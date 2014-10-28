@@ -1,0 +1,18 @@
+*.scssc
+*.zip
+*.gzip
+*.tgz
+*.DS_Store
+*.idea
+
+# External dependencies
+
+# Build output
+target
+
+# Mac OS X Finder
+.DS_Store
+
+# Closed source libraries
+closed-lib
+
