@@ -9,7 +9,7 @@ define(
             var temporary = new Temporary();
 
             it("has a method with a return value", function () {
-                expect(temporary.someMethod()).toEqual("returnValue");
+                expect(temporary.someMethod()).toEqual("Hello, world.");
             });
         });
 

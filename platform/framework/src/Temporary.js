@@ -1,10 +1,9 @@
-/**
- * Created by vwoeltje on 10/30/14.
- */
-
-
 /*global define*/
 
+/**
+ * This is a temporary file. It is present to verify
+ * that build, including test scripts, can be executed.
+ */
 define(
     [],
     function () {
@@ -13,7 +12,7 @@ define(
         function Temporary() {
             return {
                 someMethod: function () {
-                    return "returnValue";
+                    return "Hello, world.";
                 }
             };
         }
