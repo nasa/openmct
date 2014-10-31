@@ -1,13 +1,135 @@
 <html>
-  <head>
-    <link   rel="stylesheet"
-            type="text/css"
-            href="css/lib/jasmine.css">
-    <script type = "text/javascript"
-            src  = "../js/lib/require.js"
-            data-main = "js/main">
+<head>
+    <link rel="stylesheet"
+          type="text/css"
+          href="platform/framework/test/lib/css/jasmine.css">
+    <script type="text/javascript"
+            src="platform/framework/lib/require.js">
     </script>
-  </head>
-  <body>
-  </body>
+</head>
+<body>
+<script>
+    require(
+            {
+                paths: {
+                    'jasmine': 'platform/framework/test/lib/jasmine',
+                    'jasmine-html': 'platform/framework/test/lib/jasmine-html',
+                    'blanket-jasmine': 'platform/framework/test/lib/blanket_jasmine',
+                    'console-runner': 'platform/framework/test/lib/console-runner'
+                },
+                shim: {
+                    'jasmine': {
+                        'exports': 'jasmine'
+                    },
+                    'jasmine-html': {
+                        'exports': 'jasmine',
+                        'deps': ['jasmine']
+                    },
+                    'console-runner': {
+                        'exports': 'jasmine',
+                        'deps': ['jasmine']
+                    },
+                    'blanket-jasmine': {
+                        'exports': 'blanket',
+                        'deps': ['jasmine']
+                    }
+                }
+            },
+            [
+                'blanket-jasmine',
+                'jasmine-html',
+                'console-runner'
+            ],
+            function () {
+                "use strict";
+
+                // Utility function; load a JSON definition
+                function loadJSON(file, callback) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("GET", file);
+                    xhr.responseType = "json";
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4) { // DONE
+                            callback(xhr.response);
+                        }
+                    }
+                    xhr.send();
+                }
+
+                // Run Jasmine upon full declared suite.
+                // Called after all tests loaded.
+                function runJasmine() {
+                    var jasmineEnv = jasmine.getEnv(),
+                            htmlReporter,
+                            titleReporter;
+                    jasmineEnv.updateInterval = 250;
+
+                    htmlReporter = new jasmine.HtmlReporter();
+                    //https://github.com/jcarver989/phantom-jasmine/issues/2
+                    window.console_reporter = new jasmine.ConsoleReporter();
+
+                    titleReporter = new jasmine.Reporter();
+                    titleReporter.reportRunnerResults = function (runner) {
+                        document.title = runner.results().passed() ?
+                                "PASSING" : "FAILING";
+                    };
+
+                    jasmineEnv.addReporter(htmlReporter);
+                    jasmineEnv.addReporter(new jasmine.BlanketReporter());
+                    jasmineEnv.addReporter(window.console_reporter);
+                    jasmineEnv.addReporter(titleReporter);
+                    jasmineEnv.specFilter = function (spec) {
+                        return htmlReporter.specFilter(spec);
+                    };
+                    jasmineEnv.currentRunner().execute();
+                }
+
+                function lookupSource(component) {
+                    return component.src;
+                }
+
+                function lookupSpec(component) {
+                    return component.spec;
+                }
+
+                // Run a full list of specs.
+                // Should be done after loading and path-correcting all specs
+                function runSpecs(components) {
+                    blanket.options({'filter': components.map(lookupSource)});
+                    require(components.map(lookupSpec), runJasmine);
+                }
+
+                // Run all test suites contained in all bundles
+                function runSuites(bundles) {
+                    var components = [], count = 0;
+
+                    function addSuite(bundle) {
+                        function fixPath(name) {
+                            return {
+                                spec: bundle + "/test/" + name + "Spec",
+                                src: bundle + "/src/" + name
+                            };
+                        }
+
+                        function addSpecs(suiteSpecs) {
+                            components = components.concat(suiteSpecs.map(fixPath));
+                            count += 1;
+                            if (count === bundles.length) {
+                                runSpecs(components);
+                            }
+                        }
+
+                        loadJSON(bundle + "/test/suite.json", addSpecs);
+                    }
+
+                    bundles.forEach(addSuite);
+                }
+
+                // Set the ball rolling; load and run all test suites
+                loadJSON("bundles.json", runSuites);
+            }
+    );
+</script>
+</body>
+
 </html>
