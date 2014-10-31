@@ -28,8 +28,12 @@
                         *.json,
                         **/src/*,
                         **/res/*,
+                        **/lib/*,
                         **/bundle.json
                     </warSourceIncludes>
+                    <warSourceExcludes>
+                        **/test/lib/*
+                    </warSourceExcludes>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
