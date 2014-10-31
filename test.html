@@ -48,10 +48,9 @@
                 function loadJSON(file, callback) {
                     var xhr = new XMLHttpRequest();
                     xhr.open("GET", file);
-                    xhr.responseType = "json";
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState === 4) { // DONE
-                            callback(xhr.response);
+                            callback(JSON.parse(xhr.response));
                         }
                     }
                     xhr.send();
