@@ -12,7 +12,8 @@ define(
     [
         'require',
         '../lib/es6-promise-2.0.0.min',
-        '../lib/angular.min'
+        '../lib/angular.min',
+        './BundleLoader'
     ],
     function (require, es6promise, angular) {
         "use strict";

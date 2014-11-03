@@ -49,6 +49,19 @@ define(
                     return category;
                 },
                 /**
+                 * Get the path to the AMD module which implements this
+                 * extension. Will return undefined if there is no
+                 * implementation associated with this extension.
+                 *
+                 * @memberof Extension#
+                 * @returns {string} path to implementation, or undefined
+                 */
+                getImplementationPath: function () {
+                    return definition.implementation ?
+                            bundle.getSourcePath(definition.implementation) :
+                            undefined;
+                },
+                /**
                  * @memberof Extension#
                  * @returns {ExtensionDefinition}
                  */
