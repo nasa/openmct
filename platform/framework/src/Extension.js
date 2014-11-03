@@ -31,7 +31,16 @@ define(
          * @constructor
          */
         function Extension(bundle, category, definition) {
+            var logName = category;
 
+            // Build up the log-friendly name for this bundle
+            if (definition.key || definition.name) {
+                logName += "(";
+                logName += definition.key || "";
+                logName += (definition.key && definition.name) ? " " : "";
+                logName += definition.name || "";
+            }
+            logName += " from " + bundle.getLogName();
 
             return {
                 /**
@@ -67,6 +76,16 @@ define(
                     return definition.implementation ?
                             bundle.getSourcePath(definition.implementation) :
                             undefined;
+                },
+                /**
+                 * Get a log-friendly name for this extension; this will
+                 * include both the key (machine-readable name for this
+                 * extension) and the name (human-readable name for this
+                 * extension.)
+                 * @returns {string} log-friendly name for this extension
+                 */
+                getLogName: function () {
+                    return logName;
                 },
                 /**
                  * @memberof Extension#

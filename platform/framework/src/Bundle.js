@@ -33,6 +33,7 @@ define(
         function Bundle(path, bundleDefinition) {
             // Start with defaults
             var definition = Object.create(Constants.DEFAULT_BUNDLE),
+                logName = path,
                 self;
 
             // Utility function for resolving paths in this bundle
@@ -44,6 +45,15 @@ define(
             Object.keys(bundleDefinition).forEach(function (k) {
                 definition[k] = bundleDefinition[k];
             });
+
+            // Build up the log-friendly name for this bundle
+            if (definition.key || definition.name) {
+                logName += "(";
+                logName += definition.key || "";
+                logName += (definition.key && definition.name) ? " " : "";
+                logName += definition.name || "";
+                logName += ")";
+            }
 
             return (self = {
                 /**
@@ -87,6 +97,16 @@ define(
                             [ definition.resources ];
 
                     return resolvePath(subpath);
+                },
+                /**
+                 * Get a log-friendly name for this bundle; this will
+                 * include both the key (machine-readable name for this
+                 * bundle) and the name (human-readable name for this
+                 * bundle.)
+                 * @returns {string} log-friendly name for this bundle
+                 */
+                getLogName: function () {
+                    return logName;
                 },
                 getExtensions: function (category) {
                     var extensions = definition.extensions[category] || [];
