@@ -95,6 +95,9 @@ define(
                         return new Extension(self, category, extDefinition);
                     });
                 },
+                getExtensionCategories: function () {
+                    return Object.keys(definition.extensions);
+                },
                 /**
                  *
                  * @memberof Bundle#

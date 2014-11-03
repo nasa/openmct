@@ -49,6 +49,13 @@ define(
                     return category;
                 },
                 /**
+                 * Check whether or not this
+                 * @returns {boolean}
+                 */
+                hasImplementation: function () {
+                    return definition.implementation !== undefined;
+                },
+                /**
                  * Get the path to the AMD module which implements this
                  * extension. Will return undefined if there is no
                  * implementation associated with this extension.
