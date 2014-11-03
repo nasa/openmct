@@ -44,6 +44,12 @@ define(
 
             return {
                 /**
+                 * @returns {string}
+                 */
+                getKey: function () {
+                    return definition.key || "undefined";
+                },
+                /**
                  * @memberof Extension#
                  * @returns {Bundle}
                  */
