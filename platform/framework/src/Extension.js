@@ -31,7 +31,8 @@ define(
          * @constructor
          */
         function Extension(bundle, category, definition) {
-            var logName = category;
+            var logName = category,
+                extensionDefinition = Object.create(definition);
 
             // Build up the log-friendly name for this bundle
             if (definition.key || definition.name) {
@@ -41,6 +42,9 @@ define(
                 logName += definition.name || "";
             }
             logName += " from " + bundle.getLogName();
+
+            // Attach bundle metadata
+            extensionDefinition.bundle = bundle.getDefinition();
 
             return {
                 /**
@@ -98,7 +102,7 @@ define(
                  * @returns {ExtensionDefinition}
                  */
                 getDefinition: function () {
-                    return definition;
+                    return extensionDefinition;
                 }
 
             };

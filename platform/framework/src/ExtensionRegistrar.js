@@ -12,11 +12,11 @@ define(
          *
          * @constructor
          */
-        function ExtensionRegistrar(app, $log) {
+        function ExtensionRegistrar(app, customRegistrars, $log) {
             // Track which extension categories have already been registered.
             // Exceptions will be thrown if the same extension category is
             // registered twice.
-            var registeredCategories = {};
+            var registeredCategories = {},
 
             function identify(category, extension, index) {
                 var name = extension.key ?
@@ -68,12 +68,17 @@ define(
                         category,
                         " more than once. Ignoring all but first set."
                     ].join(""));
+                } else if (customRegistrars[category]) {
+                    return customRegistrars[category](extensions);
                 } else {
                     extensions.forEach(registerExtension);
                     registerExtensionArraysForCategory(category, names);
                     registeredCategories[category] = true;
+                    return true;
                 }
             }
+
+            customRegistrars = customRegistrars || {};
 
             return {
                 registerExtensions: registerExtensions
