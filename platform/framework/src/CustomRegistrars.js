@@ -16,7 +16,7 @@ define(
          */
         function CustomRegistrars(app, $log) {
             function CustomRegistrar(angularFunction) {
-                function registerExtension(extension, index) {
+                return function (extension, index) {
                     var key = extension.key,
                         dependencies = extension.depends || [];
 
@@ -41,7 +41,7 @@ define(
                             dependencies.concat([extension])
                         );
                     }
-                }
+                };
             }
 
             function registerRoute(extension, index) {
