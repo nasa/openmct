@@ -94,6 +94,10 @@ define(
                         extensionGroup[category]
                     );
                 });
+
+                // Return the application to which these extensions
+                // have been registered
+                return app;
             }
 
             customRegistrars = customRegistrars || {};

@@ -45,7 +45,7 @@ define(
                     return loader.loadBundles(bundleList)
                         .then(resolver.resolveBundles)
                         .then(registrar.registerExtensions)
-                        .then(bootstrapper.bootstrapApplication);
+                        .then(bootstrapper.bootstrap);
 
                 }
 
