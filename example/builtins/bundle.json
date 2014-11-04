@@ -3,7 +3,11 @@
     "description": "Example showing how to declare extensions with built-in support from Angular.",
     "extensions": {
         "controllers": [
-
+            {
+                "key": "ExampleController",
+                "implementation": "ExampleController.js",
+                "depends": [ "$scope" ]
+            }
         ],
         "directives": [
 
