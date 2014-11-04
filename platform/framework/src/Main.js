@@ -4,6 +4,9 @@ requirejs.config({
     "shim": {
         "../lib/angular.min": {
             "exports": "angular"
+        },
+        "../lib/angular-route.min": {
+            "deps": [ "../lib/angular.min" ]
         }
     }
 });
@@ -13,6 +16,7 @@ define(
         'require',
         '../lib/es6-promise-2.0.0.min',
         '../lib/angular.min',
+        '../lib/angular-route.min',
         './Constants',
         './FrameworkInitializer',
         './BundleLoader',
@@ -26,6 +30,7 @@ define(
     function (require,
               es6promise,
               angular,
+              angularRoute,
               Constants,
               FrameworkInitializer,
               BundleLoader,
@@ -48,7 +53,7 @@ define(
         // Wire up framework layer components necessary to complete framework
         // initialization phases.
         function initializeApplication($http, $log) {
-            var app = angular.module(Constants.MODULE_NAME, []),
+            var app = angular.module(Constants.MODULE_NAME, ["ngRoute"]),
                 loader = new BundleLoader($http, $log),
                 resolver = new BundleResolver(new ExtensionResolver(
                     new ImplementationLoader(require),
