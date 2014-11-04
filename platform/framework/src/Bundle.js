@@ -46,6 +46,9 @@ define(
                 definition[k] = bundleDefinition[k];
             });
 
+            // Record path to bundle in definition
+            definition.path = path;
+
             // Build up the log-friendly name for this bundle
             if (definition.key || definition.name) {
                 logName += "(";

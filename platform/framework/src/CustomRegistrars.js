@@ -4,8 +4,8 @@
  * Module defining CustomRegistrars. Created by vwoeltje on 11/3/14.
  */
 define(
-    [],
-    function () {
+    ['./Constants'],
+    function (Constants) {
         "use strict";
 
         /**
@@ -44,8 +44,31 @@ define(
                 }
             }
 
+            function registerRoute(extension, index) {
+                var route = Object.create(extension);
+
+                // Adjust path for bundle
+                if (route.templateUrl) {
+                    route.templateUrl = [
+                        route.bundle.path,
+                        route.bundle.resources,
+                        route.templateUrl
+                    ].join(Constants.SEPARATOR);
+                }
+
+                // Register the route with Angular
+                app.config(['$routeProvider', function ($routeProvider) {
+                    if (route.when) {
+                        $routeProvider.when(route.when, route);
+                    } else {
+                        $routeProvider.otherwise(route);
+                    }
+                }]);
+            }
+
             return {
-                services: registerExtension;
+                routes: registerRoute
+                services: new CustomRegistrar("service")
             };
         }
 
