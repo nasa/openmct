@@ -1,0 +1,20 @@
+{
+    "name": "Angular Built-ins Example",
+    "description": "Example showing how to declare extensions with built-in support from Angular.",
+    "extensions": {
+        "controllers": [
+
+        ],
+        "directives": [
+
+        ],
+        "routes": [
+            {
+                "templateUrl": "templates/example.html"
+            }
+        ],
+        "services": [
+
+        ]
+    }
+}
