@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,Promise*/
 
 /**
  * Module defining BundleLoader.js. Created by vwoeltje on 10/31/14.
@@ -33,14 +33,7 @@ define(
             // loadBundleDefinition, so at this point they are safe
             // to discard.
             function filterBundles(array) {
-                return array.map(function (x) { return x !== undefined; });
-            }
-
-            // Convert JSON bundle definitions to Bundle objects.
-            function objectifyBundles(bundleDefinitions) {
-                return bundleDefinitions.map(function (definition) {
-                    return new Bundle()
-                });
+                return array.filter(function (x) { return x !== undefined; });
             }
 
             // Load a definition for a bundle
@@ -67,11 +60,10 @@ define(
             }
 
             function loadBundlesFromArray(bundleArray) {
-                var bundlePromises = bundleArray.map(loadBundleDefinition);
+                var bundlePromises = bundleArray.map(loadBundle);
 
                 return Promise.all(bundlePromises)
-                        .then(filterBundles)
-                        .then(objectifyBundles);
+                        .then(filterBundles);
             }
 
             function loadBundlesFromFile(listFile) {
