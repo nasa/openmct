@@ -36,7 +36,7 @@ define(
             // Utility function; create the second argument for Angular's
             // .service service registration method (an array containing
             // both dependencies and a factory method for the service.)
-            function makeServiceArgument(extension) {
+            function makeServiceArgument(category, extension) {
                 var dependencies = extension.depends || [],
                     factory = (typeof extension === 'function') ?
                             new PartialConstructor(extension) :
@@ -59,7 +59,10 @@ define(
                     // Track individual extension names as-registered
                     names.push(name);
 
-                    app.factory(name, makeServiceArgument(extension));
+                    app.factory(
+                        name,
+                        makeServiceArgument(category, extension)
+                    );
                 }
 
                 if (registeredCategories[category]) {

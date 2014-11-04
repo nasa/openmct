@@ -20,13 +20,14 @@ define(
                     var key = extension.key,
                         dependencies = extension.depends || [];
 
+
                     if (!key) {
                         $log.warn([
                             "Cannot register ",
                             angularFunction,
-                            ", ",
+                            " ",
                             index,
-                            "no key specified. ",
+                            ", no key specified. ",
                             JSON.stringify(extension)
                         ].join(""));
                     } else {
@@ -35,7 +36,7 @@ define(
                             angularFunction,
                             ": ",
                             key
-                        ]);
+                        ].join(""));
                         app[angularFunction](
                             key,
                             dependencies.concat([extension])

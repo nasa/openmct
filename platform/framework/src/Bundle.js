@@ -38,7 +38,7 @@ define(
 
             // Utility function for resolving paths in this bundle
             function resolvePath(elements) {
-                return path.concat(elements || []).join(Constants.SEPARATOR);
+                return [path].concat(elements || []).join(Constants.SEPARATOR);
             }
 
             // Override defaults with specifics from bundle definition

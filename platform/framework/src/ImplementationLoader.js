@@ -19,7 +19,7 @@ define(
         function ImplementationLoader(require) {
             function loadModule(path) {
                 return new Promise(function (fulfill, reject) {
-                    require(path, fulfill, reject);
+                    require([path], fulfill, reject);
                 });
             }
 

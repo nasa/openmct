@@ -25,7 +25,11 @@ define(
                 // Attach values from the object definition to the
                 // loaded implementation.
                 function attachDefinition(impl) {
-                    var result = Object.create(impl);
+                    var result = (typeof impl === 'function') ?
+                            function () {
+                                return impl.apply({}, arguments);
+                            } :
+                            Object.create(impl);
 
                     Object.keys(definition).forEach(function (k) {
                         result[k] = definition[k];

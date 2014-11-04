@@ -3,6 +3,8 @@
 define(
     [],
     function () {
+        "use strict";
+
         /**
          * An extension's plain JSON definition.
          *
@@ -32,7 +34,7 @@ define(
          */
         function Extension(bundle, category, definition) {
             var logName = category,
-                extensionDefinition = Object.create(definition);
+                extensionDefinition = {};
 
             // Build up the log-friendly name for this bundle
             if (definition.key || definition.name) {
@@ -40,8 +42,15 @@ define(
                 logName += definition.key || "";
                 logName += (definition.key && definition.name) ? " " : "";
                 logName += definition.name || "";
+                logName += ")";
             }
             logName += " from " + bundle.getLogName();
+
+            // Copy over definition. This allows us to attach the bundle
+            // definition without modifying the original definition object.
+            Object.keys(definition).forEach(function (k) {
+                extensionDefinition[k] = definition[k];
+            });
 
             // Attach bundle metadata
             extensionDefinition.bundle = bundle.getDefinition();
