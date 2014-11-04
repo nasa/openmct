@@ -67,7 +67,9 @@ define(
             }
 
             return {
-                routes: registerRoute
+                routes: registerRoute,
+                directives: new CustomRegistrar("directive"),
+                controllers: new CustomRegistrar("controller"),
                 services: new CustomRegistrar("service")
             };
         }
