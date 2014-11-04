@@ -45,9 +45,7 @@ define(
             }
 
             return {
-                services: function (extensions) {
-                    return extensions.map(registerExtension);
-                }
+                services: registerExtension;
             };
         }
 

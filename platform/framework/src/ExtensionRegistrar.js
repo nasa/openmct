@@ -16,7 +16,7 @@ define(
             // Track which extension categories have already been registered.
             // Exceptions will be thrown if the same extension category is
             // registered twice.
-            var registeredCategories = {},
+            var registeredCategories = {};
 
             function identify(category, extension, index) {
                 var name = extension.key ?
@@ -68,11 +68,16 @@ define(
                         category,
                         " more than once. Ignoring all but first set."
                     ].join(""));
-                } else if (customRegistrars[category]) {
-                    return customRegistrars[category](extensions);
                 } else {
-                    extensions.forEach(registerExtension);
-                    registerExtensionArraysForCategory(category, names);
+                    // Register all extensions. Use custom registration
+                    // code for services, directives, etc; otherwise,
+                    // just register them under generic names.
+                    if (customRegistrars[category]) {
+                        extensions.forEach(customRegistrars[category]);
+                    } else {
+                        extensions.forEach(registerExtension);
+                        registerExtensionArraysForCategory(category, names);
+                    }
                     registeredCategories[category] = true;
                     return true;
                 }
