@@ -20,13 +20,9 @@ define(
 
             function identify(category, extension, index) {
                 var name = extension.key ?
-                    (extension.key + "-" + index) :
-                    index;
+                        (extension.key + "-" + index) :
+                        index;
                 return category + "[" + name + "]";
-            }
-
-            function identifyCategory(category) {
-                return category + Constants.EXTENSION_SUFFIX;
             }
 
             function echo() {
@@ -34,7 +30,7 @@ define(
             }
 
             function staticFunction(value) {
-                return function () { return value; }
+                return function () { return value; };
             }
 
             // Utility function; create the second argument for Angular's
