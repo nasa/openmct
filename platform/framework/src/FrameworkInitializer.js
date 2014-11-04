@@ -12,7 +12,7 @@ define(
          *
          * @constructor
          * @param {BundleLoader} loader
-         * @param {ExtensionResolver} resolver
+         * @param {BundleResolver} resolver
          * @param {ExtensionRegistrar} registrar
          * @param {ApplicationBootstrapper} bootstrapper
          */
@@ -29,20 +29,11 @@ define(
 
             /**
              *
-             * @param bundles
+             * @param {Bundle[]} bundles
              * @returns {Object.<string, object[]>} an object mapping
              */
             function resolveExtensions(bundles) {
-                var resolvedExtensions = {};
-
-
-                function resolveExtensionsForBundle(bundle) {
-
-                }
-
-                return Promises.all(bundles.map(resolveExtensionsForBundle)).then(function () {
-                    return resolvedExtensions;
-                });
+                return resolver.resolveBundles(bundles);
             }
 
             function loadBundles(bundleList) {
@@ -51,10 +42,11 @@ define(
 
             return {
                 runApplication: function (bundleList) {
-                    return loadBundles()
-                        .then(resolveExtensions)
-                        .then(registerExtensions)
-                        .then(bootstrapApplication);
+                    return loader.loadBundles(bundleList)
+                        .then(resolver.resolveBundles)
+                        .then(registrar.registerExtensions)
+                        .then(bootstrapper.bootstrapApplication);
+
                 }
 
             };

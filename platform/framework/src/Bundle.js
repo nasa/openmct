@@ -108,6 +108,12 @@ define(
                 getLogName: function () {
                     return logName;
                 },
+                /**
+                 *
+                 * @param category
+                 * @memberof Bundle#
+                 * @returns {Array}
+                 */
                 getExtensions: function (category) {
                     var extensions = definition.extensions[category] || [];
 
@@ -115,6 +121,10 @@ define(
                         return new Extension(self, category, extDefinition);
                     });
                 },
+                /**
+                 * @memberof Bundle#
+                 * @returns {Array}
+                 */
                 getExtensionCategories: function () {
                     return Object.keys(definition.extensions);
                 },

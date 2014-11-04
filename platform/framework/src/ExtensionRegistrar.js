@@ -25,6 +25,10 @@ define(
                 return category + "[" + name + "]";
             }
 
+            function identifyCategory(category) {
+                return category + Constants.EXTENSION_SUFFIX;
+            }
+
             function echo() {
                 return arguments.slice;
             }
@@ -50,7 +54,7 @@ define(
                 app.factory(name, names.concat([echo]));
             }
 
-            function registerExtensions(category, extensions) {
+            function registerExtensionsForCategory(category, extensions) {
                 var names = [];
 
                 function registerExtension(extension, index) {
@@ -83,10 +87,19 @@ define(
                 }
             }
 
+            function registerExtensionGroup(extensionGroup) {
+                Object.keys(extensionGroup).forEach(function (category) {
+                    registerExtensionsForCategory(
+                        category,
+                        extensionGroup[category]
+                    );
+                });
+            }
+
             customRegistrars = customRegistrars || {};
 
             return {
-                registerExtensions: registerExtensions
+                registerExtensions: registerExtensionGroup
             };
         }
 
