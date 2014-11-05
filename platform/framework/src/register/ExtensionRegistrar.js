@@ -101,6 +101,55 @@ define(
                 }
             }
 
+            // Check if a declared dependency looks like a dependency on
+            // an extension category (e.g. is suffixed by [])
+            function isExtensionDependency(dependency) {
+                var index = dependency.indexOf(
+                        Constants.EXTENSION_SUFFIX,
+                        dependency.length - Constants.EXTENSION_SUFFIX.length
+                    );
+                return index !== -1;
+            }
+
+            function findEmptyExtensionDependencies(extensionGroup) {
+                var needed = {},
+                    categories = Object.keys(extensionGroup),
+                    allExtensions = [];
+
+                // Build up an array of all extensions
+                categories.forEach(function (category) {
+                    allExtensions =
+                        allExtensions.concat(extensionGroup[category]);
+                });
+
+                // Track all extension dependencies exposed therefrom
+                allExtensions.forEach(function (extension) {
+                    (extension.depends || []).filter(
+                        isExtensionDependency
+                    ).forEach(function (dependency) {
+                        needed[dependency] = true;
+                    });
+                });
+
+                // Remove categories which have been provided
+                categories.forEach(function (category) {
+                    var dependency = category + Constants.EXTENSION_SUFFIX;
+                    delete needed[dependency];
+                });
+
+                return Object.keys(needed);
+            }
+
+
+            function registerEmptyDependencies(extensionGroup) {
+                findEmptyExtensionDependencies(
+                    extensionGroup
+                ).forEach(function (name) {
+                    $log.info("Registering empty extension category " + name);
+                    app.factory(name, [staticFunction([])]);
+                });
+            }
+
             function registerExtensionGroup(extensionGroup) {
                 Object.keys(extensionGroup).forEach(function (category) {
                     registerExtensionsForCategory(
@@ -108,6 +157,8 @@ define(
                         extensionGroup[category]
                     );
                 });
+
+                registerEmptyDependencies(extensionGroup);
 
                 // Return the application to which these extensions
                 // have been registered
