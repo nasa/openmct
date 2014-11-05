@@ -27,11 +27,6 @@
                 "key": "exampleService",
                 "implementation": "ExampleService.js"
             }
-        ],
-        "examples": [
-            {
-                "text": "This is an example from example/builtins."
-            }
         ]
     }
 }

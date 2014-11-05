@@ -1,0 +1,12 @@
+{
+    "name": "Custom Extensions Examples",
+    "description": "Example showing how to declare custom extensions.",
+    "sources": "src",
+    "extensions": {
+        "examples": [
+            {
+                "text": "I came from example/extensions"
+            }
+        ]
+    }
+}
