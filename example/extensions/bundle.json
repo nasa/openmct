@@ -6,6 +6,10 @@
         "examples": [
             {
                 "text": "I came from example/extensions"
+            },
+            {
+                "implementation": "SomeExample.js",
+                "depends": [ "exampleService" ]
             }
         ]
     }

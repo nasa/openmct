@@ -8,9 +8,11 @@ define(
     function () {
         "use strict";
 
-        var HAS_EXTENSIONS = "A directive loaded these example extensions.",
+        var HAS_EXTENSIONS = "A directive loaded these message from " +
+                    "example extensions.",
             NO_EXTENSIONS = "A directive tried to load example extensions," +
-                    " but found none.";
+                    " but found none.",
+            MESSAGE = "I heard this from my partial constructor.";
 
         /**
          *
@@ -22,8 +24,14 @@ define(
                     HAS_EXTENSIONS : NO_EXTENSIONS;
 
             template += "<ul>"
-            examples.forEach(function (e) {
-                template += "<li>" + e.text + "</li>";
+            examples.forEach(function (E) {
+                template += "<li>";
+                if (typeof E === 'function') {
+                    template += (new E(MESSAGE)).getText();
+                } else {
+                    template += E.text;
+                }
+                template += "</li>";
             });
             template += "</ul>";
 
