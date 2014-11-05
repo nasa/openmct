@@ -12,9 +12,19 @@ define(
          *
          * @constructor
          */
-        function ExampleDirective() {
+        function ExampleDirective(examples) {
+            // Build up a template from example extensions
+            var template = examples.length > 0 ?
+                    "A directive loaded these example extensions:<ul>" :
+                    "This came from a directive.<ul>";
+
+            examples.forEach(function (e) {
+                template += "<li>" + e.text + "</li>";
+            });
+            template += "</ul>";
+
             return {
-                template: "And this came from a directive."
+                template: template
             };
         }
 
