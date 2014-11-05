@@ -50,7 +50,12 @@
                     xhr.open("GET", file);
                     xhr.onreadystatechange = function () {
                         if (xhr.readyState === 4) { // DONE
-                            callback(JSON.parse(xhr.response));
+                            if (xhr.status === 200) {
+                                callback(JSON.parse(xhr.response));
+                            } else {
+                                // No suite defined, so no tests
+                                callback([]);
+                            }
                         }
                     }
                     xhr.send();
