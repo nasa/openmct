@@ -66,7 +66,8 @@ define(
                 ),
                 bootstrapper = new ApplicationBootstrapper(
                     angular,
-                    window.document
+                    window.document,
+                    $log
                 ),
                 initializer = new FrameworkInitializer(
                     loader,

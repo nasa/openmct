@@ -19,7 +19,7 @@ define(
          *
          * @constructor
          */
-        function ApplicationBootstrapper(angular, document) {
+        function ApplicationBootstrapper(angular, document, $log) {
             return {
                 /**
                  * @method
@@ -28,6 +28,7 @@ define(
                  *        bootstrap
                  */
                 bootstrap: function (app) {
+                    $log.info("Bootstrapping application " + (app || {}).name);
                     angular.element(document).ready(function () {
                         angular.bootstrap(document, [app.name]);
                     });
