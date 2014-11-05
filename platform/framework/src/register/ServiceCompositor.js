@@ -42,6 +42,12 @@ define(
                 return arguments[0];
             }
 
+            function hasType(type) {
+                return function (extension) {
+                    return extension.type === type;
+                };
+            }
+
             function makeName(category, service, index) {
                 return [
                     service,
@@ -148,12 +154,20 @@ define(
                 registerLatest();
             }
 
+            function registerCompositeServices(components) {
+                registerComposites(
+                    components.filter(hasType("provider")),
+                    components.filter(hasType("aggregator")),
+                    components.filter(hasType("decorator"))
+                );
+            }
+
             return {
                 /**
                  *
-                 * @param {Array} components extensions of type component
+                 * @param {Array} components extensions of category component
                  */
-                registerCompositeServices: registerComposites
+                registerCompositeServices: registerCompositeServices
             };
         }
 
