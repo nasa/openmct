@@ -1,12 +1,13 @@
 {
     "name": "Angular Built-ins Example",
     "description": "Example showing how to declare extensions with built-in support from Angular.",
+    "sources": "src",
     "extensions": {
         "controllers": [
             {
                 "key": "ExampleController",
                 "implementation": "ExampleController.js",
-                "depends": [ "$scope" ]
+                "depends": [ "$scope", "exampleService" ]
             }
         ],
         "directives": [
@@ -21,7 +22,10 @@
             }
         ],
         "services": [
-
+            {
+                "key": "exampleService",
+                "implementation": "ExampleService.js"
+            }
         ]
     }
 }

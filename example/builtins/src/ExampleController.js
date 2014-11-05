@@ -12,8 +12,8 @@ define(
          *
          * @constructor
          */
-        function ExampleController($scope) {
-            $scope.phrase = "I am a controller.";
+        function ExampleController($scope, exampleService) {
+            $scope.phrase = exampleService.getMessage();
         }
 
         return ExampleController;
