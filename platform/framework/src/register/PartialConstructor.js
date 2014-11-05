@@ -27,10 +27,10 @@ define(
         function PartialConstructor(Constructor) {
 
             return function () { // Bind services
-                var dependencies = arguments.slice();
+                var dependencies = Array.prototype.slice.call(arguments);
 
                 return function () { // Bind everything else
-                    var other = arguments.slice(),
+                    var other = Array.prototype.slice.call(arguments),
                         instance = {};
 
                     Constructor.apply(instance, dependencies.concat(other));

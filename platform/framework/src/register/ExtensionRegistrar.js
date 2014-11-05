@@ -37,7 +37,7 @@ define(
             // Echo arguments; used to represent groups of non-built-in
             // extensions as a single dependency.
             function echo() {
-                return arguments.slice();
+                return Array.prototype.slice.call(arguments);
             }
 
             // Always return a static value; used to represent plain
