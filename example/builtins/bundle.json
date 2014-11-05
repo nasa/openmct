@@ -10,7 +10,10 @@
             }
         ],
         "directives": [
-
+            {
+                "key": "exampleDirective",
+                "implementation": "ExampleDirective.js"
+            }
         ],
         "routes": [
             {
