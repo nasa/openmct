@@ -14,6 +14,9 @@ define(
             LOAD_ERROR_PREFIX = "Failed to load bundle ";
 
         /**
+         * Loads bundle definitions and wraps them in interfaces which are
+         * useful to the framework. This provides the base information which
+         * will be used by later phases of framework layer initialization.
          *
          * @constructor
          * @param {object} $http Angular's HTTP requester
@@ -53,12 +56,16 @@ define(
                 );
             }
 
+            // Load an individual bundle, as a Bundle object.
+            // Returns undefined if the definition could not be loaded.
             function loadBundle(bundlePath) {
                 return loadBundleDefinition(bundlePath).then(function (definition) {
                     return definition && (new Bundle(bundlePath, definition));
                 });
             }
 
+            // Load all named bundles from the array, returned as an array
+            // of Bundle objects.
             function loadBundlesFromArray(bundleArray) {
                 var bundlePromises = bundleArray.map(loadBundle);
 
@@ -66,10 +73,16 @@ define(
                         .then(filterBundles);
             }
 
+            // Load all bundles named in the referenced file. The file is
+            // presumed to be a JSON file
             function loadBundlesFromFile(listFile) {
                 return getJSON(listFile).then(loadBundlesFromArray);
             }
 
+            // Load all indicated bundles. If the argument is an array,
+            // this is taken to be a list of all bundles to load; if it
+            // is a string, then it is treated as the name of a JSON
+            // file containing the list of bundles to load.
             function loadBundles(bundles) {
                 return Array.isArray(bundles) ? loadBundlesFromArray(bundles) :
                         (typeof bundles === 'string') ? loadBundlesFromFile(bundles) :
@@ -78,6 +91,15 @@ define(
 
 
             return {
+                /**
+                 * Load a group of bundles, to be used to constitute the
+                 * application by later framework initialization phases.
+                 *
+                 * @memberof BundleLoader#
+                 * @param {string|string[]} an array of bundle names to load, or
+                 *        the name of a JSON file containing that array
+                 * @returns {Promise.<Bundle[]>}
+                 */
                 loadBundles: loadBundles
             };
         }

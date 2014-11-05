@@ -9,6 +9,13 @@ define(
         "use strict";
 
         /**
+         * Responsible for managing the four stages of framework
+         * initialization:
+         *
+         * * Loading bundle metadata (JSON files)
+         * * Resolving extension implementations with Require
+         * * Registering extensions with Angular
+         * * Bootstrapping the Angular application.
          *
          * @constructor
          * @param {BundleLoader} loader
@@ -18,35 +25,12 @@ define(
          */
         function FrameworkInitializer(loader, resolver, registrar, bootstrapper) {
 
-            function registerExtensions(resolvedExtensions) {
-                Object.keys(resolvedExtensions).forEach(function (category) {
-                    registrar.registerExtensions(
-                        category,
-                        resolvedExtensions[category]
-                    );
-                });
-            }
-
-            /**
-             *
-             * @param {Bundle[]} bundles
-             * @returns {Object.<string, object[]>} an object mapping
-             */
-            function resolveExtensions(bundles) {
-                return resolver.resolveBundles(bundles);
-            }
-
-            function loadBundles(bundleList) {
-                return loader.loadBundles(bundleList);
-            }
-
             return {
                 runApplication: function (bundleList) {
                     return loader.loadBundles(bundleList)
                         .then(resolver.resolveBundles)
                         .then(registrar.registerExtensions)
                         .then(bootstrapper.bootstrap);
-
                 }
 
             };

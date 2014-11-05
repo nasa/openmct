@@ -22,6 +22,8 @@ define(
         function ApplicationBootstrapper(angular, document, $log) {
             return {
                 /**
+                 * Bootstrap the application. 
+                 *
                  * @method
                  * @memberof ApplicationBootstrapper#
                  * @param {angular.Module} app the Angular application to

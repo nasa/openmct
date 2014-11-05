@@ -1,7 +1,7 @@
 /*global define*/
 
 /**
- * Constants used by the framework.
+ * Constants used by the framework layer.
  */
 define({
     MODULE_NAME: "OpenMCTWeb",

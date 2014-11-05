@@ -15,6 +15,10 @@ define(
          * @constructor
          */
         function CustomRegistrars(app, $log) {
+
+            // Used to create custom registration functions which map to
+            // named methods on Angular modules, which follow the normal
+            // app.method(key, [ deps..., function ]) pattern.
             function CustomRegistrar(angularFunction) {
                 return function (extension, index) {
                     var key = extension.key,
@@ -45,7 +49,8 @@ define(
                 };
             }
 
-            function registerRoute(extension, index) {
+            // Custom registration function for extensions of category "route"
+            function registerRoute(extension) {
                 var route = Object.create(extension);
 
                 // Adjust path for bundle
@@ -57,6 +62,9 @@ define(
                     ].join(Constants.SEPARATOR);
                 }
 
+                // Log the registration
+                $log.info("Registering route: " + (route.key || route.when));
+
                 // Register the route with Angular
                 app.config(['$routeProvider', function ($routeProvider) {
                     if (route.when) {
@@ -67,6 +75,9 @@ define(
                 }]);
             }
 
+            // More like key-value pairs than methods; key is the
+            // name of the extension category to be handled, and the value
+            // is the function which handles it.
             return {
                 routes: registerRoute,
                 directives: new CustomRegistrar("directive"),

@@ -9,8 +9,15 @@ define(
         "use strict";
 
         /**
+         * Responsible for registering extensions with Angular.
          *
          * @constructor
+         * @param {angular.Module} the Angular application with which
+         *        extensions should be registered
+         * @param {Object.<string,function>} customRegistrars an object
+         *        containing custom registration functions, primarily for
+         *        Angular built-ins.
+         * @param {*} $log Angular's logging service
          */
         function ExtensionRegistrar(app, customRegistrars, $log) {
             // Track which extension categories have already been registered.
@@ -18,6 +25,8 @@ define(
             // registered twice.
             var registeredCategories = {};
 
+            // Used to build unique identifiers for individual extensions,
+            // so that these can be registered separately with Angular
             function identify(category, extension, index) {
                 var name = extension.key ?
                         (extension.key + "-" + index) :
@@ -25,10 +34,14 @@ define(
                 return category + "[" + name + "]";
             }
 
+            // Echo arguments; used to represent groups of non-built-in
+            // extensions as a single dependency.
             function echo() {
-                return arguments.slice;
+                return arguments.slice();
             }
 
+            // Always return a static value; used to represent plain
+            // metadata as a single dependency in Angular.
             function staticFunction(value) {
                 return function () { return value; };
             }
@@ -45,6 +58,8 @@ define(
                 return dependencies.concat([factory]);
             }
 
+            // Register extension arrays with Angular under an appropriately
+            // suffixed name, e.g. "types[]"
             function registerExtensionArraysForCategory(category, names) {
                 var name = category + Constants.EXTENSION_SUFFIX;
                 app.factory(name, names.concat([echo]));
@@ -102,6 +117,21 @@ define(
             customRegistrars = customRegistrars || {};
 
             return {
+                /**
+                 * Register a group of resolved extensions with the Angular
+                 * module managed by this registrar.
+                 *
+                 * For convenient chaining (particularly from the framework
+                 * initializer's perspective), this returns the Angular
+                 * module with which extensions were registered.
+                 *
+                 * @param {Object.<string, object[]>} extensionGroup an object
+                 *        containing key-value pairs, where keys are extension
+                 *        categories and values are arrays of resolved
+                 *        extensions
+                 * @returns {angular.Module} the application module with
+                 *        which extensions were registered
+                 */
                 registerExtensions: registerExtensionGroup
             };
         }

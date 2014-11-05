@@ -57,12 +57,16 @@ define(
 
             return {
                 /**
+                 * Get the machine-readable identifier for this extension.
+                 *
                  * @returns {string}
                  */
                 getKey: function () {
                     return definition.key || "undefined";
                 },
                 /**
+                 * Get the bundle which declared this extension.
+                 *
                  * @memberof Extension#
                  * @returns {Bundle}
                  */
@@ -70,6 +74,9 @@ define(
                     return bundle;
                 },
                 /**
+                 * Get the category into which this extension falls.
+                 * (e.g. "directives")
+                 *
                  * @memberof Extension#
                  * @returns {string}
                  */
@@ -77,8 +84,12 @@ define(
                     return category;
                 },
                 /**
-                 * Check whether or not this
-                 * @returns {boolean}
+                 * Check whether or not this extension should have an
+                 * associated implementation module which may need to
+                 * be loaded.
+                 *
+                 * @returns {boolean} true if an implementation separate
+                 *          from this definition should also be loaded
                  */
                 hasImplementation: function () {
                     return definition.implementation !== undefined;
@@ -107,8 +118,16 @@ define(
                     return logName;
                 },
                 /**
+                 * Get the plain definition of the extension.
+                 *
+                 * Note that this definition will have an additional "bundle"
+                 * field which points back to the bundle which defined the
+                 * extension, as a convenience.
+                 *
                  * @memberof Extension#
-                 * @returns {ExtensionDefinition}
+                 * @returns {ExtensionDefinition} the plain definition of
+                 *          this extension, as read from the bundle
+                 *          declaration.
                  */
                 getDefinition: function () {
                     return extensionDefinition;

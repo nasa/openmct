@@ -9,12 +9,20 @@ define(
         "use strict";
 
         /**
+         * Responsible for the extension resolution phase of framework
+         * initialization. During this phase, any scripts implementing
+         * extensions provided by bundles are loaded.
          *
          * @constructor
          */
-        function BundleResolver(extensionResolver) {
+        function BundleResolver(extensionResolver, $log) {
 
             /**
+             * Merge resolved bundles (where each is expressed as an
+             * object containing key-value pairs, where keys are extension
+             * categories and values are arrays of resolved extensions)
+             * into one large object containing resolved extensions from
+             * all bundles (in the same form.)
              *
              * @param {Object.<string, object[]>[]} resolvedBundles
              * @returns {Object.<string, object[]>}
@@ -31,6 +39,9 @@ define(
                 return result;
             }
 
+            // Resolve a bundle; resolve all extensions, and return
+            // the resolved extensions in an object in the format described
+            // for mergeResolvedBundles above
             function resolveBundle(bundle) {
                 var categories = bundle.getExtensionCategories(),
                     result = {};
@@ -56,11 +67,25 @@ define(
                     return result;
                 }
 
+                // Log the large-scale task
+                $log.info(
+                    "Resolving extensions for bundle " + bundle.getLogName()
+                );
+
                 return Promise.all(categories.map(resolveCategory))
                     .then(giveResult);
             }
 
             return {
+                /**
+                 * Resolve all extensions exposed by these bundles.
+                 *
+                 * @param {Bundle[]} bundles the bundles to resolve
+                 * @returns {Object.<string, object[]>} an object containing
+                 *          key-value pairs, where keys are extension
+                 *          categories and values are arrays of resolved
+                 *          extensions belonging to those categories
+                 */
                 resolveBundles: function (bundles) {
                     return Promise.all(bundles.map(resolveBundle))
                         .then(mergeResolvedBundles);

@@ -58,9 +58,9 @@ define(
                 logName += ")";
             }
 
-            return (self = {
+            self = {
                 /**
-                 *
+                 * Get the path to this bundle.
                  * @memberof Bundle#
                  * @returns {string}
                  */
@@ -112,6 +112,8 @@ define(
                     return logName;
                 },
                 /**
+                 * Get all extensions exposed by this bundle of a given
+                 * category.
                  *
                  * @param category
                  * @memberof Bundle#
@@ -125,6 +127,9 @@ define(
                     });
                 },
                 /**
+                 * Get a list of all categories of extension exposed by
+                 * this bundle.
+                 *
                  * @memberof Bundle#
                  * @returns {Array}
                  */
@@ -132,6 +137,8 @@ define(
                     return Object.keys(definition.extensions);
                 },
                 /**
+                 * Get the plain definition of this bundle, as read from
+                 * its JSON declaration.
                  *
                  * @memberof Bundle#
                  * @returns {BundleDefinition} the raw definition of this bundle
@@ -139,7 +146,9 @@ define(
                 getDefinition: function () {
                     return definition;
                 }
-            });
+            };
+
+            return self;
         }
 
         return Bundle;

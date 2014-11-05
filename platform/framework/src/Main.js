@@ -58,7 +58,7 @@ define(
                 resolver = new BundleResolver(new ExtensionResolver(
                     new ImplementationLoader(require),
                     $log
-                )),
+                ), $log),
                 registrar = new ExtensionRegistrar(
                     app,
                     new CustomRegistrars(app, $log),
