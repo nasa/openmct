@@ -4,7 +4,7 @@
  * Module defining ExtensionRegistrar. Created by vwoeltje on 11/3/14.
  */
 define(
-    ['./Constants', './PartialConstructor'],
+    ['../Constants', './PartialConstructor'],
     function (Constants, PartialConstructor) {
         "use strict";
 

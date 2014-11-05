@@ -1,7 +1,7 @@
 /*global define*/
 
 define(
-    ['./Constants', './Extension'],
+    ['../Constants', './Extension'],
     function (Constants, Extension) {
         "use strict";
 

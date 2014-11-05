@@ -4,7 +4,7 @@
  * Module defining BundleLoader.js. Created by vwoeltje on 10/31/14.
  */
 define(
-    ['./Constants', './Bundle'],
+    ['../Constants', './Bundle'],
     function (Constants, Bundle) {
         "use strict";
 

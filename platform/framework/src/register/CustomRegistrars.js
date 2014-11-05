@@ -4,7 +4,7 @@
  * Module defining CustomRegistrars. Created by vwoeltje on 11/3/14.
  */
 define(
-    ['./Constants'],
+    ['../Constants'],
     function (Constants) {
         "use strict";
 
