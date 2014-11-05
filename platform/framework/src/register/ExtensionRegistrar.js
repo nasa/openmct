@@ -111,6 +111,8 @@ define(
                 return index !== -1;
             }
 
+            // Examine a group of resolved dependencies to determine
+            // which extension categories still need to be satisfied.
             function findEmptyExtensionDependencies(extensionGroup) {
                 var needed = {},
                     categories = Object.keys(extensionGroup),
@@ -141,6 +143,9 @@ define(
             }
 
 
+            // Register any extension categories that are depended-upon but
+            // have not been declared anywhere; such dependencies are then
+            // satisfied by an empty array, instead of not at all.
             function registerEmptyDependencies(extensionGroup) {
                 findEmptyExtensionDependencies(
                     extensionGroup
@@ -151,6 +156,7 @@ define(
             }
 
             function registerExtensionGroup(extensionGroup) {
+                // Register all declared extensions by category
                 Object.keys(extensionGroup).forEach(function (category) {
                     registerExtensionsForCategory(
                         category,
@@ -158,6 +164,7 @@ define(
                     );
                 });
 
+                // Also handle categories which are needed but not declared
                 registerEmptyDependencies(extensionGroup);
 
                 // Return the application to which these extensions
