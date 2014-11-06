@@ -98,7 +98,7 @@ define(
             });
 
 
-            it("warns about, then ignores, missing bundle declarations", function () {
+            it("warns about, then ignores, malformed bundle declarations", function () {
                 // File-not-found
                 mockHttp.get.andReturn(Promise.resolve(["I am not a valid bundle."]));
 
