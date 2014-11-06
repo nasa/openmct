@@ -55,7 +55,7 @@ define(
                 bootstrapper.bootstrap(mockApp);
             });
 
-            
+
             // The tests.
 
             it("waits for the provided document element to be ready", function () {
