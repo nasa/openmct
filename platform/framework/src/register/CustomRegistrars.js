@@ -4,8 +4,8 @@
  * Module defining CustomRegistrars. Created by vwoeltje on 11/3/14.
  */
 define(
-    ['../Constants'],
-    function (Constants) {
+    ['../Constants', './ServiceCompositor'],
+    function (Constants, ServiceCompositor) {
         "use strict";
 
         /**
