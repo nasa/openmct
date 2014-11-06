@@ -75,14 +75,22 @@ define(
                 }]);
             }
 
+            // Utility; create a function which converts another function
+            // (which acts on single objects) to one which acts upon arrays.
+            function mapUpon(func) {
+                return function(array) {
+                    return array.map(func);
+                };
+            }
+
             // More like key-value pairs than methods; key is the
             // name of the extension category to be handled, and the value
             // is the function which handles it.
             return {
-                routes: registerRoute,
-                directives: new CustomRegistrar("directive"),
-                controllers: new CustomRegistrar("controller"),
-                services: new CustomRegistrar("service")
+                routes: mapUpon(registerRoute),
+                directives: mapUpon(new CustomRegistrar("directive")),
+                controllers: mapUpon(new CustomRegistrar("controller")),
+                services: mapUpon(new CustomRegistrar("service"))
             };
         }
 

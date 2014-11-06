@@ -91,7 +91,7 @@ define(
                     // code for services, directives, etc; otherwise,
                     // just register them under generic names.
                     if (customRegistrars[category]) {
-                        extensions.forEach(customRegistrars[category]);
+                        customRegistrars[category](extensions);
                     } else {
                         extensions.forEach(registerExtension);
                         registerExtensionArraysForCategory(category, names);
