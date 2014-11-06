@@ -23,7 +23,7 @@ define(
             var template = examples.length > 0 ?
                     HAS_EXTENSIONS : NO_EXTENSIONS;
 
-            template += "<ul>"
+            template += "<ul>";
             examples.forEach(function (E) {
                 template += "<li>";
                 if (typeof E === 'function') {
