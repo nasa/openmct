@@ -32,6 +32,7 @@
                         **/bundle.json
                     </warSourceIncludes>
                     <warSourceExcludes>
+                        example/**/*,
                         **/test/lib/*
                     </warSourceExcludes>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
