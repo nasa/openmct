@@ -42,7 +42,7 @@ define(
                 // Call load bundles
                 loader.loadBundles("test-filename.json").then(mockCallback);
 
-                waitsFor(mockCallbackResolved, "then-chain resolution", 500);
+                waitsFor(mockCallbackResolved, "then-chain resolution", 100);
 
                 runs(function () {
                     // Should have loaded the file via $http
@@ -62,7 +62,7 @@ define(
                 // Call load bundles
                 loader.loadBundles(["bundle/a", "bundle/b"]).then(mockCallback);
 
-                waitsFor(mockCallbackResolved, "then-chain resolution", 500);
+                waitsFor(mockCallbackResolved, "then-chain resolution", 100);
 
                 runs(function () {
                     // Should have gotten back two bundles
@@ -75,10 +75,47 @@ define(
                     }).reduce(function (a, b) {
                         return a + b;
                     }, 0)).toEqual(13);
-
                 });
             });
 
+            it("warns about, then ignores, missing bundle declarations", function () {
+                // File-not-found
+                mockHttp.get.andReturn(Promise.reject(new Error("test error")));
+
+                // Try and load
+                loader.loadBundles(["some/bundle"]).then(mockCallback);
+
+                waitsFor(mockCallbackResolved, "then-chain resolution", 100);
+
+                runs(function () {
+                    // Should have gotten zero bundle
+                    expect(mockCallback.mostRecentCall.args[0].length).toEqual(0);
+
+                    // They should have the values we expect; don't care about order,
+                    // some map/reduce the summation.
+                    expect(mockLog.warn).toHaveBeenCalled();
+                });
+            });
+
+
+            it("warns about, then ignores, missing bundle declarations", function () {
+                // File-not-found
+                mockHttp.get.andReturn(Promise.resolve(["I am not a valid bundle."]));
+
+                // Try and load
+                loader.loadBundles(["some/bundle"]).then(mockCallback);
+
+                waitsFor(mockCallbackResolved, "then-chain resolution", 100);
+
+                runs(function () {
+                    // Should have gotten zero bundle
+                    expect(mockCallback.mostRecentCall.args[0].length).toEqual(0);
+
+                    // They should have the values we expect; don't care about order,
+                    // some map/reduce the summation.
+                    expect(mockLog.warn).toHaveBeenCalled();
+                });
+            });
 
         });
     }
