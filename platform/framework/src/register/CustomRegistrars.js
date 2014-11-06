@@ -75,6 +75,12 @@ define(
                 }]);
             }
 
+            // Handle service compositing
+            function registerComponents(components) {
+                return new ServiceCompositor(app, $log)
+                        .registerCompositeServices(components);
+            }
+
             // Utility; create a function which converts another function
             // (which acts on single objects) to one which acts upon arrays.
             function mapUpon(func) {
@@ -90,7 +96,8 @@ define(
                 routes: mapUpon(registerRoute),
                 directives: mapUpon(new CustomRegistrar("directive")),
                 controllers: mapUpon(new CustomRegistrar("controller")),
-                services: mapUpon(new CustomRegistrar("service"))
+                services: mapUpon(new CustomRegistrar("service")),
+                components: registerComponents
             };
         }
 

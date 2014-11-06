@@ -9,6 +9,8 @@ define(
         "use strict";
 
         /**
+         * Handles service compositing; that is, building up services
+         * from provider, aggregator, and decorator components.
          *
          * @constructor
          */
@@ -16,6 +18,7 @@ define(
             var latest = {},
                 providerLists = {}; // Track latest services registered
 
+            // Log a warning; defaults to "no service provided by"
             function warn(extension, category, message) {
                 var msg = message || "No service provided by";
                 $log.warn([
@@ -38,16 +41,21 @@ define(
 
             // Echo arguments; used to represent groups of non-built-in
             // extensions as a single dependency.
-            function echoSingle() {
-                return arguments[0];
+            function echoSingle(value) {
+                return value;
             }
 
+            // Generates utility functions to match types (one of
+            // provider, aggregator, or decorator) of component. Used
+            // to filter down to specific types, which are handled
+            // in order.
             function hasType(type) {
                 return function (extension) {
                     return extension.type === type;
                 };
             }
 
+            // Make a unique name for a service component.
             function makeName(category, service, index) {
                 return [
                     service,
@@ -59,6 +67,8 @@ define(
                 ].join("");
             }
 
+            // Register a specific provider instance with Angular, and
+            // record its name for subsequent stages.
             function registerProvider(provider, index) {
                 var service = provider.provides,
                     dependencies = provider.depends || [],
@@ -78,6 +88,9 @@ define(
                 app.service(name, dependencies.concat([provider]));
             }
 
+            // Register an array of providers as a single dependency;
+            // aggregators will then depend upon this to consume all
+            // aggregated providers as a single dependency.
             function registerProviderSets() {
                 Object.keys(providerLists).forEach(function (service) {
                     var name = makeName("provider", service, "*"),
@@ -87,6 +100,9 @@ define(
                 });
             }
 
+            // Registers an aggregator via Angular, including both
+            // its declared dependencies and the additional, implicit
+            // dependency upon the array of all providers.
             function registerAggregator(aggregator, index) {
                 var service = aggregator.provides,
                     dependencies = aggregator.depends || [],
@@ -113,6 +129,9 @@ define(
                 app.service(name, dependencies.concat([aggregator]));
             }
 
+            // Registers a decorator via Angular, including its implicit
+            // dependency on the latest service component which has come
+            // before it.
             function registerDecorator(decorator, index) {
                 var service = decorator.provides,
                     dependencies = decorator.depends || [],
@@ -164,6 +183,15 @@ define(
 
             return {
                 /**
+                 * Register composite services with Angular. This will build
+                 * up a dependency hierarchy between providers, aggregators,
+                 * and/or decorators, such that a dependency upon the service
+                 * type they expose shall be satisfied by their fully-wired
+                 * whole.
+                 *
+                 * Note that this method assumes that a complete set of
+                 * components shall be provided. Multiple calls to this
+                 * method may not behave as expected.
                  *
                  * @param {Array} components extensions of category component
                  */
