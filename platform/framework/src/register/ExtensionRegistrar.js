@@ -29,8 +29,8 @@ define(
             // so that these can be registered separately with Angular
             function identify(category, extension, index) {
                 var name = extension.key ?
-                        (extension.key + "-" + index) :
-                        index;
+                        ("extension-" + extension.key + "#" + index) :
+                        ("extension#" + index);
                 return category + "[" + name + "]";
             }
 
