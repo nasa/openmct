@@ -5,11 +5,15 @@
           type="text/css"
           href="platform/framework/test/lib/css/jasmine.css">
     <script type="text/javascript"
+            src="platform/framework/lib/es6-promise-2.0.0.min.js">
+    </script>
+    <script type="text/javascript"
             src="platform/framework/lib/require.js">
     </script>
 </head>
 <body>
 <script>
+    window.Promise = window.Promise || ES6Promise.Promise;
     require(
             {
                 paths: {
