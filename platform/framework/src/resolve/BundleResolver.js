@@ -81,7 +81,8 @@ define(
                  * Resolve all extensions exposed by these bundles.
                  *
                  * @param {Bundle[]} bundles the bundles to resolve
-                 * @returns {Object.<string, object[]>} an object containing
+                 * @returns {Promise.<Object.<string, object[]>>} an promise
+                 *          for an object containing
                  *          key-value pairs, where keys are extension
                  *          categories and values are arrays of resolved
                  *          extensions belonging to those categories
