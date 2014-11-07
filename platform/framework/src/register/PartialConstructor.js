@@ -31,14 +31,13 @@ define(
 
                 return function () { // Bind everything else
                     var other = Array.prototype.slice.call(arguments),
-                        instance = {};
+                        instance = Object.create(Constructor.prototype);
 
                     // Mimic "new" behavior with apply.
                     instance = Constructor.apply(
                         instance,
                         dependencies.concat(other)
                     ) || instance;
-                    instance.prototype = Constructor.prototype;
 
                     return instance;
                 };
