@@ -28,7 +28,7 @@ define(
                     " ",
                     extension.key,
                     " from bundle ",
-                    extension.bundle.path,
+                    (extension.bundle || { path: "unknown bundle" }).path,
                     "; skipping."
                 ].join(""));
             }
@@ -165,6 +165,11 @@ define(
                 });
             }
 
+            // Register composite services in phases:
+            // * Register providers
+            // * Register aggregators (which use providers)
+            // * Register decorators (which use anything)
+            // Then, register the latest candidate as a plain service.
             function registerComposites(providers, aggregators, decorators) {
                 providers.forEach(registerProvider);
                 registerProviderSets();
@@ -173,6 +178,7 @@ define(
                 registerLatest();
             }
 
+            // Initial point of entry; just separate components by type
             function registerCompositeServices(components) {
                 registerComposites(
                     components.filter(hasType("provider")),
