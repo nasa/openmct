@@ -1,4 +1,4 @@
-/*global define,Promise,describe,it,expect,beforeEach*/
+/*global define,Promise,describe,it,expect,beforeEach,jasmine,waitsFor*/
 
 /**
  * CustomRegistrarsSpec. Created by vwoeltje on 11/6/14.
@@ -88,8 +88,7 @@ define(
                             templateUrl: "templates/default.html",
                             bundle: bundle
                         }
-                    ],
-                    configCall;
+                    ];
 
                 customRegistrars.routes(routes);
 

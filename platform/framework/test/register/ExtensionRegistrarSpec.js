@@ -1,4 +1,4 @@
-/*global define,Promise,describe,it,expect,beforeEach*/
+/*global define,Promise,describe,it,expect,beforeEach,jasmine*/
 
 /**
  * ExtensionRegistrarSpec. Created by vwoeltje on 11/6/14.
