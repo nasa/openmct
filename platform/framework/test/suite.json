@@ -1,5 +1,4 @@
 [
-    "Temporary",
     "FrameworkInitializer",
     "bootstrap/ApplicationBootstrapper",
     "load/Bundle",
