@@ -19,6 +19,7 @@ define(
                     "controller",
                     "directive",
                     "service",
+                    "constant",
                     "config"
                 ]);
 
@@ -37,6 +38,7 @@ define(
                 expect(customRegistrars.controllers).toBeTruthy();
                 expect(customRegistrars.services).toBeTruthy();
                 expect(customRegistrars.routes).toBeTruthy();
+                expect(customRegistrars.constants).toBeTruthy();
             });
 
             it("invokes built-in functions on the app", function () {
@@ -52,6 +54,10 @@ define(
                 expect(mockApp.service.calls.length).toEqual(0);
                 customRegistrars.services([{ key: "a" }, { key: "b" }, { key: "c" }]);
                 expect(mockApp.service.calls.length).toEqual(3);
+
+                expect(mockApp.constant.calls.length).toEqual(0);
+                customRegistrars.constants([{ key: "a", value: "b" }, { key: "b", value: "c" }, { key: "c", value: "d" }]);
+                expect(mockApp.constant.calls.length).toEqual(3);
             });
 
             it("warns when keys are not defined, then skips", function () {
@@ -70,6 +76,11 @@ define(
                 customRegistrars.services([{ }, { }, { }]);
                 expect(mockApp.service.calls.length).toEqual(0);
                 expect(mockLog.warn.calls.length).toEqual(6);
+
+                expect(mockApp.constant.calls.length).toEqual(0);
+                customRegistrars.constants([{ }, { }, { }]);
+                expect(mockApp.constant.calls.length).toEqual(0);
+                expect(mockLog.warn.calls.length).toEqual(9);
             });
 
             it("allows routes to be registered", function () {
