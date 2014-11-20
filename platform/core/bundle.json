@@ -31,7 +31,8 @@
             {
                 "provides": "modelService",
                 "type": "aggregator",
-                "implementation": "models/ModelAggregator.js"
+                "implementation": "models/ModelAggregator.js",
+                "depends": [ "$q" ]
             },
             {
                 "provides": "modelService",
