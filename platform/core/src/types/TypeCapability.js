@@ -9,17 +9,23 @@ define(
         "use strict";
 
         /**
+         * The `type` capability makes information about a domain object's
+         * type directly available when working with that object, by way
+         * of a `domainObject.getCapability('type')` invocation.
          *
          * @constructor
+         * @param {TypeService} typeService the service which
+         *        provides type information
+         * @param {DomainObject} domainObject the domain object
+         *        which exposes the type capability
          */
         function TypeCapability(typeService, domainObject) {
             var typeKey = domainObject.getModel().type,
-                type = typeService.getType(typeKey),
-                self = Object.create(type);
+                type = typeService.getType(typeKey);
 
-            self.invoke = function () { return self; };
-
-            return self;
+            // Simply return the type, but wrap with Object.create
+            // to avoid exposing the type object directly.
+            return Object.create(type);
         }
 
         return TypeCapability;

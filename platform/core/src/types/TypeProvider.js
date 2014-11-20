@@ -1,24 +1,11 @@
-/*global define, Promise*/
+/*global define*/
 
-/**
- * Provides information about types of domain objects within the running
- * Open MCT Web instance.
- *
- * @module core/type/type-provider
- */
 define(
     ['./TypeImpl', './MergeModels'],
     function (TypeImpl, mergeModels) {
         'use strict';
 
-        var promises = {
-                merge: Promise.all,
-                decorate: function (promise, callback) {
-                    return promise.then(callback);
-                },
-                as: function (value) {return Promise.resolve(value); }
-            },
-            TO_CONCAT = ['inherits', 'capabilities', 'properties', 'features'],
+        var TO_CONCAT = ['inherits', 'capabilities', 'properties', 'features'],
             TO_MERGE = ['model'];
 
         function copyKeys(a, b) {
@@ -42,7 +29,8 @@ define(
         }
 
         /**
-         * Instantiate a new type provider.
+         * A type provider provides information about types of domain objects
+         * within the running Open MCT Web instance.
          *
          * @param {Array<TypeDefinition>} options.definitions the raw type
          *        definitions for this type.
