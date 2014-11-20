@@ -1,0 +1,6 @@
+[
+    "types/TypeImpl",
+    "types/TypeProperty",
+    "types/TypePropertyConversion",
+    "types/TypeProvider"
+]

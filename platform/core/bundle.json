@@ -1,0 +1,147 @@
+{
+    "name": "Open MCT Web Core",
+    "description": "Defines core concepts of Open MCT Web.",
+    "sources": "src",
+    "extensions": {
+        "components": [
+            {
+                "provides": "objectService",
+                "type": "provider",
+                "implementation": "objects/DomainObjectProvider.js",
+                "depends": [ "modelService", "capabilityService" ]
+            },
+            {
+                "provides": "capabilityService",
+                "type": "provider",
+                "implementation": "capabilities/CoreCapabilityProvider.js",
+                "depends": [ "capabilities[]" ]
+            },
+            {
+                "provides": "modelService",
+                "type": "provider",
+                "implementation": "models/StaticModelProvider.js",
+                "depends": [ "models[]", "$log" ]
+            },
+            {
+                "provides": "modelService",
+                "type": "provider",
+                "implementation": "models/RootModelProvider.js",
+                "depends": [ "roots[]", "$log" ]
+            },
+            {
+                "provides": "modelService",
+                "type": "aggregator",
+                "implementation": "models/ModelAggregator.js"
+            },
+            {
+                "provides": "modelService",
+                "type": "provider",
+                "implementation": "models/PersistedModelProvider.js",
+                "depends": [ "persistenceService", "$q", "PERSISTENCE_SPACE" ]
+            },
+            {
+                "provides": "typeService",
+                "type": "provider",
+                "implementation": "types/TypeProvider.js",
+                "depends": [ "types[]" ]
+            },
+            {
+                "provides": "actionService",
+                "type": "provider",
+                "implementation": "actions/ActionProvider.js",
+                "depends": [ "actions[]" ]
+            },
+            {
+                "provides": "actionService",
+                "type": "aggregator",
+                "implementation": "actions/ActionAggregator.js"
+            },
+            {
+                "provides": "actionService",
+                "type": "decorator",
+                "implementation": "actions/LoggingActionDecorator.js",
+                "depends": [ "$log" ]
+            },
+            {
+                "provides": "viewService",
+                "type": "provider",
+                "implementation": "views/ViewProvider.js",
+                "depends": [ "views[]" ]
+            }
+        ],
+        "types": [
+            {
+                "properties": [
+                    {
+                        "control": "_textfield",
+                        "label": "Title",
+                        "key": "name",
+                        "property": "name",
+                        "pattern": "\\S+",
+                        "required": true
+                    },
+                    {
+                        "control": "_checkbox",
+                        "label": "Display title by default",
+                        "key": "displayTitle",
+                        "property": [ "display", "title" ]
+                    }
+                ]
+            },
+            {
+                "key": "folder",
+                "name": "Folder",
+                "glyph": "F",
+                "features": "creation",
+                "description": "A folder, useful for storing and organizing domain objects.",
+                "model": { "composition": [] }
+            }
+        ],
+        "capabilities": [
+            {
+                "key": "composition",
+                "implementation": "capabilities/CompositionCapability.js",
+                "depends": [ "$injector" ]
+            },
+            {
+                "key": "type",
+                "implementation": "types/TypeCapability.js",
+                "depends": [ "typeService" ]
+            },
+            {
+                "key": "action",
+                "implementation": "actions/ActionCapability.js",
+                "depends": [ "actionService" ]
+            },
+            {
+                "key": "view",
+                "implementation": "views/ViewCapability.js",
+                "depends": [ "viewService" ]
+            },
+            {
+                "key": "persistence",
+                "implementation": "capabilities/PersistenceCapability.js",
+                "depends": [ "persistenceService", "PERSISTENCE_SPACE" ]
+            },
+            {
+                "key": "mutation",
+                "implementation": "capabilities/MutationCapability.js",
+                "depends": [ "$q" ]
+            },
+            {
+                "key": "delegation",
+                "implementation": "capabilities/DelegationCapability.js"
+            }
+        ],
+        "roots": [
+            {
+                "id": "mine",
+                "model": {
+                    "name": "My Items",
+                    "type": "folder",
+                    "composition": []
+                }
+            }
+        ]
+    }
+}
