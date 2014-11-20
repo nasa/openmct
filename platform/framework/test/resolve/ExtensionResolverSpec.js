@@ -15,6 +15,7 @@ define(
 
             // Test implementation, to load from the mock loader
             function Constructor() { return { someKey: "some value" }; }
+            Constructor.someProperty = "some static value";
 
             beforeEach(function () {
                 mockLoader = jasmine.createSpyObj("loader", ["load"]);
@@ -83,6 +84,33 @@ define(
                     // We should have resolved to the plain definition from above
                     expect(typeof result).not.toEqual('function');
                     expect(result.someOtherKey).toEqual("some other value");
+                });
+            });
+
+            it("ensures implementation properties are exposed", function () {
+                var bundle = new Bundle("w", {
+                        sources: "x",
+                        extensions: { tests: [ { implementation: "y/z.js" } ] }
+                    }),
+                    extension = bundle.getExtensions("tests")[0],
+                    result;
+
+                resolver.resolve(extension).then(function (v) { result = v; });
+
+                waitsFor(
+                    function () { return result !== undefined; },
+                    "promise resolution",
+                    250
+                );
+
+                runs(function () {
+                    // Verify that the right file was requested
+                    expect(mockLoader.load).toHaveBeenCalledWith("w/x/y/z.js");
+
+                    // We should have resolved to the constructor from above
+                    expect(typeof result).toEqual('function');
+                    expect(result().someKey).toEqual("some value");
+                    expect(result.someProperty).toEqual("some static value");
                 });
             });
 
