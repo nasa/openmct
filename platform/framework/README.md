@@ -38,8 +38,8 @@ process. These stages are:
 3. __Registering extensions.__ Resolved extensions are registered with Angular,
    such that they can be used by the application at run-time. This stage
    includes both registration of Angular built-ins (directives, controllers,
-   routes, and services) as well as registration of non-Angular extensions.
-   _Sources in `src/register`_
+   routes, constants, and services) as well as registration of non-Angular
+   extensions. _Sources in `src/register`_
 4. __Bootstrapping.__ JSON declarations are loaded for all bundles which
    will constitute the application, and wrapped in a useful API for subsequent
    stages. _Sources in `src/bootstrap`_
@@ -82,7 +82,7 @@ support for the category of extension being registered.
 
 * For _built-in_ extension types (recognized by Angular), these are
   registered with the application module. These categories are `directives`,
-  `controllers`, `services`, and `routes`.
+  `controllers`, `services`, `constants`, and `routes`.
 * For _composite services_, extensions of category `components` are passed
   to the service compositor, which builds up a dependency graph among
   the components such that their fully-wired whole is exposed as a single
