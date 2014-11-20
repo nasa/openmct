@@ -111,7 +111,7 @@
             {
                 "key": "action",
                 "implementation": "actions/ActionCapability.js",
-                "depends": [ "actionService" ]
+                "depends": [ "$q", "actionService" ]
             },
             {
                 "key": "view",
