@@ -49,6 +49,29 @@ define(
                 };
             }
 
+            function registerConstant(extension) {
+                var key = extension.key,
+                    value = extension.value;
+
+                if (typeof key === "string" && value !== undefined) {
+                    $log.info([
+                        "Registering constant: ",
+                        key,
+                        " with value ",
+                        value
+                    ].join(""));
+                    app.constant(key, value);
+                } else {
+                    $log.warn([
+                        "Cannot register constant ",
+                        key,
+                        " with value ",
+                        value
+                    ].join(""));
+                }
+
+            }
+
             // Custom registration function for extensions of category "route"
             function registerRoute(extension) {
                 var route = Object.create(extension);
@@ -93,6 +116,7 @@ define(
             // name of the extension category to be handled, and the value
             // is the function which handles it.
             return {
+                constants: mapUpon(registerConstant),
                 routes: mapUpon(registerRoute),
                 directives: mapUpon(new CustomRegistrar("directive")),
                 controllers: mapUpon(new CustomRegistrar("controller")),

@@ -80,6 +80,9 @@ define(
             initializer.runApplication(Constants.BUNDLE_LISTING_FILE);
         }
 
+        // Reconfigure base url, since bundle paths will all be relative
+        // to the root now.
+        requirejs.config({ "baseUrl": "" });
         injector.invoke(['$http', '$log', initializeApplication]);
     }
 );

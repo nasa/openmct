@@ -26,10 +26,10 @@ define(
          */
         function PartialConstructor(Constructor) {
 
-            return function () { // Bind services
+            function OuterConstructor() { // Bind services
                 var dependencies = Array.prototype.slice.call(arguments);
 
-                return function () { // Bind everything else
+                function InnerConstructor() { // Bind everything else
                     var other = Array.prototype.slice.call(arguments),
                         instance = Object.create(Constructor.prototype);
 
@@ -41,7 +41,16 @@ define(
 
                     return instance;
                 };
+
+                // Copy properties from original constructor
+                Object.keys(Constructor).forEach(function (k) {
+                    InnerConstructor[k] = Constructor[k];
+                });
+
+                return InnerConstructor;
             };
+
+            return OuterConstructor;
         }
 
         return PartialConstructor;

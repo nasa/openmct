@@ -31,12 +31,21 @@ define(
                             } :
                             Object.create(impl);
 
-                    Object.keys(definition).forEach(function (k) {
-                        result[k] = definition[k];
+                    // Copy over static properties
+                    Object.keys(impl).forEach(function (k) {
+                        result[k] = impl[k];
                     });
 
+                    // Copy over definition
+                    Object.keys(definition).forEach(function (k) {
+                        if (result[k] === undefined) {
+                            result[k] = definition[k];
+                        }
+                    });
+                    result.definition = definition;
+
                     // Log that this load was successful
-                    $log.info("Loaded " + extension.getLogName());
+                    $log.info("Resolved " + extension.getLogName());
 
                     return result;
                 }

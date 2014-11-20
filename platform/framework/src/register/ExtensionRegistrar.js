@@ -156,6 +156,9 @@ define(
             }
 
             function registerExtensionGroup(extensionGroup) {
+                // Announce we're entering a new phase
+                $log.info("Registering extensions...");
+
                 // Register all declared extensions by category
                 Object.keys(extensionGroup).forEach(function (category) {
                     registerExtensionsForCategory(
