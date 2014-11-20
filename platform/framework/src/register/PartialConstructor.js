@@ -40,7 +40,7 @@ define(
                     ) || instance;
 
                     return instance;
-                };
+                }
 
                 // Copy properties from original constructor
                 Object.keys(Constructor).forEach(function (k) {
@@ -48,7 +48,7 @@ define(
                 });
 
                 return InnerConstructor;
-            };
+            }
 
             return OuterConstructor;
         }
