@@ -89,3 +89,31 @@ This build will:
   (`index.html` and `bundles.json`).
 
 Run as `mvn clean install`.
+
+# Glossary
+
+Certain terms are used throughout Open MCT Web with consistent meanings
+or conventions. Any deviations from the below are issues and should be
+addressed (either by updating this glossary or changing code to reflect
+correct usage.)
+
+* _bundle_: A bundle is a removable, reusable grouping of software elements.
+  The application is composed of bundles. Plug-ins are bundles. For more
+  information, refer to framework documentation (under `platform/framework`.)
+* _capability_: An object which exposes dynamic behavior or non-persistent
+  state associated with a domain object.
+* _domain object_: A meaningful object to the user; a distinct thing in
+  the work support by Open MCT Web. Anything that appears in the left-hand
+  tree is a domain object.
+* _extension_: An extension is a unit of functionality exposed to the
+  platform in a declarative fashion by a bundle. For more
+  information, refer to framework documentation (under `platform/framework`.)
+* _id_: A string which uniquely identifies a domain object.
+* _model_: The persistent state associated with a domain object. A domain
+  object's model is a JavaScript object which can be converted to JSON
+  without losing information (that is, it contains no methods.)
+* _space_: A name used to identify a persistence store. Interactions with
+  persistence with generally involve a `space` parameter in some form, to
+  distinguish multiple persistence stores from one another (for cases
+  where there are multiple valid persistence locations available.)
+  
