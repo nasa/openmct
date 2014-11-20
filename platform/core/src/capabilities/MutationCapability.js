@@ -21,6 +21,26 @@ define(
             });
         }
 
+        /**
+         * The `mutation` capability allows a domain object's model to be
+         * modified. Wrapping such modifications in calls made through
+         * this capability allows these changes to be tracked (e.g. to
+         * ensure that a domain object's `modified` timestamp is kept
+         * up-to-date.)
+         *
+         * Usage:
+         *
+         * ```
+         * domainObject.useCapability("mutation", function (model) {
+         *     // make changes to model here...
+         * });
+         * ```
+         *
+         * @param $q Angular's $q service, for promises
+         * @param {DomainObject} domainObject the domain object
+         *        which will expose this capability
+         * @constructor
+         */
         function MutationCapability($q, domainObject) {
 
             function mutate(mutator) {
@@ -54,7 +74,35 @@ define(
             }
 
             return {
-                invoke: mutate
+                /**
+                 * Alias of `mutate`, used to support useCapability.
+                 */
+                invoke: mutate,
+                /**
+                 * Modify the domain object's model, using a provided
+                 * function. This function will receive a copy of the
+                 * domain object's model as an argument; behavior
+                 * varies depending on that function's return value:
+                 *
+                 * * If no value (or undefined) is returned by the mutator,
+                 *   the state of the model object delivered as the mutator's
+                 *   argument will become the domain object's new model.
+                 *   This is useful for writing code that modifies the model
+                 *   directly.
+                 * * If a plain object is returned, that object will be used
+                 *   as the domain object's new model.
+                 * * If boolean `false` is returned, the mutation will be
+                 *   cancelled.
+                 * * If a promise is returned, its resolved value will be
+                 *   handled as one of the above.
+                 *
+                 *
+                 * @params {function} mutator the function which will make
+                 *         changes to the domain object's model.
+                 * @returns {Promise.<boolean>} a promise for the result
+                 *         of the mutation; true if changes were made.
+                 */
+                mutate: mutate
             };
         }
 

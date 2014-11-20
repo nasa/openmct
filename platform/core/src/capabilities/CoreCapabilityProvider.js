@@ -9,7 +9,13 @@ define(
         "use strict";
 
         /**
-         * Provides capabilities based on extension definitions.
+         * Provides capabilities based on extension definitions,
+         * matched to domain object models.
+         *
+         * @param {Array.<function(DomainObject) : Capability>} an array
+         *        of constructor functions for capabilities, as
+         *        exposed by extensions defined at the bundle level.
+         *
          * @constructor
          */
         function CoreCapabilityProvider(capabilities) {
