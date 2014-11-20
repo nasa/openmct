@@ -26,6 +26,8 @@ define(
                 this.message = [x, y, z].join(" ");
             }
 
+            RegularConstructor.someProperty = "test property";
+
             beforeEach(function () {
                 result = undefined;
                 PartializedConstructor = new PartialConstructor(RegularConstructor);
@@ -60,6 +62,14 @@ define(
                 expect(instance.message).toEqual("this is correct");
                 expect(instance).toEqual(new ThisStyleConstructor("this", "is", "correct"));
                 expect(instance instanceof ThisStyleConstructor).toBeTruthy();
+            });
+
+            it("retains static properties after partialization", function () {
+                // This string should appear after invoking the partialized
+                // constructor, such that the resulting inner constructor
+                // exposes these as if we were looking at the original
+                // RegularConstructor.
+                expect(new PartializedConstructor().someProperty).toEqual("test property");
             });
 
         });
