@@ -150,7 +150,7 @@ define(
                 /**
                  * Get a specific type by name.
                  *
-                 * @param {string} key the key (machine-readable identifier)
+                 * @param {string} [key] the key (machine-readable identifier)
                  *        for the type of interest
                  * @returns {Promise<module:core/type/type-impl.TypeImpl>} a
                  *          promise for a type object identified by this key.

@@ -2,7 +2,7 @@
 
 define(
     ['../../src/types/TypeProvider'],
-    function (typeProviderModule) {
+    function (TypeProvider) {
         "use strict";
 
         describe("Type provider", function () {
@@ -50,162 +50,83 @@ define(
 
             beforeEach(function () {
                 captured = {};
-                provider = typeProviderModule.instantiate({
-                    definitions: testTypeDefinitions
-                });
-            });
-
-            it("can be instantiated from a factory method", function () {
-                expect(provider).toBeTruthy();
+                provider = new TypeProvider(testTypeDefinitions);
             });
 
             it("looks up non-inherited types by name", function () {
-                provider.getType('basic').then(capture('type'));
+                captured.type = provider.getType('basic');
 
-                waitsFor(
-                    function () {
-                        return captured.type !== undefined;
-                    },
-                    "promise resolution",
-                    250
-                );
-                runs(function () {
-                    expect(captured.type.getGlyph()).toEqual("X");
-                    expect(captured.type.getName()).toEqual("Basic Type");
-                    expect(captured.type.getDescription()).toBeUndefined();
-                });
+                expect(captured.type.getGlyph()).toEqual("X");
+                expect(captured.type.getName()).toEqual("Basic Type");
+                expect(captured.type.getDescription()).toBeUndefined();
             });
 
             it("supports single inheritance", function () {
-                provider.getType('single-subtype').then(capture('type'));
+                captured.type = provider.getType('single-subtype');
 
-                waitsFor(
-                    function () {
-                        return captured.type !== undefined;
-                    },
-                    "promise resolution",
-                    250
-                );
-                runs(function () {
-                    expect(captured.type.getGlyph()).toEqual("X");
-                    expect(captured.type.getName()).toEqual("Basic Subtype");
-                    expect(captured.type.getDescription()).toEqual("A test subtype");
-                });
+                expect(captured.type.getGlyph()).toEqual("X");
+                expect(captured.type.getName()).toEqual("Basic Subtype");
+                expect(captured.type.getDescription()).toEqual("A test subtype");
             });
 
             it("supports multiple inheritance", function () {
-                provider.getType('multi-subtype').then(capture('type'));
-                waitsFor(
-                    function () {
-                        return captured.type !== undefined;
-                    },
-                    "promise resolution",
-                    250
-                );
-                runs(function () {
-                    expect(captured.type.getGlyph()).toEqual("Y");
-                    expect(captured.type.getName()).toEqual("Multi-parent Subtype");
-                    expect(captured.type.getDescription()).toEqual("Multi1 Description");
-                });
+                captured.type = provider.getType('multi-subtype');
+
+                expect(captured.type.getGlyph()).toEqual("Y");
+                expect(captured.type.getName()).toEqual("Multi-parent Subtype");
+                expect(captured.type.getDescription()).toEqual("Multi1 Description");
             });
 
             it("concatenates capabilities in order", function () {
-                provider.getType('multi-subtype').then(capture('type'));
-                waitsFor(
-                    function () {
-                        return captured.type !== undefined;
-                    },
-                    "promise resolution",
-                    250
+                captured.type = provider.getType('multi-subtype');
+
+                expect(captured.type.getDefinition().capabilities).toEqual(
+                    ['a1', 'b1', 'a2', 'b2', 'c2', 'a3']
                 );
-                runs(function () {
-                    expect(captured.type.getDefinition().capabilities).toEqual(
-                        ['a1', 'b1', 'a2', 'b2', 'c2', 'a3']
-                    );
-                });
             });
 
             it("allows lookup of the undefined type", function () {
-                provider.getType(undefined).then(capture('type'));
-                waitsFor(
-                    function () {
-                        return captured.type !== undefined;
-                    },
-                    "promise resolution",
-                    250
-                );
-                runs(function () {
-                    expect(captured.type.getName()).toEqual("Default");
-                });
+                captured.type = provider.getType(undefined);
+
+                expect(captured.type.getName()).toEqual("Default");
             });
 
             it("concatenates capabilities of all undefined types", function () {
-                typeProviderModule.instantiate({
-                    definitions: testTypeDefinitions.concat([
-                        {
-                            capabilities: ['a', 'b', 'c']
-                        },
-                        {
-                            capabilities: ['x', 'y', 'z']
-                        }
+                captured.type = new TypeProvider(
+                    testTypeDefinitions.concat([
+                        { capabilities: ['a', 'b', 'c'] },
+                        { capabilities: ['x', 'y', 'z'] }
                     ])
-                }).getType(undefined).then(capture('type'));
+                ).getType(undefined);
 
-                waitsFor(
-                    function () {
-                        return captured.type !== undefined;
-                    },
-                    "promise resolution",
-                    250
+
+                expect(captured.type.getDefinition().capabilities).toEqual(
+                    ['a', 'b', 'c', 'x', 'y', 'z']
                 );
-                runs(function () {
-                    expect(captured.type.getDefinition().capabilities).toEqual(
-                        ['a', 'b', 'c', 'x', 'y', 'z']
-                    );
-                });
+
             });
 
             it("includes capabilities from undefined type in all types", function () {
-                typeProviderModule.instantiate({
-                    definitions: testTypeDefinitions.concat([
-                        {
-                            capabilities: ['a', 'b', 'c']
-                        },
-                        {
-                            capabilities: ['x', 'y', 'z']
-                        }
+                captured.type = TypeProvider.instantiate(
+                    testTypeDefinitions.concat([
+                        { capabilities: ['a', 'b', 'c'] },
+                        { capabilities: ['x', 'y', 'z'] }
                     ])
-                }).getType('multi-subtype').then(capture('type'));
-                waitsFor(
-                    function () {
-                        return captured.type !== undefined;
-                    },
-                    "promise resolution",
-                    250
+                ).getType('multi-subtype');
+
+                expect(captured.type.getDefinition().capabilities).toEqual(
+                    ['a', 'b', 'c', 'x', 'y', 'z', 'a1', 'b1', 'a2', 'b2', 'c2', 'a3']
                 );
-                runs(function () {
-                    expect(captured.type.getDefinition().capabilities).toEqual(
-                        ['a', 'b', 'c', 'x', 'y', 'z', 'a1', 'b1', 'a2', 'b2', 'c2', 'a3']
-                    );
-                });
             });
 
             it("allows types to be listed", function () {
-                provider.listTypes().then(capture('types'));
-                waitsFor(
-                    function () {
-                        return captured.types !== undefined;
-                    },
-                    "promise resolution",
-                    250
+                captured.types = provider.listTypes();
+
+                expect(captured.types.length).toEqual(
+                    testTypeDefinitions.filter(function (t) {
+                        return t.key;
+                    }).length
                 );
-                runs(function () {
-                    expect(captured.types.length).toEqual(
-                        testTypeDefinitions.filter(function (t) {
-                            return t.key;
-                        }).length
-                    );
-                });
             });
 
 
