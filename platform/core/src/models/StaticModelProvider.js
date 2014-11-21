@@ -12,7 +12,7 @@ define(
          * Loads static models, provided as declared extensions of bundles.
          * @constructor
          */
-        function StaticModelProvider(models, $log) {
+        function StaticModelProvider(models, $q, $log) {
             var modelMap = {};
 
             function addModelToMap(model) {
@@ -54,7 +54,7 @@ define(
                     ids.forEach(function (id) {
                         result[id] = modelMap[id];
                     });
-                    return Promise.resolve(result);
+                    return $q.when(result);
                 }
             };
         }

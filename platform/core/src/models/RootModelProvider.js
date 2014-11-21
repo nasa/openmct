@@ -4,7 +4,7 @@
  * Module defining RootModelProvider. Created by vwoeltje on 11/7/14.
  */
 define(
-    ['./StaticModelProvider.js'],
+    ['./StaticModelProvider'],
     function (StaticModelProvider) {
         "use strict";
 
