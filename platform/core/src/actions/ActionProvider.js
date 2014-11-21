@@ -32,7 +32,7 @@ define(
                 // declarative bindings, as well as context,
                 // unless the action has defined its own.
                 if (!action.getMetadata) {
-                    metadata = Object.create(Action.definition);
+                    metadata = Object.create(Action.definition || {});
                     metadata.context = context;
                     action.getMetadata = function () {
                         return metadata;

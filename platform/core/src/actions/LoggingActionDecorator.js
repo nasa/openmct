@@ -20,13 +20,14 @@ define(
             // it emits a log message whenever performed.
             function addLogging(action) {
                 var logAction = Object.create(action),
-                    domainObject =
-                        action.getMetadata().context.domainObject;
+                    metadata = action.getMetadata() || {},
+                    context = metadata.context || {},
+                    domainObject = context.domainObject;
 
                 logAction.perform = function () {
                     $log.info([
                         "Performing action ",
-                        action.getMetadata().key,
+                        metadata.key,
                         " upon ",
                         domainObject && domainObject.getId()
                     ].join(""));
