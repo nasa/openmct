@@ -1,3 +1,4 @@
 [
-    "platform/framework"
+    "platform/framework",
+    "platform/core"
 ]

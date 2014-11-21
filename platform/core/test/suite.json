@@ -1,6 +1,32 @@
 [
+    "actions/ActionAggregator",
+    "actions/ActionCapability",
+    "actions/ActionProvider",
+    "actions/LoggingActionDecorator",
+
+    "capabilities/CompositionCapability",
+    "capabilities/ContextCapability",
+    "capabilities/ContextualDomainObject",
+    "capabilities/CoreCapabilityProvider",
+    "capabilities/DelegationCapability",
+    "capabilities/MutationCapability",
+    "capabilities/PersistenceCapability",
+
+    "models/ModelAggregator",
+    "models/PersistedModelProvider",
+    "models/RootModelProvider",
+    "models/StaticModelProvider",
+
+    "objects/DomainObject",
+    "objects/DomainObjectProvider",
+
+    "types/MergeModels",
+    "types/TypeCapability",
     "types/TypeImpl",
     "types/TypeProperty",
     "types/TypePropertyConversion",
-    "types/TypeProvider"
+    "types/TypeProvider",
+
+    "views/ViewCapability",
+    "views/ViewProvider"
 ]
