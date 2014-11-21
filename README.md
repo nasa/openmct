@@ -102,6 +102,10 @@ correct usage.)
   information, refer to framework documentation (under `platform/framework`.)
 * _capability_: An object which exposes dynamic behavior or non-persistent
   state associated with a domain object.
+* _description_: When used as an object property, this refers to the human-readable
+  description of a thing; usually a single sentence or short paragraph.
+  (Most often used in the context of extensions, domain
+  object models, or other similar application-specific objects.)
 * _domain object_: A meaningful object to the user; a distinct thing in
   the work support by Open MCT Web. Anything that appears in the left-hand
   tree is a domain object.
@@ -109,9 +113,15 @@ correct usage.)
   platform in a declarative fashion by a bundle. For more
   information, refer to framework documentation (under `platform/framework`.)
 * _id_: A string which uniquely identifies a domain object.
+* _key_: When used as an object property, this refers to the machine-readable
+  identifier for a specific thing in a set of things. (Most often used in the
+  context of extensions or other similar application-specific object sets.)
 * _model_: The persistent state associated with a domain object. A domain
   object's model is a JavaScript object which can be converted to JSON
   without losing information (that is, it contains no methods.)
+* _name_: When used as an object property, this refers to the human-readable
+  name for a thing. (Most often used in the context of extensions, domain
+  object models, or other similar application-specific objects.)
 * _space_: A name used to identify a persistence store. Interactions with
   persistence with generally involve a `space` parameter in some form, to
   distinguish multiple persistence stores from one another (for cases
