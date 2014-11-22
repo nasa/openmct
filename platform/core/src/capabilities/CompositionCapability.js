@@ -1,4 +1,4 @@
-/*global define,Promise*/
+/*global define*/
 
 /**
  * Module defining CompositionCapability. Created by vwoeltje on 11/7/14.
