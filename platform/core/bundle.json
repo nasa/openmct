@@ -19,7 +19,7 @@
             {
                 "provides": "modelService",
                 "type": "provider",
-                "implementation": "models/StaticModelProvider.js",
+                "implementation": "models/StaticModelProvider",
                 "depends": [ "models[]", "$q", "$log" ]
             },
             {
