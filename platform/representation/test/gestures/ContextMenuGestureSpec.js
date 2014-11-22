@@ -12,7 +12,6 @@ define(
         var JQLITE_FUNCTIONS = [ "on", "off", "find", "append", "remove" ],
             DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability" ];
 
-        // ContextMenuGesture($compile, $document, $window, $rootScope, element, domainObject)
 
         describe("The 'context menu' gesture", function () {
             var mockCompile,

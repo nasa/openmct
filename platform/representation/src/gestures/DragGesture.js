@@ -49,7 +49,7 @@ define(
             return {
                 destroy: function () {
                     // Detach listener
-                    element.attr('draggable', false);
+                    element.removeAttr('draggable');
                     element.off('dragstart', startDrag);
                 }
             };
