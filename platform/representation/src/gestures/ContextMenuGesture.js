@@ -4,15 +4,16 @@
  * Module defining ContextMenuGesture. Created by vwoeltje on 11/17/14.
  */
 define(
-    [],
-    function () {
+    ["./GestureConstants"],
+    function (GestureConstants) {
         "use strict";
 
         var MENU_TEMPLATE = "<mct-representation key=\"'context-menu'\" " +
                 "mct-object=\"domainObject\" " +
                 "ng-class=\"menuClass\"" +
                 "ng-style=\"menuStyle\">" +
-                "</mct-representation>";
+                "</mct-representation>",
+            dismissExistingMenu;
 
         /**
          * Add listeners to a view such that it launches a context menu for the
@@ -24,7 +25,7 @@ define(
             function showMenu(event) {
                 var winDim = [$window.innerWidth, $window.innerHeight],
                     eventCoors = [event.pageX, event.pageY],
-                    menuDim = [170, 200],
+                    menuDim = GestureConstants.MCT_MENU_DIMENSIONS,
                     body = $document.find('body'),
                     scope = $rootScope.$new(),
                     goLeft = eventCoors[0] + menuDim[0] > winDim[0],
@@ -35,16 +36,16 @@ define(
                 function dismiss() {
                     menu.remove();
                     body.off("click", dismiss);
-                    ContextMenuGesture.dismissExistingMenu = undefined;
+                    dismissExistingMenu = undefined;
                 }
 
                 // Dismiss any menu which was already showing
-                if (ContextMenuGesture.dismissExistingMenu) {
-                    ContextMenuGesture.dismissExistingMenu();
+                if (dismissExistingMenu) {
+                    dismissExistingMenu();
                 }
 
                 // ...and record the presence of this menu.
-                ContextMenuGesture.dismissExistingMenu = dismiss;
+                dismissExistingMenu = dismiss;
 
                 // Set up the scope, including menu positioning
                 scope.domainObject = domainObject;
@@ -73,8 +74,9 @@ define(
 
             return {
                 destroy: function () {
-                    if (ContextMenuGesture.dismissExistingMenu) {
-                        ContextMenuGesture.dismissExistingMenu();
+                    // Scope has been destroyed, so remove all listeners.
+                    if (dismissExistingMenu) {
+                        dismissExistingMenu();
                     }
                     element.off('contextmenu', showMenu);
                 }
