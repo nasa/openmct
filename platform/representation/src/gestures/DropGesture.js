@@ -17,12 +17,11 @@ define(
 
             function doPersist() {
                 var persistence = domainObject.getCapability("persistence");
-                return $q.when(persistence && peristence.persist());
+                return $q.when(persistence && persistence.persist());
             }
 
             function dragOver(e) {
                 var event = (e || {}).originalEvent || e;
-                //event.stopPropagation();
 
                 // TODO: Vary this based on modifier keys
                 event.dataTransfer.dropEffect = 'move';
