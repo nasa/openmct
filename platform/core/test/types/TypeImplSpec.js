@@ -15,7 +15,10 @@ define(
                     name: 'Test Type',
                     description: 'A type, for testing',
                     glyph: 't',
-                    inherits: ['test-parent-1', 'test-parent-2']
+                    inherits: ['test-parent-1', 'test-parent-2'],
+                    features: ['test-feature-1'],
+                    properties: [ {} ],
+                    model: {someKey: "some value"}
                 };
                 type = typeImpl(testTypeDef);
             });
@@ -66,6 +69,19 @@ define(
             it("recognizes that all types are instances of the undefined type", function () {
                 expect(type.instanceOf()).toBeTruthy();
                 expect(type.instanceOf({ getKey: function () {} })).toBeTruthy();
+            });
+
+            it("allows features to be exposed", function () {
+                expect(type.hasFeature('test-feature-1')).toBeTruthy();
+                expect(type.hasFeature('test-feature-2')).toBeFalsy();
+            });
+
+            it("provides an initial model, if defined", function () {
+                expect(type.getInitialModel().someKey).toEqual("some value");
+            });
+
+            it("provides type properties", function () {
+                expect(type.getProperties().length).toEqual(1);
             });
         });
     }

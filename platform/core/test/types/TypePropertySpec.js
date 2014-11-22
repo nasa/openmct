@@ -56,6 +56,26 @@ define(
                 expect(property.getValue(model)).toEqual("some value");
             });
 
+            it("stops looking for properties when a path is invalid", function () {
+                var definition = {
+                        key: "someKey",
+                        property: [ "some", "property" ]
+                    },
+                    property = new TypeProperty(definition);
+                expect(property.getValue(undefined)).toBeUndefined();
+            });
+
+            it("gives undefined for empty paths", function () {
+                var definition = {
+                        key: "someKey",
+                        property: []
+                    },
+                    model = { some: { property: "some value" } },
+                    property = new TypeProperty(definition);
+                expect(property.getValue(model)).toBeUndefined();
+            });
+
+
         });
     }
 );

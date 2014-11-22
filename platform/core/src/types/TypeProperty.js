@@ -46,9 +46,10 @@ define(
                     return propertyPath.length > 1 ?
                             lookupValue(value, propertyPath.slice(1)) :
                             value;
-                } else {
-                    return undefined;
                 }
+
+                // Fallback; property path was empty
+                return undefined;
             }
 
             function specifyValue(object, propertyPath, value) {
@@ -79,13 +80,9 @@ define(
                     var property = propertyDefinition.property ||
                         propertyDefinition.key;
 
-                    if (property) {
-                        return conversion.toFormValue(
-                            lookupValue(model, property)
-                        );
-                    } else {
-                        return undefined;
-                    }
+                    return property ? conversion.toFormValue(
+                        lookupValue(model, property)
+                    ) : undefined;
                 },
                 /**
                  * Set a value associated with this property in
@@ -97,11 +94,9 @@ define(
 
                     value = conversion.toModelValue(value);
 
-                    if (property) {
-                        return specifyValue(model, property, value);
-                    } else {
-                        return undefined;
-                    }
+                    return property ?
+                            specifyValue(model, property, value) :
+                            undefined;
                 },
                 /**
                  * Get the raw definition for this property.
