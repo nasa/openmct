@@ -26,7 +26,7 @@
                 "provides": "modelService",
                 "type": "provider",
                 "implementation": "models/RootModelProvider.js",
-                "depends": [ "roots[]", "$log" ]
+                "depends": [ "roots[]", "$q", "$log" ]
             },
             {
                 "provides": "modelService",

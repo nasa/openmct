@@ -20,10 +20,10 @@ define(
          *
          * @constructor
          */
-        function RootModelProvider(roots, $log) {
+        function RootModelProvider(roots, $q, $log) {
             // Pull out identifiers to used as ROOT's
             var ids = roots.map(function (root) { return root.id; }),
-                baseProvider = new StaticModelProvider(roots, $log);
+                baseProvider = new StaticModelProvider(roots, $q, $log);
 
             function addRoot(models) {
                 models.ROOT = {
