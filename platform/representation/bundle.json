@@ -1,0 +1,33 @@
+{
+    "extensions": {
+        "directives": [
+            {
+                "key": "mctInclude",
+                "implementation": "MCTInclude.js",
+                "depends": [ "templates[]" ]
+            },
+            {
+                "key": "mctRepresentation",
+                "implementation": "MCTRepresentation.js",
+                "depends": [ "representations[]", "views[]", "gestures[]", "$q", "$log" ]
+            }
+        ],
+        "gestures": [
+            {
+                "key": "drag",
+                "implementation": "gestures/DragGesture.js",
+                "depends": [ "$log" ]
+            },
+            {
+                "key": "drop",
+                "implementation": "gestures/DropGesture.js",
+                "depends": [ "$q" ]
+            },
+            {
+                "key": "menu",
+                "implementation": "gestures/ContextMenuGesture.js",
+                "depends": [ "$compile", "$document", "$window", "$rootScope" ]
+            }
+        ]
+    }
+}
