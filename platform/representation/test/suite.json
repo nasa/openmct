@@ -2,6 +2,7 @@
     "gestures/ContextMenuGesture",
     "gestures/DragGesture",
     "gestures/DropGesture",
+    "gestures/GestureProvider",
     "MCTInclude",
     "MCTRepresentation"
 ]

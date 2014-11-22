@@ -15,12 +15,10 @@ define(
         function GestureProvider(gestures) {
             var gestureMap = {};
 
-            function releaseGestures(gestures) {
-                gestures.forEach(function (gesture) {
-                    if (gesture && gesture.destroy) {
-                        gesture.destroy();
-                    }
-                });
+            function releaseGesture(gesture) {
+                if (gesture && gesture.destroy) {
+                    gesture.destroy();
+                }
             }
 
             function attachGestures(element, domainObject, gestureKeys) {
@@ -36,7 +34,7 @@ define(
 
                 return {
                     destroy: function () {
-                        releaseGestures(attachedGestures);
+                        attachedGestures.forEach(releaseGesture);
                     }
                 };
             }
