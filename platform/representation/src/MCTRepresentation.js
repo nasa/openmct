@@ -12,7 +12,7 @@ define(
          *
          * @constructor
          */
-        function MCTRepresentation(representations, views, gestures, $q, $log) {
+        function MCTRepresentation(representations, views, gestureService, $q, $log) {
             var pathMap = {},
                 representationMap = {},
                 gestureMap = {};
@@ -32,37 +32,9 @@ define(
                 representationMap[representation.key] = representation;
             });
 
-            // Assemble all gestures into a map, similarly
-            gestures.forEach(function (gesture) {
-                gestureMap[gesture.key] = gesture;
-            });
-
-            function findRepresentation(key, domainObject) {
-                return representationMap[key];
-            }
-
-            function createGestures(element, domainObject, gestureKeys) {
-                return gestureKeys.map(function (key) {
-                    return gestureMap[key];
-                }).filter(function (Gesture) {
-                    return Gesture !== undefined && (Gesture.appliesTo ?
-                            Gesture.appliesTo(domainObject) :
-                            true);
-                }).map(function (Gesture) {
-                    return new Gesture(element, domainObject);
-                });
-            }
-
-            function releaseGestures(gestures) {
-                gestures.forEach(function (gesture) {
-                    if (gesture && gesture.destroy) {
-                        gesture.destroy();
-                    }
-                });
-            }
 
             function link($scope, element) {
-                var linkedGestures = [];
+                var gestureHandle;
 
                 function refresh() {
                     var representation = representationMap[$scope.key],
@@ -74,7 +46,9 @@ define(
                     $scope.inclusion = pathMap[$scope.key];
 
                     // Any existing gestures are no longer valid; release them.
-                    releaseGestures(linkedGestures);
+                    if (gestureHandle) {
+                        gestureHandle.destroy();
+                    }
 
                     if (!representation && $scope.key) {
                         $log.warn("No representation found for " + $scope.key);
@@ -96,7 +70,7 @@ define(
                             });
                         });
 
-                        linkedGestures = createGestures(
+                        gestureHandle = gestureService.attachGestures(
                             element,
                             domainObject,
                             gestureKeys

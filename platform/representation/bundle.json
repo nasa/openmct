@@ -28,6 +28,13 @@
                 "implementation": "gestures/ContextMenuGesture.js",
                 "depends": [ "$compile", "$document", "$window", "$rootScope" ]
             }
+        ],
+        "components": [
+            {
+                "provides": "gestureService",
+                "type": "provider",
+                "implementation": "gestures/GestureProvider.js"
+            }
         ]
     }
 }
