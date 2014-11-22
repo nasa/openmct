@@ -18,7 +18,7 @@ define(
          *
          * @constructor
          */
-        function CoreCapabilityProvider(capabilities) {
+        function CoreCapabilityProvider(capabilities, $log) {
             // Filter by invoking the capability's appliesTo method
             function filterCapabilities(model) {
                 return capabilities.filter(function (capability) {
@@ -32,7 +32,11 @@ define(
             function packageCapabilities(capabilities) {
                 var result = {};
                 capabilities.forEach(function (capability) {
-                    result[capability.key] = capability;
+                    if (capability.key) {
+                        result[capability.key] = capability;
+                    } else {
+                        $log.warn("No key defined for capability; skipping.");
+                    }
                 });
                 return result;
             }

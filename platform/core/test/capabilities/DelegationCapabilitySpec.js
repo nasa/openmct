@@ -9,7 +9,71 @@ define(
         "use strict";
 
         describe("The delegation capability", function () {
+            var captured,
+                typeDef = {},
+                type,
+                capabilities,
+                children = [],
+                object = {},
+                delegation;
 
+            function capture(k) { return function (v) { captured[k] = v; }; }
+            function TestDomainObject(caps, id) {
+                return {
+                    getId: function () {
+                        return id;
+                    },
+                    getCapability: function (name) {
+                        return caps[name];
+                    },
+                    useCapability: function (name) {
+                        return this.getCapability(name).invoke();
+                    },
+                    hasCapability: function (name) {
+                        return this.getCapability(name) !== undefined;
+                    }
+                };
+            }
+
+            function mockPromise(value) {
+                return {
+                    then: function (callback) {
+                        return value.then ?
+                                value : mockPromise(callback(value));
+                    }
+                };
+            }
+
+
+            beforeEach(function () {
+                captured = {};
+                typeDef = {};
+                typeDef.delegates = [ "foo" ];
+                type = { getDefinition: function () { return typeDef; } };
+                children = [];
+                capabilities = {
+                    type: type,
+                    composition: { invoke: function () { return mockPromise(children); } }
+                };
+                object = new TestDomainObject(capabilities);
+
+                delegation = new DelegationCapability({ when: mockPromise }, object);
+            });
+
+            it("provides a list of children which expose a desired capability", function () {
+
+                children = [
+                    new TestDomainObject({ foo: true }, 'has-capability'),
+                    new TestDomainObject({ }, 'does-not-have-capability')
+                ];
+
+                // Look up delegates
+                delegation.getDelegates('foo').then(capture('delegates'));
+
+                // Expect only the first child to be a delegate
+                expect(captured.delegates.length).toEqual(1);
+                expect(captured.delegates[0].getId()).toEqual('has-capability');
+            });
         });
     }
 );

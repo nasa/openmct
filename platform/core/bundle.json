@@ -14,7 +14,7 @@
                 "provides": "capabilityService",
                 "type": "provider",
                 "implementation": "capabilities/CoreCapabilityProvider.js",
-                "depends": [ "capabilities[]" ]
+                "depends": [ "capabilities[]", "$log" ]
             },
             {
                 "provides": "modelService",
@@ -131,7 +131,8 @@
             },
             {
                 "key": "delegation",
-                "implementation": "capabilities/DelegationCapability.js"
+                "implementation": "capabilities/DelegationCapability.js",
+                "depends": [ "$q" ]
             }
         ],
         "roots": [

@@ -1,4 +1,4 @@
-/*global define,Promise*/
+/*global define*/
 
 /**
  * Module defining DelegationCapability. Created by vwoeltje on 11/18/14.
@@ -27,7 +27,7 @@ define(
          * @param domainObject
          * @constructor
          */
-        function DelegationCapability(domainObject) {
+        function DelegationCapability($q, domainObject) {
             var delegateCapabilities = {},
                 type = domainObject.getCapability("type");
 
@@ -52,7 +52,7 @@ define(
                         promiseChildren().then(
                             filterObjectsWithCapability(capability)
                         ) :
-                        [];
+                        $q.when([]);
             }
 
             // Generate set for easy lookup of capability delegation
