@@ -8,7 +8,7 @@
                 "provides": "objectService",
                 "type": "provider",
                 "implementation": "objects/DomainObjectProvider.js",
-                "depends": [ "modelService", "capabilityService" ]
+                "depends": [ "modelService", "capabilityService", "$q" ]
             },
             {
                 "provides": "capabilityService",

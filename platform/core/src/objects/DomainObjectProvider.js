@@ -16,9 +16,10 @@ define(
          * @param {CapabilityService} capabilityService the service
          *        which provides capabilities (dynamic behavior)
          *        for domain objects.
+         * @param $q Angular's $q, for promise consolidation
          * @constructor
          */
-        function DomainObjectProvider(modelService, capabilityService) {
+        function DomainObjectProvider(modelService, capabilityService, $q) {
             // Given a models object (containing key-value id-model pairs)
             // create a function that will look up from the capability
             // service based on id; for handy mapping below.
@@ -54,7 +55,7 @@ define(
             // domain object provider.
             function getObjects(ids) {
                 return modelService.getModels(ids).then(function (models) {
-                    return Promise.all(
+                    return $q.all(
                         ids.map(capabilityResolver(models))
                     ).then(function (capabilities) {
                         return assembleResult(ids, models, capabilities);
