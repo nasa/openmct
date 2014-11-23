@@ -1,0 +1,11 @@
+<div class="current-elements abs" style="height: 100%;">
+    <!--p class="hint">Drop objects here to add them...</p-->
+    <ul class="tree">
+        <li ng-repeat="containedObject in composition">
+            <span class="tree-item">
+                <mct-representation key="'label'" mct-object="containedObject">
+                </mct-representation>
+            </span>
+        </li>
+    </ul>
+</div>

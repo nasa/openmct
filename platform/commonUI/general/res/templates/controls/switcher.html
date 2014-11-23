@@ -1,0 +1,28 @@
+<div class="menu-element btn icon-btn very-subtle btn-menu dropdown click-invoke"
+     ng-if="ngModel.options.length > 1">
+
+    <span ng-click="ngModel.expanded = !ngModel.expanded">
+        <span class="ui-symbol icon type-icon">{{ngModel.selected.glyph}}</span>
+        <span>{{ngModel.selected.name}}</span>
+        <span class='ui-symbol icon invoke-menu'>v</span>
+    </span>
+
+    <div class="menu dropdown" ng-show="ngModel.expanded">
+        <ul>
+            <li ng-repeat="option in ngModel.options">
+                <a href="" ng-click="ngModel.selected = option; ngModel.expanded = false;">
+                    <span class="ui-symbol type-icon icon">
+                        {{option.glyph}}
+                    </span>
+                    {{option.name}}
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<span class="btn"
+      ng-if="ngModel.options.length === 1">
+    <span class="ui-symbol icon type-icon">{{ngModel.selected.glyph}}</span>
+    <span>{{ngModel.selected.name}}</span>
+</span>

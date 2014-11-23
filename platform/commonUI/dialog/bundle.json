@@ -1,0 +1,17 @@
+{
+    "extensions": {
+        "services": [
+            {
+                "key": "dialogService",
+                "implementation": "DialogService.js",
+                "depends": [ "$document", "$compile", "$rootScope", "$timeout", "$q", "$log" ]
+            }
+        ],
+        "templates": [
+            {
+                "key": "overlay-dialog",
+                "templateUrl": "templates/overlay.html"
+            }
+        ]
+    }
+}

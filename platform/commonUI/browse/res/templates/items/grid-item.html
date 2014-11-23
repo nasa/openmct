@@ -1,0 +1,26 @@
+<!-- For selected, add class 'selected' to outer div -->
+<div class='item grid-item' ng-click='action.perform("navigate")'>
+    <div class="contents abs">
+        <div class='top-bar bar abs'>
+            <div class='left abs'>
+                <mct-include key="_checkbox"></mct-include>
+            </div>
+            <div class='right abs'>
+                <div class='ui-symbol icon alert hidden' onclick="alert('Not yet functional. When this is visible, it means that this object needs to be updated. Clicking will allow that action via a dialog.');">!</div>
+                <div class='ui-symbol icon profile' onclick="alert('Not yet functional. This will allow sharing and permissions to be controlled for this object.');">P</div>
+            </div>
+        </div>
+        <div class='item-main abs'>
+            <div class='ui-symbol icon lg abs item-type'>{{type.getGlyph()}}</div>
+            <div class='ui-symbol icon abs item-open'>}</div>
+        </div>
+        <div class='bottom-bar bar abs'>
+            <div class='title'>{{model.name}}</div>
+            <div class='details'>
+                <span ng-show="model.composition !== undefined">
+                    {{model.composition.length}} Items
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

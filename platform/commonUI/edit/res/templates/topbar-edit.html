@@ -1,0 +1,17 @@
+<div class='top-bar edit abs'>
+    <mct-representation key="'object-header'" mct-object="parameters.object" parameters="{ mode: 'Edit' }">
+    </mct-representation>
+    <div class='buttons-main btn-bar buttons abs'>
+        <mct-include key="'switcher'"
+                     ng-model="parameters.switcher"
+                     ng-if="parameters.switcher.options.length > 0">
+        </mct-include>
+        <mct-representation key="'edit-action-buttons'"
+                            mct-object="parameters.object"
+                            class='conclude-editing'>
+		<!--a class='btn major' href=''>Save<span id='save-actions-menu' class='ui-symbol invoke-menu'>v</span></a>
+		<a class='btn subtle' href=''>Cancel</a-->
+
+        </mct-representation>
+    </div>
+</div>

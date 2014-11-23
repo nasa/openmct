@@ -1,0 +1,15 @@
+<span ng-controller="ActionGroupController">
+
+    <span ng-repeat="action in ungrouped">
+        <mct-include key="'action-button'" parameters="{ action: action }">
+        </mct-include>
+    </span>
+
+    <span class="btn-set" ng-repeat="group in groups">
+        <span ng-repeat="action in group">
+            <mct-include key="'action-button'" parameters="{ action: action }">
+            </mct-include>
+        </span>
+    </span>
+
+</span>

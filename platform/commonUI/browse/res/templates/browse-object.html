@@ -1,0 +1,26 @@
+<span ng-controller="ViewSwitcherController">
+    <div class="object-browse-bar bar abs">
+
+        <div class="items-select left abs">
+            <mct-representation key="'object-header'" mct-object="domainObject">
+            </mct-representation>
+        </div>
+
+        <div class="view-controls sort-controls btn-bar right abs">
+
+            <mct-representation key="'action-group'"
+                                mct-object="domainObject"
+                                parameters="{ category: 'view-control' }">
+            </mct-representation>
+
+            <mct-include key="'switcher'" ng-model="switcher" ng-if="switcher.options.length > 0">
+            </mct-include>
+        </div>
+
+    </div>
+
+    <div class='object-holder abs vscroll'>
+        <mct-representation key="switcher.selected.key" mct-object="domainObject">
+        </mct-representation>
+    </div>
+</span>

@@ -1,0 +1,12 @@
+<a href=""
+   class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
+   ng-class="{ labeled: parameters.labeled }"
+   title="{{parameters.action.getMetadata().description}}"
+   ng-click="parameters.action.perform()">
+    <span class="ui-symbol icon">
+        {{parameters.action.getMetadata().glyph}}
+    </span>
+    <span class="title-label" ng-if="parameters.labeled">
+        {{parameters.action.getMetadata().name}}
+    </span>
+</a>

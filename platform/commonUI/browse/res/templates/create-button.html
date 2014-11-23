@@ -1,0 +1,9 @@
+<div class="menu-element wrapper" ng-controller="CreateButtonController">
+    <div class="btn btn-menu create-btn major" ng-click="toggle()">
+        <span class='ui-symbol major' href=''>+</span> Create<!--span class='ui-symbol invoke-menu'>v</span-->
+    </div>
+    <div class="menu dropdown super-menu" ng-show="createState.visible">
+        <mct-representation mct-object="domainObject" key="'create-menu'">
+        </mct-representation>
+    </div>
+</div>

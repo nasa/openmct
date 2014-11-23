@@ -1,0 +1,94 @@
+{
+    "name": "General UI elements",
+    "description": "General UI elements, meant to be reused across modes.",
+    "resources": "res",
+    "extensions": {
+        "templates": [
+            {
+                "key": "bottombar",
+                "templateUrl": "templates/bottombar.html"
+            },
+            {
+                "key": "switcher",
+                "templateUrl": "templates/controls/switcher.html"
+            },
+            {
+                "key": "action-button",
+                "templateUrl": "templates/controls/action-button.html"
+            }
+        ],
+        "controllers": [
+            {
+                "key": "TreeNodeController",
+                "implementation": "TreeNodeController.js",
+                "depends": [ "$scope", "navigationService" ]
+            },
+            {
+                "key": "ActionGroupController",
+                "implementation": "ActionGroupController.js",
+                "depends": [ "$scope" ]
+            },
+            {
+                "key": "AccordionController",
+                "implementation": "AccordionController.js"
+            },
+            {
+                "key": "ContextMenuController",
+                "implementation": "ContextMenuController.js",
+                "depends": [ "$scope" ]
+            }
+        ],
+        "directives": [
+            {
+                "key": "mctContainer",
+                "implementation": "MCTContainer.js",
+                "depends": [ "containers[]" ]
+            }
+        ],
+        "containers": [
+            {
+                "key": "accordion",
+                "templateUrl": "templates/containers/accordion.html",
+                "attributes": [ "title" ]
+            }
+        ],
+        "representations": [
+            {
+                "key": "tree",
+                "templateUrl": "templates/tree.html",
+                "uses": [ "composition" ]
+            },
+            {
+                "key": "test",
+                "templateUrl": "templates/test.html"
+            },
+            {
+                "key": "tree-item",
+                "templateUrl": "templates/tree-item.html",
+                "uses": [ "action" ]
+            },
+            {
+                "key": "label",
+                "templateUrl": "templates/label.html",
+                "uses": [ "type" ],
+                "gestures": [ "drag", "menu" ]
+            },
+            {
+                "key": "node",
+                "templateUrl": "templates/label.html",
+                "uses": [ "type" ],
+                "gestures": [ "drag", "menu" ]
+            },
+            {
+                "key": "action-group",
+                "templateUrl": "templates/controls/action-group.html",
+                "uses": [ "action" ]
+            },
+            {
+                "key": "context-menu",
+                "templateUrl": "templates/menu/context-menu.html",
+                "uses": [ "action" ]
+            }
+        ]
+    }
+}

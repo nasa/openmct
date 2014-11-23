@@ -1,0 +1,33 @@
+<span ng-controller="ViewSwitcherController">
+<mct-include key="'topbar-edit'"
+             parameters="{ switcher: switcher, object: domainObject }">
+</mct-include>
+<div class="holder edit-area outline abs">
+    <!-- edit toolbar goes here -->
+    <div class='split-layout vertical contents abs work-area'>
+        <div class='split-pane-component edit-main pane' style="right: 200px; left: 0px;">
+            <div class='holder abs object-holder'>
+                <mct-representation key="switcher.selected.key" mct-object="domainObject">
+                </mct-representation>
+            </div>
+        </div>
+        <div class="splitter" style="right: 200px"></div>
+        <div class='split-pane-component edit-objects pane menus-to-left'
+                style="right: 0px; width: 200px">
+            <div class='holder abs split-layout horizontal'>
+
+                <mct-container key="accordion" title="Library" style="position: relative; top: 0px;">
+                    <mct-representation key="'tree'" mct-object="context.getRoot()">
+                    </mct-representation>
+                </mct-container>
+
+                <mct-container key="accordion" title="Elements" style="position: relative; top: 200px;">
+                    <mct-representation key="'edit-elements'" mct-object="domainObject">
+                    </mct-representation>
+                </mct-container>
+
+            </div>
+        </div>
+    </div>
+</div>
+</span>

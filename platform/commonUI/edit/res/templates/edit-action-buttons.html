@@ -1,0 +1,9 @@
+<span ng-controller="EditActionController">
+    <span ng-repeat="currentAction in editActions">
+        <a class='btn'
+           ng-click="currentAction.perform()"
+           ng-class="{ major: $index === 0, subtle: $index !== 0 }">
+            {{currentAction.getMetadata().name}}
+        </a>
+    </span>
+</span>

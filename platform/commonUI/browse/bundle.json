@@ -1,0 +1,126 @@
+{
+    "extensions": {
+        "routes": [
+            {
+                "when": "/browse",
+                "templateUrl": "templates/browse.html"
+            },
+            {
+                "when": "",
+                "templateUrl": "templates/browse.html"
+            }
+        ],
+        "controllers": [
+            {
+                "key": "BrowseController",
+                "implementation": "BrowseController.js",
+                "depends": [ "$scope", "objectService", "navigationService" ]
+            },
+            {
+                "key": "ViewSwitcherController",
+                "implementation": "ViewSwitcherController.js",
+                "depends": [ "$scope" ]
+            },
+            {
+                "key": "CreateButtonController",
+                "implementation": "creation/CreateButtonController",
+                "depends": [ "$scope", "$document" ]
+            },
+            {
+                "key": "CreateMenuController",
+                "implementation": "creation/CreateMenuController",
+                "depends": [ "$scope" ]
+            }
+        ],
+        "templates": [
+            {
+                "key": "topbar-browse",
+                "templateUrl": "templates/topbar-browse.html"
+            }
+        ],
+        "representations": [
+            {
+                "key": "browse-object",
+                "templateUrl": "templates/browse-object.html",
+                "uses": [ "view" ]
+            },
+            {
+                "key": "create-button",
+                "templateUrl": "templates/create-button.html"
+            },
+            {
+                "key": "create-menu",
+                "templateUrl": "templates/create-menu.html",
+                "uses": [ "action" ]
+            },
+            {
+                "key": "grid-item",
+                "templateUrl": "templates/items/grid-item.html",
+                "uses": [ "type", "action" ]
+            },
+            {
+                "key": "object-header",
+                "templateUrl": "templates/browse/object-header.html",
+                "uses": [ "type" ]
+            }
+        ],
+        "services": [
+            {
+                "key": "navigationService",
+                "implementation": "navigation/NavigationService.js"
+            },
+            {
+                "key": "creationService",
+                "implementation": "creation/CreationService.js",
+                "depends": [ "persistenceService", "uuidService", "$q", "$log" ]
+            },
+            {
+                "key": "uuidService",
+                "implementation": "creation/UUIDService.js"
+            }
+        ],
+        "actions": [
+            {
+                "key": "navigate",
+                "implementation": "navigation/NavigateAction.js",
+                "depends": [ "navigationService" ]
+            },
+            {
+                "key": "window",
+                "implementation": "windowing/NewWindowAction.js",
+                "description": "Open this object in a new window.",
+                "category": "view-control",
+                "depends": [ "$window" ],
+                "group": "windowing",
+                "glyph": "y"
+            },
+            {
+                "key": "fullscreen",
+                "implementation": "windowing/FullscreenAction.js",
+                "category": "view-control",
+                "group": "windowing",
+                "glyph": "z"
+            }
+        ],
+        "views": [
+            {
+                "key": "items",
+                "name": "Items",
+                "glyph": "i",
+                "description": "Grid of available items.",
+                "templateUrl": "templates/items/items.html",
+                "uses": [ "composition" ],
+                "gestures": [ "drop" ]
+            }
+        ],
+        "components": [
+            {
+                "key": "CreateActionProvider",
+                "provides": "actionService",
+                "type": "provider",
+                "implementation": "creation/CreateActionProvider.js",
+                "depends": [ "typeService", "dialogService", "creationService" ]
+            }
+        ]
+    }
+}

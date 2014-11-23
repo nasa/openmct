@@ -1,0 +1,85 @@
+{
+    "extensions": {
+        "routes": [
+            {
+                "when": "/edit",
+                "templateUrl": "templates/edit.html"
+            }
+        ],
+        "controllers": [
+            {
+                "key": "EditController",
+                "implementation": "EditController.js",
+                "depends": [ "$scope", "navigationService" ]
+            },
+            {
+                "key": "EditActionController",
+                "implementation": "EditActionController.js",
+                "depends": [ "$scope" ]
+            }
+        ],
+        "actions": [
+            {
+                "key": "edit",
+                "implementation": "actions/EditAction.js",
+                "depends": [ "$location", "navigationService", "$log" ],
+                "description": "Edit this object.",
+                "category": "view-control",
+                "glyph": "p"
+            },
+            {
+                "key": "remove",
+                "category": "contextual",
+                "implementation": "actions/RemoveAction.js",
+                "glyph": "Z",
+                "name": "Remove",
+                "description": "Remove this object from its containing object.",
+                "depends": [ "$q" ]
+            },
+            {
+                "key": "save",
+                "category": "conclude-editing",
+                "implementation": "actions/SaveAction.js",
+                "name": "Save",
+                "description": "Save changes made to these objects.",
+                "depends": [ "$location" ]
+            },
+            {
+                "key": "cancel",
+                "category": "conclude-editing",
+                "implementation": "actions/CancelAction.js",
+                "name": "Cancel",
+                "description": "Discard changes made to these objects.",
+                "depends": [ "$location" ]
+            }
+        ],
+        "templates": [
+            {
+                "key": "topbar-edit",
+                "templateUrl": "templates/topbar-edit.html"
+            },
+            {
+                "key": "edit-library",
+                "templateUrl": "templates/library.html"
+            }
+        ],
+        "representations": [
+            {
+                "key": "edit-object",
+                "templateUrl": "templates/edit-object.html",
+                "uses": [ "view", "context" ]
+            },
+            {
+                "key": "edit-action-buttons",
+                "templateUrl": "templates/edit-action-buttons.html",
+                "uses": [ "action" ]
+            },
+            {
+                "key": "edit-elements",
+                "templateUrl": "templates/elements.html",
+                "uses": [ "composition" ],
+                "gestures": [ "drop" ]
+            }
+        ]
+    }
+}
