@@ -16,10 +16,18 @@ define(
             dismissExistingMenu;
 
         /**
-         * Add listeners to a view such that it launches a context menu for the
-         * object it contains.
+         * Add listeners to a representation such that it launches a
+         * custom context menu for the domain object it contains.
          *
          * @constructor
+         * @param $compile Angular's $compile service
+         * @param $document the current document
+         * @param $window the active window
+         * @param $rootScope Angular's root scope
+         * @param element the jqLite-wrapped element which should exhibit
+         *                the context mennu
+         * @param {DomainObject} domainObject the object on which actions
+         *                       in the context menu will be performed
          */
         function ContextMenuGesture($compile, $document, $window, $rootScope, element, domainObject) {
             function showMenu(event) {
@@ -73,6 +81,12 @@ define(
             element.on('contextmenu', showMenu);
 
             return {
+                /**
+                 * Detach any event handlers associated with this gesture,
+                 * and dismiss any visible menu.
+                 * @method
+                 * @memberof ContextMenuGesture
+                 */
                 destroy: function () {
                     // Scope has been destroyed, so remove all listeners.
                     if (dismissExistingMenu) {

@@ -55,13 +55,21 @@ define(
             function link($scope, element) {
                 var gestureHandle;
 
+                // General-purpose refresh mechanism; should set up the scope
+                // as appropriate for current representation key and
+                // domain object.
                 function refresh() {
                     var representation = representationMap[$scope.key],
                         domainObject = $scope.domainObject,
                         uses = ((representation || {}).uses || []),
                         gestureKeys = ((representation || {}).gestures || []);
 
+                    // Create an empty object named "representation", for this
+                    // representation to store local variables into.
                     $scope.representation = {};
+
+                    // Look up the actual template path, pass it to ng-include
+                    // via the "inclusion" field
                     $scope.inclusion = pathMap[$scope.key];
 
                     // Any existing gestures are no longer valid; release them.
@@ -69,12 +77,19 @@ define(
                         gestureHandle.destroy();
                     }
 
+                    // Log if a key was given, but no matching representation
+                    // was found.
                     if (!representation && $scope.key) {
                         $log.warn("No representation found for " + $scope.key);
                     }
+
+                    // Populate scope with fields associated with the current
+                    // domain object (if one has been passed in)
                     if (domainObject) {
+                        // Always provide the model, as "model"
                         $scope.model = domainObject.getModel();
 
+                        // Also provide any of the capabilities requested
                         uses.forEach(function (used) {
                             $log.debug([
                                 "Requesting capability ",
@@ -89,6 +104,8 @@ define(
                             });
                         });
 
+                        // Finally, wire up any gestures that should be
+                        // associated with this representation.
                         gestureHandle = gestureService.attachGestures(
                             element,
                             domainObject,
@@ -97,15 +114,33 @@ define(
                     }
                 }
 
+                // Update the representation when the key changes (e.g. if a
+                // different representation has been selected)
                 $scope.$watch("key", refresh);
+
+                // Also update when the represented domain object changes
+                // (to a different object)
                 $scope.$watch("domainObject", refresh);
+
+                // Finally, also update when there is a new version of that
+                // same domain object; these changes should be tracked in the
+                // model's "modified" field, by the mutation capability.
                 $scope.$watch("domainObject.getModel().modified", refresh);
             }
 
             return {
+                // Only applicable at the element level
                 restrict: "E",
+
+                // Handle Angular's linking step
                 link: link,
+
+                // Use ng-include as a template; "inclusion" will be the real
+                // template path
                 template: '<ng-include src="inclusion"></ng-include>',
+
+                // Two-way bind key and parameters, get the represented domain
+                // object as "mct-object"
                 scope: { key: "=", domainObject: "=mctObject", parameters: "=" }
             };
         }

@@ -9,10 +9,16 @@ define(
         "use strict";
 
         /**
+         * Add event handlers to a representation such that it may be
+         * dragged as the source for drag-drop composition.
          *
          * @constructor
+         * @param $log Angular's logging service
+         * @param element the jqLite-wrapped element which should become
+         *        draggable
+         * @param {DomainObject} domainObject the domain object which
+         *        is represented; this will be passed on drop.
          */
-
         function DragGesture($log, element, domainObject) {
             function startDrag(e) {
                 var event = (e || {}).originalEvent || e;
@@ -20,7 +26,10 @@ define(
                 $log.debug("Initiating drag");
 
                 try {
+                    // Set the data associated with the drag-drop operation
                     event.dataTransfer.effectAllowed = 'move';
+
+                    // Support drop as plain-text (JSON); not used internally
                     event.dataTransfer.setData(
                         'text/plain',
                         JSON.stringify({
@@ -28,12 +37,18 @@ define(
                             model: domainObject.getModel()
                         })
                     );
+
+                    // For internal use, pass the object's identifier as
+                    // part of the drag
                     event.dataTransfer.setData(
                         GestureConstants.MCT_DRAG_TYPE,
                         domainObject.getId()
                     );
 
                 } catch (err) {
+                    // Exceptions at this point indicate that the browser
+                    // do not fully support drag-and-drop (e.g. if
+                    // dataTransfer is undefined)
                     $log.warn([
                         "Could not initiate drag due to ",
                         err.message
@@ -42,11 +57,17 @@ define(
 
             }
 
+            // Mark the element as draggable, and handle the dragstart event
             $log.debug("Attaching drag gesture");
             element.attr('draggable', 'true');
             element.on('dragstart', startDrag);
 
             return {
+                /**
+                 * Detach any event handlers associated with this gesture.
+                 * @memberof DragGesture
+                 * @method
+                 */
                 destroy: function () {
                     // Detach listener
                     element.removeAttr('draggable');

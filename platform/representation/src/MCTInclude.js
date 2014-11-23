@@ -57,7 +57,8 @@ define(
                 // Use the included controller to populate scope
                 controller: controller,
 
-                // Use ng-include as a template; it gets the real template path
+                // Use ng-include as a template; "inclusion" will be the real
+                // template path
                 template: '<ng-include src="inclusion"></ng-include>',
 
                 // Two-way bind key, ngModel, and parameters
