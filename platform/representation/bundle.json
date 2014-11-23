@@ -9,7 +9,7 @@
             {
                 "key": "mctRepresentation",
                 "implementation": "MCTRepresentation.js",
-                "depends": [ "representations[]", "views[]", "gestures[]", "$q", "$log" ]
+                "depends": [ "representations[]", "views[]", "gestureService", "$q", "$log" ]
             }
         ],
         "gestures": [
@@ -33,7 +33,8 @@
             {
                 "provides": "gestureService",
                 "type": "provider",
-                "implementation": "gestures/GestureProvider.js"
+                "implementation": "gestures/GestureProvider.js",
+                "depends": ["gestures[]"]
             }
         ]
     }
