@@ -1,7 +1,9 @@
-<span ng-controller="TreeNodeController">
-<span class="tree-item menus-to-left">
-	<span class='ui-symbol view-control' ng-click="toggle()" ng-if="model.composition !== undefined">
-        {{node.expanded ? "v" : ">"}}
+<span ng-controller="ToggleController as toggle">
+<span class="tree-item menus-to-left" ng-controller="TreeNodeController">
+	<span class='ui-symbol view-control'
+          ng-click="toggle.toggle()"
+          ng-if="model.composition !== undefined">
+        {{toggle.isActive() ? "v" : ">"}}
     </span>
     <mct-representation key="'label'"
                         mct-object="domainObject"
@@ -10,7 +12,9 @@
                         ng-class="{selected: node.isSelected}">
     </mct-representation>
 </span>
-<span class="tree-item-subtree" ng-show="node.expanded" ng-if="model.composition !== undefined">
+<span class="tree-item-subtree"
+      ng-show="toggle.isActive()"
+      ng-if="model.composition !== undefined">
     <mct-representation key="'tree'"
                         parameters="parameters"
                         mct-object="node.domainObject">

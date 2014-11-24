@@ -29,8 +29,8 @@
                 "depends": [ "$scope" ]
             },
             {
-                "key": "AccordionController",
-                "implementation": "AccordionController.js"
+                "key": "ToggleController",
+                "implementation": "ToggleController.js"
             },
             {
                 "key": "ContextMenuController",

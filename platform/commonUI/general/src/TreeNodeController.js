@@ -29,6 +29,15 @@ define(
                 return obj.getId();
             }
 
+            // Verify that id paths are equivalent, staring at
+            // index, ending at the end of the node path.
+            function checkPath(nodePath, navPath, index) {
+                index = index || 0;
+                return index > nodePath.length ||
+                        (navPath[index] === nodePath[index] &&
+                                checkPath(nodePath, navPath, index + 1));
+            }
+
             function isOnNavigationPath(nodeObject, navObject) {
                 var nodeContext = nodeObject &&
                             nodeObject.getCapability('context'),
@@ -41,12 +50,7 @@ define(
                     nodePath = nodeContext.getPath().map(getId);
                     navPath = navContext.getPath().map(getId);
                     return (navPath.length > nodePath.length) &&
-                            nodePath.map(function (id, i) {
-                                return id === navPath[i];
-                            }).reduce(function (a, b) {
-                                return a && b;
-                            }, true);
-
+                            checkPath(nodePath, navPath);
                 }
                 return false; // No context to judge by
             }
@@ -58,8 +62,10 @@ define(
                     idsEqual(nodeObject, navigatedObject) &&
                             idsEqual(parentOf(nodeObject), parentOf(navigatedObject));
                 // Expand if necessary
-                if (!$scope.node.expanded && isOnNavigationPath(nodeObject, navigatedObject)) {
-                    $scope.toggle();
+                if (!$scope.node.expanded &&
+                        isOnNavigationPath(nodeObject, navigatedObject) &&
+                        $scope.toggle !== undefined) {
+                    $scope.toggle.toggle();
                 }
             }
 
@@ -68,21 +74,25 @@ define(
                 checkNavigation();
             }
 
-            $scope.node = { expanded: false };
+            // When the node is expanded, set "node.domainObject" in
+            // the scope; this is used to populate the subtree, which
+            // should only happen when first expanded (lazy loading)
+            function doExpand(state) {
+                if (state) {
+                    $scope.node.domainObject = $scope.domainObject;
+                }
+            }
 
-            $scope.toggle = function () {
-                var expanded = !$scope.node.expanded;
-                $scope.node.expanded = expanded;
-
-                // Trigger load of composition, if needed
-                $scope.node.domainObject = $scope.domainObject;
-            };
+            // Set up a little namespace for tree node properties
+            $scope.node = {};
 
             navigationService.addListener(setNavigation);
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);
             });
             $scope.$watch("domainObject", checkNavigation);
+            $scope.$watch("toggle.isActive()", doExpand);
+
         }
 
         return TreeNodeController;

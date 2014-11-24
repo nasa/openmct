@@ -38,7 +38,7 @@ define(
 
             function updateGroups() {
                 var actionCapability = $scope.action,
-                    params = $scope.parameters ? $scope.parameters : {},
+                    params = $scope.parameters || {},
                     category = params.category;
 
                 if (actionCapability && category) {
