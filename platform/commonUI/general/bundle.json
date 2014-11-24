@@ -68,8 +68,8 @@
                 "templateUrl": "templates/test.html"
             },
             {
-                "key": "tree-item",
-                "templateUrl": "templates/tree-item.html",
+                "key": "tree-node",
+                "templateUrl": "templates/tree-node.html",
                 "uses": [ "action" ]
             },
             {

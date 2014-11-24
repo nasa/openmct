@@ -122,8 +122,12 @@ correct usage.)
 * _name_: When used as an object property, this refers to the human-readable
   name for a thing. (Most often used in the context of extensions, domain
   object models, or other similar application-specific objects.)
+* _navigation_: Refers to the current state of the application with respect
+  to the user's expressed interest in a specific domain object; e.g. when
+  a user clicks on a domain object in the tree, they are _navigating_ to
+  it, and it is thereafter considered the _navigated_ object (until the
+  user makes another such choice.)
 * _space_: A name used to identify a persistence store. Interactions with
   persistence with generally involve a `space` parameter in some form, to
   distinguish multiple persistence stores from one another (for cases
   where there are multiple valid persistence locations available.)
-  
