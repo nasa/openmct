@@ -36,6 +36,11 @@
                 "key": "ContextMenuController",
                 "implementation": "ContextMenuController.js",
                 "depends": [ "$scope" ]
+            },
+            {
+                "key": "ClickAwayController",
+                "implementation": "ClickAwayController.js",
+                "depends": [ "$scope", "$document" ]
             }
         ],
         "directives": [
