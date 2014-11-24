@@ -42,8 +42,10 @@ define(
                             $log.warn([
                                 "Dialog already showing; ",
                                 "unable to show ",
-                                title
+                                formModel.name
                             ].join(""));
+                            deferred.reject();
+                            return;
                         }
 
                         scope.dialog.visible = true;
