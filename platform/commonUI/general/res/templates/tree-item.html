@@ -2,7 +2,7 @@
     <span ng-controller="TreeNodeController as treeNode">
         <span class="tree-item menus-to-left">
             <span class='ui-symbol view-control'
-                  ng-click="toggle.toggle(); treeNode.setNodeObject(domainObject)"
+                  ng-click="toggle.toggle(); treeNode.trackExpansion()"
                   ng-if="model.composition !== undefined">
                 {{toggle.isActive() ? "v" : ">"}}
             </span>
@@ -17,10 +17,9 @@
               ng-show="toggle.isActive()"
               ng-if="model.composition !== undefined">
 
-            ID: {{treeNode.getNodeObject().getId()}}?
             <mct-representation key="'tree'"
                                 parameters="parameters"
-                                mct-object="treeNode.getNodeObject()">
+                                mct-object="treeNode.hasBeenExpanded() && domainObject">
             </mct-representation>
 
         </span>

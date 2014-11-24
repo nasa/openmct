@@ -15,10 +15,11 @@ define(
         function TreeNodeController($scope, navigationService) {
             var navigatedObject = navigationService.getNavigation(),
                 isNavigated = false,
-                expandedObject;
+                hasBeenExpanded = false;
 
             function idsEqual(objA, objB) {
-                return objA && objB && (objA.getId() === objB.getId());
+                return (objA === objB) ||
+                        (objA && objB && (objA.getId() === objB.getId()));
             }
 
             function parentOf(domainObject) {
@@ -35,8 +36,8 @@ define(
             // index, ending at the end of the node path.
             function checkPath(nodePath, navPath, index) {
                 index = index || 0;
-                return index > nodePath.length ||
-                        (navPath[index] === nodePath[index] &&
+                return (index >= nodePath.length) ||
+                        (idsEqual(navPath[index], nodePath[index]) &&
                                 checkPath(nodePath, navPath, index + 1));
             }
 
@@ -66,10 +67,9 @@ define(
 
                 // Expand if necessary
                 if (isOnNavigationPath(nodeObject, navigatedObject) &&
-                        $scope.toggle !== undefined &&
-                        $scope.toggle.isActive()) {
-                    $scope.toggle.toggle();
-                    expandedObject = nodeObject;
+                        $scope.toggle !== undefined) {
+                    $scope.toggle.setState(true);
+                    hasBeenExpanded = true;
                 }
             }
 
@@ -85,11 +85,11 @@ define(
             $scope.$watch("domainObject", checkNavigation);
 
             return {
-                setNodeObject: function (domainObject) {
-                    expandedObject = domainObject;
+                trackExpansion: function () {
+                    hasBeenExpanded = true;
                 },
-                getNodeObject: function () {
-                    return expandedObject;
+                hasBeenExpanded: function () {
+                    return hasBeenExpanded;
                 },
                 isNavigated: function () {
                     return isNavigated;

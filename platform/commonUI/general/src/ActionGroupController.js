@@ -28,10 +28,10 @@ define(
                     }
                 }
 
-                actions.forEach(assignToGroup);
+                (actions || []).forEach(assignToGroup);
 
                 $scope.ungrouped = ungrouped;
-                $scope.groups = Object.keys(groups).map(function (k) {
+                $scope.groups = Object.keys(groups).sort().map(function (k) {
                     return groups[k];
                 });
             }
