@@ -1,5 +1,10 @@
 [
     "platform/framework",
     "platform/core",
-    "platform/representation"
+    "platform/representation",
+    "platform/commonUI/browse",
+    "platform/commonUI/dialog",
+    "platform/commonUI/general",
+
+    "example/persistence"
 ]
