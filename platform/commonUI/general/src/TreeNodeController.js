@@ -13,7 +13,9 @@ define(
          * @constructor
          */
         function TreeNodeController($scope, navigationService) {
-            var navigatedObject = navigationService.getNavigation();
+            var navigatedObject = navigationService.getNavigation(),
+                isNavigated = false,
+                expandedObject;
 
             function idsEqual(objA, objB) {
                 return objA && objB && (objA.getId() === objB.getId());
@@ -58,14 +60,16 @@ define(
             function checkNavigation() {
                 var nodeObject = $scope.domainObject;
 
-                $scope.node.isSelected =
+                isNavigated =
                     idsEqual(nodeObject, navigatedObject) &&
                             idsEqual(parentOf(nodeObject), parentOf(navigatedObject));
+
                 // Expand if necessary
-                if (!$scope.node.expanded &&
-                        isOnNavigationPath(nodeObject, navigatedObject) &&
-                        $scope.toggle !== undefined) {
+                if (isOnNavigationPath(nodeObject, navigatedObject) &&
+                        $scope.toggle !== undefined &&
+                        $scope.toggle.isActive()) {
                     $scope.toggle.toggle();
+                    expandedObject = nodeObject;
                 }
             }
 
@@ -74,25 +78,23 @@ define(
                 checkNavigation();
             }
 
-            // When the node is expanded, set "node.domainObject" in
-            // the scope; this is used to populate the subtree, which
-            // should only happen when first expanded (lazy loading)
-            function doExpand(state) {
-                if (state) {
-                    $scope.node.domainObject = $scope.domainObject;
-                }
-            }
-
-            // Set up a little namespace for tree node properties
-            $scope.node = {};
-
             navigationService.addListener(setNavigation);
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);
             });
             $scope.$watch("domainObject", checkNavigation);
-            $scope.$watch("toggle.isActive()", doExpand);
 
+            return {
+                setNodeObject: function (domainObject) {
+                    expandedObject = domainObject;
+                },
+                getNodeObject: function () {
+                    return expandedObject;
+                },
+                isNavigated: function () {
+                    return isNavigated;
+                }
+            };
         }
 
         return TreeNodeController;
