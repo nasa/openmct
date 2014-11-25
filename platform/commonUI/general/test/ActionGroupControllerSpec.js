@@ -63,6 +63,14 @@ define(
                 expect(mockScope.groups[1].length).toEqual(2); // b
                 expect(mockScope.ungrouped.length).toEqual(3); // ungrouped
             });
+
+            it("provides empty arrays when no action capability is available", function () {
+                // Call the watch
+                mockScope.$watch.mostRecentCall.args[1]();
+
+                expect(mockScope.groups.length).toEqual(0);
+                expect(mockScope.ungrouped.length).toEqual(0);
+            });
         });
     }
 );
