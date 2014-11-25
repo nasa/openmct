@@ -1,16 +1,21 @@
 /*global define*/
 
-/**
- * Editable Persistence Capability. Overrides the persistence capability
- * normally exhibited by a domain object to ensure that changes made
- * during edit mode are not immediately stored to the database or other
- * backing storage.
- */
+
 define(
     function () {
         'use strict';
 
-        return function EditablePersistenceCapability(
+        /**
+         * Editable Persistence Capability. Overrides the persistence capability
+         * normally exhibited by a domain object to ensure that changes made
+         * during edit mode are not immediately stored to the database or other
+         * backing storage.
+         *
+         * Meant specifically for use by EditableDomainObject and the
+         * associated cache; the constructor signature is particular
+         * to a pattern used there and may contain unused arguments.
+         */
+        function EditablePersistenceCapability(
             persistenceCapability,
             editableObject,
             domainObject,
@@ -25,6 +30,8 @@ define(
             };
 
             return persistence;
-        };
+        }
+
+        return EditablePersistenceCapability;
     }
 );
