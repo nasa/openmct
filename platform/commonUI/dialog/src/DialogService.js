@@ -7,33 +7,91 @@ define(
     [],
     function () {
         "use strict";
-
-        // Template to inject into the DOM to show the dialog; really just points to
-        // the overlay-dialog template.
-        var TEMPLATE = "<mct-include ng-model=\"dialog\" key=\"'overlay-dialog'\"></mct-include>";
-
         /**
          * The dialog service is responsible for handling window-modal
          * communication with the user, such as displaying forms for user
          * input.
          * @constructor
          */
-        function DialogService($document, $compile, $rootScope, $timeout, $q, $log) {
-            var scope;
+        function DialogService(overlayService, $q, $log) {
+            var overlay,
+                dialogVisible = false;
 
-            // Inject the dialog at the top of the body; this is necessary to
-            // ensure that the dialog is positioned appropriately and can fill
-            // the screen to block other interactions.
-            function addContent() {
-                scope = $rootScope.$new();
-                $document.find('body').prepend($compile(TEMPLATE)(scope));
-                scope.dialog = { visible: false, value: {} };
+            // Stop showing whatever overlay is currently active
+            // (e.g. because the user hit cancel)
+            function dismiss() {
+                if (overlay) {
+                    overlay.dismiss();
+                }
+                dialogVisible = false;
             }
 
-            // Dismiss the dialog; just stop showing it, and release any
-            // form information for garbage collection.
-            function dismiss() {
-                scope.dialog = { visible: false, value: {} };
+            function getUserInput(formModel, value) {
+                // We will return this result as a promise, because user
+                // input is asynchronous.
+                var deferred = $q.defer(),
+                    overlayModel;
+
+                // Confirm function; this will be passed in to the
+                // overlay-dialog template and associated with a
+                // OK button click
+                function confirm() {
+                    var resultingValue;
+
+                    // Temporary workaround, in the absence of a
+                    // forms package.
+                    try {
+                        resultingValue = JSON.parse(overlayModel.value);
+                    } catch (e) {
+                        resultingValue = {};
+                    }
+
+                    // Pass along the result
+                    deferred.resolve(resultingValue);
+
+                    // Stop showing the dialog
+                    dismiss();
+                }
+
+                // Cancel function; this will be passed in to the
+                // overlay-dialog template and associated with a
+                // Cancel or X button click
+                function cancel() {
+                    deferred.reject();
+                    dismiss();
+                }
+
+                if (dialogVisible) {
+                    // Only one dialog should be shown at a time.
+                    // The application design should be such that
+                    // we never even try to do this.
+                    $log.warn([
+                        "Dialog already showing; ",
+                        "unable to show ",
+                        formModel.name
+                    ].join(""));
+                    deferred.reject();
+                } else {
+                    // To be passed to the overlay-dialog template,
+                    // via ng-model
+                    overlayModel = {
+                        title: formModel.name,
+                        message: formModel.message,
+                        formModel: formModel,
+                        value: JSON.stringify(value),
+                        confirm: confirm,
+                        cancel: cancel
+                    };
+
+                    // Add the overlay using the OverlayService, which
+                    // will handle actual insertion into the DOM
+                    overlay = overlayService.createOverlay(
+                        overlayModel,
+                        "overlay-dialog"
+                    );
+                }
+
+                return deferred.promise;
             }
 
             return {
@@ -48,49 +106,7 @@ define(
                  *          user input cannot be obtained (for instance,
                  *          because the user cancelled the dialog)
                  */
-                getUserInput: function (formModel, value) {
-                    var deferred = $q.defer();
-
-                    if (!scope) {
-                        addContent();
-                    }
-
-                    $timeout(function () {
-                        if (scope.dialog.visible) {
-                            $log.warn([
-                                "Dialog already showing; ",
-                                "unable to show ",
-                                formModel.name
-                            ].join(""));
-                            deferred.reject();
-                            return;
-                        }
-
-                        scope.dialog.visible = true;
-                        scope.dialog.title = formModel.name;
-                        scope.dialog.message = formModel.message;
-                        scope.dialog.formModel = formModel;
-                        scope.dialog.value = JSON.stringify(value);
-
-                        scope.dialog.confirm = function () {
-                            var resultingValue;
-
-                            try {
-                                resultingValue = JSON.parse(scope.dialog.value);
-                            } catch (e) {
-                                resultingValue = {};
-                            }
-                            deferred.resolve(resultingValue);
-                            dismiss();
-                        };
-                        scope.dialog.cancel = function () {
-                            deferred.reject();
-                            dismiss();
-                        };
-                    });
-
-                    return deferred.promise;
-                }
+                getUserInput: getUserInput
             };
         }
 

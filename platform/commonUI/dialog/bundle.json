@@ -4,7 +4,12 @@
             {
                 "key": "dialogService",
                 "implementation": "DialogService.js",
-                "depends": [ "$document", "$compile", "$rootScope", "$timeout", "$q", "$log" ]
+                "depends": [ "overlayService", "$q", "$log" ]
+            },
+            {
+                "key": "overlayService",
+                "implementation": "OverlayService.js",
+                "depends": [ "$document", "$compile", "$rootScope" ]
             }
         ],
         "templates": [
