@@ -77,13 +77,13 @@ define(
         }
 
         // Object needs to have a parent for Remove to be applicable
-        /*RemoveAction.appliesTo = function (context) {
-            var object = context.domainObject,
+        RemoveAction.appliesTo = function (context) {
+            var object = (context || {}).domainObject,
                 contextCapability = object && object.getCapability("context"),
                 parent = contextCapability && contextCapability.getParent();
             return parent !== undefined &&
                     Array.isArray(parent.getModel().composition);
-        };*/
+        };
 
         return RemoveAction;
     }
