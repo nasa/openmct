@@ -1,0 +1,13 @@
+[
+    "EditActionController",
+    "EditController",
+    "actions/CancelAction",
+    "actions/EditAction",
+    "actions/RemoveAction",
+    "actions/SaveAction",
+    "capabilities/EditableContextCapability",
+    "capabilities/EditablePersistenceCapability",
+    "capabilities/EditorCapability",
+    "objects/EditableDomainObject",
+    "objects/EditableDomainObjectCache"
+]

@@ -79,10 +79,6 @@ define(
                     // Save All. An infinite loop is avoided by marking
                     // objects as clean as we go.
 
-                    function doSave(editCapability) {
-                        return editCapability.save();
-                    }
-
                     while (Object.keys(dirty).length > 0) {
                         // Pick the first dirty object
                         object = dirty[Object.keys(dirty)[0]];
@@ -91,7 +87,7 @@ define(
                         this.markClean(object);
 
                         // Invoke its save behavior
-                        object.getCapability('editor.completion').then(doSave);
+                        object.getCapability('editor').save();
                     }
                 }
             };
