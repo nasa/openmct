@@ -22,7 +22,7 @@ define(
             var domainObject = (context || {}).domainObject;
 
             if (!domainObject) {
-                $log.error([
+                $log.warn([
                     "No domain object to edit; ",
                     "edit action is not valid."
                 ].join(""));
