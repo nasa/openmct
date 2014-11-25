@@ -40,11 +40,7 @@ define(
 
                     // Temporary workaround, in the absence of a
                     // forms package.
-                    try {
-                        resultingValue = JSON.parse(overlayModel.value);
-                    } catch (e) {
-                        resultingValue = {};
-                    }
+                    resultingValue = JSON.parse(overlayModel.value);
 
                     // Pass along the result
                     deferred.resolve(resultingValue);
@@ -89,6 +85,10 @@ define(
                         overlayModel,
                         "overlay-dialog"
                     );
+
+                    // Track that a dialog is already visible, to
+                    // avoid spawning multiple dialogs at once.
+                    dialogVisible = true;
                 }
 
                 return deferred.promise;
