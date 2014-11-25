@@ -1,14 +1,15 @@
 /*global define*/
 
-/**
- * The "Save" action; the action triggered by clicking Save from
- * Edit Mode. Exits the editing user interface and invokes object
- * capabilities to persist the changes that have been made.
- */
+
 define(
     function () {
         'use strict';
 
+        /**
+         * The "Save" action; the action triggered by clicking Save from
+         * Edit Mode. Exits the editing user interface and invokes object
+         * capabilities to persist the changes that have been made.
+         */
         function SaveAction($location, context) {
             var domainObject = context.domainObject;
 
@@ -33,12 +34,24 @@ define(
             }
 
             return {
+                /**
+                 * Save changes and conclude editing.
+                 *
+                 * @returns {Promise} a promise that will be fulfilled when
+                 *          cancellation has completed
+                 */
                 perform: function () {
                     return doSave(getEditorCapability()).then(returnToBrowse);
                 }
             };
         }
 
+        /**
+         * Check if this action is applicable in a given context.
+         * This will ensure that a domain object is present in the context,
+         * and that this domain object is in Edit mode.
+         * @returns true if applicable
+         */
         SaveAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject;
             return domainObject !== undefined &&
