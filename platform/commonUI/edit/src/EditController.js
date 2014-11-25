@@ -20,6 +20,9 @@ define(
 
             setNavigation(navigationService.getNavigation());
             navigationService.addListener(setNavigation);
+            $scope.$on("$destroy", function () {
+                navigationService.removeListener(setNavigation);
+            });
         }
 
         return EditController;
