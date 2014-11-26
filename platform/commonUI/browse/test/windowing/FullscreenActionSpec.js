@@ -1,4 +1,4 @@
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine,afterEach,screenfull*/
+/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine,afterEach,window*/
 
 /**
  * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
@@ -10,25 +10,26 @@ define(
 
         describe("The fullscreen action", function () {
             var action,
-                oldToggle;
+                oldScreenfull;
 
             beforeEach(function () {
                 // Screenfull is not shimmed or injected, so
                 // we need to spy on it in the global scope.
-                oldToggle = screenfull.toggle;
+                oldScreenfull = window.screenfull;
 
-                screenfull.toggle = jasmine.createSpy("toggle");
+                window.screenfull = {};
+                window.screenfull.toggle = jasmine.createSpy("toggle");
 
                 action = new FullscreenAction({});
             });
 
             afterEach(function () {
-                screenfull.toggle = oldToggle;
+                window.screenfull = oldScreenfull;
             });
 
             it("toggles fullscreen mode when performed", function () {
                 action.perform();
-                expect(screenfull.toggle).toHaveBeenCalled();
+                expect(window.screenfull.toggle).toHaveBeenCalled();
             });
 
             it("provides displayable metadata", function () {
