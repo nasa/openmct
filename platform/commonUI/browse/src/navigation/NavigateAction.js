@@ -9,23 +9,34 @@ define(
         "use strict";
 
         /**
-         *
+         * The navigate action navigates to a specific domain object.
          * @constructor
          */
-        function NavigateAction(navigationService, context) {
+        function NavigateAction(navigationService, $q, context) {
             var domainObject = context.domainObject;
 
             function perform() {
-                return Promise.resolve(
-                    navigationService.setNavigation(domainObject)
-                );
+                // Set navigation, and wrap like a promise
+                return $q.when(navigationService.setNavigation(domainObject));
             }
 
             return {
+                /**
+                 * Navigate to the object described in the context.
+                 * @returns {Promise} a promise that is resolved once the
+                 *          navigation has been updated
+                 */
                 perform: perform
             };
         }
 
+        /**
+         * Navigate as an action is only applicable when a domain object
+         * is described in the action context.
+         * @param {ActionContext} context the context in which the action
+         *        will be performed
+         * @returns true if applicable
+         */
         NavigateAction.appliesTo = function (context) {
             return context.domainObject !== undefined;
         };

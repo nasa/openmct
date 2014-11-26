@@ -79,7 +79,7 @@
             {
                 "key": "navigate",
                 "implementation": "navigation/NavigateAction.js",
-                "depends": [ "navigationService" ]
+                "depends": [ "navigationService", "$q" ]
             },
             {
                 "key": "window",

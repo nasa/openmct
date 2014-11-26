@@ -95,13 +95,21 @@ Run as `mvn clean install`.
 Certain terms are used throughout Open MCT Web with consistent meanings
 or conventions. Any deviations from the below are issues and should be
 addressed (either by updating this glossary or changing code to reflect
-correct usage.)
+correct usage.) Other developer documentation, particularly in-line
+documentation, may presume an understanding of these terms.
 
 * _bundle_: A bundle is a removable, reusable grouping of software elements.
   The application is composed of bundles. Plug-ins are bundles. For more
   information, refer to framework documentation (under `platform/framework`.)
 * _capability_: An object which exposes dynamic behavior or non-persistent
   state associated with a domain object.
+* _composition_: In the context of a domain object, this refers to the set of
+  other domain objects that compose or are contained by that object. A domain
+  object's composition is the set of domain objects that should appear
+  immediately beneath it in a tree hierarchy. A domain object's composition is
+  described in its model as an array of id's; its composition capability
+  provides a means to retrieve the actual domain object instances associated
+  with these identifiers asynchronously.
 * _description_: When used as an object property, this refers to the human-readable
   description of a thing; usually a single sentence or short paragraph.
   (Most often used in the context of extensions, domain

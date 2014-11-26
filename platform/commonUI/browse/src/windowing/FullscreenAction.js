@@ -12,14 +12,22 @@ define(
             EXIT_FULLSCREEN = "Exit full screen mode.";
 
         /**
-         *
+         * The fullscreen action toggles between fullscreen display
+         * and regular in-window display.
          * @constructor
          */
         function FullscreenAction(context) {
             return {
+                /**
+                 * Toggle full screen state
+                 */
                 perform: function () {
                     screenfull.toggle();
                 },
+                /**
+                 * Get metadata about this action, including the
+                 * applicable glyph to display.
+                 */
                 getMetadata: function () {
                     // We override getMetadata, because the glyph and
                     // description need to be determined at run-time

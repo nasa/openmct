@@ -9,7 +9,8 @@ define(
         "use strict";
 
         /**
-         *
+         * Controller for the view switcher; populates and maintains a list
+         * of applicable views for a represented domain object.
          * @constructor
          */
         function ViewSwitcherController($scope) {
