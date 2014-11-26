@@ -50,6 +50,9 @@ define(
                     // Enabled/disabled state
                     ngDisabled: "=",
 
+                    // Whether or not input is required
+                    ngRequired: "=",
+
                     // Pattern (for input fields)
                     ngPattern: "=",
 
