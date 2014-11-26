@@ -6,9 +6,13 @@
             {{section.name}}
         </div>
         <div class="form-section">
-            <div ng-repeat="row in section.rows"
-                 class="form-row validates"
-                 ng-class="{ required: row.required }">
+            <ng-form name="mctFormInner" ng-repeat="row in section.rows">
+            <div class="form-row validates"
+                 ng-class="{
+                           req: row.required,
+                           valid: mctFormInner.$dirty && mctFormInner.$valid,
+                           invalid: mctFormInner.$dirty && !mctFormInner.$valid
+                           }">
 
                 <div class='label' title="{{row.description}}">
                     {{row.name}}
@@ -19,7 +23,7 @@
                 </div>
                 <div class='controls'>
                     <div class="wrapper" ng-if="row.control">
-                        <ng-form name="mctFormInner">
+
                             <mct-control key="row.control"
                                          ng-model="ngModel"
                                          ng-required="row.required"
@@ -27,7 +31,6 @@
                                          structure="row"
                                          field="row.key">
                             </mct-control>
-                        </ng-form>
                     </div>
                     <div ng-repeat="item in row.items" class="validates">
                         <ng-form name="mctFormInner">
@@ -40,8 +43,8 @@
                         </ng-form>
                     </div>
                 </div>
-
             </div>
+            </ng-form>
         </div>
     </span>
 </div>
