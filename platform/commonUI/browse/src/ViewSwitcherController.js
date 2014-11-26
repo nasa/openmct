@@ -31,8 +31,8 @@ define(
             }
 
             // Get list of views, read from capability
-            $scope.$watch("view", function () {
-                var options = $scope.view || [ {} ];
+            function updateOptions(views) {
+                var options = views || [];
 
                 $scope.switcher = {
                     options: options,
@@ -41,7 +41,11 @@ define(
                         ($scope.switcher || {}).selected
                     )
                 };
-            });
+            }
+
+            // Update view options when the in-scope results of using the
+            // view capability change.
+            $scope.$watch("view", updateOptions);
         }
 
         return ViewSwitcherController;
