@@ -19,10 +19,23 @@ define(
                 "templates/form.html"
             ].join("/");
 
+            function controller($scope) {
+                $scope.$watch("mctForm", function (mctForm) {
+                    if ($scope.name) {
+                        $scope.$parent.mctForm = mctForm;
+                    }
+                });
+            }
+
             return {
                 restrict: "E",
                 templateUrl: templatePath,
-                scope: { structure: "=", ngModel: "=ngModel" }
+                link: controller,
+                scope: {
+                    structure: "=",
+                    ngModel: "=",
+                    name: "@"
+                }
             };
         }
 

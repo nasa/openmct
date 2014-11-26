@@ -22,8 +22,6 @@ define(
                 $scope.$watch("key", function (key) {
                     // Pass the template URL to ng-include via scope.
                     $scope.inclusion = controlMap[key];
-                    console.log(key);
-                    console.log($scope.inclusion);
                 });
             }
 

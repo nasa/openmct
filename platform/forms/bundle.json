@@ -17,6 +17,18 @@
             {
                 "key": "checkbox",
                 "templateUrl": "templates/controls/checkbox.html"
+            },
+            {
+                "key": "datetime",
+                "templateUrl": "templates/controls/datetime.html"
+            },
+            {
+                "key": "select",
+                "templateUrl": "templates/controls/select.html"
+            },
+            {
+                "key": "textfield",
+                "templateUrl": "templates/controls/textfield.html"
             }
         ],
         "templates": [

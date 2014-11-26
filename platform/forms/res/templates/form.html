@@ -1,4 +1,4 @@
-<form name="{{structure.key}}">
+<form name="mctForm" novalidate>
 
 <div class="form">
     <span ng-repeat="section in structure.sections">
@@ -10,13 +10,18 @@
                  class="form-row validates"
                  ng-class="{ required: row.required }">
 
-                <div class='label'>{{row.name}}</div>
+                <div class='label' title="{{row.description}}">
+                    {{row.name}}
+                    <span ng-if="row.description"
+                          class="ui-symbol">
+                        i
+                    </span>
+                </div>
                 <div class='controls'>
-                    <div class="wrapper" ng-if="row.control">
+                    <div class="wrapper" ng-if="row.control">>
                         <mct-control key="row.control"
                                      ng-model="ngModel"
                                      ng-required="row.required"
-                                     ng-pattern="row.pattern"
                                      options="row.options"
                                      structure="row"
                                      name="{{row.key}}">
@@ -26,7 +31,6 @@
                         <mct-control key="item.control"
                                      ng-model="ngModel"
                                      ng-required="item.required"
-                                     ng-pattern="item.pattern"
                                      options="item.options"
                                      structure="item"
                                      name="{{item.key}}">
