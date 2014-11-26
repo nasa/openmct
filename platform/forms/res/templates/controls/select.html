@@ -1,6 +1,6 @@
 <select class='form-control input select'
         ng-model="ngModel[field]"
-        ng-options="o.name for o in options"
+        ng-options="opt.value as opt.name for opt in options"
         ng-required="ngRequired"
         name="mctControl">
     <option value="" ng-if="!ngModel[field]">- Select One -</option>
