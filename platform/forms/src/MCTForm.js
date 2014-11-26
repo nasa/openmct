@@ -22,7 +22,7 @@ define(
             return {
                 restrict: "E",
                 templateUrl: templatePath,
-                scope: { structure: "=", model: "=ngModel" }
+                scope: { structure: "=", ngModel: "=ngModel" }
             };
         }
 

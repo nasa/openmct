@@ -21,7 +21,9 @@ define(
             function controller($scope) {
                 $scope.$watch("key", function (key) {
                     // Pass the template URL to ng-include via scope.
-                    $scope.inclusion = controlMap[$scope.key];
+                    $scope.inclusion = controlMap[key];
+                    console.log(key);
+                    console.log($scope.inclusion);
                 });
             }
 
@@ -36,14 +38,35 @@ define(
                 // template path
                 template: '<ng-include src="inclusion"></ng-include>',
 
+                // ngOptions is terminal, so we need to be higher priority
+                priority: 1000,
+
                 // Pass through Angular's normal input field attributes
                 scope: {
+                    // Used to choose which form control to use
+                    key: "=",
+
+                    // The state of the form value itself
                     ngModel: "=",
-                    ngOptions: "=",
+
+                    // Enabled/disabled state
                     ngDisabled: "=",
-                    ngPattern: "="
+
+                    // Pattern (for input fields)
+                    ngPattern: "=",
+
+                    // Set of choices (if any)
+                    options: "=",
+
+                    // Structure (subtree of Form Structure)
+                    structure: "=",
+
+                    // Name, as in "<input name="...
+                    name: "@"
                 }
             };
         }
+
+        return MCTControl;
     }
 );

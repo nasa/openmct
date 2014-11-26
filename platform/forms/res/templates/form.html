@@ -1,38 +1,42 @@
-<b>{{structure.name}}</b>
+<form name="{{structure.key}}">
+
 <div class="form">
     <span ng-repeat="section in structure.sections">
-        <div class="section-header">{{section.name}}</div>
+        <div class="section-header" ng-if="section.name">
+            {{section.name}}
+        </div>
         <div class="form-section">
-            <!--<div ng-repeat="row in section.rows" class="form-row validates">-->
-                <!--<div class='label'>{{row.name}}</div>-->
-                <!--<div class='controls {cssclass}'>-->
-                    <!--<div class="wrapper">-->
-                        <!--&lt;!&ndash;{{row.control}} - {{model[row.key]}}&ndash;&gt;-->
-                        <!--<span class="ui-symbol req" ng-show="row.required">*</span>-->
-                        <!--<mct-include key="row.control" ng-model="model[row.key]"></mct-include>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
-            <div ng-repeat="row in section.rows" class="form-row validates">
-                <div class='label'>{{row.name}}</div>
-                <div class='controls {cssclass}'>
-                    <div ng-repeat="item in row.items" class="validates">
+            <div ng-repeat="row in section.rows"
+                 class="form-row validates"
+                 ng-class="{ required: row.required }">
 
-                        <div>
-                            {{item.control}} | Item.Key={{item.key}} | model={{model[item.key]}}
-                            <span class="ui-symbol req" ng-show="item.required">*</span>
-                            <mct-include key="item.control" ng-model="model[item.key]" id="item.key"></mct-include>
-                        </div>
+                <div class='label'>{{row.name}}</div>
+                <div class='controls'>
+                    <div class="wrapper" ng-if="row.control">
+                        <mct-control key="row.control"
+                                     ng-model="ngModel"
+                                     ng-required="row.required"
+                                     ng-pattern="row.pattern"
+                                     options="row.options"
+                                     structure="row"
+                                     name="{{row.key}}">
+                        </mct-control>
+                    </div>
+                    <div ng-repeat="item in row.items" class="validates">
+                        <mct-control key="item.control"
+                                     ng-model="ngModel"
+                                     ng-required="item.required"
+                                     ng-pattern="item.pattern"
+                                     options="item.options"
+                                     structure="item"
+                                     name="{{item.key}}">
+                        </mct-control>
                     </div>
                 </div>
+
             </div>
         </div>
     </span>
-    <div class="form-section">
-        <div class="form-row" ng-if="structure.submit">
-            <a class='btn lg major' href=''>{{structure.submit}}</a>
-        </div>
-    </div>
-<span ng-click="model.foo='Foo'">CLICK!</span>
-<div>Model: {{model | json}}</div>
 </div>
+
+</form>
