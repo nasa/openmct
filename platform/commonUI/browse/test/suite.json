@@ -1,0 +1,12 @@
+[
+    "BrowseController",
+    "ViewSwitcherController",
+    "creation/CreateAction",
+    "creation/CreateActionProvider",
+    "creation/CreateMenuController",
+    "creation/CreateWizard",
+    "creation/CreationService",
+    "navigation/NavigateAction",
+    "navigation/NavigationService",
+    "windowing/FullscreenAction"
+]
