@@ -1,4 +1,4 @@
-/*global define,Promise*/
+/*global define*/
 
 define(
     [],
@@ -25,6 +25,20 @@ define(
             domainObject,
             cache
         ) {
+
+            // Simulate Promise.resolve (or $q.when); the former
+            // causes a delayed reaction from Angular (since it
+            // does not trigger a digest) and the latter is not
+            // readily accessible, since we're a few classes
+            // removed from the layer which gets dependency
+            // injection.
+            function resolvePromise(value) {
+                return value && value.then ? value : {
+                    then: function (callback) {
+                        return resolvePromise(callback(value));
+                    }
+                };
+            }
 
             // Update the underlying, "real" domain object's model
             // with changes made to the copy used for editing.
@@ -60,7 +74,7 @@ define(
                  *          persistence has completed.
                  */
                 save: function () {
-                    return Promise.resolve(doMutate())
+                    return resolvePromise(doMutate())
                         .then(doPersist)
                         .then(markClean)
                         .then(saveOthers);
@@ -73,7 +87,7 @@ define(
                  *          cancellation has completed.
                  */
                 cancel: function () {
-                    return Promise.resolve(undefined);
+                    return resolvePromise(undefined);
                 }
             };
         };
