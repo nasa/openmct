@@ -72,11 +72,7 @@
             {
                 "key": "creationService",
                 "implementation": "creation/CreationService.js",
-                "depends": [ "persistenceService", "uuidService", "$q", "$log" ]
-            },
-            {
-                "key": "uuidService",
-                "implementation": "creation/UUIDService.js"
+                "depends": [ "persistenceService", "$q", "$log" ]
             }
         ],
         "actions": [

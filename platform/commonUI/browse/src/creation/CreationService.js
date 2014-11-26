@@ -4,8 +4,8 @@
  * Module defining CreateService. Created by vwoeltje on 11/10/14.
  */
 define(
-    [],
-    function () {
+    ["../../lib/uuid"],
+    function (uuid) {
         "use strict";
 
         var NON_PERSISTENT_WARNING =
@@ -14,10 +14,11 @@ define(
                 "Could not add to composition; no composition in ";
 
         /**
-         *
+         * The creation service is responsible for instantiating and
+         * persisting new domain objects. This is
          * @constructor
          */
-        function CreationService(persistenceService, uuidService, $q, $log) {
+        function CreationService(persistenceService, $q, $log) {
 
             function doPersist(space, id, model) {
                 return persistenceService.createObject(
@@ -66,7 +67,7 @@ define(
                 if (persistence) {
                     space = persistence.getSpace();
                     return $q.when(
-                        uuidService.getUUID()
+                        uuid()
                     ).then(function (id) {
                         return doPersist(space, id, model);
                     }).then(function (id) {

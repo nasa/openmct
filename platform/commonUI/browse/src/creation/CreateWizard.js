@@ -24,6 +24,14 @@ define(
                 properties = type.getProperties();
 
             return {
+                /**
+                 * Get the form model for this wizard; this is a description
+                 * that will be rendered to an HTML form. See the
+                 * platform/forms bundle
+                 *
+                 * @return {FormModel} formModel the form model to
+                 *         show in the create dialog
+                 */
                 getFormModel: function () {
                     var parentRow = Object.create(parent),
                         sections = [];
@@ -51,9 +59,19 @@ define(
                         name: "Create a New " + type.getName()
                     };
                 },
+                /**
+                 * Based on a populated form, get the domain object which
+                 * should be used as a parent for the newly-created object.
+                 * @return {DomainObject}
+                 */
                 getLocation: function (formValue) {
                     return formValue.createParent || parent;
                 },
+                /**
+                 * Create the domain object model for a newly-created object,
+                 * based on user input read from a formModel.
+                 * @return {object} the domain object' model
+                 */
                 createModel: function (formValue) {
                     // Clone
                     var newModel = JSON.parse(JSON.stringify(model));
