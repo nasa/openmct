@@ -9,6 +9,152 @@ define(
         "use strict";
 
         describe("The creation service", function () {
+            var mockPersistenceService,
+                mockQ,
+                mockLog,
+                mockParentObject,
+                mockMutationCapability,
+                mockPersistenceCapability,
+                mockCapabilities,
+                creationService;
+
+            function mockPromise(value) {
+                return (value && value.then) ? value : {
+                    then: function (callback) {
+                        return mockPromise(callback(value));
+                    }
+                };
+            }
+
+            function mockReject(value) {
+                return {
+                    then: function (callback, error) {
+                        return mockPromise(error(value));
+                    }
+                };
+            }
+
+            beforeEach(function () {
+                mockPersistenceService = jasmine.createSpyObj(
+                    "persistenceService",
+                    [ "createObject" ]
+                );
+                mockQ = { when: mockPromise, reject: mockReject };
+                mockLog = jasmine.createSpyObj(
+                    "$log",
+                    [ "error", "warn", "info", "debug" ]
+                );
+                mockParentObject = jasmine.createSpyObj(
+                    "parentObject",
+                    [ "getId", "getCapability", "useCapability" ]
+                );
+                mockMutationCapability = jasmine.createSpyObj(
+                    "mutation",
+                    [ "invoke" ]
+                );
+                mockPersistenceCapability = jasmine.createSpyObj(
+                    "persistence",
+                    [ "persist", "getSpace" ]
+                );
+                mockCapabilities = {
+                    mutation: mockMutationCapability,
+                    persistence: mockPersistenceCapability
+                };
+
+                mockPersistenceService.createObject.andReturn(
+                    mockPromise(true)
+                );
+
+                mockParentObject.getCapability.andCallFake(function (key) {
+                    return mockCapabilities[key];
+                });
+                mockParentObject.useCapability.andCallFake(function (key, value) {
+                    return mockCapabilities[key].invoke(value);
+                });
+
+                mockMutationCapability.invoke.andReturn(mockPromise(true));
+                mockPersistenceCapability.getSpace.andReturn("testSpace");
+
+                creationService = new CreationService(
+                    mockPersistenceService,
+                    mockQ,
+                    mockLog
+                );
+            });
+
+            it("allows new objects to be created", function () {
+                var model = { someKey: "some value" };
+                creationService.createObject(model, mockParentObject);
+                expect(mockPersistenceService.createObject).toHaveBeenCalledWith(
+                    "testSpace",
+                    jasmine.any(String), // the object id; generated UUID
+                    model
+                );
+            });
+
+            it("adds new id's to the parent's composition", function () {
+                var model = { someKey: "some value" },
+                    parentModel = { composition: ["notAnyUUID"] };
+                creationService.createObject(model, mockParentObject);
+
+                // Invoke the mutation callback
+                expect(mockMutationCapability.invoke).toHaveBeenCalled();
+                mockMutationCapability.invoke.mostRecentCall.args[0](parentModel);
+
+                // Should have a longer composition now, with the new UUID
+                expect(parentModel.composition.length).toEqual(2);
+            });
+
+            it("warns if parent has no composition", function () {
+                var model = { someKey: "some value" },
+                    parentModel = { };
+                creationService.createObject(model, mockParentObject);
+
+                // Verify precondition; no prior warnings
+                expect(mockLog.warn).not.toHaveBeenCalled();
+
+                // Invoke the mutation callback
+                expect(mockMutationCapability.invoke).toHaveBeenCalled();
+                mockMutationCapability.invoke.mostRecentCall.args[0](parentModel);
+
+                // Should have a longer composition now, with the new UUID
+                expect(mockLog.warn).toHaveBeenCalled();
+                // Composition should still be undefined
+                expect(parentModel.composition).toBeUndefined();
+            });
+
+
+            it("warns if parent has no persistence capability", function () {
+                // Callbacks
+                var success = jasmine.createSpy("success"),
+                    failure = jasmine.createSpy("failure");
+
+                mockCapabilities.persistence = undefined;
+                creationService.createObject({}, mockParentObject).then(
+                    success,
+                    failure
+                );
+
+                // Should have warned and rejected the promise
+                expect(mockLog.warn).toHaveBeenCalled();
+                expect(success).not.toHaveBeenCalled();
+                expect(failure).toHaveBeenCalled();
+
+            });
+
+            it("logs an error when mutaton fails", function () {
+                // If mutation of the parent fails, we've lost the
+                // created object - this is an error.
+                var model = { someKey: "some value" },
+                    parentModel = { composition: ["notAnyUUID"] };
+
+                mockMutationCapability.invoke.andReturn(mockPromise(false));
+
+                creationService.createObject(model, mockParentObject);
+
+                expect(mockLog.error).toHaveBeenCalled();
+            });
+
 
         });
     }
