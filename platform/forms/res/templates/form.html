@@ -18,23 +18,26 @@
                     </span>
                 </div>
                 <div class='controls'>
-                    <div class="wrapper" ng-if="row.control">>
-                        <mct-control key="row.control"
-                                     ng-model="ngModel"
-                                     ng-required="row.required"
-                                     options="row.options"
-                                     structure="row"
-                                     name="{{row.key}}">
-                        </mct-control>
+                    <div class="wrapper" ng-if="row.control">
+                        <ng-form name="mctFormInner">
+                            <mct-control key="row.control"
+                                         ng-model="ngModel"
+                                         ng-required="row.required"
+                                         options="row.options"
+                                         structure="row"
+                                         field="row.key">
+                            </mct-control>
+                        </ng-form>
                     </div>
                     <div ng-repeat="item in row.items" class="validates">
-                        <mct-control key="item.control"
-                                     ng-model="ngModel"
-                                     ng-required="item.required"
-                                     options="item.options"
-                                     structure="item"
-                                     name="{{item.key}}">
-                        </mct-control>
+                        <ng-form name="mctFormInner">
+                            <mct-control key="item.control"
+                                         ng-model="ngModel"
+                                         ng-required="item.required"
+                                         options="item.options"
+                                         structure="item">
+                            </mct-control>
+                        </ng-form>
                     </div>
                 </div>
 

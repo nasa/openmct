@@ -1,7 +1,7 @@
 <select class='form-control input select'
-        ng-model="ngModel[name]"
+        ng-model="ngModel[field]"
         ng-options="o.name for o in options"
-        name="name">
-    <option value="" ng-if="!ngModel[name]">- Select One -</option>
+        name="mctControl">
+    <option value="" ng-if="!ngModel[field]">- Select One -</option>
     <span class='ui-symbol arw colorKey'>v</span>
 </select>

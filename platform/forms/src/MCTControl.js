@@ -60,7 +60,7 @@ define(
                     structure: "=",
 
                     // Name, as in "<input name="...
-                    name: "@"
+                    field: "="
                 }
             };
         }

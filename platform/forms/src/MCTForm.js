@@ -21,8 +21,9 @@ define(
 
             function controller($scope) {
                 $scope.$watch("mctForm", function (mctForm) {
+                    console.log(JSON.stringify(mctForm));
                     if ($scope.name) {
-                        $scope.$parent.mctForm = mctForm;
+                        $scope.$parent[$scope.name] = mctForm;
                     }
                 });
             }
