@@ -1,0 +1,42 @@
+{
+  "name": "MCT Forms",
+  "description": "Form generator; includes directive and some controls.",
+  "extensions": {
+    "directives": [
+      {
+        "key": "mctForm",
+        "implementation": "MCTForm.js"
+      }
+    ],
+    "templates": [
+      {
+        "key": "_checkbox",
+        "templateUrl": "templates/_checkbox.html"
+      },
+      {
+        "key": "_checkboxes",
+        "templateUrl": "templates/_checkboxes.html"
+      },
+      {
+        "key": "_datetime",
+        "templateUrl": "templates/_datetime.html"
+      },
+      {
+        "key": "_select",
+        "templateUrl": "templates/_select.html"
+      },
+      {
+        "key": "_selects",
+        "templateUrl": "templates/_selects.html"
+      },
+      {
+        "key": "_textfield",
+        "templateUrl": "templates/_textfield.html"
+      },
+      {
+        "key": "_textfields",
+        "templateUrl": "templates/_textfields.html"
+      }
+    ]
+  }
+}
