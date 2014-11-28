@@ -8,6 +8,8 @@ define(
     function () {
         "use strict";
 
+        var MATCH_ALL = /^.*$/;
+
         /**
          *
          * @constructor
@@ -20,18 +22,47 @@ define(
             ].join("/");
 
             function controller($scope) {
+                var regexps = [],
+                    matchAll = /.*/;
+
+                // ng-pattern seems to want a RegExp, and not a
+                // string (despite what documentation says) but
+                // we want form structure to be JSON-expressible,
+                // so we make RegExp's from strings as-needed
+                function getRegExp(pattern) {
+                    // If undefined, don't apply a pattern
+                    if (!pattern) {
+                        return MATCH_ALL;
+                    }
+
+                    // Just echo if it's already a regexp
+                    if (pattern instanceof RegExp) {
+                        return pattern;
+                    }
+
+                    // Otherwise, assume a string
+                    // Cache for easy lookup later (so we don't
+                    // creat a new RegExp every digest cycle)
+                    if (!regexps[pattern]) {
+                        regexps[pattern] = new RegExp(pattern);
+                    }
+
+                    return regexps[pattern];
+                }
+
                 $scope.$watch("mctForm", function (mctForm) {
-                    console.log(JSON.stringify(mctForm));
                     if ($scope.name) {
                         $scope.$parent[$scope.name] = mctForm;
                     }
                 });
+
+                $scope.getRegExp = getRegExp;
             }
 
             return {
                 restrict: "E",
                 templateUrl: templatePath,
-                link: controller,
+                controller: controller,
                 scope: {
                     structure: "=",
                     ngModel: "=",
