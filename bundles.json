@@ -2,11 +2,11 @@
     "platform/framework",
     "platform/core",
     "platform/representation",
+    "platform/commonUI/browse",
+    "platform/commonUI/edit",
     "platform/commonUI/dialog",
     "platform/commonUI/general",
     "platform/forms",
-
-    "example/forms",
 
     "example/persistence"
 ]
