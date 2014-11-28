@@ -1,8 +1,10 @@
 /*global define*/
 
 define(
-    [],
+    ["../../lib/moment.min"],
     function () {
+
+        var DATE_FORMAT = "YYYY-DDD";
 
         function DateTimeController($scope) {
 
@@ -10,14 +12,15 @@ define(
                 var date = $scope.datetime.date,
                     hour = $scope.datetime.hour,
                     min = $scope.datetime.min,
-                    sec = $scope.datetime.sec;
+                    sec = $scope.datetime.sec,
+                    fullDateTime = moment.utc(date, DATE_FORMAT)
+                            .hour(hour || 0)
+                            .minute(min || 0)
+                            .second(sec || 0);
 
-                $scope.ngModel[$scope.field] = [
-                    date,
-                    hour,
-                    min,
-                    sec
-                ].join(".");
+                if (fullDateTime.isValid()) {
+                    $scope.ngModel[$scope.field] = fullDateTime.valueOf();
+                }
             }
 
             $scope.$watch("datetime.date", update);
