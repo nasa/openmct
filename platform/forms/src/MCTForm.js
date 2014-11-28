@@ -8,7 +8,8 @@ define(
     function () {
         "use strict";
 
-        var MATCH_ALL = /^.*$/;
+        // Default ng-pattern; any non whitespace
+        var NON_WHITESPACE = /\S/;
 
         /**
          * The mct-form directive allows generation of displayable
@@ -37,8 +38,7 @@ define(
             ].join("/");
 
             function controller($scope) {
-                var regexps = [],
-                    matchAll = /.*/;
+                var regexps = [];
 
                 // ng-pattern seems to want a RegExp, and not a
                 // string (despite what documentation says) but
@@ -47,7 +47,7 @@ define(
                 function getRegExp(pattern) {
                     // If undefined, don't apply a pattern
                     if (!pattern) {
-                        return MATCH_ALL;
+                        return NON_WHITESPACE;
                     }
 
                     // Just echo if it's already a regexp
