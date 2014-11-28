@@ -1,0 +1,19 @@
+<div ng-controller="ExampleFormController">
+    <mct-form structure="form" ng-model="state" name="aForm">
+    </mct-form>
+
+
+    <ul>
+        <li>Dirty: {{aForm.$dirty}}</li>
+        <li>Valid: {{aForm.$valid}}</li>
+    </ul>
+
+    <pre>
+
+
+    <textarea>
+    {{state | json}}
+    </textarea>
+
+    </pre>
+</div>
