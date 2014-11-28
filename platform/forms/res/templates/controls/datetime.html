@@ -1,4 +1,5 @@
 <div class='form-control complex datetime'>
+
     <div class='field-hints'>
         <span class='hint date'>Date</span>
         <span class='hint time sm'>Hour</span>
@@ -7,22 +8,43 @@
         <span class='hint timezone'>Timezone</span>
     </div>
 
-    <div class='fields'>
-        <span class='field control date'>
-            <input type='text' name='date' />
-        </span>
-        <span class='field control time sm'>
-            <input type='text' name='hour' maxlength='2' />
-        </span>
-        <span class='field control time sm'>
-            <input type='text' name='min' maxlength='2' />
-        </span>
-        <span class='field control time sm'>
-            <input type='text' name='sec' maxlength='2' />
-        </span>
-        <span class='field control timezone'>
-            UTC
-        </span>
-    </div>
-</div>
+
+    <ng-form name="mctControl">
+        <div class='fields' ng-controller="DateTimeController">
+            <span class='field control date'>
+                <input type='text'
+                       name='date'
+                       placeholder="YYYY-DDD"
+                       ng-pattern="/\d\d\d\d-\d\d\d/"
+                       ng-model='datetime.date'
+                       ng-required='true'/>
+            </span>
+            <span class='field control time sm'>
+                <input type='text'
+                       name='hour'
+                       maxlength='2'
+                       ng-model="datetime.hour"
+                       ng-required='true'/>
+            </span>
+            <span class='field control time sm'>
+                <input type='text'
+                       name='min'
+                       maxlength='2'
+                       ng-model="datetime.min"
+                       ng-required='true'/>
+            </span>
+            <span class='field control time sm'>
+                <input type='text'
+                       name='sec'
+                       maxlength='2'
+                       ng-model="datetime.sec"
+                       ng-required='true'/>
+            </span>
+            <span class='field control timezone'>
+                UTC
+            </span>
+        </div>
+    </ng-form>
+
+
 </div>

@@ -31,6 +31,13 @@
                 "templateUrl": "templates/controls/textfield.html"
             }
         ],
+        "controllers": [
+            {
+                "key": "DateTimeController",
+                "implementation": "controllers/DateTimeController.js",
+                "depends": [ "$scope" ]
+            }
+        ],
         "templates": [
             {
                 "key": "_checkbox",
