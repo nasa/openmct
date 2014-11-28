@@ -5,6 +5,14 @@ define(
     function () {
         "use strict";
 
+        /**
+         * The mct-control will dynamically include the control
+         * for a form element based on a symbolic key. Individual
+         * controls are defined under the extension category
+         * `controls`; this allows plug-ins to introduce new form
+         * control types while still making use of the form
+         * generator to ensure an overall consistent form style.
+         */
         function MCTControl(controls) {
             var controlMap = {};
 

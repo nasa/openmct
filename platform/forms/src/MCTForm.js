@@ -11,6 +11,21 @@ define(
         var MATCH_ALL = /^.*$/;
 
         /**
+         * The mct-form directive allows generation of displayable
+         * forms based on a declarative description of the form's
+         * structure.
+         *
+         * This directive accepts three attributes:
+         *
+         * * `ng-model`: The model for the form; where user input
+         *   where be stored.
+         * * `structure`: The declarative structure of the form.
+         *   Describes what controls should be shown and where
+         *   their values should be read/written in the model.
+         * * `name`: The name under which to expose the form's
+         *   dirty/valid state. This is similar to ng-form's use
+         *   of name, except this will be made available in the
+         *   parent scope.
          *
          * @constructor
          */
@@ -50,6 +65,8 @@ define(
                     return regexps[pattern];
                 }
 
+                // Publish the form state under the requested
+                // name in the parent scope
                 $scope.$watch("mctForm", function (mctForm) {
                     if ($scope.name) {
                         $scope.$parent[$scope.name] = mctForm;
@@ -60,12 +77,26 @@ define(
             }
 
             return {
+                // Only show at the element level
                 restrict: "E",
+
+                // Load the forms template
                 templateUrl: templatePath,
+
+                // Use the controller defined above to
+                // populate/respond to changes in scope
                 controller: controller,
+
+                // Initial an isolate scope
                 scope: {
-                    structure: "=",
+
+                    // The model: Where form input will actually go
                     ngModel: "=",
+
+                    // Form structure; what sections/rows to show
+                    structure: "=",
+
+                    // Name under which to publish the form
                     name: "@"
                 }
             };
