@@ -1,0 +1,34 @@
+{
+    "name": "Data bundle",
+    "description": "Interfaces and infrastructure for real-time and historical data.",
+    "extensions": {
+        "components": [
+            {
+                "provides": "telemetryService",
+                "type": "aggregator",
+                "implementation": "TelemetryAggregator.js",
+                "depends": [ "$q" ]
+            }
+        ],
+        "controllers": [
+            {
+                "key": "TelemetryController",
+                "implementation": "TelemetryController.js",
+                "depends": [ "$scope", "$q", "$timeout", "$log" ]
+            }
+        ],
+        "capabilities": [
+            {
+                "key": "telemetry",
+                "implementation": "TelemetryCapability.js",
+                "depends": [ "telemetryService" ]
+            }
+        ],
+        "services": [
+            {
+                "key": "telemetryHelper",
+                "implementation": "TelemetryHelper.js"
+            }
+        ]
+    }
+}
