@@ -66,9 +66,6 @@ define(
                     telemetry: { source: "testSource" }
                 })).toBeTruthy();
                 expect(TelemetryCapability.appliesTo({
-                    telemetry: { xsource: "testSource" }
-                })).toBeFalsy();
-                expect(TelemetryCapability.appliesTo({
                     xtelemetry: { source: "testSource" }
                 })).toBeFalsy();
                 expect(TelemetryCapability.appliesTo({})).toBeFalsy();
