@@ -1,4 +1,4 @@
-/*global define,Promise*/
+/*global define*/
 
 /**
  * Module defining Telemetry. Created by vwoeltje on 11/12/14.

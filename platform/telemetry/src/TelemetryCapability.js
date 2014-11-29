@@ -1,4 +1,4 @@
-/*global define,Promise*/
+/*global define*/
 
 /**
  * Module defining TelemetryCapability. Created by vwoeltje on 11/12/14.
@@ -63,7 +63,7 @@ define(
 
         TelemetryCapability.appliesTo = function (model) {
             return model.telemetry;
-        }
+        };
 
         return TelemetryCapability;
     }

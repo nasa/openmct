@@ -1,4 +1,4 @@
-/*global define,Float32Array,Promise*/
+/*global define,Float32Array*/
 
 /**
  * Module defining TelemetryHelper. Created by vwoeltje on 11/14/14.
