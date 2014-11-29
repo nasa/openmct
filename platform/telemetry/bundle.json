@@ -23,12 +23,6 @@
                 "implementation": "TelemetryCapability.js",
                 "depends": [ "telemetryService" ]
             }
-        ],
-        "services": [
-            {
-                "key": "telemetryHelper",
-                "implementation": "TelemetryHelper.js"
-            }
         ]
     }
 }
