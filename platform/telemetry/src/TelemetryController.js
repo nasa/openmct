@@ -10,33 +10,13 @@ define(
 
         /**
          * Serves as a reusable controller for views (or parts of views)
-         * which need to issue, use telemetry controls.
+         * which need to issue requests for telemetry data and use the
+         * results
          *
          * @constructor
          */
         function TelemetryController($scope, $q, $timeout, $log) {
-           /*
-           Want a notion of "the data set": All the latest data.
-           It can look like:
-           {
-               "source": {
-                     "key": {
-                          ...Telemetry object...
-                     }
-                }
-           }
 
-           Then, telemetry controller should provide:
-           {
-               // Element for which there is telemetry data available
-               elements: [ { <-- the objects to view
-                   name: ...human-readable
-                   metadata: ...
-                   object: ...the domain object
-                   data: ...telemetry data for that element
-               } ]
-           }
-            */
             var self = {
                 ids: [],
                 response: {},
@@ -91,9 +71,7 @@ define(
                 }));
             }
 
-            function promiseRelevantDomainObjects() {
-                var domainObject = $scope.domainObject;
-
+            function promiseRelevantDomainObjects(domainObject) {
                 if (!domainObject) {
                     return $q.when([]);
                 }
@@ -130,6 +108,14 @@ define(
                         domainObject.getId(),
                         " but none was found."
                     ].join(""));
+
+                    self.response[domainObject.getId()] = {
+                        name: domainObject.getModel().name,
+                        domainObject: domainObject,
+                        metadata: {},
+                        pending: 0,
+                        data: {}
+                    };
                 }
             }
 
@@ -149,8 +135,9 @@ define(
                 }
             }
 
-            function getTelemetryObjects() {
-                promiseRelevantDomainObjects().then(buildResponseContainers);
+            function getTelemetryObjects(domainObject) {
+                promiseRelevantDomainObjects(domainObject)
+                    .then(buildResponseContainers);
             }
 
             function startTimeout() {
@@ -163,7 +150,7 @@ define(
 
                         self.refreshing = false;
                         startTimeout();
-                    }, 1000);
+                    }, self.interval);
                 }
             }
 

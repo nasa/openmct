@@ -12,10 +12,27 @@ define(
          *
          * @constructor
          */
-        function TelemetryCapability(telemetryService, domainObject) {
+        function TelemetryCapability($injector, $q, $log, domainObject) {
+            var telemetryService;
+
+            // We could depend on telemetryService directly, but
+            // there isn't a platform implementation of this;
+            function getTelemetryService() {
+                if (!telemetryService) {
+                    try {
+                        telemetryService =
+                            $q.when($injector.get("telemetryService"));
+                    } catch (e) {
+                        $log.warn("Telemetry service unavailable");
+                        telemetryService = $q.reject(e);
+                    }
+                }
+                return telemetryService;
+            }
+
             function buildRequest(request) {
                 var type = domainObject.getCapability("type"),
-                    typeRequest = type.getDefinition().telemetry || {},
+                    typeRequest = (type && type.getDefinition().telemetry) || {},
                     modelTelemetry = domainObject.getModel().telemetry,
                     fullRequest = Object.create(typeRequest);
 
@@ -45,10 +62,15 @@ define(
                     key = fullRequest.key;
 
                 function getRelevantResponse(response) {
-                    return (response[source] || {})[key] || {};
+                    return ((response || {})[source] || {})[key] || {};
                 }
 
-                return telemetryService.requestTelemetry([fullRequest])
+                function requestTelemetryFromService(telemetryService) {
+                    return telemetryService.requestTelemetry([fullRequest]);
+                }
+
+                return getTelemetryService()
+                        .then(requestTelemetryFromService)
                         .then(getRelevantResponse);
             }
 
@@ -57,12 +79,13 @@ define(
                 getMetadata: function () {
                     return buildRequest({});
                 }
-                //subscribe: subscribe
             };
         }
 
         TelemetryCapability.appliesTo = function (model) {
-            return model.telemetry;
+            return (model &&
+                    model.telemetry &&
+                    model.telemetry.source) ? true : false;
         };
 
         return TelemetryCapability;

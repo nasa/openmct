@@ -21,7 +21,7 @@
             {
                 "key": "telemetry",
                 "implementation": "TelemetryCapability.js",
-                "depends": [ "telemetryService" ]
+                "depends": [ "$injector", "$q", "$log" ]
             }
         ]
     }
