@@ -7,6 +7,9 @@ define(
     function () {
         'use strict';
 
+        // Prepare different forms of the palette, since we wish to
+        // describe colors in several ways (as RGB 0-255, as
+        // RGB 0.0-1.0, or as stylesheet-appropriate #-prefixed colors).
         var integerPalette = [
             [ 0x20, 0xB2, 0xAA ],
             [ 0x9A, 0xCD, 0x32 ],
@@ -41,25 +44,31 @@ define(
         ], stringPalette = integerPalette.map(function (arr) {
             // Convert to # notation for use in styles
             return '#' + arr.map(function (c) {
-                    return (c < 16 ? '0' : '') + c.toString(16);
-                }).join('');
+                return (c < 16 ? '0' : '') + c.toString(16);
+            }).join('');
         }), floatPalette = integerPalette.map(function (arr) {
             return arr.map(function (c) {
                 return c / 255.0;
             }).concat([1]); // RGBA
         });
 
-        return {
-            getIntegerColor: function (i) {
-                return integerPalette[Math.floor(i) % integerPalette.length];
-            },
-            getFloatColor: function (i) {
-                return floatPalette[Math.floor(i) % floatPalette.length];
-            },
-            getStringColor: function (i) {
-                return stringPalette[Math.floor(i) % stringPalette.length];
-            }
+        function PlotPalette() {
+            return PlotPalette;
+        }
+
+        PlotPalette.getIntegerColor = function (i) {
+            return integerPalette[Math.floor(i) % integerPalette.length];
         };
+
+        PlotPalette.getFloatColor = function (i) {
+            return floatPalette[Math.floor(i) % floatPalette.length];
+        };
+
+        PlotPalette.getStringColor = function (i) {
+            return stringPalette[Math.floor(i) % stringPalette.length];
+        };
+
+        return PlotPalette;
 
     }
 );
