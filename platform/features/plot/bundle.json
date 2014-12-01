@@ -1,0 +1,27 @@
+{
+    "name": "Plot view for telemetry",
+    "extensions": {
+        "views": [
+            {
+                "name": "Plot",
+                "templateUrl": "templates/plot.html",
+                "needs": [ "telemetry" ],
+                "delegation": true
+            }
+        ],
+        "directives": [
+            {
+                "key": "mctChart",
+                "implementation": "MCTChart.js",
+                "depends": [ "$interval" ]
+            }
+        ],
+        "controllers": [
+            {
+                "key": "PlotController",
+                "implementation": "PlotController.js",
+                "depends": [ "$scope" ]
+            }
+        ]
+    }
+}
