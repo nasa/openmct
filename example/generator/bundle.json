@@ -1,0 +1,40 @@
+{
+    "name": "Sine Wave Generator",
+    "description": "Example of a component that produces dataa.",
+    "extensions": {
+        "components": [
+            {
+                "implementation": "SinewaveTelemetryProvider.js",
+                "type": "provider",
+                "provides": "telemetryService",
+                "depends": [ "$q", "$timeout" ]
+            }
+        ],
+        "types": [
+            {
+                "key": "generator",
+                "name": "Sine Wave Generator",
+                "glyph": "T",
+                "description": "A sine wave generator",
+                "model": {
+                    "telemetry": {
+                        "period": 10
+                    }
+                },
+                "telemetry": {
+                    "source": "generator"
+                },
+                "properties": [
+                    {
+                        "label": "Period",
+                        "control": "_textfield",
+                        "key": "period",
+                        "required": true,
+                        "property": [ "telemetry", "period" ],
+                        "pattern": "^\\d*(\\.\\d*)?$"
+                    }
+                ]
+            }
+        ]
+    }
+}
