@@ -8,9 +8,10 @@ define(
         "./PlotPreparer",
         "./PlotPalette",
         "./PlotPanZoomStack",
+        "./PlotPosition",
         "../lib/moment.min.js"
     ],
-    function (PlotPreparer, PlotPalette, PlotPanZoomStack) {
+    function (PlotPreparer, PlotPalette, PlotPanZoomStack, PlotPosition) {
         "use strict";
 
         var AXIS_DEFAULTS = [
@@ -44,30 +45,15 @@ define(
                 return (i ? formatRangeValue : formatDomainValue)(v);
             }
 
-
-            function pixelToDomainRange(x, y, width, height, domainOffset) {
-                var panZoom = panZoomStack.getPanZoom(),
-                    offset = [ domainOffset || 0, 0 ],
-                    origin = panZoom.origin,
-                    dimensions = panZoom.dimensions;
-
-                if (!dimensions || !origin) {
-                    return [];
-                }
-
-                return [ x / width, (height - y) / height ].map(function (v, i) {
-                    return v * dimensions[i] + origin[i] + offset[i];
-                });
-            }
-
             function mousePositionToDomainRange(mousePosition, domainOffset) {
-                return pixelToDomainRange(
+                return new PlotPosition(
                     mousePosition.x,
                     mousePosition.y,
                     mousePosition.width,
                     mousePosition.height,
+                    panZoomStack,
                     domainOffset
-                );
+                ).getPosition();
             }
 
             function generateTicks(start, span, count, format) {
