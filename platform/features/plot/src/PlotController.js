@@ -4,8 +4,8 @@
  * Module defining PlotController. Created by vwoeltje on 11/12/14.
  */
 define(
-    ["./GLPlotPreparer", "./PlotPalette", "../lib/moment.min.js"],
-    function (GLPlotPreparer, PlotPalette) {
+    ["./PlotPreparer", "./PlotPalette", "../lib/moment.min.js"],
+    function (PlotPreparer, PlotPalette) {
         "use strict";
 
         var AXIS_DEFAULTS = [
@@ -110,7 +110,7 @@ define(
 
                 data = telemetry.getResponse();
 
-                prepared = new GLPlotPreparer(
+                prepared = new PlotPreparer(
                     data,
                     ($scope.axes[0].active || {}).key,
                     ($scope.axes[1].active || {}).key

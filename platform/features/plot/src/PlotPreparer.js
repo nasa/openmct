@@ -10,7 +10,7 @@ define(
 
         function identity(x) { return x; }
 
-        function GLPlotPreparer(datas, domain, range) {
+        function PlotPreparer(datas, domain, range) {
             var index,
                 vertices = [],
                 max = [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY],
@@ -86,7 +86,7 @@ define(
             };
         }
 
-        return GLPlotPreparer;
+        return PlotPreparer;
 
     }
 );
