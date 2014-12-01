@@ -24,7 +24,7 @@ define(
                 "}"
             ].join('\n');
 
-        function GLPlot(canvas) {
+        function GLChart(canvas) {
             var gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl"),
                 vertexShader,
                 fragmentShader,
@@ -94,6 +94,6 @@ define(
                 gl: gl
             };
         }
-        return GLPlot;
+        return GLChart;
     }
 );

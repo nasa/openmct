@@ -4,8 +4,8 @@
  * Module defining MCTChart. Created by vwoeltje on 11/12/14.
  */
 define(
-    ["./GLPlot"],
-    function (GLPlot) {
+    ["./GLChart"],
+    function (GLChart) {
         "use strict";
 
         var TEMPLATE = "<canvas style='position: absolute; background: none; width: 100%; height: 100%;'></canvas>";
@@ -18,7 +18,7 @@ define(
 
             function linkChart(scope, element) {
                 var canvas = element.find("canvas")[0],
-                    chart = new GLPlot(canvas);
+                    chart = new GLChart(canvas);
 
                 function doDraw() {
                     var draw = scope.draw;
