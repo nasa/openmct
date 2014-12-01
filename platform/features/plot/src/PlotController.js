@@ -4,8 +4,13 @@
  * Module defining PlotController. Created by vwoeltje on 11/12/14.
  */
 define(
-    ["./PlotPreparer", "./PlotPalette", "../lib/moment.min.js"],
-    function (PlotPreparer, PlotPalette) {
+    [
+        "./PlotPreparer",
+        "./PlotPalette",
+        "./PlotPanZoomStack",
+        "../lib/moment.min.js"
+    ],
+    function (PlotPreparer, PlotPalette, PlotPanZoomStack) {
         "use strict";
 
         var AXIS_DEFAULTS = [
@@ -22,10 +27,7 @@ define(
         function PlotController($scope) {
             var mousePosition,
                 marqueeStart,
-                panZoomStack = [{
-                    dimensions: [],
-                    origin: []
-                }],
+                panZoomStack = new PlotPanZoomStack([], []),
                 domainOffset;
 
             function formatDomainValue(v) {
@@ -44,8 +46,8 @@ define(
 
 
             function pixelToDomainRange(x, y, width, height, domainOffset) {
-                var panZoom = panZoomStack[panZoomStack.length - 1],
-                    offset = [ domainOffset || 0, 0],
+                var panZoom = panZoomStack.getPanZoom(),
+                    offset = [ domainOffset || 0, 0 ],
                     origin = panZoom.origin,
                     dimensions = panZoom.dimensions;
 
@@ -92,7 +94,7 @@ define(
             }
 
             function updateDrawingBounds() {
-                var panZoom = panZoomStack[panZoomStack.length - 1];
+                var panZoom = panZoomStack.getPanZoom();
 
                 $scope.draw.dimensions = panZoom.dimensions;
                 $scope.draw.origin = panZoom.origin;
@@ -129,10 +131,10 @@ define(
                     formatRangeValue
                 );
 
-                panZoomStack[0] = {
-                    origin: prepared.getOrigin(),
-                    dimensions: prepared.getDimensions()
-                };
+                panZoomStack.setBasePanZoom(
+                    prepared.getOrigin(),
+                    prepared.getDimensions()
+                );
 
                 domainOffset = prepared.getDomainOffset();
 
@@ -207,10 +209,7 @@ define(
                         Math.max(a[1], b[1]) - origin[1]
                     ];
 
-                panZoomStack.push({
-                    origin: origin,
-                    dimensions: dimensions
-                });
+                panZoomStack.pushPanZoom(origin, dimensions);
             }
 
             $scope.axes = [ {}, {} ];
@@ -249,16 +248,14 @@ define(
                     }
                 },
                 isZoomed: function () {
-                    return panZoomStack.length > 1;
+                    return panZoomStack.getDepth() > 1;
                 },
                 stepBackPanZoom: function () {
-                    if (panZoomStack.length > 1) {
-                        panZoomStack.pop();
-                        updateDrawingBounds();
-                    }
+                    panZoomStack.popPanZoom();
+                    updateDrawingBounds();
                 },
                 unzoom: function () {
-                    panZoomStack = [panZoomStack[0]];
+                    panZoomStack.clearPanZoom();
                     updateDrawingBounds();
                 }
 
