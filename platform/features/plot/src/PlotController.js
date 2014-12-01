@@ -9,9 +9,10 @@ define(
         "./PlotPalette",
         "./PlotPanZoomStack",
         "./PlotPosition",
-        "../lib/moment.min.js"
+        "./PlotTickGenerator",
+        "./PlotFormatter"
     ],
-    function (PlotPreparer, PlotPalette, PlotPanZoomStack, PlotPosition) {
+    function (PlotPreparer, PlotPalette, PlotPanZoomStack, PlotPosition, PlotTickGenerator, PlotFormatter) {
         "use strict";
 
         var AXIS_DEFAULTS = [
@@ -29,20 +30,15 @@ define(
             var mousePosition,
                 marqueeStart,
                 panZoomStack = new PlotPanZoomStack([], []),
+                formatter = new PlotFormatter(),
                 domainOffset;
-
-            function formatDomainValue(v) {
-                return moment.utc(v).format("YYYY-DDD HH:mm:ss");
-            }
-
-            function formatRangeValue(v) {
-                return v.toFixed(1);
-            }
 
             // Utility, for map/forEach loops. Index 0 is domain,
             // index 1 is range.
             function formatValue(v, i) {
-                return (i ? formatRangeValue : formatDomainValue)(v);
+                return (i ?
+                        formatter.formatRangeValue :
+                        formatter.formatDomainValue)(v);
             }
 
             function mousePositionToDomainRange(mousePosition, domainOffset) {
@@ -54,20 +50,6 @@ define(
                     panZoomStack,
                     domainOffset
                 ).getPosition();
-            }
-
-            function generateTicks(start, span, count, format) {
-                var step = span / (count - 1),
-                    result = [],
-                    i;
-
-                for (i = 0; i < count; i += 1) {
-                    result.push({
-                        label: format(i * step + start)
-                    });
-                }
-
-                return result;
             }
 
             function updateMarqueeBox() {
@@ -86,9 +68,8 @@ define(
                 $scope.draw.origin = panZoom.origin;
             }
 
-
             function plotTelemetry() {
-                var telemetry, prepared, data;
+                var telemetry, prepared, tickGenerator, data;
 
                 telemetry = $scope.telemetry;
 
@@ -104,18 +85,12 @@ define(
                     ($scope.axes[1].active || {}).key
                 );
 
-                $scope.axes[0].ticks = generateTicks(
-                    prepared.getOrigin()[0] + prepared.getDomainOffset(),
-                    prepared.getDimensions()[0],
-                    DOMAIN_TICKS,
-                    formatDomainValue
-                );
-                $scope.axes[1].ticks = generateTicks(
-                    prepared.getOrigin()[1],
-                    prepared.getDimensions()[1],
-                    RANGE_TICKS,
-                    formatRangeValue
-                );
+                tickGenerator = new PlotTickGenerator(prepared, formatter);
+
+                $scope.axes[0].ticks =
+                    tickGenerator.generateDomainTicks(DOMAIN_TICKS);
+                $scope.axes[1].ticks =
+                    tickGenerator.generateRangeTicks(RANGE_TICKS);
 
                 panZoomStack.setBasePanZoom(
                     prepared.getOrigin(),
