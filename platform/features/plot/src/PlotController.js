@@ -5,15 +5,23 @@
  */
 define(
     [
-        "./PlotPreparer",
-        "./PlotPalette",
-        "./PlotPanZoomStack",
-        "./PlotPosition",
-        "./PlotTickGenerator",
-        "./PlotFormatter",
-        "./PlotAxis"
+        "./elements/PlotPreparer",
+        "./elements/PlotPalette",
+        "./elements/PlotPanZoomStack",
+        "./elements/PlotPosition",
+        "./elements/PlotTickGenerator",
+        "./elements/PlotFormatter",
+        "./elements/PlotAxis"
     ],
-    function (PlotPreparer, PlotPalette, PlotPanZoomStack, PlotPosition, PlotTickGenerator, PlotFormatter, PlotAxis) {
+    function (
+        PlotPreparer,
+        PlotPalette,
+        PlotPanZoomStack,
+        PlotPosition,
+        PlotTickGenerator,
+        PlotFormatter,
+        PlotAxis
+    ) {
         "use strict";
 
         var AXIS_DEFAULTS = [
