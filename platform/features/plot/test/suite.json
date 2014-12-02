@@ -1,4 +1,13 @@
 [
-    "PlotController"
+    "GLChart",
+    "MCTChart",
+    "PlotController",
+    "elements/PlotAxis",
+    "elements/PlotFormatter",
+    "elements/PlotPalette",
+    "elements/PlotPanZoomStack",
+    "elements/PlotPosition",
+    "elements/PlotPreparer",
+    "elements/PlotTickGenerator"
 ]
 
