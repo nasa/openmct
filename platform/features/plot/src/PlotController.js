@@ -84,11 +84,24 @@ define(
                     tickGenerator.generateRangeTicks(RANGE_TICKS);
             }
 
-            function plotTelemetry(telemetry) {
-                var prepared, data;
+            function setupAxes(metadatas) {
+                $scope.axes = [
+                    new PlotAxis("domain", metadatas, AXIS_DEFAULTS[0]),
+                    new PlotAxis("range", metadatas, AXIS_DEFAULTS[1])
+                ];
+            }
+
+            function plotTelemetry() {
+                var prepared, data, telemetry;
+
+                telemetry = $scope.telemetry;
 
                 if (!telemetry) {
                     return;
+                }
+
+                if (!$scope.axes) {
+                    setupAxes(telemetry.getMetadata());
                 }
 
                 data = telemetry.getResponse();
@@ -117,13 +130,6 @@ define(
                 updateDrawingBounds();
                 updateMarqueeBox();
                 updateTicks();
-            }
-
-            function setupAxes(metadatas) {
-                $scope.axes = [
-                    new PlotAxis("domain", metadatas, AXIS_DEFAULTS[0]),
-                    new PlotAxis("range", metadatas, AXIS_DEFAULTS[1])
-                ];
             }
 
             function toMousePosition($event) {
