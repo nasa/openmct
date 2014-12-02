@@ -84,10 +84,8 @@ define(
                     tickGenerator.generateRangeTicks(RANGE_TICKS);
             }
 
-            function plotTelemetry() {
-                var telemetry, prepared, data;
-
-                telemetry = $scope.telemetry;
+            function plotTelemetry(telemetry) {
+                var prepared, data;
 
                 if (!telemetry) {
                     return;
