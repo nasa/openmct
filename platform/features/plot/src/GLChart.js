@@ -36,7 +36,7 @@ define(
                 buffer;
 
             if (!gl) {
-                return false;
+                throw new Error("WebGL unavailable.");
             }
 
             // Initialize shaders

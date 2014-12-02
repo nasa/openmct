@@ -14,15 +14,23 @@ define(
          *
          * @constructor
          */
-        function MCTChart($interval) {
+        function MCTChart($interval, $log) {
 
             function linkChart(scope, element) {
                 var canvas = element.find("canvas")[0],
+                    chart;
+
+                // Try to initialize GLChart, which allows drawing using WebGL.
+                // This may fail, particularly where browsers do not support
+                // WebGL, so catch that here.
+                try {
                     chart = new GLChart(canvas);
+                } catch (e) {
+                    $log.warn("Cannot initialize mct-chart; " + e.message);
+                    return;
+                }
 
-                function doDraw() {
-                    var draw = scope.draw;
-
+                function doDraw(draw) {
                     canvas.width = canvas.offsetWidth;
                     canvas.height = canvas.offsetHeight;
                     chart.clear();
@@ -57,7 +65,7 @@ define(
                 function drawIfResized() {
                     if (canvas.width !== canvas.offsetWidth ||
                             canvas.height !== canvas.offsetHeight) {
-                        doDraw();
+                        doDraw(scope.draw);
                     }
                 }
 
