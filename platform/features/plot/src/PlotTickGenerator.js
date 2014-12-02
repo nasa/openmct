@@ -5,7 +5,7 @@ define(
     function () {
         "use strict";
 
-        function PlotTickGenerator(preparer, formatter) {
+        function PlotTickGenerator(panZoomStack, formatter) {
 
             function generateTicks(start, span, count, format) {
                 var step = span / (count - 1),
@@ -24,17 +24,19 @@ define(
 
             return {
                 generateDomainTicks: function (count) {
+                    var panZoom = panZoomStack.getPanZoom();
                     return generateTicks(
-                        preparer.getOrigin()[0] + preparer.getDomainOffset(),
-                        preparer.getDimensions()[0],
+                        panZoom.origin[0],
+                        panZoom.dimensions[0],
                         count,
                         formatter.formatDomainValue
                     );
                 },
                 generateRangeTicks: function (count) {
+                    var panZoom = panZoomStack.getPanZoom();
                     return generateTicks(
-                        preparer.getOrigin()[1],
-                        preparer.getDimensions()[1],
+                        panZoom.origin[1],
+                        panZoom.dimensions[1],
                         count,
                         formatter.formatRangeValue
                     );

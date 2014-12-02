@@ -36,9 +36,9 @@ define(
 
                 vertices.push([]);
                 for (index = 0; index < data.getPointCount(); index = index + 1) {
-                    x = data.getDomainValue(index, domain) - domainOffset;
+                    x = data.getDomainValue(index, domain);
                     y = data.getRangeValue(index, range);
-                    vertices[i].push(x);
+                    vertices[i].push(x - domainOffset);
                     vertices[i].push(y);
                     min[0] = Math.min(min[0], x);
                     min[1] = Math.min(min[1], y);

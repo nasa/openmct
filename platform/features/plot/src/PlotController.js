@@ -10,9 +10,10 @@ define(
         "./PlotPanZoomStack",
         "./PlotPosition",
         "./PlotTickGenerator",
-        "./PlotFormatter"
+        "./PlotFormatter",
+        "./PlotAxis"
     ],
-    function (PlotPreparer, PlotPalette, PlotPanZoomStack, PlotPosition, PlotTickGenerator, PlotFormatter) {
+    function (PlotPreparer, PlotPalette, PlotPanZoomStack, PlotPosition, PlotTickGenerator, PlotFormatter, PlotAxis) {
         "use strict";
 
         var AXIS_DEFAULTS = [
@@ -41,22 +42,25 @@ define(
                         formatter.formatDomainValue)(v);
             }
 
-            function mousePositionToDomainRange(mousePosition, domainOffset) {
+            function mousePositionToDomainRange(mousePosition) {
                 return new PlotPosition(
                     mousePosition.x,
                     mousePosition.y,
                     mousePosition.width,
                     mousePosition.height,
-                    panZoomStack,
-                    domainOffset
+                    panZoomStack
                 ).getPosition();
+            }
+
+            function toDisplayable(position) {
+                return [ position[0] - domainOffset, position[1] ];
             }
 
             function updateMarqueeBox() {
                 $scope.draw.boxes = marqueeStart ?
                         [{
-                            start: mousePositionToDomainRange(marqueeStart),
-                            end: mousePositionToDomainRange(mousePosition),
+                            start: toDisplayable(mousePositionToDomainRange(marqueeStart)),
+                            end: toDisplayable(mousePositionToDomainRange(mousePosition)),
                             color: [1, 1, 1, 0.5 ]
                         }] : undefined;
             }
@@ -65,11 +69,23 @@ define(
                 var panZoom = panZoomStack.getPanZoom();
 
                 $scope.draw.dimensions = panZoom.dimensions;
-                $scope.draw.origin = panZoom.origin;
+                $scope.draw.origin = [
+                    panZoom.origin[0] - domainOffset,
+                    panZoom.origin[1]
+                ];
+            }
+
+            function updateTicks() {
+                var tickGenerator = new PlotTickGenerator(panZoomStack, formatter);
+
+                $scope.domainTicks =
+                    tickGenerator.generateDomainTicks(DOMAIN_TICKS);
+                $scope.rangeTicks =
+                    tickGenerator.generateRangeTicks(RANGE_TICKS);
             }
 
             function plotTelemetry() {
-                var telemetry, prepared, tickGenerator, data;
+                var telemetry, prepared, data;
 
                 telemetry = $scope.telemetry;
 
@@ -84,13 +100,6 @@ define(
                     ($scope.axes[0].active || {}).key,
                     ($scope.axes[1].active || {}).key
                 );
-
-                tickGenerator = new PlotTickGenerator(prepared, formatter);
-
-                $scope.axes[0].ticks =
-                    tickGenerator.generateDomainTicks(DOMAIN_TICKS);
-                $scope.axes[1].ticks =
-                    tickGenerator.generateRangeTicks(RANGE_TICKS);
 
                 panZoomStack.setBasePanZoom(
                     prepared.getOrigin(),
@@ -109,41 +118,14 @@ define(
 
                 updateDrawingBounds();
                 updateMarqueeBox();
+                updateTicks();
             }
 
             function setupAxes(metadatas) {
-                var domainKeys = {},
-                    rangeKeys = {},
-                    domains = [],
-                    ranges = [];
-
-                function buildOptionsForMetadata(m) {
-                    (m.domains || []).forEach(function (domain) {
-                        if (!domainKeys[domain.key]) {
-                            domainKeys[domain.key] = true;
-                            domains.push(domain);
-                        }
-                    });
-                    (m.ranges || []).forEach(function (range) {
-                        if (!rangeKeys[range.key]) {
-                            rangeKeys[range.key] = true;
-                            ranges.push(range);
-                        }
-                    });
-                }
-
-                (metadatas || []).
-                    forEach(buildOptionsForMetadata);
-
-                [domains, ranges].forEach(function (options, i) {
-                    var active = $scope.axes[i].active;
-                    $scope.axes[i].options = options;
-                    if (!active || !active.key) {
-                        $scope.axes[i].active =
-                            options[0] || AXIS_DEFAULTS[i];
-                    }
-                });
-
+                $scope.axes = [
+                    new PlotAxis("domain", metadatas, AXIS_DEFAULTS[0]),
+                    new PlotAxis("range", metadatas, AXIS_DEFAULTS[1])
+                ];
             }
 
             function toMousePosition($event) {
@@ -171,9 +153,9 @@ define(
                     ];
 
                 panZoomStack.pushPanZoom(origin, dimensions);
+                updateTicks();
             }
 
-            $scope.axes = [ {}, {} ];
             $scope.$watch("telemetry.getMetadata()", setupAxes);
             $scope.$on("telemetryUpdate", plotTelemetry);
             $scope.draw = {};
@@ -185,8 +167,7 @@ define(
                 getHoverCoordinates: function () {
                     return mousePosition ?
                             mousePositionToDomainRange(
-                                mousePosition,
-                                domainOffset
+                                mousePosition
                             ).map(formatValue) : [];
                 },
                 hover: function ($event) {

@@ -5,9 +5,8 @@ define(
     function () {
         "use strict";
 
-        function PlotPosition(x, y, width, height, panZoomStack, domainOffset) {
+        function PlotPosition(x, y, width, height, panZoomStack) {
             var panZoom = panZoomStack.getPanZoom(),
-                offset = [ domainOffset || 0, 0 ],
                 origin = panZoom.origin,
                 dimensions = panZoom.dimensions,
                 position;
@@ -16,7 +15,7 @@ define(
                 position = [];
             } else {
                 position = [ x / width, (height - y) / height ].map(function (v, i) {
-                    return v * dimensions[i] + origin[i] + offset[i];
+                    return v * dimensions[i] + origin[i];
                 });
             }
 

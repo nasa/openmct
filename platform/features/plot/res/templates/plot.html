@@ -24,9 +24,9 @@
             {{axes[1].active.name}}
         </div>
 
-        <div ng-repeat="tick in axes[1].ticks"
+        <div ng-repeat="tick in rangeTicks"
              class="gl-plot-tick gl-plot-y-tick-label"
-             ng-style="{ bottom: (100 * $index / (axes[1].ticks.length - 1)) + '%' }">
+             ng-style="{ bottom: (100 * $index / (rangeTicks.length - 1)) + '%' }">
             {{tick.label}}
         </div>
 
@@ -48,14 +48,14 @@
 
 
         <div class="gl-plot-hash hash-v"
-             ng-repeat="tick in axes[0].ticks"
-             ng-style="{ left: (100 * $index / (axes[0].ticks.length - 1)) + '%', height: '100%' }"
-             ng-show="$index > 0 && $index < (axes[0].ticks.length - 1)">
+             ng-repeat="tick in domainTicks"
+             ng-style="{ left: (100 * $index / (domainTicks.length - 1)) + '%', height: '100%' }"
+             ng-show="$index > 0 && $index < (domainTicks.length - 1)">
         </div>
         <div class="gl-plot-hash hash-h"
-             ng-repeat="tick in axes[1].ticks"
-             ng-style="{ bottom: (100 * $index / (axes[1].ticks.length - 1)) + '%', width: '100%' }"
-             ng-show="$index > 0 && $index < (axes[1].ticks.length - 1)">
+             ng-repeat="tick in rangeTicks"
+             ng-style="{ bottom: (100 * $index / (rangeTicks.length - 1)) + '%', width: '100%' }"
+             ng-show="$index > 0 && $index < (rangeTicks.length - 1)">
         </div>
 
         <mct-chart draw="draw"
@@ -92,10 +92,10 @@
 
     <div class="gl-plot-axis-area gl-plot-x">
 
-        <div ng-repeat="tick in axes[0].ticks"
+        <div ng-repeat="tick in domainTicks"
              class="gl-plot-tick gl-plot-x-tick-label"
-             ng-show="$index > 0 && $index < (axes[0].ticks.length - 1)"
-             ng-style="{ left: (100 * $index / (axes[0].ticks.length - 1)) + '%' }">
+             ng-show="$index > 0 && $index < (domainTicks.length - 1)"
+             ng-style="{ left: (100 * $index / (domainTicks.length - 1)) + '%' }">
             {{tick.label}}
         </div>
 
