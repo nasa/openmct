@@ -8,6 +8,7 @@
     "platform/commonUI/general",
     "platform/telemetry",
     "platform/features/plot",
+    "platform/features/scrolling",
 
     "example/generator",
     "example/persistence"
