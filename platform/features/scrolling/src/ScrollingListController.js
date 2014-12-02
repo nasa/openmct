@@ -11,7 +11,8 @@ define(
         var ROW_COUNT = 18;
 
         /**
-         *
+         * The ScrollingListController is responsible for populating
+         * the contents of the scrolling list view.
          * @constructor
          */
         function ScrollingListController($scope) {
@@ -85,18 +86,25 @@ define(
                         // in the data set on the next iteration
                         used[candidate.objectIndex] = used[candidate.objectIndex] + 1;
                     } else {
-                        break; // Ran out of candidates; not enough data points available
+                        // Ran out of candidates; not enough data points
+                        // available to fill all rows.
+                        break;
                     }
                 }
 
                 return latest;
             }
 
+            // Get a set of populated, ready-to-display rows for the
+            // latest data values.
             function getRows(telemetry) {
                 var datas = telemetry.getResponse(),
                     objects = telemetry.getTelemetryObjects(),
                     values = getLatestDataValues(datas);
 
+                // Each value will become a row, which will contain
+                // some value in each column (rendering by the
+                // column object itself)
                 return values.map(function (value) {
                     return columns.map(function (column) {
                         return column.getValue(
@@ -108,17 +116,22 @@ define(
                 });
             }
 
+            // Update the contents
             function updateRows() {
                 var telemetry = $scope.telemetry;
                 $scope.rows = telemetry ? getRows(telemetry) : [];
             }
 
-            function setupColumns() {
-                var telemetry = $scope.telemetry,
-                    domainKeys = {},
+            // Set up columns based on telemetry metadata. This will
+            // include one column for each domain and range type, as
+            // well as a column for the domain object name.
+            function setupColumns(telemetry) {
+                var domainKeys = {},
                     rangeKeys = {},
                     metadata;
 
+                // Add a domain to the set of columns, if a domain
+                // with the same key has not yet been inclued.
                 function addDomain(domain) {
                     var key = domain.key;
                     if (key && !domainKeys[key]) {
@@ -126,6 +139,8 @@ define(
                     }
                 }
 
+                // Add a range to the set of columns, if a range
+                // with the same key has not yet been inclued.
                 function addRange(range) {
                     var key = range.key;
                     if (key && !rangeKeys[key]) {
@@ -133,6 +148,8 @@ define(
                     }
                 }
 
+                // We cannot proceed if the telemetry controller
+                // is not available; clear all rows/columns.
                 if (!telemetry) {
                     columns = [];
                     $scope.rows = [];
@@ -158,10 +175,13 @@ define(
                     columns.push(new RangeColumn({ name: "Value" }));
                 }
 
+                // We have all columns now, so populate the headers
+                // for these columns in the scope.
                 $scope.headers = columns.map(function (column) {
                     return column.getTitle();
                 });
 
+                // Fill in the contents of the rows.
                 updateRows();
             }
 
