@@ -52,18 +52,57 @@ define(
             }).concat([1]); // RGBA
         });
 
+        /**
+         * PlotPalette allows a consistent set of colors to be retrieved
+         * by index, in various color formats. All PlotPalette methods are
+         * static, so there is no need for a constructor call; using
+         * this will simply return PlotPalette itself.
+         * @constructor
+         */
         function PlotPalette() {
             return PlotPalette;
         }
 
+        /**
+         * Look up a color in the plot's palette, by index.
+         * This will be returned as a three element array of RGB
+         * values, as integers in the range of 0-255.
+         * @param {number} i the index of the color to look up
+         * @return {number[]} the color, as integer RGB values
+         */
         PlotPalette.getIntegerColor = function (i) {
             return integerPalette[Math.floor(i) % integerPalette.length];
         };
 
+
+        /**
+         * Look up a color in the plot's palette, by index.
+         * This will be returned as a three element array of RGB
+         * values, in the range of 0.0-1.0.
+         *
+         * This format is present specifically to support use with
+         * WebGL, which expects colors of that form.
+         *
+         * @param {number} i the index of the color to look up
+         * @return {number[]} the color, as floating-point RGB values
+         */
         PlotPalette.getFloatColor = function (i) {
             return floatPalette[Math.floor(i) % floatPalette.length];
         };
 
+
+        /**
+         * Look up a color in the plot's palette, by index.
+         * This will be returned as a string using #-prefixed
+         * six-digit RGB hex notation (e.g. #FF0000)
+         * See http://www.w3.org/TR/css3-color/#rgb-color.
+         *
+         * This format is useful for representing colors in in-line
+         * styles.
+         *
+         * @param {number} i the index of the color to look up
+         * @return {string} the color, as a style-friendly string
+         */
         PlotPalette.getStringColor = function (i) {
             return stringPalette[Math.floor(i) % stringPalette.length];
         };
