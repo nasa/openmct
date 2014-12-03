@@ -46,11 +46,11 @@
             },
             {
                 "key": "create-button",
-                "templateUrl": "templates/create-button.html"
+                "templateUrl": "templates/create/create-button.html"
             },
             {
                 "key": "create-menu",
-                "templateUrl": "templates/create-menu.html",
+                "templateUrl": "templates/create/create-menu.html",
                 "uses": [ "action" ]
             },
             {
