@@ -1,0 +1,24 @@
+{
+    "name": "Couch Persistence",
+    "description": "Adapter to read and write objects using a CouchDB instance.",
+    "extensions": {
+        "components": [
+            {
+                "provides": "persistenceService",
+                "type": "provider",
+                "implementation": "CouchPersistenceProvider.js",
+                "depends": [ "$http", "$q", "PERSISTENCE_SPACE", "COUCHDB_PATH" ]
+            }
+        ],
+        "constants": [
+            {
+                "key": "PERSISTENCE_SPACE",
+                "value": "mct"
+            },
+            {
+                "key": "COUCHDB_PATH",
+                "value": "/couch/openmct"
+            }
+        ]
+    }
+}

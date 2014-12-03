@@ -6,6 +6,5 @@
     "platform/commonUI/edit",
     "platform/commonUI/dialog",
     "platform/commonUI/general",
-
-    "example/persistence"
+    "platform/persistence"
 ]
