@@ -1,4 +1,4 @@
-/*global define,Promise*/
+/*global define*/
 
 /**
  * Module defining DialogService. Created by vwoeltje on 11/10/14.
@@ -36,14 +36,8 @@ define(
                 // overlay-dialog template and associated with a
                 // OK button click
                 function confirm() {
-                    var resultingValue;
-
-                    // Temporary workaround, in the absence of a
-                    // forms package.
-                    resultingValue = JSON.parse(overlayModel.value);
-
                     // Pass along the result
-                    deferred.resolve(resultingValue);
+                    deferred.resolve(overlayModel.value);
 
                     // Stop showing the dialog
                     dismiss();
@@ -73,8 +67,8 @@ define(
                     overlayModel = {
                         title: formModel.name,
                         message: formModel.message,
-                        formModel: formModel,
-                        value: JSON.stringify(value),
+                        structure: formModel,
+                        value: value,
                         confirm: confirm,
                         cancel: cancel
                     };

@@ -12,7 +12,10 @@
             <div class="abs form outline editor">
                 <div class='abs contents'>
                     <!-- mct-include key="'form'" ng-model="" -->
-                    <textarea ng-model="ngModel.value"></textarea>
+                    <mct-form ng-model="ngModel.value"
+                              structure="ngModel.structure"
+                              name="createForm">
+                    </mct-form>
                 </div>
             </div>
             <div class="abs bottom-bar">
