@@ -29,6 +29,10 @@
             {
                 "key": "textfield",
                 "templateUrl": "templates/controls/textfield.html"
+            },
+            {
+                "key": "composite",
+                "templateUrl": "templates/controls/composite.html"
             }
         ],
         "controllers": [
