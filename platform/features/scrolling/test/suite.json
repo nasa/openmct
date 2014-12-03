@@ -2,5 +2,6 @@
     "DomainColumn",
     "NameColumn",
     "RangeColumn",
-    "ScrollingListController"
+    "ScrollingListController",
+    "ScrollingListPopulator"
 ]
