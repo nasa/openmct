@@ -9,10 +9,14 @@ define(
             var spaces = [ SPACE ],
                 revs = {};
 
+            // Convert a subpath to a full path, suitable to pass
+            // to $http.
             function url(subpath) {
                 return PATH + '/' + subpath;
             }
 
+            // Issue a request using $http; get back the plain JS object
+            // from the expected JSON response
             function request(subpath, method, value) {
                 return $http({
                     method: method,
@@ -25,7 +29,7 @@ define(
                 });
             }
 
-            // Shorthand methods for various get types
+            // Shorthand methods for various HTTP methods
             function get(subpath) {
                 return request(subpath, "GET");
             }
@@ -76,11 +80,11 @@ define(
                     return get(key).then(getModel);
                 },
                 updateObject: function (space, key, value) {
-                    return put(key, new CouchDocument(key, value, true))
+                    return put(key, new CouchDocument(key, value, revs[key]))
                         .then(checkResponse);
                 },
                 deleteObject: function (space, key, value) {
-                    return put(key, new CouchDocument(key, value, true, true))
+                    return put(key, new CouchDocument(key, value, revs[key], true))
                         .then(checkResponse);
                 }
             };
