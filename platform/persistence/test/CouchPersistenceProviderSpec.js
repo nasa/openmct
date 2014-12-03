@@ -46,6 +46,10 @@ define(
                 expect(capture).toHaveBeenCalledWith([testSpace]);
             });
 
+            // General pattern of tests below is to simulate CouchDB's
+            // response, verify that request looks like what CouchDB
+            // would expect, and finally verify that CouchPersistenceProvider's
+            // return values match what is expected.
             it("lists all available documents", function () {
                 mockHttp.andReturn(mockPromise({
                     data: { rows: [ { id: "a" }, { id: "b" }, { id: "c" } ] }
@@ -65,7 +69,7 @@ define(
                 }));
                 provider.createObject("testSpace", "abc", model).then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
-                    url: "/test/db/abc", // couch document listing
+                    url: "/test/db/abc",
                     method: "PUT",
                     data: {
                         "_id": "abc",
@@ -83,7 +87,7 @@ define(
                 }));
                 provider.readObject("testSpace", "abc").then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
-                    url: "/test/db/abc", // couch document listing
+                    url: "/test/db/abc",
                     method: "GET"
                 });
                 expect(capture).toHaveBeenCalledWith(model);
@@ -104,7 +108,7 @@ define(
                 }));
                 provider.updateObject("testSpace", "abc", model).then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
-                    url: "/test/db/abc", // couch document listing
+                    url: "/test/db/abc",
                     method: "PUT",
                     data: {
                         "_id": "abc",
