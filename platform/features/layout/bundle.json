@@ -18,15 +18,14 @@
                         "items": [
                             {
                                 "name": "Width (px)",
-                                "control": "textfield",
-                                "pattern": "^(\\d*[1-9]\\d*)?$"
+                                "control": "textfield"
                             },
                             {
                                 "name": "Height (px)",
-                                "control": "textfield",
-                                "pattern": "^(\\d*[1-9]\\d*)?$"
+                                "control": "textfield"
                             }
                         ],
+                        "pattern": "^(\\d*[1-9]\\d*)?$",
                         "property": "preferredSize",
                         "conversion": "number[]"
                     },
@@ -36,15 +35,14 @@
                         "items": [
                             {
                                 "name": "Horizontal grid (px)",
-                                "control": "textfield",
-                                "pattern": "^(\\d*[1-9]\\d*)?$"
+                                "control": "textfield"
                             },
                             {
                                 "name": "Vertical grid (px)",
-                                "control": "textfield",
-                                "pattern": "^(\\d*[1-9]\\d*)?$"
+                                "control": "textfield"
                             }
                         ],
+                        "pattern": "^(\\d*[1-9]\\d*)?$",
                         "property": "layoutGrid",
                         "conversion": "number[]"
                     },

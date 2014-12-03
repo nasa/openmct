@@ -1,7 +1,7 @@
 <ng-form name="mctFormItem" ng-repeat="item in structure.items">
     <mct-control key="item.control"
                  ng-model="ngModel[field]"
-                 ng-required="item.required"
+                 ng-required="ngRequired"
                  ng-pattern="ngPattern"
                  options="item.options"
                  structure="row"
