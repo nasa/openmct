@@ -63,7 +63,8 @@ define(
                 }
 
                 return dialogService.getUserInput(
-                    wizard.getFormModel()
+                    wizard.getFormModel(),
+                    wizard.getInitialFormValue()
                 ).then(persistResult, doNothing);
             }
 
