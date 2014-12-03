@@ -24,6 +24,7 @@ define(
             // that is currently navigated-to.
             function setNavigation(domainObject) {
                 $scope.navigatedObject = domainObject;
+                $scope.treeModel.selectedObject = domainObject;
             }
 
             // Load the root object, put it in the scope.
@@ -48,30 +49,22 @@ define(
                 }
             });
 
+            // Provide a model for the tree to modify
+            $scope.treeModel = {
+                selectedObject: navigationService.getNavigation()
+            };
+
             // Listen for changes in navigation state.
             navigationService.addListener(setNavigation);
+
+            // Also listen for changes which come from the tree
+            $scope.$watch("treeModel.selectedObject", setNavigation);
 
             // Clean up when the scope is destroyed
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);
             });
 
-            return {
-                /**
-                 * Navigate to a specific domain object.
-                 *
-                 * This is exposed so that the browse tree has a callback
-                 * to invoke when the user clicks on a new object to navigate
-                 * to it.
-                 *
-                 * @method
-                 * @memberof BrowseController
-                 * @param {DomainObject} domainObject the object to navigate to
-                 */
-                setNavigation: function (domainObject) {
-                    navigationService.setNavigation(domainObject);
-                }
-            };
         }
 
         return BrowseController;

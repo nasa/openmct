@@ -29,9 +29,9 @@ define(
          * expand-to-show-navigated-object behavior.)
          * @constructor
          */
-        function TreeNodeController($scope, navigationService) {
-            var navigatedObject = navigationService.getNavigation(),
-                isNavigated = false,
+        function TreeNodeController($scope) {
+            var selectedObject = ($scope.ngModel || {}).selectedObject,
+                isSelected = false,
                 hasBeenExpanded = false;
 
             // Look up the id for a domain object. A convenience
@@ -73,7 +73,7 @@ define(
             // Check if the navigated object is in the subtree of this
             // node's domain object, by comparing the paths reported
             // by their context capability.
-            function isOnNavigationPath(nodeObject, navObject) {
+            function isOnSelectionPath(nodeObject, navObject) {
                 var nodeContext = nodeObject &&
                             nodeObject.getCapability('context'),
                     navContext = navObject &&
@@ -92,19 +92,19 @@ define(
 
             // Consider the currently-navigated object and update
             // parameters which support display.
-            function checkNavigation() {
+            function checkSelection() {
                 var nodeObject = $scope.domainObject;
 
                 // Check if we are the navigated object. Check the parent
                 // as well to make sure we are the same instance of the
                 // navigated object.
-                isNavigated =
-                    idsEqual(nodeObject, navigatedObject) &&
-                            idsEqual(parentOf(nodeObject), parentOf(navigatedObject));
+                isSelected =
+                    idsEqual(nodeObject, selectedObject) &&
+                            idsEqual(parentOf(nodeObject), parentOf(selectedObject));
 
                 // Expand if necessary (if the navigated object will
                 // be in this node's subtree)
-                if (isOnNavigationPath(nodeObject, navigatedObject) &&
+                if (isOnSelectionPath(nodeObject, selectedObject) &&
                         $scope.toggle !== undefined) {
                     $scope.toggle.setState(true);
                     hasBeenExpanded = true;
@@ -113,17 +113,14 @@ define(
 
             // Callback for the navigation service; track the currently
             // navigated object and update display parameters as needed.
-            function setNavigation(object) {
-                navigatedObject = object;
-                checkNavigation();
+            function setSelection(object) {
+                selectedObject = object;
+                checkSelection();
             }
 
             // Listen for changes which will effect display parameters
-            navigationService.addListener(setNavigation);
-            $scope.$on("$destroy", function () {
-                navigationService.removeListener(setNavigation);
-            });
-            $scope.$watch("domainObject", checkNavigation);
+            $scope.$watch("ngModel.selectedObject", setSelection);
+            $scope.$watch("domainObject", checkSelection);
 
             return {
                 /**
@@ -143,11 +140,13 @@ define(
                 },
                 /**
                  * Check whether or not the domain object represented by
-                 * this tree node is currently the navigated object.
-                 * @returns true if this is the navigated object
+                 * this tree node should be highlighted.
+                 * An object will be highlighted if it matches
+                 * ngModel.selectedObject
+                 * @returns true if this should be highlighted
                  */
-                isNavigated: function () {
-                    return isNavigated;
+                isSelected: function () {
+                    return isSelected;
                 }
             };
         }

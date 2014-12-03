@@ -8,9 +8,9 @@
             </span>
             <mct-representation key="'label'"
                                 mct-object="domainObject"
-                                parameters="parameters"
-                                ng-click="parameters.callback(domainObject)"
-                                ng-class="{selected: treeNode.isNavigated()}">
+                                ng-model="ngModel"
+                                ng-click="ngModel.selectedObject = domainObject"
+                                ng-class="{selected: treeNode.isSelected()}">
             </mct-representation>
         </span>
         <span class="tree-item-subtree"
@@ -18,7 +18,7 @@
               ng-if="model.composition !== undefined">
 
             <mct-representation key="'tree'"
-                                parameters="parameters"
+                                ng-model="ngModel"
                                 mct-object="treeNode.hasBeenExpanded() && domainObject">
             </mct-representation>
 
