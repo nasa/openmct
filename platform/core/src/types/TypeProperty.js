@@ -24,6 +24,24 @@ define(
                 propertyDefinition.conversion || "identity"
             );
 
+            // Check if a value is defined; used to check if initial array
+            // values have been populated.
+            function isUnpopulatedArray(value) {
+                var i;
+
+                if (!Array.isArray(value) || value.length === 0) {
+                    return false;
+                }
+
+                for (i = 0; i < value.length; i += 1) {
+                    if (value[i] !== undefined) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
             // Perform a lookup for a value from an object,
             // which may recursively look at contained objects
             // based on the path provided.
@@ -78,11 +96,18 @@ define(
                  */
                 getValue: function (model) {
                     var property = propertyDefinition.property ||
-                        propertyDefinition.key;
+                            propertyDefinition.key,
+                        initialValue =
+                            property && lookupValue(model, property);
 
-                    return property ? conversion.toFormValue(
-                        lookupValue(model, property)
-                    ) : undefined;
+                    // Provide an empty array if this is a multi-item
+                    // property.
+                    if (Array.isArray(propertyDefinition.items)) {
+                        initialValue = initialValue ||
+                            new Array(propertyDefinition.items.length);
+                    }
+
+                    return conversion.toFormValue(initialValue);
                 },
                 /**
                  * Set a value associated with this property in
@@ -92,6 +117,13 @@ define(
                     var property = propertyDefinition.property ||
                         propertyDefinition.key;
 
+                    // If an array contains all undefined values, treat it
+                    // as undefined, to filter back out arrays for input
+                    // that never got entered.
+                    value = isUnpopulatedArray(value) ? undefined : value;
+
+                    // Convert to a value suitable for storage in the
+                    // domain object's model
                     value = conversion.toModelValue(value);
 
                     return property ?
