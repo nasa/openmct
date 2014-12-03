@@ -19,7 +19,10 @@
                 </div>
             </div>
             <div class="abs bottom-bar">
-                <a class='btn lg major' href='' ng-click="ngModel.confirm()">
+                <a class='btn lg major'
+                   href=''
+                   ng-class="{ disabled: !createForm.$valid }"
+                   ng-click="ngModel.confirm()">
                     OK
                 </a>
                 <a class='btn lg subtle' href='' ng-click="ngModel.cancel()">
