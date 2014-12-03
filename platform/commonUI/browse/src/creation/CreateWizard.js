@@ -101,9 +101,8 @@ define(
                     newModel.type = type.getKey();
 
                     // Update all properties
-                    properties.forEach(function (property) {
-                        var value = formValue[property.getDefinition().key];
-                        property.setValue(newModel, value);
+                    properties.forEach(function (property, index) {
+                        property.setValue(newModel, formValue[index]);
                     });
 
                     return newModel;
