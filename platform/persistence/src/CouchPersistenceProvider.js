@@ -5,6 +5,11 @@ define(
     function (CouchDocument) {
         'use strict';
 
+        // JSLint doesn't like dangling _'s, but CouchDB uses these, so
+        // hide this behind variables.
+        var REV = "_rev",
+            ID = "_id";
+
         /**
          * The CouchPersistenceProvider reads and writes JSON documents
          * (more specifically, domain object models) to/from a CouchDB
@@ -50,10 +55,9 @@ define(
             }
 
             // Get a domain object model out of CouchDB's response
-            /*jslint nomen: true */ // Allow the _id and _rev that couch provides
             function getModel(response) {
                 if (response && response.model) {
-                    revs[response._id] = response._rev;
+                    revs[response[ID]] = response[REV];
                     return response.model;
                 } else {
                     return undefined;

@@ -8,19 +8,22 @@ define(
     function (CouchDocument) {
         "use strict";
 
-        // Don't complain about _id or _rev; these are the CouchDB
-        // fields that must be used.
-        /*jslint nomen: true */
+        // JSLint doesn't like dangling _'s, but CouchDB uses these, so
+        // hide this behind variables.
+        var REV = "_rev",
+            ID = "_id",
+            DELETED = "_deleted";
+
         describe("A couch document", function () {
             it("includes an id", function () {
-                expect(new CouchDocument("testId", {})._id)
+                expect(new CouchDocument("testId", {})[ID])
                     .toEqual("testId");
             });
 
             it("includes a rev only when one is provided", function () {
-                expect(new CouchDocument("testId", {})._rev)
+                expect(new CouchDocument("testId", {})[REV])
                     .not.toBeDefined();
-                expect(new CouchDocument("testId", {}, "testRev")._rev)
+                expect(new CouchDocument("testId", {}, "testRev")[REV])
                     .toEqual("testRev");
             });
 
@@ -31,9 +34,9 @@ define(
             });
 
             it("marks documents as deleted only on request", function () {
-                expect(new CouchDocument("testId", {}, "testRev")._deleted)
+                expect(new CouchDocument("testId", {}, "testRev")[DELETED])
                     .not.toBeDefined();
-                expect(new CouchDocument("testId", {}, "testRev", true)._deleted)
+                expect(new CouchDocument("testId", {}, "testRev", true)[DELETED])
                     .toBe(true);
             });
         });
