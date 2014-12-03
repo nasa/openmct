@@ -38,10 +38,6 @@ define(
                 return request(subpath, "PUT", value);
             }
 
-            function del(subpath, value) {
-                return request(subpath, "DELETE", value);
-            }
-
             function getIdsFromAllDocs(allDocs) {
                 return allDocs.rows.map(function (r) { return r.id; });
             }
@@ -61,7 +57,7 @@ define(
                     revs[response.id] = response.rev;
                     return response.ok;
                 } else {
-                    return undefined;
+                    return false;
                 }
             }
 
