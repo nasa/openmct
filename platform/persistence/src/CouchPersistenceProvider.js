@@ -1,8 +1,8 @@
 /*global define*/
 
 define(
-    [],
-    function () {
+    ["./CouchDocument"],
+    function (CouchDocument) {
         'use strict';
 
         function CouchPersistenceProvider($http, $q, SPACE, PATH) {
@@ -25,9 +25,18 @@ define(
                 });
             }
 
-            function get(subpath) { return request(subpath, "GET"); }
-            function put(subpath, value) { return request(subpath, "PUT", value); }
-            function del(subpath, value) { return request(subpath, "DELETE", value); }
+            // Shorthand methods for various get types
+            function get(subpath) {
+                return request(subpath, "GET");
+            }
+
+            function put(subpath, value) {
+                return request(subpath, "PUT", value);
+            }
+
+            function del(subpath, value) {
+                return request(subpath, "DELETE", value);
+            }
 
             function getIdsFromAllDocs(allDocs) {
                 return allDocs.rows.map(function (r) { return r.id; });
@@ -50,22 +59,6 @@ define(
                 } else {
                     return undefined;
                 }
-            }
-
-            function CouchDocument(key, value, includeRevision, markDeleted) {
-                return {
-                    "_id": key,
-                    "_rev": includeRevision ? revs[key] : undefined,
-                    "_deleted": markDeleted,
-                    "metadata": {
-                        "category": "domain object",
-                        "type": value.type,
-                        "owner": "admin",
-                        "name": value.name,
-                        "created": Date.now()
-                    },
-                    "model": value
-                };
             }
 
             return {
