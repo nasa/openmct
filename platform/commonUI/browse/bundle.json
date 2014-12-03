@@ -30,6 +30,17 @@
                 "key": "CreateMenuController",
                 "implementation": "creation/CreateMenuController",
                 "depends": [ "$scope" ]
+            },
+            {
+                "key": "LocatorController",
+                "implementation": "creation/LocatorController",
+                "depends": [ "$scope" ]
+            }
+        ],
+        "controls": [
+            {
+                "key": "locator",
+                "templateUrl": "templates/create/locator.html"
             }
         ],
         "templates": [
