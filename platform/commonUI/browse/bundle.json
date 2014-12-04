@@ -22,11 +22,6 @@
                 "depends": [ "$scope" ]
             },
             {
-                "key": "CreateButtonController",
-                "implementation": "creation/CreateButtonController",
-                "depends": [ "$scope", "$document" ]
-            },
-            {
                 "key": "CreateMenuController",
                 "implementation": "creation/CreateMenuController",
                 "depends": [ "$scope" ]
