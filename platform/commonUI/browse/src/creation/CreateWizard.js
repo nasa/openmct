@@ -32,7 +32,7 @@ define(
                  * @return {FormModel} formModel the form model to
                  *         show in the create dialog
                  */
-                getFormModel: function () {
+                getFormStructure: function () {
                     var sections = [];
 
                     sections.push({
