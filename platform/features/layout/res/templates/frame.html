@@ -1,4 +1,4 @@
-<div class="frame frame-template abs" ng-controller="ViewSwitcherController">
+<div class="frame frame-template abs">
     <div class="bar abs object-header object-top-bar">
         <div class="title left abs">
             <mct-representation key="'node'"
@@ -6,10 +6,10 @@
             </mct-representation>
         </div>
         <div class="btn-bar right abs">
-            <mct-include key="'switcher'"
-                         ng-model="switcher"
-                         ng-if="switcher.options.length > 0">
-            </mct-include>
+            <mct-representation key="'switcher'"
+                                ng-model="representation"
+                                mct-object="domainObject">
+            </mct-representation>
         </div>
     </div>
     <div class="abs object-holder">

@@ -8,13 +8,21 @@
                 "name": "Layout",
                 "glyph": "L",
                 "type": "layout",
-                "templateUrl": "templates/layout.html"
+                "templateUrl": "templates/layout.html",
+                "uses": [ "composition" ]
             }
         ],
         "representations": [
             {
                 "key": "frame",
                 "templateUrl": "templates/frame.html"
+            }
+        ],
+        "controllers": [
+            {
+                "key": "LayoutController",
+                "implementation": "LayoutController.js",
+                "depends": [ "$scope" ]
             }
         ],
         "types": [

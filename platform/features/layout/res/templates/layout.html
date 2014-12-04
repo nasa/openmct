@@ -1,9 +1,16 @@
-<div style="width: 100%; height: 100%;">
+<div style="width: 100%; height: 100%;"
+     ng-controller="LayoutController as controller">
 
-    <span style="left: 45px; width: 360px; top: 60px; height: 240px">
-        <mct-representation key="'frame'"
-                            mct-object="domainObject">
-        </mct-representation>
-    </span>
+    <div class='frame child-frame panel abs'
+         ng-repeat="childObject in composition"
+         ng-style="controller.getFrameStyle(childObject.getId())">
+
+        <div class="frame child-frame holder contents abs">
+            <mct-representation key="'frame'"
+                                mct-object="childObject">
+            </mct-representation>
+        </div>
+
+    </div>
 
 </div>
