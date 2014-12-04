@@ -28,6 +28,15 @@
                 "glyph": "p"
             },
             {
+                "key": "properties",
+                "category": "contextual",
+                "implementation": "actions/PropertiesAction.js",
+                "glyph": "p",
+                "name": "Edit Properties...",
+                "description": "Edit properties of this object.",
+                "depends": [ "dialogService" ]
+            },
+            {
                 "key": "remove",
                 "category": "contextual",
                 "implementation": "actions/RemoveAction.js",
