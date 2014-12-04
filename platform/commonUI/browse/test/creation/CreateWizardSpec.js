@@ -12,6 +12,7 @@ define(
             var mockType,
                 mockParent,
                 mockProperties,
+                testModel,
                 wizard;
 
             function createMockProperty(name) {
@@ -20,6 +21,7 @@ define(
                     [ "getDefinition", "getValue", "setValue" ]
                 );
                 mockProperty.getDefinition.andReturn({});
+                mockProperty.getValue.andReturn(name);
                 return mockProperty;
             }
 
@@ -45,11 +47,13 @@ define(
                 );
                 mockProperties = [ "A", "B", "C" ].map(createMockProperty);
 
+                testModel = { someKey: "some value" };
+
                 mockType.getKey.andReturn("test");
                 mockType.getGlyph.andReturn("T");
                 mockType.getDescription.andReturn("a test type");
                 mockType.getName.andReturn("Test");
-                mockType.getInitialModel.andReturn({});
+                mockType.getInitialModel.andReturn(testModel);
                 mockType.getProperties.andReturn(mockProperties);
 
                 wizard = new CreateWizard(
@@ -80,12 +84,24 @@ define(
                 // Should have gotten a setValue call
                 mockProperties.forEach(function (mockProperty, i) {
                     expect(mockProperty.setValue).toHaveBeenCalledWith(
-                        { type: 'test' },
+                        { someKey: "some value", type: 'test' },
                         "field " + i
                     );
                 });
+            });
 
+            it("looks up initial values from properties", function () {
+                var initialValue = wizard.getInitialFormValue();
 
+                expect(initialValue[0]).toEqual("A");
+                expect(initialValue[1]).toEqual("B");
+                expect(initialValue[2]).toEqual("C");
+
+                // Verify that expected argument was passed
+                mockProperties.forEach(function (mockProperty) {
+                    expect(mockProperty.getValue)
+                        .toHaveBeenCalledWith(testModel);
+                });
             });
 
 

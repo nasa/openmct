@@ -52,11 +52,13 @@ define(
                 // Verify precondition
                 expect(controller.isSelected()).toBeFalsy();
 
-//                mockNavigationService.getNavigation.andReturn(obj);
-//                mockScope.domainObject = obj;
-//                mockNavigationService.addListener.mostRecentCall.args[0](obj);
+                // Change the represented domain object
+                mockScope.domainObject = obj;
 
-                //expect(controller.isSelected()).toBeTruthy();
+                // Invoke the watch with the new selection
+                mockScope.$watch.calls[0].args[1](obj);
+
+                expect(controller.isSelected()).toBeTruthy();
             });
 
             it("expands a node if it is on the navigation path", function () {
@@ -80,9 +82,12 @@ define(
                 mockScope.domainObject = parent;
                 mockScope.toggle = jasmine.createSpyObj("toggle", ["setState"]);
 
-//                expect(mockScope.toggle.setState).toHaveBeenCalledWith(true);
-//                expect(controller.hasBeenExpanded()).toBeTruthy();
-//                expect(controller.isSelected()).toBeFalsy();
+                // Invoke the watch with the new selection
+                mockScope.$watch.calls[0].args[1](child);
+
+                expect(mockScope.toggle.setState).toHaveBeenCalledWith(true);
+                expect(controller.hasBeenExpanded()).toBeTruthy();
+                expect(controller.isSelected()).toBeFalsy();
 
             });
 
@@ -107,12 +112,12 @@ define(
                 mockScope.domainObject = parent;
                 mockScope.toggle = jasmine.createSpyObj("toggle", ["setState"]);
 
-                // Trigger update
-//                mockNavigationService.addListener.mostRecentCall.args[0](child);
-//
-//                expect(mockScope.toggle.setState).not.toHaveBeenCalled();
-//                expect(controller.hasBeenExpanded()).toBeFalsy();
-//                expect(controller.isNavigated()).toBeFalsy();
+                // Invoke the watch with the new selection
+                mockScope.$watch.calls[0].args[1](child);
+
+                expect(mockScope.toggle.setState).not.toHaveBeenCalled();
+                expect(controller.hasBeenExpanded()).toBeFalsy();
+                expect(controller.isSelected()).toBeFalsy();
 
             });
         });
