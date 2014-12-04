@@ -10,19 +10,28 @@ define(
         function LayoutController($scope) {
             var width = 16,
                 height = 16,
+                rawPositions = {},
                 positions = {};
 
-            function convertPosition(position, dimensions) {
+            function convertPosition(raw) {
                 return {
-                    left: (width * position[0]) + 'px',
-                    top: (width * position[1]) + 'px',
-                    width: (width * dimensions[0]) + 'px',
-                    height: (height * dimensions[1]) + 'px'
+                    left: (width * raw.position[0]) + 'px',
+                    top: (width * raw.position[1]) + 'px',
+                    width: (width * raw.dimensions[0]) + 'px',
+                    height: (height * raw.dimensions[1]) + 'px'
                 };
             }
 
             function defaultPosition(index) {
-                return convertPosition([index, index], DEFAULT_DIMENSIONS);
+                return {
+                    position: [index, index],
+                    dimensions: DEFAULT_DIMENSIONS
+                };
+            }
+
+            function populatePosition(id, index) {
+                rawPositions[id] = rawPositions[id] || defaultPosition(index);
+                positions[id] = convertPosition(rawPositions[id]);
             }
 
             function lookupPanels(model) {
@@ -34,21 +43,26 @@ define(
 
                 // Update width/height that we are tracking
 
-                // Pull values from panels field
+                // Pull values from panels field to rawPositions
 
-                // Add defaults where needed
-                ((model || {}).composition || []).forEach(function (id, i) {
-                    positions[id] = positions[id] || defaultPosition(i);
-                });
+                // Compute positions and add defaults where needed
+                ((model || {}).composition || []).forEach(populatePosition);
             }
-
-
 
             $scope.$watch("model", lookupPanels);
 
             return {
                 getFrameStyle: function (id) {
                     return positions[id];
+                },
+                startDrag: function (event) {
+                    console.log("start", event);
+                },
+                continueDrag: function (event) {
+                    console.log("continue", event);
+                },
+                endDrag: function (event) {
+                    console.log("end", event);
                 }
             };
 
