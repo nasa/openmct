@@ -14,6 +14,7 @@ define(
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj("$scope", [ "$watch" ]);
+                mockScope.ngModel = {};
                 controller = new ViewSwitcherController(mockScope);
             });
 
@@ -28,17 +29,6 @@ define(
                 );
             });
 
-            it("updates available options to reflect views", function () {
-                var views = [
-                    { key: "a", name: "View A" },
-                    { key: "b", name: "View B" },
-                    { key: "c", name: "View C" },
-                    { key: "d", name: "View D" }
-                ];
-                mockScope.$watch.mostRecentCall.args[1](views);
-                expect(mockScope.switcher.options).toEqual(views);
-            });
-
             it("maintains the current selection when views change", function () {
                 var views = [
                     { key: "a", name: "View A" },
@@ -47,7 +37,7 @@ define(
                     { key: "d", name: "View D" }
                 ];
                 mockScope.$watch.mostRecentCall.args[1](views);
-                mockScope.switcher.selected = views[1];
+                mockScope.ngModel.selected = views[1];
 
                 // Change the set of applicable views
                 mockScope.$watch.mostRecentCall.args[1]([
@@ -57,7 +47,7 @@ define(
                 ]);
 
                 // "b" is still in there, should remain selected
-                expect(mockScope.switcher.selected).toEqual(views[1]);
+                expect(mockScope.ngModel.selected).toEqual(views[1]);
             });
 
             it("chooses a default if a selected view becomes inapplicable", function () {
@@ -68,7 +58,7 @@ define(
                     { key: "d", name: "View D" }
                 ];
                 mockScope.$watch.mostRecentCall.args[1](views);
-                mockScope.switcher.selected = views[1];
+                mockScope.ngModel.selected = views[1];
 
                 // Change the set of applicable views
                 mockScope.$watch.mostRecentCall.args[1]([
@@ -78,7 +68,7 @@ define(
                 ]);
 
                 // "b" is still in there, should remain selected
-                expect(mockScope.switcher.selected).not.toEqual(views[1]);
+                expect(mockScope.ngModel.selected).not.toEqual(views[1]);
             });
 
         });
