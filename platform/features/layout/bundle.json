@@ -4,6 +4,42 @@
     "extensions": {
         "types": [
             {
+                "key": "layout",
+                "name": "Layout",
+                "glyph": "L",
+                "description": "A layout in which multiple telemetry panels may be displayed.",
+                "features": "creation",
+                "model": { "composition": [] },
+                "properties": [
+                    {
+                        "name": "Preferred Size",
+                        "control": "select",
+                        "options": [
+                            { "name": "Fit to Window", "value": "FIT" },
+                            { "name": "Fixed Size", "value": "FIXED" }
+                        ],
+                        "key": "preferredSize"
+                    },
+                    {
+                        "label": "Layout Grid",
+                        "control": "composite",
+                        "pattern": "^(\\d*[1-9]\\d*)?$",
+                        "items": [
+                            {
+                                "name": "Horizontal grid (px)",
+                                "control": "textfield"
+                            },
+                            {
+                                "name": "Vertical grid (px)",
+                                "control": "textfield"
+                            }
+                        ],
+                        "key": "layoutGrid",
+                        "conversion": "number[]"
+                    }
+                ]
+            },
+            {
                 "key": "telemetry.panel",
                 "name": "Telemetry Panel",
                 "glyph": "t",
