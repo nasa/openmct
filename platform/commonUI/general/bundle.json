@@ -49,6 +49,11 @@
                 "key": "mctContainer",
                 "implementation": "MCTContainer.js",
                 "depends": [ "containers[]" ]
+            },
+            {
+                "key": "mctDrag",
+                "implementation": "MCTDrag.js",
+                "depends": [ "$document" ]
             }
         ],
         "containers": [
