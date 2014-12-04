@@ -2,6 +2,21 @@
     "name": "Layout components.",
     "description": "Plug in adding Layout capabiltiies.",
     "extensions": {
+        "views": [
+            {
+                "key": "layout",
+                "name": "Layout",
+                "glyph": "L",
+                "type": "layout",
+                "templateUrl": "templates/layout.html"
+            }
+        ],
+        "representations": [
+            {
+                "key": "frame",
+                "templateUrl": "templates/frame.html"
+            }
+        ],
         "types": [
             {
                 "key": "layout",
