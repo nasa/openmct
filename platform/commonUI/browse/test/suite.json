@@ -1,6 +1,5 @@
 [
     "BrowseController",
-    "ViewSwitcherController",
     "creation/CreateAction",
     "creation/CreateActionProvider",
     "creation/CreateMenuController",

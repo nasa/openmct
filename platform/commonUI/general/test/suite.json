@@ -4,5 +4,6 @@
     "ContextMenuController",
     "MCTContainer",
     "ToggleController",
-    "TreeNodeController"
+    "TreeNodeController",
+    "ViewSwitcherController"
 ]
