@@ -17,11 +17,6 @@
                 "depends": [ "$scope", "objectService", "navigationService" ]
             },
             {
-                "key": "ViewSwitcherController",
-                "implementation": "ViewSwitcherController.js",
-                "depends": [ "$scope" ]
-            },
-            {
                 "key": "CreateMenuController",
                 "implementation": "creation/CreateMenuController",
                 "depends": [ "$scope" ]

@@ -9,10 +9,6 @@
                 "templateUrl": "templates/bottombar.html"
             },
             {
-                "key": "switcher",
-                "templateUrl": "templates/controls/switcher.html"
-            },
-            {
                 "key": "action-button",
                 "templateUrl": "templates/controls/action-button.html"
             }
@@ -41,6 +37,11 @@
                 "key": "ClickAwayController",
                 "implementation": "ClickAwayController.js",
                 "depends": [ "$scope", "$document" ]
+            },
+            {
+                "key": "ViewSwitcherController",
+                "implementation": "ViewSwitcherController.js",
+                "depends": [ "$scope" ]
             }
         ],
         "directives": [
@@ -93,6 +94,11 @@
                 "key": "context-menu",
                 "templateUrl": "templates/menu/context-menu.html",
                 "uses": [ "action" ]
+            },
+            {
+                "key": "switcher",
+                "templateUrl": "templates/controls/switcher.html",
+                "uses": [ "view" ]
             }
         ]
     }

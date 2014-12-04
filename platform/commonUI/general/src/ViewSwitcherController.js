@@ -32,15 +32,10 @@ define(
 
             // Get list of views, read from capability
             function updateOptions(views) {
-                var options = views || [];
-
-                $scope.switcher = {
-                    options: options,
-                    selected: findMatchingOption(
-                        options,
-                        ($scope.switcher || {}).selected
-                    )
-                };
+                $scope.ngModel.selected = findMatchingOption(
+                    views || [],
+                    ($scope.ngModel || {}).selected
+                );
             }
 
             // Update view options when the in-scope results of using the

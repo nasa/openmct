@@ -1,4 +1,4 @@
-<span ng-controller="ViewSwitcherController">
+<span>
     <div class="object-browse-bar bar abs">
 
         <div class="items-select left abs">
@@ -13,14 +13,17 @@
                                 parameters="{ category: 'view-control' }">
             </mct-representation>
 
-            <mct-include key="'switcher'" ng-model="switcher" ng-if="switcher.options.length > 0">
-            </mct-include>
+            <mct-representation key="'switcher'"
+                                mct-object="domainObject"
+                                ng-model="representation">
+            </mct-representation>
         </div>
 
     </div>
 
     <div class='object-holder abs vscroll'>
-        <mct-representation key="switcher.selected.key" mct-object="domainObject">
+        <mct-representation key="representation.selected.key"
+                            mct-object="domainObject">
         </mct-representation>
     </div>
 </span>
