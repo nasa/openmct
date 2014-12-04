@@ -26,8 +26,8 @@
                 },
                 "properties": [
                     {
-                        "label": "Period",
-                        "control": "_textfield",
+                        "name": "Period",
+                        "control": "textfield",
                         "key": "period",
                         "required": true,
                         "property": [ "telemetry", "period" ],
