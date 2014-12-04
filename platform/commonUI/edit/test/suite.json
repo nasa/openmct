@@ -3,6 +3,8 @@
     "EditController",
     "actions/CancelAction",
     "actions/EditAction",
+    "actions/PropertiesAction",
+    "actions/PropertiesDialog",
     "actions/RemoveAction",
     "actions/SaveAction",
     "capabilities/EditableContextCapability",
