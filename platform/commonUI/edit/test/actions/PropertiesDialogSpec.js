@@ -13,32 +13,34 @@ define(
                 type = {
                     getProperties: function () { return properties; }
                 };
-                domainObject = {
-                    getModel: function () { return model; }
-                };
                 model = { x: "initial value" };
+                properties = ["x", "y", "z"].map(function (k) {
+                    return {
+                        getValue: function (model) { return model[k]; },
+                        setValue: function (model, v) { model[k] = v; },
+                        getDefinition: function () { return {}; }
+                    };
+                });
 
-                dialog = new PropertiesDialog(type, domainObject);
+                dialog = new PropertiesDialog(type, model);
             });
 
             it("provides sections based on type properties", function () {
-                expect(
-                    dialog.getSections()[0].rows.length
-                ).toEqual(properties.length);
+                expect(dialog.getFormStructure().sections[0].rows.length)
+                    .toEqual(properties.length);
             });
 
             it("pulls initial values from object model", function () {
-                expect(
-                    dialog.getSections()[0].rows[0].value
-                ).toEqual("initial value");
+                expect(dialog.getInitialFormValue()[0])
+                    .toEqual("initial value");
             });
 
             it("populates models with form results", function () {
-                dialog.updateModel(model, {
-                    a: "new value",
-                    b: "other new value",
-                    c: 42
-                });
+                dialog.updateModel(model, [
+                    "new value",
+                    "other new value",
+                    42
+                ]);
                 expect(model).toEqual({
                     x: "new value",
                     y: "other new value",

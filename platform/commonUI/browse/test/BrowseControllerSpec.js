@@ -25,7 +25,10 @@ define(
             }
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj("$scope", [ "$on" ]);
+                mockScope = jasmine.createSpyObj(
+                    "$scope",
+                    [ "$on", "$watch" ]
+                );
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",
                     [ "getObjects" ]
@@ -58,20 +61,6 @@ define(
                     mockObjectService,
                     mockNavigationService
                 );
-            });
-
-            it("provides a means of changing navigation", function () {
-                // Browse template needs a setNavigation function
-
-                // Verify precondition
-                expect(mockNavigationService.setNavigation)
-                    .not.toHaveBeenCalled();
-
-                // Set navigation via controller
-                controller.setNavigation(mockDomainObject);
-
-                expect(mockNavigationService.setNavigation)
-                    .toHaveBeenCalledWith(mockDomainObject);
             });
 
             it("uses composition to set the navigated object, if there is none", function () {
