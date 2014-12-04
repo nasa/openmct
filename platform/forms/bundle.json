@@ -40,6 +40,10 @@
                 "key": "DateTimeController",
                 "implementation": "controllers/DateTimeController.js",
                 "depends": [ "$scope" ]
+            },
+            {
+                "key": "CompositeController",
+                "implementation": "controllers/CompositeController.js"
             }
         ],
         "templates": [
