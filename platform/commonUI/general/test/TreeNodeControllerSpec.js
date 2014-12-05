@@ -7,6 +7,7 @@ define(
 
         describe("The tree node controller", function () {
             var mockScope,
+                mockTimeout,
                 controller;
 
             function TestObject(id, context) {
@@ -19,13 +20,9 @@ define(
             }
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj(
-                    "$scope",
-                    [ "$watch", "$on" ]
-                );
-                controller = new TreeNodeController(
-                    mockScope
-                );
+                mockScope = jasmine.createSpyObj("$scope", ["$watch", "$on"]);
+                mockTimeout = jasmine.createSpy("$timeout");
+                controller = new TreeNodeController(mockScope, mockTimeout);
             });
 
             it("allows tracking of expansion state", function () {
@@ -34,6 +31,12 @@ define(
                 // portion of the tree.
                 expect(controller.hasBeenExpanded()).toBeFalsy();
                 controller.trackExpansion();
+
+                // Expansion is tracked on a timeout, because too
+                // much expansion can result in an unstable digest.
+                expect(mockTimeout).toHaveBeenCalled();
+                mockTimeout.mostRecentCall.args[0]();
+
                 expect(controller.hasBeenExpanded()).toBeTruthy();
                 controller.trackExpansion();
                 expect(controller.hasBeenExpanded()).toBeTruthy();
@@ -84,6 +87,12 @@ define(
 
                 // Invoke the watch with the new selection
                 mockScope.$watch.calls[0].args[1](child);
+
+                // Expansion is tracked on a timeout, because too
+                // much expansion can result in an unstable digest.
+                // Trigger that timeout.
+                expect(mockTimeout).toHaveBeenCalled();
+                mockTimeout.mostRecentCall.args[0]();
 
                 expect(mockScope.toggle.setState).toHaveBeenCalledWith(true);
                 expect(controller.hasBeenExpanded()).toBeTruthy();
