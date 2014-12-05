@@ -89,6 +89,12 @@
                 "key": "topbar-edit",
                 "templateUrl": "templates/topbar-edit.html"
             }
+        ],
+        "representers": [
+            {
+                "implementation": "EditRepresenter.js",
+                "depends": [ "$q" ]
+            }
         ]
     }
 }
