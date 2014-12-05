@@ -28,6 +28,10 @@ define(
                 function continueDrag(event) {
                     updatePosition(event);
                     fireListener("mctDrag");
+
+                    // Don't show selection highlights, etc
+                    event.preventDefault();
+                    return false;
                 }
 
                 function endDrag(event) {
@@ -37,14 +41,27 @@ define(
                     continueDrag(event);
 
                     fireListener("mctDragUp");
+
+                    // Clear out start-of-drag position
+                    initialPosition = undefined;
+
+                    // Don't show selection highlights, etc
+                    event.preventDefault();
+                    return false;
                 }
 
                 function startDrag(event) {
                     body.on("mouseup", endDrag);
                     body.on("mousemove", continueDrag);
+
                     updatePosition(event);
+
                     fireListener("mctDragDown");
                     fireListener("mctDrag");
+
+                    // Don't show selection highlights, etc
+                    event.preventDefault();
+                    return false;
                 }
 
                 element.on("mousedown", startDrag);
