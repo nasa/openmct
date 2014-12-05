@@ -11,7 +11,7 @@
             </mct-representation>
         </div>
 
-        <span class="layout-drag-handles">
+        <span class="layout-drag-handles" ng-show="domainObject.hasCapability('editor')">
             <span style="position: absolute; left: 12px; right: 12px; top: 12px; bottom: 12px; cursor: move;"
                   mct-drag-down="controller.startDrag(childObject.getId(), [1,1], [0,0])"
                   mct-drag="controller.continueDrag(delta)"
