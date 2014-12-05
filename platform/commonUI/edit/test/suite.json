@@ -1,6 +1,7 @@
 [
     "EditActionController",
     "EditController",
+    "EditRepresenter",
     "actions/CancelAction",
     "actions/EditAction",
     "actions/PropertiesAction",

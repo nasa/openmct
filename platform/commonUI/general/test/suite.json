@@ -3,6 +3,7 @@
     "ClickAwayController",
     "ContextMenuController",
     "MCTContainer",
+    "MCTDrag",
     "ToggleController",
     "TreeNodeController",
     "ViewSwitcherController"
