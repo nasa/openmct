@@ -6,10 +6,10 @@ define(
         "use strict";
 
         function MCTDrag($document) {
-            var body = $document.find('body');
 
             function link(scope, element, attrs) {
-                var initialPosition,
+                var body = $document.find('body'),
+                    initialPosition,
                     currentPosition,
                     delta;
 
