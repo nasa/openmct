@@ -11,12 +11,57 @@
             </mct-representation>
         </div>
 
-        <span>
-            <span style="position: absolute; left: 12px; right: 12px; top: 12px; bottom: 12px;"
+        <span class="layout-drag-handles">
+            <span style="position: absolute; left: 12px; right: 12px; top: 12px; bottom: 12px; cursor: move;"
                   mct-drag-down="controller.startDrag(childObject.getId(), [1,1], [0,0])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">
             </span>
+
+            <span style="position: absolute; left: 0px; width: 12px; top: 12px; bottom: 12px; cursor: w-resize;"
+                  mct-drag-down="controller.startDrag(childObject.getId(), [1,0], [-1,0])"
+                  mct-drag="controller.continueDrag(delta)"
+                  mct-drag-up="controller.endDrag()">
+            </span>
+            <span style="position: absolute; right: 0px; width: 12px; top: 12px; bottom: 12px; cursor: e-resize;"
+                  mct-drag-down="controller.startDrag(childObject.getId(), [0,0], [1,0])"
+                  mct-drag="controller.continueDrag(delta)"
+                  mct-drag-up="controller.endDrag()">
+            </span>
+
+            <span style="position: absolute; left: 12px; right: 12px; top: 0px; height: 12px; cursor: n-resize;"
+                  mct-drag-down="controller.startDrag(childObject.getId(), [0,1], [0,-1])"
+                  mct-drag="controller.continueDrag(delta)"
+                  mct-drag-up="controller.endDrag()">
+            </span>
+            <span style="position: absolute; left: 12px; right: 12px; bottom: 0px; height: 12px; cursor: s-resize;"
+                  mct-drag-down="controller.startDrag(childObject.getId(), [0,0], [1,0])"
+                  mct-drag="controller.continueDrag(delta)"
+                  mct-drag-up="controller.endDrag()">
+            </span>
+
+            <span style="position: absolute; left: 0px; width: 12px; top: 0px; height: 12px; cursor: nw-resize;"
+                  mct-drag-down="controller.startDrag(childObject.getId(), [1,1], [-1,-1])"
+                  mct-drag="controller.continueDrag(delta)"
+                  mct-drag-up="controller.endDrag()">
+            </span>
+            <span style="position: absolute; right: 0px; width: 12px; top: 0px; height: 12px; cursor: ne-resize;"
+                  mct-drag-down="controller.startDrag(childObject.getId(), [0,1], [1,-1])"
+                  mct-drag="controller.continueDrag(delta)"
+                  mct-drag-up="controller.endDrag()">
+            </span>
+            <span style="position: absolute; left: 0px; width: 12px; bottom: 0px; height: 12px; cursor: sw-resize;"
+                  mct-drag-down="controller.startDrag(childObject.getId(), [1,0], [-1,1])"
+                  mct-drag="controller.continueDrag(delta)"
+                  mct-drag-up="controller.endDrag()">
+            </span>
+            <span style="position: absolute; right: 0px; width: 12px; bottom: 0px; height: 12px; cursor: se-resize;"
+                  mct-drag-down="controller.startDrag(childObject.getId(), [0,0], [1,1])"
+                  mct-drag="controller.continueDrag(delta)"
+                  mct-drag-up="controller.endDrag()">
+            </span>
+
+
         </span>
 
     </div>
