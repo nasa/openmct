@@ -6,7 +6,7 @@
     "platform/commonUI/edit",
     "platform/commonUI/dialog",
     "platform/commonUI/general",
-    "platform/forms",
-
+    "platform/telemetry",
+    
     "example/persistence"
 ]
