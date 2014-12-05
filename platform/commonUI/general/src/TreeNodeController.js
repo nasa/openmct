@@ -29,7 +29,7 @@ define(
          * expand-to-show-navigated-object behavior.)
          * @constructor
          */
-        function TreeNodeController($scope) {
+        function TreeNodeController($scope, $timeout) {
             var selectedObject = ($scope.ngModel || {}).selectedObject,
                 isSelected = false,
                 hasBeenExpanded = false;
@@ -90,6 +90,17 @@ define(
                 return false; // No context to judge by
             }
 
+            // Track that a node has been expanded, either by the
+            // user or automatically to show a selection.
+            function trackExpansion() {
+                if (!hasBeenExpanded) {
+                    // Run on a timeout; if a lot of expansion needs to
+                    // occur (e.g. if the selection is several nodes deep) we
+                    // want this to be spread across multiple digest cycles.
+                    $timeout(function () { hasBeenExpanded = true; }, 0);
+                }
+            }
+
             // Consider the currently-navigated object and update
             // parameters which support display.
             function checkSelection() {
@@ -107,7 +118,7 @@ define(
                 if (isOnSelectionPath(nodeObject, selectedObject) &&
                         $scope.toggle !== undefined) {
                     $scope.toggle.setState(true);
-                    hasBeenExpanded = true;
+                    trackExpansion();
                 }
             }
 
@@ -128,9 +139,7 @@ define(
                  * to record that this has occurred, to support one-time
                  * lazy loading of the node's subtree.
                  */
-                trackExpansion: function () {
-                    hasBeenExpanded = true;
-                },
+                trackExpansion: trackExpansion,
                 /**
                  * Check if this not has ever been expanded.
                  * @returns true if it has been expanded
