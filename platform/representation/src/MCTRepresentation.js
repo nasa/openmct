@@ -131,6 +131,12 @@ define(
                 // same domain object; these changes should be tracked in the
                 // model's "modified" field, by the mutation capability.
                 $scope.$watch("domainObject.getModel().modified", refresh);
+
+                // Do one initial refresh, so that we don't need another
+                // digest iteration just to populate the scope. Failure to
+                // do this can result in unstable digest cycles, which
+                // Angular will detect, and throw an Error about.
+                refresh();
             }
 
             return {
