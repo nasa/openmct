@@ -31,7 +31,7 @@ define(
          *        representation extensions
          * @param {ViewDefinition[]} views an array of view extensions
          */
-        function MCTRepresentation(representations, views, gestureService, $q, $log) {
+        function MCTRepresentation(representations, views, representers, $q, $log) {
             var pathMap = {},
                 representationMap = {},
                 gestureMap = {};
@@ -52,8 +52,10 @@ define(
             });
 
 
-            function link($scope, element) {
-                var gestureHandle;
+            function link($scope, element, attrs) {
+                var activeRepresenters = representers.map(function (Representer) {
+                    return new Representer($scope, element, attrs);
+                });
 
                 // General-purpose refresh mechanism; should set up the scope
                 // as appropriate for current representation key and
@@ -73,9 +75,9 @@ define(
                     $scope.inclusion = pathMap[$scope.key];
 
                     // Any existing gestures are no longer valid; release them.
-                    if (gestureHandle) {
-                        gestureHandle.destroy();
-                    }
+                    activeRepresenters.forEach(function (activeRepresenter) {
+                        activeRepresenter.destroy();
+                    });
 
                     // Log if a key was given, but no matching representation
                     // was found.
@@ -88,6 +90,11 @@ define(
                     if (domainObject) {
                         // Always provide the model, as "model"
                         $scope.model = domainObject.getModel();
+
+                        // Also provide the view configuration,
+                        // for the specific view
+                        $scope.configuration =
+                            ($scope.model.configuration || {})[$scope.key] || {};
 
                         // Also provide any of the capabilities requested
                         uses.forEach(function (used) {
@@ -104,13 +111,11 @@ define(
                             });
                         });
 
-                        // Finally, wire up any gestures that should be
-                        // associated with this representation.
-                        gestureHandle = gestureService.attachGestures(
-                            element,
-                            domainObject,
-                            gestureKeys
-                        );
+                        // Finally, wire up any additional behavior (such as
+                        // gestures) associated with this representation.
+                        activeRepresenters.forEach(function (representer) {
+                            representer.represent(representation, domainObject);
+                        });
                     }
                 }
 
