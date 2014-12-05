@@ -107,7 +107,8 @@
                 "description": "Grid of available items.",
                 "templateUrl": "templates/items/items.html",
                 "uses": [ "composition" ],
-                "gestures": [ "drop" ]
+                "gestures": [ "drop" ],
+                "type": "folder"
             }
         ],
         "components": [
