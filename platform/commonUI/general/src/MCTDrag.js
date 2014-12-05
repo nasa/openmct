@@ -15,6 +15,9 @@ define(
 
                 function fireListener(name) {
                     scope.$eval(attrs[name], { delta: delta });
+
+                    // Trigger prompt digestion
+                    scope.$apply();
                 }
 
                 function updatePosition(event) {
