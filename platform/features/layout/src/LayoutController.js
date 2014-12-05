@@ -1,15 +1,17 @@
 /*global define*/
 
 define(
-    [],
-    function () {
+    ['./LayoutDrag'],
+    function (LayoutDrag) {
         "use strict";
 
-        var DEFAULT_DIMENSIONS = [ 4, 2 ];
+        var DEFAULT_DIMENSIONS = [ 12, 8 ];
 
         function LayoutController($scope) {
-            var width = 16,
-                height = 16,
+            var width = 32,
+                height = 32,
+                activeDrag,
+                activeDragId,
                 rawPositions = {},
                 positions = {};
 
@@ -30,8 +32,10 @@ define(
             }
 
             function populatePosition(id, index) {
-                rawPositions[id] = rawPositions[id] || defaultPosition(index);
-                positions[id] = convertPosition(rawPositions[id]);
+                rawPositions[id] =
+                    rawPositions[id] || defaultPosition(index || 0);
+                positions[id] =
+                    convertPosition(rawPositions[id]);
             }
 
             function lookupPanels(model) {
@@ -55,14 +59,24 @@ define(
                 getFrameStyle: function (id) {
                     return positions[id];
                 },
-                startDrag: function (event) {
-                    console.log("start", event);
+                startDrag: function (id, posFactor, dimFactor) {
+                    activeDragId = id;
+                    activeDrag = new LayoutDrag(
+                        rawPositions[id],
+                        posFactor,
+                        dimFactor,
+                        [ width, height ]
+                    );
                 },
-                continueDrag: function (event) {
-                    console.log("continue", event);
+                continueDrag: function (delta) {
+                    if (activeDrag) {
+                        rawPositions[activeDragId] =
+                            activeDrag.getAdjustedPosition(delta);
+                        populatePosition(activeDragId);
+                    }
                 },
-                endDrag: function (event) {
-                    console.log("end", event);
+                endDrag: function () {
+                    // TODO: Mutate, persist
                 }
             };
 
