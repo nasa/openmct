@@ -15,6 +15,15 @@ define(
                 rawPositions = {},
                 positions = {};
 
+
+            function shallowCopy(obj, keys) {
+                var copy = {};
+                keys.forEach(function (k) {
+                    copy[k] = obj[k];
+                });
+                return copy;
+            }
+
             function convertPosition(raw) {
                 return {
                     left: (width * raw.position[0]) + 'px',
@@ -39,10 +48,11 @@ define(
             }
 
             function lookupPanels(model) {
-                var configuration =
-                    ((model || {}).configuration || {}).layout || {};
+                var configuration = $scope.configuration || {},
+                    ids = (model || {}).composition || [];
 
                 // Clear prior positions
+                rawPositions = shallowCopy(configuration.panels || {}, ids);
                 positions = {};
 
                 // Update width/height that we are tracking
@@ -50,7 +60,7 @@ define(
                 // Pull values from panels field to rawPositions
 
                 // Compute positions and add defaults where needed
-                ((model || {}).composition || []).forEach(populatePosition);
+                ids.forEach(populatePosition);
             }
 
             $scope.$watch("model", lookupPanels);
@@ -76,7 +86,14 @@ define(
                     }
                 },
                 endDrag: function () {
-                    // TODO: Mutate, persist
+                    // Write to configuration; this is watched and
+                    // saved by the EditRepresenter.
+                    $scope.configuration =
+                        $scope.configuration || {};
+                    $scope.configuration.panels =
+                        $scope.configuration.panels || {};
+                    $scope.configuration.panels[activeDragId] =
+                        rawPositions[activeDragId];
                 }
             };
 
