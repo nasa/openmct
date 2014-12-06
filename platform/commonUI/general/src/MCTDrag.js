@@ -5,29 +5,65 @@ define(
     function () {
         "use strict";
 
+        /**
+         * The mct-drag directive allows drag functionality
+         * (in the mousedown-mousemove-mouseup sense, as opposed to
+         * the drag-and-drop sense) to be attached to specific
+         * elements. This takes the form of three attributes:
+         *
+         * * `mct-drag`: An Angular expression to evaluate during
+         *   drag movement.
+         * * `mct-drag-down`: An Angular expression to evaluate
+         *   when the drag begins.
+         * * `mct-drag-up`: An Angular expression to evaluate when
+         *   dragging ends.
+         *
+         * In each case, a variable `delta` will be provided to the
+         * expression; this is a two-element array or the horizontal
+         * and vertical pixel offset of the current mouse position
+         * relative to the mouse position where dragging began.
+         *
+         * @constructor
+         *
+         */
         function MCTDrag($document) {
 
+            // Link; install event handlers.
             function link(scope, element, attrs) {
+                // Keep a reference to the body, to attach/detach
+                // mouse event handlers; mousedown and mouseup cannot
+                // only be attached to the element being linked, as the
+                // mouse may leave this element during the drag.
                 var body = $document.find('body'),
                     initialPosition,
-                    currentPosition,
                     delta;
 
+                // Utility function to cause evaluation of mctDrag,
+                // mctDragUp, etc
                 function fireListener(name) {
+                    // Evaluate the expression, with current delta
                     scope.$eval(attrs[name], { delta: delta });
 
                     // Trigger prompt digestion
                     scope.$apply();
                 }
 
+                // Update positions (both actual and relative)
+                // based on a new mouse event object.
                 function updatePosition(event) {
-                    currentPosition = [ event.pageX, event.pageY ];
+                    // Get the current position, as an array
+                    var currentPosition = [ event.pageX, event.pageY ];
+
+                    // Track the initial position, if one hasn't been observed
                     initialPosition = initialPosition || currentPosition;
+
+                    // Compute relative position
                     delta = currentPosition.map(function (v, i) {
                         return v - initialPosition[i];
                     });
                 }
 
+                // Called during a drag, on mousemove
                 function continueDrag(event) {
                     updatePosition(event);
                     fireListener("mctDrag");
@@ -37,10 +73,14 @@ define(
                     return false;
                 }
 
+                // Called only when the drag ends (on mouseup)
                 function endDrag(event) {
+                    // Detach event handlers
                     body.off("mouseup", endDrag);
                     body.off("mousemove", continueDrag);
 
+                    // Also call continueDrag, to fire mctDrag
+                    // and do its usual position update
                     continueDrag(event);
 
                     fireListener("mctDragUp");
@@ -53,12 +93,18 @@ define(
                     return false;
                 }
 
+                // Called on mousedown on the element
                 function startDrag(event) {
+                    // Listen for mouse events at the body level,
+                    // since the mouse may leave the element during
+                    // the drag.
                     body.on("mouseup", endDrag);
                     body.on("mousemove", continueDrag);
 
+                    // Set an initial position
                     updatePosition(event);
 
+                    // Fire listeners, including mctDrag
                     fireListener("mctDragDown");
                     fireListener("mctDrag");
 
@@ -67,11 +113,14 @@ define(
                     return false;
                 }
 
+                // Listen for mousedown on the element
                 element.on("mousedown", startDrag);
             }
 
             return {
+                // mct-drag only makes sense as an attribute
                 restrict: "A",
+                // Link function, to install event handlers
                 link: link
             };
         }
