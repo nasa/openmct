@@ -7,6 +7,7 @@ define(
 
         describe("The Edit mode representer", function () {
             var mockQ,
+                mockLog,
                 mockScope,
                 testRepresentation,
                 mockDomainObject,
@@ -23,6 +24,7 @@ define(
 
             beforeEach(function () {
                 mockQ = { when: mockPromise };
+                mockLog = jasmine.createSpyObj("$log", ["info", "debug"]);
                 mockScope = jasmine.createSpyObj("$scope", ["$watch"]);
                 testRepresentation = { key: "test" };
                 mockDomainObject = jasmine.createSpyObj("domainObject", [
@@ -35,39 +37,24 @@ define(
                 mockPersistence =
                     jasmine.createSpyObj("persistence", ["persist"]);
 
+                mockDomainObject.getModel.andReturn({});
                 mockDomainObject.hasCapability.andReturn(true);
                 mockDomainObject.useCapability.andReturn(true);
                 mockDomainObject.getCapability.andReturn(mockPersistence);
 
-                representer = new EditRepresenter(mockQ, mockScope);
+                representer = new EditRepresenter(mockQ, mockLog, mockScope);
                 representer.represent(testRepresentation, mockDomainObject);
             });
 
-            it("watches for changes in view configuration", function () {
-                // Should watch the configuration field,
-                // provided by mct-representation
-                expect(mockScope.$watch).toHaveBeenCalledWith(
-                    "configuration",
-                    jasmine.any(Function),
-                    true // should be a deep watch
-                );
-            });
-
-            it("watches for changes in domain object model", function () {
-                // Should watch the model field,
-                // provided by mct-representation
-                expect(mockScope.$watch).toHaveBeenCalledWith(
-                    "model",
-                    jasmine.any(Function),
-                    true // should be a deep watch
-                );
+            it("provides a commit method in scope", function () {
+                expect(mockScope.commit).toEqual(jasmine.any(Function));
             });
 
             it("mutates and persists upon observed changes", function () {
                 mockScope.model = { someKey: "some value" };
                 mockScope.configuration = { someConfiguration: "something" };
 
-                mockScope.$watch.mostRecentCall.args[1].call();
+                mockScope.commit("Some message");
 
                 // Should have mutated the object...
                 expect(mockDomainObject.useCapability).toHaveBeenCalledWith(

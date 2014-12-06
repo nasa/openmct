@@ -67,7 +67,7 @@ define(
 
             // Respond to the destruction of the current representation.
             function destroy() {
-                // No op
+                // Nothing to clean up
             }
 
             // Handle a specific representation of a specific domain object

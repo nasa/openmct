@@ -91,6 +91,25 @@ define(
                 // that a configuration for b has been defined.
                 expect(testConfiguration.panels.b).toBeDefined();
             });
+
+
+            it("invokes commit after drag", function () {
+                // Populate scope
+                mockScope.$watch.mostRecentCall.args[1](testModel);
+
+                // Add a commit method to scope
+                mockScope.commit = jasmine.createSpy("commit");
+
+                // Do a drag
+                controller.startDrag("b", [1, 1], [0, 0]);
+                controller.continueDrag([100, 100]);
+                controller.endDrag();
+
+                // Should have triggered commit (provided by
+                // EditRepresenter) with some message.
+                expect(mockScope.commit)
+                    .toHaveBeenCalledWith(jasmine.any(String));
+            });
         });
     }
 );
