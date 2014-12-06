@@ -59,7 +59,11 @@ define(
                     // Allow mutators to change their mind by
                     // returning false.
                     if (mutationResult !== false) {
-                        copyValues(model, result);
+                        // Copy values if result was a different object
+                        // (either our clone or some other new thing)
+                        if (model !== result) {
+                            copyValues(model, result);
+                        }
                         model.modified = Date.now();
                     }
 
