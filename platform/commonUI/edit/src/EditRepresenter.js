@@ -5,17 +5,15 @@ define(
     function () {
         "use strict";
 
-        function EditRepresenter($q, scope, element, attrs) {
+        function EditRepresenter($q, scope) {
             var watches = [],
                 domainObject,
                 key;
 
             function doPersist(model) {
-                return $q.when(function () {
-                    return domainObject.useCapability("mutation", function () {
-                        return model;
-                    });
-                }).then(function (result) {
+                return $q.when(domainObject.useCapability("mutation", function () {
+                    return model;
+                })).then(function (result) {
                     return result &&
                         domainObject.getCapability("persistence").persist();
                 });
@@ -23,12 +21,13 @@ define(
 
             function update() {
                 var model = scope.model,
-                    configuration = scope.configuration,
-                    key = scope.key;
+                    configuration = scope.configuration;
 
                 if (domainObject && domainObject.hasCapability("persistence")) {
-                    model.configuration = model.configuration || {};
-                    model.configuration[key] = configuration;
+                    if (key && configuration) {
+                        model.configuration = model.configuration || {};
+                        model.configuration[key] = configuration;
+                    }
                     doPersist(model);
                 }
             }
