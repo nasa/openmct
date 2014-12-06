@@ -93,7 +93,7 @@
         "representers": [
             {
                 "implementation": "EditRepresenter.js",
-                "depends": [ "$q" ]
+                "depends": [ "$q", "$log" ]
             }
         ]
     }

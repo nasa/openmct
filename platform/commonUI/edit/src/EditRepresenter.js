@@ -22,9 +22,8 @@ define(
          *
          * @constructor
          */
-        function EditRepresenter($q, scope) {
-            var watches = [],
-                domainObject,
+        function EditRepresenter($q, $log, scope) {
+            var domainObject,
                 key;
 
             // Mutate and persist a new version of a domain object's model.
@@ -40,11 +39,19 @@ define(
             }
 
             // Handle changes to model and/or view configuration
-            function update() {
+            function commit(message) {
                 // Look up from scope; these will have been populated by
                 // mct-representation.
                 var model = scope.model,
                     configuration = scope.configuration;
+
+                // Log the commit message
+                $log.debug([
+                    "Committing ",
+                    domainObject && domainObject.getModel().name,
+                    "(" + (domainObject && domainObject.getId()) + "):",
+                    message
+                ].join(" "));
 
                 // Update the configuration stored in the model, and persist.
                 if (domainObject && domainObject.hasCapability("persistence")) {
@@ -60,9 +67,7 @@ define(
 
             // Respond to the destruction of the current representation.
             function destroy() {
-                // Stop watching for changes
-                watches.forEach(function (deregister) { deregister(); });
-                watches = [];
+                // No op
             }
 
             // Handle a specific representation of a specific domain object
@@ -74,15 +79,10 @@ define(
 
                 // Ensure existing watches are released
                 destroy();
-
-                // Watch for changes to model or configuration; keep the
-                // results, as $watch returns an de-registration function.
-                // Use the "editor" capability to check if we are in Edit mode.
-                watches = representedObject.hasCapability("editor") ? [
-                    scope.$watch("model", update, true),
-                    scope.$watch("configuration", update, true)
-                ] : [];
             }
+
+            // Place the "commit" method in the scope
+            scope.commit = commit;
 
             return {
                 /**

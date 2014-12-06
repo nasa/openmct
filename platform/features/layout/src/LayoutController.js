@@ -158,6 +158,10 @@ define(
                     // Store the position of this panel.
                     $scope.configuration.panels[activeDragId] =
                         rawPositions[activeDragId];
+                    // Mark this object as dirty to encourage persistence
+                    if ($scope.commit) {
+                        $scope.commit("Moved frame.");
+                    }
                 }
             };
 
