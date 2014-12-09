@@ -1,0 +1,61 @@
+{
+    "name": "Layout components.",
+    "description": "Plug in adding Layout capabiltiies.",
+    "extensions": {
+        "types": [
+            {
+                "key": "telemetry.panel",
+                "name": "Telemetry Panel",
+                "glyph": "t",
+                "description": "A panel for collecting telemetry elements.",
+                "delegates": [ "telemetry" ],
+                "features": "creation",
+                "model": { "composition": [] },
+                "properties": [
+                    {
+                        "label": "Preferred Size",
+                        "control": "_textfields",
+                        "values": [
+                            {
+                                "label": "Width (px)",
+                                "pattern": "^(\\d*[1-9]\\d*)?$"
+                            },
+                            {
+                                "label": "Height (px)",
+                                "pattern": "^(\\d*[1-9]\\d*)?$"
+                            }
+                        ],
+                        "key": "preferredSize",
+                        "conversion": "number[]"
+                    },
+                    {
+                        "label": "Layout Grid",
+                        "control": "_textfields",
+                        "values": [
+                            {
+                                "label": "Horizontal grid (px)",
+                                "pattern": "^(\\d*[1-9]\\d*)?$"
+                            },
+                            {
+                                "label": "Vertical grid (px)",
+                                "pattern": "^(\\d*[1-9]\\d*)?$"
+                            }
+                        ],
+                        "key": "layoutGrid",
+                        "conversion": "number[]"
+                    },
+                    {
+                        "label": "Default View",
+                        "control": "_select",
+                        "values": [
+                            "Plot",
+                            "Scrolling"
+                        ],
+                        "comment": "TODO: Infer values from type",
+                        "key": "defaultView"
+                    }
+                ]
+            }
+        ]
+    }
+}
