@@ -2,7 +2,66 @@
     "name": "Layout components.",
     "description": "Plug in adding Layout capabiltiies.",
     "extensions": {
+        "views": [
+            {
+                "key": "layout",
+                "name": "Layout",
+                "glyph": "L",
+                "type": "layout",
+                "templateUrl": "templates/layout.html",
+                "uses": [ "composition" ]
+            }
+        ],
+        "representations": [
+            {
+                "key": "frame",
+                "templateUrl": "templates/frame.html"
+            }
+        ],
+        "controllers": [
+            {
+                "key": "LayoutController",
+                "implementation": "LayoutController.js",
+                "depends": [ "$scope" ]
+            }
+        ],
         "types": [
+            {
+                "key": "layout",
+                "name": "Layout",
+                "glyph": "L",
+                "description": "A layout in which multiple telemetry panels may be displayed.",
+                "features": "creation",
+                "model": { "composition": [] },
+                "properties": [
+                    {
+                        "name": "Preferred Size",
+                        "control": "select",
+                        "options": [
+                            { "name": "Fit to Window", "value": "FIT" },
+                            { "name": "Fixed Size", "value": "FIXED" }
+                        ],
+                        "key": "preferredSize"
+                    },
+                    {
+                        "label": "Layout Grid",
+                        "control": "composite",
+                        "pattern": "^(\\d*[1-9]\\d*)?$",
+                        "items": [
+                            {
+                                "name": "Horizontal grid (px)",
+                                "control": "textfield"
+                            },
+                            {
+                                "name": "Vertical grid (px)",
+                                "control": "textfield"
+                            }
+                        ],
+                        "key": "layoutGrid",
+                        "conversion": "number[]"
+                    }
+                ]
+            },
             {
                 "key": "telemetry.panel",
                 "name": "Telemetry Panel",

@@ -9,10 +9,6 @@
                 "templateUrl": "templates/bottombar.html"
             },
             {
-                "key": "switcher",
-                "templateUrl": "templates/controls/switcher.html"
-            },
-            {
                 "key": "action-button",
                 "templateUrl": "templates/controls/action-button.html"
             }
@@ -21,7 +17,7 @@
             {
                 "key": "TreeNodeController",
                 "implementation": "TreeNodeController.js",
-                "depends": [ "$scope", "navigationService" ]
+                "depends": [ "$scope", "$timeout" ]
             },
             {
                 "key": "ActionGroupController",
@@ -41,6 +37,11 @@
                 "key": "ClickAwayController",
                 "implementation": "ClickAwayController.js",
                 "depends": [ "$scope", "$document" ]
+            },
+            {
+                "key": "ViewSwitcherController",
+                "implementation": "ViewSwitcherController.js",
+                "depends": [ "$scope" ]
             }
         ],
         "directives": [
@@ -48,6 +49,11 @@
                 "key": "mctContainer",
                 "implementation": "MCTContainer.js",
                 "depends": [ "containers[]" ]
+            },
+            {
+                "key": "mctDrag",
+                "implementation": "MCTDrag.js",
+                "depends": [ "$document" ]
             }
         ],
         "containers": [
@@ -93,6 +99,11 @@
                 "key": "context-menu",
                 "templateUrl": "templates/menu/context-menu.html",
                 "uses": [ "action" ]
+            },
+            {
+                "key": "switcher",
+                "templateUrl": "templates/controls/switcher.html",
+                "uses": [ "view" ]
             }
         ]
     }

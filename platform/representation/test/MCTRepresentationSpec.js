@@ -15,13 +15,13 @@ define(
         describe("The mct-representation directive", function () {
             var testRepresentations,
                 testViews,
-                mockGestureService,
-                mockGestureHandle,
+                mockRepresenters,
                 mockQ,
                 mockLog,
                 mockScope,
                 mockElement,
                 mockDomainObject,
+                testModel,
                 mctRepresentation;
 
             function mockPromise(value) {
@@ -61,10 +61,17 @@ define(
                     }
                 ];
 
-                mockGestureService = jasmine.createSpyObj("gestureService", [ "attachGestures" ]);
-                mockGestureHandle = jasmine.createSpyObj("gestureHandle", [ "destroy" ]);
+                testModel = { someKey: "some value" };
 
-                mockGestureService.attachGestures.andReturn(mockGestureHandle);
+                mockRepresenters = ["A", "B"].map(function (name) {
+                    var constructor = jasmine.createSpy("Representer" + name),
+                        representer = jasmine.createSpyObj(
+                            "representer" + name,
+                            [ "represent", "destroy" ]
+                        );
+                    constructor.andReturn(representer);
+                    return constructor;
+                });
 
                 mockQ = { when: mockPromise };
                 mockLog = jasmine.createSpyObj("$log", LOG_FUNCTIONS);
@@ -73,10 +80,12 @@ define(
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
 
+                mockDomainObject.getModel.andReturn(testModel);
+
                 mctRepresentation = new MCTRepresentation(
                     testRepresentations,
                     testViews,
-                    mockGestureService,
+                    mockRepresenters,
                     mockQ,
                     mockLog
                 );
@@ -136,32 +145,6 @@ define(
                 expect(mockDomainObject.useCapability)
                     .toHaveBeenCalledWith("otherTestCapability");
             });
-
-            it("attaches declared gestures, and detaches on refresh", function () {
-                mctRepresentation.link(mockScope, mockElement);
-
-                mockScope.key = "uvw";
-                mockScope.domainObject = mockDomainObject;
-
-                // Trigger the watch
-                mockScope.$watch.mostRecentCall.args[1]();
-
-                expect(mockGestureService.attachGestures).toHaveBeenCalledWith(
-                    mockElement,
-                    mockDomainObject,
-                    [ "testGesture", "otherTestGesture" ]
-                );
-
-                expect(mockGestureHandle.destroy).not.toHaveBeenCalled();
-
-                // Refresh, expect a detach
-                mockScope.key = "abc";
-                mockScope.$watch.mostRecentCall.args[1]();
-
-                // Should have destroyed those old gestures
-                expect(mockGestureHandle.destroy).toHaveBeenCalled();
-            });
-
 
             it("logs when no representation is available for a key", function () {
                 mctRepresentation.link(mockScope, mockElement);

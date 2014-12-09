@@ -17,11 +17,6 @@
                 "depends": [ "$scope", "objectService", "navigationService" ]
             },
             {
-                "key": "ViewSwitcherController",
-                "implementation": "ViewSwitcherController.js",
-                "depends": [ "$scope" ]
-            },
-            {
                 "key": "CreateMenuController",
                 "implementation": "creation/CreateMenuController",
                 "depends": [ "$scope" ]
@@ -112,7 +107,8 @@
                 "description": "Grid of available items.",
                 "templateUrl": "templates/items/items.html",
                 "uses": [ "composition" ],
-                "gestures": [ "drop" ]
+                "gestures": [ "drop" ],
+                "type": "folder"
             }
         ],
         "components": [

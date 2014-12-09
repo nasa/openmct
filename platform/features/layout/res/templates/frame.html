@@ -1,0 +1,20 @@
+<div class="frame frame-template abs">
+    <div class="bar abs object-header object-top-bar">
+        <div class="title left abs">
+            <mct-representation key="'node'"
+                                mct-object="domainObject">
+            </mct-representation>
+        </div>
+        <div class="btn-bar right abs">
+            <mct-representation key="'switcher'"
+                                ng-model="representation"
+                                mct-object="domainObject">
+            </mct-representation>
+        </div>
+    </div>
+    <div class="abs object-holder">
+        <mct-representation key="representation.selected.key"
+                            mct-object="domainObject">
+        </mct-representation>
+    </div>
+</div>

@@ -3,6 +3,7 @@
     "gestures/DragGesture",
     "gestures/DropGesture",
     "gestures/GestureProvider",
+    "gestures/GestureRepresenter",
     "MCTInclude",
     "MCTRepresentation"
 ]
