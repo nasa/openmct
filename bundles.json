@@ -7,6 +7,6 @@
     "platform/commonUI/dialog",
     "platform/commonUI/general",
     "platform/telemetry",
-    
+
     "example/persistence"
 ]

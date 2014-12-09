@@ -1,0 +1,121 @@
+<div class="gl-plot"
+     ng-controller="TelemetryController as telemetry">
+    <span ng-controller="PlotController as plot"
+          ng-mouseleave="representation.showControls = false">
+
+    <div class="gl-plot-legend">
+        <span class='plot-legend-item'
+              ng-repeat="telemetryObject in telemetry.getTelemetryObjects() track by $index">
+            <span class='plot-color-swatch' ng-style="{ 'background-color': plot.getColor($index) }"></span>
+	        <span class='title-label'>{{telemetryObject.getModel().name}}</span>
+        </span>
+    </div>
+
+
+    <div class="gl-plot-coords"
+         ng-if="representation.showControls">
+        {{plot.getHoverCoordinates().join(', ')}}
+    </div>
+
+    <div class="gl-plot-axis-area gl-plot-y">
+
+        <div class="gl-plot-label gl-plot-y-label"
+             ng-show="!representation.showControls">
+            {{axes[1].active.name}}
+        </div>
+
+        <div ng-repeat="tick in rangeTicks"
+             class="gl-plot-tick gl-plot-y-tick-label"
+             ng-style="{ bottom: (100 * $index / (rangeTicks.length - 1)) + '%' }">
+            {{tick.label}}
+        </div>
+
+        <div class="gl-plot-y-options gl-plot-local-controls"
+             ng-show="representation.showControls"
+             ng-if="axes[1].options.length > 0">
+            <div class='form-control shell select'>
+                <select class="form-control input shell select"
+                        ng-model="axes[1].active"
+                        ng-options="option.name for option in axes[1].options">
+                </select>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="gl-plot-display-area"
+         ng-mouseenter="representation.showControls = true">
+
+
+        <div class="gl-plot-hash hash-v"
+             ng-repeat="tick in domainTicks"
+             ng-style="{ left: (100 * $index / (domainTicks.length - 1)) + '%', height: '100%' }"
+             ng-show="$index > 0 && $index < (domainTicks.length - 1)">
+        </div>
+        <div class="gl-plot-hash hash-h"
+             ng-repeat="tick in rangeTicks"
+             ng-style="{ bottom: (100 * $index / (rangeTicks.length - 1)) + '%', width: '100%' }"
+             ng-show="$index > 0 && $index < (rangeTicks.length - 1)">
+        </div>
+
+        <mct-chart draw="draw"
+                   ng-mousemove="plot.hover($event)"
+                   ng-mousedown="plot.startMarquee($event)"
+                   ng-mouseup="plot.endMarquee($event)">
+        </mct-chart>
+
+        <!-- TODO: Move into correct position; make part of group; infer from set of actions -->
+        <div class="gl-plot-local-controls"
+             style="position: absolute; top: 8px; right: 8px;">
+
+            <a href=""
+               class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
+               ng-click="plot.stepBackPanZoom()"
+               ng-show="plot.isZoomed()"
+               title="Restore previous pan/zoom">
+                <span class="ui-symbol icon">&lt;</span>
+            </a>
+
+            <a href=""
+               class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
+               ng-click="plot.unzoom()"
+               ng-show="plot.isZoomed()"
+               title="Reset pan/zoom">
+                <span class="ui-symbol icon">I</span>
+            </a>
+
+        </div>
+
+        <span class="t-wait-spinner loading" ng-show="telemetry.isRequestPending()">
+        </span>
+    </div>
+
+    <div class="gl-plot-axis-area gl-plot-x">
+
+        <div ng-repeat="tick in domainTicks"
+             class="gl-plot-tick gl-plot-x-tick-label"
+             ng-show="$index > 0 && $index < (domainTicks.length - 1)"
+             ng-style="{ left: (100 * $index / (domainTicks.length - 1)) + '%' }">
+            {{tick.label}}
+        </div>
+
+        <div class="gl-plot-label gl-plot-x-label">
+            {{axes[0].active.name}}
+        </div>
+
+
+        <div class="gl-plot-x-options gl-plot-local-controls"
+             ng-show="representation.showControls"
+             ng-if="axes[0].options.length > 0">
+            <div class='form-control shell select'>
+                <select class="form-control input shell select"
+                        ng-model="axes[0].active"
+                        ng-options="option.name for option in axes[0].options">
+                </select>
+            </div>
+        </div>
+
+    </div>
+    </span>
+</div>
+
