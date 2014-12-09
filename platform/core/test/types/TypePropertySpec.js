@@ -75,6 +75,32 @@ define(
                 expect(property.getValue(model)).toBeUndefined();
             });
 
+            it("provides empty arrays for values that are array-like", function () {
+                var definition = {
+                        property: "someProperty",
+                        items: [ {}, {}, {} ]
+                    },
+                    model = {},
+                    property = new TypeProperty(definition);
+                expect(property.getValue(model))
+                    .toEqual([undefined, undefined, undefined]);
+            });
+
+            it("detects and ignores empty arrays on setValue", function () {
+                var definition = {
+                        property: "someProperty",
+                        items: [ {}, {}, {} ]
+                    },
+                    model = {},
+                    property = new TypeProperty(definition);
+
+                property.setValue(model, [undefined, undefined, undefined]);
+                expect(model.someProperty).toBeUndefined();
+
+                // Verify that this only happens when all are undefined
+                property.setValue(model, [undefined, "x", 42]);
+                expect(model.someProperty).toEqual([undefined, "x", 42]);
+            });
 
         });
     }

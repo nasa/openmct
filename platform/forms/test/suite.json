@@ -1,5 +1,6 @@
 [
     "MCTControl",
     "MCTForm",
+    "controllers/CompositeController",
     "controllers/DateTimeController"
 ]

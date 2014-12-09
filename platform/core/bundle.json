@@ -74,16 +74,16 @@
             {
                 "properties": [
                     {
-                        "control": "_textfield",
-                        "label": "Title",
+                        "control": "textfield",
+                        "name": "Title",
                         "key": "name",
                         "property": "name",
                         "pattern": "\\S+",
                         "required": true
                     },
                     {
-                        "control": "_checkbox",
-                        "label": "Display title by default",
+                        "control": "checkbox",
+                        "name": "Display title by default",
                         "key": "displayTitle",
                         "property": [ "display", "title" ]
                     }

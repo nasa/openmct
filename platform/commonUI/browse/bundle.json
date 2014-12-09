@@ -22,14 +22,20 @@
                 "depends": [ "$scope" ]
             },
             {
-                "key": "CreateButtonController",
-                "implementation": "creation/CreateButtonController",
-                "depends": [ "$scope", "$document" ]
-            },
-            {
                 "key": "CreateMenuController",
                 "implementation": "creation/CreateMenuController",
                 "depends": [ "$scope" ]
+            },
+            {
+                "key": "LocatorController",
+                "implementation": "creation/LocatorController",
+                "depends": [ "$scope" ]
+            }
+        ],
+        "controls": [
+            {
+                "key": "locator",
+                "templateUrl": "templates/create/locator.html"
             }
         ],
         "templates": [
@@ -46,11 +52,11 @@
             },
             {
                 "key": "create-button",
-                "templateUrl": "templates/create-button.html"
+                "templateUrl": "templates/create/create-button.html"
             },
             {
                 "key": "create-menu",
-                "templateUrl": "templates/create-menu.html",
+                "templateUrl": "templates/create/create-menu.html",
                 "uses": [ "action" ]
             },
             {

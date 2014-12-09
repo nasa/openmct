@@ -7,7 +7,6 @@ define(
 
         describe("The tree node controller", function () {
             var mockScope,
-                mockNavigationService,
                 controller;
 
             function TestObject(id, context) {
@@ -24,24 +23,9 @@ define(
                     "$scope",
                     [ "$watch", "$on" ]
                 );
-                mockNavigationService = jasmine.createSpyObj(
-                    "navigationService",
-                    [
-                        "getNavigation",
-                        "setNavigation",
-                        "addListener",
-                        "removeListener"
-                    ]
-                );
                 controller = new TreeNodeController(
-                    mockScope,
-                    mockNavigationService
+                    mockScope
                 );
-            });
-
-            it("listens for navigation changes", function () {
-                expect(mockNavigationService.addListener)
-                    .toHaveBeenCalledWith(jasmine.any(Function));
             });
 
             it("allows tracking of expansion state", function () {
@@ -66,13 +50,15 @@ define(
                 mockContext.getPath.andReturn([obj]);
 
                 // Verify precondition
-                expect(controller.isNavigated()).toBeFalsy();
+                expect(controller.isSelected()).toBeFalsy();
 
-                mockNavigationService.getNavigation.andReturn(obj);
+                // Change the represented domain object
                 mockScope.domainObject = obj;
-                mockNavigationService.addListener.mostRecentCall.args[0](obj);
 
-                expect(controller.isNavigated()).toBeTruthy();
+                // Invoke the watch with the new selection
+                mockScope.$watch.calls[0].args[1](obj);
+
+                expect(controller.isSelected()).toBeTruthy();
             });
 
             it("expands a node if it is on the navigation path", function () {
@@ -92,16 +78,16 @@ define(
                 mockParentContext.getPath.andReturn([parent]);
 
                 // Set up such that we are on, but not at the end of, a path
-                mockNavigationService.getNavigation.andReturn(child);
+                mockScope.ngModel = { selectedObject: child };
                 mockScope.domainObject = parent;
                 mockScope.toggle = jasmine.createSpyObj("toggle", ["setState"]);
 
-                // Trigger update
-                mockNavigationService.addListener.mostRecentCall.args[0](child);
+                // Invoke the watch with the new selection
+                mockScope.$watch.calls[0].args[1](child);
 
                 expect(mockScope.toggle.setState).toHaveBeenCalledWith(true);
                 expect(controller.hasBeenExpanded()).toBeTruthy();
-                expect(controller.isNavigated()).toBeFalsy();
+                expect(controller.isSelected()).toBeFalsy();
 
             });
 
@@ -122,42 +108,18 @@ define(
                 mockParentContext.getPath.andReturn([parent]);
 
                 // Set up such that we are on, but not at the end of, a path
-                mockNavigationService.getNavigation.andReturn(child);
+                mockScope.ngModel = { selectedObject: child };
                 mockScope.domainObject = parent;
                 mockScope.toggle = jasmine.createSpyObj("toggle", ["setState"]);
 
-                // Trigger update
-                mockNavigationService.addListener.mostRecentCall.args[0](child);
+                // Invoke the watch with the new selection
+                mockScope.$watch.calls[0].args[1](child);
 
                 expect(mockScope.toggle.setState).not.toHaveBeenCalled();
                 expect(controller.hasBeenExpanded()).toBeFalsy();
-                expect(controller.isNavigated()).toBeFalsy();
+                expect(controller.isSelected()).toBeFalsy();
 
             });
-
-            it("removes its navigation listener when the scope is destroyed", function () {
-                var navCallback =
-                    mockNavigationService.addListener.mostRecentCall.args[0];
-
-                // Make sure the controller is listening in the first place
-                expect(mockScope.$on).toHaveBeenCalledWith(
-                    "$destroy",
-                    jasmine.any(Function)
-                );
-
-                // Verify precondition - no removeListener called
-                expect(mockNavigationService.removeListener)
-                    .not.toHaveBeenCalled();
-
-                // Call that listener (act as if scope is being destroyed)
-                mockScope.$on.mostRecentCall.args[1]();
-
-                // Verify precondition - no removeListener called
-                expect(mockNavigationService.removeListener)
-                    .toHaveBeenCalledWith(navCallback);
-            });
-
-
         });
     }
 );

@@ -1,6 +1,8 @@
 <ul class="tree">
     <li ng-repeat="child in composition">
-        <mct-representation key="'tree-node'" mct-object="child" parameters="parameters">
+        <mct-representation key="'tree-node'"
+                            mct-object="child"
+                            ng-model="ngModel">
         </mct-representation>
     </li>
 </ul>

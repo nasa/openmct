@@ -1,6 +1,6 @@
 <div content="jquery-wrapper" class="abs holder-all browse-mode">
     <mct-include key="'topbar-browse'"></mct-include>
-    <div class="holder browse-area outline abs" ng-controller="BrowseController as browse">
+    <div class="holder browse-area outline abs" ng-controller="BrowseController">
         <div class='split-layout vertical contents abs'>
             <div class='split-pane-component treeview pane' style="width: 200px;">
                 <mct-representation key="'create-button'" mct-object="navigatedObject">
@@ -8,7 +8,7 @@
                 <div class='holder tree-holder abs'>
                     <mct-representation key="'tree'"
                                         mct-object="domainObject"
-                                        parameters="{callback: browse.setNavigation}">
+                                        ng-model="treeModel">
                     </mct-representation>
                 </div>
             </div>

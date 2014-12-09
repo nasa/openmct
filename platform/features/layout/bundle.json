@@ -13,43 +13,45 @@
                 "model": { "composition": [] },
                 "properties": [
                     {
-                        "label": "Preferred Size",
-                        "control": "_textfields",
-                        "values": [
+                        "name": "Preferred Size",
+                        "control": "composite",
+                        "items": [
                             {
-                                "label": "Width (px)",
-                                "pattern": "^(\\d*[1-9]\\d*)?$"
+                                "name": "Width (px)",
+                                "control": "textfield"
                             },
                             {
-                                "label": "Height (px)",
-                                "pattern": "^(\\d*[1-9]\\d*)?$"
+                                "name": "Height (px)",
+                                "control": "textfield"
                             }
                         ],
-                        "key": "preferredSize",
+                        "pattern": "^(\\d*[1-9]\\d*)?$",
+                        "property": "preferredSize",
                         "conversion": "number[]"
                     },
                     {
-                        "label": "Layout Grid",
-                        "control": "_textfields",
-                        "values": [
+                        "name": "Layout Grid",
+                        "control": "composite",
+                        "items": [
                             {
-                                "label": "Horizontal grid (px)",
-                                "pattern": "^(\\d*[1-9]\\d*)?$"
+                                "name": "Horizontal grid (px)",
+                                "control": "textfield"
                             },
                             {
-                                "label": "Vertical grid (px)",
-                                "pattern": "^(\\d*[1-9]\\d*)?$"
+                                "name": "Vertical grid (px)",
+                                "control": "textfield"
                             }
                         ],
-                        "key": "layoutGrid",
+                        "pattern": "^(\\d*[1-9]\\d*)?$",
+                        "property": "layoutGrid",
                         "conversion": "number[]"
                     },
                     {
-                        "label": "Default View",
-                        "control": "_select",
-                        "values": [
-                            "Plot",
-                            "Scrolling"
+                        "name": "Default View",
+                        "control": "select",
+                        "options": [
+                            { "name": "Plot", "value": "plot" },
+                            { "name": "Scrolling", "value": "scrolling" }
                         ],
                         "comment": "TODO: Infer values from type",
                         "key": "defaultView"

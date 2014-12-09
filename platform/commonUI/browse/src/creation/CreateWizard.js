@@ -32,32 +32,53 @@ define(
                  * @return {FormModel} formModel the form model to
                  *         show in the create dialog
                  */
-                getFormModel: function () {
-                    var parentRow = Object.create(parent),
-                        sections = [];
+                getFormStructure: function () {
+                    var sections = [];
 
                     sections.push({
                         name: "Properties",
-                        rows: properties.map(function (property) {
+                        rows: properties.map(function (property, index) {
                             // Property definition is same as form row definition
                             var row = Object.create(property.getDefinition());
-                            // But pull an initial value from the model
-                            row.value = property.getValue(model);
+
+                            // Use index as the key into the formValue;
+                            // this correlates to the indexing provided by
+                            // getInitialFormValue
+                            row.key = index;
+
                             return row;
                         })
                     });
 
                     // Ensure there is always a "save in" section
-                    parentRow.name = "Save In";
-                    parentRow.cssclass = "selector-list";
-                    parentRow.control = "_locator";
-                    parentRow.key = "createParent";
-                    sections.push({ label: 'Location', rows: [parentRow]});
+                    sections.push({ name: 'Location', rows: [{
+                        name: "Save In",
+                        control: "locator",
+                        key: "createParent"
+                    }]});
 
                     return {
                         sections: sections,
                         name: "Create a New " + type.getName()
                     };
+                },
+                /**
+                 * Get the initial value for the form being described.
+                 * This will include the values for all properties described
+                 * in the structure.
+                 *
+                 * @returns {object} the initial value of the form
+                 */
+                getInitialFormValue: function () {
+                    // Start with initial values for properties
+                    var formValue = properties.map(function (property) {
+                        return property.getValue(model);
+                    });
+
+                    // Include the createParent
+                    formValue.createParent = parent;
+
+                    return formValue;
                 },
                 /**
                  * Based on a populated form, get the domain object which
@@ -80,9 +101,8 @@ define(
                     newModel.type = type.getKey();
 
                     // Update all properties
-                    properties.forEach(function (property) {
-                        var value = formValue[property.getDefinition().key];
-                        property.setValue(newModel, value);
+                    properties.forEach(function (property, index) {
+                        property.setValue(newModel, formValue[index]);
                     });
 
                     return newModel;

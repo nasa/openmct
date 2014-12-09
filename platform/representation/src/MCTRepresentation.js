@@ -141,7 +141,12 @@ define(
 
                 // Two-way bind key and parameters, get the represented domain
                 // object as "mct-object"
-                scope: { key: "=", domainObject: "=mctObject", parameters: "=" }
+                scope: {
+                    key: "=",
+                    domainObject: "=mctObject",
+                    ngModel: "=",
+                    parameters: "="
+                }
             };
         }
 

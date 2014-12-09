@@ -29,6 +29,10 @@
             {
                 "key": "textfield",
                 "templateUrl": "templates/controls/textfield.html"
+            },
+            {
+                "key": "composite",
+                "templateUrl": "templates/controls/composite.html"
             }
         ],
         "controllers": [
@@ -36,6 +40,10 @@
                 "key": "DateTimeController",
                 "implementation": "controllers/DateTimeController.js",
                 "depends": [ "$scope" ]
+            },
+            {
+                "key": "CompositeController",
+                "implementation": "controllers/CompositeController.js"
             }
         ],
         "templates": [

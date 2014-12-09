@@ -12,6 +12,7 @@ define(
             var mockType,
                 mockParent,
                 mockProperties,
+                testModel,
                 wizard;
 
             function createMockProperty(name) {
@@ -19,10 +20,8 @@ define(
                     "property" + name,
                     [ "getDefinition", "getValue", "setValue" ]
                 );
-                mockProperty.getDefinition.andReturn({
-                    name: name,
-                    key: name.toLowerCase()
-                });
+                mockProperty.getDefinition.andReturn({});
+                mockProperty.getValue.andReturn(name);
                 return mockProperty;
             }
 
@@ -48,11 +47,13 @@ define(
                 );
                 mockProperties = [ "A", "B", "C" ].map(createMockProperty);
 
+                testModel = { someKey: "some value" };
+
                 mockType.getKey.andReturn("test");
                 mockType.getGlyph.andReturn("T");
                 mockType.getDescription.andReturn("a test type");
                 mockType.getName.andReturn("Test");
-                mockType.getInitialModel.andReturn({});
+                mockType.getInitialModel.andReturn(testModel);
                 mockType.getProperties.andReturn(mockProperties);
 
                 wizard = new CreateWizard(
@@ -62,33 +63,45 @@ define(
             });
 
             it("creates a form model with a Properties section", function () {
-                expect(wizard.getFormModel().sections[0].name)
+                expect(wizard.getFormStructure().sections[0].name)
                     .toEqual("Properties");
             });
 
             it("adds one row per defined type property", function () {
                 // Three properties were defined in the mock type
-                expect(wizard.getFormModel().sections[0].rows.length)
+                expect(wizard.getFormStructure().sections[0].rows.length)
                     .toEqual(3);
             });
 
             it("interprets form data using type-defined properties", function () {
                 // Use key names from mock properties
-                wizard.createModel({
-                    a: "field 0",
-                    b: "field 1",
-                    c: "field 2"
-                });
+                wizard.createModel([
+                    "field 0",
+                    "field 1",
+                    "field 2"
+                ]);
 
                 // Should have gotten a setValue call
                 mockProperties.forEach(function (mockProperty, i) {
                     expect(mockProperty.setValue).toHaveBeenCalledWith(
-                        { type: 'test' },
+                        { someKey: "some value", type: 'test' },
                         "field " + i
                     );
                 });
+            });
 
+            it("looks up initial values from properties", function () {
+                var initialValue = wizard.getInitialFormValue();
 
+                expect(initialValue[0]).toEqual("A");
+                expect(initialValue[1]).toEqual("B");
+                expect(initialValue[2]).toEqual("C");
+
+                // Verify that expected argument was passed
+                mockProperties.forEach(function (mockProperty) {
+                    expect(mockProperty.getValue)
+                        .toHaveBeenCalledWith(testModel);
+                });
             });
 
 
