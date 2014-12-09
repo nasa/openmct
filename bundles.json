@@ -6,10 +6,5 @@
     "platform/commonUI/edit",
     "platform/commonUI/dialog",
     "platform/commonUI/general",
-    "platform/telemetry",
-    "platform/features/layout",
-    "platform/features/plot",
-
-    "example/generator",
-    "example/persistence"
+    "platform/persistence"
 ]
