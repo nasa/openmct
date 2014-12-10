@@ -13,6 +13,5 @@
     "platform/forms",
     "platform/persistence",
 
-    "example/generator",
-    "example/persistence"
+    "example/generator"
 ]
