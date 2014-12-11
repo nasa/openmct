@@ -19,8 +19,7 @@
 
     <div class="gl-plot-axis-area gl-plot-y">
 
-        <div class="gl-plot-label gl-plot-y-label"
-             ng-show="!representation.showControls">
+        <div class="gl-plot-label gl-plot-y-label">
             {{axes[1].active.name}}
         </div>
 
@@ -66,6 +65,7 @@
 
         <!-- TODO: Move into correct position; make part of group; infer from set of actions -->
         <div class="gl-plot-local-controls"
+             ng-show="representation.showControls"
              style="position: absolute; top: 8px; right: 8px;">
 
             <a href=""
@@ -83,6 +83,29 @@
                title="Reset pan/zoom">
                 <span class="ui-symbol icon">I</span>
             </a>
+
+            <div class="menu-element btn icon-btn very-subtle btn-menu dropdown click-invoke"
+                 ng-controller="ClickAwayController as toggle">
+
+                <span ng-click="toggle.toggle()">
+                    <span class="ui-symbol icon type-icon">{{plot.getMode().glyph}}</span>
+                    <span>{{plot.getMode().name}}</span>
+                    <span class='ui-symbol icon invoke-menu'>v</span>
+                </span>
+
+                <div class="menu dropdown" ng-show="toggle.isActive()">
+                    <ul>
+                        <li ng-repeat="option in plot.getModeOptions()">
+                            <a href="" ng-click="plot.setMode(option); toggle.setState(false)">
+                                <span class="ui-symbol type-icon icon">
+                                    {{option.glyph}}
+                                </span>
+                                {{option.name}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
 
         </div>
 

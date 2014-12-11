@@ -11,7 +11,8 @@ define(
         "./elements/PlotPosition",
         "./elements/PlotTickGenerator",
         "./elements/PlotFormatter",
-        "./elements/PlotAxis"
+        "./elements/PlotAxis",
+        "./modes/PlotModeOptions"
     ],
     function (
         PlotPreparer,
@@ -20,7 +21,8 @@ define(
         PlotPosition,
         PlotTickGenerator,
         PlotFormatter,
-        PlotAxis
+        PlotAxis,
+        PlotModeOptions
     ) {
         "use strict";
 
@@ -47,6 +49,7 @@ define(
                 marqueeStart,
                 panZoomStack = new PlotPanZoomStack([], []),
                 formatter = new PlotFormatter(),
+                modeOptions,
                 domainOffset;
 
             // Utility, for map/forEach loops. Index 0 is domain,
@@ -217,6 +220,11 @@ define(
                 updateTicks();
             }
 
+            function setupModes(telemetryObjects) {
+                modeOptions = new PlotModeOptions(telemetryObjects);
+            }
+
+            $scope.$watch("telemetry.getTelemetryObjects()", setupModes);
             $scope.$watch("telemetry.getMetadata()", setupAxes);
             $scope.$on("telemetryUpdate", plotTelemetry);
             $scope.draw = {};
@@ -297,6 +305,15 @@ define(
                 unzoom: function () {
                     panZoomStack.clearPanZoom();
                     updateDrawingBounds();
+                },
+                getModeOptions: function () {
+                    return modeOptions && modeOptions.getModeOptions();
+                },
+                getMode: function () {
+                    return modeOptions && modeOptions.getModeOptions()[0];
+                },
+                setMode: function (mode) {
+                    console.log(mode);
                 }
 
             };
