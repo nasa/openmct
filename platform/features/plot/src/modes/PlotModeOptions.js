@@ -1,15 +1,15 @@
 /*global define*/
 
 define(
-    ["./PlotOverlayMode"],
-    function (PlotOverlayMode, PlotStackedMode) {
+    ["./PlotOverlayMode", "./PlotStackMode"],
+    function (PlotOverlayMode, PlotStackMode) {
         "use strict";
 
         var STACKED = {
                 key: "stacked",
                 name: "Stacked",
                 glyph: "8",
-                factory: PlotOverlayMode
+                factory: PlotStackMode
             },
             OVERLAID = {
                 key: "overlaid",
