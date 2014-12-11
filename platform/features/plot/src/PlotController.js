@@ -306,14 +306,27 @@ define(
                     panZoomStack.clearPanZoom();
                     updateDrawingBounds();
                 },
+                /**
+                 * Get the mode options (Stacked/Overlaid) that are applicable
+                 * for this plot.
+                 */
                 getModeOptions: function () {
                     return modeOptions && modeOptions.getModeOptions();
                 },
+                /**
+                 * Get the current mode that is applicable to this plot. This
+                 * will include key, name, and glyph fields.
+                 */
                 getMode: function () {
-                    return modeOptions && modeOptions.getModeOptions()[0];
+                    return modeOptions && modeOptions.getMode();
                 },
+                /**
+                 * Set the mode which should be active in this plot.
+                 * @param mode one of the mode options returned from
+                 *        getModeOptions()
+                 */
                 setMode: function (mode) {
-                    console.log(mode);
+                    return modeOptions && modeOptions.setMode(mode);
                 }
 
             };

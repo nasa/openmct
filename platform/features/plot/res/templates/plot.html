@@ -85,6 +85,7 @@
             </a>
 
             <div class="menu-element btn icon-btn very-subtle btn-menu dropdown click-invoke"
+                 ng-if="plot.getModeOptions().length > 1"
                  ng-controller="ClickAwayController as toggle">
 
                 <span ng-click="toggle.toggle()">

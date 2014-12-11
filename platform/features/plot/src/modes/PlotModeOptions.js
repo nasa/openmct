@@ -18,15 +18,19 @@ define(
 
         function PlotModeOptions(telemetryObjects) {
             var options = telemetryObjects.length > 1 ?
-                    [ STACKED, OVERLAID ] : [ OVERLAID, STACKED ];
+                    [ OVERLAID, STACKED ] : [ OVERLAID ],
+                mode = options[0];
 
 
             return {
                 getModeOptions: function () {
                     return options;
                 },
-                getMode: function (option) {
-
+                getMode: function () {
+                    return mode;
+                },
+                setMode: function (option) {
+                    mode = option;
                 }
             };
         }
