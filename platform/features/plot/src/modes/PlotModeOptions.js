@@ -1,7 +1,7 @@
 /*global define*/
 
 define(
-    [],
+    ["./PlotOverlayMode"],
     function (PlotOverlayMode, PlotStackedMode) {
         "use strict";
 
@@ -15,7 +15,7 @@ define(
                 key: "overlaid",
                 name: "Overlaid",
                 glyph: "6",
-                factory: PlotStackedMode
+                factory: PlotOverlayMode
             };
 
         function PlotModeOptions(telemetryObjects) {

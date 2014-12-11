@@ -1,7 +1,7 @@
 /*global define*/
 
 define(
-    ['elements/PlotPosition', 'elements/PlotFormatter', 'elements/PlotTickGenerator'],
+    ['./elements/PlotPosition', './elements/PlotFormatter', './elements/PlotTickGenerator'],
     function (PlotPosition, PlotFormatter, PlotTickGenerator) {
         "use strict";
 
@@ -191,6 +191,9 @@ define(
                     updateDrawingBounds();
                     updateMarqueeBox();
                     updateTicks();
+                },
+                setDomainOffset: function (value) {
+                    domainOffset = value;
                 }
             };
         }

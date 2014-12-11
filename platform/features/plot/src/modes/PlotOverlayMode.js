@@ -22,7 +22,7 @@ define(
                 // Track the domain offset, used to bias domain values
                 // to minimize loss of precision when converted to 32-bit
                 // floating point values for display.
-                domainOffset = prepared.getDomainOffset();
+                subplot.setDomainOffset(prepared.getDomainOffset());
 
                 // Draw the buffers. Select color by index.
                 subplot.getDrawingObject().lines = prepared.getBuffers().map(function (buf, i) {
