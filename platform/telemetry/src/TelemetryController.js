@@ -45,7 +45,11 @@ define(
 
                 // Used to track whether a new telemetryUpdate
                 // is being issued.
-                broadcasting: false
+                broadcasting: false,
+
+                // Used for getTelemetryObjects; a reference is
+                // stored so that this can be called in a watch
+                telemetryObjects: []
             };
 
             // Broadcast that a telemetryUpdate has occurred.
@@ -182,6 +186,9 @@ define(
                 // Build the containers
                 domainObjects.forEach(buildResponseContainer);
 
+                // Store the reference to support getTelemetryObjects
+                self.telemetryObjects = domainObjects;
+
                 // Maintain a list of relevant ids, to convert
                 // back from dictionary-like container objects to arrays.
                 self.ids = domainObjects.map(function (obj) {
@@ -259,9 +266,7 @@ define(
                  * @returns {DomainObject[]} an array of metadata objects
                  */
                 getTelemetryObjects: function () {
-                    return self.ids.map(function (id) {
-                        return self.response[id].domainObject;
-                    });
+                    return self.telemetryObjects;
                 },
                 /**
                  * Get the latest telemetry response for a specific
