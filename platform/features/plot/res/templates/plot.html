@@ -6,7 +6,7 @@
         <span ng-repeat="subplot in plot.getSubPlots()">
             <div class="gl-plot-legend">
                 <span class='plot-legend-item'
-                      ng-repeat="telemetryObject in subplot.telemetryObjects">
+                      ng-repeat="telemetryObject in subplot.getTelemetryObjects()">
                     <span class='plot-color-swatch'
                           ng-style="{ 'background-color': plot.getColor($index) }">
                     </span>
@@ -16,7 +16,7 @@
 
             <div class="gl-plot-coords"
                  ng-if="representation.showControls">
-                {{plot.getHoverCoordinates().join(', ')}}
+                {{subplot.getHoverCoordinates().join(', ')}}
             </div>
 
             <div class="gl-plot-axis-area gl-plot-y">
@@ -48,17 +48,17 @@
                  ng-mouseenter="representation.showControls = true">
 
                 <div class="gl-plot-hash hash-v"
-                     ng-repeat="tick in subplot.domainTicks"
-                     ng-style="{ left: (100 * $index / (subplot.domainTicks.length - 1)) + '%', height: '100%' }"
-                     ng-show="$index > 0 && $index < (subplot.domainTicks.length - 1)">
+                     ng-repeat="tick in subplot.getDomainTicks()"
+                     ng-style="{ left: (100 * $index / (subplot.getDomainTicks().length - 1)) + '%', height: '100%' }"
+                     ng-show="$index > 0 && $index < (subplot.getDomainTicks().length - 1)">
                 </div>
                 <div class="gl-plot-hash hash-h"
-                     ng-repeat="tick in rangeTicks"
-                     ng-style="{ bottom: (100 * $index / (subplot.rangeTicks.length - 1)) + '%', width: '100%' }"
-                     ng-show="$index > 0 && $index < (subplot.rangeTicks.length - 1)">
+                     ng-repeat="tick in subplot.getRangeTicks()"
+                     ng-style="{ bottom: (100 * $index / (subplot.getRangeTicks().length - 1)) + '%', width: '100%' }"
+                     ng-show="$index > 0 && $index < (subplot.getRangeTicks().length - 1)">
                 </div>
 
-                <mct-chart draw="subplot.draw"
+                <mct-chart draw="subplot.getDrawingObject()"
                            ng-mousemove="subplot.hover($event)"
                            ng-mousedown="subplot.startMarquee($event)"
                            ng-mouseup="subplot.endMarquee($event)">
@@ -117,10 +117,10 @@
             </div>
             <div ng-if="$last" class="gl-plot-axis-area gl-plot-x">
 
-                <div ng-repeat="tick in domainTicks"
+                <div ng-repeat="tick in subplot.getDomainTicks()"
                      class="gl-plot-tick gl-plot-x-tick-label"
-                     ng-show="$index > 0 && $index < (domainTicks.length - 1)"
-                     ng-style="{ left: (100 * $index / (domainTicks.length - 1)) + '%' }">
+                     ng-show="$index > 0 && $index < (subplot.getDomainTicks().length - 1)"
+                     ng-style="{ left: (100 * $index / (subplot.getDomainTicks().length - 1)) + '%' }">
                     {{tick.label}}
                 </div>
 
