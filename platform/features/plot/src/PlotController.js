@@ -87,6 +87,13 @@ define(
                 modeOptions = new PlotModeOptions(telemetryObjects || []);
             }
 
+            // Update all sub-plots
+            function update() {
+                modeOptions.getModeHandler()
+                    .getSubPlots()
+                    .forEach(updateSubplot);
+            }
+
             $scope.$watch("telemetry.getTelemetryObjects()", setupModes);
             $scope.$watch("telemetry.getMetadata()", setupAxes);
             $scope.$on("telemetryUpdate", plotTelemetry);
@@ -143,7 +150,8 @@ define(
                  *        getModeOptions()
                  */
                 setMode: function (mode) {
-                    return modeOptions.setMode(mode);
+                    modeOptions.setMode(mode);
+                    plotTelemetry();
                 },
                 /**
                  * Get all individual plots contained within this Plot view.
@@ -156,12 +164,7 @@ define(
                 /**
                  * Explicitly update all plots.
                  */
-                update: function () {
-                    modeOptions.getModeHandler()
-                        .getSubPlots()
-                        .forEach(updateSubplot);
-                }
-
+                update: update
             };
         }
 
