@@ -16,7 +16,7 @@
             </div>
 
             <div class="gl-plot-coords"
-                 ng-if="representation.showControls">
+                 ng-if="subplot.isHovering()">
                 {{subplot.getHoverCoordinates().join(', ')}}
             </div>
 
@@ -46,7 +46,8 @@
             </div>
 
             <div class="gl-plot-display-area"
-                 ng-mouseenter="representation.showControls = true">
+                 ng-mouseenter="subplot.isHovering(true); representation.showControls = true;"
+                 ng-mouseleave="subplot.isHovering(false)">
 
                 <div class="gl-plot-hash hash-v"
                      ng-repeat="tick in subplot.getDomainTicks()"

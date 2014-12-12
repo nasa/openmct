@@ -19,7 +19,8 @@ define(
                 formatter = new PlotFormatter(),
                 domainOffset,
                 mousePosition,
-                marqueeStart;
+                marqueeStart,
+                isHovering = false;
 
             // Utility, for map/forEach loops. Index 0 is domain,
             // index 1 is range.
@@ -157,6 +158,7 @@ define(
                  * @param $event the mouse event
                  */
                 hover: function ($event) {
+                    isHovering = true;
                     mousePosition = toMousePosition($event);
                     if (marqueeStart) {
                         updateMarqueeBox();
@@ -194,6 +196,12 @@ define(
                 },
                 setDomainOffset: function (value) {
                     domainOffset = value;
+                },
+                isHovering: function (state) {
+                    if (state !== undefined) {
+                        isHovering = state;
+                    }
+                    return isHovering;
                 }
             };
         }
