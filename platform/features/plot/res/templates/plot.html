@@ -1,9 +1,10 @@
-<div class="gl-plot"
-     ng-controller="TelemetryController as telemetry">
+<span ng-controller="TelemetryController as telemetry">
     <span ng-controller="PlotController as plot"
           ng-mouseleave="representation.showControls = false">
 
-        <span ng-repeat="subplot in plot.getSubPlots()">
+        <div class="gl-plot"
+             ng-style="{ height: 100 / plot.getSubPlots().length + '%'}"
+             ng-repeat="subplot in plot.getSubPlots()">
             <div class="gl-plot-legend">
                 <span class='plot-legend-item'
                       ng-repeat="telemetryObject in subplot.getTelemetryObjects()">
