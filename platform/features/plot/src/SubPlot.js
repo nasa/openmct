@@ -127,6 +127,11 @@ define(
                 updateTicks();
             }
 
+            // Start with the right initial drawing bounds,
+            // tick marks
+            updateDrawingBounds();
+            updateTicks();
+
             return {
                 getTelemetryObjects: function () {
                     return telemetryObjects;
