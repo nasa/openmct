@@ -26,9 +26,9 @@
                     {{axes[1].active.name}}
                 </div>
 
-                <div ng-repeat="tick in rangeTicks"
+                <div ng-repeat="tick in subplot.getRangeTicks()"
                      class="gl-plot-tick gl-plot-y-tick-label"
-                     ng-style="{ bottom: (100 * $index / (rangeTicks.length - 1)) + '%' }">
+                     ng-style="{ bottom: (100 * $index / (subplot.getRangeTicks().length - 1)) + '%' }">
                     {{tick.label}}
                 </div>
 
