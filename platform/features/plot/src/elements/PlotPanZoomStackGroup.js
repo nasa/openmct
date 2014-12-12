@@ -38,7 +38,7 @@ define(
 
             function clearPanZoom() {
                 stacks.forEach(function (stack) {
-                    stack.popPanZoom();
+                    stack.clearPanZoom();
                 });
             }
 
