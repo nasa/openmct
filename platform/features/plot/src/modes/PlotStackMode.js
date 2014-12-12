@@ -37,12 +37,10 @@ define(
             function plotTelemetry(prepared) {
                 // Fit to the boundaries of the data, but don't
                 // override any user-initiated pan-zoom changes.
-                panZoomStackGroup.getPanZoomStacks().forEach(function (stack) {
-                    stack.setBasePanZoom(
-                        prepared.getOrigin(),
-                        prepared.getDimensions()
-                    );
-                });
+                panZoomStackGroup.setBasePanZoom(
+                    prepared.getOrigin(),
+                    prepared.getDimensions()
+                );
 
                 subplots.forEach(function (subplot, index) {
                     plotTelemetryTo(subplot, prepared, index);

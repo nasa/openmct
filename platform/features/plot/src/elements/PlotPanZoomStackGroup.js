@@ -63,15 +63,13 @@ define(
             return {
                 popPanZoom: popPanZoom,
                 clearPanZoom: clearPanZoom,
+                setBasePanZoom: setBasePanZoom,
                 getDepth: function () {
                     return stacks.length > 0 ?
                             stacks[0].getDepth() : 0;
                 },
                 getPanZoomStack: function (index) {
                     return decoratedStacks[index];
-                },
-                getPanZoomStacks: function () {
-                    return decoratedStacks;
                 }
             };
 

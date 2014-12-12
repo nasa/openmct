@@ -90,6 +90,10 @@ define(
                 modeOptions.getModeHandler().plotTelemetry(prepared);
             }
 
+            function updateSubplot(subplot) {
+                subplot.update();
+            }
+
             function setupModes(telemetryObjects) {
                 modeOptions = new PlotModeOptions(telemetryObjects || []);
             }
@@ -159,6 +163,14 @@ define(
                  */
                 getSubPlots: function () {
                     return modeOptions.getModeHandler().getSubPlots();
+                },
+                /**
+                 * Explicitly update all plots.
+                 */
+                update: function () {
+                    modeOptions.getModeHandler()
+                        .getSubPlots()
+                        .forEach(updateSubplot);
                 }
 
             };
