@@ -9,6 +9,17 @@ define(
         "use strict";
 
         describe("A sub-plot", function () {
+            var subplot;
+
+
+            it("provides coordinates on hover", function () {
+//                expect(subplot.getHoverCoordinates().length).toEqual(0);
+//
+//                subplot.hover({ target: mockElement });
+//
+//                expect(subplot.getHoverCoordinates().length).toEqual(2);
+            });
+
         });
     }
 );

@@ -67,15 +67,6 @@ define(
                     .not.toEqual(controller.getColor(1));
             });
 
-            it("draws lines when telemetry data becomes available", function () {
-                // Broadcast data
-                mockScope.$on.mostRecentCall.args[1]();
-
-                // Should have put some lines in the drawing scope,
-                // which the template should pass along to the renderer
-                expect(mockScope.draw.lines).toBeDefined();
-            });
-
             it("does not fail if telemetry controller is not in scope", function () {
                 mockScope.telemetry = undefined;
 
@@ -85,110 +76,6 @@ define(
                 // Just want to not have an exception
             });
 
-            it("provides coordinates on hover", function () {
-                expect(controller.getHoverCoordinates().length).toEqual(0);
-
-                controller.hover({
-                    target: mockElement
-                });
-
-                expect(controller.getHoverCoordinates().length).toEqual(2);
-            });
-
-            it("permits marquee zoom", function () {
-                // Verify pre-condition
-                expect(controller.isZoomed()).toBeFalsy();
-
-                // Simulate a marquee zoom interaction
-                controller.startMarquee({
-                    target: mockElement,
-                    clientX: 0,
-                    clientY: 10
-                });
-
-                controller.hover({
-                    target: mockElement,
-                    clientX: 0,
-                    clientY: 0
-                });
-
-                controller.endMarquee({
-                    target: mockElement,
-                    clientX: 10,
-                    clientY: 0
-                });
-
-                expect(controller.isZoomed()).toBeTruthy();
-            });
-
-            it("permits unøom", function () {
-                // Simulate a marquee zoom interaction
-                controller.startMarquee({
-                    target: mockElement,
-                    clientX: 0,
-                    clientY: 10
-                });
-
-                controller.hover({
-                    target: mockElement,
-                    clientX: 0,
-                    clientY: 0
-                });
-
-                controller.endMarquee({
-                    target: mockElement,
-                    clientX: 10,
-                    clientY: 0
-                });
-
-                // Verify precondition
-                expect(controller.isZoomed()).toBeTruthy();
-
-                // Perform the unzoom
-                controller.unzoom();
-
-                // Should no longer report as zoomed
-                expect(controller.isZoomed()).toBeFalsy();
-            });
-
-
-            it("permits unøom", function () {
-                // Simulate two marquee zooms interaction
-                [0, 1].forEach(function (n) {
-                    controller.startMarquee({
-                        target: mockElement,
-                        clientX: 0,
-                        clientY: 10 + 10 * n
-                    });
-
-                    controller.hover({
-                        target: mockElement,
-                        clientX: 0,
-                        clientY: 0
-                    });
-
-                    controller.endMarquee({
-                        target: mockElement,
-                        clientX: 10 + 10 * n,
-                        clientY: 0
-                    });
-                });
-
-                // Verify precondition
-                expect(controller.isZoomed()).toBeTruthy();
-
-                // Step back...
-                controller.stepBackPanZoom();
-
-                // Should still be zoomed
-                expect(controller.isZoomed()).toBeTruthy();
-
-                // Step back again...
-                controller.stepBackPanZoom();
-
-                // Should no longer report as zoomed
-                expect(controller.isZoomed()).toBeFalsy();
-            });
 
 
         });

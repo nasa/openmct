@@ -9,6 +9,16 @@ define(
         "use strict";
 
         describe("Overlaid plot mode", function () {
+            var testDrawingObject;
+
+
+            it("draws all lines to one subplot", function () {
+
+                // Should have put some lines in the drawing scope,
+                // which the template should pass along to the renderer
+                //expect(testDrawingObject.lines).toBeDefined();
+            });
+
         });
     }
 );
