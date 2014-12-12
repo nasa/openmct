@@ -33,6 +33,7 @@ define(
                 domainOffset,
                 mousePosition,
                 marqueeStart,
+                hoverCoordinates,
                 isHovering = false;
 
             // Utility, for map/forEach loops. Index 0 is domain,
@@ -41,6 +42,11 @@ define(
                 return (i ?
                         formatter.formatRangeValue :
                         formatter.formatDomainValue)(v);
+            }
+
+            // Utility function for filtering out empty strings.
+            function isNonEmpty(v) {
+                return typeof v === 'string' && v !== "";
             }
 
             // Converts from pixel coordinates to domain-range,
@@ -77,6 +83,16 @@ define(
             // format (which is needed in the chart area itself, by WebGL.)
             function toDisplayable(position) {
                 return [ position[0] - domainOffset, position[1] ];
+            }
+
+
+            // Update the currnet hover coordinates
+            function updateHoverCoordinates() {
+                hoverCoordinates = mousePosition &&
+                        mousePositionToDomainRange(mousePosition)
+                            .map(formatValue)
+                            .filter(isNonEmpty)
+                            .join(", ");
             }
 
             // Update the drawable marquee area to reflect current
@@ -191,10 +207,7 @@ define(
                  *          coordinates over which the mouse is hovered
                  */
                 getHoverCoordinates: function () {
-                    return mousePosition ?
-                            mousePositionToDomainRange(
-                                mousePosition
-                            ).map(formatValue) : [];
+                    return hoverCoordinates;
                 },
                 /**
                  * Handle mouse movement over the chart area.
@@ -203,6 +216,7 @@ define(
                 hover: function ($event) {
                     isHovering = true;
                     mousePosition = toMousePosition($event);
+                    updateHoverCoordinates();
                     if (marqueeStart) {
                         updateMarqueeBox();
                     }

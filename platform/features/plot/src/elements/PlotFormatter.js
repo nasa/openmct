@@ -16,11 +16,11 @@ define(
          */
         function PlotFormatter() {
             function formatDomainValue(v) {
-                return moment.utc(v).format(DATE_FORMAT);
+                return isNaN(v) ? "" : moment.utc(v).format(DATE_FORMAT);
             }
 
             function formatRangeValue(v) {
-                return v.toFixed(1);
+                return isNaN(v) ? "" : v.toFixed(1);
             }
 
             return {

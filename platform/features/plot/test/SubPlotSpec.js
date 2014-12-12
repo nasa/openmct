@@ -84,13 +84,15 @@ define(
 
             it("provides hovering coordinates", function () {
                 // Should be empty when not hovering
-                expect(subplot.getHoverCoordinates()).toEqual([]);
+                expect(subplot.getHoverCoordinates())
+                    .toBeUndefined();
 
                 // Start hovering
                 subplot.hover({ target: mockElement });
 
                 // Should now have coordinates to display
-                expect(subplot.getHoverCoordinates().length).toEqual(2);
+                expect(subplot.getHoverCoordinates())
+                    .toEqual(jasmine.any(String));
             });
 
             it("supports marquee zoom", function () {

@@ -16,8 +16,8 @@
             </div>
 
             <div class="gl-plot-coords"
-                 ng-if="subplot.isHovering()">
-                {{subplot.getHoverCoordinates().join(', ')}}
+                 ng-if="subplot.isHovering() && subplot.getHoverCoordinates()">
+                {{subplot.getHoverCoordinates()}}
             </div>
 
             <div class="gl-plot-axis-area gl-plot-y">
