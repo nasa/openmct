@@ -45,7 +45,7 @@ define(
                     return panZoomStack.getDepth() > 1;
                 },
                 stepBackPanZoom: function () {
-                    panZoomStack.pop();
+                    panZoomStack.popPanZoom();
                     subplot.update();
                 },
                 unzoom: function () {
