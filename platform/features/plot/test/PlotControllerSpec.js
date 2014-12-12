@@ -12,7 +12,6 @@ define(
             var mockScope,
                 mockTelemetry, // mock telemetry controller
                 mockData,
-                mockElement,
                 mockDomainObject,
                 controller;
 
@@ -31,10 +30,6 @@ define(
                     "data",
                     [ "getPointCount", "getDomainValue", "getRangeValue" ]
                 );
-                mockElement = jasmine.createSpyObj(
-                    "element",
-                    [ "getBoundingClientRect" ]
-                );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     [ "getId", "getModel", "getCapability" ]
@@ -45,12 +40,6 @@ define(
                 mockData.getPointCount.andReturn(2);
                 mockData.getDomainValue.andCallFake(echo);
                 mockData.getRangeValue.andCallFake(echo);
-                mockElement.getBoundingClientRect.andReturn({
-                    left: 0,
-                    top: 0,
-                    width: 100,
-                    height: 100
-                });
 
                 controller = new PlotController(mockScope);
             });
