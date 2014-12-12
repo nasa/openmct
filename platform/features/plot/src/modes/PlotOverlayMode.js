@@ -5,6 +5,12 @@ define(
     function (SubPlot, PlotPalette, PlotPanZoomStack) {
         "use strict";
 
+        /**
+         * Handles plotting in Overlaid mode. In overlaid mode, there
+         * is one sub-plot which contains all plotted objects.
+         * @constructor
+         * @param {DomainObject[]} the domain objects to be plotted
+         */
         function PlotOverlayMode(telemetryObjects) {
             var domainOffset,
                 panZoomStack = new PlotPanZoomStack([], []),
@@ -37,13 +43,32 @@ define(
             }
 
             return {
+                /**
+                 * Plot telemetry to the sub-plot(s) managed by this mode.
+                 * @param {PlotPreparer} prepared the prepared data to plot
+                 */
                 plotTelemetry: plotTelemetry,
+                /**
+                 * Get all sub-plots to be displayed in this mode; used
+                 * to populate the plot template.
+                 * @return {SubPlot[]} all sub-plots to display in this mode
+                 */
                 getSubPlots: function () {
                     return subplots;
                 },
+                /**
+                 * Check if we are not in our base pan-zoom state (that is,
+                 * there are some temporary user modifications to the
+                 * current pan-zoom state.)
+                 * @returns {boolean} true if not in the base pan-zoom state
+                 */
                 isZoomed: function () {
                     return panZoomStack.getDepth() > 1;
                 },
+                /**
+                 * Undo the most recent pan/zoom change and restore
+                 * the prior state.
+                 */
                 stepBackPanZoom: function () {
                     panZoomStack.popPanZoom();
                     subplot.update();

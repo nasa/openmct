@@ -1,18 +1,31 @@
 /*global define*/
 
 define(
-    ['./elements/PlotPosition', './elements/PlotFormatter', './elements/PlotTickGenerator'],
+    [
+        './elements/PlotPosition',
+        './elements/PlotFormatter',
+        './elements/PlotTickGenerator'
+    ],
     function (PlotPosition, PlotFormatter, PlotTickGenerator) {
         "use strict";
 
-        var AXIS_DEFAULTS = [
-                { "name": "Time" },
-                { "name": "Value" }
-            ],
-            DOMAIN_TICKS = 5,
+        var DOMAIN_TICKS = 5,
             RANGE_TICKS = 7;
 
+        /**
+         * A SubPlot is an individual plot within a Plot View (which
+         * may contain multiple plots, specifically when in Stacked
+         * plot mode.)
+         * @constructor
+         * @param {DomainObject[]} telemetryObjects the domain objects
+         *        which will be plotted in this sub-plot
+         * @param {PlotPanZoomStack} panZoomStack the stack of pan-zoom
+         *        states which is applicable to this sub-plot
+         */
         function SubPlot(telemetryObjects, panZoomStack) {
+            // We are used from a template often, so maintain
+            // state in local variables to allow for fast look-up,
+            // as is normal for controllers.
             var draw = {},
                 rangeTicks = [],
                 domainTicks = [],
@@ -133,19 +146,44 @@ define(
             updateTicks();
 
             return {
+                /**
+                 * Get the set of domain objects which are being
+                 * represented in this sub-plot.
+                 * @returns {DomainObject[]} the domain objects which
+                 *          will have data plotted in this sub-plot
+                 */
                 getTelemetryObjects: function () {
                     return telemetryObjects;
                 },
+                /**
+                 * Get ticks mark information appropriate for using in the
+                 * template for this sub-plot's domain axis, as prepared
+                 * by the PlotTickGenerator.
+                 * @returns {Array} tick marks for the domain axis
+                 */
                 getDomainTicks: function () {
                     return domainTicks;
                 },
+                /**
+                 * Get ticks mark information appropriate for using in the
+                 * template for this sub-plot's range axis, as prepared
+                 * by the PlotTickGenerator.
+                 * @returns {Array} tick marks for the range axis
+                 */
                 getRangeTicks: function () {
                     return rangeTicks;
                 },
+                /**
+                 * Get the drawing object associated with this sub-plot;
+                 * this object will be passed to the mct-chart in which
+                 * this sub-plot's lines will be plotted, as its "draw"
+                 * attribute, and should have the same internal format
+                 * expected by that directive.
+                 * @return {object} the drawing object
+                 */
                 getDrawingObject: function () {
                     return draw;
                 },
-
                 /**
                  * Get the coordinates (as displayable text) for the
                  * current mouse position.
@@ -199,9 +237,28 @@ define(
                     updateMarqueeBox();
                     updateTicks();
                 },
+                /**
+                 * Set the domain offset associated with this sub-plot.
+                 * A domain offset is subtracted from all domain
+                 * before lines are drawn to avoid artifacts associated
+                 * with the use of 32-bit floats when domain values
+                 * are often timestamps (due to insufficient precision.)
+                 * A SubPlot will be drawing boxes (for marquee zoom) in
+                 * the same offset coordinate space, so it needs to know
+                 * the value of this to position that marquee box
+                 * correctly.
+                 * @param {number} value the domain offset
+                 */
                 setDomainOffset: function (value) {
                     domainOffset = value;
                 },
+                /**
+                 * When used with no argument, check whether or not the user
+                 * is currently hovering over this subplot. When used with
+                 * an argument, set that state.
+                 * @param {boolean} [state] the new hovering state
+                 * @returns {boolean} the hovering state
+                 */
                 isHovering: function (state) {
                     if (state !== undefined) {
                         isHovering = state;

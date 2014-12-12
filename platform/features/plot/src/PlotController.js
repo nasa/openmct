@@ -7,31 +7,16 @@ define(
     [
         "./elements/PlotPreparer",
         "./elements/PlotPalette",
-        "./elements/PlotPanZoomStack",
-        "./elements/PlotPosition",
-        "./elements/PlotTickGenerator",
-        "./elements/PlotFormatter",
         "./elements/PlotAxis",
         "./modes/PlotModeOptions"
     ],
-    function (
-        PlotPreparer,
-        PlotPalette,
-        PlotPanZoomStack,
-        PlotPosition,
-        PlotTickGenerator,
-        PlotFormatter,
-        PlotAxis,
-        PlotModeOptions
-    ) {
+    function (PlotPreparer, PlotPalette, PlotAxis, PlotModeOptions) {
         "use strict";
 
         var AXIS_DEFAULTS = [
                 { "name": "Time" },
                 { "name": "Value" }
-            ],
-            DOMAIN_TICKS = 5,
-            RANGE_TICKS = 7;
+            ];
 
         /**
          * The PlotController is responsible for any computation/logic
@@ -90,10 +75,14 @@ define(
                 modeOptions.getModeHandler().plotTelemetry(prepared);
             }
 
+            // Trigger an update of a specific subplot;
+            // used in a loop to update all subplots.
             function updateSubplot(subplot) {
                 subplot.update();
             }
 
+            // Set up available modes (stacked/overlaid), based on the
+            // set of telemetry objects in this plot view.
             function setupModes(telemetryObjects) {
                 modeOptions = new PlotModeOptions(telemetryObjects || []);
             }
