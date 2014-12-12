@@ -1,15 +1,19 @@
 /*global define*/
 
 define(
-    ["../SubPlot", "../elements/PlotPalette", "../elements/PlotPanZoomStack"],
-    function (SubPlot, PlotPalette, PlotPanZoomStack) {
+    ["../SubPlot", "../elements/PlotPalette", "../elements/PlotPanZoomStackGroup"],
+    function (SubPlot, PlotPalette, PlotPanZoomStackGroup) {
         "use strict";
 
         function PlotStackMode(telemetryObjects) {
             var domainOffset,
-                panZoomStack = new PlotPanZoomStack([], []),
-                subplots = telemetryObjects.map(function (telemetryObject) {
-                    return new SubPlot([telemetryObject], panZoomStack);
+                panZoomStackGroup =
+                    new PlotPanZoomStackGroup(telemetryObjects.length),
+                subplots = telemetryObjects.map(function (telemetryObject, i) {
+                    return new SubPlot(
+                        [telemetryObject],
+                        panZoomStackGroup.getPanZoomStack(i)
+                    );
                 });
 
             function plotTelemetryTo(subplot, prepared, index) {
@@ -31,12 +35,14 @@ define(
             }
 
             function plotTelemetry(prepared) {
-                 // Fit to the boundaries of the data, but don't
+                // Fit to the boundaries of the data, but don't
                 // override any user-initiated pan-zoom changes.
-                panZoomStack.setBasePanZoom(
-                    prepared.getOrigin(),
-                    prepared.getDimensions()
-                );
+                panZoomStackGroup.getPanZoomStacks().forEach(function (stack) {
+                    stack.setBasePanZoom(
+                        prepared.getOrigin(),
+                        prepared.getDimensions()
+                    );
+                });
 
                 subplots.forEach(function (subplot, index) {
                     plotTelemetryTo(subplot, prepared, index);
@@ -49,16 +55,16 @@ define(
                     return subplots;
                 },
                 isZoomed: function () {
-                    return panZoomStack.getDepth() > 1;
+                    return panZoomStackGroup.getDepth() > 1;
                 },
                 stepBackPanZoom: function () {
-                    panZoomStack.pop();
+                    panZoomStackGroup.popPanZoom();
                     subplots.forEach(function (subplot) {
                         subplot.update();
                     });
                 },
                 unzoom: function () {
-                    panZoomStack.clearPanZoom();
+                    panZoomStackGroup.clearPanZoom();
                     subplots.forEach(function (subplot) {
                         subplot.update();
                     });
