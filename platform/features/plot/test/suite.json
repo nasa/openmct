@@ -2,12 +2,17 @@
     "GLChart",
     "MCTChart",
     "PlotController",
+    "SubPlot",
     "elements/PlotAxis",
     "elements/PlotFormatter",
     "elements/PlotPalette",
     "elements/PlotPanZoomStack",
+    "elements/PlotPanZoomStackGroup",
     "elements/PlotPosition",
     "elements/PlotPreparer",
-    "elements/PlotTickGenerator"
+    "elements/PlotTickGenerator",
+    "modes/PlotModeOptions",
+    "modes/PlotOverlayMode",
+    "modes/PlotStackMode"
 ]
 
