@@ -42,6 +42,11 @@
                 "key": "ViewSwitcherController",
                 "implementation": "ViewSwitcherController.js",
                 "depends": [ "$scope" ]
+            },
+            {
+                "key": "BottomBarController",
+                "implementation": "BottomBarController.js",
+                "depends": [ "indicators[]" ]
             }
         ],
         "directives": [
