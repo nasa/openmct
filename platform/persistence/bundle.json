@@ -18,6 +18,21 @@
             {
                 "key": "COUCHDB_PATH",
                 "value": "/couch/openmct"
+            },
+            {
+                "key": "COUCHDB_INDICATOR_INTERVAL",
+                "value": 15000
+            }
+        ],
+        "indicators": [
+            {
+                "implementation": "CouchIndicator.js",
+                "depends": [
+                    "$http",
+                    "$interval",
+                    "COUCHDB_PATH",
+                    "COUCHDB_INDICATOR_INTERVAL"
+                ]
             }
         ]
     }
