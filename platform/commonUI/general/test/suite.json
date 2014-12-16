@@ -1,5 +1,6 @@
 [
     "ActionGroupController",
+    "BottomBarController",
     "ClickAwayController",
     "ContextMenuController",
     "MCTContainer",

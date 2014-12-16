@@ -1,4 +1,5 @@
 [
     "CouchDocument",
+    "CouchIndicator",
     "CouchPersistenceProvider"
 ]
