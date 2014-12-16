@@ -85,6 +85,14 @@ define(
                  */
                 getText: function () {
                     return state.text;
+                },
+                /**
+                 * Get a longer-form description of the current connection
+                 * space, suitable for display in a tooltip
+                 * @returns {string} longer summary of connection status
+                 */
+                getDescription: function () {
+                    return state.description;
                 }
             };
 
