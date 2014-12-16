@@ -1,23 +1,9 @@
 <div class='abs bottom-bar ue-bottom-bar' ng-controller="BottomBarController as bar">
     <div id='status' class='status-holder abs'>
-        <div ng-repeat="indicator in bar.getIndicators()"
-             class='status block'
-             ng-class='indicator.getClass()'>
-            <span class="ui-symbol status-indicator"
-                  ng-class='indicator.getGlyphClass()'>
-                {{indicator.getGlyph()}}
-            </span>
-            <span class="label"
-                  ng-class='indicator.getTextClass()'>
-                {{indicator.getText()}}
-            </span>
-            <a href=''
-               class="ui-symbol"
-               ng-if="indicator.configure"
-               ng-click="indicator.configure()">
-                G
-            </a>
-        </div>
+        <mct-include ng-repeat="indicator in bar.getIndicators()"
+                     ng-model="indicator.ngModel"
+                     key="indicator.template">
+        </mct-include>
     </div>
     <!--mct-include key="'app-logo'"></mct-include-->
 </div>

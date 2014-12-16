@@ -11,6 +11,10 @@
             {
                 "key": "action-button",
                 "templateUrl": "templates/controls/action-button.html"
+            },
+            {
+                "key": "indicator",
+                "templateUrl": "templates/indicator.html"
             }
         ],
         "controllers": [

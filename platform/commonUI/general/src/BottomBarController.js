@@ -11,13 +11,17 @@ define(
          * @constructor
          */
         function BottomBarController(indicators) {
-            // Utility function used to instantiate indicators
-            // from their injected constructors.
-            function instantiate(Indicator) {
-                return new Indicator();
+            // Utility function used to make indicators presentable
+            // for display.
+            function present(Indicator) {
+                return {
+                    template: Indicator.template || "indicator",
+                    ngModel: typeof Indicator === 'function' ?
+                            new Indicator() : Indicator
+                };
             }
 
-            indicators = indicators.map(instantiate);
+            indicators = indicators.map(present);
 
             return {
                 /**
