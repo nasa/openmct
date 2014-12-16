@@ -48,7 +48,7 @@ define(
             // report an error, so check for that.
             function handleResponse(response) {
                 var data = response.data;
-                state = data.error ? DISCONNECTED : CONNECTED;
+                state = data.error ? SEMICONNECTED : CONNECTED;
             }
 
             // Try to connect to CouchDB, and update the indicator.
