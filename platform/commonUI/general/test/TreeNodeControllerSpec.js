@@ -100,6 +100,39 @@ define(
 
             });
 
+            it("does not expand a node if it is not on the navigation path", function () {
+                var mockParentContext = jasmine.createSpyObj(
+                        "parentContext",
+                        [ "getParent", "getPath", "getRoot" ]
+                    ),
+                    mockChildContext = jasmine.createSpyObj(
+                        "childContext",
+                        [ "getParent", "getPath", "getRoot" ]
+                    ),
+                    parent = new TestObject("parent", mockParentContext),
+                    child = new TestObject("child", mockChildContext);
+
+                mockChildContext.getParent.andReturn(parent);
+                mockChildContext.getPath.andReturn([child, child]);
+                mockParentContext.getPath.andReturn([parent]);
+
+                // Set up such that we are on, but not at the end of, a path
+                mockScope.ngModel = { selectedObject: child };
+                mockScope.domainObject = parent;
+                mockScope.toggle = jasmine.createSpyObj("toggle", ["setState"]);
+
+                // Invoke the watch with the new selection
+                mockScope.$watch.calls[0].args[1](child);
+
+                // Expansion is tracked on a timeout, because too
+                // much expansion can result in an unstable digest.
+                // We want to make sure no timeouts are pending here.
+                expect(mockTimeout).not.toHaveBeenCalled();
+                expect(controller.hasBeenExpanded()).toBeFalsy();
+                expect(controller.isSelected()).toBeFalsy();
+            });
+
+
             it("does not expand a node if no context is available", function () {
                 var mockParentContext = jasmine.createSpyObj(
                         "parentContext",
