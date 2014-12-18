@@ -1,13 +1,9 @@
-<div class='abs bottom-bar ue-bottom-bar'>
+<div class='abs bottom-bar ue-bottom-bar' ng-controller="BottomBarController as bar">
     <div id='status' class='status-holder abs'>
-        <div id='status_data_flow' class='status block data-flow'>
-            <span class='ui-symbol status-indicator ok'>.</span>
-            <span class='label'>Connected</span>
-        </div>
-        <!--div id='status_data_connection' class='status block data-connection'>
-            <span class='ui-symbol status-indicator caution'>D</span>
-            <span class='label'>Connected CPU 0.1% / Mem 1.9%</span>
-        </div-->
+        <mct-include ng-repeat="indicator in bar.getIndicators()"
+                     ng-model="indicator.ngModel"
+                     key="indicator.template">
+        </mct-include>
     </div>
     <!--mct-include key="'app-logo'"></mct-include-->
 </div>
