@@ -40,21 +40,6 @@ define(
                 return obj && obj.getId && obj.getId();
             }
 
-            // Check if two domain objects have the same ID
-            function idsEqual(objA, objB) {
-                return getId(objA) === getId(objB);
-            }
-
-            // Get the parent of a domain object, as reported by
-            // its context capability. This is used to distinguish
-            // two different instances of a domain object that have
-            // been reached in different ways.
-            function parentOf(domainObject) {
-                var context = domainObject &&
-                        domainObject.getCapability("context");
-                return context && context.getParent();
-            }
-
             // Verify that id paths are equivalent, staring at
             // index, ending at the end of the node path.
             function checkPath(nodePath, navPath, index) {
@@ -66,28 +51,8 @@ define(
                 // a recursive step for subsequent ids in the paths,
                 // until we exceed path length or hit a mismatch.
                 return (index >= nodePath.length) ||
-                        (idsEqual(navPath[index], nodePath[index]) &&
+                        ((navPath[index] === nodePath[index]) &&
                                 checkPath(nodePath, navPath, index + 1));
-            }
-
-            // Check if the navigated object is in the subtree of this
-            // node's domain object, by comparing the paths reported
-            // by their context capability.
-            function isOnSelectionPath(nodeObject, navObject) {
-                var nodeContext = nodeObject &&
-                            nodeObject.getCapability('context'),
-                    navContext = navObject &&
-                            navObject.getCapability('context'),
-                    nodePath,
-                    navPath;
-
-                if (nodeContext && navContext) {
-                    nodePath = nodeContext.getPath().map(getId);
-                    navPath = navContext.getPath().map(getId);
-                    return (navPath.length > nodePath.length) &&
-                            checkPath(nodePath, navPath);
-                }
-                return false; // No context to judge by
             }
 
             // Track that a node has been expanded, either by the
@@ -104,25 +69,49 @@ define(
             // Consider the currently-navigated object and update
             // parameters which support display.
             function checkSelection() {
-                var nodeObject = $scope.domainObject;
+                var nodeObject = $scope.domainObject,
+                    navObject = selectedObject,
+                    nodeContext = nodeObject &&
+                            nodeObject.getCapability('context'),
+                    navContext = navObject &&
+                            navObject.getCapability('context'),
+                    nodePath,
+                    navPath;
 
-                // Check if we are the navigated object. Check the parent
-                // as well to make sure we are the same instance of the
-                // navigated object.
-                isSelected =
-                    idsEqual(nodeObject, selectedObject) &&
-                            idsEqual(parentOf(nodeObject), parentOf(selectedObject));
+                // Deselect; we will reselect below, iff we are
+                // exactly at the end of the path.
+                isSelected = false;
 
                 // Expand if necessary (if the navigated object will
                 // be in this node's subtree)
-                if (isOnSelectionPath(nodeObject, selectedObject) &&
-                        $scope.toggle !== undefined) {
-                    $scope.toggle.setState(true);
-                    trackExpansion();
+                if (nodeContext && navContext) {
+                    // Get the paths as arrays of identifiers
+                    nodePath = nodeContext.getPath().map(getId);
+                    navPath = navContext.getPath().map(getId);
+
+                    // Check to see if the node's path lies entirely
+                    // within the navigation path; otherwise, navigation
+                    // has happened in some other subtree.
+                    if (navPath.length >= nodePath.length &&
+                            checkPath(nodePath, navPath)) {
+
+                        // nodePath is along the navPath; if it's
+                        // at the end of the path, highlight;
+                        // otherwise, expand.
+                        if (nodePath.length === navPath.length) {
+                            isSelected = true;
+                        } else { // node path is shorter: Expand!
+                            if ($scope.toggle) {
+                                $scope.toggle.setState(true);
+                            }
+                            trackExpansion();
+                        }
+
+                    }
                 }
             }
 
-            // Callback for the navigation service; track the currently
+            // Callback for the selection updates; track the currently
             // navigated object and update display parameters as needed.
             function setSelection(object) {
                 selectedObject = object;
