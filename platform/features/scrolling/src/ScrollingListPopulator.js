@@ -5,6 +5,13 @@ define(
     function () {
         "use strict";
 
+        /**
+         * The ScrollingListPopulator is responsible for filling in the
+         * values which should appear within columns of a scrolling list
+         * view, based on received telemetry data.
+         * @constructor
+         * @param {Column[]} columns the columns to be populated
+         */
         function ScrollingListPopulator(columns) {
             /**
              * Look up the most recent values from a set of data objects.
@@ -21,7 +28,7 @@ define(
              * @param {Array<Telemetry>} datas an array of the most recent
              *            data objects; expected to be in the same order
              *            as the domain objects provided at constructor
-             * @param {Array<ScrollingColumn}
+             * @param {number} count the number of rows to provide
              */
             function getLatestDataValues(datas, count) {
                 var latest = [],
@@ -85,11 +92,27 @@ define(
 
 
             return {
+                /**
+                 * Get the text which should appear in headers for the
+                 * provided columns.
+                 * @returns {string[]} column headers
+                 */
                 getHeaders: function () {
                     return columns.map(function (column) {
                         return column.getTitle();
                     });
                 },
+                /**
+                 * Get the contents of rows for the scrolling list view.
+                 * @param {TelemetrySeries[]} datas the data sets
+                 * @param {DomainObject[]} objects the domain objects which
+                 *        provided the data sets; these should match
+                 *        index-to-index with the `datas` argument
+                 * @param {number} count the number of rows to populate
+                 * @returns {string[][]} an array of rows, each of which
+                 *          is an array of values which should appear
+                 *          in that row
+                 */
                 getRows: function (datas, objects, count) {
                     var values = getLatestDataValues(datas, count);
 
