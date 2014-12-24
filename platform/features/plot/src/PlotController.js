@@ -86,7 +86,10 @@ define(
             // Set up available modes (stacked/overlaid), based on the
             // set of telemetry objects in this plot view.
             function setupModes(telemetryObjects) {
-                modeOptions = new PlotModeOptions(telemetryObjects || []);
+                modeOptions = new PlotModeOptions(
+                    telemetryObjects || [],
+                    subPlotFactory
+                );
             }
 
             // Update all sub-plots

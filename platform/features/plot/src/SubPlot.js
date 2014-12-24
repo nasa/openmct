@@ -3,10 +3,9 @@
 define(
     [
         './elements/PlotPosition',
-        './elements/PlotFormatter',
         './elements/PlotTickGenerator'
     ],
-    function (PlotPosition, PlotFormatter, PlotTickGenerator) {
+    function (PlotPosition, PlotTickGenerator) {
         "use strict";
 
         var DOMAIN_TICKS = 5,

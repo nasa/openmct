@@ -23,6 +23,12 @@
                 "implementation": "TelemetryCapability.js",
                 "depends": [ "$injector", "$q", "$log" ]
             }
+        ],
+        "services": [
+            {
+                "key": "telemetryFormatter",
+                "implementation": "TelemetryFormatter.js"
+            }
         ]
     }
 }
