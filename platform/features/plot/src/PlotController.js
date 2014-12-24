@@ -8,9 +8,10 @@ define(
         "./elements/PlotPreparer",
         "./elements/PlotPalette",
         "./elements/PlotAxis",
-        "./modes/PlotModeOptions"
+        "./modes/PlotModeOptions",
+        "./SubPlotFactory"
     ],
-    function (PlotPreparer, PlotPalette, PlotAxis, PlotModeOptions) {
+    function (PlotPreparer, PlotPalette, PlotAxis, PlotModeOptions, SubPlotFactory) {
         "use strict";
 
         var AXIS_DEFAULTS = [
@@ -29,8 +30,9 @@ define(
          *
          * @constructor
          */
-        function PlotController($scope) {
-            var modeOptions = new PlotModeOptions([]),
+        function PlotController($scope, telemetryFormatter) {
+            var subPlotFactory = new SubPlotFactory(telemetryFormatter),
+                modeOptions = new PlotModeOptions([], subPlotFactory),
                 subplots = [],
                 domainOffset;
 

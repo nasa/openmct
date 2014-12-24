@@ -11,10 +11,13 @@ define(
          * @constructor
          * @param {DomainObject[]} the domain objects to be plotted
          */
-        function PlotOverlayMode(telemetryObjects) {
+        function PlotOverlayMode(telemetryObjects, subPlotFactory) {
             var domainOffset,
                 panZoomStack = new PlotPanZoomStack([], []),
-                subplot = new SubPlot(telemetryObjects, panZoomStack),
+                subplot = subPlotFactory.createSubPlot(
+                    telemetryObjects,
+                    panZoomStack
+                ),
                 subplots = [ subplot ];
 
             function plotTelemetry(prepared) {

@@ -11,12 +11,12 @@ define(
          * @constructor
          * @param {DomainObject[]} the domain objects to be plotted
          */
-        function PlotStackMode(telemetryObjects) {
+        function PlotStackMode(telemetryObjects, subPlotFactory) {
             var domainOffset,
                 panZoomStackGroup =
                     new PlotPanZoomStackGroup(telemetryObjects.length),
                 subplots = telemetryObjects.map(function (telemetryObject, i) {
-                    return new SubPlot(
+                    return subPlotFactory.createSubPlot(
                         [telemetryObject],
                         panZoomStackGroup.getPanZoomStack(i)
                     );

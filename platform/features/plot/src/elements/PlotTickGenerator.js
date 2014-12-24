@@ -13,7 +13,7 @@ define(
          * @constructor
          * @param {PlotPanZoomStack} panZoomStack the pan-zoom stack for
          *        this plot, used to determine plot boundaries
-         * @param {PlotFormatter} formatter used to format (for display)
+         * @param {TelemetryFormatter} formatter used to format (for display)
          *        domain and range values.
          */
         function PlotTickGenerator(panZoomStack, formatter) {

@@ -22,14 +22,14 @@ define(
          * @param {PlotPanZoomStack} panZoomStack the stack of pan-zoom
          *        states which is applicable to this sub-plot
          */
-        function SubPlot(telemetryObjects, panZoomStack) {
+        function SubPlot(telemetryObjects, panZoomStack, telemetryFormatter) {
             // We are used from a template often, so maintain
             // state in local variables to allow for fast look-up,
             // as is normal for controllers.
             var draw = {},
                 rangeTicks = [],
                 domainTicks = [],
-                formatter = new PlotFormatter(),
+                formatter = telemetryFormatter,
                 domainOffset,
                 mousePosition,
                 marqueeStart,

@@ -27,7 +27,7 @@ define(
          * @param {DomainObject[]} the telemetry objects being
          *        represented in this plot view
          */
-        function PlotModeOptions(telemetryObjects) {
+        function PlotModeOptions(telemetryObjects, subPlotFactory) {
             var options = telemetryObjects.length > 1 ?
                     [ OVERLAID, STACKED ] : [ OVERLAID ],
                 mode = options[0], // Initial selection (overlaid)
@@ -44,7 +44,10 @@ define(
                 getModeHandler: function () {
                     // Lazily initialize
                     if (!modeHandler) {
-                        modeHandler = mode.factory(telemetryObjects);
+                        modeHandler = mode.factory(
+                            telemetryObjects,
+                            subPlotFactory
+                        );
                     }
                     return modeHandler;
                 },
