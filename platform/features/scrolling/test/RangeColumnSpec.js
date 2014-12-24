@@ -8,6 +8,8 @@ define(
     function (RangeColumn) {
         "use strict";
 
+        var TEST_RANGE_VALUE = "some formatted range value";
+
         describe("A range column", function () {
             var mockDataSet,
                 testMetadata,
@@ -27,6 +29,8 @@ define(
                     key: "testKey",
                     name: "Test Name"
                 };
+                mockFormatter.formatRangeValue.andReturn(TEST_RANGE_VALUE);
+
                 column = new RangeColumn(testMetadata, mockFormatter);
             });
 
@@ -43,7 +47,13 @@ define(
             it("formats range values as time", function () {
                 mockDataSet.getRangeValue.andReturn(123.45678);
                 expect(column.getValue(undefined, mockDataSet, 42))
-                    .toEqual("123.457");
+                    .toEqual(TEST_RANGE_VALUE);
+
+                // Make sure that service interactions were as expected
+                expect(mockFormatter.formatRangeValue)
+                    .toHaveBeenCalledWith(123.45678);
+                expect(mockFormatter.formatDomainValue)
+                    .not.toHaveBeenCalled();
             });
         });
     }

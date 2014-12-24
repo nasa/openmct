@@ -8,6 +8,8 @@ define(
     function (DomainColumn) {
         "use strict";
 
+        var TEST_DOMAIN_VALUE = "some formatted domain value";
+
         describe("A domain column", function () {
             var mockDataSet,
                 testMetadata,
@@ -27,6 +29,8 @@ define(
                     key: "testKey",
                     name: "Test Name"
                 };
+                mockFormatter.formatDomainValue.andReturn(TEST_DOMAIN_VALUE);
+
                 column = new DomainColumn(testMetadata, mockFormatter);
             });
 
@@ -42,8 +46,16 @@ define(
 
             it("formats domain values as time", function () {
                 mockDataSet.getDomainValue.andReturn(402513731000);
+
+                // Should have just given the value the formatter gave
                 expect(column.getValue(undefined, mockDataSet, 42))
-                    .toEqual("1982-276 17:22:11");
+                    .toEqual(TEST_DOMAIN_VALUE);
+
+                // Make sure that service interactions were as expected
+                expect(mockFormatter.formatDomainValue)
+                    .toHaveBeenCalledWith(402513731000);
+                expect(mockFormatter.formatRangeValue)
+                    .not.toHaveBeenCalled();
             });
 
         });
