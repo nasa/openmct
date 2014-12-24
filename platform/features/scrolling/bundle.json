@@ -16,7 +16,7 @@
             {
                 "key": "ScrollingListController",
                 "implementation": "ScrollingListController.js",
-                "depends": [ "$scope" ]
+                "depends": [ "$scope", "telemetryFormatter" ]
             }
         ]
     }

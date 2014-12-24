@@ -15,7 +15,7 @@ define(
          * the contents of the scrolling list view.
          * @constructor
          */
-        function ScrollingListController($scope) {
+        function ScrollingListController($scope, formatter) {
             var populator;
 
 
@@ -49,7 +49,7 @@ define(
                     var key = domain.key;
                     if (key && !domainKeys[key]) {
                         domainKeys[key] = true;
-                        columns.push(new DomainColumn(domain));
+                        columns.push(new DomainColumn(domain, formatter));
                     }
                 }
 
@@ -59,7 +59,7 @@ define(
                     var key = range.key;
                     if (key && !rangeKeys[key]) {
                         rangeKeys[key] = true;
-                        columns.push(new RangeColumn(range));
+                        columns.push(new RangeColumn(range, formatter));
                     }
                 }
 
@@ -86,10 +86,10 @@ define(
                 // Add default domain, range columns if none
                 // were described in metadata.
                 if (Object.keys(domainKeys).length < 1) {
-                    columns.push(new DomainColumn({ name: "Time" }));
+                    columns.push(new DomainColumn({name: "Time"}, formatter));
                 }
                 if (Object.keys(rangeKeys).length < 1) {
-                    columns.push(new RangeColumn({ name: "Value" }));
+                    columns.push(new RangeColumn({name: "Value"}, formatter));
                 }
 
                 // We have all columns now; use them to initializer

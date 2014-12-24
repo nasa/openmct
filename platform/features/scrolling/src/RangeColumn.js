@@ -16,8 +16,10 @@ define(
          * @param rangeMetadata an object with the machine- and human-
          *        readable names for this range (in `key` and `name`
          *        fields, respectively.)
+         * @param {TelemetryFormatter} telemetryFormatter the telemetry
+         *        formatting service, for making values human-readable.
          */
-        function RangeColumn(rangeMetadata) {
+        function RangeColumn(rangeMetadata, telemetryFormatter) {
             return {
                 /**
                  * Get the title to display in this column's header.
@@ -32,8 +34,9 @@ define(
                  * @returns {string} the text to display
                  */
                 getValue: function (domainObject, data, index) {
-                    var value = data.getRangeValue(index, rangeMetadata.key);
-                    return value && value.toFixed(3);
+                    return telemetryFormatter.formatRangeValue(
+                        data.getRangeValue(index, rangeMetadata.key)
+                    );
                 }
             };
         }
