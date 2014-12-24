@@ -11,6 +11,7 @@ define(
         describe("A range column", function () {
             var mockDataSet,
                 testMetadata,
+                mockFormatter,
                 column;
 
             beforeEach(function () {
@@ -18,11 +19,15 @@ define(
                     "data",
                     [ "getRangeValue" ]
                 );
+                mockFormatter = jasmine.createSpyObj(
+                    "formatter",
+                    [ "formatDomainValue", "formatRangeValue" ]
+                );
                 testMetadata = {
                     key: "testKey",
                     name: "Test Name"
                 };
-                column = new RangeColumn(testMetadata);
+                column = new RangeColumn(testMetadata, mockFormatter);
             });
 
             it("reports a column header from range metadata", function () {

@@ -20,6 +20,9 @@ define(
          *        which will be plotted in this sub-plot
          * @param {PlotPanZoomStack} panZoomStack the stack of pan-zoom
          *        states which is applicable to this sub-plot
+         * @param {TelemetryFormatter} telemetryFormatter the telemetry
+         *        formatting service; used to convert domain/range values
+         *        from telemetry data sets to a human-readable form.
          */
         function SubPlot(telemetryObjects, panZoomStack, telemetryFormatter) {
             // We are used from a template often, so maintain

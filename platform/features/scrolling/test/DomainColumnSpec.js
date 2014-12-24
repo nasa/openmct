@@ -11,6 +11,7 @@ define(
         describe("A domain column", function () {
             var mockDataSet,
                 testMetadata,
+                mockFormatter,
                 column;
 
             beforeEach(function () {
@@ -18,11 +19,15 @@ define(
                     "data",
                     [ "getDomainValue" ]
                 );
+                mockFormatter = jasmine.createSpyObj(
+                    "formatter",
+                    [ "formatDomainValue", "formatRangeValue" ]
+                );
                 testMetadata = {
                     key: "testKey",
                     name: "Test Name"
                 };
-                column = new DomainColumn(testMetadata);
+                column = new DomainColumn(testMetadata, mockFormatter);
             });
 
             it("reports a column header from domain metadata", function () {

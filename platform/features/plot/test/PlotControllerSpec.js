@@ -10,6 +10,7 @@ define(
 
         describe("The plot controller", function () {
             var mockScope,
+                mockFormatter,
                 mockTelemetry, // mock telemetry controller
                 mockData,
                 mockDomainObject,
@@ -21,6 +22,10 @@ define(
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     [ "$watch", "$on" ]
+                );
+                mockFormatter = jasmine.createSpyObj(
+                    "formatter",
+                    [ "formatDomainValue", "formatRangeValue" ]
                 );
                 mockTelemetry = jasmine.createSpyObj(
                     "telemetry",
@@ -41,7 +46,7 @@ define(
                 mockData.getDomainValue.andCallFake(echo);
                 mockData.getRangeValue.andCallFake(echo);
 
-                controller = new PlotController(mockScope);
+                controller = new PlotController(mockScope, mockFormatter);
             });
 
             it("listens for telemetry updates", function () {

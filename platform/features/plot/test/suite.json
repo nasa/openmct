@@ -3,6 +3,7 @@
     "MCTChart",
     "PlotController",
     "SubPlot",
+    "SubPlotFactory",
     "elements/PlotAxis",
     "elements/PlotPalette",
     "elements/PlotPanZoomStack",

@@ -9,18 +9,23 @@ define(
         "use strict";
 
         describe("Plot mode options", function () {
-            var mockDomainObject;
+            var mockDomainObject,
+                mockSubPlotFactory;
 
             beforeEach(function () {
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     [ "getId", "getModel", "getCapability" ]
                 );
+                mockSubPlotFactory = jasmine.createSpyObj(
+                    "subPlotFactory",
+                    [ "createSubPlot" ]
+                );
             });
 
             it("offers only one option when one object is present", function () {
                 expect(
-                    new PlotModeOptions([mockDomainObject])
+                    new PlotModeOptions([mockDomainObject], mockSubPlotFactory)
                             .getModeOptions().length
                 ).toEqual(1);
             });
@@ -33,7 +38,7 @@ define(
                         mockDomainObject
                     ];
                 expect(
-                    new PlotModeOptions(objects)
+                    new PlotModeOptions(objects, mockSubPlotFactory)
                             .getModeOptions().length
                 ).toEqual(2);
             });
@@ -44,7 +49,7 @@ define(
                         mockDomainObject,
                         mockDomainObject,
                         mockDomainObject
-                    ]),
+                    ], mockSubPlotFactory),
                     initialHandler = plotModeOptions.getModeHandler();
 
                 // Change the mode

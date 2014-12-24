@@ -11,6 +11,7 @@ define(
         describe("A sub-plot", function () {
             var mockDomainObject,
                 mockPanZoomStack,
+                mockFormatter,
                 mockElement,
                 testDomainObjects,
                 testOrigin,
@@ -35,6 +36,10 @@ define(
                         "getDimensions"
                     ]
                 );
+                mockFormatter = jasmine.createSpyObj(
+                    "formatter",
+                    [ "formatDomainValue", "formatRangeValue" ]
+                );
                 mockElement = jasmine.createSpyObj(
                     "element",
                     [ "getBoundingClientRect" ]
@@ -55,7 +60,8 @@ define(
 
                 subplot = new SubPlot(
                     testDomainObjects,
-                    mockPanZoomStack
+                    mockPanZoomStack,
+                    mockFormatter
                 );
             });
 
