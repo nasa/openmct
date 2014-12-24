@@ -1,5 +1,6 @@
 [
     "TelemetryAggregator",
     "TelemetryCapability",
-    "TelemetryController"
+    "TelemetryController",
+    "TelemetryFormatter"
 ]

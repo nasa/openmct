@@ -4,15 +4,15 @@
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
  */
 define(
-    ["../../src/elements/PlotFormatter"],
-    function (PlotFormatter) {
+    ["../src/TelemetryFormatter"],
+    function (TelemetryFormatter) {
         "use strict";
 
-        describe("The plot formatter", function () {
+        describe("The telemetry formatter", function () {
             var formatter;
 
             beforeEach(function () {
-                formatter = new PlotFormatter();
+                formatter = new TelemetryFormatter();
             });
 
             it("formats domains using YYYY-DDD style", function () {
@@ -22,7 +22,7 @@ define(
             });
 
             it("formats ranges as values", function () {
-                expect(formatter.formatRangeValue(10)).toEqual("10.0");
+                expect(formatter.formatRangeValue(10)).toEqual("10.000");
             });
         });
     }

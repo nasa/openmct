@@ -4,7 +4,6 @@
     "PlotController",
     "SubPlot",
     "elements/PlotAxis",
-    "elements/PlotFormatter",
     "elements/PlotPalette",
     "elements/PlotPanZoomStack",
     "elements/PlotPanZoomStackGroup",
