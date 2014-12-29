@@ -64,7 +64,8 @@ define(
                  *          which may (or may not, depending on
                  *          availability) satisfy the requests
                  */
-                requestTelemetry: requestTelemetry
+                requestTelemetry: requestTelemetry,
+                subscribe: subscribe
             };
         }
 
