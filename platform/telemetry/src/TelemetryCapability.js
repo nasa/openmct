@@ -16,20 +16,22 @@ define(
          * @constructor
          */
         function TelemetryCapability($injector, $q, $log, domainObject) {
-            var telemetryService;
+            var telemetryService,
+                subscriptions = [],
+                unsubscribeFunction;
 
             // We could depend on telemetryService directly, but
             // there isn't a platform implementation of this;
             function getTelemetryService() {
-                if (!telemetryService) {
+                if (telemetryService === undefined) {
                     try {
                         telemetryService =
-                            $q.when($injector.get("telemetryService"));
+                            $injector.get("telemetryService");
                     } catch (e) {
                         // $injector should throw is telemetryService
                         // is unavailable or unsatisfiable.
                         $log.warn("Telemetry service unavailable");
-                        telemetryService = $q.reject(e);
+                        telemetryService = null;
                     }
                 }
                 return telemetryService;
@@ -83,16 +85,34 @@ define(
                 }
 
                 // Issue a request to the service
-                function requestTelemetryFromService(telemetryService) {
+                function requestTelemetryFromService() {
                     return telemetryService.requestTelemetry([fullRequest]);
                 }
 
                 // If a telemetryService is not available,
                 // getTelemetryService() should reject, and this should
                 // bubble through subsequent then calls.
-                return getTelemetryService()
-                        .then(requestTelemetryFromService)
-                        .then(getRelevantResponse);
+                return getTelemetryService() &&
+                        requestTelemetryFromService()
+                            .then(getRelevantResponse);
+            }
+
+            // Listen for real-time and/or streaming updates
+            function subscribe(callback, request) {
+                var fullRequest = buildRequest(request || {});
+
+                // Unpack the relevant telemetry series
+                function update(telemetries) {
+                    var source = fullRequest.source,
+                        key = fullRequest.key,
+                        result = ((telemetries || {})[source] || {})[key];
+                    if (result) {
+                        callback(result);
+                    }
+                }
+
+                return getTelemetryService() &&
+                        telemetryService.subscribe(update, [fullRequest]);
             }
 
             return {
@@ -115,7 +135,18 @@ define(
                     // type-level and object-level telemetry
                     // properties
                     return buildRequest({});
-                }
+                },
+
+                /**
+                 * Subscribe to updates to telemetry data for this domain
+                 * object.
+                 * @param {Function} callback a function to call when new
+                 *        data becomes available; the telemetry series
+                 *        containing the data will be given as an argument.
+                 * @param {TelemetryRequest} [request] parameters for the
+                 *        subscription request
+                 */
+                subscribe: subscribe
             };
         }
 

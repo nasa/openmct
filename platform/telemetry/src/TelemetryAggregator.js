@@ -38,6 +38,23 @@ define(
                 })).then(mergeResults);
             }
 
+            // Subscribe to updates from all providers
+            function subscribe(callback, requests) {
+                var unsubscribes = telemetryProviders.map(function (provider) {
+                    return provider.subscribe(callback, requests);
+                });
+
+                // Return an unsubscribe function that invokes unsubscribe
+                // for all providers.
+                return function () {
+                    unsubscribes.forEach(function (unsubscribe) {
+                        if (unsubscribe) {
+                            unsubscribe();
+                        }
+                    });
+                };
+            }
+
             return {
                 /**
                  * Request telemetry data.
