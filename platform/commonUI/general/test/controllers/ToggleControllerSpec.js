@@ -1,7 +1,7 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ["../src/ToggleController"],
+    ["../../src/controllers/ToggleController"],
     function (ToggleController) {
         "use strict";
 

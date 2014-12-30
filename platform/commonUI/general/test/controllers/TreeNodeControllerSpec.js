@@ -1,7 +1,7 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ["../src/TreeNodeController"],
+    ["../../src/controllers/TreeNodeController"],
     function (TreeNodeController) {
         "use strict";
 

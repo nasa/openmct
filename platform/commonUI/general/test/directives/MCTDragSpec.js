@@ -1,7 +1,7 @@
 /*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
-    ["../src/MCTDrag"],
+    ["../../src/directives/MCTDrag"],
     function (MCTDrag) {
         "use strict";
 

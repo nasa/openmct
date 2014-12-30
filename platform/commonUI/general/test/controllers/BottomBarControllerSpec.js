@@ -1,7 +1,7 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ["../src/BottomBarController"],
+    ["../../src/controllers/BottomBarController"],
     function (BottomBarController) {
         "use strict";
 
