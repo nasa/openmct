@@ -50,6 +50,9 @@ define(
                     }
                 });
 
+                mockTelemetryService.requestTelemetry
+                    .andReturn(mockPromise({}));
+
                 // Bubble up...
                 mockReject.then.andReturn(mockReject);
 

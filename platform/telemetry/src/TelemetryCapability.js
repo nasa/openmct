@@ -28,7 +28,7 @@ define(
                         telemetryService =
                             $injector.get("telemetryService");
                     } catch (e) {
-                        // $injector should throw is telemetryService
+                        // $injector should throw if telemetryService
                         // is unavailable or unsatisfiable.
                         $log.warn("Telemetry service unavailable");
                         telemetryService = null;
