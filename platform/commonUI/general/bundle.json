@@ -55,6 +55,11 @@
                 "key": "BottomBarController",
                 "implementation": "BottomBarController.js",
                 "depends": [ "indicators[]" ]
+            },
+            {
+                "key": "GetterSetterController",
+                "implementation": "GetterSetterController.js",
+                "depends": [ "$scope" ]
             }
         ],
         "directives": [
