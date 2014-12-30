@@ -8,6 +8,7 @@ define(
         describe("The telemetry aggregator", function () {
             var mockQ,
                 mockProviders,
+                mockUnsubscribes,
                 aggregator;
 
             function mockPromise(value) {
@@ -20,10 +21,15 @@ define(
 
             function mockProvider(key, index) {
                 var provider = jasmine.createSpyObj(
-                    "provider" + index,
-                    [ "requestTelemetry" ]
-                );
+                        "provider" + index,
+                        [ "requestTelemetry", "subscribe" ]
+                    ),
+                    unsubscribe = jasmine.createSpy("unsubscribe" + index);
                 provider.requestTelemetry.andReturn({ someKey: key });
+                provider.subscribe.andReturn(unsubscribe);
+
+                // Store to verify interactions later
+                mockUnsubscribes[index] = unsubscribe;
                 return provider;
             }
 
@@ -31,6 +37,7 @@ define(
                 mockQ = jasmine.createSpyObj("$q", [ "all" ]);
                 mockQ.all.andReturn(mockPromise([]));
 
+                mockUnsubscribes = [];
                 mockProviders = [ "a", "b", "c" ].map(mockProvider);
 
                 aggregator = new TelemetryAggregator(mockQ, mockProviders);
@@ -74,6 +81,24 @@ define(
                 });
             });
 
+            it("broadcasts subscriptions from all providers", function () {
+                var mockCallback = jasmine.createSpy("callback"),
+                    subscription = aggregator.subscribe(mockCallback);
+
+                // Make sure all providers got subscribed to
+                mockProviders.forEach(function (mockProvider) {
+                    expect(mockProvider.subscribe).toHaveBeenCalled();
+                });
+
+                // Verify that unsubscription gets broadcast too
+                mockUnsubscribes.forEach(function (mockUnsubscribe) {
+                    expect(mockUnsubscribe).not.toHaveBeenCalled();
+                });
+                subscription(); // unsubscribe
+                mockUnsubscribes.forEach(function (mockUnsubscribe) {
+                    expect(mockUnsubscribe).toHaveBeenCalled();
+                });
+            });
 
         });
     }

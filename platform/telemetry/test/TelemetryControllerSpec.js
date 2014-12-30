@@ -187,6 +187,13 @@ define(
                     .toHaveBeenCalledWith("telemetryUpdate");
             });
 
+            it("listens for scope destruction to clean up", function () {
+                expect(mockScope.$on).toHaveBeenCalledWith(
+                    "$destroy",
+                    jasmine.any(Function)
+                );
+                mockScope.$on.mostRecentCall.args[1]();
+            });
 
         });
     }
