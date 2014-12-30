@@ -3,9 +3,11 @@
     "controllers/BottomBarController",
     "controllers/ClickAwayController",
     "controllers/ContextMenuController",
+    "controllers/GetterSetterController",
     "controllers/ToggleController",
     "controllers/TreeNodeController",
     "controllers/ViewSwitcherController",
     "directives/MCTContainer",
-    "directives/MCTDrag"
+    "directives/MCTDrag",
+    "directives/MCTResize"
 ]
