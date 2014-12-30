@@ -49,7 +49,11 @@ define(
 
                 // Used for getTelemetryObjects; a reference is
                 // stored so that this can be called in a watch
-                telemetryObjects: []
+                telemetryObjects: [],
+
+                // Whether or not this controller is active; once
+                // scope is destroyed, polling should stop.
+                active: true
             };
 
             // Broadcast that a telemetryUpdate has occurred.
@@ -227,13 +231,24 @@ define(
                         }
 
                         self.refreshing = false;
-                        startTimeout();
+
+                        if (self.active) {
+                            startTimeout();
+                        }
                     }, self.interval);
                 }
             }
 
+            // Stop polling for changes
+            function deactivate() {
+                self.active = false;
+            }
+
             // Watch for a represented domain object
             $scope.$watch("domainObject", getTelemetryObjects);
+
+            // Stop polling when destroyed
+            $scope.$on("$destroy", deactivate);
 
             // Begin polling for data changes
             startTimeout();
