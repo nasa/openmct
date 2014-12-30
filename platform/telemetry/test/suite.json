@@ -2,5 +2,7 @@
     "TelemetryAggregator",
     "TelemetryCapability",
     "TelemetryController",
-    "TelemetryFormatter"
+    "TelemetryFormatter",
+    "TelemetrySubscriber",
+    "TelemetrySubscription"
 ]
