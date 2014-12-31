@@ -4,6 +4,7 @@
 *.tgz
 *.DS_Store
 *.idea
+*.sass-cache
 
 # External dependencies
 
