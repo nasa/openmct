@@ -1,0 +1,225 @@
+$yBarW: 60px;
+$yLabelW: auto; //10px;
+$xBarH: 32px;
+$legendH: 24px;
+$colorHash: rgba(white, 0.3);
+$styleHash: dashed;
+$swatchD: 8px;
+$plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBarW); // Top, right, bottom, left
+
+.gl-plot {
+	color: $colorBodyFg;
+	font-size: 0.7rem;
+	position: relative;
+	width: 100%;
+	height: 100%;
+
+	.gl-plot-axis-area {
+		//		@include test(green);
+		position: absolute;
+		&.gl-plot-x {
+			top: auto;
+			right: 0;
+			bottom: $interiorMargin;
+			left: $yBarW;
+			height: $xBarH;
+			width: auto;
+			overflow: hidden;
+		}
+		&.gl-plot-y {
+			top: $legendH + $interiorMargin;
+			right: auto;
+			bottom: nth($plotDisplayArea, 3);
+			left: 0;
+			width: $yBarW;
+		}
+	}
+
+	.gl-plot-coords {
+		@include box-sizing(border-box);
+		@include border-radius($controlCr);
+		background: rgba($colorAlt1, 0.5);
+		color: lighten($colorBodyFg, 30%);
+		padding: 2px 5px;
+		position: absolute;
+		top: nth($plotDisplayArea,1) + $interiorMarginLg;
+		right: auto;
+		bottom: auto;
+		left: nth($plotDisplayArea,4) + $interiorMarginLg;
+		z-index: 10;
+		&:empty {
+			display: none;
+		}
+	}
+
+	.gl-plot-display-area {
+		position: absolute;
+		top: nth($plotDisplayArea, 1);
+		right: nth($plotDisplayArea, 2);
+		bottom: nth($plotDisplayArea, 3);
+		left: nth($plotDisplayArea, 4);
+		cursor: crosshair;
+		border: 1px solid $colorInteriorBorder;
+	}
+
+	.gl-plot-label {
+		//		@include test(yellow);
+		color: lighten($colorBodyFg, 20%);
+		position: absolute;
+		text-align: center;
+//		text-transform: uppercase;
+
+		&.gl-plot-x-label {
+			top: auto;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			height: auto;
+		}
+
+		&.gl-plot-y-label {
+			$x: -50%;
+			$r: -90deg;
+			@include transform-origin(50%, 0);
+			@include transform(translateX($x) rotate($r));
+			display: inline-block;
+			margin-left: $interiorMargin; // Kick off the left edge
+			left: 0;
+			top: 50%;
+			white-space: nowrap;
+		}
+	}
+
+	.gl-plot-y-options {
+		$h: 32px;
+//		@include test();
+		position: absolute;
+		top: 50%;
+		right: auto;
+		bottom: auto;
+		left: $yLabelW + $interiorMargin;
+		margin-top: $h / -2;
+		height: auto;
+		min-height: $h;
+		width: $h;
+	}
+
+	.gl-plot-hash {
+		position: absolute;
+		border: 0 $colorHash $styleHash;
+		&.hash-v {
+			border-right-width: 1px;
+			height: 100%;
+		}
+		&.hash-h {
+			border-bottom-width: 1px;
+			width: 100%;
+		}
+	}
+
+	.gl-plot-legend {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: auto;
+		left: 0;
+		height: $legendH;
+		overflow-x: hidden;
+		overflow-y: auto;
+//		.plot-legend-item {
+//			display: inline-block;
+//			margin-right: $interiorMarginLg;
+//			span {
+//				vertical-align: middle;
+//			}
+//			.plot-color-swatch {
+//				@include border-radius(2px);
+//				display: inline-block;
+//				height: $swatchD;
+//				width: $swatchD;
+//				margin-right: $interiorMarginSm;
+//			}
+//		}
+	}
+}
+.gl-plot-legend,
+.legend {
+	.plot-legend-item,
+	.legend-item {
+		display: inline-block;
+		margin-right: $interiorMarginLg;
+		span {
+			vertical-align: middle;
+		}
+		.plot-color-swatch,
+		.color-swatch {
+			@include border-radius(2px);
+			display: inline-block;
+			height: $swatchD;
+			width: $swatchD;
+			margin-right: $interiorMarginSm;
+
+		}
+		.title-label {
+
+		}
+	}
+}
+
+.tick {
+	position: absolute;
+	border: 0 $colorHash solid;
+	&.tick-x {
+		border-right-width: 1px;
+		height: 100%; // Assumption is that the tick will be in a holder that will set it's height;
+	}
+}
+
+
+.gl-plot-tick,
+.tick-label {
+	//			@include test(red);
+	font-size: 0.7rem;
+	position: absolute;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	&.gl-plot-x-tick-label,
+	&.tick-label-x {
+		right: auto;
+		bottom: auto;
+		left: auto;
+		height: auto;
+		width: 20%;
+		margin-left: -10%;
+		text-align: center;
+	}
+	&.gl-plot-y-tick-label,
+	&.tick-label-y {
+		top: auto;
+		height: 1em;
+		width: auto;
+		margin-bottom: -0.5em;
+		text-align: right;
+	}
+}
+
+.gl-plot-tick {
+	//			@include test(red);
+	&.gl-plot-x-tick-label {
+		top: $interiorMargin;
+	}
+	&.gl-plot-y-tick-label {
+		right: $interiorMargin;
+		left: $interiorMargin;
+	}
+}
+
+.tick-label {
+	&.tick-label-x {
+		top: 0;
+	}
+	&.tick-label-y {
+		right: 0; left: 0;
+	}
+}

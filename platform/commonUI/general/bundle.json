@@ -13,6 +13,10 @@
                 "templateUrl": "templates/controls/action-button.html"
             },
             {
+                "key": "input-filter",
+                "templateUrl": "templates/controls/input-filter.html"
+            },
+            {
                 "key": "indicator",
                 "templateUrl": "templates/indicator.html"
             }

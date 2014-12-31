@@ -1,0 +1,47 @@
+.ue-bottom-bar {
+	color: lighten($colorBodyBg, 30%);
+	font-size: 0.7em;
+	line-height: $ueFooterH - 4px;
+	.status-holder {
+		@include border-radius($basicCr * 1.75);
+		@include box-sizing(border-box);
+		background: $colorFooterBg;
+        border-bottom: 1px solid lighten($colorBodyBg, 10%);
+		padding: 2px 5px;
+		text-transform: uppercase;
+	}
+	.app-logo {
+		@include box-sizing(border-box);
+		font-size: 0.8em;
+		line-height: $ueFooterH - 10px;
+		padding-top: 1px;
+		text-transform: uppercase;
+		&.logo-warp {
+			background: url($dirImgs + 'logo-warp.png') no-repeat left top;
+			color: lighten($colorBodyBg, 40%);
+			font-size: 0.7rem;
+			padding-top: 3px;
+			text-align: right;
+		}
+	}
+}
+
+.status.block {
+	display: inline-block;
+	margin-right: $interiorMargin * 4;
+	.status-indicator {
+		@include border-radius($controlCr * 0.9);
+		@include box-shadow(inset rgba(black, 0.5) 0 0 3px);
+		@include text-shadow(rgba(black, 0.3) 0 0 2px);
+		display: inline-block;
+		font-size: 1.25em;
+		vertical-align: middle;
+		margin-right: $interiorMargin;
+		&.ok {
+			color: #009900;
+		}
+		&.caution {
+			color: #ffaa00;
+		}
+	}
+}

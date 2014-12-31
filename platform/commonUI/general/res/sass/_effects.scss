@@ -1,0 +1,19 @@
+.disabled,
+a.disabled {
+	@include opacity($controlDisabledOpacity);
+	pointer-events: none !important;
+	cursor: default !important;
+}
+
+.incised {
+    @include boxIncised(0.8);
+    border-bottom: 1px solid rgba(#fff, 0.3);
+}
+
+.outline {
+    @include boxOutline();
+}
+
+.test {
+	@include test();
+}

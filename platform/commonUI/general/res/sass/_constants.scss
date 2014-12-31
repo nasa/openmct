@@ -1,0 +1,95 @@
+// Margins, spacing, radii
+$bodyMargin: 10px;
+$interiorMargin: 5px;
+$interiorMarginLg: $interiorMargin * 2;
+$interiorMarginSm: 3px;
+$basicCr: 3px;
+$controlCr: $basicCr;
+$badgeW: 35px;
+
+// Colors and shading
+$colorBodyBg: #333;
+$colorBodyFg: #999;
+$colorFooterBg: #000;
+$colorKey: #0099cc;
+$colorKeyFg: #fff;
+$colorAlt1: #ffc700;
+$colorAlert: #ff3c00;
+$colorCheck: $colorKey;
+$colorCreateBtn: $colorKey;
+$colorInteriorBorder: lighten($colorBodyBg, 10%);
+$colorObjFrameBg: darken($colorBodyBg, 5%);
+$colorFormRequired: #ffc700;
+$colorFormValid: #33cc33;
+$colorFormError: #cc0000;
+$colorFormInvalid: #ff9900;
+
+
+// Ratios
+$ltGamma: 20%;
+$btnFontSizeToH: 0.45;
+
+// User Environment
+$ueTopBarH: 35px;
+$ueFooterH: 20px;
+$ueColMargin: 1.5%;
+$ueAppLogoW: 95px;
+$ueBrowseViewBarH: $ueTopBarH; // was 30px
+$ueEditToolBarH: $ueBrowseViewBarH;
+$ueEditToolBarButtonH: $ueEditToolBarH * 0.8;
+$ueBrowseLeftPaneW: 25%;
+$ueEditLeftPaneW: 75%;
+
+// Overlay
+$colorOvrBlocker: rgba(black, 0.7);
+$colorOvrBg: $colorBodyBg;
+$colorOvrFg: $colorBodyFg;
+$ovrTopBarH: 60px;
+$ovrFooterH: 40px;
+
+//Items
+$ueBrowseGridItemLg: 200px;
+$ueBrowseGridItemTopBarH: 20px;
+$ueBrowseGridItemBottomBarH: 40px;
+$colorItemBase: lighten($colorBodyBg, 5%);
+$colorItemFg: lighten($colorItemBase, 20%);
+$colorItemSelected: $colorKey;
+
+// Tree
+$treeVCW: 10px;
+$treeTypeIconW: 17px;
+$treeContextTriggerW: 20px;
+$colorItemTreeIcon: $colorKey;
+$colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
+$colorItemTreeVCHover: $colorAlt1;
+
+//Tabular
+$tabularHeaderH: 20px;
+$tabularTdPadLR: 5px;
+$tabularTdPadTB: 2px;
+$tabularColorBorder: rgba(white, 0.1);
+$tabularColorBodyBg: darken($colorBodyBg, 10%);
+$tabularColorBodyFg: lighten($tabularColorBodyBg, 40%);
+$tabularColorHeaderBg: lighten($colorBodyBg, 10%);
+$tabularColorHeaderFg: lighten($tabularColorHeaderBg, 40%);
+
+// Controls
+$controlCr: $basicCr;
+$controlDisabledOpacity: 0.3;
+$formLabelW: 20%;
+$formInputH: 22px;
+$formRowCtrlsH: 14px;
+$menuLineH: 1.5rem;
+$scrollbarTrackSize: 10px;
+$scrollbarTrackColorBg: rgba(#000, 0.4);
+
+// Paths
+$dirImgs: '../images/';
+
+// Ticks
+$ticksH: 25px;
+$tickLblVMargin: 3px;
+$tickLblH: 15px;
+$tickLblW: 50px;
+$tickH: $ticksH - $tickLblVMargin - $tickLblH;
+$tickW: 1px;

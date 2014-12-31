@@ -1,0 +1,32 @@
+.wrapper-ticks {
+//	@include test();
+	height: $ticksH; //temp!
+	position: relative;
+}
+
+.tick {
+	line-height: $tickLblH;
+	position: absolute;
+	top: 0; right: auto; bottom: 0; left: auto;
+	z-index: 2;
+	&.no-label .label { display: none; }
+	&:before {
+		background: rgba(#fff, 0.3);
+//		border-bottom: 1px solid blue;
+		content: "";
+		display: block;
+		position: absolute;
+		top: 0; right: auto; bottom: auto; left: auto;
+		height: $tickH; width: $tickW;
+	}
+	.label {
+//		@include test();
+		font-size: 0.6em;
+		position: absolute;
+		text-align: center;
+		height: $tickLblH; width: $tickLblW;
+		margin-left: -1 * $tickLblW / 2;
+		top: auto; right: auto; bottom: 0; left: 0;
+
+	}
+}

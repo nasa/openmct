@@ -1,0 +1,210 @@
+@mixin cols($totalCols, $span) {
+    $cw: 100% / $totalCols;
+    min-width: (500px / $totalCols) * $span;
+    @if ($totalCols != $span) {
+        width: ($cw * $span) - $ueColMargin;
+    } @else {
+        width: $cw;
+    }
+}
+
+.browse-area,
+.edit-area,
+.editor {
+	@include border-radius($basicCr * 1.5);
+	position: absolute;
+	.contents {
+//		overflow-y: auto;
+	}
+}
+
+.user-environ {
+    .browse-area,
+    .edit-area,
+    .editor {
+        top: $bodyMargin + $ueTopBarH + ($interiorMargin);
+        right: $bodyMargin;
+        bottom: $bodyMargin + $ueFooterH + $interiorMargin;
+        left: $bodyMargin;
+    }
+
+	.edit-area {
+		$tbH: $ueEditToolBarH;
+		.tool-bar {
+			bottom: auto;
+			height: $tbH;
+			line-height: $tbH - 2;
+		}
+		.work-area {
+			top: $tbH + $interiorMargin * 2;
+		}
+	}
+
+    .bottom-bar {
+        top: auto;
+        right: $bodyMargin;
+        bottom: $bodyMargin;
+        left: $bodyMargin;
+        height: $ueFooterH;
+        .status-holder {
+            right: $ueAppLogoW + $bodyMargin;
+        }
+        .app-logo {
+            left: auto;
+            width: $ueAppLogoW;
+        }
+    }
+}
+
+
+.contents {
+    $myM: $interiorMargin;
+    box-sizing: border-box;
+    position: absolute;
+    top: $myM;
+    right: $myM;
+    bottom: $myM;
+    left: $myM;
+    &.nomargin {
+        $myM: 0px;
+        right: $myM;
+        bottom: $myM;
+        left: $myM;
+    }
+}
+
+.bar {
+    .icon.major {
+        margin-right: $interiorMargin;
+    }
+    &.abs {
+	    text-wrap: none;
+	    white-space: nowrap;
+        &.left,
+        .left {
+            width: 45%;
+            right: auto;
+        }
+        &.right,
+        .right {
+            width: 45%;
+            left: auto;
+            right: 0;
+            text-align: right;
+            .icon.major {
+                margin-left: $interiorMargin * 3;
+            }
+//            .icon.major {
+//                margin-left: $interiorMargin;
+//            }
+        }
+    }
+}
+
+.cols {
+    @include clearfix;
+    .col {
+        @include box-sizing(border-box);
+        @include clearfix;
+        //		background: rgba(#ffcc00, 0.2);
+        float: left;
+        margin-left: $ueColMargin;
+        padding-left: $interiorMargin;
+        position: relative;
+        &:first-child {
+            margin-left: 0;
+            padding-left: 0;
+        }
+    }
+    &.cols-2 {
+        $nc: 2;
+        .col-1 {
+            @include cols($nc, 1);
+        }
+    }
+    &.cols-16 {
+        $nc: 16;
+        .col-1 {
+            @include cols($nc, 1);
+        }
+        .col-2 {
+            @include cols($nc, 2);
+        }
+        .col-7 {
+            @include cols($nc, 7);
+        }
+    }
+    &.cols-32 {
+        $nc: 32;
+        .col-2 {
+            @include cols($nc, 2);
+        }
+        .col-15 {
+            @include cols($nc, 15);
+        }
+    }
+}
+
+.pane {
+    position: absolute;
+    &.treeview {
+	    .create-btn-holder {
+		    bottom: auto; height: $ueBrowseViewBarH;
+	    }
+	    .tree-holder {
+		    overflow: auto;
+		    top: $ueBrowseViewBarH + $interiorMargin;
+	    }
+    }
+    &.items {
+        .object-browse-bar {
+//            bottom: auto;
+        }
+        .object-holder {
+            top: $ueBrowseViewBarH + $interiorMargin;
+        }
+    }
+	&.edit-main {
+		.object-holder {
+			top: 0;
+		}
+	}
+	&.edit-objects {
+	}
+	.object-holder {
+		overflow: auto;
+	}
+}
+
+.split-layout {
+	&.horizontal {
+		// Slides up and down
+		>.pane {
+			margin-top: $interiorMargin;
+			&:first-child {
+				margin-top: 0;
+			}
+		}
+	}
+	&.vertical {
+		// Slides left and right
+		>.pane {
+			margin-left: $interiorMargin;
+			>.holder {
+				left: 0;
+				right: 0;
+			}
+			&:first-child {
+				margin-left: 0;
+				.holder {
+					right: $interiorMargin;
+				}
+			}
+		}
+
+	}
+}
+
+.vscroll {
+    overflow-y: auto;
+}

@@ -144,7 +144,7 @@ input[type="text"] {
   /* line 11, ../sass/forms/_mixins.scss */
   input[type="text"].error {
     background: rgba(255, 0, 0, 0.5); }
-  /* line 6, ../sass/forms/_text-input.scss */
+  /* line 11, ../sass/forms/_text-input.scss */
   input[type="text"].numeric {
     text-align: right; }
 
@@ -274,60 +274,3 @@ input[type="text"] {
   /* line 32, ../sass/forms/_datetime.scss */
   .complex.datetime .time.sm input {
     width: 40px; }
-
-/* line 2, ../sass/forms/_filter.scss */
-.filter input.filter {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  -o-border-radius: 3px;
-  border-radius: 3px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
-  -moz-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
-  box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
-  background: #666666;
-  border: none;
-  border-bottom: 1px solid #999999;
-  color: #cccccc;
-  outline: none;
-  padding: 0 3px;
-  background: #3b3b3b;
-  border-bottom: 1px solid #4d4d4d; }
-  /* line 11, ../sass/forms/_mixins.scss */
-  .filter input.filter.error {
-    background: rgba(255, 0, 0, 0.5); }
-/* line 5, ../sass/forms/_filter.scss */
-.filter .icon.ui-symbol {
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  -o-border-radius: 3px;
-  border-radius: 3px;
-  display: inline-block;
-  font-size: 1.3em;
-  height: 22px;
-  line-height: 22px;
-  padding: 0px 5px;
-  vertical-align: middle; }
-  /* line 13, ../sass/forms/_filter.scss */
-  .filter .icon.ui-symbol:hover {
-    background: rgba(255, 255, 255, 0.1); }
-
-/* line 20, ../sass/forms/_filter.scss */
-.top-bar input.filter {
-  font-size: .8em;
-  height: 35px;
-  line-height: 35px;
-  margin-right: 5px;
-  margin-top: -5px;
-  padding-left: 10px;
-  padding-right: 10px; }
-/* line 31, ../sass/forms/_filter.scss */
-.top-bar .icon-filter {
-  font-size: 1.4em; }

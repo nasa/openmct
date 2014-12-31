@@ -1,0 +1,101 @@
+ul.tree {
+    @include menuUlReset();
+    li {
+        .tree-item {
+//            @include test();
+            @include border-radius($basicCr);
+            @include single-transition(background-color, 0.25s);
+            display: block;
+            font-size: 0.80rem;
+            height: $menuLineH;
+            line-height: $menuLineH;
+            margin-bottom: $interiorMarginSm;
+//            overflow: hidden;
+//            padding: 2px 4px 2px 7px;
+            position: relative;
+//            white-space: nowrap;
+            &.loading {
+                color: darken($colorBodyFg, 20%);
+                font-style: italic;
+                .wait-spinner {
+                    margin-left: 14px;
+                }
+            }
+            &:not(.loading) {
+                cursor: pointer;
+                &:hover {
+                    background: lighten($colorBodyBg, 5%);
+                    color: lighten($colorBodyFg, 20%);
+	                .context-trigger {
+		                display: block;
+	                }
+                    .icon {
+                        color: $colorItemTreeIconHover;
+                    }
+                }
+            }
+            .selected {
+                color: #fff;
+            }
+            .view-control {
+//                @include test();
+                display: inline-block;
+//                margin-right: $interiorMargin;
+//                vertical-align: middle;
+                width: $treeVCW;
+                &:hover {
+                    color: $colorItemTreeVCHover;
+                }
+            }
+	        .context-trigger {
+		        $h: 0.9rem;
+		        display: none;
+                top: -1px;
+		        position: absolute;
+		        right: $interiorMarginSm;
+		        .btn-invoke-menu {
+			        font-size: 0.75em;
+			        height: $h;
+			        line-height: $h;
+		        }
+	        }
+            .icon {
+//                @include test();
+                @include txtShdwSubtle(0.6);
+                color: $colorItemTreeIcon;
+                left: $treeVCW + $interiorMargin;
+                .alert {
+                    @include txtShdwSubtle(0.3);
+                    background: $colorBodyBg;
+                    color: $colorAlert;
+                    font-size: 0.7em;
+                    margin-top: -3px;
+                    top: 0;
+                    right: auto;
+                    bottom: auto;
+                    left: 9px;
+                    height: auto;
+                    width: auto;
+                    position: absolute;
+                    z-index: 2;
+                }
+            }
+            .title-label {
+//                @include test();
+                display: block;
+                position: absolute;
+                top: 0;
+                left: $treeVCW + $treeTypeIconW + ($interiorMargin * 2); //38px;
+                right: $treeContextTriggerW + $interiorMargin;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                height: $menuLineH;
+                bottom: auto;
+                white-space: nowrap;
+            }
+        }
+    }
+    ul.tree {
+        margin-left: $treeVCW + $interiorMargin;
+    }
+}

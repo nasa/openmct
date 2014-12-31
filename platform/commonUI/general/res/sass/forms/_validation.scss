@@ -1,0 +1,47 @@
+.validates {
+    $symbolW: 15px;
+    $symbolM: $interiorMargin * 2;
+    > .label {
+        //        @include test(green, 0.1);
+        padding-right: $symbolW + $symbolM; // Keep room for validation element
+        &::after {
+            //            @include test(yellow, 0.3);
+            display: block;
+            position: absolute;
+            top: 0;
+            right: $symbolM;
+            bottom: 0;
+            left: auto;
+            height: auto;
+            width: $symbolW;
+            font-family: symbolsfont;
+            font-size: 1.1em;
+            text-align: right;
+            vertical-align: middle;
+        }
+    }
+    &.invalid,
+    &.invalid.req {
+        > .label::after {
+            color: $colorFormInvalid;
+            content: "x";
+        }
+    }
+    &.valid,
+    &.valid.req {
+        > .label::after {
+            color: $colorFormValid;
+            content: "2";
+        }
+    }
+    &.req {
+        > .label::after {
+            color: $colorFormRequired;
+            content: "*";
+        }
+    }
+}
+
+span.req {
+    color: $colorFormRequired;
+}

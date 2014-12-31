@@ -1,0 +1,40 @@
+.badge {
+    @include background-image(linear-gradient(lighten($colorAlt1, 10%), $colorAlt1));
+    color: $colorBodyBg;
+    display: inline-block;
+    text-align: center;
+}
+
+.top-bar .badge {
+    @include border-radius($controlCr * 1.5);
+    $h: $ueTopBarH; // - 5px;
+    font-size: 1.4em;
+    height: $h;
+    line-height: $h;
+    margin-right: $interiorMargin;
+    width: $badgeW;
+    vertical-align: middle;
+}
+
+//.top-bar .btn-browse .badge {
+// Moved to _controls.scss .btn.browse-btn
+//    @include border-radius($controlCr * 1.5);
+//    $d: 20px;
+//    display: block;
+//    font-size: 1em;
+//    line-height: $d;
+////    margin-top: -4px;
+//
+//    position: absolute;
+//    top: 5px; left: 5px; bottom: 5px; right: auto;
+//    width: $d; height: auto;
+//}
+
+.super-menu .badge {
+    @include background-image(linear-gradient(lighten($colorCreateBtn, 10%), $colorCreateBtn));
+    @include border-radius($controlCr);
+    @include boxShdwSubtle();
+//    display: inline-block;
+//    margin-right: 10px !important;
+    padding: 2px 7px;
+}

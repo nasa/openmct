@@ -1,0 +1,69 @@
+.triangle {
+    $myColor: $colorKey;
+    $mySize: 10px;
+    @include triangle-right($mySize, $myColor);
+    &.triangle-down {
+        @include triangle-down($mySize, $myColor);
+    }
+}
+
+.ui-symbol {
+    $c: $colorKey;
+    &.icon {
+        color: $c;
+        @include txtShdwSubtle();
+        &.alert {
+            color: $colorAlert;
+            &:hover {
+                color: lighten($colorAlert, $ltGamma);
+            }
+        }
+        &.major {
+            font-size: 1.65em;
+        }
+        &:hover {
+            //			color: lighten($c, $ltGamma);
+            .invoke-menu {
+                //				color: lighten($colorBodyBg, $ltGamma * 2);
+            }
+        }
+    }
+}
+
+.bar .icon {
+    display: inline-block;
+}
+
+.invoke-menu {
+    @include invokeMenu($colorKey);
+    display: inline-block;
+    font-size: 1rem;
+    vertical-align: middle;
+}
+
+.btn-menu .invoke-menu,
+.icon.major .invoke-menu {
+    margin-left: $interiorMargin;
+}
+
+.icon-buttons-main .invoke-menu {
+    @include invokeMenu(lighten($colorBodyBg, $ltGamma));
+}
+
+.menu-element .invoke-menu {
+
+}
+
+.object-header .type-icon {
+    color: $colorAlt1;
+}
+
+.menu .type-icon,
+.tree-item .type-icon,
+.icon-btn .menu.dropdown .icon,
+.super-menu.menu.dropdown .icon {
+    font-size: $menuLineH * 0.93;
+    line-height: $menuLineH * 1.13;
+    position: absolute;
+}
+

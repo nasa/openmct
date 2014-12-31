@@ -1,0 +1,26 @@
+.frame {
+	$ohH: 20px;
+	$bc: $colorInteriorBorder;
+	&.child-frame.panel {
+		background: $colorBodyBg;
+		border: 1px solid $bc;
+		&:hover {
+			border-color: lighten($bc, 10%);
+		}
+	}
+	>.object-header.abs {
+		font-size: 0.75em;
+		height: $ohH;
+	}
+	>.object-holder.abs {
+		top: $ohH + $interiorMarginSm;
+	}
+}
+
+.edit-main .frame.child-frame.panel {
+	&:hover {
+		border-color: $colorKey;
+		@include boxShdwLarge();
+	}
+
+}

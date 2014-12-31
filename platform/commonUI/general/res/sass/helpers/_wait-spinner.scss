@@ -1,0 +1,62 @@
+@-webkit-keyframes rotation {
+	from {-webkit-transform: rotate(0deg);}
+	to {-webkit-transform: rotate(359deg);}
+}
+
+@-moz-keyframes rotation {
+	from {-moz-transform: rotate(0deg);}
+	to {-moz-transform: rotate(359deg);}
+}
+
+@-o-keyframes rotation {
+	from {-o-transform: rotate(0deg);}
+	to {-o-transform: rotate(359deg);}
+}
+
+@keyframes rotation {
+	from {transform: rotate(0deg);}
+	to {transform: rotate(359deg);}
+}
+
+.t-wait-spinner,
+.wait-spinner {
+	$d: 5%;
+	@include wait-spinner(0.5em, $colorKey);
+	top: 50%; left: 50%;
+	height: auto; width: auto;
+	padding: $d; // Will size object based on parent container WIDTH
+	pointer-events: none;
+	margin-top: $d / -1;
+	margin-left: $d / -1;
+	z-index: 2;
+}
+
+.l-wait-spinner-holder {
+	pointer-events: none;
+	position: absolute;
+	&.align-left {
+		.t-wait-spinner {
+			left: 0;
+			margin-left: 0;
+		}
+	}
+	&.full-size {
+		display: inline-block;
+		height: 100%; width: 100%;
+		.t-wait-spinner {
+			top: 0;
+			margin-top: 0;
+			padding: 30%;
+		}
+	}
+}
+
+
+.treeview .wait-spinner {
+	$d: 18px;
+	@include wait-spinner(0.25em, $colorKey);
+	height: $d; width: $d;
+	margin: 0 !important;
+	padding: 0 !important;
+	top: 2px; left: 0;
+}

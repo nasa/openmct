@@ -1,0 +1,95 @@
+.autoflow {
+	$headerH: $formInputH;
+    $colMargin: $interiorMargin;
+	$rowH: 15px;
+	font-size: 0.75rem;
+	.l-autoflow-header {
+		bottom: auto;
+		height: $headerH;
+        line-height: $headerH;
+		span {
+			vertical-align: middle;
+		}
+		.l-filter {
+			margin-left: $interiorMargin;
+		}
+	}
+
+	.l-autoflow-items {
+//		@include test(green);
+//      right: auto; width: 100; // TEMP!
+		overflow-x: scroll;
+		overflow-y: hidden;
+		top: $headerH + $interiorMargin * 2;
+		white-space: nowrap;
+		.l-autoflow-col {
+//			@include test();
+            @include box-sizing(border-box);
+            border-left: 1px solid $colorInteriorBorder;
+			display: inline-block;
+			height: 100%;
+            padding-left: $colMargin;
+            padding-right: $colMargin;
+			width: 150px;
+			.l-autoflow-row {
+//				@include test(red);
+				@include box-sizing(border-box);
+				display: block;
+				height: $rowH;
+				line-height: $rowH;
+				margin-bottom: 1px; margin-top: 1px;
+				position: relative;
+				&:first-child {
+					border-top: none;
+				}
+                &:hover {
+                    background: rgba(#fff, 0.1);
+                }
+                &.stale {
+                    color: darken($colorBodyFg, 20%);
+                }
+                &:not(.stale) {
+                    .l-autoflow-item.r {
+                        color: lighten($colorBodyFg, 20%);
+                    }
+                }
+                &.alert {
+                    .l-autoflow-item.r {
+                        background: $colorFormError;
+	                    padding-right: 2px;
+                    }
+                }
+				&.first-in-group {
+					border-top: 1px solid lighten($colorInteriorBorder, 20%);
+				}
+				.l-autoflow-item {
+					bottom: auto;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+					top: 1px; bottom: 1px;
+					&.l {
+//						@include test(orange);
+						width: 60%; right: auto;
+//                        left: $interiorMarginSm;
+					}
+					&.r {
+//						@include test(blue);
+						@include border-radius($controlCr);
+						left: 60%;
+//                        right: $interiorMarginSm;
+						text-align: right;
+					}
+				}
+			}
+
+            &:first-child {
+                border-left: none;
+                padding-left: 0;
+                .l-autoflow-item.l {
+                    left: 0;
+                }
+            }
+		}
+	}
+}

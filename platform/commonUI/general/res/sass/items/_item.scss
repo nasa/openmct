@@ -1,0 +1,93 @@
+.items-holder {
+    @include clearfix;
+    overflow-y: auto;
+	.contents { top: 0; }
+    .item {
+        &.grid-item {
+            $d: $ueBrowseGridItemLg;
+            @include btnSubtle($colorItemBase);
+            box-sizing: border-box;
+            cursor: pointer;
+            float: left;
+            height: $d;
+//            padding-bottom: 32%;
+            width: $d;
+            margin-bottom: $interiorMarginSm;
+            margin-right: $interiorMarginSm;
+            position: relative;
+            &:hover .item-main {
+	            .item-type {
+		            color: $colorKey !important;
+                }
+	            .item-open {
+		            display: block;
+	            }
+            }
+            .bar {
+                &.top-bar.abs {
+                    bottom: auto;
+                    height: $ueBrowseGridItemTopBarH;
+                    line-height: $ueBrowseGridItemTopBarH;
+	                z-index: 5;
+	                .left, .right {
+		                width: auto;
+		                .icon {
+			                margin-left: $interiorMargin;
+		                }
+	                }
+                }
+                &.bottom-bar.abs {
+                    top: auto;
+                    height: $ueBrowseGridItemBottomBarH;
+	                padding: $interiorMargin;
+                }
+            }
+            .item-main {
+	            $h: $ueBrowseGridItemLg;
+	            $lh: $h * 0.9;
+//                @include test();
+                div {
+//                  background: rgba(deeppink, 0.2);
+                }
+	            z-index: 1;
+                .item-type {
+                    color: $colorItemFg;
+                    text-align: center;
+                    font-size: 7em;
+                    line-height: $lh;
+                }
+                .item-open {
+//                    color: lighten($colorItemBase, 15%);
+	                display: none;
+                    font-size: 5em;
+                    line-height: $lh;
+                    left: auto; width: 30px;
+                }
+            }
+            .title {
+	            @include txtShdwSubtle();
+                color: lighten($colorBodyFg, 20%);
+	            overflow: hidden;
+	            white-space: nowrap;
+	            text-overflow: ellipsis;
+//                font-weight: bold;
+            }
+            .details {
+                font-size: 0.8em;
+            }
+	        &.selected {
+		        $cfg: lighten($colorItemSelected, 35%);
+		        $cfgh: lighten($cfg, 30%);
+		        @include btnNoticeable($colorItemSelected);
+		        color: $cfg;
+		        .item-type, .top-bar .icon:not(.alert) { color: $cfg }
+		        .item-main .item-open { color: $cfg }
+		        .title { color: $cfgh; }
+		        &:hover {
+			        .item-main .item-type { color: $cfgh !important; }
+		        }
+	        }
+        }
+    }
+
+}

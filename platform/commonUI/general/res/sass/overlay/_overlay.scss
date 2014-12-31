@@ -1,0 +1,48 @@
+.overlay {
+	.blocker {
+		background: $colorOvrBlocker;
+		z-index: 100;
+	}
+    .btn.close {
+        position: absolute;
+        top: $interiorMargin; right: $interiorMargin; bottom: auto; left: auto;
+    }
+    .editor {
+//        background: $colorBodyBg;
+    }
+	>.holder {
+		$i: 15%;
+		@include containerSubtle();
+		@include border-radius($basicCr * 3);
+		color: $colorOvrFg;
+		top: $i; right: $i; bottom: $i; left: $i;
+		z-index: 101;
+        >.contents {
+            $m: 20px;
+            top: $m; right: $m; bottom: $m; left: $m;
+        }
+	}
+    .title {
+        font-size: 1.3em;
+    }
+    
+    .top-bar {
+        height: $ovrTopBarH;
+    }
+    
+    .editor {
+        top: $ovrTopBarH + ($interiorMargin * 2);
+        bottom: $ovrFooterH + $interiorMargin * 2;
+        left: 0; right: 0;
+    }
+    
+    .bottom-bar {
+        top: auto; right: 0; bottom: 0; left: 0;
+        font-size: 1em;
+        height: $ovrFooterH;
+        text-align: right;
+        .btn {
+            margin-left: 10px;
+        }
+    }
+}

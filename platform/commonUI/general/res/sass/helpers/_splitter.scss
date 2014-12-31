@@ -1,0 +1,47 @@
+.split-layout {
+	$b: lighten($colorBodyBg, 5%);
+	$splitterD: 5px;
+	.splitter {
+		background-color: $b;
+		@include box-shadow(rgba(black, 0.4) 0 0 3px);
+		overflow: hidden;
+		position: absolute;
+		z-index: 1;
+	}
+	&.horizontal {
+		// Slides vertically up and down, splitting the element horizontally
+        overflow: hidden; // Suppress overall scroll; each internal pane handles its own overflow
+		.pane {
+			left: 0;
+			right: 0;
+		}
+		>.splitter {
+			@include controlGrippy($b, horizontal);
+			cursor: row-resize;
+			left: 0; right: 0;
+			width: auto;
+			height: $splitterD;
+		}
+	}
+	&.vertical {
+		// Slides horizontally left to right, splitting the element vertically
+		.pane {
+			top: 0;
+			bottom: 0;
+		}
+		>.splitter {
+			@include controlGrippy($b, vertical);
+			bottom: 0;
+			cursor: col-resize;
+			width: $splitterD;
+		}
+	}
+}
+
+.browse-area .splitter {
+	top: $ueBrowseViewBarH + $interiorMargin;
+}
+
+.edit-area .splitter {
+	top: 0;
+}

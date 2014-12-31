@@ -1,0 +1,36 @@
+.complex.datetime {
+	span {
+		display: inline-block;
+		margin-right: $interiorMargin;
+	}
+	
+	.field-hints,
+	.fields {
+	}
+	
+	.field-hints {
+		
+	}
+	
+	.fields {
+		margin-top: $interiorMarginSm 0;
+		padding: $interiorMarginSm 0;
+	}
+	
+	.date {
+		$myW: 80px;
+		width: $myW + $interiorMargin;
+		input {
+			width: $myW;
+		}
+		
+	}
+	
+	.time.sm {
+		$myW: 40px;
+		width: $myW + $interiorMargin;
+		input {
+			width: $myW;
+		}
+	}
+}

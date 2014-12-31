@@ -1,0 +1,40 @@
+.bubble-wrapper {
+  $arwSize: 7px;
+  $c: #990000;
+  @include box-shadow(rgba(black, 0.4) 0 1px 5px);
+  position: absolute;
+  //top: 200px; left: 200px;
+  z-index: 10;
+	.bubble {
+      @include border-radius($basicCr);
+      display: inline-block;
+      background: $c;
+      color: lighten($c, 50%);
+      font-size: 0.8rem;
+      font-style: italic;
+      max-width: 200px;
+      padding: 4px 8px;
+      &:before {
+        content:"";
+        position: absolute;
+        width: 0;
+        height: 0;
+      }
+	}
+  &.arw-left .bubble:before {
+    right: 100%;
+    top: 50%; // 26px;
+    margin-top: -1 * $arwSize;
+    border-top: $arwSize solid transparent;
+    border-bottom: $arwSize solid transparent;
+    border-right: ($arwSize * 1.5) solid $c;
+  }
+  &.arw-down .bubble:before {
+    left: 50%;
+    top: 100%;
+    margin-left: -1 * $arwSize;
+    border-left: $arwSize solid transparent;
+    border-right: $arwSize solid transparent;
+    border-top: ($arwSize * 1.5) solid $c;
+  }
+}

@@ -1,0 +1,35 @@
+.form-control.select {
+	$myH: $formInputH + 1;
+	@include btnSubtle($colorBodyBg);
+	margin-right: $interiorMargin;
+	margin-top: 1px;
+	padding: 0 25px 0 0;
+	position: relative;
+	overflow: hidden;
+	vertical-align: middle;
+	
+	span.arw {
+		display: block;
+		pointer-events: none;
+		position: absolute;
+		right: 8%; top: 10%;
+	}
+
+	select {
+		@include appearance(none);
+		@include box-sizing(border-box);
+		border: none;
+		box-shadow: none;
+		background-color: transparent;
+		background-image: none;
+		cursor: pointer;
+//		height: $myH;
+//		line-height: $myH;
+		padding: 3px 5px 4px 5px;
+		width: 150%;
+	}
+
+	select:focus {
+		outline: none;
+	}
+}

@@ -1,0 +1,7 @@
+.edit-main textarea {
+	@include nice-textarea();
+//	font-size: 0.9em;
+	position: absolute;
+	height: 100%;
+	width: 100%;
+}

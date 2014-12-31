@@ -1,0 +1,82 @@
+.filter,
+.t-filter {
+	input.filter,
+	input.t-filter-input {
+		@include subdued-input();
+	}
+	input.t-filter-input {
+		height: $formInputH;
+		width: 200px;
+		&:not(.ng-dirty) {
+//			TO-DO: Update compass install to support this
+//			@include input-placeholder {
+//				color: rgba(#fff, 0.3);
+//				font-style: italic;
+//			}
+		}
+		&:not(.ng-dirty) + .t-a-clear {
+			display: none;
+		}
+	}
+	.icon.ui-symbol {
+		@include border-radius($controlCr);
+		display: block;
+		font-size: 1.3em;
+		height: $formInputH;
+		line-height: $formInputH;
+		padding: 0px 5px;
+		vertical-align: middle;
+		&:hover {
+			background: rgba(white, 0.1);
+		}
+	}
+	.s-a-clear.ui-symbol {
+		$mgn: 4.5px;
+		$d: $formInputH - $mgn * 2;
+		$cb: #fff;
+		$cf: #333;
+		@include border-radius($controlCr);
+		@include box-sizing(border-box);
+		@include opacity(0.2);
+		background: $cb;
+		color: $cf;
+		display: block;
+		position: absolute;
+		height: $d; width: $d;
+		line-height: $d;
+		margin-top: $d * -0.5;
+		overflow: hidden;
+		padding-top: 1px;
+		right: $mgn; top: 50%;
+		text-align: center;
+		z-index: 5;
+		&:hover {
+			@include opacity(0.6);
+			background-color: $colorKey;
+		}
+	}
+//	&:not(ng-dirty)
+}
+
+.l-filter {
+	// Holds an input and a clear button
+	display:inline-block;
+	position: relative;
+}
+
+.top-bar {
+	input.filter {
+		$h: $ueTopBarH;
+		$ip: 10px;
+		font-size: .8em;
+		height: $h;
+		line-height: $h;
+		margin-right: $interiorMargin;
+		margin-top: -5px;
+		padding-left: $ip;
+		padding-right: $ip;
+	}
+	.icon-filter {
+		font-size: 1.4em;
+	}
+}

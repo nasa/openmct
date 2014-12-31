@@ -1,0 +1,9 @@
+.object-browse-bar {
+    height: $ueBrowseViewBarH;
+    line-height: $ueBrowseViewBarH;
+    .items-select {
+        .btn-menu {
+            margin-right: $interiorMargin * 3;
+        }
+    }
+}

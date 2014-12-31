@@ -1,0 +1,163 @@
+/******************************************************** MENUS */
+.menu-element {
+    $bg: lighten($colorBodyBg, 5%);
+	$bgHover: lighten($bg, 20%);
+	$iconColor: $colorKey;
+	cursor: pointer;
+	position: relative;
+	.menu {
+		@include border-radius($basicCr);
+        @include containerSubtle($bg);
+        @include txtShdwSubtle(0.2);
+		display: block; // set to block via jQuery
+		padding: $interiorMarginSm 0;
+		position: absolute;
+		z-index: 10;
+		ul {
+			@include menuUlReset();
+			li {
+//				@include border-radius($controlCr);
+                @include box-sizing(border-box);
+				border-top: 1px solid lighten($bg, 20%);
+				line-height: $menuLineH;
+				padding: $interiorMarginSm $interiorMargin * 2 $interiorMarginSm ($interiorMargin * 3) + $treeTypeIconW;
+				white-space: nowrap;
+				&:first-child {
+					border: none;
+				}
+				&:hover {
+					background: $bgHover;
+					a {
+						color: $colorKeyFg;
+					}
+					.icon {
+						color: lighten($iconColor, 20%);
+					}
+				}
+				a {
+					color: lighten($bg, 60%);
+					display: block;
+				}
+				.type-icon {
+                    left: $interiorMargin * 2;
+				}
+			}
+		}
+	}
+    .super-menu {
+        $w: 400px;
+        $h: $w + 20;
+        $plw: $w * 0.55;
+        $prw: $w - $plw;
+        width: $w;
+        height: $h;
+        .contents { overflow: none; }
+        .pane {
+            @include box-sizing(border-box);
+            &.left {
+//                @include test();
+                border-right: 1px solid rgba(white, 0.2);
+                left: 0;
+                padding-right: $interiorMargin;
+                right: auto;
+                width: $plw;
+                overflow-x: hidden;
+                overflow-y: auto;
+                ul {
+                    li {
+                        @include border-radius($controlCr);
+//                        @include test(red);
+                        border-top: none;
+//                        font-size: 0.85em;
+//                        line-height: 20px;
+                        &:hover {
+                            background: $bgHover;
+                        }
+                        .icon {
+                            @include txtShdwSubtle(0.4);
+                            left: $interiorMargin;
+                        }
+                    }
+                }
+            }
+            &.right {
+                left: $plw;
+                right: 0;
+                padding: $interiorMargin * 3;
+                width: auto;
+            }
+        }
+    }
+    .menu-item-description {
+        .desc-area {
+//            @include test(green);
+            &.icon {
+//                @include test(red);
+                $h: 150px;
+                position: relative;
+                color: lighten($bg, 30%);
+                font-size: 8em;
+                left: 0;
+                height: $h;
+                line-height: $h;
+//                top: 0; right: 0; bottom: 5em; left: 0;
+//                height: 5em;
+//                text-align: center;
+            }
+            &.description {
+                color: lighten($bg, 30%);
+                font-size: 0.8em;
+            }
+            &.title {
+                color: lighten($bg, 60%);
+                font-size: 1.2em;
+                margin-bottom: 1rem;
+            }
+        }
+    }
+    .context-menu {
+        $bg: lighten($colorBodyBg, 25%);
+        $fg: lighten($bg, 70%);
+        $ic: lighten($colorKey, 15%);
+        font-size: 0.80rem;
+        pointer-events: auto;
+        &.menu {
+            @include containerSubtle($bg);
+            ul li {
+                padding-left: 30px;
+                a { color: $fg; }
+                .icon {
+                    color: $ic;
+                }
+                .type-icon {
+                    left: $interiorMargin;
+                }
+                &:hover .icon {
+                    color: lighten($ic, 5%);
+                }
+            }
+        }
+    }
+}
+
+.context-menu-holder {
+    pointer-events: none;
+    position: absolute;
+    height: 200px;
+    width: 170px;
+    z-index: 59;
+    .context-menu-wrapper {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        .context-menu {
+        }
+    }
+    &.go-left .context-menu { right: 0; }
+    &.go-up .context-menu { bottom: 0; }
+}
+
+.btn-bar.right .menu,
+.menus-to-left .menu {
+    left: auto; right: 0; width: auto;
+}

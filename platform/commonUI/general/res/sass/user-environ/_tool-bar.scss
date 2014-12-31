@@ -1,0 +1,19 @@
+.tool-bar {
+	border-bottom: 1px solid $colorInteriorBorder;
+	.control-group {
+		height: $ueEditToolBarH;
+	}
+	input[type="text"] {
+		@include box-sizing(border-box);
+		font-size: .9em;
+		height: $ueEditToolBarButtonH;
+		margin-bottom: 1px;
+		position: relative;
+		&.sm {
+			width: $ueEditToolBarButtonH;
+		}
+	}
+	.input-labeled label {
+		font-size: $ueEditToolBarButtonH * $btnFontSizeToH;
+	}
+}

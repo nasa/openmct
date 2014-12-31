@@ -1,0 +1,92 @@
+.form {
+	.section-header {
+		@include border-radius(3px);
+		background: rgba(white, 0.1);
+		font-size: 0.8em;
+		margin-top: $interiorMargin;
+		padding: $interiorMargin;
+		&:first-child {
+			margin-top: 0;
+		}
+	}
+	.form-section {
+		position: relative;
+	}
+
+	.form-row {
+		@include box-sizing(border-box);
+		@include clearfix;
+		//		background: rgba(#00ff00, 0.1);
+		border-top: 1px solid $colorInteriorBorder;
+		//		box-sizing: border-box;
+		margin-top: $interiorMargin;
+		padding: $interiorMargin;
+		position: relative;
+		&:first-child {
+			border-top: none;
+		}
+		.label,
+		.controls {
+			//			background: rgba(#ffcc00, 0.1);
+			@include box-sizing(border-box);
+			@include clearfix;
+			box-sizing: border-box;
+			font-size: 0.75rem;
+			line-height: $formInputH;
+            min-height: $formInputH;
+		}
+
+		>.label {
+			// Only style this way for immediate children of .form-row; prevents problems when .label is used in .controls section of a form
+			float: left;
+            position: relative;
+			white-space: nowrap;
+			width: $formLabelW;
+		}
+
+		.value {
+			color: lighten($colorBodyFg, 20%);
+		}
+
+		.controls {
+			float: left;
+//			padding-left: $interiorMargin;
+            position: relative;
+			width: 99% - $formLabelW; // Start with less than 100% for Firefox
+		}
+
+		.field-hints {
+			color: darken($colorBodyFg, 20%);
+		}
+
+		.selector-list {
+			// Used in create overlay to display tree view
+			$h: 150px;
+			@include border-radius($basicCr);
+			background: rgba(black, 0.2);
+			position: relative;
+			height: $h;
+			max-width: 50%;
+			.wrapper {
+				$p: $interiorMargin;
+				overflow-y: auto;
+				position: absolute;
+				top: $p;
+				right: $p;
+				bottom: $p;
+				left: $p;
+			}
+		}
+	}
+}
+
+label.form-control.checkbox {
+	input {
+		margin-right: $interiorMargin;
+		vertical-align: top;
+	}
+}
+
+.hint {
+	font-size: 0.9em;
+}

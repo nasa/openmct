@@ -1,0 +1,26 @@
+.channel-selector {
+	.line {
+		margin-bottom: $interiorMargin;
+        min-height: $formInputH;
+	}
+	.treeview {
+		$myBg: darken($colorBodyBg, 2%);
+		@include subdued-input();
+		min-height: 300px;
+        max-height: 400px;
+		overflow: auto;
+		padding: $interiorMargin;
+	}
+	
+	.btns-add-remove {
+//		background: rgba(#ff0000, 0.3);;
+		margin-top: 150px;
+		.btn {
+			display: block;
+			font-size: 1.5em;
+			margin-bottom: $interiorMargin;
+			padding: 10px;
+			text-align: center;
+		}
+	}
+}
