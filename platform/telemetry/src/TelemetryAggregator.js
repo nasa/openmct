@@ -65,6 +65,21 @@ define(
                  *          availability) satisfy the requests
                  */
                 requestTelemetry: requestTelemetry,
+                /**
+                 * Subscribe to streaming updates to telemetry data.
+                 * The provided callback will be invoked as new
+                 * telemetry becomes available; as an argument, it
+                 * will receive an object of key-value pairs, where
+                 * keys are source identifiers and values are objects
+                 * of key-value pairs, where keys are point identifiers
+                 * and values are TelemetrySeries objects containing
+                 * the latest streaming telemetry.
+                 * @param {Function} callback the callback to invoke
+                 * @param {TelemetryRequest[]} requests an array of
+                 *        requests to be subscribed upon
+                 * @returns {Function} a function which can be called
+                 *        to unsubscribe
+                 */
                 subscribe: subscribe
             };
         }
