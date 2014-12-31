@@ -5,28 +5,29 @@
 <div class="holder edit-area outline abs">
     <!-- edit toolbar goes here -->
     <div class='split-layout vertical contents abs work-area'>
-        <div class='split-pane-component edit-main pane' style="right: 200px; left: 0px;">
+        <div class='abs pane left edit-main'>
             <div class='holder abs object-holder'>
                 <mct-representation key="representation.selected.key"
                                     mct-object="domainObject">
                 </mct-representation>
             </div>
         </div>
-        <div class="splitter" style="right: 200px"></div>
-        <div class='split-pane-component edit-objects pane menus-to-left'
-             style="right: 0px; width: 200px">
+        <div class="splitter"></div>
+        <div class='abs pane right edit-objects menus-to-left'>
             <div class='holder abs split-layout horizontal'>
-
-                <mct-container key="accordion" title="Library" style="position: relative; top: 0px; height: 200px;">
-                    <mct-representation key="'tree'" mct-object="context.getRoot()">
+	            <div class="abs pane top accordion" ng-controller="ToggleController as toggle">
+                <mct-container key="accordion" title="Library">
+                    <mct-representation key="'tree'" alias="foo1" mct-object="context.getRoot()">
                     </mct-representation>
                 </mct-container>
-
-                <mct-container key="accordion" title="Elements" style="position: relative; top: 200px;">
+		        </div>
+	            <div class="splitter"></div>
+	            <div class="abs pane bottom accordion" ng-controller="ToggleController as toggle">
+                <mct-container key="accordion" title="Elements">
                     <mct-representation key="'edit-elements'" mct-object="domainObject">
                     </mct-representation>
                 </mct-container>
-
+				</div>
             </div>
         </div>
     </div>

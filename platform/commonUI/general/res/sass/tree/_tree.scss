@@ -86,7 +86,8 @@ ul.tree {
                 position: absolute;
                 top: 0;
                 left: $treeVCW + $treeTypeIconW + ($interiorMargin * 2); //38px;
-                right: $treeContextTriggerW + $interiorMargin;
+//                right: $treeContextTriggerW + $interiorMargin; //Disabling as context trigger not being used
+	            right: 0;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 height: $menuLineH;

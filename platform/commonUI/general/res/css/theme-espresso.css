@@ -103,33 +103,36 @@ body, html {
   color: #999999;
   font-family: Helvetica, Arial, sans-serif;
   font-size: 100%;
-  margin: 5px;
+  height: 100%;
+  width: 100%;
   overflow: hidden; }
 
-/* line 34, ../sass/_global.scss */
+/* line 35, ../sass/_global.scss */
 em {
   color: rgba(255, 255, 255, 0.2);
   font-style: normal; }
 
-/* line 39, ../sass/_global.scss */
+/* line 40, ../sass/_global.scss */
 input, textarea {
   font-family: Helvetica, Arial, sans-serif; }
 
-/* line 43, ../sass/_global.scss */
+/* line 44, ../sass/_global.scss */
 h1, h2, h3 {
   margin: 0; }
 
-/* line 47, ../sass/_global.scss */
+/* line 48, ../sass/_global.scss */
 h1 {
   font-size: 1.7em;
   font-weight: normal;
   margin-bottom: 20px; }
 
-/* line 53, ../sass/_global.scss */
+/* line 54, ../sass/_global.scss */
 span {
-  box-sizing: border-box; }
+  /* 618 DEBUG
+  box-sizing: border-box;
+  */ }
 
-/* line 57, ../sass/_global.scss */
+/* line 60, ../sass/_global.scss */
 .abs {
   position: absolute;
   top: 0;
@@ -139,28 +142,28 @@ span {
   height: auto;
   width: auto; }
 
-/* line 67, ../sass/_global.scss */
+/* line 70, ../sass/_global.scss */
 .code {
   font-family: "Lucida Console", monospace;
   font-size: 0.7em;
   line-height: 150%;
   white-space: pre; }
 
-/* line 74, ../sass/_global.scss */
+/* line 77, ../sass/_global.scss */
 .centered {
   text-align: center; }
 
-/* line 78, ../sass/_global.scss */
+/* line 81, ../sass/_global.scss */
 .colorKey {
   color: #0099cc; }
 
-/* line 82, ../sass/_global.scss */
+/* line 85, ../sass/_global.scss */
 .ds {
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px; }
 
-/* line 87, ../sass/_global.scss */
+/* line 90, ../sass/_global.scss */
 .hide,
 .hidden {
   display: none !important; }
@@ -2360,7 +2363,7 @@ input[type="text"] {
     border-right: 7px solid transparent;
     border-top: 10.5px solid #990000; }
 
-/* line 4, ../sass/helpers/_splitter.scss */
+/* line 8, ../sass/helpers/_splitter.scss */
 .split-layout .splitter {
   background-color: #404040;
   -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0 0 3px;
@@ -2369,20 +2372,30 @@ input[type="text"] {
   overflow: hidden;
   position: absolute;
   z-index: 1; }
-/* line 11, ../sass/helpers/_splitter.scss */
+/* line 15, ../sass/helpers/_splitter.scss */
 .split-layout.horizontal {
   overflow: hidden; }
-  /* line 14, ../sass/helpers/_splitter.scss */
+  /* line 18, ../sass/helpers/_splitter.scss */
   .split-layout.horizontal .pane {
     left: 0;
     right: 0; }
-  /* line 18, ../sass/helpers/_splitter.scss */
+    /* line 21, ../sass/helpers/_splitter.scss */
+    .split-layout.horizontal .pane.top {
+      bottom: auto;
+      height: 70%; }
+    /* line 25, ../sass/helpers/_splitter.scss */
+    .split-layout.horizontal .pane.bottom {
+      top: auto;
+      height: 30%; }
+  /* line 30, ../sass/helpers/_splitter.scss */
   .split-layout.horizontal > .splitter {
     cursor: row-resize;
     left: 0;
     right: 0;
     width: auto;
-    height: 5px; }
+    height: 5px;
+    margin-top: -7px;
+    top: 70%; }
     /* line 54, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:before {
       content: '';
@@ -2397,15 +2410,25 @@ input[type="text"] {
     /* line 75, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:not(.disabled):hover:before {
       border-color: rgba(0, 153, 204, 0.9); }
-/* line 28, ../sass/helpers/_splitter.scss */
+/* line 42, ../sass/helpers/_splitter.scss */
 .split-layout.vertical .pane {
   top: 0;
   bottom: 0; }
-/* line 32, ../sass/helpers/_splitter.scss */
+  /* line 45, ../sass/helpers/_splitter.scss */
+  .split-layout.vertical .pane.left {
+    right: auto;
+    width: 84%; }
+  /* line 49, ../sass/helpers/_splitter.scss */
+  .split-layout.vertical .pane.right {
+    left: auto;
+    width: 15%; }
+/* line 54, ../sass/helpers/_splitter.scss */
 .split-layout.vertical > .splitter {
   bottom: 0;
   cursor: col-resize;
-  width: 5px; }
+  width: 5px;
+  margin-left: -7px;
+  left: 85%; }
   /* line 54, ../sass/_mixins.scss */
   .split-layout.vertical > .splitter:before {
     content: '';
@@ -2421,11 +2444,11 @@ input[type="text"] {
   .split-layout.vertical > .splitter:not(.disabled):hover:before {
     border-color: rgba(0, 153, 204, 0.9); }
 
-/* line 41, ../sass/helpers/_splitter.scss */
+/* line 65, ../sass/helpers/_splitter.scss */
 .browse-area .splitter {
   top: 40px; }
 
-/* line 45, ../sass/helpers/_splitter.scss */
+/* line 69, ../sass/helpers/_splitter.scss */
 .edit-area .splitter {
   top: 0; }
 

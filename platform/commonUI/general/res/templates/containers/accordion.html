@@ -1,10 +1,7 @@
-<div class="accordion" ng-controller="ToggleController as toggle">
-    <div class="accordion-head" ng-click="toggle.toggle()">
-        {{container.title}}
-    </div>
-    <div class="accordion-contents"
-         ng-show="!toggle.isActive()"
-         style="height: 180px;"
-         ng-transclude>
-    </div>
+<div class="accordion-head" ng-click="toggle.toggle()">
+    {{container.title}}
+</div>
+<div class="accordion-contents"
+     ng-show="!toggle.isActive()"
+     ng-transclude>
 </div>

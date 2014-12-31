@@ -27,7 +27,8 @@ body, html {
 	color: $colorBodyFg;
 	font-family: Helvetica, Arial, sans-serif;
 	font-size: 100%;
-	margin: $bodyMargin;
+	height: 100%;
+	width: 100%;
 	overflow: hidden;
 }
 
@@ -51,7 +52,9 @@ h1 {
 }
 
 span {
+	/* 618 DEBUG
 	box-sizing: border-box;
+	*/
 }
 
 .abs {

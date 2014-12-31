@@ -1,6 +1,10 @@
 .split-layout {
 	$b: lighten($colorBodyBg, 5%);
 	$splitterD: 5px;
+	// TEMP VAlS - this will need to be redone when we implement a draggable splitter
+	$splitL: 85%;
+	$splitT: 70%;
+
 	.splitter {
 		background-color: $b;
 		@include box-shadow(rgba(black, 0.4) 0 0 3px);
@@ -14,6 +18,14 @@
 		.pane {
 			left: 0;
 			right: 0;
+			&.top {
+				bottom: auto;
+				height: $splitT;
+			}
+			&.bottom {
+				top: auto;
+				height: 100% - $splitT;
+			}
 		}
 		>.splitter {
 			@include controlGrippy($b, horizontal);
@@ -21,6 +33,8 @@
 			left: 0; right: 0;
 			width: auto;
 			height: $splitterD;
+			margin-top: ($splitterD + 2) * -1;
+			top: $splitT;
 		}
 	}
 	&.vertical {
@@ -28,12 +42,22 @@
 		.pane {
 			top: 0;
 			bottom: 0;
+			&.left {
+				right: auto;
+				width: $splitL - 1%;
+			}
+			&.right {
+				left: auto;
+				width: 100% - $splitL;
+			}
 		}
 		>.splitter {
 			@include controlGrippy($b, vertical);
 			bottom: 0;
 			cursor: col-resize;
 			width: $splitterD;
+			margin-left: ($splitterD + 2) * -1;
+			left: $splitL;
 		}
 	}
 }

@@ -91,12 +91,12 @@ ul.tree {
       position: absolute;
       top: 0;
       left: 37px;
-      right: 25px;
+      right: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       height: 1.5rem;
       bottom: auto;
       white-space: nowrap; }
-  /* line 98, ../sass/tree/_tree.scss */
+  /* line 99, ../sass/tree/_tree.scss */
   ul.tree ul.tree {
     margin-left: 15px; }
