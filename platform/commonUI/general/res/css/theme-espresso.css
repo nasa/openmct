@@ -1377,8 +1377,8 @@ label.checkbox.custom {
           left: 10px; }
   /* line 47, ../sass/controls/_menus.scss */
   .menu-element .super-menu {
-    width: 400px;
-    height: 420px; }
+    width: 450px;
+    height: 430px; }
     /* line 54, ../sass/controls/_menus.scss */
     .menu-element .super-menu .contents {
       overflow: none; }
@@ -1393,7 +1393,7 @@ label.checkbox.custom {
         left: 0;
         padding-right: 5px;
         right: auto;
-        width: 220.0px;
+        width: 225px !important;
         overflow-x: hidden;
         overflow-y: auto; }
         /* line 67, ../sass/controls/_menus.scss */
@@ -1413,10 +1413,10 @@ label.checkbox.custom {
             left: 5px; }
       /* line 83, ../sass/controls/_menus.scss */
       .menu-element .super-menu .pane.right {
-        left: 220.0px;
+        left: 225px;
         right: 0;
-        padding: 15px;
-        width: auto; }
+        padding: 25px;
+        width: 225px !important; }
   /* line 94, ../sass/controls/_menus.scss */
   .menu-element .menu-item-description .desc-area.icon {
     position: relative;
@@ -1424,7 +1424,8 @@ label.checkbox.custom {
     font-size: 8em;
     left: 0;
     height: 150px;
-    line-height: 150px; }
+    line-height: 150px;
+    text-align: center; }
   /* line 107, ../sass/controls/_menus.scss */
   .menu-element .menu-item-description .desc-area.description {
     color: #8c8c8c;

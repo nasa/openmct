@@ -45,9 +45,9 @@
 		}
 	}
     .super-menu {
-        $w: 400px;
-        $h: $w + 20;
-        $plw: $w * 0.55;
+        $w: 450px;
+        $h: $w - 20;
+        $plw: $w * 0.5;
         $prw: $w - $plw;
         width: $w;
         height: $h;
@@ -60,7 +60,7 @@
                 left: 0;
                 padding-right: $interiorMargin;
                 right: auto;
-                width: $plw;
+                width: $plw !important;
                 overflow-x: hidden;
                 overflow-y: auto;
                 ul {
@@ -83,8 +83,8 @@
             &.right {
                 left: $plw;
                 right: 0;
-                padding: $interiorMargin * 3;
-                width: auto;
+                padding: $interiorMargin * 5;
+                width: $prw !important;
             }
         }
     }
@@ -102,7 +102,7 @@
                 line-height: $h;
 //                top: 0; right: 0; bottom: 5em; left: 0;
 //                height: 5em;
-//                text-align: center;
+                text-align: center;
             }
             &.description {
                 color: lighten($bg, 30%);
