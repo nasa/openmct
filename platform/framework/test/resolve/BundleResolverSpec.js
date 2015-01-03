@@ -10,6 +10,7 @@ define(
 
         describe("The bundle resolver", function () {
             var mockExtensionResolver,
+                mockRequireConfigurator,
                 mockLog,
                 resolver;
 
@@ -18,17 +19,26 @@ define(
                     "extensionResolver",
                     ["resolve"]
                 );
+                mockRequireConfigurator = jasmine.createSpyObj(
+                    "requireConfigurator",
+                    ["configure"]
+                );
                 mockLog = jasmine.createSpyObj(
                     "$log",
                     ["error", "warn", "info", "debug"]
                 );
-                resolver = new BundleResolver(mockExtensionResolver, mockLog);
+
+                mockExtensionResolver.resolve.andReturn(Promise.resolve("a"));
+
+                resolver = new BundleResolver(
+                    mockExtensionResolver,
+                    mockRequireConfigurator,
+                    mockLog
+                );
             });
 
             it("invokes the extension resolver for all bundle extensions", function () {
                 var result;
-
-                mockExtensionResolver.resolve.andReturn(Promise.resolve("a"));
 
                 resolver.resolveBundles([
                     new Bundle("x", { extensions: { tests: [ {}, {}, {} ] } }),
@@ -48,6 +58,18 @@ define(
                     expect(result.tests).toEqual(["a", "a", "a", "a", "a"]);
                     expect(result.others).toEqual(["a", "a", "a"]);
                 });
+            });
+
+            it("configures require before loading implementations", function () {
+                var bundles = [
+                    new Bundle("x", { extensions: { tests: [ {}, {}, {} ] } }),
+                    new Bundle("y", { extensions: { tests: [ {}, {} ], others: [ {}, {} ] } }),
+                    new Bundle("z", { extensions: { others: [ {} ] } })
+                ];
+
+                resolver.resolveBundles(bundles);
+                expect(mockRequireConfigurator.configure)
+                    .toHaveBeenCalledWith(bundles);
             });
 
         });
