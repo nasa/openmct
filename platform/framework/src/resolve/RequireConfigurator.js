@@ -26,7 +26,7 @@ define(
                 // Adjust paths to point to libraries
                 if (configuration.paths) {
                     // Don't modify the actual bundle definition...
-                    configuration = configuration.clone(configuration);
+                    configuration = clone(configuration);
                     // ...replace values in a clone instead.
                     Object.keys(configuration.paths).forEach(function (path) {
                         configuration.paths[path] =
@@ -47,6 +47,7 @@ define(
                         base[k][p] = next[k][p];
                     });
                 });
+                return base;
             }
 
             // Build a configuration object, to pass to requirejs.config,
