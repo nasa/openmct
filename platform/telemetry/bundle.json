@@ -1,6 +1,16 @@
 {
     "name": "Data bundle",
     "description": "Interfaces and infrastructure for real-time and historical data.",
+    "configuration": {
+        "paths": {
+            "moment": "moment.min.js"
+        },
+        "shim": {
+            "moment": {
+                "exports": "moment"
+            }
+        }
+    },
     "extensions": {
         "components": [
             {
