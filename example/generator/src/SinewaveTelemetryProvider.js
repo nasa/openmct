@@ -13,6 +13,7 @@ define(
          * @constructor
          */
         function SinewaveTelemetryProvider($q, $timeout) {
+            var subscriptions = [];
 
             //
             function matchesSource(request) {
@@ -43,8 +44,48 @@ define(
                 }, 0);
             }
 
+            function handleSubscriptions() {
+                subscriptions.forEach(function (subscription) {
+                    var requests = subscription.requests;
+                    subscription.callback(doPackage(
+                        requests.filter(matchesSource).map(generateData)
+                    ));
+                });
+            }
+
+            function startGenerating() {
+                $timeout(function () {
+                    handleSubscriptions();
+                    if (subscriptions.length > 0) {
+                        startGenerating();
+                    }
+                }, 1000);
+            }
+
+            function subscribe(callback, requests) {
+                var subscription = {
+                    callback: callback,
+                    requests: requests
+                };
+
+                function unsubscribe() {
+                    subscriptions = subscriptions.filter(function (s) {
+                        return s !== subscription;
+                    });
+                }
+
+                subscriptions.push(subscription);
+
+                if (subscriptions.length === 1) {
+                    startGenerating();
+                }
+
+                return unsubscribe;
+            }
+
             return {
-                requestTelemetry: requestTelemetry
+                requestTelemetry: requestTelemetry,
+                subscribe: subscribe
             };
         }
 

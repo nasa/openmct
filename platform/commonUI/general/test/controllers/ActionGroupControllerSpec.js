@@ -1,7 +1,7 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ["../src/ActionGroupController"],
+    ["../../src/controllers/ActionGroupController"],
     function (ActionGroupController) {
         "use strict";
 

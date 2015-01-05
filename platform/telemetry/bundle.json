@@ -28,6 +28,11 @@
             {
                 "key": "telemetryFormatter",
                 "implementation": "TelemetryFormatter.js"
+            },
+            {
+                "key": "telemetrySubscriber",
+                "implementation": "TelemetrySubscriber.js",
+                "depends": [ "$q", "$timeout" ]
             }
         ]
     }

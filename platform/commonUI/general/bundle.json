@@ -24,49 +24,59 @@
         "controllers": [
             {
                 "key": "TreeNodeController",
-                "implementation": "TreeNodeController.js",
+                "implementation": "controllers/TreeNodeController.js",
                 "depends": [ "$scope", "$timeout" ]
             },
             {
                 "key": "ActionGroupController",
-                "implementation": "ActionGroupController.js",
+                "implementation": "controllers/ActionGroupController.js",
                 "depends": [ "$scope" ]
             },
             {
                 "key": "ToggleController",
-                "implementation": "ToggleController.js"
+                "implementation": "controllers/ToggleController.js"
             },
             {
                 "key": "ContextMenuController",
-                "implementation": "ContextMenuController.js",
+                "implementation": "controllers/ContextMenuController.js",
                 "depends": [ "$scope" ]
             },
             {
                 "key": "ClickAwayController",
-                "implementation": "ClickAwayController.js",
+                "implementation": "controllers/ClickAwayController.js",
                 "depends": [ "$scope", "$document" ]
             },
             {
                 "key": "ViewSwitcherController",
-                "implementation": "ViewSwitcherController.js",
+                "implementation": "controllers/ViewSwitcherController.js",
                 "depends": [ "$scope" ]
             },
             {
                 "key": "BottomBarController",
-                "implementation": "BottomBarController.js",
+                "implementation": "controllers/BottomBarController.js",
                 "depends": [ "indicators[]" ]
+            },
+            {
+                "key": "GetterSetterController",
+                "implementation": "controllers/GetterSetterController.js",
+                "depends": [ "$scope" ]
             }
         ],
         "directives": [
             {
                 "key": "mctContainer",
-                "implementation": "MCTContainer.js",
+                "implementation": "directives/MCTContainer.js",
                 "depends": [ "containers[]" ]
             },
             {
                 "key": "mctDrag",
-                "implementation": "MCTDrag.js",
+                "implementation": "directives/MCTDrag.js",
                 "depends": [ "$document" ]
+            },
+            {
+                "key": "mctResize",
+                "implementation": "directives/MCTResize.js",
+                "depends": [ "$timeout" ]
             }
         ],
         "containers": [

@@ -4,7 +4,7 @@
  * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
  */
 define(
-    ["../src/ViewSwitcherController"],
+    ["../../src/controllers/ViewSwitcherController"],
     function (ViewSwitcherController) {
         "use strict";
 

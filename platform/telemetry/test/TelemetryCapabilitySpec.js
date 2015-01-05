@@ -12,6 +12,7 @@ define(
                 mockDomainObject,
                 mockTelemetryService,
                 mockReject,
+                mockUnsubscribe,
                 telemetry;
 
 
@@ -33,9 +34,10 @@ define(
                 );
                 mockTelemetryService = jasmine.createSpyObj(
                     "telemetryService",
-                    [ "requestTelemetry" ]
+                    [ "requestTelemetry", "subscribe" ]
                 );
                 mockReject = jasmine.createSpyObj("reject", ["then"]);
+                mockUnsubscribe = jasmine.createSpy("unsubscribe");
 
                 mockInjector.get.andReturn(mockTelemetryService);
 
@@ -49,6 +51,11 @@ define(
                         key: "testKey"
                     }
                 });
+
+                mockTelemetryService.requestTelemetry
+                    .andReturn(mockPromise({}));
+                mockTelemetryService.subscribe
+                    .andReturn(mockUnsubscribe);
 
                 // Bubble up...
                 mockReject.then.andReturn(mockReject);
@@ -124,6 +131,36 @@ define(
                 expect(mockLog.warn).toHaveBeenCalled();
             });
 
+            it("allows subscriptions to updates", function () {
+                var mockCallback = jasmine.createSpy("callback"),
+                    subscription = telemetry.subscribe(mockCallback);
+
+                // Verify subscription to the appropriate object
+                expect(mockTelemetryService.subscribe).toHaveBeenCalledWith(
+                    jasmine.any(Function),
+                    [{
+                        id: "testId", // from domain object
+                        source: "testSource",
+                        key: "testKey"
+                    }]
+                );
+
+                // Check that the callback gets invoked
+                expect(mockCallback).not.toHaveBeenCalled();
+                mockTelemetryService.subscribe.mostRecentCall.args[0]({
+                    testSource: { testKey: { someKey: "some value" } }
+                });
+                expect(mockCallback).toHaveBeenCalledWith(
+                    { someKey: "some value" }
+                );
+
+                // Finally, unsubscribe
+                expect(mockUnsubscribe).not.toHaveBeenCalled();
+                subscription(); // should be an unsubscribe function
+                expect(mockUnsubscribe).toHaveBeenCalled();
+
+
+            });
         });
     }
 );

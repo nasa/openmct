@@ -1,7 +1,7 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ["../src/ContextMenuController"],
+    ["../../src/controllers/ContextMenuController"],
     function (ContextMenuController) {
         "use strict";
 

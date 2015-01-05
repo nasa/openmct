@@ -1,11 +1,13 @@
 [
-    "ActionGroupController",
-    "BottomBarController",
-    "ClickAwayController",
-    "ContextMenuController",
-    "MCTContainer",
-    "MCTDrag",
-    "ToggleController",
-    "TreeNodeController",
-    "ViewSwitcherController"
+    "controllers/ActionGroupController",
+    "controllers/BottomBarController",
+    "controllers/ClickAwayController",
+    "controllers/ContextMenuController",
+    "controllers/GetterSetterController",
+    "controllers/ToggleController",
+    "controllers/TreeNodeController",
+    "controllers/ViewSwitcherController",
+    "directives/MCTContainer",
+    "directives/MCTDrag",
+    "directives/MCTResize"
 ]
