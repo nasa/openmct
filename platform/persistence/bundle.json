@@ -8,6 +8,12 @@
                 "type": "provider",
                 "implementation": "CouchPersistenceProvider.js",
                 "depends": [ "$http", "$q", "PERSISTENCE_SPACE", "COUCHDB_PATH" ]
+            },
+            {
+                "provides": "persistenceService",
+                "type": "decorator",
+                "implementation": "CachingPersistenceDecorator.js",
+                "depends": [ "PERSISTENCE_SPACE" ]
             }
         ],
         "constants": [
