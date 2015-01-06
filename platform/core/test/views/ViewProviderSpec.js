@@ -25,6 +25,7 @@ define(
                 delegates = {},
                 delegation,
                 mockDomainObject = {},
+                mockLog,
                 provider;
 
             beforeEach(function () {
@@ -38,6 +39,7 @@ define(
                 mockDomainObject.useCapability = function (c, v) {
                     return capabilities[c] && capabilities[c].invoke(v);
                 };
+                mockLog = jasmine.createSpyObj("$log", ["warn", "info", "debug"]);
 
                 capabilities = {};
                 delegates = {};
@@ -48,7 +50,7 @@ define(
                     }
                 };
 
-                provider = new ViewProvider([viewA, viewB, viewC]);
+                provider = new ViewProvider([viewA, viewB, viewC], mockLog);
             });
 
             it("reports views provided as extensions", function () {
@@ -69,6 +71,20 @@ define(
                 delegates.someCapability = true;
                 expect(provider.getViews(mockDomainObject))
                     .toEqual([viewA, viewC]);
+            });
+
+            it("warns if keys are omitted from views", function () {
+                // Verify that initial construction issued no warning
+                expect(mockLog.warn).not.toHaveBeenCalled();
+                // Recreate with no keys; that view should be filtered out
+                expect(
+                    new ViewProvider(
+                        [viewA, { some: "bad view" }],
+                        mockLog
+                    ).getViews(mockDomainObject)
+                ).toEqual([viewA]);
+                // We should have also received a warning, to support debugging
+                expect(mockLog.warn).toHaveBeenCalledWith(jasmine.any(String));
             });
 
         });

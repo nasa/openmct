@@ -67,7 +67,7 @@
                 "provides": "viewService",
                 "type": "provider",
                 "implementation": "views/ViewProvider.js",
-                "depends": [ "views[]" ]
+                "depends": [ "views[]", "$log" ]
             }
         ],
         "types": [

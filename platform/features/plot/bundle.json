@@ -4,6 +4,7 @@
         "views": [
             {
                 "name": "Plot",
+                "key": "plot",
                 "templateUrl": "templates/plot.html",
                 "needs": [ "telemetry" ],
                 "delegation": true

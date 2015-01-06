@@ -37,7 +37,25 @@ define(
          * @constructor
          * @param {View[]} an array of view definitions
          */
-        function ViewProvider(views) {
+        function ViewProvider(views, $log) {
+
+            // Views without defined keys cannot be used in the user
+            // interface, and can result in unexpected behavior. These
+            // are filtered out using this function.
+            function validate(view) {
+                var key = view.key;
+
+                // Leave a log message to support detection of this issue.
+                if (!key) {
+                    $log.warn([
+                        "No key specified for view in ",
+                        (view.bundle || {}).path,
+                        "; omitting this view."
+                    ].join(""));
+                }
+
+                return key;
+            }
 
             // Check if an object has all capabilities designated as `needs`
             // for a view. Exposing a capability via delegation is taken to
@@ -78,6 +96,9 @@ define(
                     );
                 });
             }
+
+            // Filter out any key-less views
+            views = views.filter(validate);
 
             return {
                 /**
