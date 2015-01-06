@@ -23,6 +23,7 @@ define(
         './resolve/ImplementationLoader',
         './resolve/ExtensionResolver',
         './resolve/BundleResolver',
+        './resolve/RequireConfigurator',
         './register/CustomRegistrars',
         './register/ExtensionRegistrar',
         './bootstrap/ApplicationBootstrapper'
@@ -37,6 +38,7 @@ define(
               ImplementationLoader,
               ExtensionResolver,
               BundleResolver,
+              RequireConfigurator,
               CustomRegistrars,
               ExtensionRegistrar,
               ApplicationBootstrapper
@@ -55,10 +57,14 @@ define(
         function initializeApplication($http, $log) {
             var app = angular.module(Constants.MODULE_NAME, ["ngRoute"]),
                 loader = new BundleLoader($http, $log),
-                resolver = new BundleResolver(new ExtensionResolver(
-                    new ImplementationLoader(require),
+                resolver = new BundleResolver(
+                    new ExtensionResolver(
+                        new ImplementationLoader(require),
+                        $log
+                    ),
+                    new RequireConfigurator(requirejs),
                     $log
-                ), $log),
+                ),
                 registrar = new ExtensionRegistrar(
                     app,
                     new CustomRegistrars(app, $log),

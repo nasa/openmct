@@ -1,5 +1,16 @@
 {
     "name": "Open MCT Web Framework Component",
     "description": "Framework layer for Open MCT Web; interprets bundle definitions and serves as an intermediary between Require and Angular.",
+    "libraries": "lib",
+    "configuration": {
+        "paths": {
+            "angular": "angular.min"
+        },
+        "shim": {
+            "angular": {
+                "exports": "angular"
+            }
+        }
+    },
     "extensions": {}
 }

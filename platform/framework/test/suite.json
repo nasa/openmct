@@ -10,5 +10,6 @@
     "register/ServiceCompositor",
     "resolve/BundleResolver",
     "resolve/ExtensionResolver",
-    "resolve/ImplementationLoader"
+    "resolve/ImplementationLoader",
+    "resolve/RequireConfigurator"
 ]

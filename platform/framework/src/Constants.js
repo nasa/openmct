@@ -12,7 +12,9 @@ define({
     DEFAULT_BUNDLE: {
         "sources": "src",
         "resources": "res",
-        "test": "test",
+        "libraries": "lib",
+        "tests": "test",
+        "configuration": {},
         "extensions": {}
     }
 });

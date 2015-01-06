@@ -1,5 +1,5 @@
-Framework-level components for Open MCT Web. This is Angular and Require, 
-with an extra layer to mediate between them and act as an extension 
+Framework-level components for Open MCT Web. This is Angular and Require,
+with an extra layer to mediate between them and act as an extension
 mechanism to allow plug-ins to be introduced declaratively.
 
 # Usage
@@ -67,6 +67,21 @@ These are referred to by the `implementation` field in their extension
 definition. The implementation name should not include the bundle path,
 or the name of the source folder; these will be pre-pended by the framework
 during this stage. The implementation name should include a `.js` extension.
+
+Bundles may utilize third-party libraries, and may wish to expose these such
+that other bundles may use them. Require JS may need special configuration
+to recognize and utilize third-party libraries, and when exposing a
+third-party library it may be desirable to do so under a short name
+(to avoid long relative paths.) Such configuration is performed during the
+resolution stage, immediately before implementations are loaded. Any
+`configuration` properties from a bundle's definition (`bundle.json`) will
+be used to perform this configuration; these `configuration` should take
+the same form as needed to populate a
+[`require.config`](http://requirejs.org/docs/api.html#config) call.
+At present, only `shim` and `paths` options are supported; any `paths` will
+be prepended with the bundle's library path (the bundle's `lib` folder, by
+default; this directory name can be overridden by specifying a `libraries`
+property in `bundles.json`.)
 
 An extension is resolved by loading its implementing script, if one has been
 declared. If none is declared, the extension's raw definition is used

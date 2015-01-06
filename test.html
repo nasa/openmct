@@ -110,7 +110,9 @@
 
                 // Run all test suites contained in all bundles
                 function runSuites(bundles) {
-                    var components = [], count = 0;
+                    var components = [],
+                        configuration = { baseUrl: "" },
+                        count = 0;
 
                     function addSuite(bundle) {
                         function fixPath(name) {
@@ -124,6 +126,7 @@
                             components = components.concat(suiteSpecs.map(fixPath));
                             count += 1;
                             if (count === bundles.length) {
+                                require.config(configuration);
                                 runSpecs(components);
                             }
                         }
@@ -131,7 +134,36 @@
                         loadJSON(bundle + "/test/suite.json", addSpecs);
                     }
 
-                    bundles.forEach(addSuite);
+                    // Some AMD modules are configured in bundle.json files,
+                    // so those need to be read and a require definition built
+                    function readConfig(bundle, definition) {
+                        var lib = bundle.libraries || "lib",
+                            bundleConfig = definition.configuration || {};
+
+                        // Merge in paths
+                        Object.keys(bundleConfig.paths || {}).forEach(function (path) {
+                            configuration.paths = configuration.paths || {};
+                            configuration.paths[path] =
+                                bundle + "/" + lib + "/" + bundleConfig.paths[path];
+                        });
+
+                        // Merge in shims
+                        Object.keys(bundleConfig.shim || {}).forEach(function (shim) {
+                            configuration.shim = configuration.shim || {};
+                            configuration.shim[shim] = bundleConfig.shim[shim];
+                        });
+                    }
+
+                    function addBundle(bundle) {
+                        function readConfigAndContinue(definition) {
+                            readConfig(bundle, definition);
+                            addSuite(bundle);
+                        }
+
+                        loadJSON(bundle + "/bundle.json", readConfigAndContinue);
+                    }
+
+                    bundles.forEach(addBundle);
                 }
 
                 // Set the ball rolling; load and run all test suites

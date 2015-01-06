@@ -15,7 +15,7 @@ define(
          *
          * @constructor
          */
-        function BundleResolver(extensionResolver, $log) {
+        function BundleResolver(extensionResolver, requireConfigurator, $log) {
 
             /**
              * Merge resolved bundles (where each is expressed as an
@@ -88,6 +88,10 @@ define(
                  *          extensions belonging to those categories
                  */
                 resolveBundles: function (bundles) {
+                    // First, make sure Require is suitably configured
+                    requireConfigurator.configure(bundles);
+
+                    // Then, resolve all extension implementations.
                     return Promise.all(bundles.map(resolveBundle))
                         .then(mergeResolvedBundles);
                 }

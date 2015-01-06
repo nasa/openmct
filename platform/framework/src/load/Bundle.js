@@ -102,6 +102,33 @@ define(
                     return resolvePath(subpath);
                 },
                 /**
+                 * Get the path to this bundle's library folder. If an
+                 * argument is provided, the path will be to the library
+                 * file within the bundle's resource file.
+                 *
+                 * @memberof Bundle#
+                 * @param {string} [libraryFile] optionally, give a path to
+                 *        a specific library file in the bundle.
+                 * @returns {string}
+                 */
+                getLibraryPath: function (libraryFile) {
+                    var subpath = libraryFile ?
+                            [ definition.libraries, libraryFile ] :
+                            [ definition.libraries ];
+
+                    return resolvePath(subpath);
+                },
+                /**
+                 * Get library configuration for this bundle. This is read
+                 * from the bundle's definition; if the bundle is well-formed,
+                 * it will resemble a require.config object.
+                 * @memberof Bundle#
+                 * @returns {object}
+                 */
+                getConfiguration: function () {
+                    return definition.configuration || {};
+                },
+                /**
                  * Get a log-friendly name for this bundle; this will
                  * include both the key (machine-readable name for this
                  * bundle) and the name (human-readable name for this
