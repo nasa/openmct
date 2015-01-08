@@ -19,9 +19,10 @@ define({
     },
     PRIORITY_LEVELS: {
         "fallback": Number.NEGATIVE_INFINITY,
-        "default": 100,
-        "optional": 200,
-        "preferred": 400,
+        "default": -100,
+        "none": 0,
+        "optional": 100,
+        "preferred": 1000,
         "mandatory": Number.POSITIVE_INFINITY
     },
     DEFAULT_PRIORITY: 0

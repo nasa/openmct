@@ -106,6 +106,37 @@ support for the category of extension being registered.
   list, with Angular-level dependencies are declared, and the full set
   is exposed as a single Angular "service."
 
+### Priority order
+
+Within each category, registration occurs in priority order. An extension's
+priority may be specified as a `priority` property in its extension
+definition; this may be a number, or a symbolic string. Extensions are
+registered in reverse numeric order (highest-priority first), and symbolic
+strings are mapped to the numeric values as follows:
+
+* `fallback`: Negative infinity. Used for extensions that are not intended
+  for use (that is, they are meant to be overridden) but are present as an
+  option of last resort.
+* `default`: -100. Used for extensions that are expected to be overridden, but
+  need a useful default.
+* `none`: 0. Also used if no priority is specified, or if an unknown or
+  malformed priority is specified.
+* `optional`: 100. Used for extensions that are meant to be used, but may be
+  overridden.
+* `preferred`: 1000. Used for extensions that are specifically intended to
+  be used, but still may be overridden in principle.
+* `mandatory`: Positive infinity. Used when an extension should definitely
+  not be overridden.
+
+These symbolic names are chosen to reflect usage where many extensions may
+satisfy a given usage, but only one may be used; in this case, as a
+convention it should be the lowest-ordered (highest-priority) extensions
+available. In other cases, a full set (or multi-element subset) of
+extensions may be desired, with a specific ordering; in these cases, it
+is preferable to specify priority numerically when declaring extensions,
+and to understand that extensions will be sorted according to these
+conventions when using them.
+
 ### Composite services
 
 Composite services are assumed to follow a provider-aggregator-decorator
