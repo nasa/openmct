@@ -47,6 +47,9 @@ define(
                 // is being issued.
                 broadcasting: false,
 
+                // Active subscriptions
+                subscriptions: [],
+
                 // Used for getTelemetryObjects; a reference is
                 // stored so that this can be called in a watch
                 telemetryObjects: [],
@@ -183,6 +186,25 @@ define(
                 }
             }
 
+            // Subscribe to streaming telemetry updates
+            function subscribe(domainObject) {
+                var telemetryCapability =
+                    domainObject.getCapability("telemetry");
+                return telemetryCapability.subscribe(function () {
+                    requestTelemetryForId(
+                        domainObject.getId(),
+                        false
+                    );
+                });
+            }
+
+            // Stop listening to active subscriptions
+            function unsubscribe() {
+                self.subscriptions.forEach(function (s) {
+                    return s && s();
+                });
+            }
+
             // Build response containers (as above) for all
             // domain objects, and update some controller-internal
             // state to support subsequent calls.
@@ -205,6 +227,9 @@ define(
                     return self.response[id].metadata;
                 });
 
+                // Subscribe to all telemetry objects
+                self.subscriptions = domainObjects.map(subscribe);
+
                 // Issue a request for the new objects, if we
                 // know what our request looks like
                 if (self.request) {
@@ -217,6 +242,7 @@ define(
             // scope. This will be the domain object itself, or
             // its telemetry delegates, or both.
             function getTelemetryObjects(domainObject) {
+                unsubscribe();
                 promiseRelevantDomainObjects(domainObject)
                     .then(buildResponseContainers);
             }
@@ -241,6 +267,7 @@ define(
 
             // Stop polling for changes
             function deactivate() {
+                unsubscribe();
                 self.active = false;
             }
 
