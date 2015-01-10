@@ -21,7 +21,9 @@ define(
          */
         function PersistedModelProvider(persistenceService, $q, SPACE) {
             function promiseModels(ids) {
-                return $q.all(ids.map(function (id) {
+                return $q.all(ids.filter(function (id) {
+                    return id.indexOf(":") === -1;
+                }).map(function (id) {
                     return persistenceService.readObject(SPACE, id);
                 })).then(function (models) {
                     var result = {};
