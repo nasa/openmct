@@ -1,4 +1,10 @@
 <ul class="tree">
+    <li ng-if="!composition">
+        <span class="tree-item">
+            <span class="icon wait-spinner"></span>
+            <span class="title-label">Loading...</span>
+        </span>
+    </li>
     <li ng-repeat="child in composition">
         <mct-representation key="'tree-node'"
                             mct-object="child"
