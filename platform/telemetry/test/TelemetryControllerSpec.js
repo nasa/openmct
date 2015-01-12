@@ -190,6 +190,16 @@ define(
                     .toHaveBeenCalledWith("telemetryUpdate");
             });
 
+            it("subscribes for streaming telemetry updates", function () {
+                // Push into scope to create subscriptions
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                // Should have subscribed
+                expect(mockTelemetry.subscribe)
+                    .toHaveBeenCalledWith(jasmine.any(Function));
+                // Invoke the subscriber function (for coverage)
+                mockTelemetry.subscribe.mostRecentCall.args[0]({});
+            });
+
             it("listens for scope destruction to clean up", function () {
                 expect(mockScope.$on).toHaveBeenCalledWith(
                     "$destroy",
@@ -198,6 +208,16 @@ define(
                 mockScope.$on.mostRecentCall.args[1]();
             });
 
+            it("unsubscribes when destroyed", function () {
+                // Push into scope to create subscriptions
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+
+                // Invoke "$destroy" listener
+                mockScope.$on.mostRecentCall.args[1]();
+
+                // Should have unsubscribed
+                expect(mockUnsubscribe).toHaveBeenCalled();
+            });
         });
     }
 );
