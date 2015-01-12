@@ -17,9 +17,11 @@ define(
          * @param {Object.<string,function>} customRegistrars an object
          *        containing custom registration functions, primarily for
          *        Angular built-ins.
+         * @param {ExtensionSorter} sorter the sorter which will impose
+         *        priority ordering upon extensions
          * @param {*} $log Angular's logging service
          */
-        function ExtensionRegistrar(app, customRegistrars, $log) {
+        function ExtensionRegistrar(app, customRegistrars, sorter, $log) {
             // Track which extension categories have already been registered.
             // Exceptions will be thrown if the same extension category is
             // registered twice.
@@ -163,7 +165,7 @@ define(
                 Object.keys(extensionGroup).forEach(function (category) {
                     registerExtensionsForCategory(
                         category,
-                        extensionGroup[category]
+                        sorter.sort(extensionGroup[category])
                     );
                 });
 

@@ -6,6 +6,7 @@
     "load/Extension",
     "register/CustomRegistrars",
     "register/ExtensionRegistrar",
+    "register/ExtensionSorter",
     "register/PartialConstructor",
     "register/ServiceCompositor",
     "resolve/BundleResolver",

@@ -11,14 +11,24 @@ define(
         describe("The extension registrar", function () {
             var mockApp,
                 mockLog,
+                mockSorter,
                 customRegistrars,
                 registrar;
 
             beforeEach(function () {
                 mockApp = jasmine.createSpyObj("app", ["factory"]);
                 mockLog = jasmine.createSpyObj("$log", ["error", "warn", "debug", "info"]);
+                mockSorter = jasmine.createSpyObj("sorter", ["sort"]);
                 customRegistrars = {};
-                registrar = new ExtensionRegistrar(mockApp, customRegistrars, mockLog);
+
+                mockSorter.sort.andCallFake(function (v) { return v; });
+
+                registrar = new ExtensionRegistrar(
+                    mockApp,
+                    customRegistrars,
+                    mockSorter,
+                    mockLog
+                );
             });
 
             it("registers extensions using the factory", function () {
@@ -62,6 +72,23 @@ define(
                 registrar.registerExtensions({ things: [ {} ] });
                 expect(mockApp.factory).not.toHaveBeenCalled();
                 expect(customRegistrars.things).toHaveBeenCalled();
+            });
+
+            it("sorts extensions before registering", function () {
+                // Some extension definitions to sort
+                var a = { a: 'a' }, b = { b: 'b' }, c = { c: 'c' };
+
+                // Fake sorting; just reverse the array
+                mockSorter.sort.andCallFake(function (v) { return v.reverse(); });
+
+                // Register the extensions
+                registrar.registerExtensions({ things: [ a, b, c ] });
+
+                // Verify registration interactions occurred in reverse-order
+                [ c, b, a ].forEach(function (extension, index) {
+                    expect(mockApp.factory.calls[index].args[1][0]())
+                        .toEqual(extension);
+                });
             });
 
         });

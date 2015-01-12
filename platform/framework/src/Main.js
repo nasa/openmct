@@ -26,23 +26,26 @@ define(
         './resolve/RequireConfigurator',
         './register/CustomRegistrars',
         './register/ExtensionRegistrar',
+        './register/ExtensionSorter',
         './bootstrap/ApplicationBootstrapper'
     ],
-    function (require,
-              es6promise,
-              angular,
-              angularRoute,
-              Constants,
-              FrameworkInitializer,
-              BundleLoader,
-              ImplementationLoader,
-              ExtensionResolver,
-              BundleResolver,
-              RequireConfigurator,
-              CustomRegistrars,
-              ExtensionRegistrar,
-              ApplicationBootstrapper
-        ) {
+    function (
+        require,
+        es6promise,
+        angular,
+        angularRoute,
+        Constants,
+        FrameworkInitializer,
+        BundleLoader,
+        ImplementationLoader,
+        ExtensionResolver,
+        BundleResolver,
+        RequireConfigurator,
+        CustomRegistrars,
+        ExtensionRegistrar,
+        ExtensionSorter,
+        ApplicationBootstrapper
+    ) {
         "use strict";
 
         // Get a reference to Angular's injector, so we can get $http and $log
@@ -68,6 +71,7 @@ define(
                 registrar = new ExtensionRegistrar(
                     app,
                     new CustomRegistrars(app, $log),
+                    new ExtensionSorter($log),
                     $log
                 ),
                 bootstrapper = new ApplicationBootstrapper(
