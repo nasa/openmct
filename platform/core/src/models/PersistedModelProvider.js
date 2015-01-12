@@ -22,10 +22,14 @@ define(
         function PersistedModelProvider(persistenceService, $q, SPACE) {
             function promiseModels(ids) {
                 return $q.all(ids.filter(function (id) {
+                    // Filter out "namespaced" identifiers; these are
+                    // not expected to be found in database. See WTD-659.
                     return id.indexOf(":") === -1;
                 }).map(function (id) {
+                    // Read remaining objects from persistence
                     return persistenceService.readObject(SPACE, id);
                 })).then(function (models) {
+                    // Packaged the result as id->object
                     var result = {};
                     ids.forEach(function (id, index) {
                         result[id] = models[index];
