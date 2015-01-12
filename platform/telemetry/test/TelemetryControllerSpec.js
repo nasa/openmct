@@ -12,6 +12,7 @@ define(
                 mockLog,
                 mockDomainObject,
                 mockTelemetry,
+                mockUnsubscribe,
                 controller;
 
             function mockPromise(value) {
@@ -44,8 +45,9 @@ define(
 
                 mockTelemetry = jasmine.createSpyObj(
                     "telemetry",
-                    [ "requestData", "getMetadata" ]
+                    [ "requestData", "subscribe", "getMetadata" ]
                 );
+                mockUnsubscribe = jasmine.createSpy("unsubscribe");
 
                 mockQ.when.andCallFake(mockPromise);
                 mockQ.all.andReturn(mockPromise([mockDomainObject]));
@@ -63,6 +65,7 @@ define(
                 mockTelemetry.requestData.andReturn(mockPromise({
                     telemetryKey: "some value"
                 }));
+                mockTelemetry.subscribe.andReturn(mockUnsubscribe);
 
                 controller = new TelemetryController(
                     mockScope,
