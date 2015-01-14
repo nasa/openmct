@@ -37,12 +37,14 @@ define(
 
             // Prepopulate templateMap for easy look up by key
             templates.forEach(function (template) {
-                var path = [
-                    template.bundle.path,
-                    template.bundle.resources,
-                    template.templateUrl
-                ].join("/");
-                templateMap[template.key] = path;
+                var key = template.key,
+                    path = [
+                        template.bundle.path,
+                        template.bundle.resources,
+                        template.templateUrl
+                    ].join("/");
+                // First found should win (priority ordering)
+                templateMap[key] = templateMap[key] || path;
             });
 
             function controller($scope) {
