@@ -5,12 +5,30 @@
             {
                 "key": "app-logo",
                 "priority": "optional",
-                "templateUrl": "app-logo.html"
+                "templateUrl": "templates/app-logo.html"
             },
             {
                 "key": "about-logo",
                 "priority": "preferred",
-                "templateUrl": "about-logo.html"
+                "templateUrl": "templates/about-logo.html"
+            }
+        ],
+        "controllers": [
+            {
+                "key": "LogoController",
+                "depends": [ "overlayService" ],
+                "implementation": "LogoController.js"
+            },
+            {
+                "key": "AboutController",
+                "depends": [ "versions[]", "$window" ],
+                "implementation": "AboutController.js"
+            }
+        ],
+        "routes": [
+            {
+                "when": "/licenses",
+                "templateUrl": "templates/licenses.html"
             }
         ]
     }

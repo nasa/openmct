@@ -11,7 +11,7 @@ define(
                     return versions;
                 },
                 openLicenses: function () {
-                    $window.open("#/licenses", "_blank");
+                    $window.open("#/licenses");
                 }
             };
         }
