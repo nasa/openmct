@@ -11,6 +11,14 @@
                 "key": "about-logo",
                 "priority": "preferred",
                 "templateUrl": "templates/about-logo.html"
+            },
+            {
+                "key": "about-dialog",
+                "templateUrl": "templates/about-dialog.html"
+            },
+            {
+                "key": "overlay-about",
+                "templateUrl": "templates/overlay-about.html"
             }
         ],
         "controllers": [
