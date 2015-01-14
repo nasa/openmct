@@ -1,0 +1,17 @@
+{
+    "name": "About Open MCT Web",
+    "extensions": {
+        "templates": [
+            {
+                "key": "app-logo",
+                "priority": "optional",
+                "templateUrl": "app-logo.html"
+            },
+            {
+                "key": "about-logo",
+                "priority": "preferred",
+                "templateUrl": "about-logo.html"
+            }
+        ]
+    }
+}
