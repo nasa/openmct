@@ -8,7 +8,7 @@ define(
     function (OverlayService) {
         "use strict";
 
-        describe("The dialog service", function () {
+        describe("The overlay service", function () {
             var mockDocument,
                 mockCompile,
                 mockRootScope,
@@ -40,19 +40,19 @@ define(
             });
 
             it("prepends an mct-include to create overlays", function () {
-                overlayService.createOverlay({}, "test");
+                overlayService.createOverlay("test", {});
                 expect(mockCompile).toHaveBeenCalled();
                 expect(mockCompile.mostRecentCall.args[0].indexOf("mct-include"))
                     .not.toEqual(-1);
             });
 
             it("adds the templated element to the body", function () {
-                overlayService.createOverlay({}, "test");
+                overlayService.createOverlay("test", {});
                 expect(mockBody.prepend).toHaveBeenCalledWith(mockElement);
             });
 
             it("places the provided model/key in its template's scope", function () {
-                overlayService.createOverlay({ someKey: 42 }, "test");
+                overlayService.createOverlay("test", { someKey: 42 });
                 expect(mockScope.overlay).toEqual({ someKey: 42 });
                 expect(mockScope.key).toEqual("test");
 
@@ -61,7 +61,7 @@ define(
             });
 
             it("removes the prepended element on request", function () {
-                var overlay = overlayService.createOverlay({}, "test");
+                var overlay = overlayService.createOverlay("test", {});
 
                 // Verify precondition
                 expect(mockElement.remove).not.toHaveBeenCalled();

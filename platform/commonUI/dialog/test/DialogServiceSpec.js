@@ -56,7 +56,7 @@ define(
 
             it("allows user input to be canceled", function () {
                 dialogService.getUserInput({}, { someKey: "some value" });
-                mockOverlayService.createOverlay.mostRecentCall.args[0].cancel();
+                mockOverlayService.createOverlay.mostRecentCall.args[1].cancel();
                 expect(mockDeferred.reject).toHaveBeenCalled();
                 expect(mockDeferred.resolve).not.toHaveBeenCalled();
             });
@@ -64,7 +64,7 @@ define(
             it("passes back the result of user input when confirmed", function () {
                 var value = { someKey: 42 };
                 dialogService.getUserInput({}, value);
-                mockOverlayService.createOverlay.mostRecentCall.args[0].confirm();
+                mockOverlayService.createOverlay.mostRecentCall.args[1].confirm();
                 expect(mockDeferred.reject).not.toHaveBeenCalled();
                 expect(mockDeferred.resolve).toHaveBeenCalledWith(value);
             });
@@ -80,7 +80,7 @@ define(
             it("can show multiple dialogs if prior ones are dismissed", function () {
                 dialogService.getUserInput({}, {});
                 expect(mockLog.warn).not.toHaveBeenCalled();
-                mockOverlayService.createOverlay.mostRecentCall.args[0].confirm();
+                mockOverlayService.createOverlay.mostRecentCall.args[1].confirm();
                 dialogService.getUserInput({}, {});
                 expect(mockLog.warn).not.toHaveBeenCalled();
                 expect(mockDeferred.reject).not.toHaveBeenCalled();
