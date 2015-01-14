@@ -15,6 +15,16 @@
         "templates": [
             {
                 "key": "overlay-dialog",
+                "templateUrl": "templates/overlay-dialog.html"
+            },
+            {
+                "key": "form-dialog",
+                "templateUrl": "templates/dialog.html"
+            }
+        ],
+        "containers": [
+            {
+                "key": "overlay",
                 "templateUrl": "templates/overlay.html"
             }
         ]
