@@ -10,6 +10,14 @@
                 "type": "layout",
                 "templateUrl": "templates/layout.html",
                 "uses": [ "composition" ]
+            },
+            {
+                "key": "fixed",
+                "name": "Fixed Position",
+                "glyph": "3",
+                "type": "telemetry.panel",
+                "templateUrl": "templates/fixed.html",
+                "uses": [ "composition" ]
             }
         ],
         "representations": [
