@@ -20,7 +20,8 @@ define(
                     "directive",
                     "service",
                     "constant",
-                    "config"
+                    "config",
+                    "run"
                 ]);
 
                 mockLog = jasmine.createSpyObj("$log", [
@@ -39,6 +40,7 @@ define(
                 expect(customRegistrars.services).toBeTruthy();
                 expect(customRegistrars.routes).toBeTruthy();
                 expect(customRegistrars.constants).toBeTruthy();
+                expect(customRegistrars.runs).toBeTruthy();
             });
 
             it("invokes built-in functions on the app", function () {
@@ -58,6 +60,11 @@ define(
                 expect(mockApp.constant.calls.length).toEqual(0);
                 customRegistrars.constants([{ key: "a", value: "b" }, { key: "b", value: "c" }, { key: "c", value: "d" }]);
                 expect(mockApp.constant.calls.length).toEqual(3);
+
+                expect(mockApp.run.calls.length).toEqual(0);
+                customRegistrars.runs([jasmine.createSpy("a"), jasmine.createSpy("a"), jasmine.createSpy("a")]);
+                expect(mockApp.run.calls.length).toEqual(3);
+
             });
 
             it("warns when keys are not defined, then skips", function () {
@@ -81,6 +88,8 @@ define(
                 customRegistrars.constants([{ }, { }, { }]);
                 expect(mockApp.constant.calls.length).toEqual(0);
                 expect(mockLog.warn.calls.length).toEqual(9);
+
+                // Notably, keys are not needed for run calls
             });
 
             it("allows routes to be registered", function () {
