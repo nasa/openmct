@@ -15,9 +15,10 @@
                 {{item.name}}:
             </label>
             <mct-control key="item.control"
+                         ng-class="{ disabled: item.disabled }"
                          ng-model="ngModel"
                          ng-required="item.required"
-                         ng-pattern="getRegExp(row.pattern)"
+                         ng-pattern="getRegExp(item.pattern)"
                          options="item.options"
                          structure="item"
                          field="item.key">

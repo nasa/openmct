@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,window*/
 
 define(
     [],
@@ -21,6 +21,7 @@ define(
                                 description: "X coordinate",
                                 control: "textfield",
                                 pattern: "^\\d+$",
+                                disabled: true,
                                 size: 2,
                                 key: "x"
                             },
