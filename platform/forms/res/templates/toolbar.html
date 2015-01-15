@@ -1,0 +1,42 @@
+<form name="mctForm" novalidate>
+
+<div class="form">
+    <span ng-repeat="section in structure.sections">
+        <div class="section-header" ng-if="section.name">
+            {{section.name}}
+        </div>
+        <div class="form-section">
+            <ng-form name="mctFormInner" ng-repeat="row in section.rows">
+                <div class="form-row validates"
+                     ng-class="{
+                               req: row.required,
+                               valid: mctFormInner.$dirty && mctFormInner.$valid,
+                               invalid: mctFormInner.$dirty && !mctFormInner.$valid
+                               }">
+
+                    <div class='label' title="{{row.description}}">
+                        {{row.name}}
+                        <span ng-if="row.description"
+                              class="ui-symbol">
+                            i
+                        </span>
+                    </div>
+                    <div class='controls'>
+                        <div class="wrapper" ng-if="row.control">
+                            <mct-control key="row.control"
+                                         ng-model="ngModel"
+                                         ng-required="row.required"
+                                         ng-pattern="getRegExp(row.pattern)"
+                                         options="row.options"
+                                         structure="row"
+                                         field="row.key">
+                            </mct-control>
+                        </div>
+                    </div>
+                </div>
+            </ng-form>
+        </div>
+    </span>
+</div>
+
+</form>

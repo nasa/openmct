@@ -8,6 +8,10 @@
                 "implementation": "MCTForm.js"
             },
             {
+                "key": "mctToolbar",
+                "implementation": "MCTToolbar.js"
+            },
+            {
                 "key": "mctControl",
                 "implementation": "MCTControl.js",
                 "depends": [ "controls[]" ]
