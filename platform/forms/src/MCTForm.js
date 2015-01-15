@@ -4,12 +4,9 @@
  * Module defining MCTForm. Created by vwoeltje on 11/10/14.
  */
 define(
-    [],
-    function () {
+    ["./controllers/FormController"],
+    function (FormController) {
         "use strict";
-
-        // Default ng-pattern; any non whitespace
-        var NON_WHITESPACE = /\S/;
 
         /**
          * The mct-form directive allows generation of displayable
@@ -37,45 +34,6 @@ define(
                 "templates/form.html"
             ].join("/");
 
-            function controller($scope) {
-                var regexps = [];
-
-                // ng-pattern seems to want a RegExp, and not a
-                // string (despite what documentation says) but
-                // we want form structure to be JSON-expressible,
-                // so we make RegExp's from strings as-needed
-                function getRegExp(pattern) {
-                    // If undefined, don't apply a pattern
-                    if (!pattern) {
-                        return NON_WHITESPACE;
-                    }
-
-                    // Just echo if it's already a regexp
-                    if (pattern instanceof RegExp) {
-                        return pattern;
-                    }
-
-                    // Otherwise, assume a string
-                    // Cache for easy lookup later (so we don't
-                    // creat a new RegExp every digest cycle)
-                    if (!regexps[pattern]) {
-                        regexps[pattern] = new RegExp(pattern);
-                    }
-
-                    return regexps[pattern];
-                }
-
-                // Publish the form state under the requested
-                // name in the parent scope
-                $scope.$watch("mctForm", function (mctForm) {
-                    if ($scope.name) {
-                        $scope.$parent[$scope.name] = mctForm;
-                    }
-                });
-
-                $scope.getRegExp = getRegExp;
-            }
-
             return {
                 // Only show at the element level
                 restrict: "E",
@@ -83,9 +41,8 @@ define(
                 // Load the forms template
                 templateUrl: templatePath,
 
-                // Use the controller defined above to
-                // populate/respond to changes in scope
-                controller: controller,
+                // Use FormController to populate/respond to changes in scope
+                controller: FormController,
 
                 // Initial an isolate scope
                 scope: {
