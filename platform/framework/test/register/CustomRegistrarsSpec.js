@@ -135,6 +135,14 @@ define(
                 expect(customRegistrars.components).toBeTruthy();
                 customRegistrars.components([]);
             });
+
+            it("warns if no implementation is provided for runs", function () {
+                // Verify precondition
+                expect(mockLog.warn).not.toHaveBeenCalled();
+                customRegistrars.runs([{ something: "that is not a function"}]);
+                expect(mockLog.warn).toHaveBeenCalledWith(jasmine.any(String));
+                expect(mockApp.run).not.toHaveBeenCalled();
+            });
         });
     }
 );
