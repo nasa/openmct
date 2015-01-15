@@ -39,6 +39,10 @@
                 "templateUrl": "templates/controls/button.html"
             },
             {
+                "key": "color",
+                "templateUrl": "templates/controls/color.html"
+            },
+            {
                 "key": "composite",
                 "templateUrl": "templates/controls/composite.html"
             }
