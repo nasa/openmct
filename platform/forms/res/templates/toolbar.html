@@ -3,12 +3,12 @@
 <div class="form">
     <span ng-repeat="section in structure.sections"
           class="control-group coordinates"
-          title="section.description">
+          title="{{section.description}}">
 
         <ng-form ng-repeat="item in section.items"
                  ng-class="{ 'input-labeled': item.name }"
                  class="inline"
-                 title="item.description"
+                 title="{{item.description}}"
                  name="mctFormInner">
 
             <label ng-if="item.name">

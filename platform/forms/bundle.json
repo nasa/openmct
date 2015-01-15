@@ -35,6 +35,10 @@
                 "templateUrl": "templates/controls/textfield.html"
             },
             {
+                "key": "button",
+                "templateUrl": "templates/controls/button.html"
+            },
+            {
                 "key": "composite",
                 "templateUrl": "templates/controls/composite.html"
             }
