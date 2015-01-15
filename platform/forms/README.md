@@ -12,6 +12,11 @@ directive, e.g.:
     <mct-form ng-model="myModel" structure="myStructure" name="myForm">
     </mct-form>
 
+Using toolbars is similar:
+
+    <mct-toolbar ng-model="myModel" structure="myStructure" name="myToolbar">
+    </mct-toolbar>
+
 The attributes utilized by this form are as follows:
 
 * `ng-model`: The object which should contain the full form input. Individual
@@ -55,6 +60,44 @@ Note that `pattern` may be specified as a string, to simplify storing
 for structures as JSON when necessary. The string should be given in
 a form appropriate to pass to a `RegExp` constructor.
 
+## Toolbar structure
+
+A toolbar's structure is described similarly to forms, except that there
+is no notion of rows; instead, there are `items`.
+
+    {
+        "name": ... title to display for the form, as a string ...,
+        "sections": [
+            {
+                "name": ... title to display for the section ...,
+                "items": [
+                    {
+                        "name": ... title to display for this row ...,
+                        "control": ... symbolic key for the control ...,
+                        "key": ... field name in ng-model ...
+                        "pattern": ... optional, reg exp to match against ...
+                        "required": ... optional boolean ...
+                        "options": [
+                            "name": ... name to display (e.g. in a select) ...,
+                            "value": ... value to store in the model ...
+                        ],
+                        "disabled": ... true if control should be disabled ...
+                        "size": ... size of the control (for textfields) ...
+                        "click": ... function to invoke (for buttons) ...
+                        "glyph": ... glyph to display (for buttons) ...
+                        "text": ... text withiin control (for buttons) ...
+                    },
+                    ... and other rows ...
+                ]
+            },
+            ... and other sections ...
+        ]
+    }
+
+Note that `pattern` may be specified as a string, to simplify storing
+for structures as JSON when necessary. The string should be given in
+a form appropriate to pass to a `RegExp` constructor.
+
 ## Adding controls
 
 Four standard control types are included in the forms bundle:
@@ -62,6 +105,8 @@ Four standard control types are included in the forms bundle:
 * `textfield`: An area to enter plain text.
 * `select`: A drop-down list of options.
 * `checkbox`: A box which may be checked/unchecked.
+* `color`: A color picker.
+* `button`: A button.
 * `datetime`: An input for UTC date/time entry; gives result as a
   UNIX timestamp, in milliseconds since start of 1970, UTC.
 
