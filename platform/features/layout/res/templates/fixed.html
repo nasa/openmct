@@ -1,7 +1,19 @@
-<div style="width: 100%; height: 100%;"
+
+
+<div style="width: 100%; height: 100%; position: absolute; left: 0px; top: 0px;"
      ng-controller="FixedController as controller">
 
+    <!-- Background grid -->
+    <div ng-repeat="cell in controller.getCellStyles()"
+         style="position: absolute; border: 1px gray solid; background: black;"
+         ng-style="cell">
+    </div>
+
+
+
+
     <div ng-repeat="childObject in composition"
+         style="position: absolute;"
          ng-style="controller.getStyle(childObject.getId())">
 
         <div ng-style="controller.getCellStyle()">

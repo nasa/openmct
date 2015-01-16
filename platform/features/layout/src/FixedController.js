@@ -6,7 +6,8 @@ define(
         "use strict";
 
         var DEFAULT_DIMENSIONS = [ 2, 1 ],
-            DEFAULT_GRID_SIZE = [64, 16];
+            DEFAULT_GRID_SIZE = [64, 16],
+            DEFAULT_GRID_EXTENT = [4, 4];
 
         /**
          * The FixedController is responsible for supporting the
@@ -18,8 +19,10 @@ define(
          */
         function FixedController($scope) {
             var gridSize = DEFAULT_GRID_SIZE,
+                gridExtent = DEFAULT_GRID_EXTENT,
                 activeDrag,
                 activeDragId,
+                cellStyles = [],
                 rawPositions = {},
                 positions = {};
 
@@ -32,6 +35,25 @@ define(
                     copy[k] = obj[k];
                 });
                 return copy;
+            }
+
+            // Refresh cell styles (e.g. because grid extent changed)
+            function refreshCellStyles() {
+                var x, y;
+
+                cellStyles = [];
+
+                for (x = 0; x < gridExtent[0]; x += 1) {
+                    for (y = 0; y < gridExtent[1]; y += 1) {
+                        // Position blocks; subtract out border size from w/h
+                        cellStyles.push({
+                            left: x * gridSize[0] + 'px',
+                            top: y * gridSize[1] + 'px',
+                            width: gridSize[0] - 2 + 'px',
+                            height: gridSize[1] - 2 + 'px'
+                        });
+                    }
+                }
             }
 
             // Convert from { positions: ..., dimensions: ... } to an
@@ -86,7 +108,18 @@ define(
             // Position panes when the model field changes
             $scope.$watch("model", lookupPanels);
 
+            refreshCellStyles();
+
             return {
+                /**
+                 * Get styles for all background cells, as will populate the
+                 * ng-style tag.
+                 * @memberof FixedController#
+                 * @returns {Array} cell styles
+                 */
+                getCellStyles: function () {
+                    return cellStyles;
+                },
                 /**
                  * Get a style object for a frame with the specified domain
                  * object identifier, suitable for use in an `ng-style`
