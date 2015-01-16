@@ -95,7 +95,7 @@ define(
                     ids = (model || {}).composition || [];
 
                 // Pull panel positions from configuration
-                rawPositions = shallowCopy(configuration.panels || {}, ids);
+                rawPositions = shallowCopy(configuration.elements || {}, ids);
 
                 // Clear prior computed positions
                 positions = {};
