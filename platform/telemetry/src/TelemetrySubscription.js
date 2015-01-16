@@ -58,7 +58,10 @@ define(
             // Invoke the observer callback to notify that new streaming
             // data has become available.
             function fireCallback() {
-                callback();
+                // Fire callback, if one was provided
+                if (callback) {
+                    callback();
+                }
                 // Clear the pending flag so that future updates will
                 // schedule this callback.
                 updatePending = false;
