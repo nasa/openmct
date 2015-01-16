@@ -17,11 +17,13 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function FixedController($scope) {
+        function FixedController($scope, telemetrySubscriber, telemetryFormatter) {
             var gridSize = DEFAULT_GRID_SIZE,
                 gridExtent = DEFAULT_GRID_EXTENT,
                 activeDrag,
                 activeDragId,
+                subscription,
+                values = {},
                 cellStyles = [],
                 rawPositions = {},
                 positions = {};
@@ -105,8 +107,42 @@ define(
                 ids.forEach(populatePosition);
             }
 
+            function updateValue(telemetryObject) {
+                var id = telemetryObject && telemetryObject.getId();
+                if (id) {
+                    values[id] = telemetryFormatter.formatRangeValue(
+                        subscription.getRangeValue(telemetryObject)
+                    );
+                }
+            }
+
+            // Update telemetry values based on new data available
+            function updateValues() {
+                if (subscription) {
+                    subscription.getTelemetryObjects().forEach(updateValue);
+                }
+            }
+
+            // Subscribe to telemetry updates for this domain object
+            function subscribe(domainObject) {
+                // Clear any old values
+                values = {};
+
+                // Release existing subscription (if any)
+                if (subscription) {
+                    subscription.unsubscribe();
+                }
+
+                // Make a new subscription
+                subscription = domainObject &&
+                    telemetrySubscriber.subscribe(domainObject, updateValues);
+            }
+
             // Position panes when the model field changes
             $scope.$watch("model", lookupPanels);
+
+            // Subscribe to telemetry when an object is available
+            $scope.$watch("domainObject", subscribe);
 
             refreshCellStyles();
 
@@ -119,6 +155,15 @@ define(
                  */
                 getCellStyles: function () {
                     return cellStyles;
+                },
+                /**
+                 * Get the current data value for the specified domain object.
+                 * @memberof FixedController#
+                 * @param {string} id the domain object identifier
+                 * @returns {string} the displayable data value
+                 */
+                getValue: function (id) {
+                    return values[id];
                 },
                 /**
                  * Set the size of the viewable fixed position area.
