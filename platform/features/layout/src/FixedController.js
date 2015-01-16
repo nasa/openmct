@@ -5,8 +5,8 @@ define(
     function (LayoutDrag) {
         "use strict";
 
-        var DEFAULT_DIMENSIONS = [ 12, 8 ],
-            DEFAULT_GRID_SIZE = [32, 32];
+        var DEFAULT_DIMENSIONS = [ 2, 1 ],
+            DEFAULT_GRID_SIZE = [64, 16];
 
         /**
          * The FixedController is responsible for supporting the
@@ -153,14 +153,14 @@ define(
                         $scope.configuration || {};
                     // Make sure there is a "panels" field in the
                     // view configuration.
-                    $scope.configuration.panels =
-                        $scope.configuration.panels || {};
+                    $scope.configuration.elements =
+                        $scope.configuration.elements || {};
                     // Store the position of this panel.
-                    $scope.configuration.panels[activeDragId] =
+                    $scope.configuration.elements[activeDragId] =
                         rawPositions[activeDragId];
                     // Mark this object as dirty to encourage persistence
                     if ($scope.commit) {
-                        $scope.commit("Moved frame.");
+                        $scope.commit("Moved element.");
                     }
                 }
             };

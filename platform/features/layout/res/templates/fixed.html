@@ -4,10 +4,11 @@
     <div ng-repeat="childObject in composition"
          ng-style="controller.getStyle(childObject.getId())">
 
-        <div>
-            <mct-representation key="'frame'"
-                                mct-object="childObject">
-            </mct-representation>
+        <div ng-style="controller.getCellStyle()">
+            {{childObject.getModel().name}}
+        </div>
+        <div ng-style="controller.getCellStyle()">
+            {{controller.getValue(childObject.getId())}}
         </div>
 
         <!-- Drag handles -->
