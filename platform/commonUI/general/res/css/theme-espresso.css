@@ -2555,89 +2555,87 @@ input[type="text"] {
 /* line 1, ../sass/_autoflow.scss */
 .autoflow {
   font-size: 0.75rem; }
-  /* line 6, ../sass/_autoflow.scss */
+  /* line 9, ../sass/_autoflow.scss */
   .autoflow .l-autoflow-header {
     bottom: auto;
     height: 22px;
     line-height: 22px; }
-    /* line 10, ../sass/_autoflow.scss */
+    /* line 13, ../sass/_autoflow.scss */
     .autoflow .l-autoflow-header span {
       vertical-align: middle; }
-    /* line 13, ../sass/_autoflow.scss */
+    /* line 16, ../sass/_autoflow.scss */
     .autoflow .l-autoflow-header .l-filter {
       margin-left: 5px; }
-  /* line 18, ../sass/_autoflow.scss */
+  /* line 21, ../sass/_autoflow.scss */
   .autoflow .l-autoflow-items {
     overflow-x: scroll;
     overflow-y: hidden;
     top: 32px;
     white-space: nowrap; }
-    /* line 25, ../sass/_autoflow.scss */
+    /* line 27, ../sass/_autoflow.scss */
     .autoflow .l-autoflow-items .l-autoflow-col {
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
       box-sizing: border-box;
       border-left: 1px solid #4d4d4d;
       display: inline-block;
-      height: 100%;
       padding-left: 5px;
       padding-right: 5px;
-      width: 150px; }
-      /* line 34, ../sass/_autoflow.scss */
+      vertical-align: top;
+      width: 225px; }
+      /* line 37, ../sass/_autoflow.scss */
       .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row {
         -webkit-box-sizing: border-box;
         -moz-box-sizing: border-box;
         box-sizing: border-box;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         display: block;
         height: 15px;
         line-height: 15px;
         margin-bottom: 1px;
         margin-top: 1px;
         position: relative; }
-        /* line 42, ../sass/_autoflow.scss */
+        /* line 46, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row:first-child {
           border-top: none; }
-        /* line 45, ../sass/_autoflow.scss */
+        /* line 49, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row:hover {
           background: rgba(255, 255, 255, 0.1); }
-        /* line 48, ../sass/_autoflow.scss */
+        /* line 52, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row.stale {
           color: #666666; }
-        /* line 52, ../sass/_autoflow.scss */
+        /* line 56, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row:not(.stale) .l-autoflow-item.r {
           color: #cccccc; }
-        /* line 57, ../sass/_autoflow.scss */
+        /* line 61, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row.alert .l-autoflow-item.r {
-          background: #cc0000;
-          padding-right: 2px; }
-        /* line 62, ../sass/_autoflow.scss */
+          background: #cc0000; }
+        /* line 65, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row.first-in-group {
           border-top: 1px solid gray; }
-        /* line 65, ../sass/_autoflow.scss */
+        /* line 68, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row .l-autoflow-item {
-          bottom: auto;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          top: 1px;
-          bottom: 1px; }
-          /* line 71, ../sass/_autoflow.scss */
+          display: block; }
+          /* line 70, ../sass/_autoflow.scss */
           .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row .l-autoflow-item.l {
-            width: 60%;
-            right: auto; }
-          /* line 76, ../sass/_autoflow.scss */
+            float: none;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            width: auto; }
+          /* line 78, ../sass/_autoflow.scss */
           .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row .l-autoflow-item.r {
             -webkit-border-radius: 3px;
             -moz-border-radius: 3px;
             -ms-border-radius: 3px;
             -o-border-radius: 3px;
             border-radius: 3px;
-            left: 60%;
+            float: right;
+            margin-left: 5px;
+            padding-left: 2px;
+            padding-right: 2px;
             text-align: right; }
-      /* line 86, ../sass/_autoflow.scss */
+      /* line 90, ../sass/_autoflow.scss */
       .autoflow .l-autoflow-items .l-autoflow-col:first-child {
         border-left: none;
         padding-left: 0; }
-        /* line 89, ../sass/_autoflow.scss */
-        .autoflow .l-autoflow-items .l-autoflow-col:first-child .l-autoflow-item.l {
-          left: 0; }
