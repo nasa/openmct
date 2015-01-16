@@ -10,18 +10,16 @@
          ng-style="cell">
     </div>
 
-
-
-
+    <!-- Telemetry elements -->
     <div ng-repeat="childObject in composition"
-         style="position: absolute;"
+         style="position: absolute; background: #444;"
          ng-style="controller.getStyle(childObject.getId())">
 
-        <div ng-style="controller.getCellStyle()">
+        <div style="position: absolute; left: 0px; top: 0px; bottom: 0px; width: 50%; overflow: hidden;">
             {{childObject.getModel().name}}
         </div>
-        <div ng-style="controller.getCellStyle()">
-            {{controller.getValue(childObject.getId())}}
+        <div style="position: absolute; right: 0px; top: 0px; bottom: 0px; width: 50%; overflow: hidden;">
+            X{{controller.getValue(childObject.getId())}}
         </div>
 
         <!-- Drag handles -->
