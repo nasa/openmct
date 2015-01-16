@@ -49,8 +49,8 @@ define(
                         cellStyles.push({
                             left: x * gridSize[0] + 'px',
                             top: y * gridSize[1] + 'px',
-                            width: gridSize[0] - 2 + 'px',
-                            height: gridSize[1] - 2 + 'px'
+                            width: gridSize[0] - 1 + 'px',
+                            height: gridSize[1] - 1 + 'px'
                         });
                     }
                 }
@@ -119,6 +119,19 @@ define(
                  */
                 getCellStyles: function () {
                     return cellStyles;
+                },
+                /**
+                 * Set the size of the viewable fixed position area.
+                 * @memberof FixedController#
+                 * @param bounds the width/height, as reported by mct-resize
+                 */
+                setBounds: function (bounds) {
+                    var w = Math.ceil(bounds.width / gridSize[0]),
+                        h = Math.ceil(bounds.height / gridSize[1]);
+                    if (w !== gridExtent[0] || h !== gridExtent[1]) {
+                        gridExtent = [w, h];
+                        refreshCellStyles();
+                    }
                 },
                 /**
                  * Get a style object for a frame with the specified domain

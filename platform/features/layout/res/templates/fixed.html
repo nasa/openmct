@@ -1,7 +1,8 @@
 
 
 <div style="width: 100%; height: 100%; position: absolute; left: 0px; top: 0px;"
-     ng-controller="FixedController as controller">
+     ng-controller="FixedController as controller"
+     mct-resize="controller.setBounds(bounds)">
 
     <!-- Background grid -->
     <div ng-repeat="cell in controller.getCellStyles()"
