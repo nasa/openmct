@@ -3,6 +3,30 @@
     "description": "General UI elements, meant to be reused across modes.",
     "resources": "res",
     "extensions": {
+        "runs": [
+            {
+                "implementation": "StyleSheetLoader.js",
+                "depends": [ "stylesheets[]", "$document" ]
+            }
+        ],
+        "stylesheets": [
+            {
+                "stylesheetUrl": "css/normalize.min.css",
+                "priority": "mandatory"
+            },
+            {
+                "stylesheetUrl": "css/theme-espresso.css",
+                "priority": 1000
+            },
+            {
+                "stylesheetUrl": "css/items.css",
+                "priority": 901
+            },
+            {
+                "stylesheetUrl": "css/tree.css",
+                "priority": 900
+            }
+        ],
         "templates": [
             {
                 "key": "bottombar",

@@ -9,5 +9,6 @@
     "controllers/ViewSwitcherController",
     "directives/MCTContainer",
     "directives/MCTDrag",
-    "directives/MCTResize"
+    "directives/MCTResize",
+    "StyleSheetLoader"
 ]
