@@ -13,7 +13,7 @@ define(
          * of applicable views for a represented domain object.
          * @constructor
          */
-        function ViewSwitcherController($scope) {
+        function ViewSwitcherController($scope, $timeout) {
             // If the view capability gets refreshed, try to
             // keep the same option chosen.
             function findMatchingOption(options, selected) {
@@ -32,10 +32,12 @@ define(
 
             // Get list of views, read from capability
             function updateOptions(views) {
-                $scope.ngModel.selected = findMatchingOption(
-                    views || [],
-                    ($scope.ngModel || {}).selected
-                );
+                $timeout(function () {
+                    $scope.ngModel.selected = findMatchingOption(
+                        views || [],
+                        ($scope.ngModel || {}).selected
+                    );
+                }, 0);
             }
 
             // Update view options when the in-scope results of using the

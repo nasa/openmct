@@ -10,12 +10,15 @@ define(
 
         describe("The view switcher controller", function () {
             var mockScope,
+                mockTimeout,
                 controller;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj("$scope", [ "$watch" ]);
+                mockTimeout = jasmine.createSpy("$timeout");
+                mockTimeout.andCallFake(function (cb) { cb(); });
                 mockScope.ngModel = {};
-                controller = new ViewSwitcherController(mockScope);
+                controller = new ViewSwitcherController(mockScope, mockTimeout);
             });
 
             it("watches for changes in applicable views", function () {
@@ -69,6 +72,19 @@ define(
 
                 // "b" is still in there, should remain selected
                 expect(mockScope.ngModel.selected).not.toEqual(views[1]);
+            });
+
+            // Use of a timeout avoids infinite digest problems when deeply
+            // nesting switcher-driven views (e.g. in a layout.) See WTD-689
+            it("updates initial selection on a timeout", function () {
+                // Verify precondition
+                expect(mockTimeout).not.toHaveBeenCalled();
+
+                // Invoke the watch for set of views
+                mockScope.$watch.mostRecentCall.args[1]([]);
+
+                // Should have run on a timeout
+                expect(mockTimeout).toHaveBeenCalled();
             });
 
         });
