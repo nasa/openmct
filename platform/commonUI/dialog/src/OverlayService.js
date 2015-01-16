@@ -25,10 +25,20 @@ define(
          * @constructor
          */
         function OverlayService($document, $compile, $rootScope) {
-            function createOverlay(overlayModel, key) {
+            function createOverlay(key, overlayModel) {
                 // Create a new scope for this overlay
                 var scope = $rootScope.$new(),
                     element;
+
+                // Stop showing the overlay; additionally, release the scope
+                // that it uses.
+                function dismiss() {
+                    scope.$destroy();
+                    element.remove();
+                }
+
+                // If no model is supplied, just fill in a default "cancel"
+                overlayModel = overlayModel || { cancel: dismiss };
 
                 // Populate the scope; will be passed directly to the template
                 scope.overlay = overlayModel;
@@ -38,12 +48,7 @@ define(
                 element = $compile(TEMPLATE)(scope);
                 $document.find('body').prepend(element);
 
-                // Stop showing the overlay; additionally, release the scope
-                // that it uses.
-                function dismiss() {
-                    scope.$destroy();
-                    element.remove();
-                }
+
 
                 return {
                     dismiss: dismiss
@@ -57,11 +62,12 @@ define(
                  * template (as pointed to by the `key` argument) is
                  * responsible for having a useful z-order, and for
                  * blocking user interactions if appropriate.
+                 *
+                 * @param {string} key the symbolic key which identifies
+                 *        the template of the overlay to be shown
                  * @param {object} overlayModel the model to pass to the
                  *        included overlay template (this will be passed
                  *        in via ng-model)
-                 * @param {string} key the symbolic key which identifies
-                 *        the template of the overlay to be shown
                  */
                 createOverlay: createOverlay
             };

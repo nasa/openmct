@@ -1,0 +1,12 @@
+<div ng-controller = "AboutController as about">
+    This is a placeholder for the about dialog.
+
+    <a ng-click="about.openLicenses()">Show licenses.</a>
+
+    <p ng-repeat = "version in about.versions()">
+        <span title="{{version.description}}">
+            <b>{{version.name}}</b>
+            <i>{{version.value}}</i>
+        </span>
+    </p>
+</div>

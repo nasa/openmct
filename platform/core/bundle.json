@@ -3,6 +3,19 @@
     "description": "Defines core concepts of Open MCT Web.",
     "sources": "src",
     "extensions": {
+        "versions": [
+            {
+                "name": "Open MCT Web",
+                "value": "0.3.0-dev",
+                "priority": 1000
+            },
+            {
+                "name": "Built",
+                "value": "YYYY-MM-DDTHH:MM:ssZ",
+                "description": "The date on which this version of the client was built.",
+                "priority": 990
+            }
+        ],
         "components": [
             {
                 "provides": "objectService",
