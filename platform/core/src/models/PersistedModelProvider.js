@@ -20,16 +20,30 @@ define(
          *        models should be retrieved.
          */
         function PersistedModelProvider(persistenceService, $q, SPACE) {
+            // Load a single object model from persistence
+            function loadModel(id) {
+                return persistenceService.readObject(SPACE, id);
+            }
+
+            // Promise all persisted models (in id->model form)
             function promiseModels(ids) {
-                return $q.all(ids.map(function (id) {
-                    return persistenceService.readObject(SPACE, id);
-                })).then(function (models) {
+                // Package the result as id->model
+                function packageResult(models) {
                     var result = {};
                     ids.forEach(function (id, index) {
                         result[id] = models[index];
                     });
                     return result;
+                }
+
+                // Filter out "namespaced" identifiers; these are
+                // not expected to be found in database. See WTD-659.
+                ids = ids.filter(function (id) {
+                    return id.indexOf(":") === -1;
                 });
+
+                // Give a promise for all persistence lookups...
+                return $q.all(ids.map(loadModel)).then(packageResult);
             }
 
             return {

@@ -22,7 +22,7 @@ define(
             }
 
             function formatRangeValue(v, key) {
-                return isNaN(v) ? "" : v.toFixed(3);
+                return isNaN(v) ? v : v.toFixed(3);
             }
 
             return {

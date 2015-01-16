@@ -73,7 +73,7 @@ define(
             // Handle a specific representation of a specific domain object
             function represent(representation, representedObject) {
                 // Track the key, to know which view configuration to save to.
-                key = representation.key;
+                key = (representation || {}).key;
                 // Track the represented object
                 domainObject = representedObject;
 

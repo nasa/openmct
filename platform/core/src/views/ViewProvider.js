@@ -81,15 +81,32 @@ define(
                 return capabilities.map(hasCapability).reduce(and, true);
             }
 
+            // Check if a view and domain object type can be paired;
+            // both can restrict the others they accept.
+            function viewMatchesType(view, type) {
+                var views = type && (type.getDefinition() || {}).views,
+                    matches = true;
+
+                // View is restricted to a certain type
+                if (view.type) {
+                    matches = matches && type && type.instanceOf(view.type);
+                }
+
+                // Type wishes to restrict its specific views
+                if (Array.isArray(views)) {
+                    matches = matches && (views.indexOf(view.key) > -1);
+                }
+
+                return matches;
+            }
+
             function getViews(domainObject) {
                 var type = domainObject.useCapability("type");
 
                 // First, filter views by type (matched to domain object type.)
                 // Second, filter by matching capabilities.
                 return views.filter(function (view) {
-                    return (!view.type) || type.instanceOf(view.type);
-                }).filter(function (view) {
-                    return capabilitiesMatch(
+                    return viewMatchesType(view, type) && capabilitiesMatch(
                         domainObject,
                         view.needs || [],
                         view.delegation || false

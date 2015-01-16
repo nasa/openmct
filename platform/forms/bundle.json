@@ -8,6 +8,10 @@
                 "implementation": "MCTForm.js"
             },
             {
+                "key": "mctToolbar",
+                "implementation": "MCTToolbar.js"
+            },
+            {
                 "key": "mctControl",
                 "implementation": "MCTControl.js",
                 "depends": [ "controls[]" ]
@@ -31,6 +35,14 @@
                 "templateUrl": "templates/controls/textfield.html"
             },
             {
+                "key": "button",
+                "templateUrl": "templates/controls/button.html"
+            },
+            {
+                "key": "color",
+                "templateUrl": "templates/controls/color.html"
+            },
+            {
                 "key": "composite",
                 "templateUrl": "templates/controls/composite.html"
             }
@@ -44,36 +56,6 @@
             {
                 "key": "CompositeController",
                 "implementation": "controllers/CompositeController.js"
-            }
-        ],
-        "templates": [
-            {
-                "key": "_checkbox",
-                "templateUrl": "templates/_checkbox.html"
-            },
-            {
-                "key": "_checkboxes",
-                "templateUrl": "templates/_checkboxes.html"
-            },
-            {
-                "key": "_datetime",
-                "templateUrl": "templates/_datetime.html"
-            },
-            {
-                "key": "_select",
-                "templateUrl": "templates/_select.html"
-            },
-            {
-                "key": "_selects",
-                "templateUrl": "templates/_selects.html"
-            },
-            {
-                "key": "_textfield",
-                "templateUrl": "templates/_textfield.html"
-            },
-            {
-                "key": "_textfields",
-                "templateUrl": "templates/_textfields.html"
             }
         ]
     }

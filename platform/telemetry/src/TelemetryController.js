@@ -47,6 +47,9 @@ define(
                 // is being issued.
                 broadcasting: false,
 
+                // Active subscriptions
+                subscriptions: [],
+
                 // Used for getTelemetryObjects; a reference is
                 // stored so that this can be called in a watch
                 telemetryObjects: [],
@@ -120,6 +123,21 @@ define(
                 }));
             }
 
+            // Subscribe to streaming telemetry updates
+            function subscribe(telemetryCapability, id) {
+                return telemetryCapability.subscribe(function () {
+                    requestTelemetryForId(id, false);
+                });
+            }
+
+            // Stop listening to active subscriptions
+            function unsubscribe() {
+                self.subscriptions.forEach(function (s) {
+                    return s && s();
+                });
+                self.subscriptions = [];
+            }
+
             // Look up domain objects which have telemetry capabilities.
             // This will either be the object in view, or object that
             // this object delegates its telemetry capability to.
@@ -149,12 +167,17 @@ define(
             function buildResponseContainer(domainObject) {
                 var telemetry = domainObject &&
                         domainObject.getCapability("telemetry"),
+                    id,
                     metadata;
 
                 if (telemetry) {
+                    id = domainObject.getId();
+
+                    self.subscriptions.push(subscribe(telemetry, id));
+
                     metadata = telemetry.getMetadata();
 
-                    self.response[domainObject.getId()] = {
+                    self.response[id] = {
                         name: domainObject.getModel().name,
                         domainObject: domainObject,
                         metadata: metadata,
@@ -187,6 +210,9 @@ define(
             // domain objects, and update some controller-internal
             // state to support subsequent calls.
             function buildResponseContainers(domainObjects) {
+                // Clear out any existing subscriptions
+                unsubscribe();
+
                 // Build the containers
                 domainObjects.forEach(buildResponseContainer);
 
@@ -217,6 +243,7 @@ define(
             // scope. This will be the domain object itself, or
             // its telemetry delegates, or both.
             function getTelemetryObjects(domainObject) {
+                unsubscribe();
                 promiseRelevantDomainObjects(domainObject)
                     .then(buildResponseContainers);
             }
@@ -241,6 +268,7 @@ define(
 
             // Stop polling for changes
             function deactivate() {
+                unsubscribe();
                 self.active = false;
             }
 
