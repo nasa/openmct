@@ -73,7 +73,7 @@
             {
                 "key": "ViewSwitcherController",
                 "implementation": "controllers/ViewSwitcherController.js",
-                "depends": [ "$scope" ]
+                "depends": [ "$scope", "$timeout" ]
             },
             {
                 "key": "BottomBarController",
