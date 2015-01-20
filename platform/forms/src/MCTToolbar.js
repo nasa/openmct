@@ -9,7 +9,7 @@ define(
         "use strict";
 
         /**
-         * The mct-form directive allows generation of displayable
+         * The mct-toolbar directive allows generation of displayable
          * forms based on a declarative description of the form's
          * structure.
          *
@@ -17,7 +17,7 @@ define(
          *
          * * `ng-model`: The model for the form; where user input
          *   where be stored.
-         * * `structure`: The declarative structure of the form.
+         * * `structure`: The declarative structure of the toolbar.
          *   Describes what controls should be shown and where
          *   their values should be read/written in the model.
          * * `name`: The name under which to expose the form's
@@ -31,7 +31,7 @@ define(
             var templatePath = [
                 "platform/forms", //MCTForm.bundle.path,
                 "res", //MCTForm.bundle.resources,
-                "templates/form.html"
+                "templates/toolbar.html"
             ].join("/");
 
             return {
