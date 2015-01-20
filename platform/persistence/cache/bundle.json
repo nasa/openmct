@@ -1,0 +1,14 @@
+{
+    "name": "Persistence cache",
+    "description": "Cache to improve availability of persisted objects.",
+    "extensions": {
+        "components": [
+            {
+                "provides": "persistenceService",
+                "type": "decorator",
+                "implementation": "CachingPersistenceDecorator.js",
+                "depends": [ "PERSISTENCE_SPACE" ]
+            }
+        ]
+    }
+}

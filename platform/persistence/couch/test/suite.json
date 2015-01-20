@@ -1,5 +1,4 @@
 [
-    "CachingPersistenceDecorator",
     "CouchDocument",
     "CouchIndicator",
     "CouchPersistenceProvider"
