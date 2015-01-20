@@ -12,7 +12,8 @@
     "platform/features/plot",
     "platform/features/scrolling",
     "platform/forms",
-    "platform/persistence",
+    "platform/persistence/cache",
+    "platform/persistence/couch",
 
     "example/generator"
 ]
