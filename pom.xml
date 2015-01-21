@@ -26,9 +26,9 @@
                     <warSourceIncludes>
                         index.html,
                         *.json,
-                        **/src/*,
-                        **/res/*,
-                        **/lib/*,
+                        **/src/**/*,
+                        **/res/**/*,
+                        **/lib/**/*,
                         **/bundle.json
                     </warSourceIncludes>
                     <warSourceExcludes>
