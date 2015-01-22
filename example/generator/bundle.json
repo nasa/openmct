@@ -16,6 +16,7 @@
                 "name": "Sine Wave Generator",
                 "glyph": "T",
                 "description": "A sine wave generator",
+                "features": "creation",
                 "model": {
                     "telemetry": {
                         "period": 10
