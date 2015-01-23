@@ -22,19 +22,31 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
-                    <warSourceDirectory>.</warSourceDirectory>
-                    <warSourceIncludes>
-                        index.html,
-                        *.json,
-                        **/src/**/*,
-                        **/res/**/*,
-                        **/lib/**/*,
-                        **/bundle.json
-                    </warSourceIncludes>
-                    <warSourceExcludes>
-                        example/**/*,
-                        **/test/lib/*
-                    </warSourceExcludes>
+                    <webResources>
+                        <resource>
+                            <directory>.</directory>
+                            <includes>
+                                <include>index.html</include>
+                                <include>*.json</include>
+                                <include>**/src/**/*</include>
+                                <include>**/res/**/*</include>
+                                <include>**/lib/**/*</include>
+                                <include>**/bundle.json</include>
+                            </includes>
+                            <excludes>
+                                <exclude>platform/core/bundle.json</exclude>
+                                <exclude>example/**/*</exclude>
+                                <exclude>**/test/lib/*</exclude>
+                            </excludes>
+                        </resource>
+                        <resource>
+                            <directory>.</directory>
+                            <includes>
+                                <include>platform/core/bundle.json</include>
+                            </includes>
+                            <filtering>true</filtering>
+                        </resource>
+                    </webResources>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>

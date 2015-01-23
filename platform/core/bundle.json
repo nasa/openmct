@@ -6,7 +6,7 @@
         "versions": [
             {
                 "name": "Open MCT Web",
-                "value": "0.3.0-dev",
+                "value": "${project.version}",
                 "priority": 1000
             },
             {
