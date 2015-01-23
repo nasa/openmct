@@ -20,6 +20,12 @@
                 "value": "${buildNumber}",
                 "description": "A unique revision identifier for the client sources.",
                 "priority": 995
+            },
+            {
+                "name": "Branch",
+                "value": "${scmBranch}",
+                "description": "The date on which this version of the client was built.",
+                "priority": 994
             }
         ],
         "components": [
