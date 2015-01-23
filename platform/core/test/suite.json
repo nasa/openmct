@@ -20,6 +20,8 @@
     "objects/DomainObject",
     "objects/DomainObjectProvider",
 
+    "services/Now",
+
     "types/MergeModels",
     "types/TypeCapability",
     "types/TypeImpl",

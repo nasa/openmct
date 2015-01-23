@@ -148,6 +148,12 @@
                 "depends": [ "$q" ]
             }
         ],
+        "services": [
+            {
+                "key": "now",
+                "implementation": "services/Now.js"
+            }
+        ],
         "roots": [
             {
                 "id": "mine",
