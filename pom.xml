@@ -13,6 +13,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <!-- SCM info, for build number plugin -->
+    <scm>
+        <connection>scm:git:${basedir}</connection>
+    </scm>
+
     <build>
 
         <plugins>
@@ -64,17 +69,12 @@
                             <goal>create</goal>
                         </goals>
                     </execution>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>create-timestamp</goal>
-                        </goals>
-                    </execution>
                 </executions>
                 <configuration>
-                    <timestampFormat>yyyy-MM-dd HH:mm:ss</timestampFormat>
+                    <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss.SSSZ}</timestampFormat>
                     <doCheck>true</doCheck>
                     <doUpdate>false</doUpdate>
+                    <revisionOnScmFailure>Unknown</revisionOnScmFailure>
                 </configuration>
             </plugin>
 
