@@ -12,17 +12,19 @@
 	}
 	.app-logo {
 		@include box-sizing(border-box);
+		cursor: pointer;
 		font-size: 0.8em;
 		line-height: $ueFooterH - 10px;
 		padding-top: 1px;
 		text-transform: uppercase;
-		&.logo-warp {
+		// Moved following to warp/warp.scss
+/*		&.logo-warp {
 			background: url($dirImgs + 'logo-warp.png') no-repeat left top;
 			color: lighten($colorBodyBg, 40%);
 			font-size: 0.7rem;
 			padding-top: 3px;
 			text-align: right;
-		}
+		}*/
 	}
 }
 

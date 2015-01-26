@@ -4,8 +4,12 @@
 		z-index: 100;
 	}
     .btn.close {
+	    @include border-radius($basicCr * 2);
+	    padding: 3px 6px;
         position: absolute;
-        top: $interiorMargin; right: $interiorMargin; bottom: auto; left: auto;
+	    border: none;
+        top: $interiorMarginSm; right: $interiorMarginSm; bottom: auto; left: auto;
+	    z-index: 100;
     }
     .editor {
 //        background: $colorBodyBg;
@@ -18,7 +22,7 @@
 		top: $i; right: $i; bottom: $i; left: $i;
 		z-index: 101;
         >.contents {
-            $m: 20px;
+            $m: 25px;
             top: $m; right: $m; bottom: $m; left: $m;
         }
 	}
