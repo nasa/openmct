@@ -17,14 +17,9 @@
 		line-height: $ueFooterH - 10px;
 		padding-top: 1px;
 		text-transform: uppercase;
-		// Moved following to warp/warp.scss
-/*		&.logo-warp {
-			background: url($dirImgs + 'logo-warp.png') no-repeat left top;
-			color: lighten($colorBodyBg, 40%);
-			font-size: 0.7rem;
-			padding-top: 3px;
-			text-align: right;
-		}*/
+		&.logo-openmctweb {
+			background: url($dirImgs + 'logo-openmctweb.svg') no-repeat center center;
+		}
 	}
 }
 

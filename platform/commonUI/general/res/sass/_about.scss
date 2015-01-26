@@ -8,7 +8,7 @@
 		font-size: 0.8em;
 	}
 	.s-logo-holder {
-		background: url($dirImgs + "bg-lunar-1.jpg") center no-repeat;
+		background: url($dirImgs + "bg-about-openmctweb.jpg") no-repeat center; // For OpenMCT Web.
 		background-size: cover;
 	}
 	.s-logo {
@@ -17,6 +17,9 @@
 		background-repeat: no-repeat;
 		background-size: contain;
 	}
+    .s-logo-openmctweb {
+         background-image: url($dirImgs + 'logo-openmctweb.svg');
+     }
 	h1, h2 {
 		color: #fff;
 		font-weight: normal !important;

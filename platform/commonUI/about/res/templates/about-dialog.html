@@ -1,12 +1,21 @@
-<div ng-controller = "AboutController as about">
-    This is a placeholder for the about dialog.
+<div class="abs t-about l-about t-about-openmctweb" ng-controller = "AboutController as about">
+    <div class="l-logo-holder s-logo-holder">
+        <div class="l-logo s-logo s-logo-nasa"></div>
+        <div class="l-logo l-logo-app s-logo s-logo-openmctweb"></div>
+    </div>
 
-    <a ng-click="about.openLicenses()">Show licenses.</a>
-
-    <p ng-repeat = "version in about.versions()">
-        <span title="{{version.description}}">
-            <b>{{version.name}}</b>
-            <i>{{version.value}}</i>
-        </span>
-    </p>
+    <div class="l-content">
+        <h1 class="l-title s-title">OpenMCT Web</h1>
+        <div class="l-description s-description">
+            <p>OpenMCT Web is a project of NASA's Ames Research Center. Copyright &copy;2015 NASA Ames Research Center, all rights reserved. <a ng-click="about.openLicenses()">Licensing information</a></p>
+        </div>
+        <h2>Version Information</h2>
+        <ul class="t-info l-info s-info" ng-repeat = "version in about.versions()">
+            <li title="{{version.description}}">
+                <span class="info version-name">{{version.name}}</span>
+	            <span class="info version-value">{{version.value}}</span>
+            </li>
+        </ul>
+    </div>
 </div>
+
