@@ -14,7 +14,7 @@ define(
 
             beforeEach(function () {
                 mockTimeout = jasmine.createSpy("$timeout");
-                mockScope = jasmine.createSpyObj("$scope", ["$eval"]);
+                mockScope = jasmine.createSpyObj("$scope", ["$eval", "$on"]);
 
                 testElement = { offsetWidth: 100, offsetHeight: 200 };
                 testAttrs = { mctResize: "some-expr" };
@@ -61,6 +61,32 @@ define(
                     testAttrs.mctResize,
                     { bounds: { width: 300, height: 350 } }
                 );
+            });
+
+            it("stops size checking for size changes after destroy", function () {
+                mctResize.link(mockScope, [testElement], testAttrs);
+
+                // First, make sure there's a $destroy observer
+                expect(mockScope.$on)
+                    .toHaveBeenCalledWith("$destroy", jasmine.any(Function));
+
+                // Should have scheduled the first timeout
+                expect(mockTimeout.calls.length).toEqual(1);
+
+                // Fire the timeout
+                mockTimeout.mostRecentCall.args[0]();
+
+                // Should have scheduled another timeout
+                expect(mockTimeout.calls.length).toEqual(2);
+
+                // Broadcast a destroy event
+                mockScope.$on.mostRecentCall.args[1]();
+
+                // Fire the timeout
+                mockTimeout.mostRecentCall.args[0]();
+
+                // Should NOT have scheduled another timeout
+                expect(mockTimeout.calls.length).toEqual(2);
             });
 
         });
