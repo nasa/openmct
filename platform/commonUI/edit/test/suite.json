@@ -12,5 +12,6 @@
     "capabilities/EditablePersistenceCapability",
     "capabilities/EditorCapability",
     "objects/EditableDomainObject",
-    "objects/EditableDomainObjectCache"
+    "objects/EditableDomainObjectCache",
+    "objects/EditableModelCache"
 ]
