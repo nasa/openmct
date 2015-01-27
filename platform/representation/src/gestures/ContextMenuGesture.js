@@ -59,10 +59,14 @@ define(
                 scope.domainObject = domainObject;
                 scope.menuStyle = {};
                 scope.menuStyle[goLeft ? "right" : "left"] =
-                    eventCoors[0] + 'px';
+                    (goLeft ? (winDim[0] - eventCoors[0]) : eventCoors[0]) + 'px';
                 scope.menuStyle[goUp ? "bottom" : "top"] =
-                    eventCoors[1] + 'px';
-                scope.menuClass = { "go-left": goLeft, "go-up": goUp, "context-menu-holder": true };
+                    (goUp ? (winDim[1] - eventCoors[1]) : eventCoors[1]) + 'px';
+                scope.menuClass = {
+                    "go-left": goLeft,
+                    "go-up": goUp,
+                    "context-menu-holder": true
+                };
 
                 // Create the context menu
                 menu = $compile(MENU_TEMPLATE)(scope);

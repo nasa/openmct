@@ -10,7 +10,8 @@ define(
         "use strict";
 
         var JQLITE_FUNCTIONS = [ "on", "off", "find", "append", "remove" ],
-            DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability" ];
+            DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability" ],
+            MENU_DIMENSIONS = GestureConstants.MCT_MENU_DIMENSIONS;
 
 
         describe("The 'context menu' gesture", function () {
@@ -34,7 +35,7 @@ define(
                 mockMenu = jasmine.createSpyObj("menu", JQLITE_FUNCTIONS);
                 mockDocument = jasmine.createSpyObj("$document", JQLITE_FUNCTIONS);
                 mockBody = jasmine.createSpyObj("body", JQLITE_FUNCTIONS);
-                mockWindow = { innerWidth: GestureConstants[0] * 4, innerHeight: GestureConstants[1] * 4 };
+                mockWindow = { innerWidth: MENU_DIMENSIONS[0] * 4, innerHeight: MENU_DIMENSIONS[1] * 4 };
                 mockRootScope = jasmine.createSpyObj("$rootScope", ["$new"]);
                 mockScope = {};
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
@@ -91,6 +92,30 @@ define(
             it("prevents the default context menu behavior", function () {
                 fireGesture(mockEvent);
                 expect(mockEvent.preventDefault).toHaveBeenCalled();
+            });
+
+            it("positions menus where clicked", function () {
+                mockEvent.pageX = 10;
+                mockEvent.pageY = 5;
+                fireGesture(mockEvent);
+                expect(mockScope.menuStyle.left).toEqual("10px");
+                expect(mockScope.menuStyle.top).toEqual("5px");
+                expect(mockScope.menuStyle.right).toBeUndefined();
+                expect(mockScope.menuStyle.bottom).toBeUndefined();
+                expect(mockScope.menuClass['go-up']).toBeFalsy();
+                expect(mockScope.menuClass['go-left']).toBeFalsy();
+            });
+
+            it("repositions menus near the screen edge", function () {
+                mockEvent.pageX = mockWindow.innerWidth - 10;
+                mockEvent.pageY = mockWindow.innerHeight - 5;
+                fireGesture(mockEvent);
+                expect(mockScope.menuStyle.right).toEqual("10px");
+                expect(mockScope.menuStyle.bottom).toEqual("5px");
+                expect(mockScope.menuStyle.left).toBeUndefined();
+                expect(mockScope.menuStyle.top).toBeUndefined();
+                expect(mockScope.menuClass['go-up']).toBeTruthy();
+                expect(mockScope.menuClass['go-left']).toBeTruthy();
             });
 
             it("removes a menu when body is clicked", function () {
