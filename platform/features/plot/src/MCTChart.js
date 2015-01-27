@@ -46,6 +46,7 @@ define(
 
             function linkChart(scope, element) {
                 var canvas = element.find("canvas")[0],
+                    releaseInterval,
                     chart;
 
                 // Try to initialize GLChart, which allows drawing using WebGL.
@@ -111,11 +112,14 @@ define(
                 }
 
                 // Check for resize, on a timer
-                $interval(drawIfResized, 1000);
+                releaseInterval = $interval(drawIfResized, 1000);
 
                 // Watch "draw" for external changes to the set of
                 // things to be drawn.
                 scope.$watchCollection("draw", doDraw);
+
+                // Stop checking for resize when scope is destroyed
+                scope.$on("$destroy", releaseInterval);
             }
 
             return {
