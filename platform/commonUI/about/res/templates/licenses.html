@@ -1,4 +1,10 @@
-<div ng-controller="LicenseController as lc" style="padding: 1em;">
+<style>
+    .licenses { padding: 1em; }
+    .licenses th { font-weight: bold; padding: 0.5em; }
+    .licenses td { padding: 0.5em; }
+</style>
+
+<div ng-controller="LicenseController as lc" class="licenses">
 
     <p>
         This software includes components released under the following licenses.
@@ -14,7 +20,7 @@
                 <th>License</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody style="font-weight: normal;">
             <tr ng-repeat="license in lc.licenses()">
                 <td><a ng-href="{{license.website}}">{{license.name}}</a></td>
                 <td>{{license.version}}</td>
