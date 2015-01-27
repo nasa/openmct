@@ -44,6 +44,17 @@
                 "implementation": "TelemetrySubscriber.js",
                 "depends": [ "$q", "$timeout" ]
             }
+        ],
+        "licenses": [
+            {
+                "name": "Moment.js",
+                "version": "2.7.0",
+                "author": "Tim Wood, Iskren Chernev, Moment.js contributors",
+                "description": "Time/date parsing/formatting.",
+                "website": "http://momentjs.com",
+                "license": "MIT",
+                "link": "https://raw.githubusercontent.com/moment/moment/develop/LICENSE"
+            }
         ]
     }
 }
