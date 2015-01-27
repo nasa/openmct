@@ -1,1 +1,27 @@
-Placeholder for open source licenses.
+<div ng-controller="LicenseController as lc" style="padding: 1em;">
+
+    <p>
+        This software includes components released under the following licenses.
+    </p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Version</th>
+                <th>Author</th>
+                <th>Description</th>
+                <th>License</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="license in lc.licenses()">
+                <td><a ng-href="{{license.website}}">{{license.name}}</a></td>
+                <td>{{license.version}}</td>
+                <td>{{license.author}}</td>
+                <td>{{license.description}}</td>
+                <td><a ng-href="{{license.link}}">{{license.license}}</a></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
