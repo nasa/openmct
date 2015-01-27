@@ -38,15 +38,15 @@ define(
 
             // Model changes will indicate that panel positions
             // may have changed, for instance.
-            it("watches for changes to model", function () {
+            it("watches for changes to composition", function () {
                 expect(mockScope.$watch).toHaveBeenCalledWith(
-                    "model",
+                    "model.composition",
                     jasmine.any(Function)
                 );
             });
 
             it("provides styles for frames, from configuration", function () {
-                mockScope.$watch.mostRecentCall.args[1](testModel);
+                mockScope.$watch.mostRecentCall.args[1](testModel.composition);
                 expect(controller.getFrameStyle("a")).toEqual({
                     top: "320px",
                     left: "640px",
@@ -59,7 +59,7 @@ define(
                 var styleB, styleC;
 
                 // b and c do not have configured positions
-                mockScope.$watch.mostRecentCall.args[1](testModel);
+                mockScope.$watch.mostRecentCall.args[1](testModel.composition);
 
                 styleB = controller.getFrameStyle("b");
                 styleC = controller.getFrameStyle("c");
@@ -76,7 +76,7 @@ define(
 
             it("allows panels to be dragged", function () {
                 // Populate scope
-                mockScope.$watch.mostRecentCall.args[1](testModel);
+                mockScope.$watch.mostRecentCall.args[1](testModel.composition);
 
                 // Verify precondtion
                 expect(testConfiguration.panels.b).not.toBeDefined();
@@ -95,7 +95,7 @@ define(
 
             it("invokes commit after drag", function () {
                 // Populate scope
-                mockScope.$watch.mostRecentCall.args[1](testModel);
+                mockScope.$watch.mostRecentCall.args[1](testModel.composition);
 
                 // Add a commit method to scope
                 mockScope.commit = jasmine.createSpy("commit");
