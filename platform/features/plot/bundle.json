@@ -5,6 +5,7 @@
             {
                 "name": "Plot",
                 "key": "plot",
+                "glyph": "6",
                 "templateUrl": "templates/plot.html",
                 "needs": [ "telemetry" ],
                 "delegation": true
