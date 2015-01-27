@@ -10,6 +10,7 @@ define(
                 mockNavigationService,
                 mockLog,
                 mockDomainObject,
+                mockType,
                 actionContext,
                 action;
 
@@ -30,6 +31,13 @@ define(
                     "domainObject",
                     [ "getId", "getModel", "getCapability" ]
                 );
+                mockType = jasmine.createSpyObj(
+                    "type",
+                    [ "hasFeature" ]
+                );
+
+                mockDomainObject.getCapability.andReturn(mockType);
+                mockType.hasFeature.andReturn(true);
 
                 actionContext = { domainObject: mockDomainObject };
 
@@ -44,6 +52,8 @@ define(
             it("is only applicable when a domain object is present", function () {
                 expect(EditAction.appliesTo(actionContext)).toBeTruthy();
                 expect(EditAction.appliesTo({})).toBeFalsy();
+                // Should have checked for creatability
+                expect(mockType.hasFeature).toHaveBeenCalledWith('creation');
             });
 
             it("changes URL path to edit mode when performed", function () {

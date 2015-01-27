@@ -81,7 +81,7 @@ define(
             var object = (context || {}).domainObject,
                 contextCapability = object && object.getCapability("context"),
                 parent = contextCapability && contextCapability.getParent(),
-                parentType = parent.getCapability('type'),
+                parentType = parent && parent.getCapability('type'),
                 parentCreatable = parentType && parentType.hasFeature('creation');
 
             // Only creatable types should be modifiable

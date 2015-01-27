@@ -18,7 +18,10 @@ define(
 
             beforeEach(function () {
                 capabilities = {
-                    type: { getProperties: function () { return []; } },
+                    type: {
+                        getProperties: function () { return []; },
+                        hasFeature: jasmine.createSpy('hasFeature')
+                    },
                     persistence: jasmine.createSpyObj("persistence", ["persist"]),
                     mutation: jasmine.createSpy("mutation")
                 };
@@ -38,6 +41,7 @@ define(
                     }
                 };
 
+                capabilities.type.hasFeature.andReturn(true);
                 capabilities.mutation.andReturn(true);
 
                 action = new PropertiesAction(dialogService, context);
@@ -65,6 +69,8 @@ define(
             it("is only applicable when a domain object is in context", function () {
                 expect(PropertiesAction.appliesTo(context)).toBeTruthy();
                 expect(PropertiesAction.appliesTo({})).toBeFalsy();
+                // Make sure it checked for creatability
+                expect(capabilities.type.hasFeature).toHaveBeenCalledWith('creation');
             });
         });
     }
