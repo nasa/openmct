@@ -40,7 +40,7 @@ define(
                  * @returns {string} the character of the database icon
                  */
                 getGlyph: function () {
-                    return "A";
+                    return "E";
                 },
                 /**
                  * Get the name of the CSS class to apply to the glyph.
@@ -49,14 +49,16 @@ define(
                  * @returns {string} the CSS class to apply to this glyph
                  */
                 getGlyphClass: function () {
-                    return undefined;
+                    return (watches > 2000) ? "caution" :
+                            (watches < 1000) ? "ok" :
+                                    undefined;
                 },
                 /**
                  * Get the text that should appear in the indicator.
                  * @returns {string} brief summary of connection status
                  */
                 getText: function () {
-                    return "Watches " + watches;
+                    return watches + " watches";
                 },
                 /**
                  * Get a longer-form description of the current connection
