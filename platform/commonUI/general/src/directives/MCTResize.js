@@ -35,7 +35,8 @@ define(
 
             // Link; start listening for changes to an element's size
             function link(scope, element, attrs) {
-                var lastBounds;
+                var lastBounds,
+                    active = true;
 
                 // Determine how long to wait before the next update
                 function currentInterval() {
@@ -62,8 +63,18 @@ define(
                         width: element[0].offsetWidth,
                         height: element[0].offsetHeight
                     });
-                    $timeout(onInterval, currentInterval());
+                    if (active) {
+                        $timeout(onInterval, currentInterval());
+                    }
                 }
+
+                // Stop running in the background
+                function deactivate() {
+                    active = false;
+                }
+
+                // Unregister once out-of-scope
+                scope.$on("$destroy", deactivate);
 
                 // Handle the initial callback
                 onInterval();
