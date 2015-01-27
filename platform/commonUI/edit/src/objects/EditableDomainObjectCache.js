@@ -15,7 +15,8 @@
  * @module editor/object/editable-domain-object-cache
  */
 define(
-    function () {
+    ["./EditableModelCache"],
+    function (EditableModelCache) {
         'use strict';
 
         /**
@@ -32,7 +33,7 @@ define(
          * @memberof module:editor/object/editable-domain-object-cache
          */
         function EditableDomainObjectCache(EditableDomainObject) {
-            var cache = {},
+            var cache = new EditableModelCache(),
                 dirty = {};
 
             return {
@@ -44,9 +45,10 @@ define(
                  * @returns {DomainObject} the domain object in an editable form
                  */
                 getEditableObject: function (domainObject) {
-                    var id = domainObject.getId();
-                    return (cache[id] =
-                        cache[id] || new EditableDomainObject(domainObject));
+                    return new EditableDomainObject(
+                        domainObject,
+                        cache.getCachedModel(domainObject)
+                    );
                 },
                 /**
                  * Mark an editable domain object (presumably already cached)

@@ -53,9 +53,8 @@ define(
 
             // Constructor for EditableDomainObject, which adheres
             // to the same shared cache.
-            function EditableDomainObjectImpl(domainObject) {
-                var model = JSON.parse(JSON.stringify(domainObject.getModel())),
-                    editableObject = Object.create(domainObject);
+            function EditableDomainObjectImpl(domainObject, model) {
+                var editableObject = Object.create(domainObject);
 
                 // Only provide the cloned model.
                 editableObject.getModel = function () { return model; };
