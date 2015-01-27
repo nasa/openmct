@@ -13,12 +13,14 @@ define(
     [
         '../capabilities/EditablePersistenceCapability',
         '../capabilities/EditableContextCapability',
+        '../capabilities/EditableCompositionCapability',
         '../capabilities/EditorCapability',
         './EditableDomainObjectCache'
     ],
     function (
         EditablePersistenceCapability,
         EditableContextCapability,
+        EditableCompositionCapability,
         EditorCapability,
         EditableDomainObjectCache
     ) {
@@ -27,7 +29,7 @@ define(
         var capabilityFactories = {
             persistence: EditablePersistenceCapability,
             context: EditableContextCapability,
-            composition: EditableContextCapability,
+            composition: EditableCompositionCapability,
             editor: EditorCapability
         };
 

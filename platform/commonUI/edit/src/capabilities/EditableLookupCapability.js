@@ -89,7 +89,7 @@ define(
             }
 
             // Wrap all methods; return only editable domain objects.
-            Object.keys(contextCapability).forEach(wrapFunction);
+            Object.keys(contextCapability).forEach(wrapMethod);
 
             return capability;
         };
