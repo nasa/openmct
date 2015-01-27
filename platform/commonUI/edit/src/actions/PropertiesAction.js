@@ -70,9 +70,14 @@ define(
          * context.
          */
         PropertiesAction.appliesTo = function (context) {
-            return (context || {}).domainObject &&
-                (context || {}).domainObject.hasCapability("type") &&
-                (context || {}).domainObject.hasCapability("persistence");
+            var domainObject = (context || {}).domainObject,
+                type = domainObject && domainObject.getCapability('type'),
+                creatable = type && type.hasFeature('creation');
+
+            // Only allow creatable types to be edited
+            return domainObject &&
+                domainObject.hasCapability("persistence") &&
+                creatable;
         };
 
         return PropertiesAction;
