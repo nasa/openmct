@@ -15,7 +15,7 @@ define(
                 mockElement,
                 mockCanvas,
                 mockGL,
-                mockCancelInterval,
+                mockPromise,
                 mctChart;
 
             beforeEach(function () {
@@ -27,7 +27,8 @@ define(
                     jasmine.createSpyObj("$scope", ["$watchCollection", "$on"]);
                 mockElement =
                     jasmine.createSpyObj("element", ["find"]);
-                mockCancelInterval = jasmine.createSpy("cancelInterval");
+                mockInterval.cancel = jasmine.createSpy("cancelInterval");
+                mockPromise = jasmine.createSpyObj("promise", ["then"]);
 
 
                 // mct-chart uses GLChart, so it needs WebGL API
@@ -72,7 +73,7 @@ define(
 
                 mockElement.find.andReturn([mockCanvas]);
                 mockCanvas.getContext.andReturn(mockGL);
-                mockInterval.andReturn(mockCancelInterval);
+                mockInterval.andReturn(mockPromise);
 
                 mctChart = new MCTChart(mockInterval, mockLog);
             });
@@ -164,13 +165,13 @@ define(
                 );
 
                 // Precondition - interval still active
-                expect(mockCancelInterval).not.toHaveBeenCalled();
+                expect(mockInterval.cancel).not.toHaveBeenCalled();
 
                 // Broadcast a $destroy
                 mockScope.$on.mostRecentCall.args[1]();
 
                 // Should have stopped the interval
-                expect(mockCancelInterval).toHaveBeenCalled();
+                expect(mockInterval.cancel).toHaveBeenCalledWith(mockPromise);
             });
 
         });
