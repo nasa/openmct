@@ -18,7 +18,7 @@
 		background-size: contain;
 	}
     .s-logo-openmctweb {
-         background-image: url($dirImgs + 'logo-openmctweb.svg');
+         background-image: url($dirImgs + 'logo-openmctweb-shdw.svg');
      }
 	h1, h2 {
 		color: #fff;
@@ -39,8 +39,7 @@
 			position: absolute;
 			&.l-logo-app {
 //				@include test(blue);
-				top: 0; right: $w * 5; bottom: 0; left: $w * 5;
-//				height: auto; width: auto;
+				top: 0; right: 15%; bottom: 0; left: 15%;
 			}
 			&.s-logo-nasa {
 //				@include test(red);
