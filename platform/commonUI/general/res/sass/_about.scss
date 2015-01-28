@@ -1,0 +1,59 @@
+// General About dialog styling
+
+.t-about {
+	// Styling
+	line-height: 120%;
+	.s-description,
+	.s-info {
+		font-size: 0.8em;
+	}
+	.s-logo-holder {
+		background: url($dirImgs + "bg-about-openmctweb.jpg") no-repeat center; // For OpenMCT Web.
+		background-size: cover;
+	}
+	.s-logo {
+//		@include txtShdwLarge(); // text-shadow doesn't work for svg
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: contain;
+	}
+    .s-logo-openmctweb {
+         background-image: url($dirImgs + 'logo-openmctweb-shdw.svg');
+     }
+	h1, h2 {
+		color: #fff;
+		font-weight: normal !important;
+	}
+
+	// Layout
+	&.l-about.abs {
+//		top: 20px;
+		overflow: auto;
+	}
+	$contentH: 200px;
+	.l-logo-holder {
+		position: relative;
+		height: 45%;
+		.l-logo {
+			$w: 5%;
+			position: absolute;
+			&.l-logo-app {
+//				@include test(blue);
+				top: 0; right: 15%; bottom: 0; left: 15%;
+			}
+			&.s-logo-nasa {
+//				@include test(red);
+				$m: 10px;
+				background-image: url($dirImgs + 'logo-nasa.svg');
+				top: $m; right: auto; bottom: auto; left: $m;
+				width: $w * 2; height: auto; padding-bottom: $w; padding-top: $w;
+			}
+		}
+	}
+	.l-content {
+//		@include test();
+		position: relative;
+		margin-top: $interiorMarginLg;
+	}
+}
+

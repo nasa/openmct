@@ -33,7 +33,7 @@ $btnFontSizeToH: 0.45;
 $ueTopBarH: 35px;
 $ueFooterH: 20px;
 $ueColMargin: 1.5%;
-$ueAppLogoW: 95px;
+$ueAppLogoW: 105px;
 $ueBrowseViewBarH: $ueTopBarH; // was 30px
 $ueEditToolBarH: $ueBrowseViewBarH;
 $ueEditToolBarButtonH: $ueEditToolBarH * 0.8;
@@ -84,7 +84,7 @@ $scrollbarTrackSize: 10px;
 $scrollbarTrackColorBg: rgba(#000, 0.4);
 
 // Paths
-$dirImgs: '../images/';
+$dirImgs: '../images/'; // Relative to platform/css/ directory
 
 // Ticks
 $ticksH: 25px;

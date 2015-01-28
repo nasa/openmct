@@ -1,1 +1,3 @@
-<span><div class='app-logo abs'>Open MCT Web</div></span>
+<span ng-controller = "AboutController as about">
+	<div class='app-logo logo-openmctweb abs' title="Version {{about.versions()[0].value}}"></div>
+</span>

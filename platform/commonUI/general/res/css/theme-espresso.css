@@ -123,16 +123,22 @@ h1, h2, h3 {
 /* line 48, ../sass/_global.scss */
 h1 {
   font-size: 1.7em;
-  font-weight: normal;
-  margin-bottom: 20px; }
+  font-weight: normal !important;
+  line-height: 120%;
+  margin-bottom: 20px;
+  margin-top: 0; }
 
-/* line 54, ../sass/_global.scss */
+/* line 56, ../sass/_global.scss */
+p {
+  margin-bottom: 10px; }
+
+/* line 60, ../sass/_global.scss */
 span {
   /* 618 DEBUG
   box-sizing: border-box;
   */ }
 
-/* line 60, ../sass/_global.scss */
+/* line 66, ../sass/_global.scss */
 .abs {
   position: absolute;
   top: 0;
@@ -142,31 +148,35 @@ span {
   height: auto;
   width: auto; }
 
-/* line 70, ../sass/_global.scss */
+/* line 76, ../sass/_global.scss */
 .code {
   font-family: "Lucida Console", monospace;
   font-size: 0.7em;
   line-height: 150%;
   white-space: pre; }
 
-/* line 77, ../sass/_global.scss */
+/* line 83, ../sass/_global.scss */
 .centered {
   text-align: center; }
 
-/* line 81, ../sass/_global.scss */
+/* line 87, ../sass/_global.scss */
 .colorKey {
   color: #0099cc; }
 
-/* line 85, ../sass/_global.scss */
+/* line 91, ../sass/_global.scss */
 .ds {
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px; }
 
-/* line 90, ../sass/_global.scss */
+/* line 96, ../sass/_global.scss */
 .hide,
 .hidden {
   display: none !important; }
+
+/* line 100, ../sass/_global.scss */
+.sep {
+  color: rgba(255, 255, 255, 0.2); }
 
 /* line 1, ../sass/_fonts.scss */
 .ui-symbol {
@@ -208,11 +218,11 @@ span {
   height: 20px; }
   /* line 49, ../sass/user-environ/_layout.scss */
   .user-environ .bottom-bar .status-holder {
-    right: 100px; }
+    right: 110px; }
   /* line 52, ../sass/user-environ/_layout.scss */
   .user-environ .bottom-bar .app-logo {
     left: auto;
-    width: 95px; }
+    width: 105px; }
 
 /* line 60, ../sass/user-environ/_layout.scss */
 .contents {
@@ -341,6 +351,61 @@ span {
 .vscroll {
   overflow-y: auto; }
 
+/* line 3, ../sass/_about.scss */
+.t-about {
+  line-height: 120%; }
+  /* line 7, ../sass/_about.scss */
+  .t-about .s-description,
+  .t-about .s-info {
+    font-size: 0.8em; }
+  /* line 10, ../sass/_about.scss */
+  .t-about .s-logo-holder {
+    background: url("../images/bg-about-openmctweb.jpg") no-repeat center;
+    background-size: cover; }
+  /* line 14, ../sass/_about.scss */
+  .t-about .s-logo {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain; }
+  /* line 20, ../sass/_about.scss */
+  .t-about .s-logo-openmctweb {
+    background-image: url("../images/logo-openmctweb-shdw.svg"); }
+  /* line 23, ../sass/_about.scss */
+  .t-about h1, .t-about h2 {
+    color: #fff;
+    font-weight: normal !important; }
+  /* line 29, ../sass/_about.scss */
+  .t-about.l-about.abs {
+    overflow: auto; }
+  /* line 34, ../sass/_about.scss */
+  .t-about .l-logo-holder {
+    position: relative;
+    height: 45%; }
+    /* line 37, ../sass/_about.scss */
+    .t-about .l-logo-holder .l-logo {
+      position: absolute; }
+      /* line 40, ../sass/_about.scss */
+      .t-about .l-logo-holder .l-logo.l-logo-app {
+        top: 0;
+        right: 15%;
+        bottom: 0;
+        left: 15%; }
+      /* line 44, ../sass/_about.scss */
+      .t-about .l-logo-holder .l-logo.s-logo-nasa {
+        background-image: url("../images/logo-nasa.svg");
+        top: 10px;
+        right: auto;
+        bottom: auto;
+        left: 10px;
+        width: 10%;
+        height: auto;
+        padding-bottom: 5%;
+        padding-top: 5%; }
+  /* line 53, ../sass/_about.scss */
+  .t-about .l-content {
+    position: relative;
+    margin-top: 10px; }
+
 /* line 1, ../sass/_badges.scss */
 .badge {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffd233), color-stop(100%, #ffc700));
@@ -422,7 +487,7 @@ span {
   display: inline-block;
   font-size: 1rem;
   vertical-align: middle; }
-  /* line 123, ../sass/_mixins.scss */
+  /* line 126, ../sass/_mixins.scss */
   .invoke-menu:hover {
     color: #33ccff; }
 
@@ -434,7 +499,7 @@ span {
 /* line 49, ../sass/_icons.scss */
 .icon-buttons-main .invoke-menu {
   color: #666666; }
-  /* line 123, ../sass/_mixins.scss */
+  /* line 126, ../sass/_mixins.scss */
   .icon-buttons-main .invoke-menu:hover {
     color: #999999; }
 
@@ -1342,7 +1407,7 @@ label.checkbox.custom {
     .menu-element .menu ul {
       margin: 0;
       padding: 0; }
-      /* line 131, ../sass/_mixins.scss */
+      /* line 134, ../sass/_mixins.scss */
       .menu-element .menu ul li {
         list-style-type: none;
         margin: 0;
@@ -2108,12 +2173,20 @@ input[type="text"] {
   z-index: 100; }
 /* line 6, ../sass/overlay/_overlay.scss */
 .overlay .btn.close {
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  -ms-border-radius: 6px;
+  -o-border-radius: 6px;
+  border-radius: 6px;
+  padding: 3px 6px;
   position: absolute;
-  top: 5px;
-  right: 5px;
+  border: none;
+  top: 3px;
+  right: 3px;
   bottom: auto;
-  left: auto; }
-/* line 13, ../sass/overlay/_overlay.scss */
+  left: auto;
+  z-index: 100; }
+/* line 17, ../sass/overlay/_overlay.scss */
 .overlay > .holder {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #4d4d4d), color-stop(100%, #404040));
   background-image: -webkit-linear-gradient(#4d4d4d, #404040);
@@ -2145,25 +2218,25 @@ input[type="text"] {
   bottom: 15%;
   left: 15%;
   z-index: 101; }
-  /* line 20, ../sass/overlay/_overlay.scss */
+  /* line 24, ../sass/overlay/_overlay.scss */
   .overlay > .holder > .contents {
-    top: 20px;
-    right: 20px;
-    bottom: 20px;
-    left: 20px; }
-/* line 25, ../sass/overlay/_overlay.scss */
+    top: 25px;
+    right: 25px;
+    bottom: 25px;
+    left: 25px; }
+/* line 29, ../sass/overlay/_overlay.scss */
 .overlay .title {
   font-size: 1.3em; }
-/* line 29, ../sass/overlay/_overlay.scss */
+/* line 33, ../sass/overlay/_overlay.scss */
 .overlay .top-bar {
   height: 60px; }
-/* line 33, ../sass/overlay/_overlay.scss */
+/* line 37, ../sass/overlay/_overlay.scss */
 .overlay .editor {
   top: 70px;
   bottom: 50px;
   left: 0;
   right: 0; }
-/* line 39, ../sass/overlay/_overlay.scss */
+/* line 43, ../sass/overlay/_overlay.scss */
 .overlay .bottom-bar {
   top: auto;
   right: 0;
@@ -2172,7 +2245,7 @@ input[type="text"] {
   font-size: 1em;
   height: 40px;
   text-align: right; }
-  /* line 44, ../sass/overlay/_overlay.scss */
+  /* line 48, ../sass/overlay/_overlay.scss */
   .overlay .bottom-bar .btn {
     margin-left: 10px; }
 
@@ -2252,23 +2325,20 @@ input[type="text"] {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+    cursor: pointer;
     font-size: 0.8em;
     line-height: 10px;
     padding-top: 1px;
     text-transform: uppercase; }
-    /* line 19, ../sass/user-environ/_bottom-bar.scss */
-    .ue-bottom-bar .app-logo.logo-warp {
-      background: url("../images/logo-warp.png") no-repeat left top;
-      color: #999999;
-      font-size: 0.7rem;
-      padding-top: 3px;
-      text-align: right; }
+    /* line 20, ../sass/user-environ/_bottom-bar.scss */
+    .ue-bottom-bar .app-logo.logo-openmctweb {
+      background: url("../images/logo-openmctweb.svg") no-repeat center center; }
 
-/* line 29, ../sass/user-environ/_bottom-bar.scss */
+/* line 26, ../sass/user-environ/_bottom-bar.scss */
 .status.block {
   display: inline-block;
   margin-right: 20px; }
-  /* line 32, ../sass/user-environ/_bottom-bar.scss */
+  /* line 29, ../sass/user-environ/_bottom-bar.scss */
   .status.block .status-indicator {
     -webkit-border-radius: 2.7px;
     -moz-border-radius: 2.7px;
@@ -2283,10 +2353,10 @@ input[type="text"] {
     font-size: 1.25em;
     vertical-align: middle;
     margin-right: 5px; }
-    /* line 40, ../sass/user-environ/_bottom-bar.scss */
+    /* line 37, ../sass/user-environ/_bottom-bar.scss */
     .status.block .status-indicator.ok {
       color: #009900; }
-    /* line 43, ../sass/user-environ/_bottom-bar.scss */
+    /* line 40, ../sass/user-environ/_bottom-bar.scss */
     .status.block .status-indicator.caution {
       color: #ffaa00; }
 

@@ -47,8 +47,14 @@ h1, h2, h3 {
 
 h1 {
 	font-size: 1.7em;
-	font-weight: normal;
+	font-weight: normal !important;
+	line-height: 120%;
 	margin-bottom: 20px;
+	margin-top: 0;
+}
+
+p {
+	margin-bottom: $interiorMarginLg;
 }
 
 span {
@@ -89,4 +95,8 @@ span {
 .hide,
 .hidden {
 	display: none !important;
+}
+
+.sep {
+	color: rgba(#fff, 0.2);
 }
