@@ -6,9 +6,10 @@ define(
         "use strict";
 
         function SplitPaneController() {
-            var minimum = 8,
+            var minimum = 120,
                 maximum = 600,
                 current = 200,
+                start = 200,
                 style;
 
             function updateStyle() {
@@ -21,10 +22,16 @@ define(
                 style: function () {
                     return style;
                 },
+                state: function () {
+                    return current;
+                },
+                startMove: function () {
+                    start = current;
+                },
                 move: function (delta) {
                     current = Math.min(
                         maximum,
-                        Math.max(minimum, current + delta)
+                        Math.max(minimum, start + delta)
                     );
                     updateStyle();
                 }
