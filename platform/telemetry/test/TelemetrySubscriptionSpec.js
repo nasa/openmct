@@ -33,7 +33,7 @@ define(
                 mockCallback = jasmine.createSpy("callback");
                 mockTelemetry = jasmine.createSpyObj(
                     "telemetry",
-                    ["subscribe"]
+                    ["subscribe", "getMetadata"]
                 );
                 mockUnsubscribe = jasmine.createSpy("unsubscribe");
                 mockSeries = jasmine.createSpyObj(
