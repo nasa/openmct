@@ -69,6 +69,8 @@ define(
                     .forEach(updateSubplot);
             }
 
+            // Reinstantiate the plot updater (e.g. because we have a
+            // new subscription.) This will clear the plot.
             function recreateUpdater() {
                 updater = new PlotUpdater(
                     subscription,
@@ -77,6 +79,7 @@ define(
                 );
             }
 
+            // Handle new telemetry data in this plot
             function updateValues() {
                 if (updater) {
                     updater.update();

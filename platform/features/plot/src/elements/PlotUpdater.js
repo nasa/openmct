@@ -11,8 +11,6 @@ define(
         var MAX_POINTS = 86400,
             INITIAL_SIZE = 675; // 1/128 of MAX_POINTS
 
-        function identity(x) { return x; }
-
         /**
          * The PlotPreparer is responsible for handling data sets and
          * preparing them to be rendered. It creates a WebGL-plottable
@@ -34,14 +32,20 @@ define(
                 lengthArray = [],
                 bufferArray = [];
 
+            // Make sure there is enough space in a buffer to accomodate a
+            // new point at the specified index. This will updates buffers[id]
+            // if necessary.
             function ensureBufferSize(buffer, id, index) {
                 // Check if we don't have enough room
                 if (index > buffer.length / 2) {
                     // If we don't, can we expand?
                     if (index < MAX_POINTS) {
                         // Double the buffer size
-                        buffer = buffers[id] =
-                                new Float32Array(buffer, 0, buffer.length * 2);
+                        buffer = buffers[id] = new Float32Array(
+                            buffer,
+                            0,
+                            buffer.length * 2
+                        );
                     } else {
                         // Just shift the existing buffer
                         buffer.copyWithin(0, 2);
@@ -51,6 +55,7 @@ define(
                 return buffer;
             }
 
+            // Add data to the plot.
             function addData(obj) {
                 var id = obj.getId(),
                     index = lengths[id] || 0,
@@ -58,11 +63,14 @@ define(
                     domainValue = subscription.getDomainValue(obj),
                     rangeValue = subscription.getRangeValue(obj);
 
+                // If we don't already have a data buffer for that ID,
+                // make one.
                 if (!buffer) {
                     buffer = new Float32Array(INITIAL_SIZE);
                     buffers[id] = buffer;
                 }
 
+                // Make sure there's data to add, and then add it
                 if (domainValue !== undefined && rangeValue !== undefined &&
                         (index < 1 || domainValue !== buffer[index * 2 - 2])) {
                     // Use the first observed domain value as a domainOffset
@@ -85,6 +93,7 @@ define(
                 return buffer;
             }
 
+            // Update min/max domain values for these objects
             function updateDomainExtrema(objects) {
                 max[0] = Number.NEGATIVE_INFINITY;
                 min[0] = Number.POSITIVE_INFINITY;
@@ -99,6 +108,7 @@ define(
                 });
             }
 
+            // Handle new telemetry data
             function update() {
                 var objects = subscription.getTelemetryObjects();
                 bufferArray = objects.map(addData);
@@ -108,6 +118,7 @@ define(
                 updateDomainExtrema(objects);
             }
 
+            // Prepare buffers and related state for this object
             function prepare(telemetryObject) {
                 var id = telemetryObject.getId();
                 lengths[id] = 0;
@@ -116,6 +127,9 @@ define(
                 bufferArray.push(buffers[id]);
             }
 
+            // Initially prepare state for these objects.
+            // Note that this may be an empty array at this time,
+            // so we also need to check during update cycles.
             subscription.getTelemetryObjects().forEach(prepare);
 
             return {
@@ -172,6 +186,13 @@ define(
                 getBuffers: function () {
                     return bufferArray;
                 },
+                /**
+                 * Get the number of points in the buffer with the specified
+                 * index. Buffers are padded to minimize memory allocations,
+                 * so user code will need this information to know how much
+                 * data to plot.
+                 * @returns {number} the number of points in this buffer
+                 */
                 getLength: function (index) {
                     return lengthArray;
                 },
