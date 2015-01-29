@@ -2,7 +2,7 @@
     <mct-include key="'topbar-browse'"></mct-include>
     <div class="holder browse-area outline abs" ng-controller="BrowseController">
         <div class='split-layout vertical contents abs'>
-            <div class='split-pane-component treeview pane' style="width: 200px;">
+            <div class='split-pane-component treeview pane'>
                 <mct-representation key="'create-button'" mct-object="navigatedObject">
                 </mct-representation>
                 <div class='holder tree-holder abs'>
@@ -12,13 +12,12 @@
                     </mct-representation>
                 </div>
             </div>
-            <div class="splitter" style="left: 200px"></div>
-            <div class='split-pane-component items pane' style="right:0; left:200px;">
+            <mct-container key="splitter">
                 <div class='holder abs' id='content-area'>
                     <mct-representation mct-object="navigatedObject" key="'browse-object'">
                     </mct-representation>
                 </div>
-            </div>
+            </mct-container>
         </div>
     </div>
     <mct-include key="'bottombar'"></mct-include>
