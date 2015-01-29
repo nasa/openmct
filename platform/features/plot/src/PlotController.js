@@ -5,13 +5,13 @@
  */
 define(
     [
-        "./elements/PlotPreparer",
+        "./elements/PlotUpdater",
         "./elements/PlotPalette",
         "./elements/PlotAxis",
         "./modes/PlotModeOptions",
         "./SubPlotFactory"
     ],
-    function (PlotPreparer, PlotPalette, PlotAxis, PlotModeOptions, SubPlotFactory) {
+    function (PlotUpdater, PlotPalette, PlotAxis, PlotModeOptions, SubPlotFactory) {
         "use strict";
 
         var AXIS_DEFAULTS = [
@@ -34,6 +34,7 @@ define(
             var subPlotFactory = new SubPlotFactory(telemetryFormatter),
                 modeOptions = new PlotModeOptions([], subPlotFactory),
                 subplots = [],
+                updater,
                 subscription,
                 domainOffset;
 
@@ -44,38 +45,6 @@ define(
                     new PlotAxis("domain", metadatas, AXIS_DEFAULTS[0]),
                     new PlotAxis("range", metadatas, AXIS_DEFAULTS[1])
                 ];
-            }
-
-            // Respond to newly-available telemetry data; update the
-            // drawing area accordingly.
-            function plotTelemetry() {
-                var prepared, datas, telemetry;
-
-                // Get a reference to the TelemetryController
-                telemetry = $scope.telemetry;
-
-                // Nothing to plot without TelemetryController
-                if (!telemetry) {
-                    return;
-                }
-
-                // Ensure axes have been initialized (we will want to
-                // get the active axis below)
-                if (!$scope.axes) {
-                    setupAxes(telemetry.getMetadata());
-                }
-
-                // Get data sets
-                datas = telemetry.getResponse();
-
-                // Prepare data sets for rendering
-                prepared = new PlotPreparer(
-                    datas,
-                    ($scope.axes[0].active || {}).key,
-                    ($scope.axes[1].active || {}).key
-                );
-
-                modeOptions.getModeHandler().plotTelemetry(prepared);
             }
 
             // Trigger an update of a specific subplot;
@@ -100,18 +69,34 @@ define(
                     .forEach(updateSubplot);
             }
 
-            function updateValues() {
+            function recreateUpdater() {
+                updater = new PlotUpdater(
+                    subscription,
+                    ($scope.axes[0].active || {}).key,
+                    ($scope.axes[1].active || {}).key
+                );
+            }
 
+            function updateValues() {
+                modeOptions.getModeHandler().plotTelemetry(updater);
+                update();
             }
 
             // Create a new subscription; telemetrySubscriber gets
             // to do the meaningful work here.
             function subscribe(domainObject) {
+                if (subscription) {
+                    subscription.unsubscribe();
+                }
                 subscription = domainObject && telemetrySubscriber.subscribe(
                     domainObject,
                     updateValues
                 );
+                setupAxes(subscription.getMetadata());
+                recreateUpdater();
             }
+
+            $scope.$watch('domainObject', subscribe);
 
             return {
                 /**
@@ -166,7 +151,7 @@ define(
                  */
                 setMode: function (mode) {
                     modeOptions.setMode(mode);
-                    plotTelemetry();
+                    updateValues();
                 },
                 /**
                  * Get all individual plots contained within this Plot view.

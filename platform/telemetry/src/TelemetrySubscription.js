@@ -30,6 +30,7 @@ define(
             var unsubscribePromise,
                 latestValues = {},
                 telemetryObjects = [],
+                metadatas,
                 updatePending;
 
             // Look up domain objects which have telemetry capabilities.
@@ -96,6 +97,14 @@ define(
                 });
             }
 
+            // Look up metadata associated with an object's telemetry
+            function lookupMetadata(domainObject) {
+                var telemetryCapability =
+                    domainObject.getCapability("telemetry");
+                return telemetryCapability &&
+                        telemetryCapability.getMetadata();
+            }
+
             // Prepare subscriptions to all relevant telemetry-providing
             // domain objects.
             function subscribeAll(domainObjects) {
@@ -108,6 +117,7 @@ define(
             // to return a non-Promise to simplify usage elsewhere.
             function cacheObjectReferences(objects) {
                 telemetryObjects = objects;
+                metadatas = objects.map(lookupMetadata);
                 return objects;
             }
 
@@ -189,6 +199,21 @@ define(
                  */
                 getTelemetryObjects: function () {
                     return telemetryObjects;
+                },
+                /**
+                 * Get all telemetry metadata associated with
+                 * telemetry-providing domain objects managed by
+                 * this controller.
+                 *
+                 * This will ordered in the
+                 * same manner as `getTelemetryObjects()` or
+                 * `getResponse()`; that is, the metadata at a
+                 * given index will correspond to the telemetry-providing
+                 * domain object at the same index.
+                 * @returns {Array} an array of metadata objects
+                 */
+                getMetadata: function () {
+                    return metadatas;
                 }
             };
         }
