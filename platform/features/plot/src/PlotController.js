@@ -34,6 +34,7 @@ define(
             var subPlotFactory = new SubPlotFactory(telemetryFormatter),
                 modeOptions = new PlotModeOptions([], subPlotFactory),
                 subplots = [],
+                cachedObjects = [],
                 updater,
                 subscription,
                 domainOffset;
@@ -56,10 +57,13 @@ define(
             // Set up available modes (stacked/overlaid), based on the
             // set of telemetry objects in this plot view.
             function setupModes(telemetryObjects) {
-                modeOptions = new PlotModeOptions(
-                    telemetryObjects || [],
-                    subPlotFactory
-                );
+                if (cachedObjects !== telemetryObjects) {
+                    cachedObjects = telemetryObjects;
+                    modeOptions = new PlotModeOptions(
+                        telemetryObjects || [],
+                        subPlotFactory
+                    );
+                }
             }
 
             // Update all sub-plots
@@ -81,6 +85,7 @@ define(
 
             // Handle new telemetry data in this plot
             function updateValues() {
+                setupModes(subscription.getTelemetryObjects());
                 if (updater) {
                     updater.update();
                     modeOptions.getModeHandler().plotTelemetry(updater);

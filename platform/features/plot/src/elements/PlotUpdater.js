@@ -194,7 +194,7 @@ define(
                  * @returns {number} the number of points in this buffer
                  */
                 getLength: function (index) {
-                    return lengthArray;
+                    return lengthArray[index] || 0;
                 },
                 /**
                  * Update with latest data.
