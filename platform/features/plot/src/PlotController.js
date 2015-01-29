@@ -30,10 +30,11 @@ define(
          *
          * @constructor
          */
-        function PlotController($scope, telemetryFormatter) {
+        function PlotController($scope, telemetryFormatter, telemetrySubscriber) {
             var subPlotFactory = new SubPlotFactory(telemetryFormatter),
                 modeOptions = new PlotModeOptions([], subPlotFactory),
                 subplots = [],
+                subscription,
                 domainOffset;
 
             // Populate the scope with axis information (specifically, options
@@ -99,9 +100,18 @@ define(
                     .forEach(updateSubplot);
             }
 
-            $scope.$watch("telemetry.getTelemetryObjects()", setupModes);
-            $scope.$watch("telemetry.getMetadata()", setupAxes);
-            $scope.$on("telemetryUpdate", plotTelemetry);
+            function updateValues() {
+
+            }
+
+            // Create a new subscription; telemetrySubscriber gets
+            // to do the meaningful work here.
+            function subscribe(domainObject) {
+                subscription = domainObject && telemetrySubscriber.subscribe(
+                    domainObject,
+                    updateValues
+                );
+            }
 
             return {
                 /**
@@ -169,7 +179,13 @@ define(
                 /**
                  * Explicitly update all plots.
                  */
-                update: update
+                update: update,
+                /**
+                 * Check if a request is pending (to show the wait spinner)
+                 */
+                isRequestPending: function () {
+                    return false;
+                }
             };
         }
 
