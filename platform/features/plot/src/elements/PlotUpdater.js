@@ -31,7 +31,8 @@ define(
                 domainOffset,
                 buffers = {},
                 lengths = {},
-                bufferArray;
+                lengthArray = [],
+                bufferArray = [];
 
             function ensureBufferSize(buffer, id, index) {
                 // Check if we don't have enough room
@@ -52,10 +53,15 @@ define(
 
             function addData(obj) {
                 var id = obj.getId(),
-                    index = lengths[id],
+                    index = lengths[id] || 0,
                     buffer = buffers[id],
                     domainValue = subscription.getDomainValue(obj),
                     rangeValue = subscription.getRangeValue(obj);
+
+                if (!buffer) {
+                    buffer = new Float32Array(INITIAL_SIZE);
+                    buffers[id] = buffer;
+                }
 
                 if (domainValue !== undefined && rangeValue !== undefined &&
                         (index < 1 || domainValue !== buffer[index * 2 - 2])) {
@@ -86,31 +92,28 @@ define(
                     var id = obj.getId(),
                         buffer = buffers[id],
                         length = lengths[id],
-                        value = buffer[length * 2 - 2] + domainOffset;
-                    max[0] = Math.max(value, max[0]);
-                    min[0] = Math.min(value, min[0]);
+                        low = buffer[0] + domainOffset,
+                        high = buffer[length * 2 - 2] + domainOffset;
+                    max[0] = Math.max(high, max[0]);
+                    min[0] = Math.min(low, min[0]);
                 });
-            }
-
-            function padRange() {
-                // If range is empty, add some padding
-                if (max[1] === min[1]) {
-                    max[1] = max[1] + 1.0;
-                    min[1] = min[1] - 1.0;
-                }
             }
 
             function update() {
                 var objects = subscription.getTelemetryObjects();
                 bufferArray = objects.map(addData);
+                lengthArray = objects.map(function (obj) {
+                    return lengths[obj.getId()];
+                });
                 updateDomainExtrema(objects);
-                padRange();
             }
 
             function prepare(telemetryObject) {
                 var id = telemetryObject.getId();
                 lengths[id] = 0;
                 buffers[id] = new Float32Array(INITIAL_SIZE);
+                lengthArray.push(lengths[id]);
+                bufferArray.push(buffers[id]);
             }
 
             subscription.getTelemetryObjects().forEach(prepare);
@@ -123,7 +126,10 @@ define(
                  * @returns {number[]} the dimensions which bound this data set
                  */
                 getDimensions: function () {
-                    return [max[0] - min[0], max[1] - min[1]];
+                    // Pad range if necessary
+                    return (max[1] === min[1]) ?
+                            [max[0] - min[0], 2.0 ] :
+                            [max[0] - min[0], max[1] - min[1]];
                 },
                 /**
                  * Get the origin of this data set's boundary.
@@ -133,7 +139,8 @@ define(
                  * @returns {number[]} the origin of this data set's boundary
                  */
                 getOrigin: function () {
-                    return min;
+                    // Pad range if necessary
+                    return (max[1] === min[1]) ? [ min[0], min[1] - 1.0 ] : min;
                 },
                 /**
                  * Get the domain offset; this offset will have been subtracted
@@ -163,7 +170,10 @@ define(
                  * @returns {Float32Array[]} the buffers for these traces
                  */
                 getBuffers: function () {
-                    return buffers;
+                    return bufferArray;
+                },
+                getLength: function (index) {
+                    return lengthArray;
                 },
                 /**
                  * Update with latest data.
