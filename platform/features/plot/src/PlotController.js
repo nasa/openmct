@@ -78,7 +78,10 @@ define(
             }
 
             function updateValues() {
-                modeOptions.getModeHandler().plotTelemetry(updater);
+                if (updater) {
+                    updater.update();
+                    modeOptions.getModeHandler().plotTelemetry(updater);
+                }
                 update();
             }
 
@@ -92,8 +95,10 @@ define(
                     domainObject,
                     updateValues
                 );
-                setupAxes(subscription.getMetadata());
-                recreateUpdater();
+                if (subscription) {
+                    setupAxes(subscription.getMetadata());
+                    recreateUpdater();
+                }
             }
 
             $scope.$watch('domainObject', subscribe);
