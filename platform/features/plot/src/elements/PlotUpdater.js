@@ -32,20 +32,23 @@ define(
                 lengthArray = [],
                 bufferArray = [];
 
+            // Double the size of a Float32Array
+            function doubleSize(buffer) {
+                var doubled = new Float32Array(buffer.length * 2);
+                doubled.set(buffer); // Copy contents of original
+                return doubled;
+            }
+
             // Make sure there is enough space in a buffer to accomodate a
             // new point at the specified index. This will updates buffers[id]
             // if necessary.
             function ensureBufferSize(buffer, id, index) {
                 // Check if we don't have enough room
-                if (index > buffer.length / 2) {
+                if (index > (buffer.length / 2 - 1)) {
                     // If we don't, can we expand?
                     if (index < MAX_POINTS) {
                         // Double the buffer size
-                        buffer = buffers[id] = new Float32Array(
-                            buffer,
-                            0,
-                            buffer.length * 2
-                        );
+                        buffer = buffers[id] = doubleSize(buffer);
                     } else {
                         // Just shift the existing buffer
                         buffer.copyWithin(0, 2);
