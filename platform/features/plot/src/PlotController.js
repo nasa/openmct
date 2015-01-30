@@ -101,7 +101,8 @@ define(
                 }
                 subscription = domainObject && telemetrySubscriber.subscribe(
                     domainObject,
-                    updateValues
+                    updateValues,
+                    true // Lossless
                 );
                 if (subscription) {
                     setupAxes(subscription.getMetadata());
