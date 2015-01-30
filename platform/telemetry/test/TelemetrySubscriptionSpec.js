@@ -120,6 +120,47 @@ define(
                 // Should have no objects
                 expect(subscription.getTelemetryObjects()).toEqual([]);
             });
+
+            // This test case corresponds to plot usage of
+            // telemetrySubscription, where failure to callback
+            // once-per-update results in loss of data, WTD-784
+            it("fires one event per update if requested", function () {
+                var i, domains = [], ranges = [], lastCall;
+
+                // Clear out the subscription from beforeEach
+                subscription.unsubscribe();
+                // Create a subscription which does not drop events
+                subscription = new TelemetrySubscription(
+                    mockQ,
+                    mockTimeout,
+                    mockDomainObject,
+                    mockCallback,
+                    true // Don't drop updates!
+                );
+
+                // Snapshot getDomainValue, getRangeValue at time of callback
+                mockCallback.andCallFake(function () {
+                    domains.push(subscription.getDomainValue(mockDomainObject));
+                    ranges.push(subscription.getRangeValue(mockDomainObject));
+                });
+
+                // Send 100 updates
+                for (i = 0; i < 100; i += 1) {
+                    // Return different values to verify later
+                    mockSeries.getDomainValue.andReturn(i);
+                    mockSeries.getRangeValue.andReturn(i * 2);
+                    mockTelemetry.subscribe.mostRecentCall.args[0](mockSeries);
+                }
+
+                // Fire all timeouts that get scheduled
+                while (mockTimeout.mostRecentCall !== lastCall) {
+                    lastCall = mockTimeout.mostRecentCall;
+                    lastCall.args[0]();
+                }
+
+                // Should have only triggered the
+                expect(mockCallback.calls.length).toEqual(100);
+            });
         });
     }
 );
