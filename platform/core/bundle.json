@@ -6,14 +6,26 @@
         "versions": [
             {
                 "name": "Open MCT Web",
-                "value": "0.3.0-dev",
-                "priority": 1000
+                "value": "${project.version}",
+                "priority": 999
             },
             {
                 "name": "Built",
-                "value": "YYYY-MM-DDTHH:MM:ssZ",
+                "value": "${timestamp}",
                 "description": "The date on which this version of the client was built.",
                 "priority": 990
+            },
+            {
+                "name": "Revision",
+                "value": "${buildNumber}",
+                "description": "A unique revision identifier for the client sources.",
+                "priority": 995
+            },
+            {
+                "name": "Branch",
+                "value": "${scmBranch}",
+                "description": "The date on which this version of the client was built.",
+                "priority": 994
             }
         ],
         "components": [
