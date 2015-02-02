@@ -45,7 +45,9 @@ define(
                     }
 
                     // Introduce one create action per type
-                    return typeService.listTypes().map(function (type) {
+                    return typeService.listTypes().filter(function (type) {
+                        return type.hasFeature("creation");
+                    }).map(function (type) {
                         return new CreateAction(
                             type,
                             destination,

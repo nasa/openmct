@@ -12,6 +12,7 @@ define(
             var mockTypeService,
                 mockDialogService,
                 mockCreationService,
+                mockTypes,
                 provider;
 
             function createMockType(name) {
@@ -23,9 +24,11 @@ define(
                         "getName",
                         "getDescription",
                         "getProperties",
-                        "getInitialModel"
+                        "getInitialModel",
+                        "hasFeature"
                     ]
                 );
+                mockType.hasFeature.andReturn(true);
                 mockType.getName.andReturn(name);
                 return mockType;
             }
@@ -43,10 +46,9 @@ define(
                     "creationService",
                     [ "createObject" ]
                 );
+                mockTypes = [ "A", "B", "C" ].map(createMockType);
 
-                mockTypeService.listTypes.andReturn(
-                    [ "A", "B", "C" ].map(createMockType)
-                );
+                mockTypeService.listTypes.andReturn(mockTypes);
 
                 provider = new CreateActionProvider(
                     mockTypeService,
@@ -67,6 +69,19 @@ define(
                     key: "somethingElse",
                     domainObject: {}
                 }).length).toEqual(0);
+            });
+
+            it("does not expose non-creatable types", function () {
+                // One of the types won't have the creation feature...
+                mockTypes[1].hasFeature.andReturn(false);
+                // ...so it should have been filtered out.
+                expect(provider.getActions({
+                    key: "create",
+                    domainObject: {}
+                }).length).toEqual(2);
+                // Make sure it was creation which was used to check
+                expect(mockTypes[1].hasFeature)
+                    .toHaveBeenCalledWith("creation");
             });
         });
     }
