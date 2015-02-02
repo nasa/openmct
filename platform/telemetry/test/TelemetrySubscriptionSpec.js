@@ -13,6 +13,7 @@ define(
                 mockTelemetry,
                 mockUnsubscribe,
                 mockSeries,
+                testMetadata,
                 subscription;
 
             function mockPromise(value) {
@@ -24,6 +25,8 @@ define(
             }
 
             beforeEach(function () {
+                testMetadata = { someKey: "some value" };
+
                 mockQ = jasmine.createSpyObj("$q", ["when", "all"]);
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockDomainObject = jasmine.createSpyObj(
@@ -48,6 +51,7 @@ define(
                 mockDomainObject.getId.andReturn('test-id');
 
                 mockTelemetry.subscribe.andReturn(mockUnsubscribe);
+                mockTelemetry.getMetadata.andReturn(testMetadata);
 
                 mockSeries.getPointCount.andReturn(42);
                 mockSeries.getDomainValue.andReturn(123456);
@@ -160,6 +164,11 @@ define(
 
                 // Should have only triggered the
                 expect(mockCallback.calls.length).toEqual(100);
+            });
+
+            it("provides domain object metadata", function () {
+                expect(subscription.getMetadata()[0])
+                    .toEqual(testMetadata);
             });
         });
     }

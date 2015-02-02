@@ -1,4 +1,4 @@
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine,Float32Array*/
 
 /**
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
@@ -58,6 +58,13 @@ define(
                     preparer = new PlotPreparer(datas);
 
                 expect(preparer.getDimensions[1]).not.toEqual(0);
+            });
+
+            it("provides buffers", function () {
+                var datas = [makeMockData(0)],
+                    preparer = new PlotPreparer(datas);
+                expect(preparer.getBuffers()[0] instanceof Float32Array)
+                    .toBeTruthy();
             });
 
         });
