@@ -77,6 +77,17 @@ define(
 
             });
 
+            it("gives a single instance of cached objects", function () {
+                // Perform two reads
+                decorator.readObject(testSpace, "someKey", "someValue")
+                    .then(mockCallback);
+                decorator.readObject(testSpace, "someKey", "someValue")
+                    .then(mockCallback);
+
+                // Results should have been pointer-identical
+                expect(mockCallback.calls[0].args[0])
+                    .toBe(mockCallback.calls[1].args[0]);
+            });
         });
     }
 );
