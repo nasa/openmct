@@ -85,7 +85,9 @@ define(
 
             // Handle new telemetry data in this plot
             function updateValues() {
-                setupModes(subscription.getTelemetryObjects());
+                if (subscription) {
+                    setupModes(subscription.getTelemetryObjects());
+                }
                 if (updater) {
                     updater.update();
                     modeOptions.getModeHandler().plotTelemetry(updater);
@@ -105,6 +107,7 @@ define(
                     true // Lossless
                 );
                 if (subscription) {
+                    setupModes(subscription.getTelemetryObjects());
                     setupAxes(subscription.getMetadata());
                     recreateUpdater();
                 }
@@ -183,6 +186,8 @@ define(
                  * Check if a request is pending (to show the wait spinner)
                  */
                 isRequestPending: function () {
+                    // Placeholder; this should reflect request state
+                    // when requesting historical telemetry
                     return false;
                 }
             };
