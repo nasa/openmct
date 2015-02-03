@@ -21,7 +21,7 @@ define(
          * @param {string} domain the key to use when looking up domain values
          * @param {string} range the key to use when looking up range values
          */
-        function PlotUpdater(subscription, domain, range) {
+        function PlotUpdater(subscription, domain, range, maxPoints) {
             var max = [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY],
                 min = [Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY],
                 x,
@@ -46,12 +46,12 @@ define(
                 // Check if we don't have enough room
                 if (index > (buffer.length / 2 - 1)) {
                     // If we don't, can we expand?
-                    if (index < MAX_POINTS) {
+                    if (index < maxPoints) {
                         // Double the buffer size
                         buffer = buffers[id] = doubleSize(buffer);
                     } else {
                         // Just shift the existing buffer
-                        buffer.copyWithin(0, 2);
+                        buffer.set(buffer.subarray(2));
                     }
                 }
 
@@ -82,12 +82,12 @@ define(
                     // Ensure there is space for the new buffer
                     buffer = ensureBufferSize(buffer, id, index);
                     // Account for shifting that may have occurred
-                    index = Math.min(index, MAX_POINTS - 2);
+                    index = Math.min(index, maxPoints - 1);
                     // Update the buffer
                     buffer[index * 2] = domainValue - domainOffset;
                     buffer[index * 2 + 1] = rangeValue;
                     // Update length
-                    lengths[id] = Math.min(index + 1, MAX_POINTS);
+                    lengths[id] = Math.min(index + 1, maxPoints);
                     // Observe max/min range values
                     max[1] = Math.max(max[1], rangeValue);
                     min[1] = Math.min(min[1], rangeValue);
@@ -129,6 +129,9 @@ define(
                 lengthArray.push(lengths[id]);
                 bufferArray.push(buffers[id]);
             }
+
+            // Use a default MAX_POINTS if none is provided
+            maxPoints = maxPoints || MAX_POINTS;
 
             // Initially prepare state for these objects.
             // Note that this may be an empty array at this time,
