@@ -1,0 +1,10 @@
+{
+    "extensions": {
+        "indicators": [
+            {
+                "implementation": "WatchIndicator.js",
+                "depends": ["$interval", "$rootScope"]
+            }
+        ]
+    }
+}

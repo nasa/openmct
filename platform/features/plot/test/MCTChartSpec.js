@@ -15,6 +15,7 @@ define(
                 mockElement,
                 mockCanvas,
                 mockGL,
+                mockPromise,
                 mctChart;
 
             beforeEach(function () {
@@ -23,9 +24,11 @@ define(
                 mockLog =
                     jasmine.createSpyObj("$log", ["warn", "info", "debug"]);
                 mockScope =
-                    jasmine.createSpyObj("$scope", ["$watchCollection"]);
+                    jasmine.createSpyObj("$scope", ["$watchCollection", "$on"]);
                 mockElement =
                     jasmine.createSpyObj("element", ["find"]);
+                mockInterval.cancel = jasmine.createSpy("cancelInterval");
+                mockPromise = jasmine.createSpyObj("promise", ["then"]);
 
 
                 // mct-chart uses GLChart, so it needs WebGL API
@@ -70,6 +73,7 @@ define(
 
                 mockElement.find.andReturn([mockCanvas]);
                 mockCanvas.getContext.andReturn(mockGL);
+                mockInterval.andReturn(mockPromise);
 
                 mctChart = new MCTChart(mockInterval, mockLog);
             });
@@ -148,6 +152,26 @@ define(
                 // Complement the previous test
                 mctChart.link(mockScope, mockElement);
                 expect(mockLog.warn).not.toHaveBeenCalled();
+            });
+
+            // Avoid resource leaks
+            it("stops polling for size changes on destroy", function () {
+                mctChart.link(mockScope, mockElement);
+
+                // Should be listening for a destroy event
+                expect(mockScope.$on).toHaveBeenCalledWith(
+                    "$destroy",
+                    jasmine.any(Function)
+                );
+
+                // Precondition - interval still active
+                expect(mockInterval.cancel).not.toHaveBeenCalled();
+
+                // Broadcast a $destroy
+                mockScope.$on.mostRecentCall.args[1]();
+
+                // Should have stopped the interval
+                expect(mockInterval.cancel).toHaveBeenCalledWith(mockPromise);
             });
 
         });
