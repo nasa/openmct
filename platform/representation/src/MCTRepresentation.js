@@ -57,6 +57,34 @@ define(
                     return new Representer($scope, element, attrs);
                 });
 
+                // Populate scope with any capabilities indicated by the
+                // representation's extension definition
+                function refreshCapabilities() {
+                    var representation = representationMap[$scope.key],
+                        domainObject = $scope.domainObject,
+                        uses = ((representation || {}).uses || []);
+
+                    if (domainObject) {
+                        // Update model
+                        $scope.model = domainObject.getModel();
+
+                        // Provide any of the capabilities requested
+                        uses.forEach(function (used) {
+                            $log.debug([
+                                "Requesting capability ",
+                                used,
+                                " for representation ",
+                                $scope.key
+                            ].join(""));
+                            $q.when(
+                                domainObject.useCapability(used)
+                            ).then(function (c) {
+                                $scope[used] = c;
+                            });
+                        });
+                    }
+                }
+
                 // General-purpose refresh mechanism; should set up the scope
                 // as appropriate for current representation key and
                 // domain object.
@@ -88,28 +116,13 @@ define(
                     // Populate scope with fields associated with the current
                     // domain object (if one has been passed in)
                     if (domainObject) {
-                        // Always provide the model, as "model"
-                        $scope.model = domainObject.getModel();
+                        // Initialize any capabilities
+                        refreshCapabilities();
 
                         // Also provide the view configuration,
                         // for the specific view
                         $scope.configuration =
                             ($scope.model.configuration || {})[$scope.key] || {};
-
-                        // Also provide any of the capabilities requested
-                        uses.forEach(function (used) {
-                            $log.debug([
-                                "Requesting capability ",
-                                used,
-                                " for representation ",
-                                $scope.key
-                            ].join(""));
-                            $q.when(
-                                domainObject.useCapability(used)
-                            ).then(function (c) {
-                                $scope[used] = c;
-                            });
-                        });
 
                         // Finally, wire up any additional behavior (such as
                         // gestures) associated with this representation.
@@ -130,7 +143,7 @@ define(
                 // Finally, also update when there is a new version of that
                 // same domain object; these changes should be tracked in the
                 // model's "modified" field, by the mutation capability.
-                $scope.$watch("domainObject.getModel().modified", refresh);
+                $scope.$watch("domainObject.getModel().modified", refreshCapabilities);
 
                 // Do one initial refresh, so that we don't need another
                 // digest iteration just to populate the scope. Failure to

@@ -115,7 +115,7 @@ define(
                 mockScope.key = "abc";
 
                 // Trigger the watch
-                mockScope.$watch.mostRecentCall.args[1]();
+                mockScope.$watch.calls[0].args[1]();
 
                 expect(mockScope.inclusion).toEqual("a/b/c/template.html");
             });
@@ -126,7 +126,7 @@ define(
                 mockScope.key = "xyz";
 
                 // Trigger the watch
-                mockScope.$watch.mostRecentCall.args[1]();
+                mockScope.$watch.calls[0].args[1]();
 
                 expect(mockScope.inclusion).toEqual("x/y/z/template.html");
             });
@@ -138,7 +138,7 @@ define(
                 mockScope.domainObject = mockDomainObject;
 
                 // Trigger the watch
-                mockScope.$watch.mostRecentCall.args[1]();
+                mockScope.$watch.calls[0].args[1]();
 
                 expect(mockDomainObject.useCapability)
                     .toHaveBeenCalledWith("testCapability");
@@ -155,7 +155,7 @@ define(
                 expect(mockLog.warn).not.toHaveBeenCalled();
 
                 // Trigger the watch
-                mockScope.$watch.mostRecentCall.args[1]();
+                mockScope.$watch.calls[0].args[1]();
 
                 // Should have gotten a warning - that's an unknown key
                 expect(mockLog.warn).toHaveBeenCalled();

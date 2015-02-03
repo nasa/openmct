@@ -66,9 +66,8 @@ define(
             }
 
             // Compute panel positions based on the layout's object model
-            function lookupPanels(model) {
-                var configuration = $scope.configuration || {},
-                    ids = (model || {}).composition || [];
+            function lookupPanels(ids) {
+                var configuration = $scope.configuration || {};
 
                 // Pull panel positions from configuration
                 rawPositions = shallowCopy(configuration.panels || {}, ids);
@@ -77,14 +76,14 @@ define(
                 positions = {};
 
                 // Update width/height that we are tracking
-                gridSize = (model || {}).layoutGrid || DEFAULT_GRID_SIZE;
+                gridSize = ($scope.model || {}).layoutGrid || DEFAULT_GRID_SIZE;
 
                 // Compute positions and add defaults where needed
                 ids.forEach(populatePosition);
             }
 
             // Position panes when the model field changes
-            $scope.$watch("model", lookupPanels);
+            $scope.$watch("model.composition", lookupPanels);
 
             return {
                 /**
