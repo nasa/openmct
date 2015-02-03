@@ -11,6 +11,7 @@
     "elements/PlotPosition",
     "elements/PlotPreparer",
     "elements/PlotTickGenerator",
+    "elements/PlotUpdater",
     "modes/PlotModeOptions",
     "modes/PlotOverlayMode",
     "modes/PlotStackMode"

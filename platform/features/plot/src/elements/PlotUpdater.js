@@ -63,8 +63,8 @@ define(
                 var id = obj.getId(),
                     index = lengths[id] || 0,
                     buffer = buffers[id],
-                    domainValue = subscription.getDomainValue(obj),
-                    rangeValue = subscription.getRangeValue(obj);
+                    domainValue = subscription.getDomainValue(obj, domain),
+                    rangeValue = subscription.getRangeValue(obj, range);
 
                 // If we don't already have a data buffer for that ID,
                 // make one.
