@@ -103,7 +103,7 @@
             {
                 "key": "items",
                 "name": "Items",
-                "glyph": "i",
+                "glyph": "9",
                 "description": "Grid of available items.",
                 "templateUrl": "templates/items/items.html",
                 "uses": [ "composition" ],
