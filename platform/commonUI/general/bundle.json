@@ -152,6 +152,26 @@
                 "templateUrl": "templates/controls/switcher.html",
                 "uses": [ "view" ]
             }
+        ],
+        "licenses": [
+            {
+                "name": "Modernizr",
+                "version": "2.6.2",
+                "description": "Browser/device capability finding.",
+                "author": "Faruk Ateş",
+                "website": "http://modernizr.com",
+                "license": "MIT",
+                "link": "http://modernizr.com/license/"
+            },
+            {
+                "name": "Normalize.css",
+                "version": "1.1.2",
+                "description": "Browser style normalization.",
+                "author": "Nicolas Gallagher, Jonathan Neal",
+                "website": "http://necolas.github.io/normalize.css/",
+                "license": "MIT",
+                "link": "https://github.com/necolas/normalize.css/blob/master/LICENSE.md"
+            }
         ]
     }
 }

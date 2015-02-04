@@ -119,6 +119,26 @@
                 "implementation": "creation/CreateActionProvider.js",
                 "depends": [ "typeService", "dialogService", "creationService" ]
             }
+        ],
+        "licenses": [
+            {
+                "name": "screenfull.js",
+                "version": "1.2.0",
+                "description": "Wrapper for cross-browser usage of fullscreen API.",
+                "author": "Sindre Sorhus",
+                "website": "https://github.com/sindresorhus/screenfull.js/",
+                "license": "MIT",
+                "link": "https://github.com/sindresorhus/screenfull.js/blob/gh-pages/license"
+            },
+            {
+                "name": "Math.uuid.js",
+                "version": "1.4",
+                "description": "Unique identifer generation (code adapted.)",
+                "author": "Robert Kieffer",
+                "website": "https://github.com/broofa/node-uuid",
+                "license": "MIT",
+                "link": "http://opensource.org/licenses/MIT"
+            }
         ]
     }
 }
