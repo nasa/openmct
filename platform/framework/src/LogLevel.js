@@ -43,7 +43,6 @@ define(
                         log[m] = NOOP;
                     }
                 });
-                return log;
             }
 
             // Default to 'warn' level if unspecified
@@ -67,7 +66,10 @@ define(
                 configure: function (app, $log) {
                     decorate($log);
                     app.config(function ($provide) {
-                        $provide.decorator('$log', decorate);
+                        $provide.decorator('$log', function ($delegate) {
+                            decorate($delegate);
+                            return $delegate;
+                        });
                     });
                 }
             };

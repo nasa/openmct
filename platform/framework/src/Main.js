@@ -19,6 +19,7 @@ define(
         '../lib/angular-route.min',
         './Constants',
         './FrameworkInitializer',
+        './LogLevel',
         './load/BundleLoader',
         './resolve/ImplementationLoader',
         './resolve/ExtensionResolver',
@@ -36,6 +37,7 @@ define(
         angularRoute,
         Constants,
         FrameworkInitializer,
+        LogLevel,
         BundleLoader,
         ImplementationLoader,
         ExtensionResolver,
@@ -51,6 +53,12 @@ define(
         // Get a reference to Angular's injector, so we can get $http and $log
         // services, which are useful to the framework layer.
         var injector = angular.injector(['ng']);
+
+        // Look up log level from query string
+        function logLevel() {
+            var match = /[?&]log=([a-z]+)/.exec(window.location.search);
+            return match ? match[1] : "";
+        }
 
         // Polyfill Promise, in case browser does not natively provide Promise
         window.Promise = window.Promise || es6promise.Promise;
@@ -86,6 +94,11 @@ define(
                     bootstrapper
                 );
 
+            // Apply logging levels; this must be done now, before the
+            // first log statement.
+            new LogLevel(logLevel()).configure(app, $log);
+
+            // Initialize the application
             $log.info("Initializing application.");
             initializer.runApplication(Constants.BUNDLE_LISTING_FILE);
         }
