@@ -8,9 +8,12 @@
     "actions/PropertiesDialog",
     "actions/RemoveAction",
     "actions/SaveAction",
+    "capabilities/EditableCompositionCapability",
     "capabilities/EditableContextCapability",
+    "capabilities/EditableLookupCapability",
     "capabilities/EditablePersistenceCapability",
     "capabilities/EditorCapability",
     "objects/EditableDomainObject",
-    "objects/EditableDomainObjectCache"
+    "objects/EditableDomainObjectCache",
+    "objects/EditableModelCache"
 ]

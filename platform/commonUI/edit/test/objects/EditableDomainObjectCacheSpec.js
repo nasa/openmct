@@ -24,9 +24,10 @@ define(
                 };
             }
 
-            function WrapObject(domainObject) {
+            function WrapObject(domainObject, model) {
                 var result = Object.create(domainObject);
                 result.wrapped = true;
+                result.wrappedModel = model;
                 captured.wraps = (captured.wraps || 0) + 1;
                 return result;
             }
@@ -49,24 +50,30 @@ define(
                 expect(wrappedObject.getId()).toEqual(domainObject.getId());
             });
 
-            it("only wraps objects once", function () {
+            it("wraps objects repeatedly, wraps models once", function () {
                 var domainObject = new TestObject('test-id'),
-                    wrappedObject;
+                    wrappedObjects = [];
 
                 // Verify precondition
                 expect(captured.wraps).toBeUndefined();
 
                 // Invoke a few more times; expect count not to increment
-                wrappedObject = cache.getEditableObject(domainObject);
+                wrappedObjects.push(cache.getEditableObject(domainObject));
                 expect(captured.wraps).toEqual(1);
-                wrappedObject = cache.getEditableObject(domainObject);
-                expect(captured.wraps).toEqual(1);
-                wrappedObject = cache.getEditableObject(domainObject);
-                expect(captured.wraps).toEqual(1);
+                wrappedObjects.push(cache.getEditableObject(domainObject));
+                expect(captured.wraps).toEqual(2);
+                wrappedObjects.push(cache.getEditableObject(domainObject));
+                expect(captured.wraps).toEqual(3);
 
                 // Verify that the last call still gave us a wrapped object
-                expect(wrappedObject.wrapped).toBeTruthy();
-                expect(wrappedObject.getId()).toEqual(domainObject.getId());
+                expect(wrappedObjects[0].wrapped).toBeTruthy();
+                expect(wrappedObjects[0].getId()).toEqual(domainObject.getId());
+
+                // Verify that objects are distinct but models are identical
+                expect(wrappedObjects[0].wrappedModel)
+                    .toBe(wrappedObjects[1].wrappedModel);
+                expect(wrappedObjects[0]).not
+                    .toBe(wrappedObjects[1]);
             });
 
             it("saves objects that have been marked dirty", function () {

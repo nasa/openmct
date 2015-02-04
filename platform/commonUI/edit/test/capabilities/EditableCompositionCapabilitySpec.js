@@ -1,11 +1,11 @@
 /*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
-    ["../../src/capabilities/EditableContextCapability"],
-    function (EditableContextCapability) {
+    ["../../src/capabilities/EditableCompositionCapability"],
+    function (EditableCompositionCapability) {
         "use strict";
 
-        describe("An editable context capability", function () {
+        describe("An editable composition capability", function () {
             var mockContext,
                 mockEditableObject,
                 mockDomainObject,
@@ -32,7 +32,7 @@ define(
                 mockContext.getDomainObject.andReturn(mockTestObject);
                 mockFactory.getEditableObject.andReturn(someValue);
 
-                capability = new EditableContextCapability(
+                capability = new EditableCompositionCapability(
                     mockContext,
                     mockEditableObject,
                     mockDomainObject,
@@ -41,10 +41,12 @@ define(
 
             });
 
-            it("presumes idempotence of its wrapped capability", function () {
+            // Most behavior is tested for EditableLookupCapability,
+            // so just verify that this isse
+            it("presumes non-idempotence of its wrapped capability", function () {
                 expect(capability.getDomainObject())
                     .toEqual(capability.getDomainObject());
-                expect(mockContext.getDomainObject.calls.length).toEqual(1);
+                expect(mockContext.getDomainObject.calls.length).toEqual(2);
             });
 
         });

@@ -7,7 +7,7 @@ define(
         'use strict';
 
         /**
-         * Wrapper for the "context" capability;
+         * Wrapper for the "composition" capability;
          * ensures that any domain objects reachable in Edit mode
          * are also wrapped as EditableDomainObjects.
          *
@@ -15,20 +15,21 @@ define(
          * associated cache; the constructor signature is particular
          * to a pattern used there and may contain unused arguments.
          */
-        return function EditableContextCapability(
+        return function EditableCompositionCapability(
             contextCapability,
             editableObject,
             domainObject,
             cache
         ) {
             // This is a "lookup" style capability (it looks up other
-            // domain objects), and it should be idempotent
+            // domain objects), but we do not want to return the same
+            // specific value every time (composition may change)
             return new EditableLookupCapability(
                 contextCapability,
                 editableObject,
                 domainObject,
                 cache,
-                true // Not idempotent
+                false // Not idempotent
             );
         };
     }

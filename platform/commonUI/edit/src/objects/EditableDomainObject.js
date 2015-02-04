@@ -13,12 +13,14 @@ define(
     [
         '../capabilities/EditablePersistenceCapability',
         '../capabilities/EditableContextCapability',
+        '../capabilities/EditableCompositionCapability',
         '../capabilities/EditorCapability',
         './EditableDomainObjectCache'
     ],
     function (
         EditablePersistenceCapability,
         EditableContextCapability,
+        EditableCompositionCapability,
         EditorCapability,
         EditableDomainObjectCache
     ) {
@@ -27,7 +29,7 @@ define(
         var capabilityFactories = {
             persistence: EditablePersistenceCapability,
             context: EditableContextCapability,
-            composition: EditableContextCapability,
+            composition: EditableCompositionCapability,
             editor: EditorCapability
         };
 
@@ -53,9 +55,8 @@ define(
 
             // Constructor for EditableDomainObject, which adheres
             // to the same shared cache.
-            function EditableDomainObjectImpl(domainObject) {
-                var model = JSON.parse(JSON.stringify(domainObject.getModel())),
-                    editableObject = Object.create(domainObject);
+            function EditableDomainObjectImpl(domainObject, model) {
+                var editableObject = Object.create(domainObject);
 
                 // Only provide the cloned model.
                 editableObject.getModel = function () { return model; };
