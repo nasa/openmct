@@ -57,7 +57,11 @@ define(
          *        will be performed; should contain a `domainObject` property
          */
         EditAction.appliesTo = function (context) {
-            return (context || {}).domainObject !== undefined;
+            var domainObject = (context || {}).domainObject,
+                type = domainObject && domainObject.getCapability('type');
+
+            // Only allow creatable types to be edited
+            return type && type.hasFeature('creation');
         };
 
         return EditAction;

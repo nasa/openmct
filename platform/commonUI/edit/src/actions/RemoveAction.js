@@ -80,9 +80,14 @@ define(
         RemoveAction.appliesTo = function (context) {
             var object = (context || {}).domainObject,
                 contextCapability = object && object.getCapability("context"),
-                parent = contextCapability && contextCapability.getParent();
+                parent = contextCapability && contextCapability.getParent(),
+                parentType = parent && parent.getCapability('type'),
+                parentCreatable = parentType && parentType.hasFeature('creation');
+
+            // Only creatable types should be modifiable
             return parent !== undefined &&
-                    Array.isArray(parent.getModel().composition);
+                    Array.isArray(parent.getModel().composition) &&
+                    parentCreatable;
         };
 
         return RemoveAction;

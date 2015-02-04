@@ -12,6 +12,7 @@ define(
                 mockContext,
                 mockMutation,
                 mockPersistence,
+                mockType,
                 actionContext,
                 model,
                 capabilities,
@@ -47,16 +48,18 @@ define(
                 mockContext = jasmine.createSpyObj("context", [ "getParent" ]);
                 mockMutation = jasmine.createSpyObj("mutation", [ "invoke" ]);
                 mockPersistence = jasmine.createSpyObj("persistence", [ "persist" ]);
+                mockType = jasmine.createSpyObj("type", [ "hasFeature" ]);
 
                 mockDomainObject.getId.andReturn("test");
                 mockDomainObject.getCapability.andReturn(mockContext);
                 mockContext.getParent.andReturn(mockParent);
-
+                mockType.hasFeature.andReturn(true);
 
 
                 capabilities = {
                     mutation: mockMutation,
-                    persistence: mockPersistence
+                    persistence: mockPersistence,
+                    type: mockType
                 };
                 model = {
                     composition: [ "a", "test", "b", "c" ]
@@ -73,6 +76,9 @@ define(
                 mockContext.getParent.andReturn(undefined);
 
                 expect(RemoveAction.appliesTo(actionContext)).toBeFalsy();
+
+                // Also verify that creatability was checked
+                expect(mockType.hasFeature).toHaveBeenCalledWith('creation');
             });
 
             it("mutates the parent when performed", function () {
