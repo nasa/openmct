@@ -32,18 +32,23 @@ define(
                  *        associated telemetry data is of interest
                  * @param {Function} callback a function to invoke
                  *        when new data has become available.
+                 * @param {boolean} lossless flag to indicate whether the
+                 *        callback should be notified for all values
+                 *        (otherwise, multiple values in quick succession
+                 *        will call back with only the latest value.)
                  * @returns {TelemetrySubscription} the subscription,
                  *        which will provide access to latest values.
                  *
                  * @method
                  * @memberof TelemetrySubscriber
                  */
-                subscribe: function (domainObject, callback) {
+                subscribe: function (domainObject, callback, lossless) {
                     return new TelemetrySubscription(
                         $q,
                         $timeout,
                         domainObject,
-                        callback
+                        callback,
+                        lossless
                     );
                 }
             };

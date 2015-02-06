@@ -35,7 +35,7 @@ define(
                 subplot.getDrawingObject().lines = [{
                     buffer: buffer,
                     color: PlotPalette.getFloatColor(0),
-                    points: buffer.length / 2
+                    points: prepared.getLength(index)
                 }];
 
                 subplot.update();

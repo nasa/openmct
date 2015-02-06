@@ -3,6 +3,8 @@
     "TelemetryCapability",
     "TelemetryController",
     "TelemetryFormatter",
+    "TelemetryQueue",
     "TelemetrySubscriber",
-    "TelemetrySubscription"
+    "TelemetrySubscription",
+    "TelemetryTable"
 ]
