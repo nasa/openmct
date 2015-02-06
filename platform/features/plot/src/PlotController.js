@@ -113,7 +113,19 @@ define(
                 }
             }
 
+            // Release the current subscription (called when scope is destroyed)
+            function releaseSubscription() {
+                if (subscription) {
+                    subscription.unsubscribe();
+                    subscription = undefined;
+                }
+            }
+
+            // Subscribe to telemetry when a domain object becomes available
             $scope.$watch('domainObject', subscribe);
+
+            // Unsubscribe when the plot is destroyed
+            $scope.$on("$destroy", releaseSubscription);
 
             return {
                 /**
