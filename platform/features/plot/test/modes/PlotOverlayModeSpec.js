@@ -57,7 +57,7 @@ define(
                 // Prepared telemetry data
                 mockPrepared = jasmine.createSpyObj(
                     "prepared",
-                    [ "getDomainOffset", "getOrigin", "getDimensions", "getBuffers" ]
+                    [ "getDomainOffset", "getOrigin", "getDimensions", "getBuffers", "getLength" ]
                 );
 
                 mockSubPlotFactory.createSubPlot.andCallFake(createMockSubPlot);
@@ -68,6 +68,7 @@ define(
                 mockPrepared.getDomainOffset.andReturn(1234);
                 mockPrepared.getOrigin.andReturn([10, 10]);
                 mockPrepared.getDimensions.andReturn([500, 500]);
+                mockPrepared.getLength.andReturn(3);
 
                 // Clear out drawing objects
                 testDrawingObjects = [];

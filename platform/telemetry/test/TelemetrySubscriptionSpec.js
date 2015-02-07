@@ -13,6 +13,7 @@ define(
                 mockTelemetry,
                 mockUnsubscribe,
                 mockSeries,
+                testMetadata,
                 subscription;
 
             function mockPromise(value) {
@@ -24,6 +25,8 @@ define(
             }
 
             beforeEach(function () {
+                testMetadata = { someKey: "some value" };
+
                 mockQ = jasmine.createSpyObj("$q", ["when", "all"]);
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockDomainObject = jasmine.createSpyObj(
@@ -33,7 +36,7 @@ define(
                 mockCallback = jasmine.createSpy("callback");
                 mockTelemetry = jasmine.createSpyObj(
                     "telemetry",
-                    ["subscribe"]
+                    ["subscribe", "getMetadata"]
                 );
                 mockUnsubscribe = jasmine.createSpy("unsubscribe");
                 mockSeries = jasmine.createSpyObj(
@@ -48,6 +51,7 @@ define(
                 mockDomainObject.getId.andReturn('test-id');
 
                 mockTelemetry.subscribe.andReturn(mockUnsubscribe);
+                mockTelemetry.getMetadata.andReturn(testMetadata);
 
                 mockSeries.getPointCount.andReturn(42);
                 mockSeries.getDomainValue.andReturn(123456);
@@ -119,6 +123,52 @@ define(
 
                 // Should have no objects
                 expect(subscription.getTelemetryObjects()).toEqual([]);
+            });
+
+            // This test case corresponds to plot usage of
+            // telemetrySubscription, where failure to callback
+            // once-per-update results in loss of data, WTD-784
+            it("fires one event per update if requested", function () {
+                var i, domains = [], ranges = [], lastCall;
+
+                // Clear out the subscription from beforeEach
+                subscription.unsubscribe();
+                // Create a subscription which does not drop events
+                subscription = new TelemetrySubscription(
+                    mockQ,
+                    mockTimeout,
+                    mockDomainObject,
+                    mockCallback,
+                    true // Don't drop updates!
+                );
+
+                // Snapshot getDomainValue, getRangeValue at time of callback
+                mockCallback.andCallFake(function () {
+                    domains.push(subscription.getDomainValue(mockDomainObject));
+                    ranges.push(subscription.getRangeValue(mockDomainObject));
+                });
+
+                // Send 100 updates
+                for (i = 0; i < 100; i += 1) {
+                    // Return different values to verify later
+                    mockSeries.getDomainValue.andReturn(i);
+                    mockSeries.getRangeValue.andReturn(i * 2);
+                    mockTelemetry.subscribe.mostRecentCall.args[0](mockSeries);
+                }
+
+                // Fire all timeouts that get scheduled
+                while (mockTimeout.mostRecentCall !== lastCall) {
+                    lastCall = mockTimeout.mostRecentCall;
+                    lastCall.args[0]();
+                }
+
+                // Should have only triggered the
+                expect(mockCallback.calls.length).toEqual(100);
+            });
+
+            it("provides domain object metadata", function () {
+                expect(subscription.getMetadata()[0])
+                    .toEqual(testMetadata);
             });
         });
     }

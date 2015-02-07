@@ -1,4 +1,3 @@
-<span ng-controller="TelemetryController as telemetry">
     <span ng-controller="PlotController as plot"
           ng-mouseleave="representation.showControls = false">
 
@@ -114,7 +113,7 @@
 
                 </div>
 
-                <span class="t-wait-spinner loading" ng-show="telemetry.isRequestPending()">
+                <span class="t-wait-spinner loading" ng-show="plot.isRequestPending()">
                 </span>
             </div>
             <div ng-if="$last" class="gl-plot-axis-area gl-plot-x">
@@ -143,9 +142,6 @@
                 </div>
 
             </div>
-        </span>
-
-
+        </div>
     </span>
-</div>
 

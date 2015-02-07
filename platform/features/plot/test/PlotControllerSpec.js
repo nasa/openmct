@@ -1,4 +1,4 @@
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,Promise,describe,it,expect,xit,beforeEach,waitsFor,jasmine*/
 
 /**
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
@@ -11,12 +11,11 @@ define(
         describe("The plot controller", function () {
             var mockScope,
                 mockFormatter,
-                mockTelemetry, // mock telemetry controller
-                mockData,
+                mockSubscriber,
+                mockSubscription,
                 mockDomainObject,
                 controller;
 
-            function echo(i) { return i; }
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
@@ -27,33 +26,32 @@ define(
                     "formatter",
                     [ "formatDomainValue", "formatRangeValue" ]
                 );
-                mockTelemetry = jasmine.createSpyObj(
-                    "telemetry",
-                    [ "getResponse", "getMetadata" ]
-                );
-                mockData = jasmine.createSpyObj(
-                    "data",
-                    [ "getPointCount", "getDomainValue", "getRangeValue" ]
-                );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     [ "getId", "getModel", "getCapability" ]
                 );
-
-                mockScope.telemetry = mockTelemetry;
-                mockTelemetry.getResponse.andReturn([mockData]);
-                mockData.getPointCount.andReturn(2);
-                mockData.getDomainValue.andCallFake(echo);
-                mockData.getRangeValue.andCallFake(echo);
-
-                controller = new PlotController(mockScope, mockFormatter);
-            });
-
-            it("listens for telemetry updates", function () {
-                expect(mockScope.$on).toHaveBeenCalledWith(
-                    "telemetryUpdate",
-                    jasmine.any(Function)
+                mockSubscriber = jasmine.createSpyObj(
+                    "telemetrySubscriber",
+                    ["subscribe"]
                 );
+                mockSubscription = jasmine.createSpyObj(
+                    "subscription",
+                    [
+                        "unsubscribe",
+                        "getTelemetryObjects",
+                        "getMetadata",
+                        "getDomainValue",
+                        "getRangeValue"
+                    ]
+                );
+
+                mockSubscriber.subscribe.andReturn(mockSubscription);
+                mockSubscription.getTelemetryObjects.andReturn([mockDomainObject]);
+                mockSubscription.getMetadata.andReturn([{}]);
+                mockSubscription.getDomainValue.andReturn(123);
+                mockSubscription.getRangeValue.andReturn(42);
+
+                controller = new PlotController(mockScope, mockFormatter, mockSubscriber);
             });
 
             it("provides plot colors", function () {
@@ -66,16 +64,24 @@ define(
                     .not.toEqual(controller.getColor(1));
             });
 
-            it("does not fail if telemetry controller is not in scope", function () {
-                mockScope.telemetry = undefined;
-
-                // Broadcast data
-                mockScope.$on.mostRecentCall.args[1]();
-
-                // Just want to not have an exception
+            it("subscribes to telemetry when a domain object appears in scope", function () {
+                // Make sure we're using the right watch here
+                expect(mockScope.$watch.mostRecentCall.args[0])
+                    .toEqual("domainObject");
+                // Make an object available
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                // Should have subscribed
+                expect(mockSubscriber.subscribe).toHaveBeenCalledWith(
+                    mockDomainObject,
+                    jasmine.any(Function),
+                    true // Lossless
+                );
             });
 
             it("draws lines when data becomes available", function () {
+                // Make an object available
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+
                 // Verify precondition
                 controller.getSubPlots().forEach(function (subplot) {
                     expect(subplot.getDrawingObject().lines)
@@ -83,11 +89,10 @@ define(
                 });
 
                 // Make sure there actually are subplots being verified
-                expect(controller.getSubPlots().length > 0)
-                    .toBeTruthy();
+                expect(controller.getSubPlots().length > 0).toBeTruthy();
 
                 // Broadcast data
-                mockScope.$on.mostRecentCall.args[1]();
+                mockSubscriber.subscribe.mostRecentCall.args[1]();
 
                 controller.getSubPlots().forEach(function (subplot) {
                     expect(subplot.getDrawingObject().lines)
@@ -95,27 +100,39 @@ define(
                 });
             });
 
+            it("unsubscribes when domain object changes", function () {
+                // Make an object available
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                // Verify precondition - shouldn't unsubscribe yet
+                expect(mockSubscription.unsubscribe).not.toHaveBeenCalled();
+                // Remove the domain object
+                mockScope.$watch.mostRecentCall.args[1](undefined);
+                // Should have unsubscribed
+                expect(mockSubscription.unsubscribe).toHaveBeenCalled();
+            });
+
 
             it("changes modes depending on number of objects", function () {
-                var expectedWatch = "telemetry.getTelemetryObjects()",
-                    watchFunction;
+                // Act like one object is available
+                mockSubscription.getTelemetryObjects.andReturn([
+                    mockDomainObject
+                ]);
 
-                // Find the watch for telemetry objects, which
-                // should change plot mode options
-                mockScope.$watch.calls.forEach(function (call) {
-                    if (call.args[0] === expectedWatch) {
-                        watchFunction = call.args[1];
-                    }
-                });
+                // Make an object available
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
 
-                watchFunction([mockDomainObject]);
                 expect(controller.getModeOptions().length).toEqual(1);
 
-                watchFunction([
+                // Act like one object is available
+                mockSubscription.getTelemetryObjects.andReturn([
                     mockDomainObject,
                     mockDomainObject,
                     mockDomainObject
                 ]);
+
+                // Make an object available
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+
                 expect(controller.getModeOptions().length).toEqual(2);
             });
 
@@ -150,6 +167,11 @@ define(
                 expect(controller.isZoomed).not.toThrow();
                 expect(controller.stepBackPanZoom).not.toThrow();
                 expect(controller.unzoom).not.toThrow();
+            });
+
+            it("indicates if a request is pending", function () {
+                // Placeholder; need to support requesting telemetry
+                expect(controller.isRequestPending()).toBeFalsy();
             });
         });
     }

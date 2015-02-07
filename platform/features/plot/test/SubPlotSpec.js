@@ -135,6 +135,22 @@ define(
                     ]
                 );
             });
+
+            it("provides access to a drawable object", function () {
+                expect(typeof subplot.getDrawingObject()).toEqual('object');
+            });
+
+            it("allows a domain offset to be provided", function () {
+                // Domain object is needed to adjust canvas coordinates
+                // to avoid loss-of-precision associated with converting
+                // to 32 bit floats.
+                subplot.setDomainOffset(3);
+                subplot.update();
+                // Should have adjusted the origin accordingly
+                expect(subplot.getDrawingObject().origin[0])
+                    .toEqual(2);
+            });
+
         });
     }
 );

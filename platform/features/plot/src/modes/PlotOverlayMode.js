@@ -38,7 +38,7 @@ define(
                     return {
                         buffer: buf,
                         color: PlotPalette.getFloatColor(i),
-                        points: buf.length / 2
+                        points: prepared.getLength(i)
                     };
                 });
 

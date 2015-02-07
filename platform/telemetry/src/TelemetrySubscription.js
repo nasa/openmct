@@ -1,8 +1,8 @@
 /*global define*/
 
 define(
-    [],
-    function () {
+    ['./TelemetryQueue', './TelemetryTable'],
+    function (TelemetryQueue, TelemetryTable) {
         "use strict";
 
 
@@ -25,11 +25,17 @@ define(
          *        associated telemetry data is of interest
          * @param {Function} callback a function to invoke
          *        when new data has become available.
+         * @param {boolean} lossless true if callback should be invoked
+         *        once with every data point available; otherwise, multiple
+         *        data events in a short period of time will only invoke
+         *        the callback once, with access to the latest data
          */
-        function TelemetrySubscription($q, $timeout, domainObject, callback) {
+        function TelemetrySubscription($q, $timeout, domainObject, callback, lossless) {
             var unsubscribePromise,
                 latestValues = {},
                 telemetryObjects = [],
+                pool = lossless ? new TelemetryQueue() : new TelemetryTable(),
+                metadatas,
                 updatePending;
 
             // Look up domain objects which have telemetry capabilities.
@@ -55,10 +61,22 @@ define(
                 });
             }
 
+            function updateValuesFromPool() {
+                var values = pool.poll();
+                Object.keys(values).forEach(function (k) {
+                    latestValues[k] = values[k];
+                });
+            }
+
             // Invoke the observer callback to notify that new streaming
             // data has become available.
             function fireCallback() {
-                callback();
+                // Play back from queue if we are lossless
+                while (!pool.isEmpty()) {
+                    updateValuesFromPool();
+                    callback();
+                }
+
                 // Clear the pending flag so that future updates will
                 // schedule this callback.
                 updatePending = false;
@@ -79,10 +97,10 @@ define(
 
                 // Update the latest-value table
                 if (count > 0) {
-                    latestValues[domainObject.getId()] = {
+                    pool.put(domainObject.getId(), {
                         domain: telemetry.getDomainValue(count - 1),
                         range: telemetry.getRangeValue(count - 1)
-                    };
+                    });
                 }
             }
 
@@ -94,6 +112,14 @@ define(
                 return telemetryCapability.subscribe(function (telemetry) {
                     update(domainObject, telemetry);
                 });
+            }
+
+            // Look up metadata associated with an object's telemetry
+            function lookupMetadata(domainObject) {
+                var telemetryCapability =
+                    domainObject.getCapability("telemetry");
+                return telemetryCapability &&
+                        telemetryCapability.getMetadata();
             }
 
             // Prepare subscriptions to all relevant telemetry-providing
@@ -108,6 +134,7 @@ define(
             // to return a non-Promise to simplify usage elsewhere.
             function cacheObjectReferences(objects) {
                 telemetryObjects = objects;
+                metadatas = objects.map(lookupMetadata);
                 return objects;
             }
 
@@ -189,6 +216,21 @@ define(
                  */
                 getTelemetryObjects: function () {
                     return telemetryObjects;
+                },
+                /**
+                 * Get all telemetry metadata associated with
+                 * telemetry-providing domain objects managed by
+                 * this controller.
+                 *
+                 * This will ordered in the
+                 * same manner as `getTelemetryObjects()` or
+                 * `getResponse()`; that is, the metadata at a
+                 * given index will correspond to the telemetry-providing
+                 * domain object at the same index.
+                 * @returns {Array} an array of metadata objects
+                 */
+                getMetadata: function () {
+                    return metadatas;
                 }
             };
         }
