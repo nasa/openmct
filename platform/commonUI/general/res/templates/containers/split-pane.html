@@ -1,0 +1,9 @@
+<span ng-controller="SplitPaneController as splitter">
+    <div class="splitter" ng-style="splitter.style()"
+         mct-drag="splitter.move(delta.x)">
+    </div>
+    <div class='split-pane-component items pane' style="right:0;"
+         ng-style="splitter.style()"
+         ng-transclude>
+    </div>
+</span>

@@ -84,6 +84,10 @@
                 "key": "GetterSetterController",
                 "implementation": "controllers/GetterSetterController.js",
                 "depends": [ "$scope" ]
+            },
+            {
+                "key": "SplitPaneController",
+                "implementation": "controllers/SplitPaneController.js"
             }
         ],
         "directives": [

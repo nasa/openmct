@@ -4,6 +4,7 @@
     "controllers/ClickAwayController",
     "controllers/ContextMenuController",
     "controllers/GetterSetterController",
+    "controllers/SplitPaneController",
     "controllers/ToggleController",
     "controllers/TreeNodeController",
     "controllers/ViewSwitcherController",
