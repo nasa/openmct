@@ -3,7 +3,7 @@
     "description": "Interfaces and infrastructure for real-time and historical data.",
     "configuration": {
         "paths": {
-            "moment": "moment.min.js"
+            "moment": "moment.min"
         },
         "shim": {
             "moment": {
