@@ -96,7 +96,15 @@ define(
                  * Clear the chart.
                  */
                 clear: function () {
-                    gl.viewport(0, 0, canvas.width, canvas.height);
+                    // Set the viewport size; note that we use the width/height
+                    // that our WebGL context reports, which may be lower
+                    // resolution than the canvas we requested.
+                    gl.viewport(
+                        0,
+                        0,
+                        gl.drawingBufferWidth,
+                        gl.drawingBufferHeight
+                    );
                     gl.clear(gl.COLOR_BUFFER_BIT + gl.DEPTH_BUFFER_BIT);
                 },
                 /**
@@ -107,8 +115,11 @@ define(
                  *        origin of the chart
                  */
                 setDimensions: function (dimensions, origin) {
-                    gl.uniform2fv(uDimensions, dimensions);
-                    gl.uniform2fv(uOrigin, origin);
+                    if (dimensions && dimensions.length > 0 &&
+                            origin && origin.length > 0) {
+                        gl.uniform2fv(uDimensions, dimensions);
+                        gl.uniform2fv(uOrigin, origin);
+                    }
                 },
                 /**
                  * Draw the supplied buffer as a line strip (a sequence
