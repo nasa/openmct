@@ -21,16 +21,38 @@ define(
             var spaces = CACHE_SPACES || [], // List of spaces to cache
                 cache = {}; // Where objects will be stored
 
-            // Utility function; avoid sharing one instance everywhere.
-            function clone(value) {
-                // Only clone truthy values (no need to clone undefined, false...)
-                return value && JSON.parse(JSON.stringify(value));
+            // Update the cached instance of an object to a new value
+            function replaceValue(valueHolder, newValue) {
+                var v = valueHolder.value;
+
+                // If it's a JS object, we want to replace contents, so that
+                // everybody gets the same instance.
+                if (typeof v === 'object' && v !== null) {
+                    // Only update contents if these are different instances
+                    if (v !== newValue) {
+                        // Clear prior contents
+                        Object.keys(v).forEach(function (k) {
+                            delete v[k];
+                        });
+                        // Shallow-copy contents
+                        Object.keys(newValue).forEach(function (k) {
+                            v[k] = newValue[k];
+                        });
+                    }
+                } else {
+                    // Otherwise, just store the new value
+                    valueHolder.value = newValue;
+                }
             }
 
             // Place value in the cache for space, if there is one.
             function addToCache(space, key, value) {
                 if (cache[space]) {
-                    cache[space][key] = { value: clone(value) };
+                    if (cache[space][key]) {
+                        replaceValue(cache[space][key], value);
+                    } else {
+                        cache[space][key] = { value: value };
+                    }
                 }
             }
 
@@ -110,7 +132,7 @@ define(
                  */
                 readObject: function (space, key) {
                     return (cache[space] && cache[space][key]) ?
-                            fastPromise(clone(cache[space][key].value)) :
+                            fastPromise(cache[space][key].value) :
                             persistenceService.readObject(space, key)
                                 .then(putCache(space, key));
                 },
