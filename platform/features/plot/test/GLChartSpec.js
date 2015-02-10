@@ -106,6 +106,19 @@ define(
                 expect(mockGL.drawArrays)
                     .toHaveBeenCalledWith("TRIANGLE_FAN", 0, 4);
             });
+
+            it("uses buffer sizes reported by WebGL", function () {
+                // Make sure that GLChart uses the GL buffer size, which may
+                // differ from what canvas requested. WTD-852
+                mockCanvas.width = 300;
+                mockCanvas.height = 150;
+                mockGL.drawingBufferWidth = 200;
+                mockGL.drawingBufferHeight = 175;
+
+                glChart.clear();
+
+                expect(mockGL.viewport).toHaveBeenCalledWith(0, 0, 200, 175);
+            });
         });
     }
 );
