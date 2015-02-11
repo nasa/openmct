@@ -173,6 +173,19 @@ define(
                 // Placeholder; need to support requesting telemetry
                 expect(controller.isRequestPending()).toBeFalsy();
             });
+
+            it("unsubscribes when destroyed", function () {
+                // Make an object available
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                // Make sure $destroy is what's listened for
+                expect(mockScope.$on.mostRecentCall.args[0]).toEqual('$destroy');
+                // Also verify precondition
+                expect(mockSubscription.unsubscribe).not.toHaveBeenCalled();
+                // Destroy the scope
+                mockScope.$on.mostRecentCall.args[1]();
+                // Should have unsubscribed
+                expect(mockSubscription.unsubscribe).toHaveBeenCalled();
+            });
         });
     }
 );
