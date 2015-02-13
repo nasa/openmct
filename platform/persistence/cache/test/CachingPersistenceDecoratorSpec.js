@@ -88,6 +88,36 @@ define(
                 expect(mockCallback.calls[0].args[0])
                     .toBe(mockCallback.calls[1].args[0]);
             });
+
+            it("maintains the same cached instance between reads/writes", function () {
+                var testObject = { abc: "XYZ!" };
+
+                // Perform two reads with a write in between
+                decorator.readObject(testSpace, "someKey", "someValue")
+                    .then(mockCallback);
+                decorator.updateObject(testSpace, "someKey", testObject);
+                decorator.readObject(testSpace, "someKey", "someValue")
+                    .then(mockCallback);
+
+                // Results should have been pointer-identical
+                expect(mockCallback.calls[0].args[0])
+                    .toBe(mockCallback.calls[1].args[0]);
+
+                // But contents should have been equal to the written object
+                expect(mockCallback).toHaveBeenCalledWith(testObject);
+            });
+
+            it("is capable of reading/writing strings", function () {
+                // Efforts made to keep cached objects pointer-identical
+                // would break on strings - so make sure cache isn't
+                // breaking when we read/write strings.
+                decorator.createObject(testSpace, "someKey", "someValue");
+                decorator.updateObject(testSpace, "someKey", "someOtherValue");
+                decorator.readObject(testSpace, "someKey").then(mockCallback);
+                expect(mockCallback).toHaveBeenCalledWith("someOtherValue");
+
+
+            });
         });
     }
 );
