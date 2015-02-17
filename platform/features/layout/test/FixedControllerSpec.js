@@ -113,7 +113,7 @@ define(
 
             it("configures view based on model", function () {
                 mockScope.model = testModel;
-                findWatch("model")(mockScope.model);
+                findWatch("model.composition")(mockScope.model.composition);
                 // Should have styles for all elements of composition
                 expect(controller.getStyle('a')).toBeDefined();
                 expect(controller.getStyle('b')).toBeDefined();
@@ -126,7 +126,7 @@ define(
                 mockScope.domainObject = mockDomainObject;
                 mockScope.model = testModel;
                 findWatch("domainObject")(mockDomainObject);
-                findWatch("model")(mockScope.model);
+                findWatch("model.composition")(mockScope.model.composition);
 
                 // Invoke the subscription callback
                 mockSubscriber.subscribe.mostRecentCall.args[1]();
@@ -148,7 +148,7 @@ define(
                     };
 
                 mockScope.model = testModel;
-                findWatch("model")(mockScope.model);
+                findWatch("model.composition")(mockScope.model.composition);
 
                 // Set first bounds
                 controller.setBounds(s1);

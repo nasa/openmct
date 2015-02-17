@@ -90,9 +90,9 @@ define(
             }
 
             // Compute panel positions based on the layout's object model
-            function lookupPanels(model) {
-                var configuration = $scope.configuration || {},
-                    ids = (model || {}).composition || [];
+            function lookupPanels(ids) {
+                var configuration = $scope.configuration || {};
+                ids = ids || [];
 
                 // Pull panel positions from configuration
                 rawPositions = shallowCopy(configuration.elements || {}, ids);
@@ -101,7 +101,7 @@ define(
                 positions = {};
 
                 // Update width/height that we are tracking
-                gridSize = (model || {}).layoutGrid || DEFAULT_GRID_SIZE;
+                gridSize = ($scope.model || {}).layoutGrid || DEFAULT_GRID_SIZE;
 
                 // Compute positions and add defaults where needed
                 ids.forEach(populatePosition);
@@ -147,6 +147,14 @@ define(
                     telemetrySubscriber.subscribe(domainObject, updateValues);
             }
 
+            // Handle changes in the object's composition
+            function updateComposition(ids) {
+                // Populate panel positions
+                lookupPanels(ids);
+                // Resubscribe - objects in view have changed
+                subscribe($scope.domainObject);
+            }
+
             // Position a panel after a drop event
             function handleDrop(e, id, position) {
                 // Make sure there is a "elements" field in the
@@ -168,7 +176,7 @@ define(
             }
 
             // Position panes when the model field changes
-            $scope.$watch("model", lookupPanels);
+            $scope.$watch("model.composition", updateComposition);
 
             // Subscribe to telemetry when an object is available
             $scope.$watch("domainObject", subscribe);
