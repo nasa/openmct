@@ -85,6 +85,26 @@ define(
             // Position panes when the model field changes
             $scope.$watch("model.composition", lookupPanels);
 
+            // Position panes where they are dropped
+            $scope.$on("mctDrop", function (e, id, position) {
+                // Make sure there is a "panels" field in the
+                // view configuration.
+                $scope.configuration.panels =
+                    $scope.configuration.panels || {};
+                // Store the position of this panel.
+                $scope.configuration.panels[id] = {
+                    position: [
+                        Math.floor(position.x / gridSize[0]),
+                        Math.floor(position.y / gridSize[1])
+                    ],
+                    dimensions: DEFAULT_DIMENSIONS
+                };
+                // Mark change as persistable
+                if ($scope.commit) {
+                    $scope.commit("Dropped a frame.");
+                }
+            });
+
             return {
                 /**
                  * Get a style object for a frame with the specified domain

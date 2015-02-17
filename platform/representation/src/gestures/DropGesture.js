@@ -22,14 +22,23 @@ define(
         function DropGesture($q, element, domainObject) {
             function broadcastDrop(id, event) {
                 // Find the relevant scope...
-                var scope = element && element.scope && element.scope();
+                var scope = element && element.scope && element.scope(),
+                    rect;
                 if (scope && scope.$broadcast) {
+                    // Get the representation's bounds, to convert
+                    // drop position
+                    rect = element[0].getBoundingClientRect();
+
                     // ...and broadcast the event. This allows specific
                     // views to have post-drop behavior which depends on
                     // drop position.
                     scope.$broadcast(
                         GestureConstants.MCT_DROP_EVENT,
-                        { id: id, dropEvent: event }
+                        id,
+                        {
+                            x: event.pageX - rect.left,
+                            y: event.pageY - rect.top
+                        }
                     );
                 }
             }
