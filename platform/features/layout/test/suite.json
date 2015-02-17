@@ -1,4 +1,5 @@
 [
+    "FixedController",
     "LayoutController",
     "LayoutDrag"
 ]

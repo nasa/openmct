@@ -1,0 +1,36 @@
+
+
+<div style="width: 100%; height: 100%; position: absolute; left: 0px; top: 0px;"
+     ng-controller="FixedController as controller"
+     mct-resize="controller.setBounds(bounds)">
+
+    <!-- Background grid -->
+    <div ng-repeat="cell in controller.getCellStyles()"
+         style="position: absolute; border: 1px gray solid; background: black;"
+         ng-style="cell">
+    </div>
+
+    <!-- Telemetry elements -->
+    <div ng-repeat="childObject in composition"
+         style="position: absolute; background: #444;"
+         ng-style="controller.getStyle(childObject.getId())">
+
+        <div style="position: absolute; left: 0px; top: 0px; bottom: 0px; width: 50%; overflow: hidden;">
+            {{childObject.getModel().name}}
+        </div>
+        <div style="position: absolute; right: 0px; top: 0px; bottom: 0px; width: 50%; overflow: hidden;">
+            {{controller.getValue(childObject.getId())}}
+        </div>
+
+        <!-- Drag handles -->
+        <span ng-show="domainObject.hasCapability('editor')">
+            <span style="position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; cursor: move;"
+                  mct-drag-down="controller.startDrag(childObject.getId(), [1,1], [0,0])"
+                  mct-drag="controller.continueDrag(delta)"
+                  mct-drag-up="controller.endDrag()">
+            </span>
+        </span>
+
+    </div>
+
+</div>

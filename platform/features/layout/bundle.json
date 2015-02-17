@@ -9,7 +9,17 @@
                 "glyph": "L",
                 "type": "layout",
                 "templateUrl": "templates/layout.html",
-                "uses": [ "composition" ]
+                "uses": [ "composition" ],
+                "gestures": [ "drop" ]
+            },
+            {
+                "key": "fixed",
+                "name": "Fixed Position",
+                "glyph": "3",
+                "type": "telemetry.panel",
+                "templateUrl": "templates/fixed.html",
+                "uses": [ "composition" ],
+                "gestures": [ "drop" ]
             }
         ],
         "representations": [
@@ -23,6 +33,11 @@
                 "key": "LayoutController",
                 "implementation": "LayoutController.js",
                 "depends": [ "$scope" ]
+            },
+            {
+                "key": "FixedController",
+                "implementation": "FixedController.js",
+                "depends": [ "$scope", "telemetrySubscriber", "telemetryFormatter" ]
             }
         ],
         "types": [

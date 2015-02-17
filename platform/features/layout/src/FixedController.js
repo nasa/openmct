@@ -5,21 +5,26 @@ define(
     function (LayoutDrag) {
         "use strict";
 
-        var DEFAULT_DIMENSIONS = [ 12, 8 ],
-            DEFAULT_GRID_SIZE = [32, 32];
+        var DEFAULT_DIMENSIONS = [ 2, 1 ],
+            DEFAULT_GRID_SIZE = [64, 16],
+            DEFAULT_GRID_EXTENT = [4, 4];
 
         /**
-         * The LayoutController is responsible for supporting the
-         * Layout view. It arranges frames according to saved configuration
-         * and provides methods for updating these based on mouse
-         * movement.
+         * The FixedController is responsible for supporting the
+         * Fixed Position view. It arranges frames according to saved
+         * configuration and provides methods for updating these based on
+         * mouse movement.
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function LayoutController($scope) {
+        function FixedController($scope, telemetrySubscriber, telemetryFormatter) {
             var gridSize = DEFAULT_GRID_SIZE,
+                gridExtent = DEFAULT_GRID_EXTENT,
                 activeDrag,
                 activeDragId,
+                subscription,
+                values = {},
+                cellStyles = [],
                 rawPositions = {},
                 positions = {};
 
@@ -32,6 +37,25 @@ define(
                     copy[k] = obj[k];
                 });
                 return copy;
+            }
+
+            // Refresh cell styles (e.g. because grid extent changed)
+            function refreshCellStyles() {
+                var x, y;
+
+                cellStyles = [];
+
+                for (x = 0; x < gridExtent[0]; x += 1) {
+                    for (y = 0; y < gridExtent[1]; y += 1) {
+                        // Position blocks; subtract out border size from w/h
+                        cellStyles.push({
+                            left: x * gridSize[0] + 'px',
+                            top: y * gridSize[1] + 'px',
+                            width: gridSize[0] - 1 + 'px',
+                            height: gridSize[1] - 1 + 'px'
+                        });
+                    }
+                }
             }
 
             // Convert from { positions: ..., dimensions: ... } to an
@@ -68,9 +92,10 @@ define(
             // Compute panel positions based on the layout's object model
             function lookupPanels(ids) {
                 var configuration = $scope.configuration || {};
+                ids = ids || [];
 
                 // Pull panel positions from configuration
-                rawPositions = shallowCopy(configuration.panels || {}, ids);
+                rawPositions = shallowCopy(configuration.elements || {}, ids);
 
                 // Clear prior computed positions
                 positions = {};
@@ -82,16 +107,64 @@ define(
                 ids.forEach(populatePosition);
             }
 
+            // Update the displayed value for this object
+            function updateValue(telemetryObject) {
+                var id = telemetryObject && telemetryObject.getId();
+                if (id) {
+                    values[id] = telemetryFormatter.formatRangeValue(
+                        subscription.getRangeValue(telemetryObject)
+                    );
+                }
+            }
+
+            // Update telemetry values based on new data available
+            function updateValues() {
+                if (subscription) {
+                    subscription.getTelemetryObjects().forEach(updateValue);
+                }
+            }
+
+            // Free up subscription to telemetry
+            function releaseSubscription() {
+                if (subscription) {
+                    subscription.unsubscribe();
+                    subscription = undefined;
+                }
+            }
+
+            // Subscribe to telemetry updates for this domain object
+            function subscribe(domainObject) {
+                // Clear any old values
+                values = {};
+
+                // Release existing subscription (if any)
+                if (subscription) {
+                    subscription.unsubscribe();
+                }
+
+                // Make a new subscription
+                subscription = domainObject &&
+                    telemetrySubscriber.subscribe(domainObject, updateValues);
+            }
+
+            // Handle changes in the object's composition
+            function updateComposition(ids) {
+                // Populate panel positions
+                lookupPanels(ids);
+                // Resubscribe - objects in view have changed
+                subscribe($scope.domainObject);
+            }
+
             // Position a panel after a drop event
             function handleDrop(e, id, position) {
                 // Ensure that configuration field is populated
                 $scope.configuration = $scope.configuration || {};
-                // Make sure there is a "panels" field in the
+                // Make sure there is a "elements" field in the
                 // view configuration.
-                $scope.configuration.panels =
-                    $scope.configuration.panels || {};
-                // Store the position of this panel.
-                $scope.configuration.panels[id] = {
+                $scope.configuration.elements =
+                    $scope.configuration.elements || {};
+                // Store the position of this element.
+                $scope.configuration.elements[id] = {
                     position: [
                         Math.floor(position.x / gridSize[0]),
                         Math.floor(position.y / gridSize[1])
@@ -107,12 +180,52 @@ define(
             }
 
             // Position panes when the model field changes
-            $scope.$watch("model.composition", lookupPanels);
+            $scope.$watch("model.composition", updateComposition);
+
+            // Subscribe to telemetry when an object is available
+            $scope.$watch("domainObject", subscribe);
+
+            // Free up subscription on destroy
+            $scope.$on("$destroy", releaseSubscription);
 
             // Position panes where they are dropped
             $scope.$on("mctDrop", handleDrop);
 
+            // Initialize styles (position etc.) for cells
+            refreshCellStyles();
+
             return {
+                /**
+                 * Get styles for all background cells, as will populate the
+                 * ng-style tag.
+                 * @memberof FixedController#
+                 * @returns {Array} cell styles
+                 */
+                getCellStyles: function () {
+                    return cellStyles;
+                },
+                /**
+                 * Get the current data value for the specified domain object.
+                 * @memberof FixedController#
+                 * @param {string} id the domain object identifier
+                 * @returns {string} the displayable data value
+                 */
+                getValue: function (id) {
+                    return values[id];
+                },
+                /**
+                 * Set the size of the viewable fixed position area.
+                 * @memberof FixedController#
+                 * @param bounds the width/height, as reported by mct-resize
+                 */
+                setBounds: function (bounds) {
+                    var w = Math.ceil(bounds.width / gridSize[0]),
+                        h = Math.ceil(bounds.height / gridSize[1]);
+                    if (w !== gridExtent[0] || h !== gridExtent[1]) {
+                        gridExtent = [w, h];
+                        refreshCellStyles();
+                    }
+                },
                 /**
                  * Get a style object for a frame with the specified domain
                  * object identifier, suitable for use in an `ng-style`
@@ -121,7 +234,7 @@ define(
                  * @returns {Object.<string, string>} an object with
                  *          appropriate left, width, etc fields for positioning
                  */
-                getFrameStyle: function (id) {
+                getStyle: function (id) {
                     // Called in a loop, so just look up; the "positions"
                     // object is kept up to date by a watch.
                     return positions[id];
@@ -179,20 +292,20 @@ define(
                         $scope.configuration || {};
                     // Make sure there is a "panels" field in the
                     // view configuration.
-                    $scope.configuration.panels =
-                        $scope.configuration.panels || {};
+                    $scope.configuration.elements =
+                        $scope.configuration.elements || {};
                     // Store the position of this panel.
-                    $scope.configuration.panels[activeDragId] =
+                    $scope.configuration.elements[activeDragId] =
                         rawPositions[activeDragId];
                     // Mark this object as dirty to encourage persistence
                     if ($scope.commit) {
-                        $scope.commit("Moved frame.");
+                        $scope.commit("Moved element.");
                     }
                 }
             };
 
         }
 
-        return LayoutController;
+        return FixedController;
     }
 );
