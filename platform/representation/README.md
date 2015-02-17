@@ -1,4 +1,4 @@
-This bundle introduces the notion of "representations" to Open MCT Web, 
+This bundle introduces the notion of "representations" to Open MCT Web,
 primarily via an Angular directive, `mct-representation`.
 
 A representation is used to display domain objects as Angular templates.
@@ -107,9 +107,14 @@ introduces three specific gestures as "built in" options, listed by key:
   drag-drop domain object composition.
 * `drop`: Representations with this gesture can serve as drop targets for
   drag-drop domain object composition.
+  * When a drop occurs, an `mctDrop` event will be broadcast with two
+  arguments (in addition to Angular's event object): The domain object
+  identifier for the dropped object, and the position (with `x` and `y`
+  properties in pixels) of the drop, relative to the top-left of the
+  representation which features the drop gesture.
 * `menu`: Representations with this gesture will provide a custom context
   menu (instead of the browser default).
-    * It should be noted that this gesture does _not_ define the appearance
-      or functionality of this menu; rather, it simply adds a
-      representation of key `context-menu` to the document at an appropriate
-      location. This representation will be supplied by the commonUI bundle.
+  * It should be noted that this gesture does _not_ define the appearance
+  or functionality of this menu; rather, it simply adds a
+  representation of key `context-menu` to the document at an appropriate
+  location. This representation will be supplied by the commonUI bundle.
