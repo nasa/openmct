@@ -31,3 +31,11 @@ proxy in the current selection (in addition to whatever objects the
 user will conceive of as part of the current selection), typically
 with `inclusive` set to `true`.
 
+## Selection
+
+The `selection` property of a view's scope in Edit mode will be
+initialized to an empty array. This array's contents may be modified
+to implicitly change the contents of the toolbar based on the rules
+described above. Care should be taken to modify this array in-place
+instead of shadowing it (as the selection will typically
+be a few scopes up the hierarchy from the view's actual scope.)
