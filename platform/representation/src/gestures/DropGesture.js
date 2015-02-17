@@ -20,6 +20,19 @@ define(
          */
 
         function DropGesture($q, element, domainObject) {
+            function broadcastDrop(id, event) {
+                // Find the relevant scope...
+                var scope = element && element.scope && element.scope();
+                if (scope && scope.$broadcast) {
+                    // ...and broadcast the event. This allows specific
+                    // views to have post-drop behavior which depends on
+                    // drop position.
+                    scope.$broadcast(
+                        GestureConstants.MCT_DROP_EVENT,
+                        { id: id, dropEvent: event }
+                    );
+                }
+            }
 
             function doPersist() {
                 var persistence = domainObject.getCapability("persistence");
@@ -60,6 +73,11 @@ define(
                             }
                         }
                     )).then(function (result) {
+                        // Broadcast the drop event if it was successful
+                        if (result) {
+                            broadcastDrop(id, event);
+                        }
+
                         // If mutation was successful, persist the change
                         return result && doPersist();
                     });
