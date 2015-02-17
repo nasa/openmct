@@ -30,3 +30,4 @@ per-selection) then the view must include some object to act as its
 proxy in the current selection (in addition to whatever objects the
 user will conceive of as part of the current selection), typically
 with `inclusive` set to `true`.
+
