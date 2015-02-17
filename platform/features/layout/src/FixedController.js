@@ -107,6 +107,7 @@ define(
                 ids.forEach(populatePosition);
             }
 
+            // Update the displayed value for this object
             function updateValue(telemetryObject) {
                 var id = telemetryObject && telemetryObject.getId();
                 if (id) {
@@ -144,6 +145,7 @@ define(
             // Subscribe to telemetry when an object is available
             $scope.$watch("domainObject", subscribe);
 
+            // Initialize styles (position etc.) for cells
             refreshCellStyles();
 
             return {
