@@ -14,7 +14,7 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$watch" ]
+                    [ "$watch", "$on", "commit" ]
                 );
 
                 testModel = {
@@ -97,13 +97,37 @@ define(
                 // Populate scope
                 mockScope.$watch.mostRecentCall.args[1](testModel.composition);
 
-                // Add a commit method to scope
-                mockScope.commit = jasmine.createSpy("commit");
-
                 // Do a drag
                 controller.startDrag("b", [1, 1], [0, 0]);
                 controller.continueDrag([100, 100]);
                 controller.endDrag();
+
+                // Should have triggered commit (provided by
+                // EditRepresenter) with some message.
+                expect(mockScope.commit)
+                    .toHaveBeenCalledWith(jasmine.any(String));
+            });
+
+            it("listens for drop events", function () {
+                // Layout should position panels according to
+                // where the user dropped them, so it needs to
+                // listen for drop events.
+                expect(mockScope.$on).toHaveBeenCalledWith(
+                    'mctDrop',
+                    jasmine.any(Function)
+                );
+
+                // Verify precondition
+                expect(testConfiguration.panels.d).not.toBeDefined();
+
+                // Notify that a drop occurred
+                testModel.composition.push('d');
+                mockScope.$on.mostRecentCall.args[1](
+                    {},
+                    'd',
+                    { x: 300, y: 100 }
+                );
+                expect(testConfiguration.panels.d).toBeDefined();
 
                 // Should have triggered commit (provided by
                 // EditRepresenter) with some message.

@@ -27,6 +27,17 @@ define(
                 return watch;
             }
 
+            // As above, but for $on calls
+            function findOn(expr) {
+                var on;
+                mockScope.$on.calls.forEach(function (call) {
+                    if (call.args[0] === expr) {
+                        on = call.args[1];
+                    }
+                });
+                return on;
+            }
+
             function makeMockDomainObject(id) {
                 var mockObject = jasmine.createSpyObj(
                     'domainObject-' + id,
@@ -39,7 +50,7 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     '$scope',
-                    [ "$on", "$watch" ]
+                    [ "$on", "$watch", "commit" ]
                 );
                 mockSubscriber = jasmine.createSpyObj(
                     'telemetrySubscriber',
@@ -156,6 +167,33 @@ define(
                 // Set new bounds
                 controller.setBounds(s2);
                 expect(controller.getCellStyles().length).toEqual(60); // 10 * 6
+            });
+
+            it("listens for drop events", function () {
+                // Layout should position panels according to
+                // where the user dropped them, so it needs to
+                // listen for drop events.
+                expect(mockScope.$on).toHaveBeenCalledWith(
+                    'mctDrop',
+                    jasmine.any(Function)
+                );
+
+                // Verify precondition
+                expect(controller.getStyle('d')).not.toBeDefined();
+
+                // Notify that a drop occurred
+                testModel.composition.push('d');
+                findOn('mctDrop')(
+                    {},
+                    'd',
+                    { x: 300, y: 100 }
+                );
+                expect(controller.getStyle('d')).toBeDefined();
+
+                // Should have triggered commit (provided by
+                // EditRepresenter) with some message.
+                expect(mockScope.commit)
+                    .toHaveBeenCalledWith(jasmine.any(String));
             });
         });
     }

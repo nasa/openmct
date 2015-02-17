@@ -84,6 +84,8 @@ define(
 
             // Position a panel after a drop event
             function handleDrop(e, id, position) {
+                // Ensure that configuration field is populated
+                $scope.configuration = $scope.configuration || {};
                 // Make sure there is a "panels" field in the
                 // view configuration.
                 $scope.configuration.panels =
@@ -100,6 +102,8 @@ define(
                 if ($scope.commit) {
                     $scope.commit("Dropped a frame.");
                 }
+                // Populate template-facing position for this id
+                populatePosition(id);
             }
 
             // Position panes when the model field changes
