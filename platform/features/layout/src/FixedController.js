@@ -124,6 +124,14 @@ define(
                 }
             }
 
+            // Free up subscription to telemetry
+            function releaseSubscription() {
+                if (subscription) {
+                    subscription.unsubscribe();
+                    subscription = undefined;
+                }
+            }
+
             // Subscribe to telemetry updates for this domain object
             function subscribe(domainObject) {
                 // Clear any old values
@@ -144,6 +152,9 @@ define(
 
             // Subscribe to telemetry when an object is available
             $scope.$watch("domainObject", subscribe);
+
+            // Free up subscription on destroy
+            $scope.$on("$destroy", releaseSubscription);
 
             // Initialize styles (position etc.) for cells
             refreshCellStyles();
