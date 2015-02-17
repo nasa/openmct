@@ -82,11 +82,8 @@ define(
                 ids.forEach(populatePosition);
             }
 
-            // Position panes when the model field changes
-            $scope.$watch("model.composition", lookupPanels);
-
-            // Position panes where they are dropped
-            $scope.$on("mctDrop", function (e, id, position) {
+            // Position a panel after a drop event
+            function handleDrop(e, id, position) {
                 // Make sure there is a "panels" field in the
                 // view configuration.
                 $scope.configuration.panels =
@@ -103,7 +100,13 @@ define(
                 if ($scope.commit) {
                     $scope.commit("Dropped a frame.");
                 }
-            });
+            }
+
+            // Position panes when the model field changes
+            $scope.$watch("model.composition", lookupPanels);
+
+            // Position panes where they are dropped
+            $scope.$on("mctDrop", handleDrop);
 
             return {
                 /**
