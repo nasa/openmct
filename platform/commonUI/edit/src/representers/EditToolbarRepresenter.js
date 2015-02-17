@@ -37,7 +37,9 @@ define(
 
             // Update selection models to match changed toolbar state
             function updateState(state) {
-                state.forEach(toolbar.updateState);
+                state.forEach(function (value, index) {
+                    toolbar.updateState(index, value);
+                });
             }
 
             // Represent a domain object using this definition

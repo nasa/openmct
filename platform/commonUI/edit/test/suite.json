@@ -16,5 +16,6 @@
     "objects/EditableDomainObject",
     "objects/EditableDomainObjectCache",
     "objects/EditableModelCache",
-    "representers/EditToolbar"
+    "representers/EditToolbar",
+    "representers/EditToolbarRepresenter"
 ]
