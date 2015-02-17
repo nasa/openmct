@@ -35,8 +35,8 @@ define(
                 testAB = { a: 0, b: 1 };
                 testABC = { a: 0, b: 1, c: 2 };
                 testABC2 = { a: 4, b: 1, c: 2 }; // For inconsistent-state checking
-                testABCXYZ = { a: 'A!', b: 'B!', c: 'C!', x: 'X!', y: 'Y!', z: 'Z!' };
-                testABCYZ = { a: 'A!', b: 'B!', c: 'C!', y: 'Y!', z: 'Z!' };
+                testABCXYZ = { a: 0, b: 1, c: 2, x: 'X!', y: 'Y!', z: 'Z!' };
+                testABCYZ = { a: 0, b: 1, c: 2, y: 'Y!', z: 'Z!' };
             });
 
             it("provides properties from the original structure", function () {
