@@ -74,7 +74,10 @@ define(
                 // Play back from queue if we are lossless
                 while (!pool.isEmpty()) {
                     updateValuesFromPool();
-                    callback();
+                    // Fire callback, if one was provided
+                    if (callback) {
+                        callback();
+                    }
                 }
 
                 // Clear the pending flag so that future updates will
