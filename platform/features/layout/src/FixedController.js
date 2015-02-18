@@ -23,22 +23,9 @@ define(
                 activeDrag,
                 activeDragId,
                 subscription,
-                values = {},
                 cellStyles = [],
-                rawPositions = {},
-                positions = {},
+                elementProxies = [],
                 selection;
-
-            // Utility function to copy raw positions from configuration,
-            // without writing directly to configuration (to avoid triggering
-            // persistence from watchers during drags).
-            function shallowCopy(obj, keys) {
-                var copy = {};
-                keys.forEach(function (k) {
-                    copy[k] = obj[k];
-                });
-                return copy;
-            }
 
             // Refresh cell styles (e.g. because grid extent changed)
             function refreshCellStyles() {
@@ -59,62 +46,27 @@ define(
                 }
             }
 
-            // Convert from { positions: ..., dimensions: ... } to an
-            // apropriate ng-style argument, to position frames.
+            // Convert from element x/y/width/height to an
+            // apropriate ng-style argument, to position elements.
             function convertPosition(raw) {
                 // Multiply position/dimensions by grid size
                 return {
-                    left: (gridSize[0] * raw.position[0]) + 'px',
-                    top: (gridSize[1] * raw.position[1]) + 'px',
-                    width: (gridSize[0] * raw.dimensions[0]) + 'px',
-                    height: (gridSize[1] * raw.dimensions[1]) + 'px'
+                    left: (gridSize[0] * raw.x) + 'px',
+                    top: (gridSize[1] * raw.y) + 'px',
+                    width: (gridSize[0] * raw.width) + 'px',
+                    height: (gridSize[1] * raw.height) + 'px'
                 };
-            }
-
-            // Generate a default position (in its raw format) for a frame.
-            // Use an index to ensure that default positions are unique.
-            function defaultPosition(index) {
-                return {
-                    position: [index, index],
-                    dimensions: DEFAULT_DIMENSIONS
-                };
-            }
-
-            // Store a computed position for a contained frame by its
-            // domain object id. Called in a forEach loop, so arguments
-            // are as expected there.
-            function populatePosition(id, index) {
-                rawPositions[id] =
-                    rawPositions[id] || defaultPosition(index || 0);
-                positions[id] =
-                    convertPosition(rawPositions[id]);
-            }
-
-            // Compute panel positions based on the layout's object model
-            function lookupPanels(ids) {
-                var configuration = $scope.configuration || {};
-                ids = ids || [];
-
-                // Pull panel positions from configuration
-                rawPositions = shallowCopy(configuration.elements || {}, ids);
-
-                // Clear prior computed positions
-                positions = {};
-
-                // Update width/height that we are tracking
-                gridSize = ($scope.model || {}).layoutGrid || DEFAULT_GRID_SIZE;
-
-                // Compute positions and add defaults where needed
-                ids.forEach(populatePosition);
             }
 
             // Update the displayed value for this object
             function updateValue(telemetryObject) {
                 var id = telemetryObject && telemetryObject.getId();
                 if (id) {
-                    values[id] = telemetryFormatter.formatRangeValue(
-                        subscription.getRangeValue(telemetryObject)
-                    );
+                    elementProxies.forEach(function (element) {
+                        element.value = telemetryFormatter.formatRangeValue(
+                            subscription.getRangeValue(telemetryObject)
+                        );
+                    });
                 }
             }
 
@@ -123,6 +75,18 @@ define(
                 if (subscription) {
                     subscription.getTelemetryObjects().forEach(updateValue);
                 }
+            }
+
+            // Decorate an element for display
+            function makeProxyElement(element) {
+                return element; // TODO: Use proxy!
+            }
+
+            // Decorate elements in the current configuration
+            function refreshElements() {
+                elementProxies = (($scope.configuration || {}).elements || [])
+                        .map(makeProxyElement);
+                // TODO: Ensure elements for all domain objects?
             }
 
             // Free up subscription to telemetry
@@ -135,9 +99,6 @@ define(
 
             // Subscribe to telemetry updates for this domain object
             function subscribe(domainObject) {
-                // Clear any old values
-                values = {};
-
                 // Release existing subscription (if any)
                 if (subscription) {
                     subscription.unsubscribe();
@@ -151,7 +112,7 @@ define(
             // Handle changes in the object's composition
             function updateComposition(ids) {
                 // Populate panel positions
-                lookupPanels(ids);
+                // TODO: Ensure defaults here
                 // Resubscribe - objects in view have changed
                 subscribe($scope.domainObject);
             }
@@ -163,21 +124,20 @@ define(
                 // Make sure there is a "elements" field in the
                 // view configuration.
                 $scope.configuration.elements =
-                    $scope.configuration.elements || {};
+                    $scope.configuration.elements || [];
                 // Store the position of this element.
-                $scope.configuration.elements[id] = {
-                    position: [
-                        Math.floor(position.x / gridSize[0]),
-                        Math.floor(position.y / gridSize[1])
-                    ],
-                    dimensions: DEFAULT_DIMENSIONS
-                };
+                $scope.configuration.elements.push({
+                    type: "fixed.telemetry",
+                    x: Math.floor(position.x / gridSize[0]),
+                    y: Math.floor(position.y / gridSize[1]),
+                    id: id,
+                    width: DEFAULT_DIMENSIONS[0],
+                    height: DEFAULT_DIMENSIONS[1]
+                });
                 // Mark change as persistable
                 if ($scope.commit) {
-                    $scope.commit("Dropped a frame.");
+                    $scope.commit("Dropped an element.");
                 }
-                // Populate template-facing position for this id
-                populatePosition(id);
             }
 
             //  Track current selection state
@@ -187,6 +147,9 @@ define(
                     new FixedProxy($scope.configuration)
                 );
             }
+
+            // Refresh list of elements whenever model changes
+            $scope.$watch("model.modified", refreshElements);
 
             // Position panes when the model field changes
             $scope.$watch("model.composition", updateComposition);
@@ -214,15 +177,6 @@ define(
                     return cellStyles;
                 },
                 /**
-                 * Get the current data value for the specified domain object.
-                 * @memberof FixedController#
-                 * @param {string} id the domain object identifier
-                 * @returns {string} the displayable data value
-                 */
-                getValue: function (id) {
-                    return values[id];
-                },
-                /**
                  * Set the size of the viewable fixed position area.
                  * @memberof FixedController#
                  * @param bounds the width/height, as reported by mct-resize
@@ -234,19 +188,6 @@ define(
                         gridExtent = [w, h];
                         refreshCellStyles();
                     }
-                },
-                /**
-                 * Get a style object for a frame with the specified domain
-                 * object identifier, suitable for use in an `ng-style`
-                 * directive to position a frame as configured for this layout.
-                 * @param {string} id the object identifier
-                 * @returns {Object.<string, string>} an object with
-                 *          appropriate left, width, etc fields for positioning
-                 */
-                getStyle: function (id) {
-                    // Called in a loop, so just look up; the "positions"
-                    // object is kept up to date by a watch.
-                    return positions[id];
                 },
                 /**
                  * Start a drag gesture to move/resize a frame.
@@ -269,13 +210,14 @@ define(
                  * @param {number[]} dimFactor the dimensions factor
                  */
                 startDrag: function (id, posFactor, dimFactor) {
-                    activeDragId = id;
-                    activeDrag = new LayoutDrag(
-                        rawPositions[id],
-                        posFactor,
-                        dimFactor,
-                        gridSize
-                    );
+                    // TODO: Drag!
+//                    activeDragId = id;
+//                    activeDrag = new LayoutDrag(
+//                        rawPositions[id],
+//                        posFactor,
+//                        dimFactor,
+//                        gridSize
+//                    );
                 },
                 /**
                  * Continue an active drag gesture.
@@ -284,32 +226,34 @@ define(
                  *        to its position when the drag started
                  */
                 continueDrag: function (delta) {
-                    if (activeDrag) {
-                        rawPositions[activeDragId] =
-                            activeDrag.getAdjustedPosition(delta);
-                        populatePosition(activeDragId);
-                    }
+                    // TODO: Drag!
+//                    if (activeDrag) {
+//                        rawPositions[activeDragId] =
+//                            activeDrag.getAdjustedPosition(delta);
+//                        populatePosition(activeDragId);
+//                    }
                 },
                 /**
                  * End the active drag gesture. This will update the
                  * view configuration.
                  */
                 endDrag: function () {
-                    // Write to configuration; this is watched and
-                    // saved by the EditRepresenter.
-                    $scope.configuration =
-                        $scope.configuration || {};
-                    // Make sure there is a "panels" field in the
-                    // view configuration.
-                    $scope.configuration.elements =
-                        $scope.configuration.elements || {};
-                    // Store the position of this panel.
-                    $scope.configuration.elements[activeDragId] =
-                        rawPositions[activeDragId];
-                    // Mark this object as dirty to encourage persistence
-                    if ($scope.commit) {
-                        $scope.commit("Moved element.");
-                    }
+                    // TODO: Drag!
+//                    // Write to configuration; this is watched and
+//                    // saved by the EditRepresenter.
+//                    $scope.configuration =
+//                        $scope.configuration || {};
+//                    // Make sure there is a "panels" field in the
+//                    // view configuration.
+//                    $scope.configuration.elements =
+//                        $scope.configuration.elements || {};
+//                    // Store the position of this panel.
+//                    $scope.configuration.elements[activeDragId] =
+//                        rawPositions[activeDragId];
+//                    // Mark this object as dirty to encourage persistence
+//                    if ($scope.commit) {
+//                        $scope.commit("Moved element.");
+//                    }
                 }
             };
 
