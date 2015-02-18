@@ -194,6 +194,14 @@ define(
             // Initialize styles (position etc.) for cells
             refreshCellStyles();
 
+            if (Array.isArray($scope.selection)) {
+                $scope.selection.push({
+                    add: function () {
+                        window.alert("Placeholder; not yet implemented");
+                    }
+                });
+            }
+
             return {
                 /**
                  * Get styles for all background cells, as will populate the
