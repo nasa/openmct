@@ -19,7 +19,27 @@
                 "type": "telemetry.panel",
                 "templateUrl": "templates/fixed.html",
                 "uses": [ "composition" ],
-                "gestures": [ "drop" ]
+                "gestures": [ "drop" ],
+                "toolbar": {
+                    "sections": [
+                        {
+                            "items": [
+                                {
+                                    "property": "add",
+                                    "control": "button"
+                                }
+                            ]
+                        },
+                        {
+                            "items": [
+                                {
+                                    "property": "z",
+                                    "control": "textfield"
+                                }
+                            ]
+                        }
+                    ]
+                }
             }
         ],
         "representations": [
