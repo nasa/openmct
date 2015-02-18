@@ -79,6 +79,14 @@ define(
 
             // Decorate an element for display
             function makeProxyElement(element) {
+                // var ElementProxy = ElementProxies[element.type],
+                //     e = new ElementProxy(element);
+                // e.style = convertPosition(element);
+                element = Object.create(element);
+                // Provide a displayable position (convert from grid to px)
+                element.style = convertPosition(element);
+                // Template names are same as type names, presently
+                element.template = element.type;
                 return element; // TODO: Use proxy!
             }
 
@@ -188,6 +196,27 @@ define(
                         gridExtent = [w, h];
                         refreshCellStyles();
                     }
+                },
+                /**
+                 * Get an array of elements in this panel, decorated for
+                 * display.
+                 * @returns {Array} elements in this panel
+                 */
+                getDecoratedElements: function () {
+                    return elementProxies;
+                },
+                /**
+                 * Set the active user selection in this view.
+                 * @param element the element to select
+                 */
+                select: function (element) {
+                    selection.select(element);
+                },
+                /**
+                 * Clear the current user selection.
+                 */
+                clearSelection: function () {
+                    selection.deselect();
                 },
                 /**
                  * Start a drag gesture to move/resize a frame.
