@@ -1,8 +1,8 @@
 /*global define*/
 
 define(
-    ['./LayoutDrag'],
-    function (LayoutDrag) {
+    ['./LayoutDrag', './LayoutSelection', './FixedProxy'],
+    function (LayoutDrag, LayoutSelection, FixedProxy) {
         "use strict";
 
         var DEFAULT_DIMENSIONS = [ 2, 1 ],
@@ -26,7 +26,8 @@ define(
                 values = {},
                 cellStyles = [],
                 rawPositions = {},
-                positions = {};
+                positions = {},
+                selection;
 
             // Utility function to copy raw positions from configuration,
             // without writing directly to configuration (to avoid triggering
@@ -179,6 +180,14 @@ define(
                 populatePosition(id);
             }
 
+            //  Track current selection state
+            if (Array.isArray($scope.selection)) {
+                selection = new LayoutSelection(
+                    $scope.selection,
+                    new FixedProxy($scope.configuration)
+                );
+            }
+
             // Position panes when the model field changes
             $scope.$watch("model.composition", updateComposition);
 
@@ -193,14 +202,6 @@ define(
 
             // Initialize styles (position etc.) for cells
             refreshCellStyles();
-
-            if (Array.isArray($scope.selection)) {
-                $scope.selection.push({
-                    add: function () {
-                        window.alert("Placeholder; not yet implemented");
-                    }
-                });
-            }
 
             return {
                 /**
