@@ -61,6 +61,12 @@
                 "depends": [ "$scope", "telemetrySubscriber", "telemetryFormatter" ]
             }
         ],
+        "templates": [
+            {
+                "key": "fixed.telemetry",
+                "templateUrl": "templates/elements/telemetry.html"
+            }
+        ],
         "types": [
             {
                 "key": "layout",

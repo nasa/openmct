@@ -1,8 +1,8 @@
 /*global define*/
 
 define(
-    ['./LayoutDrag', './LayoutSelection', './FixedProxy'],
-    function (LayoutDrag, LayoutSelection, FixedProxy) {
+    ['./LayoutDrag', './LayoutSelection', './FixedProxy', './elements/ElementProxies'],
+    function (LayoutDrag, LayoutSelection, FixedProxy, ElementProxies) {
         "use strict";
 
         var DEFAULT_DIMENSIONS = [ 2, 1 ],
@@ -63,6 +63,7 @@ define(
                 var id = telemetryObject && telemetryObject.getId();
                 if (id) {
                     elementProxies.forEach(function (element) {
+                        element.name = telemetryObject.getModel().name;
                         element.value = telemetryFormatter.formatRangeValue(
                             subscription.getRangeValue(telemetryObject)
                         );
@@ -79,15 +80,17 @@ define(
 
             // Decorate an element for display
             function makeProxyElement(element) {
-                // var ElementProxy = ElementProxies[element.type],
-                //     e = new ElementProxy(element);
-                // e.style = convertPosition(element);
-                element = Object.create(element);
-                // Provide a displayable position (convert from grid to px)
-                element.style = convertPosition(element);
-                // Template names are same as type names, presently
-                element.template = element.type;
-                return element; // TODO: Use proxy!
+                var ElementProxy = ElementProxies[element.type],
+                    e = ElementProxy && new ElementProxy(element);
+
+                if (e) {
+                    // Provide a displayable position (convert from grid to px)
+                    e.style = convertPosition(element);
+                    // Template names are same as type names, presently
+                    e.template = element.type;
+                }
+
+                return e;
             }
 
             // Decorate elements in the current configuration
@@ -204,6 +207,13 @@ define(
                  */
                 getDecoratedElements: function () {
                     return elementProxies;
+                },
+                /**
+                 * Check if the element is currently selected.
+                 * @returns {boolean} true if selected
+                 */
+                selected: function (element) {
+                    return selection.selected(element);
                 },
                 /**
                  * Set the active user selection in this view.
