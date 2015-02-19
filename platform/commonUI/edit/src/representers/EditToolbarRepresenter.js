@@ -48,6 +48,8 @@ define(
                 state.forEach(function (value, index) {
                     toolbar.updateState(index, value);
                 });
+                // Commit the changes.
+                commit("Changes from toolbar.");
             }
 
             // Represent a domain object using this definition

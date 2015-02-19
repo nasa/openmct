@@ -11,7 +11,8 @@ define(
                 testABC,
                 testABC2,
                 testABCXYZ,
-                testABCYZ;
+                testABCYZ,
+                testM;
 
             beforeEach(function () {
                 testStructure = {
@@ -29,6 +30,11 @@ define(
                                 { name: "Y", property: "y" },
                                 { name: "Z", property: "z" }
                             ]
+                        },
+                        {
+                            items: [
+                                { name: "M", method: "m" }
+                            ]
                         }
                     ]
                 };
@@ -37,6 +43,7 @@ define(
                 testABC2 = { a: 4, b: 1, c: 2 }; // For inconsistent-state checking
                 testABCXYZ = { a: 0, b: 1, c: 2, x: 'X!', y: 'Y!', z: 'Z!' };
                 testABCYZ = { a: 0, b: 1, c: 2, y: 'Y!', z: 'Z!' };
+                testM = { m: jasmine.createSpy("method") };
             });
 
             it("provides properties from the original structure", function () {
@@ -181,6 +188,19 @@ define(
                         .items
                         .length
                 ).toEqual(2);
+            });
+
+            it("adds click functions when a method is specified", function () {
+                var testCommit = jasmine.createSpy('commit'),
+                    toolbar = new EditToolbar(testStructure, [ testM ], testCommit);
+                // Verify precondition
+                expect(testM.m).not.toHaveBeenCalled();
+                // Click!
+                toolbar.getStructure().sections[0].items[0].click();
+                // Should have called the underlying function
+                expect(testM.m).toHaveBeenCalled();
+                // Should also have committed the change
+                expect(testCommit).toHaveBeenCalled();
             });
         });
     }
