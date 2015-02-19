@@ -7,6 +7,12 @@ define(
 
         /**
          * Tracks selection state for Layout and Fixed Position views.
+         * This manages and mutates the provided selection array in-place,
+         * and takes care to only modify the array elements it manages
+         * (the view's proxy, and the single selection); selections may be
+         * added or removed elsewhere provided that similar care is taken
+         * elsewhere.
+         *
          * @param {Array} selection the selection array from the view's scope
          * @param [proxy] an object which represents the selection of the view
          *        itself (which handles view-level toolbar behavior)
