@@ -12,7 +12,7 @@ define(
          * @param {Object} object the object to get/set values upon
          * @param {string} key the property to get/set
          */
-        function Accessor(object, key) {
+        function AccessorMutator(object, key) {
             return function (value) {
                 if (arguments.length > 0) {
                     object[key] = value;
@@ -21,6 +21,6 @@ define(
             };
         }
 
-        return Accessor;
+        return AccessorMutator;
     }
 );
