@@ -77,9 +77,9 @@ define(
             }
 
             // Decorate an element for display
-            function makeProxyElement(element) {
+            function makeProxyElement(element, index, elements) {
                 var ElementProxy = ElementProxies[element.type],
-                    e = ElementProxy && new ElementProxy(element);
+                    e = ElementProxy && new ElementProxy(element, index, elements);
 
                 if (e) {
                     // Provide a displayable position (convert from grid to px)

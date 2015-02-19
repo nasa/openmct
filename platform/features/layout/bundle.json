@@ -27,15 +27,18 @@
                                 {
                                     "method": "add",
                                     "control": "button",
-                                    "text": "Add"
+                                    "text": "Add",
+                                    "inclusive": true
                                 }
                             ]
                         },
                         {
                             "items": [
                                 {
-                                    "property": "z",
-                                    "control": "textfield"
+                                    "method": "remove",
+                                    "control": "button",
+                                    "text": "Remove",
+                                    "inclusive": true
                                 }
                             ]
                         }
