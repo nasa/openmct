@@ -5,7 +5,7 @@
     "extensions": {
         "versions": [
             {
-                "name": "Open MCT Web",
+                "name": "Version",
                 "value": "${project.version}",
                 "priority": 999
             },
