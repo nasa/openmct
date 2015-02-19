@@ -86,6 +86,7 @@ define(
                 mockFormatter.formatRangeValue.andCallFake(function (v) {
                     return "Formatted " + v;
                 });
+                mockScope.model = testModel;
 
                 controller = new FixedController(
                     mockScope,

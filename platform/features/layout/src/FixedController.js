@@ -30,7 +30,11 @@ define(
             function refreshCellStyles() {
                 var x, y;
 
+                // Clear previous styles
                 cellStyles = [];
+
+                // Update grid size from model
+                gridSize = ($scope.model || {}).layoutGrid || gridSize;
 
                 for (x = 0; x < gridExtent[0]; x += 1) {
                     for (y = 0; y < gridExtent[1]; y += 1) {
