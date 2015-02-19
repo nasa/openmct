@@ -20,8 +20,6 @@ define(
         function FixedController($scope, telemetrySubscriber, telemetryFormatter) {
             var gridSize = DEFAULT_GRID_SIZE,
                 gridExtent = DEFAULT_GRID_EXTENT,
-                activeDrag,
-                activeDragId,
                 subscription,
                 cellStyles = [],
                 elementProxies = [],
@@ -213,20 +211,24 @@ define(
                  * @returns {boolean} true if selected
                  */
                 selected: function (element) {
-                    return selection.selected(element);
+                    return selection && selection.selected(element);
                 },
                 /**
                  * Set the active user selection in this view.
                  * @param element the element to select
                  */
                 select: function (element) {
-                    selection.select(element);
+                    if (selection) {
+                        selection.select(element);
+                    }
                 },
                 /**
                  * Clear the current user selection.
                  */
                 clearSelection: function () {
-                    selection.deselect();
+                    if (selection) {
+                        selection.deselect();
+                    }
                 },
                 /**
                  * Start a drag gesture to move/resize a frame.

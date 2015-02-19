@@ -3,16 +3,18 @@
      mct-resize="controller.setBounds(bounds)">
 
     <!-- Background grid -->
-    <div ng-repeat="cell in controller.getCellStyles()"
-         style="position: absolute; border: 1px gray solid; background: black;"
-         ng-click="controller.deselect()"
-         ng-style="cell">
-    </div>
+    <span ng-click="controller.clearSelection()">
+        <div ng-repeat="cell in controller.getCellStyles()"
+             style="position: absolute; border: 1px gray solid; background: black;"
+             ng-style="cell">
+        </div>
+    </span>
 
     <!-- Fixed position elements -->
     <mct-include ng-repeat="element in controller.getDecoratedElements()"
                  style="position: absolute;"
                  key="element.template"
+                 ng-class="{ test: controller.selected(element) }"
                  ng-style="element.style"
                  ng-click="controller.select(element)"
                  ng-model="element">
