@@ -1,8 +1,8 @@
 /*global define*/
 
 define(
-    ['./Accessor'],
-    function (Accessor) {
+    ['./AccessorMutator'],
+    function (AccessorMutator) {
         "use strict";
 
         /**
@@ -18,11 +18,11 @@ define(
         function ElementProxy(element, index, elements) {
             return {
                 element: element,
-                x: new Accessor(element, 'x'),
-                y: new Accessor(element, 'y'),
-                z: new Accessor(element, 'z'),
-                width: new Accessor(element, 'width'),
-                height: new Accessor(element, 'height'),
+                x: new AccessorMutator(element, 'x'),
+                y: new AccessorMutator(element, 'y'),
+                z: new AccessorMutator(element, 'z'),
+                width: new AccessorMutator(element, 'width'),
+                height: new AccessorMutator(element, 'height'),
                 remove: function () {
                     if (elements[index] === element) {
                         elements.splice(index, 1);

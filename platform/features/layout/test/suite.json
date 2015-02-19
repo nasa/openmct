@@ -1,5 +1,11 @@
 [
     "FixedController",
+    "FixedProxy",
     "LayoutController",
-    "LayoutDrag"
+    "LayoutDrag",
+    "LayoutSelection",
+    "elements/AccessorMutator",
+    "elements/ElementProxies",
+    "elements/ElementProxy",
+    "elements/TelemetryProxy"
 ]
