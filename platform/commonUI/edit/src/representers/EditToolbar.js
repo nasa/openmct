@@ -17,9 +17,10 @@ define(
          *
          * @param structure toolbar structure, as provided by view definition
          * @param {Array} selection the current selection state
+         * @param {Function} commit callback to invoke after changes
          * @constructor
          */
-        function EditToolbar(structure, selection) {
+        function EditToolbar(structure, selection, commit) {
             var toolbarStructure = Object.create(structure || {}),
                 toolbarState,
                 properties = [];
@@ -124,11 +125,14 @@ define(
             // Invoke all functions in selections with the given name
             function invoke(method, value) {
                 if (method) {
+                    // Make the change in the selection
                     selection.forEach(function (selected) {
                         if (typeof selected[method] === 'function') {
                             selected[method](value);
                         }
                     });
+                    // ...and commit!
+                    commit();
                 }
             }
 
@@ -139,7 +143,9 @@ define(
                     converted.key = addKey(item.property);
                 }
                 if (item.method) {
-                    converted.click = function (v) { invoke(item.method, v); };
+                    converted.click = function (v) {
+                        invoke(item.method, v);
+                    };
                 }
                 return converted;
             }

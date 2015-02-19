@@ -93,8 +93,28 @@ define(
 
             // Decorate elements in the current configuration
             function refreshElements() {
-                elementProxies = (($scope.configuration || {}).elements || [])
-                        .map(makeProxyElement);
+                // Cache selection; we are instantiating new proxies
+                // so we may want to restore this.
+                var selected = selection && selection.get(),
+                    elements = (($scope.configuration || {}).elements || []),
+                    index = -1; // Start with a 'not-found' value
+
+                // Find the selection in the new array
+                if (selected !== undefined) {
+                    index = elements.indexOf(selected.element);
+                }
+
+                // Create the new proxies...
+                elementProxies = elements.map(makeProxyElement);
+
+                // Clear old selection, and restore if appropriate
+                if (selection) {
+                    selection.deselect();
+                    if (index > -1) {
+                        selection.select(elementProxies[index]);
+                    }
+                }
+
                 // TODO: Ensure elements for all domain objects?
             }
 

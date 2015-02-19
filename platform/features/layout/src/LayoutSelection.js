@@ -75,6 +75,11 @@ define(
                 return (obj === selected) || (obj === proxy);
             }
 
+            // Getter for current selection
+            function get() {
+                return selected;
+            }
+
             // Start with the proxy selected
             selection.push(proxy);
 
@@ -95,6 +100,11 @@ define(
                  * @returns {boolean} true if selection changed
                  */
                 deselect: deselect,
+                /**
+                 * Get the currently-selected object.
+                 * @returns the currently selected object
+                 */
+                get: get,
                 /**
                  * Clear the selection, including the proxy, and dispose
                  * of this selection scope. No other calls to methods on

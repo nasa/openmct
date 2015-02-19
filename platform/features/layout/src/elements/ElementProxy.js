@@ -17,6 +17,7 @@ define(
          */
         function ElementProxy(element, index, elements) {
             return {
+                element: element,
                 x: new Accessor(element, 'x'),
                 y: new Accessor(element, 'y'),
                 z: new Accessor(element, 'z'),
