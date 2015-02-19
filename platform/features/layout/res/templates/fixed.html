@@ -17,15 +17,9 @@
                  ng-class="{ test: controller.selected(element) }"
                  ng-style="element.style"
                  ng-click="controller.select(element)"
-                 ng-model="element">
+                 ng-model="element"
+                 mct-drag-down="controller.startDrag(element); controller.select(element)"
+                 mct-drag="controller.continueDrag(delta)"
+                 mct-drag-up="controller.endDrag()">
     </mct-include>
-
-    <!-- Drag handles -->
-    <span ng-show="false && domainObject.hasCapability('editor')">
-        <span style="position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; cursor: move;"
-              mct-drag-down="controller.startDrag(element, [1,1], [0,0])"
-              mct-drag="controller.continueDrag(element)"
-              mct-drag-up="controller.endDrag()">
-        </span>
-    </span>
 </div>

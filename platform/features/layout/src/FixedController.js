@@ -20,6 +20,7 @@ define(
         function FixedController($scope, telemetrySubscriber, telemetryFormatter) {
             var gridSize = DEFAULT_GRID_SIZE,
                 gridExtent = DEFAULT_GRID_EXTENT,
+                dragging,
                 subscription,
                 cellStyles = [],
                 elementProxies = [],
@@ -265,20 +266,18 @@ define(
                  * with the mouse while the horizontal dimensions shrink in
                  * kind (and vertical properties remain unmodified.)
                  *
-                 * @param {string} id the identifier of the domain object
-                 *        in the frame being manipulated
-                 * @param {number[]} posFactor the position factor
-                 * @param {number[]} dimFactor the dimensions factor
+                 * @param element the raw (undecorated) element to drag
                  */
-                startDrag: function (id, posFactor, dimFactor) {
-                    // TODO: Drag!
-//                    activeDragId = id;
-//                    activeDrag = new LayoutDrag(
-//                        rawPositions[id],
-//                        posFactor,
-//                        dimFactor,
-//                        gridSize
-//                    );
+                startDrag: function (element) {
+                    // Only allow dragging in edit mode
+                    if ($scope.domainObject &&
+                            $scope.domainObject.hasCapability('editor')) {
+                        dragging = {
+                            element: element,
+                            x: element.x(),
+                            y: element.y()
+                        };
+                    }
                 },
                 /**
                  * Continue an active drag gesture.
@@ -287,34 +286,22 @@ define(
                  *        to its position when the drag started
                  */
                 continueDrag: function (delta) {
-                    // TODO: Drag!
-//                    if (activeDrag) {
-//                        rawPositions[activeDragId] =
-//                            activeDrag.getAdjustedPosition(delta);
-//                        populatePosition(activeDragId);
-//                    }
+                    if (dragging) {
+                        dragging.element.x(dragging.x + Math.round(delta[0] / gridSize[0]));
+                        dragging.element.y(dragging.y + Math.round(delta[1] / gridSize[1]));
+                        dragging.element.style = convertPosition(dragging.element.element);
+                    }
                 },
                 /**
                  * End the active drag gesture. This will update the
                  * view configuration.
                  */
                 endDrag: function () {
-                    // TODO: Drag!
-//                    // Write to configuration; this is watched and
-//                    // saved by the EditRepresenter.
-//                    $scope.configuration =
-//                        $scope.configuration || {};
-//                    // Make sure there is a "panels" field in the
-//                    // view configuration.
-//                    $scope.configuration.elements =
-//                        $scope.configuration.elements || {};
-//                    // Store the position of this panel.
-//                    $scope.configuration.elements[activeDragId] =
-//                        rawPositions[activeDragId];
-//                    // Mark this object as dirty to encourage persistence
-//                    if ($scope.commit) {
-//                        $scope.commit("Moved element.");
-//                    }
+                    // Mark this object as dirty to encourage persistence
+                    if (dragging && $scope.commit) {
+                        dragging = undefined;
+                        $scope.commit("Moved element.");
+                    }
                 }
             };
 

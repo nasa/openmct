@@ -17,7 +17,7 @@ define(
                 if (arguments.length > 0) {
                     object[key] = value;
                 }
-                return value;
+                return object[key];
             };
         }
 
