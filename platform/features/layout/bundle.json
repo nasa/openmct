@@ -26,9 +26,31 @@
                             "items": [
                                 {
                                     "method": "add",
-                                    "control": "button",
+                                    "control": "menu-button",
                                     "text": "Add",
-                                    "inclusive": true
+                                    "inclusive": true,
+                                    "options": [
+                                        {
+                                            "name": "Box",
+                                            "glyph": "\u2610",
+                                            "key": "fixed.box"
+                                        },
+                                        {
+                                            "name": "Line",
+                                            "glyph": "-",
+                                            "key": "fixed.line"
+                                        },
+                                        {
+                                            "name": "Text",
+                                            "glyph": "\u1D1B",
+                                            "key": "fixed.text"
+                                        },
+                                        {
+                                            "name": "Image",
+                                            "glyph": "\u2353",
+                                            "key": "fixed.image"
+                                        }
+                                    ]
                                 }
                             ]
                         },

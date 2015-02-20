@@ -45,6 +45,10 @@
             {
                 "key": "composite",
                 "templateUrl": "templates/controls/composite.html"
+            },
+            {
+                "key": "menu-button",
+                "templateUrl": "templates/controls/menu-button.html"
             }
         ],
         "controllers": [
