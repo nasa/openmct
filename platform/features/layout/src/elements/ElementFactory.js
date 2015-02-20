@@ -11,7 +11,21 @@ define(
                 }
             },
             DIALOGS = {
-
+                "fixed.image": {
+                    name: "Image Properties",
+                    sections: [
+                        {
+                            rows: [
+                                {
+                                    key: "url",
+                                    control: "textfield",
+                                    name: "Image URL",
+                                    required: true
+                                }
+                            ]
+                        }
+                    ]
+                }
             };
 
         /**
