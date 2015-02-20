@@ -29,6 +29,23 @@ define(
                 proxy.add("fixed.box");
                 expect(mockQ.when).toHaveBeenCalled();
             });
+
+            it("notifies its callback when an element is created", function () {
+                proxy.add("fixed.box");
+                // Callback should not have been invoked yet
+                expect(mockCallback).not.toHaveBeenCalled();
+                // Resolve the promise
+                mockPromise.then.mostRecentCall.args[0]({});
+                // Should have fired the callback
+                expect(mockCallback).toHaveBeenCalledWith({
+                    type: "fixed.box",
+                    x: 0,
+                    y: 0,
+                    width: 1,
+                    height: 1
+                });
+            });
+
         });
     }
 );

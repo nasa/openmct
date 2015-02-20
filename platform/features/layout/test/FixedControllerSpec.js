@@ -272,8 +272,6 @@ define(
                     .toHaveBeenCalledWith(jasmine.any(String));
             });
 
-
-
             it("unsubscribes when destroyed", function () {
                 // Make an object available
                 findWatch('domainObject')(mockDomainObject);
@@ -283,6 +281,12 @@ define(
                 findOn('$destroy')();
                 // Should have unsubscribed
                 expect(mockSubscription.unsubscribe).toHaveBeenCalled();
+            });
+
+            it("exposes its grid size", function () {
+                // Template needs to be able to pass this into line
+                // elements to size SVGs appropriately
+                expect(controller.getGridSize()).toEqual(testGrid);
             });
         });
     }
