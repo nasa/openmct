@@ -32,11 +32,11 @@ define(
             };
 
             proxy.width = function () {
-                return Math.max(element.x, element.x2) - proxy.x();
+                return Math.max(Math.abs(element.x - element.x2), 1);
             };
 
             proxy.height = function () {
-                return Math.max(element.y, element.y2) - proxy.y();
+                return Math.max(Math.abs(element.y - element.y2), 1);
             };
 
             proxy.x1 = function () {

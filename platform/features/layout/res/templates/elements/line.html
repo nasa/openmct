@@ -1,9 +1,9 @@
 <svg ng-attr-width="{{parameters.gridSize[0] * ngModel.width()}}"
      ng-attr-height="{{parameters.gridSize[1] * ngModel.height()}}">
-    <line ng-attr-x1="{{parameters.gridSize[0] * ngModel.x1()}}"
-          ng-attr-y1="{{parameters.gridSize[1] * ngModel.y1()}}"
-          ng-attr-x2="{{parameters.gridSize[0] * ngModel.x2()}}"
-          ng-attr-y2="{{parameters.gridSize[1] * ngModel.y2()}}"
+    <line ng-attr-x1="{{parameters.gridSize[0] * ngModel.x1() + 1}}"
+          ng-attr-y1="{{parameters.gridSize[1] * ngModel.y1() + 1}}"
+          ng-attr-x2="{{parameters.gridSize[0] * ngModel.x2() + 1}}"
+          ng-attr-y2="{{parameters.gridSize[1] * ngModel.y2() + 1}}"
           stroke="lightgray"
           stroke-width="2">
     </line>

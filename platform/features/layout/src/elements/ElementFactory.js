@@ -12,10 +12,10 @@ define(
                     border: "transparent"
                 },
                 "fixed.line": {
-                    x: 0,
-                    y: 0,
-                    x2: 5,
-                    y2: 3
+                    x: 5,
+                    y: 9,
+                    x2: 6,
+                    y2: 6
                 },
                 "fixed.text": {
                     fill: "transparent",
