@@ -6,8 +6,15 @@ define(
         "use strict";
 
         var INITIAL_STATES = {
-                "fixed.image": {
-                    url: "http://www.nasa.gov/sites/default/themes/NASAPortal/images/nasa-logo.gif"
+                "fixed.image": {},
+                "fixed.box": {
+                    fill: "#888",
+                    border: "transparent"
+                },
+                "fixed.line": {},
+                "fixed.text": {
+                    fill: "transparent",
+                    border: "transparent"
                 }
             },
             DIALOGS = {
@@ -20,6 +27,21 @@ define(
                                     key: "url",
                                     control: "textfield",
                                     name: "Image URL",
+                                    required: true
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "fixed.text": {
+                    name: "Text Element Properties",
+                    sections: [
+                        {
+                            rows: [
+                                {
+                                    key: "text",
+                                    control: "textfield",
+                                    name: "Text",
                                     required: true
                                 }
                             ]
