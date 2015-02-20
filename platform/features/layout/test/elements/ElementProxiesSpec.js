@@ -5,8 +5,13 @@ define(
     function (ElementProxies) {
         "use strict";
 
+        // Expect these element types to have proxies
         var ELEMENT_TYPES = [
-            "fixed.telemetry"
+            "fixed.telemetry",
+            "fixed.line",
+            "fixed.box",
+            "fixed.text",
+            "fixed.image"
         ];
 
         // Verify that the set of proxies exposed matches the specific

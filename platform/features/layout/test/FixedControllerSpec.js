@@ -7,6 +7,8 @@ define(
 
         describe("The Fixed Position controller", function () {
             var mockScope,
+                mockQ,
+                mockDialogService,
                 mockSubscriber,
                 mockFormatter,
                 mockDomainObject,
@@ -58,6 +60,11 @@ define(
                     'telemetrySubscriber',
                     [ 'subscribe' ]
                 );
+                mockQ = jasmine.createSpyObj('$q', ['when']);
+                mockDialogService = jasmine.createSpyObj(
+                    'dialogService',
+                    ['getUserInput']
+                );
                 mockFormatter = jasmine.createSpyObj(
                     'telemetryFormatter',
                     [ 'formatDomainValue', 'formatRangeValue' ]
@@ -99,6 +106,8 @@ define(
 
                 controller = new FixedController(
                     mockScope,
+                    mockQ,
+                    mockDialogService,
                     mockSubscriber,
                     mockFormatter
                 );

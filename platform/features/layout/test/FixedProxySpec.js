@@ -6,12 +6,28 @@ define(
         "use strict";
 
         describe("Fixed Position view's selection proxy", function () {
-            it("has a placeholder message when clicked", function () {
-                var oldAlert = window.alert;
-                window.alert = jasmine.createSpy('alert');
-                new FixedProxy({}).add('');
-                expect(window.alert).toHaveBeenCalledWith(jasmine.any(String));
-                window.alert = oldAlert;
+            var mockCallback,
+                mockQ,
+                mockDialogService,
+                mockPromise,
+                proxy;
+
+            beforeEach(function () {
+                mockCallback = jasmine.createSpy('callback');
+                mockQ = jasmine.createSpyObj('$q', ['when']);
+                mockDialogService = jasmine.createSpyObj('dialogService', ['getUserInput']);
+                mockPromise = jasmine.createSpyObj('promise', ['then']);
+
+                mockQ.when.andReturn(mockPromise);
+
+                proxy = new FixedProxy(mockCallback, mockQ, mockDialogService);
+            });
+
+            it("handles promised element creation", function () {
+                // The element factory may return promises (e.g. if
+                // user input is required) so make sure proxy is wrapping these
+                proxy.add("fixed.box");
+                expect(mockQ.when).toHaveBeenCalled();
             });
         });
     }
