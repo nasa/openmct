@@ -52,13 +52,13 @@ define(
 
             // Convert from element x/y/width/height to an
             // apropriate ng-style argument, to position elements.
-            function convertPosition(raw) {
+            function convertPosition(elementProxy) {
                 // Multiply position/dimensions by grid size
                 return {
-                    left: (gridSize[0] * raw.x) + 'px',
-                    top: (gridSize[1] * raw.y) + 'px',
-                    width: (gridSize[0] * raw.width) + 'px',
-                    height: (gridSize[1] * raw.height) + 'px'
+                    left: (gridSize[0] * elementProxy.x()) + 'px',
+                    top: (gridSize[1] * elementProxy.y()) + 'px',
+                    width: (gridSize[0] * elementProxy.width()) + 'px',
+                    height: (gridSize[1] * elementProxy.height()) + 'px'
                 };
             }
 
@@ -89,7 +89,7 @@ define(
 
                 if (e) {
                     // Provide a displayable position (convert from grid to px)
-                    e.style = convertPosition(element);
+                    e.style = convertPosition(e);
                     // Template names are same as type names, presently
                     e.template = element.type;
                 }
@@ -228,6 +228,14 @@ define(
                     return cellStyles;
                 },
                 /**
+                 * Get the size of the grid, in pixels. The returned array
+                 * is in the form `[x, y]`.
+                 * @returns {number[]} the grid size
+                 */
+                getGridSize: function () {
+                    return gridSize;
+                },
+                /**
                  * Set the size of the viewable fixed position area.
                  * @memberof FixedController#
                  * @param bounds the width/height, as reported by mct-resize
@@ -308,9 +316,11 @@ define(
                  */
                 continueDrag: function (delta) {
                     if (dragging) {
+                        // Update x/y values
                         dragging.element.x(dragging.x + Math.round(delta[0] / gridSize[0]));
                         dragging.element.y(dragging.y + Math.round(delta[1] / gridSize[1]));
-                        dragging.element.style = convertPosition(dragging.element.element);
+                        // Update display position
+                        dragging.element.style = convertPosition(dragging.element);
                     }
                 },
                 /**

@@ -11,7 +11,12 @@ define(
                     fill: "#888",
                     border: "transparent"
                 },
-                "fixed.line": {},
+                "fixed.line": {
+                    x: 0,
+                    y: 0,
+                    x2: 5,
+                    y2: 3
+                },
                 "fixed.text": {
                     fill: "transparent",
                     border: "transparent"

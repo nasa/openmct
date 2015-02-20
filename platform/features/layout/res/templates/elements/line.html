@@ -1,4 +1,10 @@
-<div ng-style="{ background: ngModel.fill }"
-     style="width: 100%; height: 100%">
-    ...line...
-</div>
+<svg ng-attr-width="{{parameters.gridSize[0] * ngModel.width()}}"
+     ng-attr-height="{{parameters.gridSize[1] * ngModel.height()}}">
+    <line ng-attr-x1="{{parameters.gridSize[0] * ngModel.x1()}}"
+          ng-attr-y1="{{parameters.gridSize[1] * ngModel.y1()}}"
+          ng-attr-x2="{{parameters.gridSize[0] * ngModel.x2()}}"
+          ng-attr-y2="{{parameters.gridSize[1] * ngModel.y2()}}"
+          stroke="lightgray"
+          stroke-width="2">
+    </line>
+</svg>
