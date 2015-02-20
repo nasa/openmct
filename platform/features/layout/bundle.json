@@ -90,6 +90,22 @@
             {
                 "key": "fixed.telemetry",
                 "templateUrl": "templates/elements/telemetry.html"
+            },
+            {
+                "key": "fixed.box",
+                "templateUrl": "templates/elements/box.html"
+            },
+            {
+                "key": "fixed.line",
+                "templateUrl": "templates/elements/line.html"
+            },
+            {
+                "key": "fixed.text",
+                "templateUrl": "templates/elements/text.html"
+            },
+            {
+                "key": "fixed.image",
+                "templateUrl": "templates/elements/image.html"
             }
         ],
         "types": [
