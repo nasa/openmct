@@ -16,7 +16,14 @@ define(
                  * Add a new visual element to this view.
                  */
                 add: function (type) {
-                    window.alert("Placeholder. Should add a " + type + ".");
+                    configuration.elements = configuration.elements || [];
+                    configuration.elements.push({
+                        x: configuration.elements.length,
+                        y: configuration.elements.length,
+                        width: 2,
+                        height: 1,
+                        type: type
+                    });
                 }
             };
         }
