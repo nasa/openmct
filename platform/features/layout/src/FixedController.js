@@ -24,6 +24,7 @@ define(
                 subscription,
                 cellStyles = [],
                 elementProxies = [],
+                elementProxiesById = {},
                 selection;
 
             // Refresh cell styles (e.g. because grid extent changed)
@@ -65,7 +66,7 @@ define(
             function updateValue(telemetryObject) {
                 var id = telemetryObject && telemetryObject.getId();
                 if (id) {
-                    elementProxies.forEach(function (element) {
+                    (elementProxiesById[id] || []).forEach(function (element) {
                         element.name = telemetryObject.getModel().name;
                         element.value = telemetryFormatter.formatRangeValue(
                             subscription.getRangeValue(telemetryObject)
@@ -119,6 +120,17 @@ define(
                         selection.select(elementProxies[index]);
                     }
                 }
+
+                // Finally, rebuild lists of elements by id to
+                // facilitate faster update when new telemetry comes in.
+                elementProxiesById = {};
+                elementProxies.forEach(function (elementProxy) {
+                    var id = elementProxy.id;
+                    if (elementProxy.element.type === 'fixed.telemetry') {
+                        elementProxiesById[id] = elementProxiesById[id] || [];
+                        elementProxiesById[id].push(elementProxy);
+                    }
+                });
 
                 // TODO: Ensure elements for all domain objects?
             }
@@ -224,11 +236,11 @@ define(
                     }
                 },
                 /**
-                 * Get an array of elements in this panel, decorated for
-                 * display.
+                 * Get an array of elements in this panel; these are
+                 * decorated proxies for both selection and display.
                  * @returns {Array} elements in this panel
                  */
-                getDecoratedElements: function () {
+                getElements: function () {
                     return elementProxies;
                 },
                 /**

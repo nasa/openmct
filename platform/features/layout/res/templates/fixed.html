@@ -11,7 +11,7 @@
     </span>
 
     <!-- Fixed position elements -->
-    <mct-include ng-repeat="element in controller.getDecoratedElements()"
+    <mct-include ng-repeat="element in controller.getElements()"
                  style="position: absolute;"
                  key="element.template"
                  ng-class="{ test: controller.selected(element) }"
