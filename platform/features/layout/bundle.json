@@ -83,7 +83,13 @@
             {
                 "key": "FixedController",
                 "implementation": "FixedController.js",
-                "depends": [ "$scope", "telemetrySubscriber", "telemetryFormatter" ]
+                "depends": [
+                    "$scope",
+                    "$q",
+                    "dialogService",
+                    "telemetrySubscriber",
+                    "telemetryFormatter"
+                ]
             }
         ],
         "templates": [

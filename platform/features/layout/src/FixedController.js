@@ -17,7 +17,7 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function FixedController($scope, telemetrySubscriber, telemetryFormatter) {
+        function FixedController($scope, $q, dialogService, telemetrySubscriber, telemetryFormatter) {
             var gridSize = DEFAULT_GRID_SIZE,
                 gridExtent = DEFAULT_GRID_EXTENT,
                 dragging,
@@ -190,7 +190,12 @@ define(
             if (Array.isArray($scope.selection)) {
                 selection = new LayoutSelection(
                     $scope.selection,
-                    new FixedProxy($scope.configuration)
+                    new FixedProxy(
+                        $scope.configuration,
+                        $q,
+                        dialogService,
+                        refreshElements
+                    )
                 );
             }
 
