@@ -8,9 +8,13 @@ define(
         /**
          * Proxy for configuring a fixed position view via the toolbar.
          * @constructor
-         * @param configuration the view configuration object to manage
+         * @param {Function} addElementCallback callback to invoke when
+         *        elements are created
+         * @param $q Angular's $q, for promise-handling
+         * @param {DialogService} dialogService dialog service to use
+         *        when adding a new element will require user input
          */
-        function FixedProxy(configuration, $q, dialogService, callback) {
+        function FixedProxy(addElementCallback, $q, dialogService) {
             var factory = new ElementFactory(dialogService);
 
             return {
@@ -20,9 +24,6 @@ define(
                 add: function (type) {
                     // Place a configured element into the view configuration
                     function addElement(element) {
-                        // Ensure that there is an Elements array
-                        configuration.elements = configuration.elements || [];
-
                         // Configure common properties of the element
                         element.x = element.x || 0;
                         element.y = element.y || 0;
@@ -31,10 +32,7 @@ define(
                         element.type = type;
 
                         // Finally, add it to the view's configuration
-                        configuration.elements.push(element);
-
-                        // Let the view know it needs to refresh
-                        callback();
+                        addElementCallback(element);
                     }
 
                     // Defer creation to the factory

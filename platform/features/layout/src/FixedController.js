@@ -163,8 +163,8 @@ define(
                 subscribe($scope.domainObject);
             }
 
-            // Position a panel after a drop event
-            function handleDrop(e, id, position) {
+            // Add an element to this view
+            function addElement(element) {
                 // Ensure that configuration field is populated
                 $scope.configuration = $scope.configuration || {};
                 // Make sure there is a "elements" field in the
@@ -172,7 +172,23 @@ define(
                 $scope.configuration.elements =
                     $scope.configuration.elements || [];
                 // Store the position of this element.
-                $scope.configuration.elements.push({
+                $scope.configuration.elements.push(element);
+                // Refresh displayed elements
+                refreshElements();
+                // Select the newly-added element
+                if (selection) {
+                    selection.select(elementProxies[elementProxies.length - 1]);
+                }
+                // Mark change as persistable
+                if ($scope.commit) {
+                    $scope.commit("Dropped an element.");
+                }
+            }
+
+            // Position a panel after a drop event
+            function handleDrop(e, id, position) {
+                // Store the position of this element.
+                addElement({
                     type: "fixed.telemetry",
                     x: Math.floor(position.x / gridSize[0]),
                     y: Math.floor(position.y / gridSize[1]),
@@ -180,22 +196,14 @@ define(
                     width: DEFAULT_DIMENSIONS[0],
                     height: DEFAULT_DIMENSIONS[1]
                 });
-                // Mark change as persistable
-                if ($scope.commit) {
-                    $scope.commit("Dropped an element.");
-                }
             }
+
 
             //  Track current selection state
             if (Array.isArray($scope.selection)) {
                 selection = new LayoutSelection(
                     $scope.selection,
-                    new FixedProxy(
-                        $scope.configuration,
-                        $q,
-                        dialogService,
-                        refreshElements
-                    )
+                    new FixedProxy(addElement, $q, dialogService)
                 );
             }
 
