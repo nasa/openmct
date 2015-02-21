@@ -26,6 +26,7 @@
                             "items": [
                                 {
                                     "method": "add",
+                                    "glyph": "+",
                                     "control": "menu-button",
                                     "text": "Add",
                                     "inclusive": true,
