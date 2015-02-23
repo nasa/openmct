@@ -57,6 +57,7 @@ define(
                 commit("Changes from toolbar.");
             }
 
+            // Initialize toolbar (expose object to parent scope)
             function initialize() {
                 // If we have been asked to expose toolbar state...
                 if (attrs.toolbar) {
@@ -67,7 +68,7 @@ define(
 
             // Represent a domain object using this definition
             function represent(representation) {
-                //
+                // Expose the toolbar object to the parent scope
                 initialize();
                 // Clear any existing selection
                 scope.selection = [];

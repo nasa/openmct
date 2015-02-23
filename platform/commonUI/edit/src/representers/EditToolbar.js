@@ -108,7 +108,7 @@ define(
             function isApplicable(item) {
                 var property = (item || {}).property,
                     method = (item || {}).method,
-                    exclusive = !(item || {}).inclusive;
+                    exclusive = (item || {}).exclusive;
 
                 // Check if a selected item defines this property
                 function hasProperty(selected) {
