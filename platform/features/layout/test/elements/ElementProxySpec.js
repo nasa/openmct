@@ -36,6 +36,17 @@ define(
                 proxy.remove();
                 expect(testElements).toEqual([{}, {}, {}]);
             });
+
+            it("allows order to be changed", function () {
+                proxy.order("down");
+                expect(testElements).toEqual([{}, testElement, {}, {}]);
+                proxy.order("up");
+                expect(testElements).toEqual([{}, {}, testElement, {}]);
+                proxy.order("bottom");
+                expect(testElements).toEqual([testElement, {}, {}, {}]);
+                proxy.order("top");
+                expect(testElements).toEqual([{}, {}, {}, testElement]);
+            });
         });
     }
 );

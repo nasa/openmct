@@ -5,11 +5,23 @@ define(
     function (AccessorMutator) {
         "use strict";
 
+        // Index deltas for changes in order
+        var ORDERS = {
+            top: Number.POSITIVE_INFINITY,
+            up: 1,
+            down: -1,
+            bottom: Number.NEGATIVE_INFINITY
+        };
+
         /**
          * Abstract superclass for other classes which provide useful
          * interfaces upon an elements in a fixed position view.
          * This handles the generic operations (e.g. remove) so that
          * subclasses only need to implement element-specific behaviors.
+         *
+         * Note that arguments here are meant to match those expected
+         * by `Array.prototype.map`
+         *
          * @constructor
          * @param element the fixed position element, as stored in its
          *        configuration
@@ -56,6 +68,28 @@ define(
                  * @returns {number} the height
                  */
                 height: new AccessorMutator(element, 'height'),
+                /**
+                 * Change the display order of this element.
+                 * @param {string} o where to move this element;
+                 *        one of "top", "up", "down", or "bottom"
+                 */
+                order: function (o) {
+                    var delta = ORDERS[o] || 0,
+                        desired = Math.max(
+                            Math.min(index + delta, elements.length - 1),
+                            0
+                        );
+                    // Move to the desired index, if this is a change
+                    if ((desired !== index) && (elements[index] === element)) {
+                        // Splice out the current element
+                        elements.splice(index, 1);
+                        // Splice it back in at the correct index
+                        elements.splice(desired, 0, element);
+                        // Track change in index (proxy should be recreated
+                        // anyway, but be consistent)
+                        index = desired;
+                    }
+                },
                 /**
                  * Remove this element from the fixed position view.
                  */
