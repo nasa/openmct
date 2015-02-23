@@ -3,10 +3,12 @@
 <div class="form">
     <span ng-repeat="section in structure.sections"
           class="control-group coordinates"
+          ng-if="!section.hidden"
           title="{{section.description}}">
 
         <ng-form ng-repeat="item in section.items"
                  ng-class="{ 'input-labeled': item.name }"
+                 ng-hide="item.hidden"
                  class="inline"
                  title="{{item.description}}"
                  name="mctFormInner">

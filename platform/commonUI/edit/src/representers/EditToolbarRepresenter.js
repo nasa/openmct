@@ -15,9 +15,7 @@ define(
          * @constructor
          */
         function EditToolbarRepresenter(scope, element, attrs) {
-            var definition,
-                unwatch,
-                toolbar,
+            var toolbar,
                 toolbarObject = {};
 
             // Mark changes as ready to persist
@@ -29,17 +27,20 @@ define(
 
             // Handle changes to the current selection
             function updateSelection(selection) {
-                // Make sure selection is array-like
-                selection = Array.isArray(selection) ?
-                        selection :
-                        (selection ? [selection] : []);
+                // Only update if there is a toolbar to update
+                if (toolbar) {
+                    // Make sure selection is array-like
+                    selection = Array.isArray(selection) ?
+                            selection :
+                            (selection ? [selection] : []);
 
-                // Instantiate a new toolbar...
-                toolbar = new EditToolbar(definition, selection, commit);
+                    // Update the toolbar's selection
+                    toolbar.setSelection(selection);
 
-                // ...and expose its structure/state
-                toolbarObject.structure = toolbar.getStructure();
-                toolbarObject.state = toolbar.getState();
+                    // ...and expose its structure/state
+                    toolbarObject.structure = toolbar.getStructure();
+                    toolbarObject.state = toolbar.getState();
+                }
             }
 
             // Get state (to watch it)
@@ -50,7 +51,7 @@ define(
             // Update selection models to match changed toolbar state
             function updateState(state) {
                 // Update underlying state based on toolbar changes
-                state.forEach(function (value, index) {
+                (state || []).forEach(function (value, index) {
                     toolbar.updateState(index, value);
                 });
                 // Commit the changes.
@@ -58,9 +59,11 @@ define(
             }
 
             // Initialize toolbar (expose object to parent scope)
-            function initialize() {
+            function initialize(definition) {
                 // If we have been asked to expose toolbar state...
                 if (attrs.toolbar) {
+                    // Initialize toolbar object
+                    toolbar = new EditToolbar(definition, commit);
                     // Expose toolbar state under that name
                     scope.$parent[attrs.toolbar] = toolbarObject;
                 }
@@ -68,12 +71,12 @@ define(
 
             // Represent a domain object using this definition
             function represent(representation) {
+                // Get the newest toolbar definition from the view
+                var definition = (representation || {}).toolbar || {};
                 // Expose the toolbar object to the parent scope
-                initialize();
+                initialize(definition);
                 // Clear any existing selection
                 scope.selection = [];
-                // Get the newest toolbar definition from the view
-                definition = (representation || {}).toolbar || {};
                 // Initialize toolbar to an empty selection
                 updateSelection([]);
             }

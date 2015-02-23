@@ -20,9 +20,10 @@ define(
          * @param {Function} commit callback to invoke after changes
          * @constructor
          */
-        function EditToolbar(structure, selection, commit) {
+        function EditToolbar(structure, commit) {
             var toolbarStructure = Object.create(structure || {}),
                 toolbarState,
+                selection,
                 properties = [];
 
             // Generate a new key for an item's property
@@ -155,14 +156,35 @@ define(
                 return section && section.items && section.items.length > 0;
             }
 
-            // Prepare a toolbar section based on current selection
+            // Prepare a toolbar section
             function convertSection(section) {
                 var converted = Object.create(section || {});
                 converted.items =
                     ((section || {}).items || [])
-                            .map(convertItem)
-                            .filter(isApplicable);
+                            .map(convertItem);
                 return converted;
+            }
+
+            // Show/hide controls in this section per applicability
+            function refreshSectionApplicability(section) {
+                var count = 0;
+                // Show/hide each item
+                (section.items || []).forEach(function (item) {
+                    item.hidden = !isApplicable(item);
+                    count += item.hidden ? 0 : 1;
+                });
+                // Hide this section if there are no applicable items
+                section.hidden = !count;
+            }
+
+            // Show/hide controls if they are applicable
+            function refreshApplicability() {
+                toolbarStructure.sections.forEach(refreshSectionApplicability);
+            }
+
+            // Refresh toolbar state to match selection
+            function refreshState() {
+                toolbarState = properties.map(initializeState);
             }
 
             toolbarStructure.sections =
@@ -170,20 +192,43 @@ define(
                         .map(convertSection)
                         .filter(nonEmpty);
 
-            toolbarState = properties.map(initializeState);
+            toolbarState = [];
 
             return {
                 /**
-                 *
+                 * Set the current selection. Visisbility of sections
+                 * and items in the toolbar will be updated to match this.
+                 * @param {Array} s the new selection
+                 */
+                setSelection: function (s) {
+                    selection = s;
+                    refreshApplicability();
+                    refreshState();
+                },
+                /**
+                 * Get the structure of the toolbar, as appropriate to
+                 * pass to `mct-toolbar`.
+                 * @returns the toolbar structure
                  */
                 getStructure: function () {
                     return toolbarStructure;
                 },
+                /**
+                 * Get the current state of the toolbar, as appropriate
+                 * to two-way bind to the state handled by `mct-toolbar`.
+                 * @returns {Array} state of the toolbar
+                 */
                 getState: function () {
                     return toolbarState;
                 },
-                updateState: function (key, value) {
-                    updateProperties(properties[key], value);
+                /**
+                 * Update state within the current selection.
+                 * @param {number} index the index of the corresponding
+                 *        element in the state array
+                 * @param value the new value to convey to the selection
+                 */
+                updateState: function (index, value) {
+                    updateProperties(properties[index], value);
                 }
             };
         }
