@@ -76,7 +76,6 @@ define(
                 key = (representation || {}).key;
                 // Track the represented object
                 domainObject = representedObject;
-
                 // Ensure existing watches are released
                 destroy();
             }
