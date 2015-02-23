@@ -14,5 +14,9 @@ define({
      * An estimate for the dimensions of a context menu, used for
      * positioning.
      */
-    MCT_MENU_DIMENSIONS: [ 170, 200 ]
+    MCT_MENU_DIMENSIONS: [ 170, 200 ],
+    /**
+     * Identifier for drop events.
+     */
+    MCT_DROP_EVENT: 'mctDrop'
 });

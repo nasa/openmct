@@ -90,9 +90,9 @@ define(
             }
 
             // Compute panel positions based on the layout's object model
-            function lookupPanels(model) {
-                var configuration = $scope.configuration || {},
-                    ids = (model || {}).composition || [];
+            function lookupPanels(ids) {
+                var configuration = $scope.configuration || {};
+                ids = ids || [];
 
                 // Pull panel positions from configuration
                 rawPositions = shallowCopy(configuration.elements || {}, ids);
@@ -101,7 +101,7 @@ define(
                 positions = {};
 
                 // Update width/height that we are tracking
-                gridSize = (model || {}).layoutGrid || DEFAULT_GRID_SIZE;
+                gridSize = ($scope.model || {}).layoutGrid || DEFAULT_GRID_SIZE;
 
                 // Compute positions and add defaults where needed
                 ids.forEach(populatePosition);
@@ -147,14 +147,49 @@ define(
                     telemetrySubscriber.subscribe(domainObject, updateValues);
             }
 
+            // Handle changes in the object's composition
+            function updateComposition(ids) {
+                // Populate panel positions
+                lookupPanels(ids);
+                // Resubscribe - objects in view have changed
+                subscribe($scope.domainObject);
+            }
+
+            // Position a panel after a drop event
+            function handleDrop(e, id, position) {
+                // Ensure that configuration field is populated
+                $scope.configuration = $scope.configuration || {};
+                // Make sure there is a "elements" field in the
+                // view configuration.
+                $scope.configuration.elements =
+                    $scope.configuration.elements || {};
+                // Store the position of this element.
+                $scope.configuration.elements[id] = {
+                    position: [
+                        Math.floor(position.x / gridSize[0]),
+                        Math.floor(position.y / gridSize[1])
+                    ],
+                    dimensions: DEFAULT_DIMENSIONS
+                };
+                // Mark change as persistable
+                if ($scope.commit) {
+                    $scope.commit("Dropped a frame.");
+                }
+                // Populate template-facing position for this id
+                populatePosition(id);
+            }
+
             // Position panes when the model field changes
-            $scope.$watch("model", lookupPanels);
+            $scope.$watch("model.composition", updateComposition);
 
             // Subscribe to telemetry when an object is available
             $scope.$watch("domainObject", subscribe);
 
             // Free up subscription on destroy
             $scope.$on("$destroy", releaseSubscription);
+
+            // Position panes where they are dropped
+            $scope.$on("mctDrop", handleDrop);
 
             // Initialize styles (position etc.) for cells
             refreshCellStyles();

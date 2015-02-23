@@ -9,7 +9,8 @@
                 "glyph": "L",
                 "type": "layout",
                 "templateUrl": "templates/layout.html",
-                "uses": [ "composition" ]
+                "uses": [ "composition" ],
+                "gestures": [ "drop" ]
             },
             {
                 "key": "fixed",
@@ -17,7 +18,8 @@
                 "glyph": "3",
                 "type": "telemetry.panel",
                 "templateUrl": "templates/fixed.html",
-                "uses": [ "composition" ]
+                "uses": [ "composition" ],
+                "gestures": [ "drop" ]
             }
         ],
         "representations": [

@@ -82,8 +82,35 @@ define(
                 ids.forEach(populatePosition);
             }
 
+            // Position a panel after a drop event
+            function handleDrop(e, id, position) {
+                // Ensure that configuration field is populated
+                $scope.configuration = $scope.configuration || {};
+                // Make sure there is a "panels" field in the
+                // view configuration.
+                $scope.configuration.panels =
+                    $scope.configuration.panels || {};
+                // Store the position of this panel.
+                $scope.configuration.panels[id] = {
+                    position: [
+                        Math.floor(position.x / gridSize[0]),
+                        Math.floor(position.y / gridSize[1])
+                    ],
+                    dimensions: DEFAULT_DIMENSIONS
+                };
+                // Mark change as persistable
+                if ($scope.commit) {
+                    $scope.commit("Dropped a frame.");
+                }
+                // Populate template-facing position for this id
+                populatePosition(id);
+            }
+
             // Position panes when the model field changes
             $scope.$watch("model.composition", lookupPanels);
+
+            // Position panes where they are dropped
+            $scope.$on("mctDrop", handleDrop);
 
             return {
                 /**
