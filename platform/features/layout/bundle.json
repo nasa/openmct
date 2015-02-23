@@ -84,6 +84,12 @@
                                             "key": "bottom"
                                         }
                                     ]
+                                },
+                                {
+                                    "property": "fill",
+                                    "glyph": "X",
+                                    "control": "textfield",
+                                    "inclusive": true
                                 }
                             ]
                         },
