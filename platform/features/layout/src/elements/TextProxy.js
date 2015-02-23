@@ -1,12 +1,12 @@
 /*global define*/
 
 define(
-    ['./TextProxy', './AccessorMutator'],
-    function (TextProxy, AccessorMutator) {
+    ['./BoxProxy', './AccessorMutator'],
+    function (BoxProxy, AccessorMutator) {
         'use strict';
 
         /**
-         * Selection proxy for telemetry elements in a fixed position view.
+         * Selection proxy for Text elements in a fixed position view.
          *
          * Note that arguments here are meant to match those expected
          * by `Array.prototype.map`
@@ -17,15 +17,12 @@ define(
          * @param index the element's index within its array
          * @param {Array} elements the full array of elements
          */
-        function TelemetryProxy(element, index, elements) {
-            var proxy = new TextProxy(element, index, elements);
-
-            // Expose the domain object identifier
-            proxy.id = element.id;
+        function TextProxy(element, index, elements) {
+            var proxy = new BoxProxy(element, index, elements);
 
             return proxy;
         }
 
-        return TelemetryProxy;
+        return TextProxy;
     }
 );
