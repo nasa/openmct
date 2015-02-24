@@ -13,6 +13,7 @@ define(
                 mockFormatter,
                 mockDomainObject,
                 mockSubscription,
+                mockPromise,
                 testGrid,
                 testModel,
                 testValues,
@@ -77,6 +78,10 @@ define(
                     'subscription',
                     [ 'unsubscribe', 'getTelemetryObjects', 'getRangeValue' ]
                 );
+                mockPromise = jasmine.createSpyObj(
+                    'promise',
+                    [ 'then' ]
+                );
 
                 testGrid = [ 123, 456 ];
                 testModel = {
@@ -103,6 +108,8 @@ define(
                 mockScope.model = testModel;
                 mockScope.configuration = testConfiguration;
                 mockScope.selection = []; // Act like edit mode
+                mockQ.when.andReturn(mockPromise);
+                mockPromise.then.andCallFake(function (cb) { cb({}); });
 
                 controller = new FixedController(
                     mockScope,
@@ -362,6 +369,19 @@ define(
 
                 // Style should have been updated
                 expect(controller.selected().style).not.toEqual(oldStyle);
+            });
+
+            it("ensures elements in view match elements in composition", function () {
+                // View should ensure that at least one element is present
+                // for each id, and then unused ids do not have elements.
+                mockScope.model = testModel;
+                testModel.composition = [ 'b', 'd' ];
+                findWatch("model.composition")(mockScope.model.composition);
+
+                // Should have a new element for d; should not have elements for a, c
+                expect(testConfiguration.elements.length).toEqual(2);
+                expect(testConfiguration.elements[0].id).toEqual('b');
+                expect(testConfiguration.elements[1].id).toEqual('d');
             });
         });
     }
