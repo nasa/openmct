@@ -5,8 +5,7 @@ define(
     function (LayoutSelection, FixedProxy, ElementProxies, FixedDragHandle) {
         "use strict";
 
-        var DEFAULT_DIMENSIONS = [ 2, 1 ],
-            DEFAULT_GRID_SIZE = [64, 16],
+        var DEFAULT_GRID_SIZE = [64, 16],
             DEFAULT_GRID_EXTENT = [4, 4];
 
         /**
@@ -29,6 +28,7 @@ define(
                 elementProxiesById = {},
                 handles = [],
                 moveHandle,
+                viewProxy,
                 selection;
 
             // Refresh cell styles (e.g. because grid extent changed)
@@ -198,14 +198,6 @@ define(
                     telemetrySubscriber.subscribe(domainObject, updateValues);
             }
 
-            // Handle changes in the object's composition
-            function updateComposition(ids) {
-                // Populate panel positions
-                // TODO: Ensure defaults here
-                // Resubscribe - objects in view have changed
-                subscribe($scope.domainObject);
-            }
-
             // Add an element to this view
             function addElement(element) {
                 // Ensure that configuration field is populated
@@ -226,29 +218,62 @@ define(
                 }
             }
 
+            // Add a telemetry element to this view
+            function addTelemetryElement(id, x, y) {
+                viewProxy.add("fixed.telemetry", { id: id, x: x, y: y });
+            }
+
+            // Ensure that all telemetry elements have elements in view
+            function ensureElements(ids) {
+                var found = {};
+
+                // Track that a telemetry element is in the view
+                function track(element) {
+                    if (element.type === 'fixed.telemetry') {
+                        found[element.id] = true;
+                    }
+                }
+
+                // Used to filter down to elements not yet present
+                function notFound(id) {
+                    return !found[id];
+                }
+
+                // Add a telemetry element
+                function add(id, index) {
+                    addTelemetryElement(id, 0, index);
+                }
+
+                // Build list of all found elements
+                (($scope.configuration || {}).elements || []).forEach(track);
+
+                // Add in telemetry elements where needed
+                (ids || []).filter(notFound).forEach(add);
+            }
+
+            // Handle changes in the object's composition
+            function updateComposition(ids) {
+                // Populate panel positions
+                ensureElements(ids);
+                // Resubscribe - objects in view have changed
+                subscribe($scope.domainObject);
+            }
+
             // Position a panel after a drop event
             function handleDrop(e, id, position) {
                 // Store the position of this element.
-                addElement({
-                    type: "fixed.telemetry",
-                    x: Math.floor(position.x / gridSize[0]),
-                    y: Math.floor(position.y / gridSize[1]),
-                    id: id,
-                    stroke: "transparent",
-                    color: "#717171",
-                    titled: true,
-                    width: DEFAULT_DIMENSIONS[0],
-                    height: DEFAULT_DIMENSIONS[1]
-                });
+                addTelemetryElement(
+                    id,
+                    Math.floor(position.x / gridSize[0]),
+                    Math.floor(position.y / gridSize[1])
+                );
             }
 
 
             //  Track current selection state
+            viewProxy = new FixedProxy(addElement, $q, dialogService);
             if (Array.isArray($scope.selection)) {
-                selection = new LayoutSelection(
-                    $scope.selection,
-                    new FixedProxy(addElement, $q, dialogService)
-                );
+                selection = new LayoutSelection($scope.selection, viewProxy);
             }
 
             // Refresh list of elements whenever model changes

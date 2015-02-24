@@ -25,6 +25,13 @@ define(
                     fill: "transparent",
                     stroke: "transparent",
                     color: "#717171"
+                },
+                "fixed.telemetry": {
+                    stroke: "transparent",
+                    color: "#717171",
+                    titled: true,
+                    width: 2,
+                    height: 1
                 }
             },
             DIALOGS = {
