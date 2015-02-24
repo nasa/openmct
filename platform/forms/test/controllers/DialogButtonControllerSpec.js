@@ -26,7 +26,6 @@ define(
                     [ 'then' ]
                 );
                 testStructure = {
-                    key: "testKey",
                     name: "A Test",
                     glyph: "T",
                     description: "Test description",
@@ -38,6 +37,7 @@ define(
                     }
                 };
 
+                mockScope.field = "testKey";
                 mockScope.ngModel = { testKey: "initial test value" };
                 mockScope.structure = testStructure;
 
@@ -61,7 +61,7 @@ define(
                     jasmine.any(Function)
                 );
 
-                mockScope.$watch.mostRecentCall.args(testStructure);
+                mockScope.$watch.mostRecentCall.args[1](testStructure);
 
                 buttonStructure = controller.getButtonStructure();
                 expect(buttonStructure.glyph).toEqual(testStructure.glyph);
@@ -71,7 +71,7 @@ define(
             });
 
             it("shows a dialog when clicked", function () {
-                mockScope.$watch.mostRecentCall.args(testStructure);
+                mockScope.$watch.mostRecentCall.args[1](testStructure);
                 // Verify precondition - no dialog shown
                 expect(mockDialogService.getUserInput).not.toHaveBeenCalled();
                 // Click!
@@ -83,7 +83,7 @@ define(
             it("stores user input to the model", function () {
                 var key, input = {};
                 // Show dialog, click...
-                mockScope.$watch.mostRecentCall.args(testStructure);
+                mockScope.$watch.mostRecentCall.args[1](testStructure);
                 controller.getButtonStructure().click();
                 // Should be listening to 'then'
                 expect(mockPromise.then)
@@ -101,7 +101,7 @@ define(
 
             it("supplies initial model state to the dialog", function () {
                 var key, state;
-                mockScope.$watch.mostRecentCall.args(testStructure);
+                mockScope.$watch.mostRecentCall.args[1](testStructure);
                 controller.getButtonStructure().click();
                 // Find the key that the dialog should return
                 key = mockDialogService.getUserInput.mostRecentCall
