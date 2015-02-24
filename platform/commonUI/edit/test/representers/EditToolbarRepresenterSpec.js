@@ -35,7 +35,7 @@ define(
             });
 
             it("exposes toolbar state under a attr-defined name", function () {
-                // A strucutre/state object should have been added to the
+                // A structure/state object should have been added to the
                 // parent scope under the name provided in the "toolbar"
                 // attribute
                 expect(mockScope.$parent.testToolbar).toBeDefined();
@@ -48,16 +48,10 @@ define(
             });
 
             it("watches for toolbar state changes", function () {
-                expect(mockScope.$parent.$watchCollection).toHaveBeenCalledWith(
-                    "testToolbar.state",
+                expect(mockScope.$watchCollection).toHaveBeenCalledWith(
+                    jasmine.any(Function),
                     jasmine.any(Function)
                 );
-            });
-
-            it("stops watching toolbar state when destroyed", function () {
-                expect(mockUnwatch).not.toHaveBeenCalled();
-                representer.destroy();
-                expect(mockUnwatch).toHaveBeenCalled();
             });
 
             // Verify a simple interaction between selection state and toolbar
@@ -78,7 +72,8 @@ define(
 
                 // Update the state
                 mockScope.$parent.testToolbar.state[0] = 456;
-                mockScope.$parent.$watchCollection.mostRecentCall.args[1](
+                // Invoke the first watch (assumed to be for toolbar state)
+                mockScope.$watchCollection.calls[0].args[1](
                     mockScope.$parent.testToolbar.state
                 );
 

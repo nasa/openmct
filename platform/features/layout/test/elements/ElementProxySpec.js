@@ -14,7 +14,7 @@ define(
                 testElement = {
                     x: 1,
                     y: 2,
-                    z: 3,
+                    stroke: '#717171',
                     width: 42,
                     height: 24
                 };

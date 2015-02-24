@@ -64,8 +64,6 @@ define(
                 if (attrs.toolbar) {
                     // Initialize toolbar object
                     toolbar = new EditToolbar(definition, commit);
-                    // Expose toolbar state under that name
-                    scope.$parent[attrs.toolbar] = toolbarObject;
                 }
             }
 
@@ -96,6 +94,8 @@ define(
                 scope.$watchCollection(getState, updateState);
                 // Watch for changes in the current selection state
                 scope.$watchCollection("selection", updateSelection);
+                // Expose toolbar state under that name
+                scope.$parent[attrs.toolbar] = toolbarObject;
             }
 
             return {
