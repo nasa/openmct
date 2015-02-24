@@ -101,8 +101,8 @@
                                 },
                                 {
                                     "property": "url",
-                                    "glyph": "",
-                                    "control": "dialog",
+                                    "glyph": "\u2353",
+                                    "control": "dialog-button",
                                     "title": "Image Properties",
                                     "dialog": {
                                         "control": "textfield",
@@ -112,8 +112,8 @@
                                 },
                                 {
                                     "property": "text",
-                                    "glyph": "",
-                                    "control": "dialog",
+                                    "glyph": "p",
+                                    "control": "dialog-button",
                                     "title": "Text Properties",
                                     "dialog": {
                                         "control": "textfield",

@@ -25,8 +25,12 @@ define(
 
             // Prompt for user input
             function showDialog() {
-                dialogService.getUserInput(buttonForm, $scope.ngModel)
-                    .then(storeResult);
+                // Prepare initial state
+                var state = {};
+                state[$scope.field] = $scope.ngModel[$scope.field];
+
+                // Show dialog, then store user input (if any)
+                dialogService.getUserInput(buttonForm, state).then(storeResult);
             }
 
             // Refresh state based on structure for this control
