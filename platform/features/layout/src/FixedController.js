@@ -63,6 +63,16 @@ define(
                 return element.handles().map(generateDragHandle);
             }
 
+            // Select an element
+            function select(element) {
+                if (selection) {
+                    // Update selection...
+                    selection.select(element);
+                    // ...as well as drag handles
+                    handles = generateDragHandles(element);
+                }
+            }
+
             // Convert from element x/y/width/height to an
             // apropriate ng-style argument, to position elements.
             function convertPosition(elementProxy) {
@@ -132,7 +142,7 @@ define(
                 if (selection) {
                     selection.deselect();
                     if (index > -1) {
-                        selection.select(elementProxies[index]);
+                        select(elementProxies[index]);
                     }
                 }
 
@@ -194,9 +204,7 @@ define(
                 // Refresh displayed elements
                 refreshElements();
                 // Select the newly-added element
-                if (selection) {
-                    selection.select(elementProxies[elementProxies.length - 1]);
-                }
+                select(elementProxies[elementProxies.length - 1]);
                 // Mark change as persistable
                 if ($scope.commit) {
                     $scope.commit("Dropped an element.");
@@ -298,12 +306,7 @@ define(
                  * Set the active user selection in this view.
                  * @param element the element to select
                  */
-                select: function (element) {
-                    if (selection) {
-                        selection.select(element);
-                        handles = generateDragHandles(element);
-                    }
-                },
+                select: select,
                 /**
                  * Clear the current user selection.
                  */
@@ -319,6 +322,13 @@ define(
                  */
                 handles: function () {
                     return handles;
+                },
+                /**
+                 * Update the style (for position/sizing) for the specified
+                 * element.
+                 */
+                updateStyle: function (element) {
+                    element.style = convertPosition(element);
                 },
                 /**
                  * Start a drag gesture to move/resize a frame.

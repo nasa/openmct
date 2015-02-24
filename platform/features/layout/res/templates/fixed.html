@@ -15,7 +15,6 @@
                  style="position: absolute;"
                  key="element.template"
                  parameters="{ gridSize: controller.getGridSize() }"
-                 ng-class="{ test: controller.selected(element) }"
                  ng-style="element.style"
                  ng-click="controller.select(element)"
                  ng-model="element">
@@ -26,7 +25,7 @@
         <div class="test"
              style="position: absolute;"
              mct-drag-down="controller.startDrag(controller.selected())"
-             mct-drag="controller.continueDrag(delta)"
+             mct-drag="controller.continueDrag(delta); controller.updateStyle(controller.selected())"
              mct-drag-up="controller.endDrag()"
              ng-style="controller.selected().style">
         </div>
@@ -34,7 +33,7 @@
              style="position: absolute;"
              ng-style="handle.style()"
              mct-drag-down="handle.startDrag()"
-             mct-drag="handle.continueDrag(delta)"
+             mct-drag="handle.continueDrag(delta); controller.updateStyle(controller.selected())"
              mct-drag-up="handle.endDrag()">
             O
         </div>
