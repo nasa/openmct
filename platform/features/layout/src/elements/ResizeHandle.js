@@ -16,6 +16,11 @@ define(
             minHeight = minHeight || 0;
 
             return {
+                /**
+                 * Get/set the x position of the lower-right corner
+                 * of the handle-controlled element, changing size
+                 * as necessary.
+                 */
                 x: function (value) {
                     if (arguments.length > 0) {
                         element.width = Math.max(
@@ -25,6 +30,11 @@ define(
                     }
                     return element.x + element.width;
                 },
+                /**
+                 * Get/set the y position of the lower-right corner
+                 * of the handle-controlled element, changing size
+                 * as necessary.
+                 */
                 y: function (value) {
                     if (arguments.length > 0) {
                         element.height = Math.max(
