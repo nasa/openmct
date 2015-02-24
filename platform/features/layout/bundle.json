@@ -98,6 +98,28 @@
                                     "glyph": "\u1D1B",
                                     "mandatory": true,
                                     "control": "color"
+                                },
+                                {
+                                    "property": "url",
+                                    "glyph": "",
+                                    "control": "dialog",
+                                    "title": "Image Properties",
+                                    "dialog": {
+                                        "control": "textfield",
+                                        "name": "Image URL",
+                                        "required": true
+                                    }
+                                },
+                                {
+                                    "property": "text",
+                                    "glyph": "",
+                                    "control": "dialog",
+                                    "title": "Text Properties",
+                                    "dialog": {
+                                        "control": "textfield",
+                                        "name": "Text",
+                                        "required": true
+                                    }
                                 }
                             ]
                         },
