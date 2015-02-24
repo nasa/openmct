@@ -15,7 +15,7 @@
     <div class="menu dropdown"
          ng-controller="ColorController as colors"
          ng-show="toggle.isActive()">
-        <div style="width: 12em; display: block;">
+        <div style="width: 12em; display: block;" ng-if="!structure.mandatory">
             <div style="width: 1em; height: 1em; border: 1px gray solid; display: inline-block;"
                  ng-click="ngModel[field] = 'transparent'">
                 {{ngModel[field] === 'transparent' ? 'x' : '' }}

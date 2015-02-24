@@ -92,6 +92,12 @@
                                     "property": "stroke",
                                     "glyph": "-",
                                     "control": "color"
+                                },
+                                {
+                                    "property": "color",
+                                    "glyph": "\u1D1B",
+                                    "mandatory": true,
+                                    "control": "color"
                                 }
                             ]
                         },

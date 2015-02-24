@@ -20,6 +20,13 @@ define(
         function TextProxy(element, index, elements) {
             var proxy = new BoxProxy(element, index, elements);
 
+            /**
+             * Get and/or set the text color of this element.
+             * @param {string} [color] the new text color (if setting)
+             * @returns {string} the text color
+             */
+            proxy.color = new AccessorMutator(element, 'color');
+
             return proxy;
         }
 
