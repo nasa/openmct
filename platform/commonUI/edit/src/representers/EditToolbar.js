@@ -16,7 +16,6 @@ define(
          * the current selection.
          *
          * @param structure toolbar structure, as provided by view definition
-         * @param {Array} selection the current selection state
          * @param {Function} commit callback to invoke after changes
          * @constructor
          */
@@ -109,7 +108,7 @@ define(
             function isApplicable(item) {
                 var property = (item || {}).property,
                     method = (item || {}).method,
-                    exclusive = (item || {}).exclusive;
+                    exclusive = !!(item || {}).exclusive;
 
                 // Check if a selected item defines this property
                 function hasProperty(selected) {
@@ -151,11 +150,6 @@ define(
                 return converted;
             }
 
-            // Used to filter out sections that have become empty
-            function nonEmpty(section) {
-                return section && section.items && section.items.length > 0;
-            }
-
             // Prepare a toolbar section
             function convertSection(section) {
                 var converted = Object.create(section || {});
@@ -188,9 +182,7 @@ define(
             }
 
             toolbarStructure.sections =
-                ((structure || {}).sections || [])
-                        .map(convertSection)
-                        .filter(nonEmpty);
+                ((structure || {}).sections || []).map(convertSection);
 
             toolbarState = [];
 
