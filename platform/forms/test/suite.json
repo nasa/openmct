@@ -4,5 +4,6 @@
     "controllers/ColorController",
     "controllers/CompositeController",
     "controllers/DateTimeController",
+    "controllers/DialogButtonController",
     "controllers/FormController"
 ]
