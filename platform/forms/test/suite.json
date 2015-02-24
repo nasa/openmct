@@ -1,6 +1,7 @@
 [
     "MCTControl",
     "MCTForm",
+    "controllers/ColorController",
     "controllers/CompositeController",
     "controllers/DateTimeController",
     "controllers/FormController"
