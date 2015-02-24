@@ -225,7 +225,8 @@ define(
 
             // Ensure that all telemetry elements have elements in view
             function ensureElements(ids) {
-                var found = {};
+                var contained = {},
+                    found = {};
 
                 // Track that a telemetry element is in the view
                 function track(element) {
@@ -251,8 +252,38 @@ define(
                 (ids || []).filter(notFound).forEach(add);
             }
 
+            // Remove telemetry elements which don't match set of contained ids
+            function removeOtherElements(ids) {
+                // Set of ids, to simplify lookup
+                var contained = {},
+                    elements = ($scope.configuration || {}).elements;
+
+                // Track that an id is present; used to build set
+                function track(id) {
+                    contained[id] = true;
+                }
+
+                // Check if an element is still valid
+                function valid(element) {
+                    return (element.type !== "fixed.telemetry") ||
+                            contained[element.id];
+                }
+
+                // Only need to remove elements if any have been defined
+                if (Array.isArray(elements)) {
+                    // Build set of contained ids
+                    ids.forEach(track);
+                    // Filter out removed telemetry elements
+                    $scope.configuration.elements = elements.filter(valid);
+                    // Refresh elements exposed to template
+                    refreshElements();
+                }
+            }
+
             // Handle changes in the object's composition
             function updateComposition(ids) {
+                // Remove any obsolete telemetry elements
+                removeOtherElements(ids);
                 // Populate panel positions
                 ensureElements(ids);
                 // Resubscribe - objects in view have changed
