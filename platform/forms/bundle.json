@@ -60,6 +60,10 @@
             {
                 "key": "CompositeController",
                 "implementation": "controllers/CompositeController.js"
+            },
+            {
+                "key": "ColorController",
+                "implementation": "controllers/ColorController.js"
             }
         ]
     }

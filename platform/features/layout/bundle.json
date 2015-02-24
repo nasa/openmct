@@ -88,7 +88,7 @@
                                 {
                                     "property": "fill",
                                     "glyph": "X",
-                                    "control": "textfield",
+                                    "control": "color",
                                     "inclusive": true
                                 }
                             ]

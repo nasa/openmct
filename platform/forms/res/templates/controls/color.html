@@ -1,3 +1,36 @@
-<input type="color"
-       name="mctControl"
-       ng-model="ngModel[field]">
+<div class="s-btn s-icon-btn s-very-subtle btn-menu menu-element dropdown click-invoke"
+     ng-controller="ClickAwayController as toggle">
+
+    <span ng-click="toggle.toggle()">
+        <span class="ui-symbol icon">{{structure.glyph}}</span>
+        <span class="title-label" ng-if="structure.text">
+            {{structure.text}}
+        </span>
+        <span class='ui-symbol icon invoke-menu'
+              ng-if="!structure.text">
+            v
+        </span>
+    </span>
+
+    <div class="menu dropdown"
+         ng-controller="ColorController as colors"
+         ng-show="toggle.isActive()">
+        <div style="width: 12em; display: block;">
+            <div style="width: 1em; height: 1em; border: 1px gray solid; display: inline-block;"
+                 ng-click="ngModel[field] = 'transparent'">
+                {{ngModel[field] === 'transparent' ? 'x' : '' }}
+            </div>
+            None
+        </div>
+        <div style="width: 12em; display: block;"
+             ng-repeat="group in colors.groups()">
+            <div ng-repeat="color in group"
+                 style="width: 1em; height: 1em; border: 1px gray solid; display: inline-block;"
+                 ng-style="{ background: color }"
+                 ng-click="ngModel[field] = color">
+                {{ngModel[field] === color ? 'x' : '' }}
+            </div>
+        </div>
+
+    </div>
+</div>
