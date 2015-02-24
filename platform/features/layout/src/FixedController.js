@@ -24,6 +24,8 @@ define(
                 subscription,
                 cellStyles = [],
                 elementProxies = [],
+                names = {}, // Cache names by ID
+                values = {}, // Cache values by ID
                 elementProxiesById = {},
                 selection;
 
@@ -67,10 +69,12 @@ define(
                 var id = telemetryObject && telemetryObject.getId();
                 if (id) {
                     (elementProxiesById[id] || []).forEach(function (element) {
-                        element.name = telemetryObject.getModel().name;
-                        element.value = telemetryFormatter.formatRangeValue(
+                        names[id] = telemetryObject.getModel().name;
+                        values[id] = telemetryFormatter.formatRangeValue(
                             subscription.getRangeValue(telemetryObject)
                         );
+                        element.name = names[id];
+                        element.value = values[id];
                     });
                 }
             }
@@ -127,6 +131,9 @@ define(
                 elementProxies.forEach(function (elementProxy) {
                     var id = elementProxy.id;
                     if (elementProxy.element.type === 'fixed.telemetry') {
+                        // Provide it a cached name/value to avoid flashing
+                        elementProxy.name = names[id];
+                        elementProxy.value = values[id];
                         elementProxiesById[id] = elementProxiesById[id] || [];
                         elementProxiesById[id].push(elementProxy);
                     }
