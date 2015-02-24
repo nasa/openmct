@@ -195,6 +195,7 @@ define(
                     id: id,
                     stroke: "transparent",
                     color: "#717171",
+                    titled: true,
                     width: DEFAULT_DIMENSIONS[0],
                     height: DEFAULT_DIMENSIONS[1]
                 });

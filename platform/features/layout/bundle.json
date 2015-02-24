@@ -120,6 +120,18 @@
                                         "name": "Text",
                                         "required": true
                                     }
+                                },
+                                {
+                                    "method": "showTitle",
+                                    "glyph": "+",
+                                    "control": "button",
+                                    "description": "Show telemetry element title."
+                                },
+                                {
+                                    "method": "hideTitle",
+                                    "glyph": "X",
+                                    "control": "button",
+                                    "description": "Hide telemetry element title."
                                 }
                             ]
                         },
