@@ -18,9 +18,24 @@
                  ng-class="{ test: controller.selected(element) }"
                  ng-style="element.style"
                  ng-click="controller.select(element)"
-                 ng-model="element"
-                 mct-drag-down="controller.startDrag(element); controller.select(element)"
-                 mct-drag="controller.continueDrag(delta)"
-                 mct-drag-up="controller.endDrag()">
+                 ng-model="element">
     </mct-include>
+
+    <!-- Selection highlight, handles -->
+    <span ng-if="controller.selected()">
+        <div class="test"
+             mct-drag-down="controller.startDrag(controller.selected())"
+             mct-drag="controller.continueDrag(delta)"
+             mct-drag-up="controller.endDrag()"
+             ng-style="controller.selected().style">
+        </div>
+        <div ng-repeat="handle in controller.handles()"
+             ng-style="handle.style"
+             mct-drag-down="handle.startDrag()"
+             mct-drag="handle.continueDrag(delta)"
+             mct-drag-up="handle.endDrag()">
+            O
+        </div>
+    </span>
+
 </div>
