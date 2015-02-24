@@ -1,35 +1,26 @@
 .form-control.select {
-	$myH: $formInputH + 1;
 	@include btnSubtle($colorBodyBg);
-	margin-right: $interiorMargin;
-	margin-top: 1px;
-	padding: 0 25px 0 0;
+	cursor: pointer;
+	display: inline-block;
+	margin: 0 0 2px 2px; // Needed to avoid dropshadow from being clipped by parent containers
 	position: relative;
-	overflow: hidden;
-	vertical-align: middle;
-	
-	span.arw {
-		display: block;
-		pointer-events: none;
-		position: absolute;
-		right: 8%; top: 10%;
-	}
-
 	select {
 		@include appearance(none);
 		@include box-sizing(border-box);
-		border: none;
-		box-shadow: none;
-		background-color: transparent;
-		background-image: none;
+		background: none;
+		color: $colorBodyFg;
+		border: none !important;
 		cursor: pointer;
-//		height: $myH;
-//		line-height: $myH;
-		padding: 3px 5px 4px 5px;
-		width: 150%;
+		padding: 4px 25px 2px 5px;
 	}
-
-	select:focus {
-		outline: none;
+	&:after {
+		color: $colorKey;
+		content:"v";
+		display: block;
+		font-family: 'symbolsfont';
+		pointer-events: none;
+		position: absolute;
+		right: $interiorMargin; top: 0;
+//		z-index: 2;
 	}
 }

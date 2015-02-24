@@ -16,9 +16,7 @@
 	.form-row {
 		@include box-sizing(border-box);
 		@include clearfix;
-		//		background: rgba(#00ff00, 0.1);
 		border-top: 1px solid $colorInteriorBorder;
-		//		box-sizing: border-box;
 		margin-top: $interiorMargin;
 		padding: $interiorMargin;
 		position: relative;
@@ -27,7 +25,6 @@
 		}
 		.label,
 		.controls {
-			//			background: rgba(#ffcc00, 0.1);
 			@include box-sizing(border-box);
 			@include clearfix;
 			box-sizing: border-box;
@@ -50,9 +47,11 @@
 
 		.controls {
 			float: left;
-//			padding-left: $interiorMargin;
             position: relative;
 			width: 99% - $formLabelW; // Start with less than 100% for Firefox
+			.select {
+				margin-right: $interiorMargin;
+			}
 		}
 
 		.field-hints {

@@ -20,7 +20,7 @@
 	}
 	.icon.ui-symbol {
 		@include border-radius($controlCr);
-		display: block;
+		display: inline-block;
 		font-size: 1.3em;
 		height: $formInputH;
 		line-height: $formInputH;

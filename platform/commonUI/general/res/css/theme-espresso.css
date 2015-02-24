@@ -611,7 +611,6 @@ span {
   display: inline-block;
   font-size: 1rem;
   vertical-align: middle; }
-  /* line 170, ../sass/_mixins.scss */
   .invoke-menu:hover {
     color: #33ccff; }
 
@@ -623,7 +622,6 @@ span {
 /* line 49, ../sass/_icons.scss */
 .icon-buttons-main .invoke-menu {
   color: #666666; }
-  /* line 170, ../sass/_mixins.scss */
   .icon-buttons-main .invoke-menu:hover {
     color: #999999; }
 
@@ -764,10 +762,10 @@ span {
     -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+    border: none;
     border-top: 1px solid #666666;
     color: #999999;
     display: inline-block; }
-    /* line 81, ../sass/_mixins.scss */
     .s-btn.s-very-subtle:hover, .s-very-subtle.s-icon-btn:hover {
       background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #595959));
       background-image: -webkit-linear-gradient(#666666, #595959);
@@ -985,6 +983,7 @@ a.l-btn span {
     -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+    border: none;
     border-top: 1px solid #33ccff;
     color: #999999;
     display: inline-block;
@@ -994,7 +993,6 @@ a.l-btn span {
     background-image: -o-linear-gradient(#33ccff, #0099cc);
     background-image: linear-gradient(#33ccff, #0099cc);
     color: #ccf2ff; }
-    /* line 134, ../sass/_mixins.scss */
     .btn.major:not(.disabled):hover {
       background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #66d9ff), color-stop(100%, #00bfff));
       background-image: -webkit-linear-gradient(#66d9ff, #00bfff);
@@ -1019,6 +1017,7 @@ a.l-btn span {
       -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
       -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
       box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+      border: none;
       border-top: 1px solid #4dd2ff;
       color: #999999;
       display: inline-block;
@@ -1028,7 +1027,6 @@ a.l-btn span {
       background-image: -o-linear-gradient(#4dd2ff, #00ace6);
       background-image: linear-gradient(#4dd2ff, #00ace6);
       color: #ccf2ff; }
-      /* line 134, ../sass/_mixins.scss */
       .btn.major:hover:not(.disabled):hover {
         background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #80dfff), color-stop(100%, #1ac6ff));
         background-image: -webkit-linear-gradient(#80dfff, #1ac6ff);
@@ -1062,10 +1060,10 @@ a.l-btn span {
     -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+    border: none;
     border-top: 1px solid #999999;
     color: #cccccc;
     display: inline-block; }
-    /* line 126, ../sass/_mixins.scss */
     .btn.subtle:not(.disabled):hover {
       background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #999999), color-stop(100%, #808080));
       background-image: -webkit-linear-gradient(#999999, #808080);
@@ -1090,10 +1088,10 @@ a.l-btn span {
     -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+    border: none;
     border-top: 1px solid #666666;
     color: #b3b3b3;
     display: inline-block; }
-    /* line 126, ../sass/_mixins.scss */
     .btn.very-subtle:not(.disabled):hover {
       background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #4d4d4d));
       background-image: -webkit-linear-gradient(#666666, #4d4d4d);
@@ -1288,12 +1286,12 @@ label.checkbox.custom {
   -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+  border: none;
   border-top: 1px solid #666666;
   color: #999999;
   display: inline-block;
   height: 20px;
   line-height: 20px; }
-  /* line 126, ../sass/_mixins.scss */
   .btn-menu:not(.disabled):hover {
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #4d4d4d));
     background-image: -webkit-linear-gradient(#666666, #4d4d4d);
@@ -1438,6 +1436,7 @@ label.checkbox.custom {
   -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+  border: none;
   border-top: 1px solid #666666;
   color: #999999;
   display: inline-block;
@@ -1449,14 +1448,12 @@ label.checkbox.custom {
   auto: 0;
   bottom: auto;
   left: auto; }
-  /* line 126, ../sass/_mixins.scss */
   .slider .knob:not(.disabled):hover {
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #4d4d4d));
     background-image: -webkit-linear-gradient(#666666, #4d4d4d);
     background-image: -moz-linear-gradient(#666666, #4d4d4d);
     background-image: -o-linear-gradient(#666666, #4d4d4d);
     background-image: linear-gradient(#666666, #4d4d4d); }
-  /* line 98, ../sass/_mixins.scss */
   .slider .knob:before {
     content: '';
     display: block;
@@ -1467,7 +1464,6 @@ label.checkbox.custom {
     left: 2px;
     bottom: 5px;
     top: 5px; }
-  /* line 119, ../sass/_mixins.scss */
   .slider .knob:not(.disabled):hover:before {
     border-color: rgba(0, 153, 204, 0.9); }
   /* line 426, ../sass/controls/_controls.scss */
@@ -1577,6 +1573,7 @@ label.checkbox.custom {
     -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+    border: none;
     border-top: 1px solid #737373;
     color: #999999;
     display: inline-block;
@@ -1589,7 +1586,6 @@ label.checkbox.custom {
     .menu-element .menu ul {
       margin: 0;
       padding: 0; }
-      /* line 178, ../sass/_mixins.scss */
       .menu-element .menu ul li {
         list-style-type: none;
         margin: 0;
@@ -1704,6 +1700,7 @@ label.checkbox.custom {
       -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
       -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
       box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+      border: none;
       border-top: 1px solid #a6a6a6;
       color: #999999;
       display: inline-block; }
@@ -1777,10 +1774,10 @@ label.checkbox.custom {
   margin-top: 5px;
   padding: 5px;
   position: relative; }
-  /* line 25, ../sass/forms/_elems.scss */
+  /* line 23, ../sass/forms/_elems.scss */
   .form .form-row:first-child {
     border-top: none; }
-  /* line 29, ../sass/forms/_elems.scss */
+  /* line 27, ../sass/forms/_elems.scss */
   .form .form-row .label,
   .form .form-row .controls {
     -webkit-box-sizing: border-box;
@@ -1792,24 +1789,27 @@ label.checkbox.custom {
     font-size: 0.75rem;
     line-height: 22px;
     min-height: 22px; }
-  /* line 39, ../sass/forms/_elems.scss */
+  /* line 36, ../sass/forms/_elems.scss */
   .form .form-row > .label {
     float: left;
     position: relative;
     white-space: nowrap;
     width: 20%; }
-  /* line 47, ../sass/forms/_elems.scss */
+  /* line 44, ../sass/forms/_elems.scss */
   .form .form-row .value {
     color: #cccccc; }
-  /* line 51, ../sass/forms/_elems.scss */
+  /* line 48, ../sass/forms/_elems.scss */
   .form .form-row .controls {
     float: left;
     position: relative;
     width: 79%; }
-  /* line 58, ../sass/forms/_elems.scss */
+    /* line 52, ../sass/forms/_elems.scss */
+    .form .form-row .controls .select {
+      margin-right: 5px; }
+  /* line 57, ../sass/forms/_elems.scss */
   .form .form-row .field-hints {
     color: #666666; }
-  /* line 62, ../sass/forms/_elems.scss */
+  /* line 61, ../sass/forms/_elems.scss */
   .form .form-row .selector-list {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
@@ -1820,7 +1820,7 @@ label.checkbox.custom {
     position: relative;
     height: 150px;
     max-width: 50%; }
-    /* line 70, ../sass/forms/_elems.scss */
+    /* line 69, ../sass/forms/_elems.scss */
     .form .form-row .selector-list .wrapper {
       overflow-y: auto;
       position: absolute;
@@ -1829,12 +1829,12 @@ label.checkbox.custom {
       bottom: 5px;
       left: 5px; }
 
-/* line 84, ../sass/forms/_elems.scss */
+/* line 83, ../sass/forms/_elems.scss */
 label.form-control.checkbox input {
   margin-right: 5px;
   vertical-align: top; }
 
-/* line 90, ../sass/forms/_elems.scss */
+/* line 89, ../sass/forms/_elems.scss */
 .hint {
   font-size: 0.9em; }
 
@@ -1922,30 +1922,23 @@ input[type="text"] {
   -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+  border: none;
   border-top: 1px solid #666666;
   color: #999999;
   display: inline-block;
-  margin-right: 5px;
-  margin-top: 1px;
   padding: 0 25px 0 0;
-  position: relative;
   overflow: hidden;
-  vertical-align: middle; }
-  /* line 126, ../sass/_mixins.scss */
+  vertical-align: middle;
+  cursor: pointer;
+  margin: 0 0 2px 2px;
+  position: relative; }
   .form-control.select:not(.disabled):hover {
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #4d4d4d));
     background-image: -webkit-linear-gradient(#666666, #4d4d4d);
     background-image: -moz-linear-gradient(#666666, #4d4d4d);
     background-image: -o-linear-gradient(#666666, #4d4d4d);
     background-image: linear-gradient(#666666, #4d4d4d); }
-  /* line 11, ../sass/forms/_selects.scss */
-  .form-control.select span.arw {
-    display: block;
-    pointer-events: none;
-    position: absolute;
-    right: 8%;
-    top: 10%; }
-  /* line 18, ../sass/forms/_selects.scss */
+  /* line 7, ../sass/forms/_selects.scss */
   .form-control.select select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -1953,16 +1946,21 @@ input[type="text"] {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    border: none;
-    box-shadow: none;
-    background-color: transparent;
-    background-image: none;
+    background: none;
+    color: #999999;
+    border: none !important;
     cursor: pointer;
-    padding: 3px 5px 4px 5px;
-    width: 150%; }
-  /* line 32, ../sass/forms/_selects.scss */
-  .form-control.select select:focus {
-    outline: none; }
+    padding: 4px 25px 2px 5px; }
+  /* line 16, ../sass/forms/_selects.scss */
+  .form-control.select:after {
+    color: #0099cc;
+    content: "v";
+    display: block;
+    font-family: 'symbolsfont';
+    pointer-events: none;
+    position: absolute;
+    right: 5px;
+    top: 0; }
 
 /* line 2, ../sass/forms/_channel-selector.scss */
 .channel-selector .line {
@@ -2081,7 +2079,7 @@ input[type="text"] {
   -ms-border-radius: 3px;
   -o-border-radius: 3px;
   border-radius: 3px;
-  display: block;
+  display: inline-block;
   font-size: 1.3em;
   height: 22px;
   line-height: 22px;
@@ -2391,6 +2389,7 @@ input[type="text"] {
   -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+  border: none;
   border-top: 1px solid #666666;
   color: #999999;
   display: inline-block;
@@ -2657,7 +2656,6 @@ input[type="text"] {
     height: 5px;
     margin-top: -7px;
     top: 70%; }
-    /* line 98, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:before {
       content: '';
       display: block;
@@ -2668,7 +2666,6 @@ input[type="text"] {
       top: 2px;
       left: 5px;
       right: 5px; }
-    /* line 119, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:not(.disabled):hover:before {
       border-color: rgba(0, 153, 204, 0.9); }
 /* line 42, ../sass/helpers/_splitter.scss */
@@ -2690,7 +2687,6 @@ input[type="text"] {
   width: 5px;
   margin-left: -7px;
   left: 85%; }
-  /* line 98, ../sass/_mixins.scss */
   .split-layout.vertical > .splitter:before {
     content: '';
     display: block;
@@ -2701,7 +2697,6 @@ input[type="text"] {
     left: 2px;
     bottom: 5px;
     top: 5px; }
-  /* line 119, ../sass/_mixins.scss */
   .split-layout.vertical > .splitter:not(.disabled):hover:before {
     border-color: rgba(0, 153, 204, 0.9); }
 
