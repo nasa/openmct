@@ -154,6 +154,15 @@
 	}
 }
 
+.l-composite-control {
+	vertical-align: middle;
+	&.l-checkbox {
+		.composite-control-label {
+			line-height: 18px;
+		}
+	}
+}
+
 .control-group {
 	// Buttons that have a conceptual grouping - internal space between, and a divider between groups.
 	//	@include test();
@@ -215,6 +224,7 @@ label.checkbox.custom {
 	margin-right: $interiorMargin * 4;
 	padding-left: $d + $interiorMargin;
 	position: relative;
+	vertical-align: top;
 	em {
 		color: $colorBodyFg;
 		display: inline-block;

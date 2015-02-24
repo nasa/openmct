@@ -1,4 +1,5 @@
 .form {
+//	@include test(orange);
 	.section-header {
 		@include border-radius(3px);
 		background: rgba(white, 0.1);
@@ -23,6 +24,7 @@
 		&:first-child {
 			border-top: none;
 		}
+
 		.label,
 		.controls {
 			@include box-sizing(border-box);
@@ -49,6 +51,17 @@
 			float: left;
             position: relative;
 			width: 99% - $formLabelW; // Start with less than 100% for Firefox
+
+			.l-composite-control {
+				display: inline-block;
+				&.l-checkbox {
+//					@include test();
+//					height: $formRowCtrlsH;
+					line-height: $formRowCtrlsH;
+					margin-right: 5px;
+				}
+			}
+
 			.select {
 				margin-right: $interiorMargin;
 			}
@@ -86,6 +99,23 @@ label.form-control.checkbox {
 	}
 }
 
-.hint {
+.hint,
+.s-hint {
 	font-size: 0.9em;
+}
+
+.l-result {
+	// Used in /vista/channel-query.html and evr-query.html as of 2/24/15
+	display: inline-block;
+	min-width: 32px; min-height: 32px;
+	position: relative;
+	vertical-align: top;
+
+	div.s-hint {
+		@include border-radius($basicCr);
+		background: rgba($colorFormInvalid, 0.8);
+		display: block;
+		color: lighten($colorFormInvalid, 30%);
+		padding: $interiorMargin;
+	}
 }
