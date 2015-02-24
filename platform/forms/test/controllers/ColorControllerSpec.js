@@ -41,7 +41,7 @@ define(
                         count += 1;
                         set[color] = true;
                     });
-                })
+                });
 
                 // Size of set should be number of colors if all were unique
                 expect(Object.keys(set).length).toEqual(count);

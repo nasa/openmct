@@ -48,10 +48,22 @@ define(
             });
 
             it("watches for toolbar state changes", function () {
+                representer.represent({});
                 expect(mockScope.$watchCollection).toHaveBeenCalledWith(
                     jasmine.any(Function),
                     jasmine.any(Function)
                 );
+                expect(mockScope.$watchCollection.calls[0].args[0]())
+                    .toBe(mockScope.$parent.testToolbar.state);
+            });
+
+            it("removes state from parent scope on destroy", function () {
+                // Verify precondition
+                expect(mockScope.$parent.testToolbar).toBeDefined();
+                // Destroy the represeter
+                representer.destroy();
+                // Should have removed toolbar state from view
+                expect(mockScope.$parent.testToolbar).toBeUndefined();
             });
 
             // Verify a simple interaction between selection state and toolbar

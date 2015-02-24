@@ -64,6 +64,8 @@ define(
                 if (attrs.toolbar) {
                     // Initialize toolbar object
                     toolbar = new EditToolbar(definition, commit);
+                    // Ensure toolbar state is exposed
+                    scope.$parent[attrs.toolbar] = toolbarObject;
                 }
             }
 
