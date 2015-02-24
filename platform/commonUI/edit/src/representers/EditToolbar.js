@@ -34,14 +34,20 @@ define(
             // Update value for this property in all elements of the
             // selection which have this property.
             function updateProperties(property, value) {
+                var changed = false;
+
                 // Update property in a selected element
                 function updateProperty(selected) {
                     // Ignore selected elements which don't have this property
                     if (selected[property] !== undefined) {
                         // Check if this is a setter, or just assignable
                         if (typeof selected[property] === 'function') {
+                            changed =
+                                changed || (selected[property]() !== value);
                             selected[property](value);
                         } else {
+                            changed =
+                                changed || (selected[property] !== value);
                             selected[property] = value;
                         }
                     }
@@ -49,6 +55,9 @@ define(
 
                 // Update property in all selected elements
                 selection.forEach(updateProperty);
+
+                // Return whether or not anything changed
+                return changed;
             }
 
             // Look up the current value associated with a property
@@ -220,7 +229,7 @@ define(
                  * @param value the new value to convey to the selection
                  */
                 updateState: function (index, value) {
-                    updateProperties(properties[index], value);
+                    return updateProperties(properties[index], value);
                 }
             };
         }

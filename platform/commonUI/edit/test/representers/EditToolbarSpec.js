@@ -143,6 +143,15 @@ define(
                 expect(testABC.a).toHaveBeenCalledWith("new value");
             });
 
+            it("provides a return value describing update status", function () {
+                // Should return true if actually updated, otherwise false
+                var key;
+                toolbar.setSelection([ testABC ]);
+                key = toolbar.getStructure().sections[0].items[0].key;
+                expect(toolbar.updateState(key, testABC.a)).toBeFalsy();
+                expect(toolbar.updateState(key, "new value")).toBeTruthy();
+            });
+
             it("removes inapplicable items", function () {
                 // First, verify with all items
                 toolbar.setSelection([ testABC ]);

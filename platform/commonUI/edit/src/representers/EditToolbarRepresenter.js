@@ -51,11 +51,17 @@ define(
             // Update selection models to match changed toolbar state
             function updateState(state) {
                 // Update underlying state based on toolbar changes
-                (state || []).forEach(function (value, index) {
-                    toolbar.updateState(index, value);
-                });
-                // Commit the changes.
-                commit("Changes from toolbar.");
+                var changed = (state || []).map(function (value, index) {
+                    return toolbar.updateState(index, value);
+                }).reduce(function (a, b) {
+                    return a || b;
+                }, false);
+
+                // Only commit if something actually changed
+                if (changed) {
+                    // Commit the changes.
+                    commit("Changes from toolbar.");
+                }
             }
 
             // Initialize toolbar (expose object to parent scope)

@@ -91,6 +91,32 @@ define(
 
                 // Should have updated the original object
                 expect(testObject.k).toEqual(456);
+
+                // Should have committed the change
+                expect(mockScope.commit).toHaveBeenCalled();
+            });
+
+            it("does not commit if nothing changed", function () {
+                var testObject = { k: 123 };
+
+                // Provide a view which has a toolbar
+                representer.represent({
+                    toolbar: { sections: [ { items: [ { property: 'k' } ] } ] }
+                });
+
+                // Update the selection
+                mockScope.selection.push(testObject);
+                expect(mockScope.$watchCollection.mostRecentCall.args[0])
+                    .toEqual('selection'); // Make sure we're using right watch
+                mockScope.$watchCollection.mostRecentCall.args[1]([testObject]);
+
+                // Invoke the first watch (assumed to be for toolbar state)
+                mockScope.$watchCollection.calls[0].args[1](
+                    mockScope.$parent.testToolbar.state
+                );
+
+                // Should have committed the change
+                expect(mockScope.commit).not.toHaveBeenCalled();
             });
 
         });
