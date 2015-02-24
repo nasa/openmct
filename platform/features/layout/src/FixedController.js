@@ -28,6 +28,7 @@ define(
                 values = {}, // Cache values by ID
                 elementProxiesById = {},
                 handles = [],
+                moveHandle,
                 selection;
 
             // Refresh cell styles (e.g. because grid extent changed)
@@ -53,9 +54,34 @@ define(
                 }
             }
 
+            // Convert from element x/y/width/height to an
+            // apropriate ng-style argument, to position elements.
+            function convertPosition(elementProxy) {
+                // Multiply position/dimensions by grid size
+                return {
+                    left: (gridSize[0] * elementProxy.x()) + 'px',
+                    top: (gridSize[1] * elementProxy.y()) + 'px',
+                    width: (gridSize[0] * elementProxy.width()) + 'px',
+                    height: (gridSize[1] * elementProxy.height()) + 'px'
+                };
+            }
+
+            // Update the style for a selected element
+            function updateSelectionStyle() {
+                var element = selection && selection.get();
+                if (element) {
+                    element.style = convertPosition(element);
+                }
+            }
+
             // Generate a specific drag handle
             function generateDragHandle(elementHandle) {
-                return new FixedDragHandle(elementHandle, gridSize, $scope.commit);
+                return new FixedDragHandle(
+                    elementHandle,
+                    gridSize,
+                    updateSelectionStyle,
+                    $scope.commit
+                );
             }
 
             // Generate drag handles for an element
@@ -68,21 +94,10 @@ define(
                 if (selection) {
                     // Update selection...
                     selection.select(element);
-                    // ...as well as drag handles
+                    // ...as well as move, resize handles
+                    moveHandle = generateDragHandle(element);
                     handles = generateDragHandles(element);
                 }
-            }
-
-            // Convert from element x/y/width/height to an
-            // apropriate ng-style argument, to position elements.
-            function convertPosition(elementProxy) {
-                // Multiply position/dimensions by grid size
-                return {
-                    left: (gridSize[0] * elementProxy.x()) + 'px',
-                    top: (gridSize[1] * elementProxy.y()) + 'px',
-                    width: (gridSize[0] * elementProxy.width()) + 'px',
-                    height: (gridSize[1] * elementProxy.height()) + 'px'
-                };
             }
 
             // Update the displayed value for this object
@@ -314,6 +329,7 @@ define(
                     if (selection) {
                         selection.deselect();
                         handles = [];
+                        moveHandle = undefined;
                     }
                 },
                 /**
@@ -324,65 +340,11 @@ define(
                     return handles;
                 },
                 /**
-                 * Update the style (for position/sizing) for the specified
-                 * element.
+                 * Get the handle to handle dragging to reposition an element.
+                 * @returns {FixedDragHandle} the drag handle
                  */
-                updateStyle: function (element) {
-                    element.style = convertPosition(element);
-                },
-                /**
-                 * Start a drag gesture to move/resize a frame.
-                 *
-                 * The provided position and dimensions factors will determine
-                 * whether this is a move or a resize, and what type it
-                 * will be. For instance, a position factor of [1, 1]
-                 * will move a frame along with the mouse as the drag
-                 * proceeds, while a dimension factor of [0, 0] will leave
-                 * dimensions unchanged. Combining these in different
-                 * ways results in different handles; a position factor of
-                 * [1, 0] and a dimensions factor of [-1, 0] will implement
-                 * a left-edge resize, as the horizontal position will move
-                 * with the mouse while the horizontal dimensions shrink in
-                 * kind (and vertical properties remain unmodified.)
-                 *
-                 * @param element the raw (undecorated) element to drag
-                 */
-                startDrag: function (element) {
-                    // Only allow dragging in edit mode
-                    if ($scope.domainObject &&
-                            $scope.domainObject.hasCapability('editor')) {
-                        dragging = {
-                            element: element,
-                            x: element.x(),
-                            y: element.y()
-                        };
-                    }
-                },
-                /**
-                 * Continue an active drag gesture.
-                 * @param {number[]} delta the offset, in pixels,
-                 *        of the current pointer position, relative
-                 *        to its position when the drag started
-                 */
-                continueDrag: function (delta) {
-                    if (dragging) {
-                        // Update x/y values
-                        dragging.element.x(dragging.x + Math.round(delta[0] / gridSize[0]));
-                        dragging.element.y(dragging.y + Math.round(delta[1] / gridSize[1]));
-                        // Update display position
-                        dragging.element.style = convertPosition(dragging.element);
-                    }
-                },
-                /**
-                 * End the active drag gesture. This will update the
-                 * view configuration.
-                 */
-                endDrag: function () {
-                    // Mark this object as dirty to encourage persistence
-                    if (dragging && $scope.commit) {
-                        dragging = undefined;
-                        $scope.commit("Moved element.");
-                    }
+                moveHandle: function () {
+                    return moveHandle;
                 }
             };
 

@@ -9,6 +9,7 @@ define(
 
         describe("A fixed position drag handle", function () {
             var mockElementHandle,
+                mockUpdate,
                 mockCommit,
                 handle;
 
@@ -17,6 +18,7 @@ define(
                     'elementHandle',
                     [ 'x', 'y' ]
                 );
+                mockUpdate = jasmine.createSpy('update');
                 mockCommit = jasmine.createSpy('commit');
 
                 mockElementHandle.x.andReturn(6);
@@ -25,6 +27,7 @@ define(
                 handle = new FixedDragHandle(
                     mockElementHandle,
                     TEST_GRID_SIZE,
+                    mockUpdate,
                     mockCommit
                 );
             });
@@ -50,6 +53,9 @@ define(
                 // Should have interpreted relative to initial state
                 expect(mockElementHandle.x).toHaveBeenCalledWith(5);
                 expect(mockElementHandle.y).toHaveBeenCalledWith(7);
+
+                // Should have called update once per continueDrag
+                expect(mockUpdate.calls.length).toEqual(2);
 
                 // Finally, ending drag should commit
                 expect(mockCommit).not.toHaveBeenCalled();

@@ -14,7 +14,7 @@ define(
          * position mode.
          * @constructor
          */
-        function FixedDragHandle(elementHandle, gridSize, commit) {
+        function FixedDragHandle(elementHandle, gridSize, update, commit) {
             var self = {},
                 dragging;
 
@@ -49,6 +49,10 @@ define(
                     elementHandle.y(
                         dragging.y + Math.round(delta[1] / gridSize[1])
                     );
+                    // Invoke update callback
+                    if (update) {
+                        update();
+                    }
                 }
             }
 

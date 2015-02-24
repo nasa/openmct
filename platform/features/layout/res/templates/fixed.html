@@ -24,16 +24,16 @@
     <span ng-if="controller.selected()">
         <div class="test"
              style="position: absolute;"
-             mct-drag-down="controller.startDrag(controller.selected())"
-             mct-drag="controller.continueDrag(delta); controller.updateStyle(controller.selected())"
-             mct-drag-up="controller.endDrag()"
+             mct-drag-down="controller.moveHandle().startDrag(controller.selected())"
+             mct-drag="controller.moveHandle().continueDrag(delta)"
+             mct-drag-up="controller.moveHandle().endDrag()"
              ng-style="controller.selected().style">
         </div>
         <div ng-repeat="handle in controller.handles()"
              style="position: absolute;"
              ng-style="handle.style()"
              mct-drag-down="handle.startDrag()"
-             mct-drag="handle.continueDrag(delta); controller.updateStyle(controller.selected())"
+             mct-drag="handle.continueDrag(delta)"
              mct-drag-up="handle.endDrag()">
             O
         </div>
