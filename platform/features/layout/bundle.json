@@ -140,8 +140,7 @@
                                 {
                                     "method": "remove",
                                     "control": "button",
-                                    "text": "Remove",
-                                    "inclusive": true
+                                    "glyph": "Z"
                                 }
                             ]
                         }
