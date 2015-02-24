@@ -24,7 +24,7 @@ define(
              */
             proxy.x = function (v) {
                 var x = Math.min(element.x, element.x2),
-                    delta = v - x;
+                    delta = Math.max(v, 0) - x;
                 if (arguments.length > 0 && delta) {
                     element.x += delta;
                     element.x2 += delta;
@@ -39,7 +39,7 @@ define(
              */
             proxy.y = function (v) {
                 var y = Math.min(element.y, element.y2),
-                    delta = v - y;
+                    delta = Math.max(v, 0) - y;
                 if (arguments.length > 0 && delta) {
                     element.y += delta;
                     element.y2 += delta;
