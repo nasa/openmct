@@ -193,6 +193,7 @@ define(
                     x: Math.floor(position.x / gridSize[0]),
                     y: Math.floor(position.y / gridSize[1]),
                     id: id,
+                    stroke: "transparent",
                     width: DEFAULT_DIMENSIONS[0],
                     height: DEFAULT_DIMENSIONS[1]
                 });

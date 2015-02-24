@@ -4,7 +4,7 @@
           ng-attr-y1="{{parameters.gridSize[1] * ngModel.y1() + 1}}"
           ng-attr-x2="{{parameters.gridSize[0] * ngModel.x2() + 1}}"
           ng-attr-y2="{{parameters.gridSize[1] * ngModel.y2() + 1}}"
-          stroke="lightgray"
+          ng-attr-stroke="{{ngModel.stroke()}}"
           stroke-width="2">
     </line>
 </svg>

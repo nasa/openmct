@@ -29,7 +29,6 @@
                                     "glyph": "+",
                                     "control": "menu-button",
                                     "text": "Add",
-                                    "inclusive": true,
                                     "options": [
                                         {
                                             "name": "Box",
@@ -61,7 +60,6 @@
                                     "method": "order",
                                     "glyph": "o",
                                     "control": "menu-button",
-                                    "inclusive": true,
                                     "options": [
                                         {
                                             "name": "Move to Top",
@@ -88,8 +86,12 @@
                                 {
                                     "property": "fill",
                                     "glyph": "X",
-                                    "control": "color",
-                                    "inclusive": true
+                                    "control": "color"
+                                },
+                                {
+                                    "property": "stroke",
+                                    "glyph": "-",
+                                    "control": "color"
                                 }
                             ]
                         },

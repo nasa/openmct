@@ -49,11 +49,11 @@ define(
                  */
                 y: new AccessorMutator(element, 'y'),
                 /**
-                 * Get and/or set the z index of this element.
-                 * @param {number} [z] the new z index (if setting)
-                 * @returns {number} the z index
+                 * Get and/or set the stroke color of this element.
+                 * @param {string} [stroke] the new stroke color (if setting)
+                 * @returns {string} the stroke color
                  */
-                z: new AccessorMutator(element, 'z'),
+                stroke: new AccessorMutator(element, 'stroke'),
                 /**
                  * Get and/or set the width of this element.
                  * Units are in fixed position grid space.
