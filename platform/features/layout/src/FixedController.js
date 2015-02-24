@@ -1,8 +1,8 @@
 /*global define*/
 
 define(
-    ['./LayoutDrag', './LayoutSelection', './FixedProxy', './elements/ElementProxies'],
-    function (LayoutDrag, LayoutSelection, FixedProxy, ElementProxies) {
+    ['./LayoutSelection', './FixedProxy', './elements/ElementProxies', './FixedDragHandle'],
+    function (LayoutSelection, FixedProxy, ElementProxies, FixedDragHandle) {
         "use strict";
 
         var DEFAULT_DIMENSIONS = [ 2, 1 ],
@@ -27,6 +27,7 @@ define(
                 names = {}, // Cache names by ID
                 values = {}, // Cache values by ID
                 elementProxiesById = {},
+                handles = [],
                 selection;
 
             // Refresh cell styles (e.g. because grid extent changed)
@@ -50,6 +51,16 @@ define(
                         });
                     }
                 }
+            }
+
+            // Generate a specific drag handle
+            function generateDragHandle(elementHandle) {
+                return new FixedDragHandle(elementHandle, gridSize, $scope.commit);
+            }
+
+            // Generate drag handles for an element
+            function generateDragHandles(element) {
+                return element.handles().map(generateDragHandle);
             }
 
             // Convert from element x/y/width/height to an
@@ -275,11 +286,13 @@ define(
                     return elementProxies;
                 },
                 /**
-                 * Check if the element is currently selected.
+                 * Check if the element is currently selected, or (if no
+                 * argument is supplied) get the currently selected element.
                  * @returns {boolean} true if selected
                  */
                 selected: function (element) {
-                    return selection && selection.selected(element);
+                    return selection && ((arguments.length > 0) ?
+                            selection.selected(element) : selection.get());
                 },
                 /**
                  * Set the active user selection in this view.
@@ -288,6 +301,7 @@ define(
                 select: function (element) {
                     if (selection) {
                         selection.select(element);
+                        handles = generateDragHandles(element);
                     }
                 },
                 /**
@@ -296,7 +310,15 @@ define(
                 clearSelection: function () {
                     if (selection) {
                         selection.deselect();
+                        handles = [];
                     }
+                },
+                /**
+                 * Get drag handles.
+                 * @returns {Array} drag handles for the current selection
+                 */
+                handles: function () {
+                    return handles;
                 },
                 /**
                  * Start a drag gesture to move/resize a frame.

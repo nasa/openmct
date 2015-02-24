@@ -1,8 +1,8 @@
 /*global define*/
 
 define(
-    ['./AccessorMutator'],
-    function (AccessorMutator) {
+    ['./AccessorMutator', './ResizeHandle'],
+    function (AccessorMutator, ResizeHandle) {
         "use strict";
 
         // Index deltas for changes in order
@@ -29,6 +29,8 @@ define(
          * @param {Array} elements the full array of elements
          */
         function ElementProxy(element, index, elements) {
+            var handles = [ new ResizeHandle(element, 1, 1) ];
+
             return {
                 /**
                  * The element as stored in the view configuration.
@@ -97,6 +99,13 @@ define(
                     if (elements[index] === element) {
                         elements.splice(index, 1);
                     }
+                },
+                /**
+                 * Get handles to control specific features of this element,
+                 * e.g. corner size.
+                 */
+                handles: function () {
+                    return handles;
                 }
             };
         }
