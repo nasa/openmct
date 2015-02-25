@@ -94,6 +94,9 @@
             {
                 "implementation": "EditRepresenter.js",
                 "depends": [ "$q", "$log" ]
+            },
+            {
+                "implementation": "representers/EditToolbarRepresenter.js"
             }
         ]
     }

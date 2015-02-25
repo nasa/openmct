@@ -2,20 +2,17 @@
                     mct-object="domainObject"
                     ng-model="representation">
 </mct-representation>
-<div class="holder edit-area outline abs"
-     ng-init="toolbar = {}">
-
+<div class="holder edit-area outline abs">
     <mct-toolbar name="mctToolbar"
                  structure="toolbar.structure"
                  ng-model="toolbar.state">
     </mct-toolbar>
-
     <div class='split-layout vertical contents abs work-area'>
         <div class='abs pane left edit-main'>
             <div class='holder abs object-holder'>
                 <mct-representation key="representation.selected.key"
                                     toolbar="toolbar"
-                                    mct-object="representation.selected.key && domainObject">
+                                    mct-object="domainObject">
                 </mct-representation>
             </div>
         </div>

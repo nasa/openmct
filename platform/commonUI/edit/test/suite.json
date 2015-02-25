@@ -15,5 +15,7 @@
     "capabilities/EditorCapability",
     "objects/EditableDomainObject",
     "objects/EditableDomainObjectCache",
-    "objects/EditableModelCache"
+    "objects/EditableModelCache",
+    "representers/EditToolbar",
+    "representers/EditToolbarRepresenter"
 ]
