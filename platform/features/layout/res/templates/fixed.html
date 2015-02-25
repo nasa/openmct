@@ -1,14 +1,18 @@
-<div style="width: 100%; height: 100%; position: absolute; left: 0px; top: 0px;"
+<div class="t-fixed-position l-fixed-position"
      ng-controller="FixedController as controller"
      mct-resize="controller.setBounds(bounds)">
 
     <!-- Background grid -->
     <span ng-click="controller.clearSelection()">
-        <div ng-repeat="cell in controller.getCellStyles()"
-             style="position: absolute; border: 1px gray solid; background: black;"
+        <!--div ng-repeat="cell in controller.getCellStyles()"
+             class="l-grid-cell s-grid-cell"
              ng-style="cell">
-        </div>
+        </div-->
+	    <span class="s-grid l-grid-x" ng-style="{ 'background-size': controller.getGridSize() [0] + 'px 100%' }"></span>
+	    <span class="s-grid l-grid-y" ng-style="{ 'background-size': '100% ' + controller.getGridSize() [1] + 'px' }"></span>
     </span>
+
+
 
     <!-- Fixed position elements -->
     <mct-include ng-repeat="element in controller.getElements()"
@@ -23,7 +27,7 @@
 
     <!-- Selection highlight, handles -->
     <span ng-if="controller.selected()">
-        <div class="test"
+        <div class="s-fixed-position-item-selected"
              style="position: absolute;"
              mct-drag-down="controller.moveHandle().startDrag(controller.selected())"
              mct-drag="controller.moveHandle().continueDrag(delta)"

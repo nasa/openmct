@@ -1,0 +1,28 @@
+.t-fixed-position {
+	&.l-fixed-position {
+//		@include test(red);
+		position: absolute;
+		top: 0; right: 2px; bottom: 2px; left: 0;
+		width: auto; height: auto;
+
+		.l-grid-cell {
+			$brd: 1px solid lighten($colorBodyBg, 5%);
+			position: absolute;
+			border-top: $brd;
+			border-left: $brd;
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
