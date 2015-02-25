@@ -2,9 +2,9 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <svg>
 <metadata>
-Created by FontForge 20110222 at Wed Dec 31 17:02:29 2014
+Created by FontForge 20110222 at Mon Feb 23 21:13:56 2015
  By deploy user
-Copyright 2014 Adobe Systems Incorporated. All rights reserved.
+Copyright 2015 Adobe Systems Incorporated. All rights reserved.
 </metadata>
 <defs>
 <font id="WTDSymbols" horiz-adv-x="500" >
@@ -117,6 +117,12 @@ q2 58 13 103.5t24 66t24 20.5zM282 666q-54 0 -85 -73.5t-39 -179.5h-158q14 142 120
 d="M800 733l-396 -397l-397 397h793zM69 0q-29 0 -49 20t-20 49v123q0 29 20 49t49 20h671q28 0 48.5 -20.5t20.5 -48.5v-123q0 -28 -20.5 -48.5t-48.5 -20.5h-671z" />
     <glyph glyph-name="V" unicode="V" horiz-adv-x="679" 
 d="M339 727l340 -236v-491h-340h-339v491zM339 255l252 176l-252 174l-252 -174z" />
+    <glyph glyph-name="X" unicode="X" horiz-adv-x="753" 
+d="M471 471v-95h-95v-94h-94v94h-94v95h94v94h94v-94h95zM753 94l-94 -94l-149 149q-81 -55 -181 -55q-137 0 -232 97q-97 95 -97 233q0 137 97 232q95 97 232 97q138 0 233 -97q97 -95 97 -232q0 -100 -55 -181zM329 235q79 0 134 55t55 134q0 78 -55 133t-134 55
+q-78 0 -133 -55t-55 -133q0 -79 55 -134t133 -55z" />
+    <glyph glyph-name="Y" unicode="Y" 
+d="M471 471v-95h-283v95h283zM753 94l-94 -94l-149 149q-81 -55 -181 -55q-137 0 -232 97q-97 95 -97 233q0 137 97 232q95 97 232 97q138 0 233 -97q97 -95 97 -232q0 -100 -55 -181zM329 235q79 0 134 55t55 134q0 78 -55 133t-134 55q-78 0 -133 -55t-55 -133
+q0 -79 55 -134t133 -55z" />
     <glyph glyph-name="Z" unicode="Z" horiz-adv-x="808" 
 d="M808 573v-129h-79v-371q0 -29 -22 -51t-52 -22h-502q-30 0 -51.5 21.5t-21.5 51.5v371h-80v129q0 30 21.5 51.5t51.5 21.5h247v41q0 20 15.5 34.5t37.5 14.5h62q22 0 37 -14.5t15 -34.5v-41h248q30 0 51.5 -21.5t21.5 -51.5zM172 88h83v356h-83v-356zM362 88h83v356h-83
 v-356zM635 88v356h-83v-356h83z" />

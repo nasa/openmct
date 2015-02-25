@@ -62,14 +62,16 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 		border: 1px solid $colorInteriorBorder;
 	}
 
-	.gl-plot-label {
+	.gl-plot-label,
+	.l-plot-label {
 		//		@include test(yellow);
 		color: lighten($colorBodyFg, 20%);
 		position: absolute;
 		text-align: center;
 //		text-transform: uppercase;
 
-		&.gl-plot-x-label {
+		&.gl-plot-x-label,
+		&.l-plot-x-label {
 			top: auto;
 			right: 0;
 			bottom: 0;
@@ -77,7 +79,8 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 			height: auto;
 		}
 
-		&.gl-plot-y-label {
+		&.gl-plot-y-label,
+		&.l-plot-y-label  {
 			$x: -50%;
 			$r: -90deg;
 			@include transform-origin(50%, 0);
