@@ -1,34 +1,29 @@
-<form name="tool-bar btn-bar contents" novalidate>
+<form novalidate>
+	<div class="tool-bar btn-bar contents abs">
+	    <span ng-repeat="section in structure.sections"
+	          class="control-group"
+	          ng-if="!section.hidden"
+	          title="{{section.description}}">
+	        <ng-form ng-repeat="item in section.items"
+	                 ng-class="{ 'input-labeled': item.name }"
+	                 ng-hide="item.hidden"
+	                 class="inline"
+	                 title="{{item.description}}"
+	                 name="mctFormInner">
 
-<div class="form">
-    <span ng-repeat="section in structure.sections"
-          class="control-group coordinates"
-          ng-if="!section.hidden"
-          title="{{section.description}}">
-
-        <ng-form ng-repeat="item in section.items"
-                 ng-class="{ 'input-labeled': item.name }"
-                 ng-hide="item.hidden"
-                 class="inline"
-                 title="{{item.description}}"
-                 name="mctFormInner">
-
-            <label ng-if="item.name">
-                {{item.name}}:
-            </label>
-            <mct-control key="item.control"
-                         ng-class="{ disabled: item.disabled }"
-                         ng-model="ngModel"
-                         ng-required="item.required"
-                         ng-pattern="getRegExp(item.pattern)"
-                         options="item.options"
-                         structure="item"
-                         field="item.key">
-            </mct-control>
-
-        </ng-form>
-
-    </span>
-</div>
-
+	            <label ng-if="item.name">
+	                {{item.name}}:
+	            </label>
+	            <mct-control key="item.control"
+	                         ng-class="{ disabled: item.disabled }"
+	                         ng-model="ngModel"
+	                         ng-required="item.required"
+	                         ng-pattern="getRegExp(item.pattern)"
+	                         options="item.options"
+	                         structure="item"
+	                         field="item.key">
+	            </mct-control>
+	        </ng-form>
+	    </span>
+	</div>
 </form>
