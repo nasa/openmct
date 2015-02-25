@@ -11,5 +11,6 @@
     "directives/MCTContainer",
     "directives/MCTDrag",
     "directives/MCTResize",
+    "directives/MCTScroll",
     "StyleSheetLoader"
 ]
