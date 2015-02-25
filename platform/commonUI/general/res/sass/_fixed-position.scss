@@ -2,27 +2,100 @@
 	&.l-fixed-position {
 //		@include test(red);
 		position: absolute;
-		top: 0; right: 2px; bottom: 2px; left: 0;
+		top: 0; right: 0; bottom: 0; left: 0;
 		width: auto; height: auto;
 
-		.l-grid-cell {
-			$brd: 1px solid lighten($colorBodyBg, 5%);
-			position: absolute;
-			border-top: $brd;
-			border-left: $brd;
+		.l-grid-holder {
+			position: relative;
+			height: 100%; width: 100%;
+			.l-grid {
+//				@include test(orange);
+				position: absolute;
+				height: 100%; width: 100%;
+				pointer-events: none;
+				z-index: 0;
+				&.l-grid-x {
+					@include bgTicks($colorGridLines, 'x');
+				}
+
+				&.l-grid-y {
+					@include bgTicks($colorGridLines, 'y');
+				}
+
+			}
 		}
+	}
+
+	.l-fixed-position-item {
+		position: absolute;
+		border: 1px solid transparent;
+		@include box-sizing(border-box);
+		&.s-selected {
+			@include boxShdwLarge();
+			border-color: $colorKey;
+			cursor: move;
+		}
+		&.s-not-selected {
+			opacity: 0.8;
+		}
+	}
+
+	.l-fixed-position-image {
+		width: 100%;
+		height: 100%;
+		background-size: contain;
+		background-repeat: no-repeat;
+		background-position: left top;
+	}
+
+	.l-fixed-position-text {
+		border:1px solid transparent;
+		height: 100%; width: 100%;
+		font-size: 0.8rem;
+		$p: $interiorMarginSm;
+		&.l-static-text {
+			overflow: auto;
+			padding: $p;
+		}
+		&.l-telemetry {
+			.l-elem {
+				@include absPosDefault($p);
+				@include box-sizing(border-box);
+				width: 50%;
+				&.l-title {
+					right: auto;
+					left: $p;
+				}
+				&.l-value {
+					right: $p;
+					left: auto;
+					text-align: right;
+					&.telem-only {
+						@include test();
+						left: 0; width: 100%;
+					}
+				}
+			}
+		}
+	}
+	
+	.l-fixed-position-item-handle {
+		$brd: 1px solid $colorKey;
+//		@include border-radius($controlCr);
+		background: rgba($colorKey, 0.5);
+		cursor: crosshair;
+		border: $brd;
+		position: absolute;
 	}
 
 
 
+}
 
-
-
-
-
-
-
-
-
-
+.edit-mode .t-fixed-position {
+	.l-fixed-position-item {
+		&:not(.s-selected):hover {
+			border: 1px dotted rgba($colorKey, 0.5);
+		}
+	}
 }

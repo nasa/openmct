@@ -6,8 +6,8 @@ define(
         'use strict';
 
 
-        // 8 by 8 pixels
-        var DRAG_HANDLE_SIZE = [ 8, 8 ];
+        // Drag handle dimensions
+        var DRAG_HANDLE_SIZE = [ 6, 6 ];
 
         /**
          * Template-displayable drag handle for an element in fixed
