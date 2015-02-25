@@ -75,29 +75,28 @@ a.disabled {
   border: 1px solid #666666; }
 
 /* line 17, ../sass/_effects.scss */
+.test-stripes {
+  background-image: -webkit-linear-gradient(-45deg, rgba(255, 255, 0, 0.1) 25%, transparent 25%, transparent 50%, rgba(255, 255, 0, 0.1) 50%, rgba(255, 255, 0, 0.1) 75%, transparent 75%, transparent 0%);
+  background-image: -moz-linear-gradient(-45deg, rgba(255, 255, 0, 0.1) 25%, transparent 25%, transparent 50%, rgba(255, 255, 0, 0.1) 50%, rgba(255, 255, 0, 0.1) 75%, transparent 75%, transparent 0%);
+  background-image: -o-linear-gradient(-45deg, rgba(255, 255, 0, 0.1) 25%, transparent 25%, transparent 50%, rgba(255, 255, 0, 0.1) 50%, rgba(255, 255, 0, 0.1) 75%, transparent 75%, transparent 0%);
+  background-image: linear-gradient(-45deg, rgba(255, 255, 0, 0.1) 25%, transparent 25%, transparent 50%, rgba(255, 255, 0, 0.1) 50%, rgba(255, 255, 0, 0.1) 75%, transparent 75%, transparent 0%);
+  background-repeat: repeat;
+  background-size: 40px 40px; }
+
+/* line 21, ../sass/_effects.scss */
 .test {
   background-color: rgba(255, 204, 0, 0.2); }
 
-@font-face {
-  /*
-  * Use https://www.web-font-generator.com/ to gen fonts
-  */
-  font-family: 'symbolsfont';
-  src: url("../fonts/symbols/wtdsymbols.eot");
-  src: url("../fonts/symbols/wtdsymbols.eot?#iefix") format("embedded-opentype"), url("../fonts/symbols/wtdsymbols.woff") format("woff"), url("../fonts/symbols/wtdsymbols.woff2") format("woff2"), url("../fonts/symbols/wtdsymbols.ttf") format("truetype"), url("../fonts/symbols/wtdsymbols.svg#armataregular") format("svg");
-  font-weight: normal;
-  font-style: normal; }
-
-/* line 16, ../sass/_global.scss */
+/* line 1, ../sass/_global.scss */
 a {
   color: #ccc;
   cursor: pointer;
   text-decoration: none; }
-  /* line 20, ../sass/_global.scss */
+  /* line 5, ../sass/_global.scss */
   a:hover {
     color: #fff; }
 
-/* line 25, ../sass/_global.scss */
+/* line 10, ../sass/_global.scss */
 body, html {
   background-color: #333333;
   color: #999999;
@@ -107,20 +106,20 @@ body, html {
   width: 100%;
   overflow: hidden; }
 
-/* line 35, ../sass/_global.scss */
+/* line 20, ../sass/_global.scss */
 em {
   color: rgba(255, 255, 255, 0.2);
   font-style: normal; }
 
-/* line 40, ../sass/_global.scss */
+/* line 25, ../sass/_global.scss */
 input, textarea {
   font-family: Helvetica, Arial, sans-serif; }
 
-/* line 44, ../sass/_global.scss */
+/* line 29, ../sass/_global.scss */
 h1, h2, h3 {
   margin: 0; }
 
-/* line 48, ../sass/_global.scss */
+/* line 33, ../sass/_global.scss */
 h1 {
   font-size: 1.7em;
   font-weight: normal !important;
@@ -128,17 +127,17 @@ h1 {
   margin-bottom: 20px;
   margin-top: 0; }
 
-/* line 56, ../sass/_global.scss */
+/* line 41, ../sass/_global.scss */
 p {
   margin-bottom: 10px; }
 
-/* line 60, ../sass/_global.scss */
+/* line 45, ../sass/_global.scss */
 span {
   /* 618 DEBUG
   box-sizing: border-box;
   */ }
 
-/* line 66, ../sass/_global.scss */
+/* line 51, ../sass/_global.scss */
 .abs {
   position: absolute;
   top: 0;
@@ -148,37 +147,51 @@ span {
   height: auto;
   width: auto; }
 
-/* line 76, ../sass/_global.scss */
+/* line 61, ../sass/_global.scss */
 .code {
   font-family: "Lucida Console", monospace;
   font-size: 0.7em;
   line-height: 150%;
   white-space: pre; }
 
-/* line 83, ../sass/_global.scss */
+/* line 68, ../sass/_global.scss */
+.align-right {
+  text-align: right; }
+
+/* line 72, ../sass/_global.scss */
 .centered {
   text-align: center; }
 
-/* line 87, ../sass/_global.scss */
+/* line 76, ../sass/_global.scss */
 .colorKey {
   color: #0099cc; }
 
-/* line 91, ../sass/_global.scss */
+/* line 80, ../sass/_global.scss */
 .ds {
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px; }
 
-/* line 96, ../sass/_global.scss */
+/* line 85, ../sass/_global.scss */
 .hide,
 .hidden {
   display: none !important; }
 
-/* line 100, ../sass/_global.scss */
+/* line 89, ../sass/_global.scss */
 .sep {
   color: rgba(255, 255, 255, 0.2); }
 
-/* line 1, ../sass/_fonts.scss */
+@font-face {
+  /*
+  * Use https://www.web-font-generator.com/ to gen fonts
+  */
+  font-family: 'symbolsfont';
+  src: url("../fonts/symbols/wtdsymbols.eot");
+  src: url("../fonts/symbols/wtdsymbols.eot?#iefix") format("embedded-opentype"), url("../fonts/symbols/wtdsymbols.woff") format("woff"), url("../fonts/symbols/wtdsymbols.ttf") format("truetype"), url("../fonts/symbols/wtdsymbols.svg#armataregular") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+/* line 15, ../sass/_fonts.scss */
 .ui-symbol {
   font-family: 'symbolsfont'; }
 
@@ -487,7 +500,7 @@ span {
   display: inline-block;
   font-size: 1rem;
   vertical-align: middle; }
-  /* line 126, ../sass/_mixins.scss */
+  /* line 159, ../sass/_mixins.scss */
   .invoke-menu:hover {
     color: #33ccff; }
 
@@ -499,7 +512,7 @@ span {
 /* line 49, ../sass/_icons.scss */
 .icon-buttons-main .invoke-menu {
   color: #666666; }
-  /* line 126, ../sass/_mixins.scss */
+  /* line 159, ../sass/_mixins.scss */
   .icon-buttons-main .invoke-menu:hover {
     color: #999999; }
 
@@ -642,7 +655,7 @@ span {
     border-top: 1px solid #666666;
     color: #999999;
     display: inline-block; }
-    /* line 37, ../sass/_mixins.scss */
+    /* line 70, ../sass/_mixins.scss */
     .s-btn.s-very-subtle:hover, .s-very-subtle.s-icon-btn:hover {
       background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #595959));
       background-image: -webkit-linear-gradient(#666666, #595959);
@@ -811,7 +824,7 @@ a.l-btn span {
     background-image: -o-linear-gradient(#33ccff, #0099cc);
     background-image: linear-gradient(#33ccff, #0099cc);
     color: #ccf2ff; }
-    /* line 90, ../sass/_mixins.scss */
+    /* line 123, ../sass/_mixins.scss */
     .btn.major:not(.disabled):hover {
       background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #66d9ff), color-stop(100%, #00bfff));
       background-image: -webkit-linear-gradient(#66d9ff, #00bfff);
@@ -845,7 +858,7 @@ a.l-btn span {
       background-image: -o-linear-gradient(#4dd2ff, #00ace6);
       background-image: linear-gradient(#4dd2ff, #00ace6);
       color: #ccf2ff; }
-      /* line 90, ../sass/_mixins.scss */
+      /* line 123, ../sass/_mixins.scss */
       .btn.major:hover:not(.disabled):hover {
         background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #80dfff), color-stop(100%, #1ac6ff));
         background-image: -webkit-linear-gradient(#80dfff, #1ac6ff);
@@ -882,7 +895,7 @@ a.l-btn span {
     border-top: 1px solid #999999;
     color: #cccccc;
     display: inline-block; }
-    /* line 82, ../sass/_mixins.scss */
+    /* line 115, ../sass/_mixins.scss */
     .btn.subtle:not(.disabled):hover {
       background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #999999), color-stop(100%, #808080));
       background-image: -webkit-linear-gradient(#999999, #808080);
@@ -910,7 +923,7 @@ a.l-btn span {
     border-top: 1px solid #666666;
     color: #b3b3b3;
     display: inline-block; }
-    /* line 82, ../sass/_mixins.scss */
+    /* line 115, ../sass/_mixins.scss */
     .btn.very-subtle:not(.disabled):hover {
       background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #4d4d4d));
       background-image: -webkit-linear-gradient(#666666, #4d4d4d);
@@ -1110,7 +1123,7 @@ label.checkbox.custom {
   display: inline-block;
   height: 20px;
   line-height: 20px; }
-  /* line 82, ../sass/_mixins.scss */
+  /* line 115, ../sass/_mixins.scss */
   .btn-menu:not(.disabled):hover {
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #4d4d4d));
     background-image: -webkit-linear-gradient(#666666, #4d4d4d);
@@ -1267,14 +1280,14 @@ label.checkbox.custom {
   auto: 0;
   bottom: auto;
   left: auto; }
-  /* line 82, ../sass/_mixins.scss */
+  /* line 115, ../sass/_mixins.scss */
   .slider .knob:not(.disabled):hover {
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #4d4d4d));
     background-image: -webkit-linear-gradient(#666666, #4d4d4d);
     background-image: -moz-linear-gradient(#666666, #4d4d4d);
     background-image: -o-linear-gradient(#666666, #4d4d4d);
     background-image: linear-gradient(#666666, #4d4d4d); }
-  /* line 54, ../sass/_mixins.scss */
+  /* line 87, ../sass/_mixins.scss */
   .slider .knob:before {
     content: '';
     display: block;
@@ -1285,7 +1298,7 @@ label.checkbox.custom {
     left: 2px;
     bottom: 5px;
     top: 5px; }
-  /* line 75, ../sass/_mixins.scss */
+  /* line 108, ../sass/_mixins.scss */
   .slider .knob:not(.disabled):hover:before {
     border-color: rgba(0, 153, 204, 0.9); }
   /* line 426, ../sass/controls/_controls.scss */
@@ -1407,7 +1420,7 @@ label.checkbox.custom {
     .menu-element .menu ul {
       margin: 0;
       padding: 0; }
-      /* line 134, ../sass/_mixins.scss */
+      /* line 167, ../sass/_mixins.scss */
       .menu-element .menu ul li {
         list-style-type: none;
         margin: 0;
@@ -1749,7 +1762,7 @@ input[type="text"] {
   position: relative;
   overflow: hidden;
   vertical-align: middle; }
-  /* line 82, ../sass/_mixins.scss */
+  /* line 115, ../sass/_mixins.scss */
   .form-control.select:not(.disabled):hover {
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #4d4d4d));
     background-image: -webkit-linear-gradient(#666666, #4d4d4d);
@@ -2018,20 +2031,25 @@ input[type="text"] {
     left: 60px;
     cursor: crosshair;
     border: 1px solid #4d4d4d; }
-  /* line 65, ../sass/plots/_plots-main.scss */
-  .gl-plot .gl-plot-label {
+  /* line 66, ../sass/plots/_plots-main.scss */
+  .gl-plot .gl-plot-label,
+  .gl-plot .l-plot-label {
     color: #cccccc;
     position: absolute;
     text-align: center; }
-    /* line 72, ../sass/plots/_plots-main.scss */
-    .gl-plot .gl-plot-label.gl-plot-x-label {
+    /* line 74, ../sass/plots/_plots-main.scss */
+    .gl-plot .gl-plot-label.gl-plot-x-label, .gl-plot .gl-plot-label.l-plot-x-label,
+    .gl-plot .l-plot-label.gl-plot-x-label,
+    .gl-plot .l-plot-label.l-plot-x-label {
       top: auto;
       right: 0;
       bottom: 0;
       left: 0;
       height: auto; }
-    /* line 80, ../sass/plots/_plots-main.scss */
-    .gl-plot .gl-plot-label.gl-plot-y-label {
+    /* line 83, ../sass/plots/_plots-main.scss */
+    .gl-plot .gl-plot-label.gl-plot-y-label, .gl-plot .gl-plot-label.l-plot-y-label,
+    .gl-plot .l-plot-label.gl-plot-y-label,
+    .gl-plot .l-plot-label.l-plot-y-label {
       -webkit-transform-origin: 50% 0;
       -moz-transform-origin: 50% 0;
       -ms-transform-origin: 50% 0;
@@ -2047,7 +2065,7 @@ input[type="text"] {
       left: 0;
       top: 50%;
       white-space: nowrap; }
-  /* line 93, ../sass/plots/_plots-main.scss */
+  /* line 96, ../sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-y-options {
     position: absolute;
     top: 50%;
@@ -2058,19 +2076,19 @@ input[type="text"] {
     height: auto;
     min-height: 32px;
     width: 32px; }
-  /* line 107, ../sass/plots/_plots-main.scss */
+  /* line 110, ../sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-hash {
     position: absolute;
     border: 0 rgba(255, 255, 255, 0.3) dashed; }
-    /* line 110, ../sass/plots/_plots-main.scss */
+    /* line 113, ../sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-hash.hash-v {
       border-right-width: 1px;
       height: 100%; }
-    /* line 114, ../sass/plots/_plots-main.scss */
+    /* line 117, ../sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-hash.hash-h {
       border-bottom-width: 1px;
       width: 100%; }
-  /* line 120, ../sass/plots/_plots-main.scss */
+  /* line 123, ../sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-legend {
     position: absolute;
     top: 0;
@@ -2081,20 +2099,20 @@ input[type="text"] {
     overflow-x: hidden;
     overflow-y: auto; }
 
-/* line 148, ../sass/plots/_plots-main.scss */
+/* line 151, ../sass/plots/_plots-main.scss */
 .gl-plot-legend .plot-legend-item,
 .gl-plot-legend .legend-item,
 .legend .plot-legend-item,
 .legend .legend-item {
   display: inline-block;
   margin-right: 10px; }
-  /* line 151, ../sass/plots/_plots-main.scss */
+  /* line 154, ../sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item span,
   .gl-plot-legend .legend-item span,
   .legend .plot-legend-item span,
   .legend .legend-item span {
     vertical-align: middle; }
-  /* line 155, ../sass/plots/_plots-main.scss */
+  /* line 158, ../sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item .plot-color-swatch,
   .gl-plot-legend .plot-legend-item .color-swatch,
   .gl-plot-legend .legend-item .plot-color-swatch,
@@ -2113,16 +2131,16 @@ input[type="text"] {
     width: 8px;
     margin-right: 3px; }
 
-/* line 169, ../sass/plots/_plots-main.scss */
+/* line 172, ../sass/plots/_plots-main.scss */
 .tick {
   position: absolute;
   border: 0 rgba(255, 255, 255, 0.3) solid; }
-  /* line 172, ../sass/plots/_plots-main.scss */
+  /* line 175, ../sass/plots/_plots-main.scss */
   .tick.tick-x {
     border-right-width: 1px;
     height: 100%; }
 
-/* line 180, ../sass/plots/_plots-main.scss */
+/* line 183, ../sass/plots/_plots-main.scss */
 .gl-plot-tick,
 .tick-label {
   font-size: 0.7rem;
@@ -2130,7 +2148,7 @@ input[type="text"] {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis; }
-  /* line 188, ../sass/plots/_plots-main.scss */
+  /* line 191, ../sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-x-tick-label, .gl-plot-tick.tick-label-x,
   .tick-label.gl-plot-x-tick-label,
   .tick-label.tick-label-x {
@@ -2141,7 +2159,7 @@ input[type="text"] {
     width: 20%;
     margin-left: -10%;
     text-align: center; }
-  /* line 198, ../sass/plots/_plots-main.scss */
+  /* line 201, ../sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-y-tick-label, .gl-plot-tick.tick-label-y,
   .tick-label.gl-plot-y-tick-label,
   .tick-label.tick-label-y {
@@ -2151,18 +2169,18 @@ input[type="text"] {
     margin-bottom: -0.5em;
     text-align: right; }
 
-/* line 209, ../sass/plots/_plots-main.scss */
+/* line 212, ../sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-x-tick-label {
   top: 5px; }
-/* line 212, ../sass/plots/_plots-main.scss */
+/* line 215, ../sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-y-tick-label {
   right: 5px;
   left: 5px; }
 
-/* line 219, ../sass/plots/_plots-main.scss */
+/* line 222, ../sass/plots/_plots-main.scss */
 .tick-label.tick-label-x {
   top: 0; }
-/* line 222, ../sass/plots/_plots-main.scss */
+/* line 225, ../sass/plots/_plots-main.scss */
 .tick-label.tick-label-y {
   right: 0;
   left: 0; }
@@ -2470,7 +2488,7 @@ input[type="text"] {
     height: 5px;
     margin-top: -7px;
     top: 70%; }
-    /* line 54, ../sass/_mixins.scss */
+    /* line 87, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:before {
       content: '';
       display: block;
@@ -2481,7 +2499,7 @@ input[type="text"] {
       top: 2px;
       left: 5px;
       right: 5px; }
-    /* line 75, ../sass/_mixins.scss */
+    /* line 108, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:not(.disabled):hover:before {
       border-color: rgba(0, 153, 204, 0.9); }
 /* line 42, ../sass/helpers/_splitter.scss */
@@ -2503,7 +2521,7 @@ input[type="text"] {
   width: 5px;
   margin-left: -7px;
   left: 85%; }
-  /* line 54, ../sass/_mixins.scss */
+  /* line 87, ../sass/_mixins.scss */
   .split-layout.vertical > .splitter:before {
     content: '';
     display: block;
@@ -2514,7 +2532,7 @@ input[type="text"] {
     left: 2px;
     bottom: 5px;
     top: 5px; }
-  /* line 75, ../sass/_mixins.scss */
+  /* line 108, ../sass/_mixins.scss */
   .split-layout.vertical > .splitter:not(.disabled):hover:before {
     border-color: rgba(0, 153, 204, 0.9); }
 

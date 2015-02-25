@@ -41,6 +41,13 @@ define(
                 expect(controller.state() > initialState).toBeTruthy();
             });
 
+            it("accepts a default state", function () {
+                // Should use default state the first time...
+                expect(controller.state(12321)).toEqual(12321);
+                // ...but not after it's been initialized
+                expect(controller.state(42)).toEqual(12321);
+            });
+
         });
     }
 );

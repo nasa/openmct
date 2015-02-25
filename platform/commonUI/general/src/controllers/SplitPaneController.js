@@ -5,16 +5,18 @@ define(
     function () {
         "use strict";
 
+        var DEFAULT_MAXIMUM = 1000,
+            DEFAULT_MINIMUM = 120;
+
         /**
          * Controller for the splitter in Browse mode. Current implementation
          * uses many hard-coded constants; this could be generalized.
          * @constructor
          */
         function SplitPaneController() {
-            var minimum = 120,
-                maximum = 600,
-                current = 200,
-                start = 200;
+            var current = 200,
+                start = 200,
+                assigned = false;
 
             return {
                 /**
@@ -22,7 +24,13 @@ define(
                  * from the left edge.
                  * @returns {number} position of the splitter, in pixels
                  */
-                state: function () {
+                state: function (defaultState) {
+                    // Set the state to the desired default, if we don't have a
+                    // "real" current state yet.
+                    if (arguments.length > 0 && !assigned) {
+                        current = defaultState;
+                        assigned = true;
+                    }
                     return current;
                 },
                 /**
@@ -40,7 +48,12 @@ define(
                  * splitter when startMove was last invoked.
                  * @param {number} delta number of pixels to move
                  */
-                move: function (delta) {
+                move: function (delta, minimum, maximum) {
+                    // Ensure defaults for minimum/maximum
+                    maximum = isNaN(maximum) ? DEFAULT_MAXIMUM : maximum;
+                    minimum = isNaN(minimum) ? DEFAULT_MINIMUM : minimum;
+
+                    // Update current splitter state
                     current = Math.min(
                         maximum,
                         Math.max(minimum, start + delta)
