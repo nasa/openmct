@@ -34,7 +34,8 @@ define(
 
                 // Handle event; assign to scroll state to scope
                 function updateScope() {
-                    parsed.assign(element[0][property]);
+                    parsed.assign(scope, element[0][property]);
+                    scope.$apply(expr);
                 }
 
                 // Initialize state in scope

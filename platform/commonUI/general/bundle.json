@@ -108,12 +108,12 @@
             },
             {
                 "key": "mctScrollX",
-                "implementations": "directives/MCTScroll.js",
+                "implementation": "directives/MCTScroll.js",
                 "depends": [ "$parse", "MCT_SCROLL_X_PROPERTY", "MCT_SCROLL_X_ATTRIBUTE" ]
             },
             {
                 "key": "mctScrollY",
-                "implementations": "directives/MCTScroll.js",
+                "implementation": "directives/MCTScroll.js",
                 "depends": [ "$parse", "MCT_SCROLL_Y_PROPERTY", "MCT_SCROLL_Y_ATTRIBUTE" ]
             }
         ],

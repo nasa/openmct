@@ -26,7 +26,7 @@ define(
                 mockParsed = jasmine.createSpy('parsed');
                 mockParsed.assign = jasmine.createSpy('assign');
 
-                mockScope = jasmine.createSpyObj('$scope', ['$watch']);
+                mockScope = jasmine.createSpyObj('$scope', ['$watch', '$apply']);
                 mockElement = [{ testProperty: 42 }];
                 mockElement.on = jasmine.createSpy('on');
 
@@ -71,7 +71,7 @@ define(
 
             it("publishes initial scroll state", function () {
                 expect(mockParse).toHaveBeenCalledWith(EXPRESSION);
-                expect(mockParsed.assign).toHaveBeenCalledWith(42);
+                expect(mockParsed.assign).toHaveBeenCalledWith(mockScope, 42);
             });
 
             it("updates scroll state when scope changes", function () {
@@ -82,7 +82,8 @@ define(
             it("updates scope when scroll state changes", function () {
                 mockElement[0].testProperty = 12321;
                 mockElement.on.mostRecentCall.args[1]({ target: mockElement[0] });
-                expect(mockParsed.assign).toHaveBeenCalledWith(12321);
+                expect(mockParsed.assign).toHaveBeenCalledWith(mockScope, 12321);
+                expect(mockScope.$apply).toHaveBeenCalledWith(EXPRESSION);
             });
 
         });
