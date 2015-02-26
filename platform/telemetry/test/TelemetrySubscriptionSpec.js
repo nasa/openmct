@@ -76,7 +76,10 @@ define(
             });
 
             it("fires callbacks when subscriptions update", function () {
-                expect(mockCallback).not.toHaveBeenCalled();
+                // Callback fires when telemetry objects become available,
+                // so track initial call count instead of verifying that
+                // it hasn't been called at all.
+                var initialCalls = mockCallback.calls.length;
                 mockTelemetry.subscribe.mostRecentCall.args[0](mockSeries);
                 // This gets fired via a timeout, so trigger that
                 expect(mockTimeout).toHaveBeenCalledWith(
@@ -86,11 +89,14 @@ define(
                 mockTimeout.mostRecentCall.args[0]();
                 // Should have triggered the callback to alert that
                 // new data was available
-                expect(mockCallback).toHaveBeenCalled();
+                expect(mockCallback.calls.length).toEqual(initialCalls + 1);
             });
 
             it("fires subscription callbacks once per cycle", function () {
                 var i;
+
+                // Verify precondition - one call for telemetryObjects
+                expect(mockCallback.calls.length).toEqual(1);
 
                 for (i = 0; i < 100; i += 1) {
                     mockTelemetry.subscribe.mostRecentCall.args[0](mockSeries);
@@ -100,7 +106,7 @@ define(
                     call.args[0]();
                 });
                 // Should have only triggered the
-                expect(mockCallback.calls.length).toEqual(1);
+                expect(mockCallback.calls.length).toEqual(2);
             });
 
             it("reports its latest observed data values", function () {
@@ -129,7 +135,8 @@ define(
             // telemetrySubscription, where failure to callback
             // once-per-update results in loss of data, WTD-784
             it("fires one event per update if requested", function () {
-                var i, domains = [], ranges = [], lastCall;
+                var i, domains = [], ranges = [], lastCall, initialCalls;
+
 
                 // Clear out the subscription from beforeEach
                 subscription.unsubscribe();
@@ -141,6 +148,9 @@ define(
                     mockCallback,
                     true // Don't drop updates!
                 );
+
+                // Track calls at this point
+                initialCalls = mockCallback.calls.length;
 
                 // Snapshot getDomainValue, getRangeValue at time of callback
                 mockCallback.andCallFake(function () {
@@ -163,12 +173,16 @@ define(
                 }
 
                 // Should have only triggered the
-                expect(mockCallback.calls.length).toEqual(100);
+                expect(mockCallback.calls.length).toEqual(100 + initialCalls);
             });
 
             it("provides domain object metadata", function () {
                 expect(subscription.getMetadata()[0])
                     .toEqual(testMetadata);
+            });
+
+            it("fires callback when telemetry objects are available", function () {
+                expect(mockCallback.calls.length).toEqual(1);
             });
         });
     }

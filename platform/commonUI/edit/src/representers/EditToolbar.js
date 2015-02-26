@@ -17,9 +17,10 @@ define(
          *
          * @param structure toolbar structure, as provided by view definition
          * @param {Array} selection the current selection state
+         * @param {Function} commit callback to invoke after changes
          * @constructor
          */
-        function EditToolbar(structure, selection) {
+        function EditToolbar(structure, selection, commit) {
             var toolbarStructure = Object.create(structure || {}),
                 toolbarState,
                 properties = [];
@@ -106,23 +107,46 @@ define(
             // to the current selection.
             function isApplicable(item) {
                 var property = (item || {}).property,
+                    method = (item || {}).method,
                     exclusive = !(item || {}).inclusive;
 
                 // Check if a selected item defines this property
                 function hasProperty(selected) {
-                    return selected[property] !== undefined;
+                    return (property && (selected[property] !== undefined)) ||
+                            (method && (typeof selected[method] === 'function'));
                 }
 
-                return property && selection.map(hasProperty).reduce(
+                return selection.map(hasProperty).reduce(
                     exclusive ? and : or,
                     exclusive
                 ) && isConsistent(property);
             }
 
+            // Invoke all functions in selections with the given name
+            function invoke(method, value) {
+                if (method) {
+                    // Make the change in the selection
+                    selection.forEach(function (selected) {
+                        if (typeof selected[method] === 'function') {
+                            selected[method](value);
+                        }
+                    });
+                    // ...and commit!
+                    commit();
+                }
+            }
+
             // Prepare a toolbar item based on current selection
             function convertItem(item) {
                 var converted = Object.create(item || {});
-                converted.key = addKey(item.property);
+                if (item.property) {
+                    converted.key = addKey(item.property);
+                }
+                if (item.method) {
+                    converted.click = function (v) {
+                        invoke(item.method, v);
+                    };
+                }
                 return converted;
             }
 

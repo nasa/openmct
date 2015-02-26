@@ -138,6 +138,11 @@ define(
             function cacheObjectReferences(objects) {
                 telemetryObjects = objects;
                 metadatas = objects.map(lookupMetadata);
+                // Fire callback, as this will be the first time that
+                // telemetry objects are available
+                if (callback) {
+                    callback();
+                }
                 return objects;
             }
 

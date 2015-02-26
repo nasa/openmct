@@ -19,7 +19,31 @@
                 "type": "telemetry.panel",
                 "templateUrl": "templates/fixed.html",
                 "uses": [ "composition" ],
-                "gestures": [ "drop" ]
+                "gestures": [ "drop" ],
+                "toolbar": {
+                    "sections": [
+                        {
+                            "items": [
+                                {
+                                    "method": "add",
+                                    "control": "button",
+                                    "text": "Add",
+                                    "inclusive": true
+                                }
+                            ]
+                        },
+                        {
+                            "items": [
+                                {
+                                    "method": "remove",
+                                    "control": "button",
+                                    "text": "Remove",
+                                    "inclusive": true
+                                }
+                            ]
+                        }
+                    ]
+                }
             }
         ],
         "representations": [
@@ -38,6 +62,12 @@
                 "key": "FixedController",
                 "implementation": "FixedController.js",
                 "depends": [ "$scope", "telemetrySubscriber", "telemetryFormatter" ]
+            }
+        ],
+        "templates": [
+            {
+                "key": "fixed.telemetry",
+                "templateUrl": "templates/elements/telemetry.html"
             }
         ],
         "types": [

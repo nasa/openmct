@@ -1,8 +1,8 @@
 /*global define*/
 
 define(
-    ['./LayoutDrag'],
-    function (LayoutDrag) {
+    ['./LayoutDrag', './LayoutSelection', './FixedProxy', './elements/ElementProxies'],
+    function (LayoutDrag, LayoutSelection, FixedProxy, ElementProxies) {
         "use strict";
 
         var DEFAULT_DIMENSIONS = [ 2, 1 ],
@@ -20,30 +20,22 @@ define(
         function FixedController($scope, telemetrySubscriber, telemetryFormatter) {
             var gridSize = DEFAULT_GRID_SIZE,
                 gridExtent = DEFAULT_GRID_EXTENT,
-                activeDrag,
-                activeDragId,
+                dragging,
                 subscription,
-                values = {},
                 cellStyles = [],
-                rawPositions = {},
-                positions = {};
-
-            // Utility function to copy raw positions from configuration,
-            // without writing directly to configuration (to avoid triggering
-            // persistence from watchers during drags).
-            function shallowCopy(obj, keys) {
-                var copy = {};
-                keys.forEach(function (k) {
-                    copy[k] = obj[k];
-                });
-                return copy;
-            }
+                elementProxies = [],
+                elementProxiesById = {},
+                selection;
 
             // Refresh cell styles (e.g. because grid extent changed)
             function refreshCellStyles() {
                 var x, y;
 
+                // Clear previous styles
                 cellStyles = [];
+
+                // Update grid size from model
+                gridSize = ($scope.model || {}).layoutGrid || gridSize;
 
                 for (x = 0; x < gridExtent[0]; x += 1) {
                     for (y = 0; y < gridExtent[1]; y += 1) {
@@ -58,62 +50,28 @@ define(
                 }
             }
 
-            // Convert from { positions: ..., dimensions: ... } to an
-            // apropriate ng-style argument, to position frames.
+            // Convert from element x/y/width/height to an
+            // apropriate ng-style argument, to position elements.
             function convertPosition(raw) {
                 // Multiply position/dimensions by grid size
                 return {
-                    left: (gridSize[0] * raw.position[0]) + 'px',
-                    top: (gridSize[1] * raw.position[1]) + 'px',
-                    width: (gridSize[0] * raw.dimensions[0]) + 'px',
-                    height: (gridSize[1] * raw.dimensions[1]) + 'px'
+                    left: (gridSize[0] * raw.x) + 'px',
+                    top: (gridSize[1] * raw.y) + 'px',
+                    width: (gridSize[0] * raw.width) + 'px',
+                    height: (gridSize[1] * raw.height) + 'px'
                 };
-            }
-
-            // Generate a default position (in its raw format) for a frame.
-            // Use an index to ensure that default positions are unique.
-            function defaultPosition(index) {
-                return {
-                    position: [index, index],
-                    dimensions: DEFAULT_DIMENSIONS
-                };
-            }
-
-            // Store a computed position for a contained frame by its
-            // domain object id. Called in a forEach loop, so arguments
-            // are as expected there.
-            function populatePosition(id, index) {
-                rawPositions[id] =
-                    rawPositions[id] || defaultPosition(index || 0);
-                positions[id] =
-                    convertPosition(rawPositions[id]);
-            }
-
-            // Compute panel positions based on the layout's object model
-            function lookupPanels(ids) {
-                var configuration = $scope.configuration || {};
-                ids = ids || [];
-
-                // Pull panel positions from configuration
-                rawPositions = shallowCopy(configuration.elements || {}, ids);
-
-                // Clear prior computed positions
-                positions = {};
-
-                // Update width/height that we are tracking
-                gridSize = ($scope.model || {}).layoutGrid || DEFAULT_GRID_SIZE;
-
-                // Compute positions and add defaults where needed
-                ids.forEach(populatePosition);
             }
 
             // Update the displayed value for this object
             function updateValue(telemetryObject) {
                 var id = telemetryObject && telemetryObject.getId();
                 if (id) {
-                    values[id] = telemetryFormatter.formatRangeValue(
-                        subscription.getRangeValue(telemetryObject)
-                    );
+                    (elementProxiesById[id] || []).forEach(function (element) {
+                        element.name = telemetryObject.getModel().name;
+                        element.value = telemetryFormatter.formatRangeValue(
+                            subscription.getRangeValue(telemetryObject)
+                        );
+                    });
                 }
             }
 
@@ -122,6 +80,59 @@ define(
                 if (subscription) {
                     subscription.getTelemetryObjects().forEach(updateValue);
                 }
+            }
+
+            // Decorate an element for display
+            function makeProxyElement(element, index, elements) {
+                var ElementProxy = ElementProxies[element.type],
+                    e = ElementProxy && new ElementProxy(element, index, elements);
+
+                if (e) {
+                    // Provide a displayable position (convert from grid to px)
+                    e.style = convertPosition(element);
+                    // Template names are same as type names, presently
+                    e.template = element.type;
+                }
+
+                return e;
+            }
+
+            // Decorate elements in the current configuration
+            function refreshElements() {
+                // Cache selection; we are instantiating new proxies
+                // so we may want to restore this.
+                var selected = selection && selection.get(),
+                    elements = (($scope.configuration || {}).elements || []),
+                    index = -1; // Start with a 'not-found' value
+
+                // Find the selection in the new array
+                if (selected !== undefined) {
+                    index = elements.indexOf(selected.element);
+                }
+
+                // Create the new proxies...
+                elementProxies = elements.map(makeProxyElement);
+
+                // Clear old selection, and restore if appropriate
+                if (selection) {
+                    selection.deselect();
+                    if (index > -1) {
+                        selection.select(elementProxies[index]);
+                    }
+                }
+
+                // Finally, rebuild lists of elements by id to
+                // facilitate faster update when new telemetry comes in.
+                elementProxiesById = {};
+                elementProxies.forEach(function (elementProxy) {
+                    var id = elementProxy.id;
+                    if (elementProxy.element.type === 'fixed.telemetry') {
+                        elementProxiesById[id] = elementProxiesById[id] || [];
+                        elementProxiesById[id].push(elementProxy);
+                    }
+                });
+
+                // TODO: Ensure elements for all domain objects?
             }
 
             // Free up subscription to telemetry
@@ -134,9 +145,6 @@ define(
 
             // Subscribe to telemetry updates for this domain object
             function subscribe(domainObject) {
-                // Clear any old values
-                values = {};
-
                 // Release existing subscription (if any)
                 if (subscription) {
                     subscription.unsubscribe();
@@ -150,7 +158,7 @@ define(
             // Handle changes in the object's composition
             function updateComposition(ids) {
                 // Populate panel positions
-                lookupPanels(ids);
+                // TODO: Ensure defaults here
                 // Resubscribe - objects in view have changed
                 subscribe($scope.domainObject);
             }
@@ -162,22 +170,32 @@ define(
                 // Make sure there is a "elements" field in the
                 // view configuration.
                 $scope.configuration.elements =
-                    $scope.configuration.elements || {};
+                    $scope.configuration.elements || [];
                 // Store the position of this element.
-                $scope.configuration.elements[id] = {
-                    position: [
-                        Math.floor(position.x / gridSize[0]),
-                        Math.floor(position.y / gridSize[1])
-                    ],
-                    dimensions: DEFAULT_DIMENSIONS
-                };
+                $scope.configuration.elements.push({
+                    type: "fixed.telemetry",
+                    x: Math.floor(position.x / gridSize[0]),
+                    y: Math.floor(position.y / gridSize[1]),
+                    id: id,
+                    width: DEFAULT_DIMENSIONS[0],
+                    height: DEFAULT_DIMENSIONS[1]
+                });
                 // Mark change as persistable
                 if ($scope.commit) {
-                    $scope.commit("Dropped a frame.");
+                    $scope.commit("Dropped an element.");
                 }
-                // Populate template-facing position for this id
-                populatePosition(id);
             }
+
+            //  Track current selection state
+            if (Array.isArray($scope.selection)) {
+                selection = new LayoutSelection(
+                    $scope.selection,
+                    new FixedProxy($scope.configuration)
+                );
+            }
+
+            // Refresh list of elements whenever model changes
+            $scope.$watch("model.modified", refreshElements);
 
             // Position panes when the model field changes
             $scope.$watch("model.composition", updateComposition);
@@ -205,15 +223,6 @@ define(
                     return cellStyles;
                 },
                 /**
-                 * Get the current data value for the specified domain object.
-                 * @memberof FixedController#
-                 * @param {string} id the domain object identifier
-                 * @returns {string} the displayable data value
-                 */
-                getValue: function (id) {
-                    return values[id];
-                },
-                /**
                  * Set the size of the viewable fixed position area.
                  * @memberof FixedController#
                  * @param bounds the width/height, as reported by mct-resize
@@ -227,17 +236,36 @@ define(
                     }
                 },
                 /**
-                 * Get a style object for a frame with the specified domain
-                 * object identifier, suitable for use in an `ng-style`
-                 * directive to position a frame as configured for this layout.
-                 * @param {string} id the object identifier
-                 * @returns {Object.<string, string>} an object with
-                 *          appropriate left, width, etc fields for positioning
+                 * Get an array of elements in this panel; these are
+                 * decorated proxies for both selection and display.
+                 * @returns {Array} elements in this panel
                  */
-                getStyle: function (id) {
-                    // Called in a loop, so just look up; the "positions"
-                    // object is kept up to date by a watch.
-                    return positions[id];
+                getElements: function () {
+                    return elementProxies;
+                },
+                /**
+                 * Check if the element is currently selected.
+                 * @returns {boolean} true if selected
+                 */
+                selected: function (element) {
+                    return selection && selection.selected(element);
+                },
+                /**
+                 * Set the active user selection in this view.
+                 * @param element the element to select
+                 */
+                select: function (element) {
+                    if (selection) {
+                        selection.select(element);
+                    }
+                },
+                /**
+                 * Clear the current user selection.
+                 */
+                clearSelection: function () {
+                    if (selection) {
+                        selection.deselect();
+                    }
                 },
                 /**
                  * Start a drag gesture to move/resize a frame.
@@ -254,19 +282,18 @@ define(
                  * with the mouse while the horizontal dimensions shrink in
                  * kind (and vertical properties remain unmodified.)
                  *
-                 * @param {string} id the identifier of the domain object
-                 *        in the frame being manipulated
-                 * @param {number[]} posFactor the position factor
-                 * @param {number[]} dimFactor the dimensions factor
+                 * @param element the raw (undecorated) element to drag
                  */
-                startDrag: function (id, posFactor, dimFactor) {
-                    activeDragId = id;
-                    activeDrag = new LayoutDrag(
-                        rawPositions[id],
-                        posFactor,
-                        dimFactor,
-                        gridSize
-                    );
+                startDrag: function (element) {
+                    // Only allow dragging in edit mode
+                    if ($scope.domainObject &&
+                            $scope.domainObject.hasCapability('editor')) {
+                        dragging = {
+                            element: element,
+                            x: element.x(),
+                            y: element.y()
+                        };
+                    }
                 },
                 /**
                  * Continue an active drag gesture.
@@ -275,10 +302,10 @@ define(
                  *        to its position when the drag started
                  */
                 continueDrag: function (delta) {
-                    if (activeDrag) {
-                        rawPositions[activeDragId] =
-                            activeDrag.getAdjustedPosition(delta);
-                        populatePosition(activeDragId);
+                    if (dragging) {
+                        dragging.element.x(dragging.x + Math.round(delta[0] / gridSize[0]));
+                        dragging.element.y(dragging.y + Math.round(delta[1] / gridSize[1]));
+                        dragging.element.style = convertPosition(dragging.element.element);
                     }
                 },
                 /**
@@ -286,19 +313,9 @@ define(
                  * view configuration.
                  */
                 endDrag: function () {
-                    // Write to configuration; this is watched and
-                    // saved by the EditRepresenter.
-                    $scope.configuration =
-                        $scope.configuration || {};
-                    // Make sure there is a "panels" field in the
-                    // view configuration.
-                    $scope.configuration.elements =
-                        $scope.configuration.elements || {};
-                    // Store the position of this panel.
-                    $scope.configuration.elements[activeDragId] =
-                        rawPositions[activeDragId];
                     // Mark this object as dirty to encourage persistence
-                    if ($scope.commit) {
+                    if (dragging && $scope.commit) {
+                        dragging = undefined;
                         $scope.commit("Moved element.");
                     }
                 }

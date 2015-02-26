@@ -15,6 +15,8 @@ view's scope.) These additional properties are:
   then that function is assumed to be an accessor-mutator function
   (that is, it will be called with no arguments to get, and with
   an argument to set.)
+* `method`: Name of a method to invoke upon a selected object when
+  a control is activated, e.g. on a button click.
 * `inclusive`: Optional; true if this control should be considered
   applicable whenever at least one element in the selection has
   the associated property. Otherwise, all members of the current

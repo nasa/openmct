@@ -10,7 +10,7 @@ define(
 
 
         // Methods to mock
-        var JQLITE_FUNCTIONS = [ "on", "off", "attr", "removeAttr" ],
+        var JQLITE_FUNCTIONS = [ "on", "off", "attr", "removeAttr", "scope" ],
             DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability"],
             TEST_ID = "test-id",
             DROP_ID = "drop-id";
@@ -21,7 +21,10 @@ define(
                 mockDomainObject,
                 mockPersistence,
                 mockEvent,
+                mockScope,
+                mockUnwrappedElement,
                 testModel,
+                testRect,
                 gesture,
                 callbacks;
 
@@ -35,6 +38,7 @@ define(
 
             beforeEach(function () {
                 testModel = { composition: [] };
+                testRect = {};
 
                 mockQ = { when: mockPromise };
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
@@ -42,11 +46,17 @@ define(
                 mockPersistence = jasmine.createSpyObj("persistence", [ "persist" ]);
                 mockEvent = jasmine.createSpyObj("event", ["preventDefault"]);
                 mockEvent.dataTransfer = jasmine.createSpyObj("dataTransfer", [ "getData" ]);
+                mockScope = jasmine.createSpyObj("$scope", ["$broadcast"]);
+                mockUnwrappedElement = jasmine.createSpyObj("unwrapped", ["getBoundingClientRect"]);
 
                 mockDomainObject.getId.andReturn(TEST_ID);
                 mockDomainObject.getModel.andReturn(testModel);
                 mockDomainObject.getCapability.andReturn(mockPersistence);
+                mockDomainObject.useCapability.andReturn(true);
                 mockEvent.dataTransfer.getData.andReturn(DROP_ID);
+                mockElement[0] = mockUnwrappedElement;
+                mockElement.scope.andReturn(mockScope);
+                mockUnwrappedElement.getBoundingClientRect.andReturn(testRect);
 
                 gesture = new DropGesture(mockQ, mockElement, mockDomainObject);
 
@@ -112,6 +122,19 @@ define(
                 callbacks.drop(mockEvent);
                 expect(mockDomainObject.useCapability).toHaveBeenCalledWith("mutation", jasmine.any(Function));
                 expect(mockDomainObject.getCapability).toHaveBeenCalledWith("persistence");
+            });
+
+            it("broadcasts drop position", function () {
+                testRect.left = 42;
+                testRect.top = 36;
+                mockEvent.pageX = 52;
+                mockEvent.pageY = 64;
+                callbacks.drop(mockEvent);
+                expect(mockScope.$broadcast).toHaveBeenCalledWith(
+                    'mctDrop',
+                    DROP_ID,
+                    { x: 10, y: 28 }
+                );
             });
 
         });

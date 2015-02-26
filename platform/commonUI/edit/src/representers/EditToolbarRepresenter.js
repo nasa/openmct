@@ -20,6 +20,13 @@ define(
                 toolbar,
                 toolbarObject = {};
 
+            // Mark changes as ready to persist
+            function commit(message) {
+                if (scope.commit) {
+                    scope.commit(message);
+                }
+            }
+
             // Handle changes to the current selection
             function updateSelection(selection) {
                 // Make sure selection is array-like
@@ -28,7 +35,7 @@ define(
                         (selection ? [selection] : []);
 
                 // Instantiate a new toolbar...
-                toolbar = new EditToolbar(definition, selection);
+                toolbar = new EditToolbar(definition, selection, commit);
 
                 // ...and expose its structure/state
                 toolbarObject.structure = toolbar.getStructure();
@@ -37,9 +44,12 @@ define(
 
             // Update selection models to match changed toolbar state
             function updateState(state) {
+                // Update underlying state based on toolbar changes
                 state.forEach(function (value, index) {
                     toolbar.updateState(index, value);
                 });
+                // Commit the changes.
+                commit("Changes from toolbar.");
             }
 
             // Represent a domain object using this definition
