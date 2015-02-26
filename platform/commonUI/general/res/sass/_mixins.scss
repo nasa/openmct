@@ -6,9 +6,13 @@
 }
 
 @mixin trans-prop-nice-fade($t: 0.5s) {
-    @include transition-property(visibility, opacity, background-color);
-    @include transition-duration($t);
-    @include transition-timing-function(ease-in-out);
+	@if $t == 0 {
+		@include transition-property(none);
+	} @else {
+		@include transition-property(visibility, opacity, background-color, border-color);
+		@include transition-duration($t);
+		@include transition-timing-function(ease-in-out);
+	}
 }
 
 @mixin trans-prop-nice-resize-h($t: 0.5s) {

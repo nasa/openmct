@@ -29,7 +29,11 @@
 	.l-fixed-position-item {
 		position: absolute;
 		border: 1px solid transparent;
-		@include box-sizing(border-box);
+//		@include box-sizing(border-box);
+		&>div {
+			@include box-sizing(border-box);
+			@include test(red);
+		}
 		&.s-selected {
 			@include boxShdwLarge();
 			border-color: $colorKey;
@@ -72,7 +76,8 @@
 					text-align: right;
 					&.telem-only {
 						@include test();
-						left: 0; width: 100%;
+						left: $p;
+						width: 100%;
 					}
 				}
 			}
