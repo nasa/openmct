@@ -6,12 +6,16 @@ define(
         'use strict';
 
         /**
-         * Superclass of mct-scroll-x and mct-scroll-y directives. Listens
+         * Implements `mct-scroll-x` and `mct-scroll-y` directives. Listens
          * for scroll events and publishes their results into scope; watches
          * scope and updates scroll state to match. This varies for x- and y-
          * directives only by the attribute name chosen to find the expression,
          * and the property (scrollLeft or scrollTop) managed within the
          * element.
+         *
+         * This is exposed as two directives in `bundle.json`; the difference
+         * is handled purely by parameterization.
+         *
          * @constructor
          * @param $parse Angular's $parse
          * @param {string} property property to manage within the HTML element
