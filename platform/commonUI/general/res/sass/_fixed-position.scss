@@ -21,7 +21,6 @@
 				&.l-grid-y {
 					@include bgTicks($colorGridLines, 'y');
 				}
-
 			}
 		}
 	}
@@ -29,11 +28,7 @@
 	.l-fixed-position-item {
 		position: absolute;
 		border: 1px solid transparent;
-//		@include box-sizing(border-box);
-		&>div {
-			@include box-sizing(border-box);
-			@include test(red);
-		}
+
 		&.s-selected {
 			@include boxShdwLarge();
 			border-color: $colorKey;
@@ -42,59 +37,64 @@
 		&.s-not-selected {
 			opacity: 0.8;
 		}
-	}
 
-	.l-fixed-position-image {
-		width: 100%;
-		height: 100%;
-		background-size: contain;
-		background-repeat: no-repeat;
-		background-position: left top;
-	}
-
-	.l-fixed-position-text {
-		border:1px solid transparent;
-		height: 100%; width: 100%;
-		font-size: 0.8rem;
-		$p: $interiorMarginSm;
-		&.l-static-text {
-			overflow: auto;
-			padding: $p;
+		.l-fixed-position-box,
+		.l-fixed-position-image,
+		.l-fixed-position-text {
+			@include box-sizing(border-box);
+			height: 100%; width: 100%;
 		}
-		&.l-telemetry {
-			.l-elem {
-				@include absPosDefault($p);
-				@include box-sizing(border-box);
-				width: 50%;
-				&.l-title {
-					right: auto;
-					left: $p;
-				}
-				&.l-value {
-					right: $p;
-					left: auto;
-					text-align: right;
-					&.telem-only {
-						@include test();
+
+		.l-fixed-position-box {
+		}
+		
+		.l-fixed-position-image {
+			background-size: contain;
+			background-repeat: no-repeat;
+			background-position: left top;
+		}
+
+		.l-fixed-position-text {
+			@include txtShdwSubtle();
+			border:1px solid transparent;
+			font-size: 0.8rem;
+			$p: $interiorMarginSm;
+			&.l-static-text {
+				overflow: auto;
+				padding: $p;
+			}
+			&.l-telemetry {
+				.l-elem {
+					@include absPosDefault($p);
+					@include box-sizing(border-box);
+					width: 50%;
+					&.l-title {
+						right: auto;
 						left: $p;
-						width: 100%;
+					}
+					&.l-value {
+						right: $p;
+						left: auto;
+						text-align: right;
+						&.telem-only {
+							@include test();
+							left: $p;
+							width: 100%;
+						}
 					}
 				}
 			}
 		}
 	}
-	
+
 	.l-fixed-position-item-handle {
 		$brd: 1px solid $colorKey;
-//		@include border-radius($controlCr);
+		//		@include border-radius($controlCr);
 		background: rgba($colorKey, 0.5);
 		cursor: crosshair;
 		border: $brd;
 		position: absolute;
 	}
-
-
-
 }
 
 .edit-mode .t-fixed-position {
