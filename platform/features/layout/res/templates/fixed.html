@@ -4,24 +4,23 @@
 
     <!-- Background grid -->
     <div class="l-grid-holder" ng-click="controller.clearSelection()">
-	    <div class="l-grid l-grid-x" ng-style="{ 'background-size': controller.getGridSize() [0] + 'px 100%' }"></div>
-	    <div class="l-grid l-grid-y" ng-style="{ 'background-size': '100% ' + controller.getGridSize() [1] + 'px' }"></div>
+	    <div class="l-grid l-grid-x"
+             ng-style="{ 'background-size': controller.getGridSize() [0] + 'px 100%' }"></div>
+	    <div class="l-grid l-grid-y"
+             ng-style="{ 'background-size': '100% ' + controller.getGridSize() [1] + 'px' }"></div>
     </div>
 
-
-
     <!-- Fixed position elements -->
-	<!-- TO-DO: Should not be applying positioning styles or CSS classes to the mct-include element.
-	Instead, these should be passed on to the actual HTML element within the template -->
-    <mct-include ng-repeat="element in controller.getElements()"
-                 key="element.template"
-                 parameters="{ gridSize: controller.getGridSize() }"
-                 class="l-fixed-position-item"
-                 ng-class="{ 's-not-selected': controller.selected() && !controller.selected(element) }"
-                 ng-style="element.style"
-                 ng-click="controller.select(element)"
-                 ng-model="element">
-    </mct-include>
+    <div ng-repeat="element in controller.getElements()"
+         class="l-fixed-position-item"
+         ng-class="{ 's-not-selected': controller.selected() && !controller.selected(element) }"
+         ng-style="element.style"
+         ng-click="controller.select(element)">
+        <mct-include key="element.template"
+                     parameters="{ gridSize: controller.getGridSize() }"
+                     ng-model="element">
+        </mct-include>
+    </div>
 
     <!-- Selection highlight, handles -->
     <span ng-if="controller.selected()">
