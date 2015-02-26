@@ -73,13 +73,14 @@
 						left: $p;
 					}
 					&.l-value {
+//                        @include test(blue);
 						right: $p;
 						left: auto;
 						text-align: right;
 						&.telem-only {
-							@include test();
+//							@include test(red);
 							left: $p;
-							width: 100%;
+							width: auto;
 						}
 					}
 				}
