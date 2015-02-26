@@ -34,10 +34,10 @@ define(
 
             it("provides a style for positioning", function () {
                 var style = handle.style();
-                // 6 grid coords * 13 pixels - 4 pixels for centering
-                expect(style.left).toEqual('74px');
-                // 8 grid coords * 33 pixels - 4 pixels for centering
-                expect(style.top).toEqual('260px');
+                // 6 grid coords * 13 pixels - 3 pixels for centering
+                expect(style.left).toEqual('75px');
+                // 8 grid coords * 33 pixels - 3 pixels for centering
+                expect(style.top).toEqual('261px');
             });
 
             it("allows handles to be dragged", function () {
