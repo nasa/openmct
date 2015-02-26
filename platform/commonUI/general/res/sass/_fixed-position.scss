@@ -49,7 +49,7 @@
 		}
 		
 		.l-fixed-position-image {
-			background-size: contain;
+			background-size: cover;
 			background-repeat: no-repeat;
 			background-position: left top;
 		}
@@ -60,7 +60,7 @@
 			font-size: 0.8rem;
 			$p: $interiorMarginSm;
 			&.l-static-text {
-				overflow: auto;
+//				overflow: auto;
 				padding: $p;
 			}
 			&.l-telemetry {

@@ -235,7 +235,7 @@ define(
                     y: Math.floor(position.y / gridSize[1]),
                     id: id,
                     stroke: "transparent",
-                    color: "#717171",
+                    color: "#cccccc",
                     titled: true,
                     width: DEFAULT_DIMENSIONS[0],
                     height: DEFAULT_DIMENSIONS[1]
