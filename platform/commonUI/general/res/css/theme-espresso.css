@@ -629,9 +629,10 @@ span {
 
 /* line 57, ../sass/_icons.scss */
 .object-header .type-icon {
-  color: #ffc700; }
+  color: #ffc700;
+  margin-right: 5px; }
 
-/* line 64, ../sass/_icons.scss */
+/* line 65, ../sass/_icons.scss */
 .menu .type-icon,
 .tree-item .type-icon,
 .icon-btn .menu.dropdown .icon,
@@ -1366,12 +1367,11 @@ label.checkbox.custom {
 /* line 366, ../sass/controls/_controls.scss */
 .top-bar .object-header,
 .object-browse-bar .object-header {
-  font-size: 1.2em; }
+  font-size: 1.1em; }
   /* line 368, ../sass/controls/_controls.scss */
   .top-bar .object-header span,
   .object-browse-bar .object-header span {
-    display: inline-block;
-    margin-right: 5px; }
+    display: inline-block; }
 
 /******************************************************** VIEW-CONTROLS */
 /* line 377, ../sass/controls/_controls.scss */
