@@ -1,7 +1,7 @@
 /*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
-    ["../src/EditRepresenter"],
+    ["../../src/representers/EditRepresenter"],
     function (EditRepresenter) {
         "use strict";
 

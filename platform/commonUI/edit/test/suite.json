@@ -1,7 +1,4 @@
 [
-    "EditActionController",
-    "EditController",
-    "EditRepresenter",
     "actions/CancelAction",
     "actions/EditAction",
     "actions/PropertiesAction",
@@ -13,10 +10,13 @@
     "capabilities/EditableLookupCapability",
     "capabilities/EditablePersistenceCapability",
     "capabilities/EditorCapability",
+    "controllers/EditActionController",
+    "controllers/EditController",
     "controllers/EditPanesController",
     "objects/EditableDomainObject",
     "objects/EditableDomainObjectCache",
     "objects/EditableModelCache",
+    "representers/EditRepresenter",
     "representers/EditToolbar",
     "representers/EditToolbarRepresenter"
 ]
