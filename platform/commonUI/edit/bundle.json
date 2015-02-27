@@ -16,6 +16,11 @@
                 "key": "EditActionController",
                 "implementation": "EditActionController.js",
                 "depends": [ "$scope" ]
+            },
+            {
+                "key": "EditPanesController",
+                "implementation": "controllers/EditPanesController.js",
+                "depends": [ "$scope" ]
             }
         ],
         "actions": [
@@ -72,7 +77,7 @@
             {
                 "key": "edit-object",
                 "templateUrl": "templates/edit-object.html",
-                "uses": [ "view", "context" ]
+                "uses": [ "view" ]
             },
             {
                 "key": "edit-action-buttons",

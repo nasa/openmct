@@ -18,10 +18,13 @@
         </div>
         <div class="splitter"></div>
         <div class='abs pane right edit-objects menus-to-left'>
-            <div class='holder abs split-layout horizontal'>
+            <div class='holder abs split-layout horizontal'
+                 ng-controller='EditPanesController as editPanes'>
 	            <div class="abs pane top accordion" ng-controller="ToggleController as toggle">
                 <mct-container key="accordion" title="Library">
-                    <mct-representation key="'tree'" alias="foo1" mct-object="context.getRoot()">
+                    <mct-representation key="'tree'"
+                                        alias="foo1"
+                                        mct-object="editPanes.getRoot()">
                     </mct-representation>
                 </mct-container>
 		        </div>
