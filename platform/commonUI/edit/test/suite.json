@@ -13,6 +13,7 @@
     "capabilities/EditableLookupCapability",
     "capabilities/EditablePersistenceCapability",
     "capabilities/EditorCapability",
+    "controllers/EditPanesController",
     "objects/EditableDomainObject",
     "objects/EditableDomainObjectCache",
     "objects/EditableModelCache",
