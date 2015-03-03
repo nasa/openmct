@@ -86,6 +86,11 @@ define(
                 expect(mockScope.$apply).toHaveBeenCalledWith(EXPRESSION);
             });
 
+            // This would trigger an infinite digest exception
+            it("does not call $apply during construction", function () {
+                expect(mockScope.$apply).not.toHaveBeenCalled();
+            });
+
         });
     }
 );

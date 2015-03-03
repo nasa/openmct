@@ -39,7 +39,7 @@ define(
                 }
 
                 // Initialize state in scope
-                updateScope();
+                parsed.assign(scope, element[0][property]);
 
                 // Update element state when value in scope changes
                 scope.$watch(expr, updateElement);
