@@ -7,6 +7,8 @@ define(
 
         describe("The Fixed Position controller", function () {
             var mockScope,
+                mockQ,
+                mockDialogService,
                 mockSubscriber,
                 mockFormatter,
                 mockDomainObject,
@@ -58,6 +60,11 @@ define(
                     'telemetrySubscriber',
                     [ 'subscribe' ]
                 );
+                mockQ = jasmine.createSpyObj('$q', ['when']);
+                mockDialogService = jasmine.createSpyObj(
+                    'dialogService',
+                    ['getUserInput']
+                );
                 mockFormatter = jasmine.createSpyObj(
                     'telemetryFormatter',
                     [ 'formatDomainValue', 'formatRangeValue' ]
@@ -99,6 +106,8 @@ define(
 
                 controller = new FixedController(
                     mockScope,
+                    mockQ,
+                    mockDialogService,
                     mockSubscriber,
                     mockFormatter
                 );
@@ -263,8 +272,6 @@ define(
                     .toHaveBeenCalledWith(jasmine.any(String));
             });
 
-
-
             it("unsubscribes when destroyed", function () {
                 // Make an object available
                 findWatch('domainObject')(mockDomainObject);
@@ -274,6 +281,12 @@ define(
                 findOn('$destroy')();
                 // Should have unsubscribed
                 expect(mockSubscription.unsubscribe).toHaveBeenCalled();
+            });
+
+            it("exposes its grid size", function () {
+                // Template needs to be able to pass this into line
+                // elements to size SVGs appropriately
+                expect(controller.getGridSize()).toEqual(testGrid);
             });
         });
     }

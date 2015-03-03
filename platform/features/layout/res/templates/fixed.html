@@ -14,6 +14,7 @@
     <mct-include ng-repeat="element in controller.getElements()"
                  style="position: absolute;"
                  key="element.template"
+                 parameters="{ gridSize: controller.getGridSize() }"
                  ng-class="{ test: controller.selected(element) }"
                  ng-style="element.style"
                  ng-click="controller.select(element)"

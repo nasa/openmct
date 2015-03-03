@@ -26,9 +26,32 @@
                             "items": [
                                 {
                                     "method": "add",
-                                    "control": "button",
+                                    "glyph": "+",
+                                    "control": "menu-button",
                                     "text": "Add",
-                                    "inclusive": true
+                                    "inclusive": true,
+                                    "options": [
+                                        {
+                                            "name": "Box",
+                                            "glyph": "\u2610",
+                                            "key": "fixed.box"
+                                        },
+                                        {
+                                            "name": "Line",
+                                            "glyph": "-",
+                                            "key": "fixed.line"
+                                        },
+                                        {
+                                            "name": "Text",
+                                            "glyph": "\u1D1B",
+                                            "key": "fixed.text"
+                                        },
+                                        {
+                                            "name": "Image",
+                                            "glyph": "\u2353",
+                                            "key": "fixed.image"
+                                        }
+                                    ]
                                 }
                             ]
                         },
@@ -61,13 +84,35 @@
             {
                 "key": "FixedController",
                 "implementation": "FixedController.js",
-                "depends": [ "$scope", "telemetrySubscriber", "telemetryFormatter" ]
+                "depends": [
+                    "$scope",
+                    "$q",
+                    "dialogService",
+                    "telemetrySubscriber",
+                    "telemetryFormatter"
+                ]
             }
         ],
         "templates": [
             {
                 "key": "fixed.telemetry",
                 "templateUrl": "templates/elements/telemetry.html"
+            },
+            {
+                "key": "fixed.box",
+                "templateUrl": "templates/elements/box.html"
+            },
+            {
+                "key": "fixed.line",
+                "templateUrl": "templates/elements/line.html"
+            },
+            {
+                "key": "fixed.text",
+                "templateUrl": "templates/elements/text.html"
+            },
+            {
+                "key": "fixed.image",
+                "templateUrl": "templates/elements/image.html"
             }
         ],
         "types": [

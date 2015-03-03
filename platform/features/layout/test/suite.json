@@ -5,7 +5,9 @@
     "LayoutDrag",
     "LayoutSelection",
     "elements/AccessorMutator",
+    "elements/ElementFactory",
     "elements/ElementProxies",
     "elements/ElementProxy",
+    "elements/LineProxy",
     "elements/TelemetryProxy"
 ]

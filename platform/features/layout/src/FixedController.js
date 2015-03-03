@@ -17,7 +17,7 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function FixedController($scope, telemetrySubscriber, telemetryFormatter) {
+        function FixedController($scope, $q, dialogService, telemetrySubscriber, telemetryFormatter) {
             var gridSize = DEFAULT_GRID_SIZE,
                 gridExtent = DEFAULT_GRID_EXTENT,
                 dragging,
@@ -52,13 +52,13 @@ define(
 
             // Convert from element x/y/width/height to an
             // apropriate ng-style argument, to position elements.
-            function convertPosition(raw) {
+            function convertPosition(elementProxy) {
                 // Multiply position/dimensions by grid size
                 return {
-                    left: (gridSize[0] * raw.x) + 'px',
-                    top: (gridSize[1] * raw.y) + 'px',
-                    width: (gridSize[0] * raw.width) + 'px',
-                    height: (gridSize[1] * raw.height) + 'px'
+                    left: (gridSize[0] * elementProxy.x()) + 'px',
+                    top: (gridSize[1] * elementProxy.y()) + 'px',
+                    width: (gridSize[0] * elementProxy.width()) + 'px',
+                    height: (gridSize[1] * elementProxy.height()) + 'px'
                 };
             }
 
@@ -89,7 +89,7 @@ define(
 
                 if (e) {
                     // Provide a displayable position (convert from grid to px)
-                    e.style = convertPosition(element);
+                    e.style = convertPosition(e);
                     // Template names are same as type names, presently
                     e.template = element.type;
                 }
@@ -163,8 +163,8 @@ define(
                 subscribe($scope.domainObject);
             }
 
-            // Position a panel after a drop event
-            function handleDrop(e, id, position) {
+            // Add an element to this view
+            function addElement(element) {
                 // Ensure that configuration field is populated
                 $scope.configuration = $scope.configuration || {};
                 // Make sure there is a "elements" field in the
@@ -172,7 +172,23 @@ define(
                 $scope.configuration.elements =
                     $scope.configuration.elements || [];
                 // Store the position of this element.
-                $scope.configuration.elements.push({
+                $scope.configuration.elements.push(element);
+                // Refresh displayed elements
+                refreshElements();
+                // Select the newly-added element
+                if (selection) {
+                    selection.select(elementProxies[elementProxies.length - 1]);
+                }
+                // Mark change as persistable
+                if ($scope.commit) {
+                    $scope.commit("Dropped an element.");
+                }
+            }
+
+            // Position a panel after a drop event
+            function handleDrop(e, id, position) {
+                // Store the position of this element.
+                addElement({
                     type: "fixed.telemetry",
                     x: Math.floor(position.x / gridSize[0]),
                     y: Math.floor(position.y / gridSize[1]),
@@ -180,17 +196,14 @@ define(
                     width: DEFAULT_DIMENSIONS[0],
                     height: DEFAULT_DIMENSIONS[1]
                 });
-                // Mark change as persistable
-                if ($scope.commit) {
-                    $scope.commit("Dropped an element.");
-                }
             }
+
 
             //  Track current selection state
             if (Array.isArray($scope.selection)) {
                 selection = new LayoutSelection(
                     $scope.selection,
-                    new FixedProxy($scope.configuration)
+                    new FixedProxy(addElement, $q, dialogService)
                 );
             }
 
@@ -221,6 +234,14 @@ define(
                  */
                 getCellStyles: function () {
                     return cellStyles;
+                },
+                /**
+                 * Get the size of the grid, in pixels. The returned array
+                 * is in the form `[x, y]`.
+                 * @returns {number[]} the grid size
+                 */
+                getGridSize: function () {
+                    return gridSize;
                 },
                 /**
                  * Set the size of the viewable fixed position area.
@@ -303,9 +324,11 @@ define(
                  */
                 continueDrag: function (delta) {
                     if (dragging) {
+                        // Update x/y values
                         dragging.element.x(dragging.x + Math.round(delta[0] / gridSize[0]));
                         dragging.element.y(dragging.y + Math.round(delta[1] / gridSize[1]));
-                        dragging.element.style = convertPosition(dragging.element.element);
+                        // Update display position
+                        dragging.element.style = convertPosition(dragging.element);
                     }
                 },
                 /**
