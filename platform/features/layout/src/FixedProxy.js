@@ -21,9 +21,14 @@ define(
                 /**
                  * Add a new visual element to this view.
                  */
-                add: function (type) {
+                add: function (type, state) {
                     // Place a configured element into the view configuration
                     function addElement(element) {
+                        // Populate element with additional state
+                        Object.keys(state || {}).forEach(function (k) {
+                            element[k] = state[k];
+                        });
+
                         // Configure common properties of the element
                         element.x = element.x || 0;
                         element.y = element.y || 0;
