@@ -6,16 +6,17 @@ define(
         "use strict";
 
         /**
-         * Tracks selection state for Layout and Fixed Position views.
-         * This manages and mutates the provided selection array in-place,
-         * and takes care to only modify the array elements it manages
-         * (the view's proxy, and the single selection); selections may be
-         * added or removed elsewhere provided that similar care is taken
-         * elsewhere.
+         * Tracks selection state for editable views. Selection is
+         * implemented such that (from the toolbar's perspective)
+         * up to two objects can be "selected" at any given time:
          *
-         * @param {Array} selection the selection array from the view's scope
-         * @param [proxy] an object which represents the selection of the view
-         *        itself (which handles view-level toolbar behavior)
+         * * The view proxy (see the `proxy` method), which provides
+         *   an interface for interacting with the view itself (e.g.
+         *   for buttons like "Add")
+         * * The selection, for single selected elements within the
+         *   view.
+         *
+         * @constructor
          */
         function EditToolbarSelection() {
             var selection = [ {} ],

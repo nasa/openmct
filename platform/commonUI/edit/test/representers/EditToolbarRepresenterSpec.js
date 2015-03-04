@@ -77,9 +77,9 @@ define(
                 });
 
                 // Update the selection
-                mockScope.selection.push(testObject);
+                mockScope.selection.select(testObject);
                 expect(mockScope.$watchCollection.mostRecentCall.args[0])
-                    .toEqual('selection'); // Make sure we're using right watch
+                    .toEqual('selection.all()'); // Make sure we're using right watch
                 mockScope.$watchCollection.mostRecentCall.args[1]([testObject]);
 
                 // Update the state
@@ -105,9 +105,9 @@ define(
                 });
 
                 // Update the selection
-                mockScope.selection.push(testObject);
+                mockScope.selection.select(testObject);
                 expect(mockScope.$watchCollection.mostRecentCall.args[0])
-                    .toEqual('selection'); // Make sure we're using right watch
+                    .toEqual('selection.all()'); // Make sure we're using right watch
                 mockScope.$watchCollection.mostRecentCall.args[1]([testObject]);
 
                 // Invoke the first watch (assumed to be for toolbar state)
