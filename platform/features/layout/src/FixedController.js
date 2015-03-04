@@ -1,8 +1,8 @@
 /*global define*/
 
 define(
-    ['./LayoutDrag', './LayoutSelection', './FixedProxy', './elements/ElementProxies'],
-    function (LayoutDrag, LayoutSelection, FixedProxy, ElementProxies) {
+    ['./LayoutDrag', './FixedProxy', './elements/ElementProxies'],
+    function (LayoutDrag, FixedProxy, ElementProxies) {
         "use strict";
 
         var DEFAULT_DIMENSIONS = [ 2, 1 ],
@@ -208,14 +208,8 @@ define(
                 });
             }
 
-
             //  Track current selection state
-            if (Array.isArray($scope.selection)) {
-                selection = new LayoutSelection(
-                    $scope.selection,
-                    new FixedProxy(addElement, $q, dialogService)
-                );
-            }
+            selection = $scope.selection;
 
             // Refresh list of elements whenever model changes
             $scope.$watch("model.modified", refreshElements);
