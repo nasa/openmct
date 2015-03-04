@@ -200,14 +200,11 @@ input[type="text"] {
   border-top: 1px solid #666666;
   color: #999999;
   display: inline-block;
-  margin-right: 5px;
-  margin-top: 1px;
-  padding: 0 25px 0 0;
-  overflow: hidden;
-  vertical-align: middle; }
   cursor: pointer;
+  display: inline-block;
+  margin: 0 0 2px 2px;
   position: relative; }
-  /* line 83, ../sass/_mixins.scss */
+  /* line 127, ../sass/_mixins.scss */
   .form-control.select:not(.disabled):hover {
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #4d4d4d));
     background-image: -webkit-linear-gradient(#666666, #4d4d4d);
