@@ -6,9 +6,13 @@
 }
 
 @mixin trans-prop-nice-fade($t: 0.5s) {
-    @include transition-property(visibility, opacity, background-color);
-    @include transition-duration($t);
-    @include transition-timing-function(ease-in-out);
+	@if $t == 0 {
+		@include transition-property(none);
+	} @else {
+		@include transition-property(visibility, opacity, background-color, border-color);
+		@include transition-duration($t);
+		@include transition-timing-function(ease-in-out);
+	}
 }
 
 @mixin trans-prop-nice-resize-h($t: 0.5s) {
@@ -48,13 +52,20 @@
 	background-size: $d $d;
 }
 
-@mixin bgTicks($c: $colorBodyFg) {
-	$c: $c;
-	@include background-image(linear-gradient(90deg,
+@mixin bgTicks($c: $colorBodyFg, $repeatDir: 'x') {
+	$deg: 90deg;
+	@if ($repeatDir != 'x') {
+		$deg: 0deg;
+		$repeatDir: repeat-y;
+	} @else {
+		$repeatDir: repeat-x;
+	}
+
+	@include background-image(linear-gradient($deg,
 		$c 1px, transparent 1px,
 		transparent 100%
 	));
-	background-repeat: repeat-x;
+	background-repeat: $repeatDir;
 }
 
 @mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $hover: false) {
@@ -63,6 +74,7 @@
 	@include box-sizing(border-box);
 //	@include box-shadow(rgba(black, 0.3) 0 1px 2px);
 	@include boxShdwSubtle();
+	border: none;
 	border-top: 1px solid lighten($bg, 20%);
 	color: $fg;
 	display: inline-block;

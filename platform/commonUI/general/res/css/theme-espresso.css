@@ -364,6 +364,115 @@ span {
 .vscroll {
   overflow-y: auto; }
 
+/* line 2, ../sass/_fixed-position.scss */
+.t-fixed-position.l-fixed-position {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: auto;
+  height: auto; }
+  /* line 8, ../sass/_fixed-position.scss */
+  .t-fixed-position.l-fixed-position .l-grid-holder {
+    position: relative;
+    height: 100%;
+    width: 100%; }
+    /* line 11, ../sass/_fixed-position.scss */
+    .t-fixed-position.l-fixed-position .l-grid-holder .l-grid {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      pointer-events: none;
+      z-index: 0; }
+      /* line 17, ../sass/_fixed-position.scss */
+      .t-fixed-position.l-fixed-position .l-grid-holder .l-grid.l-grid-x {
+        background-image: -webkit-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
+        background-image: -moz-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
+        background-image: -o-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
+        background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
+        background-repeat: repeat-x; }
+      /* line 21, ../sass/_fixed-position.scss */
+      .t-fixed-position.l-fixed-position .l-grid-holder .l-grid.l-grid-y {
+        background-image: -webkit-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
+        background-image: -moz-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
+        background-image: -o-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
+        background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
+        background-repeat: repeat-y; }
+/* line 28, ../sass/_fixed-position.scss */
+.t-fixed-position .l-fixed-position-item {
+  position: absolute;
+  border: 1px solid transparent; }
+  /* line 32, ../sass/_fixed-position.scss */
+  .t-fixed-position .l-fixed-position-item.s-selected {
+    -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
+    -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
+    box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
+    border-color: #0099cc;
+    cursor: move; }
+  /* line 37, ../sass/_fixed-position.scss */
+  .t-fixed-position .l-fixed-position-item.s-not-selected {
+    opacity: 0.8; }
+  /* line 43, ../sass/_fixed-position.scss */
+  .t-fixed-position .l-fixed-position-item .l-fixed-position-box,
+  .t-fixed-position .l-fixed-position-item .l-fixed-position-image,
+  .t-fixed-position .l-fixed-position-item .l-fixed-position-text {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%; }
+  /* line 51, ../sass/_fixed-position.scss */
+  .t-fixed-position .l-fixed-position-item .l-fixed-position-image {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: left top; }
+  /* line 57, ../sass/_fixed-position.scss */
+  .t-fixed-position .l-fixed-position-item .l-fixed-position-text {
+    text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px;
+    border: 1px solid transparent;
+    font-size: 0.8rem; }
+    /* line 62, ../sass/_fixed-position.scss */
+    .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-static-text {
+      padding: 3px; }
+    /* line 67, ../sass/_fixed-position.scss */
+    .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem {
+      overflow: hidden;
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      bottom: 3px;
+      left: 3px;
+      width: auto;
+      height: auto;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      width: 50%; }
+      /* line 71, ../sass/_fixed-position.scss */
+      .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-title {
+        right: auto;
+        left: 3px; }
+      /* line 75, ../sass/_fixed-position.scss */
+      .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-value {
+        right: 3px;
+        left: auto;
+        text-align: right; }
+        /* line 80, ../sass/_fixed-position.scss */
+        .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-value.telem-only {
+          left: 3px;
+          width: auto; }
+/* line 91, ../sass/_fixed-position.scss */
+.t-fixed-position .l-fixed-position-item-handle {
+  background: rgba(0, 153, 204, 0.5);
+  cursor: crosshair;
+  border: 1px solid #0099cc;
+  position: absolute; }
+
+/* line 103, ../sass/_fixed-position.scss */
+.edit-mode .t-fixed-position .l-fixed-position-item:not(.s-selected):hover {
+  border: 1px dotted rgba(0, 153, 204, 0.5); }
+
 /* line 3, ../sass/_about.scss */
 .t-about {
   line-height: 120%; }
@@ -500,7 +609,7 @@ span {
   display: inline-block;
   font-size: 1rem;
   vertical-align: middle; }
-  /* line 159, ../sass/_mixins.scss */
+  /* line 171, ../sass/_mixins.scss */
   .invoke-menu:hover {
     color: #33ccff; }
 
@@ -512,15 +621,16 @@ span {
 /* line 49, ../sass/_icons.scss */
 .icon-buttons-main .invoke-menu {
   color: #666666; }
-  /* line 159, ../sass/_mixins.scss */
+  /* line 171, ../sass/_mixins.scss */
   .icon-buttons-main .invoke-menu:hover {
     color: #999999; }
 
 /* line 57, ../sass/_icons.scss */
 .object-header .type-icon {
-  color: #ffc700; }
+  color: #ffc700;
+  margin-right: 5px; }
 
-/* line 64, ../sass/_icons.scss */
+/* line 65, ../sass/_icons.scss */
 .menu .type-icon,
 .tree-item .type-icon,
 .icon-btn .menu.dropdown .icon,
@@ -652,10 +762,11 @@ span {
     -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+    border: none;
     border-top: 1px solid #666666;
     color: #999999;
     display: inline-block; }
-    /* line 70, ../sass/_mixins.scss */
+    /* line 82, ../sass/_mixins.scss */
     .s-btn.s-very-subtle:hover, .s-very-subtle.s-icon-btn:hover {
       background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #595959));
       background-image: -webkit-linear-gradient(#666666, #595959);
@@ -689,6 +800,64 @@ span.l-btn span,
 a.l-btn,
 a.l-btn span {
   display: inline-block; }
+
+/* line 1, ../sass/controls/_color-palette.scss */
+.l-color-palette {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 5px !important; }
+  /* line 10, ../sass/controls/_color-palette.scss */
+  .l-color-palette .l-palette-row {
+    overflow: hidden;
+    *zoom: 1;
+    line-height: 16px;
+    width: 170px; }
+    /* line 15, ../sass/controls/_color-palette.scss */
+    .l-color-palette .l-palette-row .l-palette-item {
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      text-shadow: rgba(0, 0, 0, 0.8) 0 1px 2px;
+      -webkit-transition-property: visibility, opacity, background-color, border-color;
+      -moz-transition-property: visibility, opacity, background-color, border-color;
+      -o-transition-property: visibility, opacity, background-color, border-color;
+      transition-property: visibility, opacity, background-color, border-color;
+      -webkit-transition-duration: 0.25s;
+      -moz-transition-duration: 0.25s;
+      -o-transition-duration: 0.25s;
+      transition-duration: 0.25s;
+      -webkit-transition-timing-function: ease-in-out;
+      -moz-transition-timing-function: ease-in-out;
+      -o-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out;
+      border: 1px solid transparent;
+      color: white;
+      display: block;
+      font-family: 'symbolsfont';
+      float: left;
+      height: 16px;
+      width: 16px;
+      line-height: 16px;
+      margin: 0 1px 1px 0;
+      text-align: center;
+      vertical-align: middle; }
+    /* line 32, ../sass/controls/_color-palette.scss */
+    .l-color-palette .l-palette-row .s-palette-item:hover {
+      -webkit-transition-property: none;
+      -moz-transition-property: none;
+      -o-transition-property: none;
+      transition-property: none;
+      border-color: white !important; }
+    /* line 38, ../sass/controls/_color-palette.scss */
+    .l-color-palette .l-palette-row .l-palette-item-label {
+      margin-left: 5px; }
+    /* line 42, ../sass/controls/_color-palette.scss */
+    .l-color-palette .l-palette-row.l-option-row {
+      margin-bottom: 5px; }
+      /* line 44, ../sass/controls/_color-palette.scss */
+      .l-color-palette .l-palette-row.l-option-row .s-palette-item {
+        border-color: #999999; }
 
 /* line 3, ../sass/controls/_controls.scss */
 .control.view-control .icon {
@@ -815,6 +984,7 @@ a.l-btn span {
     -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+    border: none;
     border-top: 1px solid #33ccff;
     color: #999999;
     display: inline-block;
@@ -824,7 +994,7 @@ a.l-btn span {
     background-image: -o-linear-gradient(#33ccff, #0099cc);
     background-image: linear-gradient(#33ccff, #0099cc);
     color: #ccf2ff; }
-    /* line 123, ../sass/_mixins.scss */
+    /* line 135, ../sass/_mixins.scss */
     .btn.major:not(.disabled):hover {
       background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #66d9ff), color-stop(100%, #00bfff));
       background-image: -webkit-linear-gradient(#66d9ff, #00bfff);
@@ -849,6 +1019,7 @@ a.l-btn span {
       -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
       -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
       box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+      border: none;
       border-top: 1px solid #4dd2ff;
       color: #999999;
       display: inline-block;
@@ -858,7 +1029,7 @@ a.l-btn span {
       background-image: -o-linear-gradient(#4dd2ff, #00ace6);
       background-image: linear-gradient(#4dd2ff, #00ace6);
       color: #ccf2ff; }
-      /* line 123, ../sass/_mixins.scss */
+      /* line 135, ../sass/_mixins.scss */
       .btn.major:hover:not(.disabled):hover {
         background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #80dfff), color-stop(100%, #1ac6ff));
         background-image: -webkit-linear-gradient(#80dfff, #1ac6ff);
@@ -892,10 +1063,11 @@ a.l-btn span {
     -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+    border: none;
     border-top: 1px solid #999999;
     color: #cccccc;
     display: inline-block; }
-    /* line 115, ../sass/_mixins.scss */
+    /* line 127, ../sass/_mixins.scss */
     .btn.subtle:not(.disabled):hover {
       background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #999999), color-stop(100%, #808080));
       background-image: -webkit-linear-gradient(#999999, #808080);
@@ -920,10 +1092,11 @@ a.l-btn span {
     -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+    border: none;
     border-top: 1px solid #666666;
     color: #b3b3b3;
     display: inline-block; }
-    /* line 115, ../sass/_mixins.scss */
+    /* line 127, ../sass/_mixins.scss */
     .btn.very-subtle:not(.disabled):hover {
       background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #4d4d4d));
       background-image: -webkit-linear-gradient(#666666, #4d4d4d);
@@ -954,6 +1127,13 @@ a.l-btn span {
   margin-left: 5px; }
 
 /* line 157, ../sass/controls/_controls.scss */
+.l-composite-control {
+  vertical-align: middle; }
+  /* line 160, ../sass/controls/_controls.scss */
+  .l-composite-control.l-checkbox .composite-control-label {
+    line-height: 18px; }
+
+/* line 166, ../sass/controls/_controls.scss */
 .control-group {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -961,16 +1141,16 @@ a.l-btn span {
   border-left: 1px solid #4d4d4d;
   padding: 0 5px;
   position: relative; }
-  /* line 164, ../sass/controls/_controls.scss */
+  /* line 173, ../sass/controls/_controls.scss */
   .control-group:first-child {
     border-left: none;
     padding-left: 0; }
 
-/* line 170, ../sass/controls/_controls.scss */
+/* line 179, ../sass/controls/_controls.scss */
 .btn-set {
   display: inline-block;
   position: relative; }
-  /* line 175, ../sass/controls/_controls.scss */
+  /* line 184, ../sass/controls/_controls.scss */
   .btn-set .btn,
   .btn-set .t-btn {
     -webkit-border-radius: 0;
@@ -980,7 +1160,7 @@ a.l-btn span {
     border-radius: 0;
     border-left: 1px solid #666666;
     margin-left: 0; }
-    /* line 179, ../sass/controls/_controls.scss */
+    /* line 188, ../sass/controls/_controls.scss */
     .btn-set .btn:first-child,
     .btn-set .t-btn:first-child {
       border-left: none;
@@ -990,7 +1170,7 @@ a.l-btn span {
       -moz-border-radius-bottomleft: 3px;
       -webkit-border-bottom-left-radius: 3px;
       border-bottom-left-radius: 3px; }
-    /* line 183, ../sass/controls/_controls.scss */
+    /* line 192, ../sass/controls/_controls.scss */
     .btn-set .btn:last-child,
     .btn-set .t-btn:last-child {
       -moz-border-radius-topright: 3px;
@@ -1000,7 +1180,7 @@ a.l-btn span {
       -webkit-border-bottom-right-radius: 3px;
       border-bottom-right-radius: 3px; }
 
-/* line 194, ../sass/controls/_controls.scss */
+/* line 203, ../sass/controls/_controls.scss */
 .object-browse-bar .btn,
 .object-browse-bar .t-btn,
 .top-bar .buttons-main .btn,
@@ -1011,7 +1191,7 @@ a.l-btn span {
   font-size: 12.6px;
   height: 28px;
   line-height: 28px; }
-  /* line 200, ../sass/controls/_controls.scss */
+  /* line 209, ../sass/controls/_controls.scss */
   .object-browse-bar .btn .icon:not(.invoke-menu),
   .object-browse-bar .t-btn .icon:not(.invoke-menu),
   .top-bar .buttons-main .btn .icon:not(.invoke-menu),
@@ -1021,21 +1201,22 @@ a.l-btn span {
     font-size: 150%;
     vertical-align: middle; }
 
-/* line 208, ../sass/controls/_controls.scss */
+/* line 217, ../sass/controls/_controls.scss */
 label.checkbox.custom {
   cursor: pointer;
   display: inline-block;
   line-height: 14px;
   margin-right: 20px;
   padding-left: 19px;
-  position: relative; }
-  /* line 218, ../sass/controls/_controls.scss */
+  position: relative;
+  vertical-align: top; }
+  /* line 228, ../sass/controls/_controls.scss */
   label.checkbox.custom em {
     color: #999999;
     display: inline-block;
     height: 14px;
     min-width: 14px; }
-    /* line 223, ../sass/controls/_controls.scss */
+    /* line 233, ../sass/controls/_controls.scss */
     label.checkbox.custom em:before {
       -webkit-border-radius: 2.25px;
       -moz-border-radius: 2.25px;
@@ -1056,51 +1237,51 @@ label.checkbox.custom {
       top: 0;
       position: absolute;
       text-align: center; }
-  /* line 241, ../sass/controls/_controls.scss */
+  /* line 251, ../sass/controls/_controls.scss */
   label.checkbox.custom.no-text {
     overflow: hidden;
     margin-right: 0;
     padding-left: 0;
     height: 14px;
     width: 14px; }
-    /* line 247, ../sass/controls/_controls.scss */
+    /* line 257, ../sass/controls/_controls.scss */
     label.checkbox.custom.no-text em {
       overflow: hidden; }
-  /* line 251, ../sass/controls/_controls.scss */
+  /* line 261, ../sass/controls/_controls.scss */
   label.checkbox.custom input {
     display: none; }
-    /* line 253, ../sass/controls/_controls.scss */
+    /* line 263, ../sass/controls/_controls.scss */
     label.checkbox.custom input:checked ~ em:before {
       background: #0099cc;
       color: #ccf2ff;
       content: "2"; }
 
-/* line 261, ../sass/controls/_controls.scss */
+/* line 271, ../sass/controls/_controls.scss */
 .input-labeled {
   margin-left: 5px; }
-  /* line 263, ../sass/controls/_controls.scss */
+  /* line 273, ../sass/controls/_controls.scss */
   .input-labeled label {
     display: inline-block;
     margin-right: 3px; }
-  /* line 267, ../sass/controls/_controls.scss */
+  /* line 277, ../sass/controls/_controls.scss */
   .input-labeled.inline {
     display: inline-block; }
-  /* line 270, ../sass/controls/_controls.scss */
+  /* line 280, ../sass/controls/_controls.scss */
   .input-labeled:first-child {
     margin-left: 0; }
 
-/* line 275, ../sass/controls/_controls.scss */
+/* line 285, ../sass/controls/_controls.scss */
 .btn-menu label.checkbox.custom {
   margin-left: 5px; }
 
-/* line 280, ../sass/controls/_controls.scss */
+/* line 290, ../sass/controls/_controls.scss */
 .item .checkbox.checked label {
   -webkit-box-shadow: none;
   -moz-box-shadow: none;
   box-shadow: none;
   border-bottom: none; }
 
-/* line 286, ../sass/controls/_controls.scss */
+/* line 296, ../sass/controls/_controls.scss */
 .btn-menu {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #4d4d4d), color-stop(100%, #404040));
   background-image: -webkit-linear-gradient(#4d4d4d, #404040);
@@ -1118,51 +1299,52 @@ label.checkbox.custom {
   -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+  border: none;
   border-top: 1px solid #666666;
   color: #999999;
   display: inline-block;
   height: 20px;
   line-height: 20px; }
-  /* line 115, ../sass/_mixins.scss */
+  /* line 127, ../sass/_mixins.scss */
   .btn-menu:not(.disabled):hover {
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #4d4d4d));
     background-image: -webkit-linear-gradient(#666666, #4d4d4d);
     background-image: -moz-linear-gradient(#666666, #4d4d4d);
     background-image: -o-linear-gradient(#666666, #4d4d4d);
     background-image: linear-gradient(#666666, #4d4d4d); }
-  /* line 293, ../sass/controls/_controls.scss */
+  /* line 303, ../sass/controls/_controls.scss */
   .btn-menu.dropdown {
     padding-right: 7px; }
-  /* line 298, ../sass/controls/_controls.scss */
+  /* line 308, ../sass/controls/_controls.scss */
   .btn-menu:not(.disabled):hover {
     color: #cccccc; }
-  /* line 302, ../sass/controls/_controls.scss */
+  /* line 312, ../sass/controls/_controls.scss */
   .btn-menu.btn-invoke-menu {
     color: #0099cc;
     padding: 0 5px; }
-    /* line 306, ../sass/controls/_controls.scss */
+    /* line 316, ../sass/controls/_controls.scss */
     .btn-menu.btn-invoke-menu:hover {
       color: deepskyblue; }
-  /* line 311, ../sass/controls/_controls.scss */
+  /* line 325, ../sass/controls/_controls.scss */
   .btn-menu .type-icon {
     margin-right: 5px; }
-  /* line 314, ../sass/controls/_controls.scss */
+  /* line 328, ../sass/controls/_controls.scss */
   .btn-menu .menu {
     text-align: left; }
-    /* line 317, ../sass/controls/_controls.scss */
+    /* line 331, ../sass/controls/_controls.scss */
     .btn-menu .menu .ui-symbol.icon {
       width: 12px; }
 
-/* line 323, ../sass/controls/_controls.scss */
+/* line 337, ../sass/controls/_controls.scss */
 .top-bar .btn-menu {
   height: 35px;
   line-height: 35px;
   padding-right: 10px; }
-  /* line 331, ../sass/controls/_controls.scss */
+  /* line 345, ../sass/controls/_controls.scss */
   .top-bar .btn-menu.browse-btn {
     margin-right: 5px;
     padding-left: 35px; }
-    /* line 334, ../sass/controls/_controls.scss */
+    /* line 348, ../sass/controls/_controls.scss */
     .top-bar .btn-menu.browse-btn .badge {
       -webkit-border-radius: 4.5px;
       -moz-border-radius: 4.5px;
@@ -1181,31 +1363,30 @@ label.checkbox.custom {
       height: auto; }
 
 /******************************************************** OBJECT-HEADER */
-/* line 351, ../sass/controls/_controls.scss */
+/* line 365, ../sass/controls/_controls.scss */
 .object-header {
   display: inline-block;
   font-size: 1em; }
-  /* line 354, ../sass/controls/_controls.scss */
+  /* line 368, ../sass/controls/_controls.scss */
   .object-header .title {
     color: white; }
-  /* line 357, ../sass/controls/_controls.scss */
+  /* line 371, ../sass/controls/_controls.scss */
   .object-header .type-icon {
     font-size: 1.5em;
     margin-right: 5px;
     vertical-align: middle; }
 
-/* line 366, ../sass/controls/_controls.scss */
+/* line 380, ../sass/controls/_controls.scss */
 .top-bar .object-header,
 .object-browse-bar .object-header {
-  font-size: 1.2em; }
-  /* line 368, ../sass/controls/_controls.scss */
+  font-size: 1.1em; }
+  /* line 382, ../sass/controls/_controls.scss */
   .top-bar .object-header span,
   .object-browse-bar .object-header span {
-    display: inline-block;
-    margin-right: 5px; }
+    display: inline-block; }
 
 /******************************************************** VIEW-CONTROLS */
-/* line 377, ../sass/controls/_controls.scss */
+/* line 391, ../sass/controls/_controls.scss */
 .view-controls .view-type {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -1219,16 +1400,16 @@ label.checkbox.custom {
   line-height: 20px;
   padding-left: 5px;
   padding-right: 5px; }
-  /* line 388, ../sass/controls/_controls.scss */
+  /* line 402, ../sass/controls/_controls.scss */
   .view-controls .view-type.cur {
     background: #666666; }
 
-/* line 393, ../sass/controls/_controls.scss */
+/* line 407, ../sass/controls/_controls.scss */
 .edit-mode .top-bar .control-set.edit-view-controls {
   margin-right: 50px; }
 
 /******************************************************** SLIDERS */
-/* line 404, ../sass/controls/_controls.scss */
+/* line 418, ../sass/controls/_controls.scss */
 .slider .slot {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -1251,7 +1432,7 @@ label.checkbox.custom {
   right: 0;
   bottom: auto;
   left: 0; }
-/* line 415, ../sass/controls/_controls.scss */
+/* line 429, ../sass/controls/_controls.scss */
 .slider .knob {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #4d4d4d), color-stop(100%, #404040));
   background-image: -webkit-linear-gradient(#4d4d4d, #404040);
@@ -1269,6 +1450,7 @@ label.checkbox.custom {
   -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+  border: none;
   border-top: 1px solid #666666;
   color: #999999;
   display: inline-block;
@@ -1280,14 +1462,14 @@ label.checkbox.custom {
   auto: 0;
   bottom: auto;
   left: auto; }
-  /* line 115, ../sass/_mixins.scss */
+  /* line 127, ../sass/_mixins.scss */
   .slider .knob:not(.disabled):hover {
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #4d4d4d));
     background-image: -webkit-linear-gradient(#666666, #4d4d4d);
     background-image: -moz-linear-gradient(#666666, #4d4d4d);
     background-image: -o-linear-gradient(#666666, #4d4d4d);
     background-image: linear-gradient(#666666, #4d4d4d); }
-  /* line 87, ../sass/_mixins.scss */
+  /* line 99, ../sass/_mixins.scss */
   .slider .knob:before {
     content: '';
     display: block;
@@ -1298,15 +1480,15 @@ label.checkbox.custom {
     left: 2px;
     bottom: 5px;
     top: 5px; }
-  /* line 108, ../sass/_mixins.scss */
+  /* line 120, ../sass/_mixins.scss */
   .slider .knob:not(.disabled):hover:before {
     border-color: rgba(0, 153, 204, 0.9); }
-  /* line 426, ../sass/controls/_controls.scss */
+  /* line 440, ../sass/controls/_controls.scss */
   .slider .knob:before {
     top: 1px;
     bottom: 3px;
     left: 5px; }
-/* line 433, ../sass/controls/_controls.scss */
+/* line 447, ../sass/controls/_controls.scss */
 .slider .range {
   background: rgba(0, 153, 204, 0.6);
   cursor: ew-resize;
@@ -1317,12 +1499,12 @@ label.checkbox.custom {
   left: auto;
   height: auto;
   width: auto; }
-  /* line 443, ../sass/controls/_controls.scss */
+  /* line 457, ../sass/controls/_controls.scss */
   .slider .range:hover {
     background: rgba(0, 153, 204, 0.7); }
 
 /******************************************************** BROWSER ELEMENTS */
-/* line 451, ../sass/controls/_controls.scss */
+/* line 465, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -1341,7 +1523,7 @@ label.checkbox.custom {
   height: 10px;
   width: 10px; }
 
-/* line 457, ../sass/controls/_controls.scss */
+/* line 471, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar-thumb {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 20, color-stop(0%, #666666), color-stop(100%, #595959));
   background-image: -webkit-linear-gradient(#666666, #595959 20px);
@@ -1360,7 +1542,7 @@ label.checkbox.custom {
   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   border-top: 1px solid gray; }
-  /* line 464, ../sass/controls/_controls.scss */
+  /* line 478, ../sass/controls/_controls.scss */
   ::-webkit-scrollbar-thumb:hover {
     background-image: -webkit-gradient(linear, 50% 0%, 50% 20, color-stop(0%, #808080), color-stop(100%, #737373));
     background-image: -webkit-linear-gradient(#808080, #737373 20px);
@@ -1368,7 +1550,7 @@ label.checkbox.custom {
     background-image: -o-linear-gradient(#808080, #737373 20px);
     background-image: linear-gradient(#808080, #737373 20px); }
 
-/* line 469, ../sass/controls/_controls.scss */
+/* line 483, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar-corner {
   background: rgba(0, 0, 0, 0.4); }
 
@@ -1408,6 +1590,7 @@ label.checkbox.custom {
     -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+    border: none;
     border-top: 1px solid #737373;
     color: #999999;
     display: inline-block;
@@ -1420,7 +1603,7 @@ label.checkbox.custom {
     .menu-element .menu ul {
       margin: 0;
       padding: 0; }
-      /* line 167, ../sass/_mixins.scss */
+      /* line 179, ../sass/_mixins.scss */
       .menu-element .menu ul li {
         list-style-type: none;
         margin: 0;
@@ -1535,6 +1718,7 @@ label.checkbox.custom {
       -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
       -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
       box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+      border: none;
       border-top: 1px solid #a6a6a6;
       color: #999999;
       display: inline-block; }
@@ -1580,7 +1764,7 @@ label.checkbox.custom {
   right: 0;
   width: auto; }
 
-/* line 2, ../sass/forms/_elems.scss */
+/* line 3, ../sass/forms/_elems.scss */
 .form .section-header {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -1591,13 +1775,13 @@ label.checkbox.custom {
   font-size: 0.8em;
   margin-top: 5px;
   padding: 5px; }
-  /* line 8, ../sass/forms/_elems.scss */
+  /* line 9, ../sass/forms/_elems.scss */
   .form .section-header:first-child {
     margin-top: 0; }
-/* line 12, ../sass/forms/_elems.scss */
+/* line 13, ../sass/forms/_elems.scss */
 .form .form-section {
   position: relative; }
-/* line 16, ../sass/forms/_elems.scss */
+/* line 17, ../sass/forms/_elems.scss */
 .form .form-row {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -1608,7 +1792,7 @@ label.checkbox.custom {
   margin-top: 5px;
   padding: 5px;
   position: relative; }
-  /* line 25, ../sass/forms/_elems.scss */
+  /* line 24, ../sass/forms/_elems.scss */
   .form .form-row:first-child {
     border-top: none; }
   /* line 29, ../sass/forms/_elems.scss */
@@ -1623,24 +1807,34 @@ label.checkbox.custom {
     font-size: 0.75rem;
     line-height: 22px;
     min-height: 22px; }
-  /* line 39, ../sass/forms/_elems.scss */
+  /* line 38, ../sass/forms/_elems.scss */
   .form .form-row > .label {
     float: left;
     position: relative;
     white-space: nowrap;
     width: 20%; }
-  /* line 47, ../sass/forms/_elems.scss */
+  /* line 46, ../sass/forms/_elems.scss */
   .form .form-row .value {
     color: #cccccc; }
-  /* line 51, ../sass/forms/_elems.scss */
+  /* line 50, ../sass/forms/_elems.scss */
   .form .form-row .controls {
     float: left;
     position: relative;
     width: 79%; }
-  /* line 58, ../sass/forms/_elems.scss */
+    /* line 55, ../sass/forms/_elems.scss */
+    .form .form-row .controls .l-composite-control {
+      display: inline-block; }
+      /* line 57, ../sass/forms/_elems.scss */
+      .form .form-row .controls .l-composite-control.l-checkbox {
+        line-height: 14px;
+        margin-right: 5px; }
+    /* line 65, ../sass/forms/_elems.scss */
+    .form .form-row .controls .select {
+      margin-right: 5px; }
+  /* line 70, ../sass/forms/_elems.scss */
   .form .form-row .field-hints {
     color: #666666; }
-  /* line 62, ../sass/forms/_elems.scss */
+  /* line 74, ../sass/forms/_elems.scss */
   .form .form-row .selector-list {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
@@ -1651,7 +1845,7 @@ label.checkbox.custom {
     position: relative;
     height: 150px;
     max-width: 50%; }
-    /* line 70, ../sass/forms/_elems.scss */
+    /* line 82, ../sass/forms/_elems.scss */
     .form .form-row .selector-list .wrapper {
       overflow-y: auto;
       position: absolute;
@@ -1660,14 +1854,34 @@ label.checkbox.custom {
       bottom: 5px;
       left: 5px; }
 
-/* line 84, ../sass/forms/_elems.scss */
+/* line 96, ../sass/forms/_elems.scss */
 label.form-control.checkbox input {
   margin-right: 5px;
   vertical-align: top; }
 
-/* line 90, ../sass/forms/_elems.scss */
-.hint {
+/* line 103, ../sass/forms/_elems.scss */
+.hint,
+.s-hint {
   font-size: 0.9em; }
+
+/* line 107, ../sass/forms/_elems.scss */
+.l-result {
+  display: inline-block;
+  min-width: 32px;
+  min-height: 32px;
+  position: relative;
+  vertical-align: top; }
+  /* line 114, ../sass/forms/_elems.scss */
+  .l-result div.s-hint {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    -o-border-radius: 3px;
+    border-radius: 3px;
+    background: rgba(255, 153, 0, 0.8);
+    display: block;
+    color: #ffd699;
+    padding: 5px; }
 
 /* line 4, ../sass/forms/_validation.scss */
 .validates > .label {
@@ -1753,30 +1967,22 @@ input[type="text"] {
   -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+  border: none;
   border-top: 1px solid #666666;
   color: #999999;
   display: inline-block;
-  margin-right: 5px;
-  margin-top: 1px;
-  padding: 0 25px 0 0;
-  position: relative;
-  overflow: hidden;
-  vertical-align: middle; }
-  /* line 115, ../sass/_mixins.scss */
+  cursor: pointer;
+  display: inline-block;
+  margin: 0 0 2px 2px;
+  position: relative; }
+  /* line 127, ../sass/_mixins.scss */
   .form-control.select:not(.disabled):hover {
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #4d4d4d));
     background-image: -webkit-linear-gradient(#666666, #4d4d4d);
     background-image: -moz-linear-gradient(#666666, #4d4d4d);
     background-image: -o-linear-gradient(#666666, #4d4d4d);
     background-image: linear-gradient(#666666, #4d4d4d); }
-  /* line 11, ../sass/forms/_selects.scss */
-  .form-control.select span.arw {
-    display: block;
-    pointer-events: none;
-    position: absolute;
-    right: 8%;
-    top: 10%; }
-  /* line 18, ../sass/forms/_selects.scss */
+  /* line 7, ../sass/forms/_selects.scss */
   .form-control.select select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -1784,16 +1990,21 @@ input[type="text"] {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    border: none;
-    box-shadow: none;
-    background-color: transparent;
-    background-image: none;
+    background: none;
+    color: #999999;
+    border: none !important;
     cursor: pointer;
-    padding: 3px 5px 4px 5px;
-    width: 150%; }
-  /* line 32, ../sass/forms/_selects.scss */
-  .form-control.select select:focus {
-    outline: none; }
+    padding: 4px 25px 2px 5px; }
+  /* line 16, ../sass/forms/_selects.scss */
+  .form-control.select:after {
+    color: #0099cc;
+    content: "v";
+    display: block;
+    font-family: 'symbolsfont';
+    pointer-events: none;
+    position: absolute;
+    right: 5px;
+    top: 0; }
 
 /* line 2, ../sass/forms/_channel-selector.scss */
 .channel-selector .line {
@@ -1912,7 +2123,7 @@ input[type="text"] {
   -ms-border-radius: 3px;
   -o-border-radius: 3px;
   border-radius: 3px;
-  display: block;
+  display: inline-block;
   font-size: 1.3em;
   height: 22px;
   line-height: 22px;
@@ -2222,6 +2433,7 @@ input[type="text"] {
   -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+  border: none;
   border-top: 1px solid #666666;
   color: #999999;
   display: inline-block;
@@ -2488,7 +2700,7 @@ input[type="text"] {
     height: 5px;
     margin-top: -7px;
     top: 70%; }
-    /* line 87, ../sass/_mixins.scss */
+    /* line 99, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:before {
       content: '';
       display: block;
@@ -2499,7 +2711,7 @@ input[type="text"] {
       top: 2px;
       left: 5px;
       right: 5px; }
-    /* line 108, ../sass/_mixins.scss */
+    /* line 120, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:not(.disabled):hover:before {
       border-color: rgba(0, 153, 204, 0.9); }
 /* line 42, ../sass/helpers/_splitter.scss */
@@ -2521,7 +2733,7 @@ input[type="text"] {
   width: 5px;
   margin-left: -7px;
   left: 85%; }
-  /* line 87, ../sass/_mixins.scss */
+  /* line 99, ../sass/_mixins.scss */
   .split-layout.vertical > .splitter:before {
     content: '';
     display: block;
@@ -2532,7 +2744,7 @@ input[type="text"] {
     left: 2px;
     bottom: 5px;
     top: 5px; }
-  /* line 108, ../sass/_mixins.scss */
+  /* line 120, ../sass/_mixins.scss */
   .split-layout.vertical > .splitter:not(.disabled):hover:before {
     border-color: rgba(0, 153, 204, 0.9); }
 

@@ -1,8 +1,8 @@
 /*global define*/
 
 define(
-    ['./AccessorMutator'],
-    function (AccessorMutator) {
+    ['./AccessorMutator', './ResizeHandle'],
+    function (AccessorMutator, ResizeHandle) {
         "use strict";
 
         // Index deltas for changes in order
@@ -12,6 +12,11 @@ define(
             down: -1,
             bottom: Number.NEGATIVE_INFINITY
         };
+
+        // Ensure a value is non-negative (for x/y setters)
+        function clamp(value) {
+            return Math.max(value, 0);
+        }
 
         /**
          * Abstract superclass for other classes which provide useful
@@ -29,6 +34,8 @@ define(
          * @param {Array} elements the full array of elements
          */
         function ElementProxy(element, index, elements) {
+            var handles = [ new ResizeHandle(element, 1, 1) ];
+
             return {
                 /**
                  * The element as stored in the view configuration.
@@ -40,14 +47,14 @@ define(
                  * @param {number} [x] the new x position (if setting)
                  * @returns {number} the x position
                  */
-                x: new AccessorMutator(element, 'x'),
+                x: new AccessorMutator(element, 'x', clamp),
                 /**
                  * Get and/or set the y position of this element.
                  * Units are in fixed position grid space.
                  * @param {number} [y] the new y position (if setting)
                  * @returns {number} the y position
                  */
-                y: new AccessorMutator(element, 'y'),
+                y: new AccessorMutator(element, 'y', clamp),
                 /**
                  * Get and/or set the stroke color of this element.
                  * @param {string} [stroke] the new stroke color (if setting)
@@ -97,6 +104,13 @@ define(
                     if (elements[index] === element) {
                         elements.splice(index, 1);
                     }
+                },
+                /**
+                 * Get handles to control specific features of this element,
+                 * e.g. corner size.
+                 */
+                handles: function () {
+                    return handles;
                 }
             };
         }

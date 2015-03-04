@@ -1,36 +1,45 @@
-<div class="s-btn s-icon-btn s-very-subtle btn-menu menu-element dropdown click-invoke"
-     ng-controller="ClickAwayController as toggle">
+<div
+	class="t-btn l-btn s-btn s-icon-btn s-very-subtle btn-menu menu-element dropdown click-invoke t-color-palette"
+    ng-controller="ClickAwayController as toggle"
+	>
 
     <span ng-click="toggle.toggle()">
         <span class="ui-symbol icon">{{structure.glyph}}</span>
         <span class="title-label" ng-if="structure.text">
             {{structure.text}}
         </span>
-        <span class='ui-symbol icon invoke-menu'
-              ng-if="!structure.text">
-            v
-        </span>
+        <span class='ui-symbol icon invoke-menu' ng-if="!structure.text">v</span>
     </span>
 
-    <div class="menu dropdown"
-         ng-controller="ColorController as colors"
-         ng-show="toggle.isActive()">
-        <div style="width: 12em; display: block;" ng-if="!structure.mandatory">
-            <div style="width: 1em; height: 1em; border: 1px gray solid; display: inline-block;"
-                 ng-click="ngModel[field] = 'transparent'">
-                {{ngModel[field] === 'transparent' ? 'x' : '' }}
+    <div
+	    class="menu dropdown l-color-palette"
+        ng-controller="ColorController as colors"
+        ng-show="toggle.isActive()"
+	    >
+        <div
+	        class="l-palette-row l-option-row"
+	        ng-if="!structure.mandatory"
+	        >
+            <div
+	            class="l-palette-item s-palette-item"
+                ng-click="ngModel[field] = 'transparent'"
+	            >
+                {{ngModel[field] === 'transparent' ? '2' : '' }}
             </div>
-            None
+            <span class="l-palette-item-label">None</span>
         </div>
-        <div style="width: 12em; display: block;"
-             ng-repeat="group in colors.groups()">
-            <div ng-repeat="color in group"
-                 style="width: 1em; height: 1em; border: 1px gray solid; display: inline-block;"
-                 ng-style="{ background: color }"
-                 ng-click="ngModel[field] = color">
-                {{ngModel[field] === color ? 'x' : '' }}
+        <div
+	        class="l-palette-row"
+            ng-repeat="group in colors.groups()"
+	        >
+            <div
+	            class="l-palette-item s-palette-item"
+	            ng-repeat="color in group"
+                ng-style="{ background: color }"
+                ng-click="ngModel[field] = color"
+	            >
+                {{ngModel[field] === color ? '2' : '' }}
             </div>
         </div>
-
     </div>
 </div>

@@ -170,6 +170,20 @@ define(
                     .toHaveBeenCalledWith(elements[1]);
             });
 
+            it("allows selection retrieval", function () {
+                // selected with no arguments should give the current
+                // selection
+                var elements;
+
+                testModel.modified = 1;
+                findWatch("model.modified")(testModel.modified);
+
+                elements = controller.getElements();
+                controller.select(elements[1]);
+                mockScope.selection.get.andReturn(elements[1]);
+                expect(controller.selected()).toEqual(elements[1]);
+            });
+
             it("allows selections to be cleared", function () {
                 var elements;
 
@@ -302,6 +316,69 @@ define(
                 expect(mockScope.selection.proxy).toHaveBeenCalledWith(
                     jasmine.any(Object)
                 );
+            });
+
+            it("exposes drag handles", function () {
+                var handles;
+
+                // Select something so that drag handles are expected
+                testModel.modified = 1;
+                findWatch("model.modified")(testModel.modified);
+                controller.select(controller.getElements()[1]);
+
+                // Should have a non-empty array of handles
+                handles = controller.handles();
+                expect(handles).toEqual(jasmine.any(Array));
+                expect(handles.length).not.toEqual(0);
+
+                // And they should have start/continue/end drag methods
+                handles.forEach(function (handle) {
+                    expect(handle.startDrag).toEqual(jasmine.any(Function));
+                    expect(handle.continueDrag).toEqual(jasmine.any(Function));
+                    expect(handle.endDrag).toEqual(jasmine.any(Function));
+                });
+            });
+
+            it("exposes a move handle", function () {
+                var handle;
+
+                // Select something so that drag handles are expected
+                testModel.modified = 1;
+                findWatch("model.modified")(testModel.modified);
+                controller.select(controller.getElements()[1]);
+
+                // Should have a move handle
+                handle = controller.moveHandle();
+
+                // And it should have start/continue/end drag methods
+                expect(handle.startDrag).toEqual(jasmine.any(Function));
+                expect(handle.continueDrag).toEqual(jasmine.any(Function));
+                expect(handle.endDrag).toEqual(jasmine.any(Function));
+            });
+
+            it("updates selection style during drag", function () {
+                var oldStyle;
+
+                // Select something so that drag handles are expected
+                testModel.modified = 1;
+                findWatch("model.modified")(testModel.modified);
+                controller.select(controller.getElements()[1]);
+                mockScope.selection.get.andReturn(controller.getElements()[1]);
+
+                // Get style
+                oldStyle = controller.selected().style;
+
+                // Start a drag gesture
+                controller.moveHandle().startDrag();
+
+                // Haven't moved yet; style shouldn't have updated yet
+                expect(controller.selected().style).toEqual(oldStyle);
+
+                // Drag a little
+                controller.moveHandle().continueDrag([ 1000, 100 ]);
+
+                // Style should have been updated
+                expect(controller.selected().style).not.toEqual(oldStyle);
             });
         });
     }

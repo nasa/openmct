@@ -67,6 +67,10 @@ define(
                 expect(proxy.y2()).toEqual(0);
             });
 
+            it("provides handles for both ends", function () {
+                expect(new LineProxy(diagonal).handles().length).toEqual(2);
+            });
+
         });
     }
 );

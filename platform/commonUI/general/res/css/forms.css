@@ -1,4 +1,4 @@
-/* line 2, ../sass/forms/_elems.scss */
+/* line 3, ../sass/forms/_elems.scss */
 .form .section-header {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -9,13 +9,13 @@
   font-size: 0.8em;
   margin-top: 5px;
   padding: 5px; }
-  /* line 8, ../sass/forms/_elems.scss */
+  /* line 9, ../sass/forms/_elems.scss */
   .form .section-header:first-child {
     margin-top: 0; }
-/* line 12, ../sass/forms/_elems.scss */
+/* line 13, ../sass/forms/_elems.scss */
 .form .form-section {
   position: relative; }
-/* line 16, ../sass/forms/_elems.scss */
+/* line 17, ../sass/forms/_elems.scss */
 .form .form-row {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -26,7 +26,7 @@
   margin-top: 5px;
   padding: 5px;
   position: relative; }
-  /* line 25, ../sass/forms/_elems.scss */
+  /* line 24, ../sass/forms/_elems.scss */
   .form .form-row:first-child {
     border-top: none; }
   /* line 29, ../sass/forms/_elems.scss */
@@ -41,24 +41,34 @@
     font-size: 0.75rem;
     line-height: 22px;
     min-height: 22px; }
-  /* line 39, ../sass/forms/_elems.scss */
+  /* line 38, ../sass/forms/_elems.scss */
   .form .form-row > .label {
     float: left;
     position: relative;
     white-space: nowrap;
     width: 20%; }
-  /* line 47, ../sass/forms/_elems.scss */
+  /* line 46, ../sass/forms/_elems.scss */
   .form .form-row .value {
     color: #cccccc; }
-  /* line 51, ../sass/forms/_elems.scss */
+  /* line 50, ../sass/forms/_elems.scss */
   .form .form-row .controls {
     float: left;
     position: relative;
     width: 79%; }
-  /* line 58, ../sass/forms/_elems.scss */
+    /* line 55, ../sass/forms/_elems.scss */
+    .form .form-row .controls .l-composite-control {
+      display: inline-block; }
+      /* line 57, ../sass/forms/_elems.scss */
+      .form .form-row .controls .l-composite-control.l-checkbox {
+        line-height: 14px;
+        margin-right: 5px; }
+    /* line 65, ../sass/forms/_elems.scss */
+    .form .form-row .controls .select {
+      margin-right: 5px; }
+  /* line 70, ../sass/forms/_elems.scss */
   .form .form-row .field-hints {
     color: #666666; }
-  /* line 62, ../sass/forms/_elems.scss */
+  /* line 74, ../sass/forms/_elems.scss */
   .form .form-row .selector-list {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
@@ -69,7 +79,7 @@
     position: relative;
     height: 150px;
     max-width: 50%; }
-    /* line 70, ../sass/forms/_elems.scss */
+    /* line 82, ../sass/forms/_elems.scss */
     .form .form-row .selector-list .wrapper {
       overflow-y: auto;
       position: absolute;
@@ -78,14 +88,34 @@
       bottom: 5px;
       left: 5px; }
 
-/* line 84, ../sass/forms/_elems.scss */
+/* line 96, ../sass/forms/_elems.scss */
 label.form-control.checkbox input {
   margin-right: 5px;
   vertical-align: top; }
 
-/* line 90, ../sass/forms/_elems.scss */
-.hint {
+/* line 103, ../sass/forms/_elems.scss */
+.hint,
+.s-hint {
   font-size: 0.9em; }
+
+/* line 107, ../sass/forms/_elems.scss */
+.l-result {
+  display: inline-block;
+  min-width: 32px;
+  min-height: 32px;
+  position: relative;
+  vertical-align: top; }
+  /* line 114, ../sass/forms/_elems.scss */
+  .l-result div.s-hint {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    -o-border-radius: 3px;
+    border-radius: 3px;
+    background: rgba(255, 153, 0, 0.8);
+    display: block;
+    color: #ffd699;
+    padding: 5px; }
 
 /* line 1, ../sass/forms/_textarea.scss */
 .edit-main textarea {
@@ -166,30 +196,22 @@ input[type="text"] {
   -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+  border: none;
   border-top: 1px solid #666666;
   color: #999999;
   display: inline-block;
-  margin-right: 5px;
-  margin-top: 1px;
-  padding: 0 25px 0 0;
-  position: relative;
-  overflow: hidden;
-  vertical-align: middle; }
-  /* line 115, ../sass/_mixins.scss */
+  cursor: pointer;
+  display: inline-block;
+  margin: 0 0 2px 2px;
+  position: relative; }
+  /* line 127, ../sass/_mixins.scss */
   .form-control.select:not(.disabled):hover {
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #4d4d4d));
     background-image: -webkit-linear-gradient(#666666, #4d4d4d);
     background-image: -moz-linear-gradient(#666666, #4d4d4d);
     background-image: -o-linear-gradient(#666666, #4d4d4d);
     background-image: linear-gradient(#666666, #4d4d4d); }
-  /* line 11, ../sass/forms/_selects.scss */
-  .form-control.select span.arw {
-    display: block;
-    pointer-events: none;
-    position: absolute;
-    right: 8%;
-    top: 10%; }
-  /* line 18, ../sass/forms/_selects.scss */
+  /* line 7, ../sass/forms/_selects.scss */
   .form-control.select select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -197,16 +219,21 @@ input[type="text"] {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-    border: none;
-    box-shadow: none;
-    background-color: transparent;
-    background-image: none;
+    background: none;
+    color: #999999;
+    border: none !important;
     cursor: pointer;
-    padding: 3px 5px 4px 5px;
-    width: 150%; }
-  /* line 32, ../sass/forms/_selects.scss */
-  .form-control.select select:focus {
-    outline: none; }
+    padding: 4px 25px 2px 5px; }
+  /* line 16, ../sass/forms/_selects.scss */
+  .form-control.select:after {
+    color: #0099cc;
+    content: "v";
+    display: block;
+    font-family: 'symbolsfont';
+    pointer-events: none;
+    position: absolute;
+    right: 5px;
+    top: 0; }
 
 /* line 2, ../sass/forms/_channel-selector.scss */
 .channel-selector .line {

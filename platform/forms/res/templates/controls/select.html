@@ -1,8 +1,9 @@
-<select class='form-control input select'
-        ng-model="ngModel[field]"
-        ng-options="opt.value as opt.name for opt in options"
-        ng-required="ngRequired"
-        name="mctControl">
-    <option value="" ng-if="!ngModel[field]">- Select One -</option>
-    <span class='ui-symbol arw colorKey'>v</span>
-</select>
+<div class='form-control select'>
+	<select
+	        ng-model="ngModel[field]"
+	        ng-options="opt.value as opt.name for opt in options"
+	        ng-required="ngRequired"
+	        name="mctControl">
+	    <option value="" ng-if="!ngModel[field]">- Select One -</option>
+	</select>
+</div>

@@ -32,22 +32,22 @@
                                     "options": [
                                         {
                                             "name": "Box",
-                                            "glyph": "\u2610",
+                                            "glyph": "\u00E0",
                                             "key": "fixed.box"
                                         },
                                         {
                                             "name": "Line",
-                                            "glyph": "-",
+                                            "glyph": "\u00E2",
                                             "key": "fixed.line"
                                         },
                                         {
                                             "name": "Text",
-                                            "glyph": "\u1D1B",
+                                            "glyph": "\u00E4",
                                             "key": "fixed.text"
                                         },
                                         {
                                             "name": "Image",
-                                            "glyph": "\u2353",
+                                            "glyph": "\u00E3",
                                             "key": "fixed.image"
                                         }
                                     ]
@@ -58,7 +58,7 @@
                             "items": [
                                 {
                                     "method": "order",
-                                    "glyph": "o",
+                                    "glyph": "\u00E1",
                                     "control": "menu-button",
                                     "options": [
                                         {
@@ -85,23 +85,23 @@
                                 },
                                 {
                                     "property": "fill",
-                                    "glyph": "X",
+                                    "glyph": "\u00E0",
                                     "control": "color"
                                 },
                                 {
                                     "property": "stroke",
-                                    "glyph": "-",
+                                    "glyph": "\u00E2",
                                     "control": "color"
                                 },
                                 {
                                     "property": "color",
-                                    "glyph": "\u1D1B",
+                                    "glyph": "\u00E4",
                                     "mandatory": true,
                                     "control": "color"
                                 },
                                 {
                                     "property": "url",
-                                    "glyph": "\u2353",
+                                    "glyph": "\u00E3",
                                     "control": "dialog-button",
                                     "title": "Image Properties",
                                     "dialog": {
@@ -123,13 +123,13 @@
                                 },
                                 {
                                     "method": "showTitle",
-                                    "glyph": "+",
+                                    "glyph": "\u00E7",
                                     "control": "button",
                                     "description": "Show telemetry element title."
                                 },
                                 {
                                     "method": "hideTitle",
-                                    "glyph": "X",
+                                    "glyph": "\u00E5",
                                     "control": "button",
                                     "description": "Hide telemetry element title."
                                 }

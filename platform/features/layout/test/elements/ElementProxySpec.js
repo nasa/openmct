@@ -47,6 +47,13 @@ define(
                 proxy.order("top");
                 expect(testElements).toEqual([{}, {}, {}, testElement]);
             });
+
+            it("ensures x/y values are non-negative", function () {
+                proxy.x(-1);
+                proxy.y(-400);
+                expect(proxy.x()).toEqual(0);
+                expect(proxy.y()).toEqual(0);
+            });
         });
     }
 );

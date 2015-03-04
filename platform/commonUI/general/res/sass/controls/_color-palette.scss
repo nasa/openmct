@@ -1,0 +1,55 @@
+.l-color-palette {
+	$d: 16px;
+	$colorsPerRow: 10;
+	$m: 1;
+	$colorSelectedColor: #fff;
+
+	@include box-sizing(border-box);
+	padding: $interiorMargin !important;
+
+	.l-palette-row {
+		@include clearfix;
+		line-height: $d;
+		width: ($d * $colorsPerRow) + ($m * $colorsPerRow);
+
+		.l-palette-item {
+			@include box-sizing(border-box);
+			@include txtShdwSubtle(0.8);
+			@include trans-prop-nice-fade(0.25s);
+			border: 1px solid transparent;
+			color: $colorSelectedColor;
+			display: block;
+			font-family: 'symbolsfont';
+			float: left;
+			height: $d; width: $d;
+			line-height: $d;
+			margin: 0 ($m * 1px) ($m * 1px) 0;
+			text-align: center;
+			vertical-align: middle;
+		}
+
+		.s-palette-item {
+			&:hover {
+				@include trans-prop-nice-fade(0);
+				border-color: $colorSelectedColor !important;
+			}
+		}
+
+		.l-palette-item-label {
+			margin-left: $interiorMargin;
+		}
+
+		&.l-option-row {
+			margin-bottom: $interiorMargin;
+			.s-palette-item {
+				border-color: $colorBodyFg;
+			}
+		}
+	}
+
+
+
+
+
+
+}

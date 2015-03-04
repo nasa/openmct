@@ -1,15 +1,17 @@
 <span ng-controller="CompositeController as compositeCtrl">
     <ng-form name="mctFormItem" ng-repeat="item in structure.items">
-        <mct-control key="item.control"
-                     ng-model="ngModel[field]"
-                     ng-required="ngRequired || compositeCtrl.isNonEmpty(ngModel[field])"
-                     ng-pattern="ngPattern"
-                     options="item.options"
-                     structure="row"
-                     field="$index">
-        </mct-control>
-        <span class="composite-control-label">
-            {{item.name}}
-        </span>
+	    <div class="l-composite-control l-{{item.control}}">
+	        <mct-control key="item.control"
+	                     ng-model="ngModel[field]"
+	                     ng-required="ngRequired || compositeCtrl.isNonEmpty(ngModel[field])"
+	                     ng-pattern="ngPattern"
+	                     options="item.options"
+	                     structure="row"
+	                     field="$index">
+	        </mct-control>
+	        <span class="composite-control-label">
+	            {{item.name}}
+	        </span>
+	    </div>
     </ng-form>
 </span>
