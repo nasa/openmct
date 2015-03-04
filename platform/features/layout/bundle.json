@@ -29,7 +29,6 @@
                                     "glyph": "+",
                                     "control": "menu-button",
                                     "text": "Add",
-                                    "inclusive": true,
                                     "options": [
                                         {
                                             "name": "Box",
@@ -58,10 +57,90 @@
                         {
                             "items": [
                                 {
+                                    "method": "order",
+                                    "glyph": "o",
+                                    "control": "menu-button",
+                                    "options": [
+                                        {
+                                            "name": "Move to Top",
+                                            "glyph": "^",
+                                            "key": "top"
+                                        },
+                                        {
+                                            "name": "Move Up",
+                                            "glyph": "^",
+                                            "key": "up"
+                                        },
+                                        {
+                                            "name": "Move Down",
+                                            "glyph": "v",
+                                            "key": "down"
+                                        },
+                                        {
+                                            "name": "Move to Bottom",
+                                            "glyph": "v",
+                                            "key": "bottom"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "property": "fill",
+                                    "glyph": "X",
+                                    "control": "color"
+                                },
+                                {
+                                    "property": "stroke",
+                                    "glyph": "-",
+                                    "control": "color"
+                                },
+                                {
+                                    "property": "color",
+                                    "glyph": "\u1D1B",
+                                    "mandatory": true,
+                                    "control": "color"
+                                },
+                                {
+                                    "property": "url",
+                                    "glyph": "\u2353",
+                                    "control": "dialog-button",
+                                    "title": "Image Properties",
+                                    "dialog": {
+                                        "control": "textfield",
+                                        "name": "Image URL",
+                                        "required": true
+                                    }
+                                },
+                                {
+                                    "property": "text",
+                                    "glyph": "p",
+                                    "control": "dialog-button",
+                                    "title": "Text Properties",
+                                    "dialog": {
+                                        "control": "textfield",
+                                        "name": "Text",
+                                        "required": true
+                                    }
+                                },
+                                {
+                                    "method": "showTitle",
+                                    "glyph": "+",
+                                    "control": "button",
+                                    "description": "Show telemetry element title."
+                                },
+                                {
+                                    "method": "hideTitle",
+                                    "glyph": "X",
+                                    "control": "button",
+                                    "description": "Hide telemetry element title."
+                                }
+                            ]
+                        },
+                        {
+                            "items": [
+                                {
                                     "method": "remove",
                                     "control": "button",
-                                    "text": "Remove",
-                                    "inclusive": true
+                                    "glyph": "Z"
                                 }
                             ]
                         }

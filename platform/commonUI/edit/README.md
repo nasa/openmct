@@ -17,10 +17,10 @@ view's scope.) These additional properties are:
   an argument to set.)
 * `method`: Name of a method to invoke upon a selected object when
   a control is activated, e.g. on a button click.
-* `inclusive`: Optional; true if this control should be considered
-  applicable whenever at least one element in the selection has
-  the associated property. Otherwise, all members of the current
-  selection must have this property for the control to be shown.
+* `exclusive`: Optional; true if this control should be considered
+  applicable only when all elements in the selection has
+  the associated property. Otherwise, only at least one member of the
+  current selection must have this property for the control to be shown.
 
 Controls in the toolbar are shown based on applicability to the
 current selection. Applicability for a given member of the selection

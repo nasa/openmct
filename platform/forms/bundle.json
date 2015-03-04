@@ -49,6 +49,10 @@
             {
                 "key": "menu-button",
                 "templateUrl": "templates/controls/menu-button.html"
+            },
+            {
+                "key": "dialog-button",
+                "templateUrl": "templates/controls/dialog.html"
             }
         ],
         "controllers": [
@@ -60,6 +64,15 @@
             {
                 "key": "CompositeController",
                 "implementation": "controllers/CompositeController.js"
+            },
+            {
+                "key": "ColorController",
+                "implementation": "controllers/ColorController.js"
+            },
+            {
+                "key": "DialogButtonController",
+                "implementation": "controllers/DialogButtonController.js",
+                "depends": [ "$scope", "dialogService" ]
             }
         ]
     }

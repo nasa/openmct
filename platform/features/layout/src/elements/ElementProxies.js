@@ -1,16 +1,16 @@
 /*global define*/
 
 define(
-    ['./TelemetryProxy', './ElementProxy', './LineProxy'],
-    function (TelemetryProxy, ElementProxy, LineProxy) {
+    ['./TelemetryProxy', './ImageProxy', './LineProxy', './BoxProxy', './TextProxy'],
+    function (TelemetryProxy, ImageProxy, LineProxy, BoxProxy, TextProxy) {
         "use strict";
 
         return {
             "fixed.telemetry": TelemetryProxy,
             "fixed.line": LineProxy,
-            "fixed.box": ElementProxy,
-            "fixed.image": ElementProxy,
-            "fixed.text": ElementProxy
+            "fixed.box": BoxProxy,
+            "fixed.image": ImageProxy,
+            "fixed.text": TextProxy
         };
     }
 );

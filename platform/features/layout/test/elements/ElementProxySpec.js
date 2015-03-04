@@ -14,7 +14,7 @@ define(
                 testElement = {
                     x: 1,
                     y: 2,
-                    z: 3,
+                    stroke: '#717171',
                     width: 42,
                     height: 24
                 };
@@ -35,6 +35,17 @@ define(
             it("allows elements to be removed", function () {
                 proxy.remove();
                 expect(testElements).toEqual([{}, {}, {}]);
+            });
+
+            it("allows order to be changed", function () {
+                proxy.order("down");
+                expect(testElements).toEqual([{}, testElement, {}, {}]);
+                proxy.order("up");
+                expect(testElements).toEqual([{}, {}, testElement, {}]);
+                proxy.order("bottom");
+                expect(testElements).toEqual([testElement, {}, {}, {}]);
+                proxy.order("top");
+                expect(testElements).toEqual([{}, {}, {}, testElement]);
             });
         });
     }

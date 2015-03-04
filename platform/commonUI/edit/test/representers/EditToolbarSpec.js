@@ -6,34 +6,41 @@ define(
         "use strict";
 
         describe("An Edit mode toolbar", function () {
-            var testStructure,
+            var mockCommit,
+                testStructure,
                 testAB,
                 testABC,
                 testABC2,
                 testABCXYZ,
                 testABCYZ,
-                testM;
+                testM,
+                toolbar;
+
+            function getVisibility(obj) {
+                return !obj.hidden;
+            }
 
             beforeEach(function () {
+                mockCommit = jasmine.createSpy('commit');
                 testStructure = {
                     sections: [
                         {
                             items: [
-                                { name: "A", property: "a" },
-                                { name: "B", property: "b" },
-                                { name: "C", property: "c" }
+                                { name: "A", property: "a", exclusive: true },
+                                { name: "B", property: "b", exclusive: true },
+                                { name: "C", property: "c", exclusive: true }
                             ]
                         },
                         {
                             items: [
-                                { name: "X", property: "x", inclusive: true },
-                                { name: "Y", property: "y" },
-                                { name: "Z", property: "z" }
+                                { name: "X", property: "x" },
+                                { name: "Y", property: "y", exclusive: true },
+                                { name: "Z", property: "z", exclusive: true }
                             ]
                         },
                         {
                             items: [
-                                { name: "M", method: "m" }
+                                { name: "M", method: "m", exclusive: true }
                             ]
                         }
                     ]
@@ -44,6 +51,8 @@ define(
                 testABCXYZ = { a: 0, b: 1, c: 2, x: 'X!', y: 'Y!', z: 'Z!' };
                 testABCYZ = { a: 0, b: 1, c: 2, y: 'Y!', z: 'Z!' };
                 testM = { m: jasmine.createSpy("method") };
+
+                toolbar = new EditToolbar(testStructure, mockCommit);
             });
 
             it("provides properties from the original structure", function () {
@@ -67,27 +76,25 @@ define(
                 ).not.toBeUndefined();
             });
 
-            it("prunes empty sections", function () {
+            it("marks empty sections as hidden", function () {
                 // Verify that all sections are included when applicable...
-                expect(
-                    new EditToolbar(testStructure, [ testABCXYZ ])
-                        .getStructure()
-                        .sections
-                        .length
-                ).toEqual(2);
+                toolbar.setSelection([ testABCXYZ ]);
+                expect(toolbar.getStructure().sections.map(getVisibility))
+                    .toEqual([ true, true, false ]);
+
                 // ...but omitted when only some are applicable
-                expect(
-                    new EditToolbar(testStructure, [ testABC ])
-                        .getStructure()
-                        .sections
-                        .length
-                ).toEqual(1);
+                toolbar.setSelection([ testABC ]);
+                expect(toolbar.getStructure().sections.map(getVisibility))
+                    .toEqual([ true, false, false ]);
             });
 
             it("reads properties from selections", function () {
-                var toolbar = new EditToolbar(testStructure, [ testABC ]),
-                    structure = toolbar.getStructure(),
-                    state = toolbar.getState();
+                var structure, state;
+
+                toolbar.setSelection([ testABC ]);
+
+                structure = toolbar.getStructure();
+                state = toolbar.getState();
 
                 expect(state[structure.sections[0].items[0].key])
                     .toEqual(testABC.a);
@@ -98,11 +105,11 @@ define(
             });
 
             it("reads properties from getters", function () {
-                var toolbar, structure, state;
+                var structure, state;
 
                 testABC.a = function () { return "from a getter!"; };
 
-                toolbar = new EditToolbar(testStructure, [ testABC ]);
+                toolbar.setSelection([ testABC ]);
                 structure = toolbar.getStructure();
                 state = toolbar.getState();
 
@@ -111,10 +118,9 @@ define(
             });
 
             it("sets properties on update", function () {
-                var toolbar = new EditToolbar(testStructure, [ testABC ]),
-                    structure = toolbar.getStructure();
+                toolbar.setSelection([ testABC ]);
                 toolbar.updateState(
-                    structure.sections[0].items[0].key,
+                    toolbar.getStructure().sections[0].items[0].key,
                     "new value"
                 );
                 // Should have updated the underlying object
@@ -122,11 +128,11 @@ define(
             });
 
             it("invokes setters on update", function () {
-                var toolbar, structure, state;
+                var structure, state;
 
                 testABC.a = jasmine.createSpy('a');
 
-                toolbar = new EditToolbar(testStructure, [ testABC ]);
+                toolbar.setSelection([ testABC ]);
                 structure = toolbar.getStructure();
 
                 toolbar.updateState(
@@ -137,70 +143,58 @@ define(
                 expect(testABC.a).toHaveBeenCalledWith("new value");
             });
 
+            it("provides a return value describing update status", function () {
+                // Should return true if actually updated, otherwise false
+                var key;
+                toolbar.setSelection([ testABC ]);
+                key = toolbar.getStructure().sections[0].items[0].key;
+                expect(toolbar.updateState(key, testABC.a)).toBeFalsy();
+                expect(toolbar.updateState(key, "new value")).toBeTruthy();
+            });
+
             it("removes inapplicable items", function () {
                 // First, verify with all items
-                expect(
-                    new EditToolbar(testStructure, [ testABC ])
-                        .getStructure()
-                        .sections[0]
-                        .items
-                        .length
-                ).toEqual(3);
+                toolbar.setSelection([ testABC ]);
+                expect(toolbar.getStructure().sections[0].items.map(getVisibility))
+                    .toEqual([ true, true, true ]);
                 // Then, try with some items omitted
-                expect(
-                    new EditToolbar(testStructure, [ testABC, testAB ])
-                        .getStructure()
-                        .sections[0]
-                        .items
-                        .length
-                ).toEqual(2);
+                toolbar.setSelection([ testABC, testAB ]);
+                expect(toolbar.getStructure().sections[0].items.map(getVisibility))
+                    .toEqual([ true, true, false ]);
             });
 
             it("removes inconsistent states", function () {
                 // Only two of three values match among these selections
-                expect(
-                    new EditToolbar(testStructure, [ testABC, testABC2 ])
-                        .getStructure()
-                        .sections[0]
-                        .items
-                        .length
-                ).toEqual(2);
+                toolbar.setSelection([ testABC, testABC2 ]);
+                expect(toolbar.getStructure().sections[0].items.map(getVisibility))
+                    .toEqual([ false, true, true ]);
             });
 
             it("allows inclusive items", function () {
                 // One inclusive item is in the set, property 'x' of the
                 // second section; make sure items are pruned down
                 // when only some of the selection has x,y,z properties
-                expect(
-                    new EditToolbar(testStructure, [ testABC, testABCXYZ ])
-                        .getStructure()
-                        .sections[1]
-                        .items
-                        .length
-                ).toEqual(1);
+                toolbar.setSelection([ testABC, testABCXYZ ]);
+                expect(toolbar.getStructure().sections[1].items.map(getVisibility))
+                    .toEqual([ true, false, false ]);
             });
 
             it("removes inclusive items when there are no matches", function () {
-                expect(
-                    new EditToolbar(testStructure, [ testABCYZ ])
-                        .getStructure()
-                        .sections[1]
-                        .items
-                        .length
-                ).toEqual(2);
+                toolbar.setSelection([ testABCYZ ]);
+                expect(toolbar.getStructure().sections[1].items.map(getVisibility))
+                    .toEqual([ false, true, true ]);
             });
 
             it("adds click functions when a method is specified", function () {
-                var testCommit = jasmine.createSpy('commit'),
-                    toolbar = new EditToolbar(testStructure, [ testM ], testCommit);
+                toolbar.setSelection([testM]);
                 // Verify precondition
                 expect(testM.m).not.toHaveBeenCalled();
                 // Click!
-                toolbar.getStructure().sections[0].items[0].click();
+                toolbar.getStructure().sections[2].items[0].click();
                 // Should have called the underlying function
                 expect(testM.m).toHaveBeenCalled();
                 // Should also have committed the change
-                expect(testCommit).toHaveBeenCalled();
+                expect(mockCommit).toHaveBeenCalled();
             });
         });
     }

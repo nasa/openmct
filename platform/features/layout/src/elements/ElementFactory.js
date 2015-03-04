@@ -6,20 +6,25 @@ define(
         "use strict";
 
         var INITIAL_STATES = {
-                "fixed.image": {},
+                "fixed.image": {
+                    stroke: "transparent"
+                },
                 "fixed.box": {
-                    fill: "#888",
-                    border: "transparent"
+                    fill: "#717171",
+                    border: "transparent",
+                    stroke: "transparent"
                 },
                 "fixed.line": {
                     x: 5,
                     y: 9,
                     x2: 6,
-                    y2: 6
+                    y2: 6,
+                    stroke: "#717171"
                 },
                 "fixed.text": {
                     fill: "transparent",
-                    border: "transparent"
+                    stroke: "transparent",
+                    color: "#717171"
                 }
             },
             DIALOGS = {

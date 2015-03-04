@@ -16,13 +16,13 @@ define(
          * the current selection.
          *
          * @param structure toolbar structure, as provided by view definition
-         * @param {Array} selection the current selection state
          * @param {Function} commit callback to invoke after changes
          * @constructor
          */
-        function EditToolbar(structure, selection, commit) {
+        function EditToolbar(structure, commit) {
             var toolbarStructure = Object.create(structure || {}),
                 toolbarState,
+                selection,
                 properties = [];
 
             // Generate a new key for an item's property
@@ -34,14 +34,20 @@ define(
             // Update value for this property in all elements of the
             // selection which have this property.
             function updateProperties(property, value) {
+                var changed = false;
+
                 // Update property in a selected element
                 function updateProperty(selected) {
                     // Ignore selected elements which don't have this property
                     if (selected[property] !== undefined) {
                         // Check if this is a setter, or just assignable
                         if (typeof selected[property] === 'function') {
+                            changed =
+                                changed || (selected[property]() !== value);
                             selected[property](value);
                         } else {
+                            changed =
+                                changed || (selected[property] !== value);
                             selected[property] = value;
                         }
                     }
@@ -49,6 +55,9 @@ define(
 
                 // Update property in all selected elements
                 selection.forEach(updateProperty);
+
+                // Return whether or not anything changed
+                return changed;
             }
 
             // Look up the current value associated with a property
@@ -108,7 +117,7 @@ define(
             function isApplicable(item) {
                 var property = (item || {}).property,
                     method = (item || {}).method,
-                    exclusive = !(item || {}).inclusive;
+                    exclusive = !!(item || {}).exclusive;
 
                 // Check if a selected item defines this property
                 function hasProperty(selected) {
@@ -150,40 +159,77 @@ define(
                 return converted;
             }
 
-            // Used to filter out sections that have become empty
-            function nonEmpty(section) {
-                return section && section.items && section.items.length > 0;
-            }
-
-            // Prepare a toolbar section based on current selection
+            // Prepare a toolbar section
             function convertSection(section) {
                 var converted = Object.create(section || {});
                 converted.items =
                     ((section || {}).items || [])
-                            .map(convertItem)
-                            .filter(isApplicable);
+                            .map(convertItem);
                 return converted;
             }
 
-            toolbarStructure.sections =
-                ((structure || {}).sections || [])
-                        .map(convertSection)
-                        .filter(nonEmpty);
+            // Show/hide controls in this section per applicability
+            function refreshSectionApplicability(section) {
+                var count = 0;
+                // Show/hide each item
+                (section.items || []).forEach(function (item) {
+                    item.hidden = !isApplicable(item);
+                    count += item.hidden ? 0 : 1;
+                });
+                // Hide this section if there are no applicable items
+                section.hidden = !count;
+            }
 
-            toolbarState = properties.map(initializeState);
+            // Show/hide controls if they are applicable
+            function refreshApplicability() {
+                toolbarStructure.sections.forEach(refreshSectionApplicability);
+            }
+
+            // Refresh toolbar state to match selection
+            function refreshState() {
+                toolbarState = properties.map(initializeState);
+            }
+
+            toolbarStructure.sections =
+                ((structure || {}).sections || []).map(convertSection);
+
+            toolbarState = [];
 
             return {
                 /**
-                 *
+                 * Set the current selection. Visisbility of sections
+                 * and items in the toolbar will be updated to match this.
+                 * @param {Array} s the new selection
+                 */
+                setSelection: function (s) {
+                    selection = s;
+                    refreshApplicability();
+                    refreshState();
+                },
+                /**
+                 * Get the structure of the toolbar, as appropriate to
+                 * pass to `mct-toolbar`.
+                 * @returns the toolbar structure
                  */
                 getStructure: function () {
                     return toolbarStructure;
                 },
+                /**
+                 * Get the current state of the toolbar, as appropriate
+                 * to two-way bind to the state handled by `mct-toolbar`.
+                 * @returns {Array} state of the toolbar
+                 */
                 getState: function () {
                     return toolbarState;
                 },
-                updateState: function (key, value) {
-                    updateProperties(properties[key], value);
+                /**
+                 * Update state within the current selection.
+                 * @param {number} index the index of the corresponding
+                 *        element in the state array
+                 * @param value the new value to convey to the selection
+                 */
+                updateState: function (index, value) {
+                    return updateProperties(properties[index], value);
                 }
             };
         }
