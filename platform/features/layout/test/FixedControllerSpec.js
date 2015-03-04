@@ -102,7 +102,10 @@ define(
                 });
                 mockScope.model = testModel;
                 mockScope.configuration = testConfiguration;
-                mockScope.selection = []; // Act like edit mode
+                mockScope.selection = jasmine.createSpyObj(
+                    'selection',
+                    [ 'select', 'get', 'selected', 'deselect' ]
+                );
 
                 controller = new FixedController(
                     mockScope,
@@ -163,8 +166,8 @@ define(
 
                 elements = controller.getElements();
                 controller.select(elements[1]);
-                expect(controller.selected(elements[0])).toBeFalsy();
-                expect(controller.selected(elements[1])).toBeTruthy();
+                expect(mockScope.selection.select)
+                    .toHaveBeenCalledWith(elements[1]);
             });
 
             it("allows selections to be cleared", function () {
@@ -190,6 +193,12 @@ define(
                 elements = controller.getElements();
                 controller.select(elements[1]);
 
+                // Verify precondition
+                expect(mockScope.selection.select.calls.length).toEqual(1);
+
+                // Mimic selection behavior
+                mockScope.selection.get.andReturn(elements[1]);
+
                 elements[2].remove();
                 testModel.modified = 2;
                 findWatch("model.modified")(testModel.modified);
@@ -198,7 +207,7 @@ define(
                 // Verify removal, as test assumes this
                 expect(elements.length).toEqual(2);
 
-                expect(controller.selected(elements[1])).toBeTruthy();
+                expect(mockScope.selection.select.calls.length).toEqual(2);
             });
 
             it("provides values for telemetry elements", function () {
