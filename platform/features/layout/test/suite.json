@@ -3,7 +3,6 @@
     "FixedProxy",
     "LayoutController",
     "LayoutDrag",
-    "LayoutSelection",
     "elements/AccessorMutator",
     "elements/BoxProxy",
     "elements/ElementFactory",
