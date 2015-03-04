@@ -1,8 +1,8 @@
 /*global define*/
 
 define(
-    ['./ElementProxy'],
-    function (ElementProxy) {
+    ['./ElementProxy', './LineHandle'],
+    function (ElementProxy, LineHandle) {
         'use strict';
 
         /**
@@ -15,7 +15,11 @@ define(
          * @param {Array} elements the full array of elements
          */
         function LineProxy(element, index, elements) {
-            var proxy = new ElementProxy(element, index, elements);
+            var proxy = new ElementProxy(element, index, elements),
+                handles = [
+                    new LineHandle(element, 'x', 'y', 'x2', 'y2'),
+                    new LineHandle(element, 'x2', 'y2', 'x', 'y')
+                ];
 
             /**
              * Get the top-left x coordinate, in grid space, of
@@ -24,7 +28,7 @@ define(
              */
             proxy.x = function (v) {
                 var x = Math.min(element.x, element.x2),
-                    delta = v - x;
+                    delta = Math.max(v, 0) - x;
                 if (arguments.length > 0 && delta) {
                     element.x += delta;
                     element.x2 += delta;
@@ -39,7 +43,7 @@ define(
              */
             proxy.y = function (v) {
                 var y = Math.min(element.y, element.y2),
-                    delta = v - y;
+                    delta = Math.max(v, 0) - y;
                 if (arguments.length > 0 && delta) {
                     element.y += delta;
                     element.y2 += delta;
@@ -103,6 +107,15 @@ define(
              */
             proxy.y2 = function () {
                 return element.y2 - proxy.y();
+            };
+
+            /**
+             * Get element handles for changing the position of end
+             * points of this line.
+             * @returns {LineHandle[]} line handles for both end points
+             */
+            proxy.handles = function () {
+                return handles;
             };
 
             return proxy;

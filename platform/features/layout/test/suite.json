@@ -1,5 +1,6 @@
 [
     "FixedController",
+    "FixedDragHandle",
     "FixedProxy",
     "LayoutController",
     "LayoutDrag",
@@ -10,6 +11,7 @@
     "elements/ElementProxies",
     "elements/ElementProxy",
     "elements/LineProxy",
+    "elements/ResizeHandle",
     "elements/TelemetryProxy",
     "elements/TextProxy"
 ]

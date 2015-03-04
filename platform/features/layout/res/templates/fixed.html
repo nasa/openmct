@@ -15,12 +15,29 @@
                  style="position: absolute;"
                  key="element.template"
                  parameters="{ gridSize: controller.getGridSize() }"
-                 ng-class="{ test: controller.selected(element) }"
+                 ng-class="{ disabled: controller.selected() && !controller.selected(element) }"
                  ng-style="element.style"
                  ng-click="controller.select(element)"
-                 ng-model="element"
-                 mct-drag-down="controller.startDrag(element); controller.select(element)"
-                 mct-drag="controller.continueDrag(delta)"
-                 mct-drag-up="controller.endDrag()">
+                 ng-model="element">
     </mct-include>
+
+    <!-- Selection highlight, handles -->
+    <span ng-if="controller.selected()">
+        <div class="test"
+             style="position: absolute;"
+             mct-drag-down="controller.moveHandle().startDrag(controller.selected())"
+             mct-drag="controller.moveHandle().continueDrag(delta)"
+             mct-drag-up="controller.moveHandle().endDrag()"
+             ng-style="controller.selected().style">
+        </div>
+        <div ng-repeat="handle in controller.handles()"
+             style="position: absolute;"
+             ng-style="handle.style()"
+             mct-drag-down="handle.startDrag()"
+             mct-drag="handle.continueDrag(delta)"
+             mct-drag-up="handle.endDrag()">
+            O
+        </div>
+    </span>
+
 </div>
