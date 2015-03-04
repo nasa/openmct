@@ -104,7 +104,7 @@ define(
                 mockScope.configuration = testConfiguration;
                 mockScope.selection = jasmine.createSpyObj(
                     'selection',
-                    [ 'select', 'get', 'selected', 'deselect' ]
+                    [ 'select', 'get', 'selected', 'deselect', 'proxy' ]
                 );
 
                 controller = new FixedController(
@@ -296,6 +296,12 @@ define(
                 // Template needs to be able to pass this into line
                 // elements to size SVGs appropriately
                 expect(controller.getGridSize()).toEqual(testGrid);
+            });
+
+            it("exposes a view-level selection proxy", function () {
+                expect(mockScope.selection.proxy).toHaveBeenCalledWith(
+                    jasmine.any(Object)
+                );
             });
         });
     }

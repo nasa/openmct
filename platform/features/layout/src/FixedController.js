@@ -208,8 +208,13 @@ define(
                 });
             }
 
-            //  Track current selection state
+            // Track current selection state
             selection = $scope.selection;
+
+            // Expose the view's selection proxy
+            if (selection) {
+                selection.proxy(new FixedProxy(addElement, $q, dialogService));
+            }
 
             // Refresh list of elements whenever model changes
             $scope.$watch("model.modified", refreshElements);
