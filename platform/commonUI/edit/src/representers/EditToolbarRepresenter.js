@@ -1,8 +1,8 @@
 /*global define*/
 
 define(
-    ['./EditToolbar'],
-    function (EditToolbar) {
+    ['./EditToolbar', './EditToolbarSelection'],
+    function (EditToolbar, EditToolbarSelection) {
         "use strict";
 
         // No operation
@@ -81,8 +81,8 @@ define(
                 var definition = (representation || {}).toolbar || {};
                 // Expose the toolbar object to the parent scope
                 initialize(definition);
-                // Clear any existing selection
-                scope.selection = [];
+                // Create a selection scope
+                scope.selection = new EditToolbarSelection();
                 // Initialize toolbar to an empty selection
                 updateSelection([]);
             }
@@ -101,7 +101,7 @@ define(
                 // Detect and handle changes to state from the toolbar
                 scope.$watchCollection(getState, updateState);
                 // Watch for changes in the current selection state
-                scope.$watchCollection("selection", updateSelection);
+                scope.$watchCollection("selection.all()", updateSelection);
                 // Expose toolbar state under that name
                 scope.$parent[attrs.toolbar] = toolbarObject;
             }
