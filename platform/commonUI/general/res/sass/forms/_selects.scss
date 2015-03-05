@@ -3,6 +3,7 @@
 	cursor: pointer;
 	display: inline-block;
 	margin: 0 0 2px 2px; // Needed to avoid dropshadow from being clipped by parent containers
+    overflow: hidden;
 	position: relative;
 	select {
 		@include appearance(none);
@@ -12,6 +13,10 @@
 		border: none !important;
 		cursor: pointer;
 		padding: 4px 25px 2px 5px;
+        width: 120%;
+        option {
+            margin: $interiorMargin 0; // Firefox
+        }
 	}
 	&:after {
 		color: $colorKey;

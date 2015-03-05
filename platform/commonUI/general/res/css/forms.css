@@ -203,6 +203,7 @@ input[type="text"] {
   cursor: pointer;
   display: inline-block;
   margin: 0 0 2px 2px;
+  overflow: hidden;
   position: relative; }
   /* line 127, ../sass/_mixins.scss */
   .form-control.select:not(.disabled):hover {
@@ -211,7 +212,7 @@ input[type="text"] {
     background-image: -moz-linear-gradient(#666666, #4d4d4d);
     background-image: -o-linear-gradient(#666666, #4d4d4d);
     background-image: linear-gradient(#666666, #4d4d4d); }
-  /* line 7, ../sass/forms/_selects.scss */
+  /* line 8, ../sass/forms/_selects.scss */
   .form-control.select select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -223,8 +224,12 @@ input[type="text"] {
     color: #999999;
     border: none !important;
     cursor: pointer;
-    padding: 4px 25px 2px 5px; }
-  /* line 16, ../sass/forms/_selects.scss */
+    padding: 4px 25px 2px 5px;
+    width: 120%; }
+    /* line 17, ../sass/forms/_selects.scss */
+    .form-control.select select option {
+      margin: 5px 0; }
+  /* line 21, ../sass/forms/_selects.scss */
   .form-control.select:after {
     color: #0099cc;
     content: "v";
