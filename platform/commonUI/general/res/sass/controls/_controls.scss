@@ -295,13 +295,14 @@ label.checkbox.custom {
 
 .btn-menu {
 	$h: 20px;
-	$p: 7px;
+	$p: $interiorMargin;
 	$c: $colorBodyFg;
 	@include btnSubtle($colorBodyBg);
 	height: $h;
 	line-height: $h;
 	&.dropdown {
 		//		padding-left: $p;
+		padding-left: $p;
 		padding-right: $p;
 	}
 
@@ -318,8 +319,9 @@ label.checkbox.custom {
 		}
 	}
 
-    .l-click-area {
-//        @include test();
+    span.l-click-area {
+	    // In markup, this element should not enclose anything.
+	    @extend .abs;
     }
 
 	.type-icon {
@@ -327,6 +329,8 @@ label.checkbox.custom {
 	}
 	.menu {
 		//		margin-left: (-1 * $p);
+		position: absolute;
+		left: 0;
 		text-align: left;
 		.ui-symbol.icon {
 			width: 12px;
