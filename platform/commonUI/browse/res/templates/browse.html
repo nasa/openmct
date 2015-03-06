@@ -4,7 +4,7 @@
         <div class='split-layout vertical contents abs'
              ng-controller="SplitPaneController as splitter">
             <div class='split-pane-component treeview pane'
-                 ng-style="{ width: splitter.state() + 'px'}">
+                 ng-style="{ width: (splitter.state() - 8) + 'px'}">
                 <mct-representation key="'create-button'" mct-object="navigatedObject">
                 </mct-representation>
                 <div class='holder tree-holder abs'>

@@ -7,8 +7,11 @@
                  structure="toolbar.structure"
                  ng-model="toolbar.state">
     </mct-toolbar>
-    <div class='split-layout vertical contents abs work-area'>
-        <div class='abs pane left edit-main'>
+    <div class='split-layout vertical contents abs work-area' ng-controller="SplitPaneController as vSplitter">
+        <div
+            class='abs pane left edit-main'
+            ng-style="{ right: (vSplitter.state(200) - 8) + 'px'}"
+            >
             <div class='holder abs object-holder'>
                 <mct-representation key="representation.selected.key"
                                     toolbar="toolbar"
@@ -16,21 +19,51 @@
                 </mct-representation>
             </div>
         </div>
-        <div class="splitter"></div>
-        <div class='abs pane right edit-objects menus-to-left'>
-            <div class='holder abs split-layout horizontal'>
-	            <div class="abs pane top accordion" ng-controller="ToggleController as toggle">
-                <mct-container key="accordion" title="Library">
-                    <mct-representation key="'tree'" alias="foo1" mct-object="context.getRoot()">
-                    </mct-representation>
-                </mct-container>
+
+        <!-- MAIN VERTICAL SPLITTER -->
+        <div
+            class="splitter"
+            ng-style="{ right: (Splitter.state()-8) + 'px'}"
+            mct-drag-down="vSplitter.startMove()"
+            mct-drag="vSplitter.move(-delta[0], 300, 500)"
+            ></div>
+
+
+        <div
+            class='abs pane right edit-objects menus-to-left'
+            ng-style="{ width: vSplitter.state() + 'px', right: '0px'}"
+            >
+            <div
+                class='holder abs split-layout horizontal'
+                ng-controller="SplitPaneController as hSplitter"
+                >
+	            <div
+                    class="abs pane top accordion"
+                    ng-style="{ bottom: (hSplitter.state(400) + 8) + 'px', top: '0px' }"
+                    ng-controller="ToggleController as toggle"
+                    >
+                    <mct-container key="accordion" title="Library">
+                        <mct-representation key="'tree'" alias="foo1" mct-object="context.getRoot()">
+                        </mct-representation>
+                    </mct-container>
 		        </div>
-	            <div class="splitter"></div>
-	            <div class="abs pane bottom accordion" ng-controller="ToggleController as toggle">
-                <mct-container key="accordion" title="Elements">
-                    <mct-representation key="'edit-elements'" mct-object="domainObject">
-                    </mct-representation>
-                </mct-container>
+                <!-- HORZ SPLITTER -->
+                <div
+                        class="splitter"
+                        ng-style="{ bottom: hSplitter.state() + 'px', top: 'auto' }"
+                        mct-drag-down="hSplitter.startMove()"
+                        mct-drag="hSplitter.move(-delta[1], 120, 1000)"
+                        >
+                </div>
+	            <div
+                    class="abs pane bottom accordion"
+                    ng-style="{ bottom: '0px', height: (hSplitter.state()) + 'px'}"
+                    ng-controller="ToggleController as toggle"
+                    >
+                    <mct-container key="accordion" title="Elements">
+                        <mct-representation key="'edit-elements'" mct-object="domainObject">
+                        </mct-representation>
+                    </mct-container>
 				</div>
             </div>
         </div>

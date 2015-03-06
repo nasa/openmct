@@ -44,11 +44,11 @@
 			bottom: 0;
 			&.left {
 				right: auto;
-				width: $splitL - 1%;
+//				width: $splitL - 1%; // Controlled by splitter
 			}
 			&.right {
 				left: auto;
-				width: 100% - $splitL;
+//				width: 100% - $splitL; // Controlled by splitter
 			}
 		}
 		>.splitter {

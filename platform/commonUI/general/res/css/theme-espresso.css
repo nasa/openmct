@@ -2725,12 +2725,10 @@ input[type="text"] {
   bottom: 0; }
   /* line 45, ../sass/helpers/_splitter.scss */
   .split-layout.vertical .pane.left {
-    right: auto;
-    width: 84%; }
+    right: auto; }
   /* line 49, ../sass/helpers/_splitter.scss */
   .split-layout.vertical .pane.right {
-    left: auto;
-    width: 15%; }
+    left: auto; }
 /* line 54, ../sass/helpers/_splitter.scss */
 .split-layout.vertical > .splitter {
   bottom: 0;
