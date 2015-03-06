@@ -180,6 +180,7 @@
 	&.horizontal {
 		// Slides up and down
 		>.pane {
+//			@include test();
 			margin-top: $interiorMargin;
 			&:first-child {
 				margin-top: 0;

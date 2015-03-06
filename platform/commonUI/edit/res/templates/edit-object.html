@@ -10,7 +10,7 @@
     <div class='split-layout vertical contents abs work-area' ng-controller="SplitPaneController as vSplitter">
         <div
             class='abs pane left edit-main'
-            ng-style="{ right: (vSplitter.state(200) - 8) + 'px'}"
+            ng-style="{ right: (vSplitter.state()+5) + 'px'}"
             >
             <div class='holder abs object-holder'>
                 <mct-representation key="representation.selected.key"
@@ -23,15 +23,14 @@
         <!-- MAIN VERTICAL SPLITTER -->
         <div
             class="splitter"
-            ng-style="{ right: (Splitter.state()-8) + 'px'}"
+            ng-style="{ right: vSplitter.state() + 'px'}"
             mct-drag-down="vSplitter.startMove()"
-            mct-drag="vSplitter.move(-delta[0], 300, 500)"
+            mct-drag="vSplitter.move(-delta[0], 100, 1000)"
             ></div>
-
 
         <div
             class='abs pane right edit-objects menus-to-left'
-            ng-style="{ width: vSplitter.state() + 'px', right: '0px'}"
+            ng-style="{ width: (vSplitter.state()-4) + 'px', right: '0px'}"
             >
             <div
                 class='holder abs split-layout horizontal'
@@ -39,7 +38,7 @@
                 >
 	            <div
                     class="abs pane top accordion"
-                    ng-style="{ bottom: (hSplitter.state(400) + 8) + 'px', top: '0px' }"
+                    ng-style="{ bottom: (hSplitter.state()+8) + 'px', top: '0px' }"
                     ng-controller="ToggleController as toggle"
                     >
                     <mct-container key="accordion" title="Library">
@@ -57,7 +56,7 @@
                 </div>
 	            <div
                     class="abs pane bottom accordion"
-                    ng-style="{ bottom: '0px', height: (hSplitter.state()) + 'px'}"
+                    ng-style="{ bottom: '0px', height: (hSplitter.state()-4) + 'px'}"
                     ng-controller="ToggleController as toggle"
                     >
                     <mct-container key="accordion" title="Elements">
