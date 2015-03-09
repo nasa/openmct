@@ -89,7 +89,7 @@ define(
                  * object.
                  * @returns {string[]} a list of all relationship types
                  */
-                list: listRelationships,
+                listRelationships: listRelationships,
                 /**
                  * Request related objects, with a given relationship type.
                  * This will typically require asynchronous lookup, so this
@@ -110,7 +110,7 @@ define(
          * @returns {boolean} true if this object has relationships
          */
         RelationshipCapability.appliesTo = function (model) {
-            return Array.isArray((model || {}).relationships);
+            return !!(model || {}).relationships;
         };
 
         return RelationshipCapability;
