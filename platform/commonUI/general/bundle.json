@@ -105,6 +105,34 @@
                 "key": "mctResize",
                 "implementation": "directives/MCTResize.js",
                 "depends": [ "$timeout" ]
+            },
+            {
+                "key": "mctScrollX",
+                "implementation": "directives/MCTScroll.js",
+                "depends": [ "$parse", "MCT_SCROLL_X_PROPERTY", "MCT_SCROLL_X_ATTRIBUTE" ]
+            },
+            {
+                "key": "mctScrollY",
+                "implementation": "directives/MCTScroll.js",
+                "depends": [ "$parse", "MCT_SCROLL_Y_PROPERTY", "MCT_SCROLL_Y_ATTRIBUTE" ]
+            }
+        ],
+        "constants": [
+            {
+                "key": "MCT_SCROLL_X_PROPERTY",
+                "value": "scrollLeft"
+            },
+            {
+                "key": "MCT_SCROLL_X_ATTRIBUTE",
+                "value": "mctScrollX"
+            },
+            {
+                "key": "MCT_SCROLL_Y_PROPERTY",
+                "value": "scrollTop"
+            },
+            {
+                "key": "MCT_SCROLL_Y_ATTRIBUTE",
+                "value": "mctScrollY"
             }
         ],
         "containers": [
