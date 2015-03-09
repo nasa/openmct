@@ -12,6 +12,7 @@
     "capabilities/EditableContextCapability",
     "capabilities/EditableLookupCapability",
     "capabilities/EditablePersistenceCapability",
+    "capabilities/EditableRelationshipCapability",
     "capabilities/EditorCapability",
     "objects/EditableDomainObject",
     "objects/EditableDomainObjectCache",
