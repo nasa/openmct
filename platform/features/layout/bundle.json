@@ -204,15 +204,6 @@
                 "model": { "composition": [] },
                 "properties": [
                     {
-                        "name": "Preferred Size",
-                        "control": "select",
-                        "options": [
-                            { "name": "Fit to Window", "value": "FIT" },
-                            { "name": "Fixed Size", "value": "FIXED" }
-                        ],
-                        "key": "preferredSize"
-                    },
-                    {
                         "label": "Layout Grid",
                         "control": "composite",
                         "pattern": "^(\\d*[1-9]\\d*)?$",
@@ -240,23 +231,6 @@
                 "features": "creation",
                 "model": { "composition": [] },
                 "properties": [
-                    {
-                        "name": "Preferred Size",
-                        "control": "composite",
-                        "items": [
-                            {
-                                "name": "Width (px)",
-                                "control": "textfield"
-                            },
-                            {
-                                "name": "Height (px)",
-                                "control": "textfield"
-                            }
-                        ],
-                        "pattern": "^(\\d*[1-9]\\d*)?$",
-                        "property": "preferredSize",
-                        "conversion": "number[]"
-                    },
                     {
                         "name": "Layout Grid",
                         "control": "composite",
