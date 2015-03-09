@@ -1,0 +1,39 @@
+<div class='form-control complex channel-selector cols cols-32'
+     ng-controller="">
+    <div class='col col-15'>
+        <div class='line field-hints'>Available</div>
+        <div id='_form_filter' class='line filter'>
+            <input type='text' class='control filter' name='filter-available' />
+            <a class='icon ui-symbol t-available-trigger'
+               href=''
+               title="Filter is case sensitive">M</a>
+        </div>
+
+        <div class="line">
+            Showing {{shown}} of {{count}} available options.
+        </div>
+
+        <div class='line treeview checkbox-list' name='available'>
+
+        </div>
+    </div>
+    <div class='col col-2'>
+        <div class='btn-holder valign-mid btns-add-remove'>
+            <a class='btn major' href=''><span class='ui-symbol'>&gt;</span></a>
+            <a class='btn major' href=''><span class='ui-symbol'>&lt;</span></a>
+        </div>
+    </div>
+    <div class='col col-15'>
+        <div class='line field-hints'>Selected</div>
+        <div id='_form_filter' class='line filter'>
+            <input type='text' class='control filter' name='filter-selected' />
+            <a class='icon ui-symbol t-selected-trigger' href='' title="Filter is case sensitive">M</a>
+        </div>
+        <div class="line">
+            Showing {{shown}} of {{count}} available options.
+        </div>
+
+        <div class='line treeview checkbox-list' name='selected'>
+        </div>
+    </div>
+</div>
