@@ -47,12 +47,16 @@
         </div -->
 
         <div class='line treeview checkbox-list' name='selected'>
-            <mct-representation ng-repeat="selectedObject in selector.selected()"
-                                key="'label'"
-                                mct-object="selectedObject"
-                                ng-click="selector.listModel.selectedObject = selectedObject"
-                                ng-class="{ test: selector.listModel.selectedObject === selectedObject }">
-            </mct-representation>
+            <ul class="tree">
+                <li ng-repeat="selectedObject in selector.selected()">
+                    <mct-representation key="'label'"
+                                        mct-object="selectedObject"
+                                        ng-click="selector.listModel.selectedObject = selectedObject"
+                                        ng-class="{ test: selector.listModel.selectedObject === selectedObject }">
+                    </mct-representation>
+
+                </li>
+            </ul>
         </div>
     </div>
 </div>
