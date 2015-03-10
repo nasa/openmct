@@ -1,7 +1,7 @@
 /*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
-    ["../src/EditActionController"],
+    ["../../src/controllers/EditActionController"],
     function (EditActionController) {
         "use strict";
 

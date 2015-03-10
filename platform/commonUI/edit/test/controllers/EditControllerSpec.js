@@ -1,7 +1,7 @@
 /*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
-    ["../src/EditController"],
+    ["../../src/controllers/EditController"],
     function (EditController) {
         "use strict";
 

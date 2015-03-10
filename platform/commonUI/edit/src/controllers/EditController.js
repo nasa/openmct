@@ -4,7 +4,7 @@
  * Module defining EditController. Created by vwoeltje on 11/14/14.
  */
 define(
-    ["./objects/EditableDomainObject"],
+    ["../objects/EditableDomainObject"],
     function (EditableDomainObject) {
         "use strict";
 

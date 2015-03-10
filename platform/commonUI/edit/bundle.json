@@ -9,12 +9,17 @@
         "controllers": [
             {
                 "key": "EditController",
-                "implementation": "EditController.js",
+                "implementation": "controllers/EditController.js",
                 "depends": [ "$scope", "navigationService" ]
             },
             {
                 "key": "EditActionController",
-                "implementation": "EditActionController.js",
+                "implementation": "controllers/EditActionController.js",
+                "depends": [ "$scope" ]
+            },
+            {
+                "key": "EditPanesController",
+                "implementation": "controllers/EditPanesController.js",
                 "depends": [ "$scope" ]
             }
         ],
@@ -72,7 +77,7 @@
             {
                 "key": "edit-object",
                 "templateUrl": "templates/edit-object.html",
-                "uses": [ "view", "context" ]
+                "uses": [ "view" ]
             },
             {
                 "key": "edit-action-buttons",
@@ -92,7 +97,7 @@
         ],
         "representers": [
             {
-                "implementation": "EditRepresenter.js",
+                "implementation": "representers/EditRepresenter.js",
                 "depends": [ "$q", "$log" ]
             },
             {
