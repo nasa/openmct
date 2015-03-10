@@ -66,7 +66,7 @@ define(
                         .then(packageObject);
                 }
 
-                return lastPromise;
+                return lastPromise[key];
             }
 
             // List types of relationships which this object has
