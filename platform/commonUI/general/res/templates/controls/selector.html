@@ -2,7 +2,7 @@
      ng-controller="SelectorController as selector">
     <div class='col col-15'>
         <div class='line field-hints'>Available</div>
-        <div id='_form_filter' class='line filter'>
+        <!--div id='_form_filter' class='line filter'>
             <input type='text' class='control filter' name='filter-available' />
             <a class='icon ui-symbol t-available-trigger'
                href=''
@@ -11,7 +11,7 @@
 
         <div class="line">
             Showing {{shown}} of {{count}} available options.
-        </div>
+        </div -->
 
         <div class='line treeview checkbox-list' name='available'>
             <mct-representation key="'tree'"
@@ -34,7 +34,7 @@
     </div>
     <div class='col col-15'>
         <div class='line field-hints'>Selected</div>
-        <div id='_form_filter' class='line filter'>
+        <!-- div id='_form_filter' class='line filter'>
             <input type='text' class='control filter' name='filter-selected' />
             <a class='icon ui-symbol t-selected-trigger'
                href=''
@@ -44,7 +44,7 @@
         </div>
         <div class="line">
             Showing {{shown}} of {{count}} available options.
-        </div>
+        </div -->
 
         <div class='line treeview checkbox-list' name='selected'>
             <mct-representation ng-repeat="selectedObject in selector.selected()"
