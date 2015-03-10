@@ -27,7 +27,7 @@
                 <span class='ui-symbol'>&gt;</span>
             </a>
             <a class='btn major' href=''
-               ng-click="selector.deselect">
+               ng-click="selector.deselect(selector.listModel.selectedObject)">
                 <span class='ui-symbol'>&lt;</span>
             </a>
         </div>
@@ -48,7 +48,7 @@
 
         <div class='line treeview checkbox-list' name='selected'>
             <mct-representation ng-repeat="selectedObject in selector.selected()"
-                                key="'breadcrumb'"
+                                key="'label'"
                                 mct-object="selectedObject"
                                 ng-click="selector.listModel.selectedObject = selectedObject"
                                 ng-class="{ test: selector.listModel.selectedObject === selectedObject }">
