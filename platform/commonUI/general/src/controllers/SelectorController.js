@@ -28,7 +28,7 @@ define(
 
             // Get the value of the field being edited
             function getField() {
-                return $scope.ngModel[$scope.field];
+                return $scope.ngModel[$scope.field] || [];
             }
 
             // Get the value of the field being edited
@@ -65,7 +65,7 @@ define(
                 }
 
                 // Look up objects by id, then populate right-hand list
-                objectService.get(ids).then(updateSelectedObjects);
+                objectService.getObjects(ids).then(updateSelectedObjects);
             }
 
             // Reject attempts to select objects of the wrong type
@@ -75,7 +75,7 @@ define(
             $scope.$watchCollection(getField, updateList);
 
             // Look up root object, then store it
-            objectService.get(ROOT_ID).then(storeRoot);
+            objectService.getObjects([ROOT_ID]).then(storeRoot);
 
             return {
                 /**
@@ -112,7 +112,16 @@ define(
                         setField(list.filter(function (otherId) {
                             return otherId !== id;
                         }));
+                        // Clear the current list selection
+                        delete listModel.selectedObject;
                     }
+                },
+                /**
+                 * Get the currently-selected domain objects.
+                 * @returns {DomainObject[]} the current selection
+                 */
+                selected: function () {
+                    return selectedObjects;
                 },
                 // Expose tree/list model for use in template directly
                 treeModel: treeModel,

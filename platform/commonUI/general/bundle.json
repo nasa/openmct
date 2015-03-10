@@ -88,6 +88,11 @@
             {
                 "key": "SplitPaneController",
                 "implementation": "controllers/SplitPaneController.js"
+            },
+            {
+                "key": "SelectorController",
+                "implementation": "controllers/SelectorController.js",
+                "depends": [ "objectService", "$scope" ]
             }
         ],
         "directives": [
@@ -183,6 +188,12 @@
                 "key": "switcher",
                 "templateUrl": "templates/controls/switcher.html",
                 "uses": [ "view" ]
+            }
+        ],
+        "controls": [
+            {
+                "key": "selector",
+                "templateUrl": "templates/controls/selector.html"
             }
         ],
         "licenses": [
