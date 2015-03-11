@@ -21,8 +21,8 @@
 		margin-top: $interiorMargin;
 		padding: $interiorMargin;
 		position: relative;
-		&:first-child {
-//			border-top: none;
+		&.first {
+			border-top: none;
 		}
 
 		.label,

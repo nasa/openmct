@@ -26,6 +26,9 @@
   margin-top: 5px;
   padding: 5px;
   position: relative; }
+  /* line 24, ../sass/forms/_elems.scss */
+  .form .form-row.first {
+    border-top: none; }
   /* line 29, ../sass/forms/_elems.scss */
   .form .form-row .label,
   .form .form-row .controls {
