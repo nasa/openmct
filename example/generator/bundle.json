@@ -29,6 +29,7 @@
                     {
                         "name": "Period",
                         "control": "textfield",
+                        "cssclass": "l-small l-numeric",
                         "key": "period",
                         "required": true,
                         "property": [ "telemetry", "period" ],

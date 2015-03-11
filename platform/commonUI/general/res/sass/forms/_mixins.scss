@@ -3,9 +3,10 @@
 	@include border-radius($controlCr);
 	@include box-sizing(border-box);
 	@include box-shadow(inset rgba(black, 0.5) 0 1px 5px);
-	background: lighten($bg, 20%);
+//	background: lighten($bg, 20%);
+	background: rgba(#fff, 0.1);
 	border: none;
-	border-bottom: 1px solid lighten($bg, 40%);
+	border-bottom: 1px solid rgba(#fff, 0.1);
 	color: lighten($fg, 20%);
 	outline: none;
 	&.error {

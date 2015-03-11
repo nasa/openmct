@@ -204,17 +204,19 @@
                 "model": { "composition": [] },
                 "properties": [
                     {
-                        "label": "Layout Grid",
+                        "name": "Layout Grid",
                         "control": "composite",
                         "pattern": "^(\\d*[1-9]\\d*)?$",
                         "items": [
                             {
                                 "name": "Horizontal grid (px)",
-                                "control": "textfield"
+                                "control": "textfield",
+                                "cssclass": "l-small l-numeric"
                             },
                             {
                                 "name": "Vertical grid (px)",
-                                "control": "textfield"
+                                "control": "textfield",
+                                "cssclass": "l-small l-numeric"
                             }
                         ],
                         "key": "layoutGrid",
@@ -237,11 +239,13 @@
                         "items": [
                             {
                                 "name": "Horizontal grid (px)",
-                                "control": "textfield"
+                                "control": "textfield",
+                                "cssclass": "l-small l-numeric"
                             },
                             {
                                 "name": "Vertical grid (px)",
-                                "control": "textfield"
+                                "control": "textfield",
+                                "cssclass": "l-small l-numeric"
                             }
                         ],
                         "pattern": "^(\\d*[1-9]\\d*)?$",

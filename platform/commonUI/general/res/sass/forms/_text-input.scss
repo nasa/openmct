@@ -1,8 +1,5 @@
 input[type="text"] {
 	@include nice-input();
-	height: $formInputH;
-	line-height: $formInputH;
-	vertical-align: middle;
     &.filter {
         &.ng-dirty {
 //            background: red;

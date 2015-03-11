@@ -22,11 +22,12 @@
 		padding: $interiorMargin;
 		position: relative;
 		&:first-child {
-			border-top: none;
+//			border-top: none;
 		}
 
 		.label,
 		.controls {
+//			@include test(orange);
 			@include box-sizing(border-box);
 			@include clearfix;
 			box-sizing: border-box;
@@ -50,16 +51,36 @@
 		.controls {
 			float: left;
             position: relative;
-			width: 99% - $formLabelW; // Start with less than 100% for Firefox
+			width: 99.9% - $formLabelW; // Start with less than 100% for Firefox
 
 			.l-composite-control {
-				display: inline-block;
+//				display: inline-block;
 				&.l-checkbox {
 //					@include test();
 //					height: $formRowCtrlsH;
+					display: inline-block;
 					line-height: $formRowCtrlsH;
 					margin-right: 5px;
 				}
+			}
+
+			input[type="text"] {
+				height: $formInputH;
+				line-height: $formInputH;
+				margin-top: -4px;
+				vertical-align: baseline;
+			}
+
+			.l-med input[type="text"] {
+				width: 200px;
+			}
+
+			.l-small input[type="text"] {
+				width: 50px;
+			}
+
+			.l-numeric input[type="text"] {
+				text-align: right;
 			}
 
 			.select {
@@ -75,10 +96,13 @@
 			// Used in create overlay to display tree view
 			$h: 150px;
 			@include border-radius($basicCr);
+			@include box-sizing(border-box);
 			background: rgba(black, 0.2);
+			padding: $interiorMargin;
 			position: relative;
 			height: $h;
-			max-width: 50%;
+			overflow: auto;
+//			max-width: 50%;
 			.wrapper {
 				$p: $interiorMargin;
 				overflow-y: auto;
