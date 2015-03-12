@@ -13,21 +13,9 @@ define(
                 domainObject = { getModel: function () { return testModel; } },
                 mutation;
 
-            function mockPromise(value) {
-                return {
-                    then: function (callback) {
-                        return (value && value.then) ?
-                                value : mockPromise(callback(value));
-                    }
-                };
-            }
-
             beforeEach(function () {
                 testModel = { number: 6 };
-                mutation = new MutationCapability(
-                    { when: mockPromise }, // $q
-                    domainObject
-                );
+                mutation = new MutationCapability(domainObject);
             });
 
             it("allows mutation of a model", function () {

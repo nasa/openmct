@@ -46,12 +46,11 @@ define(
          * });
          * ```
          *
-         * @param $q Angular's $q service, for promises
          * @param {DomainObject} domainObject the domain object
          *        which will expose this capability
          * @constructor
          */
-        function MutationCapability($q, domainObject) {
+        function MutationCapability(domainObject) {
 
             function mutate(mutator) {
                 // Get the object's model and clone it, so the
