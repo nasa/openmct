@@ -21,6 +21,16 @@ define(
             });
         }
 
+        // Utility function to cast to a promise, without waiting
+        // for nextTick if a value is non-promise-like.
+        function fastPromise(value) {
+            return (value || {}).then ? value : {
+                then: function (callback) {
+                    return fastPromise(callback(value));
+                }
+            };
+        }
+
         /**
          * The `mutation` capability allows a domain object's model to be
          * modified. Wrapping such modifications in calls made through
@@ -73,8 +83,7 @@ define(
 
                 // Invoke the provided mutator, then make changes to
                 // the underlying model (if applicable.)
-                return $q.when(mutator(clone))
-                        .then(handleMutation);
+                return fastPromise(mutator(clone)).then(handleMutation);
             }
 
             return {
