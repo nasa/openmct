@@ -136,6 +136,30 @@ define(
                 );
             });
 
+            it("disallows marquee zoom when start and end Marquee is at the same position", function () {
+                expect(mockPanZoomStack.pushPanZoom).not.toHaveBeenCalled();
+
+                // Simulate a marquee zoom. Note that the mockElement
+                // is 100 by 100 and starts at 10,20
+                subplot.startMarquee({
+                    target: mockElement,
+                    clientX: 60,
+                    clientY: 45
+                });
+                subplot.hover({
+                    target: mockElement,
+                    clientX: 75,
+                    clientY: 85
+                });
+                subplot.endMarquee({
+                    target: mockElement,
+                    clientX: 60,
+                    clientY: 45
+                });
+
+                expect(mockPanZoomStack.pushPanZoom).not.toHaveBeenCalled();
+            });
+
             it("provides access to a drawable object", function () {
                 expect(typeof subplot.getDrawingObject()).toEqual('object');
             });

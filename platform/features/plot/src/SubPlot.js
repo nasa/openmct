@@ -151,11 +151,14 @@ define(
                         Math.max(a[1], b[1]) - origin[1]
                     ];
 
-                // Push the new state onto the pan-zoom stack
-                panZoomStack.pushPanZoom(origin, dimensions);
+                // Proceed with zoom if zoom dimensions are non zeros
+                if (!(dimensions[0] === 0 && dimensions[1] === 0)) {
+                    // Push the new state onto the pan-zoom stack
+                    panZoomStack.pushPanZoom(origin, dimensions);
 
-                // Make sure tick marks reflect new bounds
-                updateTicks();
+                    // Make sure tick marks reflect new bounds
+                    updateTicks();
+                }
             }
 
             // Start with the right initial drawing bounds,
