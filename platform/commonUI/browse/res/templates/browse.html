@@ -19,7 +19,7 @@
                  mct-drag-down="splitter.startMove()"
                  mct-drag="splitter.move(delta[0])"></div>
             <div class='split-pane-component items pane'
-                 ng-style="{ left: splitter.state() + 'px', right: '0px' }">
+                 ng-style="{ left: (splitter.state()+4) + 'px', right: '0px' }">
                 <div class='holder abs' id='content-area'>
                     <mct-representation mct-object="navigatedObject" key="'browse-object'">
                     </mct-representation>

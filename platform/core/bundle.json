@@ -104,7 +104,8 @@
                         "key": "name",
                         "property": "name",
                         "pattern": "\\S+",
-                        "required": true
+                        "required": true,
+                        "cssclass": "l-med"
                     },
                     {
                         "control": "checkbox",

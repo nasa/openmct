@@ -27,6 +27,7 @@
         }
 	}
     .title {
+	    @include ellipsize();
         font-size: 1.3em;
     }
     

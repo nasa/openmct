@@ -138,7 +138,7 @@ span {
   */ }
 
 /* line 51, ../sass/_global.scss */
-.abs {
+.abs, .btn-menu span.l-click-area {
   position: absolute;
   top: 0;
   right: 0;
@@ -255,24 +255,27 @@ span {
 .bar .icon.major {
   margin-right: 5px; }
 /* line 80, ../sass/user-environ/_layout.scss */
-.bar.abs {
+.bar.abs, .btn-menu span.bar.l-click-area {
   text-wrap: none;
   white-space: nowrap; }
   /* line 84, ../sass/user-environ/_layout.scss */
-  .bar.abs.left,
-  .bar.abs .left {
+  .bar.abs.left, .btn-menu span.bar.left.l-click-area,
+  .bar.abs .left,
+  .btn-menu span.bar.l-click-area .left {
     width: 45%;
     right: auto; }
   /* line 89, ../sass/user-environ/_layout.scss */
-  .bar.abs.right,
-  .bar.abs .right {
+  .bar.abs.right, .btn-menu span.bar.right.l-click-area,
+  .bar.abs .right,
+  .btn-menu span.bar.l-click-area .right {
     width: 45%;
     left: auto;
     right: 0;
     text-align: right; }
     /* line 94, ../sass/user-environ/_layout.scss */
-    .bar.abs.right .icon.major,
-    .bar.abs .right .icon.major {
+    .bar.abs.right .icon.major, .btn-menu span.bar.right.l-click-area .icon.major,
+    .bar.abs .right .icon.major,
+    .btn-menu span.bar.l-click-area .right .icon.major {
       margin-left: 15px; }
 
 /* line 104, ../sass/user-environ/_layout.scss */
@@ -343,24 +346,24 @@ span {
 /* line 182, ../sass/user-environ/_layout.scss */
 .split-layout.horizontal > .pane {
   margin-top: 5px; }
-  /* line 184, ../sass/user-environ/_layout.scss */
+  /* line 185, ../sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane:first-child {
     margin-top: 0; }
-/* line 191, ../sass/user-environ/_layout.scss */
+/* line 192, ../sass/user-environ/_layout.scss */
 .split-layout.vertical > .pane {
   margin-left: 5px; }
-  /* line 193, ../sass/user-environ/_layout.scss */
+  /* line 194, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane > .holder {
     left: 0;
     right: 0; }
-  /* line 197, ../sass/user-environ/_layout.scss */
+  /* line 198, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane:first-child {
     margin-left: 0; }
-    /* line 199, ../sass/user-environ/_layout.scss */
+    /* line 200, ../sass/user-environ/_layout.scss */
     .split-layout.vertical > .pane:first-child .holder {
       right: 5px; }
 
-/* line 208, ../sass/user-environ/_layout.scss */
+/* line 209, ../sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
 
@@ -497,7 +500,7 @@ span {
     color: #fff;
     font-weight: normal !important; }
   /* line 29, ../sass/_about.scss */
-  .t-about.l-about.abs {
+  .t-about.l-about.abs, .btn-menu span.t-about.l-about.l-click-area {
     overflow: auto; }
   /* line 34, ../sass/_about.scss */
   .t-about .l-logo-holder {
@@ -1314,37 +1317,40 @@ label.checkbox.custom {
     background-image: linear-gradient(#666666, #4d4d4d); }
   /* line 303, ../sass/controls/_controls.scss */
   .btn-menu.dropdown {
-    padding-right: 7px; }
-  /* line 308, ../sass/controls/_controls.scss */
+    padding-left: 5px;
+    padding-right: 5px; }
+  /* line 309, ../sass/controls/_controls.scss */
   .btn-menu:not(.disabled):hover {
     color: #cccccc; }
-  /* line 312, ../sass/controls/_controls.scss */
+  /* line 313, ../sass/controls/_controls.scss */
   .btn-menu.btn-invoke-menu {
     color: #0099cc;
     padding: 0 5px; }
-    /* line 316, ../sass/controls/_controls.scss */
+    /* line 317, ../sass/controls/_controls.scss */
     .btn-menu.btn-invoke-menu:hover {
       color: deepskyblue; }
-  /* line 325, ../sass/controls/_controls.scss */
+  /* line 327, ../sass/controls/_controls.scss */
   .btn-menu .type-icon {
     margin-right: 5px; }
-  /* line 328, ../sass/controls/_controls.scss */
+  /* line 330, ../sass/controls/_controls.scss */
   .btn-menu .menu {
+    position: absolute;
+    left: 0;
     text-align: left; }
-    /* line 331, ../sass/controls/_controls.scss */
+    /* line 335, ../sass/controls/_controls.scss */
     .btn-menu .menu .ui-symbol.icon {
       width: 12px; }
 
-/* line 337, ../sass/controls/_controls.scss */
+/* line 341, ../sass/controls/_controls.scss */
 .top-bar .btn-menu {
   height: 35px;
   line-height: 35px;
   padding-right: 10px; }
-  /* line 345, ../sass/controls/_controls.scss */
+  /* line 349, ../sass/controls/_controls.scss */
   .top-bar .btn-menu.browse-btn {
     margin-right: 5px;
     padding-left: 35px; }
-    /* line 348, ../sass/controls/_controls.scss */
+    /* line 352, ../sass/controls/_controls.scss */
     .top-bar .btn-menu.browse-btn .badge {
       -webkit-border-radius: 4.5px;
       -moz-border-radius: 4.5px;
@@ -1363,30 +1369,30 @@ label.checkbox.custom {
       height: auto; }
 
 /******************************************************** OBJECT-HEADER */
-/* line 365, ../sass/controls/_controls.scss */
+/* line 369, ../sass/controls/_controls.scss */
 .object-header {
   display: inline-block;
   font-size: 1em; }
-  /* line 368, ../sass/controls/_controls.scss */
+  /* line 372, ../sass/controls/_controls.scss */
   .object-header .title {
     color: white; }
-  /* line 371, ../sass/controls/_controls.scss */
+  /* line 375, ../sass/controls/_controls.scss */
   .object-header .type-icon {
     font-size: 1.5em;
     margin-right: 5px;
     vertical-align: middle; }
 
-/* line 380, ../sass/controls/_controls.scss */
+/* line 384, ../sass/controls/_controls.scss */
 .top-bar .object-header,
 .object-browse-bar .object-header {
   font-size: 1.1em; }
-  /* line 382, ../sass/controls/_controls.scss */
+  /* line 386, ../sass/controls/_controls.scss */
   .top-bar .object-header span,
   .object-browse-bar .object-header span {
     display: inline-block; }
 
 /******************************************************** VIEW-CONTROLS */
-/* line 391, ../sass/controls/_controls.scss */
+/* line 395, ../sass/controls/_controls.scss */
 .view-controls .view-type {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -1400,16 +1406,16 @@ label.checkbox.custom {
   line-height: 20px;
   padding-left: 5px;
   padding-right: 5px; }
-  /* line 402, ../sass/controls/_controls.scss */
+  /* line 406, ../sass/controls/_controls.scss */
   .view-controls .view-type.cur {
     background: #666666; }
 
-/* line 407, ../sass/controls/_controls.scss */
+/* line 411, ../sass/controls/_controls.scss */
 .edit-mode .top-bar .control-set.edit-view-controls {
   margin-right: 50px; }
 
 /******************************************************** SLIDERS */
-/* line 418, ../sass/controls/_controls.scss */
+/* line 422, ../sass/controls/_controls.scss */
 .slider .slot {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -1432,7 +1438,7 @@ label.checkbox.custom {
   right: 0;
   bottom: auto;
   left: 0; }
-/* line 429, ../sass/controls/_controls.scss */
+/* line 433, ../sass/controls/_controls.scss */
 .slider .knob {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #4d4d4d), color-stop(100%, #404040));
   background-image: -webkit-linear-gradient(#4d4d4d, #404040);
@@ -1483,12 +1489,12 @@ label.checkbox.custom {
   /* line 120, ../sass/_mixins.scss */
   .slider .knob:not(.disabled):hover:before {
     border-color: rgba(0, 153, 204, 0.9); }
-  /* line 440, ../sass/controls/_controls.scss */
+  /* line 444, ../sass/controls/_controls.scss */
   .slider .knob:before {
     top: 1px;
     bottom: 3px;
     left: 5px; }
-/* line 447, ../sass/controls/_controls.scss */
+/* line 451, ../sass/controls/_controls.scss */
 .slider .range {
   background: rgba(0, 153, 204, 0.6);
   cursor: ew-resize;
@@ -1499,12 +1505,12 @@ label.checkbox.custom {
   left: auto;
   height: auto;
   width: auto; }
-  /* line 457, ../sass/controls/_controls.scss */
+  /* line 461, ../sass/controls/_controls.scss */
   .slider .range:hover {
     background: rgba(0, 153, 204, 0.7); }
 
 /******************************************************** BROWSER ELEMENTS */
-/* line 465, ../sass/controls/_controls.scss */
+/* line 469, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -1523,7 +1529,7 @@ label.checkbox.custom {
   height: 10px;
   width: 10px; }
 
-/* line 471, ../sass/controls/_controls.scss */
+/* line 475, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar-thumb {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 20, color-stop(0%, #666666), color-stop(100%, #595959));
   background-image: -webkit-linear-gradient(#666666, #595959 20px);
@@ -1542,7 +1548,7 @@ label.checkbox.custom {
   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   border-top: 1px solid gray; }
-  /* line 478, ../sass/controls/_controls.scss */
+  /* line 482, ../sass/controls/_controls.scss */
   ::-webkit-scrollbar-thumb:hover {
     background-image: -webkit-gradient(linear, 50% 0%, 50% 20, color-stop(0%, #808080), color-stop(100%, #737373));
     background-image: -webkit-linear-gradient(#808080, #737373 20px);
@@ -1550,7 +1556,7 @@ label.checkbox.custom {
     background-image: -o-linear-gradient(#808080, #737373 20px);
     background-image: linear-gradient(#808080, #737373 20px); }
 
-/* line 483, ../sass/controls/_controls.scss */
+/* line 487, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar-corner {
   background: rgba(0, 0, 0, 0.4); }
 
@@ -1793,7 +1799,7 @@ label.checkbox.custom {
   padding: 5px;
   position: relative; }
   /* line 24, ../sass/forms/_elems.scss */
-  .form .form-row:first-child {
+  .form .form-row.first {
     border-top: none; }
   /* line 29, ../sass/forms/_elems.scss */
   .form .form-row .label,
@@ -1807,45 +1813,62 @@ label.checkbox.custom {
     font-size: 0.75rem;
     line-height: 22px;
     min-height: 22px; }
-  /* line 38, ../sass/forms/_elems.scss */
+  /* line 39, ../sass/forms/_elems.scss */
   .form .form-row > .label {
     float: left;
     position: relative;
     white-space: nowrap;
     width: 20%; }
-  /* line 46, ../sass/forms/_elems.scss */
+  /* line 47, ../sass/forms/_elems.scss */
   .form .form-row .value {
     color: #cccccc; }
-  /* line 50, ../sass/forms/_elems.scss */
+  /* line 51, ../sass/forms/_elems.scss */
   .form .form-row .controls {
     float: left;
     position: relative;
-    width: 79%; }
-    /* line 55, ../sass/forms/_elems.scss */
-    .form .form-row .controls .l-composite-control {
-      display: inline-block; }
-      /* line 57, ../sass/forms/_elems.scss */
-      .form .form-row .controls .l-composite-control.l-checkbox {
-        line-height: 14px;
-        margin-right: 5px; }
-    /* line 65, ../sass/forms/_elems.scss */
+    width: 79.9%; }
+    /* line 58, ../sass/forms/_elems.scss */
+    .form .form-row .controls .l-composite-control.l-checkbox {
+      display: inline-block;
+      line-height: 14px;
+      margin-right: 5px; }
+    /* line 67, ../sass/forms/_elems.scss */
+    .form .form-row .controls input[type="text"] {
+      height: 22px;
+      line-height: 22px;
+      margin-top: -4px;
+      vertical-align: baseline; }
+    /* line 74, ../sass/forms/_elems.scss */
+    .form .form-row .controls .l-med input[type="text"] {
+      width: 200px; }
+    /* line 78, ../sass/forms/_elems.scss */
+    .form .form-row .controls .l-small input[type="text"] {
+      width: 50px; }
+    /* line 82, ../sass/forms/_elems.scss */
+    .form .form-row .controls .l-numeric input[type="text"] {
+      text-align: right; }
+    /* line 86, ../sass/forms/_elems.scss */
     .form .form-row .controls .select {
       margin-right: 5px; }
-  /* line 70, ../sass/forms/_elems.scss */
+  /* line 91, ../sass/forms/_elems.scss */
   .form .form-row .field-hints {
     color: #666666; }
-  /* line 74, ../sass/forms/_elems.scss */
+  /* line 95, ../sass/forms/_elems.scss */
   .form .form-row .selector-list {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     -ms-border-radius: 3px;
     -o-border-radius: 3px;
     border-radius: 3px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
     background: rgba(0, 0, 0, 0.2);
+    padding: 5px;
     position: relative;
     height: 150px;
-    max-width: 50%; }
-    /* line 82, ../sass/forms/_elems.scss */
+    overflow: auto; }
+    /* line 106, ../sass/forms/_elems.scss */
     .form .form-row .selector-list .wrapper {
       overflow-y: auto;
       position: absolute;
@@ -1854,24 +1877,24 @@ label.checkbox.custom {
       bottom: 5px;
       left: 5px; }
 
-/* line 96, ../sass/forms/_elems.scss */
+/* line 120, ../sass/forms/_elems.scss */
 label.form-control.checkbox input {
   margin-right: 5px;
   vertical-align: top; }
 
-/* line 103, ../sass/forms/_elems.scss */
+/* line 127, ../sass/forms/_elems.scss */
 .hint,
 .s-hint {
   font-size: 0.9em; }
 
-/* line 107, ../sass/forms/_elems.scss */
+/* line 131, ../sass/forms/_elems.scss */
 .l-result {
   display: inline-block;
   min-width: 32px;
   min-height: 32px;
   position: relative;
   vertical-align: top; }
-  /* line 114, ../sass/forms/_elems.scss */
+  /* line 138, ../sass/forms/_elems.scss */
   .l-result div.s-hint {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
@@ -1933,19 +1956,16 @@ input[type="text"] {
   -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   -moz-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
-  background: #666666;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
-  border-bottom: 1px solid #999999;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   color: #cccccc;
   outline: none;
-  padding: 0 3px;
-  height: 22px;
-  line-height: 22px;
-  vertical-align: middle; }
-  /* line 11, ../sass/forms/_mixins.scss */
+  padding: 0 3px; }
+  /* line 12, ../sass/forms/_mixins.scss */
   input[type="text"].error {
     background: rgba(255, 0, 0, 0.5); }
-  /* line 11, ../sass/forms/_text-input.scss */
+  /* line 8, ../sass/forms/_text-input.scss */
   input[type="text"].numeric {
     text-align: right; }
 
@@ -1974,6 +1994,7 @@ input[type="text"] {
   cursor: pointer;
   display: inline-block;
   margin: 0 0 2px 2px;
+  overflow: hidden;
   position: relative; }
   /* line 127, ../sass/_mixins.scss */
   .form-control.select:not(.disabled):hover {
@@ -1982,7 +2003,7 @@ input[type="text"] {
     background-image: -moz-linear-gradient(#666666, #4d4d4d);
     background-image: -o-linear-gradient(#666666, #4d4d4d);
     background-image: linear-gradient(#666666, #4d4d4d); }
-  /* line 7, ../sass/forms/_selects.scss */
+  /* line 8, ../sass/forms/_selects.scss */
   .form-control.select select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -1994,8 +2015,12 @@ input[type="text"] {
     color: #999999;
     border: none !important;
     cursor: pointer;
-    padding: 4px 25px 2px 5px; }
-  /* line 16, ../sass/forms/_selects.scss */
+    padding: 4px 25px 2px 5px;
+    width: 120%; }
+    /* line 17, ../sass/forms/_selects.scss */
+    .form-control.select select option {
+      margin: 5px 0; }
+  /* line 21, ../sass/forms/_selects.scss */
   .form-control.select:after {
     color: #0099cc;
     content: "v";
@@ -2026,9 +2051,9 @@ input[type="text"] {
   -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   -moz-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
-  background: #666666;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
-  border-bottom: 1px solid #999999;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   color: #cccccc;
   outline: none;
   padding: 0 3px;
@@ -2038,7 +2063,7 @@ input[type="text"] {
   max-height: 400px;
   overflow: auto;
   padding: 5px; }
-  /* line 11, ../sass/forms/_mixins.scss */
+  /* line 12, ../sass/forms/_mixins.scss */
   .channel-selector .treeview.error {
     background: rgba(255, 0, 0, 0.5); }
 /* line 15, ../sass/forms/_channel-selector.scss */
@@ -2092,15 +2117,15 @@ input[type="text"] {
   -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   -moz-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
-  background: #666666;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
-  border-bottom: 1px solid #999999;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   color: #cccccc;
   outline: none;
   padding: 0 3px;
   background: #3b3b3b;
   border-bottom: 1px solid #4d4d4d; }
-  /* line 11, ../sass/forms/_mixins.scss */
+  /* line 12, ../sass/forms/_mixins.scss */
   .filter input.filter.error,
   .filter input.t-filter-input.error,
   .t-filter input.filter.error,
@@ -2456,17 +2481,20 @@ input[type="text"] {
     left: 25px; }
 /* line 29, ../sass/overlay/_overlay.scss */
 .overlay .title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: 1.3em; }
-/* line 33, ../sass/overlay/_overlay.scss */
+/* line 34, ../sass/overlay/_overlay.scss */
 .overlay .top-bar {
   height: 60px; }
-/* line 37, ../sass/overlay/_overlay.scss */
+/* line 38, ../sass/overlay/_overlay.scss */
 .overlay .editor {
   top: 70px;
   bottom: 50px;
   left: 0;
   right: 0; }
-/* line 43, ../sass/overlay/_overlay.scss */
+/* line 44, ../sass/overlay/_overlay.scss */
 .overlay .bottom-bar {
   top: auto;
   right: 0;
@@ -2475,10 +2503,10 @@ input[type="text"] {
   font-size: 1em;
   height: 40px;
   text-align: right; }
-  /* line 48, ../sass/overlay/_overlay.scss */
+  /* line 49, ../sass/overlay/_overlay.scss */
   .overlay .bottom-bar .btn {
     margin-left: 10px; }
-/* line 52, ../sass/overlay/_overlay.scss */
+/* line 53, ../sass/overlay/_overlay.scss */
 .overlay .contents.l-dialog {
   overflow: auto; }
 
@@ -2489,15 +2517,15 @@ input[type="text"] {
   /* line 7, ../sass/user-environ/_frame.scss */
   .frame.child-frame.panel:hover {
     border-color: #666666; }
-/* line 11, ../sass/user-environ/_frame.scss */
-.frame > .object-header.abs {
+/* line 14, ../sass/user-environ/_frame.scss */
+.frame > .object-header.abs, .btn-menu .frame > span.object-header.l-click-area {
   font-size: 0.75em;
   height: 20px; }
-/* line 15, ../sass/user-environ/_frame.scss */
-.frame > .object-holder.abs {
+/* line 18, ../sass/user-environ/_frame.scss */
+.frame > .object-holder.abs, .btn-menu .frame > span.object-holder.l-click-area {
   top: 23px; }
 
-/* line 21, ../sass/user-environ/_frame.scss */
+/* line 24, ../sass/user-environ/_frame.scss */
 .edit-main .frame.child-frame.panel:hover {
   border-color: #0099cc;
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
@@ -2530,7 +2558,7 @@ input[type="text"] {
 .edit-mode .top-bar .buttons-main {
   white-space: nowrap; }
   /* line 37, ../sass/user-environ/_top-bar.scss */
-  .edit-mode .top-bar .buttons-main.abs {
+  .edit-mode .top-bar .buttons-main.abs, .edit-mode .top-bar .btn-menu span.buttons-main.l-click-area, .btn-menu .edit-mode .top-bar span.buttons-main.l-click-area {
     bottom: auto;
     left: auto; }
 
@@ -2685,21 +2713,17 @@ input[type="text"] {
     right: 0; }
     /* line 21, ../sass/helpers/_splitter.scss */
     .split-layout.horizontal .pane.top {
-      bottom: auto;
-      height: 70%; }
+      bottom: auto; }
     /* line 25, ../sass/helpers/_splitter.scss */
     .split-layout.horizontal .pane.bottom {
-      top: auto;
-      height: 30%; }
+      top: auto; }
   /* line 30, ../sass/helpers/_splitter.scss */
   .split-layout.horizontal > .splitter {
     cursor: row-resize;
     left: 0;
     right: 0;
     width: auto;
-    height: 5px;
-    margin-top: -7px;
-    top: 70%; }
+    height: 5px; }
     /* line 99, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:before {
       content: '';
@@ -2720,19 +2744,15 @@ input[type="text"] {
   bottom: 0; }
   /* line 45, ../sass/helpers/_splitter.scss */
   .split-layout.vertical .pane.left {
-    right: auto;
-    width: 84%; }
+    right: auto; }
   /* line 49, ../sass/helpers/_splitter.scss */
   .split-layout.vertical .pane.right {
-    left: auto;
-    width: 15%; }
+    left: auto; }
 /* line 54, ../sass/helpers/_splitter.scss */
 .split-layout.vertical > .splitter {
   bottom: 0;
   cursor: col-resize;
-  width: 5px;
-  margin-left: -7px;
-  left: 85%; }
+  width: 5px; }
   /* line 99, ../sass/_mixins.scss */
   .split-layout.vertical > .splitter:before {
     content: '';

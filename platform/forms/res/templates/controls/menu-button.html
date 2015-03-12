@@ -1,15 +1,15 @@
 <div class="t-btn l-btn s-btn s-icon-btn s-very-subtle btn-menu menu-element dropdown click-invoke"
      ng-controller="ClickAwayController as toggle">
 
-    <span class="l-click-area" ng-click="toggle.toggle()">
-        <span class="ui-symbol icon">{{structure.glyph}}</span>
-        <span class="title-label" ng-if="structure.text">
-            {{structure.text}}
-        </span>
-        <span class='ui-symbol icon invoke-menu'
-              ng-if="!structure.text">
-            v
-        </span>
+    <span class="l-click-area" ng-click="toggle.toggle()"></span>
+
+    <span class="ui-symbol icon">{{structure.glyph}}</span>
+    <span class="title-label" ng-if="structure.text">
+        {{structure.text}}
+    </span>
+    <span class='ui-symbol icon invoke-menu'
+          ng-if="!structure.text">
+        v
     </span>
 
     <div class="menu dropdown" ng-show="toggle.isActive()">

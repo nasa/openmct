@@ -27,7 +27,7 @@
   padding: 5px;
   position: relative; }
   /* line 24, ../sass/forms/_elems.scss */
-  .form .form-row:first-child {
+  .form .form-row.first {
     border-top: none; }
   /* line 29, ../sass/forms/_elems.scss */
   .form .form-row .label,
@@ -41,45 +41,62 @@
     font-size: 0.75rem;
     line-height: 22px;
     min-height: 22px; }
-  /* line 38, ../sass/forms/_elems.scss */
+  /* line 39, ../sass/forms/_elems.scss */
   .form .form-row > .label {
     float: left;
     position: relative;
     white-space: nowrap;
     width: 20%; }
-  /* line 46, ../sass/forms/_elems.scss */
+  /* line 47, ../sass/forms/_elems.scss */
   .form .form-row .value {
     color: #cccccc; }
-  /* line 50, ../sass/forms/_elems.scss */
+  /* line 51, ../sass/forms/_elems.scss */
   .form .form-row .controls {
     float: left;
     position: relative;
-    width: 79%; }
-    /* line 55, ../sass/forms/_elems.scss */
-    .form .form-row .controls .l-composite-control {
-      display: inline-block; }
-      /* line 57, ../sass/forms/_elems.scss */
-      .form .form-row .controls .l-composite-control.l-checkbox {
-        line-height: 14px;
-        margin-right: 5px; }
-    /* line 65, ../sass/forms/_elems.scss */
+    width: 79.9%; }
+    /* line 58, ../sass/forms/_elems.scss */
+    .form .form-row .controls .l-composite-control.l-checkbox {
+      display: inline-block;
+      line-height: 14px;
+      margin-right: 5px; }
+    /* line 67, ../sass/forms/_elems.scss */
+    .form .form-row .controls input[type="text"] {
+      height: 22px;
+      line-height: 22px;
+      margin-top: -4px;
+      vertical-align: baseline; }
+    /* line 74, ../sass/forms/_elems.scss */
+    .form .form-row .controls .l-med input[type="text"] {
+      width: 200px; }
+    /* line 78, ../sass/forms/_elems.scss */
+    .form .form-row .controls .l-small input[type="text"] {
+      width: 50px; }
+    /* line 82, ../sass/forms/_elems.scss */
+    .form .form-row .controls .l-numeric input[type="text"] {
+      text-align: right; }
+    /* line 86, ../sass/forms/_elems.scss */
     .form .form-row .controls .select {
       margin-right: 5px; }
-  /* line 70, ../sass/forms/_elems.scss */
+  /* line 91, ../sass/forms/_elems.scss */
   .form .form-row .field-hints {
     color: #666666; }
-  /* line 74, ../sass/forms/_elems.scss */
+  /* line 95, ../sass/forms/_elems.scss */
   .form .form-row .selector-list {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     -ms-border-radius: 3px;
     -o-border-radius: 3px;
     border-radius: 3px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
     background: rgba(0, 0, 0, 0.2);
+    padding: 5px;
     position: relative;
     height: 150px;
-    max-width: 50%; }
-    /* line 82, ../sass/forms/_elems.scss */
+    overflow: auto; }
+    /* line 106, ../sass/forms/_elems.scss */
     .form .form-row .selector-list .wrapper {
       overflow-y: auto;
       position: absolute;
@@ -88,24 +105,24 @@
       bottom: 5px;
       left: 5px; }
 
-/* line 96, ../sass/forms/_elems.scss */
+/* line 120, ../sass/forms/_elems.scss */
 label.form-control.checkbox input {
   margin-right: 5px;
   vertical-align: top; }
 
-/* line 103, ../sass/forms/_elems.scss */
+/* line 127, ../sass/forms/_elems.scss */
 .hint,
 .s-hint {
   font-size: 0.9em; }
 
-/* line 107, ../sass/forms/_elems.scss */
+/* line 131, ../sass/forms/_elems.scss */
 .l-result {
   display: inline-block;
   min-width: 32px;
   min-height: 32px;
   position: relative;
   vertical-align: top; }
-  /* line 114, ../sass/forms/_elems.scss */
+  /* line 138, ../sass/forms/_elems.scss */
   .l-result div.s-hint {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
@@ -133,16 +150,16 @@ label.form-control.checkbox input {
   -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   -moz-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
-  background: #666666;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
-  border-bottom: 1px solid #999999;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   color: #cccccc;
   outline: none;
   padding: 5px;
   position: absolute;
   height: 100%;
   width: 100%; }
-  /* line 11, ../sass/forms/_mixins.scss */
+  /* line 12, ../sass/forms/_mixins.scss */
   .edit-main textarea.error {
     background: rgba(255, 0, 0, 0.5); }
 
@@ -162,19 +179,16 @@ input[type="text"] {
   -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   -moz-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
-  background: #666666;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
-  border-bottom: 1px solid #999999;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   color: #cccccc;
   outline: none;
-  padding: 0 3px;
-  height: 22px;
-  line-height: 22px;
-  vertical-align: middle; }
-  /* line 11, ../sass/forms/_mixins.scss */
+  padding: 0 3px; }
+  /* line 12, ../sass/forms/_mixins.scss */
   input[type="text"].error {
     background: rgba(255, 0, 0, 0.5); }
-  /* line 11, ../sass/forms/_text-input.scss */
+  /* line 8, ../sass/forms/_text-input.scss */
   input[type="text"].numeric {
     text-align: right; }
 
@@ -203,6 +217,7 @@ input[type="text"] {
   cursor: pointer;
   display: inline-block;
   margin: 0 0 2px 2px;
+  overflow: hidden;
   position: relative; }
   /* line 127, ../sass/_mixins.scss */
   .form-control.select:not(.disabled):hover {
@@ -211,7 +226,7 @@ input[type="text"] {
     background-image: -moz-linear-gradient(#666666, #4d4d4d);
     background-image: -o-linear-gradient(#666666, #4d4d4d);
     background-image: linear-gradient(#666666, #4d4d4d); }
-  /* line 7, ../sass/forms/_selects.scss */
+  /* line 8, ../sass/forms/_selects.scss */
   .form-control.select select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -223,8 +238,12 @@ input[type="text"] {
     color: #999999;
     border: none !important;
     cursor: pointer;
-    padding: 4px 25px 2px 5px; }
-  /* line 16, ../sass/forms/_selects.scss */
+    padding: 4px 25px 2px 5px;
+    width: 120%; }
+    /* line 17, ../sass/forms/_selects.scss */
+    .form-control.select select option {
+      margin: 5px 0; }
+  /* line 21, ../sass/forms/_selects.scss */
   .form-control.select:after {
     color: #0099cc;
     content: "v";
@@ -255,9 +274,9 @@ input[type="text"] {
   -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   -moz-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
-  background: #666666;
+  background: rgba(255, 255, 255, 0.1);
   border: none;
-  border-bottom: 1px solid #999999;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   color: #cccccc;
   outline: none;
   padding: 0 3px;
@@ -267,7 +286,7 @@ input[type="text"] {
   max-height: 400px;
   overflow: auto;
   padding: 5px; }
-  /* line 11, ../sass/forms/_mixins.scss */
+  /* line 12, ../sass/forms/_mixins.scss */
   .channel-selector .treeview.error {
     background: rgba(255, 0, 0, 0.5); }
 /* line 15, ../sass/forms/_channel-selector.scss */

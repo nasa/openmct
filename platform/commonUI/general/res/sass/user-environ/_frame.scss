@@ -7,6 +7,9 @@
 		&:hover {
 			border-color: lighten($bc, 10%);
 		}
+		.contents {
+//			overflow: hidden;
+		}
 	}
 	>.object-header.abs {
 		font-size: 0.75em;

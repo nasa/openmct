@@ -58,6 +58,8 @@ define(
                         maximum,
                         Math.max(minimum, start + delta)
                     );
+
+	                //console.log(current + "; minimum: " + minimum + "; max: " + maximum);
                 }
             };
         }

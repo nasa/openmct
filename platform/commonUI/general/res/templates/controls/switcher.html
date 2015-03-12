@@ -4,11 +4,12 @@
          ng-if="view.length > 1"
          ng-controller="ClickAwayController as toggle">
 
-        <span ng-click="toggle.toggle()">
-            <span class="ui-symbol icon type-icon">{{ngModel.selected.glyph}}</span>
-            <span>{{ngModel.selected.name}}</span>
-            <span class='ui-symbol icon invoke-menu'>v</span>
-        </span>
+        <span class="l-click-area" ng-click="toggle.toggle()"></span>
+
+        <span class="ui-symbol icon type-icon">{{ngModel.selected.glyph}}</span>
+        <span>{{ngModel.selected.name}}</span>
+        <span class='ui-symbol icon invoke-menu'>v</span>
+
 
         <div class="menu dropdown" ng-show="toggle.isActive()">
             <ul>

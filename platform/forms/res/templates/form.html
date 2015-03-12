@@ -11,7 +11,8 @@
                      ng-class="{
                                req: row.required,
                                valid: mctFormInner.$dirty && mctFormInner.$valid,
-                               invalid: mctFormInner.$dirty && !mctFormInner.$valid
+                               invalid: mctFormInner.$dirty && !mctFormInner.$valid,
+                               first: $index < 1
                                }">
 
                     <div class='label' title="{{row.description}}">

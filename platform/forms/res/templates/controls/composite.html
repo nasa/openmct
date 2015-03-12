@@ -1,6 +1,6 @@
 <span ng-controller="CompositeController as compositeCtrl">
     <ng-form name="mctFormItem" ng-repeat="item in structure.items">
-	    <div class="l-composite-control l-{{item.control}}">
+	    <div class="l-composite-control l-{{item.control}} {{item.cssclass}}">
 	        <mct-control key="item.control"
 	                     ng-model="ngModel[field]"
 	                     ng-required="ngRequired || compositeCtrl.isNonEmpty(ngModel[field])"

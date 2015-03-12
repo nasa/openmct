@@ -56,7 +56,8 @@
                 "implementation": "actions/SaveAction.js",
                 "name": "Save",
                 "description": "Save changes made to these objects.",
-                "depends": [ "$location" ]
+                "depends": [ "$location" ],
+                "priority": "mandatory"
             },
             {
                 "key": "cancel",
