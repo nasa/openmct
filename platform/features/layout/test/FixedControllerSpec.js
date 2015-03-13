@@ -13,7 +13,6 @@ define(
                 mockFormatter,
                 mockDomainObject,
                 mockSubscription,
-                mockPromise,
                 testGrid,
                 testModel,
                 testValues,
@@ -78,10 +77,6 @@ define(
                     'subscription',
                     [ 'unsubscribe', 'getTelemetryObjects', 'getRangeValue' ]
                 );
-                mockPromise = jasmine.createSpyObj(
-                    'promise',
-                    [ 'then' ]
-                );
 
                 testGrid = [ 123, 456 ];
                 testModel = {
@@ -107,9 +102,10 @@ define(
                 });
                 mockScope.model = testModel;
                 mockScope.configuration = testConfiguration;
-                mockScope.selection = []; // Act like edit mode
-                mockQ.when.andReturn(mockPromise);
-                mockPromise.then.andCallFake(function (cb) { cb({}); });
+                mockScope.selection = jasmine.createSpyObj(
+                    'selection',
+                    [ 'select', 'get', 'selected', 'deselect', 'proxy' ]
+                );
 
                 controller = new FixedController(
                     mockScope,
@@ -170,8 +166,8 @@ define(
 
                 elements = controller.getElements();
                 controller.select(elements[1]);
-                expect(controller.selected(elements[0])).toBeFalsy();
-                expect(controller.selected(elements[1])).toBeTruthy();
+                expect(mockScope.selection.select)
+                    .toHaveBeenCalledWith(elements[1]);
             });
 
             it("allows selection retrieval", function () {
@@ -184,6 +180,7 @@ define(
 
                 elements = controller.getElements();
                 controller.select(elements[1]);
+                mockScope.selection.get.andReturn(elements[1]);
                 expect(controller.selected()).toEqual(elements[1]);
             });
 
@@ -210,6 +207,12 @@ define(
                 elements = controller.getElements();
                 controller.select(elements[1]);
 
+                // Verify precondition
+                expect(mockScope.selection.select.calls.length).toEqual(1);
+
+                // Mimic selection behavior
+                mockScope.selection.get.andReturn(elements[1]);
+
                 elements[2].remove();
                 testModel.modified = 2;
                 findWatch("model.modified")(testModel.modified);
@@ -218,7 +221,7 @@ define(
                 // Verify removal, as test assumes this
                 expect(elements.length).toEqual(2);
 
-                expect(controller.selected(elements[1])).toBeTruthy();
+                expect(mockScope.selection.select.calls.length).toEqual(2);
             });
 
             it("provides values for telemetry elements", function () {
@@ -309,6 +312,12 @@ define(
                 expect(controller.getGridSize()).toEqual(testGrid);
             });
 
+            it("exposes a view-level selection proxy", function () {
+                expect(mockScope.selection.proxy).toHaveBeenCalledWith(
+                    jasmine.any(Object)
+                );
+            });
+
             it("exposes drag handles", function () {
                 var handles;
 
@@ -354,6 +363,7 @@ define(
                 testModel.modified = 1;
                 findWatch("model.modified")(testModel.modified);
                 controller.select(controller.getElements()[1]);
+                mockScope.selection.get.andReturn(controller.getElements()[1]);
 
                 // Get style
                 oldStyle = controller.selected().style;
@@ -369,19 +379,6 @@ define(
 
                 // Style should have been updated
                 expect(controller.selected().style).not.toEqual(oldStyle);
-            });
-
-            it("ensures elements in view match elements in composition", function () {
-                // View should ensure that at least one element is present
-                // for each id, and then unused ids do not have elements.
-                mockScope.model = testModel;
-                testModel.composition = [ 'b', 'd' ];
-                findWatch("model.composition")(mockScope.model.composition);
-
-                // Should have a new element for d; should not have elements for a, c
-                expect(testConfiguration.elements.length).toEqual(2);
-                expect(testConfiguration.elements[0].id).toEqual('b');
-                expect(testConfiguration.elements[1].id).toEqual('d');
             });
         });
     }

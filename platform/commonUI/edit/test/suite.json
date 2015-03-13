@@ -18,5 +18,6 @@
     "objects/EditableModelCache",
     "representers/EditRepresenter",
     "representers/EditToolbar",
-    "representers/EditToolbarRepresenter"
+    "representers/EditToolbarRepresenter",
+    "representers/EditToolbarSelection"
 ]

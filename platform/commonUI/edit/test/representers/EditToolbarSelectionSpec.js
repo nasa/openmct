@@ -1,44 +1,47 @@
 /*global define,describe,it,expect,beforeEach,jasmine,xit*/
 
 define(
-    ['../src/LayoutSelection'],
-    function (LayoutSelection) {
+    ['../../src/representers/EditToolbarSelection'],
+    function (EditToolbarSelection) {
         "use strict";
 
-        describe("Layout/fixed position selection manager", function () {
-            var testSelection,
-                testProxy,
+        describe("The Edit mode selection manager", function () {
+            var testProxy,
                 testElement,
                 otherElement,
                 selection;
 
             beforeEach(function () {
-                testSelection = [];
                 testProxy = { someKey: "some value" };
                 testElement = { someOtherKey: "some other value" };
                 otherElement = { yetAnotherKey: 42 };
-                selection = new LayoutSelection(testSelection, testProxy);
+                selection = new EditToolbarSelection();
+                selection.proxy(testProxy);
             });
 
             it("adds the proxy to the selection array", function () {
-                expect(testSelection).toEqual([testProxy]);
+                expect(selection.all()).toEqual([testProxy]);
+            });
+
+            it("exposes view proxy", function () {
+                expect(selection.proxy()).toBe(testProxy);
             });
 
             it("includes selected objects alongside the proxy", function () {
                 selection.select(testElement);
-                expect(testSelection).toEqual([testProxy, testElement]);
+                expect(selection.all()).toEqual([testProxy, testElement]);
             });
 
             it("allows elements to be deselected", function () {
                 selection.select(testElement);
                 selection.deselect();
-                expect(testSelection).toEqual([testProxy]);
+                expect(selection.all()).toEqual([testProxy]);
             });
 
             it("replaces old selections with new ones", function () {
                 selection.select(testElement);
                 selection.select(otherElement);
-                expect(testSelection).toEqual([testProxy, otherElement]);
+                expect(selection.all()).toEqual([testProxy, otherElement]);
             });
 
             it("allows retrieval of the current selection", function () {
@@ -57,17 +60,6 @@ define(
                 expect(selection.selected(otherElement)).toBeTruthy();
             });
 
-            it("cleans up the selection on destroy", function () {
-                selection.destroy();
-                expect(testSelection).toEqual([]);
-            });
-
-            it("preserves other elements in the array", function () {
-                testSelection.push(42);
-                selection.select(testElement);
-                expect(testSelection).toEqual([testProxy, testElement, 42]);
-            });
-
             it("considers the proxy to be selected", function () {
                 expect(selection.selected(testProxy)).toBeTruthy();
                 selection.select(testElement);
@@ -77,7 +69,7 @@ define(
 
             it("treats selection of the proxy as a no-op", function () {
                 selection.select(testProxy);
-                expect(testSelection).toEqual([testProxy]);
+                expect(selection.all()).toEqual([testProxy]);
             });
 
         });

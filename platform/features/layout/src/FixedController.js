@@ -1,11 +1,12 @@
 /*global define*/
 
 define(
-    ['./LayoutSelection', './FixedProxy', './elements/ElementProxies', './FixedDragHandle'],
-    function (LayoutSelection, FixedProxy, ElementProxies, FixedDragHandle) {
+    ['./FixedProxy', './elements/ElementProxies', './FixedDragHandle'],
+    function (FixedProxy, ElementProxies, FixedDragHandle) {
         "use strict";
 
-        var DEFAULT_GRID_SIZE = [64, 16],
+        var DEFAULT_DIMENSIONS = [ 2, 1 ],
+            DEFAULT_GRID_SIZE = [64, 16],
             DEFAULT_GRID_EXTENT = [4, 4];
 
         /**
@@ -28,7 +29,6 @@ define(
                 elementProxiesById = {},
                 handles = [],
                 moveHandle,
-                viewProxy,
                 selection;
 
             // Refresh cell styles (e.g. because grid extent changed)
@@ -198,6 +198,14 @@ define(
                     telemetrySubscriber.subscribe(domainObject, updateValues);
             }
 
+            // Handle changes in the object's composition
+            function updateComposition(ids) {
+                // Populate panel positions
+                // TODO: Ensure defaults here
+                // Resubscribe - objects in view have changed
+                subscribe($scope.domainObject);
+            }
+
             // Add an element to this view
             function addElement(element) {
                 // Ensure that configuration field is populated
@@ -218,93 +226,28 @@ define(
                 }
             }
 
-            // Add a telemetry element to this view
-            function addTelemetryElement(id, x, y) {
-                viewProxy.add("fixed.telemetry", { id: id, x: x, y: y });
-            }
-
-            // Ensure that all telemetry elements have elements in view
-            function ensureElements(ids) {
-                var contained = {},
-                    found = {};
-
-                // Track that a telemetry element is in the view
-                function track(element) {
-                    if (element.type === 'fixed.telemetry') {
-                        found[element.id] = true;
-                    }
-                }
-
-                // Used to filter down to elements not yet present
-                function notFound(id) {
-                    return !found[id];
-                }
-
-                // Add a telemetry element
-                function add(id, index) {
-                    addTelemetryElement(id, 0, index);
-                }
-
-                // Build list of all found elements
-                (($scope.configuration || {}).elements || []).forEach(track);
-
-                // Add in telemetry elements where needed
-                (ids || []).filter(notFound).forEach(add);
-            }
-
-            // Remove telemetry elements which don't match set of contained ids
-            function removeOtherElements(ids) {
-                // Set of ids, to simplify lookup
-                var contained = {},
-                    elements = ($scope.configuration || {}).elements;
-
-                // Track that an id is present; used to build set
-                function track(id) {
-                    contained[id] = true;
-                }
-
-                // Check if an element is still valid
-                function valid(element) {
-                    return (element.type !== "fixed.telemetry") ||
-                            contained[element.id];
-                }
-
-                // Only need to remove elements if any have been defined
-                if (Array.isArray(elements)) {
-                    // Build set of contained ids
-                    ids.forEach(track);
-                    // Filter out removed telemetry elements
-                    $scope.configuration.elements = elements.filter(valid);
-                    // Refresh elements exposed to template
-                    refreshElements();
-                }
-            }
-
-            // Handle changes in the object's composition
-            function updateComposition(ids) {
-                // Remove any obsolete telemetry elements
-                removeOtherElements(ids);
-                // Populate panel positions
-                ensureElements(ids);
-                // Resubscribe - objects in view have changed
-                subscribe($scope.domainObject);
-            }
-
             // Position a panel after a drop event
             function handleDrop(e, id, position) {
                 // Store the position of this element.
-                addTelemetryElement(
-                    id,
-                    Math.floor(position.x / gridSize[0]),
-                    Math.floor(position.y / gridSize[1])
-                );
+                addElement({
+                    type: "fixed.telemetry",
+                    x: Math.floor(position.x / gridSize[0]),
+                    y: Math.floor(position.y / gridSize[1]),
+                    id: id,
+                    stroke: "transparent",
+                    color: "#cccccc",
+                    titled: true,
+                    width: DEFAULT_DIMENSIONS[0],
+                    height: DEFAULT_DIMENSIONS[1]
+                });
             }
 
+            // Track current selection state
+            selection = $scope.selection;
 
-            //  Track current selection state
-            viewProxy = new FixedProxy(addElement, $q, dialogService);
-            if (Array.isArray($scope.selection)) {
-                selection = new LayoutSelection($scope.selection, viewProxy);
+            // Expose the view's selection proxy
+            if (selection) {
+                selection.proxy(new FixedProxy(addElement, $q, dialogService));
             }
 
             // Refresh list of elements whenever model changes
