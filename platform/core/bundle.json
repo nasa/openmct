@@ -131,6 +131,11 @@
                 "depends": [ "$injector" ]
             },
             {
+                "key": "relationship",
+                "implementation": "capabilities/RelationshipCapability.js",
+                "depends": [ "$injector" ]
+            },
+            {
                 "key": "type",
                 "implementation": "types/TypeCapability.js",
                 "depends": [ "typeService" ]
