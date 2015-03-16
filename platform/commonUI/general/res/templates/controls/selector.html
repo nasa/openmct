@@ -1,0 +1,62 @@
+<div class='form-control complex channel-selector cols cols-32'
+     ng-controller="SelectorController as selector">
+    <div class='col col-15'>
+        <div class='line field-hints'>Available</div>
+        <!--div id='_form_filter' class='line filter'>
+            <input type='text' class='control filter' name='filter-available' />
+            <a class='icon ui-symbol t-available-trigger'
+               href=''
+               title="Filter is case sensitive">M</a>
+        </div>
+
+        <div class="line">
+            Showing {{shown}} of {{count}} available options.
+        </div -->
+
+        <div class='line treeview checkbox-list' name='available'>
+            <mct-representation key="'tree'"
+                                mct-object="selector.root()"
+                                ng-model="selector.treeModel">
+            </mct-representation>
+        </div>
+    </div>
+    <div class='col col-2'>
+        <div class='btn-holder valign-mid btns-add-remove'>
+            <a class='btn major'
+               ng-click="selector.select(selector.treeModel.selectedObject)">
+                <span class='ui-symbol'>&gt;</span>
+            </a>
+            <a class='btn major'
+               ng-click="selector.deselect(selector.listModel.selectedObject)">
+                <span class='ui-symbol'>&lt;</span>
+            </a>
+        </div>
+    </div>
+    <div class='col col-15'>
+        <div class='line field-hints'>Selected</div>
+        <!-- div id='_form_filter' class='line filter'>
+            <input type='text' class='control filter' name='filter-selected' />
+            <a class='icon ui-symbol t-selected-trigger'
+               href=''
+               title="Filter is case sensitive">
+                M
+            </a>
+        </div>
+        <div class="line">
+            Showing {{shown}} of {{count}} available options.
+        </div -->
+
+        <div class='line treeview checkbox-list' name='selected'>
+            <ul class="tree">
+                <li ng-repeat="selectedObject in selector.selected()">
+                    <mct-representation key="'label'"
+                                        mct-object="selectedObject"
+                                        ng-click="selector.listModel.selectedObject = selectedObject"
+                                        ng-class="{ test: selector.listModel.selectedObject === selectedObject }">
+                    </mct-representation>
+
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

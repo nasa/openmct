@@ -14,6 +14,7 @@ define(
         '../capabilities/EditablePersistenceCapability',
         '../capabilities/EditableContextCapability',
         '../capabilities/EditableCompositionCapability',
+        '../capabilities/EditableRelationshipCapability',
         '../capabilities/EditorCapability',
         './EditableDomainObjectCache'
     ],
@@ -21,6 +22,7 @@ define(
         EditablePersistenceCapability,
         EditableContextCapability,
         EditableCompositionCapability,
+        EditableRelationshipCapability,
         EditorCapability,
         EditableDomainObjectCache
     ) {
@@ -30,6 +32,7 @@ define(
             persistence: EditablePersistenceCapability,
             context: EditableContextCapability,
             composition: EditableCompositionCapability,
+            relationship: EditableRelationshipCapability,
             editor: EditorCapability
         };
 
@@ -64,7 +67,10 @@ define(
                 // Override certain capabilities
                 editableObject.getCapability = function (name) {
                     var delegateArguments = getDelegateArguments(name, arguments),
-                        capability = domainObject.getCapability.apply(this, delegateArguments),
+                        capability = domainObject.getCapability.apply(
+                            this,
+                            delegateArguments
+                        ),
                         factory = capabilityFactories[name];
 
                     return (factory && capability) ?

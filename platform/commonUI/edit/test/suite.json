@@ -9,6 +9,7 @@
     "capabilities/EditableContextCapability",
     "capabilities/EditableLookupCapability",
     "capabilities/EditablePersistenceCapability",
+    "capabilities/EditableRelationshipCapability",
     "capabilities/EditorCapability",
     "controllers/EditActionController",
     "controllers/EditController",
