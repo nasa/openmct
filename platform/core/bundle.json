@@ -157,8 +157,7 @@
             },
             {
                 "key": "mutation",
-                "implementation": "capabilities/MutationCapability.js",
-                "depends": [ "$q" ]
+                "implementation": "capabilities/MutationCapability.js"
             },
             {
                 "key": "delegation",
