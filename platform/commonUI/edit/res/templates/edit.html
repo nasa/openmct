@@ -1,8 +1,9 @@
 <div content="jquery-wrapper"
      class="abs holder-all edit-mode"
-     ng-controller="EditController">
+     ng-controller="EditController as editMode"
+     mct-before-unload="editMode.getUnloadWarning()">
 
-    <mct-representation key="'edit-object'" mct-object="navigatedObject">
+    <mct-representation key="'edit-object'" mct-object="editMode.navigatedObject()">
     </mct-representation>
 
     <mct-include key="'bottombar'"></mct-include>

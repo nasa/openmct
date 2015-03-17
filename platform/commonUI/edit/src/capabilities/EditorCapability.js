@@ -88,6 +88,13 @@ define(
                  */
                 cancel: function () {
                     return resolvePromise(undefined);
+                },
+                /**
+                 * Check if there are any unsaved changes.
+                 * @returns {boolean} true if there are unsaved changes
+                 */
+                dirty: function () {
+                    return cache.dirty();
                 }
             };
         };

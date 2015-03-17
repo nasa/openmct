@@ -91,6 +91,13 @@ define(
                         // Invoke its save behavior
                         object.getCapability('editor').save();
                     }
+                },
+                /**
+                 * Check if any objects have been marked dirty in this cache.
+                 * @returns {boolean} true if objects are dirty
+                 */
+                dirty: function () {
+                    return Object.keys(dirty).length > 0;
                 }
             };
         }

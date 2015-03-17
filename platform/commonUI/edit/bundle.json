@@ -23,6 +23,13 @@
                 "depends": [ "$scope" ]
             }
         ],
+        "directives": [
+            {
+                "key": "mctBeforeUnload",
+                "implementation": "directives/MCTBeforeUnload.js",
+                "depends": [ "$window" ]
+            }
+        ],
         "actions": [
             {
                 "key": "edit",

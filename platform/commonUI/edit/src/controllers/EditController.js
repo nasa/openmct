@@ -15,10 +15,12 @@ define(
          * @constructor
          */
         function EditController($scope, navigationService) {
+            var navigatedObject;
+
             function setNavigation(domainObject) {
                 // Wrap the domain object such that all mutation is
                 // confined to edit mode (until Save)
-                $scope.navigatedObject =
+                navigatedObject =
                     domainObject && new EditableDomainObject(domainObject);
             }
 
@@ -27,6 +29,21 @@ define(
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);
             });
+
+            return {
+                navigatedObject: function () {
+                    return navigatedObject;
+                },
+                getUnloadWarning: function () {
+                    var editorCapability = navigatedObject &&
+                            navigatedObject.getCapability("editor"),
+                        hasChanges = editorCapability && editorCapability.dirty();
+
+                    return hasChanges ?
+                            "Unsaved changes will be lost if you leave this page." :
+                            undefined;
+                }
+            };
         }
 
         return EditController;
