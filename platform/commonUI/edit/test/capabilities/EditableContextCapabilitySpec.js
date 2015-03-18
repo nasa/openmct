@@ -51,6 +51,18 @@ define(
                 expect(mockContext.getDomainObject.calls.length).toEqual(1);
             });
 
+            it("hides the root object", function () {
+                expect(capability.getRoot()).toEqual(mockEditableObject);
+                expect(capability.getPath()).toEqual([mockEditableObject]);
+            });
+
+            it("exposes the root object through a different method", function () {
+                // Should still go through the factory...
+                expect(capability.getTrueRoot()).toEqual(someValue);
+                // ...with value of the unwrapped capability's getRoot
+                expect(mockFactory.getEditableObject)
+                    .toHaveBeenCalledWith(mockTestObject);
+            });
         });
     }
 );
