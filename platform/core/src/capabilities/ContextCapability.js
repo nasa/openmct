@@ -80,7 +80,8 @@ define(
                                 parentObject.getCapability('context');
 
                     return parentContext ?
-                                parentContext.getRoot() : domainObject;
+                                parentContext.getRoot() :
+                                (parentObject || domainObject);
                 }
             };
         }
