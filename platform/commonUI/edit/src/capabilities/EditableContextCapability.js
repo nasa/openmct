@@ -24,15 +24,19 @@ define(
             // This is a "lookup" style capability (it looks up other
             // domain objects), and it should be idempotent
             var capability = new EditableLookupCapability(
-                contextCapability,
-                editableObject,
-                domainObject,
-                cache,
-                true // Idempotent
-            );
+                    contextCapability,
+                    editableObject,
+                    domainObject,
+                    cache,
+                    true // Idempotent
+                ),
+                // Track the real root object for the Elements pane
+                trueRoot = capability.getRoot();
 
             // Provide access to the real root, for the Elements pane.
-            capability.getTrueRoot = capability.getRoot;
+            capability.getTrueRoot = function () {
+                return trueRoot;
+            };
 
             // Hide ancestry after the root of this subgraph
             if (cache.isRoot(domainObject)) {
