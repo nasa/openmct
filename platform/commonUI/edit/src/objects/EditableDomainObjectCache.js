@@ -34,7 +34,8 @@ define(
          */
         function EditableDomainObjectCache(EditableDomainObject) {
             var cache = new EditableModelCache(),
-                dirty = {};
+                dirty = {},
+                root;
 
             return {
                 /**
@@ -45,10 +46,23 @@ define(
                  * @returns {DomainObject} the domain object in an editable form
                  */
                 getEditableObject: function (domainObject) {
+                    // Track the top-level domain object; this will have
+                    // some special behavior for its context capability.
+                    root = root || domainObject;
+
+                    // Provide an editable form of the object
                     return new EditableDomainObject(
                         domainObject,
                         cache.getCachedModel(domainObject)
                     );
+                },
+                /**
+                 * Check if a domain object is (effectively) the top-level
+                 * object in this editable subgraph.
+                 * @returns {boolean} true if it is the root
+                 */
+                isRoot: function (domainObject) {
+                    return domainObject === root;
                 },
                 /**
                  * Mark an editable domain object (presumably already cached)
