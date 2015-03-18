@@ -37,7 +37,7 @@ define(
 
             // Assemble all representations and views
             // The distinction between views and representations is
-            // not important her (view is-a representation)
+            // not important here (view is-a representation)
             representations.concat(views).forEach(function (representation) {
                 var key = representation.key;
 
@@ -78,8 +78,8 @@ define(
                 // Populate scope with any capabilities indicated by the
                 // representation's extension definition
                 function refreshCapabilities() {
-                    var representation = representationMap[$scope.key],
-                        domainObject = $scope.domainObject,
+                    var domainObject = $scope.domainObject,
+                        representation = lookup($scope.key, domainObject),
                         uses = ((representation || {}).uses || []);
 
                     if (domainObject) {

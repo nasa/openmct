@@ -150,12 +150,17 @@
         "representations": [
             {
                 "key": "tree",
-                "templateUrl": "templates/tree.html",
+                "templateUrl": "templates/subtree.html",
+                "uses": [ "composition" ],
                 "type": "root",
                 "priority": "preferred"
             },
             {
                 "key": "tree",
+                "templateUrl": "templates/tree.html"
+            },
+            {
+                "key": "subtree",
                 "templateUrl": "templates/subtree.html",
                 "uses": [ "composition" ]
             },
