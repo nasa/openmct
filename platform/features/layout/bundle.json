@@ -221,12 +221,6 @@
                         ],
                         "key": "layoutGrid",
                         "conversion": "number[]"
-                    },
-                    {
-                        "label": "Panel(s)",
-                        "control": "selector",
-                        "type": "telemetry.panel",
-                        "key": "somethingElse"
                     }
                 ]
             },
