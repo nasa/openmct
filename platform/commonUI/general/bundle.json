@@ -151,6 +151,12 @@
             {
                 "key": "tree",
                 "templateUrl": "templates/tree.html",
+                "type": "root",
+                "priority": "preferred"
+            },
+            {
+                "key": "tree",
+                "templateUrl": "templates/subtree.html",
                 "uses": [ "composition" ]
             },
             {
