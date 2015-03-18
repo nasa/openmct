@@ -19,14 +19,14 @@ define(
                 );
                 mockContext = jasmine.createSpyObj(
                     'context',
-                    [ 'getRoot' ]
+                    [ 'getTrueRoot' ]
                 );
 
                 mockDomainObject.getId.andReturn('test-id');
                 mockDomainObject.getCapability.andReturn(mockContext);
 
                 // Return a new instance of the root object each time
-                mockContext.getRoot.andCallFake(function () {
+                mockContext.getTrueRoot.andCallFake(function () {
                     var mockRoot = jasmine.createSpyObj('root', ['getId']);
                     mockRoot.getId.andReturn('root-id');
                     return mockRoot;
@@ -75,7 +75,7 @@ define(
                 firstRoot = controller.getRoot();
 
                 // Change the exposed root
-                mockContext.getRoot.andCallFake(function () {
+                mockContext.getTrueRoot.andCallFake(function () {
                     var mockRoot = jasmine.createSpyObj('root', ['getId']);
                     mockRoot.getId.andReturn('other-root-id');
                     return mockRoot;

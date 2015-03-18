@@ -19,18 +19,22 @@ define(
                 // methods for domain objects, so give it an
                 // arbitrary interface to wrap.
                 mockContext =
-                    jasmine.createSpyObj("context", [ "getDomainObject" ]);
+                    jasmine.createSpyObj("context", [ "getDomainObject", "getRoot" ]);
                 mockTestObject = jasmine.createSpyObj(
                     "domainObject",
                     [ "getId", "getModel", "getCapability" ]
                 );
-                mockFactory =
-                    jasmine.createSpyObj("factory", ["getEditableObject"]);
+                mockFactory = jasmine.createSpyObj(
+                    "factory",
+                    ["getEditableObject", "isRoot"]
+                );
 
                 someValue = { x: 42 };
 
+                mockContext.getRoot.andReturn(mockTestObject);
                 mockContext.getDomainObject.andReturn(mockTestObject);
                 mockFactory.getEditableObject.andReturn(someValue);
+                mockFactory.isRoot.andReturn(true);
 
                 capability = new EditableContextCapability(
                     mockContext,
