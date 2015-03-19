@@ -16,7 +16,7 @@
             {
                 "key": "drag",
                 "implementation": "gestures/DragGesture.js",
-                "depends": [ "$log" ]
+                "depends": [ "$log", "dndService" ]
             },
             {
                 "key": "drop",
@@ -41,6 +41,13 @@
             {
                 "implementation": "gestures/GestureRepresenter.js",
                 "depends": [ "gestureService" ]
+            }
+        ],
+        "services": [
+            {
+                "key": "dndService",
+                "implementation": "services/DndService.js",
+                "depends": [ "$log" ]
             }
         ]
     }

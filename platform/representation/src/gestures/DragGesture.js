@@ -19,7 +19,7 @@ define(
          * @param {DomainObject} domainObject the domain object which
          *        is represented; this will be passed on drop.
          */
-        function DragGesture($log, element, domainObject) {
+        function DragGesture($log, dndService, element, domainObject) {
             function startDrag(e) {
                 var event = (e || {}).originalEvent || e;
 
@@ -45,6 +45,12 @@ define(
                         domainObject.getId()
                     );
 
+                    // Finally, also pass the object instance via the dndService,
+                    // so more than the ID can be retrieved (if desired)
+                    dndService.setData(
+                        GestureConstants.MCT_DRAG_TYPE,
+                        domainObject
+                    );
                 } catch (err) {
                     // Exceptions at this point indicate that the browser
                     // do not fully support drag-and-drop (e.g. if
@@ -57,10 +63,16 @@ define(
 
             }
 
+            function endDrag() {
+                // Clear the drag data after the drag is complete
+                dndService.removeData(GestureConstants.MCT_DRAG_TYPE);
+            }
+
             // Mark the element as draggable, and handle the dragstart event
             $log.debug("Attaching drag gesture");
             element.attr('draggable', 'true');
             element.on('dragstart', startDrag);
+            element.on('dragend', endDrag);
 
             return {
                 /**

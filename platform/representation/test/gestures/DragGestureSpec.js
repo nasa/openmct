@@ -10,6 +10,7 @@ define(
 
         var JQLITE_FUNCTIONS = [ "on", "off", "attr", "removeAttr" ],
             LOG_FUNCTIONS = [ "error", "warn", "info", "debug"],
+            DND_FUNCTIONS = [ "setData", "getData", "removeData" ],
             DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability"],
             TEST_ID = "test-id";
 
@@ -17,14 +18,16 @@ define(
 
         describe("The drag gesture", function () {
             var mockLog,
+                mockDndService,
                 mockElement,
                 mockDomainObject,
                 mockDataTransfer,
-                gesture,
-                fireGesture;
+                handlers,
+                gesture;
 
             beforeEach(function () {
                 mockLog = jasmine.createSpyObj("$log", LOG_FUNCTIONS);
+                mockDndService = jasmine.createSpyObj("dndService", DND_FUNCTIONS);
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
                 mockDataTransfer = jasmine.createSpyObj("dataTransfer", ["setData"]);
@@ -32,12 +35,18 @@ define(
                 mockDomainObject.getId.andReturn(TEST_ID);
                 mockDomainObject.getModel.andReturn({});
 
-                gesture = new DragGesture(mockLog, mockElement, mockDomainObject);
-                fireGesture = mockElement.on.mostRecentCall.args[1];
+                handlers = {};
+
+                gesture = new DragGesture(mockLog, mockDndService, mockElement, mockDomainObject);
+
+                // Look up all handlers registered by the gesture
+                mockElement.on.calls.forEach(function (call) {
+                    handlers[call.args[0]] = call.args[1];
+                });
             });
 
             it("listens for dragstart on the element", function () {
-                expect(mockElement.on.mostRecentCall.args[0]).toEqual("dragstart");
+                expect(handlers.dragstart).toEqual(jasmine.any(Function));
             });
 
             it("marks an element as draggable", function () {
@@ -45,11 +54,32 @@ define(
             });
 
             it("places data in a dataTransfer object", function () {
-                fireGesture({ dataTransfer: mockDataTransfer });
+                handlers.dragstart({ dataTransfer: mockDataTransfer });
                 expect(mockDataTransfer.setData).toHaveBeenCalledWith(
                     GestureConstants.MCT_DRAG_TYPE,
                     TEST_ID
                 );
+            });
+
+            it("places domain object in the dnd service", function () {
+                handlers.dragstart({ dataTransfer: mockDataTransfer });
+                expect(mockDndService.setData).toHaveBeenCalledWith(
+                    GestureConstants.MCT_DRAG_TYPE,
+                    mockDomainObject
+                );
+            });
+
+            it("clears domain object from the dnd service on drag end", function () {
+                // Start dragging
+                handlers.dragstart({ dataTransfer: mockDataTransfer });
+
+                // Verify precondition
+                expect(mockDndService.removeData).not.toHaveBeenCalled();
+
+                // End the drag
+                handlers.dragend({ dataTransfer: mockDataTransfer });
+                expect(mockDndService.removeData)
+                    .toHaveBeenCalledWith(GestureConstants.MCT_DRAG_TYPE);
             });
 
             it("logs a warning if dataTransfer cannot be set", function () {
@@ -57,7 +87,7 @@ define(
                 expect(mockLog.warn).not.toHaveBeenCalled();
 
                 // Fire the gesture without a dataTransfer field
-                fireGesture({});
+                handlers.dragstart({});
 
                 // Should have logged a warning
                 expect(mockLog.warn).toHaveBeenCalled();
@@ -73,7 +103,7 @@ define(
 
                 // Verify that attribute/listener were removed
                 expect(mockElement.removeAttr).toHaveBeenCalledWith("draggable");
-                expect(mockElement.off).toHaveBeenCalledWith("dragstart", fireGesture);
+                expect(mockElement.off).toHaveBeenCalledWith("dragstart", handlers.dragstart);
             });
 
         });
