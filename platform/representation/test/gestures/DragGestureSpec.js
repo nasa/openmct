@@ -65,6 +65,10 @@ define(
                 handlers.dragstart({ dataTransfer: mockDataTransfer });
                 expect(mockDndService.setData).toHaveBeenCalledWith(
                     GestureConstants.MCT_DRAG_TYPE,
+                    TEST_ID
+                );
+                expect(mockDndService.setData).toHaveBeenCalledWith(
+                    GestureConstants.MCT_EXTENDED_DRAG_TYPE,
                     mockDomainObject
                 );
             });
@@ -78,8 +82,12 @@ define(
 
                 // End the drag
                 handlers.dragend({ dataTransfer: mockDataTransfer });
+
+                // Should have removed the data that was attached
                 expect(mockDndService.removeData)
                     .toHaveBeenCalledWith(GestureConstants.MCT_DRAG_TYPE);
+                expect(mockDndService.removeData)
+                    .toHaveBeenCalledWith(GestureConstants.MCT_EXTENDED_DRAG_TYPE);
             });
 
             it("logs a warning if dataTransfer cannot be set", function () {

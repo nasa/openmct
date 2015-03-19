@@ -11,6 +11,12 @@ define({
      */
     MCT_DRAG_TYPE: 'mct-domain-object-id',
     /**
+     * The string identifier for the data type used for drag-and-drop
+     * composition of domain objects, by object instance (passed through
+     * the dndService)
+     */
+    MCT_EXTENDED_DRAG_TYPE: 'mct-domain-object',
+    /**
      * An estimate for the dimensions of a context menu, used for
      * positioning.
      */

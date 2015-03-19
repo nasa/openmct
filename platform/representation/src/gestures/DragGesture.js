@@ -45,12 +45,19 @@ define(
                         domainObject.getId()
                     );
 
-                    // Finally, also pass the object instance via the dndService,
-                    // so more than the ID can be retrieved (if desired)
+                    // Finally, also pass the id object instance via the
+                    // dndService, allowing inspection during drag as well
+                    // as retrieval of the original domain object.
                     dndService.setData(
-                        GestureConstants.MCT_DRAG_TYPE,
+                        GestureConstants.MCT_EXTENDED_DRAG_TYPE,
                         domainObject
                     );
+                    dndService.setData(
+                        GestureConstants.MCT_DRAG_TYPE,
+                        domainObject.getId()
+                    );
+
+
                 } catch (err) {
                     // Exceptions at this point indicate that the browser
                     // do not fully support drag-and-drop (e.g. if
@@ -66,6 +73,7 @@ define(
             function endDrag() {
                 // Clear the drag data after the drag is complete
                 dndService.removeData(GestureConstants.MCT_DRAG_TYPE);
+                dndService.removeData(GestureConstants.MCT_EXTENDED_DRAG_TYPE);
             }
 
             // Mark the element as draggable, and handle the dragstart event
