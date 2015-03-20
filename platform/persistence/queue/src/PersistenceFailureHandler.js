@@ -18,8 +18,12 @@ define(
             function persist(failure) {
                 var decoratedPersistence =
                     failure.domainObject.getCapability('persistence');
-                return decoratedPersistence &&
-                        decoratedPersistence.persist();
+                // Note that we issue the persist request here, but don't
+                // return it. We trust that the PersistenceQueue will
+                // behave correctly on the next round of flushing.
+                if (decoratedPersistence) {
+                    decoratedPersistence.persist();
+                }
             }
 
             // Retry persistence (overwrite) for this set of failed attempts
