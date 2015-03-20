@@ -388,21 +388,21 @@ span {
       width: 100%;
       pointer-events: none;
       z-index: 0; }
-/* line 28, ../sass/_fixed-position.scss */
+/* line 21, ../sass/_fixed-position.scss */
 .t-fixed-position .l-fixed-position-item {
   position: absolute;
   border: 1px solid transparent; }
-  /* line 32, ../sass/_fixed-position.scss */
+  /* line 25, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item.s-selected {
     -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
     -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
     box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
     border-color: #0099cc;
     cursor: move; }
-  /* line 37, ../sass/_fixed-position.scss */
+  /* line 30, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item.s-not-selected {
     opacity: 0.8; }
-  /* line 43, ../sass/_fixed-position.scss */
+  /* line 36, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item .l-fixed-position-box,
   .t-fixed-position .l-fixed-position-item .l-fixed-position-image,
   .t-fixed-position .l-fixed-position-item .l-fixed-position-text {
@@ -411,20 +411,20 @@ span {
     box-sizing: border-box;
     height: 100%;
     width: 100%; }
-  /* line 51, ../sass/_fixed-position.scss */
+  /* line 44, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item .l-fixed-position-image {
     background-size: cover;
     background-repeat: no-repeat;
-    background-position: left top; }
-  /* line 57, ../sass/_fixed-position.scss */
+    background-position: center; }
+  /* line 50, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item .l-fixed-position-text {
     text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px;
     border: 1px solid transparent;
     font-size: 0.8rem; }
-    /* line 62, ../sass/_fixed-position.scss */
+    /* line 55, ../sass/_fixed-position.scss */
     .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-static-text {
       padding: 3px; }
-    /* line 67, ../sass/_fixed-position.scss */
+    /* line 60, ../sass/_fixed-position.scss */
     .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem {
       overflow: hidden;
       position: absolute;
@@ -438,41 +438,41 @@ span {
       -moz-box-sizing: border-box;
       box-sizing: border-box;
       width: 50%; }
-      /* line 71, ../sass/_fixed-position.scss */
+      /* line 64, ../sass/_fixed-position.scss */
       .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-title {
         right: auto;
         left: 3px; }
-      /* line 75, ../sass/_fixed-position.scss */
+      /* line 68, ../sass/_fixed-position.scss */
       .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-value {
         right: 3px;
         left: auto;
         text-align: right; }
-        /* line 80, ../sass/_fixed-position.scss */
+        /* line 73, ../sass/_fixed-position.scss */
         .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-value.telem-only {
           left: 3px;
           width: auto; }
-/* line 91, ../sass/_fixed-position.scss */
+/* line 84, ../sass/_fixed-position.scss */
 .t-fixed-position .l-fixed-position-item-handle {
   background: rgba(0, 153, 204, 0.5);
   cursor: crosshair;
   border: 1px solid #0099cc;
   position: absolute; }
 
-/* line 105, ../sass/_fixed-position.scss */
+/* line 98, ../sass/_fixed-position.scss */
 .edit-mode .t-fixed-position.l-fixed-position .l-grid-holder .l-grid.l-grid-x {
   background-image: -webkit-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: -moz-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: -o-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-repeat: repeat-x; }
-/* line 109, ../sass/_fixed-position.scss */
+/* line 102, ../sass/_fixed-position.scss */
 .edit-mode .t-fixed-position.l-fixed-position .l-grid-holder .l-grid.l-grid-y {
   background-image: -webkit-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: -moz-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: -o-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-repeat: repeat-y; }
-/* line 118, ../sass/_fixed-position.scss */
+/* line 110, ../sass/_fixed-position.scss */
 .edit-mode .t-fixed-position .l-fixed-position-item:not(.s-selected):hover {
   border: 1px dotted rgba(0, 153, 204, 0.5); }
 
