@@ -6,8 +6,8 @@
             {
                 "provides": "persistenceService",
                 "type": "provider",
-                "implementation": "CouchPersistenceProvider.js",
-                "depends": [ "$http", "$q", "PERSISTENCE_SPACE", "COUCHDB_PATH" ]
+                "implementation": "ElasticPersistenceProvider.js",
+                "depends": [ "$http", "$q", "PERSISTENCE_SPACE", "ELASTIC_ROOT", "ELASTIC_PATH" ]
             }
         ],
         "constants": [
@@ -16,22 +16,26 @@
                 "value": "mct"
             },
             {
-                "key": "COUCHDB_PATH",
-                "value": "/couch/openmct"
+                "key": "ELASTIC_ROOT",
+                "value": "http://localhost:9200"
             },
             {
-                "key": "COUCHDB_INDICATOR_INTERVAL",
+                "key": "ELASTIC_PATH",
+                "value": "mct/domain_object"
+            },
+            {
+                "key": "ELASTIC_INDICATOR_INTERVAL",
                 "value": 15000
             }
         ],
         "indicators": [
             {
-                "implementation": "CouchIndicator.js",
+                "implementation": "ElasticIndicator.js",
                 "depends": [
                     "$http",
                     "$interval",
-                    "COUCHDB_PATH",
-                    "COUCHDB_INDICATOR_INTERVAL"
+                    "ELASTIC_ROOT",
+                    "ELASTIC_INDICATOR_INTERVAL"
                 ]
             }
         ]

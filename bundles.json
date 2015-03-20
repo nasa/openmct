@@ -13,7 +13,7 @@
     "platform/features/scrolling",
     "platform/forms",
     "platform/persistence/cache",
-    "platform/persistence/couch",
+    "platform/persistence/elastic",
 
     "example/generator"
 ]

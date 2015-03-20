@@ -1,37 +1,39 @@
 /*global define*/
 
 define(
-    ["./CouchDocument"],
-    function (CouchDocument) {
+    [],
+    function () {
         'use strict';
 
-        // JSLint doesn't like dangling _'s, but CouchDB uses these, so
-        // hide this behind variables.
-        var REV = "_rev",
+        // JSLint doesn't like underscore-prefixed properties,
+        // so hide them here.
+        var SRC = "_source",
+            REV = "_version",
             ID = "_id";
 
         /**
-         * The CouchPersistenceProvider reads and writes JSON documents
-         * (more specifically, domain object models) to/from a CouchDB
+         * The ElasticPersistenceProvider reads and writes JSON documents
+         * (more specifically, domain object models) to/from an ElasticSearch
          * instance.
          * @constructor
          */
-        function ElasticPersistenceProvider($http, $q, SPACE, PATH) {
+        function ElasticPersistenceProvider($http, $q, SPACE, ROOT, PATH) {
             var spaces = [ SPACE ],
                 revs = {};
 
             // Convert a subpath to a full path, suitable to pass
             // to $http.
             function url(subpath) {
-                return PATH + '/' + subpath;
+                return ROOT + '/' + PATH + '/' + subpath;
             }
 
             // Issue a request using $http; get back the plain JS object
             // from the expected JSON response
-            function request(subpath, method, value) {
+            function request(subpath, method, value, params) {
                 return $http({
                     method: method,
                     url: url(subpath),
+                    params: params,
                     data: value
                 }).then(function (response) {
                     return response.data;
@@ -44,8 +46,11 @@ define(
             function get(subpath) {
                 return request(subpath, "GET");
             }
-            function put(subpath, value) {
-                return request(subpath, "PUT", value);
+            function put(subpath, value, params) {
+                return request(subpath, "PUT", value, params);
+            }
+            function del(subpath) {
+                return request(subpath, "DELETE");
             }
 
             // Pull out a list of document IDs from CouchDB's
@@ -56,9 +61,9 @@ define(
 
             // Get a domain object model out of CouchDB's response
             function getModel(response) {
-                if (response && response.model) {
+                if (response && response[SRC]) {
                     revs[response[ID]] = response[REV];
-                    return response.model;
+                    return response[SRC];
                 } else {
                     return undefined;
                 }
@@ -108,8 +113,7 @@ define(
                  *          operation
                  */
                 createObject: function (space, key, value) {
-                    return put(key, new CouchDocument(key, value))
-                        .then(checkResponse);
+                    return put(key, value).then(checkResponse);
                 },
 
                 /**
@@ -135,7 +139,7 @@ define(
                  *          operation
                  */
                 updateObject: function (space, key, value) {
-                    return put(key, new CouchDocument(key, value, revs[key]))
+                    return put(key, value, { version: revs[key] })
                         .then(checkResponse);
                 },
                 /**
@@ -150,8 +154,7 @@ define(
                  *          operation
                  */
                 deleteObject: function (space, key, value) {
-                    return put(key, new CouchDocument(key, value, revs[key], true))
-                        .then(checkResponse);
+                    return del(key).then(checkResponse);
                 }
             };
 
