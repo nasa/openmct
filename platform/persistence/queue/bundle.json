@@ -1,0 +1,31 @@
+{
+    "extensions": {
+        "components": [
+            {
+                "type": "decorator",
+                "provides": "capabilityService",
+                "implementation": "QueuingPersistenceCapabilityDecorator.js",
+                "depends": [ "persistenceQueue" ]
+            }
+        ],
+        "services": [
+            {
+                "key": "persistenceQueue",
+                "implementation": "PersistenceQueue.js",
+                "depends": [
+                    "$q",
+                    "$timeout",
+                    "dialogService",
+                    "persistenceService",
+                    "PERSISTENCE_QUEUE_DELAY"
+                ]
+            }
+        ],
+        "constants": [
+            {
+                "key": "PERSISTENCE_QUEUE_DELAY",
+                "value": 5
+            }
+        ]
+    }
+}
