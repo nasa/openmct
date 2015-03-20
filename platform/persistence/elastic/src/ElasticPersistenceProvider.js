@@ -155,12 +155,11 @@ define(
                  *          of the success (true) or failure (false) of this
                  *          operation
                  */
-                updateObject: function (space, key, value, options) {
-                    var check = (options || {}).check;
+                updateObject: function (space, key, value) {
                     function checkUpdate(response) {
                         return checkResponse(response, key);
                     }
-                    return put(key, value, check && { version: revs[key] })
+                    return put(key, value, { version: revs[key] })
                         .then(checkUpdate);
                 },
                 /**

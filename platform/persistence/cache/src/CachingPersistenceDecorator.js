@@ -116,9 +116,9 @@ define(
                  * @returns {Promise.<boolean>} an indicator of the success or
                  *          failure of this request
                  */
-                createObject: function (space, key, value, options) {
+                createObject: function (space, key, value) {
                     addToCache(space, key, value);
-                    return persistenceService.createObject(space, key, value, options);
+                    return persistenceService.createObject(space, key, value);
                 },
                 /**
                  * Read an object from a specific space. This will read from a
@@ -126,21 +126,14 @@ define(
                  * @memberof CachingPersistenceDecorator#
                  * @param {string} space the space in which to create the object
                  * @param {string} key the key which identifies the object
-                 * @param {*} options optional parameters
                  * @returns {Promise.<object>} a promise for the object; may
                  *          resolve to undefined (if the object does not exist
                  *          in this space)
                  */
-                readObject: function (space, key, options) {
-                    // Ignore cache upon request
-                    if ((options || {}).cache === false) {
-                        return persistenceService.readObject(space, key, options);
-                    }
-                    // Otherwise, use the cache if it's there (and put new
-                    // values into the cache, as well.)
+                readObject: function (space, key) {
                     return (cache[space] && cache[space][key]) ?
                             fastPromise(cache[space][key].value) :
-                            persistenceService.readObject(space, key, options)
+                            persistenceService.readObject(space, key)
                                 .then(putCache(space, key));
                 },
                 /**
@@ -154,8 +147,8 @@ define(
                  * @returns {Promise.<boolean>} an indicator of the success or
                  *          failure of this request
                  */
-                updateObject: function (space, key, value, options) {
-                    return persistenceService.updateObject(space, key, value, options)
+                updateObject: function (space, key, value) {
+                    return persistenceService.updateObject(space, key, value)
                         .then(function (result) {
                             addToCache(space, key, value);
                             return result;
@@ -172,7 +165,7 @@ define(
                  * @returns {Promise.<boolean>} an indicator of the success or
                  *          failure of this request
                  */
-                deleteObject: function (space, key, value, options) {
+                deleteObject: function (space, key, value) {
                     if (cache[space]) {
                         delete cache[space][key];
                     }

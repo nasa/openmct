@@ -7,16 +7,10 @@ define(
 
         function PersistenceFailureHandler($q, dialogService, persistenceService) {
             // Refresh revision information for the domain object associated
-            // with htis persistence failure
+            // with this persistence failure
             function refresh(failure) {
-                // Perform a new read; this should update the persistence
-                // service's local revision records, so that the next request
-                // should permit the overwrite
-                return persistenceService.readObject(
-                    failure.persistence.getSpace(),
-                    failure.id,
-                    { cache: false } // Disallow caching
-                );
+                // Refresh the domain object to the latest from persistence
+                return failure.persistence.refresh();
             }
 
             // Issue a new persist call for the domain object associated with
@@ -25,15 +19,42 @@ define(
                 var decoratedPersistence =
                     failure.domainObject.getCapability('persistence');
                 return decoratedPersistence &&
-                        decoratedPersistence.persist(true);
+                        decoratedPersistence.persist();
             }
 
-            // Retry persistence for this set of failed attempts
+            // Retry persistence (overwrite) for this set of failed attempts
             function retry(failures) {
-                // Refresh all objects within the persistenceService to
-                // get up-to-date revision information; once complete,
-                // reissue the persistence request.
+                var models = {};
+
+                // Cache a copy of the model
+                function cacheModel(failure) {
+                    // Clone...
+                    models[failure.id] = JSON.parse(JSON.stringify(
+                        failure.domainObject.getModel()
+                    ));
+                }
+
+                // Mutate a domain object to restore its model
+                function remutate(failure) {
+                    var model = models[failure.id];
+                    return failure.domainObject.useCapability(
+                        "mutation",
+                        function () { return model; },
+                        model.modified
+                    );
+                }
+
+                // Cache the object models we might want to save
+                failures.forEach(cacheModel);
+
+                // Strategy here:
+                // * Cache all of the models we might want to save (above)
+                // * Refresh all domain objects (so they are latest versions)
+                // * Re-insert the cached domain object models
+                // * Invoke persistence again
                 return $q.all(failures.map(refresh)).then(function () {
+                    return $q.all(failures.map(remutate));
+                }).then(function () {
                     return $q.all(failures.map(persist));
                 });
             }
