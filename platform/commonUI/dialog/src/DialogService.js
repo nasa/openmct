@@ -126,8 +126,8 @@ define(
                     // Add the overlay using the OverlayService, which
                     // will handle actual insertion into the DOM
                     overlay = overlayService.createOverlay(
-                        "overlay-dialog",
-                        { dialog: dialogModel, click: confirm }
+                        "overlay-options",
+                        { dialog: dialogModel, click: confirm, cancel: cancel }
                     );
 
                     // Track that a dialog is already visible, to

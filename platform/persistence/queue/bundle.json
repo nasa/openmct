@@ -26,6 +26,12 @@
                 "key": "PERSISTENCE_QUEUE_DELAY",
                 "value": 5
             }
+        ],
+        "templates": [
+            {
+                "key": "persistence-failure-dialog",
+                "templateUrl": "templates/persistence-failure-dialog.html"
+            }
         ]
     }
 }
