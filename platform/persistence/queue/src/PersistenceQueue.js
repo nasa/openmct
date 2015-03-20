@@ -39,6 +39,7 @@ define(
         ) {
             // Wire up injected dependencies
             return new PersistenceQueueImpl(
+                $q,
                 $timeout,
                 new PersistenceQueueHandler(
                     $q,

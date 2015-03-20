@@ -38,8 +38,8 @@ define(
                     data: value
                 }).then(function (response) {
                     return response.data;
-                }, function () {
-                    return undefined;
+                }, function (response) {
+                    return (response || {}).data;
                 });
             }
 
@@ -91,7 +91,7 @@ define(
             function checkResponse(response, key) {
                 var error;
                 if (response && !response.error) {
-                    revs[ID] = response[REV];
+                    revs[key] = response[REV];
                     return response;
                 } else {
                     return handleError(response, key);

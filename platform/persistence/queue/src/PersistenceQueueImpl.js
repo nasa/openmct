@@ -21,12 +21,13 @@ define(
          * @param {number} [DELAY] optional; delay in milliseconds between
          *        attempts to flush the queue
          */
-        function PersistenceQueueImpl($timeout, handler, DELAY) {
+        function PersistenceQueueImpl($q, $timeout, handler, DELAY) {
             var queue = {},
                 objects = {},
                 lastObservedSize = 0,
                 pendingTimeout,
-                flushPromise;
+                flushPromise,
+                activeDefer = $q.defer();
 
             // Check if the queue's size has stopped increasing)
             function quiescent() {
@@ -39,8 +40,9 @@ define(
                 flushPromise = handler.persist(queue, objects);
 
                 // When persisted, clear the active promise
-                flushPromise.then(function () {
+                flushPromise.then(function (value) {
                     flushPromise = undefined;
+                    activeDefer.resolve(value);
                 });
 
                 // Reset queue, etc.
@@ -48,14 +50,19 @@ define(
                 objects = {};
                 lastObservedSize = 0;
                 pendingTimeout = undefined;
+                activeDefer = $q.defer();
             }
 
             // Schedule a flushing of the queue (that is, plan to flush
             // all objects in the queue)
             function scheduleFlush() {
                 function maybeFlush() {
+                    // Timeout fired, so clear it
+                    pendingTimeout = undefined;
                     // Only flush when we've stopped receiving updates
                     (quiescent() ? flush : scheduleFlush)();
+                    // Update lastObservedSize to detect quiescence
+                    lastObservedSize = Object.keys(queue).length;
                 }
 
                 // If we are already flushing the queue...
@@ -68,6 +75,8 @@ define(
                     pendingTimeout = pendingTimeout ||
                         $timeout(maybeFlush, DELAY, false);
                 }
+
+                return activeDefer.promise;
             }
 
             // If no delay is provided, use a default
@@ -84,7 +93,7 @@ define(
                     var id = domainObject.getId();
                     queue[id] = persistence;
                     objects[id] = domainObject;
-                    scheduleFlush();
+                    return scheduleFlush();
                 }
             };
         }

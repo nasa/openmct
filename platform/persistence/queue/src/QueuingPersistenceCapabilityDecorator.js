@@ -43,8 +43,9 @@ define(
             }
 
             function getCapabilities(model) {
-                return capabilityService.getCapabilities(model)
-                    .then(decoratePersistence);
+                return decoratePersistence(
+                    capabilityService.getCapabilities(model)
+                );
             }
 
             return {

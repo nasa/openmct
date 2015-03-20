@@ -15,12 +15,11 @@ define(
          *        the capability
          */
         function QueuingPersistenceCapability(queue, persistence, domainObject) {
-            var queuingPersistence = Object.create(persistence),
-                id = domainObject.getId();
+            var queuingPersistence = Object.create(persistence);
 
             // Override persist calls to queue them instead
             queuingPersistence.persist = function () {
-                queue.put(id, persistence);
+                return queue.put(domainObject, persistence);
             };
 
             return queuingPersistence;
