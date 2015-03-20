@@ -9,7 +9,8 @@ define(
         // so hide them here.
         var SRC = "_source",
             REV = "_version",
-            ID = "_id";
+            ID = "_id",
+            CONFLICT = 409;
 
         /**
          * The ElasticPersistenceProvider reads and writes JSON documents
@@ -69,15 +70,31 @@ define(
                 }
             }
 
+            // Handle an update error
+            function handleError(response, key) {
+                var error = new Error("Persistence error.");
+                if ((response || {}).status === CONFLICT) {
+                    error.key = "revision";
+                    // Load the updated model, then reject the promise
+                    return get(key).then(function (model) {
+                        error.model = model;
+                        throw error;
+                    });
+                }
+                // Reject the promise
+                throw error;
+            }
+
             // Check the response to a create/update/delete request;
             // track the rev if it's valid, otherwise return false to
             // indicate that the request failed.
-            function checkResponse(response) {
-                if (response && response.ok) {
-                    revs[response.id] = response.rev;
-                    return response.ok;
+            function checkResponse(response, key) {
+                var error;
+                if (response && !response.error) {
+                    revs[ID] = response[REV];
+                    return response;
                 } else {
-                    return false;
+                    return handleError(response, key);
                 }
             }
 
@@ -139,8 +156,11 @@ define(
                  *          operation
                  */
                 updateObject: function (space, key, value) {
+                    function checkUpdate(response) {
+                        return checkResponse(response, key);
+                    }
                     return put(key, value, { version: revs[key] })
-                        .then(checkResponse);
+                        .then(checkUpdate);
                 },
                 /**
                  * Delete an object in the specified persistence space.
