@@ -22,6 +22,13 @@ define(
          * @constructor
          */
         function PersistenceCapability(persistenceService, SPACE, domainObject) {
+            // Update a domain object's model upon refresh
+            function updateModel(model) {
+                return domainObject.useCapability("mutation", function () {
+                    return model;
+                });
+            }
+
             return {
                 /**
                  * Persist any changes which have been made to this
@@ -36,6 +43,19 @@ define(
                         domainObject.getId(),
                         domainObject.getModel()
                     );
+                },
+                /**
+                 * Update this domain object to match the latest from
+                 * persistence.
+                 * @returns {Promise} a promise which will be resolved
+                 *          when the update is complete
+                 */
+                refresh: function () {
+                    return persistenceService.readObject(
+                        SPACE,
+                        domainObject.getId(),
+                        { cache: false } // Disallow cached reads
+                    ).then(updateModel);
                 },
                 /**
                  * Get the space in which this domain object is persisted;

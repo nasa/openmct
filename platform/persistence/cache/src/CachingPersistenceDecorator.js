@@ -126,12 +126,14 @@ define(
                  * @memberof CachingPersistenceDecorator#
                  * @param {string} space the space in which to create the object
                  * @param {string} key the key which identifies the object
+                 * @param {*} options optional parameters
                  * @returns {Promise.<object>} a promise for the object; may
                  *          resolve to undefined (if the object does not exist
                  *          in this space)
                  */
-                readObject: function (space, key) {
-                    return (cache[space] && cache[space][key]) ?
+                readObject: function (space, key, options) {
+                    var force = (options || {}).cache === false;
+                    return (cache[space] && cache[space][key] && !force) ?
                             fastPromise(cache[space][key].value) :
                             persistenceService.readObject(space, key)
                                 .then(putCache(space, key));
