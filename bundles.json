@@ -12,7 +12,6 @@
     "platform/features/plot",
     "platform/features/scrolling",
     "platform/forms",
-    "platform/persistence/cache",
     "platform/persistence/queue",
     "platform/persistence/elastic",
 
