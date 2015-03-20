@@ -1,0 +1,24 @@
+<mct-container key="overlay">
+    <div class="abs top-bar">
+        <div class="title">{{ngModel.dialog.title}}</div>
+        <div class="hint">{{ngModel.dialog.hint}}</div>
+    </div>
+    <div class="abs form outline editor">
+        <div class='abs contents l-dialog'>
+            <mct-include key="ngModel.dialog.template"
+                         parameters="ngModel.dialog.parameters"
+                         ng-model="ngModel.dialog.model">
+            </mct-include>
+        </div>
+    </div>
+    <div class="abs bottom-bar">
+        <a ng-repeat="options in ngModel.dialog.options"
+           href=''
+           class="btn lg"
+           title="{{option.description}}"
+           ng-click="ngModel.click(option.key)"
+           ng-class="{ major: $first, subtle: !$first }">
+            {{option.name}}
+        </a>
+    </div>
+</mct-container>

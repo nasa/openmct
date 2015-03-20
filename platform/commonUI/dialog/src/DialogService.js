@@ -88,6 +88,56 @@ define(
                 return deferred.promise;
             }
 
+            function getUserChoice(dialogModel) {
+                // We will return this result as a promise, because user
+                // input is asynchronous.
+                var deferred = $q.defer();
+
+                // Confirm function; this will be passed in to the
+                // overlay-dialog template and associated with a
+                // OK button click
+                function confirm(value) {
+                    // Pass along the result
+                    deferred.resolve(value);
+
+                    // Stop showing the dialog
+                    dismiss();
+                }
+
+                // Cancel function; this will be passed in to the
+                // overlay-dialog template and associated with a
+                // Cancel or X button click
+                function cancel() {
+                    deferred.reject();
+                    dismiss();
+                }
+
+                if (dialogVisible) {
+                    // Only one dialog should be shown at a time.
+                    // The application design should be such that
+                    // we never even try to do this.
+                    $log.warn([
+                        "Dialog already showing; ",
+                        "unable to show ",
+                        dialogModel.name
+                    ].join(""));
+                    deferred.reject();
+                } else {
+                    // Add the overlay using the OverlayService, which
+                    // will handle actual insertion into the DOM
+                    overlay = overlayService.createOverlay(
+                        "overlay-dialog",
+                        { dialog: dialogModel, click: confirm }
+                    );
+
+                    // Track that a dialog is already visible, to
+                    // avoid spawning multiple dialogs at once.
+                    dialogVisible = true;
+                }
+
+                return deferred.promise;
+            }
+
             return {
                 /**
                  * Request user input via a window-modal dialog.
@@ -100,7 +150,14 @@ define(
                  *          user input cannot be obtained (for instance,
                  *          because the user cancelled the dialog)
                  */
-                getUserInput: getUserInput
+                getUserInput: getUserInput,
+                /**
+                 * Request that the user chooses from a set of options,
+                 * which will be shown as buttons.
+                 *
+                 * @param dialogModel a description of the dialog to show
+                 */
+                getUserChoice: getUserChoice
             };
         }
 
