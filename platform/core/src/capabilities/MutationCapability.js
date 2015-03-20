@@ -50,7 +50,7 @@ define(
          *        which will expose this capability
          * @constructor
          */
-        function MutationCapability(domainObject) {
+        function MutationCapability(now, domainObject) {
 
             function mutate(mutator, timestamp) {
                 // Get the object's model and clone it, so the
@@ -74,7 +74,7 @@ define(
                             copyValues(model, result);
                         }
                         model.modified = (typeof timestamp === 'number') ?
-                                timestamp : Date.now();
+                                timestamp : now();
                     }
 
                     // Report the result of the mutation

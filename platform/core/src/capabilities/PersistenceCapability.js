@@ -27,19 +27,29 @@ define(
 
             // Update a domain object's model upon refresh
             function updateModel(model) {
-                modified = model.modified;
+                var modified = model.modified;
                 return domainObject.useCapability("mutation", function () {
                     return model;
-                });
+                }, modified);
             }
 
             // For refresh; update a domain object model, only if there
             // are no unsaved changes.
-            function maybeUpdateModel(model) {
-                // Only update the model if there are no pending changes
-                if (domainObject.getModel().modified === modified) {
-                    updateModel(model);
-                }
+            function updatePersistenceTimestamp() {
+                var modified = domainObject.getModel().modified;
+                domainObject.useCapability("mutation", function (model) {
+                    model.persisted = modified;
+                }, modified);
+            }
+
+            // Utility function for creating promise-like objects which
+            // resolve synchronously when possible
+            function fastPromise(value) {
+                return (value || {}).then ? value : {
+                    then: function (callback) {
+                        return fastPromise(callback(value));
+                    }
+                };
             }
 
             return {
@@ -50,18 +60,13 @@ define(
                  *          if persistence is successful, and rejected
                  *          if not.
                  */
-                persist: function (hard) {
+                persist: function () {
+                    updatePersistenceTimestamp();
                     return persistenceService.updateObject(
                         SPACE,
                         domainObject.getId(),
-                        domainObject.getModel(),
-                        { check: !hard }
-                    ).then(function (value) {
-                        if (value) {
-                            modified = domainObject.getModel().modified;
-                        }
-                        return value;
-                    });
+                        domainObject.getModel()
+                    );
                 },
                 /**
                  * Update this domain object to match the latest from
@@ -69,12 +74,15 @@ define(
                  * @returns {Promise} a promise which will be resolved
                  *          when the update is complete
                  */
-                refresh: function (hard) {
-                    return persistenceService.readObject(
-                        SPACE,
-                        domainObject.getId(),
-                        { cache: false } // Disallow cached reads
-                    ).then(hard ? updateModel : maybeUpdateModel);
+                refresh: function () {
+                    var model = domainObject.getModel();
+                    // Only update if we don't have unsaved changes
+                    return (model.modified === model.persisted) ?
+                            persistenceService.readObject(
+                                SPACE,
+                                domainObject.getId()
+                            ).then(updateModel) :
+                            fastPromise(false);
                 },
                 /**
                  * Get the space in which this domain object is persisted;

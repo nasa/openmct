@@ -162,7 +162,8 @@
             },
             {
                 "key": "mutation",
-                "implementation": "capabilities/MutationCapability.js"
+                "implementation": "capabilities/MutationCapability.js",
+                "depends": [ "now" ]
             },
             {
                 "key": "delegation",
