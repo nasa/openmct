@@ -5,35 +5,55 @@ define(
     function () {
         "use strict";
 
-        function QueuedPersistenceHandler($q, failureHandler) {
+        /**
+         * Handles actual persistence invocations for queeud persistence
+         * attempts, in a group. Handling in a group in this manner
+         * also allows failure to be handled in a group (e.g. in a single
+         * summary dialog.)
+         * @param $q Angular's $q, for promises
+         * @param {PersistenceFailureHandler} handler to invoke in the event
+         *        that a persistence attempt fails.
+         */
+        function PersistenceQueueHandler($q, failureHandler) {
 
+            // Handle a group of persistence invocations
             function persistGroup(ids, queue, domainObjects) {
                 var failures = [];
 
+                // Try to persist a specific domain object
                 function tryPersist(id) {
+                    // Look up its persistence capability from the provided
+                    // id->persistence object.
                     var persistence = queue[id];
 
+                    // Handle success
                     function succeed(value) {
                         return value;
                     }
 
+                    // Handle failure (build up a list of failures)
                     function fail(error) {
                         failures.push({
                             id: id,
+                            persistence: persistence,
                             domainObject: domainObjects[id],
                             error: error
                         });
                         return false;
                     }
 
+                    // Invoke the actual persistence capability, then
+                    // note success or failures
                     return persistence.persist().then(succeed, fail);
                 }
 
+                // Handle any failures from the full operation
                 function handleFailure(value) {
                     return failures.length > 0 ?
                             failureHandler.handle(failures) : value;
                 }
 
+                // Try to persist everything, then handle any failures
                 return $q.all(ids.map(tryPersist)).then(handleFailure);
             }
 
@@ -54,6 +74,6 @@ define(
             };
         }
 
-        return QueuedPersistenceHandler;
+        return PersistenceQueueHandler;
     }
 );
