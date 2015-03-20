@@ -144,7 +144,7 @@
 	.btn-set,
 	.t-btn {
 		display: inline-block;
-		margin-left: $interiorMargin;
+//		margin-left: $interiorMargin;
 	}
 	.btn,
 	.t-btn {
@@ -163,11 +163,12 @@
 	}
 }
 
-.control-group {
+.l-control-group {
 	// Buttons that have a conceptual grouping - internal space between, and a divider between groups.
 	//	@include test();
 	@include box-sizing(border-box);
 	border-left: 1px solid $colorInteriorBorder;
+	display: inline-block;
 	padding: 0 $interiorMargin;
 	position: relative;
 	&:first-child {
@@ -295,7 +296,7 @@ label.checkbox.custom {
 
 .btn-menu {
 	$h: 20px;
-	$p: $interiorMargin;
+	$p: $interiorMargin * 2;
 	$c: $colorBodyFg;
 	@include btnSubtle($colorBodyBg);
 	height: $h;

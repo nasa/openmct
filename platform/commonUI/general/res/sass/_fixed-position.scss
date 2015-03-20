@@ -14,13 +14,13 @@
 				height: 100%; width: 100%;
 				pointer-events: none;
 				z-index: 0;
-				&.l-grid-x {
-					@include bgTicks($colorGridLines, 'x');
-				}
-
-				&.l-grid-y {
-					@include bgTicks($colorGridLines, 'y');
-				}
+//				&.l-grid-x {
+//					@include bgTicks($colorGridLines, 'x');
+//				}
+//
+//				&.l-grid-y {
+//					@include bgTicks($colorGridLines, 'y');
+//				}
 			}
 		}
 	}
@@ -99,6 +99,21 @@
 }
 
 .edit-mode .t-fixed-position {
+	&.l-fixed-position {
+		.l-grid-holder {
+			.l-grid {
+				&.l-grid-x {
+					@include bgTicks($colorGridLines, 'x');
+				}
+
+				&.l-grid-y {
+					@include bgTicks($colorGridLines, 'y');
+				}
+			}
+		}
+	}
+
+
 	.l-fixed-position-item {
 		&:not(.s-selected):hover {
 			border: 1px dotted rgba($colorKey, 0.5);

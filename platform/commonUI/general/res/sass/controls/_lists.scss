@@ -7,3 +7,12 @@
 		margin-bottom: $interiorMargin;
 	}
 }
+
+.l-tree-item-flat-list {
+	// For lists of tree-items that are flat. Remove margin, etc. normally needed for the expansion arrow.
+	.tree-item {
+		.label {
+			left: $interiorMargin !important;
+		}
+	}
+}
