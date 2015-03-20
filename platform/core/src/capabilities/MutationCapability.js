@@ -52,7 +52,7 @@ define(
          */
         function MutationCapability(domainObject) {
 
-            function mutate(mutator) {
+            function mutate(mutator, timestamp) {
                 // Get the object's model and clone it, so the
                 // mutator function has a temporary copy to work with.
                 var model = domainObject.getModel(),
@@ -73,7 +73,8 @@ define(
                         if (model !== result) {
                             copyValues(model, result);
                         }
-                        model.modified = Date.now();
+                        model.modified = (typeof timestamp === 'number') ?
+                                timestamp : Date.now();
                     }
 
                     // Report the result of the mutation
@@ -109,8 +110,11 @@ define(
                  *   handled as one of the above.
                  *
                  *
-                 * @params {function} mutator the function which will make
+                 * @param  {function} mutator the function which will make
                  *         changes to the domain object's model.
+                 * @param  {number} [timestamp] timestamp to record for
+                 *         this mutation (otherwise, system time will be
+                 *         used)
                  * @returns {Promise.<boolean>} a promise for the result
                  *         of the mutation; true if changes were made.
                  */
