@@ -34,16 +34,18 @@ define(
                 return Object.keys(queue).length === lastObservedSize;
             }
 
+            // Clear the active promise for a queue flush
+            function clearFlushPromise(value) {
+                flushPromise = undefined;
+                activeDefer.resolve(value);
+                return value;
+            }
+
             // Persist all queued objects
             function flush() {
                 // Persist all queued objects
-                flushPromise = handler.persist(queue, objects);
-
-                // When persisted, clear the active promise
-                flushPromise.then(function (value) {
-                    flushPromise = undefined;
-                    activeDefer.resolve(value);
-                });
+                flushPromise = handler.persist(queue, objects)
+                    .then(clearFlushPromise, clearFlushPromise);
 
                 // Reset queue, etc.
                 queue = {};

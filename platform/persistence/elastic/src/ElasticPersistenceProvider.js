@@ -78,11 +78,11 @@ define(
                     // Load the updated model, then reject the promise
                     return get(key).then(function (model) {
                         error.model = model;
-                        throw error;
+                        return $q.reject(error);
                     });
                 }
                 // Reject the promise
-                throw error;
+                return $q.reject(error);
             }
 
             // Check the response to a create/update/delete request;
