@@ -22,10 +22,10 @@ define(
             // Issue a new persist call for the domain object associated with
             // this failure.
             function persist(failure) {
-                var undecoratedPersistence =
+                var decoratedPersistence =
                     failure.domainObject.getCapability('persistence');
-                return undecoratedPersistence &&
-                        undecoratedPersistence.persist();
+                return decoratedPersistence &&
+                        decoratedPersistence.persist(true);
             }
 
             // Retry persistence for this set of failed attempts
@@ -36,6 +36,16 @@ define(
                 return $q.all(failures.map(refresh)).then(function () {
                     return $q.all(failures.map(persist));
                 });
+            }
+
+            // Discard changes for a failed refresh
+            function discard(failure) {
+                return failure.persistence.refresh(true);
+            }
+
+            // Discard changes associated with a failed save
+            function discardAll(failures) {
+                return $q.all(failures.map(discard));
             }
 
             // Handle failures in persistence
@@ -49,6 +59,8 @@ define(
                     // If so, try again
                     if (key === PersistenceFailureConstants.OVERWRITE_KEY) {
                         return retry(revisionErrors);
+                    } else {
+                        return discardAll(revisionErrors);
                     }
                 }
 

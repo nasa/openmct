@@ -22,11 +22,24 @@ define(
          * @constructor
          */
         function PersistenceCapability(persistenceService, SPACE, domainObject) {
+            // Cache modified timestamp
+            var modified = domainObject.getModel().modified;
+
             // Update a domain object's model upon refresh
             function updateModel(model) {
+                modified = model.modified;
                 return domainObject.useCapability("mutation", function () {
                     return model;
                 });
+            }
+
+            // For refresh; update a domain object model, only if there
+            // are no unsaved changes.
+            function maybeUpdateModel(model) {
+                // Only update the model if there are no pending changes
+                if (domainObject.getModel().modified === modified) {
+                    updateModel(model);
+                }
             }
 
             return {
@@ -37,12 +50,18 @@ define(
                  *          if persistence is successful, and rejected
                  *          if not.
                  */
-                persist: function () {
+                persist: function (hard) {
                     return persistenceService.updateObject(
                         SPACE,
                         domainObject.getId(),
-                        domainObject.getModel()
-                    );
+                        domainObject.getModel(),
+                        { check: !hard }
+                    ).then(function (value) {
+                        if (value) {
+                            modified = domainObject.getModel().modified;
+                        }
+                        return value;
+                    });
                 },
                 /**
                  * Update this domain object to match the latest from
@@ -50,12 +69,12 @@ define(
                  * @returns {Promise} a promise which will be resolved
                  *          when the update is complete
                  */
-                refresh: function () {
+                refresh: function (hard) {
                     return persistenceService.readObject(
                         SPACE,
                         domainObject.getId(),
                         { cache: false } // Disallow cached reads
-                    ).then(updateModel);
+                    ).then(hard ? updateModel : maybeUpdateModel);
                 },
                 /**
                  * Get the space in which this domain object is persisted;

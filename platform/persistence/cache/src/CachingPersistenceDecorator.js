@@ -116,9 +116,9 @@ define(
                  * @returns {Promise.<boolean>} an indicator of the success or
                  *          failure of this request
                  */
-                createObject: function (space, key, value) {
+                createObject: function (space, key, value, options) {
                     addToCache(space, key, value);
-                    return persistenceService.createObject(space, key, value);
+                    return persistenceService.createObject(space, key, value, options);
                 },
                 /**
                  * Read an object from a specific space. This will read from a
@@ -132,10 +132,15 @@ define(
                  *          in this space)
                  */
                 readObject: function (space, key, options) {
-                    var force = (options || {}).cache === false;
-                    return (cache[space] && cache[space][key] && !force) ?
+                    // Ignore cache upon request
+                    if ((options || {}).cache === false) {
+                        return persistenceService.readObject(space, key, options);
+                    }
+                    // Otherwise, use the cache if it's there (and put new
+                    // values into the cache, as well.)
+                    return (cache[space] && cache[space][key]) ?
                             fastPromise(cache[space][key].value) :
-                            persistenceService.readObject(space, key)
+                            persistenceService.readObject(space, key, options)
                                 .then(putCache(space, key));
                 },
                 /**
@@ -149,9 +154,12 @@ define(
                  * @returns {Promise.<boolean>} an indicator of the success or
                  *          failure of this request
                  */
-                updateObject: function (space, key, value) {
-                    addToCache(space, key, value);
-                    return persistenceService.updateObject(space, key, value);
+                updateObject: function (space, key, value, options) {
+                    return persistenceService.updateObject(space, key, value, options)
+                        .then(function (result) {
+                            addToCache(space, key, value);
+                            return result;
+                        });
                 },
                 /**
                  * Delete an object in a specific space. This will
@@ -164,7 +172,7 @@ define(
                  * @returns {Promise.<boolean>} an indicator of the success or
                  *          failure of this request
                  */
-                deleteObject: function (space, key, value) {
+                deleteObject: function (space, key, value, options) {
                     if (cache[space]) {
                         delete cache[space][key];
                     }
