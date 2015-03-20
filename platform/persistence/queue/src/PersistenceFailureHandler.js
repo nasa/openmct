@@ -54,7 +54,7 @@ define(
 
                 // Prompt for user input, the overwrite if they said so.
                 return dialogService.getUserChoice(dialogModel)
-                    .then(handleChoice);
+                    .then(handleChoice, handleChoice);
             }
 
             return {
