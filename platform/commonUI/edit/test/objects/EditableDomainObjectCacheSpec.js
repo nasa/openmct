@@ -1,4 +1,4 @@
-/*global define,describe,it,expect,beforeEach*/
+/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/objects/EditableDomainObjectCache"],
@@ -10,6 +10,7 @@ define(
             var captured,
                 completionCapability,
                 object,
+                mockQ,
                 cache;
 
 
@@ -33,6 +34,7 @@ define(
             }
 
             beforeEach(function () {
+                mockQ = jasmine.createSpyObj('$q', ['when', 'all']);
                 captured = {};
                 completionCapability = {
                     save: function () {
@@ -40,7 +42,7 @@ define(
                     }
                 };
 
-                cache = new EditableDomainObjectCache(WrapObject);
+                cache = new EditableDomainObjectCache(WrapObject, mockQ);
             });
 
             it("wraps objects using provided constructor", function () {

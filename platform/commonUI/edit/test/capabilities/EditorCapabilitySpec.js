@@ -5,7 +5,7 @@ define(
     function (EditorCapability) {
         "use strict";
 
-        describe("An editable context capability", function () {
+        describe("The editor capability", function () {
             var mockPersistence,
                 mockEditableObject,
                 mockDomainObject,
@@ -32,6 +32,8 @@ define(
                 );
                 mockCallback = jasmine.createSpy("callback");
 
+                mockDomainObject.getCapability.andReturn(mockPersistence);
+
                 model = { someKey: "some value", x: 42 };
 
                 capability = new EditorCapability(
@@ -42,8 +44,8 @@ define(
                 );
             });
 
-            it("mutates the real domain object on save", function () {
-                capability.save().then(mockCallback);
+            it("mutates the real domain object on nonrecursive save", function () {
+                capability.save(true).then(mockCallback);
 
                 // Wait for promise to resolve
                 waitsFor(function () {
@@ -57,19 +59,6 @@ define(
                     expect(
                         mockDomainObject.useCapability.mostRecentCall.args[1]()
                     ).toEqual(model);
-                });
-            });
-
-            it("marks the saved object as clean in the editing cache", function () {
-                capability.save().then(mockCallback);
-
-                // Wait for promise to resolve
-                waitsFor(function () {
-                    return mockCallback.calls.length > 0;
-                }, 250);
-
-                runs(function () {
-                    expect(mockCache.markClean).toHaveBeenCalledWith(mockEditableObject);
                 });
             });
 
