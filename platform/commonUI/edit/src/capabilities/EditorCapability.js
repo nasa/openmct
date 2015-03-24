@@ -33,7 +33,7 @@ define(
             // removed from the layer which gets dependency
             // injection.
             function resolvePromise(value) {
-                return value && value.then ? value : {
+                return (value && value.then) ? value : {
                     then: function (callback) {
                         return resolvePromise(callback(value));
                     }
@@ -51,18 +51,6 @@ define(
             // Persist the underlying domain object
             function doPersist() {
                 return persistenceCapability.persist();
-            }
-
-            // Save any other objects that have been modified in the cache.
-            // IMPORTANT: This must not be called until after this object
-            // has been marked as clean.
-            function saveOthers() {
-                return cache.saveAll();
-            }
-
-            // Indicate that this object has been saved.
-            function markClean() {
-                return cache.markClean(editableObject);
             }
 
             return {
