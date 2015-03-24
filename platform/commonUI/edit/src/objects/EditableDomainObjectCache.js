@@ -29,10 +29,11 @@ define(
          *        constructor function which takes a regular domain object as
          *        an argument, and returns an editable domain object as its
          *        result.
+         * @param $q Angular's $q, for promise handling
          * @constructor
          * @memberof module:editor/object/editable-domain-object-cache
          */
-        function EditableDomainObjectCache(EditableDomainObject) {
+        function EditableDomainObjectCache(EditableDomainObject, $q) {
             var cache = new EditableModelCache(),
                 dirty = {},
                 root;
@@ -88,23 +89,20 @@ define(
                  * Initiate a save on all objects that have been cached.
                  */
                 saveAll: function () {
-                    var object;
+                    // Get a list of all dirty objects
+                    var objects = Object.keys(dirty).map(function (k) {
+                        return dirty[k];
+                    });
+
+                    // Clear dirty set, since we're about to save.
+                    dirty = {};
 
                     // Most save logic is handled by the "editor.completion"
-                    // capability, but this in turn will typically invoke
-                    // Save All. An infinite loop is avoided by marking
-                    // objects as clean as we go.
-
-                    while (Object.keys(dirty).length > 0) {
-                        // Pick the first dirty object
-                        object = dirty[Object.keys(dirty)[0]];
-
-                        // Mark non-dirty to avoid successive invocations
-                        this.markClean(object);
-
-                        // Invoke its save behavior
-                        object.getCapability('editor').save();
-                    }
+                    // capability, so that is delegated here.
+                    return $q.all(objects.map(function (object) {
+                        // Save; pass a nonrecursive flag to avoid looping
+                        return object.getCapability('editor').save(true);
+                    }));
                 }
             };
         }

@@ -10,7 +10,7 @@
             {
                 "key": "EditController",
                 "implementation": "controllers/EditController.js",
-                "depends": [ "$scope", "navigationService" ]
+                "depends": [ "$scope", "$q", "navigationService" ]
             },
             {
                 "key": "EditActionController",

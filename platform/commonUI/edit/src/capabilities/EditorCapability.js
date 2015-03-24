@@ -70,14 +70,15 @@ define(
                  * Save any changes that have been made to this domain object
                  * (as well as to others that might have been retrieved and
                  * modified during the editing session)
+                 * @param {boolean} nonrecursive if true, save only this
+                 *        object (and not other objects with associated changes)
                  * @returns {Promise} a promise that will be fulfilled after
                  *          persistence has completed.
                  */
-                save: function () {
-                    return resolvePromise(doMutate())
-                        .then(doPersist)
-                        .then(markClean)
-                        .then(saveOthers);
+                save: function (nonrecursive) {
+                    return nonrecursive ?
+                            resolvePromise(doMutate()).then(doPersist) :
+                            resolvePromise(cache.saveAll());
                 },
                 /**
                  * Cancel editing; Discard any changes that have been made to
