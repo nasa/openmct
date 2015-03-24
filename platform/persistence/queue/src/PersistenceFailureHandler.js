@@ -62,7 +62,9 @@ define(
 
             // Discard changes for a failed refresh
             function discard(failure) {
-                return failure.persistence.refresh(true);
+                var persistence =
+                    failure.domainObject.getCapability('persistence');
+                return persistence.refresh();
             }
 
             // Discard changes associated with a failed save

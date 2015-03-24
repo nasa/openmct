@@ -50,7 +50,7 @@ define(
 
             // Persist the underlying domain object
             function doPersist() {
-                return persistenceCapability.persist();
+                return domainObject.getCapability('persistence').persist();
             }
 
             return {

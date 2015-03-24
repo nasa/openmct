@@ -29,6 +29,13 @@ define(
                 cache.markDirty(editableObject);
             };
 
+            // Delegate refresh to the original object; this avoids refreshing
+            // the editable instance of the object, and ensures that refresh
+            // correctly targets the "real" version of the object.
+            persistence.refresh = function () {
+                return domainObject.getCapability('persistence').refresh();
+            };
+
             return persistence;
         }
 
