@@ -23,7 +23,8 @@ define(
                 );
                 mockDomainObject = {
                     getId: function () { return id; },
-                    getModel: function () { return model; }
+                    getModel: function () { return model; },
+                    useCapability: jasmine.createSpy()
                 };
                 persistence = new PersistenceCapability(
                     mockPersistenceService,
