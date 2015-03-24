@@ -22,7 +22,8 @@ define(
          *        attempts to flush the queue
          */
         function PersistenceQueueImpl($q, $timeout, handler, DELAY) {
-            var queue = {},
+            var self,
+                persistences = {},
                 objects = {},
                 lastObservedSize = 0,
                 pendingTimeout,
@@ -31,9 +32,8 @@ define(
 
             // Check if the queue's size has stopped increasing)
             function quiescent() {
-                return Object.keys(queue).length === lastObservedSize;
+                return Object.keys(persistences).length === lastObservedSize;
             }
-
 
             // Persist all queued objects
             function flush() {
@@ -51,11 +51,11 @@ define(
                 }
 
                 // Persist all queued objects
-                flushPromise = handler.persist(queue, objects)
+                flushPromise = handler.persist(persistences, objects, self)
                     .then(clearFlushPromise, clearFlushPromise);
 
                 // Reset queue, etc.
-                queue = {};
+                persistences = {};
                 objects = {};
                 lastObservedSize = 0;
                 pendingTimeout = undefined;
@@ -71,7 +71,7 @@ define(
                     // Only flush when we've stopped receiving updates
                     (quiescent() ? flush : scheduleFlush)();
                     // Update lastObservedSize to detect quiescence
-                    lastObservedSize = Object.keys(queue).length;
+                    lastObservedSize = Object.keys(persistences).length;
                 }
 
                 // If we are already flushing the queue...
@@ -91,7 +91,7 @@ define(
             // If no delay is provided, use a default
             DELAY = DELAY || 0;
 
-            return {
+            self = {
                 /**
                  * Queue persistence of a domain object.
                  * @param {DomainObject} domainObject the domain object
@@ -100,11 +100,13 @@ define(
                  */
                 put: function (domainObject, persistence) {
                     var id = domainObject.getId();
-                    queue[id] = persistence;
+                    persistences[id] = persistence;
                     objects[id] = domainObject;
                     return scheduleFlush();
                 }
             };
+
+            return self;
         }
 
         return PersistenceQueueImpl;

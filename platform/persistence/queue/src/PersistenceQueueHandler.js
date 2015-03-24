@@ -17,14 +17,21 @@ define(
         function PersistenceQueueHandler($q, failureHandler) {
 
             // Handle a group of persistence invocations
-            function persistGroup(ids, queue, domainObjects) {
+            function persistGroup(ids, persistences, domainObjects, queue) {
                 var failures = [];
 
                 // Try to persist a specific domain object
                 function tryPersist(id) {
                     // Look up its persistence capability from the provided
                     // id->persistence object.
-                    var persistence = queue[id];
+                    var persistence = persistences[id],
+                        domainObject = domainObjects[id];
+
+                    // Put a domain object back in the queue
+                    // (e.g. after Overwrite)
+                    function requeue() {
+                        return queue.put(domainObject, persistence);
+                    }
 
                     // Handle success
                     function succeed(value) {
@@ -36,7 +43,8 @@ define(
                         failures.push({
                             id: id,
                             persistence: persistence,
-                            domainObject: domainObjects[id],
+                            domainObject: domainObject,
+                            requeue: requeue,
                             error: error
                         });
                         return false;
@@ -63,14 +71,16 @@ define(
                 /**
                  * Invoke the persist method on the provided persistence
                  * capabilities.
-                 * @param {Object.<string,PersistenceCapability>} queue
+                 * @param {Object.<string,PersistenceCapability>} persistences
                  *        capabilities to invoke, in id->capability pairs.
                  * @param {Object.<string,DomainObject>} domainObjects
                  *        associated domain objects, in id->object pairs.
+                 * @param {PersistenceQueue} queue the persistence queue,
+                 *        to requeue as necessary
                  */
-                persist: function (queue, domainObjects) {
-                    var ids = Object.keys(queue);
-                    return persistGroup(ids, queue, domainObjects);
+                persist: function (persistences, domainObjects, queue) {
+                    var ids = Object.keys(persistences);
+                    return persistGroup(ids, persistences, domainObjects, queue);
                 }
             };
         }

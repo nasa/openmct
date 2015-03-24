@@ -16,14 +16,11 @@ define(
             // Issue a new persist call for the domain object associated with
             // this failure.
             function persist(failure) {
-                var decoratedPersistence =
-                    failure.domainObject.getCapability('persistence');
-                // Note that we issue the persist request here, but don't
-                // return it. We trust that the PersistenceQueue will
-                // behave correctly on the next round of flushing.
-                if (decoratedPersistence) {
-                    decoratedPersistence.persist();
-                }
+                // Note that we reissue the persist request here, but don't
+                // return it, to avoid a circular wait. We trust that the
+                // PersistenceQueue will behave correctly on the next round
+                // of flushing.
+                failure.requeue();
             }
 
             // Retry persistence (overwrite) for this set of failed attempts
