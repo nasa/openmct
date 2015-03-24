@@ -21,14 +21,9 @@ define(
             // Pick a domain object model to use, favoring the one
             // with the most recent timestamp
             function pick(a, b) {
-                if (!a) {
-                    return b;
-                }
-                if (!b) {
-                    return b;
-                }
-                return (a.modified || Number.NEGATIVE_INFINITY) >
-                    (b.modified || Number.NEGATIVE_INFINITY) ? a : b;
+                var aModified = (a || {}).modified || Number.NEGATIVE_INFINITY,
+                    bModified = (b || {}).modified || Number.NEGATIVE_INFINITY;
+                return (aModified > bModified) ? a : (b || a);
             }
 
             // Merge results from multiple providers into one
