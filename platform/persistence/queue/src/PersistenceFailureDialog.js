@@ -11,7 +11,7 @@ define(
                     key: PersistenceFailureConstants.OVERWRITE_KEY
                 },
                 {
-                    name: "Cancel",
+                    name: "Discard",
                     key: "cancel"
                 }
             ],
