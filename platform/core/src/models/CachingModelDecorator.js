@@ -15,6 +15,37 @@ define(
             var cache = {},
                 cached = {};
 
+            // Update the cached instance of a model to a new value.
+            // We update in-place to ensure there is only ever one instance
+            // of any given model exposed by the modelService as a whole.
+            function updateModel(id, model) {
+                var oldModel = cache[id];
+
+                // Same object instance is a possibility, so don't copy
+                if (oldModel === model) {
+                    return model;
+                }
+
+                // If we'd previously cached an undefined value, or are now
+                // seeing undefined, replace the item in the cache entirely.
+                if (oldModel === undefined || model === undefined) {
+                    cache[id] = model;
+                    return model;
+                }
+
+                // Otherwise, empty out the old model...
+                Object.keys(oldModel).forEach(function (k) {
+                    delete oldModel[k];
+                });
+
+                // ...and replace it with the contents of the new model.
+                Object.keys(model).forEach(function (k) {
+                    oldModel[k] = model[k];
+                });
+
+                return oldModel;
+            }
+
             // Fast-resolving promise
             function fastPromise(value) {
                 return (value || {}).then ? value : {
@@ -26,7 +57,7 @@ define(
 
             // Store this model in the cache
             function cacheModel(id, model) {
-                cache[id] = model;
+                cache[id] = cached[id] ? updateModel(id, model) : model;
                 cached[id] = true;
             }
 
