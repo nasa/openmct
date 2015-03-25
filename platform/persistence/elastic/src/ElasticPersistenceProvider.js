@@ -70,8 +70,8 @@ define(
                 if ((response || {}).status === CONFLICT) {
                     error.key = "revision";
                     // Load the updated model, then reject the promise
-                    return get(key).then(function (model) {
-                        error.model = model;
+                    return get(key).then(function (response) {
+                        error.model = response[SRC];
                         return $q.reject(error);
                     });
                 }
