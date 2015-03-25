@@ -54,12 +54,6 @@ define(
                 return request(subpath, "DELETE");
             }
 
-            // Pull out a list of document IDs from CouchDB's
-            // _all_docs response
-            function getIdsFromAllDocs(allDocs) {
-                return allDocs.rows.map(function (r) { return r.id; });
-            }
-
             // Get a domain object model out of CouchDB's response
             function getModel(response) {
                 if (response && response[SRC]) {
@@ -117,7 +111,7 @@ define(
                  *          identifiers
                  */
                 listObjects: function (space) {
-                    return get("_all_docs").then(getIdsFromAllDocs);
+                    return $q.when([]);
                 },
                 /**
                  * Create a new object in the specified persistence space.
