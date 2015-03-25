@@ -9,7 +9,6 @@ define(
         // reflected in the indicator's appearance.
         // CONNECTED: Everything nominal, expect to be able to read/write.
         // DISCONNECTED: HTTP failed; maybe misconfigured, disconnected.
-        // SEMICONNECTED: Connected to the database, but it reported an error.
         // PENDING: Still trying to connect, and haven't failed yet.
         var CONNECTED = {
                 text: "Connected",
@@ -21,11 +20,6 @@ define(
                 glyphClass: "err",
                 description: "Unable to connect to the domain object database."
             },
-            SEMICONNECTED = {
-                text: "Unavailable",
-                glyphClass: "caution",
-                description: "Database does not exist or is unavailable."
-            },
             PENDING = {
                 text: "Checking connection..."
             };
@@ -35,7 +29,7 @@ define(
          * at a regular interval (defined by bundle constants) to ensure
          * that the database is available.
          */
-        function CouchIndicator($http, $interval, PATH, INTERVAL) {
+        function ElasticIndicator($http, $interval, PATH, INTERVAL) {
             // Track the current connection state
             var state = PENDING;
 
@@ -44,11 +38,9 @@ define(
                 state = DISCONNECTED;
             }
 
-            // Callback if the HTTP request succeeds. CouchDB may
-            // report an error, so check for that.
+            // Callback if the HTTP request succeeds.
             function handleResponse(response) {
-                var data = response.data;
-                state = data.error ? SEMICONNECTED : CONNECTED;
+                state = CONNECTED;
             }
 
             // Try to connect to CouchDB, and update the indicator.
@@ -58,7 +50,7 @@ define(
 
             // Update the indicator initially, and start polling.
             updateIndicator();
-            $interval(updateIndicator, INTERVAL);
+            $interval(updateIndicator, INTERVAL, false);
 
             return {
                 /**
@@ -98,6 +90,6 @@ define(
 
         }
 
-        return CouchIndicator;
+        return ElasticIndicator;
     }
 );
