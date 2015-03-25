@@ -34,7 +34,6 @@ define(
             $q,
             $timeout,
             dialogService,
-            persistenceService,
             PERSISTENCE_QUEUE_DELAY
         ) {
             // Wire up injected dependencies
@@ -45,8 +44,7 @@ define(
                     $q,
                     new PersistenceFailureHandler(
                         $q,
-                        dialogService,
-                        persistenceService
+                        dialogService
                     )
                 ),
                 PERSISTENCE_QUEUE_DELAY

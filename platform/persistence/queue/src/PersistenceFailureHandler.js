@@ -5,7 +5,7 @@ define(
     function (PersistenceFailureDialog, PersistenceFailureConstants) {
         "use strict";
 
-        function PersistenceFailureHandler($q, dialogService, persistenceService) {
+        function PersistenceFailureHandler($q, dialogService) {
             // Refresh revision information for the domain object associated
             // with this persistence failure
             function refresh(failure) {

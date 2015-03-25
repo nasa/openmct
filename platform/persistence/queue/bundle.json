@@ -16,7 +16,6 @@
                     "$q",
                     "$timeout",
                     "dialogService",
-                    "persistenceService",
                     "PERSISTENCE_QUEUE_DELAY"
                 ]
             }
