@@ -1,3 +1,5 @@
+<span ng-controller="PersistenceFailureController as controller">
+
 <div ng-if="ngModel.revised.length > 0">
     External changes have been made to the following objects:
     <ul>
@@ -5,6 +7,10 @@
             <mct-representation key="'label'"
                                 mct-object="failure.domainObject">
             </mct-representation>
+            was modified at
+            <b>{{controller.formatTimestamp(failure.error.model.modified)}}</b>
+            by
+            <i>{{controller.formatUsername(failure.error.model.modifier)}}</i>
         </li>
     </ul>
     You may overwrite these objects, or discard your changes to keep
@@ -22,3 +28,4 @@
     </ul>
 </div>
 
+</span>

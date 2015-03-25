@@ -31,6 +31,12 @@
                 "key": "persistence-failure-dialog",
                 "templateUrl": "templates/persistence-failure-dialog.html"
             }
+        ],
+        "controllers": [
+            {
+                "key": "PersistenceFailureController",
+                "implementation": "PersistenceFailureController.js"
+            }
         ]
     }
 }
