@@ -4,6 +4,7 @@
     "gestures/DropGesture",
     "gestures/GestureProvider",
     "gestures/GestureRepresenter",
+    "services/DndService",
     "MCTInclude",
     "MCTRepresentation"
 ]
