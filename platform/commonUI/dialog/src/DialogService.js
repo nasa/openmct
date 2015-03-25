@@ -37,7 +37,7 @@ define(
                 // OK button click
                 function confirm(value) {
                     // Pass along the result
-                    deferred.resolve(resultGetter(value));
+                    deferred.resolve(resultGetter ? resultGetter() : value);
 
                     // Stop showing the dialog
                     dismiss();
@@ -94,6 +94,7 @@ define(
                     return overlayModel.value;
                 }
 
+                // Show the overlay-dialog
                 return getDialogResponse(
                     "overlay-dialog",
                     overlayModel,
@@ -102,15 +103,10 @@ define(
             }
 
             function getUserChoice(dialogModel) {
-                // We just want to pass back the result from the template
-                function echo(value) {
-                    return value;
-                }
-
+                // Show the overlay-options dialog
                 return getDialogResponse(
                     "overlay-options",
-                    { dialog: dialogModel },
-                    echo
+                    { dialog: dialogModel }
                 );
             }
 
