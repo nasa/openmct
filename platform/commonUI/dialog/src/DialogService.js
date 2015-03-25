@@ -26,7 +26,7 @@ define(
                 dialogVisible = false;
             }
 
-            function getUserInput(formModel, value) {
+            function getDialogResponse(key, model, resultGetter) {
                 // We will return this result as a promise, because user
                 // input is asynchronous.
                 var deferred = $q.defer(),
@@ -35,9 +35,9 @@ define(
                 // Confirm function; this will be passed in to the
                 // overlay-dialog template and associated with a
                 // OK button click
-                function confirm() {
+                function confirm(value) {
                     // Pass along the result
-                    deferred.resolve(overlayModel.value);
+                    deferred.resolve(resultGetter(value));
 
                     // Stop showing the dialog
                     dismiss();
@@ -51,6 +51,10 @@ define(
                     dismiss();
                 }
 
+                // Add confirm/cancel callbacks
+                model.confirm = confirm;
+                model.cancel = cancel;
+
                 if (dialogVisible) {
                     // Only one dialog should be shown at a time.
                     // The application design should be such that
@@ -58,26 +62,15 @@ define(
                     $log.warn([
                         "Dialog already showing; ",
                         "unable to show ",
-                        formModel.name
+                        model.name
                     ].join(""));
                     deferred.reject();
                 } else {
-                    // To be passed to the overlay-dialog template,
-                    // via ng-model
-                    overlayModel = {
-                        title: formModel.name,
-                        message: formModel.message,
-                        structure: formModel,
-                        value: value,
-                        confirm: confirm,
-                        cancel: cancel
-                    };
-
                     // Add the overlay using the OverlayService, which
                     // will handle actual insertion into the DOM
                     overlay = overlayService.createOverlay(
-                        "overlay-dialog",
-                        overlayModel
+                        key,
+                        model
                     );
 
                     // Track that a dialog is already visible, to
@@ -88,54 +81,37 @@ define(
                 return deferred.promise;
             }
 
+            function getUserInput(formModel, value) {
+                var overlayModel = {
+                        title: formModel.name,
+                        message: formModel.message,
+                        structure: formModel,
+                        value: value
+                    };
+
+                // Provide result from the model
+                function resultGetter() {
+                    return overlayModel.value;
+                }
+
+                return getDialogResponse(
+                    "overlay-dialog",
+                    overlayModel,
+                    resultGetter
+                );
+            }
+
             function getUserChoice(dialogModel) {
-                // We will return this result as a promise, because user
-                // input is asynchronous.
-                var deferred = $q.defer();
-
-                // Confirm function; this will be passed in to the
-                // overlay-dialog template and associated with a
-                // OK button click
-                function confirm(value) {
-                    // Pass along the result
-                    deferred.resolve(value);
-
-                    // Stop showing the dialog
-                    dismiss();
+                // We just want to pass back the result from the template
+                function echo(value) {
+                    return value;
                 }
 
-                // Cancel function; this will be passed in to the
-                // overlay-dialog template and associated with a
-                // Cancel or X button click
-                function cancel() {
-                    deferred.reject();
-                    dismiss();
-                }
-
-                if (dialogVisible) {
-                    // Only one dialog should be shown at a time.
-                    // The application design should be such that
-                    // we never even try to do this.
-                    $log.warn([
-                        "Dialog already showing; ",
-                        "unable to show ",
-                        dialogModel.name
-                    ].join(""));
-                    deferred.reject();
-                } else {
-                    // Add the overlay using the OverlayService, which
-                    // will handle actual insertion into the DOM
-                    overlay = overlayService.createOverlay(
-                        "overlay-options",
-                        { dialog: dialogModel, click: confirm, cancel: cancel }
-                    );
-
-                    // Track that a dialog is already visible, to
-                    // avoid spawning multiple dialogs at once.
-                    dialogVisible = true;
-                }
-
-                return deferred.promise;
+                return getDialogResponse(
+                    "overlay-options",
+                    { dialog: dialogModel },
+                    echo
+                );
             }
 
             return {
