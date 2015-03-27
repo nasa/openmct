@@ -13,7 +13,7 @@
             Showing {{shown}} of {{count}} available options.
         </div -->
 
-        <div class='line treeview checkbox-list' name='available'>
+        <div class='line treeview' name='available'>
             <mct-representation key="'tree'"
                                 mct-object="selector.root()"
                                 ng-model="selector.treeModel">
@@ -46,15 +46,20 @@
             Showing {{shown}} of {{count}} available options.
         </div -->
 
-        <div class='line treeview checkbox-list' name='selected'>
+        <div class='line treeview l-tree-item-flat-list' name='selected'>
             <ul class="tree">
                 <li ng-repeat="selectedObject in selector.selected()">
-                    <mct-representation key="'label'"
-                                        mct-object="selectedObject"
-                                        ng-click="selector.listModel.selectedObject = selectedObject"
-                                        ng-class="{ test: selector.listModel.selectedObject === selectedObject }">
+	                <span
+		                class="tree-item"
+		                ng-class="{selected: selector.listModel.selectedObject === selectedObject }"
+		                >
+                    <mct-representation
+	                    key="'label'"
+	                    mct-object="selectedObject"
+	                    ng-click="selector.listModel.selectedObject = selectedObject"
+	                    >
                     </mct-representation>
-
+					</span>
                 </li>
             </ul>
         </div>

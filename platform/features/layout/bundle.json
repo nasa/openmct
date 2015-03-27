@@ -112,7 +112,7 @@
                                 },
                                 {
                                     "property": "text",
-                                    "glyph": "p",
+                                    "glyph": "G",
                                     "control": "dialog-button",
                                     "title": "Text Properties",
                                     "dialog": {

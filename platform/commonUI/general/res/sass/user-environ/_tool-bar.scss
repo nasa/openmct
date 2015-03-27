@@ -1,7 +1,7 @@
 .tool-bar {
 	border-bottom: 1px solid $colorInteriorBorder;
-	.control-group {
-		height: $ueEditToolBarH;
+	.l-control-group {
+		height: $ueEditToolBarButtonH;
 	}
 	input[type="text"] {
 		@include box-sizing(border-box);
