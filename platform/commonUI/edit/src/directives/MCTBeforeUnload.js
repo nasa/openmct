@@ -43,12 +43,14 @@ define(
                     }
                 }
 
-                // Include this instance of the directive's unload function
-                unloads.push(unload);
-
                 // If this is the first active instance of this directive,
                 // register as the window's beforeunload handler
-                $window.onbeforeunload = checkUnloads;
+                if (unloads.length === 0) {
+                    $window.onbeforeunload = checkUnloads;
+                }
+
+                // Include this instance of the directive's unload function
+                unloads.push(unload);
 
                 // Remove it when the scope is destroyed
                 scope.$on("$destroy", removeUnload);

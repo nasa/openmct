@@ -31,9 +31,19 @@ define(
             });
 
             return {
+                /**
+                 * Get the domain object which is navigated-to.
+                 * @returns {DomainObject} the domain object that is navigated-to
+                 */
                 navigatedObject: function () {
                     return navigatedObject;
                 },
+                /**
+                 * Get the warning to show if the user attempts to navigate
+                 * away from Edit mode while unsaved changes are present.
+                 * @returns {string} the warning to show, or undefined if
+                 *          there are no unsaved changes
+                 */
                 getUnloadWarning: function () {
                     var editorCapability = navigatedObject &&
                             navigatedObject.getCapability("editor"),
