@@ -116,6 +116,11 @@
                 ]
             },
             {
+                "key": "root",
+                "name": "Root",
+                "glyph": "F"
+            },
+            {
                 "key": "folder",
                 "name": "Folder",
                 "glyph": "F",
@@ -157,8 +162,7 @@
             },
             {
                 "key": "mutation",
-                "implementation": "capabilities/MutationCapability.js",
-                "depends": [ "$q" ]
+                "implementation": "capabilities/MutationCapability.js"
             },
             {
                 "key": "delegation",

@@ -1,23 +1,31 @@
 <span ng-controller="ToggleController as toggle">
     <span ng-controller="TreeNodeController as treeNode">
-        <span class="tree-item menus-to-left">
-            <span class='ui-symbol view-control'
-                  ng-click="toggle.toggle(); treeNode.trackExpansion()"
-                  ng-if="model.composition !== undefined">
+        <span
+	        class="tree-item menus-to-left"
+	        ng-class="{selected: treeNode.isSelected()}"
+	        >
+            <span
+	            class='ui-symbol view-control'
+				ng-click="toggle.toggle(); treeNode.trackExpansion()"
+				ng-if="model.composition !== undefined"
+				>
                 {{toggle.isActive() ? "v" : ">"}}
             </span>
-            <mct-representation key="'label'"
-                                mct-object="domainObject"
-                                ng-model="ngModel"
-                                ng-click="ngModel.selectedObject = domainObject"
-                                ng-class="{selected: treeNode.isSelected()}">
+            <mct-representation
+				key="'label'"
+				mct-object="domainObject"
+				ng-model="ngModel"
+				ng-click="ngModel.selectedObject = domainObject"
+				>
             </mct-representation>
         </span>
-        <span class="tree-item-subtree"
-              ng-show="toggle.isActive()"
-              ng-if="model.composition !== undefined">
+        <span
+			class="tree-item-subtree"
+			ng-show="toggle.isActive()"
+			ng-if="model.composition !== undefined"
+			>
 
-            <mct-representation key="'tree'"
+            <mct-representation key="'subtree'"
                                 ng-model="ngModel"
                                 mct-object="treeNode.hasBeenExpanded() && domainObject">
             </mct-representation>

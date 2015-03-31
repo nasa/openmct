@@ -112,7 +112,7 @@
                                 },
                                 {
                                     "property": "text",
-                                    "glyph": "p",
+                                    "glyph": "G",
                                     "control": "dialog-button",
                                     "title": "Text Properties",
                                     "dialog": {
@@ -221,12 +221,6 @@
                         ],
                         "key": "layoutGrid",
                         "conversion": "number[]"
-                    },
-                    {
-                        "label": "Panel(s)",
-                        "control": "selector",
-                        "type": "telemetry.panel",
-                        "key": "somethingElse"
                     }
                 ]
             },

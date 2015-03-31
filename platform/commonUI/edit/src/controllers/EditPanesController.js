@@ -16,7 +16,7 @@ define(
             function updateRoot(domainObject) {
                 var context = domainObject &&
                     domainObject.getCapability('context'),
-                    newRoot = context && context.getRoot(),
+                    newRoot = context && context.getTrueRoot(),
                     oldId = root && root.getId(),
                     newId = newRoot && newRoot.getId();
 

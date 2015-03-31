@@ -76,7 +76,12 @@ define(
                  *          object which exposed this capability.
                  */
                 getRoot: function () {
-                    return this.getPath()[0];
+                    var parentContext = parentObject &&
+                                parentObject.getCapability('context');
+
+                    return parentContext ?
+                                parentContext.getRoot() :
+                                (parentObject || domainObject);
                 }
             };
         }

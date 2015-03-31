@@ -23,13 +23,32 @@ define(
         ) {
             // This is a "lookup" style capability (it looks up other
             // domain objects), and it should be idempotent
-            return new EditableLookupCapability(
-                contextCapability,
-                editableObject,
-                domainObject,
-                cache,
-                true // Idempotent
-            );
+            var capability = new EditableLookupCapability(
+                    contextCapability,
+                    editableObject,
+                    domainObject,
+                    cache,
+                    true // Idempotent
+                ),
+                // Track the real root object for the Elements pane
+                trueRoot = capability.getRoot();
+
+            // Provide access to the real root, for the Elements pane.
+            capability.getTrueRoot = function () {
+                return trueRoot;
+            };
+
+            // Hide ancestry after the root of this subgraph
+            if (cache.isRoot(domainObject)) {
+                capability.getRoot = function () {
+                    return editableObject;
+                };
+                capability.getPath = function () {
+                    return [editableObject];
+                };
+            }
+
+            return capability;
         };
     }
 );

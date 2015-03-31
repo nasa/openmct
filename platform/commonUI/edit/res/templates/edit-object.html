@@ -2,12 +2,13 @@
                     mct-object="domainObject"
                     ng-model="representation">
 </mct-representation>
-<div class="holder edit-area outline abs">
+<div class="holder edit-area outline abs"
+     ng-controller="SplitPaneController as vSplitter">
     <mct-toolbar name="mctToolbar"
                  structure="toolbar.structure"
                  ng-model="toolbar.state">
     </mct-toolbar>
-    <div class='split-layout vertical contents abs work-area' ng-controller="SplitPaneController as vSplitter">
+    <div class='split-layout vertical contents abs work-area'>
         <div
             class='abs pane left edit-main'
             ng-style="{ right: (vSplitter.state()+5) + 'px'}"

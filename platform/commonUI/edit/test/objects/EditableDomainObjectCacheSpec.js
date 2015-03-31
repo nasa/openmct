@@ -99,6 +99,17 @@ define(
                 expect(captured.saved).toEqual(1);
             });
 
+            it("tracks the root object of the Edit mode subgraph", function () {
+                // Root object is the first object exposed to the cache
+                var domainObjects = ['a', 'b', 'c'].map(TestObject);
+                domainObjects.forEach(function (obj) {
+                    cache.getEditableObject(obj);
+                });
+                expect(cache.isRoot(domainObjects[0])).toBeTruthy();
+                expect(cache.isRoot(domainObjects[1])).toBeFalsy();
+                expect(cache.isRoot(domainObjects[2])).toBeFalsy();
+            });
+
 
         });
     }

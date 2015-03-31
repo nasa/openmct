@@ -19,18 +19,22 @@ define(
                 // methods for domain objects, so give it an
                 // arbitrary interface to wrap.
                 mockContext =
-                    jasmine.createSpyObj("context", [ "getDomainObject" ]);
+                    jasmine.createSpyObj("context", [ "getDomainObject", "getRoot" ]);
                 mockTestObject = jasmine.createSpyObj(
                     "domainObject",
                     [ "getId", "getModel", "getCapability" ]
                 );
-                mockFactory =
-                    jasmine.createSpyObj("factory", ["getEditableObject"]);
+                mockFactory = jasmine.createSpyObj(
+                    "factory",
+                    ["getEditableObject", "isRoot"]
+                );
 
                 someValue = { x: 42 };
 
+                mockContext.getRoot.andReturn(mockTestObject);
                 mockContext.getDomainObject.andReturn(mockTestObject);
                 mockFactory.getEditableObject.andReturn(someValue);
+                mockFactory.isRoot.andReturn(true);
 
                 capability = new EditableContextCapability(
                     mockContext,
@@ -47,6 +51,18 @@ define(
                 expect(mockContext.getDomainObject.calls.length).toEqual(1);
             });
 
+            it("hides the root object", function () {
+                expect(capability.getRoot()).toEqual(mockEditableObject);
+                expect(capability.getPath()).toEqual([mockEditableObject]);
+            });
+
+            it("exposes the root object through a different method", function () {
+                // Should still go through the factory...
+                expect(capability.getTrueRoot()).toEqual(someValue);
+                // ...with value of the unwrapped capability's getRoot
+                expect(mockFactory.getEditableObject)
+                    .toHaveBeenCalledWith(mockTestObject);
+            });
         });
     }
 );

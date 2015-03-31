@@ -32,25 +32,43 @@ define(
          * @param {ViewDefinition[]} views an array of view extensions
          */
         function MCTRepresentation(representations, views, representers, $q, $log) {
-            var pathMap = {},
-                representationMap = {},
+            var representationMap = {},
                 gestureMap = {};
 
             // Assemble all representations and views
             // The distinction between views and representations is
-            // not important her (view is-a representation)
+            // not important here (view is-a representation)
             representations.concat(views).forEach(function (representation) {
-                var path = [
+                var key = representation.key;
+
+                // Store the representation
+                representationMap[key] = representationMap[key] || [];
+                representationMap[representation.key].push(representation);
+            });
+
+            // Get a path to a representation
+            function getPath(representation) {
+                return [
                     representation.bundle.path,
                     representation.bundle.resources,
                     representation.templateUrl
                 ].join("/");
+            }
 
-                // Consider allowing multiple templates with the same key
-                pathMap[representation.key] = path;
-                representationMap[representation.key] = representation;
-            });
-
+            // Look up a matching representation for this domain object
+            function lookup(key, domainObject) {
+                var candidates = representationMap[key] || [],
+                    type,
+                    i;
+                // Filter candidates by object type
+                for (i = 0; i < candidates.length; i += 1) {
+                    type = candidates[i].type;
+                    if (!type || !domainObject ||
+                            domainObject.getCapability('type').instanceOf(type)) {
+                        return candidates[i];
+                    }
+                }
+            }
 
             function link($scope, element, attrs) {
                 var activeRepresenters = representers.map(function (Representer) {
@@ -60,8 +78,8 @@ define(
                 // Populate scope with any capabilities indicated by the
                 // representation's extension definition
                 function refreshCapabilities() {
-                    var representation = representationMap[$scope.key],
-                        domainObject = $scope.domainObject,
+                    var domainObject = $scope.domainObject,
+                        representation = lookup($scope.key, domainObject),
                         uses = ((representation || {}).uses || []);
 
                     if (domainObject) {
@@ -89,8 +107,8 @@ define(
                 // as appropriate for current representation key and
                 // domain object.
                 function refresh() {
-                    var representation = representationMap[$scope.key],
-                        domainObject = $scope.domainObject,
+                    var domainObject = $scope.domainObject,
+                        representation = lookup($scope.key, domainObject),
                         uses = ((representation || {}).uses || []),
                         gestureKeys = ((representation || {}).gestures || []);
 
@@ -100,7 +118,7 @@ define(
 
                     // Look up the actual template path, pass it to ng-include
                     // via the "inclusion" field
-                    $scope.inclusion = pathMap[$scope.key];
+                    $scope.inclusion = representation && getPath(representation);
 
                     // Any existing gestures are no longer valid; release them.
                     activeRepresenters.forEach(function (activeRepresenter) {

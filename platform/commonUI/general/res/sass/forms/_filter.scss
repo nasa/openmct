@@ -68,13 +68,13 @@
 	input.filter {
 		$h: $ueTopBarH;
 		$ip: 10px;
-		font-size: .8em;
+		font-size: .9em;
 		height: $h;
 		line-height: $h;
 		margin-right: $interiorMargin;
-		margin-top: -5px;
 		padding-left: $ip;
 		padding-right: $ip;
+		vertical-align: top;
 	}
 	.icon-filter {
 		font-size: 1.4em;

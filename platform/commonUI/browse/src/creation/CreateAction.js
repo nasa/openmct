@@ -92,6 +92,7 @@ define(
                         key: 'create',
                         glyph: type.getGlyph(),
                         name: type.getName(),
+                        type: type.getKey(),
                         description: type.getDescription(),
                         context: context
                     };

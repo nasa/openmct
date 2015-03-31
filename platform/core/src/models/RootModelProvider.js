@@ -28,6 +28,7 @@ define(
             function addRoot(models) {
                 models.ROOT = {
                     name: "The root object",
+                    type: "root",
                     composition: ids
                 };
                 return models;
