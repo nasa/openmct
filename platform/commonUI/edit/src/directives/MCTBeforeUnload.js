@@ -43,6 +43,17 @@ define(
                     }
                 }
 
+                // Show a dialog before allowing a location change
+                function checkLocationChange(event) {
+                    // Get an unload message (if any)
+                    var warning = unload();
+                    // Prompt the user if there's an unload message
+                    if (warning && !$window.confirm(warning)) {
+                        // ...and prevent the route change if it was confirmed
+                        event.preventDefault();
+                    }
+                }
+
                 // If this is the first active instance of this directive,
                 // register as the window's beforeunload handler
                 if (unloads.length === 0) {
@@ -54,6 +65,9 @@ define(
 
                 // Remove it when the scope is destroyed
                 scope.$on("$destroy", removeUnload);
+
+                // Also handle route changes
+                scope.$on("$locationChangeStart", checkLocationChange);
             }
 
             return {
