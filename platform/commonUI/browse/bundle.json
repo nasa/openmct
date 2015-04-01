@@ -108,7 +108,8 @@
                 "templateUrl": "templates/items/items.html",
                 "uses": [ "composition" ],
                 "gestures": [ "drop" ],
-                "type": "folder"
+                "type": "folder",
+                "editable": false
             }
         ],
         "components": [

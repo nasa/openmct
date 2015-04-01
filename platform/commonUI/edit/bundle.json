@@ -68,6 +68,12 @@
                 "depends": [ "$location" ]
             }
         ],
+        "policies": [
+            {
+                "category": "action",
+                "implementation": "policies/EditActionPolicy.js"
+            }
+        ],
         "templates": [
             {
                 "key": "edit-library",
