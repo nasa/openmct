@@ -77,7 +77,7 @@ define(
                 testPolicies[0].result = false;
                 expect(provider.allow("a", testCandidate, testContext, mockCallback))
                     .toBeFalsy();
-                expect(mockCallback).toHaveBeenCalledWith(testPolicies[1].message);
+                expect(mockCallback).toHaveBeenCalledWith(testPolicies[0].message);
             });
 
         });
