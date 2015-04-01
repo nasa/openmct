@@ -17,6 +17,8 @@
     "objects/EditableDomainObject",
     "objects/EditableDomainObjectCache",
     "objects/EditableModelCache",
+    "policies/EditableViewPolicy",
+    "policies/EditActionPolicy",
     "representers/EditRepresenter",
     "representers/EditToolbar",
     "representers/EditToolbarRepresenter",
