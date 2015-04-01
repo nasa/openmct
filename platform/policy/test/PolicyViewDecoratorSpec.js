@@ -54,7 +54,7 @@ define(
             it("provides views from its decorated view service", function () {
                 // Mock policy service allows everything by default,
                 // so everything should be returned
-                expect(decorator.getActions(mockDomainObject))
+                expect(decorator.getViews(mockDomainObject))
                     .toEqual(testViews);
             });
 

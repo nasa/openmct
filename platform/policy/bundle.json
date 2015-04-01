@@ -11,6 +11,12 @@
                 "depends": [ "policyService" ]
             },
             {
+                "type": "decorator",
+                "provides": "viewService",
+                "implementation": "PolicyViewDecorator.js",
+                "depends": [ "policyService" ]
+            },
+            {
                 "type": "provider",
                 "provides": "policyService",
                 "implementation": "PolicyProvider.js",
