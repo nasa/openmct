@@ -34,7 +34,7 @@
             },
             {
                 "key": "properties",
-                "category": "contextual",
+                "category": ["contextual", "view-control"],
                 "implementation": "actions/PropertiesAction.js",
                 "glyph": "p",
                 "name": "Edit Properties...",
