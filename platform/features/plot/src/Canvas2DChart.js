@@ -87,7 +87,7 @@ define(
                     }
 
                     // ...and add points to it...
-                    for (i = 2; i < buf.length - 1; i = i + 2) {
+                    for (i = 2; i < points * 2; i = i + 2) {
                         c2d.lineTo(x(buf[i]), y(buf[i + 1]));
                     }
 
