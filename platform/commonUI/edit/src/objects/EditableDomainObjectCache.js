@@ -51,6 +51,11 @@ define(
                     // some special behavior for its context capability.
                     root = root || domainObject;
 
+                    // Avoid double-wrapping (WTD-1017)
+                    if (domainObject.hasCapability('editor')) {
+                        return domainObject;
+                    }
+
                     // Provide an editable form of the object
                     return new EditableDomainObject(
                         domainObject,
