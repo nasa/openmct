@@ -148,8 +148,11 @@ define(
                  *          failure of this request
                  */
                 updateObject: function (space, key, value) {
-                    addToCache(space, key, value);
-                    return persistenceService.updateObject(space, key, value);
+                    return persistenceService.updateObject(space, key, value)
+                        .then(function (result) {
+                            addToCache(space, key, value);
+                            return result;
+                        });
                 },
                 /**
                  * Delete an object in a specific space. This will

@@ -13,24 +13,18 @@ define(
         function SaveAction($location, context) {
             var domainObject = context.domainObject;
 
-            // Look up the object's "editor.completion" capability;
+            // Invoke any save behavior introduced by the editor capability;
             // this is introduced by EditableDomainObject which is
             // used to insulate underlying objects from changes made
             // during editing.
-            function getEditorCapability() {
-                return domainObject.getCapability("editor");
-            }
-
-            // Invoke any save behavior introduced by the editor.completion
-            // capability.
-            function doSave(editor) {
-                return editor.save();
+            function doSave() {
+                return domainObject.getCapability("editor").save();
             }
 
             // Discard the current root view (which will be the editing
             // UI, which will have been pushed atop the Browise UI.)
             function returnToBrowse() {
-                $location.path("/browse");
+                return $location.path("/browse");
             }
 
             return {
@@ -41,7 +35,7 @@ define(
                  *          cancellation has completed
                  */
                 perform: function () {
-                    return doSave(getEditorCapability()).then(returnToBrowse);
+                    return doSave().then(returnToBrowse);
                 }
             };
         }

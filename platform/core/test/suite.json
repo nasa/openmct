@@ -17,6 +17,7 @@
     "models/PersistedModelProvider",
     "models/RootModelProvider",
     "models/StaticModelProvider",
+    "models/CachingModelDecorator",
 
     "objects/DomainObject",
     "objects/DomainObjectProvider",

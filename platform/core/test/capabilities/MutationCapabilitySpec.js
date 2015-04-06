@@ -10,12 +10,15 @@ define(
 
         describe("The mutation capability", function () {
             var testModel,
+                mockNow,
                 domainObject = { getModel: function () { return testModel; } },
                 mutation;
 
             beforeEach(function () {
                 testModel = { number: 6 };
-                mutation = new MutationCapability(domainObject);
+                mockNow = jasmine.createSpy('now');
+                mockNow.andReturn(12321);
+                mutation = new MutationCapability(mockNow, domainObject);
             });
 
             it("allows mutation of a model", function () {
@@ -40,6 +43,24 @@ define(
                 });
                 // Number should not have been changed
                 expect(testModel.number).toEqual(6);
+            });
+
+            it("attaches a timestamp on mutation", function () {
+                // Verify precondition
+                expect(testModel.modified).toBeUndefined();
+                mutation.invoke(function (m) {
+                    m.number = m.number * 7;
+                });
+                // Should have gotten a timestamp from 'now'
+                expect(testModel.modified).toEqual(12321);
+            });
+
+            it("allows a timestamp to be provided", function () {
+                mutation.invoke(function (m) {
+                    m.number = m.number * 7;
+                }, 42);
+                // Should have gotten a timestamp from 'now'
+                expect(testModel.modified).toEqual(42);
             });
         });
     }

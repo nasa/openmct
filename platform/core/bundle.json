@@ -66,6 +66,11 @@
                 "depends": [ "persistenceService", "$q", "PERSISTENCE_SPACE" ]
             },
             {
+                "provides": "modelService",
+                "type": "decorator",
+                "implementation": "models/CachingModelDecorator.js"
+            },
+            {
                 "provides": "typeService",
                 "type": "provider",
                 "implementation": "types/TypeProvider.js",
@@ -162,7 +167,8 @@
             },
             {
                 "key": "mutation",
-                "implementation": "capabilities/MutationCapability.js"
+                "implementation": "capabilities/MutationCapability.js",
+                "depends": [ "now" ]
             },
             {
                 "key": "delegation",

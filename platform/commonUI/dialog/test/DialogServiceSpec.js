@@ -86,6 +86,19 @@ define(
                 expect(mockDeferred.reject).not.toHaveBeenCalled();
             });
 
+            it("provides an options dialogs", function () {
+                var dialogModel = {};
+                dialogService.getUserChoice(dialogModel);
+                expect(mockOverlayService.createOverlay).toHaveBeenCalledWith(
+                    'overlay-options',
+                    {
+                        dialog: dialogModel,
+                        confirm: jasmine.any(Function),
+                        cancel: jasmine.any(Function)
+                    }
+                );
+            });
+
         });
     }
 );

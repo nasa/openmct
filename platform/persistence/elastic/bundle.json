@@ -1,0 +1,43 @@
+{
+    "name": "Couch Persistence",
+    "description": "Adapter to read and write objects using a CouchDB instance.",
+    "extensions": {
+        "components": [
+            {
+                "provides": "persistenceService",
+                "type": "provider",
+                "implementation": "ElasticPersistenceProvider.js",
+                "depends": [ "$http", "$q", "PERSISTENCE_SPACE", "ELASTIC_ROOT", "ELASTIC_PATH" ]
+            }
+        ],
+        "constants": [
+            {
+                "key": "PERSISTENCE_SPACE",
+                "value": "mct"
+            },
+            {
+                "key": "ELASTIC_ROOT",
+                "value": "/elastic"
+            },
+            {
+                "key": "ELASTIC_PATH",
+                "value": "mct/domain_object"
+            },
+            {
+                "key": "ELASTIC_INDICATOR_INTERVAL",
+                "value": 15000
+            }
+        ],
+        "indicators": [
+            {
+                "implementation": "ElasticIndicator.js",
+                "depends": [
+                    "$http",
+                    "$interval",
+                    "ELASTIC_ROOT",
+                    "ELASTIC_INDICATOR_INTERVAL"
+                ]
+            }
+        ]
+    }
+}

@@ -7,6 +7,7 @@ define(
 
         describe("The Edit mode controller", function () {
             var mockScope,
+                mockQ,
                 mockNavigationService,
                 mockObject,
                 mockCapability,
@@ -17,6 +18,7 @@ define(
                     "$scope",
                     [ "$on" ]
                 );
+                mockQ = jasmine.createSpyObj('$q', ['when', 'all']);
                 mockNavigationService = jasmine.createSpyObj(
                     "navigationService",
                     [ "getNavigation", "addListener", "removeListener" ]
@@ -37,6 +39,7 @@ define(
 
                 controller = new EditController(
                     mockScope,
+                    mockQ,
                     mockNavigationService
                 );
             });

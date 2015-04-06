@@ -1,0 +1,31 @@
+<span ng-controller="PersistenceFailureController as controller">
+
+<div ng-if="ngModel.revised.length > 0">
+    External changes have been made to the following objects:
+    <ul>
+        <li ng-repeat="failure in ngModel.revised">
+            <mct-representation key="'label'"
+                                mct-object="failure.domainObject">
+            </mct-representation>
+            was modified at
+            <b>{{controller.formatTimestamp(failure.error.model.modified)}}</b>
+            by
+            <i>{{controller.formatUsername(failure.error.model.modifier)}}</i>
+        </li>
+    </ul>
+    You may overwrite these objects, or discard your changes to keep
+    the updates that were made externally.
+</div>
+
+<div ng-if="ngModel.unrecoverable.length > 0">
+    Changes to these objects could not be saved for unknown reasons:
+    <ul>
+        <li ng-repeat="failure in ngModel.unrecoverable">
+            <mct-representation key="'label'"
+                                mct-object="failure.domainObject">
+            </mct-representation>
+        </li>
+    </ul>
+</div>
+
+</span>

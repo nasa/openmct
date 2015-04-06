@@ -14,12 +14,12 @@ define(
          * navigated domain object into the scope.
          * @constructor
          */
-        function EditController($scope, navigationService) {
+        function EditController($scope, $q, navigationService) {
             function setNavigation(domainObject) {
                 // Wrap the domain object such that all mutation is
                 // confined to edit mode (until Save)
                 $scope.navigatedObject =
-                    domainObject && new EditableDomainObject(domainObject);
+                    domainObject && new EditableDomainObject(domainObject, $q);
             }
 
             setNavigation(navigationService.getNavigation());
