@@ -31,6 +31,10 @@ define(
                 chart = new Canvas2DChart(mockCanvas);
             });
 
+            // Note that tests below are less specific than they
+            // could be, esp. w.r.t. arguments to drawing calls;
+            // this is a fallback option so is a lower test priority.
+
             it("allows the canvas to be cleared", function () {
                 chart.clear();
                 expect(mock2d.clearRect).toHaveBeenCalled();
