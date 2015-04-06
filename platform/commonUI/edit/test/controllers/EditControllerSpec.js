@@ -25,7 +25,7 @@ define(
                 );
                 mockObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    [ "getId", "getModel", "getCapability", "hasCapability" ]
                 );
                 mockCapability = jasmine.createSpyObj(
                     "capability",
