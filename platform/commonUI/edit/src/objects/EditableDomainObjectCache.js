@@ -103,6 +103,13 @@ define(
                         // Save; pass a nonrecursive flag to avoid looping
                         return object.getCapability('editor').save(true);
                     }));
+                },
+                /**
+                 * Check if any objects have been marked dirty in this cache.
+                 * @returns {boolean} true if objects are dirty
+                 */
+                dirty: function () {
+                    return Object.keys(dirty).length > 0;
                 }
             };
         }
