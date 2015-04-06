@@ -14,10 +14,10 @@ define(
          */
         function Canvas2DChart(canvas) {
             var c2d = canvas.getContext('2d'),
-                dimensions,
-                origin,
                 width = canvas.width,
-                height = canvas.height;
+                height = canvas.height,
+                dimensions = [ width, height ],
+                origin = [ 0, 0 ];
 
             // Convert from logical to physical x coordinates
             function x(v) {
