@@ -7,6 +7,7 @@
     "platform/commonUI/edit",
     "platform/commonUI/dialog",
     "platform/commonUI/general",
+    "platform/containment",
     "platform/telemetry",
     "platform/features/layout",
     "platform/features/plot",
