@@ -16,8 +16,10 @@ define(
 
             // Add this domain object's identifier
             function addId(model) {
-                model.composition = model.composition || [];
-                model.composition.push(selectedId);
+                if (Array.isArray(model.composition) &&
+                        model.composition.indexOf(selectedId) < 0) {
+                    model.composition.push(selectedId);
+                }
             }
 
             // Persist changes to the domain object
