@@ -8,7 +8,9 @@ define(
 
         /**
          * Build a table indicating which types are expected to expose
-         * which capabilities.
+         * which capabilities. This supports composition policy (rules
+         * for which objects can contain which other objects) which
+         * sometimes is determined based on the presence of capabilities.
          */
         function CapabilityTable(typeService, capabilityService) {
             var table = {};

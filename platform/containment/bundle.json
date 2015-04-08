@@ -1,0 +1,11 @@
+{
+    "extensions": {
+        "policies": [
+            {
+                "category": "composition",
+                "implementation": "CompositionPolicy.js",
+                "depends": [ "typeService", "capabilityService" ]
+            }
+        ]
+    }
+}
