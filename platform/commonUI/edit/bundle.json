@@ -32,6 +32,10 @@
         ],
         "actions": [
             {
+                "key": "compose",
+                "implementation": "actions/LinkAction.js"
+            },
+            {
                 "key": "edit",
                 "implementation": "actions/EditAction.js",
                 "depends": [ "$location", "navigationService", "$log" ],
