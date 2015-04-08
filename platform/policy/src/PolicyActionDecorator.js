@@ -15,7 +15,7 @@ define(
             return {
                 /**
                  * Get actions which are applicable in this context.
-                 * These will be filters to remove any actions which
+                 * These will be filtered to remove any actions which
                  * are deemed inapplicable by policy.
                  * @param context the context in which the action will occur
                  * @returns {Action[]} applicable actions

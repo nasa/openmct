@@ -1,4 +1,5 @@
 [
     "PolicyActionDecorator",
+    "PolicyViewDecorator",
     "PolicyProvider"
 ]
