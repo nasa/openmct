@@ -34,7 +34,16 @@ define(
                             $scope.structure.validate(priorObject) ?
                                     priorObject : undefined
                         );
+                        return;
                     }
+                }
+
+                // Set validity
+                if ($scope.ngModelController) {
+                    $scope.ngModelController.$setValidity(
+                        'composition',
+                        !!$scope.treeModel.selectedObject
+                    );
                 }
             }
 
