@@ -4,7 +4,8 @@
             {
                 "category": "composition",
                 "implementation": "CompositionPolicy.js",
-                "depends": [ "typeService", "capabilityService" ]
+                "depends": [ "typeService", "capabilityService" ],
+                "message": "Objects of this type cannot contain objects of that type."
             }
         ]
     }
