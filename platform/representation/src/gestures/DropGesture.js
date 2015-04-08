@@ -55,7 +55,7 @@ define(
                 if (selectedObject) {
                     // TODO: Vary this based on modifier keys
                     action = actionCapability.getActions({
-                        key: 'link',
+                        key: 'compose',
                         selectedObject: selectedObject
                     })[0];
 
