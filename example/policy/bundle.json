@@ -1,0 +1,12 @@
+{
+    "name": "Example Policy",
+    "description": "Provides an example of using policies to prohibit actions.",
+    "extensions": {
+        "policies": [
+            {
+                "implementation": "ExamplePolicy.js",
+                "category": "action"
+            }
+        ]
+    }
+}
