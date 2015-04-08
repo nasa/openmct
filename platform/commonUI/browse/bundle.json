@@ -117,7 +117,7 @@
                 "provides": "actionService",
                 "type": "provider",
                 "implementation": "creation/CreateActionProvider.js",
-                "depends": [ "typeService", "dialogService", "creationService" ]
+                "depends": [ "typeService", "dialogService", "creationService", "policyService" ]
             }
         ],
         "licenses": [

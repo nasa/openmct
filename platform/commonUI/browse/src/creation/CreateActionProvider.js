@@ -22,7 +22,7 @@ define(
          *        introduced in this bundle), responsible for handling actual
          *        object creation.
          */
-        function CreateActionProvider(typeService, dialogService, creationService) {
+        function CreateActionProvider(typeService, dialogService, creationService, policyService) {
             return {
                 /**
                  * Get all Create actions which are applicable in the provided
@@ -53,7 +53,8 @@ define(
                             destination,
                             context,
                             dialogService,
-                            creationService
+                            creationService,
+                            policyService
                         );
                     });
                 }

@@ -27,7 +27,7 @@ define(
          *        which handles the actual instantiation and persistence
          *        of the newly-created domain object
          */
-        function CreateAction(type, parent, context, dialogService, creationService) {
+        function CreateAction(type, parent, context, dialogService, creationService, policyService) {
             /*
              Overview of steps in object creation:
 
@@ -47,7 +47,7 @@ define(
             function perform() {
                 // The wizard will handle creating the form model based
                 // on the type...
-                var wizard = new CreateWizard(type, parent);
+                var wizard = new CreateWizard(type, parent, policyService);
 
                 // Create and persist the new object, based on user
                 // input.
