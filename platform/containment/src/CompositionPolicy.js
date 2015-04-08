@@ -8,10 +8,17 @@ define(
         /**
          * Defines composition policy as driven by type metadata.
          */
-        function CompositionPolicy(typeService, capabilityService) {
+        function CompositionPolicy($injector) {
             // We're really just wrapping the containment table and rephrasing
             // it as a policy decision.
-            var table = new ContainmentTable(typeService, capabilityService);
+            var table;
+
+            function getTable() {
+                return (table = table || new ContainmentTable(
+                    $injector.get('typeService'),
+                    $injector.get('capabilityService')
+                ));
+            }
 
             return {
                 /**
@@ -19,7 +26,7 @@ define(
                  * contain the type described by the context?
                  */
                 allow: function (candidate, context) {
-                    return table.canContain(candidate, context);
+                    return getTable().canContain(candidate, context);
                 }
             };
         }

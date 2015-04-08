@@ -53,5 +53,7 @@ define(
             };
         }
 
+        return ComposeActionPolicy;
+
     }
 );
