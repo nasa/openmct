@@ -78,10 +78,7 @@ define(
                 // the change.
                 if (id) {
                     $q.when(action && action.perform()).then(function (result) {
-                        // Broadcast the drop event if it was successful
-                        if (result) {
-                            broadcastDrop(id, event);
-                        }
+                        broadcastDrop(id, event);
                     });
                 }
 
