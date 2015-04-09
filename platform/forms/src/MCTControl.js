@@ -46,7 +46,7 @@ define(
                 priority: 1000,
 
                 // Get the ngModelController, so that controls can set validity
-                require: 'ngModel',
+                require: '?ngModel',
 
                 // Link function
                 link: link,
