@@ -48,6 +48,8 @@ define(
                 policy = new CompositionPolicy(mockInjector);
             });
 
+            // Test basic composition policy here; test more closely at
+            // the unit level in ContainmentTable for 'has' support, et al
             it("enforces containment rules defined by types", function () {
                 expect(policy.allow(mockTypes[0], mockTypes[1]))
                     .toBeTruthy();
