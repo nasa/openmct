@@ -1,6 +1,7 @@
 [
     "actions/CancelAction",
     "actions/EditAction",
+    "actions/LinkAction",
     "actions/PropertiesAction",
     "actions/PropertiesDialog",
     "actions/RemoveAction",
