@@ -84,11 +84,21 @@ define(
 
             // Build up look-up tables
             actions.forEach(function (Action) {
-                if (Action.category) {
-                    actionsByCategory[Action.category] =
-                        actionsByCategory[Action.category] || [];
-                    actionsByCategory[Action.category].push(Action);
-                }
+                // Get an action's category or categories
+                var categories = Action.category || [];
+
+                // Convert to an array if necessary
+                categories = Array.isArray(categories) ?
+                        categories : [categories];
+
+                // Store action under all relevant categories
+                categories.forEach(function (category) {
+                    actionsByCategory[category] =
+                        actionsByCategory[category] || [];
+                    actionsByCategory[category].push(Action);
+                });
+
+                // Store action by ekey as well
                 if (Action.key) {
                     actionsByKey[Action.key] =
                         actionsByKey[Action.key] || [];

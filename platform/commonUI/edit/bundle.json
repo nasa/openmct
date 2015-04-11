@@ -45,7 +45,7 @@
             },
             {
                 "key": "properties",
-                "category": "contextual",
+                "category": ["contextual", "view-control"],
                 "implementation": "actions/PropertiesAction.js",
                 "glyph": "p",
                 "name": "Edit Properties...",
@@ -77,6 +77,16 @@
                 "name": "Cancel",
                 "description": "Discard changes made to these objects.",
                 "depends": [ "$location" ]
+            }
+        ],
+        "policies": [
+            {
+                "category": "action",
+                "implementation": "policies/EditActionPolicy.js"
+            },
+            {
+                "category": "view",
+                "implementation": "policies/EditableViewPolicy.js"
             }
         ],
         "templates": [
