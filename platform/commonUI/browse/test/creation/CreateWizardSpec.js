@@ -12,6 +12,7 @@ define(
             var mockType,
                 mockParent,
                 mockProperties,
+                mockPolicyService,
                 testModel,
                 wizard;
 
@@ -46,6 +47,7 @@ define(
                     ]
                 );
                 mockProperties = [ "A", "B", "C" ].map(createMockProperty);
+                mockPolicyService = jasmine.createSpyObj('policyService', ['allow']);
 
                 testModel = { someKey: "some value" };
 
@@ -58,7 +60,8 @@ define(
 
                 wizard = new CreateWizard(
                     mockType,
-                    mockParent
+                    mockParent,
+                    mockPolicyService
                 );
             });
 
@@ -102,6 +105,32 @@ define(
                     expect(mockProperty.getValue)
                         .toHaveBeenCalledWith(testModel);
                 });
+            });
+
+            it("validates selection types using policy", function () {
+                var mockDomainObject = jasmine.createSpyObj(
+                        'domainObject',
+                        ['getCapability']
+                    ),
+                    mockOtherType = jasmine.createSpyObj(
+                        'otherType',
+                        ['getKey']
+                    ),
+                    structure = wizard.getFormStructure(),
+                    sections = structure.sections,
+                    rows = structure.sections[sections.length - 1].rows,
+                    locationRow = rows[rows.length - 1];
+
+                mockDomainObject.getCapability.andReturn(mockOtherType);
+                locationRow.validate(mockDomainObject);
+
+                // Should check policy to see if the user-selected location
+                // can actually contain objects of this type
+                expect(mockPolicyService.allow).toHaveBeenCalledWith(
+                    'composition',
+                    mockOtherType,
+                    mockType
+                );
             });
 
 
