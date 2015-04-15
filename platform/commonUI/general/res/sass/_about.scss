@@ -20,9 +20,23 @@
     .s-logo-openmctweb {
          background-image: url($dirImgs + 'logo-openmctweb-shdw.svg');
      }
+	.s-btn {
+		line-height: 2em;
+	}
+
+	a {
+		color: #84b3ff;
+	}
+
 	h1, h2 {
 		color: #fff;
 		font-weight: normal !important;
+	}
+
+	h2 {
+		border-top: 1px solid $colorInteriorBorder;
+		margin-top: 2em;
+		padding-top: 1em;
 	}
 
 	// Layout

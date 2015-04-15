@@ -1,4 +1,4 @@
-<div class="abs t-about l-about t-about-openmctweb" ng-controller = "AboutController as about">
+<div class="abs t-about l-about t-about-openmctweb s-about" ng-controller = "AboutController as about">
     <div class="l-logo-holder s-logo-holder">
         <div class="l-logo s-logo s-logo-nasa"></div>
         <div class="l-logo l-logo-app s-logo s-logo-openmctweb"></div>
@@ -7,7 +7,10 @@
     <div class="l-content">
         <h1 class="l-title s-title">OpenMCT Web</h1>
         <div class="l-description s-description">
-            <p>OpenMCT Web is a project of NASA's Ames Research Center. Copyright &copy;2015 NASA Ames Research Center, all rights reserved. <a ng-click="about.openLicenses()">Licensing information</a></p>
+	        <p>Open MCT Web, Copyright &copy; 2009-2015, United States Government as represented by the Administrator of the National Aeronautics and Space Administration. All rights reserved.</p>
+	        <p>Open MCT Web is licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.  You may obtain a copy of the License at <a target="_blank" href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>.</p>
+	        <p>Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.</p>
+	        <p>Open MCT Web includes source code licensed under additional open source licenses. See the Open Source Licenses file included with this distribution or <a ng-click="about.openLicenses()">click here for licensing information</a>.</p>
         </div>
         <h2>Version Information</h2>
         <ul class="t-info l-info s-info" ng-repeat = "version in about.versions()">
