@@ -61,21 +61,7 @@ define(
                 return buffer;
             }
 
-            // Add data to the plot.
-            function addData(obj) {
-                var id = obj.getId(),
-                    index = lengths[id] || 0,
-                    buffer = buffers[id],
-                    domainValue = subscription.getDomainValue(obj, domain),
-                    rangeValue = subscription.getRangeValue(obj, range);
-
-                // If we don't already have a data buffer for that ID,
-                // make one.
-                if (!buffer) {
-                    buffer = new Float32Array(INITIAL_SIZE);
-                    buffers[id] = buffer;
-                }
-
+            function setData(buffer, id, index, domainValue, rangeValue) {
                 // Make sure there's data to add, and then add it
                 if (domainValue !== undefined && rangeValue !== undefined &&
                         (index < 1 || domainValue !== buffer[index * 2 - 2])) {
@@ -94,14 +80,39 @@ define(
                     // Observe max/min range values
                     max[1] = Math.max(max[1], rangeValue);
                     min[1] = Math.min(min[1], rangeValue);
-                    // Update the cutoff point for when we started receiving
-                    // realtime data, to aid in clearing historical data later
-                    if (realtimeIndex[id] === undefined) {
-                        realtimeIndex[id] = index;
-                    }
+                }
+                return buffer;
+            }
+
+            // Add data to the plot.
+            function addData(obj) {
+                var id = obj.getId(),
+                    index = lengths[id] || 0,
+                    buffer = buffers[id],
+                    domainValue = subscription.getDomainValue(obj, domain),
+                    rangeValue = subscription.getRangeValue(obj, range);
+
+                // If we don't already have a data buffer for that ID,
+                // make one.
+                if (!buffer) {
+                    buffer = new Float32Array(INITIAL_SIZE);
+                    buffers[id] = buffer;
                 }
 
-                return buffer;
+                // Update the cutoff point for when we started receiving
+                // realtime data, to aid in clearing historical data later
+                if (realtimeIndex[id] === undefined) {
+                    realtimeIndex[id] = index;
+                }
+
+                // Put the data in the buffer
+                return setData(
+                    buffer,
+                    id,
+                    index,
+                    domainValue,
+                    rangeValue
+                );
             }
 
             // Update min/max domain values for these objects
@@ -121,7 +132,15 @@ define(
 
             // Update historical data for this domain object
             function setHistorical(domainObject) {
+                var id = domainObject.getId(),
+                    buffer = buffers[id],
+                    endIndex = realtimeIndex[id] || 0;
 
+                // Make sure the buffer is big enough
+
+                // Move the realtime data into the correct position
+
+                // Insert the historical data before it
             }
 
             // Handle new telemetry data
