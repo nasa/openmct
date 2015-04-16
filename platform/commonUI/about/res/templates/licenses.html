@@ -1,33 +1,23 @@
-<style>
-    .licenses { padding: 1em; }
-    .licenses th { font-weight: bold; padding: 0.5em; }
-    .licenses td { padding: 0.5em; }
-</style>
+<div ng-controller="LicenseController as lc" class="abs l-standalone s-text l-about l-licenses s-about s-licenses">
+	<h1>OpenMCT Web Licenses</h1>
+	<h2>Apache License</h2>
+	<mct-include key="'license-apache'"></mct-include>
 
-<div ng-controller="LicenseController as lc" class="licenses">
-
-    <p>
-        This software includes components released under the following licenses.
-    </p>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Version</th>
-                <th>Author</th>
-                <th>Description</th>
-                <th>License</th>
-            </tr>
-        </thead>
-        <tbody style="font-weight: normal;">
-            <tr ng-repeat="license in lc.licenses()">
-                <td><a ng-href="{{license.website}}">{{license.name}}</a></td>
-                <td>{{license.version}}</td>
-                <td>{{license.author}}</td>
-                <td>{{license.description}}</td>
-                <td><a ng-href="{{license.link}}">{{license.license}}</a></td>
-            </tr>
-        </tbody>
-    </table>
+	<h2>Software Components Licenses</h2>
+    <p>This software includes components released under the following licenses:</p>
+	<div class="l-licenses-software">
+		<div class="l-license-software" ng-repeat="license in lc.licenses()">
+			<h3><a target="_blank" ng-href="{{license.website}}">{{license.name}}</a></h3>
+			<p>
+				<em>Version</em> {{license.version}}
+				<em>&nbsp;|&nbsp;Author</em> {{license.author}}
+				<em>&nbsp;|&nbsp;Description</em> {{license.description}}
+			</p>
+			<em>License</em>
+			<div class="s-license-text">
+				<p ng-show="license.copyright.length > 0">{{license.copyright}}</p>
+				<mct-include key="license.license"></mct-include>
+			</div>
+		</div>
+	</div>
 </div>

@@ -108,7 +108,6 @@ body, html {
 
 /* line 20, ../sass/_global.scss */
 em {
-  color: rgba(255, 255, 255, 0.2);
   font-style: normal; }
 
 /* line 25, ../sass/_global.scss */
@@ -148,36 +147,45 @@ span {
   width: auto; }
 
 /* line 61, ../sass/_global.scss */
-.code {
+.code, .codehilite {
   font-family: "Lucida Console", monospace;
   font-size: 0.7em;
   line-height: 150%;
   white-space: pre; }
 
 /* line 68, ../sass/_global.scss */
+.codehilite {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 1em; }
+
+/* line 74, ../sass/_global.scss */
 .align-right {
   text-align: right; }
 
-/* line 72, ../sass/_global.scss */
+/* line 78, ../sass/_global.scss */
 .centered {
   text-align: center; }
 
-/* line 76, ../sass/_global.scss */
+/* line 82, ../sass/_global.scss */
+.no-margin {
+  margin: 0; }
+
+/* line 86, ../sass/_global.scss */
 .colorKey {
   color: #0099cc; }
 
-/* line 80, ../sass/_global.scss */
+/* line 90, ../sass/_global.scss */
 .ds {
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px; }
 
-/* line 85, ../sass/_global.scss */
+/* line 95, ../sass/_global.scss */
 .hide,
 .hidden {
   display: none !important; }
 
-/* line 89, ../sass/_global.scss */
+/* line 99, ../sass/_global.scss */
 .sep {
   color: rgba(255, 255, 255, 0.2); }
 
@@ -488,71 +496,101 @@ span {
 .edit-mode .t-fixed-position .l-fixed-position-item:not(.s-selected):hover {
   border: 1px dotted rgba(0, 153, 204, 0.5); }
 
-/* line 3, ../sass/_about.scss */
-.t-about {
+/* line 5, ../sass/_about.scss */
+.l-about.abs, .btn-menu span.l-about.l-click-area {
+  overflow: auto; }
+/* line 10, ../sass/_about.scss */
+.l-about .l-logo-holder {
+  position: relative;
+  height: 45%; }
+  /* line 13, ../sass/_about.scss */
+  .l-about .l-logo-holder .l-logo {
+    position: absolute; }
+    /* line 16, ../sass/_about.scss */
+    .l-about .l-logo-holder .l-logo.l-logo-app {
+      top: 0;
+      right: 15%;
+      bottom: 0;
+      left: 15%; }
+    /* line 20, ../sass/_about.scss */
+    .l-about .l-logo-holder .l-logo.s-logo-nasa {
+      background-image: url("../images/logo-nasa.svg");
+      top: 10px;
+      right: auto;
+      bottom: auto;
+      left: 10px;
+      width: 10%;
+      height: auto;
+      padding-bottom: 5%;
+      padding-top: 5%; }
+/* line 29, ../sass/_about.scss */
+.l-about .l-content {
+  position: relative;
+  margin-top: 10px; }
+
+/* line 36, ../sass/_about.scss */
+.s-about {
   line-height: 120%; }
-  /* line 7, ../sass/_about.scss */
-  .t-about .s-description,
-  .t-about .s-info {
-    font-size: 0.8em; }
-  /* line 10, ../sass/_about.scss */
-  .t-about .s-logo-holder {
+  /* line 40, ../sass/_about.scss */
+  .s-about a {
+    color: #84b3ff; }
+  /* line 47, ../sass/_about.scss */
+  .s-about .s-logo-holder {
     background: url("../images/bg-about-openmctweb.jpg") no-repeat center;
     background-size: cover; }
-  /* line 14, ../sass/_about.scss */
-  .t-about .s-logo {
+  /* line 51, ../sass/_about.scss */
+  .s-about .s-logo {
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain; }
-  /* line 20, ../sass/_about.scss */
-  .t-about .s-logo-openmctweb {
+  /* line 57, ../sass/_about.scss */
+  .s-about .s-logo-openmctweb {
     background-image: url("../images/logo-openmctweb-shdw.svg"); }
-  /* line 23, ../sass/_about.scss */
-  .t-about .s-btn, .t-about .s-icon-btn {
+  /* line 60, ../sass/_about.scss */
+  .s-about .s-btn, .s-about .s-icon-btn {
     line-height: 2em; }
-  /* line 27, ../sass/_about.scss */
-  .t-about a {
-    color: #84b3ff; }
-  /* line 31, ../sass/_about.scss */
-  .t-about h1, .t-about h2 {
-    color: #fff;
-    font-weight: normal !important; }
-  /* line 36, ../sass/_about.scss */
-  .t-about h2 {
+  /* line 64, ../sass/_about.scss */
+  .s-about .l-licenses-software .l-license-software {
     border-top: 1px solid #4d4d4d;
+    padding: 0.5em 0; }
+    /* line 67, ../sass/_about.scss */
+    .s-about .l-licenses-software .l-license-software:first-child {
+      border-top: none; }
+    /* line 70, ../sass/_about.scss */
+    .s-about .l-licenses-software .l-license-software em {
+      color: #666666; }
+    /* line 77, ../sass/_about.scss */
+    .s-about .l-licenses-software .l-license-software h3 {
+      font-size: 1.25em; }
+    /* line 80, ../sass/_about.scss */
+    .s-about .l-licenses-software .l-license-software .s-license-text {
+      font-size: 0.9em; }
+
+/* line 3, ../sass/_text.scss */
+.abs.l-standalone, .btn-menu span.l-standalone.l-click-area {
+  padding: 5% 20%; }
+
+/* line 8, ../sass/_text.scss */
+.s-text {
+  font-size: 0.8em; }
+  /* line 10, ../sass/_text.scss */
+  .s-text ol, .s-text ul {
+    list-style: square;
+    margin-left: 1.5em; }
+  /* line 18, ../sass/_text.scss */
+  .s-text h1, .s-text h2, .s-text h3 {
+    color: #fff;
+    font-weight: normal !important;
+    margin-bottom: 1em; }
+  /* line 24, ../sass/_text.scss */
+  .s-text h2 {
+    border-top: 1px solid #4d4d4d;
+    font-size: 1.5em;
     margin-top: 2em;
     padding-top: 1em; }
-  /* line 43, ../sass/_about.scss */
-  .t-about.l-about.abs, .btn-menu span.t-about.l-about.l-click-area {
-    overflow: auto; }
-  /* line 48, ../sass/_about.scss */
-  .t-about .l-logo-holder {
-    position: relative;
-    height: 45%; }
-    /* line 51, ../sass/_about.scss */
-    .t-about .l-logo-holder .l-logo {
-      position: absolute; }
-      /* line 54, ../sass/_about.scss */
-      .t-about .l-logo-holder .l-logo.l-logo-app {
-        top: 0;
-        right: 15%;
-        bottom: 0;
-        left: 15%; }
-      /* line 58, ../sass/_about.scss */
-      .t-about .l-logo-holder .l-logo.s-logo-nasa {
-        background-image: url("../images/logo-nasa.svg");
-        top: 10px;
-        right: auto;
-        bottom: auto;
-        left: 10px;
-        width: 10%;
-        height: auto;
-        padding-bottom: 5%;
-        padding-top: 5%; }
-  /* line 67, ../sass/_about.scss */
-  .t-about .l-content {
-    position: relative;
-    margin-top: 10px; }
+  /* line 31, ../sass/_text.scss */
+  .s-text h3 {
+    margin-top: 2em; }
 
 /* line 1, ../sass/_badges.scss */
 .badge {

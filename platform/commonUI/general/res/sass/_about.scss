@@ -1,46 +1,8 @@
 // General About dialog styling
 
-.t-about {
-	// Styling
-	line-height: 120%;
-	.s-description,
-	.s-info {
-		font-size: 0.8em;
-	}
-	.s-logo-holder {
-		background: url($dirImgs + "bg-about-openmctweb.jpg") no-repeat center; // For OpenMCT Web.
-		background-size: cover;
-	}
-	.s-logo {
-//		@include txtShdwLarge(); // text-shadow doesn't work for svg
-		background-position: center;
-		background-repeat: no-repeat;
-		background-size: contain;
-	}
-    .s-logo-openmctweb {
-         background-image: url($dirImgs + 'logo-openmctweb-shdw.svg');
-     }
-	.s-btn {
-		line-height: 2em;
-	}
-
-	a {
-		color: #84b3ff;
-	}
-
-	h1, h2 {
-		color: #fff;
-		font-weight: normal !important;
-	}
-
-	h2 {
-		border-top: 1px solid $colorInteriorBorder;
-		margin-top: 2em;
-		padding-top: 1em;
-	}
-
+.l-about {
 	// Layout
-	&.l-about.abs {
+	&.abs {
 //		top: 20px;
 		overflow: auto;
 	}
@@ -68,6 +30,57 @@
 //		@include test();
 		position: relative;
 		margin-top: $interiorMarginLg;
+	}
+}
+
+.s-about {
+	// Styling
+	line-height: 120%;
+
+	a {
+		color: #84b3ff;
+	}
+	.s-description,
+	.s-info {
+//		font-size: 0.8em;
+	}
+	.s-logo-holder {
+		background: url($dirImgs + "bg-about-openmctweb.jpg") no-repeat center; // For OpenMCT Web.
+		background-size: cover;
+	}
+	.s-logo {
+		//		@include txtShdwLarge(); // text-shadow doesn't work for svg
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: contain;
+	}
+	.s-logo-openmctweb {
+		background-image: url($dirImgs + 'logo-openmctweb-shdw.svg');
+	}
+	.s-btn {
+		line-height: 2em;
+	}
+	.l-licenses-software {
+		.l-license-software {
+			border-top: 1px solid $colorInteriorBorder;
+			padding: 0.5em 0;
+			&:first-child {
+				border-top: none;
+			}
+			em {
+				color: darken($colorBodyFg, 20%);
+//				margin-left: 2em;
+				&:first-child {
+//					margin-left: 0;
+				}
+			}
+			h3 {
+				font-size: 1.25em;
+			}
+			.s-license-text {
+				font-size: 0.9em;
+			}
+		}
 	}
 }
 

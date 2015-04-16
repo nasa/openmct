@@ -19,6 +19,14 @@
             {
                 "key": "overlay-about",
                 "templateUrl": "templates/overlay-about.html"
+            },
+            {
+              "key": "license-apache",
+              "templateUrl": "templates/license-apache.html"
+            },
+            {
+              "key": "license-mit",
+              "templateUrl": "templates/license-mit.html"
             }
         ],
         "controllers": [
