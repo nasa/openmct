@@ -29,6 +29,7 @@ define(
                 domainOffset,
                 buffers = {},
                 lengths = {},
+                realtimeIndex = {},
                 lengthArray = [],
                 bufferArray = [];
 
@@ -52,6 +53,8 @@ define(
                     } else {
                         // Just shift the existing buffer
                         buffer.set(buffer.subarray(2));
+                        // Update the realtime index accordingly
+                        realtimeIndex[id] = Math.max(realtimeIndex[id] - 1, 0);
                     }
                 }
 
@@ -91,6 +94,11 @@ define(
                     // Observe max/min range values
                     max[1] = Math.max(max[1], rangeValue);
                     min[1] = Math.min(min[1], rangeValue);
+                    // Update the cutoff point for when we started receiving
+                    // realtime data, to aid in clearing historical data later
+                    if (realtimeIndex[id] === undefined) {
+                        realtimeIndex[id] = index;
+                    }
                 }
 
                 return buffer;
@@ -109,6 +117,11 @@ define(
                     max[0] = Math.max(high, max[0]);
                     min[0] = Math.min(low, min[0]);
                 });
+            }
+
+            // Update historical data for this domain object
+            function setHistorical(domainObject) {
+
             }
 
             // Handle new telemetry data
@@ -205,7 +218,11 @@ define(
                 /**
                  * Update with latest data.
                  */
-                update: update
+                update: update,
+                /**
+                 * Fill in historical data.
+                 */
+                setHistorical: setHistorical
             };
         }
 
