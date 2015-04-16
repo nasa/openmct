@@ -10,7 +10,7 @@
 			<h3><a target="_blank" ng-href="{{license.website}}">{{license.name}}</a></h3>
 			<p>
 				<em>Version</em> {{license.version}}
-				<em>&nbsp;|&nbsp;Author</em> {{license.author}}
+				<em>&nbsp;|&nbsp;Author<span ng-show="license.author.indexOf(',') > 0">s</span></em> {{license.author}}
 				<em>&nbsp;|&nbsp;Description</em> {{license.description}}
 			</p>
 			<em>License</em>
