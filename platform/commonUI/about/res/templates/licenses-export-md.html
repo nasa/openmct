@@ -1,0 +1,21 @@
+<div ng-controller="LicenseController as lc" class="abs l-about l-standalone s-text s-md-export">
+    <h1># Open MCT Web Licenses</h1>
+    <h2>## Apache License</h2>
+    <mct-include key="'license-apache'"></mct-include>
+
+    <h2>## Software Components Licenses</h2>
+    <p>This software includes components released under the following licenses:</p>
+    <div class="l-license-software" ng-repeat="license in lc.licenses()">
+        <p>### {{license.name}}</p>
+        <p>#### Info</p>
+        <p>* Link: {{license.website}}</p>
+        <p>* Version: {{license.version}}</p>
+        <p>* Author<span ng-show="license.author.indexOf(',') > 0">s</span>: {{license.author}}</p>
+        <p>* Description: {{license.description}}</p>
+        <p>#### License</p>
+        <p ng-show="license.copyright.length > 0">{{license.copyright}}</p>
+        <mct-include key="license.license"></mct-include>
+        <p>&nbsp;</p>
+        <p>---</p>
+    </div>
+</div>

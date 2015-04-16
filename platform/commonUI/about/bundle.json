@@ -50,6 +50,10 @@
             {
                 "when": "/licenses",
                 "templateUrl": "templates/licenses.html"
+            },
+            {
+                "when": "/licenses-md",
+                "templateUrl": "templates/licenses-export-md.html"
             }
         ]
     }
