@@ -1,8 +1,8 @@
 /*global define*/
 
 define(
-    ['./TelemetryQueue', './TelemetryTable'],
-    function (TelemetryQueue, TelemetryTable) {
+    ['./TelemetryQueue', './TelemetryTable', './TelemetryDelegator'],
+    function (TelemetryQueue, TelemetryTable, TelemetryDelegator) {
         "use strict";
 
 
@@ -31,7 +31,8 @@ define(
          *        the callback once, with access to the latest data
          */
         function TelemetrySubscription($q, $timeout, domainObject, callback, lossless) {
-            var unsubscribePromise,
+            var delegator = new TelemetryDelegator($q),
+                unsubscribePromise,
                 latestValues = {},
                 telemetryObjects = [],
                 pool = lossless ? new TelemetryQueue() : new TelemetryTable(),
@@ -42,23 +43,7 @@ define(
             // This will either be the object in view, or object that
             // this object delegates its telemetry capability to.
             function promiseRelevantObjects(domainObject) {
-                // If object has been cleared, there are no relevant
-                // telemetry-providing domain objects.
-                if (!domainObject) {
-                    return $q.when([]);
-                }
-
-                // Otherwise, try delegation first, and attach the
-                // object itself if it has a telemetry capability.
-                return $q.when(domainObject.useCapability(
-                    "delegation",
-                    "telemetry"
-                )).then(function (result) {
-                    var head = domainObject.hasCapability("telemetry") ?
-                            [ domainObject ] : [],
-                        tail = result || [];
-                    return head.concat(tail);
-                });
+                return delegator.promiseTelemetryObjects(domainObject);
             }
 
             function updateValuesFromPool() {
