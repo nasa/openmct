@@ -44,7 +44,7 @@ define(
 
             // Increase the size of the buffer
             function doubleBufferSize() {
-                var sz = Math.min(maxSize, buffer.length * 2),
+                var sz = Math.min(maxSize * 2, buffer.length * 2),
                     canDouble = sz > buffer.length,
                     doubled = canDouble && new Float32Array(sz);
 
@@ -58,7 +58,7 @@ define(
 
             // Decrease the size of the buffer
             function halveBufferSize() {
-                var sz = Math.max(initialSize, buffer.length / 2),
+                var sz = Math.max(initialSize * 2, buffer.length / 2),
                     canHalve = sz < buffer.length;
 
                 if (canHalve) {
@@ -76,6 +76,13 @@ define(
                  */
                 getBuffer: function () {
                     return buffer;
+                },
+                /**
+                 * Get the number of points stored in this buffer.
+                 * @returns {number} the number of points stored
+                 */
+                getLength: function () {
+                    return length;
                 },
                 /**
                  * Remove values from this buffer.
@@ -116,9 +123,7 @@ define(
                         i;
 
                     // Don't allow append after the end; that doesn't make sense
-                    if (index > length) {
-                        index = length;
-                    }
+                    index = Math.min(index, length);
 
                     // Resize if necessary
                     if (sz > free) {

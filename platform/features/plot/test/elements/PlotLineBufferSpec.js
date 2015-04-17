@@ -52,6 +52,7 @@ define(
                 expect(
                     Array.prototype.slice.call(buffer.getBuffer()).slice(0, 12)
                 ).toEqual([ -41, 8, -39, 0, -35, 3, -33, 9, -28, 8, -27, 11]);
+                expect(buffer.getLength()).toEqual(6);
             });
 
             it("finds insertion indexes", function () {
@@ -73,6 +74,51 @@ define(
                 expect(
                     Array.prototype.slice.call(buffer.getBuffer()).slice(0, 24)
                 ).toEqual(head.concat(head).concat(tail).concat(tail));
+                expect(buffer.getLength()).toEqual(12);
+            });
+
+            it("allows values to be trimmed from the start", function () {
+                buffer.trim(2);
+                expect(buffer.getLength()).toEqual(4);
+                expect(
+                    Array.prototype.slice.call(buffer.getBuffer()).slice(0, 8)
+                ).toEqual([ -35, 3, -33, 9, -28, 8, -27, 11]);
+            });
+
+            it("ensures a maximum size", function () {
+                var i;
+
+                // Should be able to insert 6 series of 6 points each
+                // (After that, we'll hit the test max of 40)
+                for (i = 1; i < 6; i += 1) {
+                    expect(buffer.getLength()).toEqual(6 * i);
+                    expect(buffer.insert(mockSeries, Number.POSITIVE_INFINITY))
+                        .toBeTruthy();
+                }
+
+                // Should be maxed out now
+                expect(buffer.getLength()).toEqual(36);
+                expect(buffer.insert(mockSeries, Number.POSITIVE_INFINITY))
+                    .toBeFalsy();
+                expect(buffer.getLength()).toEqual(36);
+
+            });
+
+            it("reduces buffer size when space is no longer needed", function () {
+                // Check that actual buffer is sized to the initial size
+                // (double TEST_INITIAL_SIZE, since two elements are needed per
+                // point; one for domain, one for range)
+                expect(buffer.getBuffer().length).toEqual(20);
+                // Should have 6 elements now... grow to 24
+                buffer.insert(mockSeries, Number.POSITIVE_INFINITY);
+                buffer.insert(mockSeries, Number.POSITIVE_INFINITY);
+                buffer.insert(mockSeries, Number.POSITIVE_INFINITY);
+                // This should have doubled the actual buffer size
+                expect(buffer.getBuffer().length).toEqual(80);
+                // Remove some values
+                buffer.trim(20);
+                // Actual buffer size should have been reduced accordingly
+                expect(buffer.getBuffer().length).toBeLessThan(80);
             });
 
         });
