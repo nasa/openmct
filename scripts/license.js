@@ -15,7 +15,7 @@
  * under the License.
  *
  * Open MCT Web includes source code licensed under additional open source
- * licenses. See the Open Source Licenses file included with this distribution
- * or the Licensing information page available at runtime from the About dialog
- * for additional information.
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
  *****************************************************************************/
