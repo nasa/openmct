@@ -251,7 +251,7 @@ define(
                 /**
                  * Fill in historical data.
                  */
-                setHistorical: setHistorical
+                addHistorical: setHistorical
             };
         }
 
