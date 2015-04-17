@@ -14,6 +14,7 @@ define(
                 testRange,
                 testDomainValues,
                 testRangeValues,
+                mockSeries,
                 updater;
 
             function makeMockDomainObject(id) {
@@ -32,6 +33,10 @@ define(
                 mockSubscription = jasmine.createSpyObj(
                     "subscription",
                     [ "getDomainValue", "getRangeValue", "getTelemetryObjects" ]
+                );
+                mockSeries = jasmine.createSpyObj(
+                    'series',
+                    ['getPointCount', 'getDomainValue', 'getRangeValue']
                 );
                 testDomain = "testDomain";
                 testRange = "testRange";
@@ -91,6 +96,76 @@ define(
                 // Should have 3 buffers for 3 objects
                 expect(updater.getLineBuffers().length).toEqual(3);
             });
+
+            it("accepts historical telemetry updates", function () {
+                var mockObject = mockSubscription.getTelemetryObjects()[0];
+
+                mockSeries.getPointCount.andReturn(3);
+                mockSeries.getDomainValue.andCallFake(function (i) {
+                    return 1000 + i * 1000;
+                });
+                mockSeries.getRangeValue.andReturn(10);
+
+                // PlotLine & PlotLineBuffer are tested for most of the
+                // details here, so just check for some expected side
+                // effect; in this case, should see more points in the buffer
+                expect(updater.getLineBuffers()[0].getLength()).toEqual(1);
+                updater.addHistorical(mockObject, mockSeries);
+                expect(updater.getLineBuffers()[0].getLength()).toEqual(4);
+            });
+
+            it("clears the domain offset if no objects are present", function () {
+                mockSubscription.getTelemetryObjects.andReturn([]);
+                updater.update();
+                expect(updater.getDomainOffset()).toBeUndefined();
+            });
+
+            it("handles empty historical telemetry updates", function () {
+                // General robustness check for when a series is empty
+                var mockObject = mockSubscription.getTelemetryObjects()[0];
+
+                mockSeries.getPointCount.andReturn(0);
+                mockSeries.getDomainValue.andCallFake(function (i) {
+                    return 1000 + i * 1000;
+                });
+                mockSeries.getRangeValue.andReturn(10);
+
+                // PlotLine & PlotLineBuffer are tested for most of the
+                // details here, so just check for some expected side
+                // effect; in this case, should see more points in the buffer
+                expect(updater.getLineBuffers()[0].getLength()).toEqual(1);
+                updater.addHistorical(mockObject, mockSeries);
+                expect(updater.getLineBuffers()[0].getLength()).toEqual(1);
+            });
+
+            it("can initialize domain offset from historical telemetry", function () {
+                var tmp = mockSubscription.getTelemetryObjects();
+
+                mockSubscription.getTelemetryObjects.andReturn([]);
+
+                // Reinstantiate with the empty subscription
+                updater = new PlotUpdater(
+                    mockSubscription,
+                    testDomain,
+                    testRange
+                );
+
+                // Restore subscription, provide some historical data
+                mockSubscription.getTelemetryObjects.andReturn(tmp);
+                mockSeries.getPointCount.andReturn(3);
+                mockSeries.getDomainValue.andCallFake(function (i) {
+                    return 1000 + i * 1000;
+                });
+                mockSeries.getRangeValue.andReturn(10);
+
+                // PlotLine & PlotLineBuffer are tested for most of the
+                // details here, so just check for some expected side
+                // effect; in this case, should see more points in the buffer
+                expect(updater.getDomainOffset()).toBeUndefined();
+                updater.addHistorical(tmp[0], mockSeries);
+                expect(updater.getDomainOffset()).toBeDefined();
+            });
+
 
         });
     }
