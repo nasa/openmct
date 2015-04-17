@@ -75,10 +75,8 @@ define(
                 buffer[index * 2 + 1] = rangeValue;
                 // Track min/max of range values (min/max for
                 // domain values can be read directly from buffer)
-                rangeExtrema = [
-                    Math.min(rangeExtrema[0], rangeValue),
-                    Math.max(rangeExtrema[1], rangeValue)
-                ];
+                rangeExtrema[0] = Math.min(rangeExtrema[0], rangeValue);
+                rangeExtrema[1] = Math.max(rangeExtrema[1], rangeValue);
             }
 
             return {

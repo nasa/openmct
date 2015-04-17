@@ -41,5 +41,7 @@ define(
                 }
             };
         }
+
+        return PlotSeriesWindow;
     }
 );

@@ -13,8 +13,8 @@ define(
                 var count = seriesWindow.getPointCount();
 
                 function doInsert() {
-                    var firstTimestamp = buffer.getDomainValue(0),
-                        lastTimestamp = buffer.getDomainValue(count - 1),
+                    var firstTimestamp = seriesWindow.getDomainValue(0),
+                        lastTimestamp = seriesWindow.getDomainValue(count - 1),
                         startIndex = buffer.findInsertionIndex(firstTimestamp),
                         endIndex = buffer.findInsertionIndex(lastTimestamp);
 
@@ -51,8 +51,16 @@ define(
                  * @param {number} rangeValue the range value
                  */
                 addPoint: function (domainValue, rangeValue) {
-                    var index = buffer.findInsertionIndex(domainValue);
-                    if (index > -1) {
+                    var index;
+                    // Make sure we got real/useful values here...
+                    if (domainValue !== undefined && rangeValue !== undefined) {
+                        index = buffer.findInsertionIndex(domainValue);
+
+                        // Already in the buffer? Skip insertion
+                        if (index < 0) {
+                            return;
+                        }
+
                         // Insert the point
                         if (!buffer.insertPoint(domainValue, rangeValue, index)) {
                             // If insertion failed, trim from the beginning...

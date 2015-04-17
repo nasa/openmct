@@ -58,13 +58,14 @@ define(
                     return;
                 }
 
-                // Update list of ids in use
-                ids = nextIds;
-
                 // Built up a set of ids. Note that we can only
                 // create plot lines after our domain offset has
                 // been determined.
                 if (domainOffset !== undefined) {
+                    // Update list of ids in use
+                    ids = nextIds;
+
+                    // Create buffers for these objects
                     bufferArray = ids.map(function (id) {
                         var buffer = new PlotLineBuffer(
                                 domainOffset,
@@ -112,18 +113,31 @@ define(
 
             // Update dimensions and origin based on extrema of plots
             function updateExtrema() {
-                domainExtrema = bufferArray.map(function (lineBuffer) {
-                    return lineBuffer.getDomainExtrema();
-                }).reduce(reduceExtrema);
+                if (bufferArray.length > 0) {
+                    domainExtrema = bufferArray.map(function (lineBuffer) {
+                        return lineBuffer.getDomainExtrema();
+                    }).reduce(reduceExtrema);
 
-                rangeExtrema = bufferArray.map(function (lineBuffer) {
-                    return lineBuffer.getRangeExtrema();
-                }).reduce(reduceExtrema);
+                    rangeExtrema = bufferArray.map(function (lineBuffer) {
+                        return lineBuffer.getRangeExtrema();
+                    }).reduce(reduceExtrema);
 
-                dimensions = (rangeExtrema[0] === rangeExtrema[1]) ?
-                        [dimensionsOf(domainExtrema), 2.0 ] :
-                        [dimensionsOf(domainExtrema), dimensionsOf(rangeExtrema)];
-                origin = [originOf(domainExtrema), originOf(rangeExtrema)];
+                    dimensions = (rangeExtrema[0] === rangeExtrema[1]) ?
+                            [dimensionsOf(domainExtrema), 2.0 ] :
+                            [dimensionsOf(domainExtrema), dimensionsOf(rangeExtrema)];
+                    origin = [originOf(domainExtrema), originOf(rangeExtrema)];
+                }
+            }
+
+            // Add latest data for this domain object
+            function addPointFor(domainObject) {
+                var line = lines[domainObject.getId()];
+                if (line) {
+                    line.addPoint(
+                        handle.getDomainValue(domainObject, domain),
+                        handle.getRangeValue(domainObject, range)
+                    );
+                }
             }
 
             // Handle new telemetry data
@@ -134,6 +148,8 @@ define(
                 if (domainOffset === undefined) {
                     initializeDomainOffset(objects.map(function (obj) {
                         return handle.getDomainValue(obj, domain);
+                    }).filter(function (value) {
+                        return typeof value === 'number';
                     }));
                 }
 
@@ -141,12 +157,7 @@ define(
                 prepareLines(objects);
 
                 // Add new data
-                objects.forEach(function (obj, index) {
-                    lines[obj.getId()].addPoint(
-                        handle.getDomainValue(obj, domain),
-                        handle.getRangeValue(obj, range)
-                    );
-                });
+                objects.forEach(addPointFor);
 
                 // Finally, update extrema
                 updateExtrema();
@@ -154,7 +165,7 @@ define(
 
             // Add historical data for this domain object
             function setHistorical(domainObject, series) {
-                var count = series.getPointCount(),
+                var count = series ? series.getPointCount() : 0,
                     line;
 
                 // Nothing to do if it's an empty series
@@ -163,7 +174,7 @@ define(
                 }
 
                 // Initialize domain offset if necessary
-                if (domainOffset === undefined && series) {
+                if (domainOffset === undefined) {
                     initializeDomainOffset([
                         series.getDomainValue(0, domain),
                         series.getDomainValue(count - 1, domain)
