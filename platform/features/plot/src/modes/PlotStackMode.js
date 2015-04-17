@@ -23,7 +23,7 @@ define(
                 });
 
             function plotTelemetryTo(subplot, prepared, index) {
-                var buffer = prepared.getBuffers()[index];
+                var buffer = prepared.getLineBuffers()[index];
 
                 // Track the domain offset, used to bias domain values
                 // to minimize loss of precision when converted to 32-bit
@@ -33,9 +33,9 @@ define(
                 // Draw the buffers. Always use the 0th color, because there
                 // is one line per plot.
                 subplot.getDrawingObject().lines = [{
-                    buffer: buffer,
+                    buffer: buffer.getBuffer(),
                     color: PlotPalette.getFloatColor(0),
-                    points: prepared.getLength(index)
+                    points: buffer.getLength()
                 }];
 
                 subplot.update();

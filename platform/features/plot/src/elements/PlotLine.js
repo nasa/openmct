@@ -6,67 +6,35 @@ define(
         "use strict";
 
 
-        function PlotLine(initialSize, maxPoints) {
-            var buffer,
-                length = 0,
-                timeWindow;
+        function PlotLine(buffer) {
 
-            // Binary search the buffer to find the index where
-            // a point with this timestamp should be inserted.
-            // After is a flag indicating whether it is preferred
-            // to insert after or before its nearest timestamp
-            function searchBuffer(timestamp, after) {
-                // Binary search for an appropriate insertion index.
-                function binSearch(min, max) {
-                    var mid = Math.floor((min + max) / 2),
-                        ts;
+            // Insert a time-windowed data series into the buffer
+            function insertSeriesWindow(seriesWindow) {
+                var count = seriesWindow.getPointCount();
 
-                    if (max < min) {
-                        return -1;
-                    }
+                function doInsert() {
+                    var firstTimestamp = buffer.getDomainValue(0),
+                        lastTimestamp = buffer.getDomainValue(count - 1),
+                        startIndex = buffer.findInsertionIndex(firstTimestamp),
+                        endIndex = buffer.findInsertionIndex(lastTimestamp);
 
-                    ts = buffer[mid * 2];
-
-                    // Check for an exact match...
-                    if (ts === timestamp) {
-                        // This is a case where we'll need to
-                        // split up what we want to insert.
-                        return mid + after ? -1 : 1;
+                    // Does the whole series fit in between two adjacent indexes?
+                    if ((startIndex === endIndex) && startIndex > -1) {
+                        // Insert it in between
+                        buffer.insert(seriesWindow, startIndex);
                     } else {
-                        // Found our index?
-                        if (max === min) {
-                            return max;
-                        }
-                        // Otherwise, search recursively
-                        if (ts < timestamp) {
-
-                        } else {
-
-                        }
+                        // Split it up, and add the two halves
+                        seriesWindow.split().forEach(insertSeriesWindow);
                     }
-
                 }
 
-                // Booleanize
-                after = !!after;
-
-                return binSearch(0, length - 1);
-            }
-
-            function insertSeriesWindow(seriesWindow) {
-                var startIndex = findStartIndex(),
-                    endIndex = findEndIndex();
-
-                if (startIndex === endIndex) {
-
-                } else {
-                    // Split it up, and add the two halves
-                    seriesWindow.split().forEach(insertSeriesWindow);
+                // Only insert if there are points to insert
+                if (count > 0) {
+                    doInsert();
                 }
             }
 
             function createWindow(series, domain, range) {
-                // TODO: Enforce time window, too!
                 return new PlotSeriesWindow(
                     series,
                     domain,
@@ -77,8 +45,20 @@ define(
             }
 
             return {
-                addData: function (domainValue, rangeValue) {
-                    // Should append to buffer
+                getLineBuffer: function () {
+                    return buffer;
+                },
+                addPoint: function (domainValue, rangeValue) {
+                    var index = buffer.findInsertionIndex(domainValue);
+                    if (index > -1) {
+                        // Insert the point
+                        if (!buffer.insertPoint(domainValue, rangeValue, index)) {
+                            // If insertion failed, trim from the beginning...
+                            buffer.trim(1);
+                            // ...and try again.
+                            buffer.insertPoint(domainValue, rangeValue, index);
+                        }
+                    }
                 },
                 addSeries: function (series, domain, range) {
                     // Should try to add via insertion if a
@@ -87,12 +67,6 @@ define(
                     // Insertion operation also needs to factor out
                     // redundant timestamps, for overlapping data
                     insertSeriesWindow(createWindow(series, domain, range));
-                },
-                setTimeWindow: function (start, end) {
-                    timeWindow = [ start, end ];
-                },
-                clearTimeWindow: function () {
-                    timeWindow = undefined;
                 }
             };
         }

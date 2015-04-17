@@ -14,6 +14,7 @@ define(
          */
         function PlotLineBuffer(domainOffset, initialSize, maxSize) {
             var buffer = new Float32Array(initialSize * 2),
+                rangeExtrema = [ Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY ],
                 length = 0;
 
             // Binary search for an insertion index
@@ -68,6 +69,17 @@ define(
                 return canHalve;
             }
 
+            // Set a value in the buffer
+            function setValue(index, domainValue, rangeValue) {
+                buffer[index * 2] = domainValue - domainOffset;
+                buffer[index * 2 + 1] = rangeValue;
+                // Track min/max of range values (min/max for
+                // domain values can be read directly from buffer)
+                rangeExtrema = [
+                    Math.min(rangeExtrema[0], rangeValue),
+                    Math.max(rangeExtrema[1], rangeValue)
+                ];
+            }
 
             return {
                 /**
@@ -83,6 +95,29 @@ define(
                  */
                 getLength: function () {
                     return length;
+                },
+                /**
+                 * Get the min/max range values that are currently in this
+                 * buffer. Unlike range extrema, these will change as the
+                 * buffer gets trimmed.
+                 * @returns {number[]} min, max domain values
+                 */
+                getDomainExtrema: function () {
+                    // Since these are ordered in the buffer, assume
+                    // these are the values at the first and last index
+                    return [
+                        buffer[0] + domainOffset,
+                        buffer[length * 2 - 2] + domainOffset
+                    ];
+                },
+                /**
+                 * Get the min/max range values that have been observed for this
+                 * buffer. Note that these values may have been trimmed out at
+                 * some point.
+                 * @returns {number[]} min, max range values
+                 */
+                getRangeExtrema: function () {
+                    return rangeExtrema;
                 },
                 /**
                  * Remove values from this buffer.
@@ -119,14 +154,13 @@ define(
                  */
                 insert: function (series, index) {
                     var sz = series.getPointCount(),
-                        free = (buffer.length / 2) - length,
                         i;
 
                     // Don't allow append after the end; that doesn't make sense
                     index = Math.min(index, length);
 
                     // Resize if necessary
-                    if (sz > free) {
+                    while (sz > ((buffer.length / 2) - length)) {
                         if (!doubleBufferSize()) {
                             // Can't make room for this, insertion fails
                             return false;
@@ -143,16 +177,40 @@ define(
 
                     // Insert data into the set
                     for (i = 0; i < sz; i += 1) {
-                        buffer[(i + index) * 2] =
-                            series.getDomainValue(i) - domainOffset;
-                        buffer[(i + index) * 2 + 1] =
-                            series.getRangeValue(i);
+                        setValue(
+                            i + index,
+                            series.getDomainValue(i),
+                            series.getRangeValue(i)
+                        );
                     }
 
                     // Increase the length
                     length += sz;
 
                     // Indicate that insertion was successful
+                    return true;
+                },
+                /**
+                 * Append a single data point.
+                 */
+                insertPoint: function (domainValue, rangeValue, index) {
+                    // Don't allow
+                    index = Math.min(length, index);
+
+                    // Ensure there is space for this point
+                    if (length >= (buffer.length / 2)) {
+                        if (!doubleBufferSize()) {
+                            return false;
+                        }
+                    }
+
+                    // Put the data in the buffer
+                    setValue(length, domainValue, rangeValue);
+
+                    // Update length
+                    length += 1;
+
+                    // Indicate that this was successful
                     return true;
                 },
                 /**
@@ -166,11 +224,15 @@ define(
                  * @returns {number} the index for insertion (or -1)
                  */
                 findInsertionIndex: function (timestamp) {
-                    return binSearch(
-                        timestamp - domainOffset,
-                        0,
-                        length - 1
-                    );
+                    var value = timestamp - domainOffset;
+
+                    // Handle empty buffer case and check for an
+                    // append opportunity (which is most common case for
+                    // real-time data so is optimized-for) before falling
+                    // back to a binary search for the insertion point.
+                    return (length < 1) ? 0 :
+                            (value > buffer[length * 2 - 2]) ? length :
+                                    binSearch(value, 0, length - 1);
                 }
             };
         }
