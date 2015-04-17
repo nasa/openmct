@@ -48,7 +48,7 @@ define(
          * and provides a "working copy" of the object's
          * model to allow changes to be easily cancelled.
          */
-        function EditableDomainObject(domainObject) {
+        function EditableDomainObject(domainObject, $q) {
             // The cache will hold all domain objects reached from
             // the initial EditableDomainObject; this ensures that
             // different versions of the same editable domain object
@@ -81,7 +81,7 @@ define(
                 return editableObject;
             }
 
-            cache = new EditableDomainObjectCache(EditableDomainObjectImpl);
+            cache = new EditableDomainObjectCache(EditableDomainObjectImpl, $q);
 
             return cache.getEditableObject(domainObject);
         }

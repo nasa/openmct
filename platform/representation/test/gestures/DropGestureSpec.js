@@ -16,13 +16,17 @@ define(
             DROP_ID = "drop-id";
 
         describe("The drop gesture", function () {
-            var mockQ,
+            var mockDndService,
+                mockQ,
                 mockElement,
                 mockDomainObject,
                 mockPersistence,
+                mockAction,
                 mockEvent,
                 mockScope,
                 mockUnwrappedElement,
+                mockDraggedObject,
+                mockCompose,
                 testModel,
                 testRect,
                 gesture,
@@ -40,25 +44,41 @@ define(
                 testModel = { composition: [] };
                 testRect = {};
 
+                mockDndService = jasmine.createSpyObj('dndService', ['getData']);
                 mockQ = { when: mockPromise };
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
+                mockDraggedObject = jasmine.createSpyObj("draggedObject", DOMAIN_OBJECT_METHODS);
                 mockPersistence = jasmine.createSpyObj("persistence", [ "persist" ]);
                 mockEvent = jasmine.createSpyObj("event", ["preventDefault"]);
                 mockEvent.dataTransfer = jasmine.createSpyObj("dataTransfer", [ "getData" ]);
                 mockScope = jasmine.createSpyObj("$scope", ["$broadcast"]);
                 mockUnwrappedElement = jasmine.createSpyObj("unwrapped", ["getBoundingClientRect"]);
+                mockAction = jasmine.createSpyObj('action', ['getActions']);
+                mockCompose = jasmine.createSpyObj('compose', ['perform']);
 
                 mockDomainObject.getId.andReturn(TEST_ID);
                 mockDomainObject.getModel.andReturn(testModel);
-                mockDomainObject.getCapability.andReturn(mockPersistence);
+                mockDomainObject.getCapability.andCallFake(function (c) {
+                    return {
+                        persistence: mockPersistence,
+                        action: mockAction
+                    }[c];
+                });
                 mockDomainObject.useCapability.andReturn(true);
                 mockEvent.dataTransfer.getData.andReturn(DROP_ID);
                 mockElement[0] = mockUnwrappedElement;
                 mockElement.scope.andReturn(mockScope);
                 mockUnwrappedElement.getBoundingClientRect.andReturn(testRect);
+                mockDndService.getData.andReturn(mockDraggedObject);
+                mockAction.getActions.andReturn([mockCompose]);
 
-                gesture = new DropGesture(mockQ, mockElement, mockDomainObject);
+                gesture = new DropGesture(
+                    mockDndService,
+                    mockQ,
+                    mockElement,
+                    mockDomainObject
+                );
 
                 // Get a reference to all callbacks registered during constructor
                 callbacks = {};
@@ -91,38 +111,16 @@ define(
                 expect(mockEvent.dataTransfer.dropEffect).toBeDefined();
             });
 
-            it("mutates composition on drop", function () {
+            it("invokes compose on drop", function () {
+                callbacks.dragover(mockEvent);
+                expect(mockAction.getActions).toHaveBeenCalledWith({
+                    key: 'compose',
+                    selectedObject: mockDraggedObject
+                });
                 callbacks.drop(mockEvent);
-                expect(mockDomainObject.useCapability).toHaveBeenCalledWith("mutation", jasmine.any(Function));
-
-                // Call the mutation function, as the mutation capability would
-                testModel = mockDomainObject.useCapability.mostRecentCall.args[1](testModel) || testModel;
-
-                // Should have the test id
-                expect(testModel.composition).toEqual([DROP_ID]);
+                expect(mockCompose.perform).toHaveBeenCalled();
             });
 
-            it("does not permit redundant IDs in composition", function () {
-                testModel.composition = [DROP_ID];
-
-                callbacks.drop(mockEvent);
-                expect(mockDomainObject.useCapability).toHaveBeenCalledWith("mutation", jasmine.any(Function));
-
-                // Call the mutation function, as the mutation capability would
-                testModel = mockDomainObject.useCapability.mostRecentCall.args[1](testModel) || testModel;
-
-                // Should still just have the one instance of DROP_ID
-                expect(testModel.composition).toEqual([DROP_ID]);
-            });
-
-
-            it("persists when mutation is successful", function () {
-                mockDomainObject.getCapability.andReturn(mockPersistence);
-                mockDomainObject.useCapability.andReturn(true);
-                callbacks.drop(mockEvent);
-                expect(mockDomainObject.useCapability).toHaveBeenCalledWith("mutation", jasmine.any(Function));
-                expect(mockDomainObject.getCapability).toHaveBeenCalledWith("persistence");
-            });
 
             it("broadcasts drop position", function () {
                 testRect.left = 42;

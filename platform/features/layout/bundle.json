@@ -231,6 +231,7 @@
                 "description": "A panel for collecting telemetry elements.",
                 "delegates": [ "telemetry" ],
                 "features": "creation",
+                "contains": [ { "has": "telemetry" } ],
                 "model": { "composition": [] },
                 "properties": [
                     {

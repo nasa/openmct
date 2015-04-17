@@ -26,7 +26,7 @@ define(
                 dialogVisible = false;
             }
 
-            function getUserInput(formModel, value) {
+            function getDialogResponse(key, model, resultGetter) {
                 // We will return this result as a promise, because user
                 // input is asynchronous.
                 var deferred = $q.defer(),
@@ -35,9 +35,9 @@ define(
                 // Confirm function; this will be passed in to the
                 // overlay-dialog template and associated with a
                 // OK button click
-                function confirm() {
+                function confirm(value) {
                     // Pass along the result
-                    deferred.resolve(overlayModel.value);
+                    deferred.resolve(resultGetter ? resultGetter() : value);
 
                     // Stop showing the dialog
                     dismiss();
@@ -51,6 +51,10 @@ define(
                     dismiss();
                 }
 
+                // Add confirm/cancel callbacks
+                model.confirm = confirm;
+                model.cancel = cancel;
+
                 if (dialogVisible) {
                     // Only one dialog should be shown at a time.
                     // The application design should be such that
@@ -58,26 +62,15 @@ define(
                     $log.warn([
                         "Dialog already showing; ",
                         "unable to show ",
-                        formModel.name
+                        model.name
                     ].join(""));
                     deferred.reject();
                 } else {
-                    // To be passed to the overlay-dialog template,
-                    // via ng-model
-                    overlayModel = {
-                        title: formModel.name,
-                        message: formModel.message,
-                        structure: formModel,
-                        value: value,
-                        confirm: confirm,
-                        cancel: cancel
-                    };
-
                     // Add the overlay using the OverlayService, which
                     // will handle actual insertion into the DOM
                     overlay = overlayService.createOverlay(
-                        "overlay-dialog",
-                        overlayModel
+                        key,
+                        model
                     );
 
                     // Track that a dialog is already visible, to
@@ -86,6 +79,35 @@ define(
                 }
 
                 return deferred.promise;
+            }
+
+            function getUserInput(formModel, value) {
+                var overlayModel = {
+                        title: formModel.name,
+                        message: formModel.message,
+                        structure: formModel,
+                        value: value
+                    };
+
+                // Provide result from the model
+                function resultGetter() {
+                    return overlayModel.value;
+                }
+
+                // Show the overlay-dialog
+                return getDialogResponse(
+                    "overlay-dialog",
+                    overlayModel,
+                    resultGetter
+                );
+            }
+
+            function getUserChoice(dialogModel) {
+                // Show the overlay-options dialog
+                return getDialogResponse(
+                    "overlay-options",
+                    { dialog: dialogModel }
+                );
             }
 
             return {
@@ -100,7 +122,14 @@ define(
                  *          user input cannot be obtained (for instance,
                  *          because the user cancelled the dialog)
                  */
-                getUserInput: getUserInput
+                getUserInput: getUserInput,
+                /**
+                 * Request that the user chooses from a set of options,
+                 * which will be shown as buttons.
+                 *
+                 * @param dialogModel a description of the dialog to show
+                 */
+                getUserChoice: getUserChoice
             };
         }
 

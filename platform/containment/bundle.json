@@ -1,0 +1,18 @@
+{
+    "extensions": {
+        "policies": [
+            {
+                "category": "composition",
+                "implementation": "CompositionPolicy.js",
+                "depends": [ "$injector" ],
+                "message": "Objects of this type cannot contain objects of that type."
+            },
+            {
+                "category": "action",
+                "implementation": "ComposeActionPolicy.js",
+                "depends": [ "$injector" ],
+                "message": "Objects of this type cannot contain objects of that type."
+            }
+        ]
+    }
+}

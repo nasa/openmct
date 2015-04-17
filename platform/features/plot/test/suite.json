@@ -1,4 +1,5 @@
 [
+    "Canvas2DChart",
     "GLChart",
     "MCTChart",
     "PlotController",

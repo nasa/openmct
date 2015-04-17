@@ -18,6 +18,14 @@ define(
          */
         function ModelAggregator($q, providers) {
 
+            // Pick a domain object model to use, favoring the one
+            // with the most recent timestamp
+            function pick(a, b) {
+                var aModified = (a || {}).modified || Number.NEGATIVE_INFINITY,
+                    bModified = (b || {}).modified || Number.NEGATIVE_INFINITY;
+                return (aModified > bModified) ? a : (b || a);
+            }
+
             // Merge results from multiple providers into one
             // large result object.
             function mergeModels(provided, ids) {
@@ -25,7 +33,7 @@ define(
                 ids.forEach(function (id) {
                     provided.forEach(function (models) {
                         if (models[id]) {
-                            result[id] = models[id];
+                            result[id] = pick(result[id], models[id]);
                         }
                     });
                 });

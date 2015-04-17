@@ -68,6 +68,33 @@ define(
                     .toHaveBeenCalledWith("context");
             });
 
+            it("rejects changes which fail validation", function () {
+                mockScope.structure = { validate: jasmine.createSpy('validate') };
+                mockScope.structure.validate.andReturn(false);
+
+                // Pass selection change
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+
+                expect(mockScope.structure.validate).toHaveBeenCalled();
+                // Change should have been rejected
+                expect(mockScope.ngModel.someField).not.toEqual(mockDomainObject);
+            });
+
+            it("treats a lack of a selection as invalid", function () {
+                mockScope.ngModelController = jasmine.createSpyObj(
+                    'ngModelController',
+                    [ '$setValidity' ]
+                );
+
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                expect(mockScope.ngModelController.$setValidity)
+                    .toHaveBeenCalledWith(jasmine.any(String), true);
+
+                mockScope.$watch.mostRecentCall.args[1](undefined);
+                expect(mockScope.ngModelController.$setValidity)
+                    .toHaveBeenCalledWith(jasmine.any(String), false);
+            });
+
         });
     }
 );

@@ -4,8 +4,8 @@
  * Module defining MCTChart. Created by vwoeltje on 11/12/14.
  */
 define(
-    ["./GLChart"],
-    function (GLChart) {
+    ["./GLChart", "./Canvas2DChart"],
+    function (GLChart, Canvas2DChart) {
         "use strict";
 
         var TEMPLATE = "<canvas style='position: absolute; background: none; width: 100%; height: 100%;'></canvas>";
@@ -43,21 +43,37 @@ define(
          * @constructor
          */
         function MCTChart($interval, $log) {
+            // Get an underlying chart implementation
+            function getChart(Charts, canvas) {
+                // Try the first available option...
+                var Chart = Charts[0];
+
+                // This function recursively try-catches all options;
+                // if these all fail, issue a warning.
+                if (!Chart) {
+                    $log.warn("Cannot initialize mct-chart.");
+                    return undefined;
+                }
+
+                // Try first option; if it fails, try remaining options
+                try {
+                    return new Chart(canvas);
+                } catch (e) {
+                    $log.warn([
+                        "Could not instantiate chart",
+                        Chart.name,
+                        ";",
+                        e.message
+                    ].join(" "));
+
+                    return getChart(Charts.slice(1), canvas);
+                }
+            }
 
             function linkChart(scope, element) {
                 var canvas = element.find("canvas")[0],
                     activeInterval,
                     chart;
-
-                // Try to initialize GLChart, which allows drawing using WebGL.
-                // This may fail, particularly where browsers do not support
-                // WebGL, so catch that here.
-                try {
-                    chart = new GLChart(canvas);
-                } catch (e) {
-                    $log.warn("Cannot initialize mct-chart; " + e.message);
-                    return;
-                }
 
                 // Handle drawing, based on contents of the "draw" object
                 // in scope
@@ -116,6 +132,15 @@ define(
                     if (activeInterval) {
                         $interval.cancel(activeInterval);
                     }
+                }
+
+                // Try to initialize a chart.
+                chart = getChart([GLChart, Canvas2DChart], canvas);
+
+                // If that failed, there's nothing more we can do here.
+                // (A warning will already have been issued)
+                if (!chart) {
+                    return;
                 }
 
                 // Check for resize, on a timer

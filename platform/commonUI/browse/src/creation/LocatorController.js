@@ -17,13 +17,34 @@ define(
             //               the full tree
             // * treeModel: The model for the embedded tree representation,
             //              used for bi-directional object selection.
-            function setLocatingObject(domainObject) {
+            function setLocatingObject(domainObject, priorObject) {
                 var context = domainObject &&
                     domainObject.getCapability("context");
 
-                $scope.rootObject = context && context.getRoot();
+                $scope.rootObject = (context && context.getRoot()) || $scope.rootObject;
                 $scope.treeModel.selectedObject = domainObject;
                 $scope.ngModel[$scope.field] = domainObject;
+
+                // Restrict which locations can be selected
+                if (domainObject &&
+                        $scope.structure &&
+                            $scope.structure.validate) {
+                    if (!$scope.structure.validate(domainObject)) {
+                        setLocatingObject(
+                            $scope.structure.validate(priorObject) ?
+                                    priorObject : undefined
+                        );
+                        return;
+                    }
+                }
+
+                // Set validity
+                if ($scope.ngModelController) {
+                    $scope.ngModelController.$setValidity(
+                        'composition',
+                        !!$scope.treeModel.selectedObject
+                    );
+                }
             }
 
             // Initial state for the tree's model

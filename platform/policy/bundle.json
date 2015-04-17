@@ -1,0 +1,27 @@
+{
+    "name": "Policy Service",
+    "description": "Provides support for extension-driven decisions.",
+    "sources": "src",
+    "extensions": {
+        "components": [
+            {
+                "type": "decorator",
+                "provides": "actionService",
+                "implementation": "PolicyActionDecorator.js",
+                "depends": [ "policyService" ]
+            },
+            {
+                "type": "decorator",
+                "provides": "viewService",
+                "implementation": "PolicyViewDecorator.js",
+                "depends": [ "policyService" ]
+            },
+            {
+                "type": "provider",
+                "provides": "policyService",
+                "implementation": "PolicyProvider.js",
+                "depends": [ "policies[]" ]
+            }
+        ]
+    }
+}

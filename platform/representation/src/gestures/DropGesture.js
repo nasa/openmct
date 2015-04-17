@@ -19,7 +19,10 @@ define(
          *        composition should be modified as a result of the drop.
          */
 
-        function DropGesture($q, element, domainObject) {
+        function DropGesture(dndService, $q, element, domainObject) {
+            var actionCapability = domainObject.getCapability('action'),
+                action; // Action for the drop, when it occurs
+
             function broadcastDrop(id, event) {
                 // Find the relevant scope...
                 var scope = element && element.scope && element.scope(),
@@ -43,20 +46,27 @@ define(
                 }
             }
 
-            function doPersist() {
-                var persistence = domainObject.getCapability("persistence");
-                return $q.when(persistence && persistence.persist());
-            }
-
             function dragOver(e) {
-                var event = (e || {}).originalEvent || e;
+                var event = (e || {}).originalEvent || e,
+                    selectedObject = dndService.getData(
+                        GestureConstants.MCT_EXTENDED_DRAG_TYPE
+                    );
 
-                // TODO: Vary this based on modifier keys
-                event.dataTransfer.dropEffect = 'move';
+                if (selectedObject) {
+                    // TODO: Vary this based on modifier keys
+                    action = actionCapability.getActions({
+                        key: 'compose',
+                        selectedObject: selectedObject
+                    })[0];
 
-                // Indicate that we will accept the drag
-                event.preventDefault(); // Required in Chrome?
-                return false;
+                    if (action) {
+                        event.dataTransfer.dropEffect = 'move';
+
+                        // Indicate that we will accept the drag
+                        event.preventDefault(); // Required in Chrome?
+                        return false;
+                    }
+                }
             }
 
             function drop(e) {
@@ -67,38 +77,21 @@ define(
                 // destination domain object's composition, and persist
                 // the change.
                 if (id) {
-                    $q.when(domainObject.useCapability(
-                        'mutation',
-                        function (model) {
-                            var composition = model.composition;
-                            // Don't store the same id more than once
-                            if (composition && // not-contains
-                                    !(composition.map(function (i) {
-                                        return i === id;
-                                    }).reduce(function (a, b) {
-                                        return a || b;
-                                    }, false))) {
-                                model.composition.push(id);
-                            }
-                        }
-                    )).then(function (result) {
-                        // Broadcast the drop event if it was successful
-                        if (result) {
-                            broadcastDrop(id, event);
-                        }
-
-                        // If mutation was successful, persist the change
-                        return result && doPersist();
+                    $q.when(action && action.perform()).then(function (result) {
+                        broadcastDrop(id, event);
                     });
                 }
 
             }
 
-            // Listen for dragover,  to indicate we'll accept a drag
-            element.on('dragover', dragOver);
+            // We can only handle drops if we have access to actions...
+            if (actionCapability) {
+                // Listen for dragover,  to indicate we'll accept a drag
+                element.on('dragover', dragOver);
 
-            // Listen for the drop itself
-            element.on('drop', drop);
+                // Listen for the drop itself
+                element.on('drop', drop);
+            }
 
             return {
                 /**

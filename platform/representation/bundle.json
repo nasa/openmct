@@ -21,7 +21,7 @@
             {
                 "key": "drop",
                 "implementation": "gestures/DropGesture.js",
-                "depends": [ "$q" ]
+                "depends": [ "dndService", "$q" ]
             },
             {
                 "key": "menu",

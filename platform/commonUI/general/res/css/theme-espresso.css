@@ -1,5 +1,5 @@
 /* CONSTANTS */
-/* line 17, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 17, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -20,38 +20,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
   display: block; }
 
@@ -302,68 +302,80 @@ span {
     min-width: 250px;
     width: 48.5%; }
   /* line 127, ../sass/user-environ/_layout.scss */
+  .cols.cols-2-ff .col-100px {
+    width: 100px; }
+  /* line 134, ../sass/user-environ/_layout.scss */
+  .cols.cols-6 .col-1 {
+    min-width: 83.33333px;
+    width: 15.16667%; }
+  /* line 140, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-1 {
     min-width: 31.25px;
     width: 4.75%; }
-  /* line 130, ../sass/user-environ/_layout.scss */
+  /* line 143, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-2 {
     min-width: 62.5px;
     width: 11%; }
-  /* line 133, ../sass/user-environ/_layout.scss */
+  /* line 146, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-7 {
     min-width: 218.75px;
     width: 42.25%; }
-  /* line 139, ../sass/user-environ/_layout.scss */
+  /* line 152, ../sass/user-environ/_layout.scss */
   .cols.cols-32 .col-2 {
     min-width: 31.25px;
     width: 4.75%; }
-  /* line 142, ../sass/user-environ/_layout.scss */
+  /* line 155, ../sass/user-environ/_layout.scss */
   .cols.cols-32 .col-15 {
     min-width: 234.375px;
     width: 45.375%; }
+  /* line 159, ../sass/user-environ/_layout.scss */
+  .cols .l-row {
+    overflow: hidden;
+    *zoom: 1;
+    padding: 5px 0; }
 
-/* line 148, ../sass/user-environ/_layout.scss */
+/* line 165, ../sass/user-environ/_layout.scss */
 .pane {
   position: absolute; }
-  /* line 151, ../sass/user-environ/_layout.scss */
+  /* line 168, ../sass/user-environ/_layout.scss */
   .pane.treeview .create-btn-holder {
     bottom: auto;
     height: 35px; }
-  /* line 154, ../sass/user-environ/_layout.scss */
+  /* line 171, ../sass/user-environ/_layout.scss */
   .pane.treeview .tree-holder {
     overflow: auto;
     top: 40px; }
-  /* line 163, ../sass/user-environ/_layout.scss */
+  /* line 180, ../sass/user-environ/_layout.scss */
   .pane.items .object-holder {
     top: 40px; }
-  /* line 168, ../sass/user-environ/_layout.scss */
+  /* line 185, ../sass/user-environ/_layout.scss */
   .pane.edit-main .object-holder {
     top: 0; }
-  /* line 174, ../sass/user-environ/_layout.scss */
+  /* line 191, ../sass/user-environ/_layout.scss */
   .pane .object-holder {
     overflow: auto; }
 
-/* line 182, ../sass/user-environ/_layout.scss */
+/* line 199, ../sass/user-environ/_layout.scss */
 .split-layout.horizontal > .pane {
   margin-top: 5px; }
-  /* line 185, ../sass/user-environ/_layout.scss */
+  /* line 202, ../sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane:first-child {
     margin-top: 0; }
-/* line 192, ../sass/user-environ/_layout.scss */
+/* line 209, ../sass/user-environ/_layout.scss */
 .split-layout.vertical > .pane {
   margin-left: 5px; }
-  /* line 194, ../sass/user-environ/_layout.scss */
+  /* line 211, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane > .holder {
     left: 0;
     right: 0; }
-  /* line 198, ../sass/user-environ/_layout.scss */
+  /* line 215, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane:first-child {
     margin-left: 0; }
-    /* line 200, ../sass/user-environ/_layout.scss */
+    /* line 217, ../sass/user-environ/_layout.scss */
     .split-layout.vertical > .pane:first-child .holder {
       right: 5px; }
 
-/* line 209, ../sass/user-environ/_layout.scss */
+/* line 226, ../sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
 
@@ -2821,10 +2833,10 @@ input[type="text"] {
 .wait-spinner {
   display: block;
   position: absolute;
-  -webkit-animation: rotation 0.6s infinite linear;
-  -moz-animation: rotation 0.6s infinite linear;
-  -o-animation: rotation 0.6s infinite linear;
-  animation: rotation 0.6s infinite linear;
+  -webkit-animation: rotation .6s infinite linear;
+  -moz-animation: rotation .6s infinite linear;
+  -o-animation: rotation .6s infinite linear;
+  animation: rotation .6s infinite linear;
   border-color: rgba(0, 153, 204, 0.25);
   border-top-color: #0099cc;
   border-style: solid;
@@ -2863,10 +2875,10 @@ input[type="text"] {
 .treeview .wait-spinner {
   display: block;
   position: absolute;
-  -webkit-animation: rotation 0.6s infinite linear;
-  -moz-animation: rotation 0.6s infinite linear;
-  -o-animation: rotation 0.6s infinite linear;
-  animation: rotation 0.6s infinite linear;
+  -webkit-animation: rotation .6s infinite linear;
+  -moz-animation: rotation .6s infinite linear;
+  -o-animation: rotation .6s infinite linear;
+  animation: rotation .6s infinite linear;
   border-color: rgba(0, 153, 204, 0.25);
   border-top-color: #0099cc;
   border-style: solid;
@@ -2878,6 +2890,18 @@ input[type="text"] {
   padding: 0 !important;
   top: 2px;
   left: 0; }
+
+/* Classes to be used for lists of properties and values */
+/* line 4, ../sass/_properties.scss */
+.properties .s-row {
+  border-top: 1px solid #4d4d4d;
+  font-size: 0.8em; }
+  /* line 7, ../sass/_properties.scss */
+  .properties .s-row:first-child {
+    border: none; }
+  /* line 10, ../sass/_properties.scss */
+  .properties .s-row .s-value {
+    color: #fff; }
 
 /* line 1, ../sass/_autoflow.scss */
 .autoflow {

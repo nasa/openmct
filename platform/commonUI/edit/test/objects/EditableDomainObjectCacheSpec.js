@@ -1,4 +1,4 @@
-/*global define,describe,it,expect,beforeEach*/
+/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/objects/EditableDomainObjectCache"],
@@ -10,6 +10,7 @@ define(
             var captured,
                 completionCapability,
                 object,
+                mockQ,
                 cache;
 
 
@@ -20,6 +21,9 @@ define(
                     getModel: function () { return {}; },
                     getCapability: function (name) {
                         return completionCapability;
+                    },
+                    hasCapability: function (name) {
+                        return false;
                     }
                 };
             }
@@ -28,11 +32,15 @@ define(
                 var result = Object.create(domainObject);
                 result.wrapped = true;
                 result.wrappedModel = model;
+                result.hasCapability = function (name) {
+                    return name === 'editor';
+                };
                 captured.wraps = (captured.wraps || 0) + 1;
                 return result;
             }
 
             beforeEach(function () {
+                mockQ = jasmine.createSpyObj('$q', ['when', 'all']);
                 captured = {};
                 completionCapability = {
                     save: function () {
@@ -40,7 +48,7 @@ define(
                     }
                 };
 
-                cache = new EditableDomainObjectCache(WrapObject);
+                cache = new EditableDomainObjectCache(WrapObject, mockQ);
             });
 
             it("wraps objects using provided constructor", function () {
@@ -108,6 +116,19 @@ define(
                 expect(cache.isRoot(domainObjects[0])).toBeTruthy();
                 expect(cache.isRoot(domainObjects[1])).toBeFalsy();
                 expect(cache.isRoot(domainObjects[2])).toBeFalsy();
+            });
+
+            it("does not double-wrap objects", function () {
+                var domainObject = new TestObject('test-id'),
+                    wrappedObject = cache.getEditableObject(domainObject);
+
+                // Same instance should be returned if you try to wrap
+                // twice. This is necessary, since it's possible to (e.g.)
+                // use a context capability on an object retrieved via
+                // composition, in which case a result will already be
+                // wrapped.
+                expect(cache.getEditableObject(wrappedObject))
+                    .toBe(wrappedObject);
             });
 
 

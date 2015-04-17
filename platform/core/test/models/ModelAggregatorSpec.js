@@ -12,8 +12,8 @@ define(
             var mockQ,
                 mockProviders,
                 modelList = [
-                    { "a": { someKey: "some value" } },
-                    { "b": { someOtherKey: "some other value" } }
+                    { "a": { someKey: "some value" }, "b": undefined },
+                    { "b": { someOtherKey: "some other value" }, "a": undefined }
                 ],
                 aggregator;
 

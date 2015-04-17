@@ -10,7 +10,7 @@
             {
                 "key": "EditController",
                 "implementation": "controllers/EditController.js",
-                "depends": [ "$scope", "navigationService" ]
+                "depends": [ "$scope", "$q", "navigationService" ]
             },
             {
                 "key": "EditActionController",
@@ -23,7 +23,18 @@
                 "depends": [ "$scope" ]
             }
         ],
+        "directives": [
+            {
+                "key": "mctBeforeUnload",
+                "implementation": "directives/MCTBeforeUnload.js",
+                "depends": [ "$window" ]
+            }
+        ],
         "actions": [
+            {
+                "key": "compose",
+                "implementation": "actions/LinkAction.js"
+            },
             {
                 "key": "edit",
                 "implementation": "actions/EditAction.js",
@@ -34,7 +45,7 @@
             },
             {
                 "key": "properties",
-                "category": "contextual",
+                "category": ["contextual", "view-control"],
                 "implementation": "actions/PropertiesAction.js",
                 "glyph": "p",
                 "name": "Edit Properties...",
@@ -66,6 +77,16 @@
                 "name": "Cancel",
                 "description": "Discard changes made to these objects.",
                 "depends": [ "$location" ]
+            }
+        ],
+        "policies": [
+            {
+                "category": "action",
+                "implementation": "policies/EditActionPolicy.js"
+            },
+            {
+                "category": "view",
+                "implementation": "policies/EditableViewPolicy.js"
             }
         ],
         "templates": [

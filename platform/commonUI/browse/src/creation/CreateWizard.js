@@ -19,9 +19,18 @@ define(
          * @constructor
          * @memberof module:core/action/create-wizard
          */
-        function CreateWizard(type, parent) {
+        function CreateWizard(type, parent, policyService) {
             var model = type.getInitialModel(),
                 properties = type.getProperties();
+
+            function validateLocation(locatingObject) {
+                var locatingType = locatingObject.getCapability('type');
+                return policyService.allow(
+                    "composition",
+                    locatingType,
+                    type
+                );
+            }
 
             return {
                 /**
@@ -54,6 +63,7 @@ define(
                     sections.push({ name: 'Location', rows: [{
                         name: "Save In",
                         control: "locator",
+                        validate: validateLocation,
                         key: "createParent"
                     }]});
 

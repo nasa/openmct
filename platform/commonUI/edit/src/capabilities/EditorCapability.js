@@ -33,7 +33,7 @@ define(
             // removed from the layer which gets dependency
             // injection.
             function resolvePromise(value) {
-                return value && value.then ? value : {
+                return (value && value.then) ? value : {
                     then: function (callback) {
                         return resolvePromise(callback(value));
                     }
@@ -50,19 +50,7 @@ define(
 
             // Persist the underlying domain object
             function doPersist() {
-                return persistenceCapability.persist();
-            }
-
-            // Save any other objects that have been modified in the cache.
-            // IMPORTANT: This must not be called until after this object
-            // has been marked as clean.
-            function saveOthers() {
-                return cache.saveAll();
-            }
-
-            // Indicate that this object has been saved.
-            function markClean() {
-                return cache.markClean(editableObject);
+                return domainObject.getCapability('persistence').persist();
             }
 
             return {
@@ -70,14 +58,15 @@ define(
                  * Save any changes that have been made to this domain object
                  * (as well as to others that might have been retrieved and
                  * modified during the editing session)
+                 * @param {boolean} nonrecursive if true, save only this
+                 *        object (and not other objects with associated changes)
                  * @returns {Promise} a promise that will be fulfilled after
                  *          persistence has completed.
                  */
-                save: function () {
-                    return resolvePromise(doMutate())
-                        .then(doPersist)
-                        .then(markClean)
-                        .then(saveOthers);
+                save: function (nonrecursive) {
+                    return nonrecursive ?
+                            resolvePromise(doMutate()).then(doPersist) :
+                            resolvePromise(cache.saveAll());
                 },
                 /**
                  * Cancel editing; Discard any changes that have been made to
@@ -88,6 +77,13 @@ define(
                  */
                 cancel: function () {
                     return resolvePromise(undefined);
+                },
+                /**
+                 * Check if there are any unsaved changes.
+                 * @returns {boolean} true if there are unsaved changes
+                 */
+                dirty: function () {
+                    return cache.dirty();
                 }
             };
         };

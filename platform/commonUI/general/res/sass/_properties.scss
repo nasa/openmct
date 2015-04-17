@@ -1,0 +1,14 @@
+/* Classes to be used for lists of properties and values */
+
+.properties {
+    .s-row {
+        border-top: 1px solid $colorInteriorBorder;
+        font-size: 0.8em;
+        &:first-child {
+            border: none;
+        }
+        .s-value {
+            color: #fff;
+        }
+    }
+}

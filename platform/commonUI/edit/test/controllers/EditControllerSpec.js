@@ -7,6 +7,7 @@ define(
 
         describe("The Edit mode controller", function () {
             var mockScope,
+                mockQ,
                 mockNavigationService,
                 mockObject,
                 mockCapability,
@@ -17,13 +18,14 @@ define(
                     "$scope",
                     [ "$on" ]
                 );
+                mockQ = jasmine.createSpyObj('$q', ['when', 'all']);
                 mockNavigationService = jasmine.createSpyObj(
                     "navigationService",
                     [ "getNavigation", "addListener", "removeListener" ]
                 );
                 mockObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getModel", "getCapability" ]
+                    [ "getId", "getModel", "getCapability", "hasCapability" ]
                 );
                 mockCapability = jasmine.createSpyObj(
                     "capability",
@@ -37,21 +39,22 @@ define(
 
                 controller = new EditController(
                     mockScope,
+                    mockQ,
                     mockNavigationService
                 );
             });
 
-            it("places the currently-navigated object in scope", function () {
-                expect(mockScope.navigatedObject).toBeDefined();
-                expect(mockScope.navigatedObject.getId()).toEqual("test");
+            it("exposes the currently-navigated object", function () {
+                expect(controller.navigatedObject()).toBeDefined();
+                expect(controller.navigatedObject().getId()).toEqual("test");
             });
 
             it("adds an editor capability to the navigated object", function () {
                 // Should provide an editor capability...
-                expect(mockScope.navigatedObject.getCapability("editor"))
+                expect(controller.navigatedObject().getCapability("editor"))
                     .toBeDefined();
                 // Shouldn't have been the mock capability we provided
-                expect(mockScope.navigatedObject.getCapability("editor"))
+                expect(controller.navigatedObject().getCapability("editor"))
                     .not.toEqual(mockCapability);
             });
 
@@ -74,6 +77,23 @@ define(
                 // Listener should have been removed
                 expect(mockNavigationService.removeListener)
                     .toHaveBeenCalledWith(navCallback);
+            });
+
+            it("exposes a warning message for unload", function () {
+                var obj = controller.navigatedObject(),
+                    mockEditor = jasmine.createSpyObj('editor', ['dirty']);
+
+                // Normally, should be undefined
+                expect(controller.getUnloadWarning()).toBeUndefined();
+
+                // Override the object's editor capability, make it look
+                // like there are unsaved changes.
+                obj.getCapability = jasmine.createSpy();
+                obj.getCapability.andReturn(mockEditor);
+                mockEditor.dirty.andReturn(true);
+
+                // Should have some warning message here now
+                expect(controller.getUnloadWarning()).toEqual(jasmine.any(String));
             });
 
         });

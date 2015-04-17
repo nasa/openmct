@@ -34,7 +34,7 @@ define(
             });
 
             it("watches its passed key to choose a template", function () {
-                mctControl.controller(mockScope);
+                mctControl.link(mockScope);
 
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "key",
@@ -43,7 +43,7 @@ define(
             });
 
             it("changes its template dynamically", function () {
-                mctControl.controller(mockScope);
+                mctControl.link(mockScope);
 
                 mockScope.key = "xyz";
                 mockScope.$watch.mostRecentCall.args[1]("xyz");

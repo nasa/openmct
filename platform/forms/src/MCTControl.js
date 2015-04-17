@@ -26,19 +26,17 @@ define(
                 controlMap[control.key] = path;
             });
 
-            function controller($scope) {
-                $scope.$watch("key", function (key) {
+            function link(scope, element, attrs, ngModelController) {
+                scope.$watch("key", function (key) {
                     // Pass the template URL to ng-include via scope.
-                    $scope.inclusion = controlMap[key];
+                    scope.inclusion = controlMap[key];
                 });
+                scope.ngModelController = ngModelController;
             }
 
             return {
                 // Only show at the element level
                 restrict: "E",
-
-                // Use the included controller to populate scope
-                controller: controller,
 
                 // Use ng-include as a template; "inclusion" will be the real
                 // template path
@@ -46,6 +44,12 @@ define(
 
                 // ngOptions is terminal, so we need to be higher priority
                 priority: 1000,
+
+                // Get the ngModelController, so that controls can set validity
+                require: '?ngModel',
+
+                // Link function
+                link: link,
 
                 // Pass through Angular's normal input field attributes
                 scope: {

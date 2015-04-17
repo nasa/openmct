@@ -122,6 +122,19 @@
             @include cols($nc, 1);
         }
     }
+    &.cols-2-ff {
+        // 2 columns, first column is fixed, second is fluid
+        .col-100px {
+            width: 100px;
+        }
+    }
+
+    &.cols-6 {
+        $nc: 6;
+        .col-1 {
+            @include cols($nc, 1);
+        }
+    }
     &.cols-16 {
         $nc: 16;
         .col-1 {
@@ -142,6 +155,10 @@
         .col-15 {
             @include cols($nc, 15);
         }
+    }
+    .l-row {
+        @include clearfix;
+        padding: $interiorMargin 0;
     }
 }
 

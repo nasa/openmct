@@ -108,7 +108,8 @@
                 "templateUrl": "templates/items/items.html",
                 "uses": [ "composition" ],
                 "gestures": [ "drop" ],
-                "type": "folder"
+                "type": "folder",
+                "editable": false
             }
         ],
         "components": [
@@ -117,7 +118,7 @@
                 "provides": "actionService",
                 "type": "provider",
                 "implementation": "creation/CreateActionProvider.js",
-                "depends": [ "typeService", "dialogService", "creationService" ]
+                "depends": [ "typeService", "dialogService", "creationService", "policyService" ]
             }
         ],
         "licenses": [

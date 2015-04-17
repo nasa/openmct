@@ -1,0 +1,11 @@
+[
+    "PersistenceFailureConstants",
+    "PersistenceFailureController",
+    "PersistenceFailureDialog",
+    "PersistenceFailureHandler",
+    "PersistenceQueue",
+    "PersistenceQueueHandler",
+    "PersistenceQueueImpl",
+    "QueuingPersistenceCapability",
+    "QueuingPersistenceCapabilityDecorator"
+]

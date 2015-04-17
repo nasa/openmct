@@ -18,6 +18,10 @@
                 "templateUrl": "templates/overlay-dialog.html"
             },
             {
+                "key": "overlay-options",
+                "templateUrl": "templates/overlay-options.html"
+            },
+            {
                 "key": "form-dialog",
                 "templateUrl": "templates/dialog.html"
             }
