@@ -131,8 +131,8 @@ define(
                     // Shift data over if necessary
                     if (index < length) {
                         buffer.set(
-                            buffer.subarray(index, length - index),
-                            index + sz
+                            buffer.subarray(index * 2, length * 2),
+                            (index + sz) * 2
                         );
                     }
 

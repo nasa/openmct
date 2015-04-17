@@ -66,6 +66,14 @@ define(
                 expect(buffer.findInsertionIndex(9)).toEqual(-1);
             });
 
+            it("allows insertion in the middle", function () {
+                var head = [ -41, 8, -39, 0, -35, 3 ],
+                    tail = [ -33, 9, -28, 8, -27, 11];
+                buffer.insert(mockSeries, 3);
+                expect(
+                    Array.prototype.slice.call(buffer.getBuffer()).slice(0, 24)
+                ).toEqual(head.concat(head).concat(tail).concat(tail));
+            });
 
         });
     }
