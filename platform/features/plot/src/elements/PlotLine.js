@@ -45,9 +45,11 @@ define(
             }
 
             return {
-                getLineBuffer: function () {
-                    return buffer;
-                },
+                /**
+                 * Add a point to this plot line.
+                 * @param {number} domainValue the domain value
+                 * @param {number} rangeValue the range value
+                 */
                 addPoint: function (domainValue, rangeValue) {
                     var index = buffer.findInsertionIndex(domainValue);
                     if (index > -1) {
@@ -60,6 +62,14 @@ define(
                         }
                     }
                 },
+                /**
+                 * Add a series of telemetry data to this plot line.
+                 * @param {TelemetrySeries} series the data series
+                 * @param {string} [domain] the key indicating which domain
+                 *        to use when looking up data from this series
+                 * @param {string} [range] the key indicating which range
+                 *        to use when looking up data from this series
+                 */
                 addSeries: function (series, domain, range) {
                     // Should try to add via insertion if a
                     // clear insertion point is available;
