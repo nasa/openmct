@@ -202,7 +202,7 @@ define(
             // Initially prepare state for these objects.
             // Note that this may be an empty array at this time,
             // so we also need to check during update cycles.
-            prepareLines(handle.getTelemetryObjects());
+            update();
 
             return {
                 /**

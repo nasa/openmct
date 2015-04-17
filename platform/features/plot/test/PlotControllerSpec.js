@@ -11,8 +11,8 @@ define(
         describe("The plot controller", function () {
             var mockScope,
                 mockFormatter,
-                mockSubscriber,
-                mockSubscription,
+                mockHandler,
+                mockHandle,
                 mockDomainObject,
                 controller;
 
@@ -30,28 +30,29 @@ define(
                     "domainObject",
                     [ "getId", "getModel", "getCapability" ]
                 );
-                mockSubscriber = jasmine.createSpyObj(
+                mockHandler = jasmine.createSpyObj(
                     "telemetrySubscriber",
-                    ["subscribe"]
+                    ["handle"]
                 );
-                mockSubscription = jasmine.createSpyObj(
+                mockHandle = jasmine.createSpyObj(
                     "subscription",
                     [
                         "unsubscribe",
                         "getTelemetryObjects",
                         "getMetadata",
                         "getDomainValue",
-                        "getRangeValue"
+                        "getRangeValue",
+                        "request"
                     ]
                 );
 
-                mockSubscriber.subscribe.andReturn(mockSubscription);
-                mockSubscription.getTelemetryObjects.andReturn([mockDomainObject]);
-                mockSubscription.getMetadata.andReturn([{}]);
-                mockSubscription.getDomainValue.andReturn(123);
-                mockSubscription.getRangeValue.andReturn(42);
+                mockHandler.handle.andReturn(mockHandle);
+                mockHandle.getTelemetryObjects.andReturn([mockDomainObject]);
+                mockHandle.getMetadata.andReturn([{}]);
+                mockHandle.getDomainValue.andReturn(123);
+                mockHandle.getRangeValue.andReturn(42);
 
-                controller = new PlotController(mockScope, mockFormatter, mockSubscriber);
+                controller = new PlotController(mockScope, mockFormatter, mockHandler);
             });
 
             it("provides plot colors", function () {
@@ -71,7 +72,7 @@ define(
                 // Make an object available
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                 // Should have subscribed
-                expect(mockSubscriber.subscribe).toHaveBeenCalledWith(
+                expect(mockHandler.handle).toHaveBeenCalledWith(
                     mockDomainObject,
                     jasmine.any(Function),
                     true // Lossless
@@ -92,7 +93,7 @@ define(
                 expect(controller.getSubPlots().length > 0).toBeTruthy();
 
                 // Broadcast data
-                mockSubscriber.subscribe.mostRecentCall.args[1]();
+                mockHandler.handle.mostRecentCall.args[1]();
 
                 controller.getSubPlots().forEach(function (subplot) {
                     expect(subplot.getDrawingObject().lines)
@@ -104,17 +105,17 @@ define(
                 // Make an object available
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
                 // Verify precondition - shouldn't unsubscribe yet
-                expect(mockSubscription.unsubscribe).not.toHaveBeenCalled();
+                expect(mockHandle.unsubscribe).not.toHaveBeenCalled();
                 // Remove the domain object
                 mockScope.$watch.mostRecentCall.args[1](undefined);
                 // Should have unsubscribed
-                expect(mockSubscription.unsubscribe).toHaveBeenCalled();
+                expect(mockHandle.unsubscribe).toHaveBeenCalled();
             });
 
 
             it("changes modes depending on number of objects", function () {
                 // Act like one object is available
-                mockSubscription.getTelemetryObjects.andReturn([
+                mockHandle.getTelemetryObjects.andReturn([
                     mockDomainObject
                 ]);
 
@@ -124,7 +125,7 @@ define(
                 expect(controller.getModeOptions().length).toEqual(1);
 
                 // Act like one object is available
-                mockSubscription.getTelemetryObjects.andReturn([
+                mockHandle.getTelemetryObjects.andReturn([
                     mockDomainObject,
                     mockDomainObject,
                     mockDomainObject
@@ -180,11 +181,11 @@ define(
                 // Make sure $destroy is what's listened for
                 expect(mockScope.$on.mostRecentCall.args[0]).toEqual('$destroy');
                 // Also verify precondition
-                expect(mockSubscription.unsubscribe).not.toHaveBeenCalled();
+                expect(mockHandle.unsubscribe).not.toHaveBeenCalled();
                 // Destroy the scope
                 mockScope.$on.mostRecentCall.args[1]();
                 // Should have unsubscribed
-                expect(mockSubscription.unsubscribe).toHaveBeenCalled();
+                expect(mockHandle.unsubscribe).toHaveBeenCalled();
             });
         });
     }
