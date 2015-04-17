@@ -78,7 +78,7 @@ define(
                 }
 
                 // If there are no more lines, clear the domain offset
-                if (Object.keys(lines).length < 1) {
+                if (Object.keys(next).length < 1) {
                     domainOffset = undefined;
                 }
 
