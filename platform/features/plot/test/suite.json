@@ -6,6 +6,7 @@
     "SubPlot",
     "SubPlotFactory",
     "elements/PlotAxis",
+    "elements/PlotLineBuffer",
     "elements/PlotPalette",
     "elements/PlotPanZoomStack",
     "elements/PlotPanZoomStackGroup",

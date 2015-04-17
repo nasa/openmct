@@ -133,8 +133,23 @@ define(
             // Update historical data for this domain object
             function setHistorical(domainObject) {
                 var id = domainObject.getId(),
+                    // Buffer to expand
                     buffer = buffers[id],
-                    endIndex = realtimeIndex[id] || 0;
+                    // Index where historical data ends (and realtime begins)
+                    endIndex = realtimeIndex[id] || 0,
+                    // Look up the data series
+                    series = subscription.getSeries(domainObject),
+                    // Get its length
+                    seriesLength = series ? series.getPointCount() : 0,
+                    // Get the current buffer length...
+                    length = lengths[id] || 0,
+                    // As well as the length of the realtime segment
+                    realtimeLength = length - endIndex,
+                    // Determine the new total length of the existing
+                    // realtime + new historical segment.
+                    totalLength =
+                        Math.min(seriesLength + realtimeLength, maxPoints),
+                    seriesFit = Math.max(0, totalLength - realtimeLength);
 
                 // Make sure the buffer is big enough
 
