@@ -1,6 +1,6 @@
 {
     "name": "General UI elements",
-    "description": "General UI elements, meant to be reused across modes.",
+    "description": "General UI elements, meant to be reused across modes",
     "resources": "res",
     "extensions": {
         "runs": [
@@ -211,19 +211,21 @@
             {
                 "name": "Modernizr",
                 "version": "2.6.2",
-                "description": "Browser/device capability finding.",
+                "description": "Browser/device capability finding",
                 "author": "Faruk Ateş",
                 "website": "http://modernizr.com",
-                "license": "MIT",
+                "copyright": "Copyright (c) 2009–2015",
+                "license": "license-mit",
                 "link": "http://modernizr.com/license/"
             },
             {
                 "name": "Normalize.css",
                 "version": "1.1.2",
-                "description": "Browser style normalization.",
+                "description": "Browser style normalization",
                 "author": "Nicolas Gallagher, Jonathan Neal",
                 "website": "http://necolas.github.io/normalize.css/",
-                "license": "MIT",
+                "copyright": "Copyright (c) Nicolas Gallagher and Jonathan Neal",
+                "license": "license-mit",
                 "link": "https://github.com/necolas/normalize.css/blob/master/LICENSE.md"
             }
         ]
