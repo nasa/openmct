@@ -85,6 +85,31 @@ define(
                 ).toEqual([ -35, 3, -33, 9, -28, 8, -27, 11]);
             });
 
+            it("expands buffer when needed to accommodate more data", function () {
+                var i;
+
+                // Initial underlying buffer should be twice initial size...
+                // (Since each pair will take up two elements)
+                expect(buffer.getBuffer().length).toEqual(20);
+
+                // Should be able to insert 6 series of 6 points each
+                // (After that, we'll hit the test max of 40)
+                for (i = 1; i < 15; i += 1) {
+                    expect(buffer.insertPoint(i * 10, Math.sin(i), i))
+                        .toBeTruthy();
+                }
+
+                // Buffer should have expanded in the process
+                expect(buffer.getBuffer().length).toEqual(40);
+
+                // Push to maximum size just to make sure...
+                for (i = 1; i < 150; i += 1) {
+                    buffer.insertPoint(i * 10, Math.sin(i), i);
+                }
+
+                expect(buffer.getBuffer().length).toEqual(80);
+            });
+
             it("ensures a maximum size", function () {
                 var i;
 

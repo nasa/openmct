@@ -20,7 +20,7 @@ define(
 
                 mockBuffer = jasmine.createSpyObj(
                     'buffer',
-                    ['findInsertionIndex', 'insert', 'insertPoint']
+                    ['findInsertionIndex', 'insert', 'insertPoint', 'trim']
                 );
                 mockSeries = jasmine.createSpyObj(
                     'series',
@@ -31,10 +31,10 @@ define(
                     return testSeries.length;
                 });
                 mockSeries.getDomainValue.andCallFake(function (i) {
-                    return testSeries[i][0];
+                    return (testSeries[i] || [])[0];
                 });
                 mockSeries.getRangeValue.andCallFake(function (i) {
-                    return testSeries[i][1];
+                    return (testSeries[i] || [])[1];
                 });
 
                 // Function like PlotLineBuffer, to aid in testability
@@ -96,6 +96,17 @@ define(
                 // Should have managed insertion index choices to get to...
                 expect(testDomainBuffer).toEqual([50, 75, 100, 150]);
                 expect(testRangeBuffer).toEqual([42, 1, 200, 12321]);
+            });
+
+            it("attempts to remove points when insertion fails", function () {
+                // Verify precondition - normally doesn't try to trim
+                line.addPoint(1, 2);
+                expect(mockBuffer.trim).not.toHaveBeenCalled();
+
+                // But if insertPoint fails, it should trim
+                mockBuffer.insertPoint.andReturn(false);
+                line.addPoint(2, 3);
+                expect(mockBuffer.trim).toHaveBeenCalled();
             });
 
         });

@@ -14,14 +14,14 @@ define(
                     return end - start;
                 },
                 getDomainValue: function (index) {
-                    return series.getDomainValue(index - start, domain);
+                    return series.getDomainValue(index + start, domain);
                 },
                 getRangeValue: function (index) {
-                    return series.getRangeValue(index - start, range);
+                    return series.getRangeValue(index + start, range);
                 },
                 split: function () {
                     var mid = Math.floor((end + start) / 2);
-                    return end > start ?
+                    return ((end - start) > 1) ?
                             [
                                 new PlotSeriesWindow(
                                     series,
@@ -34,7 +34,7 @@ define(
                                     series,
                                     domain,
                                     range,
-                                    mid + 1,
+                                    mid,
                                     end
                                 )
                             ] : [];
