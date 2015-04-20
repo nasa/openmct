@@ -5,10 +5,20 @@ define(
     function () {
         "use strict";
 
+        /**
+         * A telemetry handle acts as a helper in issuing requests for
+         * new telemetry as well as subscribing to real-time updates
+         * for the same telemetry series. This is exposed through the
+         * `telemetryHandler` service.
+         * @param $q Angular's $q, for promises
+         * @param {TelemetrySubscription} subscription a subscription
+         *        to supplied telemetry
+         */
         function TelemetryHandle($q, subscription) {
             var seriesMap = {},
                 self = Object.create(subscription);
 
+            // Request a telemetry series for this specific object
             function requestSeries(telemetryObject, request, callback) {
                 var id = telemetryObject.getId(),
                     telemetry = telemetryObject.getCapability('telemetry');
