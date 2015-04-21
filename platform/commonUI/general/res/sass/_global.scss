@@ -18,7 +18,7 @@ body, html {
 }
 
 em {
-	color: rgba(white, 0.2);
+//	color: rgba(white, 0.2); Removed this as a global setting
 	font-style: normal;
 }
 
@@ -65,12 +65,22 @@ span {
 	white-space: pre;
 }
 
+.codehilite {
+	@extend .code;
+	background-color: rgba(#fff, 0.1);
+	padding: 1em;
+}
+
 .align-right {
 	text-align: right;
 }
 
 .centered {
 	text-align: center;
+}
+
+.no-margin {
+	margin: 0;
 }
 
 .colorKey {

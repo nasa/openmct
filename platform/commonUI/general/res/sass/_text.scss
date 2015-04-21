@@ -1,0 +1,35 @@
+// Styles for extended text copy
+
+.abs.l-standalone {
+	$d: 20%;
+	padding: $d/4 $d;
+}
+
+.s-text {
+	font-size: 0.8em;
+	ol, ul {
+		list-style: square;
+		margin-left: 1.5em;
+		li {
+
+		}
+	}
+
+	h1, h2, h3 {
+		color: #fff;
+		font-weight: normal !important;
+		margin-bottom: 1em;
+	}
+
+	h2 {
+		border-top: 1px solid $colorInteriorBorder;
+		font-size: 1.5em;
+		margin-top: 2em;
+		padding-top: 1em;
+	}
+
+	h3 {
+		margin-top: 2em;
+	}
+
+}
