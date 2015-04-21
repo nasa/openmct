@@ -95,10 +95,17 @@ define(
                 update();
             }
 
+            // Display new historical data as it becomes available
+            function addHistoricalData(domainObject, series) {
+                updater.addHistorical(domainObject, series);
+                modeOptions.getModeHandler().plotTelemetry(updater);
+                update();
+            }
+
             // Issue a new request for historical telemetry
             function requestTelemetry() {
                 if (handle && updater) {
-                    handle.request({}, updater.addHistorical);
+                    handle.request({}, addHistoricalData);
                 }
             }
 
