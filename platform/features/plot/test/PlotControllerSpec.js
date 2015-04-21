@@ -14,6 +14,7 @@ define(
                 mockHandler,
                 mockHandle,
                 mockDomainObject,
+                mockSeries,
                 controller;
 
 
@@ -44,6 +45,10 @@ define(
                         "getRangeValue",
                         "request"
                     ]
+                );
+                mockSeries = jasmine.createSpyObj(
+                    'series',
+                    ['getPointCount', 'getDomainValue', 'getRangeValue']
                 );
 
                 mockHandler.handle.andReturn(mockHandle);
@@ -173,6 +178,15 @@ define(
             it("indicates if a request is pending", function () {
                 // Placeholder; need to support requesting telemetry
                 expect(controller.isRequestPending()).toBeFalsy();
+            });
+
+            it("requests historical telemetry", function () {
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                expect(mockHandle.request).toHaveBeenCalled();
+                mockHandle.request.mostRecentCall.args[1](
+                    mockDomainObject,
+                    mockSeries
+                );
             });
 
             it("unsubscribes when destroyed", function () {
