@@ -1,6 +1,7 @@
 [
     "CapabilityTable",
     "ComposeActionPolicy",
+    "CompositionMutabilityPolicy",
     "CompositionPolicy",
     "ContainmentTable"
 ]
