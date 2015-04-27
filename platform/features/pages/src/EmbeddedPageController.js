@@ -5,7 +5,7 @@ define(
     function () {
         "use strict";
 
-        function Controller($sce) {
+        function EmbeddedPageController($sce) {
             return {
                 trust: function (url) {
                     return $sce.trustAsResourceUrl(url);
@@ -13,7 +13,7 @@ define(
             };
         }
 
-        return Controller;
+        return EmbeddedPageController;
     }
 
 );
