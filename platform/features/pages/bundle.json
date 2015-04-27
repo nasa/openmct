@@ -9,7 +9,9 @@
                     {
                         "key": "url",
                         "name": "URL",
-                        "control": "textfield"
+                        "control": "textfield",
+                        "pattern": "^(ftp|https?)\\:\\/\\/\\w+(\\.\\w+)*(\\:\\d+)?(\\/\\S*)*$",
+                        "required": true
                     }
                 ]
             }
