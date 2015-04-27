@@ -10,6 +10,7 @@
     "platform/containment",
     "platform/telemetry",
     "platform/features/layout",
+    "platform/features/pages",
     "platform/features/plot",
     "platform/features/scrolling",
     "platform/forms",
