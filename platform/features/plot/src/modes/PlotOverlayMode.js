@@ -34,11 +34,11 @@ define(
                 subplot.setDomainOffset(prepared.getDomainOffset());
 
                 // Draw the buffers. Select color by index.
-                subplot.getDrawingObject().lines = prepared.getBuffers().map(function (buf, i) {
+                subplot.getDrawingObject().lines = prepared.getLineBuffers().map(function (buf, i) {
                     return {
-                        buffer: buf,
+                        buffer: buf.getBuffer(),
                         color: PlotPalette.getFloatColor(i),
-                        points: prepared.getLength(i)
+                        points: buf.getLength()
                     };
                 });
 

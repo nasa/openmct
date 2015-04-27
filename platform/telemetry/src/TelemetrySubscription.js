@@ -1,8 +1,8 @@
 /*global define*/
 
 define(
-    ['./TelemetryQueue', './TelemetryTable'],
-    function (TelemetryQueue, TelemetryTable) {
+    ['./TelemetryQueue', './TelemetryTable', './TelemetryDelegator'],
+    function (TelemetryQueue, TelemetryTable, TelemetryDelegator) {
         "use strict";
 
 
@@ -31,7 +31,9 @@ define(
          *        the callback once, with access to the latest data
          */
         function TelemetrySubscription($q, $timeout, domainObject, callback, lossless) {
-            var unsubscribePromise,
+            var delegator = new TelemetryDelegator($q),
+                unsubscribePromise,
+                telemetryObjectPromise,
                 latestValues = {},
                 telemetryObjects = [],
                 pool = lossless ? new TelemetryQueue() : new TelemetryTable(),
@@ -42,23 +44,7 @@ define(
             // This will either be the object in view, or object that
             // this object delegates its telemetry capability to.
             function promiseRelevantObjects(domainObject) {
-                // If object has been cleared, there are no relevant
-                // telemetry-providing domain objects.
-                if (!domainObject) {
-                    return $q.when([]);
-                }
-
-                // Otherwise, try delegation first, and attach the
-                // object itself if it has a telemetry capability.
-                return $q.when(domainObject.useCapability(
-                    "delegation",
-                    "telemetry"
-                )).then(function (result) {
-                    var head = domainObject.hasCapability("telemetry") ?
-                            [ domainObject ] : [],
-                        tail = result || [];
-                    return head.concat(tail);
-                });
+                return delegator.promiseTelemetryObjects(domainObject);
             }
 
             function updateValuesFromPool() {
@@ -152,8 +138,8 @@ define(
             // will be unsubscribe functions. (This must be a promise
             // because delegation is supported, and retrieving delegate
             // telemetry-capable objects may be an asynchronous operation.)
-            unsubscribePromise =
-                promiseRelevantObjects(domainObject)
+            telemetryObjectPromise = promiseRelevantObjects(domainObject);
+            unsubscribePromise = telemetryObjectPromise
                     .then(cacheObjectReferences)
                     .then(subscribeAll);
 
@@ -239,6 +225,17 @@ define(
                  */
                 getMetadata: function () {
                     return metadatas;
+                },
+                /**
+                 * Get a promise for all telemetry-providing objects
+                 * associated with this subscription.
+                 * @returns {Promise.<DomainObject[]>} a promise for
+                 *          telemetry-providing objects
+                 */
+                promiseTelemetryObjects: function () {
+                    // Unsubscribe promise is available after objects
+                    // are loaded.
+                    return telemetryObjectPromise;
                 }
             };
         }
