@@ -3,7 +3,9 @@
         "types": [
             {
                 "key": "example.page",
-                "name": "Page",
+                "name": "Web Page",
+                "glyph": "\u00EA",
+                "description": "A component to display a web page or image with a valid URL. Can be added to a Display Layout.",
                 "features": [ "creation" ],
                 "properties": [
                     {
@@ -26,8 +28,8 @@
         ],
         "controllers": [
             {
-                "key": "IFrameController",
-                "implementation": "IFrameController.js",
+                "key": "EmbeddedPageController",
+                "implementation": "EmbeddedPageController.js",
                 "depends": ["$sce"]
             }
         ]

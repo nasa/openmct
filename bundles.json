@@ -15,7 +15,7 @@
     "platform/features/scrolling",
     "platform/forms",
     "platform/persistence/queue",
-    "platform/persistence/elastic",
+    "platform/persistence/couch",
     "platform/policy",
 
     "example/generator"

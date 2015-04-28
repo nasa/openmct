@@ -2,7 +2,7 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <svg>
 <metadata>
-Created by FontForge 20110222 at Thu Mar 19 18:28:43 2015
+Created by FontForge 20090622 at Tue Apr 28 20:52:23 2015
  By deploy user
 Copyright 2015 Adobe Systems Incorporated. All rights reserved.
 </metadata>
@@ -21,7 +21,7 @@ Copyright 2015 Adobe Systems Incorporated. All rights reserved.
     bbox="-33 -19 1143 787"
     underline-thickness="50"
     underline-position="-50"
-    unicode-range="U+0020-2044"
+    unicode-range="U+0020-U+2044"
   />
 <missing-glyph horiz-adv-x="500" 
  />
@@ -129,7 +129,7 @@ v-356zM635 88v356h-83v-356h83z" />
     <glyph glyph-name="bracketleft" unicode="[" horiz-adv-x="742" 
 d="M373 602l-238 -237l237 -237l236 238zM373 731q39 0 66 -28l270 -270q29 -28 29 -67.5t-29 -67.5l-271 -271q-26 -27 -66 -27q-41 0 -68 27l-271 271q-27 27 -27 67t27 67l271 271q28 28 69 28z" />
     <glyph glyph-name="backslash" unicode="\" horiz-adv-x="810" 
-d="M806 0h-178l-228 265q-20 -6 -41 -6q-65 0 -111 47t-46 112q0 34 12 63l-214 251h178l139 -162q23 5 42 5q65 0 112 -46t47 -111q0 -30 -14 -65zM286 418q0 -31 21 -53t52 -22t53 22t22 53t-22 52t-53 21t-52 -21t-21 -52z" />
+d="M806 0h-178l-228 265q-19 -6 -41 -6q-65 0 -111 47t-46 112q0 34 12 63l-214 251h178l139 -162q23 5 42 5q65 0 112 -46t47 -111q0 -30 -14 -65zM286 418q0 -31 21 -53t52 -22t53 22t22 53t-22 52t-53 21t-52 -21t-21 -52z" />
     <glyph glyph-name="bracketright" unicode="]" horiz-adv-x="807" 
 d="M128 237l-61 61q-27 27 -27 67t27 67l271 271q28 28 69 28q39 0 67 -28l61 -60l-85 -85l-43 44l-238 -237l44 -44zM683 494l61 -61q28 -28 28 -67.5t-28 -67.5l-271 -271q-27 -27 -67 -27q-41 0 -68 27l-61 62l84 84l45 -45l237 238l-44 44zM697 731h149l-731 -731h-148z
 " />
@@ -185,7 +185,7 @@ v-170z" />
     <glyph glyph-name="u" unicode="u" horiz-adv-x="809" 
 d="M405 396l-397 -396h794zM740 732q29 0 49 -20t20 -49v-122q0 -29 -20 -49.5t-49 -20.5h-671q-29 0 -49 20.5t-20 49.5v122q0 29 20 49t49 20h671z" />
     <glyph glyph-name="v" unicode="v" horiz-adv-x="787" 
-d="M394 202l-394 377h787q-63 -61 -194.5 -187t-198.5 -190z" />
+d="M394 202l-394 377h787z" />
     <glyph glyph-name="x" unicode="x" horiz-adv-x="726" 
 d="M726 110q6 -6 6 -15t-6 -14l-72 -73q-6 -6 -15 -6t-14 6l-258 258l-257 -258q-6 -6 -15 -6t-15 6l-72 73q-6 5 -6 14t6 15l257 257l-257 258q-14 15 0 29l72 73q6 6 15 6t15 -6l257 -258l258 258q5 6 14 6t15 -6l72 -73q14 -14 0 -29l-257 -258z" />
     <glyph glyph-name="y" unicode="y" horiz-adv-x="806" 
@@ -218,10 +218,12 @@ d="M656 750q39 0 66.5 -27.5t27.5 -66.5v-562q0 -39 -27.5 -66.5t-66.5 -27.5h-562q-
     <glyph glyph-name="egrave" unicode="&#xe8;" horiz-adv-x="754" 
 d="M703 703q47 -48 47 -116t-47 -117l-94 -94q-48 -48 -117 -48q-41 0 -84 24l-8 -9q28 -47 21.5 -104t-46.5 -97l-94 -94q-48 -48 -117 -48q-68 0 -116 48q-47 49 -47 117t47 116l94 94q47 47 115 47q47 0 85 -22l9 9q-28 47 -21.5 103.5t46.5 96.5l94 94q47 47 116 47
 q70 0 117 -47zM307 209q26 25 21 62l-41 -41q-14 -12 -30 -12q-15 0 -27 12q-12 10 -12 28t12 29l41 41h-14q-28 0 -48 -20l-94 -94q-20 -20 -20 -49t20 -49q21 -22 49 -22q29 0 50 22zM635 538q21 20 21 49t-21 49q-20 20 -49 20t-49 -20l-94 -94q-25 -24 -20 -62l41 41
-q10 12 28 12t29 -12q12 -12 12 -29q0 -14 -12 -28l-41 -41q3 0 7 -0.5t5 -0.5q29 0 50 22z" />
+q11 12 28 12q18 0 29 -12q12 -12 12 -29q0 -14 -12 -28l-41 -41q3 0 7 -0.5t5 -0.5q29 0 50 22z" />
     <glyph glyph-name="eacute" unicode="&#xe9;" 
 d="M188 235h-160q-28 67 -28 140q0 156 110 265.5t265 109.5q88 0 164 -37t129 -103h-105q-39 0 -66.5 -27.5t-27.5 -66.5v-92v-2h-188q-39 0 -66 -27t-27 -67v-92v-1zM564 516h160q26 -62 26 -141q0 -155 -109.5 -265t-265.5 -110q-86 0 -162.5 38t-128.5 103h104
 q39 0 66 27.5t27 66.5v93h2h186q39 0 66.5 27.5t27.5 66.5v94h1z" />
+    <glyph glyph-name="ecircumflex" unicode="&#xea;" horiz-adv-x="751" 
+d="M376 750v-375h375v-235q0 -58 -41.5 -99t-99.5 -41h-469q-58 0 -99 41t-41 99v469q0 58 41 99.5t99 41.5h235zM470 750l281 -281h-281v281z" />
     <glyph glyph-name="fraction" unicode="&#x2044;" horiz-adv-x="761" 
 d="M380 751q158 0 269.5 -111.5t111.5 -268.5q0 -133 -82.5 -236.5t-209.5 -134.5l-4 491l-176 -490q-126 31 -207.5 134.5t-81.5 235.5q0 157 111.5 268.5t268.5 111.5zM168 488l55 20l-34 94l-56 -20zM410 530v100h-59v-100h59zM593 488l34 94l-55 20l-34 -94z" />
     <glyph glyph-name="H.002" horiz-adv-x="803" 
