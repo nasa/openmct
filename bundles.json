@@ -6,11 +6,13 @@
     "platform/commonUI/browse",
     "platform/commonUI/edit",
     "platform/commonUI/dialog",
+    "platform/commonUI/inspect",
     "platform/commonUI/general",
     "platform/containment",
     "platform/telemetry",
     "platform/features/layout",
     "platform/features/pages",
+
     "platform/features/plot",
     "platform/features/scrolling",
     "platform/forms",
