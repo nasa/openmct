@@ -57,18 +57,30 @@ define(
                 // Prepared telemetry data
                 mockPrepared = jasmine.createSpyObj(
                     "prepared",
-                    [ "getDomainOffset", "getOrigin", "getDimensions", "getBuffers", "getLength" ]
+                    [
+                        "getDomainOffset",
+                        "getOrigin",
+                        "getDimensions",
+                        "getLineBuffers"
+                    ]
                 );
 
                 mockSubPlotFactory.createSubPlot.andCallFake(createMockSubPlot);
 
                 // Act as if we have three buffers full of data
-                testBuffers = [["a"], ["b"], ["c"]];
-                mockPrepared.getBuffers.andReturn(testBuffers);
+                testBuffers = ['a', 'b', 'c'].map(function (id) {
+                    var mockBuffer = jasmine.createSpyObj(
+                        'buffer-' + id,
+                        ['getBuffer', 'getLength']
+                    );
+                    mockBuffer.getBuffer.andReturn([id]);
+                    mockBuffer.getLength.andReturn(3);
+                    return mockBuffer;
+                });
+                mockPrepared.getLineBuffers.andReturn(testBuffers);
                 mockPrepared.getDomainOffset.andReturn(1234);
                 mockPrepared.getOrigin.andReturn([10, 10]);
                 mockPrepared.getDimensions.andReturn([500, 500]);
-                mockPrepared.getLength.andReturn(3);
 
                 // Clear out drawing objects
                 testDrawingObjects = [];
@@ -104,7 +116,7 @@ define(
                     // Make sure the right buffer was drawn to the
                     // right subplot.
                     testDrawingObject.lines.forEach(function (line, j) {
-                        expect(line.buffer).toEqual(testBuffers[j]);
+                        expect(line.buffer).toEqual(testBuffers[j].getBuffer());
                     });
                 });
             });

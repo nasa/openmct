@@ -43,6 +43,11 @@
                 "key": "telemetrySubscriber",
                 "implementation": "TelemetrySubscriber.js",
                 "depends": [ "$q", "$timeout" ]
+            },
+            {
+                "key": "telemetryHandler",
+                "implementation": "TelemetryHandler.js",
+                "depends": [ "$q", "telemetrySubscriber" ]
             }
         ],
         "licenses": [
