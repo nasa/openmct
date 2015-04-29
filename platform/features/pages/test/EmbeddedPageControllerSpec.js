@@ -19,7 +19,7 @@ define(
                     return v;
                 });
 
-                controller = new EmbeddedPageController(mockSCE)
+                controller = new EmbeddedPageController(mockSCE);
             });
 
             it("allows URLs to be marked as trusted", function () {
