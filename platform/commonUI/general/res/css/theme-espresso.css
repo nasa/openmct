@@ -2726,7 +2726,7 @@ input[type="text"] {
   /* line 11, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper .l-infobubble {
     display: inline-block;
-    max-width: 400px;
+    max-width: 250px;
     padding: 5px 10px; }
     /* line 15, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper .l-infobubble:before {
@@ -2734,45 +2734,57 @@ input[type="text"] {
       position: absolute;
       width: 0;
       height: 0; }
-    /* line 22, ../sass/helpers/_bubbles.scss */
-    .l-infobubble-wrapper .l-infobubble table tr td {
-      max-width: 150px;
-      padding: 2px 0;
-      vertical-align: top; }
-      /* line 29, ../sass/helpers/_bubbles.scss */
-      .l-infobubble-wrapper .l-infobubble table tr td.value {
-        padding-left: 10px; }
-      /* line 32, ../sass/helpers/_bubbles.scss */
-      .l-infobubble-wrapper .l-infobubble table tr td.align-wrap {
-        white-space: normal; }
-  /* line 39, ../sass/helpers/_bubbles.scss */
+    /* line 21, ../sass/helpers/_bubbles.scss */
+    .l-infobubble-wrapper .l-infobubble table {
+      width: 100%; }
+      /* line 24, ../sass/helpers/_bubbles.scss */
+      .l-infobubble-wrapper .l-infobubble table tr td {
+        padding: 2px 0;
+        vertical-align: top; }
+        /* line 31, ../sass/helpers/_bubbles.scss */
+        .l-infobubble-wrapper .l-infobubble table tr td.label {
+          padding-right: 10px;
+          white-space: nowrap; }
+        /* line 35, ../sass/helpers/_bubbles.scss */
+        .l-infobubble-wrapper .l-infobubble table tr td.value {
+          white-space: nowrap; }
+        /* line 39, ../sass/helpers/_bubbles.scss */
+        .l-infobubble-wrapper .l-infobubble table tr td.align-wrap {
+          white-space: normal; }
+    /* line 45, ../sass/helpers/_bubbles.scss */
+    .l-infobubble-wrapper .l-infobubble .title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-bottom: 5px; }
+  /* line 52, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-left {
     margin-left: 10px; }
-    /* line 41, ../sass/helpers/_bubbles.scss */
+    /* line 54, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-left .l-infobubble::before {
       right: 100%;
       border-top: 5px solid transparent;
       border-bottom: 5px solid transparent;
       border-right: 7.5px solid #dddddd; }
-  /* line 49, ../sass/helpers/_bubbles.scss */
+  /* line 62, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-right {
     margin-right: 10px; }
-    /* line 51, ../sass/helpers/_bubbles.scss */
+    /* line 64, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-right .l-infobubble::before {
       left: 100%;
       border-top: 5px solid transparent;
       border-bottom: 5px solid transparent;
       border-left: 7.5px solid #dddddd; }
-  /* line 60, ../sass/helpers/_bubbles.scss */
+  /* line 73, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-top .l-infobubble::before {
     top: 10px; }
-  /* line 66, ../sass/helpers/_bubbles.scss */
+  /* line 79, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-btm .l-infobubble::before {
     bottom: 10px; }
-  /* line 71, ../sass/helpers/_bubbles.scss */
+  /* line 84, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-down {
     margin-bottom: 10px; }
-    /* line 73, ../sass/helpers/_bubbles.scss */
+    /* line 86, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-down .l-infobubble::before {
       left: 50%;
       top: 100%;
@@ -2781,7 +2793,7 @@ input[type="text"] {
       border-right: 5px solid transparent;
       border-top: 7.5px solid #dddddd; }
 
-/* line 86, ../sass/helpers/_bubbles.scss */
+/* line 99, ../sass/helpers/_bubbles.scss */
 .s-infobubble {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -2791,19 +2803,18 @@ input[type="text"] {
   background: #dddddd;
   color: #666666;
   font-size: 0.8rem; }
-  /* line 92, ../sass/helpers/_bubbles.scss */
+  /* line 105, ../sass/helpers/_bubbles.scss */
   .s-infobubble .title {
     color: #333333;
-    font-weight: bold;
-    margin-bottom: 5px; }
-  /* line 98, ../sass/helpers/_bubbles.scss */
+    font-weight: bold; }
+  /* line 110, ../sass/helpers/_bubbles.scss */
   .s-infobubble tr td {
     border-top: 1px solid #c4c4c4;
     font-size: 0.9em; }
-  /* line 102, ../sass/helpers/_bubbles.scss */
+  /* line 114, ../sass/helpers/_bubbles.scss */
   .s-infobubble tr:first-child td {
     border-top: none; }
-  /* line 106, ../sass/helpers/_bubbles.scss */
+  /* line 118, ../sass/helpers/_bubbles.scss */
   .s-infobubble .value {
     color: #333333; }
 

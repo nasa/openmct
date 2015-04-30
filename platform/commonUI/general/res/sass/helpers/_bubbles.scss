@@ -10,7 +10,7 @@ $infoBubbleBg: #ddd;
 	z-index: 70;
 	.l-infobubble {
 		display: inline-block;
-		max-width: 400px;
+		max-width: 250px;
 		padding: 5px 10px;
 		&:before {
 			content:"";
@@ -18,21 +18,34 @@ $infoBubbleBg: #ddd;
 			width: 0;
 			height: 0;
 		}
-		table tr {
-			td {
-				max-width: 150px;
-				padding: 2px 0;
-				vertical-align: top;
-				//white-space: nowrap;
-				//overflow: hidden;
-				//text-overflow: ellipsis;
-				&.value {
-					padding-left: $interiorMargin * 2;
-				}
-				&.align-wrap {
-					white-space: normal;
+		table {
+			width: 100%;
+			tr {
+				td {
+					//max-width: 150px;
+					padding: 2px 0;
+					vertical-align: top;
+					//white-space: nowrap;
+					//overflow: hidden;
+					//text-overflow: ellipsis;
+					&.label {
+						padding-right: $interiorMargin * 2;
+						white-space: nowrap;
+					}
+					&.value {
+						white-space: nowrap;
+						//width: 90%;
+					}
+					&.align-wrap {
+						white-space: normal;
+					}
 				}
 			}
+		}
+		.title {
+			@include ellipsize();
+			margin-bottom: $interiorMargin;
+			//max-width: 200px;
 		}
 	}
 
@@ -92,7 +105,6 @@ $infoBubbleBg: #ddd;
 	.title {
 		color: $emFg;
 		font-weight: bold;
-		margin-bottom: $interiorMargin;
 	}
 	tr {
 		td {
