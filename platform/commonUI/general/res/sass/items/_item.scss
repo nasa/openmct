@@ -1,7 +1,9 @@
 .items-holder {
     @include clearfix;
     overflow-y: auto;
-	.contents { top: 0; }
+	.contents {
+		top: 0;
+	}
     .item {
         &.grid-item {
             $d: $ueBrowseGridItemLg;
@@ -23,6 +25,9 @@
 		            display: block;
 	            }
             }
+	        .contents {
+		        top: $interiorMargin; right: $interiorMargin; bottom: $interiorMargin; left: $interiorMargin;
+	        }
             .bar {
                 &.top-bar.abs {
                     bottom: auto;

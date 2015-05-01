@@ -5,6 +5,7 @@
 
     &.browse,
     &.edit {
+	    border-bottom: 1px solid $colorInteriorBorder;
         top: $bodyMargin; right: $bodyMargin; bottom: auto; left: $bodyMargin;
         height: $ueTopBarH;
     }

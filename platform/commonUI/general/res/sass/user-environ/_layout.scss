@@ -8,57 +8,26 @@
     }
 }
 
+.holder-all {
+	$myM: $interiorMargin;
+	top: $myM;
+	right: $myM;
+	bottom: $myM;
+	left: $myM;
+}
+
 .browse-area,
 .edit-area,
 .editor {
-	@include border-radius($basicCr * 1.5);
 	position: absolute;
-	.contents {
-//		overflow-y: auto;
-	}
 }
 
-.user-environ {
-    .browse-area,
-    .edit-area,
-    .editor {
-        top: $bodyMargin + $ueTopBarH + ($interiorMargin);
-        right: $bodyMargin;
-        bottom: $bodyMargin + $ueFooterH + $interiorMargin;
-        left: $bodyMargin;
-    }
-
-	.edit-area {
-		$tbH: $ueEditToolBarH;
-		.tool-bar {
-			bottom: auto;
-			height: $tbH;
-			line-height: $ueEditToolBarButtonH;
-		}
-		.work-area {
-			top: $tbH + $interiorMargin * 2;
-		}
-	}
-
-    .bottom-bar {
-        top: auto;
-        right: $bodyMargin;
-        bottom: $bodyMargin;
-        left: $bodyMargin;
-        height: $ueFooterH;
-        .status-holder {
-            right: $ueAppLogoW + $bodyMargin;
-        }
-        .app-logo {
-            left: auto;
-            width: $ueAppLogoW;
-        }
-    }
+.editor {
+	@include border-radius($basicCr * 1.5);
 }
-
 
 .contents {
-    $myM: $interiorMargin;
+    $myM: 0; //$interiorMargin;
     box-sizing: border-box;
     position: absolute;
     top: $myM;
@@ -99,6 +68,52 @@
 //            }
         }
     }
+}
+
+.user-environ {
+	.browse-area,
+	.edit-area,
+	.editor {
+		top: $bodyMargin + $ueTopBarH + ($interiorMargin);
+		right: $bodyMargin;
+		bottom: $bodyMargin + $ueFooterH + $interiorMargin;
+		left: $bodyMargin;
+	}
+
+	.browse-area,
+	.edit-area {
+		> .contents {
+			left: 0;
+			right: 0;
+		}
+	}
+
+	.edit-area {
+		$tbH: $ueEditToolBarH;
+		.tool-bar {
+			bottom: auto;
+			height: $tbH;
+			line-height: $ueEditToolBarButtonH;
+		}
+		.work-area {
+			top: $tbH + $interiorMargin * 2;
+		}
+	}
+
+	.bottom-bar {
+		top: auto;
+		right: $bodyMargin;
+		bottom: $bodyMargin;
+		left: $bodyMargin;
+		height: $ueFooterH;
+		.status-holder {
+			right: $ueAppLogoW + $bodyMargin;
+		}
+		.app-logo {
+			left: auto;
+			width: $ueAppLogoW;
+		}
+	}
 }
 
 .cols {

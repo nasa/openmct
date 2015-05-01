@@ -18,6 +18,13 @@
 	>.object-holder.abs {
 		top: $ohH + $interiorMarginSm;
 	}
+	.contents {
+		$myM: $interiorMargin;
+		top: $myM;
+		right: $myM;
+		bottom: $myM;
+		left: $myM;
+	}
 }
 
 .edit-main .frame.child-frame.panel {

@@ -51,6 +51,11 @@
         }
     }
     .contents.l-dialog {
+	    $myM: $interiorMargin;
+	    top: $myM;
+	    right: $myM;
+	    bottom: $myM;
+	    left: $myM;
         overflow: auto;
     }
 }
