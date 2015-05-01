@@ -1,0 +1,50 @@
+<div ng-init="
+bubbles = [
+	{layout: 'arw-top arw-left'},
+	{layout: 'arw-top arw-right'},
+	{layout: 'arw-btm arw-left'},
+	{layout: 'arw-btm arw-right'}
+];
+
+titlex='Egress Scenario scelerisque mauris pid montes nunc ut aliquam elementum tincidunt phasellus 1';
+title='Egress Scenario 1';
+
+propertiesShort=[{label:'Type', value:'Timeline', align:'left'},
+{label:'Start', value:'2015-04-27 00:00:00 UTC', align:'left'},
+{label:'End', value:'2015-04-27 09:15:37 UTC', align:'left'},
+{label:'ID', value:'WRP-T-89', align:'left'}];
+
+properties=[{label:'Type', value:'Timeline', align:'left'},
+{label:'Start', value:'2015-04-27 00:00:00 UTC', align:'left'},
+{label:'End', value:'2015-04-27 06:07:26 UTC', align:'left'},
+{label:'Duration', value:'06:07:26', align:'left'},
+{label:'Created', value:'2015-04-26 12:27:00 UTC', align:'left'},
+{label:'Modified', value:'2015-04-26 23:21:00 UTC', align:'left'},
+{label:'Status', value:'Up to date', align:'left'},
+{label:'URL', value:'http://www.logitech.com/en-us/product/bluetooth-mouse-m557?crid=7', align:'wrap'},
+{label:'Description', value:'Enjoy exceptional battery life for a Bluetooth mouse, and work for up to a full year between battery changes, An On/Off switch helps conserve power, smart sleep mode extends battery life, and an indicator light helps to ensure that you’ll never be caught off guard.', align:'wrap'},
+{label:'ID', value:'WRP-T-89', align:'left'}];
+"></div>
+
+
+<div
+	style="position: absolute"
+	ng-repeat="bubble in bubbles"
+	ng-style="{left: $index * 300 + 'px'}"
+	>
+	<div class="t-infobubble s-infobubble l-infobubble-wrapper {{bubble.layout}}">
+		<div class="l-infobubble">
+			<div
+				ng-show="title.length > 0"
+				class="title"
+				>{{title}}
+			</div>
+			<table>
+				<tr ng-repeat="property in properties">
+					<td class="label">{{property.label}}</td>
+					<td title="{{property.value}}" class="value align-{{property.align}}">{{property.value}}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
