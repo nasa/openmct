@@ -1,0 +1,30 @@
+{
+    "extensions": {
+        "types": [
+            {
+                "key": "example.limits",
+                "name": "Limits Examples",
+                "glyph": "\u00EB",
+                "description": "Markup and styles exercised for limits displays",
+                "features": [ "creation" ],
+                "properties": [
+                    {
+                        "key": "url",
+                        "name": "URL",
+                        "control": "textfield",
+                        "pattern": "^(ftp|https?)\\:\\/\\/\\w+(\\.\\w+)*(\\:\\d+)?(\\/\\S*)*$",
+                        "required": false
+                    }
+                ]
+            }
+        ],
+        "views": [
+            {
+                "templateUrl": "examples.html",
+                "name": "Limits Examples",
+                "type": "example.limits",
+                "key": "example.limits"
+            }
+        ]
+    }
+}
