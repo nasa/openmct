@@ -1,0 +1,43 @@
+.s-limit {
+	$a: 0.7;
+	$l: 30%;
+	&:before {
+		display: inline-block;
+		font-family: symbolsfont;
+		line-height: 1.1em;
+		margin-right: $interiorMarginSm;
+		vertical-align: bottom;
+	}
+	&.s-limit-upr {
+		&.s-limit-yellow {
+			background: rgba($colorLimitYellow, $a);
+			&:before {
+				color: lighten($colorLimitYellow, $l);
+				content: "\0000ed";
+			}
+		}
+		&.s-limit-red {
+			background: rgba($colorLimitRed, $a);
+			&:before {
+				color: lighten($colorLimitRed, $l);
+				content: "\0000eb";
+			}
+		}
+	}
+	&.s-limit-lwr {
+		&.s-limit-yellow {
+			background: rgba($colorLimitYellow, $a);
+			&:before {
+				color: lighten($colorLimitYellow, $l);
+				content: "\0000ec";
+			}
+		}
+		&.s-limit-red {
+			background: rgba($colorLimitRed, $a);
+			&:before {
+				color: lighten($colorLimitRed, $l);
+				content: "\0000ee";
+			}
+		}
+	}
+}

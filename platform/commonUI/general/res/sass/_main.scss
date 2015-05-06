@@ -1,6 +1,7 @@
 @import "compass";
 @import "compass/reset";
 @import "compass/css3";
+@import "compass/css3/animation";
 @import "compass/css3/user-interface";
 @import "compass/utilities";
 
@@ -14,6 +15,7 @@
 @import "text";
 @import "badges";
 @import "icons";
+@import "limits";
 @import "lists/tabular";
 @import "controls/buttons";
 @import "controls/color-palette";

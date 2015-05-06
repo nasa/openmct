@@ -46,7 +46,7 @@
 		rgba($c, $a) 25%, transparent 25%,
 		transparent 50%, rgba($c, $a) 50%,
 		rgba($c, $a) 75%, transparent 75%,
-		transparent 0
+		transparent 100%
 	));
 	background-repeat: repeat;
 	background-size: $d $d;
@@ -159,6 +159,10 @@
 
 @mixin linearGlow($deg: 0, $c: red, $a: 0.4) {
     @include background-image(linear-gradient($deg, rgba($c,0), rgba($c, $a) 100%));
+}
+
+@mixin subtleGrad($deg: 0, $c: red, $a0: 0.2, $a1: 0.3) {
+	@include background-image(linear-gradient($deg, rgba($c,$a0), rgba($c, $a1) 100%));
 }
 
 @mixin txtShdwSubtle($sVal: 0.1) {

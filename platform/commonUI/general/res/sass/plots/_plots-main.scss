@@ -1,5 +1,5 @@
 $yBarW: 60px;
-$yLabelW: auto; //10px;
+$yLabelW: auto;
 $xBarH: 32px;
 $legendH: 24px;
 $colorHash: rgba(white, 0.3);
@@ -38,7 +38,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 	.gl-plot-coords {
 		@include box-sizing(border-box);
 		@include border-radius($controlCr);
-		background: rgba($colorAlt1, 0.5);
+		background: black; //rgba($colorKey, 0.5);
 		color: lighten($colorBodyFg, 30%);
 		padding: 2px 5px;
 		position: absolute;
@@ -80,7 +80,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 		}
 
 		&.gl-plot-y-label,
-		&.l-plot-y-label  {
+		&.l-plot-y-label {
 			$x: -50%;
 			$r: -90deg;
 			@include transform-origin(50%, 0);
@@ -129,55 +129,69 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 		height: $legendH;
 		overflow-x: hidden;
 		overflow-y: auto;
-//		.plot-legend-item {
-//			display: inline-block;
-//			margin-right: $interiorMarginLg;
-//			span {
-//				vertical-align: middle;
-//			}
-//			.plot-color-swatch {
-//				@include border-radius(2px);
-//				display: inline-block;
-//				height: $swatchD;
-//				width: $swatchD;
-//				margin-right: $interiorMarginSm;
-//			}
-//		}
 	}
-    
-    .l-limit {
-//        @include linearGlow(0,#66cc66);
-//        @include test();
-        $cLimit0: #cc9900;
-        $cLimit1: #cc0000;
-        $h: 30px;
-        position: absolute;
-        top: auto; left: 0; right: 0;
-        height: $h; width: auto;
-        &.s-limit-upr {
-//            border-top: 1px solid;
-            &.s-limit-0 {
-//                border-color: $cLimit0;
-                @include linearGlow(0deg,$cLimit0);
-            }
-            &.s-limit-1 {
-//                border-color: $cLimit1;
-                @include linearGlow(0deg,$cLimit1);
-            }
-        }
-        &.s-limit-lwr {
-//            border-bottom: 1px solid;
-            &.s-limit-0 {
-//                border-color: $cLimit0;
-                @include linearGlow(180deg,$cLimit0);
-            }
-            &.s-limit-1 {
-//                border-color: $cLimit1;
-                @include linearGlow(180deg,$cLimit1);
-            }
-        }
-    }
+
+	/****************************** Limits */
+
+	//.l-limit,
+	.l-oob-data {
+		position: absolute;
+		left: 0;
+		right: 0;
+		width: auto;
+	}
+
+	/*.l-limit {
+		// Limits in plot display area
+
+		$h: 10px;
+		$a0: 0.1;
+		$a1: 0.2;
+		//top: auto;
+		height: auto;
+		z-index: 0;
+		&.s-limit-upr {
+			//$dir: 0deg;
+			&.s-limit-yellow {
+				@include limitBg($colorLimitYellow);
+			}
+			&.s-limit-red {
+				@include limitBg($colorLimitRed);
+			}
+		}
+		&.s-limit-lwr {
+			//$dir: 180deg;
+			&.s-limit-yellow {
+				@include limitBg($colorLimitYellow);
+			}
+			&.s-limit-red {
+				@include limitBg($colorLimitRed);
+			}
+		}
+	}*/
+
+	.l-oob-data {
+		$c: #7748d6;
+		$a: 0.5;
+		$h: 10px;
+		@include animation(pulse 2s infinite);
+		@include absPosDefault();
+		pointer-events: none;
+		height: $h;
+		z-index: 1;
+		&.l-oob-data-up {
+			top: 0;
+			bottom: auto;
+			@include linearGlow(0deg, $c, $a);
+		}
+		&.l-oob-data-dwn {
+			bottom: 0;
+			top: auto;
+			@include linearGlow(180deg, $c, $a);
+		}
+	}
 }
+
 .gl-plot-legend,
 .legend {
 	.plot-legend-item,
@@ -193,11 +207,25 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 			display: inline-block;
 			height: $swatchD;
 			width: $swatchD;
-			margin-right: $interiorMarginSm;
-
+			//margin-right: $interiorMarginSm;
 		}
 		.title-label {
 
+		}
+	}
+}
+
+.gl-plot-legend {
+	.plot-legend-item {
+		//@include test();
+		@include border-radius($controlCr);
+		color: #fff;
+		line-height: 1.5em;
+		padding: 0px 5px;
+		.plot-color-swatch {
+			border: 1px solid $colorBodyBg;
+			height: $swatchD + 1;
+			width: $swatchD + 1;
 		}
 	}
 }
@@ -210,7 +238,6 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 		height: 100%; // Assumption is that the tick will be in a holder that will set it's height;
 	}
 }
-
 
 .gl-plot-tick,
 .tick-label {
