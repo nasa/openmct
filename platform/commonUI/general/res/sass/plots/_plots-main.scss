@@ -133,7 +133,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 
 	/****************************** Limits */
 
-	//.l-limit,
+	.l-limit,
 	.l-oob-data {
 		position: absolute;
 		left: 0;
@@ -141,8 +141,11 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 		width: auto;
 	}
 
-	/*.l-limit {
+	.l-limit {
 		// Limits in plot display area
+		@mixin limitBg($c) {
+			background: rgba($c, 0.2);
+		}
 
 		$h: 10px;
 		$a0: 0.1;
@@ -168,7 +171,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 				@include limitBg($colorLimitRed);
 			}
 		}
-	}*/
+	}
 
 	.l-oob-data {
 		$c: #7748d6;

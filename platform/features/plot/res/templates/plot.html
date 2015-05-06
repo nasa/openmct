@@ -53,21 +53,6 @@
              ng-mouseenter="subplot.isHovering(true); representation.showControls = true;"
              ng-mouseleave="subplot.isHovering(false)">
 
-	        <div ng-init="limits=[
-				{type: 'upr', severity: 'severe', top: 0, bottom: 90},
-				{type: 'upr', severity: 'med', top: 10, bottom: 80},
-				{type: 'lwr', severity: 'med', top: 70, bottom: 20},
-				{type: 'lwr', severity: 'severe', top: 80, bottom: 0}
-	        ]"></div>
-
-	        <!-- Limits display -->
-	        <div
-		        ng-repeat="limit in limits"
-		        ng-show="1"
-		        class="t-limit l-limit s-limit-{{limit.type}} s-limit-{{limit.severity}}"
-		        style="top: {{limit.top}}%; bottom: {{limit.bottom}}%"
-		        ></div>
-
 	        <!-- Out-of-bounds data indicators -->
             <div ng-show="1" class="l-oob-data l-oob-data-up"></div>
             <div ng-show="1" class="l-oob-data l-oob-data-dwn"></div>

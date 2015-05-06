@@ -1,13 +1,21 @@
 <h1>Limits Examples</h1>
 
 <h2>Plot limits</h2>
+<div ng-init="limits=[
+				{type: 'upr', severity: 'red', top: 0, bottom: 90},
+				{type: 'upr', severity: 'yellow', top: 10, bottom: 80},
+				{type: 'lwr', severity: 'yellow', top: 70, bottom: 20},
+				{type: 'lwr', severity: 'red', top: 80, bottom: 0}
+	        ]"></div>
 <div style="width: 1000px; height: 500px">
     <div class="gl-plot" style="height: 100%;">
         <div class="gl-plot-display-area">
-            <div class="t-limit l-limit s-limit-upr s-limit-1" style="bottom: 80%"></div>
-            <div class="t-limit l-limit s-limit-upr s-limit-0" style="bottom: 50%"></div>
-            <div class="t-limit l-limit s-limit-lwr s-limit-0" style="bottom: 30%"></div>
-            <div class="t-limit l-limit s-limit-lwr s-limit-1" style="bottom: 10%"></div>
+	        <div
+		        ng-repeat="limit in limits"
+		        ng-show="1"
+		        class="t-limit l-limit s-limit-{{limit.type}} s-limit-{{limit.severity}}"
+		        style="top: {{limit.top}}%; bottom: {{limit.bottom}}%"
+		        ></div>
         </div>
     </div>
 </div>
