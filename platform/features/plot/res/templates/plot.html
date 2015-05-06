@@ -5,10 +5,11 @@
          ng-style="{ height: 100 / plot.getSubPlots().length + '%'}"
          ng-repeat="subplot in plot.getSubPlots()">
         <div class="gl-plot-legend">
+	        <!-- ng-class is temporarily hard-coded in next element -->
             <span
 	            class='plot-legend-item'
                 ng-repeat="telemetryObject in subplot.getTelemetryObjects()"
-                ng-class="{ 's-limit': $index < 1, 's-limit-lwr': 1, 's-limit-yellow' : 1 }"
+                ng-class="{ 's-limit-lwr': $index < 1, 's-limit-yellow' : 1 }"
 	            >
                 <span class='plot-color-swatch'
                       ng-style="{ 'background-color': plot.getColor($index) }">
@@ -54,6 +55,7 @@
              ng-mouseleave="subplot.isHovering(false)">
 
 	        <!-- Out-of-bounds data indicators -->
+	        <!-- ng-show is temporarily hard-coded in next element -->
             <div ng-show="1" class="l-oob-data l-oob-data-up"></div>
             <div ng-show="1" class="l-oob-data l-oob-data-dwn"></div>
 

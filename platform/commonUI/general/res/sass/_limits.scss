@@ -1,4 +1,13 @@
-.s-limit {
+@mixin limit($c, $glyph) {
+	background: $c;
+	&:before {
+		color: lighten($c, 30%);
+		content: $glyph;
+	}
+}
+
+.s-limit-upr,
+.s-limit-lwr {
 	$a: 0.5;
 	$l: 30%;
 	white-space: nowrap;
@@ -6,40 +15,17 @@
 		display: inline-block;
 		font-family: symbolsfont;
 		font-size: 0.8em;
-		//line-height: 1.1em;
 		margin-right: $interiorMarginSm;
 		vertical-align: middle;
 	}
-	&.s-limit-upr {
-		&.s-limit-yellow {
-			background: rgba($colorLimitYellow, $a);
-			&:before {
-				color: lighten($colorLimitYellow, $l);
-				content: "\0000ed";
-			}
-		}
-		&.s-limit-red {
-			background: rgba($colorLimitRed, $a);
-			&:before {
-				color: lighten($colorLimitRed, $l);
-				content: "\0000eb";
-			}
-		}
-	}
-	&.s-limit-lwr {
-		&.s-limit-yellow {
-			background: rgba($colorLimitYellow, $a);
-			&:before {
-				color: lighten($colorLimitYellow, $l);
-				content: "\0000ec";
-			}
-		}
-		&.s-limit-red {
-			background: rgba($colorLimitRed, $a);
-			&:before {
-				color: lighten($colorLimitRed, $l);
-				content: "\0000ee";
-			}
-		}
-	}
+}
+
+.s-limit-upr {
+	&.s-limit-yellow { @include limit($colorLimitYellow, "\0000ed"); }
+	&.s-limit-red { @include limit($colorLimitRed, "\0000eb"); }
+}
+
+.s-limit-lwr {
+	&.s-limit-yellow { @include limit($colorLimitYellow, "\0000ec"); }
+	&.s-limit-red { @include limit($colorLimitRed, "\0000ee"); }
 }

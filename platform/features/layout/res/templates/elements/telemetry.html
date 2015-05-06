@@ -9,12 +9,13 @@
 		{{ngModel.name}}
 	</div>
 	<div
-		class="l-elem l-value"
+		class="l-elem l-value s-value"
 		ng-class="{ 'telem-only': !ngModel.element.titled }"
 		>
+		<!-- ng-class is temporarily hard-coded in next element -->
 	    <span
-		    class="l-value-bg"
-		    ng-class="{ 's-limit': ngModel.value < 0, 's-limit-lwr': 1, 's-limit-red' : 1 }"
+		    class="l-value-bg s-value-bg"
+		    ng-class="{ 's-limit-lwr': ngModel.value < 0, 's-limit-red' : 1 }"
 		    >
 			{{ngModel.value}}
 		</span>
