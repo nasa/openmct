@@ -1,0 +1,25 @@
+// Styles to temporarily hide non-functional elements
+
+/******************************** BROWSE */
+.browse-mode {
+	.browse {
+		&.top-bar {
+			display: none;
+		}
+	}
+
+	.browse-area.holder {
+		// When .browse.top-bar is hidden, set the top of the browse-area holder
+		top: $interiorMargin;
+		> .contents.split-layout {
+			// Don't pad in from top and bottom
+			//top: 0; bottom: 0;
+			.object-browse-bar {
+				.t-btn.key-window {
+					// Hide the Open in New Window button
+					display: none;
+				}
+			}
+		}
+	}
+}

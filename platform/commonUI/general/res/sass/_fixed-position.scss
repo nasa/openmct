@@ -1,17 +1,23 @@
 .t-fixed-position {
 	&.l-fixed-position {
-//		@include test(red);
+		//		@include test(red);
 		position: absolute;
-		top: 0; right: 0; bottom: 0; left: 0;
-		width: auto; height: auto;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		width: auto;
+		height: auto;
 
 		.l-grid-holder {
 			position: relative;
-			height: 100%; width: 100%;
+			height: 100%;
+			width: 100%;
 			.l-grid {
-//				@include test(orange);
+				//				@include test(orange);
 				position: absolute;
-				height: 100%; width: 100%;
+				height: 100%;
+				width: 100%;
 				pointer-events: none;
 				z-index: 0;
 			}
@@ -35,12 +41,13 @@
 		.l-fixed-position-image,
 		.l-fixed-position-text {
 			@include box-sizing(border-box);
-			height: 100%; width: 100%;
+			height: 100%;
+			width: 100%;
 		}
 
 		.l-fixed-position-box {
 		}
-		
+
 		.l-fixed-position-image {
 			background-size: cover;
 			background-repeat: no-repeat;
@@ -49,11 +56,11 @@
 
 		.l-fixed-position-text {
 			@include txtShdwSubtle();
-			border:1px solid transparent;
+			border: 1px solid transparent;
 			font-size: 0.8rem;
 			$p: $interiorMarginSm;
 			&.l-static-text {
-//				overflow: auto;
+				//				overflow: auto;
 				padding: $p;
 			}
 			&.l-telemetry {
@@ -66,12 +73,12 @@
 						left: $p;
 					}
 					&.l-value {
-//                        @include test(blue);
+						//                        @include test(blue);
 						right: $p;
 						left: auto;
 						text-align: right;
 						&.telem-only {
-//							@include test(red);
+							//							@include test(red);
 							left: $p;
 							width: auto;
 						}
@@ -107,8 +114,11 @@
 	}
 
 	.l-fixed-position-item {
-		&:not(.s-selected):hover {
-			border: 1px dotted rgba($colorKey, 0.5);
+		&:not(.s-selected) {
+			border: 1px dotted rgba($colorKey, 0.75);
+			&:hover {
+				border: 1px dotted rgba($colorKey, 1.0);
+			}
 		}
 	}
 }

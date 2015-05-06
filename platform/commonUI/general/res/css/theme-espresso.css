@@ -203,76 +203,55 @@ span {
 .ui-symbol {
   font-family: 'symbolsfont'; }
 
-/* line 13, ../sass/user-environ/_layout.scss */
+/* line 11, ../sass/user-environ/_layout.scss */
+.holder-all {
+  top: 3px;
+  right: 3px;
+  bottom: 3px;
+  left: 3px; }
+
+/* line 21, ../sass/user-environ/_layout.scss */
 .browse-area,
 .edit-area,
+.editor {
+  position: absolute; }
+
+/* line 25, ../sass/user-environ/_layout.scss */
 .editor {
   -webkit-border-radius: 4.5px;
   -moz-border-radius: 4.5px;
   -ms-border-radius: 4.5px;
   -o-border-radius: 4.5px;
-  border-radius: 4.5px;
-  position: absolute; }
+  border-radius: 4.5px; }
 
-/* line 24, ../sass/user-environ/_layout.scss */
-.user-environ .browse-area,
-.user-environ .edit-area,
-.user-environ .editor {
-  top: 45px;
-  right: 5px;
-  bottom: 30px;
-  left: 5px; }
-/* line 33, ../sass/user-environ/_layout.scss */
-.user-environ .edit-area .tool-bar {
-  bottom: auto;
-  height: 35px;
-  line-height: 28px; }
-/* line 38, ../sass/user-environ/_layout.scss */
-.user-environ .edit-area .work-area {
-  top: 45px; }
-/* line 43, ../sass/user-environ/_layout.scss */
-.user-environ .bottom-bar {
-  top: auto;
-  right: 5px;
-  bottom: 5px;
-  left: 5px;
-  height: 20px; }
-  /* line 49, ../sass/user-environ/_layout.scss */
-  .user-environ .bottom-bar .status-holder {
-    right: 110px; }
-  /* line 52, ../sass/user-environ/_layout.scss */
-  .user-environ .bottom-bar .app-logo {
-    left: auto;
-    width: 105px; }
-
-/* line 60, ../sass/user-environ/_layout.scss */
+/* line 29, ../sass/user-environ/_layout.scss */
 .contents {
   box-sizing: border-box;
   position: absolute;
-  top: 5px;
-  right: 5px;
-  bottom: 5px;
-  left: 5px; }
-  /* line 68, ../sass/user-environ/_layout.scss */
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0; }
+  /* line 37, ../sass/user-environ/_layout.scss */
   .contents.nomargin {
     right: 0px;
     bottom: 0px;
     left: 0px; }
 
-/* line 77, ../sass/user-environ/_layout.scss */
+/* line 46, ../sass/user-environ/_layout.scss */
 .bar .icon.major {
   margin-right: 5px; }
-/* line 80, ../sass/user-environ/_layout.scss */
+/* line 49, ../sass/user-environ/_layout.scss */
 .bar.abs, .btn-menu span.bar.l-click-area {
   text-wrap: none;
   white-space: nowrap; }
-  /* line 84, ../sass/user-environ/_layout.scss */
+  /* line 53, ../sass/user-environ/_layout.scss */
   .bar.abs.left, .btn-menu span.bar.left.l-click-area,
   .bar.abs .left,
   .btn-menu span.bar.l-click-area .left {
     width: 45%;
     right: auto; }
-  /* line 89, ../sass/user-environ/_layout.scss */
+  /* line 58, ../sass/user-environ/_layout.scss */
   .bar.abs.right, .btn-menu span.bar.right.l-click-area,
   .bar.abs .right,
   .btn-menu span.bar.l-click-area .right {
@@ -280,17 +259,53 @@ span {
     left: auto;
     right: 0;
     text-align: right; }
-    /* line 94, ../sass/user-environ/_layout.scss */
+    /* line 63, ../sass/user-environ/_layout.scss */
     .bar.abs.right .icon.major, .btn-menu span.bar.right.l-click-area .icon.major,
     .bar.abs .right .icon.major,
     .btn-menu span.bar.l-click-area .right .icon.major {
       margin-left: 15px; }
 
-/* line 104, ../sass/user-environ/_layout.scss */
+/* line 76, ../sass/user-environ/_layout.scss */
+.user-environ .browse-area,
+.user-environ .edit-area,
+.user-environ .editor {
+  top: 45px;
+  right: 5px;
+  bottom: 30px;
+  left: 5px; }
+/* line 85, ../sass/user-environ/_layout.scss */
+.user-environ .browse-area > .contents,
+.user-environ .edit-area > .contents {
+  left: 0;
+  right: 0; }
+/* line 93, ../sass/user-environ/_layout.scss */
+.user-environ .edit-area .tool-bar {
+  bottom: auto;
+  height: 35px;
+  line-height: 28px; }
+/* line 98, ../sass/user-environ/_layout.scss */
+.user-environ .edit-area .work-area {
+  top: 45px; }
+/* line 103, ../sass/user-environ/_layout.scss */
+.user-environ .bottom-bar {
+  top: auto;
+  right: 5px;
+  bottom: 5px;
+  left: 5px;
+  height: 20px; }
+  /* line 109, ../sass/user-environ/_layout.scss */
+  .user-environ .bottom-bar .status-holder {
+    right: 110px; }
+  /* line 112, ../sass/user-environ/_layout.scss */
+  .user-environ .bottom-bar .app-logo {
+    left: auto;
+    width: 105px; }
+
+/* line 119, ../sass/user-environ/_layout.scss */
 .cols {
   overflow: hidden;
   *zoom: 1; }
-  /* line 106, ../sass/user-environ/_layout.scss */
+  /* line 121, ../sass/user-environ/_layout.scss */
   .cols .col {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -301,89 +316,89 @@ span {
     margin-left: 1.5%;
     padding-left: 5px;
     position: relative; }
-    /* line 114, ../sass/user-environ/_layout.scss */
+    /* line 129, ../sass/user-environ/_layout.scss */
     .cols .col:first-child {
       margin-left: 0;
       padding-left: 0; }
-  /* line 121, ../sass/user-environ/_layout.scss */
+  /* line 136, ../sass/user-environ/_layout.scss */
   .cols.cols-2 .col-1 {
     min-width: 250px;
     width: 48.5%; }
-  /* line 127, ../sass/user-environ/_layout.scss */
+  /* line 142, ../sass/user-environ/_layout.scss */
   .cols.cols-2-ff .col-100px {
     width: 100px; }
-  /* line 134, ../sass/user-environ/_layout.scss */
+  /* line 149, ../sass/user-environ/_layout.scss */
   .cols.cols-6 .col-1 {
     min-width: 83.33333px;
     width: 15.16667%; }
-  /* line 140, ../sass/user-environ/_layout.scss */
+  /* line 155, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-1 {
     min-width: 31.25px;
     width: 4.75%; }
-  /* line 143, ../sass/user-environ/_layout.scss */
+  /* line 158, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-2 {
     min-width: 62.5px;
     width: 11%; }
-  /* line 146, ../sass/user-environ/_layout.scss */
+  /* line 161, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-7 {
     min-width: 218.75px;
     width: 42.25%; }
-  /* line 152, ../sass/user-environ/_layout.scss */
+  /* line 167, ../sass/user-environ/_layout.scss */
   .cols.cols-32 .col-2 {
     min-width: 31.25px;
     width: 4.75%; }
-  /* line 155, ../sass/user-environ/_layout.scss */
+  /* line 170, ../sass/user-environ/_layout.scss */
   .cols.cols-32 .col-15 {
     min-width: 234.375px;
     width: 45.375%; }
-  /* line 159, ../sass/user-environ/_layout.scss */
+  /* line 174, ../sass/user-environ/_layout.scss */
   .cols .l-row {
     overflow: hidden;
     *zoom: 1;
     padding: 5px 0; }
 
-/* line 165, ../sass/user-environ/_layout.scss */
+/* line 180, ../sass/user-environ/_layout.scss */
 .pane {
   position: absolute; }
-  /* line 168, ../sass/user-environ/_layout.scss */
+  /* line 183, ../sass/user-environ/_layout.scss */
   .pane.treeview .create-btn-holder {
     bottom: auto;
     height: 35px; }
-  /* line 171, ../sass/user-environ/_layout.scss */
+  /* line 186, ../sass/user-environ/_layout.scss */
   .pane.treeview .tree-holder {
     overflow: auto;
     top: 40px; }
-  /* line 180, ../sass/user-environ/_layout.scss */
+  /* line 195, ../sass/user-environ/_layout.scss */
   .pane.items .object-holder {
     top: 40px; }
-  /* line 185, ../sass/user-environ/_layout.scss */
+  /* line 200, ../sass/user-environ/_layout.scss */
   .pane.edit-main .object-holder {
     top: 0; }
-  /* line 191, ../sass/user-environ/_layout.scss */
+  /* line 206, ../sass/user-environ/_layout.scss */
   .pane .object-holder {
     overflow: auto; }
 
-/* line 199, ../sass/user-environ/_layout.scss */
+/* line 214, ../sass/user-environ/_layout.scss */
 .split-layout.horizontal > .pane {
   margin-top: 5px; }
-  /* line 202, ../sass/user-environ/_layout.scss */
+  /* line 217, ../sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane:first-child {
     margin-top: 0; }
-/* line 209, ../sass/user-environ/_layout.scss */
+/* line 224, ../sass/user-environ/_layout.scss */
 .split-layout.vertical > .pane {
   margin-left: 5px; }
-  /* line 211, ../sass/user-environ/_layout.scss */
+  /* line 226, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane > .holder {
     left: 0;
     right: 0; }
-  /* line 215, ../sass/user-environ/_layout.scss */
+  /* line 230, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane:first-child {
     margin-left: 0; }
-    /* line 217, ../sass/user-environ/_layout.scss */
+    /* line 232, ../sass/user-environ/_layout.scss */
     .split-layout.vertical > .pane:first-child .holder {
       right: 5px; }
 
-/* line 226, ../sass/user-environ/_layout.scss */
+/* line 241, ../sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
 
@@ -396,33 +411,33 @@ span {
   left: 0;
   width: auto;
   height: auto; }
-  /* line 8, ../sass/_fixed-position.scss */
+  /* line 12, ../sass/_fixed-position.scss */
   .t-fixed-position.l-fixed-position .l-grid-holder {
     position: relative;
     height: 100%;
     width: 100%; }
-    /* line 11, ../sass/_fixed-position.scss */
+    /* line 16, ../sass/_fixed-position.scss */
     .t-fixed-position.l-fixed-position .l-grid-holder .l-grid {
       position: absolute;
       height: 100%;
       width: 100%;
       pointer-events: none;
       z-index: 0; }
-/* line 21, ../sass/_fixed-position.scss */
+/* line 27, ../sass/_fixed-position.scss */
 .t-fixed-position .l-fixed-position-item {
   position: absolute;
   border: 1px solid transparent; }
-  /* line 25, ../sass/_fixed-position.scss */
+  /* line 31, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item.s-selected {
     -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
     -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
     box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
     border-color: #0099cc;
     cursor: move; }
-  /* line 30, ../sass/_fixed-position.scss */
+  /* line 36, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item.s-not-selected {
     opacity: 0.8; }
-  /* line 36, ../sass/_fixed-position.scss */
+  /* line 42, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item .l-fixed-position-box,
   .t-fixed-position .l-fixed-position-item .l-fixed-position-image,
   .t-fixed-position .l-fixed-position-item .l-fixed-position-text {
@@ -431,20 +446,20 @@ span {
     box-sizing: border-box;
     height: 100%;
     width: 100%; }
-  /* line 44, ../sass/_fixed-position.scss */
+  /* line 51, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item .l-fixed-position-image {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center; }
-  /* line 50, ../sass/_fixed-position.scss */
+  /* line 57, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item .l-fixed-position-text {
     text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px;
     border: 1px solid transparent;
     font-size: 0.8rem; }
-    /* line 55, ../sass/_fixed-position.scss */
+    /* line 62, ../sass/_fixed-position.scss */
     .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-static-text {
       padding: 3px; }
-    /* line 60, ../sass/_fixed-position.scss */
+    /* line 67, ../sass/_fixed-position.scss */
     .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem {
       overflow: hidden;
       position: absolute;
@@ -458,43 +473,46 @@ span {
       -moz-box-sizing: border-box;
       box-sizing: border-box;
       width: 50%; }
-      /* line 64, ../sass/_fixed-position.scss */
+      /* line 71, ../sass/_fixed-position.scss */
       .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-title {
         right: auto;
         left: 3px; }
-      /* line 68, ../sass/_fixed-position.scss */
+      /* line 75, ../sass/_fixed-position.scss */
       .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-value {
         right: 3px;
         left: auto;
         text-align: right; }
-        /* line 73, ../sass/_fixed-position.scss */
+        /* line 80, ../sass/_fixed-position.scss */
         .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-value.telem-only {
           left: 3px;
           width: auto; }
-/* line 84, ../sass/_fixed-position.scss */
+/* line 91, ../sass/_fixed-position.scss */
 .t-fixed-position .l-fixed-position-item-handle {
   background: rgba(0, 153, 204, 0.5);
   cursor: crosshair;
   border: 1px solid #0099cc;
   position: absolute; }
 
-/* line 98, ../sass/_fixed-position.scss */
+/* line 105, ../sass/_fixed-position.scss */
 .edit-mode .t-fixed-position.l-fixed-position .l-grid-holder .l-grid.l-grid-x {
   background-image: -webkit-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: -moz-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: -o-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-repeat: repeat-x; }
-/* line 102, ../sass/_fixed-position.scss */
+/* line 109, ../sass/_fixed-position.scss */
 .edit-mode .t-fixed-position.l-fixed-position .l-grid-holder .l-grid.l-grid-y {
   background-image: -webkit-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: -moz-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: -o-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-repeat: repeat-y; }
-/* line 110, ../sass/_fixed-position.scss */
-.edit-mode .t-fixed-position .l-fixed-position-item:not(.s-selected):hover {
-  border: 1px dotted rgba(0, 153, 204, 0.5); }
+/* line 117, ../sass/_fixed-position.scss */
+.edit-mode .t-fixed-position .l-fixed-position-item:not(.s-selected) {
+  border: 1px dotted rgba(0, 153, 204, 0.75); }
+  /* line 119, ../sass/_fixed-position.scss */
+  .edit-mode .t-fixed-position .l-fixed-position-item:not(.s-selected):hover {
+    border: 1px dotted #0099cc; }
 
 /* line 5, ../sass/_about.scss */
 .l-about.abs, .btn-menu span.l-about.l-click-area {
@@ -2573,6 +2591,10 @@ input[type="text"] {
     margin-left: 10px; }
 /* line 53, ../sass/overlay/_overlay.scss */
 .overlay .contents.l-dialog {
+  top: 5px;
+  right: 5px;
+  bottom: 5px;
+  left: 5px;
   overflow: auto; }
 
 /* line 4, ../sass/user-environ/_frame.scss */
@@ -2589,8 +2611,14 @@ input[type="text"] {
 /* line 18, ../sass/user-environ/_frame.scss */
 .frame > .object-holder.abs, .btn-menu .frame > span.object-holder.l-click-area {
   top: 23px; }
+/* line 21, ../sass/user-environ/_frame.scss */
+.frame .contents {
+  top: 5px;
+  right: 5px;
+  bottom: 5px;
+  left: 5px; }
 
-/* line 24, ../sass/user-environ/_frame.scss */
+/* line 31, ../sass/user-environ/_frame.scss */
 .edit-main .frame.child-frame.panel:hover {
   border-color: #0099cc;
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
@@ -2602,27 +2630,28 @@ input[type="text"] {
   line-height: 35px; }
   /* line 7, ../sass/user-environ/_top-bar.scss */
   .top-bar.browse, .top-bar.edit {
+    border-bottom: 1px solid #4d4d4d;
     top: 5px;
     right: 5px;
     bottom: auto;
     left: 5px;
     height: 35px; }
-  /* line 15, ../sass/user-environ/_top-bar.scss */
+  /* line 16, ../sass/user-environ/_top-bar.scss */
   .top-bar .title {
     color: #fff; }
-  /* line 20, ../sass/user-environ/_top-bar.scss */
+  /* line 21, ../sass/user-environ/_top-bar.scss */
   .top-bar .buttons-main {
     font-size: 0.8em;
     left: auto;
     text-align: right; }
-    /* line 25, ../sass/user-environ/_top-bar.scss */
+    /* line 26, ../sass/user-environ/_top-bar.scss */
     .top-bar .buttons-main .btn {
       margin-left: 5px; }
 
-/* line 33, ../sass/user-environ/_top-bar.scss */
+/* line 34, ../sass/user-environ/_top-bar.scss */
 .edit-mode .top-bar .buttons-main {
   white-space: nowrap; }
-  /* line 37, ../sass/user-environ/_top-bar.scss */
+  /* line 38, ../sass/user-environ/_top-bar.scss */
   .edit-mode .top-bar .buttons-main.abs, .edit-mode .top-bar .btn-menu span.buttons-main.l-click-area, .btn-menu .edit-mode .top-bar span.buttons-main.l-click-area {
     bottom: auto;
     left: auto; }
@@ -3104,3 +3133,14 @@ input[type="text"] {
   display: block;
   height: 100%;
   width: 100%; }
+
+/******************************** BROWSE */
+/* line 6, ../sass/_hide-non-functional.scss */
+.browse-mode .browse.top-bar {
+  display: none; }
+/* line 11, ../sass/_hide-non-functional.scss */
+.browse-mode .browse-area.holder {
+  top: 5px; }
+  /* line 18, ../sass/_hide-non-functional.scss */
+  .browse-mode .browse-area.holder > .contents.split-layout .object-browse-bar .t-btn.key-window {
+    display: none; }
