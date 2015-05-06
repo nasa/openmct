@@ -144,6 +144,39 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 //			}
 //		}
 	}
+    
+    .l-limit {
+//        @include linearGlow(0,#66cc66);
+//        @include test();
+        $cLimit0: #cc9900;
+        $cLimit1: #cc0000;
+        $h: 30px;
+        position: absolute;
+        top: auto; left: 0; right: 0;
+        height: $h; width: auto;
+        &.s-limit-upr {
+//            border-top: 1px solid;
+            &.s-limit-0 {
+//                border-color: $cLimit0;
+                @include linearGlow(0deg,$cLimit0);
+            }
+            &.s-limit-1 {
+//                border-color: $cLimit1;
+                @include linearGlow(0deg,$cLimit1);
+            }
+        }
+        &.s-limit-lwr {
+//            border-bottom: 1px solid;
+            &.s-limit-0 {
+//                border-color: $cLimit0;
+                @include linearGlow(180deg,$cLimit0);
+            }
+            &.s-limit-1 {
+//                border-color: $cLimit1;
+                @include linearGlow(180deg,$cLimit1);
+            }
+        }
+    }
 }
 .gl-plot-legend,
 .legend {
