@@ -132,16 +132,16 @@
     z-index: 0; }
     /* line 158, ../sass/plots/_plots-main.scss */
     .gl-plot .l-limit.s-limit-upr.s-limit-yellow {
-      background: rgba(204, 153, 0, 0.2); }
+      background: rgba(157, 117, 0, 0.2); }
     /* line 161, ../sass/plots/_plots-main.scss */
     .gl-plot .l-limit.s-limit-upr.s-limit-red {
-      background: rgba(204, 0, 0, 0.2); }
+      background: rgba(170, 0, 0, 0.2); }
     /* line 167, ../sass/plots/_plots-main.scss */
     .gl-plot .l-limit.s-limit-lwr.s-limit-yellow {
-      background: rgba(204, 153, 0, 0.2); }
+      background: rgba(157, 117, 0, 0.2); }
     /* line 170, ../sass/plots/_plots-main.scss */
     .gl-plot .l-limit.s-limit-lwr.s-limit-red {
-      background: rgba(204, 0, 0, 0.2); }
+      background: rgba(170, 0, 0, 0.2); }
   /* line 176, ../sass/plots/_plots-main.scss */
   .gl-plot .l-oob-data {
     -moz-animation: pulse 2s infinite;

@@ -1,3 +1,4 @@
+@charset "UTF-8";
 /* CONSTANTS */
 /* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
@@ -708,44 +709,48 @@ span {
   line-height: 1.695rem;
   position: absolute; }
 
-/* line 1, ../sass/_limits.scss */
-.s-limit {
+/* line 9, ../sass/_limits.scss */
+.s-limit-upr,
+.s-limit-lwr {
   white-space: nowrap; }
-  /* line 5, ../sass/_limits.scss */
-  .s-limit:before {
+  /* line 14, ../sass/_limits.scss */
+  .s-limit-upr:before,
+  .s-limit-lwr:before {
     display: inline-block;
     font-family: symbolsfont;
     font-size: 0.8em;
     margin-right: 3px;
     vertical-align: middle; }
-  /* line 14, ../sass/_limits.scss */
-  .s-limit.s-limit-upr.s-limit-yellow {
-    background: rgba(204, 153, 0, 0.5); }
-    /* line 16, ../sass/_limits.scss */
-    .s-limit.s-limit-upr.s-limit-yellow:before {
-      color: #ffd966;
-      content: "\0000ed"; }
-  /* line 21, ../sass/_limits.scss */
-  .s-limit.s-limit-upr.s-limit-red {
-    background: rgba(204, 0, 0, 0.5); }
-    /* line 23, ../sass/_limits.scss */
-    .s-limit.s-limit-upr.s-limit-red:before {
-      color: #ff6666;
-      content: "\0000eb"; }
-  /* line 30, ../sass/_limits.scss */
-  .s-limit.s-limit-lwr.s-limit-yellow {
-    background: rgba(204, 153, 0, 0.5); }
-    /* line 32, ../sass/_limits.scss */
-    .s-limit.s-limit-lwr.s-limit-yellow:before {
-      color: #ffd966;
-      content: "\0000ec"; }
-  /* line 37, ../sass/_limits.scss */
-  .s-limit.s-limit-lwr.s-limit-red {
-    background: rgba(204, 0, 0, 0.5); }
-    /* line 39, ../sass/_limits.scss */
-    .s-limit.s-limit-lwr.s-limit-red:before {
-      color: #ff6666;
-      content: "\0000ee"; }
+
+/* line 24, ../sass/_limits.scss */
+.s-limit-upr.s-limit-yellow {
+  background: #9d7500; }
+  /* line 3, ../sass/_limits.scss */
+  .s-limit-upr.s-limit-yellow:before {
+    color: #ffcc37;
+    content: "í"; }
+/* line 25, ../sass/_limits.scss */
+.s-limit-upr.s-limit-red {
+  background: #aa0000; }
+  /* line 3, ../sass/_limits.scss */
+  .s-limit-upr.s-limit-red:before {
+    color: #ff4444;
+    content: "ë"; }
+
+/* line 29, ../sass/_limits.scss */
+.s-limit-lwr.s-limit-yellow {
+  background: #9d7500; }
+  /* line 3, ../sass/_limits.scss */
+  .s-limit-lwr.s-limit-yellow:before {
+    color: #ffcc37;
+    content: "ì"; }
+/* line 30, ../sass/_limits.scss */
+.s-limit-lwr.s-limit-red {
+  background: #aa0000; }
+  /* line 3, ../sass/_limits.scss */
+  .s-limit-lwr.s-limit-red:before {
+    color: #ff4444;
+    content: "î"; }
 
 /* line 1, ../sass/lists/_tabular.scss */
 .w1 {
@@ -827,10 +832,21 @@ span {
     /* line 72, ../sass/lists/_tabular.scss */
     .tabular .tr .td {
       border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
       padding: 2px 5px; }
-      /* line 75, ../sass/lists/_tabular.scss */
+      /* line 76, ../sass/lists/_tabular.scss */
       .tabular .tr .td.numeric {
         text-align: right; }
+      /* line 79, ../sass/lists/_tabular.scss */
+      .tabular .tr .td.s-cell-type-value {
+        text-align: right; }
+        /* line 81, ../sass/lists/_tabular.scss */
+        .tabular .tr .td.s-cell-type-value .l-cell-contents {
+          -moz-border-radius: 2px;
+          -webkit-border-radius: 2px;
+          border-radius: 2px;
+          padding-left: 5px;
+          padding-right: 5px; }
 
 /*********************************** TYPE STYLES */
 /* line 4, ../sass/controls/_buttons.scss */
@@ -2407,16 +2423,16 @@ input[type="text"] {
     z-index: 0; }
     /* line 158, ../sass/plots/_plots-main.scss */
     .gl-plot .l-limit.s-limit-upr.s-limit-yellow {
-      background: rgba(204, 153, 0, 0.2); }
+      background: rgba(157, 117, 0, 0.2); }
     /* line 161, ../sass/plots/_plots-main.scss */
     .gl-plot .l-limit.s-limit-upr.s-limit-red {
-      background: rgba(204, 0, 0, 0.2); }
+      background: rgba(170, 0, 0, 0.2); }
     /* line 167, ../sass/plots/_plots-main.scss */
     .gl-plot .l-limit.s-limit-lwr.s-limit-yellow {
-      background: rgba(204, 153, 0, 0.2); }
+      background: rgba(157, 117, 0, 0.2); }
     /* line 170, ../sass/plots/_plots-main.scss */
     .gl-plot .l-limit.s-limit-lwr.s-limit-red {
-      background: rgba(204, 0, 0, 0.2); }
+      background: rgba(170, 0, 0, 0.2); }
   /* line 176, ../sass/plots/_plots-main.scss */
   .gl-plot .l-oob-data {
     -moz-animation: pulse 2s infinite;
