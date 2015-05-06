@@ -131,7 +131,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 		overflow-y: auto;
 	}
 
-	/****************************** Limits */
+	/****************************** Limits and Out-of-Bounds data */
 
 	.l-limit,
 	.l-oob-data {
@@ -221,7 +221,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 .gl-plot-legend {
 	.plot-legend-item {
 		//@include test();
-		@include border-radius($controlCr);
+		@include border-radius($smallCr);
 		color: #fff;
 		line-height: 1.5em;
 		padding: 0px 5px;

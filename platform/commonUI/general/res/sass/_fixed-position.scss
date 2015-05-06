@@ -52,21 +52,22 @@
 			border:1px solid transparent;
 			font-size: 0.8rem;
 			$p: $interiorMarginSm;
+			line-height: 100%;
 			&.l-static-text {
-//				overflow: auto;
 				padding: $p;
 			}
 			&.l-telemetry {
 				.l-elem {
-					@include absPosDefault($p);
+					@include absPosDefault($p, false);
 					@include box-sizing(border-box);
 					width: 50%;
+					//padding: 0 $interiorMarginSm;
 					&.l-title {
 						right: auto;
 						left: $p;
 					}
 					&.l-value {
-//                        @include test(blue);
+                        //@include test(green);
 						right: $p;
 						left: auto;
 						text-align: right;
@@ -74,6 +75,10 @@
 //							@include test(red);
 							left: $p;
 							width: auto;
+						}
+						.l-value-bg {
+							@include border-radius($smallCr);
+							padding: 0 $interiorMarginSm;
 						}
 					}
 				}
@@ -83,7 +88,6 @@
 
 	.l-fixed-position-item-handle {
 		$brd: 1px solid $colorKey;
-		//		@include border-radius($controlCr);
 		background: rgba($colorKey, 0.5);
 		cursor: crosshair;
 		border: $brd;

@@ -2,16 +2,21 @@
 	class="l-fixed-position-text l-telemetry"
 	ng-style="{ background: ngModel.fill(), 'border-color': ngModel.stroke(), color: ngModel.color() }"
 	>
-    <div
-	    class="l-elem l-title"
-         ng-show="ngModel.element.titled"
-	    >
-        {{ngModel.name}}
-    </div>
-    <div
-	    class="l-elem l-value"
-	    ng-class="{ 'telem-only': !ngModel.element.titled }"
-	    >
-        {{ngModel.value}}
-    </div>
+	<div
+		class="l-elem l-title"
+		ng-show="ngModel.element.titled"
+		>
+		{{ngModel.name}}
+	</div>
+	<div
+		class="l-elem l-value"
+		ng-class="{ 'telem-only': !ngModel.element.titled }"
+		>
+	    <span
+		    class="l-value-bg"
+		    ng-class="{ 's-limit': ngModel.value < 0, 's-limit-lwr': 1, 's-limit-red' : 1 }"
+		    >
+			{{ngModel.value}}
+		</span>
+	</div>
 </div>

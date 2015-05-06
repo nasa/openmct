@@ -1,12 +1,14 @@
 .s-limit {
-	$a: 0.7;
+	$a: 0.5;
 	$l: 30%;
+	white-space: nowrap;
 	&:before {
 		display: inline-block;
 		font-family: symbolsfont;
-		line-height: 1.1em;
+		font-size: 0.8em;
+		//line-height: 1.1em;
 		margin-right: $interiorMarginSm;
-		vertical-align: bottom;
+		vertical-align: middle;
 	}
 	&.s-limit-upr {
 		&.s-limit-yellow {
