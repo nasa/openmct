@@ -28,7 +28,7 @@ $colorGridLines: rgba(#fff, 0.05);
 $colorLimitYellow: #9d7500;
 $colorLimitRed: #aa0000;
 $colorTelemFresh: #fff;
-$colorTelemStale: #aaa;
+$colorTelemStale: #888;
 $styleTelemState: italic;
 
 // Ratios
@@ -71,7 +71,7 @@ $colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
 $colorItemTreeVCHover: $colorAlt1;
 
 //Tabular
-$tabularHeaderH: 20px;
+$tabularHeaderH: 18px;
 $tabularTdPadLR: $itemPadLR;
 $tabularTdPadTB: 2px;
 $tabularColorBorder: rgba(white, 0.1);

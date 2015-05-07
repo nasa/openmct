@@ -144,9 +144,6 @@
       background: rgba(170, 0, 0, 0.2); }
   /* line 176, ../sass/plots/_plots-main.scss */
   .gl-plot .l-oob-data {
-    -moz-animation: pulse 2s infinite;
-    -webkit-animation: pulse 2s infinite;
-    animation: pulse 2s infinite;
     overflow: hidden;
     position: absolute;
     top: 0px;
@@ -158,7 +155,7 @@
     pointer-events: none;
     height: 10px;
     z-index: 1; }
-    /* line 185, ../sass/plots/_plots-main.scss */
+    /* line 184, ../sass/plots/_plots-main.scss */
     .gl-plot .l-oob-data.l-oob-data-up {
       top: 0;
       bottom: auto;
@@ -167,7 +164,7 @@
       background-image: -moz-linear-gradient(90deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%);
       background-image: -webkit-linear-gradient(90deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%);
       background-image: linear-gradient(0deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%); }
-    /* line 190, ../sass/plots/_plots-main.scss */
+    /* line 189, ../sass/plots/_plots-main.scss */
     .gl-plot .l-oob-data.l-oob-data-dwn {
       bottom: 0;
       top: auto;
@@ -177,20 +174,20 @@
       background-image: -webkit-linear-gradient(270deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%);
       background-image: linear-gradient(180deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%); }
 
-/* line 200, ../sass/plots/_plots-main.scss */
+/* line 199, ../sass/plots/_plots-main.scss */
 .gl-plot-legend .plot-legend-item,
 .gl-plot-legend .legend-item,
 .legend .plot-legend-item,
 .legend .legend-item {
   display: inline-block;
   margin-right: 10px; }
-  /* line 204, ../sass/plots/_plots-main.scss */
+  /* line 203, ../sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item span,
   .gl-plot-legend .legend-item span,
   .legend .plot-legend-item span,
   .legend .legend-item span {
     vertical-align: middle; }
-  /* line 207, ../sass/plots/_plots-main.scss */
+  /* line 206, ../sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item .plot-color-swatch,
   .gl-plot-legend .plot-legend-item .color-swatch,
   .gl-plot-legend .legend-item .plot-color-swatch,
@@ -206,7 +203,7 @@
     height: 8px;
     width: 8px; }
 
-/* line 222, ../sass/plots/_plots-main.scss */
+/* line 219, ../sass/plots/_plots-main.scss */
 .gl-plot-legend .plot-legend-item {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -214,22 +211,22 @@
   color: #fff;
   line-height: 1.5em;
   padding: 0px 5px; }
-  /* line 228, ../sass/plots/_plots-main.scss */
+  /* line 225, ../sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item .plot-color-swatch {
     border: 1px solid #333;
     height: 9px;
     width: 9px; }
 
-/* line 236, ../sass/plots/_plots-main.scss */
+/* line 233, ../sass/plots/_plots-main.scss */
 .tick {
   position: absolute;
   border: 0 rgba(255, 255, 255, 0.3) solid; }
-  /* line 239, ../sass/plots/_plots-main.scss */
+  /* line 236, ../sass/plots/_plots-main.scss */
   .tick.tick-x {
     border-right-width: 1px;
     height: 100%; }
 
-/* line 245, ../sass/plots/_plots-main.scss */
+/* line 242, ../sass/plots/_plots-main.scss */
 .gl-plot-tick,
 .tick-label {
   font-size: 0.7rem;
@@ -237,7 +234,7 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis; }
-  /* line 253, ../sass/plots/_plots-main.scss */
+  /* line 250, ../sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-x-tick-label, .gl-plot-tick.tick-label-x,
   .tick-label.gl-plot-x-tick-label,
   .tick-label.tick-label-x {
@@ -248,7 +245,7 @@
     width: 20%;
     margin-left: -10%;
     text-align: center; }
-  /* line 263, ../sass/plots/_plots-main.scss */
+  /* line 260, ../sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-y-tick-label, .gl-plot-tick.tick-label-y,
   .tick-label.gl-plot-y-tick-label,
   .tick-label.tick-label-y {
@@ -258,18 +255,18 @@
     margin-bottom: -0.5em;
     text-align: right; }
 
-/* line 275, ../sass/plots/_plots-main.scss */
+/* line 272, ../sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-x-tick-label {
   top: 5px; }
-/* line 278, ../sass/plots/_plots-main.scss */
+/* line 275, ../sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-y-tick-label {
   right: 5px;
   left: 5px; }
 
-/* line 285, ../sass/plots/_plots-main.scss */
+/* line 282, ../sass/plots/_plots-main.scss */
 .tick-label.tick-label-x {
   top: 0; }
-/* line 288, ../sass/plots/_plots-main.scss */
+/* line 285, ../sass/plots/_plots-main.scss */
 .tick-label.tick-label-y {
   right: 0;
   left: 0; }

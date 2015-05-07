@@ -89,6 +89,39 @@ a.disabled {
 .test {
   background-color: rgba(255, 204, 0, 0.2); }
 
+@-moz-keyframes pulse {
+  0% {
+    opacity: 0.2; }
+  100% {
+    opacity: 1; } }
+@-webkit-keyframes pulse {
+  0% {
+    opacity: 0.2; }
+  100% {
+    opacity: 1; } }
+@keyframes pulse {
+  0% {
+    opacity: 0.2; }
+  100% {
+    opacity: 1; } }
+/* line 38, ../sass/_effects.scss */
+.pulse {
+  -moz-animation-name: pulse;
+  -webkit-animation-name: pulse;
+  animation-name: pulse;
+  -moz-animation-duration: 1000ms;
+  -webkit-animation-duration: 1000ms;
+  animation-duration: 1000ms;
+  -moz-animation-direction: alternate;
+  -webkit-animation-direction: alternate;
+  animation-direction: alternate;
+  -moz-animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+  -moz-animation-timing-function: ease-in-out;
+  -webkit-animation-timing-function: ease-in-out;
+  animation-timing-function: ease-in-out; }
+
 /* line 1, ../sass/_global.scss */
 a {
   color: #ccc;
@@ -709,27 +742,28 @@ span {
   line-height: 1.695rem;
   position: absolute; }
 
-/* line 9, ../sass/_limits.scss */
+/* line 10, ../sass/_limits.scss */
 .s-limit-upr,
 .s-limit-lwr {
   white-space: nowrap; }
-  /* line 14, ../sass/_limits.scss */
+  /* line 15, ../sass/_limits.scss */
   .s-limit-upr:before,
   .s-limit-lwr:before {
     display: inline-block;
     font-family: symbolsfont;
-    font-size: 0.8em;
+    font-size: 0.85em;
+    font-style: normal !important;
     margin-right: 3px;
     vertical-align: middle; }
 
-/* line 24, ../sass/_limits.scss */
+/* line 26, ../sass/_limits.scss */
 .s-limit-upr.s-limit-yellow {
   background: #9d7500; }
   /* line 3, ../sass/_limits.scss */
   .s-limit-upr.s-limit-yellow:before {
     color: #ffcc37;
     content: "í"; }
-/* line 25, ../sass/_limits.scss */
+/* line 27, ../sass/_limits.scss */
 .s-limit-upr.s-limit-red {
   background: #aa0000; }
   /* line 3, ../sass/_limits.scss */
@@ -737,14 +771,14 @@ span {
     color: #ff4444;
     content: "ë"; }
 
-/* line 29, ../sass/_limits.scss */
+/* line 31, ../sass/_limits.scss */
 .s-limit-lwr.s-limit-yellow {
   background: #9d7500; }
   /* line 3, ../sass/_limits.scss */
   .s-limit-lwr.s-limit-yellow:before {
     color: #ffcc37;
     content: "ì"; }
-/* line 30, ../sass/_limits.scss */
+/* line 32, ../sass/_limits.scss */
 .s-limit-lwr.s-limit-red {
   background: #aa0000; }
   /* line 3, ../sass/_limits.scss */
@@ -752,15 +786,19 @@ span {
     color: #ff4444;
     content: "î"; }
 
-/* line 1, ../sass/_data-status.scss */
+/* line 6, ../sass/_data-status.scss */
 .s-stale {
-  opacity: 0.5 !important;
-  font-style: italic !important; }
+  color: rgba(255, 255, 255, 0.5) !important;
+  font-style: italic; }
+  /* line 8, ../sass/_data-status.scss */
+  .s-stale .td {
+    color: rgba(255, 255, 255, 0.5) !important;
+    font-style: italic; }
 
 /* line 1, ../sass/lists/_tabular.scss */
 .w1 {
   background: #4d4d4d;
-  padding-top: 20px;
+  padding-top: 18px;
   position: relative; }
 
 /* line 6, ../sass/lists/_tabular.scss */
@@ -821,8 +859,8 @@ span {
           display: block;
           font-style: normal;
           font-weight: bold;
-          height: 20px;
-          line-height: 20px;
+          height: 18px;
+          line-height: 18px;
           margin-left: -5px;
           padding: 0 5px;
           position: absolute;
@@ -2440,9 +2478,6 @@ input[type="text"] {
       background: rgba(170, 0, 0, 0.2); }
   /* line 176, ../sass/plots/_plots-main.scss */
   .gl-plot .l-oob-data {
-    -moz-animation: pulse 2s infinite;
-    -webkit-animation: pulse 2s infinite;
-    animation: pulse 2s infinite;
     overflow: hidden;
     position: absolute;
     top: 0px;
@@ -2454,7 +2489,7 @@ input[type="text"] {
     pointer-events: none;
     height: 10px;
     z-index: 1; }
-    /* line 185, ../sass/plots/_plots-main.scss */
+    /* line 184, ../sass/plots/_plots-main.scss */
     .gl-plot .l-oob-data.l-oob-data-up {
       top: 0;
       bottom: auto;
@@ -2463,7 +2498,7 @@ input[type="text"] {
       background-image: -moz-linear-gradient(90deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%);
       background-image: -webkit-linear-gradient(90deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%);
       background-image: linear-gradient(0deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%); }
-    /* line 190, ../sass/plots/_plots-main.scss */
+    /* line 189, ../sass/plots/_plots-main.scss */
     .gl-plot .l-oob-data.l-oob-data-dwn {
       bottom: 0;
       top: auto;
@@ -2473,20 +2508,20 @@ input[type="text"] {
       background-image: -webkit-linear-gradient(270deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%);
       background-image: linear-gradient(180deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%); }
 
-/* line 200, ../sass/plots/_plots-main.scss */
+/* line 199, ../sass/plots/_plots-main.scss */
 .gl-plot-legend .plot-legend-item,
 .gl-plot-legend .legend-item,
 .legend .plot-legend-item,
 .legend .legend-item {
   display: inline-block;
   margin-right: 10px; }
-  /* line 204, ../sass/plots/_plots-main.scss */
+  /* line 203, ../sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item span,
   .gl-plot-legend .legend-item span,
   .legend .plot-legend-item span,
   .legend .legend-item span {
     vertical-align: middle; }
-  /* line 207, ../sass/plots/_plots-main.scss */
+  /* line 206, ../sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item .plot-color-swatch,
   .gl-plot-legend .plot-legend-item .color-swatch,
   .gl-plot-legend .legend-item .plot-color-swatch,
@@ -2502,7 +2537,7 @@ input[type="text"] {
     height: 8px;
     width: 8px; }
 
-/* line 222, ../sass/plots/_plots-main.scss */
+/* line 219, ../sass/plots/_plots-main.scss */
 .gl-plot-legend .plot-legend-item {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -2510,22 +2545,22 @@ input[type="text"] {
   color: #fff;
   line-height: 1.5em;
   padding: 0px 5px; }
-  /* line 228, ../sass/plots/_plots-main.scss */
+  /* line 225, ../sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item .plot-color-swatch {
     border: 1px solid #333;
     height: 9px;
     width: 9px; }
 
-/* line 236, ../sass/plots/_plots-main.scss */
+/* line 233, ../sass/plots/_plots-main.scss */
 .tick {
   position: absolute;
   border: 0 rgba(255, 255, 255, 0.3) solid; }
-  /* line 239, ../sass/plots/_plots-main.scss */
+  /* line 236, ../sass/plots/_plots-main.scss */
   .tick.tick-x {
     border-right-width: 1px;
     height: 100%; }
 
-/* line 245, ../sass/plots/_plots-main.scss */
+/* line 242, ../sass/plots/_plots-main.scss */
 .gl-plot-tick,
 .tick-label {
   font-size: 0.7rem;
@@ -2533,7 +2568,7 @@ input[type="text"] {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis; }
-  /* line 253, ../sass/plots/_plots-main.scss */
+  /* line 250, ../sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-x-tick-label, .gl-plot-tick.tick-label-x,
   .tick-label.gl-plot-x-tick-label,
   .tick-label.tick-label-x {
@@ -2544,7 +2579,7 @@ input[type="text"] {
     width: 20%;
     margin-left: -10%;
     text-align: center; }
-  /* line 263, ../sass/plots/_plots-main.scss */
+  /* line 260, ../sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-y-tick-label, .gl-plot-tick.tick-label-y,
   .tick-label.gl-plot-y-tick-label,
   .tick-label.tick-label-y {
@@ -2554,18 +2589,18 @@ input[type="text"] {
     margin-bottom: -0.5em;
     text-align: right; }
 
-/* line 275, ../sass/plots/_plots-main.scss */
+/* line 272, ../sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-x-tick-label {
   top: 5px; }
-/* line 278, ../sass/plots/_plots-main.scss */
+/* line 275, ../sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-y-tick-label {
   right: 5px;
   left: 5px; }
 
-/* line 285, ../sass/plots/_plots-main.scss */
+/* line 282, ../sass/plots/_plots-main.scss */
 .tick-label.tick-label-x {
   top: 0; }
-/* line 288, ../sass/plots/_plots-main.scss */
+/* line 285, ../sass/plots/_plots-main.scss */
 .tick-label.tick-label-y {
   right: 0;
   left: 0; }

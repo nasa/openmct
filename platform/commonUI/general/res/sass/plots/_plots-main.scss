@@ -177,7 +177,6 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 		$c: #7748d6;
 		$a: 0.5;
 		$h: 10px;
-		@include animation(pulse 2s infinite);
 		@include absPosDefault();
 		pointer-events: none;
 		height: $h;
@@ -212,9 +211,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 			width: $swatchD;
 			//margin-right: $interiorMarginSm;
 		}
-		.title-label {
-
-		}
+		.title-label {}
 	}
 }
 

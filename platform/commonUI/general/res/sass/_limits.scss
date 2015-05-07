@@ -1,6 +1,7 @@
 @mixin limit($c, $glyph) {
 	background: $c;
 	&:before {
+		//@include pulse(500ms);
 		color: lighten($c, 30%);
 		content: $glyph;
 	}
@@ -14,7 +15,8 @@
 	&:before {
 		display: inline-block;
 		font-family: symbolsfont;
-		font-size: 0.8em;
+		font-size: 0.85em;
+		font-style: normal !important;
 		margin-right: $interiorMarginSm;
 		vertical-align: middle;
 	}

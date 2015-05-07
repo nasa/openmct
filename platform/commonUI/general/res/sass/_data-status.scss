@@ -1,5 +1,12 @@
-.s-stale {
-	//color: $colorTelemStale !important;
-	opacity: 0.5 !important;
-	font-style: italic !important;
+@mixin s-stale($a: 0.5) {
+	color: rgba($colorTelemFresh, $a) !important;
+	font-style: italic;
 }
+
+.s-stale {
+	@include s-stale();
+	.td {
+		@include s-stale();
+	}
+}
+
