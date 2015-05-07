@@ -234,8 +234,6 @@
 	background-color: rgba($c, $a);
 }
 
-
-
 @mixin testObj($w: 2000px, $h: 1000px, $c: black, $a: 0.1) {
     &:after {
         @include box-sizing(border-box);
@@ -251,4 +249,9 @@
         transform: scaleX(1) scaleY(1) scaleZ(1);
         transform-origin: 50% 50% 0;
     }
+}
+
+@mixin s-stale($a: 0.5) {
+	color: rgba($colorTelemFresh, $a) !important;
+	font-style: italic;
 }

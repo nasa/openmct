@@ -51,17 +51,19 @@
 			@include txtShdwSubtle();
 			border:1px solid transparent;
 			font-size: 0.8rem;
-			$p: $interiorMarginSm;
+			$p: 1px; //$interiorMarginSm;
 			line-height: 100%;
 			&.l-static-text {
+//				overflow: auto;
 				padding: $p;
 			}
 			&.l-telemetry {
 				.l-elem {
-					@include absPosDefault($p, false);
+					//@include absPosDefault($p);
+					@include absPosDefault(0);
 					@include box-sizing(border-box);
+					padding: 2px;
 					width: 50%;
-					//padding: 0 $interiorMarginSm;
 					&.l-title {
 						right: auto;
 						left: $p;
@@ -78,7 +80,7 @@
 						}
 						.l-value-bg {
 							@include border-radius($smallCr);
-							padding: 0 $interiorMarginSm;
+							padding: 0 4px;
 						}
 					}
 				}
@@ -88,6 +90,7 @@
 
 	.l-fixed-position-item-handle {
 		$brd: 1px solid $colorKey;
+		//		@include border-radius($controlCr);
 		background: rgba($colorKey, 0.5);
 		cursor: crosshair;
 		border: $brd;
@@ -111,8 +114,11 @@
 	}
 
 	.l-fixed-position-item {
-		&:not(.s-selected):hover {
-			border: 1px dotted rgba($colorKey, 0.5);
+		&:not(.s-selected) {
+			border: 1px dotted rgba($colorKey, 0.75);
+			&:hover {
+				border: 1px dotted rgba($colorKey, 1.0);
+			}
 		}
 	}
 }

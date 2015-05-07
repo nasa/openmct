@@ -1,8 +1,3 @@
-@mixin s-stale($a: 0.5) {
-	color: rgba($colorTelemFresh, $a) !important;
-	font-style: italic;
-}
-
 .s-stale {
 	@include s-stale();
 	.td {
