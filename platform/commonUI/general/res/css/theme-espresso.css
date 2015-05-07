@@ -752,6 +752,11 @@ span {
     color: #ff4444;
     content: "î"; }
 
+/* line 1, ../sass/_data-status.scss */
+.s-stale {
+  opacity: 0.5 !important;
+  font-style: italic !important; }
+
 /* line 1, ../sass/lists/_tabular.scss */
 .w1 {
   background: #4d4d4d;

@@ -12,7 +12,13 @@
                 </div>
             </div>
 
-            <div class="tr" ng-repeat="row in rows">
+	        <!-- ng-class is temporarily hard-coded in next element -->
+            <div
+	            class="tr"
+	            ng-repeat="row in rows"
+                ng-class="{ 's-stale': $index%3==0 }"
+	            >
+	            <!-- ng-class is temporarily hard-coded in next element -->
                 <div
 	                class="td"
 	                ng-class="{ 's-cell-type-value': $index > 1 }"
@@ -21,7 +27,7 @@
 	                <!-- ng-class is temporarily hard-coded in next element -->
 	                <span
 		                class="l-cell-contents"
-		                ng-class="{ 's-limit-upr': cell > 0, 's-limit-yellow':1 }"
+		                ng-class="{ 's-limit-upr': cell > 0, 's-limit-yellow': cell > 0 }"
 		                >
 						{{cell}}
 					</span>

@@ -1,5 +1,6 @@
 <div
 	class="l-fixed-position-text l-telemetry"
+	ng-class="{ 's-stale': 1 }"
 	ng-style="{ background: ngModel.fill(), 'border-color': ngModel.stroke(), color: ngModel.color() }"
 	>
 	<div
@@ -15,7 +16,7 @@
 		<!-- ng-class is temporarily hard-coded in next element -->
 	    <span
 		    class="l-value-bg s-value-bg"
-		    ng-class="{ 's-limit-lwr': ngModel.value < 0, 's-limit-red' : 1 }"
+		    ng-class="{ 's-limit-lwr': ngModel.value < 0, 's-limit-red' : ngModel.value < 0 }"
 		    >
 			{{ngModel.value}}
 		</span>
