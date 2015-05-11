@@ -1,0 +1,9 @@
+	<div class="t-infobubble s-infobubble l-infobubble-wrapper {{bubble.bubbleLayout}}">
+		<div class="l-infobubble">
+			<div ng-show="bubble.mctTitle.length > 0"
+				 class="title">
+                {{bubble.bubbleTitle}}
+			</div>
+			<ng-transclude></ng-transclude>
+		</div>
+	</div>

@@ -16,6 +16,14 @@
                 "type": "infobubble",
                 "key": "infobubble"
             }
+        ],
+        "containers": [
+            {
+                "key": "bubble",
+                "templateUrl": "bubble.html",
+                "attributes": [ "bubbleTitle", "bubbleLayout" ],
+                "alias": "bubble"
+            }
         ]
     }
 }
