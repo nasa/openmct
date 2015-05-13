@@ -85,7 +85,7 @@
             {
                 "key": "window",
                 "implementation": "windowing/NewWindowAction.js",
-                "description": "Open this object in a new window.",
+                "description": "Open this object in a new window",
                 "category": "view-control",
                 "depends": [ "$window" ],
                 "group": "windowing",
@@ -104,7 +104,7 @@
                 "key": "items",
                 "name": "Items",
                 "glyph": "9",
-                "description": "Grid of available items.",
+                "description": "Grid of available items",
                 "templateUrl": "templates/items/items.html",
                 "uses": [ "composition" ],
                 "gestures": [ "drop" ],
@@ -125,10 +125,11 @@
             {
                 "name": "screenfull.js",
                 "version": "1.2.0",
-                "description": "Wrapper for cross-browser usage of fullscreen API.",
+                "description": "Wrapper for cross-browser usage of fullscreen API",
                 "author": "Sindre Sorhus",
                 "website": "https://github.com/sindresorhus/screenfull.js/",
-                "license": "MIT",
+                "copyright": "Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)",
+                "license": "license-mit",
                 "link": "https://github.com/sindresorhus/screenfull.js/blob/gh-pages/license"
             },
             {
@@ -137,7 +138,8 @@
                 "description": "Unique identifer generation (code adapted.)",
                 "author": "Robert Kieffer",
                 "website": "https://github.com/broofa/node-uuid",
-                "license": "MIT",
+                "copyright": "",
+                "license": "license-mit",
                 "link": "http://opensource.org/licenses/MIT"
             }
         ]

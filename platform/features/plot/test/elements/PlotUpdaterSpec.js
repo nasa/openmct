@@ -14,6 +14,7 @@ define(
                 testRange,
                 testDomainValues,
                 testRangeValues,
+                mockSeries,
                 updater;
 
             function makeMockDomainObject(id) {
@@ -32,6 +33,10 @@ define(
                 mockSubscription = jasmine.createSpyObj(
                     "subscription",
                     [ "getDomainValue", "getRangeValue", "getTelemetryObjects" ]
+                );
+                mockSeries = jasmine.createSpyObj(
+                    'series',
+                    ['getPointCount', 'getDomainValue', 'getRangeValue']
                 );
                 testDomain = "testDomain";
                 testRange = "testRange";
@@ -55,57 +60,14 @@ define(
             });
 
             it("provides one buffer per telemetry object", function () {
-                expect(updater.getBuffers().length).toEqual(3);
+                expect(updater.getLineBuffers().length).toEqual(3);
             });
 
             it("changes buffer count if telemetry object counts change", function () {
                 mockSubscription.getTelemetryObjects
                     .andReturn([makeMockDomainObject('a')]);
                 updater.update();
-                expect(updater.getBuffers().length).toEqual(1);
-            });
-
-            it("maintains a buffer of received telemetry", function () {
-                // Count should be large enough to trigger a buffer resize
-                var count = 750,
-                    i;
-
-                // Increment values exposed by subscription
-                function increment() {
-                    Object.keys(testDomainValues).forEach(function (k) {
-                        testDomainValues[k] += 1;
-                        testRangeValues[k] += 1;
-                    });
-                }
-
-                // Simulate a lot of telemetry updates
-                for (i = 0; i < count; i += 1) {
-                    updater.update();
-                    expect(updater.getLength(0)).toEqual(i + 1);
-                    expect(updater.getLength(1)).toEqual(i + 1);
-                    expect(updater.getLength(2)).toEqual(i + 1);
-                    increment();
-                }
-
-                // Domain offset should be lowest domain value
-                expect(updater.getDomainOffset()).toEqual(3);
-
-                // Test against initial values, offset by count,
-                // as was the case during each update
-                for (i = 0; i < count; i += 1) {
-                    expect(updater.getBuffers()[0][i * 2])
-                        .toEqual(3 + i - 3);
-                    expect(updater.getBuffers()[0][i * 2 + 1])
-                        .toEqual(123 + i);
-                    expect(updater.getBuffers()[1][i * 2])
-                        .toEqual(7 + i - 3);
-                    expect(updater.getBuffers()[1][i * 2 + 1])
-                        .toEqual(456 + i);
-                    expect(updater.getBuffers()[2][i * 2])
-                        .toEqual(13 + i - 3);
-                    expect(updater.getBuffers()[2][i * 2 + 1])
-                        .toEqual(789 + i);
-                }
+                expect(updater.getLineBuffers().length).toEqual(1);
             });
 
             it("can handle delayed telemetry object availability", function () {
@@ -124,7 +86,7 @@ define(
                 );
 
                 // Should have 0 buffers for 0 objects
-                expect(updater.getBuffers().length).toEqual(0);
+                expect(updater.getLineBuffers().length).toEqual(0);
 
                 // Restore the three objects the test subscription would
                 // normally have.
@@ -132,30 +94,79 @@ define(
                 updater.update();
 
                 // Should have 3 buffers for 3 objects
-                expect(updater.getBuffers().length).toEqual(3);
+                expect(updater.getLineBuffers().length).toEqual(3);
             });
 
+            it("accepts historical telemetry updates", function () {
+                var mockObject = mockSubscription.getTelemetryObjects()[0];
 
-            it("shifts buffer upon expansion", function () {
-                // Count should be large enough to hit buffer's max size
-                var count = 1400,
-                    i;
+                mockSeries.getPointCount.andReturn(3);
+                mockSeries.getDomainValue.andCallFake(function (i) {
+                    return 1000 + i * 1000;
+                });
+                mockSeries.getRangeValue.andReturn(10);
 
-                // Initial update; should have 3 in first position
-                // (a's initial domain value)
+                // PlotLine & PlotLineBuffer are tested for most of the
+                // details here, so just check for some expected side
+                // effect; in this case, should see more points in the buffer
+                expect(updater.getLineBuffers()[0].getLength()).toEqual(1);
+                updater.addHistorical(mockObject, mockSeries);
+                expect(updater.getLineBuffers()[0].getLength()).toEqual(4);
+            });
+
+            it("clears the domain offset if no objects are present", function () {
+                mockSubscription.getTelemetryObjects.andReturn([]);
                 updater.update();
-                expect(updater.getBuffers()[0][1]).toEqual(123);
-
-                // Simulate a lot of telemetry updates
-                for (i = 0; i < count; i += 1) {
-                    testDomainValues.a += 1;
-                    testRangeValues.a += 1;
-                    updater.update();
-                }
-
-                // Value at front of the buffer should have been pushed out
-                expect(updater.getBuffers()[0][1]).not.toEqual(123);
+                expect(updater.getDomainOffset()).toBeUndefined();
             });
+
+            it("handles empty historical telemetry updates", function () {
+                // General robustness check for when a series is empty
+                var mockObject = mockSubscription.getTelemetryObjects()[0];
+
+                mockSeries.getPointCount.andReturn(0);
+                mockSeries.getDomainValue.andCallFake(function (i) {
+                    return 1000 + i * 1000;
+                });
+                mockSeries.getRangeValue.andReturn(10);
+
+                // PlotLine & PlotLineBuffer are tested for most of the
+                // details here, so just check for some expected side
+                // effect; in this case, should see more points in the buffer
+                expect(updater.getLineBuffers()[0].getLength()).toEqual(1);
+                updater.addHistorical(mockObject, mockSeries);
+                expect(updater.getLineBuffers()[0].getLength()).toEqual(1);
+            });
+
+            it("can initialize domain offset from historical telemetry", function () {
+                var tmp = mockSubscription.getTelemetryObjects();
+
+                mockSubscription.getTelemetryObjects.andReturn([]);
+
+                // Reinstantiate with the empty subscription
+                updater = new PlotUpdater(
+                    mockSubscription,
+                    testDomain,
+                    testRange
+                );
+
+                // Restore subscription, provide some historical data
+                mockSubscription.getTelemetryObjects.andReturn(tmp);
+                mockSeries.getPointCount.andReturn(3);
+                mockSeries.getDomainValue.andCallFake(function (i) {
+                    return 1000 + i * 1000;
+                });
+                mockSeries.getRangeValue.andReturn(10);
+
+                // PlotLine & PlotLineBuffer are tested for most of the
+                // details here, so just check for some expected side
+                // effect; in this case, should see more points in the buffer
+                expect(updater.getDomainOffset()).toBeUndefined();
+                updater.addHistorical(tmp[0], mockSeries);
+                expect(updater.getDomainOffset()).toBeDefined();
+            });
+
+
         });
     }
 );

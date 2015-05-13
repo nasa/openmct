@@ -1,6 +1,6 @@
 {
     "name": "Data bundle",
-    "description": "Interfaces and infrastructure for real-time and historical data.",
+    "description": "Interfaces and infrastructure for real-time and historical data",
     "configuration": {
         "paths": {
             "moment": "moment.min"
@@ -43,6 +43,11 @@
                 "key": "telemetrySubscriber",
                 "implementation": "TelemetrySubscriber.js",
                 "depends": [ "$q", "$timeout" ]
+            },
+            {
+                "key": "telemetryHandler",
+                "implementation": "TelemetryHandler.js",
+                "depends": [ "$q", "telemetrySubscriber" ]
             }
         ],
         "licenses": [
@@ -50,9 +55,10 @@
                 "name": "Moment.js",
                 "version": "2.7.0",
                 "author": "Tim Wood, Iskren Chernev, Moment.js contributors",
-                "description": "Time/date parsing/formatting.",
+                "description": "Time/date parsing/formatting",
                 "website": "http://momentjs.com",
-                "license": "MIT",
+                "copyright": "Copyright (c) 2011-2014 Tim Wood, Iskren Chernev, Moment.js contributors",
+                "license": "license-mit",
                 "link": "https://raw.githubusercontent.com/moment/moment/develop/LICENSE"
             }
         ]

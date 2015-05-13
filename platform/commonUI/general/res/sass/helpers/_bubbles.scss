@@ -1,40 +1,122 @@
-.bubble-wrapper {
-  $arwSize: 7px;
-  $c: #990000;
-  @include box-shadow(rgba(black, 0.4) 0 1px 5px);
-  position: absolute;
-  //top: 200px; left: 200px;
-  z-index: 10;
-	.bubble {
-      @include border-radius($basicCr);
-      display: inline-block;
-      background: $c;
-      color: lighten($c, 50%);
-      font-size: 0.8rem;
-      font-style: italic;
-      max-width: 200px;
-      padding: 4px 8px;
-      &:before {
-        content:"";
-        position: absolute;
-        width: 0;
-        height: 0;
-      }
+//************************************************* LAYOUT
+
+$infoBubbleFg: #666;
+$infoBubbleBg: #ddd;
+
+.l-infobubble-wrapper {
+	$arwSize: 5px;
+	@include box-shadow(rgba(black, 0.4) 0 1px 5px);
+	position: absolute;
+	z-index: 70;
+	.l-infobubble {
+		display: inline-block;
+		max-width: 250px;
+		padding: 5px 10px;
+		&:before {
+			content:"";
+			position: absolute;
+			width: 0;
+			height: 0;
+		}
+		table {
+			width: 100%;
+			tr {
+				td {
+					//max-width: 150px;
+					padding: 2px 0;
+					vertical-align: top;
+					//white-space: nowrap;
+					//overflow: hidden;
+					//text-overflow: ellipsis;
+					&.label {
+						padding-right: $interiorMargin * 2;
+						white-space: nowrap;
+					}
+					&.value {
+						white-space: nowrap;
+						//width: 90%;
+					}
+					&.align-wrap {
+						white-space: normal;
+					}
+				}
+			}
+		}
+		.title {
+			@include ellipsize();
+			margin-bottom: $interiorMargin;
+			//max-width: 200px;
+		}
 	}
-  &.arw-left .bubble:before {
-    right: 100%;
-    top: 50%; // 26px;
-    margin-top: -1 * $arwSize;
-    border-top: $arwSize solid transparent;
-    border-bottom: $arwSize solid transparent;
-    border-right: ($arwSize * 1.5) solid $c;
-  }
-  &.arw-down .bubble:before {
-    left: 50%;
-    top: 100%;
-    margin-left: -1 * $arwSize;
-    border-left: $arwSize solid transparent;
-    border-right: $arwSize solid transparent;
-    border-top: ($arwSize * 1.5) solid $c;
-  }
+
+	&.arw-left {
+		margin-left: $arwSize*2;
+		.l-infobubble::before {
+			right: 100%;
+			border-top: $arwSize solid transparent;
+			border-bottom: $arwSize solid transparent;
+			border-right: ($arwSize * 1.5) solid $infoBubbleBg;
+		}
+	}
+
+	&.arw-right {
+		margin-right: $arwSize*2;
+		.l-infobubble::before {
+			left: 100%;
+			border-top: $arwSize solid transparent;
+			border-bottom: $arwSize solid transparent;
+			border-left: ($arwSize * 1.5) solid $infoBubbleBg;
+		}
+	}
+
+	&.arw-top {
+		.l-infobubble::before {
+			top: $arwSize * 2;
+		}
+	}
+
+	&.arw-btm {
+		.l-infobubble::before {
+			bottom: $arwSize * 2;
+		}
+	}
+
+	&.arw-down {
+		margin-bottom: $arwSize*2;
+		.l-infobubble::before {
+			left: 50%;
+			top: 100%;
+			margin-left: -1 * $arwSize;
+			border-left: $arwSize solid transparent;
+			border-right: $arwSize solid transparent;
+			border-top: ($arwSize * 1.5) solid $infoBubbleBg;
+		}
+	}
+}
+
+//************************************************* LOOK AND FEEL
+
+.s-infobubble {
+	$emFg: darken($infoBubbleFg, 20%);
+	@include border-radius($basicCr);
+	background: $infoBubbleBg;
+	color: $infoBubbleFg;
+	font-size: 0.8rem;
+	.title {
+		color: $emFg;
+		font-weight: bold;
+	}
+	tr {
+		td {
+			border-top: 1px solid darken($infoBubbleBg, 10%);
+			font-size: 0.9em;
+		}
+		&:first-child td {
+			border-top: none;
+		}
+	}
+	.value {
+		color: $emFg;
+	}
+
 }

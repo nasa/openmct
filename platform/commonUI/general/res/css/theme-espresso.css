@@ -1,5 +1,5 @@
 /* CONSTANTS */
-/* line 17, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 17, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -20,38 +20,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../Library/Ruby/Gems/1.8/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
   display: block; }
 
@@ -108,7 +108,6 @@ body, html {
 
 /* line 20, ../sass/_global.scss */
 em {
-  color: rgba(255, 255, 255, 0.2);
   font-style: normal; }
 
 /* line 25, ../sass/_global.scss */
@@ -148,36 +147,45 @@ span {
   width: auto; }
 
 /* line 61, ../sass/_global.scss */
-.code {
+.code, .codehilite {
   font-family: "Lucida Console", monospace;
   font-size: 0.7em;
   line-height: 150%;
   white-space: pre; }
 
 /* line 68, ../sass/_global.scss */
+.codehilite {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 1em; }
+
+/* line 74, ../sass/_global.scss */
 .align-right {
   text-align: right; }
 
-/* line 72, ../sass/_global.scss */
+/* line 78, ../sass/_global.scss */
 .centered {
   text-align: center; }
 
-/* line 76, ../sass/_global.scss */
+/* line 82, ../sass/_global.scss */
+.no-margin {
+  margin: 0; }
+
+/* line 86, ../sass/_global.scss */
 .colorKey {
   color: #0099cc; }
 
-/* line 80, ../sass/_global.scss */
+/* line 90, ../sass/_global.scss */
 .ds {
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px; }
 
-/* line 85, ../sass/_global.scss */
+/* line 95, ../sass/_global.scss */
 .hide,
 .hidden {
   display: none !important; }
 
-/* line 89, ../sass/_global.scss */
+/* line 99, ../sass/_global.scss */
 .sep {
   color: rgba(255, 255, 255, 0.2); }
 
@@ -195,76 +203,55 @@ span {
 .ui-symbol {
   font-family: 'symbolsfont'; }
 
-/* line 13, ../sass/user-environ/_layout.scss */
+/* line 11, ../sass/user-environ/_layout.scss */
+.holder-all {
+  top: 3px;
+  right: 3px;
+  bottom: 3px;
+  left: 3px; }
+
+/* line 21, ../sass/user-environ/_layout.scss */
 .browse-area,
 .edit-area,
+.editor {
+  position: absolute; }
+
+/* line 25, ../sass/user-environ/_layout.scss */
 .editor {
   -webkit-border-radius: 4.5px;
   -moz-border-radius: 4.5px;
   -ms-border-radius: 4.5px;
   -o-border-radius: 4.5px;
-  border-radius: 4.5px;
-  position: absolute; }
+  border-radius: 4.5px; }
 
-/* line 24, ../sass/user-environ/_layout.scss */
-.user-environ .browse-area,
-.user-environ .edit-area,
-.user-environ .editor {
-  top: 45px;
-  right: 5px;
-  bottom: 30px;
-  left: 5px; }
-/* line 33, ../sass/user-environ/_layout.scss */
-.user-environ .edit-area .tool-bar {
-  bottom: auto;
-  height: 35px;
-  line-height: 28px; }
-/* line 38, ../sass/user-environ/_layout.scss */
-.user-environ .edit-area .work-area {
-  top: 45px; }
-/* line 43, ../sass/user-environ/_layout.scss */
-.user-environ .bottom-bar {
-  top: auto;
-  right: 5px;
-  bottom: 5px;
-  left: 5px;
-  height: 20px; }
-  /* line 49, ../sass/user-environ/_layout.scss */
-  .user-environ .bottom-bar .status-holder {
-    right: 110px; }
-  /* line 52, ../sass/user-environ/_layout.scss */
-  .user-environ .bottom-bar .app-logo {
-    left: auto;
-    width: 105px; }
-
-/* line 60, ../sass/user-environ/_layout.scss */
+/* line 29, ../sass/user-environ/_layout.scss */
 .contents {
   box-sizing: border-box;
   position: absolute;
-  top: 5px;
-  right: 5px;
-  bottom: 5px;
-  left: 5px; }
-  /* line 68, ../sass/user-environ/_layout.scss */
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0; }
+  /* line 37, ../sass/user-environ/_layout.scss */
   .contents.nomargin {
     right: 0px;
     bottom: 0px;
     left: 0px; }
 
-/* line 77, ../sass/user-environ/_layout.scss */
+/* line 46, ../sass/user-environ/_layout.scss */
 .bar .icon.major {
   margin-right: 5px; }
-/* line 80, ../sass/user-environ/_layout.scss */
+/* line 49, ../sass/user-environ/_layout.scss */
 .bar.abs, .btn-menu span.bar.l-click-area {
   text-wrap: none;
   white-space: nowrap; }
-  /* line 84, ../sass/user-environ/_layout.scss */
+  /* line 53, ../sass/user-environ/_layout.scss */
   .bar.abs.left, .btn-menu span.bar.left.l-click-area,
   .bar.abs .left,
   .btn-menu span.bar.l-click-area .left {
     width: 45%;
     right: auto; }
-  /* line 89, ../sass/user-environ/_layout.scss */
+  /* line 58, ../sass/user-environ/_layout.scss */
   .bar.abs.right, .btn-menu span.bar.right.l-click-area,
   .bar.abs .right,
   .btn-menu span.bar.l-click-area .right {
@@ -272,17 +259,53 @@ span {
     left: auto;
     right: 0;
     text-align: right; }
-    /* line 94, ../sass/user-environ/_layout.scss */
+    /* line 63, ../sass/user-environ/_layout.scss */
     .bar.abs.right .icon.major, .btn-menu span.bar.right.l-click-area .icon.major,
     .bar.abs .right .icon.major,
     .btn-menu span.bar.l-click-area .right .icon.major {
       margin-left: 15px; }
 
-/* line 104, ../sass/user-environ/_layout.scss */
+/* line 76, ../sass/user-environ/_layout.scss */
+.user-environ .browse-area,
+.user-environ .edit-area,
+.user-environ .editor {
+  top: 45px;
+  right: 5px;
+  bottom: 30px;
+  left: 5px; }
+/* line 85, ../sass/user-environ/_layout.scss */
+.user-environ .browse-area > .contents,
+.user-environ .edit-area > .contents {
+  left: 0;
+  right: 0; }
+/* line 93, ../sass/user-environ/_layout.scss */
+.user-environ .edit-area .tool-bar {
+  bottom: auto;
+  height: 35px;
+  line-height: 28px; }
+/* line 98, ../sass/user-environ/_layout.scss */
+.user-environ .edit-area .work-area {
+  top: 45px; }
+/* line 103, ../sass/user-environ/_layout.scss */
+.user-environ .bottom-bar {
+  top: auto;
+  right: 5px;
+  bottom: 5px;
+  left: 5px;
+  height: 20px; }
+  /* line 109, ../sass/user-environ/_layout.scss */
+  .user-environ .bottom-bar .status-holder {
+    right: 110px; }
+  /* line 112, ../sass/user-environ/_layout.scss */
+  .user-environ .bottom-bar .app-logo {
+    left: auto;
+    width: 105px; }
+
+/* line 119, ../sass/user-environ/_layout.scss */
 .cols {
   overflow: hidden;
   *zoom: 1; }
-  /* line 106, ../sass/user-environ/_layout.scss */
+  /* line 121, ../sass/user-environ/_layout.scss */
   .cols .col {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -293,89 +316,89 @@ span {
     margin-left: 1.5%;
     padding-left: 5px;
     position: relative; }
-    /* line 114, ../sass/user-environ/_layout.scss */
+    /* line 129, ../sass/user-environ/_layout.scss */
     .cols .col:first-child {
       margin-left: 0;
       padding-left: 0; }
-  /* line 121, ../sass/user-environ/_layout.scss */
+  /* line 136, ../sass/user-environ/_layout.scss */
   .cols.cols-2 .col-1 {
     min-width: 250px;
     width: 48.5%; }
-  /* line 127, ../sass/user-environ/_layout.scss */
+  /* line 142, ../sass/user-environ/_layout.scss */
   .cols.cols-2-ff .col-100px {
     width: 100px; }
-  /* line 134, ../sass/user-environ/_layout.scss */
+  /* line 149, ../sass/user-environ/_layout.scss */
   .cols.cols-6 .col-1 {
     min-width: 83.33333px;
     width: 15.16667%; }
-  /* line 140, ../sass/user-environ/_layout.scss */
+  /* line 155, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-1 {
     min-width: 31.25px;
     width: 4.75%; }
-  /* line 143, ../sass/user-environ/_layout.scss */
+  /* line 158, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-2 {
     min-width: 62.5px;
     width: 11%; }
-  /* line 146, ../sass/user-environ/_layout.scss */
+  /* line 161, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-7 {
     min-width: 218.75px;
     width: 42.25%; }
-  /* line 152, ../sass/user-environ/_layout.scss */
+  /* line 167, ../sass/user-environ/_layout.scss */
   .cols.cols-32 .col-2 {
     min-width: 31.25px;
     width: 4.75%; }
-  /* line 155, ../sass/user-environ/_layout.scss */
+  /* line 170, ../sass/user-environ/_layout.scss */
   .cols.cols-32 .col-15 {
     min-width: 234.375px;
     width: 45.375%; }
-  /* line 159, ../sass/user-environ/_layout.scss */
+  /* line 174, ../sass/user-environ/_layout.scss */
   .cols .l-row {
     overflow: hidden;
     *zoom: 1;
     padding: 5px 0; }
 
-/* line 165, ../sass/user-environ/_layout.scss */
+/* line 180, ../sass/user-environ/_layout.scss */
 .pane {
   position: absolute; }
-  /* line 168, ../sass/user-environ/_layout.scss */
+  /* line 183, ../sass/user-environ/_layout.scss */
   .pane.treeview .create-btn-holder {
     bottom: auto;
     height: 35px; }
-  /* line 171, ../sass/user-environ/_layout.scss */
+  /* line 186, ../sass/user-environ/_layout.scss */
   .pane.treeview .tree-holder {
     overflow: auto;
     top: 40px; }
-  /* line 180, ../sass/user-environ/_layout.scss */
+  /* line 195, ../sass/user-environ/_layout.scss */
   .pane.items .object-holder {
     top: 40px; }
-  /* line 185, ../sass/user-environ/_layout.scss */
+  /* line 200, ../sass/user-environ/_layout.scss */
   .pane.edit-main .object-holder {
     top: 0; }
-  /* line 191, ../sass/user-environ/_layout.scss */
+  /* line 206, ../sass/user-environ/_layout.scss */
   .pane .object-holder {
     overflow: auto; }
 
-/* line 199, ../sass/user-environ/_layout.scss */
+/* line 214, ../sass/user-environ/_layout.scss */
 .split-layout.horizontal > .pane {
   margin-top: 5px; }
-  /* line 202, ../sass/user-environ/_layout.scss */
+  /* line 217, ../sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane:first-child {
     margin-top: 0; }
-/* line 209, ../sass/user-environ/_layout.scss */
+/* line 224, ../sass/user-environ/_layout.scss */
 .split-layout.vertical > .pane {
   margin-left: 5px; }
-  /* line 211, ../sass/user-environ/_layout.scss */
+  /* line 226, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane > .holder {
     left: 0;
     right: 0; }
-  /* line 215, ../sass/user-environ/_layout.scss */
+  /* line 230, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane:first-child {
     margin-left: 0; }
-    /* line 217, ../sass/user-environ/_layout.scss */
+    /* line 232, ../sass/user-environ/_layout.scss */
     .split-layout.vertical > .pane:first-child .holder {
       right: 5px; }
 
-/* line 226, ../sass/user-environ/_layout.scss */
+/* line 241, ../sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
 
@@ -388,33 +411,33 @@ span {
   left: 0;
   width: auto;
   height: auto; }
-  /* line 8, ../sass/_fixed-position.scss */
+  /* line 12, ../sass/_fixed-position.scss */
   .t-fixed-position.l-fixed-position .l-grid-holder {
     position: relative;
     height: 100%;
     width: 100%; }
-    /* line 11, ../sass/_fixed-position.scss */
+    /* line 16, ../sass/_fixed-position.scss */
     .t-fixed-position.l-fixed-position .l-grid-holder .l-grid {
       position: absolute;
       height: 100%;
       width: 100%;
       pointer-events: none;
       z-index: 0; }
-/* line 21, ../sass/_fixed-position.scss */
+/* line 27, ../sass/_fixed-position.scss */
 .t-fixed-position .l-fixed-position-item {
   position: absolute;
   border: 1px solid transparent; }
-  /* line 25, ../sass/_fixed-position.scss */
+  /* line 31, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item.s-selected {
     -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
     -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
     box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
     border-color: #0099cc;
     cursor: move; }
-  /* line 30, ../sass/_fixed-position.scss */
+  /* line 36, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item.s-not-selected {
     opacity: 0.8; }
-  /* line 36, ../sass/_fixed-position.scss */
+  /* line 42, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item .l-fixed-position-box,
   .t-fixed-position .l-fixed-position-item .l-fixed-position-image,
   .t-fixed-position .l-fixed-position-item .l-fixed-position-text {
@@ -423,20 +446,20 @@ span {
     box-sizing: border-box;
     height: 100%;
     width: 100%; }
-  /* line 44, ../sass/_fixed-position.scss */
+  /* line 51, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item .l-fixed-position-image {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center; }
-  /* line 50, ../sass/_fixed-position.scss */
+  /* line 57, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item .l-fixed-position-text {
     text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px;
     border: 1px solid transparent;
     font-size: 0.8rem; }
-    /* line 55, ../sass/_fixed-position.scss */
+    /* line 62, ../sass/_fixed-position.scss */
     .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-static-text {
       padding: 3px; }
-    /* line 60, ../sass/_fixed-position.scss */
+    /* line 67, ../sass/_fixed-position.scss */
     .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem {
       overflow: hidden;
       position: absolute;
@@ -450,98 +473,142 @@ span {
       -moz-box-sizing: border-box;
       box-sizing: border-box;
       width: 50%; }
-      /* line 64, ../sass/_fixed-position.scss */
+      /* line 71, ../sass/_fixed-position.scss */
       .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-title {
         right: auto;
         left: 3px; }
-      /* line 68, ../sass/_fixed-position.scss */
+      /* line 75, ../sass/_fixed-position.scss */
       .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-value {
         right: 3px;
         left: auto;
         text-align: right; }
-        /* line 73, ../sass/_fixed-position.scss */
+        /* line 80, ../sass/_fixed-position.scss */
         .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-value.telem-only {
           left: 3px;
           width: auto; }
-/* line 84, ../sass/_fixed-position.scss */
+/* line 91, ../sass/_fixed-position.scss */
 .t-fixed-position .l-fixed-position-item-handle {
   background: rgba(0, 153, 204, 0.5);
   cursor: crosshair;
   border: 1px solid #0099cc;
   position: absolute; }
 
-/* line 98, ../sass/_fixed-position.scss */
+/* line 105, ../sass/_fixed-position.scss */
 .edit-mode .t-fixed-position.l-fixed-position .l-grid-holder .l-grid.l-grid-x {
   background-image: -webkit-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: -moz-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: -o-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-repeat: repeat-x; }
-/* line 102, ../sass/_fixed-position.scss */
+/* line 109, ../sass/_fixed-position.scss */
 .edit-mode .t-fixed-position.l-fixed-position .l-grid-holder .l-grid.l-grid-y {
   background-image: -webkit-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: -moz-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: -o-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px, transparent 100%);
   background-repeat: repeat-y; }
-/* line 110, ../sass/_fixed-position.scss */
-.edit-mode .t-fixed-position .l-fixed-position-item:not(.s-selected):hover {
-  border: 1px dotted rgba(0, 153, 204, 0.5); }
+/* line 117, ../sass/_fixed-position.scss */
+.edit-mode .t-fixed-position .l-fixed-position-item:not(.s-selected) {
+  border: 1px dotted rgba(0, 153, 204, 0.75); }
+  /* line 119, ../sass/_fixed-position.scss */
+  .edit-mode .t-fixed-position .l-fixed-position-item:not(.s-selected):hover {
+    border: 1px dotted #0099cc; }
 
-/* line 3, ../sass/_about.scss */
-.t-about {
+/* line 5, ../sass/_about.scss */
+.l-about.abs, .btn-menu span.l-about.l-click-area {
+  overflow: auto; }
+/* line 10, ../sass/_about.scss */
+.l-about .l-logo-holder {
+  position: relative;
+  height: 45%; }
+  /* line 13, ../sass/_about.scss */
+  .l-about .l-logo-holder .l-logo {
+    position: absolute; }
+    /* line 16, ../sass/_about.scss */
+    .l-about .l-logo-holder .l-logo.l-logo-app {
+      top: 0;
+      right: 15%;
+      bottom: 0;
+      left: 15%; }
+    /* line 20, ../sass/_about.scss */
+    .l-about .l-logo-holder .l-logo.s-logo-nasa {
+      background-image: url("../images/logo-nasa.svg");
+      top: 10px;
+      right: auto;
+      bottom: auto;
+      left: 10px;
+      width: 10%;
+      height: auto;
+      padding-bottom: 5%;
+      padding-top: 5%; }
+/* line 29, ../sass/_about.scss */
+.l-about .l-content {
+  position: relative;
+  margin-top: 10px; }
+
+/* line 36, ../sass/_about.scss */
+.s-about {
   line-height: 120%; }
-  /* line 7, ../sass/_about.scss */
-  .t-about .s-description,
-  .t-about .s-info {
-    font-size: 0.8em; }
-  /* line 10, ../sass/_about.scss */
-  .t-about .s-logo-holder {
+  /* line 40, ../sass/_about.scss */
+  .s-about a {
+    color: #84b3ff; }
+  /* line 47, ../sass/_about.scss */
+  .s-about .s-logo-holder {
     background: url("../images/bg-about-openmctweb.jpg") no-repeat center;
     background-size: cover; }
-  /* line 14, ../sass/_about.scss */
-  .t-about .s-logo {
+  /* line 51, ../sass/_about.scss */
+  .s-about .s-logo {
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain; }
-  /* line 20, ../sass/_about.scss */
-  .t-about .s-logo-openmctweb {
+  /* line 57, ../sass/_about.scss */
+  .s-about .s-logo-openmctweb {
     background-image: url("../images/logo-openmctweb-shdw.svg"); }
-  /* line 23, ../sass/_about.scss */
-  .t-about h1, .t-about h2 {
+  /* line 60, ../sass/_about.scss */
+  .s-about .s-btn, .s-about .s-icon-btn {
+    line-height: 2em; }
+  /* line 64, ../sass/_about.scss */
+  .s-about .l-licenses-software .l-license-software {
+    border-top: 1px solid #4d4d4d;
+    padding: 0.5em 0; }
+    /* line 67, ../sass/_about.scss */
+    .s-about .l-licenses-software .l-license-software:first-child {
+      border-top: none; }
+    /* line 70, ../sass/_about.scss */
+    .s-about .l-licenses-software .l-license-software em {
+      color: #666666; }
+    /* line 77, ../sass/_about.scss */
+    .s-about .l-licenses-software .l-license-software h3 {
+      font-size: 1.25em; }
+    /* line 80, ../sass/_about.scss */
+    .s-about .l-licenses-software .l-license-software .s-license-text {
+      font-size: 0.9em; }
+
+/* line 3, ../sass/_text.scss */
+.abs.l-standalone, .btn-menu span.l-standalone.l-click-area {
+  padding: 5% 20%; }
+
+/* line 8, ../sass/_text.scss */
+.s-text {
+  font-size: 0.8em; }
+  /* line 10, ../sass/_text.scss */
+  .s-text ol, .s-text ul {
+    list-style: square;
+    margin-left: 1.5em; }
+  /* line 18, ../sass/_text.scss */
+  .s-text h1, .s-text h2, .s-text h3 {
     color: #fff;
-    font-weight: normal !important; }
-  /* line 29, ../sass/_about.scss */
-  .t-about.l-about.abs, .btn-menu span.t-about.l-about.l-click-area {
-    overflow: auto; }
-  /* line 34, ../sass/_about.scss */
-  .t-about .l-logo-holder {
-    position: relative;
-    height: 45%; }
-    /* line 37, ../sass/_about.scss */
-    .t-about .l-logo-holder .l-logo {
-      position: absolute; }
-      /* line 40, ../sass/_about.scss */
-      .t-about .l-logo-holder .l-logo.l-logo-app {
-        top: 0;
-        right: 15%;
-        bottom: 0;
-        left: 15%; }
-      /* line 44, ../sass/_about.scss */
-      .t-about .l-logo-holder .l-logo.s-logo-nasa {
-        background-image: url("../images/logo-nasa.svg");
-        top: 10px;
-        right: auto;
-        bottom: auto;
-        left: 10px;
-        width: 10%;
-        height: auto;
-        padding-bottom: 5%;
-        padding-top: 5%; }
-  /* line 53, ../sass/_about.scss */
-  .t-about .l-content {
-    position: relative;
-    margin-top: 10px; }
+    font-weight: normal !important;
+    margin-bottom: 1em; }
+  /* line 24, ../sass/_text.scss */
+  .s-text h2 {
+    border-top: 1px solid #4d4d4d;
+    font-size: 1.5em;
+    margin-top: 2em;
+    padding-top: 1em; }
+  /* line 31, ../sass/_text.scss */
+  .s-text h3 {
+    margin-top: 2em; }
 
 /* line 1, ../sass/_badges.scss */
 .badge {
@@ -2524,6 +2591,10 @@ input[type="text"] {
     margin-left: 10px; }
 /* line 53, ../sass/overlay/_overlay.scss */
 .overlay .contents.l-dialog {
+  top: 5px;
+  right: 5px;
+  bottom: 5px;
+  left: 5px;
   overflow: auto; }
 
 /* line 4, ../sass/user-environ/_frame.scss */
@@ -2540,8 +2611,14 @@ input[type="text"] {
 /* line 18, ../sass/user-environ/_frame.scss */
 .frame > .object-holder.abs, .btn-menu .frame > span.object-holder.l-click-area {
   top: 23px; }
+/* line 21, ../sass/user-environ/_frame.scss */
+.frame .contents {
+  top: 5px;
+  right: 5px;
+  bottom: 5px;
+  left: 5px; }
 
-/* line 24, ../sass/user-environ/_frame.scss */
+/* line 31, ../sass/user-environ/_frame.scss */
 .edit-main .frame.child-frame.panel:hover {
   border-color: #0099cc;
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
@@ -2553,27 +2630,28 @@ input[type="text"] {
   line-height: 35px; }
   /* line 7, ../sass/user-environ/_top-bar.scss */
   .top-bar.browse, .top-bar.edit {
+    border-bottom: 1px solid #4d4d4d;
     top: 5px;
     right: 5px;
     bottom: auto;
     left: 5px;
     height: 35px; }
-  /* line 15, ../sass/user-environ/_top-bar.scss */
+  /* line 16, ../sass/user-environ/_top-bar.scss */
   .top-bar .title {
     color: #fff; }
-  /* line 20, ../sass/user-environ/_top-bar.scss */
+  /* line 21, ../sass/user-environ/_top-bar.scss */
   .top-bar .buttons-main {
     font-size: 0.8em;
     left: auto;
     text-align: right; }
-    /* line 25, ../sass/user-environ/_top-bar.scss */
+    /* line 26, ../sass/user-environ/_top-bar.scss */
     .top-bar .buttons-main .btn {
       margin-left: 5px; }
 
-/* line 33, ../sass/user-environ/_top-bar.scss */
+/* line 34, ../sass/user-environ/_top-bar.scss */
 .edit-mode .top-bar .buttons-main {
   white-space: nowrap; }
-  /* line 37, ../sass/user-environ/_top-bar.scss */
+  /* line 38, ../sass/user-environ/_top-bar.scss */
   .edit-mode .top-bar .buttons-main.abs, .edit-mode .top-bar .btn-menu span.buttons-main.l-click-area, .btn-menu .edit-mode .top-bar span.buttons-main.l-click-area {
     bottom: auto;
     left: auto; }
@@ -2667,49 +2745,107 @@ input[type="text"] {
   .tool-bar .input-labeled label {
     font-size: 12.6px; }
 
-/* line 1, ../sass/helpers/_bubbles.scss */
-.bubble-wrapper {
+/* line 6, ../sass/helpers/_bubbles.scss */
+.l-infobubble-wrapper {
   -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0 1px 5px;
   -moz-box-shadow: rgba(0, 0, 0, 0.4) 0 1px 5px;
   box-shadow: rgba(0, 0, 0, 0.4) 0 1px 5px;
   position: absolute;
-  z-index: 10; }
-  /* line 8, ../sass/helpers/_bubbles.scss */
-  .bubble-wrapper .bubble {
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    -ms-border-radius: 3px;
-    -o-border-radius: 3px;
-    border-radius: 3px;
+  z-index: 70; }
+  /* line 11, ../sass/helpers/_bubbles.scss */
+  .l-infobubble-wrapper .l-infobubble {
     display: inline-block;
-    background: #990000;
-    color: #ff9999;
-    font-size: 0.8rem;
-    font-style: italic;
-    max-width: 200px;
-    padding: 4px 8px; }
-    /* line 17, ../sass/helpers/_bubbles.scss */
-    .bubble-wrapper .bubble:before {
+    max-width: 250px;
+    padding: 5px 10px; }
+    /* line 15, ../sass/helpers/_bubbles.scss */
+    .l-infobubble-wrapper .l-infobubble:before {
       content: "";
       position: absolute;
       width: 0;
       height: 0; }
-  /* line 24, ../sass/helpers/_bubbles.scss */
-  .bubble-wrapper.arw-left .bubble:before {
-    right: 100%;
-    top: 50%;
-    margin-top: -7px;
-    border-top: 7px solid transparent;
-    border-bottom: 7px solid transparent;
-    border-right: 10.5px solid #990000; }
-  /* line 32, ../sass/helpers/_bubbles.scss */
-  .bubble-wrapper.arw-down .bubble:before {
-    left: 50%;
-    top: 100%;
-    margin-left: -7px;
-    border-left: 7px solid transparent;
-    border-right: 7px solid transparent;
-    border-top: 10.5px solid #990000; }
+    /* line 21, ../sass/helpers/_bubbles.scss */
+    .l-infobubble-wrapper .l-infobubble table {
+      width: 100%; }
+      /* line 24, ../sass/helpers/_bubbles.scss */
+      .l-infobubble-wrapper .l-infobubble table tr td {
+        padding: 2px 0;
+        vertical-align: top; }
+        /* line 31, ../sass/helpers/_bubbles.scss */
+        .l-infobubble-wrapper .l-infobubble table tr td.label {
+          padding-right: 10px;
+          white-space: nowrap; }
+        /* line 35, ../sass/helpers/_bubbles.scss */
+        .l-infobubble-wrapper .l-infobubble table tr td.value {
+          white-space: nowrap; }
+        /* line 39, ../sass/helpers/_bubbles.scss */
+        .l-infobubble-wrapper .l-infobubble table tr td.align-wrap {
+          white-space: normal; }
+    /* line 45, ../sass/helpers/_bubbles.scss */
+    .l-infobubble-wrapper .l-infobubble .title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-bottom: 5px; }
+  /* line 52, ../sass/helpers/_bubbles.scss */
+  .l-infobubble-wrapper.arw-left {
+    margin-left: 10px; }
+    /* line 54, ../sass/helpers/_bubbles.scss */
+    .l-infobubble-wrapper.arw-left .l-infobubble::before {
+      right: 100%;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-right: 7.5px solid #dddddd; }
+  /* line 62, ../sass/helpers/_bubbles.scss */
+  .l-infobubble-wrapper.arw-right {
+    margin-right: 10px; }
+    /* line 64, ../sass/helpers/_bubbles.scss */
+    .l-infobubble-wrapper.arw-right .l-infobubble::before {
+      left: 100%;
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-left: 7.5px solid #dddddd; }
+  /* line 73, ../sass/helpers/_bubbles.scss */
+  .l-infobubble-wrapper.arw-top .l-infobubble::before {
+    top: 10px; }
+  /* line 79, ../sass/helpers/_bubbles.scss */
+  .l-infobubble-wrapper.arw-btm .l-infobubble::before {
+    bottom: 10px; }
+  /* line 84, ../sass/helpers/_bubbles.scss */
+  .l-infobubble-wrapper.arw-down {
+    margin-bottom: 10px; }
+    /* line 86, ../sass/helpers/_bubbles.scss */
+    .l-infobubble-wrapper.arw-down .l-infobubble::before {
+      left: 50%;
+      top: 100%;
+      margin-left: -5px;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 7.5px solid #dddddd; }
+
+/* line 99, ../sass/helpers/_bubbles.scss */
+.s-infobubble {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  background: #dddddd;
+  color: #666666;
+  font-size: 0.8rem; }
+  /* line 105, ../sass/helpers/_bubbles.scss */
+  .s-infobubble .title {
+    color: #333333;
+    font-weight: bold; }
+  /* line 110, ../sass/helpers/_bubbles.scss */
+  .s-infobubble tr td {
+    border-top: 1px solid #c4c4c4;
+    font-size: 0.9em; }
+  /* line 114, ../sass/helpers/_bubbles.scss */
+  .s-infobubble tr:first-child td {
+    border-top: none; }
+  /* line 118, ../sass/helpers/_bubbles.scss */
+  .s-infobubble .value {
+    color: #333333; }
 
 /* line 8, ../sass/helpers/_splitter.scss */
 .split-layout .splitter {
@@ -2833,10 +2969,10 @@ input[type="text"] {
 .wait-spinner {
   display: block;
   position: absolute;
-  -webkit-animation: rotation .6s infinite linear;
-  -moz-animation: rotation .6s infinite linear;
-  -o-animation: rotation .6s infinite linear;
-  animation: rotation .6s infinite linear;
+  -webkit-animation: rotation 0.6s infinite linear;
+  -moz-animation: rotation 0.6s infinite linear;
+  -o-animation: rotation 0.6s infinite linear;
+  animation: rotation 0.6s infinite linear;
   border-color: rgba(0, 153, 204, 0.25);
   border-top-color: #0099cc;
   border-style: solid;
@@ -2875,10 +3011,10 @@ input[type="text"] {
 .treeview .wait-spinner {
   display: block;
   position: absolute;
-  -webkit-animation: rotation .6s infinite linear;
-  -moz-animation: rotation .6s infinite linear;
-  -o-animation: rotation .6s infinite linear;
-  animation: rotation .6s infinite linear;
+  -webkit-animation: rotation 0.6s infinite linear;
+  -moz-animation: rotation 0.6s infinite linear;
+  -o-animation: rotation 0.6s infinite linear;
+  animation: rotation 0.6s infinite linear;
   border-color: rgba(0, 153, 204, 0.25);
   border-top-color: #0099cc;
   border-style: solid;
@@ -2990,3 +3126,21 @@ input[type="text"] {
       .autoflow .l-autoflow-items .l-autoflow-col:first-child {
         border-left: none;
         padding-left: 0; }
+
+/* Styles for the iframe EmbeddedPageController element */
+/* line 4, ../sass/_iframe.scss */
+.l-iframe iframe {
+  display: block;
+  height: 100%;
+  width: 100%; }
+
+/******************************** BROWSE */
+/* line 6, ../sass/_hide-non-functional.scss */
+.browse-mode .browse.top-bar {
+  display: none; }
+/* line 11, ../sass/_hide-non-functional.scss */
+.browse-mode .browse-area.holder {
+  top: 5px; }
+  /* line 18, ../sass/_hide-non-functional.scss */
+  .browse-mode .browse-area.holder > .contents.split-layout .object-browse-bar .t-btn.key-window {
+    display: none; }

@@ -30,13 +30,13 @@ define(
          *
          * @constructor
          */
-        function PlotController($scope, telemetryFormatter, telemetrySubscriber) {
+        function PlotController($scope, telemetryFormatter, telemetryHandler) {
             var subPlotFactory = new SubPlotFactory(telemetryFormatter),
                 modeOptions = new PlotModeOptions([], subPlotFactory),
                 subplots = [],
                 cachedObjects = [],
                 updater,
-                subscription,
+                handle,
                 domainOffset;
 
             // Populate the scope with axis information (specifically, options
@@ -77,7 +77,7 @@ define(
             // new subscription.) This will clear the plot.
             function recreateUpdater() {
                 updater = new PlotUpdater(
-                    subscription,
+                    handle,
                     ($scope.axes[0].active || {}).key,
                     ($scope.axes[1].active || {}).key
                 );
@@ -85,8 +85,8 @@ define(
 
             // Handle new telemetry data in this plot
             function updateValues() {
-                if (subscription) {
-                    setupModes(subscription.getTelemetryObjects());
+                if (handle) {
+                    setupModes(handle.getTelemetryObjects());
                 }
                 if (updater) {
                     updater.update();
@@ -95,29 +95,44 @@ define(
                 update();
             }
 
+            // Display new historical data as it becomes available
+            function addHistoricalData(domainObject, series) {
+                updater.addHistorical(domainObject, series);
+                modeOptions.getModeHandler().plotTelemetry(updater);
+                update();
+            }
+
+            // Issue a new request for historical telemetry
+            function requestTelemetry() {
+                if (handle && updater) {
+                    handle.request({}, addHistoricalData);
+                }
+            }
+
             // Create a new subscription; telemetrySubscriber gets
             // to do the meaningful work here.
             function subscribe(domainObject) {
-                if (subscription) {
-                    subscription.unsubscribe();
+                if (handle) {
+                    handle.unsubscribe();
                 }
-                subscription = domainObject && telemetrySubscriber.subscribe(
+                handle = domainObject && telemetryHandler.handle(
                     domainObject,
                     updateValues,
                     true // Lossless
                 );
-                if (subscription) {
-                    setupModes(subscription.getTelemetryObjects());
-                    setupAxes(subscription.getMetadata());
+                if (handle) {
+                    setupModes(handle.getTelemetryObjects());
+                    setupAxes(handle.getMetadata());
                     recreateUpdater();
+                    requestTelemetry();
                 }
             }
 
             // Release the current subscription (called when scope is destroyed)
             function releaseSubscription() {
-                if (subscription) {
-                    subscription.unsubscribe();
-                    subscription = undefined;
+                if (handle) {
+                    handle.unsubscribe();
+                    handle = undefined;
                 }
             }
 

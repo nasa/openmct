@@ -5,7 +5,7 @@
         "views": [
             {
                 "key": "layout",
-                "name": "Layout",
+                "name": "Display Layout",
                 "glyph": "L",
                 "type": "layout",
                 "templateUrl": "templates/layout.html",
@@ -197,7 +197,7 @@
         "types": [
             {
                 "key": "layout",
-                "name": "Layout",
+                "name": "Display Layout",
                 "glyph": "L",
                 "description": "A layout in which multiple telemetry panels may be displayed.",
                 "features": "creation",

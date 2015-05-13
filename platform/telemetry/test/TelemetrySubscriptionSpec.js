@@ -184,6 +184,14 @@ define(
             it("fires callback when telemetry objects are available", function () {
                 expect(mockCallback.calls.length).toEqual(1);
             });
+
+            it("exposes a promise for telemetry objects", function () {
+                var mockCallback2 = jasmine.createSpy('callback');
+                subscription.promiseTelemetryObjects().then(mockCallback2);
+
+                expect(mockCallback2)
+                    .toHaveBeenCalledWith([ mockDomainObject ]);
+            });
         });
     }
 );
