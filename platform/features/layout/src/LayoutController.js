@@ -69,6 +69,9 @@ define(
             function lookupPanels(ids) {
                 var configuration = $scope.configuration || {};
 
+                // Ensure ids is array-like
+                ids = ids || [];
+
                 // Pull panel positions from configuration
                 rawPositions = shallowCopy(configuration.panels || {}, ids);
 
