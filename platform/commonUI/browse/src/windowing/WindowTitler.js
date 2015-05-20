@@ -6,7 +6,8 @@ define(
         "use strict";
 
         /**
-         *
+         * Updates the title of the current window to reflect the name
+         * of the currently navigated-to domain object.
          * @constructor
          */
         function WindowTitler(navigationService, $rootScope, $document) {
