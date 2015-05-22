@@ -160,6 +160,8 @@
                     <sourceJsFolder>${basedir}</sourceJsFolder>
                     <excludes>
                         <exclude>**/lib/**</exclude>
+                        <exclude>app.js</exclude>
+                        <exclude>node_modules/**/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
