@@ -1,22 +1,5 @@
 {
     "extensions": {
-        "types": [
-            {
-                "key": "infobubble",
-                "name": "Info Bubble",
-                "glyph": "\u00EA",
-                "description": "Static markup for info bubbles",
-                "features": [ "creation" ]
-            }
-        ],
-        "views": [
-            {
-                "templateUrl": "infobubble.html",
-                "name": "Info Bubble",
-                "type": "infobubble",
-                "key": "infobubble"
-            }
-        ],
         "templates": [
             {
                 "key": "info-table",
