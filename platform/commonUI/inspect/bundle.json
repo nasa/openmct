@@ -17,6 +17,16 @@
                 "key": "infobubble"
             }
         ],
+        "templates": [
+            {
+                "key": "info-table",
+                "templateUrl": "info-table.html"
+            },
+            {
+                "key": "info-bubble",
+                "templateUrl": "info-bubble.html"
+            }
+        ],
         "containers": [
             {
                 "key": "bubble",
