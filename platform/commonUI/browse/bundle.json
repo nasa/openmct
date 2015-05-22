@@ -57,7 +57,8 @@
             {
                 "key": "grid-item",
                 "templateUrl": "templates/items/grid-item.html",
-                "uses": [ "type", "action" ]
+                "uses": [ "type", "action" ],
+                "gestures": [ "info", "menu" ]
             },
             {
                 "key": "object-header",
