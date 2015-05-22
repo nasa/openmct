@@ -5,30 +5,27 @@ define(
     function () {
         "use strict";
 
-        var BUBBLE_TEMPLATE = "<div><mct-container key=\"bubble\" " +
+        var BUBBLE_TEMPLATE = "<mct-container key=\"bubble\" " +
                 "bubble-title=\"{{bubbleTitle}}\" " +
                 "bubble-layout=\"{{bubbleLayout}}\">" +
                 "<mct-include key=\"bubbleTemplate\" ng-model=\"bubbleModel\">" +
                 "</mct-include>" +
-                "</mct-container></div>";
+                "</mct-container>",
+            OFFSET = [ 0, 16 ]; // Pixel offset for bubble, to align arrow position
 
         /**
          * Displays informative content ("info bubbles") for the user.
          * @constructor
          */
         function InfoService($compile, $document, $window, $rootScope) {
-            var template;
 
             function display(templateKey, title, content, position) {
                 var body = $document.find('body'),
                     scope = $rootScope.$new(),
                     winDim = [$window.innerWidth, $window.innerHeight],
-                    goLeft = position[0] > (window[0] / 2),
-                    goUp = position[1] > (window[1] / 2),
+                    goLeft = position[0] > (winDim[0] / 2),
+                    goUp = position[1] > (winDim[1] / 2),
                     bubble;
-
-                // Lazily initialize template
-                template = template || $compile(BUBBLE_TEMPLATE);
 
                 // Pass model & container parameters into the scope
                 scope.bubbleModel = content;
@@ -38,19 +35,19 @@ define(
                 scope.bubbleTitle = title;
 
                 // Create the context menu
-                bubble = template(scope);
+                bubble = $compile(BUBBLE_TEMPLATE)(scope);
 
                 // Position the bubble
                 bubble.css('position', 'absolute');
                 if (goLeft) {
-                    bubble.css('right', (winDim[0] - position[0]) + 'px');
+                    bubble.css('right', (winDim[0] - position[0] + OFFSET[0]) + 'px');
                 } else {
-                    bubble.css('left', position[0] + 'px');
+                    bubble.css('left', position[0] - OFFSET[0] + 'px');
                 }
                 if (goUp) {
-                    bubble.css('bottom', (winDim[1] - position[1]) + 'px');
+                    bubble.css('bottom', (winDim[1] - position[1] + OFFSET[1]) + 'px');
                 } else {
-                    bubble.css('top', position[1] + 'px');
+                    bubble.css('top', position[1] - OFFSET[1] + 'px');
                 }
 
                 // Add the menu to the body
