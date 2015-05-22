@@ -30,7 +30,7 @@
                 "description": "Unit testing",
                 "author": "Pivotal Labs",
                 "website": "http://jasmine.github.io/",
-                "copyright": "",
+                "copyright": "Copyright (c) 2008-2011 Pivotal Labs",
                 "license": "license-mit",
                 "link": "http://opensource.org/licenses/MIT"
             },
