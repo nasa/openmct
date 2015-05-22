@@ -5,6 +5,18 @@ define(
     function () {
         "use strict";
 
+        /**
+         * The `info` gesture displays domain object metadata in a
+         * bubble on hover.
+         *
+         * @constructor
+         * @param $timeout Angular's `$timeout`
+         * @param {InfoService} infoService a service which shows info bubbles
+         * @param {number} DELAY delay, in milliseconds, before bubble appears
+         * @param element jqLite-wrapped DOM element
+         * @param {DomainObject} domainObject the domain object for which to
+         *        show information
+         */
         function InfoGesture($timeout, infoService, DELAY, element, domainObject) {
             var dismissBubble,
                 pendingBubble,
@@ -65,6 +77,11 @@ define(
             scopeOff = element.scope().$on('$destroy', hideBubble);
 
             return {
+                /**
+                 * Detach any event handlers associated with this gesture.
+                 * @memberof InfoGesture
+                 * @method
+                 */
                 destroy: function () {
                     // Dismiss any active bubble...
                     hideBubble();
