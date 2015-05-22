@@ -5,20 +5,19 @@ define(
     function () {
         "use strict";
 
-        var BUBBLE_TEMPLATE = "<mct-container key=\"'bubble'\" " +
+        var BUBBLE_TEMPLATE = "<div><mct-container key=\"bubble\" " +
                 "bubble-title=\"{{bubbleTitle}}\" " +
-                "bubble-layout=\"{{bubbleLayout}}\" " +
-                "<mct-include key=\"'info-table'\" " +
-                "ng-model=\"bubbleModel\">" +
+                "bubble-layout=\"{{bubbleLayout}}\">" +
+                "<mct-include key=\"bubbleTemplate\" ng-model=\"bubbleModel\">" +
                 "</mct-include>" +
-                "</mct-container>";
+                "</mct-container></div>";
 
         /**
          * Displays informative content ("info bubbles") for the user.
          * @constructor
          */
         function InfoService($compile, $document, $window, $rootScope) {
-            var template = $compile(BUBBLE_TEMPLATE);
+            var template;
 
             function display(templateKey, title, content, position) {
                 var body = $document.find('body'),
@@ -28,8 +27,12 @@ define(
                     goUp = position[1] > (window[1] / 2),
                     bubble;
 
+                // Lazily initialize template
+                template = template || $compile(BUBBLE_TEMPLATE);
+
                 // Pass model & container parameters into the scope
                 scope.bubbleModel = content;
+                scope.bubbleTemplate = templateKey;
                 scope.bubbleLayout = (goUp ? 'arw-btm' : 'arw-top') + ' ' +
                         (goLeft ? 'arw-right' : 'arw-left');
                 scope.bubbleTitle = title;

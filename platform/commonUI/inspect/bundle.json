@@ -39,7 +39,11 @@
             {
                 "key": "info",
                 "implementation": "gestures/InfoGesture.js",
-                "depends": [ "infoService" ]
+                "depends": [
+                    "$timeout",
+                    "infoService",
+                    "INFO_HOVER_DELAY"
+                ]
             }
         ],
         "services": [
@@ -52,6 +56,12 @@
                     "$window",
                     "$rootScope"
                 ]
+            }
+        ],
+        "constants": [
+            {
+                "key": "INFO_HOVER_DELAY",
+                "value": 500
             }
         ]
     }
