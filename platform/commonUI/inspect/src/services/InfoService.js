@@ -40,12 +40,12 @@ define(
                 // Position the bubble
                 bubble.css('position', 'absolute');
                 if (goLeft) {
-                    bubble.css('right', (winDim[0] - position[0] + OFFSET[0]) + 'px');
+                    bubble.css('right', (winDim[0] - position[0] - OFFSET[0]) + 'px');
                 } else {
                     bubble.css('left', position[0] - OFFSET[0] + 'px');
                 }
                 if (goUp) {
-                    bubble.css('bottom', (winDim[1] - position[1] + OFFSET[1]) + 'px');
+                    bubble.css('bottom', (winDim[1] - position[1] - OFFSET[1]) + 'px');
                 } else {
                     bubble.css('top', position[1] - OFFSET[1] + 'px');
                 }
