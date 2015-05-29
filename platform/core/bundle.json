@@ -180,6 +180,11 @@
             {
                 "key": "now",
                 "implementation": "services/Now.js"
+            },
+            {
+                "key": "throttle",
+                "implementation": "services/Throttle.js",
+                "depends": [ "$timeout" ]
             }
         ],
         "roots": [

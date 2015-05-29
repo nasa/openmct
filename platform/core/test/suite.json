@@ -23,6 +23,7 @@
     "objects/DomainObjectProvider",
 
     "services/Now",
+    "services/Throttle",
 
     "types/MergeModels",
     "types/TypeCapability",
