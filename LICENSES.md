@@ -28,7 +28,7 @@ This software includes components released under the following licenses:
 
 #### License
 
-Copyright 2010-2014 Kerry Jiang (kerry-jiang@hotmail.com)
+Copyright 2012 Kerry Jiang (kerry-jiang@hotmail.com)
 
 SuperSocket is licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.  You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
 
@@ -50,7 +50,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 
 #### License
 
-Copyright 2010-2014 Kerry Jiang (kerry-jiang@hotmail.com)
+Copyright 2010-2013 Kerry Jiang (kerry-jiang@hotmail.com)
 
 SuperWebSocket is licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.  You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
 
@@ -65,7 +65,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 
 * Link: http://logging.apache.org/log4net/
 
-* Version: 2.0.3
+* Version: 1.2.13
 
 * Author: Apache Software Foundation
 
@@ -95,6 +95,8 @@ Unless required by applicable law or agreed to in writing, software distributed 
 
 #### License
 
+Copyright (c) 2013 Alex Seville
+
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
@@ -116,6 +118,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 * Description: Unit testing
 
 #### License
+
+Copyright (c) 2008-2011 Pivotal Labs
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -163,7 +167,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #### License
 
-Copyright (c) 2010-2015 Google, Inc. http://angularjs.org
+Copyright (c) 2010-2014 Google, Inc. http://angularjs.org
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -187,7 +191,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #### License
 
-Copyright (c) 2010-2015 Google, Inc. http://angularjs.org
+Copyright (c) 2010-2014 Google, Inc. http://angularjs.org
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -258,6 +262,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 * Description: Unique identifer generation (code adapted.)
 
 #### License
+
+Copyright (c) 2010 Robert Kieffer
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
