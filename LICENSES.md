@@ -301,7 +301,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #### Info
 
-* Link: http://necolas.github.io/normalize.css/
+* Link: https://github.com/necolas/normalize.css
 
 * Version: 1.1.2
 
