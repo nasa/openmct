@@ -22,7 +22,7 @@
             {
                 "key": "PlotController",
                 "implementation": "PlotController.js",
-                "depends": [ "$scope", "telemetryFormatter", "telemetryHandler" ]
+                "depends": [ "$scope", "telemetryFormatter", "telemetryHandler", "throttle" ]
             }
         ]
     }
