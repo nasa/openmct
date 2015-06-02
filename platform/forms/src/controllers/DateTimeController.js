@@ -52,6 +52,20 @@ define(
                 if (fullDateTime.isValid()) {
                     $scope.ngModel[$scope.field] = fullDateTime.valueOf();
                 }
+
+                // If anything is complete, say so in scope; there are
+                // ng-required usages that will update off of this (to
+                // allow datetime to be optional while still permitting
+                // incomplete input)
+                $scope.partiallyComplete =
+                    Object.keys($scope.datetime).some(function (key) {
+                        return $scope.datetime[key];
+                    });
+
+                // Treat empty input as an undefined value
+                if (!$scope.partiallyComplete) {
+                    $scope.ngModel[$scope.field] = undefined;
+                }
             }
 
             // Update value whenever any field changes.
