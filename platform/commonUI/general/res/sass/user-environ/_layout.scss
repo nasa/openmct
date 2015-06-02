@@ -89,11 +89,12 @@
 	}
 
 	.edit-area {
-		$tbH: $ueEditToolBarH;
+		$tbH: $btnToolbarH + $interiorMargin;
+		top: $bodyMargin + $ueTopBarEditH + ($interiorMargin);
 		.tool-bar {
 			bottom: auto;
 			height: $tbH;
-			line-height: $ueEditToolBarButtonH;
+			line-height: $btnToolbarH;
 		}
 		.work-area {
 			top: $tbH + $interiorMargin * 2;
@@ -181,19 +182,31 @@
     position: absolute;
     &.treeview {
 	    .create-btn-holder {
-		    bottom: auto; height: $ueBrowseViewBarH;
+		    bottom: auto; top: 0;
+		    height: $ueTopBarH;
+		    .wrapper.menu-element {
+			    position: absolute;
+			    bottom: $interiorMargin;
+		    }
 	    }
 	    .tree-holder {
 		    overflow: auto;
-		    top: $ueBrowseViewBarH + $interiorMargin;
+		    top: $ueTopBarH + $interiorMargin;
 	    }
     }
     &.items {
         .object-browse-bar {
 //            bottom: auto;
+	        .left.abs,
+	        .right.abs {
+		        top: auto;
+	        }
+	        .right.abs {
+		        bottom: $interiorMargin;
+	        }
         }
         .object-holder {
-            top: $ueBrowseViewBarH + $interiorMargin;
+            top: $ueTopBarH + $interiorMargin;
         }
     }
 	&.edit-main {

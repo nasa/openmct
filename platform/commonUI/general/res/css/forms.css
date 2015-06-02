@@ -1,9 +1,7 @@
 /* line 3, ../sass/forms/_elems.scss */
 .form .section-header {
-  -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  -o-border-radius: 3px;
+  -webkit-border-radius: 3px;
   border-radius: 3px;
   background: rgba(255, 255, 255, 0.1);
   font-size: 0.8em;
@@ -17,8 +15,8 @@
   position: relative; }
 /* line 17, ../sass/forms/_elems.scss */
 .form .form-row {
-  -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
   *zoom: 1;
@@ -29,11 +27,11 @@
   /* line 24, ../sass/forms/_elems.scss */
   .form .form-row.first {
     border-top: none; }
-  /* line 29, ../sass/forms/_elems.scss */
+  /* line 28, ../sass/forms/_elems.scss */
   .form .form-row .label,
   .form .form-row .controls {
-    -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     overflow: hidden;
     *zoom: 1;
@@ -83,13 +81,11 @@
     color: #666666; }
   /* line 95, ../sass/forms/_elems.scss */
   .form .form-row .selector-list {
-    -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
-    -ms-border-radius: 3px;
-    -o-border-radius: 3px;
+    -webkit-border-radius: 3px;
     border-radius: 3px;
-    -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     background: rgba(0, 0, 0, 0.2);
     padding: 5px;
@@ -110,7 +106,7 @@ label.form-control.checkbox input {
   margin-right: 5px;
   vertical-align: top; }
 
-/* line 127, ../sass/forms/_elems.scss */
+/* line 126, ../sass/forms/_elems.scss */
 .hint,
 .s-hint {
   font-size: 0.9em; }
@@ -124,10 +120,8 @@ label.form-control.checkbox input {
   vertical-align: top; }
   /* line 138, ../sass/forms/_elems.scss */
   .l-result div.s-hint {
-    -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
-    -ms-border-radius: 3px;
-    -o-border-radius: 3px;
+    -webkit-border-radius: 3px;
     border-radius: 3px;
     background: rgba(255, 153, 0, 0.8);
     display: block;
@@ -136,19 +130,16 @@ label.form-control.checkbox input {
 
 /* line 1, ../sass/forms/_textarea.scss */
 .edit-main textarea {
-  -webkit-appearance: none;
   -moz-appearance: none;
-  appearance: none;
-  -webkit-border-radius: 3px;
+  -webkit-appearance: none;
   -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  -o-border-radius: 3px;
+  -webkit-border-radius: 3px;
   border-radius: 3px;
-  -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   -moz-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   background: rgba(255, 255, 255, 0.1);
   border: none;
@@ -165,19 +156,16 @@ label.form-control.checkbox input {
 
 /* line 1, ../sass/forms/_text-input.scss */
 input[type="text"] {
-  -webkit-appearance: none;
   -moz-appearance: none;
-  appearance: none;
-  -webkit-border-radius: 3px;
+  -webkit-appearance: none;
   -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  -o-border-radius: 3px;
+  -webkit-border-radius: 3px;
   border-radius: 3px;
-  -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   -moz-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   background: rgba(255, 255, 255, 0.1);
   border: none;
@@ -194,25 +182,24 @@ input[type="text"] {
 
 /* line 1, ../sass/forms/_selects.scss */
 .form-control.select {
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzQwNDA0MCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+  background-size: 100%;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #4d4d4d), color-stop(100%, #404040));
-  background-image: -webkit-linear-gradient(#4d4d4d, #404040);
   background-image: -moz-linear-gradient(#4d4d4d, #404040);
-  background-image: -o-linear-gradient(#4d4d4d, #404040);
+  background-image: -webkit-linear-gradient(#4d4d4d, #404040);
   background-image: linear-gradient(#4d4d4d, #404040);
-  -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  -o-border-radius: 3px;
+  -webkit-border-radius: 3px;
   border-radius: 3px;
-  -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   border: none;
   border-top: 1px solid #666666;
-  color: #999999;
+  color: #999;
   display: inline-block;
   cursor: pointer;
   display: inline-block;
@@ -221,21 +208,21 @@ input[type="text"] {
   position: relative; }
   /* line 127, ../sass/_mixins.scss */
   .form-control.select:not(.disabled):hover {
+    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzY2NjY2NiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+    background-size: 100%;
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #4d4d4d));
-    background-image: -webkit-linear-gradient(#666666, #4d4d4d);
     background-image: -moz-linear-gradient(#666666, #4d4d4d);
-    background-image: -o-linear-gradient(#666666, #4d4d4d);
+    background-image: -webkit-linear-gradient(#666666, #4d4d4d);
     background-image: linear-gradient(#666666, #4d4d4d); }
   /* line 8, ../sass/forms/_selects.scss */
   .form-control.select select {
-    -webkit-appearance: none;
     -moz-appearance: none;
-    appearance: none;
-    -webkit-box-sizing: border-box;
+    -webkit-appearance: none;
     -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
     background: none;
-    color: #999999;
+    color: #999;
     border: none !important;
     cursor: pointer;
     padding: 4px 25px 2px 5px;
@@ -260,19 +247,16 @@ input[type="text"] {
   min-height: 22px; }
 /* line 6, ../sass/forms/_channel-selector.scss */
 .channel-selector .treeview {
-  -webkit-appearance: none;
   -moz-appearance: none;
-  appearance: none;
-  -webkit-border-radius: 3px;
+  -webkit-appearance: none;
   -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  -o-border-radius: 3px;
+  -webkit-border-radius: 3px;
   border-radius: 3px;
-  -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   -moz-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
   background: rgba(255, 255, 255, 0.1);
   border: none;

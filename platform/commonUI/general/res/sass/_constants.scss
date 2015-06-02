@@ -5,6 +5,7 @@ $interiorMarginLg: $interiorMargin * 2;
 $interiorMarginSm: 3px;
 $basicCr: 3px;
 $controlCr: $basicCr;
+$smallCr: 2px;
 $badgeW: 35px;
 
 // Colors and shading
@@ -24,20 +25,25 @@ $colorFormValid: #33cc33;
 $colorFormError: #cc0000;
 $colorFormInvalid: #ff9900;
 $colorGridLines: rgba(#fff, 0.05);
-
+$colorLimitYellow: #9d7500;
+$colorLimitRed: #aa0000;
+$colorTelemFresh: #fff;
+$colorTelemStale: #888;
+$styleTelemState: italic;
 
 // Ratios
 $ltGamma: 20%;
 $btnFontSizeToH: 0.45;
 
 // User Environment
-$ueTopBarH: 35px;
+$ueTopBarH: 30px; // Change to 45px when breadcrumb is enabled
+$ueTopBarEditH: 30px;
+$ueTopBarBtnH: 35px;
 $ueFooterH: 20px;
 $ueColMargin: 1.5%;
 $ueAppLogoW: 105px;
-$ueBrowseViewBarH: $ueTopBarH; // was 30px
-$ueEditToolBarH: $ueBrowseViewBarH;
-$ueEditToolBarButtonH: $ueEditToolBarH * 0.8;
+//$ueBrowseViewBarH: $ueTopBarH; // was 30px
+$ueEditToolBarH: 25px;
 $ueBrowseLeftPaneW: 25%;
 $ueEditLeftPaneW: 75%;
 
@@ -55,6 +61,7 @@ $ueBrowseGridItemBottomBarH: 40px;
 $colorItemBase: lighten($colorBodyBg, 5%);
 $colorItemFg: lighten($colorItemBase, 20%);
 $colorItemSelected: $colorKey;
+$itemPadLR: 5px;
 
 // Tree
 $treeVCW: 10px;
@@ -65,8 +72,8 @@ $colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
 $colorItemTreeVCHover: $colorAlt1;
 
 //Tabular
-$tabularHeaderH: 20px;
-$tabularTdPadLR: 5px;
+$tabularHeaderH: 18px;
+$tabularTdPadLR: $itemPadLR;
 $tabularTdPadTB: 2px;
 $tabularColorBorder: rgba(white, 0.1);
 $tabularColorBodyBg: darken($colorBodyBg, 10%);
@@ -83,6 +90,8 @@ $formRowCtrlsH: 14px;
 $menuLineH: 1.5rem;
 $scrollbarTrackSize: 10px;
 $scrollbarTrackColorBg: rgba(#000, 0.4);
+$btnStdH: 25px;
+$btnToolbarH: $btnStdH;
 
 // Paths
 $dirImgs: '../images/'; // Relative to platform/css/ directory

@@ -46,7 +46,7 @@
 		rgba($c, $a) 25%, transparent 25%,
 		transparent 50%, rgba($c, $a) 50%,
 		rgba($c, $a) 75%, transparent 75%,
-		transparent 0
+		transparent 100%
 	));
 	background-repeat: repeat;
 	background-size: $d $d;
@@ -157,6 +157,14 @@
 	@include box-shadow(rgba($color, $sVal) 0 0 30px);
 }
 
+@mixin linearGlow($deg: 0, $c: red, $a: 0.4) {
+    @include background-image(linear-gradient($deg, rgba($c,0), rgba($c, $a) 100%));
+}
+
+@mixin subtleGrad($deg: 0, $c: red, $a0: 0.2, $a1: 0.3) {
+	@include background-image(linear-gradient($deg, rgba($c,$a0), rgba($c, $a1) 100%));
+}
+
 @mixin txtShdwSubtle($sVal: 0.1) {
 	@include text-shadow(rgba(black, $sVal) 0 1px 2px);
 }
@@ -226,8 +234,6 @@
 	background-color: rgba($c, $a);
 }
 
-
-
 @mixin testObj($w: 2000px, $h: 1000px, $c: black, $a: 0.1) {
     &:after {
         @include box-sizing(border-box);
@@ -243,4 +249,9 @@
         transform: scaleX(1) scaleY(1) scaleZ(1);
         transform-origin: 50% 50% 0;
     }
+}
+
+@mixin s-stale($a: 0.5) {
+	color: rgba($colorTelemFresh, $a) !important;
+	font-style: italic;
 }

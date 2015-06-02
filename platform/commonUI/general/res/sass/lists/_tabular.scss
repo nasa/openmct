@@ -1,80 +1,115 @@
-.w1 {
-	background: $tabularColorHeaderBg;
-	padding-top: $tabularHeaderH;
+.w1, .w2 {
 	position: relative;
+	height: 100%;
 }
-.w2 {
-	background: $tabularColorBodyBg;
-	overflow-y: auto;
 
-}
 .tabular {
 	@include box-sizing(border-box);
 	border-spacing: 0;
 	border-collapse: collapse;
+	color: #fff;
 	display: table;
 	font-size: 0.8em;
+	position: relative;
+	height: 100%;
 	width: 100%;
-	.tr {
-		display: table-row;
+	thead, .thead,
+	tbody tr, .tbody .tr {
+		display: table;
+		width: 100%;
+		table-layout: fixed;
+	}
+	thead, .thead {
+		width: calc(100% - 10px);
+		tr, .tr {
+			height: $tabularHeaderH;
+		}
+		&:before {
+			content: "";
+			display: block;
+			z-index: 0;
+			position: absolute;
+			width: 100%;
+			height: $tabularHeaderH;
+			background: rgba(#fff, 0.15);
+		}
+	}
+	tbody, .tbody {
+		@include absPosDefault(0);
+		top: $tabularHeaderH;
+		//display: table-row-group;
+		display: block;
+		//width: 100%;
+		overflow-y: scroll;
+		tr, .tr {
+			&:hover {
+				background: rgba(white, 0.1);
+			}
+		}
+	}
+	tr, .tr {
+		//display: table-row;
+		//width: 100%;
 		&:first-child .td {
 			border-top: none;
 		}
-		&:hover {
-			background: rgba(white, 0.1);
-		}
-		&.header {
-			display: table-header-group;
-			.th {
-				border: none;
-				color: transparent;
-				height: 0px;
-				line-height: 0;
-				padding: 0 $tabularTdPadLR;
-				white-space: nowrap;
-				vertical-align: middle; // This is crucial to hiding f**king 4px height injected by browser by default
-				&:first-child em {
-					border-left: none;
-				}
-				&.sort {
-					em:after {
-						display: inline-block;
-						font-family: symbolsfont;
-						margin-left: 5px;
-					}
-					&.asc em:after { content: '0'; }
-					&.desc em:after { content: '1'; }
-				}
-				em {
-//					background: rgba(green, 0.2);
-					border-left: 1px solid $tabularColorBorder;
-					color: $tabularColorHeaderFg;
-					cursor: pointer;
-					display: block;
-					font-style: normal;
-					font-weight: bold;
-					height: $tabularHeaderH;
-					line-height: $tabularHeaderH;
-					margin-left: - $tabularTdPadLR;
-					padding: 0 $tabularTdPadLR;
-					position: absolute;
-					top: 0;
-					vertical-align: middle;
-					&:hover {
-						color: lighten($tabularColorHeaderFg, 20%);
-					}
-				}
-			}
-		}
-		.th, .td {
+		th, .th, td, .td {
 			display: table-cell;
 		}
-		.td {
+		th, .th {
+			border: none;
+			border-left: 1px solid $tabularColorBorder;
+			color: $tabularColorHeaderFg;
+			padding: 0 $tabularTdPadLR;
+			white-space: nowrap;
+			vertical-align: middle; // This is crucial to hiding f**king 4px height injected by browser by default
+			&:first-child {
+				border-left: none;
+			}
+			&.sort {
+				.icon-sorting:before {
+					display: inline-block;
+					font-family: symbolsfont;
+					margin-left: 5px;
+				}
+				&.asc .icon-sorting:before {
+					content: '0';
+				}
+				&.desc .icon-sorting:before {
+					content: '1';
+				}
+			}
+			/*	em {
+                    //background: rgba(green, 0.2);
+                    border-left: 1px solid $tabularColorBorder;
+                    color: $tabularColorHeaderFg;
+                    cursor: pointer;
+                    display: block;
+                    font-style: normal;
+                    font-weight: bold;
+                    height: $tabularHeaderH;
+                    line-height: $tabularHeaderH;
+                    margin-left: - $tabularTdPadLR;
+                    padding: 0 $tabularTdPadLR;
+                    position: absolute;
+                    top: 0;
+                    vertical-align: middle;
+                    &:hover {
+                        color: lighten($tabularColorHeaderFg, 20%);
+                    }
+                }*/
+		}
+		td, .td {
 			border-top: 1px solid $tabularColorBorder;
 			padding: $tabularTdPadTB $tabularTdPadLR;
 			&.numeric {
 				text-align: right;
 			}
+		}
+	}
+	&.filterable {
+		tbody, .tbody {
+			top: $tabularHeaderH * 2;
 		}
 	}
 }

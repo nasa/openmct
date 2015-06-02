@@ -1,5 +1,5 @@
 $yBarW: 60px;
-$yLabelW: auto; //10px;
+$yLabelW: auto;
 $xBarH: 32px;
 $legendH: 24px;
 $colorHash: rgba(white, 0.3);
@@ -38,7 +38,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 	.gl-plot-coords {
 		@include box-sizing(border-box);
 		@include border-radius($controlCr);
-		background: rgba($colorAlt1, 0.5);
+		background: black; //rgba($colorKey, 0.5);
 		color: lighten($colorBodyFg, 30%);
 		padding: 2px 5px;
 		position: absolute;
@@ -80,7 +80,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 		}
 
 		&.gl-plot-y-label,
-		&.l-plot-y-label  {
+		&.l-plot-y-label {
 			$x: -50%;
 			$r: -90deg;
 			@include transform-origin(50%, 0);
@@ -129,22 +129,51 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 		height: $legendH;
 		overflow-x: hidden;
 		overflow-y: auto;
-//		.plot-legend-item {
-//			display: inline-block;
-//			margin-right: $interiorMarginLg;
-//			span {
-//				vertical-align: middle;
-//			}
-//			.plot-color-swatch {
-//				@include border-radius(2px);
-//				display: inline-block;
-//				height: $swatchD;
-//				width: $swatchD;
-//				margin-right: $interiorMarginSm;
-//			}
-//		}
+	}
+
+	/****************************** Limits and Out-of-Bounds data */
+
+	.l-limit-bar,
+	.l-oob-data {
+		position: absolute;
+		left: 0;
+		right: 0;
+		width: auto;
+	}
+
+	.l-limit-bar {
+		// Limits in plot display area
+		@mixin limitBg($c) {
+			background: rgba($c, 0.2);
+		}
+
+		height: auto;
+		z-index: 0;
+		&.s-limit-yellow { @include limitBg($colorLimitYellow); }
+		&.s-limit-red { @include limitBg($colorLimitRed); }
+	}
+
+	.l-oob-data {
+		$c: #7748d6;
+		$a: 0.5;
+		$h: 10px;
+		@include absPosDefault();
+		pointer-events: none;
+		height: $h;
+		z-index: 1;
+		&.l-oob-data-up {
+			top: 0;
+			bottom: auto;
+			@include linearGlow(0deg, $c, $a);
+		}
+		&.l-oob-data-dwn {
+			bottom: 0;
+			top: auto;
+			@include linearGlow(180deg, $c, $a);
+		}
 	}
 }
+
 .gl-plot-legend,
 .legend {
 	.plot-legend-item,
@@ -160,11 +189,23 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 			display: inline-block;
 			height: $swatchD;
 			width: $swatchD;
-			margin-right: $interiorMarginSm;
-
+			//margin-right: $interiorMarginSm;
 		}
-		.title-label {
+		.title-label {}
+	}
+}
 
+.gl-plot-legend {
+	.plot-legend-item {
+		//@include test();
+		@include border-radius($smallCr);
+		color: #fff;
+		line-height: 1.5em;
+		padding: 0px $itemPadLR;
+		.plot-color-swatch {
+			border: 1px solid $colorBodyBg;
+			height: $swatchD + 1;
+			width: $swatchD + 1;
 		}
 	}
 }
@@ -177,7 +218,6 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 		height: 100%; // Assumption is that the tick will be in a holder that will set it's height;
 	}
 }
-
 
 .gl-plot-tick,
 .tick-label {
