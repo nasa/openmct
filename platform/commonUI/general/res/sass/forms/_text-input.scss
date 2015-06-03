@@ -19,13 +19,18 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-input[type="text"] {
+input[type="text"],
+input[type="date"] {
 	@include nice-input();
-    &.filter {
-        &.ng-dirty {
-//            background: red;
-        }
-    }
+	@include input-placeholder {
+		color: darken($colorBodyFg, 10%);
+		font-style: italic;
+	}
+	&.filter {
+		&.ng-dirty {
+			//            background: red;
+		}
+	}
 	&.numeric {
 		text-align: right;
 	}

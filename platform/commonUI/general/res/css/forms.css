@@ -302,7 +302,8 @@ label.form-control.checkbox input {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* line 22, ../sass/forms/_text-input.scss */
-input[type="text"] {
+input[type="text"],
+input[type="date"] {
   -moz-appearance: none;
   -webkit-appearance: none;
   -moz-border-radius: 3px;
@@ -321,10 +322,32 @@ input[type="text"] {
   outline: none;
   padding: 0 3px; }
   /* line 33, ../sass/forms/_mixins.scss */
-  input[type="text"].error {
+  input[type="text"].error,
+  input[type="date"].error {
     background: rgba(255, 0, 0, 0.5); }
-  /* line 29, ../sass/forms/_text-input.scss */
-  input[type="text"].numeric {
+  /* line 61, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
+  input[type="text"]:-moz-placeholder,
+  input[type="date"]:-moz-placeholder {
+    color: gray;
+    font-style: italic; }
+  /* line 64, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
+  input[type="text"]::-moz-placeholder,
+  input[type="date"]::-moz-placeholder {
+    color: gray;
+    font-style: italic; }
+  /* line 67, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
+  input[type="text"]:-ms-input-placeholder,
+  input[type="date"]:-ms-input-placeholder {
+    color: gray;
+    font-style: italic; }
+  /* line 56, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
+  input[type="text"]::-webkit-input-placeholder,
+  input[type="date"]::-webkit-input-placeholder {
+    color: gray;
+    font-style: italic; }
+  /* line 34, ../sass/forms/_text-input.scss */
+  input[type="text"].numeric,
+  input[type="date"].numeric {
     text-align: right; }
 
 /*****************************************************************************
