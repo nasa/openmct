@@ -35,7 +35,7 @@ define(
                 policy = new CompositionMutabilityPolicy();
             });
 
-            it("only allows composition for types which will have a composition capability", function () {
+            it("only allows composition for types which can be created/modified", function () {
                 expect(policy.allow(mockType)).toBeFalsy();
                 mockType.hasFeature.andReturn(true);
                 expect(policy.allow(mockType)).toBeTruthy();
