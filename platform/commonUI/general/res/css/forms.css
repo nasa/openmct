@@ -19,7 +19,91 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 3, ../sass/forms/_elems.scss */
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 24, ../sass/forms/_elems.scss */
 .form .section-header {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
@@ -28,13 +112,13 @@
   font-size: 0.8em;
   margin-top: 5px;
   padding: 5px; }
-  /* line 9, ../sass/forms/_elems.scss */
+  /* line 30, ../sass/forms/_elems.scss */
   .form .section-header:first-child {
     margin-top: 0; }
-/* line 13, ../sass/forms/_elems.scss */
+/* line 34, ../sass/forms/_elems.scss */
 .form .form-section {
   position: relative; }
-/* line 17, ../sass/forms/_elems.scss */
+/* line 38, ../sass/forms/_elems.scss */
 .form .form-row {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -45,10 +129,10 @@
   margin-top: 5px;
   padding: 5px;
   position: relative; }
-  /* line 24, ../sass/forms/_elems.scss */
+  /* line 45, ../sass/forms/_elems.scss */
   .form .form-row.first {
     border-top: none; }
-  /* line 28, ../sass/forms/_elems.scss */
+  /* line 49, ../sass/forms/_elems.scss */
   .form .form-row .label,
   .form .form-row .controls {
     -moz-box-sizing: border-box;
@@ -60,47 +144,47 @@
     font-size: 0.75rem;
     line-height: 22px;
     min-height: 22px; }
-  /* line 39, ../sass/forms/_elems.scss */
+  /* line 60, ../sass/forms/_elems.scss */
   .form .form-row > .label {
     float: left;
     position: relative;
     white-space: nowrap;
     width: 20%; }
-  /* line 47, ../sass/forms/_elems.scss */
+  /* line 68, ../sass/forms/_elems.scss */
   .form .form-row .value {
     color: #cccccc; }
-  /* line 51, ../sass/forms/_elems.scss */
+  /* line 72, ../sass/forms/_elems.scss */
   .form .form-row .controls {
     float: left;
     position: relative;
     width: 79.9%; }
-    /* line 58, ../sass/forms/_elems.scss */
+    /* line 79, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-composite-control.l-checkbox {
       display: inline-block;
       line-height: 14px;
       margin-right: 5px; }
-    /* line 67, ../sass/forms/_elems.scss */
+    /* line 88, ../sass/forms/_elems.scss */
     .form .form-row .controls input[type="text"] {
       height: 22px;
       line-height: 22px;
       margin-top: -4px;
       vertical-align: baseline; }
-    /* line 74, ../sass/forms/_elems.scss */
+    /* line 95, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-med input[type="text"] {
       width: 200px; }
-    /* line 78, ../sass/forms/_elems.scss */
+    /* line 99, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-small input[type="text"] {
       width: 50px; }
-    /* line 82, ../sass/forms/_elems.scss */
+    /* line 103, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-numeric input[type="text"] {
       text-align: right; }
-    /* line 86, ../sass/forms/_elems.scss */
+    /* line 107, ../sass/forms/_elems.scss */
     .form .form-row .controls .select {
       margin-right: 5px; }
-  /* line 91, ../sass/forms/_elems.scss */
+  /* line 112, ../sass/forms/_elems.scss */
   .form .form-row .field-hints {
     color: #666666; }
-  /* line 95, ../sass/forms/_elems.scss */
+  /* line 116, ../sass/forms/_elems.scss */
   .form .form-row .selector-list {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -113,7 +197,7 @@
     position: relative;
     height: 150px;
     overflow: auto; }
-    /* line 106, ../sass/forms/_elems.scss */
+    /* line 127, ../sass/forms/_elems.scss */
     .form .form-row .selector-list .wrapper {
       overflow-y: auto;
       position: absolute;
@@ -122,24 +206,24 @@
       bottom: 5px;
       left: 5px; }
 
-/* line 120, ../sass/forms/_elems.scss */
+/* line 141, ../sass/forms/_elems.scss */
 label.form-control.checkbox input {
   margin-right: 5px;
   vertical-align: top; }
 
-/* line 126, ../sass/forms/_elems.scss */
+/* line 147, ../sass/forms/_elems.scss */
 .hint,
 .s-hint {
   font-size: 0.9em; }
 
-/* line 131, ../sass/forms/_elems.scss */
+/* line 152, ../sass/forms/_elems.scss */
 .l-result {
   display: inline-block;
   min-width: 32px;
   min-height: 32px;
   position: relative;
   vertical-align: top; }
-  /* line 138, ../sass/forms/_elems.scss */
+  /* line 159, ../sass/forms/_elems.scss */
   .l-result div.s-hint {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -149,7 +233,28 @@ label.form-control.checkbox input {
     color: #ffd699;
     padding: 5px; }
 
-/* line 1, ../sass/forms/_textarea.scss */
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 22, ../sass/forms/_textarea.scss */
 .edit-main textarea {
   -moz-appearance: none;
   -webkit-appearance: none;
@@ -171,11 +276,32 @@ label.form-control.checkbox input {
   position: absolute;
   height: 100%;
   width: 100%; }
-  /* line 12, ../sass/forms/_mixins.scss */
+  /* line 33, ../sass/forms/_mixins.scss */
   .edit-main textarea.error {
     background: rgba(255, 0, 0, 0.5); }
 
-/* line 1, ../sass/forms/_text-input.scss */
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 22, ../sass/forms/_text-input.scss */
 input[type="text"] {
   -moz-appearance: none;
   -webkit-appearance: none;
@@ -194,14 +320,35 @@ input[type="text"] {
   color: #cccccc;
   outline: none;
   padding: 0 3px; }
-  /* line 12, ../sass/forms/_mixins.scss */
+  /* line 33, ../sass/forms/_mixins.scss */
   input[type="text"].error {
     background: rgba(255, 0, 0, 0.5); }
-  /* line 8, ../sass/forms/_text-input.scss */
+  /* line 29, ../sass/forms/_text-input.scss */
   input[type="text"].numeric {
     text-align: right; }
 
-/* line 1, ../sass/forms/_selects.scss */
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 22, ../sass/forms/_selects.scss */
 .form-control.select {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzQwNDA0MCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background-size: 100%;
@@ -227,7 +374,7 @@ input[type="text"] {
   margin: 0 0 2px 2px;
   overflow: hidden;
   position: relative; }
-  /* line 127, ../sass/_mixins.scss */
+  /* line 148, ../sass/_mixins.scss */
   .form-control.select:not(.disabled):hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzY2NjY2NiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -235,7 +382,7 @@ input[type="text"] {
     background-image: -moz-linear-gradient(#666666, #4d4d4d);
     background-image: -webkit-linear-gradient(#666666, #4d4d4d);
     background-image: linear-gradient(#666666, #4d4d4d); }
-  /* line 8, ../sass/forms/_selects.scss */
+  /* line 29, ../sass/forms/_selects.scss */
   .form-control.select select {
     -moz-appearance: none;
     -webkit-appearance: none;
@@ -248,10 +395,10 @@ input[type="text"] {
     cursor: pointer;
     padding: 4px 25px 2px 5px;
     width: 120%; }
-    /* line 17, ../sass/forms/_selects.scss */
+    /* line 38, ../sass/forms/_selects.scss */
     .form-control.select select option {
       margin: 5px 0; }
-  /* line 21, ../sass/forms/_selects.scss */
+  /* line 42, ../sass/forms/_selects.scss */
   .form-control.select:after {
     color: #0099cc;
     content: "v";
@@ -262,11 +409,32 @@ input[type="text"] {
     right: 5px;
     top: 0; }
 
-/* line 2, ../sass/forms/_channel-selector.scss */
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 23, ../sass/forms/_channel-selector.scss */
 .channel-selector .line {
   margin-bottom: 5px;
   min-height: 22px; }
-/* line 6, ../sass/forms/_channel-selector.scss */
+/* line 27, ../sass/forms/_channel-selector.scss */
 .channel-selector .treeview {
   -moz-appearance: none;
   -webkit-appearance: none;
@@ -291,13 +459,13 @@ input[type="text"] {
   max-height: 400px;
   overflow: auto;
   padding: 5px; }
-  /* line 12, ../sass/forms/_mixins.scss */
+  /* line 33, ../sass/forms/_mixins.scss */
   .channel-selector .treeview.error {
     background: rgba(255, 0, 0, 0.5); }
-/* line 15, ../sass/forms/_channel-selector.scss */
+/* line 36, ../sass/forms/_channel-selector.scss */
 .channel-selector .btns-add-remove {
   margin-top: 150px; }
-  /* line 18, ../sass/forms/_channel-selector.scss */
+  /* line 39, ../sass/forms/_channel-selector.scss */
   .channel-selector .btns-add-remove .btn {
     display: block;
     font-size: 1.5em;
@@ -305,23 +473,44 @@ input[type="text"] {
     padding: 10px;
     text-align: center; }
 
-/* line 2, ../sass/forms/_datetime.scss */
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 23, ../sass/forms/_datetime.scss */
 .complex.datetime span {
   display: inline-block;
   margin-right: 5px; }
-/* line 15, ../sass/forms/_datetime.scss */
+/* line 36, ../sass/forms/_datetime.scss */
 .complex.datetime .fields {
   margin-top: 3px 0;
   padding: 3px 0; }
-/* line 20, ../sass/forms/_datetime.scss */
+/* line 41, ../sass/forms/_datetime.scss */
 .complex.datetime .date {
   width: 85px; }
-  /* line 23, ../sass/forms/_datetime.scss */
+  /* line 44, ../sass/forms/_datetime.scss */
   .complex.datetime .date input {
     width: 80px; }
-/* line 29, ../sass/forms/_datetime.scss */
+/* line 50, ../sass/forms/_datetime.scss */
 .complex.datetime .time.sm {
   width: 45px; }
-  /* line 32, ../sass/forms/_datetime.scss */
+  /* line 53, ../sass/forms/_datetime.scss */
   .complex.datetime .time.sm input {
     width: 40px; }

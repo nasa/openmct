@@ -19,7 +19,70 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 10, ../sass/plots/_plots-main.scss */
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 31, ../sass/plots/_plots-main.scss */
 .gl-plot {
   color: #999;
   font-size: 0.7rem;
@@ -27,10 +90,10 @@
   width: 100%;
   height: 100%;
   /****************************** Limits and Out-of-Bounds data */ }
-  /* line 17, ../sass/plots/_plots-main.scss */
+  /* line 38, ../sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-axis-area {
     position: absolute; }
-    /* line 20, ../sass/plots/_plots-main.scss */
+    /* line 41, ../sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-axis-area.gl-plot-x {
       top: auto;
       right: 0;
@@ -39,14 +102,14 @@
       height: 32px;
       width: auto;
       overflow: hidden; }
-    /* line 29, ../sass/plots/_plots-main.scss */
+    /* line 50, ../sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-axis-area.gl-plot-y {
       top: 29px;
       right: auto;
       bottom: 37px;
       left: 0;
       width: 60px; }
-  /* line 38, ../sass/plots/_plots-main.scss */
+  /* line 59, ../sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-coords {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -63,10 +126,10 @@
     bottom: auto;
     left: 70px;
     z-index: 10; }
-    /* line 50, ../sass/plots/_plots-main.scss */
+    /* line 71, ../sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-coords:empty {
       display: none; }
-  /* line 55, ../sass/plots/_plots-main.scss */
+  /* line 76, ../sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-display-area {
     position: absolute;
     top: 29px;
@@ -75,13 +138,13 @@
     left: 60px;
     cursor: crosshair;
     border: 1px solid #4d4d4d; }
-  /* line 65, ../sass/plots/_plots-main.scss */
+  /* line 86, ../sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-label,
   .gl-plot .l-plot-label {
     color: #cccccc;
     position: absolute;
     text-align: center; }
-    /* line 73, ../sass/plots/_plots-main.scss */
+    /* line 94, ../sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-label.gl-plot-x-label, .gl-plot .gl-plot-label.l-plot-x-label,
     .gl-plot .l-plot-label.gl-plot-x-label,
     .gl-plot .l-plot-label.l-plot-x-label {
@@ -90,7 +153,7 @@
       bottom: 0;
       left: 0;
       height: auto; }
-    /* line 82, ../sass/plots/_plots-main.scss */
+    /* line 103, ../sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-label.gl-plot-y-label, .gl-plot .gl-plot-label.l-plot-y-label,
     .gl-plot .l-plot-label.gl-plot-y-label,
     .gl-plot .l-plot-label.l-plot-y-label {
@@ -107,7 +170,7 @@
       left: 0;
       top: 50%;
       white-space: nowrap; }
-  /* line 96, ../sass/plots/_plots-main.scss */
+  /* line 117, ../sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-y-options {
     position: absolute;
     top: 50%;
@@ -118,19 +181,19 @@
     height: auto;
     min-height: 32px;
     width: 32px; }
-  /* line 110, ../sass/plots/_plots-main.scss */
+  /* line 131, ../sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-hash {
     position: absolute;
     border: 0 rgba(255, 255, 255, 0.3) dashed; }
-    /* line 113, ../sass/plots/_plots-main.scss */
+    /* line 134, ../sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-hash.hash-v {
       border-right-width: 1px;
       height: 100%; }
-    /* line 117, ../sass/plots/_plots-main.scss */
+    /* line 138, ../sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-hash.hash-h {
       border-bottom-width: 1px;
       width: 100%; }
-  /* line 123, ../sass/plots/_plots-main.scss */
+  /* line 144, ../sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-legend {
     position: absolute;
     top: 0;
@@ -140,24 +203,24 @@
     height: 24px;
     overflow-x: hidden;
     overflow-y: auto; }
-  /* line 136, ../sass/plots/_plots-main.scss */
+  /* line 157, ../sass/plots/_plots-main.scss */
   .gl-plot .l-limit-bar,
   .gl-plot .l-oob-data {
     position: absolute;
     left: 0;
     right: 0;
     width: auto; }
-  /* line 144, ../sass/plots/_plots-main.scss */
+  /* line 165, ../sass/plots/_plots-main.scss */
   .gl-plot .l-limit-bar {
     height: auto;
     z-index: 0; }
-    /* line 152, ../sass/plots/_plots-main.scss */
+    /* line 173, ../sass/plots/_plots-main.scss */
     .gl-plot .l-limit-bar.s-limit-yellow {
       background: rgba(157, 117, 0, 0.2); }
-    /* line 153, ../sass/plots/_plots-main.scss */
+    /* line 174, ../sass/plots/_plots-main.scss */
     .gl-plot .l-limit-bar.s-limit-red {
       background: rgba(170, 0, 0, 0.2); }
-  /* line 156, ../sass/plots/_plots-main.scss */
+  /* line 177, ../sass/plots/_plots-main.scss */
   .gl-plot .l-oob-data {
     overflow: hidden;
     position: absolute;
@@ -170,7 +233,7 @@
     pointer-events: none;
     height: 10px;
     z-index: 1; }
-    /* line 164, ../sass/plots/_plots-main.scss */
+    /* line 185, ../sass/plots/_plots-main.scss */
     .gl-plot .l-oob-data.l-oob-data-up {
       top: 0;
       bottom: auto;
@@ -179,7 +242,7 @@
       background-image: -moz-linear-gradient(90deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%);
       background-image: -webkit-linear-gradient(90deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%);
       background-image: linear-gradient(0deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%); }
-    /* line 169, ../sass/plots/_plots-main.scss */
+    /* line 190, ../sass/plots/_plots-main.scss */
     .gl-plot .l-oob-data.l-oob-data-dwn {
       bottom: 0;
       top: auto;
@@ -189,20 +252,20 @@
       background-image: -webkit-linear-gradient(270deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%);
       background-image: linear-gradient(180deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%); }
 
-/* line 179, ../sass/plots/_plots-main.scss */
+/* line 200, ../sass/plots/_plots-main.scss */
 .gl-plot-legend .plot-legend-item,
 .gl-plot-legend .legend-item,
 .legend .plot-legend-item,
 .legend .legend-item {
   display: inline-block;
   margin-right: 10px; }
-  /* line 183, ../sass/plots/_plots-main.scss */
+  /* line 204, ../sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item span,
   .gl-plot-legend .legend-item span,
   .legend .plot-legend-item span,
   .legend .legend-item span {
     vertical-align: middle; }
-  /* line 186, ../sass/plots/_plots-main.scss */
+  /* line 207, ../sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item .plot-color-swatch,
   .gl-plot-legend .plot-legend-item .color-swatch,
   .gl-plot-legend .legend-item .plot-color-swatch,
@@ -218,7 +281,7 @@
     height: 8px;
     width: 8px; }
 
-/* line 199, ../sass/plots/_plots-main.scss */
+/* line 220, ../sass/plots/_plots-main.scss */
 .gl-plot-legend .plot-legend-item {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -226,22 +289,22 @@
   color: #fff;
   line-height: 1.5em;
   padding: 0px 5px; }
-  /* line 205, ../sass/plots/_plots-main.scss */
+  /* line 226, ../sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item .plot-color-swatch {
     border: 1px solid #333;
     height: 9px;
     width: 9px; }
 
-/* line 213, ../sass/plots/_plots-main.scss */
+/* line 234, ../sass/plots/_plots-main.scss */
 .tick {
   position: absolute;
   border: 0 rgba(255, 255, 255, 0.3) solid; }
-  /* line 216, ../sass/plots/_plots-main.scss */
+  /* line 237, ../sass/plots/_plots-main.scss */
   .tick.tick-x {
     border-right-width: 1px;
     height: 100%; }
 
-/* line 222, ../sass/plots/_plots-main.scss */
+/* line 243, ../sass/plots/_plots-main.scss */
 .gl-plot-tick,
 .tick-label {
   font-size: 0.7rem;
@@ -249,7 +312,7 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis; }
-  /* line 230, ../sass/plots/_plots-main.scss */
+  /* line 251, ../sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-x-tick-label, .gl-plot-tick.tick-label-x,
   .tick-label.gl-plot-x-tick-label,
   .tick-label.tick-label-x {
@@ -260,7 +323,7 @@
     width: 20%;
     margin-left: -10%;
     text-align: center; }
-  /* line 240, ../sass/plots/_plots-main.scss */
+  /* line 261, ../sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-y-tick-label, .gl-plot-tick.tick-label-y,
   .tick-label.gl-plot-y-tick-label,
   .tick-label.tick-label-y {
@@ -270,18 +333,18 @@
     margin-bottom: -0.5em;
     text-align: right; }
 
-/* line 252, ../sass/plots/_plots-main.scss */
+/* line 273, ../sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-x-tick-label {
   top: 5px; }
-/* line 255, ../sass/plots/_plots-main.scss */
+/* line 276, ../sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-y-tick-label {
   right: 5px;
   left: 5px; }
 
-/* line 262, ../sass/plots/_plots-main.scss */
+/* line 283, ../sass/plots/_plots-main.scss */
 .tick-label.tick-label-x {
   top: 0; }
-/* line 265, ../sass/plots/_plots-main.scss */
+/* line 286, ../sass/plots/_plots-main.scss */
 .tick-label.tick-label-y {
   right: 0;
   left: 0; }
