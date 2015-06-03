@@ -42,3 +42,20 @@ a.disabled {
 .test {
 	@include test();
 }
+
+@include keyframes(pulse) {
+	0%   { opacity: 0.2; }
+	100% { opacity: 1; }
+}
+
+@mixin pulse($dur: 500ms) {
+	@include animation-name(pulse);
+	@include animation-duration($dur);
+	@include animation-direction(alternate);
+	@include animation-iteration-count(infinite);
+	@include animation-timing-function(ease-in-out);
+}
+
+.pulse {
+	@include pulse(1000ms);
+}

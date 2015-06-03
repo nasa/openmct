@@ -70,17 +70,14 @@
 				&:hover {
 					background: rgba(#fff, 0.1);
 				}
-				&.stale {
-					color: darken($colorBodyFg, 20%);
+				&.s-stale {
+					//color: darken($colorBodyFg, 20%);
+					.l-autoflow-item.l { @include s-stale(0.3); };
+					.l-autoflow-item.r { @include s-stale(); };
 				}
-				&:not(.stale) {
+				&:not(.s-stale) {
 					.l-autoflow-item.r {
-						color: lighten($colorBodyFg, 20%);
-					}
-				}
-				&.alert {
-					.l-autoflow-item.r {
-						background: $colorFormError;
+						color: lighten($colorBodyFg, 10%);
 					}
 				}
 				&.first-in-group {
@@ -89,7 +86,6 @@
 				.l-autoflow-item {
 					display: block;
 					&.l {
-						//						@include test(orange);
 						float: none;
 						overflow: hidden;
 						text-overflow: ellipsis;
@@ -97,8 +93,7 @@
 						width: auto;
 					}
 					&.r {
-						//						@include test(blue);
-						@include border-radius($controlCr);
+						@include border-radius($smallCr);
 						float: right;
 						margin-left: $interiorMargin;
 						padding-left: $valPad;

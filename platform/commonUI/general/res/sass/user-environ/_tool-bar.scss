@@ -22,19 +22,19 @@
 .tool-bar {
 	border-bottom: 1px solid $colorInteriorBorder;
 	.l-control-group {
-		height: $ueEditToolBarButtonH;
+		height: $btnToolbarH;
 	}
 	input[type="text"] {
 		@include box-sizing(border-box);
 		font-size: .9em;
-		height: $ueEditToolBarButtonH;
+		height: $btnToolbarH;
 		margin-bottom: 1px;
 		position: relative;
 		&.sm {
-			width: $ueEditToolBarButtonH;
+			width: $btnToolbarH;
 		}
 	}
 	.input-labeled label {
-		font-size: $ueEditToolBarButtonH * $btnFontSizeToH;
+		font-size: $btnToolbarH * $btnFontSizeToH;
 	}
 }

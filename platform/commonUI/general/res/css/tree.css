@@ -23,7 +23,7 @@
 ul.tree {
   margin: 0;
   padding: 0; }
-  /* line 179, ../sass/_mixins.scss */
+  /* line 187, ../sass/_mixins.scss */
   ul.tree li {
     list-style-type: none;
     margin: 0;
@@ -34,14 +34,12 @@ ul.tree {
     position: relative; }
     /* line 6, ../sass/tree/_tree.scss */
     ul.tree li span.tree-item {
-      -webkit-border-radius: 3px;
       -moz-border-radius: 3px;
-      -ms-border-radius: 3px;
-      -o-border-radius: 3px;
+      -webkit-border-radius: 3px;
       border-radius: 3px;
-      -webkit-transition: background-color 0.25s;
       -moz-transition: background-color 0.25s;
       -o-transition: background-color 0.25s;
+      -webkit-transition: background-color 0.25s;
       transition: background-color 0.25s;
       display: block;
       font-size: 0.80rem;
@@ -84,7 +82,7 @@ ul.tree {
           /* line 38, ../sass/tree/_tree.scss */
           ul.tree li span.tree-item .label .type-icon .alert {
             text-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
-            background: #333333;
+            background: #333;
             color: #ff3c00;
             font-size: 0.7em;
             margin-top: -3px;
@@ -126,7 +124,7 @@ ul.tree {
       /* line 79, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item.selected {
         background: #005177;
-        color: white; }
+        color: #fff; }
         /* line 83, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item.selected .view-control {
           color: #0099cc; }

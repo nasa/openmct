@@ -1,0 +1,31 @@
+.l-breadcrumb {
+	$c: darken($colorBodyFg, 15%);
+	$p: 4px;
+	font-size: 0.7rem;
+	line-height: 1em;
+	margin-bottom: $interiorMargin;
+	margin-left: -1 * $p;
+	.l-breadcrumb-item {
+		//@include test();
+		a {
+			@include box-sizing(border-box);
+			@include border-radius($basicCr*.75);
+			@include single-transition(background-color, 0.25s);
+			color: darken($colorBodyFg, 15%);
+			display: inline-block;
+			//margin-right: $interiorMargin;
+			padding: $p/2 $p;
+			.icon {
+				color: $colorItemTreeIcon;
+				margin-right: $interiorMargin;
+			}
+			&:hover {
+				background: lighten($colorBodyBg, 10%);
+				color: lighten($colorBodyFg, 10%);
+				.icon {
+					color: $colorItemTreeIconHover;
+				}
+			}
+		}
+	}
+}
