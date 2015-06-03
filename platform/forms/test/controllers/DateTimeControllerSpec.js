@@ -57,6 +57,33 @@ define(
                 expect(mockScope.ngModel.test).toEqual(1417215313000);
             });
 
+            it("reports when form input is partially complete", function () {
+                // This is needed to flag the control's state as invalid
+                // when it is partially complete without having it treated
+                // as required.
+                mockScope.ngModel = {};
+                mockScope.field = "test";
+                mockScope.datetime.date = "2014-332";
+                mockScope.datetime.hour = 22;
+                mockScope.datetime.min = 55;
+                // mockScope.datetime.sec = 13;
+
+                mockScope.$watch.mostRecentCall.args[1]();
+
+                expect(mockScope.partiallyComplete).toBeTruthy();
+            });
+
+            it("reports 'undefined' for empty input", function () {
+                mockScope.ngModel = { test: 12345 };
+                mockScope.field = "test";
+                mockScope.$watch.mostRecentCall.args[1]();
+                // Clear all inputs
+                mockScope.datetime = {};
+                mockScope.$watch.mostRecentCall.args[1]();
+
+                // Should have cleared out the time stamp
+                expect(mockScope.ngModel.test).toBeUndefined();
+            });
         });
     }
 );
