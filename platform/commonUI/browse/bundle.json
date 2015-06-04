@@ -139,7 +139,7 @@
                 "description": "Unique identifer generation (code adapted.)",
                 "author": "Robert Kieffer",
                 "website": "https://github.com/broofa/node-uuid",
-                "copyright": "",
+                "copyright": "Copyright (c) 2010 Robert Kieffer",
                 "license": "license-mit",
                 "link": "http://opensource.org/licenses/MIT"
             }
