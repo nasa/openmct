@@ -55,10 +55,16 @@ define(
             }
 
             function getCommonMetadata() {
+                var type = domainObject.getCapability('type');
+                // Note that invalid values will be filtered out later
                 return [
                     {
                         name: "Updated",
                         value: formatTimestamp(model.modified)
+                    },
+                    {
+                        name: "Type",
+                        value: type && type.getName()
                     },
                     {
                         name: "ID",
