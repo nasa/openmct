@@ -55,7 +55,7 @@
     });
 
     // Expose everything else as static files
-    app.use(express.static('.'));
+    app.use(express['static']('.'));
 
     // Finally, open the HTTP server
     app.listen(options.port);
