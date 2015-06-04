@@ -1,17 +1,12 @@
 /*global define*/
 
 define(
-    [],
-    function () {
+    ['../InfoConstants'],
+    function (InfoConstants) {
         "use strict";
 
-        var BUBBLE_TEMPLATE = "<mct-container key=\"bubble\" " +
-                "bubble-title=\"{{bubbleTitle}}\" " +
-                "bubble-layout=\"{{bubbleLayout}}\">" +
-                "<mct-include key=\"bubbleTemplate\" ng-model=\"bubbleModel\">" +
-                "</mct-include>" +
-                "</mct-container>",
-            OFFSET = [ 0, 16 ]; // Pixel offset for bubble, to align arrow position
+        var BUBBLE_TEMPLATE = InfoConstants.BUBBLE_TEMPLATE,
+            OFFSET = InfoConstants.BUBBLE_OFFSET;
 
         /**
          * Displays informative content ("info bubbles") for the user.
@@ -40,14 +35,14 @@ define(
                 // Position the bubble
                 bubble.css('position', 'absolute');
                 if (goLeft) {
-                    bubble.css('right', (winDim[0] - position[0] - OFFSET[0]) + 'px');
+                    bubble.css('right', (winDim[0] - position[0] + OFFSET[0]) + 'px');
                 } else {
-                    bubble.css('left', position[0] - OFFSET[0] + 'px');
+                    bubble.css('left', position[0] + OFFSET[0] + 'px');
                 }
                 if (goUp) {
-                    bubble.css('bottom', (winDim[1] - position[1] - OFFSET[1]) + 'px');
+                    bubble.css('bottom', (winDim[1] - position[1] + OFFSET[1]) + 'px');
                 } else {
-                    bubble.css('top', position[1] - OFFSET[1] + 'px');
+                    bubble.css('top', position[1] + OFFSET[1] + 'px');
                 }
 
                 // Add the menu to the body

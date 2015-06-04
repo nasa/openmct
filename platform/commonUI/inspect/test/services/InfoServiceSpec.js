@@ -22,8 +22,8 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ['../../src/services/InfoService'],
-    function (InfoService) {
+    ['../../src/services/InfoService', '../../src/InfoConstants'],
+    function (InfoService, InfoConstants) {
         "use strict";
 
         describe("The info service", function () {
@@ -74,6 +74,57 @@ define(
                 expect(mockElement.remove).toHaveBeenCalled();
             });
 
+            describe("depending on mouse position", function () {
+                // Positioning should vary based on quadrant in window,
+                // which is 1000 x 100 in this test case.
+                it("displays from the top-left in the top-left quadrant", function () {
+                    service.display('', '', {}, [250, 25]);
+                    expect(mockElement.css).toHaveBeenCalledWith(
+                        'left',
+                        (250 + InfoConstants.BUBBLE_OFFSET[0]) + 'px'
+                    );
+                    expect(mockElement.css).toHaveBeenCalledWith(
+                        'top',
+                        (25 + InfoConstants.BUBBLE_OFFSET[1]) + 'px'
+                    );
+                });
+
+                it("displays from the top-right in the top-right quadrant", function () {
+                    service.display('', '', {}, [700, 25]);
+                    expect(mockElement.css).toHaveBeenCalledWith(
+                        'right',
+                        (300 + InfoConstants.BUBBLE_OFFSET[0]) + 'px'
+                    );
+                    expect(mockElement.css).toHaveBeenCalledWith(
+                        'top',
+                        (25 + InfoConstants.BUBBLE_OFFSET[1]) + 'px'
+                    );
+                });
+
+                it("displays from the bottom-left in the bottom-left quadrant", function () {
+                    service.display('', '', {}, [250, 70]);
+                    expect(mockElement.css).toHaveBeenCalledWith(
+                        'left',
+                        (250 + InfoConstants.BUBBLE_OFFSET[0]) + 'px'
+                    );
+                    expect(mockElement.css).toHaveBeenCalledWith(
+                        'bottom',
+                        (30 + InfoConstants.BUBBLE_OFFSET[1]) + 'px'
+                    );
+                });
+
+                it("displays from the bottom-right in the bottom-right quadrant", function () {
+                    service.display('', '', {}, [800, 60]);
+                    expect(mockElement.css).toHaveBeenCalledWith(
+                        'right',
+                        (200 + InfoConstants.BUBBLE_OFFSET[0]) + 'px'
+                    );
+                    expect(mockElement.css).toHaveBeenCalledWith(
+                        'bottom',
+                        (40 + InfoConstants.BUBBLE_OFFSET[1]) + 'px'
+                    );
+                });
+            });
 
         });
     }
