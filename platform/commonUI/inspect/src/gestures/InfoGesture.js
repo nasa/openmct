@@ -55,9 +55,7 @@ define(
                     dismissBubble = infoService.display(
                         "info-table",
                         domainObject.getModel().name,
-                        [
-                            { name: "ID", value: domainObject.getId() }
-                        ],
+                        domainObject.useCapability('metadata'),
                         mousePosition
                     );
                     pendingBubble = undefined;
