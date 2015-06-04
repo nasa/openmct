@@ -1,7 +1,8 @@
 /*global define*/
 
 define(
-    function () {
+    ['moment'],
+    function (moment) {
         "use strict";
 
         /**
@@ -11,6 +12,8 @@ define(
          * @property {string} value the human-readable value of this property,
          *           for this specific domain object
          */
+
+        var TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
 
         /**
          * Implements the `metadata` capability of a domain object, providing
@@ -25,35 +28,56 @@ define(
          * @constructor
          */
         function MetadataCapability(domainObject) {
+            var model = domainObject.getModel();
+
+            function hasDisplayableValue(metadataProperty) {
+                var t = typeof metadataProperty.value;
+                return (t === 'string' || t === 'number');
+            }
+
+            function formatTimestamp(timestamp) {
+                return typeof timestamp === 'number' ?
+                        (moment.utc(timestamp).format(TIME_FORMAT) + " UTC") :
+                        undefined;
+            }
+
+            function getProperties() {
+                var type = domainObject.getCapability('type');
+
+                function lookupProperty(typeProperty) {
+                    return {
+                        name: typeProperty.getDefinition().name,
+                        value: typeProperty.getValue(model)
+                    };
+                }
+
+                return (type ? type.getProperties() : []).map(lookupProperty);
+            }
+
+            function getCommonMetadata() {
+                return [
+                    {
+                        name: "Updated",
+                        value: formatTimestamp(model.modified)
+                    },
+                    {
+                        name: "ID",
+                        value: domainObject.getId()
+                    }
+                ];
+            }
+
+            function getMetadata() {
+                return getProperties().concat(getCommonMetadata())
+                    .filter(hasDisplayableValue);
+            }
+
             return {
                 /**
                  * Get metadata about this object.
                  * @returns {MetadataProperty[]} metadata about this object
                  */
-                invoke: function () {
-                    var type = domainObject.getCapability('type'),
-                        model = domainObject.getModel(),
-                        metadata = [{
-                            name: "ID",
-                            value: domainObject.getId()
-                        }];
-
-                    function addProperty(typeProperty) {
-                        var name = typeProperty.getDefinition().name,
-                            value = typeProperty.getValue(model);
-                        if (typeof value === 'string' ||
-                                typeof value === 'number') {
-                            metadata.push({
-                                name: name,
-                                value: value
-                            });
-                        }
-                    }
-
-                    (type ? type.getProperties() : []).forEach(addProperty);
-
-                    return metadata;
-                }
+                invoke: getMetadata
             };
         }
 
