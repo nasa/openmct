@@ -20,7 +20,7 @@
                 "description": "Code coverage measurement and reporting",
                 "author": "Alex Seville",
                 "website": "http://blanketjs.org/",
-                "copyright": "",
+                "copyright": "Copyright (c) 2013 Alex Seville",
                 "license": "license-mit",
                 "link": "http://opensource.org/licenses/MIT"
             },
@@ -30,7 +30,7 @@
                 "description": "Unit testing",
                 "author": "Pivotal Labs",
                 "website": "http://jasmine.github.io/",
-                "copyright": "",
+                "copyright": "Copyright (c) 2008-2011 Pivotal Labs",
                 "license": "license-mit",
                 "link": "http://opensource.org/licenses/MIT"
             },
@@ -50,9 +50,9 @@
                 "description": "Client-side web application framework",
                 "author": "Google",
                 "website": "http://angularjs.org/",
-                "copyright": "Copyright (c) 2010-2015 Google, Inc. http://angularjs.org",
+                "copyright": "Copyright (c) 2010-2014 Google, Inc. http://angularjs.org",
                 "license": "license-mit",
-                "link": "https://github.com/angular/angular.js/blob/master/LICENSE"
+                "link": "https://github.com/angular/angular.js/blob/v1.2.26/LICENSE"
             },
             {
                 "name": "Angular-Route",
@@ -60,9 +60,9 @@
                 "description": "Client-side view routing",
                 "author": "Google",
                 "website": "http://angularjs.org/",
-                "copyright": "Copyright (c) 2010-2015 Google, Inc. http://angularjs.org",
+                "copyright": "Copyright (c) 2010-2014 Google, Inc. http://angularjs.org",
                 "license": "license-mit",
-                "link": "https://github.com/angular/angular.js/blob/master/LICENSE"
+                "link": "https://github.com/angular/angular.js/blob/v1.2.26/LICENSE"
             },
             {
                 "name": "ES6-Promise",

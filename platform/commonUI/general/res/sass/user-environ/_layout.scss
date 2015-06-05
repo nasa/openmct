@@ -1,3 +1,24 @@
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
 @mixin cols($totalCols, $span) {
     $cw: 100% / $totalCols;
     min-width: (500px / $totalCols) * $span;
@@ -8,57 +29,26 @@
     }
 }
 
+.holder-all {
+	$myM: $interiorMarginSm;
+	top: $myM;
+	right: $myM;
+	bottom: $myM;
+	left: $myM;
+}
+
 .browse-area,
 .edit-area,
 .editor {
-	@include border-radius($basicCr * 1.5);
 	position: absolute;
-	.contents {
-//		overflow-y: auto;
-	}
 }
 
-.user-environ {
-    .browse-area,
-    .edit-area,
-    .editor {
-        top: $bodyMargin + $ueTopBarH + ($interiorMargin);
-        right: $bodyMargin;
-        bottom: $bodyMargin + $ueFooterH + $interiorMargin;
-        left: $bodyMargin;
-    }
-
-	.edit-area {
-		$tbH: $ueEditToolBarH;
-		.tool-bar {
-			bottom: auto;
-			height: $tbH;
-			line-height: $ueEditToolBarButtonH;
-		}
-		.work-area {
-			top: $tbH + $interiorMargin * 2;
-		}
-	}
-
-    .bottom-bar {
-        top: auto;
-        right: $bodyMargin;
-        bottom: $bodyMargin;
-        left: $bodyMargin;
-        height: $ueFooterH;
-        .status-holder {
-            right: $ueAppLogoW + $bodyMargin;
-        }
-        .app-logo {
-            left: auto;
-            width: $ueAppLogoW;
-        }
-    }
+.editor {
+	@include border-radius($basicCr * 1.5);
 }
-
 
 .contents {
-    $myM: $interiorMargin;
+    $myM: 0; //$interiorMargin;
     box-sizing: border-box;
     position: absolute;
     top: $myM;
@@ -99,6 +89,52 @@
 //            }
         }
     }
+}
+
+.user-environ {
+	.browse-area,
+	.edit-area,
+	.editor {
+		top: $bodyMargin + $ueTopBarH + ($interiorMargin);
+		right: $bodyMargin;
+		bottom: $bodyMargin + $ueFooterH + $interiorMargin;
+		left: $bodyMargin;
+	}
+
+	.browse-area,
+	.edit-area {
+		> .contents {
+			left: 0;
+			right: 0;
+		}
+	}
+
+	.edit-area {
+		$tbH: $ueEditToolBarH;
+		.tool-bar {
+			bottom: auto;
+			height: $tbH;
+			line-height: $ueEditToolBarButtonH;
+		}
+		.work-area {
+			top: $tbH + $interiorMargin * 2;
+		}
+	}
+
+	.bottom-bar {
+		top: auto;
+		right: $bodyMargin;
+		bottom: $bodyMargin;
+		left: $bodyMargin;
+		height: $ueFooterH;
+		.status-holder {
+			right: $ueAppLogoW + $bodyMargin;
+		}
+		.app-logo {
+			left: auto;
+			width: $ueAppLogoW;
+		}
+	}
 }
 
 .cols {

@@ -19,39 +19,28 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
+// Styles to temporarily hide non-functional elements
 
-define(
-    ['../../src/elements/BoxProxy'],
-    function (BoxProxy) {
-        "use strict";
+/******************************** BROWSE */
+.browse-mode {
+	.browse {
+		&.top-bar {
+			display: none;
+		}
+	}
 
-        describe("A fixed position box proxy", function () {
-            var testElement,
-                testElements,
-                proxy;
-
-            beforeEach(function () {
-                testElement = {
-                    x: 1,
-                    y: 2,
-                    width: 42,
-                    height: 24,
-                    fill: "transparent"
-                };
-                testElements = [ {}, {}, testElement, {} ];
-                proxy = new BoxProxy(
-                    testElement,
-                    testElements.indexOf(testElement),
-                    testElements
-                );
-            });
-
-            it("provides getter/setter for fill color", function () {
-                expect(proxy.fill()).toEqual('transparent');
-                expect(proxy.fill('#FFF')).toEqual('#FFF');
-                expect(proxy.fill()).toEqual('#FFF');
-            });
-        });
-    }
-);
+	.browse-area.holder {
+		// When .browse.top-bar is hidden, set the top of the browse-area holder
+		top: $interiorMargin;
+		> .contents.split-layout {
+			// Don't pad in from top and bottom
+			//top: 0; bottom: 0;
+			.object-browse-bar {
+				.t-btn.key-window {
+					// Hide the Open in New Window button
+					display: none;
+				}
+			}
+		}
+	}
+}

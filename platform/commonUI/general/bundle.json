@@ -226,7 +226,7 @@
                 "website": "http://necolas.github.io/normalize.css/",
                 "copyright": "Copyright (c) Nicolas Gallagher and Jonathan Neal",
                 "license": "license-mit",
-                "link": "https://github.com/necolas/normalize.css/blob/master/LICENSE.md"
+                "link": "https://github.com/necolas/normalize.css/blob/v1.1.2/LICENSE.md"
             }
         ]
     }
