@@ -61,6 +61,7 @@ define(
                 if (pendingBubble) {
                     $timeout.cancel(pendingBubble);
                     element.off('mousemove', trackPosition);
+                    element.off('mouseleave', hideBubble);
                     pendingBubble = undefined;
                 }
                 // Also clear mouse position so we don't have a ton of tiny

@@ -34,10 +34,22 @@ define(
                 mockDomainObject,
                 mockScope,
                 mockOff,
+                testMetadata,
+                mockPromise,
+                mockHide,
                 gesture;
+
+            function fireEvent(evt, value) {
+                mockElement.on.calls.forEach(function (call) {
+                    if (call.args[0] === evt) {
+                        call.args[1](value);
+                    }
+                });
+            }
 
             beforeEach(function () {
                 mockTimeout = jasmine.createSpy('$timeout');
+                mockTimeout.cancel = jasmine.createSpy('cancel');
                 mockInfoService = jasmine.createSpyObj(
                     'infoService',
                     [ 'display' ]
@@ -52,9 +64,18 @@ define(
                 );
                 mockScope = jasmine.createSpyObj('$scope', [ '$on' ]);
                 mockOff = jasmine.createSpy('$off');
+                testMetadata = [ { name: "Test name", value: "Test value" } ];
+                mockPromise = jasmine.createSpyObj('promise', ['then']);
+                mockHide = jasmine.createSpy('hide');
 
+                mockDomainObject.getModel.andReturn({ name: "Test Object" });
+                mockDomainObject.useCapability.andCallFake(function (c) {
+                    return (c === 'metadata') ? testMetadata : undefined;
+                });
                 mockElement.scope.andReturn(mockScope);
                 mockScope.$on.andReturn(mockOff);
+                mockTimeout.andReturn(mockPromise);
+                mockInfoService.display.andReturn(mockHide);
 
                 gesture = new InfoGesture(
                     mockTimeout,
@@ -70,6 +91,66 @@ define(
                     .toHaveBeenCalledWith('mouseenter', jasmine.any(Function));
             });
 
+            it("displays an info bubble on a delay after mouseenter", function () {
+                fireEvent("mouseenter", { clientX: 1977, clientY: 42 });
+                expect(mockTimeout)
+                    .toHaveBeenCalledWith(jasmine.any(Function), testDelay);
+                mockTimeout.mostRecentCall.args[0]();
+                expect(mockInfoService.display).toHaveBeenCalledWith(
+                    jasmine.any(String),
+                    "Test Object",
+                    testMetadata,
+                    [ 1977, 42 ]
+                );
+            });
+
+            it("does not display info bubble if mouse leaves too soon", function () {
+                fireEvent("mouseenter", { clientX: 1977, clientY: 42 });
+                fireEvent("mouseleave", { clientX: 1977, clientY: 42 });
+                expect(mockTimeout.cancel).toHaveBeenCalledWith(mockPromise);
+                expect(mockInfoService.display).not.toHaveBeenCalled();
+            });
+
+            it("hides a shown bubble when mouse leaves", function () {
+                fireEvent("mouseenter", { clientX: 1977, clientY: 42 });
+                mockTimeout.mostRecentCall.args[0]();
+                expect(mockHide).not.toHaveBeenCalled(); // verify precondition
+                fireEvent("mouseleave", {});
+                expect(mockHide).toHaveBeenCalled();
+            });
+
+            it("tracks mouse position", function () {
+                fireEvent("mouseenter", { clientX: 1977, clientY: 42 });
+                fireEvent("mousemove", { clientX: 1999, clientY: 11 });
+                fireEvent("mousemove", { clientX: 1984, clientY: 11 });
+                mockTimeout.mostRecentCall.args[0]();
+                // Should have displayed at the latest observed mouse position
+                expect(mockInfoService.display).toHaveBeenCalledWith(
+                    jasmine.any(String),
+                    "Test Object",
+                    testMetadata,
+                    [ 1984, 11 ]
+                );
+            });
+
+            it("hides shown bubbles when destroyed", function () {
+                fireEvent("mouseenter", { clientX: 1977, clientY: 42 });
+                mockTimeout.mostRecentCall.args[0]();
+                expect(mockHide).not.toHaveBeenCalled(); // verify precondition
+                gesture.destroy();
+                expect(mockHide).toHaveBeenCalled();
+            });
+
+            it("detaches listeners when destroyed", function () {
+                fireEvent("mouseenter", { clientX: 1977, clientY: 42 });
+                gesture.destroy();
+                mockElement.on.calls.forEach(function (call) {
+                    expect(mockElement.off).toHaveBeenCalledWith(
+                        call.args[0],
+                        call.args[1]
+                    );
+                });
+            });
 
         });
     }
