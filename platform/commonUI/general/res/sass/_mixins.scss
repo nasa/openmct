@@ -62,6 +62,31 @@
 	border-right: $size/$ratio solid transparent;
 }
 
+@mixin triangle($dir: "left", $size: 5px, $ratio: 1, $color: red) {
+	//$size: $size*2;
+	width: 0;
+	height: 0;
+	$slopedB: $size/$ratio solid transparent;
+	$straightB: $size solid $color;
+	@if $dir == "up" {
+		border-left: $slopedB;
+		border-right: $slopedB;
+		border-bottom: $straightB;
+	} @else if $dir == "right" {
+		border-top: $slopedB;
+		border-bottom: $slopedB;
+		border-left: $straightB;
+	} @else if $dir == "down"  {
+		border-left: $slopedB;
+		border-right: $slopedB;
+		border-top: $straightB;
+	} @else {
+		border-top: $slopedB;
+		border-bottom: $slopedB;
+		border-right: $straightB;
+	}
+}
+
 @mixin bgDiagonalStripes($c: yellow, $a: 0.1, $d: 40px) {
 	@include background-image(linear-gradient(-45deg,
 		rgba($c, $a) 25%, transparent 25%,

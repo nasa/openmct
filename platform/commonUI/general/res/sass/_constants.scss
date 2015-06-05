@@ -34,9 +34,12 @@ $colorBodyBg: #333;
 $colorBodyFg: #999;
 $colorFooterBg: #000;
 $colorKey: #0099cc;
+$colorKeySelectedBg: #005177;
 $colorKeyFg: #fff;
 $colorAlt1: #ffc700;
 $colorAlert: #ff3c00;
+$colorPausedBg: #c56f01;
+$colorPausedFg: #fff;
 $colorCheck: $colorKey;
 $colorCreateBtn: $colorKey;
 $colorInteriorBorder: lighten($colorBodyBg, 10%);
@@ -50,7 +53,11 @@ $colorLimitYellow: #9d7500;
 $colorLimitRed: #aa0000;
 $colorTelemFresh: #fff;
 $colorTelemStale: #888;
-$styleTelemState: italic;
+$styleTelemStale: italic;
+$colorInfoBubbleFg: #666;
+$colorInfoBubbleBg: #ddd;
+$colorThumbsBubbleFg: lighten($colorBodyFg, 10%);
+$colorThumbsBubbleBg: lighten($colorBodyBg, 10%);
 
 // Ratios
 $ltGamma: 20%;
@@ -124,3 +131,13 @@ $tickLblH: 15px;
 $tickLblW: 50px;
 $tickH: $ticksH - $tickLblVMargin - $tickLblH;
 $tickW: 1px;
+
+// Imagery
+$imageMainControlBarH: 20px;
+$imageThumbsD: 120px;
+$imageThumbsWrapperH: $imageThumbsD * 1.4;
+$imageThumbPad: 1px;
+
+// Bubbles
+$bubbleArwSize: 10px;
+$bubblePad: $interiorMargin;

@@ -19,27 +19,129 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<h1>Static Markup Sandbox</h1>
+<div ng-init="images=[
+{date:'2020/04/27',time:'16:03:43',url:'http://www.hacskaylo.com/wedding/images/moon-surface-with-ice.jpg',selected:true},
+{date:'2020/04/27',time:'16:03:14',url:'http://www.lpi.usra.edu/lunar/lunar_flyovers/schrodinger/schrodinger.png',selected:false},
+{date:'2020/04/27',time:'16:02:49',url:'http://www.arcadiastreet.com/cgvistas/images/luna_southern_hemisphere_1280.jpg',selected:false},
+{date:'2020/04/27',time:'16:02:36',url:'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcR0AIRCUQQ40JIImjwlp_uYAT7ftyqJcbYBytKpvp7iIFUkLbA6',selected:false},
+{date:'2020/04/27',time:'16:02:29',url:'http://www.virtualmicroscope.org/sites/default/files/styles/large_carousel/public/800-15499_a15pan1463033.jpg?itok=NMQhLnuY',selected:false},
+{date:'2020/04/27',time:'16:02:07',url:'http://www.virtualmicroscope.org/sites/default/files/styles/large_carousel/public/800-15499_a15pan1463033.jpg?itok=NMQhLnuY',selected:false},
+{date:'2020/04/27',time:'16:01:37',url:'http://www.lpi.usra.edu/lunar/lunar_flyovers/schrodinger/schrodinger.png',selected:false},
+{date:'2020/04/27',time:'16:01:25',url:'http://www.arcadiastreet.com/cgvistas/images/luna_southern_hemisphere_1280.jpg',selected:false},
+{date:'2020/04/27',time:'16:01:03',url:'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcR0AIRCUQQ40JIImjwlp_uYAT7ftyqJcbYBytKpvp7iIFUkLbA6',selected:false},
+{date:'2020/04/27',time:'16:01:02',url:'http://www.virtualmicroscope.org/sites/default/files/styles/large_carousel/public/800-15499_a15pan1463033.jpg?itok=NMQhLnuY',selected:false},
+{date:'2020/04/27',time:'16:00:57',url:'http://www.virtualmicroscope.org/sites/default/files/styles/large_carousel/public/800-15499_a15pan1463033.jpg?itok=NMQhLnuY',selected:false},
+{date:'2020/04/27',time:'16:00:27',url:'http://www.arcadiastreet.com/cgvistas/images/luna_southern_hemisphere_1280.jpg',selected:false}
+];
+clipped=true;
+showThumbsBubble=false;
+"></div>
 
-<h2>Plot limits</h2>
-<div ng-init="limits=[
+<div class="t-imagery">
+	<!-- Main image -->
+	<div class="l-image-main-wrapper">
+		<div
+			class="l-image-main s-image-main"
+			ng-class="{ paused:paused, stale:false }"
+			style="background-image:url('http://www.hacskaylo.com/wedding/images/moon-surface-with-ice.jpg');"
+			></div>
+		<div class="l-image-main-controlbar bar">
+			<div class="left">
+				<a
+					class="t-btn l-btn s-btn s-icon-btn s-very-subtle show-thumbs sm"
+					ng-click="showThumbsBubble = (showThumbsBubble)? false:true"
+					><span class="ui-symbol icon"></span></a>
+				<span class="l-timezone">UTC</span>
+				<span class="l-time">16:03:43</span>
+				<span class="l-date">2020/04/27</span>
+			</div>
+			<div class="right">
+				<a
+					class="t-btn l-btn s-btn s-icon-btn s-very-subtle pause-play sm"
+					ng-click="paused = (paused)? false:true"
+					ng-class="{ paused:paused }"
+					><span class="ui-symbol icon"></span></a>
+                <a href=""
+	                class="l-btn s-btn s-icon-btn l-mag s-mag ui-symbol vsm"
+	                ng-click="clipped = false"
+	                ng-show="clipped === true"
+	                title="117%: Click to reset"
+	                ></a>
+			</div>
+		</div>
+	</div>
+
+	<div class="l-image-thumbs-wrapper">
+		<div
+			class="l-image-thumb-item s-image-thumb-item"
+			ng-repeat="thumb in images"
+			ng-class="{ selected : thumb.selected }"
+			>
+			<div class="l-thumb" style="background-image:url('{{thumb.url}}')"></div>
+			<div class="l-date">{{thumb.date}}</div>
+			<div class="l-time">{{thumb.time}}</div><span class="l-timezone">UTC</span>
+		</div>
+	</div>
+</div>
+
+<!-- NOTE: CANONICAL VERSION OF THIS MARKUP IS IN /platform/commonUI/inspect/res/thumbsbubble.html -->
+<div
+	class="l-bubble-wrapper s-bubble-wrapper l-thumbsbubble-wrapper"
+	ng-class="{ 'arw-up':true }"
+	ng-style="{ top: '258px' }"
+    ng-show="showThumbsBubble === true"
+	>
+	<div
+		class="arw arw-up"
+		ng-style="{ left: '215px' }"
+		></div>
+	<div class="l-bubble s-bubble l-thumbsbubble s-thumbsbubble">
+		<a
+			ng-click="showThumbsBubble = false"
+			class="s-btn l-btn normal ui-symbol close"
+			>x</a>
+		<div class="l-image-thumbs-wrapper">
+			<div
+				class="l-image-thumb-item s-image-thumb-item"
+				ng-repeat="thumb in images"
+				ng-class="{ selected : thumb.selected }"
+				>
+				<div class="l-thumb" style="background-image:url('{{thumb.url}}')"></div>
+				<div class="l-date">{{thumb.date}}</div>
+				<div class="l-time">{{thumb.time}}</div>
+			</div>
+		</div>
+	</div>
+	<div
+		class="arw arw-down"
+		ng-style="{ left: '613px' }"
+		></div>
+</div>
+
+
+<div class="hidden">
+	<h2>Plot limits</h2>
+
+	<div ng-init="limits=[
 				{type: 'upr', severity: 'red', top: 0, bottom: 90},
 				{type: 'upr', severity: 'yellow', top: 10, bottom: 80},
 				{type: 'lwr', severity: 'yellow', top: 70, bottom: 20},
 				{type: 'lwr', severity: 'red', top: 80, bottom: 0}
 	        ]"></div>
-<div style="width: 1000px; height: 500px">
-    <div class="gl-plot" style="height: 100%;">
-        <div class="gl-plot-display-area">
-	        <div
-		        ng-repeat="limit in limits"
-		        ng-show="1"
-		        class="t-limit l-limit s-limit-{{limit.type}}-{{limit.severity}}"
-		        style="top: {{limit.top}}%; bottom: {{limit.bottom}}%"
-		        ></div>
-        </div>
-    </div>
-</div>
+	<div style="width: 1000px; height: 500px">
+		<div class="gl-plot" style="height: 100%;">
+			<div class="gl-plot-display-area">
+				<div
+					ng-repeat="limit in limits"
+					ng-show="1"
+					class="t-limit l-limit s-limit-{{limit.type}}-{{limit.severity}}"
+					style="top: {{limit.top}}%; bottom: {{limit.bottom}}%"
+					></div>
+			</div>
+		</div>
+	</div>
 
-<h2>Animation</h2>
-<div class="pulse" style="background: #cc0000; color: #fff; padding: 10px;">This should pulse</div>
+	<h2>Animation</h2>
+
+	<div class="pulse" style="background: #cc0000; color: #fff; padding: 10px;">This should pulse</div>
+</div>
