@@ -27,58 +27,58 @@ define(
         "use strict";
 
         var RED = 0.9,
-            YELLOW = 0.5;
+            YELLOW = 0.5,
+            LIMITS = {
+                rh: {
+                    cssClass: "s-limit-upr-red",
+                    low: RED,
+                    high: Number.POSITIVE_INFINITY,
+                    name: "Red High"
+                },
+                rl: {
+                    cssClass: "s-limit-lwr-red",
+                    high: -RED,
+                    low: Number.NEGATIVE_INFINITY,
+                    name: "Red Low"
+                },
+                yh: {
+                    cssClass: "s-limit-upr-yellow",
+                    low: YELLOW,
+                    high: RED,
+                    name: "Yellow High"
+                },
+                yl: {
+                    cssClass: "s-limit-lwr-yellow",
+                    low: -RED,
+                    high: -YELLOW,
+                    name: "Yellow Low"
+                }
+            };
 
         function SinewaveLimitCapability(domainObject) {
             return {
                 limits: function (range) {
-                    return {
-                        rh: {
-                            cssClass: "s-limit-upr-red",
-                            low: RED,
-                            high: Number.POSITIVE_INFINITY,
-                            name: "Red High"
-                        },
-                        rl: {
-                            cssClass: "s-limit-lwr-red",
-                            high: -RED,
-                            low: Number.NEGATIVE_INFINITY,
-                            name: "Red Low"
-                        },
-                        yh: {
-                            cssClass: "s-limit-upr-ylw",
-                            low: YELLOW,
-                            high: RED,
-                            name: "Yellow High"
-                        },
-                        yl: {
-                            cssClass: "s-limit-lwer-ylw",
-                            low: -RED,
-                            high: -YELLOW,
-                            name: "Yellow Low"
-                        }
-                    };
+                    return LIMITS;
                 },
-                evaluate: function (series, index, range) {
-                    var value = series.getRangeValue(index, range);
+                evaluate: function (value, range) {
                     if (value > RED) {
-                        return 'rh';
+                        return LIMITS.rh;
                     }
                     if (value < -RED) {
-                        return 'rl';
+                        return LIMITS.rl;
                     }
                     if (value > YELLOW) {
-                        return 'yh';
+                        return LIMITS.yh;
                     }
                     if (value < -YELLOW) {
-                        return 'yl';
+                        return LIMITS.yl;
                     }
                 }
             };
         }
 
         SinewaveLimitCapability.appliesTo = function (model) {
-            return model.type === 'example.generator';
+            return model.type === 'generator';
         };
 
         return SinewaveLimitCapability;

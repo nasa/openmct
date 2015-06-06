@@ -30,7 +30,7 @@
             <span
 	            class='plot-legend-item'
                 ng-repeat="telemetryObject in subplot.getTelemetryObjects()"
-                ng-class="{ 's-limit-upr-red': $index < 1, 's-stale': $index%2==0 }"
+                ng-class="plot.getLegendClass(telemetryObject)"
 	            >
                 <span class='plot-color-swatch'
                       ng-style="{ 'background-color': plot.getColor($index) }">

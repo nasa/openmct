@@ -10,6 +10,12 @@
                 "depends": [ "$q", "$timeout" ]
             }
         ],
+        "capabilities": [
+            {
+                "key": "limit",
+                "implementation": "SinewaveLimitCapability.js"
+            }
+        ],
         "types": [
             {
                 "key": "generator",
