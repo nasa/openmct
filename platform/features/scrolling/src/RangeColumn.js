@@ -55,9 +55,17 @@ define(
                  * @returns {string} the text to display
                  */
                 getValue: function (domainObject, data, index) {
-                    return telemetryFormatter.formatRangeValue(
-                        data.getRangeValue(index, rangeMetadata.key)
-                    );
+                    var range = rangeMetadata.key,
+                        limit = domainObject.getCapability('limit'),
+                        value = data.getRangeValue(index, range),
+                        cell = telemetryFormatter.formatRangeValue(value);
+
+                    return {
+                        cssClass: limit && limit.evaluate(value, range),
+                        toString: function () {
+                            return cell;
+                        }
+                    };
                 }
             };
         }

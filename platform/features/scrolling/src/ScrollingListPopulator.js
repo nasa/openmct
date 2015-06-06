@@ -142,7 +142,7 @@ define(
                     // column object itself)
                     return values.map(function (value) {
                         return columns.map(function (column) {
-                            return column.getValue(
+                            column.getValue(
                                 objects[value.objectIndex],
                                 datas[value.objectIndex],
                                 value.pointIndex
