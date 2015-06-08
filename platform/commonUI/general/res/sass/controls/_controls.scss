@@ -199,6 +199,19 @@
 	}
 }
 
+.l-local-controls {
+	// Control shown when hovering over an object, like plots and imagery
+	// Default position is upper right
+	$p: $interiorMargin;
+	position: absolute;
+	top: $p; right: $p;
+	z-index: 5;
+}
+
+.s-local-controls {
+	font-size: 0.7rem;
+}
+
 .btn-set {
 	// Buttons that have a very tight conceptual grouping - no internal space between them.
 	display: inline-block;

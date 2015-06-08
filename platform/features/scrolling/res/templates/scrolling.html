@@ -20,27 +20,31 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="w1" ng-controller="TelemetryController as telemetry">
-    <!-- Dynamically set height based on number of rows desired. In current CSS, each row occupies 18px -->
-    <div class="w2"
-         ng-style="{ height: rows.length * 18 + 'px' }"
-         ng-controller="ScrollingListController">
-        <div class="tabular">
-
-            <div class="tr header">
-                <!-- Enable sorting by binding click handlers to the <em> element in each <th>. Note that CSS classes must be added dynamically to the current <th> that is sorting. For example, if sorting by ID: <div class="th sort asc"> or <div class="th sort desc">. -->
-                <div class="th" ng-repeat="header in headers">
-                    <em>{{header}}</em>{{header}}
-                </div>
-            </div>
-
-            <div class="tr" ng-repeat="row in rows">
-                <div class="td" ng-repeat="cell in row">
-                    {{cell}}
-                </div>
-            </div>
-
-        </div>
-    </div>
+	<div class="w2"
+	     ng-controller="ScrollingListController">
+		<!-- To add filtering, add class 'filterable' to <table> and uncomment 2nd <tr> in <thead> -->
+		<table class="tabular">
+			<thead>
+			<tr>
+				<th ng-repeat="header in headers">
+					{{header}}
+				</th>
+			</tr>
+			<!--tr>
+				<th ng-repeat="header in headers">
+					<input type="text" />
+				</th>
+			</tr-->
+			</thead>
+			<tbody>
+			<tr ng-repeat="row in rows">
+				<td ng-repeat="cell in row">
+					{{cell}}
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
 </div>
 
 

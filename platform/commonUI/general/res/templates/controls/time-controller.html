@@ -1,0 +1,69 @@
+<!--
+
+NOTES
+
+Ticks:
+The thinking is to divide whatever the current time span is by 5,
+and assign values accordingly to 5 statically-positioned ticks. So the tick x-position is a static percentage
+of the total width available, and the labels change dynamically. This is consistent
+with our current approach to the time axis of plots.
+I'm keeping the number of ticks low so that when the view portal gets narrow,
+the tick labels won't collide with each other. For extra credit, add/remove ticks as the user resizes the view area.
+Note: this eval needs to be based on the whatever is containing the
+time-controller component, not the whole browser window.
+
+Range indicator and slider knobs:
+The left and right properties used in .slider .range-holder and  the .knobs are
+CSS offsets from the left and right of their respective containers. You
+may want or need to calculate those positions as pure offsets from the start datetime
+(or left, as it were) and set them as left properties. No problem if so, but
+we'll need to tweak the CSS tiny bit to get the center of the knobs to line up
+properly on the range left and right bounds.
+
+-->
+
+<div ng-init="
+notes = 'Temporarily using an array to populate ticks so I can see what I\'m doing';
+ticks = [
+'00:00',
+'00:30',
+'01:00',
+'01:30',
+'02:00'
+];
+"></div>
+
+<div class="l-time-controller">
+	<div class="l-time-range-inputs-holder">
+		Start: <input type="date" />
+		End: <input type="date" />
+	</div>
+
+	<div class="l-time-range-slider-holder">
+		<div class="l-time-range-slider">
+			<div class="slider">
+				<div class="slot range-holder">
+					<div class="range" style="left: 0%; right: 30%;"></div>
+				</div>
+				<div class="knob knob-l" style="left: 0%;">
+					<div class="range-value">05/22 14:46</div>
+				</div>
+				<div class="knob knob-r" style="right: 30%;">
+					<div class="range-value">07/22 01:21</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="l-time-range-ticks-holder">
+		<div class="l-time-range-ticks">
+			<div
+				ng-repeat="tick in ticks"
+				ng-style="{ left: $index * 25 + '%' }"
+				class="tick tick-x"
+				>
+				<span class="l-time-range-tick-label">{{tick}}</span>
+			</div>
+		</div>
+	</div>
+</div>

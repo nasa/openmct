@@ -19,6 +19,7 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
+<!-- FAKE DATA AND VARS -->
 <div ng-init="images=[
 {date:'2020/04/27',time:'16:03:43',url:'http://www.hacskaylo.com/wedding/images/moon-surface-with-ice.jpg',selected:true},
 {date:'2020/04/27',time:'16:03:14',url:'http://www.lpi.usra.edu/lunar/lunar_flyovers/schrodinger/schrodinger.png',selected:false},
@@ -33,13 +34,41 @@
 {date:'2020/04/27',time:'16:00:57',url:'http://www.virtualmicroscope.org/sites/default/files/styles/large_carousel/public/800-15499_a15pan1463033.jpg?itok=NMQhLnuY',selected:false},
 {date:'2020/04/27',time:'16:00:27',url:'http://www.arcadiastreet.com/cgvistas/images/luna_southern_hemisphere_1280.jpg',selected:false}
 ];
-clipped=true;
-showThumbsBubble=false;
+clipped = true;
+showThumbsBubble = false;
+showLocalControls = false;
 "></div>
 
 <div class="t-imagery">
 	<!-- Main image -->
-	<div class="l-image-main-wrapper">
+	<div
+		class="l-image-main-wrapper"
+		ng-mouseenter="showLocalControls = true;"
+		ng-mouseleave="showLocalControls = false;"
+		>
+		<div
+			class="l-local-controls s-local-controls"
+			ng-show="showLocalControls"
+			 >
+			<a
+			   class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
+			   ng-click="plot.stepBackPanZoom()"
+			   ng-show="1"
+			   title="Restore previous pan/zoom">
+				<span class="ui-symbol icon">&lt;</span>
+			</a>
+
+			<a
+			   class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
+			   ng-click="plot.unzoom()"
+			   ng-show="1"
+			   title="Reset pan/zoom">
+				<span class="ui-symbol icon">I</span>
+			</a>
+		</div>
+
+
+
 		<div
 			class="l-image-main s-image-main"
 			ng-class="{ paused:paused, stale:false }"
@@ -65,13 +94,15 @@ showThumbsBubble=false;
 	                class="l-btn s-btn s-icon-btn l-mag s-mag ui-symbol vsm"
 	                ng-click="clipped = false"
 	                ng-show="clipped === true"
-	                title="117%: Click to reset"
+	                title="Not all of image is visible; click to reset."
 	                ></a>
 			</div>
 		</div>
 	</div>
 
-	<div class="l-image-thumbs-wrapper">
+	<!-- IMAGE THUMBNAILS DISABLED, DON'T INCLUDE THIS MARKUP -->
+	<!-- To enable thumbs, change scss constant $enableImageryThumbs in /platform/commonUI/general/res/sass/_constants.scss to true, recompile CSS, and delete style="display:none;" from following markup -->
+	<div class="l-image-thumbs-wrapper" style="display: none;">
 		<div
 			class="l-image-thumb-item s-image-thumb-item"
 			ng-repeat="thumb in images"
@@ -84,6 +115,7 @@ showThumbsBubble=false;
 	</div>
 </div>
 
+<!-- IMAGE THUMBNAILS DISABLED, DON'T INCLUDE THIS MARKUP -->
 <!-- NOTE: CANONICAL VERSION OF THIS MARKUP IS IN /platform/commonUI/inspect/res/thumbsbubble.html -->
 <div
 	class="l-bubble-wrapper s-bubble-wrapper l-thumbsbubble-wrapper"
@@ -118,7 +150,7 @@ showThumbsBubble=false;
 		></div>
 </div>
 
-
+<!-- DON'T INCLUDE THIS MARKUP -->
 <div class="hidden">
 	<h2>Plot limits</h2>
 

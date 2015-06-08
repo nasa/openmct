@@ -10,7 +10,9 @@
 /*************************************** MAIN LAYOUT */
 .l-image-main-wrapper {
 	//@include test();
-	bottom: $interiorMargin*2 +  $imageThumbsWrapperH;
+	@if $enableImageryThumbs == true {
+		bottom: $interiorMargin*2 +  $imageThumbsWrapperH;
+	}
 	min-height: 100px;
 	min-width: 150px;
 	.l-image-main {
@@ -44,6 +46,10 @@
 	background-repeat: no-repeat;
 }
 
+.l-image-main {
+	cursor: crosshair;
+}
+
 .l-image-main-controlbar {
 	//@include test();
 	font-size: 0.8em;
@@ -72,7 +78,7 @@
 		display: inline-block;
 		//white-space: nowrap;
 		&:before {
-			content: "\000058";
+			content: "\000049";
 		}
 	}
 	.s-mag {
@@ -91,9 +97,6 @@
 }
 
 /*************************************** THUMBS */
-
-.l-image-thumb-item {
-}
 
 .l-image-thumbs-wrapper {
 	//@include test(green);
@@ -156,8 +159,10 @@
 		.l-image-main-controlbar {
 			font-size: 0.7em;
 		}
-		.l-btn.show-thumbs {
-			display: inline-block;
+		@if $enableImageryThumbs == true {
+			.l-btn.show-thumbs {
+				display: inline-block;
+			}
 		}
 	}
 	.l-image-thumbs-wrapper {
