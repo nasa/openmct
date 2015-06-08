@@ -46,6 +46,10 @@
 	background-repeat: no-repeat;
 }
 
+.l-image-main {
+	cursor: crosshair;
+}
+
 .l-image-main-controlbar {
 	//@include test();
 	font-size: 0.8em;
@@ -93,9 +97,6 @@
 }
 
 /*************************************** THUMBS */
-
-.l-image-thumb-item {
-}
 
 .l-image-thumbs-wrapper {
 	//@include test(green);

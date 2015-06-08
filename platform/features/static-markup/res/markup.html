@@ -34,13 +34,41 @@
 {date:'2020/04/27',time:'16:00:57',url:'http://www.virtualmicroscope.org/sites/default/files/styles/large_carousel/public/800-15499_a15pan1463033.jpg?itok=NMQhLnuY',selected:false},
 {date:'2020/04/27',time:'16:00:27',url:'http://www.arcadiastreet.com/cgvistas/images/luna_southern_hemisphere_1280.jpg',selected:false}
 ];
-clipped=true;
-showThumbsBubble=false;
+clipped = true;
+showThumbsBubble = false;
+showLocalControls = false;
 "></div>
 
 <div class="t-imagery">
 	<!-- Main image -->
-	<div class="l-image-main-wrapper">
+	<div
+		class="l-image-main-wrapper"
+		ng-mouseenter="showLocalControls = true;"
+		ng-mouseleave="showLocalControls = false;"
+		>
+		<div
+			class="l-local-controls s-local-controls"
+			ng-show="showLocalControls"
+			 >
+			<a
+			   class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
+			   ng-click="plot.stepBackPanZoom()"
+			   ng-show="1"
+			   title="Restore previous pan/zoom">
+				<span class="ui-symbol icon">&lt;</span>
+			</a>
+
+			<a
+			   class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
+			   ng-click="plot.unzoom()"
+			   ng-show="1"
+			   title="Reset pan/zoom">
+				<span class="ui-symbol icon">I</span>
+			</a>
+		</div>
+
+
+
 		<div
 			class="l-image-main s-image-main"
 			ng-class="{ paused:paused, stale:false }"
@@ -66,7 +94,7 @@ showThumbsBubble=false;
 	                class="l-btn s-btn s-icon-btn l-mag s-mag ui-symbol vsm"
 	                ng-click="clipped = false"
 	                ng-show="clipped === true"
-	                title="117%: Click to reset"
+	                title="Not all of image is visible; click to reset."
 	                ></a>
 			</div>
 		</div>
