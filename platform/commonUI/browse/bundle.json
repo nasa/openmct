@@ -121,6 +121,12 @@
                 "depends": [ "typeService", "dialogService", "creationService", "policyService" ]
             }
         ],
+        "runs": [
+            {
+                "implementation": "windowing/WindowTitler.js",
+                "depends": [ "navigationService", "$rootScope", "$document" ]
+            }
+        ],
         "licenses": [
             {
                 "name": "screenfull.js",

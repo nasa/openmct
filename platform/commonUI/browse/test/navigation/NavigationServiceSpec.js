@@ -62,6 +62,16 @@ define(
                 expect(callback).toHaveBeenCalledWith(testObject);
             });
 
+            it("does not notify listeners when no changes occur", function () {
+                var testObject = { someKey: 42 },
+                    callback = jasmine.createSpy("callback");
+
+                navigationService.addListener(callback);
+                navigationService.setNavigation(testObject);
+                navigationService.setNavigation(testObject);
+                expect(callback.calls.length).toEqual(1);
+            });
+
             it("stops notifying listeners after removal", function () {
                 var testObject = { someKey: 42 },
                     callback = jasmine.createSpy("callback");

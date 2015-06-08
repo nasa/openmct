@@ -46,6 +46,7 @@ define(
             function setNavigation(domainObject) {
                 $scope.navigatedObject = domainObject;
                 $scope.treeModel.selectedObject = domainObject;
+                navigationService.setNavigation(domainObject);
             }
 
             // Load the root object, put it in the scope.
