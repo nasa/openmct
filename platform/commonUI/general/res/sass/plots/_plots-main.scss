@@ -154,7 +154,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 
 	/****************************** Limits and Out-of-Bounds data */
 
-	.l-limit,
+	.l-limit-bar,
 	.l-oob-data {
 		position: absolute;
 		left: 0;
@@ -162,36 +162,16 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 		width: auto;
 	}
 
-	.l-limit {
+	.l-limit-bar {
 		// Limits in plot display area
 		@mixin limitBg($c) {
 			background: rgba($c, 0.2);
 		}
 
-		$h: 10px;
-		$a0: 0.1;
-		$a1: 0.2;
-		//top: auto;
 		height: auto;
 		z-index: 0;
-		&.s-limit-upr {
-			//$dir: 0deg;
-			&.s-limit-yellow {
-				@include limitBg($colorLimitYellow);
-			}
-			&.s-limit-red {
-				@include limitBg($colorLimitRed);
-			}
-		}
-		&.s-limit-lwr {
-			//$dir: 180deg;
-			&.s-limit-yellow {
-				@include limitBg($colorLimitYellow);
-			}
-			&.s-limit-red {
-				@include limitBg($colorLimitRed);
-			}
-		}
+		&.s-limit-yellow { @include limitBg($colorLimitYellow); }
+		&.s-limit-red { @include limitBg($colorLimitRed); }
 	}
 
 	.l-oob-data {

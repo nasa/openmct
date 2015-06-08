@@ -61,7 +61,7 @@
 
 		.l-fixed-position-box {
 		}
-
+		
 		.l-fixed-position-image {
 			background-size: cover;
 			background-repeat: no-repeat;
@@ -90,7 +90,7 @@
 						left: $p;
 					}
 					&.l-value {
-                        //@include test(green);
+//                        @include test(blue);
 						right: $p;
 						left: auto;
 						text-align: right;

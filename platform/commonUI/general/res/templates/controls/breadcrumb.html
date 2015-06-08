@@ -1,0 +1,15 @@
+<div ng-init="bcItems=[
+				{type: 'folder', glyph: 'F', name: 'My Items'},
+				{type: 'layout', glyph: 'L', name: 'Layout with a somewhat long name'},
+				{type: 'telemetry-panel', glyph: 't', name: 'Panel, My Panel'},
+				{type: 'telemetry-element', glyph: 'T', name: 'ACS-0009'}
+	        ]"></div>
+
+<div class="l-breadcrumb s-breadcrumb">
+	<span
+		class="l-breadcrumb-item s-breadcrumb-item"
+		ng-repeat="bcItem in bcItems"
+		>
+		<a><span class="ui-symbol icon {{bcItem.type}}">{{bcItem.glyph}}</span>{{bcItem.name}}</a> <span class="ui-symbol sep">}</span>
+	</span>
+</div>

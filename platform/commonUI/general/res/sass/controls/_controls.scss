@@ -103,11 +103,12 @@
 	padding: 0 ($interiorMargin * 2);  // Moved to s-btn
 	text-decoration: none;  // Moved to s-btn
 	&.create-btn {
-		$h: $ueBrowseViewBarH;
+		$h: $ueTopBarH - $interiorMargin; //$btnStdH * 1.5;;
+		$p: $p * 2.25;
 		height: $h;
 		line-height: $h;
-		font-size: 1.1em;
-		padding: 0 ($p * 1.5) 0 $p;
+		//font-size: 1.1em;
+		padding: 0 $p;
 		.menu {
 			margin-left: $p * -1;
 		}
@@ -223,7 +224,7 @@
 .top-bar .buttons-main .t-btn,
 .tool-bar .btn,
 .tool-bar .t-btn {
-	$h: $ueEditToolBarButtonH;
+	$h: $btnToolbarH;
 	display: inline-block;
 	font-size: $h * $btnFontSizeToH;
 	height: $h;
@@ -361,7 +362,7 @@ label.checkbox.custom {
 }
 
 .top-bar .btn-menu {
-	$h: $ueTopBarH; // 35px
+	$h: $btnStdH; //$ueTopBarBtnH; // 35px
 	$p: 10px;
 	$badgeM: $interiorMargin;
 	$badgeD: $h - ($badgeM * 2);
@@ -407,7 +408,6 @@ label.checkbox.custom {
 		font-size: 1.1em;
 		span {
 			display: inline-block;
-//			margin-right: $interiorMargin;
 		}
 	}
 }
@@ -436,52 +436,62 @@ label.checkbox.custom {
 }
 
 /******************************************************** SLIDERS */
-
+.wrapper-slider {
+	position: relative;
+}
 .slider {
-	$knobH: 100%; //14px;
+	//$knobH: 70%; //14px;
 	$knobW: 12px;
-	$slotH: 50%;
+	$slotH: 80%;
+	$rangeO: 0.3;
 	.slot {
-//		@include border-radius($basicCr * .75);
+		//		@include border-radius($basicCr * .75);
 		@include sliderTrack();
-		height: $slotH;
+		height: auto;
 		width: auto;
 		position: absolute;
-		top: ($knobH - $slotH) / 2;
+		//top: ($knobH - $slotH) / 2;
+		top: (100% - $slotH)/2;
 		right: 0;
-		bottom: auto;
+		bottom: (100% - $slotH)/2;
 		left: 0;
+		z-index: 0;
+		.range {
+			background: rgba($colorKey, $rangeO);
+			cursor: ew-resize;
+			position: absolute;
+			top: 0;
+			right: auto;
+			bottom: 0;
+			left: auto;
+			height: auto;
+			width: auto;
+			z-index: 1;
+			&:hover {
+				background: rgba($colorKey, $rangeO + 0.2);
+			}
+		}
 	}
 	.knob {
 		@include btnSubtle();
 		@include controlGrippy(rgba(black, 0.3), vertical, 1px, solid);
+		@include border-radius(2px);
 		cursor: ew-resize;
 		position: absolute;
-		height: $knobH;
+		height: auto;
 		width: $knobW;
 		top: 0;
-		auto: 0;
-		bottom: auto;
+		bottom: 0;
 		left: auto;
+		z-index: 2;
+		&.knob-l { margin-left: $knobW / -2; }
+		&.knob-r { margin-right: $knobW / -2; }
 		&:before {
 			top: 1px;
 			bottom: 3px;
-			left: ($knobW / 2) - 1;
-		}
-
-	}
-	.range {
-		background: rgba($colorKey, 0.6);
-		cursor: ew-resize;
-		position: absolute;
-		top: 0;
-		right: auto;
-		bottom: 0;
-		left: auto;
-		height: auto;
-		width: auto;
-		&:hover {
-			background: rgba($colorKey, 0.7);
+			//left: ($knobW / 2) - 1;
+			//margin-left: -1px;
+			left: 45%;
 		}
 	}
 }

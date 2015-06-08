@@ -28,7 +28,7 @@
 
 .top-bar .badge {
     @include border-radius($controlCr * 1.5);
-    $h: $ueTopBarH; // - 5px;
+    $h: $btnStdH; //$ueTopBarBtnH; // - 5px;
     font-size: 1.4em;
     height: $h;
     line-height: $h;

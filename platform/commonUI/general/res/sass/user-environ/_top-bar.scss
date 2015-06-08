@@ -22,13 +22,13 @@
 .top-bar {
 //	$h: $ueTopBarH - 5px;
 //	background: rgba(#ff0000, 0.2);
-	line-height: $ueTopBarH;
+//	line-height: $ueTopBarBtnH;
 
     &.browse,
     &.edit {
 	    border-bottom: 1px solid $colorInteriorBorder;
         top: $bodyMargin; right: $bodyMargin; bottom: auto; left: $bodyMargin;
-        height: $ueTopBarH;
+        height: $ueTopBarEditH;
     }
 	
 	.action {
