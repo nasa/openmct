@@ -54,10 +54,10 @@ define(
                  * column.
                  * @returns {string} the text to display
                  */
-                getValue: function (domainObject, data, index) {
+                getValue: function (domainObject, datum) {
                     return {
                         text: telemetryFormatter.formatDomainValue(
-                            data.getDomainValue(index, domainMetadata.key)
+                            datum[domainMetadata.key]
                         )
                     };
                 }

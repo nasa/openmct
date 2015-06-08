@@ -54,11 +54,11 @@ define(
                  * column.
                  * @returns {string} the text to display
                  */
-                getValue: function (domainObject, data, index) {
+                getValue: function (domainObject, datum) {
                     var range = rangeMetadata.key,
                         limit = domainObject.getCapability('limit'),
-                        value = data.getRangeValue(index, range),
-                        alarm = limit.evaluate(value, range);
+                        value = datum[range],
+                        alarm = limit.evaluate(datum, range);
 
                     return {
                         cssClass: alarm && alarm.cssClass,
