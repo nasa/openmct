@@ -436,62 +436,52 @@ label.checkbox.custom {
 }
 
 /******************************************************** SLIDERS */
-.wrapper-slider {
-	position: relative;
-}
+
 .slider {
-	//$knobH: 70%; //14px;
+	$knobH: 100%; //14px;
 	$knobW: 12px;
-	$slotH: 80%;
-	$rangeO: 0.3;
+	$slotH: 50%;
 	.slot {
-		//		@include border-radius($basicCr * .75);
+//		@include border-radius($basicCr * .75);
 		@include sliderTrack();
-		height: auto;
+		height: $slotH;
 		width: auto;
 		position: absolute;
-		//top: ($knobH - $slotH) / 2;
-		top: (100% - $slotH)/2;
+		top: ($knobH - $slotH) / 2;
 		right: 0;
-		bottom: (100% - $slotH)/2;
+		bottom: auto;
 		left: 0;
-		z-index: 0;
-		.range {
-			background: rgba($colorKey, $rangeO);
-			cursor: ew-resize;
-			position: absolute;
-			top: 0;
-			right: auto;
-			bottom: 0;
-			left: auto;
-			height: auto;
-			width: auto;
-			z-index: 1;
-			&:hover {
-				background: rgba($colorKey, $rangeO + 0.2);
-			}
-		}
 	}
 	.knob {
 		@include btnSubtle();
 		@include controlGrippy(rgba(black, 0.3), vertical, 1px, solid);
-		@include border-radius(2px);
 		cursor: ew-resize;
 		position: absolute;
-		height: auto;
+		height: $knobH;
 		width: $knobW;
 		top: 0;
-		bottom: 0;
+		auto: 0;
+		bottom: auto;
 		left: auto;
-		z-index: 2;
-		&.knob-l { margin-left: $knobW / -2; }
-		&.knob-r { margin-right: $knobW / -2; }
 		&:before {
 			top: 1px;
 			bottom: 3px;
-			//left: ($knobW / 2) - 1;
-			//margin-left: -1px;
-			left: 45%;
+			left: ($knobW / 2) - 1;
+		}
+
+	}
+	.range {
+		background: rgba($colorKey, 0.6);
+		cursor: ew-resize;
+		position: absolute;
+		top: 0;
+		right: auto;
+		bottom: 0;
+		left: auto;
+		height: auto;
+		width: auto;
+		&:hover {
+			background: rgba($colorKey, 0.7);
 		}
 	}
 }

@@ -117,6 +117,13 @@ span {
 	display: none !important;
 }
 
+.paused {
+	&:not(.s-btn) {
+		border-color: $colorPausedBg !important;
+		color: $colorPausedBg !important;
+	}
+}
+
 .sep {
 	color: rgba(#fff, 0.2);
 }
