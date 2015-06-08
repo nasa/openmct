@@ -43,6 +43,10 @@
             {
                 "key": "indicator",
                 "templateUrl": "templates/indicator.html"
+            },
+            {
+              "key": "time-controller",
+              "templateUrl": "templates/controls/time-controller.html"
             }
         ],
         "controllers": [

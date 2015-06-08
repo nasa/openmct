@@ -19,20 +19,83 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 1, ../sass/tree/_tree.scss */
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 22, ../sass/tree/_tree.scss */
 ul.tree {
   margin: 0;
   padding: 0; }
-  /* line 187, ../sass/_mixins.scss */
+  /* line 208, ../sass/_mixins.scss */
   ul.tree li {
     list-style-type: none;
     margin: 0;
     padding: 0; }
-  /* line 3, ../sass/tree/_tree.scss */
+  /* line 24, ../sass/tree/_tree.scss */
   ul.tree li {
     display: block;
     position: relative; }
-    /* line 6, ../sass/tree/_tree.scss */
+    /* line 27, ../sass/tree/_tree.scss */
     ul.tree li span.tree-item {
       -moz-border-radius: 3px;
       -webkit-border-radius: 3px;
@@ -47,15 +110,15 @@ ul.tree {
       line-height: 1.5rem;
       margin-bottom: 3px;
       position: relative; }
-      /* line 17, ../sass/tree/_tree.scss */
+      /* line 38, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item .view-control {
         display: inline-block;
         margin-left: 5px;
         width: 10px; }
-        /* line 23, ../sass/tree/_tree.scss */
+        /* line 44, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item .view-control:hover {
           color: #ffc700; }
-      /* line 28, ../sass/tree/_tree.scss */
+      /* line 49, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item .label {
         display: block;
         overflow: hidden;
@@ -67,7 +130,7 @@ ul.tree {
         width: auto;
         height: auto;
         left: 20px; }
-        /* line 34, ../sass/tree/_tree.scss */
+        /* line 55, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item .label .type-icon {
           overflow: hidden;
           position: absolute;
@@ -79,7 +142,7 @@ ul.tree {
           height: auto;
           text-shadow: rgba(0, 0, 0, 0.6) 0 1px 2px;
           color: #0099cc; }
-          /* line 38, ../sass/tree/_tree.scss */
+          /* line 59, ../sass/tree/_tree.scss */
           ul.tree li span.tree-item .label .type-icon .alert {
             text-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
             background: #333;
@@ -94,7 +157,7 @@ ul.tree {
             width: auto;
             position: absolute;
             z-index: 2; }
-        /* line 54, ../sass/tree/_tree.scss */
+        /* line 75, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item .label .title-label {
           overflow: hidden;
           position: absolute;
@@ -109,52 +172,52 @@ ul.tree {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap; }
-      /* line 66, ../sass/tree/_tree.scss */
+      /* line 87, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item.loading {
         pointer-events: none; }
-        /* line 68, ../sass/tree/_tree.scss */
+        /* line 89, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item.loading .label {
           opacity: 0.5; }
-          /* line 70, ../sass/tree/_tree.scss */
+          /* line 91, ../sass/tree/_tree.scss */
           ul.tree li span.tree-item.loading .label .title-label {
             font-style: italic; }
-        /* line 74, ../sass/tree/_tree.scss */
+        /* line 95, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item.loading .wait-spinner {
           margin-left: 14px; }
-      /* line 79, ../sass/tree/_tree.scss */
+      /* line 100, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item.selected {
         background: #005177;
         color: #fff; }
-        /* line 83, ../sass/tree/_tree.scss */
+        /* line 104, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item.selected .view-control {
           color: #0099cc; }
-        /* line 86, ../sass/tree/_tree.scss */
+        /* line 107, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item.selected .label .type-icon {
           color: #fff; }
-      /* line 92, ../sass/tree/_tree.scss */
+      /* line 113, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item:not(.selected):hover {
         background: #404040;
         color: #cccccc; }
-        /* line 95, ../sass/tree/_tree.scss */
+        /* line 116, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item:not(.selected):hover .context-trigger {
           display: block; }
-        /* line 98, ../sass/tree/_tree.scss */
+        /* line 119, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item:not(.selected):hover .icon {
           color: #33ccff; }
-      /* line 104, ../sass/tree/_tree.scss */
+      /* line 125, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item:not(.loading) {
         cursor: pointer; }
-      /* line 109, ../sass/tree/_tree.scss */
+      /* line 130, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item .context-trigger {
         display: none;
         top: -1px;
         position: absolute;
         right: 3px; }
-        /* line 115, ../sass/tree/_tree.scss */
+        /* line 136, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item .context-trigger .btn-invoke-menu {
           font-size: 0.75em;
           height: 0.9rem;
           line-height: 0.9rem; }
-  /* line 124, ../sass/tree/_tree.scss */
+  /* line 145, ../sass/tree/_tree.scss */
   ul.tree ul.tree {
     margin-left: 15px; }
