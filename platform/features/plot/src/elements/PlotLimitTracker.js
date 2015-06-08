@@ -43,11 +43,11 @@ define(
 
             function updateLimit(telemetryObject) {
                 var limit = telemetryObject.getCapability('limit'),
-                    value = handle.getRangeValue(telemetryObject, range);
+                    datum = handle.getDatum(telemetryObject);
 
-                if (limit && (value !== undefined)) {
+                if (limit && datum) {
                     legendClasses[telemetryObject.getId()] =
-                        (limit.evaluate(value, range) || {}).cssClass;
+                        (limit.evaluate(datum, range) || {}).cssClass;
                 }
             }
 
