@@ -55,9 +55,11 @@ define(
                  * @returns {string} the text to display
                  */
                 getValue: function (domainObject, data, index) {
-                    return telemetryFormatter.formatDomainValue(
-                        data.getDomainValue(index, domainMetadata.key)
-                    );
+                    return {
+                        text: telemetryFormatter.formatDomainValue(
+                            data.getDomainValue(index, domainMetadata.key)
+                        )
+                    };
                 }
             };
         }

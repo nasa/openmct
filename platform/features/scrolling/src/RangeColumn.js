@@ -58,13 +58,11 @@ define(
                     var range = rangeMetadata.key,
                         limit = domainObject.getCapability('limit'),
                         value = data.getRangeValue(index, range),
-                        cell = telemetryFormatter.formatRangeValue(value);
+                        alarm = limit.evaluate(value, range);
 
                     return {
-                        cssClass: limit && limit.evaluate(value, range),
-                        toString: function () {
-                            return cell;
-                        }
+                        cssClass: alarm && alarm.cssClass,
+                        text: telemetryFormatter.formatRangeValue(value)
                     };
                 }
             };
