@@ -60,17 +60,17 @@ define(
                 limits: function (range) {
                     return LIMITS;
                 },
-                evaluate: function (value, range) {
-                    if (value > RED) {
+                evaluate: function (datum, range) {
+                    if (datum[range] > RED) {
                         return LIMITS.rh;
                     }
-                    if (value < -RED) {
+                    if (datum[range] < -RED) {
                         return LIMITS.rl;
                     }
-                    if (value > YELLOW) {
+                    if (datum[range] > YELLOW) {
                         return LIMITS.yh;
                     }
-                    if (value < -YELLOW) {
+                    if (datum[range] < -YELLOW) {
                         return LIMITS.yl;
                     }
                 }
