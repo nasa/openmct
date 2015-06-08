@@ -72,7 +72,9 @@
         $prw: $w - $plw;
         width: $w;
         height: $h;
-        .contents { overflow: none; }
+        .contents {
+	        @include absPosDefault($interiorMargin);
+        }
         .pane {
             @include box-sizing(border-box);
             &.left {

@@ -103,11 +103,12 @@
 	padding: 0 ($interiorMargin * 2);  // Moved to s-btn
 	text-decoration: none;  // Moved to s-btn
 	&.create-btn {
-		$h: $ueBrowseViewBarH;
+		$h: $ueTopBarH - $interiorMargin; //$btnStdH * 1.5;;
+		$p: $p * 2.25;
 		height: $h;
 		line-height: $h;
-		font-size: 1.1em;
-		padding: 0 ($p * 1.5) 0 $p;
+		//font-size: 1.1em;
+		padding: 0 $p;
 		.menu {
 			margin-left: $p * -1;
 		}
@@ -223,7 +224,7 @@
 .top-bar .buttons-main .t-btn,
 .tool-bar .btn,
 .tool-bar .t-btn {
-	$h: $ueEditToolBarButtonH;
+	$h: $btnToolbarH;
 	display: inline-block;
 	font-size: $h * $btnFontSizeToH;
 	height: $h;
@@ -361,7 +362,7 @@ label.checkbox.custom {
 }
 
 .top-bar .btn-menu {
-	$h: $ueTopBarH; // 35px
+	$h: $btnStdH; //$ueTopBarBtnH; // 35px
 	$p: 10px;
 	$badgeM: $interiorMargin;
 	$badgeD: $h - ($badgeM * 2);
@@ -407,7 +408,6 @@ label.checkbox.custom {
 		font-size: 1.1em;
 		span {
 			display: inline-block;
-//			margin-right: $interiorMargin;
 		}
 	}
 }

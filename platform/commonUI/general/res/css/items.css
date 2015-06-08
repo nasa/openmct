@@ -19,35 +19,97 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 1, ../sass/items/_item.scss */
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 22, ../sass/items/_item.scss */
 .items-holder {
   overflow: hidden;
   *zoom: 1;
   overflow-y: auto; }
-  /* line 4, ../sass/items/_item.scss */
+  /* line 25, ../sass/items/_item.scss */
   .items-holder .contents {
     top: 0; }
-  /* line 8, ../sass/items/_item.scss */
+  /* line 29, ../sass/items/_item.scss */
   .items-holder .item.grid-item {
+    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+    background-size: 100%;
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #595959), color-stop(100%, #4d4d4d));
-    background-image: -webkit-linear-gradient(#595959, #4d4d4d);
     background-image: -moz-linear-gradient(#595959, #4d4d4d);
-    background-image: -o-linear-gradient(#595959, #4d4d4d);
+    background-image: -webkit-linear-gradient(#595959, #4d4d4d);
     background-image: linear-gradient(#595959, #4d4d4d);
-    -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
-    -ms-border-radius: 3px;
-    -o-border-radius: 3px;
+    -webkit-border-radius: 3px;
     border-radius: 3px;
-    -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
     border: none;
     border-top: 1px solid #737373;
-    color: #999999;
+    color: #999;
     display: inline-block;
     box-sizing: border-box;
     cursor: pointer;
@@ -57,112 +119,114 @@
     margin-bottom: 3px;
     margin-right: 3px;
     position: relative; }
-    /* line 127, ../sass/_mixins.scss */
+    /* line 148, ../sass/_mixins.scss */
     .items-holder .item.grid-item:not(.disabled):hover {
+      background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzczNzM3MyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+      background-size: 100%;
       background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #737373), color-stop(100%, #595959));
-      background-image: -webkit-linear-gradient(#737373, #595959);
       background-image: -moz-linear-gradient(#737373, #595959);
-      background-image: -o-linear-gradient(#737373, #595959);
+      background-image: -webkit-linear-gradient(#737373, #595959);
       background-image: linear-gradient(#737373, #595959); }
-    /* line 21, ../sass/items/_item.scss */
+    /* line 42, ../sass/items/_item.scss */
     .items-holder .item.grid-item:hover .item-main .item-type {
       color: #0099cc !important; }
-    /* line 24, ../sass/items/_item.scss */
+    /* line 45, ../sass/items/_item.scss */
     .items-holder .item.grid-item:hover .item-main .item-open {
       display: block; }
-    /* line 28, ../sass/items/_item.scss */
+    /* line 49, ../sass/items/_item.scss */
     .items-holder .item.grid-item .contents {
       top: 5px;
       right: 5px;
       bottom: 5px;
       left: 5px; }
-    /* line 32, ../sass/items/_item.scss */
+    /* line 53, ../sass/items/_item.scss */
     .items-holder .item.grid-item .bar.top-bar.abs {
       bottom: auto;
       height: 20px;
       line-height: 20px;
       z-index: 5; }
-      /* line 37, ../sass/items/_item.scss */
+      /* line 58, ../sass/items/_item.scss */
       .items-holder .item.grid-item .bar.top-bar.abs .left, .items-holder .item.grid-item .bar.top-bar.abs .right {
         width: auto; }
-        /* line 39, ../sass/items/_item.scss */
+        /* line 60, ../sass/items/_item.scss */
         .items-holder .item.grid-item .bar.top-bar.abs .left .icon, .items-holder .item.grid-item .bar.top-bar.abs .right .icon {
           margin-left: 5px; }
-    /* line 44, ../sass/items/_item.scss */
+    /* line 65, ../sass/items/_item.scss */
     .items-holder .item.grid-item .bar.bottom-bar.abs {
       top: auto;
       height: 40px;
       padding: 5px; }
-    /* line 50, ../sass/items/_item.scss */
+    /* line 71, ../sass/items/_item.scss */
     .items-holder .item.grid-item .item-main {
       z-index: 1; }
-      /* line 58, ../sass/items/_item.scss */
+      /* line 79, ../sass/items/_item.scss */
       .items-holder .item.grid-item .item-main .item-type {
         color: #737373;
         text-align: center;
         font-size: 7em;
         line-height: 180px; }
-      /* line 64, ../sass/items/_item.scss */
+      /* line 85, ../sass/items/_item.scss */
       .items-holder .item.grid-item .item-main .item-open {
         display: none;
         font-size: 5em;
         line-height: 180px;
         left: auto;
         width: 30px; }
-    /* line 72, ../sass/items/_item.scss */
+    /* line 93, ../sass/items/_item.scss */
     .items-holder .item.grid-item .title {
       text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px;
       color: #cccccc;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis; }
-    /* line 80, ../sass/items/_item.scss */
+    /* line 101, ../sass/items/_item.scss */
     .items-holder .item.grid-item .details {
       font-size: 0.8em; }
-    /* line 83, ../sass/items/_item.scss */
+    /* line 104, ../sass/items/_item.scss */
     .items-holder .item.grid-item.selected {
+      background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwYmZmZiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwYWNlNiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+      background-size: 100%;
       background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #00bfff), color-stop(100%, #00ace6));
-      background-image: -webkit-linear-gradient(#00bfff, #00ace6);
       background-image: -moz-linear-gradient(#00bfff, #00ace6);
-      background-image: -o-linear-gradient(#00bfff, #00ace6);
+      background-image: -webkit-linear-gradient(#00bfff, #00ace6);
       background-image: linear-gradient(#00bfff, #00ace6);
-      -webkit-border-radius: 3px;
       -moz-border-radius: 3px;
-      -ms-border-radius: 3px;
-      -o-border-radius: 3px;
+      -webkit-border-radius: 3px;
       border-radius: 3px;
-      -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
       box-sizing: border-box;
-      -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
       -moz-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
+      -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
       box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
       border: none;
       border-top: 1px solid #33ccff;
-      color: #999999;
+      color: #999;
       display: inline-block;
+      background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzMzY2NmZiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwOTljYyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+      background-size: 100%;
       background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #33ccff), color-stop(100%, #0099cc));
-      background-image: -webkit-linear-gradient(#33ccff, #0099cc);
       background-image: -moz-linear-gradient(#33ccff, #0099cc);
-      background-image: -o-linear-gradient(#33ccff, #0099cc);
+      background-image: -webkit-linear-gradient(#33ccff, #0099cc);
       background-image: linear-gradient(#33ccff, #0099cc);
       color: #80dfff; }
-      /* line 135, ../sass/_mixins.scss */
+      /* line 156, ../sass/_mixins.scss */
       .items-holder .item.grid-item.selected:not(.disabled):hover {
+        background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzY2ZDlmZiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwYmZmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+        background-size: 100%;
         background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #66d9ff), color-stop(100%, #00bfff));
-        background-image: -webkit-linear-gradient(#66d9ff, #00bfff);
         background-image: -moz-linear-gradient(#66d9ff, #00bfff);
-        background-image: -o-linear-gradient(#66d9ff, #00bfff);
+        background-image: -webkit-linear-gradient(#66d9ff, #00bfff);
         background-image: linear-gradient(#66d9ff, #00bfff); }
-      /* line 88, ../sass/items/_item.scss */
+      /* line 109, ../sass/items/_item.scss */
       .items-holder .item.grid-item.selected .item-type, .items-holder .item.grid-item.selected .top-bar .icon:not(.alert) {
         color: #80dfff; }
-      /* line 89, ../sass/items/_item.scss */
+      /* line 110, ../sass/items/_item.scss */
       .items-holder .item.grid-item.selected .item-main .item-open {
         color: #80dfff; }
-      /* line 90, ../sass/items/_item.scss */
+      /* line 111, ../sass/items/_item.scss */
       .items-holder .item.grid-item.selected .title {
         color: white; }
-      /* line 92, ../sass/items/_item.scss */
+      /* line 113, ../sass/items/_item.scss */
       .items-holder .item.grid-item.selected:hover .item-main .item-type {
         color: white !important; }

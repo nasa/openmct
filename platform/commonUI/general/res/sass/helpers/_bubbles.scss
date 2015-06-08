@@ -21,9 +21,6 @@
  *****************************************************************************/
 //************************************************* LAYOUT
 
-$infoBubbleFg: #666;
-$infoBubbleBg: #ddd;
-
 .l-infobubble-wrapper {
 	$arwSize: 5px;
 	@include box-shadow(rgba(black, 0.4) 0 1px 5px);
@@ -31,7 +28,7 @@ $infoBubbleBg: #ddd;
 	z-index: 70;
 	.l-infobubble {
 		display: inline-block;
-		max-width: 250px;
+		max-width: 300px;
 		padding: 5px 10px;
 		&:before {
 			content:"";
@@ -54,7 +51,8 @@ $infoBubbleBg: #ddd;
 						white-space: nowrap;
 					}
 					&.value {
-						white-space: nowrap;
+						//@include test(red);
+						//white-space: nowrap;
 						//width: 90%;
 					}
 					&.align-wrap {
@@ -76,7 +74,7 @@ $infoBubbleBg: #ddd;
 			right: 100%;
 			border-top: $arwSize solid transparent;
 			border-bottom: $arwSize solid transparent;
-			border-right: ($arwSize * 1.5) solid $infoBubbleBg;
+			border-right: ($arwSize * 1.5) solid $colorInfoBubbleBg;
 		}
 	}
 
@@ -86,7 +84,7 @@ $infoBubbleBg: #ddd;
 			left: 100%;
 			border-top: $arwSize solid transparent;
 			border-bottom: $arwSize solid transparent;
-			border-left: ($arwSize * 1.5) solid $infoBubbleBg;
+			border-left: ($arwSize * 1.5) solid $colorInfoBubbleBg;
 		}
 	}
 
@@ -110,7 +108,7 @@ $infoBubbleBg: #ddd;
 			margin-left: -1 * $arwSize;
 			border-left: $arwSize solid transparent;
 			border-right: $arwSize solid transparent;
-			border-top: ($arwSize * 1.5) solid $infoBubbleBg;
+			border-top: ($arwSize * 1.5) solid $colorInfoBubbleBg;
 		}
 	}
 }
@@ -118,10 +116,10 @@ $infoBubbleBg: #ddd;
 //************************************************* LOOK AND FEEL
 
 .s-infobubble {
-	$emFg: darken($infoBubbleFg, 20%);
+	$emFg: darken($colorInfoBubbleFg, 20%);
 	@include border-radius($basicCr);
-	background: $infoBubbleBg;
-	color: $infoBubbleFg;
+	background: $colorInfoBubbleBg;
+	color: $colorInfoBubbleFg;
 	font-size: 0.8rem;
 	.title {
 		color: $emFg;
@@ -129,7 +127,7 @@ $infoBubbleBg: #ddd;
 	}
 	tr {
 		td {
-			border-top: 1px solid darken($infoBubbleBg, 10%);
+			border-top: 1px solid darken($colorInfoBubbleBg, 10%);
 			font-size: 0.9em;
 		}
 		&:first-child td {
