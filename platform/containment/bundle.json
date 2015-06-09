@@ -13,6 +13,11 @@
                 "message": "Objects of this type cannot be modified."
             },
             {
+                "category": "composition",
+                "implementation": "CompositionModelPolicy.js",
+                "message": "Objects of this type cannot contain other objects."
+            },
+            {
                 "category": "action",
                 "implementation": "ComposeActionPolicy.js",
                 "depends": [ "$injector" ],
