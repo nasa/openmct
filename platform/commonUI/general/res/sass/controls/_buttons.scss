@@ -19,25 +19,28 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-$pad: $interiorMargin * 2;
+$pad: $interiorMargin * 1.5;
 
 /*********************************** TYPE STYLES */
 .t-btn {
 	cursor: pointer;
 }
 
-
 /*********************************** STYLE STYLES */
 .s-btn {
-	$base: lighten($colorBodyBg, 20%);
 	@include border-radius($controlCr);
 	@include box-sizing(border-box);
 	@include text-shadow(rgba(black, 0.3) 0 1px 1px);
 	line-height: 1.2em;
-	padding: 0 $pad;
 	text-decoration: none;
 	&.s-very-subtle {
 		@include containerSubtle($colorBodyBg, $colorBodyFg, true);
+		&.paused {
+			@include containerSubtle($colorPausedBg, $colorPausedFg, true);
+			.icon:before {
+				content:"\0000EF";
+			}
+		}
 	}
 }
 
@@ -47,9 +50,20 @@ $pad: $interiorMargin * 2;
 	.icon {
 		color: $colorKey;
 	}
+	&.paused {
+		.icon {
+			color: $colorPausedFg;
+		}
+	}
 
-	&:not(.disabled):hover .icon {
-		color: lighten($colorKey, $ltGamma);
+	&:not(.disabled) {
+		&:not(.paused) {
+			&:hover {
+				.icon {
+					color: lighten($colorKey, $ltGamma);
+				}
+			}
+		}
 	}
 
 	&.labeled {
@@ -61,8 +75,22 @@ $pad: $interiorMargin * 2;
 			margin-left: $interiorMargin;
 		}
 	}
-}
 
+	&.pause-play {
+		&.paused {
+			@include pulse(500ms);
+		}
+		.icon:before {
+			content:"\0000F1";
+		}
+	}
+
+	&.show-thumbs {
+		.icon:before {
+			content:"\000039";
+		}
+	}
+}
 
 /*********************************** LAYOUT STYLES */
 span.l-btn,
@@ -70,4 +98,14 @@ span.l-btn span,
 a.l-btn,
 a.l-btn span {
 	display: inline-block;
+}
+
+.l-btn {
+	padding: 0 $pad;
+	&.sm {
+		padding: 0 $interiorMargin;
+	}
+	&.vsm {
+		padding: 0 $interiorMargin/2;
+	}
 }

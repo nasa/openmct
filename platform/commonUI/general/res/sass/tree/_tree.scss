@@ -99,7 +99,7 @@ ul.tree {
 
 			&.selected {
 				$c: #fff;
-				background: #005177;
+				background: $colorKeySelectedBg;
 				color: $c;
 				.view-control {
 					color: $colorItemTreeIcon;
