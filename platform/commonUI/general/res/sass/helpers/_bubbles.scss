@@ -121,8 +121,10 @@
 .l-thumbsbubble-wrapper {
 	$closeBtnD: 15px;
 	position: absolute;
+	left: $interiorMarginLg;
+	right: $interiorMarginLg;
 	height: $imageThumbsWrapperH + $bubblePad*2 + $interiorMargin;
-	width: 100%;
+	width: auto;
 	.l-thumbsbubble {
 		@include absPosDefault();
 		.l-image-thumbs-wrapper {
