@@ -29,7 +29,23 @@
                     }
                 },
                 "telemetry": {
-                    "source": "generator"
+                    "source": "generator",
+                    "domains": [
+                        {
+                            "key": "time",
+                            "name": "Time"
+                        }
+                    ],
+                    "ranges": [
+                        {
+                            "key": "sin",
+                            "name": "Sine"
+                        },
+                        {
+                            "key": "cos",
+                            "name": "Cosine"
+                        }
+                    ]
                 },
                 "properties": [
                     {
