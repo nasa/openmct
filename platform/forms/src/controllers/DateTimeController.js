@@ -52,7 +52,39 @@ define(
                 if (fullDateTime.isValid()) {
                     $scope.ngModel[$scope.field] = fullDateTime.valueOf();
                 }
+
+                // If anything is complete, say so in scope; there are
+                // ng-required usages that will update off of this (to
+                // allow datetime to be optional while still permitting
+                // incomplete input)
+                $scope.partiallyComplete =
+                    Object.keys($scope.datetime).some(function (key) {
+                        return $scope.datetime[key];
+                    });
+
+                // Treat empty input as an undefined value
+                if (!$scope.partiallyComplete) {
+                    $scope.ngModel[$scope.field] = undefined;
+                }
             }
+
+            function updateDateTime(value) {
+                var m;
+                if (value !== undefined) {
+                    m = moment.utc(value);
+                    $scope.datetime = {
+                        date: m.format(DATE_FORMAT),
+                        hour: m.format("H"),
+                        min: m.format("m"),
+                        sec: m.format("s")
+                    };
+                } else {
+                    $scope.datetime = {};
+                }
+            }
+
+            // ...and update form values when actual field in model changes
+            $scope.$watch("ngModel[field]", updateDateTime);
 
             // Update value whenever any field changes.
             $scope.$watch("datetime.date", update);
@@ -60,7 +92,11 @@ define(
             $scope.$watch("datetime.min", update);
             $scope.$watch("datetime.sec", update);
 
-            $scope.datetime = {};
+            // Initialize forms values
+            updateDateTime(
+                ($scope.ngModel && $scope.field) ?
+                        $scope.ngModel[$scope.field] : undefined
+            );
         }
 
         return DateTimeController;
