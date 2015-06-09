@@ -1,1 +1,61 @@
-Hello imagery!
+<div class="t-imagery">
+    <!-- Main image -->
+    <div
+        class="l-image-main-wrapper"
+        ng-mouseenter="showLocalControls = true;"
+        ng-mouseleave="showLocalControls = false;"
+        >
+        <div
+            class="l-local-controls s-local-controls"
+            ng-show="showLocalControls"
+             >
+            <a
+               class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
+               ng-click="plot.stepBackPanZoom()"
+               ng-show="1"
+               title="Restore previous pan/zoom">
+                <span class="ui-symbol icon">&lt;</span>
+            </a>
+
+            <a
+               class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
+               ng-click="plot.unzoom()"
+               ng-show="1"
+               title="Reset pan/zoom">
+                <span class="ui-symbol icon">I</span>
+            </a>
+        </div>
+
+
+
+        <div
+            class="l-image-main s-image-main"
+            ng-class="{ paused:paused, stale:false }"
+            style="background-image:url('http://www.hacskaylo.com/wedding/images/moon-surface-with-ice.jpg');"
+            ></div>
+        <div class="l-image-main-controlbar bar">
+            <div class="left">
+                <a
+                    class="t-btn l-btn s-btn s-icon-btn s-very-subtle show-thumbs sm"
+                    ng-click="showThumbsBubble = (showThumbsBubble)? false:true"
+                    ><span class="ui-symbol icon"></span></a>
+                <span class="l-timezone">UTC</span>
+                <span class="l-time">16:03:43</span>
+                <span class="l-date">2020/04/27</span>
+            </div>
+            <div class="right">
+                <a
+                    class="t-btn l-btn s-btn s-icon-btn s-very-subtle pause-play sm"
+                    ng-click="paused = (paused)? false:true"
+                    ng-class="{ paused:paused }"
+                    ><span class="ui-symbol icon"></span></a>
+                <a href=""
+                    class="l-btn s-btn s-icon-btn l-mag s-mag ui-symbol vsm"
+                    ng-click="clipped = false"
+                    ng-show="clipped === true"
+                    title="Not all of image is visible; click to reset."
+                    ></a>
+            </div>
+        </div>
+    </div>
+</div>
