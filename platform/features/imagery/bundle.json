@@ -1,0 +1,20 @@
+{
+    "name": "Plot view for telemetry",
+    "extensions": {
+        "views": [
+            {
+                "name": "Imagery",
+                "key": "imagery",
+                "glyph": "I",
+                "templateUrl": "templates/imagery.html",
+                "needs": [ "telemetry" ]
+            }
+        ],
+        "policies": [
+            {
+                "category": "view",
+                "implementation": "policies/ImageryViewPolicy.js"
+            }
+        ]
+    }
+}
