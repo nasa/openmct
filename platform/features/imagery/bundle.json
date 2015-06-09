@@ -15,6 +15,13 @@
                 "category": "view",
                 "implementation": "policies/ImageryViewPolicy.js"
             }
+        ],
+        "controllers": [
+            {
+                "key": "ImageryController",
+                "implementation": "controllers/ImageryController.js",
+                "depends": [ "$scope", "telemetryHandler", "telemetryFormatter" ]
+            }
         ]
     }
 }

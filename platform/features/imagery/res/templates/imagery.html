@@ -1,4 +1,4 @@
-<div class="t-imagery">
+<div class="t-imagery" ng-controller="ImageryController as imagery">
     <!-- Main image -->
     <div
         class="l-image-main-wrapper"
@@ -31,7 +31,7 @@
         <div
             class="l-image-main s-image-main"
             ng-class="{ paused:paused, stale:false }"
-            style="background-image:url('http://www.hacskaylo.com/wedding/images/moon-surface-with-ice.jpg');"
+            style="background-image:url('{{imagery.getImageUrl()}}');"
             ></div>
         <div class="l-image-main-controlbar bar">
             <div class="left">
@@ -39,9 +39,9 @@
                     class="t-btn l-btn s-btn s-icon-btn s-very-subtle show-thumbs sm"
                     ng-click="showThumbsBubble = (showThumbsBubble)? false:true"
                     ><span class="ui-symbol icon"></span></a>
-                <span class="l-timezone">UTC</span>
-                <span class="l-time">16:03:43</span>
-                <span class="l-date">2020/04/27</span>
+                <span class="l-timezone">{{imagery.getZone()}}</span>
+                <span class="l-time">{{imagery.getTime()}}</span>
+                <span class="l-date">{{imagery.getDate()}}</span>
             </div>
             <div class="right">
                 <a

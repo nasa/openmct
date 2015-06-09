@@ -22,12 +22,16 @@
 /*global define*/
 
 define(
-    [],
-    function () {
+    ['moment'],
+    function (moment) {
         "use strict";
 
+        var DATE_FORMAT = "YYYY-DDD",
+            TIME_FORMAT = "HH:mm:ss";
+
         function ImageryController($scope, telemetryHandler, telemetryFormatter) {
-            var timestamp = "",
+            var date = "",
+                time = "",
                 imageUrl = "",
                 handle;
 
@@ -39,11 +43,12 @@ define(
             }
 
             function updateValues() {
-                var imageObject = handle && handle.getTelemetryObjects()[0];
+                var imageObject = handle && handle.getTelemetryObjects()[0],
+                    m;
                 if (imageObject) {
-                    timestamp = telemetryFormatter.formatDomainValue(
-                        handle.getDomainValue(imageObject)
-                    );
+                    m = moment.utc(handle.getDomainValue(imageObject));
+                    date = m.format(DATE_FORMAT);
+                    time = m.format(TIME_FORMAT);
                     imageUrl = handle.getRangeValue(imageObject);
                 }
             }
@@ -52,7 +57,8 @@ define(
             // to do the meaningful work here.
             function subscribe(domainObject) {
                 releaseSubscription();
-                timestamp = "";
+                date = "";
+                time = "";
                 imageUrl = "";
                 handle = domainObject && telemetryHandler.handle(
                     domainObject,
@@ -68,8 +74,14 @@ define(
             $scope.$on("$destroy", releaseSubscription);
 
             return {
-                getTimestamp: function () {
-                    return timestamp;
+                getTime: function () {
+                    return time;
+                },
+                getDate: function () {
+                    return date;
+                },
+                getZone: function () {
+                    return "UTC";
                 },
                 getImageUrl: function () {
                     return imageUrl;
