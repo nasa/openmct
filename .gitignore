@@ -17,3 +17,6 @@ target
 # Closed source libraries
 closed-lib
 
+# Node dependencies
+node_modules
+
