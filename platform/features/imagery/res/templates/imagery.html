@@ -26,11 +26,9 @@
             </a>
         </div>
 
-
-
         <div
             class="l-image-main s-image-main"
-            ng-class="{ paused:paused, stale:false }"
+            ng-class="{ paused: imagery.paused(), stale:false }"
             style="background-image:url('{{imagery.getImageUrl()}}');"
             ></div>
         <div class="l-image-main-controlbar bar">
@@ -46,8 +44,8 @@
             <div class="right">
                 <a
                     class="t-btn l-btn s-btn s-icon-btn s-very-subtle pause-play sm"
-                    ng-click="paused = (paused)? false:true"
-                    ng-class="{ paused:paused }"
+                    ng-click="imagery.paused(!imagery.paused())"
+                    ng-class="{ paused: imagery.paused() }"
                     ><span class="ui-symbol icon"></span></a>
                 <a href=""
                     class="l-btn s-btn s-icon-btn l-mag s-mag ui-symbol vsm"

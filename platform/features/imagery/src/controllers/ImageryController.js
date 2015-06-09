@@ -33,6 +33,7 @@ define(
             var date = "",
                 time = "",
                 imageUrl = "",
+                paused = false,
                 handle;
 
             function releaseSubscription() {
@@ -45,7 +46,7 @@ define(
             function updateValues() {
                 var imageObject = handle && handle.getTelemetryObjects()[0],
                     m;
-                if (imageObject) {
+                if (imageObject && !paused) {
                     m = moment.utc(handle.getDomainValue(imageObject));
                     date = m.format(DATE_FORMAT);
                     time = m.format(TIME_FORMAT);
@@ -85,6 +86,14 @@ define(
                 },
                 getImageUrl: function () {
                     return imageUrl;
+                },
+                paused: function (state) {
+                    if (arguments.length > 0 && state !== paused) {
+                        paused = state;
+                        // Switch to latest image
+                        updateValues();
+                    }
+                    return paused;
                 }
             };
         }
