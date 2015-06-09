@@ -2,7 +2,7 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <svg>
 <metadata>
-Created by FontForge 20090622 at Fri Jun  5 15:37:46 2015
+Created by FontForge 20090622 at Tue Jun  9 23:00:40 2015
  By deploy user
 Copyright 2015 Adobe Systems Incorporated. All rights reserved.
 </metadata>
@@ -245,6 +245,9 @@ z" />
 d="M216 375l187 -187h-309q-38 0 -66 27.5t-28 66.5v375q0 38 28 66t66 28h375q39 0 66.5 -28t27.5 -66v-309l-188 187zM751 422v-422h-422v94h234l-281 281l93 94l282 -281v234h94z" />
     <glyph glyph-name="ocircumflex" unicode="&#xf4;" horiz-adv-x="751" 
 d="M610 751q58 0 99.5 -41.5t41.5 -99.5v-469q0 -59 -41.5 -100t-99.5 -41h-469q-59 0 -100 41t-41 100v469q0 58 41 99.5t100 41.5h469zM610 282v328h-328l93 -94l-234 -375l375 234z" />
+    <glyph glyph-name="otilde" unicode="&#xf5;" horiz-adv-x="657" 
+d="M329 657q136 0 232 -96t96 -232t-96 -232.5t-232 -96.5q-137 0 -233 96t-96 233q0 136 96.5 232t232.5 96zM329 329v246q-101 0 -175 -72zM422 704q0 -20 -13.5 -33.5t-33.5 -13.5h-46h-47q-20 0 -33.5 13.5t-13.5 33.5t13.5 33.5t33.5 13.5h93q20 0 33.5 -13.5
+t13.5 -33.5z" />
     <glyph glyph-name="odieresis" unicode="&#xf6;" 
 d="M328 562v-375h-328v375h328zM750 562v-375h-328v375h328z" />
     <glyph glyph-name="fraction" unicode="&#x2044;" horiz-adv-x="761" 
