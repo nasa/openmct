@@ -45,10 +45,12 @@ define(
 
             // Setter for navigation; invokes callbacks
             function setNavigation(value) {
-                navigated = value;
-                callbacks.forEach(function (callback) {
-                    callback(value);
-                });
+                if (navigated !== value) {
+                    navigated = value;
+                    callbacks.forEach(function (callback) {
+                        callback(value);
+                    });
+                }
             }
 
             // Adds a callback

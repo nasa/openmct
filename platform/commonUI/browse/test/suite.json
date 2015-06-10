@@ -8,5 +8,6 @@
     "creation/LocatorController",
     "navigation/NavigateAction",
     "navigation/NavigationService",
-    "windowing/FullscreenAction"
+    "windowing/FullscreenAction",
+    "windowing/WindowTitler"
 ]

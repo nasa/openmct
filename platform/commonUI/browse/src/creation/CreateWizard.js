@@ -45,8 +45,9 @@ define(
                 properties = type.getProperties();
 
             function validateLocation(locatingObject) {
-                var locatingType = locatingObject.getCapability('type');
-                return policyService.allow(
+                var locatingType = locatingObject &&
+                        locatingObject.getCapability('type');
+                return locatingType && policyService.allow(
                     "composition",
                     locatingType,
                     type

@@ -19,29 +19,34 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,Promise*/
 
 define(
-    ["../src/CompositionMutabilityPolicy"],
-    function (CompositionMutabilityPolicy) {
+    [],
+    function () {
         "use strict";
 
-        describe("The composition mutability policy", function () {
-            var mockType,
-                policy;
+        /**
+         * Updates the title of the current window to reflect the name
+         * of the currently navigated-to domain object.
+         * @constructor
+         */
+        function WindowTitler(navigationService, $rootScope, $document) {
+            // Look up name of the navigated domain object...
+            function getNavigatedObjectName() {
+                var navigatedObject = navigationService.getNavigation();
+                return navigatedObject && navigatedObject.getModel().name;
+            }
 
-            beforeEach(function () {
-                mockType = jasmine.createSpyObj('type', ['hasFeature']);
-                policy = new CompositionMutabilityPolicy();
-            });
+            // Set the window title...
+            function setTitle(name) {
+                $document[0].title = name;
+            }
 
-            it("only allows composition for types which can be created/modified", function () {
-                expect(policy.allow(mockType)).toBeFalsy();
-                mockType.hasFeature.andReturn(true);
-                expect(policy.allow(mockType)).toBeTruthy();
-                expect(mockType.hasFeature).toHaveBeenCalledWith('creation');
-            });
-        });
+            // Watch the former, and invoke the latter
+            $rootScope.$watch(getNavigatedObjectName, setTitle);
+        }
 
+        return WindowTitler;
     }
 );

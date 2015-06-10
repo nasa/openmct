@@ -84,7 +84,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -105,38 +105,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -2050,7 +2050,11 @@ label.checkbox.custom {
   margin-right: 50px; }
 
 /******************************************************** SLIDERS */
-/* line 444, ../sass/controls/_controls.scss */
+/* line 439, ../sass/controls/_controls.scss */
+.wrapper-slider {
+  position: relative; }
+
+/* line 447, ../sass/controls/_controls.scss */
 .slider .slot {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -2064,14 +2068,30 @@ label.checkbox.custom {
   background-color: rgba(0, 0, 0, 0.4);
   border-bottom: 1px solid rgba(77, 77, 77, 0.4);
   border-right: 1px solid rgba(77, 77, 77, 0.4);
-  height: 50%;
+  height: auto;
   width: auto;
   position: absolute;
-  top: 25%;
+  top: 10%;
   right: 0;
-  bottom: auto;
-  left: 0; }
-/* line 455, ../sass/controls/_controls.scss */
+  bottom: 10%;
+  left: 0;
+  z-index: 0; }
+  /* line 459, ../sass/controls/_controls.scss */
+  .slider .slot .range {
+    background: rgba(0, 153, 204, 0.3);
+    cursor: ew-resize;
+    position: absolute;
+    top: 0;
+    right: auto;
+    bottom: 0;
+    left: auto;
+    height: auto;
+    width: auto;
+    z-index: 1; }
+    /* line 470, ../sass/controls/_controls.scss */
+    .slider .slot .range:hover {
+      background: rgba(0, 153, 204, 0.5); }
+/* line 475, ../sass/controls/_controls.scss */
 .slider .knob {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzQwNDA0MCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background-size: 100%;
@@ -2092,14 +2112,17 @@ label.checkbox.custom {
   border-top: 1px solid #666666;
   color: #999;
   display: inline-block;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
   cursor: ew-resize;
   position: absolute;
-  height: 100%;
+  height: auto;
   width: 12px;
   top: 0;
-  auto: 0;
-  bottom: auto;
-  left: auto; }
+  bottom: 0;
+  left: auto;
+  z-index: 2; }
   /* line 148, ../sass/_mixins.scss */
   .slider .knob:not(.disabled):hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzY2NjY2NiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
@@ -2122,28 +2145,20 @@ label.checkbox.custom {
   /* line 141, ../sass/_mixins.scss */
   .slider .knob:not(.disabled):hover:before {
     border-color: rgba(0, 153, 204, 0.9); }
-  /* line 466, ../sass/controls/_controls.scss */
+  /* line 487, ../sass/controls/_controls.scss */
+  .slider .knob.knob-l {
+    margin-left: -6px; }
+  /* line 488, ../sass/controls/_controls.scss */
+  .slider .knob.knob-r {
+    margin-right: -6px; }
+  /* line 489, ../sass/controls/_controls.scss */
   .slider .knob:before {
     top: 1px;
     bottom: 3px;
-    left: 5px; }
-/* line 473, ../sass/controls/_controls.scss */
-.slider .range {
-  background: rgba(0, 153, 204, 0.6);
-  cursor: ew-resize;
-  position: absolute;
-  top: 0;
-  right: auto;
-  bottom: 0;
-  left: auto;
-  height: auto;
-  width: auto; }
-  /* line 483, ../sass/controls/_controls.scss */
-  .slider .range:hover {
-    background: rgba(0, 153, 204, 0.7); }
+    left: 45%; }
 
 /******************************************************** BROWSER ELEMENTS */
-/* line 491, ../sass/controls/_controls.scss */
+/* line 501, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -2160,7 +2175,7 @@ label.checkbox.custom {
   height: 10px;
   width: 10px; }
 
-/* line 497, ../sass/controls/_controls.scss */
+/* line 507, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar-thumb {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzY2NjY2NiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background-size: 100%;
@@ -2178,7 +2193,7 @@ label.checkbox.custom {
   -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   box-shadow: rgba(0, 0, 0, 0.3) 0 1px 3px;
   border-top: 1px solid gray; }
-  /* line 504, ../sass/controls/_controls.scss */
+  /* line 514, ../sass/controls/_controls.scss */
   ::-webkit-scrollbar-thumb:hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzgwODA4MCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzczNzM3MyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -2187,7 +2202,7 @@ label.checkbox.custom {
     background-image: -webkit-linear-gradient(#808080, #737373 20px);
     background-image: linear-gradient(#808080, #737373 20px); }
 
-/* line 509, ../sass/controls/_controls.scss */
+/* line 519, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar-corner {
   background: rgba(0, 0, 0, 0.4); }
 
@@ -2448,6 +2463,103 @@ label.checkbox.custom {
   right: 0;
   width: auto; }
 
+/* line 1, ../sass/controls/_time-controller.scss */
+.l-time-controller {
+  position: relative;
+  margin: 10px 0;
+  min-width: 400px; }
+  /* line 12, ../sass/controls/_time-controller.scss */
+  .l-time-controller .l-time-range-inputs-holder,
+  .l-time-controller .l-time-range-slider {
+    font-size: 0.8em; }
+  /* line 17, ../sass/controls/_time-controller.scss */
+  .l-time-controller .l-time-range-inputs-holder,
+  .l-time-controller .l-time-range-slider-holder,
+  .l-time-controller .l-time-range-ticks-holder {
+    margin-bottom: 5px;
+    position: relative; }
+  /* line 24, ../sass/controls/_time-controller.scss */
+  .l-time-controller .l-time-range-slider,
+  .l-time-controller .l-time-range-ticks {
+    overflow: visible;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    height: auto; }
+  /* line 30, ../sass/controls/_time-controller.scss */
+  .l-time-controller .l-time-range-inputs-holder {
+    height: 20px; }
+  /* line 34, ../sass/controls/_time-controller.scss */
+  .l-time-controller .l-time-range-slider,
+  .l-time-controller .l-time-range-ticks {
+    left: 90px;
+    right: 90px; }
+  /* line 40, ../sass/controls/_time-controller.scss */
+  .l-time-controller .l-time-range-slider-holder {
+    height: 30px; }
+    /* line 42, ../sass/controls/_time-controller.scss */
+    .l-time-controller .l-time-range-slider-holder .range-holder {
+      -moz-box-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+      background: none;
+      border: none;
+      height: 75%; }
+  /* line 50, ../sass/controls/_time-controller.scss */
+  .l-time-controller .l-time-range-ticks-holder {
+    height: 10px; }
+    /* line 52, ../sass/controls/_time-controller.scss */
+    .l-time-controller .l-time-range-ticks-holder .l-time-range-ticks {
+      border-top: 1px solid #4d4d4d; }
+      /* line 54, ../sass/controls/_time-controller.scss */
+      .l-time-controller .l-time-range-ticks-holder .l-time-range-ticks .tick {
+        background-color: #4d4d4d;
+        border: none;
+        width: 1px;
+        margin-left: -1px; }
+        /* line 59, ../sass/controls/_time-controller.scss */
+        .l-time-controller .l-time-range-ticks-holder .l-time-range-ticks .tick:first-child {
+          margin-left: 0; }
+        /* line 62, ../sass/controls/_time-controller.scss */
+        .l-time-controller .l-time-range-ticks-holder .l-time-range-ticks .tick .l-time-range-tick-label {
+          color: gray;
+          font-size: 0.7em;
+          position: absolute;
+          margin-left: -25px;
+          text-align: center;
+          top: 10px;
+          width: 50px;
+          z-index: 2; }
+  /* line 76, ../sass/controls/_time-controller.scss */
+  .l-time-controller .knob {
+    width: 9px; }
+    /* line 78, ../sass/controls/_time-controller.scss */
+    .l-time-controller .knob .range-value {
+      position: absolute;
+      top: 50%;
+      margin-top: -7px;
+      white-space: nowrap;
+      width: 75px; }
+    /* line 87, ../sass/controls/_time-controller.scss */
+    .l-time-controller .knob:hover .range-value {
+      color: #0099cc; }
+    /* line 90, ../sass/controls/_time-controller.scss */
+    .l-time-controller .knob.knob-l {
+      margin-left: -4.5px; }
+      /* line 92, ../sass/controls/_time-controller.scss */
+      .l-time-controller .knob.knob-l .range-value {
+        text-align: right;
+        right: 14px; }
+    /* line 97, ../sass/controls/_time-controller.scss */
+    .l-time-controller .knob.knob-r {
+      margin-right: -4.5px; }
+      /* line 99, ../sass/controls/_time-controller.scss */
+      .l-time-controller .knob.knob-r .range-value {
+        left: 14px; }
+
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -2697,7 +2809,8 @@ span.req {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* line 22, ../sass/forms/_text-input.scss */
-input[type="text"] {
+input[type="text"],
+input[type="date"] {
   -moz-appearance: none;
   -webkit-appearance: none;
   -moz-border-radius: 3px;
@@ -2716,10 +2829,32 @@ input[type="text"] {
   outline: none;
   padding: 0 3px; }
   /* line 33, ../sass/forms/_mixins.scss */
-  input[type="text"].error {
+  input[type="text"].error,
+  input[type="date"].error {
     background: rgba(255, 0, 0, 0.5); }
-  /* line 29, ../sass/forms/_text-input.scss */
-  input[type="text"].numeric {
+  /* line 61, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
+  input[type="text"]:-moz-placeholder,
+  input[type="date"]:-moz-placeholder {
+    color: gray;
+    font-style: italic; }
+  /* line 64, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
+  input[type="text"]::-moz-placeholder,
+  input[type="date"]::-moz-placeholder {
+    color: gray;
+    font-style: italic; }
+  /* line 67, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
+  input[type="text"]:-ms-input-placeholder,
+  input[type="date"]:-ms-input-placeholder {
+    color: gray;
+    font-style: italic; }
+  /* line 56, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
+  input[type="text"]::-webkit-input-placeholder,
+  input[type="date"]::-webkit-input-placeholder {
+    color: gray;
+    font-style: italic; }
+  /* line 34, ../sass/forms/_text-input.scss */
+  input[type="text"].numeric,
+  input[type="date"].numeric {
     text-align: right; }
 
 /*****************************************************************************
