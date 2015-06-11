@@ -45,7 +45,6 @@ define(
                     callExtensions,
                     spy;
 
-                // TODO: return a proper deferred to support composing.
                 performPromise = jasmine.createSpyObj(
                     'performPromise',
                     ['then']

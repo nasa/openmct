@@ -18,8 +18,6 @@ define(
                     'dialogService',
                     ['getUserInput']
                 );
-                // TODO: replace the dialogServicePromise with a deferred and
-                // get rid of chainedPromise.
                 dialogServicePromise = jasmine.createSpyObj(
                     'dialogServicePromise',
                     ['then']
@@ -72,8 +70,6 @@ define(
                 });
 
                 it("returns a promise", function () {
-                    // This test is testing that chainedPromise is returned.
-                    // TODO: have better assumptions with deferred objects.
                     expect(locationResult.then).toBeDefined();
                 });
 
