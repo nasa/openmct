@@ -10,7 +10,7 @@ define(
                 mockTimeout,
                 mockFn,
                 mockPromise;
-            
+
             beforeEach(function () {
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockPromise = jasmine.createSpyObj("promise", ["then"]);
@@ -18,7 +18,7 @@ define(
                 mockTimeout.andReturn(mockPromise);
                 throttle = new Throttle(mockTimeout);
             });
-            
+
             it("provides functions which run on a timeout", function () {
                 var throttled = throttle(mockFn);
                 // Verify precondition: Not called at throttle-time
@@ -26,7 +26,7 @@ define(
                 expect(throttled()).toEqual(mockPromise);
                 expect(mockTimeout).toHaveBeenCalledWith(mockFn, 0, false);
             });
-            
+
             it("schedules only one timeout at a time", function () {
                 var throttled = throttle(mockFn);
                 throttled();
@@ -34,7 +34,7 @@ define(
                 throttled();
                 expect(mockTimeout.calls.length).toEqual(1);
             });
-            
+
             it("schedules additional invocations after resolution", function () {
                 var throttled = throttle(mockFn);
                 throttled();
