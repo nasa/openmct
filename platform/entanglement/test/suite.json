@@ -1,0 +1,9 @@
+[
+    "actions/CopyAction",
+    "actions/LinkAction",
+    "actions/MoveAction",
+    "services/CopyService",
+    "services/LinkService",
+    "services/MoveService",
+    "services/LocationService"
+]
