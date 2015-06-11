@@ -33,6 +33,7 @@ define(
             var mockScope,
                 mockFormatter,
                 mockHandler,
+                mockThrottle,
                 mockHandle,
                 mockDomainObject,
                 mockSeries,
@@ -56,6 +57,7 @@ define(
                     "telemetrySubscriber",
                     ["handle"]
                 );
+                mockThrottle = jasmine.createSpy("throttle");
                 mockHandle = jasmine.createSpyObj(
                     "subscription",
                     [
@@ -73,12 +75,18 @@ define(
                 );
 
                 mockHandler.handle.andReturn(mockHandle);
+                mockThrottle.andCallFake(function (fn) { return fn; });
                 mockHandle.getTelemetryObjects.andReturn([mockDomainObject]);
                 mockHandle.getMetadata.andReturn([{}]);
                 mockHandle.getDomainValue.andReturn(123);
                 mockHandle.getRangeValue.andReturn(42);
 
-                controller = new PlotController(mockScope, mockFormatter, mockHandler);
+                controller = new PlotController(
+                    mockScope,
+                    mockFormatter,
+                    mockHandler,
+                    mockThrottle
+                );
             });
 
             it("provides plot colors", function () {
