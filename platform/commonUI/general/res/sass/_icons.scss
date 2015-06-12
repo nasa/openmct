@@ -62,17 +62,23 @@
     margin-left: $interiorMarginSm;
 }
 
+/*
 .object-header .type-icon {
     color: $colorKey;
 	margin-right: $interiorMarginSm;
 }
+*/
 
 .menu .type-icon,
 .tree-item .type-icon,
-.icon-btn .menu.dropdown .icon,
-.super-menu.menu.dropdown .icon {
-    font-size: $menuLineH * 0.93;
+.super-menu.menu .type-icon {
+    font-size: $menuLineH * 0.8; //.93
     line-height: $menuLineH * 1.13;
     position: absolute;
+}
+
+
+.super-menu.menu.dropdown .icon {
+	font-size: $menuLineH * 0.95
 }
 

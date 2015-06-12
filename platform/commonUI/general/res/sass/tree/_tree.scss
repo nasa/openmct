@@ -75,8 +75,8 @@ ul.tree {
 				.title-label {
 					@include absPosDefault();
 					display: block;
-					left: $runningItemW + ($interiorMargin * 2);
-					//                right: $treeContextTriggerW + $interiorMargin; //Disabling as context trigger not being used
+					left: $runningItemW + ($interiorMargin);
+	                //right: $treeContextTriggerW + $interiorMargin;
 					overflow: hidden;
 					text-overflow: ellipsis;
 //					height: $menuLineH;
@@ -124,16 +124,15 @@ ul.tree {
 
 			&:not(.loading) {
 				cursor: pointer;
-				//                @include tree-item-hover();
 			}
 
 			.context-trigger {
 				$h: 0.9rem;
-				display: none;
+				//display: none;
 				top: -1px;
 				position: absolute;
 				right: $interiorMarginSm;
-				.btn-invoke-menu {
+				.invoke-menu {
 					font-size: 0.75em;
 					height: $h;
 					line-height: $h;

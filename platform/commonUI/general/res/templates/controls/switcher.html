@@ -22,7 +22,7 @@
 <span ng-controller="ViewSwitcherController">
 
     <div
-	    class="t-view-switcher menu-element icon-btn btn btn-menu dropdown click-invoke"
+	    class="t-view-switcher menu-element btn btn-menu dropdown click-invoke"
 	    ng-if="view.length > 1"
 	    ng-controller="ClickAwayController as toggle"
 	    >
@@ -33,9 +33,7 @@
 	        title="{{ngModel.selected.name}}"
 	        ></span>
 
-        <span class="ui-symbol icon type-icon">
-	        {{ngModel.selected.glyph}}
-        </span>
+        <span class="ui-symbol icon type-icon">{{ngModel.selected.glyph}}</span>
         <span class="name">{{ngModel.selected.name}}</span>
         <span class='ui-symbol invoke-menu'>v</span>
 
@@ -43,11 +41,9 @@
         <div class="menu dropdown" ng-show="toggle.isActive()">
             <ul>
                 <li ng-repeat="option in view">
-                    <a href="" ng-click="ngModel.selected = option; toggle.setState(false)">
-                        <span class="ui-symbol type-icon icon">
-                            {{option.glyph}}
-                        </span>
-                        {{option.name}}
+                    <a ng-click="ngModel.selected = option; toggle.setState(false)">
+                        <span class="ui-symbol type-icon icon">{{option.glyph}}</span>
+	                    {{option.name}}
                     </a>
                 </li>
             </ul>

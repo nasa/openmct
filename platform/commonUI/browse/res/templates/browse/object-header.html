@@ -20,9 +20,11 @@
  at runtime from the About dialog for additional information.
 -->
 <div class='object-header'>
-    <span class='type-icon icon ui-symbol'>{{type.getGlyph()}}</span>
-    <span ng-if="parameters.mode" class='action'>{{parameters.mode}}</span>
-    <span class='type'>{{type.getName()}}</span>
-    <span class='title'>{{model.name}}</span>
-    <!--a id='actions-menu' class='ui-symbol invoke-menu' onclick="alert('Not yet functional. This will display a dropdown menu of options for this object.');">v</a-->
+	<span class="label s-label">
+	    <span class='type-icon icon ui-symbol'>{{type.getGlyph()}}</span>
+	    <span ng-if="parameters.mode" class='action'>{{parameters.mode}}</span>
+	    <span class='type-name'>{{type.getName()}}</span>
+	    <span class='title-label'>{{model.name}}</span>
+		<!--a id='actions-menu' class='ui-symbol context-available' onclick="alert('Not yet functional. This will display a dropdown menu of options for this object.');">v</a-->
+	</span>
 </div>
