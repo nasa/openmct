@@ -26,6 +26,11 @@ define(
     function () {
         "use strict";
 
+        /**
+         * MoveService provides an interface for moving objects from one
+         * location to another.  It also provides a method for determining if
+         * an object can be copied to a specific location.
+         */
         function MoveService(policyService, linkService) {
             return {
                 /**

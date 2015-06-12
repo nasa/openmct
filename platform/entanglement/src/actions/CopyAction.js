@@ -25,6 +25,13 @@ define(
     function () {
         "use strict";
 
+
+        /**
+         * The CopyAction is available from context menus and allows a user to
+         * deep copy an object to another location of their choosing.
+         *
+         * @implements Action
+         */
         function CopyAction(locationService, copyService, context) {
 
             var object,

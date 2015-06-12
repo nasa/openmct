@@ -26,6 +26,11 @@ define(
     function () {
         "use strict";
 
+        /**
+         * CopyService provides an interface for deep copying objects from one
+         * location to another.  It also provides a method for determining if
+         * an object can be copied to a specific location.
+         */
         function CopyService($q, creationService, policyService) {
 
             /**

@@ -26,6 +26,11 @@ define(
     function () {
         "use strict";
 
+        /**
+         * LinkService provides an interface for linking objects to additional
+         * locations.  It also provides a method for determining if an object
+         * can be copied to a specific location.
+         */
         function LinkService(policyService) {
             return {
                 /**

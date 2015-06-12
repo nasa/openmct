@@ -25,6 +25,12 @@ define(
     function () {
         "use strict";
 
+        /**
+         * The LinkAction is available from context menus and allows a user to
+         * link an object to another location of their choosing.
+         *
+         * @implements Action
+         */
         function LinkAction(locationService, linkService, context) {
 
             var object,

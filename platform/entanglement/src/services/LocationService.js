@@ -29,7 +29,7 @@ define(
         /**
          * The LocationService allows for easily prompting the user for a
          * location in the root tree.
-        */
+         */
         function LocationService(dialogService) {
             return {
                 /** Prompt the user to select a location.  Returns a promise

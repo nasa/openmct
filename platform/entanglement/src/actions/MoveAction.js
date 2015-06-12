@@ -25,6 +25,12 @@ define(
     function () {
         "use strict";
 
+        /**
+         * The MoveAction is available from context menus and allows a user to
+         * move an object to another location of their choosing.
+         *
+         * @implements Action
+         */
         function MoveAction(locationService, moveService, context) {
 
             var object,
