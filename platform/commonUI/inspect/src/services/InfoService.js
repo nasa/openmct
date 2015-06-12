@@ -39,7 +39,8 @@ define(
                 var body = $document.find('body'),
                     scope = $rootScope.$new(),
                     winDim = [$window.innerWidth, $window.innerHeight],
-                    goLeft = position[0] > (winDim[0] / 2),
+	                bubbleSpaceLR = InfoConstants.BUBBLE_MARGIN_LR + InfoConstants.BUBBLE_MAX_WIDTH,
+                    goLeft = position[0] > (winDim[0] - bubbleSpaceLR),
                     goUp = position[1] > (winDim[1] / 2),
                     bubble;
 

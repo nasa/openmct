@@ -24,12 +24,12 @@
 .l-infobubble-wrapper {
 	$arwSize: 5px;
 	@include box-shadow(rgba(black, 0.4) 0 1px 5px);
-	position: absolute;
+	position: relative;
 	z-index: 50;
 	.l-infobubble {
 		display: inline-block;
-		min-width: 100px;
-		max-width: 300px;
+		min-width: $bubbleMinW;
+		max-width: $bubbleMaxW;
 		padding: 5px 10px;
 		&:before {
 			content:"";
