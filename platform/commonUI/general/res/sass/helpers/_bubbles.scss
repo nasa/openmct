@@ -25,9 +25,10 @@
 	$arwSize: 5px;
 	@include box-shadow(rgba(black, 0.4) 0 1px 5px);
 	position: absolute;
-	z-index: 70;
+	z-index: 50;
 	.l-infobubble {
 		display: inline-block;
+		min-width: 100px;
 		max-width: 300px;
 		padding: 5px 10px;
 		&:before {
@@ -51,8 +52,9 @@
 						white-space: nowrap;
 					}
 					&.value {
+						//@include ellipsize();
 						//@include test(red);
-						//white-space: nowrap;
+						white-space: nowrap;
 						//width: 90%;
 					}
 					&.align-wrap {

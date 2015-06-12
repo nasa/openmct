@@ -2443,7 +2443,7 @@ label.checkbox.custom {
   position: absolute;
   height: 200px;
   width: 170px;
-  z-index: 59; }
+  z-index: 70; }
   /* line 172, ../sass/controls/_menus.scss */
   .context-menu-holder .context-menu-wrapper {
     position: absolute;
@@ -3840,66 +3840,70 @@ input[type="date"] {
   -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0 1px 5px;
   box-shadow: rgba(0, 0, 0, 0.4) 0 1px 5px;
   position: absolute;
-  z-index: 70; }
+  z-index: 50; }
   /* line 29, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper .l-infobubble {
     display: inline-block;
+    min-width: 100px;
     max-width: 300px;
     padding: 5px 10px; }
-    /* line 33, ../sass/helpers/_bubbles.scss */
+    /* line 34, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper .l-infobubble:before {
       content: "";
       position: absolute;
       width: 0;
       height: 0; }
-    /* line 39, ../sass/helpers/_bubbles.scss */
+    /* line 40, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper .l-infobubble table {
       width: 100%; }
-      /* line 42, ../sass/helpers/_bubbles.scss */
+      /* line 43, ../sass/helpers/_bubbles.scss */
       .l-infobubble-wrapper .l-infobubble table tr td {
         padding: 2px 0;
         vertical-align: top; }
-        /* line 49, ../sass/helpers/_bubbles.scss */
+        /* line 50, ../sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper .l-infobubble table tr td.label {
           padding-right: 10px;
           white-space: nowrap; }
-        /* line 58, ../sass/helpers/_bubbles.scss */
+        /* line 54, ../sass/helpers/_bubbles.scss */
+        .l-infobubble-wrapper .l-infobubble table tr td.value {
+          white-space: nowrap; }
+        /* line 60, ../sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper .l-infobubble table tr td.align-wrap {
           white-space: normal; }
-    /* line 64, ../sass/helpers/_bubbles.scss */
+    /* line 66, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper .l-infobubble .title {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       margin-bottom: 5px; }
-  /* line 71, ../sass/helpers/_bubbles.scss */
+  /* line 73, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-left {
     margin-left: 10px; }
-    /* line 73, ../sass/helpers/_bubbles.scss */
+    /* line 75, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-left .l-infobubble::before {
       right: 100%;
       border-top: 5px solid transparent;
       border-bottom: 5px solid transparent;
       border-right: 7.5px solid #ddd; }
-  /* line 81, ../sass/helpers/_bubbles.scss */
+  /* line 83, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-right {
     margin-right: 10px; }
-    /* line 83, ../sass/helpers/_bubbles.scss */
+    /* line 85, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-right .l-infobubble::before {
       left: 100%;
       border-top: 5px solid transparent;
       border-bottom: 5px solid transparent;
       border-left: 7.5px solid #ddd; }
-  /* line 92, ../sass/helpers/_bubbles.scss */
+  /* line 94, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-top .l-infobubble::before {
     top: 10px; }
-  /* line 98, ../sass/helpers/_bubbles.scss */
+  /* line 100, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-btm .l-infobubble::before {
     bottom: 10px; }
-  /* line 103, ../sass/helpers/_bubbles.scss */
+  /* line 105, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-down {
     margin-bottom: 10px; }
-    /* line 105, ../sass/helpers/_bubbles.scss */
+    /* line 107, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-down .l-infobubble::before {
       left: 50%;
       top: 100%;
@@ -3908,7 +3912,7 @@ input[type="date"] {
       border-right: 5px solid transparent;
       border-top: 7.5px solid #ddd; }
 
-/* line 118, ../sass/helpers/_bubbles.scss */
+/* line 120, ../sass/helpers/_bubbles.scss */
 .s-infobubble {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
@@ -3916,18 +3920,18 @@ input[type="date"] {
   background: #ddd;
   color: #666;
   font-size: 0.8rem; }
-  /* line 124, ../sass/helpers/_bubbles.scss */
+  /* line 126, ../sass/helpers/_bubbles.scss */
   .s-infobubble .title {
     color: #333333;
     font-weight: bold; }
-  /* line 129, ../sass/helpers/_bubbles.scss */
+  /* line 131, ../sass/helpers/_bubbles.scss */
   .s-infobubble tr td {
     border-top: 1px solid #c4c4c4;
     font-size: 0.9em; }
-  /* line 133, ../sass/helpers/_bubbles.scss */
+  /* line 135, ../sass/helpers/_bubbles.scss */
   .s-infobubble tr:first-child td {
     border-top: none; }
-  /* line 137, ../sass/helpers/_bubbles.scss */
+  /* line 139, ../sass/helpers/_bubbles.scss */
   .s-infobubble .value {
     color: #333333; }
 
