@@ -11,7 +11,7 @@
     "platform/telemetry",
     "platform/features/layout",
     "platform/features/pages",
-    "platform/features/plot",
+    "platform/features/plot-reborn",
     "platform/features/scrolling",
     "platform/forms",
     "platform/persistence/queue",

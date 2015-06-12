@@ -1,0 +1,76 @@
+<!--TODO: Don't require plotcontroller here. -->
+<div class="gl-plot">
+    <div class="gl-plot-legend">
+        <span class="plot-legend-item"
+              ng-repeat="series in series">
+            <span class="plot-color-swatch"
+                  ng-style="{ 'background-color': series.color }">
+            </span>
+            <span class="title-label">{{ series.name }}</span>
+        </span>
+    </div>
+
+    <div class="gl-plot-coords"
+         ng-if="mouseCoordinates">
+        {{ displayableDomain(mouseCoordinates.positionAsPlotPoint.domain)  }},
+        {{ displayableRange(mouseCoordinates.positionAsPlotPoint.range) }}
+
+    </div>
+
+    <div class="gl-plot-axis-area gl-plot-y">
+
+        <div class="gl-plot-label gl-plot-y-label">
+            {{ axes.range.name}}
+        </div>
+
+        <div ng-repeat="tick in axes.range.ticks"
+             class="gl-plot-tick gl-plot-y-tick-label"
+             ng-style="{ top: (100 * $index / (axes.range.ticks.length - 1)) + '%' }"
+             style="margin-top: -0.50em;">
+            {{ displayableRange(tick) }}
+        </div>
+    </div>
+
+    <div class="gl-plot-display-area">
+
+        <div class="gl-plot-hash hash-v"
+             ng-repeat="tick in axes.domain.ticks"
+             ng-style="{ left: (100 * $index / (axes.domain.ticks.length - 1)) + '%', height: '100%' }"
+             ng-show="$index > 0 && $index < (axes.domain.ticks.length - 1)">
+            <!--TODO: Show/hide using CSS? -->
+        </div>
+
+        <div class="gl-plot-hash hash-h"
+             ng-repeat="tick in axes.range.ticks"
+             ng-style="{ bottom: (100 * $index / (axes.range.ticks.length - 1)) + '%', width: '100%' }"
+             ng-show="$index > 0 && $index < (axes.range.ticks.length - 1)">
+             <!--TODO: Show/hide using CSS? -->
+        </div>
+
+        <mct-chart series="series"
+                   viewport="viewport"
+                   rectangles="rectangles"
+                   ng-mousemove="plot.trackMousePosition($event)"
+                   ng-mouseleave="plot.untrackMousePosition()"
+                   ng-mousedown="plot.startMarquee()"
+                   ng-mouseup="plot.endMarquee()">
+        </mct-chart>
+
+        <span class="t-wait-spinner loading" ng-show="plot.isRequestPending()">
+        </span>
+
+    </div>
+
+    <div class="gl-plot-axis-area gl-plot-x">
+        <div ng-repeat="tick in axes.domain.ticks"
+             class="gl-plot-tick gl-plot-x-tick-label"
+             ng-show="$index > 0 && $index < (axes.domain.ticks.length - 1)"
+             ng-style="{ left: (100 * $index / (axes.domain.ticks.length - 1)) + '%' }">
+            {{ displayableDomain(tick) }}
+        </div>
+
+        <div class="gl-plot-label gl-plot-x-label">
+            {{ axes.domain.name }}
+        </div>
+    </div>
+</div>
