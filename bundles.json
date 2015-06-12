@@ -16,6 +16,7 @@
     "platform/forms",
     "platform/persistence/queue",
     "platform/policy",
+    "platform/entanglement",
 
     "example/persistence",
     "example/generator"
