@@ -83,8 +83,8 @@ define(
                     }
                     return policyService.allow(
                         "composition",
-                        object.getCapability('type'),
-                        parentCandidate.getCapability('type')
+                        parentCandidate.getCapability('type'),
+                        object.getCapability('type')
                     );
                 },
                 /**

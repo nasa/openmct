@@ -84,8 +84,21 @@ define(
                 describe("defers to policyService", function () {
                     beforeEach(function () {
                         object.id = 'abc';
+                        object.capabilities.type = { type: 'object' };
                         parentCandidate.id = 'xyz';
+                        parentCandidate.capabilities.type = {
+                            type: 'parentCandidate'
+                        };
                         parentCandidate.model.composition = [];
+                    });
+
+                    it("calls policy service with correct args", function () {
+                        validate();
+                        expect(mockPolicyService.allow).toHaveBeenCalledWith(
+                            "composition",
+                            parentCandidate.capabilities.type,
+                            object.capabilities.type
+                        );
                     });
 
                     it("and returns false", function () {

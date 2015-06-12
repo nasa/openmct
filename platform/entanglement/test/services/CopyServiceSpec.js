@@ -60,10 +60,16 @@ define(
                         policyService
                     );
                     object = domainObjectFactory({
-                        name: 'object'
+                        name: 'object',
+                        capabilities: {
+                            type: { type: 'object' }
+                        }
                     });
                     parentCandidate = domainObjectFactory({
-                        name: 'parentCandidate'
+                        name: 'parentCandidate',
+                        capabilities: {
+                            type: { type: 'parentCandidate' }
+                        }
                     });
                     validate = function () {
                         return copyService.validate(object, parentCandidate);
@@ -86,6 +92,15 @@ define(
                     beforeEach(function () {
                         object.id = 'a';
                         parentCandidate.id = 'b';
+                    });
+
+                    it("calls policy service with correct args", function () {
+                        validate();
+                        expect(policyService.allow).toHaveBeenCalledWith(
+                            "composition",
+                            parentCandidate.capabilities.type,
+                            object.capabilities.type
+                        );
                     });
 
                     it("and returns false", function () {

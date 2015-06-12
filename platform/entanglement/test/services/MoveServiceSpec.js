@@ -65,7 +65,8 @@ define(
                         name: 'object',
                         id: 'a',
                         capabilities: {
-                            context: objectContextCapability
+                            context: objectContextCapability,
+                            type: { type: 'object' }
                         }
                     });
 
@@ -78,8 +79,11 @@ define(
 
                     parentCandidate = domainObjectFactory({
                         name: 'parentCandidate',
-                        model: {composition: []},
-                        id: 'c'
+                        model: { composition: [] },
+                        id: 'c',
+                        capabilities: {
+                            type: { type: 'parentCandidate' }
+                        }
                     });
 
                     validate = function () {
@@ -111,6 +115,15 @@ define(
                 });
 
                 describe("defers to policyService", function () {
+
+                    it("calls policy service with correct args", function () {
+                        validate();
+                        expect(policyService.allow).toHaveBeenCalledWith(
+                            "composition",
+                            parentCandidate.capabilities.type,
+                            object.capabilities.type
+                        );
+                    });
 
                     it("and returns false", function () {
                         policyService.allow.andReturn(false);
