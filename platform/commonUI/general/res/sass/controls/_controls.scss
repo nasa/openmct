@@ -275,28 +275,28 @@ label.checkbox.custom {
 	$p: $interiorMarginSm * 2;
 	$c: $colorBodyFg;
 	@include btnSubtle($colorBodyBg);
-/*	height: $h;
-	line-height: $h;
-	&.dropdown {
-		padding-left: $p;
-		padding-right: $p;
-	}*/
+	/*	height: $h;
+		line-height: $h;
+		&.dropdown {
+			padding-left: $p;
+			padding-right: $p;
+		}*/
 
 	&:not(.disabled):hover {
 		color: lighten($c, 20%);
 	}
 
-/*	&.context-available {
-		// An element like the invoke-menu triangle;
-		// Indicates that this element has a dropdown menu available;
-		// Currently unused
-		$c: $colorKey;
-		color: $c;
-		padding: 0 5px;
-		&:hover {
-			color: lighten($c, 10%);
-		}
-	}*/
+	/*	&.context-available {
+			// An element like the invoke-menu triangle;
+			// Indicates that this element has a dropdown menu available;
+			// Currently unused
+			$c: $colorKey;
+			color: $c;
+			padding: 0 5px;
+			&:hover {
+				color: lighten($c, 10%);
+			}
+		}*/
 
 	span.l-click-area {
 		// In markup, this element should not enclose anything.
@@ -348,6 +348,10 @@ label.checkbox.custom {
 	}
 }
 
+.view-switcher {
+	@include trans-prop-nice-fade($controlFadeMs);
+}
+
 /******************************************************** OBJECT-HEADER */
 .object-header {
 	display: inline-block;
@@ -372,37 +376,6 @@ label.checkbox.custom {
 			display: inline-block;
 		}
 	}
-}
-
-/******************************************************** VIEW-CONTROLS */
-
-/*.view-controls .view-type {
-// UNUSED?
-	$d: 20px;
-	$p: 5px;
-	@include border-radius($controlCr);
-	box-sizing: border-box;
-	display: inline-block;
-	margin-left: $interiorMargin;
-	height: $d;
-	line-height: $d;
-	padding-left: $p;
-	padding-right: $p;
-	&.cur {
-		background: lighten($colorBodyBg, $ltGamma);
-	}
-}*/
-
-.frame .t-view-switcher {
-	// Hide the name when the view switcher is in a frame context
-	.name {
-		display: none;
-	}
-}
-
-.edit-mode .top-bar .control-set.edit-view-controls {
-	//	Used in templates/edit-view-controls.html
-	margin-right: $interiorMargin * 10;
 }
 
 /******************************************************** SLIDERS */
