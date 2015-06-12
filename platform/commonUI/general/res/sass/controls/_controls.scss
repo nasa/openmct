@@ -263,7 +263,7 @@ label.checkbox.custom {
 
 .btn-menu {
 	$h: 20px;
-	$p: $interiorMargin * 2;
+	$p: $interiorMarginSm * 2;
 	$c: $colorBodyFg;
 	@include btnSubtle($colorBodyBg);
 	height: $h;
@@ -359,7 +359,8 @@ label.checkbox.custom {
 
 /******************************************************** VIEW-CONTROLS */
 
-.view-controls .view-type {
+/*.view-controls .view-type {
+// UNUSED?
 	$d: 20px;
 	$p: 5px;
 	@include border-radius($controlCr);
@@ -373,11 +374,15 @@ label.checkbox.custom {
 	&.cur {
 		background: lighten($colorBodyBg, $ltGamma);
 	}
-}
+}*/
 
 .edit-mode .top-bar .control-set.edit-view-controls {
 	//	Used in templates/edit-view-controls.html
 	margin-right: $interiorMargin * 10;
+}
+
+.frame .t-view-switcher {
+	// Style the view switcher when in a frame
 }
 
 /******************************************************** SLIDERS */

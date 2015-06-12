@@ -62,12 +62,12 @@ $pad: $interiorMargin * $baseRatio;
 	text-decoration: none;
 	&.major {
 		$bg: $colorKey;
-		@include btnNoticeable($bg);
+		@include btnSubtle($bg);
 		$fg: lighten($bg, 50%);
 		color: $fg;
 		&:hover {
-			@include btnNoticeable(lighten($bg, 5%));
-			color: $fg;
+			@include btnSubtle(lighten($bg, 5%), $fg);
+			//color: $fg;
 		}
 		.invoke-menu {
 			color: $fg;
