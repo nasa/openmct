@@ -47,7 +47,7 @@ define(
             it("converts date-time input into a timestamp", function () {
                 mockScope.ngModel = {};
                 mockScope.field = "test";
-                mockScope.datetime.date = "2014-332";
+                mockScope.datetime.date = "2014-11-28";
                 mockScope.datetime.hour = 22;
                 mockScope.datetime.min = 55;
                 mockScope.datetime.sec = 13;
@@ -63,7 +63,7 @@ define(
                 // as required.
                 mockScope.ngModel = {};
                 mockScope.field = "test";
-                mockScope.datetime.date = "2014-332";
+                mockScope.datetime.date = "2014-11-28";
                 mockScope.datetime.hour = 22;
                 mockScope.datetime.min = 55;
                 // mockScope.datetime.sec = 13;
@@ -83,6 +83,11 @@ define(
 
                 // Should have cleared out the time stamp
                 expect(mockScope.ngModel.test).toBeUndefined();
+            });
+
+            it("exposes date-time format for placeholder", function () {
+                expect(mockScope.format).toEqual(jasmine.any(String));
+                expect(mockScope.format.length).toBeGreaterThan(0);
             });
         });
     }
