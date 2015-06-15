@@ -62,6 +62,11 @@ $colorInfoBubbleFg: #666;
 $colorInfoBubbleBg: #ddd;
 $colorThumbsBubbleFg: lighten($colorBodyFg, 10%);
 $colorThumbsBubbleBg: lighten($colorBodyBg, 10%);
+$colorLimitYellow: #9d7500;
+$colorLimitRed: #aa0000;
+$colorTelemFresh: #fff;
+$colorTelemStale: #888;
+$styleTelemState: italic;
 
 // Ratios
 $ltGamma: 20%;
