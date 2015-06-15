@@ -325,22 +325,22 @@ input[type="date"] {
   input[type="text"].error,
   input[type="date"].error {
     background: rgba(255, 0, 0, 0.5); }
-  /* line 61, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
+  /* line 61, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
   input[type="text"]:-moz-placeholder,
   input[type="date"]:-moz-placeholder {
     color: gray;
     font-style: italic; }
-  /* line 64, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
+  /* line 64, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
   input[type="text"]::-moz-placeholder,
   input[type="date"]::-moz-placeholder {
     color: gray;
     font-style: italic; }
-  /* line 67, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
+  /* line 67, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
   input[type="text"]:-ms-input-placeholder,
   input[type="date"]:-ms-input-placeholder {
     color: gray;
     font-style: italic; }
-  /* line 56, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
+  /* line 56, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/css3/_user-interface.scss */
   input[type="text"]::-webkit-input-placeholder,
   input[type="date"]::-webkit-input-placeholder {
     color: gray;
