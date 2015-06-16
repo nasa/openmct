@@ -47,7 +47,14 @@ define(
                 }
             }
 
+            function updateQueryParam(viewKey) {
+                if (viewKey) {
+                    $location.search('view', viewKey);
+                }
+            }
+
             $scope.$watch('domainObject', setViewForDomainObject);
+            $scope.$watch('representation.selected.key', updateQueryParam);
         }
 
         return BrowseObjectController;
