@@ -37,6 +37,7 @@ define(
 
                 function selectViewIfMatching(view) {
                     if (view.key === locationViewKey) {
+                        $scope.representation = $scope.representation || {};
                         $scope.representation.selected = view;
                     }
                 }
