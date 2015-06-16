@@ -40,7 +40,7 @@ define(
          *
          * @constructor
          */
-        function BrowseController($scope, objectService, navigationService) {
+        function BrowseController($scope, $routeParams, objectService, navigationService) {
             // Callback for updating the in-scope reference to the object
             // that is currently navigated-to.
             function setNavigation(domainObject) {

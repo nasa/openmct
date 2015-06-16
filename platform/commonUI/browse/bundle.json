@@ -2,7 +2,7 @@
     "extensions": {
         "routes": [
             {
-                "when": "/browse",
+                "when": "/browse/:id*",
                 "templateUrl": "templates/browse.html"
             },
             {
@@ -14,7 +14,7 @@
             {
                 "key": "BrowseController",
                 "implementation": "BrowseController.js",
-                "depends": [ "$scope", "objectService", "navigationService" ]
+                "depends": [ "$scope", "$routeParams", "objectService", "navigationService" ]
             },
             {
                 "key": "CreateMenuController",
