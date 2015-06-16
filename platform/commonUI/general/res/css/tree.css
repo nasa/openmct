@@ -61,6 +61,15 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*
+@mixin invokeMenu($baseColor: $colorBodyFg) {
+	$c: $baseColor;
+	color: $c;
+	&:hover {
+		color: lighten($c, $ltGamma);
+	}
+}
+*/
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -86,7 +95,7 @@
 ul.tree {
   margin: 0;
   padding: 0; }
-  /* line 208, ../sass/_mixins.scss */
+  /* line 264, ../sass/_mixins.scss */
   ul.tree li {
     list-style-type: none;
     margin: 0;
@@ -97,17 +106,17 @@ ul.tree {
     position: relative; }
     /* line 27, ../sass/tree/_tree.scss */
     ul.tree li span.tree-item {
-      -moz-border-radius: 3px;
-      -webkit-border-radius: 3px;
-      border-radius: 3px;
+      -moz-border-radius: 2px;
+      -webkit-border-radius: 2px;
+      border-radius: 2px;
       -moz-transition: background-color 0.25s;
       -o-transition: background-color 0.25s;
       -webkit-transition: background-color 0.25s;
       transition: background-color 0.25s;
       display: block;
       font-size: 0.80rem;
-      height: 1.5rem;
-      line-height: 1.5rem;
+      height: 1.4rem;
+      line-height: 1.4rem;
       margin-bottom: 3px;
       position: relative; }
       /* line 38, ../sass/tree/_tree.scss */
@@ -168,7 +177,7 @@ ul.tree {
           width: auto;
           height: auto;
           display: block;
-          left: 25px;
+          left: 20px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap; }
@@ -207,17 +216,16 @@ ul.tree {
       /* line 125, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item:not(.loading) {
         cursor: pointer; }
-      /* line 130, ../sass/tree/_tree.scss */
+      /* line 129, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item .context-trigger {
-        display: none;
         top: -1px;
         position: absolute;
         right: 3px; }
-        /* line 136, ../sass/tree/_tree.scss */
-        ul.tree li span.tree-item .context-trigger .btn-invoke-menu {
+        /* line 135, ../sass/tree/_tree.scss */
+        ul.tree li span.tree-item .context-trigger .invoke-menu {
           font-size: 0.75em;
           height: 0.9rem;
           line-height: 0.9rem; }
-  /* line 145, ../sass/tree/_tree.scss */
+  /* line 144, ../sass/tree/_tree.scss */
   ul.tree ul.tree {
     margin-left: 15px; }

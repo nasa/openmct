@@ -1,0 +1,171 @@
+.l-image-main-wrapper,
+.l-image-main,
+.l-image-main-controlbar,
+.l-image-main-controlbar .left,
+.l-image-main-controlbar .right,
+.l-image-thumbs-wrapper {
+	@include absPosDefault(0, false);
+}
+
+/*************************************** MAIN LAYOUT */
+.l-image-main-wrapper {
+	//@include test();
+	@if $enableImageryThumbs == true {
+		bottom: $interiorMargin*2 +  $imageThumbsWrapperH;
+	}
+	min-height: 100px;
+	min-width: 150px;
+	.l-image-main {
+		background-color: rgba(#fff, 0.1);
+		bottom: $imageMainControlBarH + $interiorMargin;
+	}
+	.l-image-main-controlbar {
+		top: auto;
+		height: $imageMainControlBarH;
+	}
+}
+
+.l-image-thumbs-wrapper {
+	//@include test(red);
+	top: auto;
+	height: $imageThumbsWrapperH;
+}
+
+.l-date,
+.l-time,
+.l-timezone {
+	display: inline-block;
+}
+
+/*************************************** MAIN IMAGE */
+
+.l-image-main,
+.l-image-thumb-item .l-thumb {
+	background-size: contain;
+	background-position: center;
+	background-repeat: no-repeat;
+}
+
+.l-image-main {
+	cursor: crosshair;
+}
+
+.l-image-main-controlbar {
+	//@include test();
+	font-size: 0.8em;
+	line-height: $imageMainControlBarH;
+	.left, .right {
+		direction: rtl;
+		overflow: hidden;
+	}
+	.left {
+		//@include test(red);
+		text-align: left;
+		width: 75% !important;
+	}
+	.right {
+		//@include test(green);
+		min-width: 40px;
+		width: 25% !important;
+		z-index: 2;
+	}
+	.l-date,
+	.l-time {
+		color: #fff;
+	}
+	.l-mag {
+		direction: ltr;
+		display: inline-block;
+		//white-space: nowrap;
+		&:before {
+			content: "\000049";
+		}
+	}
+	.s-mag {
+		color: darken($colorBodyFg, 20%);
+	}
+	.l-btn.show-thumbs {
+		display: none;
+	}
+}
+
+.s-image-main {
+	border: 1px solid transparent;
+	&.paused {
+		border-color: $colorPausedBg;
+	}
+}
+
+/*************************************** THUMBS */
+
+.l-image-thumbs-wrapper {
+	//@include test(green);
+	direction: rtl;
+	overflow-x: auto;
+	overflow-y: hidden;
+	padding-bottom: $interiorMargin;
+	white-space: nowrap;
+	z-index: 70;
+}
+
+.l-image-thumb-item {
+	@include single-transition(background-color, 0.25s);
+	@include box-sizing(border-box);
+	padding: 1px;
+	position: relative;
+	.l-thumb,
+	.l-date,
+	.l-time {
+		display: inline-block;
+	}
+	.l-date,
+	.l-time {
+		padding: 2px 3px;
+	}
+	cursor: pointer;
+	direction: ltr;
+	display: inline-block;
+	font-size: 0.8em;
+	margin-left: $interiorMarginSm;
+	text-align: left;
+	width: $imageThumbsD + $imageThumbPad*2;
+	white-space: normal;
+	&:hover {
+		background: rgba(#fff, 0.2);
+		.l-date,
+		.l-time {
+			color: #fff;
+		}
+	}
+	&.selected {
+		background: $colorKeySelectedBg;
+		.l-date,
+		.l-time {
+			color: #fff;
+		}
+	}
+	.l-thumb {
+		background-color: rgba(#fff, 0.1);
+		height: $imageThumbsD;
+		width: $imageThumbsD;
+		margin-top: 0;
+	}
+}
+
+/*************************************** WHEN IN FRAME */
+.frame .t-imagery {
+	.l-image-main-wrapper {
+		bottom: 0;
+		.l-image-main-controlbar {
+			font-size: 0.7em;
+		}
+		@if $enableImageryThumbs == true {
+			.l-btn.show-thumbs {
+				display: inline-block;
+			}
+		}
+	}
+	.l-image-thumbs-wrapper {
+		display: none;
+	}
+}

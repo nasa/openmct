@@ -1,0 +1,44 @@
+.l-time-display {
+	$transTime: 200ms;
+	// Layout
+	&:hover {
+		.l-btn.control {
+			//display: inline-block;
+			opacity: 1;
+		}
+	}
+	.l-elem-wrapper {
+		position: relative;
+	}
+	.l-elem {
+		display: inline-block;
+	}
+
+	&.l-timer {
+		.l-elem.l-value {
+			@include trans-prop-nice(left, $transTime);
+			position: absolute;
+			left: 0;
+			z-index: 1;
+		}
+		&:hover .l-elem.l-value {
+			left: 20px;
+		}
+	}
+
+	// Look-and-feel
+	.l-elem {
+		.value.active,
+		&.value.active {
+			color: $colorKeyFg;
+		}
+	}
+	.l-btn.control {
+		@include trans-prop-nice-fade($transTime);
+		//display: none;
+		opacity: 0;
+		font-size: 0.9em;
+		line-height: 1em;
+	}
+
+}
