@@ -29,7 +29,8 @@ define(
     function () {
         "use strict";
 
-        var DEFAULT_PATH = "ROOT/mine";
+        var ROOT_ID = "ROOT",
+            DEFAULT_PATH = "mine";
 
         /**
          * The BrowseController is used to populate the initial scope in Browse
@@ -41,7 +42,9 @@ define(
          * @constructor
          */
         function BrowseController($scope, $routeParams, objectService, navigationService) {
-            var path = ($routeParams.ids || DEFAULT_PATH).split("/");
+            var path = [ROOT_ID].concat(
+                ($routeParams.ids || DEFAULT_PATH).split("/")
+            );
 
             // Callback for updating the in-scope reference to the object
             // that is currently navigated-to.
