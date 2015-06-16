@@ -53,7 +53,7 @@ define(
 
             // Get list of views, read from capability
             function updateOptions(views) {
-                if (Array.isArray(views) && !($scope.ngModel || {}).selected) {
+                if (Array.isArray(views)) {
                     $timeout(function () {
                         $scope.ngModel.selected = findMatchingOption(
                             views,
