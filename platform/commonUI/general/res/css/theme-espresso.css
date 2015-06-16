@@ -2663,52 +2663,92 @@ label.checkbox.custom {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* line 26, ../sass/edit/_editor.scss */
+.edit-main .edit-corner,
 .edit-main .edit-handle {
   position: absolute;
-  top: 40px;
-  right: 40px;
-  bottom: 40px;
-  left: 40px; }
-  /* line 33, ../sass/edit/_editor.scss */
+  z-index: 2; }
+/* line 32, ../sass/edit/_editor.scss */
+.edit-main .edit-corner {
+  width: 15px;
+  height: 15px; }
+  /* line 35, ../sass/edit/_editor.scss */
+  .edit-main .edit-corner.edit-resize-nw {
+    -moz-border-radius-bottomright: 5px;
+    -webkit-border-bottom-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    cursor: nw-resize;
+    top: 0;
+    left: 0; }
+  /* line 40, ../sass/edit/_editor.scss */
+  .edit-main .edit-corner.edit-resize-se {
+    -moz-border-radius-topleft: 5px;
+    -webkit-border-top-left-radius: 5px;
+    border-top-left-radius: 5px;
+    cursor: se-resize;
+    bottom: 0;
+    right: 0; }
+  /* line 45, ../sass/edit/_editor.scss */
+  .edit-main .edit-corner.edit-resize-sw {
+    -moz-border-radius-topright: 5px;
+    -webkit-border-top-right-radius: 5px;
+    border-top-right-radius: 5px;
+    cursor: sw-resize;
+    bottom: 0;
+    left: 0; }
+/* line 53, ../sass/edit/_editor.scss */
+.edit-main .edit-handle {
+  top: 15px;
+  right: 15px;
+  bottom: 15px;
+  left: 15px; }
+  /* line 55, ../sass/edit/_editor.scss */
   .edit-main .edit-handle.edit-move {
     cursor: move;
-    left: 30%;
-    right: 30%;
-    top: 30%;
-    bottom: 30%; }
-  /* line 42, ../sass/edit/_editor.scss */
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1; }
+  /* line 65, ../sass/edit/_editor.scss */
   .edit-main .edit-handle.edit-resize-n {
     top: 0px;
     bottom: auto;
     height: 15px;
     cursor: n-resize; }
-  /* line 47, ../sass/edit/_editor.scss */
+  /* line 70, ../sass/edit/_editor.scss */
   .edit-main .edit-handle.edit-resize-e {
     right: 0px;
     left: auto;
     width: 15px;
     cursor: e-resize; }
-  /* line 52, ../sass/edit/_editor.scss */
+  /* line 75, ../sass/edit/_editor.scss */
   .edit-main .edit-handle.edit-resize-s {
     bottom: 0px;
     top: auto;
     height: 15px;
     cursor: s-resize; }
-  /* line 57, ../sass/edit/_editor.scss */
+  /* line 80, ../sass/edit/_editor.scss */
   .edit-main .edit-handle.edit-resize-w {
     left: 0px;
     right: auto;
     width: 15px;
     cursor: w-resize; }
-/* line 66, ../sass/edit/_editor.scss */
+/* line 89, ../sass/edit/_editor.scss */
 .edit-main .frame.child-frame.panel:hover {
-  border-color: #0099cc;
   -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
-  box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px; }
-  /* line 69, ../sass/edit/_editor.scss */
-  .edit-main .frame.child-frame.panel:hover .edit-handle {
-    background-color: rgba(0, 153, 204, 0.3); }
+  box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
+  border-color: #0099cc;
+  z-index: 2; }
+  /* line 93, ../sass/edit/_editor.scss */
+  .edit-main .frame.child-frame.panel:hover .view-switcher {
+    opacity: 1; }
+  /* line 96, ../sass/edit/_editor.scss */
+  .edit-main .frame.child-frame.panel:hover .edit-corner {
+    background-color: rgba(0, 153, 204, 0.8); }
+    /* line 98, ../sass/edit/_editor.scss */
+    .edit-main .frame.child-frame.panel:hover .edit-corner:hover {
+      background-color: #0099cc; }
 
 /* line 1, ../sass/features/_imagery.scss */
 .l-image-main-wrapper,
@@ -4061,11 +4101,12 @@ input[type="text"] {
   left: 5px; }
 /* line 54, ../sass/user-environ/_frame.scss */
 .frame.frame-template .view-switcher {
-  opacity: 0; }
-/* line 58, ../sass/user-environ/_frame.scss */
+  opacity: 0;
+  z-index: 10; }
+/* line 59, ../sass/user-environ/_frame.scss */
 .frame.frame-template:hover .view-switcher {
   opacity: 1; }
-/* line 66, ../sass/user-environ/_frame.scss */
+/* line 67, ../sass/user-environ/_frame.scss */
 .frame .view-switcher .name {
   display: none; }
 
