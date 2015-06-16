@@ -55,10 +55,12 @@ define(
                     }),
                     priorRoute = $route.current,
                     // Act as if params HADN'T changed to avoid page reload
-                    unlisten = $scope.$on('$locationChangeSuccess', function () {
-                        $route.current = priorRoute;
-                        unlisten();
-                    });
+                    unlisten;
+
+                unlisten = $scope.$on('$locationChangeSuccess', function () {
+                    $route.current = priorRoute;
+                    unlisten();
+                });
 
                 $location.path("/browse/" + ids.slice(1).join("/"));
             }
