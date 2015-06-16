@@ -19,3 +19,56 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
+.edit-main {
+
+
+    .edit-handle {
+        $edgeHandleD: 15px;
+        $cornerM: 50px;
+        //@include border-radius(0.5em);
+        //display: none;
+        position: absolute;
+        top: $cornerM; right: $cornerM; bottom: $cornerM; left: $cornerM;
+        &.edit-move {
+            $m: 30%;
+            cursor: move;
+            left: $m;
+            right: $m;
+            top: $m;
+            bottom: $m;
+
+        }
+        &.edit-resize-n {
+            top: 0px; bottom: auto;
+            height: $edgeHandleD;
+            cursor: n-resize;
+        }
+        &.edit-resize-e {
+            right: 0px; left: auto;
+            width: $edgeHandleD;
+            cursor: e-resize;
+        }
+        &.edit-resize-s {
+            bottom: 0px; top: auto;
+            height: $edgeHandleD;
+            cursor: s-resize;
+        }
+        &.edit-resize-w {
+            left: 0px; right: auto;
+            width: $edgeHandleD;
+            cursor: w-resize;
+        }
+    }
+
+
+    .frame.child-frame.panel {
+        &:hover {
+            border-color: $colorKey;
+            @include boxShdwLarge();
+            .edit-handle {
+                background-color: rgba($colorKey, 0.3);
+            }
+        }
+    }
+}

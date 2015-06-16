@@ -34,29 +34,34 @@
 
         <!-- Drag handles -->
         <span ng-show="domainObject.hasCapability('editor')">
-            <span style="position: absolute; left: 12px; right: 12px; top: 12px; bottom: 12px; cursor: move;"
+            <span
+                class="edit-handle edit-move"
                   mct-drag-down="controller.startDrag(childObject.getId(), [1,1], [0,0])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">
             </span>
 
-            <span style="position: absolute; left: 0px; width: 12px; top: 12px; bottom: 12px; cursor: w-resize;"
+            <span
+                class="edit-handle edit-resize-w"
                   mct-drag-down="controller.startDrag(childObject.getId(), [1,0], [-1,0])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">
             </span>
-            <span style="position: absolute; right: 0px; width: 12px; top: 12px; bottom: 12px; cursor: e-resize;"
+            <span
+                class="edit-handle edit-resize-e"
                   mct-drag-down="controller.startDrag(childObject.getId(), [0,0], [1,0])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">
             </span>
 
-            <span style="position: absolute; left: 12px; right: 12px; top: 0px; height: 12px; cursor: n-resize;"
+            <span
+                class="edit-handle edit-resize-n"
                   mct-drag-down="controller.startDrag(childObject.getId(), [0,1], [0,-1])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">
             </span>
-            <span style="position: absolute; left: 12px; right: 12px; bottom: 0px; height: 12px; cursor: s-resize;"
+            <span
+                class="edit-handle edit-resize-s"
                   mct-drag-down="controller.startDrag(childObject.getId(), [0,0], [0,1])"
                   mct-drag="controller.continueDrag(delta)"
                   mct-drag-up="controller.endDrag()">

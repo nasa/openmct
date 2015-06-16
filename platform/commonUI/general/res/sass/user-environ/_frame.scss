@@ -68,10 +68,3 @@
 		}
 	}
 }
-
-.edit-main .frame.child-frame.panel {
-	&:hover {
-		border-color: $colorKey;
-		@include boxShdwLarge();
-	}
-}
