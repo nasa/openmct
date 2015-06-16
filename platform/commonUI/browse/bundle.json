@@ -2,7 +2,7 @@
     "extensions": {
         "routes": [
             {
-                "when": "/browse/:id*",
+                "when": "/browse/:ids*",
                 "templateUrl": "templates/browse.html"
             },
             {
