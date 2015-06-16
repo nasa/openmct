@@ -31,6 +31,8 @@ define(
 
         describe("The browse controller", function () {
             var mockScope,
+                mockRoute,
+                mockLocation,
                 mockObjectService,
                 mockNavigationService,
                 mockRootObject,
@@ -49,6 +51,11 @@ define(
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     [ "$on", "$watch" ]
+                );
+                mockRoute = { current: { params: {} } };
+                mockLocation = jasmine.createSpyObj(
+                    "$location",
+                    [ "path" ]
                 );
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",
@@ -75,21 +82,25 @@ define(
                 mockObjectService.getObjects.andReturn(mockPromise({
                     ROOT: mockRootObject
                 }));
-
+                mockRootObject.useCapability.andReturn(mockPromise([
+                    mockDomainObject
+                ]));
+                mockDomainObject.getId.andReturn("mine");
 
                 controller = new BrowseController(
                     mockScope,
+                    mockRoute,
+                    mockLocation,
                     mockObjectService,
                     mockNavigationService
                 );
             });
 
             it("uses composition to set the navigated object, if there is none", function () {
-                mockRootObject.useCapability.andReturn(mockPromise([
-                    mockDomainObject
-                ]));
                 controller = new BrowseController(
                     mockScope,
+                    mockRoute,
+                    mockLocation,
                     mockObjectService,
                     mockNavigationService
                 );
@@ -98,12 +109,11 @@ define(
             });
 
             it("does not try to override navigation", function () {
-                // This behavior is needed if object navigation has been
-                // determined by query string parameters
-                mockRootObject.useCapability.andReturn(mockPromise([null]));
                 mockNavigationService.getNavigation.andReturn(mockDomainObject);
                 controller = new BrowseController(
                     mockScope,
+                    mockRoute,
+                    mockLocation,
                     mockObjectService,
                     mockNavigationService
                 );
