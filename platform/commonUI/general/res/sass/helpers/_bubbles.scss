@@ -24,11 +24,12 @@
 .l-infobubble-wrapper {
 	$arwSize: 5px;
 	@include box-shadow(rgba(black, 0.4) 0 1px 5px);
-	position: absolute;
-	z-index: 70;
+	position: relative;
+	z-index: 50;
 	.l-infobubble {
 		display: inline-block;
-		max-width: 300px;
+		min-width: $bubbleMinW;
+		max-width: $bubbleMaxW;
 		padding: 5px 10px;
 		&:before {
 			content:"";
@@ -96,27 +97,17 @@
 	}
 
 	&.arw-down {
-
-	}
-}
-
-.l-thumbsbubble-wrapper {
-	$closeBtnD: 15px;
-	position: absolute;
-	left: $interiorMarginLg;
-	right: $interiorMarginLg;
-	height: $imageThumbsWrapperH + $bubblePad*2 + $interiorMargin;
-	width: auto;
-	.l-thumbsbubble {
-		@include absPosDefault();
-		.l-image-thumbs-wrapper {
-			height: auto;
-			top: $bubblePad !important; right: $closeBtnD + ($interiorMargin*2); bottom: $bubblePad !important; left: $bubblePad;
+		margin-bottom: $arwSize*2;
+		.l-infobubble::before {
+			left: 50%;
+			top: 100%;
+			margin-left: -1 * $arwSize;
+			border-left: $arwSize solid transparent;
+			border-right: $arwSize solid transparent;
+			border-top: ($arwSize * 1.5) solid $colorInfoBubbleBg;
 		}
 	}
 	.arw {
-		//left: 50%;
-		//margin-left: $bubbleArwSize / -2;
 		z-index: 2;
 	}
 	&.arw-up .arw.arw-down,

@@ -28,5 +28,8 @@ define({
                 "</mct-include>" +
                 "</mct-container>",
     // Pixel offset for bubble, to align arrow position
-    BUBBLE_OFFSET: [ 0, -16 ]
+    BUBBLE_OFFSET: [ 0, -26 ],
+	// Max width and margins allowed for bubbles; defined in /platform/commonUI/general/res/sass/_constants.scss
+	BUBBLE_MARGIN_LR: 10,
+	BUBBLE_MAX_WIDTH: 300
 });

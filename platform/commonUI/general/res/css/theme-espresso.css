@@ -328,6 +328,10 @@ span {
   */ }
 
 /* line 72, ../sass/_global.scss */
+mct-container {
+  display: block; }
+
+/* line 76, ../sass/_global.scss */
 .abs, .btn-menu span.l-click-area {
   position: absolute;
   top: 0;
@@ -337,51 +341,51 @@ span {
   height: auto;
   width: auto; }
 
-/* line 82, ../sass/_global.scss */
+/* line 86, ../sass/_global.scss */
 .code, .codehilite {
   font-family: "Lucida Console", monospace;
   font-size: 0.7em;
   line-height: 150%;
   white-space: pre; }
 
-/* line 89, ../sass/_global.scss */
+/* line 93, ../sass/_global.scss */
 .codehilite {
   background-color: rgba(255, 255, 255, 0.1);
   padding: 1em; }
 
-/* line 95, ../sass/_global.scss */
+/* line 99, ../sass/_global.scss */
 .align-right {
   text-align: right; }
 
-/* line 99, ../sass/_global.scss */
+/* line 103, ../sass/_global.scss */
 .centered {
   text-align: center; }
 
-/* line 103, ../sass/_global.scss */
+/* line 107, ../sass/_global.scss */
 .no-margin {
   margin: 0; }
 
-/* line 107, ../sass/_global.scss */
+/* line 111, ../sass/_global.scss */
 .colorKey {
   color: #0099cc; }
 
-/* line 111, ../sass/_global.scss */
+/* line 115, ../sass/_global.scss */
 .ds {
   -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px; }
 
-/* line 115, ../sass/_global.scss */
+/* line 119, ../sass/_global.scss */
 .hide,
 .hidden {
   display: none !important; }
 
-/* line 121, ../sass/_global.scss */
+/* line 125, ../sass/_global.scss */
 .paused:not(.s-btn):not(.icon-btn) {
   border-color: #c56f01 !important;
   color: #c56f01 !important; }
 
-/* line 127, ../sass/_global.scss */
+/* line 131, ../sass/_global.scss */
 .sep {
   color: rgba(255, 255, 255, 0.2); }
 
@@ -2621,7 +2625,7 @@ label.checkbox.custom {
   position: absolute;
   height: 200px;
   width: 170px;
-  z-index: 59; }
+  z-index: 70; }
   /* line 172, ../sass/controls/_menus.scss */
   .context-menu-holder .context-menu-wrapper {
     position: absolute;
@@ -4229,46 +4233,47 @@ input[type="text"] {
   -moz-box-shadow: rgba(0, 0, 0, 0.4) 0 1px 5px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0 1px 5px;
   box-shadow: rgba(0, 0, 0, 0.4) 0 1px 5px;
-  position: absolute;
-  z-index: 70; }
+  position: relative;
+  z-index: 50; }
   /* line 29, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper .l-infobubble {
     display: inline-block;
+    min-width: 100px;
     max-width: 300px;
     padding: 5px 10px; }
-    /* line 33, ../sass/helpers/_bubbles.scss */
+    /* line 34, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper .l-infobubble:before {
       content: "";
       position: absolute;
       width: 0;
       height: 0; }
-    /* line 39, ../sass/helpers/_bubbles.scss */
+    /* line 40, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper .l-infobubble table {
       width: 100%; }
-      /* line 42, ../sass/helpers/_bubbles.scss */
+      /* line 43, ../sass/helpers/_bubbles.scss */
       .l-infobubble-wrapper .l-infobubble table tr td {
         padding: 2px 0;
         vertical-align: top; }
-        /* line 49, ../sass/helpers/_bubbles.scss */
+        /* line 50, ../sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper .l-infobubble table tr td.label {
           padding-right: 10px;
           white-space: nowrap; }
-        /* line 53, ../sass/helpers/_bubbles.scss */
+        /* line 54, ../sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper .l-infobubble table tr td.value {
           white-space: nowrap; }
-        /* line 57, ../sass/helpers/_bubbles.scss */
+        /* line 58, ../sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper .l-infobubble table tr td.align-wrap {
           white-space: normal; }
-    /* line 63, ../sass/helpers/_bubbles.scss */
+    /* line 64, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper .l-infobubble .title {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       margin-bottom: 5px; }
-  /* line 70, ../sass/helpers/_bubbles.scss */
+  /* line 71, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-left {
     margin-left: 20px; }
-    /* line 72, ../sass/helpers/_bubbles.scss */
+    /* line 73, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-left .l-infobubble::before {
       right: 100%;
       width: 0;
@@ -4276,10 +4281,10 @@ input[type="text"] {
       border-top: 6.66667px solid transparent;
       border-bottom: 6.66667px solid transparent;
       border-right: 10px solid #ddd; }
-  /* line 78, ../sass/helpers/_bubbles.scss */
+  /* line 79, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-right {
     margin-right: 20px; }
-    /* line 80, ../sass/helpers/_bubbles.scss */
+    /* line 81, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-right .l-infobubble::before {
       left: 100%;
       width: 0;
@@ -4287,52 +4292,38 @@ input[type="text"] {
       border-top: 6.66667px solid transparent;
       border-bottom: 6.66667px solid transparent;
       border-left: 10px solid #ddd; }
-  /* line 87, ../sass/helpers/_bubbles.scss */
+  /* line 88, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-top .l-infobubble::before {
     top: 20px; }
-  /* line 93, ../sass/helpers/_bubbles.scss */
+  /* line 94, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-btm .l-infobubble::before {
     bottom: 20px; }
-
-/* line 103, ../sass/helpers/_bubbles.scss */
-.l-thumbsbubble-wrapper {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  height: 183px;
-  width: auto; }
+  /* line 99, ../sass/helpers/_bubbles.scss */
+  .l-infobubble-wrapper.arw-down {
+    margin-bottom: 10px; }
+    /* line 101, ../sass/helpers/_bubbles.scss */
+    .l-infobubble-wrapper.arw-down .l-infobubble::before {
+      left: 50%;
+      top: 100%;
+      margin-left: -5px;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-top: 7.5px solid #ddd; }
   /* line 110, ../sass/helpers/_bubbles.scss */
-  .l-thumbsbubble-wrapper .l-thumbsbubble {
-    overflow: hidden;
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
-    left: 0px;
-    width: auto;
-    height: auto; }
-    /* line 112, ../sass/helpers/_bubbles.scss */
-    .l-thumbsbubble-wrapper .l-thumbsbubble .l-image-thumbs-wrapper {
-      height: auto;
-      top: 5px !important;
-      right: 25px;
-      bottom: 5px !important;
-      left: 5px; }
-  /* line 117, ../sass/helpers/_bubbles.scss */
-  .l-thumbsbubble-wrapper .arw {
+  .l-infobubble-wrapper .arw {
     z-index: 2; }
-  /* line 122, ../sass/helpers/_bubbles.scss */
-  .l-thumbsbubble-wrapper.arw-up .arw.arw-down, .l-thumbsbubble-wrapper.arw-down .arw.arw-up {
+  /* line 113, ../sass/helpers/_bubbles.scss */
+  .l-infobubble-wrapper.arw-up .arw.arw-down, .l-infobubble-wrapper.arw-down .arw.arw-up {
     display: none; }
 
-/* line 129, ../sass/helpers/_bubbles.scss */
+/* line 120, ../sass/helpers/_bubbles.scss */
 .l-thumbsbubble-wrapper .arw-up {
   width: 0;
   height: 0;
   border-left: 6.66667px solid transparent;
   border-right: 6.66667px solid transparent;
   border-bottom: 10px solid #4d4d4d; }
-/* line 132, ../sass/helpers/_bubbles.scss */
+/* line 123, ../sass/helpers/_bubbles.scss */
 .l-thumbsbubble-wrapper .arw-down {
   width: 0;
   height: 0;
@@ -4340,7 +4331,7 @@ input[type="text"] {
   border-right: 6.66667px solid transparent;
   border-top: 10px solid #4d4d4d; }
 
-/* line 136, ../sass/helpers/_bubbles.scss */
+/* line 127, ../sass/helpers/_bubbles.scss */
 .s-infobubble {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -4351,22 +4342,22 @@ input[type="text"] {
   background: #ddd;
   color: #666;
   font-size: 0.8rem; }
-  /* line 143, ../sass/helpers/_bubbles.scss */
+  /* line 134, ../sass/helpers/_bubbles.scss */
   .s-infobubble .title {
     color: #333333;
     font-weight: bold; }
-  /* line 148, ../sass/helpers/_bubbles.scss */
+  /* line 139, ../sass/helpers/_bubbles.scss */
   .s-infobubble tr td {
     border-top: 1px solid #c4c4c4;
     font-size: 0.9em; }
-  /* line 152, ../sass/helpers/_bubbles.scss */
+  /* line 143, ../sass/helpers/_bubbles.scss */
   .s-infobubble tr:first-child td {
     border-top: none; }
-  /* line 156, ../sass/helpers/_bubbles.scss */
+  /* line 147, ../sass/helpers/_bubbles.scss */
   .s-infobubble .value {
     color: #333333; }
 
-/* line 161, ../sass/helpers/_bubbles.scss */
+/* line 152, ../sass/helpers/_bubbles.scss */
 .s-thumbsbubble {
   background: #4d4d4d;
   color: #b3b3b3; }
