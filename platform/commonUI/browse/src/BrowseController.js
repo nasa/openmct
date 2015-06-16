@@ -41,9 +41,9 @@ define(
          *
          * @constructor
          */
-        function BrowseController($scope, $routeParams, $location, objectService, navigationService) {
+        function BrowseController($scope, $route, $location, objectService, navigationService) {
             var path = [ROOT_ID].concat(
-                ($routeParams.ids || DEFAULT_PATH).split("/")
+                ($route.current.ids || DEFAULT_PATH).split("/")
             );
 
             function updateRoute(domainObject) {
@@ -51,6 +51,12 @@ define(
                     objectPath = context.getPath(),
                     ids = objectPath.map(function (domainObject) {
                         return domainObject.getId();
+                    }),
+                    priorRoute = $route.current,
+                    // Act as if params HADN'T changed to avoid page reload
+                    unlisten = $scope.$on('$locationChangeSuccess', function () {
+                        $route.current = priorRoute;
+                        unlisten();
                     });
 
                 $location.path("/browse/" + ids.slice(1).join("/"));
