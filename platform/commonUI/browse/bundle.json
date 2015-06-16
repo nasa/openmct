@@ -3,11 +3,13 @@
         "routes": [
             {
                 "when": "/browse/:ids*",
-                "templateUrl": "templates/browse.html"
+                "templateUrl": "templates/browse.html",
+                "reloadOnSearch": false
             },
             {
                 "when": "",
-                "templateUrl": "templates/browse.html"
+                "templateUrl": "templates/browse.html",
+                "reloadOnSearch": false
             }
         ],
         "controllers": [
@@ -19,7 +21,7 @@
             {
                 "key": "BrowseObjectController",
                 "implementation": "BrowseObjectController.js",
-                "depends": [ "$scope", "$location" ]
+                "depends": [ "$scope", "$location", "$route" ]
             },
             {
                 "key": "CreateMenuController",

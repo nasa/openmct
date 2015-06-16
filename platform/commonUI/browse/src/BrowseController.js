@@ -47,8 +47,9 @@ define(
             );
 
             function updateRoute(domainObject) {
-                var context = domainObject.getCapability('context'),
-                    objectPath = context.getPath(),
+                var context = domainObject &&
+                        domainObject.getCapability('context'),
+                    objectPath = context ? context.getPath() : [],
                     ids = objectPath.map(function (domainObject) {
                         return domainObject.getId();
                     }),

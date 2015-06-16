@@ -31,7 +31,7 @@ define(
          * object (the right-hand side of Browse mode.)
          * @constructor
          */
-        function BrowseObjectController($scope, $location) {
+        function BrowseObjectController($scope, $location, $route) {
             function setViewForDomainObject(domainObject) {
                 var locationViewKey = $location.search().view;
 
@@ -48,8 +48,14 @@ define(
             }
 
             function updateQueryParam(viewKey) {
+                var unlisten, priorRoute = $route.current;
+
                 if (viewKey) {
                     $location.search('view', viewKey);
+                    unlisten = $scope.$on('$locationChangeSuccess', function () {
+                        $route.current = priorRoute;
+                        unlisten();
+                    });
                 }
             }
 
