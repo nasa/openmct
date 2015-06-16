@@ -149,13 +149,3 @@ a.l-btn,
 a.l-btn span {
 	display: inline-block;
 }
-
-.l-btn {
-	padding: 0 $pad;
-	&.sm {
-		padding: 0 $interiorMargin;
-	}
-	&.vsm {
-		padding: 0 $interiorMargin/2;
-	}
-}
