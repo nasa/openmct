@@ -43,7 +43,7 @@ define(
          */
         function BrowseController($scope, $route, $location, objectService, navigationService) {
             var path = [ROOT_ID].concat(
-                ($route.current.ids || DEFAULT_PATH).split("/")
+                ($route.current.params.ids || DEFAULT_PATH).split("/")
             );
 
             function updateRoute(domainObject) {
@@ -73,13 +73,16 @@ define(
 
             function navigateTo(domainObject) {
                 // Check if an object has been navigated-to already...
-                if (!navigationService.getNavigation()) {
+                // If not, or if an ID path has been explicitly set in the URL,
+                // navigate to the URL-specified object.
+                if (!navigationService.getNavigation() || $route.current.params.ids) {
                     // If not, pick a default as the last
                     // root-level component (usually "mine")
                     navigationService.setNavigation(domainObject);
                 } else {
-                    // Otherwise, just expose it in the scope
+                    // Otherwise, just expose the currently navigated object.
                     $scope.navigatedObject = navigationService.getNavigation();
+                    updateRoute($scope.navigatedObject);
                 }
             }
 
