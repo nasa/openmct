@@ -41,10 +41,20 @@ define(
          *
          * @constructor
          */
-        function BrowseController($scope, $routeParams, objectService, navigationService) {
+        function BrowseController($scope, $routeParams, $location, objectService, navigationService) {
             var path = [ROOT_ID].concat(
                 ($routeParams.ids || DEFAULT_PATH).split("/")
             );
+
+            function updateRoute(domainObject) {
+                var context = domainObject.getCapability('context'),
+                    objectPath = context.getPath(),
+                    ids = objectPath.map(function (domainObject) {
+                        return domainObject.getId();
+                    });
+
+                $location.path("/browse/" + ids.slice(1).join("/"));
+            }
 
             // Callback for updating the in-scope reference to the object
             // that is currently navigated-to.
@@ -52,6 +62,7 @@ define(
                 $scope.navigatedObject = domainObject;
                 $scope.treeModel.selectedObject = domainObject;
                 navigationService.setNavigation(domainObject);
+                updateRoute(domainObject);
             }
 
             function navigateTo(domainObject) {
