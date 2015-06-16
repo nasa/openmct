@@ -103,12 +103,22 @@ define(
                 if (composition) {
                     composition.then(function (c) {
                         var nextObject = findObject(c, path[index]);
-                        if (index + 1 >= path.length) {
-                            navigateTo(nextObject);
+                        if (nextObject) {
+                            if (index + 1 >= path.length) {
+                                navigateTo(nextObject);
+                            } else {
+                                doNavigate(nextObject, index + 1);
+                            }
                         } else {
-                            doNavigate(nextObject, index + 1);
+                            // Couldn't find the next element of the path
+                            // so navigate to the last path object we did find
+                            navigateTo(domainObject);
                         }
                     });
+                } else {
+                    // Similar to above case; this object has no composition,
+                    // so navigate to it instead of subsequent path elements.
+                    navigateTo(domainObject);
                 }
             }
 
