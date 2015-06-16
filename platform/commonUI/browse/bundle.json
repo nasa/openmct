@@ -17,6 +17,11 @@
                 "depends": [ "$scope", "$route", "$location", "objectService", "navigationService" ]
             },
             {
+                "key": "BrowseObjectController",
+                "implementation": "BrowseObjectController.js",
+                "depends": [ "$scope", "$location" ]
+            },
+            {
                 "key": "CreateMenuController",
                 "implementation": "creation/CreateMenuController",
                 "depends": [ "$scope" ]
