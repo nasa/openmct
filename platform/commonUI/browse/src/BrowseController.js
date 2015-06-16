@@ -80,6 +80,7 @@ define(
                     // If not, pick a default as the last
                     // root-level component (usually "mine")
                     navigationService.setNavigation(domainObject);
+                    $scope.navigatedObject = domainObject;
                 } else {
                     // Otherwise, just expose the currently navigated object.
                     $scope.navigatedObject = navigationService.getNavigation();

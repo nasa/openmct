@@ -37,6 +37,7 @@ define(
                 mockNavigationService,
                 mockRootObject,
                 mockDomainObject,
+                mockNextObject,
                 controller;
 
             function mockPromise(value) {
@@ -78,6 +79,10 @@ define(
                     "domainObject",
                     [ "getId", "getCapability", "getModel", "useCapability" ]
                 );
+                mockNextObject = jasmine.createSpyObj(
+                    "nextObject",
+                    [ "getId", "getCapability", "getModel", "useCapability" ]
+                );
 
                 mockObjectService.getObjects.andReturn(mockPromise({
                     ROOT: mockRootObject
@@ -85,6 +90,11 @@ define(
                 mockRootObject.useCapability.andReturn(mockPromise([
                     mockDomainObject
                 ]));
+                mockDomainObject.useCapability.andReturn(mockPromise([
+                    mockNextObject
+                ]));
+                mockNextObject.useCapability.andReturn(undefined);
+                mockNextObject.getId.andReturn("next");
                 mockDomainObject.getId.andReturn("mine");
 
                 controller = new BrowseController(
@@ -138,6 +148,76 @@ define(
                 expect(mockNavigationService.removeListener).toHaveBeenCalledWith(
                     mockNavigationService.addListener.mostRecentCall.args[0]
                 );
+            });
+
+            it("uses route parameters to choose initially-navigated object", function () {
+                mockRoute.current.params.ids = "mine/next";
+                controller = new BrowseController(
+                    mockScope,
+                    mockRoute,
+                    mockLocation,
+                    mockObjectService,
+                    mockNavigationService
+                );
+                expect(mockScope.navigatedObject).toBe(mockNextObject);
+                expect(mockNavigationService.setNavigation)
+                    .toHaveBeenCalledWith(mockNextObject);
+            });
+
+            it("handles invalid IDs by going as far as possible", function () {
+                // Idea here is that if we get a bad path of IDs,
+                // browse controller should traverse down it until
+                // it hits an invalid ID.
+                mockRoute.current.params.ids = "mine/junk";
+                controller = new BrowseController(
+                    mockScope,
+                    mockRoute,
+                    mockLocation,
+                    mockObjectService,
+                    mockNavigationService
+                );
+                expect(mockScope.navigatedObject).toBe(mockDomainObject);
+                expect(mockNavigationService.setNavigation)
+                    .toHaveBeenCalledWith(mockDomainObject);
+            });
+
+            it("handles compositionless objects by going as far as possible", function () {
+                // Idea here is that if we get a path which passes
+                // through an object without a composition, browse controller
+                // should stop at it since remaining IDs cannot be loaded.
+                mockRoute.current.params.ids = "mine/next/junk";
+                controller = new BrowseController(
+                    mockScope,
+                    mockRoute,
+                    mockLocation,
+                    mockObjectService,
+                    mockNavigationService
+                );
+                expect(mockScope.navigatedObject).toBe(mockNextObject);
+                expect(mockNavigationService.setNavigation)
+                    .toHaveBeenCalledWith(mockNextObject);
+            });
+
+            it("updates the displayed route to reflect current navigation", function () {
+                var mockContext = jasmine.createSpyObj('context', ['getPath']),
+                    mockUnlisten = jasmine.createSpy('unlisten');
+
+                mockContext.getPath.andReturn(
+                    [mockRootObject, mockDomainObject, mockNextObject]
+                );
+                mockNextObject.getCapability.andCallFake(function (c) {
+                    return c === 'context' && mockContext;
+                });
+                mockScope.$on.andReturn(mockUnlisten);
+                // Provide a navigation change
+                mockNavigationService.addListener.mostRecentCall.args[0](
+                    mockNextObject
+                );
+                expect(mockLocation.path).toHaveBeenCalledWith("/browse/mine/next");
+
+                // Exercise the Angular workaround
+                mockScope.$on.mostRecentCall.args[1]();
+                expect(mockUnlisten).toHaveBeenCalled();
             });
 
         });
