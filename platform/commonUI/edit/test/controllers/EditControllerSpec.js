@@ -31,7 +31,7 @@ define(
                 mockQ,
                 mockNavigationService,
                 mockObject,
-                mockCapability,
+                mockType,
                 controller;
 
             beforeEach(function () {
@@ -48,15 +48,18 @@ define(
                     "domainObject",
                     [ "getId", "getModel", "getCapability", "hasCapability" ]
                 );
-                mockCapability = jasmine.createSpyObj(
-                    "capability",
-                    [ "invoke" ]
+                mockType = jasmine.createSpyObj(
+                    "type",
+                    [ "hasFeature" ]
                 );
 
                 mockNavigationService.getNavigation.andReturn(mockObject);
                 mockObject.getId.andReturn("test");
                 mockObject.getModel.andReturn({ name: "Test object" });
-                mockObject.getCapability.andReturn(mockCapability);
+                mockObject.getCapability.andCallFake(function (key) {
+                    return key === 'type' && mockType;
+                });
+                mockType.hasFeature.andReturn(true);
 
                 controller = new EditController(
                     mockScope,
@@ -76,7 +79,7 @@ define(
                     .toBeDefined();
                 // Shouldn't have been the mock capability we provided
                 expect(controller.navigatedObject().getCapability("editor"))
-                    .not.toEqual(mockCapability);
+                    .not.toEqual(mockType);
             });
 
             it("detaches its navigation listener when destroyed", function () {
