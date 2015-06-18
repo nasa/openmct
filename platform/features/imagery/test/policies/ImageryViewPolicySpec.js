@@ -30,7 +30,50 @@ define(
             var testView,
                 mockDomainObject,
                 mockTelemetry,
+                testMetadata,
                 policy;
+
+            beforeEach(function () {
+                testView = { key: "imagery" };
+                testMetadata = {};
+                mockDomainObject = jasmine.createSpyObj(
+                    'domainObject',
+                    ['getId', 'getModel', 'getCapability']
+                );
+                mockTelemetry = jasmine.createSpyObj(
+                    'telemetry',
+                    ['getMetadata']
+                );
+                mockDomainObject.getCapability.andCallFake(function (c) {
+                    return c === 'telemetry' ? mockTelemetry : undefined;
+                });
+                mockTelemetry.getMetadata.andReturn(testMetadata);
+
+                policy = new ImageryViewPolicy();
+            });
+
+            it("allows the imagery view for domain objects with image telemetry", function () {
+                testMetadata.ranges = [ { key: "foo", format: "imageUrl" } ];
+                expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
+            });
+
+            it("disallows the imagery view for domain objects without image telemetry", function () {
+                testMetadata.ranges = [ { key: "foo", format: "somethingElse" } ];
+                expect(policy.allow(testView, mockDomainObject)).toBeFalsy();
+            });
+
+            it("disallows the imagery view for domain objects without telemetry", function () {
+                testMetadata.ranges = [ { key: "foo", format: "imageUrl" } ];
+                mockDomainObject.getCapability.andReturn(undefined);
+                expect(policy.allow(testView, mockDomainObject)).toBeFalsy();
+            });
+
+            it("allows other views", function () {
+                testView.key = "somethingElse";
+                testMetadata.ranges = [ { key: "foo", format: "somethingElse" } ];
+                expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
+            });
+
         });
     }
 );
