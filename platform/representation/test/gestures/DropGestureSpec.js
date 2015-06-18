@@ -132,35 +132,6 @@ define(
                 expect(mockEvent.dataTransfer.dropEffect).toBeDefined();
             });
             
-/*
-            it("invokes compose on drop in browse", function () {
-                callbacks.dragover(mockEvent);
-                expect(mockAction.getActions).toHaveBeenCalledWith({
-                    key: 'compose',
-                    selectedObject: mockDraggedObject
-                });
-                callbacks.drop(mockEvent);
-                mockDomainObject.useCapability('browse');
-                var mockDomainObjectType = mockDomainObject.getModel().type;
-//                if (mockDomainObjectType === 'folder' || mockDomainObject.hasCapability('editor') {
-                    expect((mockCompose.perform)).toHaveBeenCalled();
-//                }
-            });
-*/
-            
-//            it("invokes compose on drop in edit", function () {
-//                callbacks.dragover(mockEvent);
-//                expect(mockAction.getActions).toHaveBeenCalledWith({
-//                    key: 'compose',
-//                    selectedObject: mockDraggedObject
-//                });
-//                callbacks.drop(mockEvent);
-//                mockDomainObject.useCapability('editor');
-//                if (mockDomainObjectType === 'folder' || mockDomainObject.hasCapability('editor') {
-//                    expect((mockCompose.perform)).toHaveBeenCalled();
-//                }
-//            });            
-            
             it("invokes compose on drop in edit mode", function () {
                 // Set the mockDomainObject to have the editor capability
                 mockDomainObject.hasCapability.andReturn(true);
@@ -206,20 +177,6 @@ define(
                 expect(mockCompose.perform).toHaveBeenCalled();
             });
             
-            /*
-            it("does not invoke compose on drop in browse mode for non-folders", function () {
-                if (mockDomainObject.hasCapability('editor') === false && !(domainObject.getModel().type === 'folder')) {
-                    callbacks.dragover(mockEvent);
-                    expect(mockAction.getActions).toHaveBeenCalledWith({
-                        key: 'compose',
-                        selectedObject: mockDraggedObject
-                    });
-                    callbacks.drop(mockEvent);
-                    expect(mockCompose.perform).not.toHaveBeenCalled();
-                }
-            });
-            */
-
             it("broadcasts drop position (in edit mode)", function () {
                 // Set the mockDomainObject to have the editor capability
                 mockDomainObject.hasCapability.andReturn(true);

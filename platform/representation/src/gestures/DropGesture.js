@@ -112,6 +112,7 @@ define(
                     // Informs user that drag and drop is not allowed.
                      // window.alert("Cannot drag and drop objects during browse mode.");
                 }
+                
             }
 
             // We can only handle drops if we have access to actions...
