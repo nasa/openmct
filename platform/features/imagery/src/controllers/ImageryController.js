@@ -26,7 +26,7 @@ define(
     function (moment) {
         "use strict";
 
-        var DATE_FORMAT = "YYYY-DDD",
+        var DATE_FORMAT = "YYYY-MM-DD",
             TIME_FORMAT = "HH:mm:ss.SSS";
 
         /**

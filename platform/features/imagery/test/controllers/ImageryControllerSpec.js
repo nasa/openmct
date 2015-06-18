@@ -27,6 +27,124 @@ define(
         "use strict";
 
         describe("The Imagery controller", function () {
+            var mockScope,
+                mockTelemetryHandler,
+                mockHandle,
+                mockDomainObject,
+                controller;
+
+            function invokeWatch(expr, value) {
+                mockScope.$watch.calls.forEach(function (call) {
+                    if (call.args[0] === expr) {
+                        call.args[1](value);
+                    }
+                });
+            }
+
+            beforeEach(function () {
+                mockScope = jasmine.createSpyObj('$scope', ['$on', '$watch']);
+                mockTelemetryHandler = jasmine.createSpyObj(
+                    'telemetryHandler',
+                    ['handle']
+                );
+                mockHandle = jasmine.createSpyObj(
+                    'handle',
+                    [
+                        'getDomainValue',
+                        'getRangeValue',
+                        'getTelemetryObjects',
+                        'unsubscribe'
+                    ]
+                );
+                mockDomainObject = jasmine.createSpyObj(
+                    'domainObject',
+                    ['getId', 'getModel', 'getCapability']
+                );
+
+                mockTelemetryHandler.handle.andReturn(mockHandle);
+                mockHandle.getTelemetryObjects.andReturn([mockDomainObject]);
+
+                controller = new ImageryController(
+                    mockScope,
+                    mockTelemetryHandler
+                );
+                invokeWatch('domainObject', mockDomainObject);
+            });
+
+            it("unsubscribes when scope is destroyed", function () {
+                expect(mockHandle.unsubscribe).not.toHaveBeenCalled();
+
+                // Find the $destroy listener and call it
+                mockScope.$on.calls.forEach(function (call) {
+                    if (call.args[0] === '$destroy') {
+                        call.args[1]();
+                    }
+                });
+                expect(mockHandle.unsubscribe).toHaveBeenCalled();
+            });
+
+            it("exposes the latest telemetry values", function () {
+                // 06/18/2015 4:04am UTC
+                var testTimestamp = 1434600258123,
+                    testUrl = "some/url",
+                    nextTimestamp = 1434600259456, // 4:05.456
+                    nextUrl = "some/other/url";
+
+                mockHandle.getDomainValue.andReturn(testTimestamp);
+                mockHandle.getRangeValue.andReturn(testUrl);
+
+                // Call the subscription listener
+                mockTelemetryHandler.handle.mostRecentCall.args[1]();
+
+                expect(controller.getTime()).toEqual("04:04:18.123");
+                expect(controller.getDate()).toEqual("2015-06-18");
+                expect(controller.getZone()).toEqual("UTC");
+                expect(controller.getImageUrl()).toEqual(testUrl);
+
+                mockHandle.getDomainValue.andReturn(nextTimestamp);
+                mockHandle.getRangeValue.andReturn(nextUrl);
+                mockTelemetryHandler.handle.mostRecentCall.args[1]();
+
+                expect(controller.getTime()).toEqual("04:04:19.456");
+                expect(controller.getDate()).toEqual("2015-06-18");
+                expect(controller.getZone()).toEqual("UTC");
+                expect(controller.getImageUrl()).toEqual(nextUrl);
+            });
+
+            it("allows updates to be paused", function () {
+                // 06/18/2015 4:04am UTC
+                var testTimestamp = 1434600258123,
+                    testUrl = "some/url",
+                    nextTimestamp = 1434600259456, // 4:05.456
+                    nextUrl = "some/other/url";
+
+                // As above, but pause in between. Expect details
+                // not to change this time
+
+                mockHandle.getDomainValue.andReturn(testTimestamp);
+                mockHandle.getRangeValue.andReturn(testUrl);
+
+                // Call the subscription listener
+                mockTelemetryHandler.handle.mostRecentCall.args[1]();
+
+                expect(controller.getTime()).toEqual("04:04:18.123");
+                expect(controller.getDate()).toEqual("2015-06-18");
+                expect(controller.getZone()).toEqual("UTC");
+                expect(controller.getImageUrl()).toEqual(testUrl);
+
+                expect(controller.paused()).toBeFalsy();
+                controller.paused(true); // Pause!
+                expect(controller.paused()).toBeTruthy();
+
+                mockHandle.getDomainValue.andReturn(nextTimestamp);
+                mockHandle.getRangeValue.andReturn(nextUrl);
+                mockTelemetryHandler.handle.mostRecentCall.args[1]();
+
+                expect(controller.getTime()).toEqual("04:04:18.123");
+                expect(controller.getDate()).toEqual("2015-06-18");
+                expect(controller.getZone()).toEqual("UTC");
+                expect(controller.getImageUrl()).toEqual(testUrl);
+            });
 
         });
     }
