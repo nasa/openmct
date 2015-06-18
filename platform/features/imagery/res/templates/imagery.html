@@ -7,7 +7,7 @@
         >
         <div
             class="l-local-controls s-local-controls"
-            ng-show="showLocalControls"
+            ng-show="false && showLocalControls"
              >
             <a
                class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
@@ -32,12 +32,7 @@
             mct-background-image="imagery.getImageUrl()"
             >
         </div>
-<!--
-        <mct-image class="l-image-main s-image-main"
-                   ng-class="{ paused: imagery.paused(), stale: false }"
-                   src="imagery.getImageUrl()">
-        </mct-image>
--->
+
         <div class="l-image-main-controlbar bar">
             <div class="left">
                 <a
@@ -54,6 +49,12 @@
                     ng-click="imagery.paused(!imagery.paused())"
                     ng-class="{ paused: imagery.paused() }"
                     ><span class="ui-symbol icon"></span></a>
+                <a href="{{imagery.getImageUrl()}}"
+                   ng-if="imagery.getImageUrl()"
+                   target="_blank"
+                   title="Open image in new tab."
+                   class="t-btn l-btn s-btn s-icon-btn s-very-subtle sm">
+                    <span class="ui-symbol icon">y</span></a>
                 <a href=""
                     class="l-btn s-btn s-icon-btn l-mag s-mag ui-symbol vsm"
                     ng-click="clipped = false"
