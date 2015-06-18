@@ -109,10 +109,7 @@ define(
                         });
                     }
                 }
-//                else {
-//                    // Informs user that drag and drop is not allowed.
-//                    window.alert("Cannot drag and drop objects during browse mode.");
-//                }
+                // TODO: Alert user if drag and drop is not allowed
             }
 
             // We can only handle drops if we have access to actions...
