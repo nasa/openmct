@@ -29,13 +29,15 @@
         <div
             class="l-image-main s-image-main"
             ng-class="{ paused: imagery.paused(), stale:false }"
-            style="background-image:url('{{imagery.getImageUrl()}}');"
+            mct-background-image="imagery.getImageUrl()"
             >
         </div>
+<!--
         <mct-image class="l-image-main s-image-main"
                    ng-class="{ paused: imagery.paused(), stale: false }"
                    src="imagery.getImageUrl()">
         </mct-image>
+-->
         <div class="l-image-main-controlbar bar">
             <div class="left">
                 <a
