@@ -1,4 +1,4 @@
-/*global onmessage,postMessage*/
+/*global self*/
 (function () {
     "use strict";
 
@@ -9,7 +9,7 @@
         return n < 2 ? n : (fib(n - 1) + fib(n - 2));
     }
 
-    onmessage = function (event) {
-        postMessage(fib(event.data));
+    self.onmessage = function (event) {
+        self.postMessage(fib(event.data));
     };
 }());
