@@ -132,15 +132,32 @@ define(
                 expect(mockEvent.dataTransfer.dropEffect).toBeDefined();
             });
 
-            it("invokes compose on drop", function () {
+            it("invokes compose on drop in browse", function () {
                 callbacks.dragover(mockEvent);
                 expect(mockAction.getActions).toHaveBeenCalledWith({
                     key: 'compose',
                     selectedObject: mockDraggedObject
                 });
                 callbacks.drop(mockEvent);
-                expect(mockCompose.perform).toHaveBeenCalled();
+                mockDomainObject.useCapability('browse');
+                var mockDomainObjectType = mockDomainObject.getModel().type;
+//                if (mockDomainObjectType === 'folder' || mockDomainObject.hasCapability('editor') {
+                    expect((mockCompose.perform)).toHaveBeenCalled();
+//                }
             });
+            
+//            it("invokes compose on drop in edit", function () {
+//                callbacks.dragover(mockEvent);
+//                expect(mockAction.getActions).toHaveBeenCalledWith({
+//                    key: 'compose',
+//                    selectedObject: mockDraggedObject
+//                });
+//                callbacks.drop(mockEvent);
+//                mockDomainObject.useCapability('editor');
+//                if (mockDomainObjectType === 'folder' || mockDomainObject.hasCapability('editor') {
+//                    expect((mockCompose.perform)).toHaveBeenCalled();
+//                }
+//            });            
 
 
             it("broadcasts drop position", function () {
