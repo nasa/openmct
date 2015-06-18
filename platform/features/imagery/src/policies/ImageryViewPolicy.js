@@ -38,7 +38,8 @@ define(
                     ranges = metadata.ranges || [];
 
                 return ranges.some(function (range) {
-                    return range.format === 'imageUrl';
+                    return range.format === 'imageUrl' ||
+                            range.format === 'image';
                 });
             }
 
