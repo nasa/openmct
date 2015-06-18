@@ -84,7 +84,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -105,38 +105,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -4219,51 +4219,55 @@ input[type="text"] {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* line 24, ../sass/helpers/_bubbles.scss */
+.bubble-container {
+  pointer-events: none; }
+
+/* line 31, ../sass/helpers/_bubbles.scss */
 .l-infobubble-wrapper {
   -moz-box-shadow: rgba(0, 0, 0, 0.4) 0 1px 5px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0 1px 5px;
   box-shadow: rgba(0, 0, 0, 0.4) 0 1px 5px;
   position: relative;
   z-index: 50; }
-  /* line 29, ../sass/helpers/_bubbles.scss */
+  /* line 36, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper .l-infobubble {
     display: inline-block;
     min-width: 100px;
     max-width: 300px;
     padding: 5px 10px; }
-    /* line 34, ../sass/helpers/_bubbles.scss */
+    /* line 41, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper .l-infobubble:before {
       content: "";
       position: absolute;
       width: 0;
       height: 0; }
-    /* line 40, ../sass/helpers/_bubbles.scss */
+    /* line 47, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper .l-infobubble table {
       width: 100%; }
-      /* line 43, ../sass/helpers/_bubbles.scss */
+      /* line 50, ../sass/helpers/_bubbles.scss */
       .l-infobubble-wrapper .l-infobubble table tr td {
         padding: 2px 0;
         vertical-align: top; }
-        /* line 50, ../sass/helpers/_bubbles.scss */
+        /* line 57, ../sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper .l-infobubble table tr td.label {
           padding-right: 10px;
           white-space: nowrap; }
-        /* line 54, ../sass/helpers/_bubbles.scss */
+        /* line 61, ../sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper .l-infobubble table tr td.value {
           white-space: nowrap; }
-        /* line 58, ../sass/helpers/_bubbles.scss */
+        /* line 65, ../sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper .l-infobubble table tr td.align-wrap {
           white-space: normal; }
-    /* line 64, ../sass/helpers/_bubbles.scss */
+    /* line 71, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper .l-infobubble .title {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       margin-bottom: 5px; }
-  /* line 71, ../sass/helpers/_bubbles.scss */
+  /* line 78, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-left {
     margin-left: 20px; }
-    /* line 73, ../sass/helpers/_bubbles.scss */
+    /* line 80, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-left .l-infobubble::before {
       right: 100%;
       width: 0;
@@ -4271,10 +4275,10 @@ input[type="text"] {
       border-top: 6.66667px solid transparent;
       border-bottom: 6.66667px solid transparent;
       border-right: 10px solid #ddd; }
-  /* line 79, ../sass/helpers/_bubbles.scss */
+  /* line 86, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-right {
     margin-right: 20px; }
-    /* line 81, ../sass/helpers/_bubbles.scss */
+    /* line 88, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-right .l-infobubble::before {
       left: 100%;
       width: 0;
@@ -4282,16 +4286,16 @@ input[type="text"] {
       border-top: 6.66667px solid transparent;
       border-bottom: 6.66667px solid transparent;
       border-left: 10px solid #ddd; }
-  /* line 88, ../sass/helpers/_bubbles.scss */
+  /* line 95, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-top .l-infobubble::before {
     top: 20px; }
-  /* line 94, ../sass/helpers/_bubbles.scss */
+  /* line 101, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-btm .l-infobubble::before {
     bottom: 20px; }
-  /* line 99, ../sass/helpers/_bubbles.scss */
+  /* line 106, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-down {
     margin-bottom: 10px; }
-    /* line 101, ../sass/helpers/_bubbles.scss */
+    /* line 108, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-down .l-infobubble::before {
       left: 50%;
       top: 100%;
@@ -4299,21 +4303,21 @@ input[type="text"] {
       border-left: 5px solid transparent;
       border-right: 5px solid transparent;
       border-top: 7.5px solid #ddd; }
-  /* line 110, ../sass/helpers/_bubbles.scss */
+  /* line 117, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper .arw {
     z-index: 2; }
-  /* line 113, ../sass/helpers/_bubbles.scss */
+  /* line 120, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-up .arw.arw-down, .l-infobubble-wrapper.arw-down .arw.arw-up {
     display: none; }
 
-/* line 120, ../sass/helpers/_bubbles.scss */
+/* line 127, ../sass/helpers/_bubbles.scss */
 .l-thumbsbubble-wrapper .arw-up {
   width: 0;
   height: 0;
   border-left: 6.66667px solid transparent;
   border-right: 6.66667px solid transparent;
   border-bottom: 10px solid #4d4d4d; }
-/* line 123, ../sass/helpers/_bubbles.scss */
+/* line 130, ../sass/helpers/_bubbles.scss */
 .l-thumbsbubble-wrapper .arw-down {
   width: 0;
   height: 0;
@@ -4321,7 +4325,7 @@ input[type="text"] {
   border-right: 6.66667px solid transparent;
   border-top: 10px solid #4d4d4d; }
 
-/* line 127, ../sass/helpers/_bubbles.scss */
+/* line 134, ../sass/helpers/_bubbles.scss */
 .s-infobubble {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -4332,22 +4336,22 @@ input[type="text"] {
   background: #ddd;
   color: #666;
   font-size: 0.8rem; }
-  /* line 134, ../sass/helpers/_bubbles.scss */
+  /* line 141, ../sass/helpers/_bubbles.scss */
   .s-infobubble .title {
     color: #333333;
     font-weight: bold; }
-  /* line 139, ../sass/helpers/_bubbles.scss */
+  /* line 146, ../sass/helpers/_bubbles.scss */
   .s-infobubble tr td {
     border-top: 1px solid #c4c4c4;
     font-size: 0.9em; }
-  /* line 143, ../sass/helpers/_bubbles.scss */
+  /* line 150, ../sass/helpers/_bubbles.scss */
   .s-infobubble tr:first-child td {
     border-top: none; }
-  /* line 147, ../sass/helpers/_bubbles.scss */
+  /* line 154, ../sass/helpers/_bubbles.scss */
   .s-infobubble .value {
     color: #333333; }
 
-/* line 152, ../sass/helpers/_bubbles.scss */
+/* line 159, ../sass/helpers/_bubbles.scss */
 .s-thumbsbubble {
   background: #4d4d4d;
   color: #b3b3b3; }
