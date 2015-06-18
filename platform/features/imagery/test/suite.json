@@ -1,0 +1,5 @@
+[
+    "controllers/ImageryController",
+    "directives/MCTBackgroundImage",
+    "policies/ImageryViewPolicy"
+]
