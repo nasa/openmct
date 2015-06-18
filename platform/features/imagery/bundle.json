@@ -5,8 +5,9 @@
             {
                 "name": "Imagery",
                 "key": "imagery",
-                "glyph": "I",
+                "glyph": "\u00E3",
                 "templateUrl": "templates/imagery.html",
+                "priority": "preferred",
                 "needs": [ "telemetry" ]
             }
         ],
@@ -20,7 +21,7 @@
             {
                 "key": "ImageryController",
                 "implementation": "controllers/ImageryController.js",
-                "depends": [ "$scope", "telemetryHandler", "telemetryFormatter" ]
+                "depends": [ "$scope", "telemetryHandler" ]
             }
         ],
         "directives": [

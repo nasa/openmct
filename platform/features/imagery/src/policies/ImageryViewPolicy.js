@@ -25,6 +25,11 @@ define(
     function () {
         "use strict";
 
+        /**
+         * Policy preventing the Imagery view from being made available for
+         * domain objects which do not have associated image telemetry.
+         * @implements {Policy}
+         */
         function ImageryViewPolicy() {
             function hasImageTelemetry(domainObject) {
                 var telemetry = domainObject &&

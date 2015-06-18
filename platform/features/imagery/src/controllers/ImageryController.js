@@ -27,9 +27,13 @@ define(
         "use strict";
 
         var DATE_FORMAT = "YYYY-DDD",
-            TIME_FORMAT = "HH:mm:ss";
+            TIME_FORMAT = "HH:mm:ss.SSS";
 
-        function ImageryController($scope, telemetryHandler, telemetryFormatter) {
+        /**
+         * Controller for the "Imagery" view of a domain object which
+         * provides image telemetry.
+         */
+        function ImageryController($scope, telemetryHandler) {
             var date = "",
                 time = "",
                 imageUrl = "",
@@ -75,18 +79,44 @@ define(
             $scope.$on("$destroy", releaseSubscription);
 
             return {
+                /**
+                 * Get the time portion (hours, minutes, seconds) of the
+                 * timestamp associated with the incoming image telemetry.
+                 * @returns {string} the time
+                 */
                 getTime: function () {
                     return time;
                 },
+                /**
+                 * Get the date portion (month, year) of the
+                 * timestamp associated with the incoming image telemetry.
+                 * @returns {string} the date
+                 */
                 getDate: function () {
                     return date;
                 },
+                /**
+                 * Get the time zone for the displayed time/date corresponding
+                 * to the timestamp associated with the incoming image
+                 * telemetry.
+                 * @returns {string} the time
+                 */
                 getZone: function () {
                     return "UTC";
                 },
+                /**
+                 * Get the URL of the image telemetry to display.
+                 * @returns {string} URL for telemetry image
+                 */
                 getImageUrl: function () {
                     return imageUrl;
                 },
+                /**
+                 * Getter-setter for paused state of the view (true means
+                 * paused, false means not.)
+                 * @param {boolean} [state] the state to set
+                 * @returns {boolean} the current state
+                 */
                 paused: function (state) {
                     if (arguments.length > 0 && state !== paused) {
                         paused = state;
