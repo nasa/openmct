@@ -108,7 +108,7 @@
                         <span class="ui-symbol icon">I</span>
                     </a>
 
-                    <div class="menu-element btn icon-btn very-subtle btn-menu dropdown click-invoke"
+                    <div class="menu-element btn s-very-subtle btn-menu dropdown menus-to-left"
                          ng-if="plot.getModeOptions().length > 1"
                          ng-controller="ClickAwayController as toggle">
 
@@ -116,7 +116,7 @@
 
                         <span class="ui-symbol icon type-icon">{{plot.getMode().glyph}}</span>
                         <span>{{plot.getMode().name}}</span>
-                        <span class='ui-symbol icon invoke-menu'>v</span>
+                        <span class='ui-symbol invoke-menu'>v</span>
 
                         <div class="menu dropdown" ng-show="toggle.isActive()">
                             <ul>

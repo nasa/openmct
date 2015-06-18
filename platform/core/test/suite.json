@@ -9,6 +9,7 @@
     "capabilities/ContextualDomainObject",
     "capabilities/CoreCapabilityProvider",
     "capabilities/DelegationCapability",
+    "capabilities/MetadataCapability",
     "capabilities/MutationCapability",
     "capabilities/PersistenceCapability",
     "capabilities/RelationshipCapability",
