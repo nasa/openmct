@@ -27,7 +27,74 @@ define(
         "use strict";
 
         describe("The mct-background-image directive", function () {
+            var mockDocument,
+                mockScope,
+                mockElement,
+                testImage,
+                directive;
 
+            beforeEach(function () {
+                mockDocument = [
+                    jasmine.createSpyObj('document', ['createElement'])
+                ];
+                mockScope = jasmine.createSpyObj('scope', ['$watch']);
+                mockElement = jasmine.createSpyObj('element', [ 'css' ]);
+                testImage = {};
+
+                mockDocument[0].createElement.andReturn(testImage);
+
+                directive = new MCTBackgroundImage(mockDocument);
+            });
+
+            it("is applicable as an attribute", function () {
+                expect(directive.restrict).toEqual("A");
+            });
+
+            it("two-way-binds its own value", function () {
+                expect(directive.scope.mctBackgroundImage).toEqual("=");
+            });
+
+            it("watches for changes to the URL", function () {
+                directive.link(mockScope, mockElement, {});
+                expect(mockScope.$watch).toHaveBeenCalledWith(
+                    'mctBackgroundImage',
+                    jasmine.any(Function)
+                );
+            });
+
+            it("updates images in-order, even when they load out-of-order", function () {
+                var firstOnload;
+
+                directive.link(mockScope, mockElement);
+
+                mockScope.$watch.mostRecentCall.args[1]("some/url/0");
+                firstOnload = testImage.onload;
+
+                mockScope.$watch.mostRecentCall.args[1]("some/url/1");
+
+                // Resolve in a different order
+                testImage.onload();
+                firstOnload();
+
+                // Should still have taken the more recent value
+                expect(mockElement.css.mostRecentCall.args).toEqual([
+                    "background-image",
+                    "url('some/url/1')"
+                ]);
+            });
+
+            it("clears the background image when undefined is passed in", function () {
+                directive.link(mockScope, mockElement);
+
+                mockScope.$watch.mostRecentCall.args[1]("some/url/0");
+                testImage.onload();
+                mockScope.$watch.mostRecentCall.args[1](undefined);
+
+                expect(mockElement.css.mostRecentCall.args).toEqual([
+                    "background-image",
+                    undefined
+                ]);
+            });
         });
     }
 );
