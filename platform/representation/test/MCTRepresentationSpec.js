@@ -117,6 +117,7 @@ define(
                     testViews,
                     mockRepresenters,
                     mockQ,
+                    mockSce,
                     mockLog
                 );
             });
