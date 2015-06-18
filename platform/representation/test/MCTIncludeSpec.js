@@ -31,6 +31,7 @@ define(
 
         describe("The mct-include directive", function () {
             var testTemplates,
+                mockSce,
                 mctInclude;
 
             beforeEach(function () {
@@ -46,7 +47,14 @@ define(
                         templateUrl: "z/template.html"
                     }
                 ];
-                mctInclude = new MCTInclude(testTemplates);
+                mockSce = jasmine.createSpyObj(
+                    '$sce',
+                    ['trustAsResourceUrl']
+                );
+                mockSce.trustAsResourceUrl.andCallFake(function (url) {
+                    return url;
+                });
+                mctInclude = new MCTInclude(testTemplates, mockSce);
             });
 
             it("has a built-in template, with ng-include src=inclusion", function () {
@@ -67,6 +75,12 @@ define(
                 scope = { key: "xyz" };
                 mctInclude.controller(scope);
                 expect(scope.inclusion).toEqual("x/y/z/template.html");
+            });
+
+            it("trusts template URLs", function () {
+                mctInclude.controller({ key: "xyz" });
+                expect(mockSce.trustAsResourceUrl)
+                    .toHaveBeenCalledWith("x/y/z/template.html");
             });
 
         });

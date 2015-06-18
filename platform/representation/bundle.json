@@ -4,12 +4,12 @@
             {
                 "key": "mctInclude",
                 "implementation": "MCTInclude.js",
-                "depends": [ "templates[]" ]
+                "depends": [ "templates[]", "$sce" ]
             },
             {
                 "key": "mctRepresentation",
                 "implementation": "MCTRepresentation.js",
-                "depends": [ "representations[]", "views[]", "representers[]", "$q", "$log" ]
+                "depends": [ "representations[]", "views[]", "representers[]", "$q", "$sce", "$log" ]
             }
         ],
         "gestures": [

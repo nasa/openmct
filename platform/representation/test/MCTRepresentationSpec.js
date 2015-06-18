@@ -38,6 +38,7 @@ define(
                 testViews,
                 mockRepresenters,
                 mockQ,
+                mockSce,
                 mockLog,
                 mockScope,
                 mockElement,
@@ -95,8 +96,16 @@ define(
                 });
 
                 mockQ = { when: mockPromise };
+                mockSce = jasmine.createSpyObj(
+                    '$sce',
+                    ['trustAsResourceUrl']
+                );
                 mockLog = jasmine.createSpyObj("$log", LOG_FUNCTIONS);
 
+
+                mockSce.trustAsResourceUrl.andCallFake(function (url) {
+                    return url;
+                });
                 mockScope = jasmine.createSpyObj("scope", [ "$watch" ]);
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
@@ -125,9 +134,18 @@ define(
 
             it("watches scope when linked", function () {
                 mctRepresentation.link(mockScope, mockElement);
-                expect(mockScope.$watch).toHaveBeenCalledWith("key", jasmine.any(Function));
-                expect(mockScope.$watch).toHaveBeenCalledWith("domainObject", jasmine.any(Function));
-                expect(mockScope.$watch).toHaveBeenCalledWith("domainObject.getModel().modified", jasmine.any(Function));
+                expect(mockScope.$watch).toHaveBeenCalledWith(
+                    "key",
+                    jasmine.any(Function)
+                );
+                expect(mockScope.$watch).toHaveBeenCalledWith(
+                    "domainObject",
+                    jasmine.any(Function)
+                );
+                expect(mockScope.$watch).toHaveBeenCalledWith(
+                    "domainObject.getModel().modified",
+                    jasmine.any(Function)
+                );
             });
 
             it("recognizes keys for representations", function () {
@@ -150,6 +168,18 @@ define(
                 mockScope.$watch.calls[0].args[1]();
 
                 expect(mockScope.inclusion).toEqual("x/y/z/template.html");
+            });
+
+            it("trusts template URLs", function () {
+                mctRepresentation.link(mockScope, mockElement);
+
+                mockScope.key = "xyz";
+
+                // Trigger the watch
+                mockScope.$watch.calls[0].args[1]();
+
+                expect(mockSce.trustAsResourceUrl)
+                    .toHaveBeenCalledWith("x/y/z/template.html");
             });
 
             it("loads declared capabilities", function () {

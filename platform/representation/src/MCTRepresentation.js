@@ -52,7 +52,7 @@ define(
          *        representation extensions
          * @param {ViewDefinition[]} views an array of view extensions
          */
-        function MCTRepresentation(representations, views, representers, $q, $log) {
+        function MCTRepresentation(representations, views, representers, $q, $sce, $log) {
             var representationMap = {},
                 gestureMap = {};
 
@@ -69,11 +69,11 @@ define(
 
             // Get a path to a representation
             function getPath(representation) {
-                return [
+                return $sce.trustAsResourceUrl([
                     representation.bundle.path,
                     representation.bundle.resources,
                     representation.templateUrl
-                ].join("/");
+                ].join("/"));
             }
 
             // Look up a matching representation for this domain object
