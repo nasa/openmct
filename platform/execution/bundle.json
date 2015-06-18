@@ -1,0 +1,10 @@
+{
+    "extensions": {
+        "services": [
+            {
+                "key": "workerService",
+                "depends": [ "$window", "workers[]" ]
+            }
+        ]
+    }
+}
