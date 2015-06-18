@@ -28,8 +28,8 @@ $bodyMargin: 10px;
 $interiorMargin: 5px;
 $interiorMarginLg: $interiorMargin * 2;
 $interiorMarginSm: 3px;
-$basicCr: 3px;
-$controlCr: $basicCr;
+$basicCr: 2px;
+$controlCr: 2px;
 $smallCr: 2px;
 $badgeW: 35px;
 
@@ -62,6 +62,13 @@ $colorInfoBubbleFg: #666;
 $colorInfoBubbleBg: #ddd;
 $colorThumbsBubbleFg: lighten($colorBodyFg, 10%);
 $colorThumbsBubbleBg: lighten($colorBodyBg, 10%);
+$colorLimitYellow: #9d7500;
+$colorLimitRed: #aa0000;
+$colorTelemFresh: #fff;
+$colorTelemStale: #888;
+$styleTelemState: italic;
+$colorInfoBubbleFg: #666;
+$colorInfoBubbleBg: #ddd;
 
 // Ratios
 $ltGamma: 20%;
@@ -119,7 +126,7 @@ $controlDisabledOpacity: 0.3;
 $formLabelW: 20%;
 $formInputH: 22px;
 $formRowCtrlsH: 14px;
-$menuLineH: 1.5rem;
+$menuLineH: 1.4rem;
 $scrollbarTrackSize: 10px;
 $scrollbarTrackColorBg: rgba(#000, 0.4);
 $btnStdH: 25px;
@@ -145,3 +152,9 @@ $imageThumbPad: 1px;
 // Bubbles
 $bubbleArwSize: 10px;
 $bubblePad: $interiorMargin;
+$bubbleMinW: 100px;
+$bubbleMaxW: 300px;
+
+
+// Timing
+$controlFadeMs: 100ms;

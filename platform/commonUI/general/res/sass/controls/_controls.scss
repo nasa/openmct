@@ -19,7 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.control {
+/*.control {
+	// UNUSED?
 	&.view-control {
 		.icon {
 			display: inline-block;
@@ -45,10 +46,10 @@
 			}
 		}
 	}
-}
+}*/
 
 .accordion {
-    $accordionHeadH: 18px;
+	$accordionHeadH: 18px;
 	margin-top: $interiorMargin;
 	&:first-child {
 		margin-top: 0;
@@ -56,16 +57,20 @@
 	.accordion-head {
 		$op: 0.2;
 		@include border-radius($basicCr * 0.75);
-        @include box-sizing("border-box");
+		@include box-sizing("border-box");
 		background: rgba($colorBodyFg, $op);
 		cursor: pointer;
 		font-size: 0.75em;
-        line-height: $accordionHeadH;
+		line-height: $accordionHeadH;
 		margin-bottom: $interiorMargin;
 		padding: 0 $interiorMargin;
 		position: absolute;
-        top: 0; right: 0; bottom: auto; left: 0;
-        width: auto; height: $accordionHeadH;
+		top: 0;
+		right: 0;
+		bottom: auto;
+		left: 0;
+		width: auto;
+		height: $accordionHeadH;
 		text-transform: uppercase;
 		&:hover {
 			background: rgba($colorBodyFg, $op * 2);
@@ -84,79 +89,14 @@
 			content: "v";
 		}
 	}
-    .accordion-contents {
-        position: absolute;
-        top: $accordionHeadH + $interiorMargin; right: 0; bottom: 0; left: 0;
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
-}
-
-.btn {
-	$base: lighten($colorBodyBg, 20%); // Moved to s-btn
-	$p: 10px;   // Moved to s-btn
-	@include border-radius($controlCr); // Moved to s-btn
-	@include box-sizing(border-box); // Moved to s-btn
-	@include text-shadow(rgba(black, 0.3) 0 1px 1px); // Moved to s-btn
-//	display: inline-block;
-	//	margin-right: 10px;
-	padding: 0 ($interiorMargin * 2);  // Moved to s-btn
-	text-decoration: none;  // Moved to s-btn
-	&.create-btn {
-		$h: $ueTopBarH - $interiorMargin; //$btnStdH * 1.5;;
-		$p: $p * 2.25;
-		height: $h;
-		line-height: $h;
-		//font-size: 1.1em;
-		padding: 0 $p;
-		.menu {
-			margin-left: $p * -1;
-		}
-		.ui-symbol.major {
-			font-size: 1.1em;
-		}
-	}
-	&.major {
-		$bg: $colorKey;
-		@include btnNoticeable($bg);
-		$fg: lighten($bg, 50%);
-		color: $fg;
-		&:hover {
-			@include btnNoticeable(lighten($bg, 5%));
-			color: $fg;
-		}
-		.invoke-menu {
-			color: $fg;
-		}
-	}
-	&.normal {
-		padding: $p * 0.5 $p * 0.7;
-	}
-	&.outline {
-		&:hover {
-			background: rgba(#fff, 0.1);
-		}
-	}
-	&.subtle {
-		@include btnSubtle($base, lighten($base, 40%));
-	}
-
-	&.very-subtle {
-		@include btnSubtle($colorBodyBg, lighten($colorBodyBg, 50%));
-	}
-	&.lg {
-		@include border-radius($controlCr * 1.5);
-		font-size: 1.2em;
-		padding: 7px 25px;
-	}
-	&.icon-btn {
-		.icon {
-			color: $colorKey;
-		}
-
-		&:not(.disabled):hover .icon {
-			color: lighten($colorKey, $ltGamma);
-		}
+	.accordion-contents {
+		position: absolute;
+		top: $accordionHeadH + $interiorMargin;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		overflow-y: auto;
+		overflow-x: hidden;
 	}
 }
 
@@ -166,12 +106,12 @@
 	.btn-set,
 	.t-btn {
 		display: inline-block;
-//		margin-left: $interiorMargin;
+		//		margin-left: $interiorMargin;
 	}
 	.btn,
 	.t-btn {
 		&:first-child {
-//			margin-left: 0;
+			//			margin-left: 0;
 		}
 	}
 }
@@ -204,7 +144,8 @@
 	// Default position is upper right
 	$p: $interiorMargin;
 	position: absolute;
-	top: $p; right: $p;
+	top: $p;
+	right: $p;
 	z-index: 5;
 }
 
@@ -243,8 +184,8 @@
 	height: $h;
 	line-height: $h;
 	.icon:not(.invoke-menu) {
-//		position: relative;
-//		top: -0.04em;
+		//		position: relative;
+		//		top: -0.04em;
 		font-size: 150%;
 		vertical-align: middle;
 	}
@@ -331,37 +272,43 @@ label.checkbox.custom {
 
 .btn-menu {
 	$h: 20px;
-	$p: $interiorMargin * 2;
+	$p: $interiorMarginSm * 2;
 	$c: $colorBodyFg;
 	@include btnSubtle($colorBodyBg);
-	height: $h;
-	line-height: $h;
-	&.dropdown {
-		//		padding-left: $p;
-		padding-left: $p;
-		padding-right: $p;
-	}
+	/*	height: $h;
+		line-height: $h;
+		&.dropdown {
+			padding-left: $p;
+			padding-right: $p;
+		}*/
 
 	&:not(.disabled):hover {
 		color: lighten($c, 20%);
 	}
 
-	&.btn-invoke-menu {
-		$c: $colorKey;
-		color: $c;
-		padding: 0 5px;
-		&:hover {
-			color: lighten($c, 10%);
-		}
+	/*	&.context-available {
+			// An element like the invoke-menu triangle;
+			// Indicates that this element has a dropdown menu available;
+			// Currently unused
+			$c: $colorKey;
+			color: $c;
+			padding: 0 5px;
+			&:hover {
+				color: lighten($c, 10%);
+			}
+		}*/
+
+	span.l-click-area {
+		// In markup, this element should not enclose anything.
+		@extend .abs;
 	}
 
-    span.l-click-area {
-	    // In markup, this element should not enclose anything.
-	    @extend .abs;
-    }
-
 	.type-icon {
-		margin-right: $interiorMargin;
+		//margin-right: $interiorMargin;
+	}
+
+	.name {
+		margin-left: $interiorMargin;
 	}
 	.menu {
 		//		margin-left: (-1 * $p);
@@ -401,17 +348,23 @@ label.checkbox.custom {
 	}
 }
 
+.view-switcher {
+	@include trans-prop-nice-fade($controlFadeMs);
+}
+
 /******************************************************** OBJECT-HEADER */
 .object-header {
 	display: inline-block;
 	font-size: 1em;
-	.title {
-		color: lighten($colorBodyFg, 40%);
-	}
-	.type-icon {
-		font-size: 1.5em;
-		margin-right: $interiorMargin;
-		vertical-align: middle;
+	.label {
+		.title-label {
+			color: lighten($colorBodyFg, 40%);
+		}
+		.type-icon {
+			font-size: 1.5em;
+			margin-right: $interiorMargin;
+			vertical-align: middle;
+		}
 	}
 }
 
@@ -425,29 +378,6 @@ label.checkbox.custom {
 	}
 }
 
-/******************************************************** VIEW-CONTROLS */
-
-.view-controls .view-type {
-	$d: 20px;
-	$p: 5px;
-	@include border-radius($controlCr);
-	box-sizing: border-box;
-	display: inline-block;
-	margin-left: $interiorMargin;
-	height: $d;
-	line-height: $d;
-	padding-left: $p;
-	padding-right: $p;
-	&.cur {
-		background: lighten($colorBodyBg, $ltGamma);
-	}
-}
-
-.edit-mode .top-bar .control-set.edit-view-controls {
-	//	Used in templates/edit-view-controls.html
-	margin-right: $interiorMargin * 10;
-}
-
 /******************************************************** SLIDERS */
 
 .slider {
@@ -455,7 +385,7 @@ label.checkbox.custom {
 	$knobW: 12px;
 	$slotH: 50%;
 	.slot {
-//		@include border-radius($basicCr * .75);
+		//		@include border-radius($basicCr * .75);
 		@include sliderTrack();
 		height: $slotH;
 		width: auto;
@@ -502,23 +432,23 @@ label.checkbox.custom {
 /******************************************************** BROWSER ELEMENTS */
 
 ::-webkit-scrollbar {
-    @include sliderTrack();
-    height: $scrollbarTrackSize;
-    width: $scrollbarTrackSize;
+	@include sliderTrack();
+	height: $scrollbarTrackSize;
+	width: $scrollbarTrackSize;
 }
 
 ::-webkit-scrollbar-thumb {
-    $bg: lighten($colorBodyBg, 10%);
-    @include background-image(linear-gradient(lighten($bg, 10%), lighten($bg, 5%) 20px));
-    @include border-radius(1px);
-    @include box-sizing(border-box);
-    @include boxShdwSubtle();
-    border-top: 1px solid lighten($bg, 20%);
-    &:hover {
-        @include background-image(linear-gradient(lighten($bg, 20%), lighten($bg, 15%) 20px));
-    }
+	$bg: lighten($colorBodyBg, 10%);
+	@include background-image(linear-gradient(lighten($bg, 10%), lighten($bg, 5%) 20px));
+	@include border-radius(1px);
+	@include box-sizing(border-box);
+	@include boxShdwSubtle();
+	border-top: 1px solid lighten($bg, 20%);
+	&:hover {
+		@include background-image(linear-gradient(lighten($bg, 20%), lighten($bg, 15%) 20px));
+	}
 }
 
 ::-webkit-scrollbar-corner {
-    background: rgba(#000, 0.4);
+	background: rgba(#000, 0.4);
 }

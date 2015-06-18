@@ -19,20 +19,65 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-$pad: $interiorMargin * 1.5;
+$baseRatio: 1.5;
+$pad: $interiorMargin * $baseRatio;
 
-/*********************************** TYPE STYLES */
-.t-btn {
-	cursor: pointer;
+/******* LAYOUT AND SIZING */
+.btn,
+.l-btn {
+	line-height: 1.25em;
+	padding: 0 $pad;
+	text-decoration: none;
+	&.lg,
+	&.create-btn {
+		$h: $ueTopBarH - $interiorMargin;
+		height: $h;
+		line-height: $h;
+		padding: 0 $pad * 3;
+	}
+	&.create-btn {
+		.menu {
+			margin-left: $pad * -1;
+		}
+		>.ui-symbol {
+			font-size: 1.1em;
+		}
+	}
+	&.sm {
+		padding: 0 $pad / $baseRatio;
+	}
+	&.vsm {
+		padding: 0 ($pad / $baseRatio) / 2;
+	}
 }
 
 /*********************************** STYLE STYLES */
+.btn,
 .s-btn {
+	$base: lighten($colorBodyBg, 20%); // Moved to s-btn
 	@include border-radius($controlCr);
 	@include box-sizing(border-box);
 	@include text-shadow(rgba(black, 0.3) 0 1px 1px);
+	cursor: pointer;
 	line-height: 1.2em;
 	text-decoration: none;
+	&.major {
+		$bg: $colorKey;
+		@include btnSubtle($bg);
+		$fg: lighten($bg, 50%);
+		color: $fg;
+		&:hover {
+			@include btnSubtle(lighten($bg, 5%), $fg);
+			//color: $fg;
+		}
+		.invoke-menu {
+			color: $fg;
+		}
+	}
+	&.subtle {
+		@include btnSubtle($base, lighten($base, 40%));
+	}
+	&.very-subtle,
 	&.s-very-subtle {
 		@include containerSubtle($colorBodyBg, $colorBodyFg, true);
 		&.paused {
@@ -44,9 +89,10 @@ $pad: $interiorMargin * 1.5;
 	}
 }
 
+.icon-btn,
 .s-icon-btn {
 	@extend .s-btn;
-	font-size: 1.2em;
+	font-size: 1em;
 	.icon {
 		color: $colorKey;
 	}
@@ -93,19 +139,13 @@ $pad: $interiorMargin * 1.5;
 }
 
 /*********************************** LAYOUT STYLES */
+span.btn,
+span.btn span,
 span.l-btn,
 span.l-btn span,
+a.btn,
+a.btn span,
 a.l-btn,
 a.l-btn span {
 	display: inline-block;
-}
-
-.l-btn {
-	padding: 0 $pad;
-	&.sm {
-		padding: 0 $interiorMargin;
-	}
-	&.vsm {
-		padding: 0 $interiorMargin/2;
-	}
 }
