@@ -43,7 +43,7 @@ define(
         function DropGesture(dndService, $q, element, domainObject) {
             var actionCapability = domainObject.getCapability('action'),
                 action; // Action for the drop, when it occurs
-
+            
             function broadcastDrop(id, event) {
                 // Find the relevant scope...
                 var scope = element && element.scope && element.scope(),
@@ -92,17 +92,24 @@ define(
 
             function drop(e) {
                 var event = (e || {}).originalEvent || e,
-                    id = event.dataTransfer.getData(GestureConstants.MCT_DRAG_TYPE);
-
-                // Handle the drop; add the dropped identifier to the
-                // destination domain object's composition, and persist
-                // the change.
-                if (id) {
-                    $q.when(action && action.perform()).then(function (result) {
-                        broadcastDrop(id, event);
-                    });
+                    id = event.dataTransfer.getData(GestureConstants.MCT_DRAG_TYPE),
+                    domainObjectType = domainObject.getModel().type;
+                
+                // If currently in edit mode allow drag and drop gestures to the
+                // domain object. An exception to this is folders which have drop
+                // gestures in browse mode.
+                if (domainObjectType === 'folder' || domainObject.hasCapability('editor')) {
+                
+                    // Handle the drop; add the dropped identifier to the
+                    // destination domain object's composition, and persist
+                    // the change.
+                    if (id) {
+                        $q.when(action && action.perform()).then(function (result) {
+                            broadcastDrop(id, event);
+                        });
+                    }
                 }
-
+                // TODO: Alert user if drag and drop is not allowed
             }
 
             // We can only handle drops if we have access to actions...

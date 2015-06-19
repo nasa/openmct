@@ -104,7 +104,7 @@
 	        &.selected {
 		        $cfg: lighten($colorItemSelected, 35%);
 		        $cfgh: lighten($cfg, 30%);
-		        @include btnNoticeable($colorItemSelected);
+		        @include btnSubtle($colorItemSelected);
 		        color: $cfg;
 		        .item-type, .top-bar .icon:not(.alert) { color: $cfg }
 		        .item-main .item-open { color: $cfg }

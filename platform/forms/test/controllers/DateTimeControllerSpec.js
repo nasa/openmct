@@ -85,9 +85,25 @@ define(
                 expect(mockScope.ngModel.test).toBeUndefined();
             });
 
+
             it("exposes date-time format for placeholder", function () {
                 expect(mockScope.format).toEqual(jasmine.any(String));
                 expect(mockScope.format.length).toBeGreaterThan(0);
+            });
+            it("initializes form fields with values from ng-model", function () {
+                mockScope.ngModel = { test: 1417215313000 };
+                mockScope.field = "test";
+                mockScope.$watch.calls.forEach(function (call) {
+                    if (call.args[0] === 'ngModel[field]') {
+                        call.args[1](mockScope.ngModel.test);
+                    }
+                });
+                expect(mockScope.datetime).toEqual({
+                    date: "2014-11-28",
+                    hour: "22",
+                    min: "55",
+                    sec: "13"
+                });
             });
         });
     }

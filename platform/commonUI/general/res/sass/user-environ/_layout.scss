@@ -70,23 +70,19 @@
     &.abs {
 	    text-wrap: none;
 	    white-space: nowrap;
-        &.left,
-        .left {
-            width: 45%;
-            right: auto;
-        }
-        &.right,
-        .right {
-            width: 45%;
-            left: auto;
-            right: 0;
-            text-align: right;
-            .icon.major {
-                margin-left: $interiorMargin * 3;
-            }
-//            .icon.major {
-//                margin-left: $interiorMargin;
-//            }
+    }
+    &.left,
+    .left {
+        width: 45% !important;
+        right: auto !important;
+    }
+    &.right,
+    .right {
+        width: 45% !important;
+        left: auto !important;
+        text-align: right;
+        .icon.major {
+            margin-left: $interiorMargin * 3;
         }
     }
 }
