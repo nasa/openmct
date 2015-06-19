@@ -17,15 +17,18 @@
             },
             {
                 "key": "ELASTIC_ROOT",
-                "value": "/elastic"
+                "value": "/elastic",
+                "priority": "fallback"
             },
             {
                 "key": "ELASTIC_PATH",
-                "value": "mct/domain_object"
+                "value": "mct/domain_object",
+                "priority": "fallback"
             },
             {
                 "key": "ELASTIC_INDICATOR_INTERVAL",
-                "value": 15000
+                "value": 15000,
+                "priority": "fallback"
             }
         ],
         "indicators": [

@@ -166,6 +166,10 @@
                 "depends": [ "persistenceService", "PERSISTENCE_SPACE" ]
             },
             {
+                "key": "metadata",
+                "implementation": "capabilities/MetadataCapability.js"
+            },
+            {
                 "key": "mutation",
                 "implementation": "capabilities/MutationCapability.js",
                 "depends": [ "now" ]

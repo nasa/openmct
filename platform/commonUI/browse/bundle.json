@@ -57,7 +57,8 @@
             {
                 "key": "grid-item",
                 "templateUrl": "templates/items/grid-item.html",
-                "uses": [ "type", "action" ]
+                "uses": [ "type", "action" ],
+                "gestures": [ "info", "menu" ]
             },
             {
                 "key": "object-header",
@@ -119,6 +120,12 @@
                 "type": "provider",
                 "implementation": "creation/CreateActionProvider.js",
                 "depends": [ "typeService", "dialogService", "creationService", "policyService" ]
+            }
+        ],
+        "runs": [
+            {
+                "implementation": "windowing/WindowTitler.js",
+                "depends": [ "navigationService", "$rootScope", "$document" ]
             }
         ],
         "licenses": [

@@ -21,17 +21,15 @@
  *****************************************************************************/
 //************************************************* LAYOUT
 
-$infoBubbleFg: #666;
-$infoBubbleBg: #ddd;
-
 .l-infobubble-wrapper {
 	$arwSize: 5px;
 	@include box-shadow(rgba(black, 0.4) 0 1px 5px);
-	position: absolute;
-	z-index: 70;
+	position: relative;
+	z-index: 50;
 	.l-infobubble {
 		display: inline-block;
-		max-width: 250px;
+		min-width: $bubbleMinW;
+		max-width: $bubbleMaxW;
 		padding: 5px 10px;
 		&:before {
 			content:"";
@@ -71,34 +69,30 @@ $infoBubbleBg: #ddd;
 	}
 
 	&.arw-left {
-		margin-left: $arwSize*2;
+		margin-left: $bubbleArwSize*2;
 		.l-infobubble::before {
 			right: 100%;
-			border-top: $arwSize solid transparent;
-			border-bottom: $arwSize solid transparent;
-			border-right: ($arwSize * 1.5) solid $infoBubbleBg;
+			@include triangle('left', $bubbleArwSize, 1.5, $colorInfoBubbleBg);
 		}
 	}
 
 	&.arw-right {
-		margin-right: $arwSize*2;
+		margin-right: $bubbleArwSize*2;
 		.l-infobubble::before {
 			left: 100%;
-			border-top: $arwSize solid transparent;
-			border-bottom: $arwSize solid transparent;
-			border-left: ($arwSize * 1.5) solid $infoBubbleBg;
+			@include triangle('right', $bubbleArwSize, 1.5, $colorInfoBubbleBg);
 		}
 	}
 
 	&.arw-top {
 		.l-infobubble::before {
-			top: $arwSize * 2;
+			top: $bubbleArwSize * 2;
 		}
 	}
 
 	&.arw-btm {
 		.l-infobubble::before {
-			bottom: $arwSize * 2;
+			bottom: $bubbleArwSize * 2;
 		}
 	}
 
@@ -110,18 +104,32 @@ $infoBubbleBg: #ddd;
 			margin-left: -1 * $arwSize;
 			border-left: $arwSize solid transparent;
 			border-right: $arwSize solid transparent;
-			border-top: ($arwSize * 1.5) solid $infoBubbleBg;
+			border-top: ($arwSize * 1.5) solid $colorInfoBubbleBg;
 		}
 	}
+	.arw {
+		z-index: 2;
+	}
+	&.arw-up .arw.arw-down,
+	&.arw-down .arw.arw-up { display: none; }
 }
 
 //************************************************* LOOK AND FEEL
 
+.l-thumbsbubble-wrapper {
+	.arw-up {
+		@include triangle('up', $bubbleArwSize, 1.5, $colorThumbsBubbleBg);
+	}
+	.arw-down {
+		@include triangle('down', $bubbleArwSize, 1.5, $colorThumbsBubbleBg);
+	}
+}
 .s-infobubble {
-	$emFg: darken($infoBubbleFg, 20%);
+	$emFg: darken($colorInfoBubbleFg, 20%);
 	@include border-radius($basicCr);
-	background: $infoBubbleBg;
-	color: $infoBubbleFg;
+	@include box-shadow(rgba(black, 0.4) 0 1px 5px);
+	background: $colorInfoBubbleBg;
+	color: $colorInfoBubbleFg;
 	font-size: 0.8rem;
 	.title {
 		color: $emFg;
@@ -129,7 +137,7 @@ $infoBubbleBg: #ddd;
 	}
 	tr {
 		td {
-			border-top: 1px solid darken($infoBubbleBg, 10%);
+			border-top: 1px solid darken($colorInfoBubbleBg, 10%);
 			font-size: 0.9em;
 		}
 		&:first-child td {
@@ -139,5 +147,9 @@ $infoBubbleBg: #ddd;
 	.value {
 		color: $emFg;
 	}
+}
 
+.s-thumbsbubble {
+	background: $colorThumbsBubbleBg;
+	color: $colorThumbsBubbleFg;
 }

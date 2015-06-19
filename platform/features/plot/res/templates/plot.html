@@ -22,16 +22,16 @@
 <span ng-controller="PlotController as plot"
       ng-mouseleave="representation.showControls = false">
 
-	<div class="gl-plot"
+    <div class="gl-plot"
          ng-style="{ height: 100 / plot.getSubPlots().length + '%'}"
          ng-repeat="subplot in plot.getSubPlots()">
         <div class="gl-plot-legend">
-	        <!-- ng-class is temporarily hard-coded in next element -->
+            <!-- ng-class is temporarily hard-coded in next element -->
             <span
-	            class='plot-legend-item'
+                class='plot-legend-item'
                 ng-repeat="telemetryObject in subplot.getTelemetryObjects()"
                 ng-class="plot.getLegendClass(telemetryObject)"
-	            >
+                >
                 <span class='plot-color-swatch'
                       ng-style="{ 'background-color': plot.getColor($index) }">
                 </span>
@@ -40,9 +40,9 @@
         </div>
 
         <div
-	        class="gl-plot-coords"
-	        ng-if="subplot.isHovering() && subplot.getHoverCoordinates()"
-	        >
+            class="gl-plot-coords"
+            ng-if="subplot.isHovering() && subplot.getHoverCoordinates()"
+            >
             {{subplot.getHoverCoordinates()}}
         </div>
 
@@ -75,8 +75,8 @@
              ng-mouseenter="subplot.isHovering(true); representation.showControls = true;"
              ng-mouseleave="subplot.isHovering(false)">
 
-	        <!-- Out-of-bounds data indicators -->
-	        <!-- ng-show is temporarily hard-coded in next element -->
+            <!-- Out-of-bounds data indicators -->
+            <!-- ng-show is temporarily hard-coded in next element -->
             <div ng-show="1" class="l-oob-data l-oob-data-up"></div>
             <div ng-show="1" class="l-oob-data l-oob-data-dwn"></div>
 
@@ -98,7 +98,7 @@
             </mct-chart>
 
             <!-- TODO: Move into correct position; make part of group; infer from set of actions -->
-            <div class="gl-plot-local-controls"
+            <div class="l-local-controls gl-plot-local-controls"
                  ng-if="$first"
                  ng-show="representation.showControls"
                  style="position: absolute; top: 8px; right: 8px;">
@@ -119,7 +119,7 @@
                     <span class="ui-symbol icon">I</span>
                 </a>
 
-                <div class="menu-element btn icon-btn very-subtle btn-menu dropdown click-invoke"
+                <div class="menu-element btn s-very-subtle btn-menu dropdown menus-to-left"
                      ng-if="plot.getModeOptions().length > 1"
                      ng-controller="ClickAwayController as toggle">
 
@@ -127,7 +127,7 @@
 
                     <span class="ui-symbol icon type-icon">{{plot.getMode().glyph}}</span>
                     <span>{{plot.getMode().name}}</span>
-                    <span class='ui-symbol icon invoke-menu'>v</span>
+                    <span class='ui-symbol invoke-menu'>v</span>
 
                     <div class="menu dropdown" ng-show="toggle.isActive()">
                         <ul>

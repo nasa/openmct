@@ -181,7 +181,7 @@
                 "key": "label",
                 "templateUrl": "templates/label.html",
                 "uses": [ "type" ],
-                "gestures": [ "drag", "menu" ]
+                "gestures": [ "drag", "menu", "info" ]
             },
             {
                 "key": "node",

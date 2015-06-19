@@ -42,12 +42,6 @@
         &.major {
             font-size: 1.65em;
         }
-        &:hover {
-            //			color: lighten($c, $ltGamma);
-            .invoke-menu {
-                //				color: lighten($colorBodyBg, $ltGamma * 2);
-            }
-        }
     }
 }
 
@@ -56,36 +50,35 @@
 }
 
 .invoke-menu {
-    @include invokeMenu($colorKey);
+    //@include invokeMenu(); // $colorKey
+	text-shadow: none;
     display: inline-block;
-    font-size: 1rem;
+    font-size: 0.8rem;
     vertical-align: middle;
 }
 
 .btn-menu .invoke-menu,
 .icon.major .invoke-menu {
-    margin-left: $interiorMargin;
+    margin-left: $interiorMarginSm;
 }
 
-.icon-buttons-main .invoke-menu {
-    @include invokeMenu(lighten($colorBodyBg, $ltGamma));
-}
-
-.menu-element .invoke-menu {
-
-}
-
+/*
 .object-header .type-icon {
     color: $colorKey;
-	margin-right: $interiorMargin;
+	margin-right: $interiorMarginSm;
 }
+*/
 
 .menu .type-icon,
 .tree-item .type-icon,
-.icon-btn .menu.dropdown .icon,
-.super-menu.menu.dropdown .icon {
-    font-size: $menuLineH * 0.93;
+.super-menu.menu .type-icon {
+    font-size: $menuLineH * 0.8; //.93
     line-height: $menuLineH * 1.13;
     position: absolute;
+}
+
+
+.super-menu.menu.dropdown .icon {
+	font-size: $menuLineH * 0.95
 }
 
