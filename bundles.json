@@ -14,10 +14,12 @@
     "platform/features/pages",
     "platform/features/plot",
     "platform/features/scrolling",
+    "platform/features/events",
     "platform/forms",
     "platform/persistence/queue",
     "platform/policy",
 
     "example/persistence",
+    "example/eventGenerator",
     "example/generator"
 ]
