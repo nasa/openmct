@@ -155,6 +155,15 @@ define(
                     }
                 }
 
+                function fallbackFromWebGL() {
+                    element.html(TEMPLATE);
+                    canvas = element.find("canvas")[0];
+                    chart = getChart([Canvas2DChart], canvas);
+                    if (chart) {
+                        doDraw(scope.draw);
+                    }
+                }
+
                 // Try to initialize a chart.
                 chart = getChart([GLChart, Canvas2DChart], canvas);
 
