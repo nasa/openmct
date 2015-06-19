@@ -26,7 +26,7 @@ define(
     function () {
         "use strict";
 
-        var DATE_FORMAT = "YYYY-DDD";
+        var DATE_FORMAT = "YYYY-MM-DD";
 
         /**
          * Controller for the `datetime` form control.
@@ -91,6 +91,9 @@ define(
             $scope.$watch("datetime.hour", update);
             $scope.$watch("datetime.min", update);
             $scope.$watch("datetime.sec", update);
+
+            // Expose format string for placeholder
+            $scope.format = DATE_FORMAT;
 
             // Initialize forms values
             updateDateTime(
