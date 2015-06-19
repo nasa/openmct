@@ -1,10 +1,36 @@
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+// Features
+$enableImageryThumbs: false; // Set to true if historical imagery thumbnails are supported
+
 // Margins, spacing, radii
 $bodyMargin: 10px;
 $interiorMargin: 5px;
 $interiorMarginLg: $interiorMargin * 2;
 $interiorMarginSm: 3px;
-$basicCr: 3px;
-$controlCr: $basicCr;
+$basicCr: 2px;
+$controlCr: 2px;
+$smallCr: 2px;
 $badgeW: 35px;
 
 // Colors and shading
@@ -12,9 +38,12 @@ $colorBodyBg: #333;
 $colorBodyFg: #999;
 $colorFooterBg: #000;
 $colorKey: #0099cc;
+$colorKeySelectedBg: #005177;
 $colorKeyFg: #fff;
 $colorAlt1: #ffc700;
 $colorAlert: #ff3c00;
+$colorPausedBg: #c56f01;
+$colorPausedFg: #fff;
 $colorCheck: $colorKey;
 $colorCreateBtn: $colorKey;
 $colorInteriorBorder: lighten($colorBodyBg, 10%);
@@ -24,20 +53,36 @@ $colorFormValid: #33cc33;
 $colorFormError: #cc0000;
 $colorFormInvalid: #ff9900;
 $colorGridLines: rgba(#fff, 0.05);
-
+$colorLimitYellow: #9d7500;
+$colorLimitRed: #aa0000;
+$colorTelemFresh: #fff;
+$colorTelemStale: #888;
+$styleTelemStale: italic;
+$colorInfoBubbleFg: #666;
+$colorInfoBubbleBg: #ddd;
+$colorThumbsBubbleFg: lighten($colorBodyFg, 10%);
+$colorThumbsBubbleBg: lighten($colorBodyBg, 10%);
+$colorLimitYellow: #9d7500;
+$colorLimitRed: #aa0000;
+$colorTelemFresh: #fff;
+$colorTelemStale: #888;
+$styleTelemState: italic;
+$colorInfoBubbleFg: #666;
+$colorInfoBubbleBg: #ddd;
 
 // Ratios
 $ltGamma: 20%;
 $btnFontSizeToH: 0.45;
 
 // User Environment
-$ueTopBarH: 35px;
+$ueTopBarH: 30px; // Change to 45px when breadcrumb is enabled
+$ueTopBarEditH: 30px;
+$ueTopBarBtnH: 35px;
 $ueFooterH: 20px;
 $ueColMargin: 1.5%;
 $ueAppLogoW: 105px;
-$ueBrowseViewBarH: $ueTopBarH; // was 30px
-$ueEditToolBarH: $ueBrowseViewBarH;
-$ueEditToolBarButtonH: $ueEditToolBarH * 0.8;
+//$ueBrowseViewBarH: $ueTopBarH; // was 30px
+$ueEditToolBarH: 25px;
 $ueBrowseLeftPaneW: 25%;
 $ueEditLeftPaneW: 75%;
 
@@ -55,6 +100,7 @@ $ueBrowseGridItemBottomBarH: 40px;
 $colorItemBase: lighten($colorBodyBg, 5%);
 $colorItemFg: lighten($colorItemBase, 20%);
 $colorItemSelected: $colorKey;
+$itemPadLR: 5px;
 
 // Tree
 $treeVCW: 10px;
@@ -65,8 +111,8 @@ $colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
 $colorItemTreeVCHover: $colorAlt1;
 
 //Tabular
-$tabularHeaderH: 20px;
-$tabularTdPadLR: 5px;
+$tabularHeaderH: 18px;
+$tabularTdPadLR: $itemPadLR;
 $tabularTdPadTB: 2px;
 $tabularColorBorder: rgba(white, 0.1);
 $tabularColorBodyBg: darken($colorBodyBg, 10%);
@@ -80,9 +126,11 @@ $controlDisabledOpacity: 0.3;
 $formLabelW: 20%;
 $formInputH: 22px;
 $formRowCtrlsH: 14px;
-$menuLineH: 1.5rem;
+$menuLineH: 1.4rem;
 $scrollbarTrackSize: 10px;
 $scrollbarTrackColorBg: rgba(#000, 0.4);
+$btnStdH: 25px;
+$btnToolbarH: $btnStdH;
 
 // Paths
 $dirImgs: '../images/'; // Relative to platform/css/ directory
@@ -94,3 +142,19 @@ $tickLblH: 15px;
 $tickLblW: 50px;
 $tickH: $ticksH - $tickLblVMargin - $tickLblH;
 $tickW: 1px;
+
+// Imagery
+$imageMainControlBarH: 20px;
+$imageThumbsD: 120px;
+$imageThumbsWrapperH: $imageThumbsD * 1.4;
+$imageThumbPad: 1px;
+
+// Bubbles
+$bubbleArwSize: 10px;
+$bubblePad: $interiorMargin;
+$bubbleMinW: 100px;
+$bubbleMaxW: 300px;
+
+
+// Timing
+$controlFadeMs: 100ms;

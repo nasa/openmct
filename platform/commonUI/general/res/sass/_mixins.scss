@@ -1,8 +1,39 @@
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
 @mixin absPosDefault($offset: 0px, $overflowHidden: hidden) {
     overflow: $overflowHidden;
     position: absolute;
     top: $offset; right: $offset; bottom: $offset; left: $offset;
     width: auto; height: auto;
+}
+
+@mixin trans-prop-nice($props, $t) {
+	@if $t == 0 {
+		@include transition-property(none);
+	} @else {
+		@include transition-property($props);
+		@include transition-duration($t);
+		@include transition-timing-function(ease-in-out);
+	}
 }
 
 @mixin trans-prop-nice-fade($t: 0.5s) {
@@ -17,6 +48,12 @@
 
 @mixin trans-prop-nice-resize-h($t: 0.5s) {
 	@include transition-property(height, bottom, top);
+	@include transition-duration($t);
+	@include transition-timing-function(ease-in-out);
+}
+
+@mixin trans-prop-nice-resize-w($t: 0.5s) {
+	@include transition-property(width, left, right);
 	@include transition-duration($t);
 	@include transition-timing-function(ease-in-out);
 }
@@ -41,12 +78,37 @@
 	border-right: $size/$ratio solid transparent;
 }
 
+@mixin triangle($dir: "left", $size: 5px, $ratio: 1, $color: red) {
+	//$size: $size*2;
+	width: 0;
+	height: 0;
+	$slopedB: $size/$ratio solid transparent;
+	$straightB: $size solid $color;
+	@if $dir == "up" {
+		border-left: $slopedB;
+		border-right: $slopedB;
+		border-bottom: $straightB;
+	} @else if $dir == "right" {
+		border-top: $slopedB;
+		border-bottom: $slopedB;
+		border-left: $straightB;
+	} @else if $dir == "down"  {
+		border-left: $slopedB;
+		border-right: $slopedB;
+		border-top: $straightB;
+	} @else {
+		border-top: $slopedB;
+		border-bottom: $slopedB;
+		border-right: $straightB;
+	}
+}
+
 @mixin bgDiagonalStripes($c: yellow, $a: 0.1, $d: 40px) {
 	@include background-image(linear-gradient(-45deg,
 		rgba($c, $a) 25%, transparent 25%,
 		transparent 50%, rgba($c, $a) 50%,
 		rgba($c, $a) 75%, transparent 75%,
-		transparent 0
+		transparent 100%
 	));
 	background-repeat: repeat;
 	background-size: $d $d;
@@ -69,19 +131,34 @@
 }
 
 @mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $hover: false) {
-	@include background-image(linear-gradient(lighten($bg, 10%), lighten($bg, 5%)));
+	$ltnRatio: 7%;
+	$gradRatio: 5%;
+	$hovRatio: 7%;
+	$bgBase: lighten($bg, $ltnRatio);
+	$fgBase: lighten($fg, $ltnRatio);
+	$gradC1: lighten($bgBase, $gradRatio);
+	$gradC2: $bgBase;
+	$cInvokeBase: lighten($gradC1, $ltnRatio*2);
+
+	@include background-image(linear-gradient($gradC1, $gradC2));
 	@include border-radius($controlCr);
 	@include box-sizing(border-box);
-//	@include box-shadow(rgba(black, 0.3) 0 1px 2px);
 	@include boxShdwSubtle();
 	border: none;
-	border-top: 1px solid lighten($bg, 20%);
+	border-top: 1px solid lighten($gradC1, 2%);
 	color: $fg;
 	display: inline-block;
 	@if $hover == true {
-		&:hover {
-			@include background-image(linear-gradient(lighten($bg, 20%), lighten($bg, 15%)));
+		&:not(.disabled):hover {
+			@include background-image(linear-gradient(lighten($gradC1, $hovRatio), lighten($gradC2, $hovRatio)));
+			color: lighten($fgBase, $hovRatio);
+			&.btn-menu .invoke-menu {
+				color: lighten($cInvokeBase, $hovRatio);
+			}
 		}
+	}
+	&.btn-menu .invoke-menu {
+		color: $cInvokeBase;
 	}
 }
 
@@ -123,18 +200,16 @@
 }
 
 @mixin btnSubtle($bg: $colorBodyBg, $fg: $colorBodyFg) {
-	@include containerSubtle($bg, $fg);
-	&:not(.disabled):hover {
-		@include background-image(linear-gradient(lighten($bg, 20%), lighten($bg, 10%)));
-	}
+	@include containerSubtle($bg, $fg, true);
 }
 
 @mixin btnNoticeable($bg: $colorBodyBg, $fg: $colorBodyFg) {
-	@include containerSubtle($bg, $fg);
-	@include background-image(linear-gradient(lighten($bg, 20%), $bg));
-	&:not(.disabled):hover {
+	// No longer should be used; use btnSubtle instead
+	//@include containerSubtle($bg, $fg, true);
+	//@include background-image(linear-gradient(lighten($bg, 20%), $bg));
+/*	&:not(.disabled):hover {
 		@include background-image(linear-gradient(lighten($bg, 30%), lighten($bg, 10%)));
-	}
+	}*/
 }
 
 @mixin boxIncised($sVal: 0.6) {
@@ -145,8 +220,8 @@
     border: 1px solid $c;
 }
 
-@mixin boxShdwSubtle($sVal: 0.3) {
-    @include box-shadow(rgba(black, $sVal) 0 1px 3px);
+@mixin boxShdwSubtle($sVal: 0.2) {
+    @include box-shadow(rgba(black, $sVal) 0 1px 2px);
 }
 
 @mixin boxShdwLarge($sVal: 0.7) {
@@ -157,6 +232,14 @@
 	@include box-shadow(rgba($color, $sVal) 0 0 30px);
 }
 
+@mixin linearGlow($deg: 0, $c: red, $a: 0.4) {
+    @include background-image(linear-gradient($deg, rgba($c,0), rgba($c, $a) 100%));
+}
+
+@mixin subtleGrad($deg: 0, $c: red, $a0: 0.2, $a1: 0.3) {
+	@include background-image(linear-gradient($deg, rgba($c,$a0), rgba($c, $a1) 100%));
+}
+
 @mixin txtShdwSubtle($sVal: 0.1) {
 	@include text-shadow(rgba(black, $sVal) 0 1px 2px);
 }
@@ -165,13 +248,15 @@
 }
 
 
-@mixin invokeMenu($baseColor) {
+/*
+@mixin invokeMenu($baseColor: $colorBodyFg) {
 	$c: $baseColor;
 	color: $c;
 	&:hover {
 		color: lighten($c, $ltGamma);
 	}
 }
+*/
 
 @mixin menuUlReset() {
     margin: 0;
@@ -226,8 +311,6 @@
 	background-color: rgba($c, $a);
 }
 
-
-
 @mixin testObj($w: 2000px, $h: 1000px, $c: black, $a: 0.1) {
     &:after {
         @include box-sizing(border-box);
@@ -243,4 +326,9 @@
         transform: scaleX(1) scaleY(1) scaleZ(1);
         transform-origin: 50% 50% 0;
     }
+}
+
+@mixin s-stale($a: 0.5) {
+	color: rgba($colorTelemFresh, $a) !important;
+	font-style: italic;
 }

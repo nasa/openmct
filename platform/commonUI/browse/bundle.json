@@ -57,7 +57,8 @@
             {
                 "key": "grid-item",
                 "templateUrl": "templates/items/grid-item.html",
-                "uses": [ "type", "action" ]
+                "uses": [ "type", "action" ],
+                "gestures": [ "info", "menu" ]
             },
             {
                 "key": "object-header",
@@ -121,6 +122,12 @@
                 "depends": [ "typeService", "dialogService", "creationService", "policyService" ]
             }
         ],
+        "runs": [
+            {
+                "implementation": "windowing/WindowTitler.js",
+                "depends": [ "navigationService", "$rootScope", "$document" ]
+            }
+        ],
         "licenses": [
             {
                 "name": "screenfull.js",
@@ -138,7 +145,7 @@
                 "description": "Unique identifer generation (code adapted.)",
                 "author": "Robert Kieffer",
                 "website": "https://github.com/broofa/node-uuid",
-                "copyright": "",
+                "copyright": "Copyright (c) 2010 Robert Kieffer",
                 "license": "license-mit",
                 "link": "http://opensource.org/licenses/MIT"
             }

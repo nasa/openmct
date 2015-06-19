@@ -43,6 +43,10 @@
             {
                 "key": "indicator",
                 "templateUrl": "templates/indicator.html"
+            },
+            {
+              "key": "time-controller",
+              "templateUrl": "templates/controls/time-controller.html"
             }
         ],
         "controllers": [
@@ -177,7 +181,7 @@
                 "key": "label",
                 "templateUrl": "templates/label.html",
                 "uses": [ "type" ],
-                "gestures": [ "drag", "menu" ]
+                "gestures": [ "drag", "menu", "info" ]
             },
             {
                 "key": "node",
@@ -226,7 +230,7 @@
                 "website": "http://necolas.github.io/normalize.css/",
                 "copyright": "Copyright (c) Nicolas Gallagher and Jonathan Neal",
                 "license": "license-mit",
-                "link": "https://github.com/necolas/normalize.css/blob/master/LICENSE.md"
+                "link": "https://github.com/necolas/normalize.css/blob/v1.1.2/LICENSE.md"
             }
         ]
     }
