@@ -54,6 +54,7 @@
 		.view-switcher {
 			//display: none;
 			opacity: 0;
+			z-index: 10;
 		}
 		&:hover .view-switcher {
 			// Show the view switcher on frame hover
@@ -66,12 +67,5 @@
 		.name {
 			display: none;
 		}
-	}
-}
-
-.edit-main .frame.child-frame.panel {
-	&:hover {
-		border-color: $colorKey;
-		@include boxShdwLarge();
 	}
 }
