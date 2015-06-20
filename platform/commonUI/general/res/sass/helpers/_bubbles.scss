@@ -19,6 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
+//************************************************* GENERAL
+.bubble-container {
+	pointer-events: none;
+}
+
+
 //************************************************* LAYOUT
 
 .l-infobubble-wrapper {

@@ -1,5 +1,6 @@
 [
     "BrowseController",
+    "BrowseObjectController",
     "creation/CreateAction",
     "creation/CreateActionProvider",
     "creation/CreateMenuController",

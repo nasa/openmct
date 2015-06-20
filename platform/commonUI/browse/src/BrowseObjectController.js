@@ -21,53 +21,49 @@
  *****************************************************************************/
 /*global define,Promise*/
 
-/**
- * Module defining ViewSwitcherController. Created by vwoeltje on 11/7/14.
- */
 define(
     [],
     function () {
         "use strict";
 
         /**
-         * Controller for the view switcher; populates and maintains a list
-         * of applicable views for a represented domain object.
+         * Controller for the `browse-object` representation of a domain
+         * object (the right-hand side of Browse mode.)
          * @constructor
          */
-        function ViewSwitcherController($scope, $timeout) {
-            // If the view capability gets refreshed, try to
-            // keep the same option chosen.
-            function findMatchingOption(options, selected) {
-                var i;
+        function BrowseObjectController($scope, $location, $route) {
+            function setViewForDomainObject(domainObject) {
+                var locationViewKey = $location.search().view;
 
-                if (selected) {
-                    for (i = 0; i < options.length; i += 1) {
-                        if (options[i].key === selected.key) {
-                            return options[i];
-                        }
+                function selectViewIfMatching(view) {
+                    if (view.key === locationViewKey) {
+                        $scope.representation = $scope.representation || {};
+                        $scope.representation.selected = view;
                     }
                 }
 
-                return options[0];
-            }
-
-            // Get list of views, read from capability
-            function updateOptions(views) {
-                if (Array.isArray(views)) {
-                    $timeout(function () {
-                        $scope.ngModel.selected = findMatchingOption(
-                            views,
-                            ($scope.ngModel || {}).selected
-                        );
-                    }, 0);
+                if (locationViewKey) {
+                    ((domainObject && domainObject.useCapability('view')) || [])
+                        .forEach(selectViewIfMatching);
                 }
             }
 
-            // Update view options when the in-scope results of using the
-            // view capability change.
-            $scope.$watch("view", updateOptions);
+            function updateQueryParam(viewKey) {
+                var unlisten, priorRoute = $route.current;
+
+                if (viewKey) {
+                    $location.search('view', viewKey);
+                    unlisten = $scope.$on('$locationChangeSuccess', function () {
+                        $route.current = priorRoute;
+                        unlisten();
+                    });
+                }
+            }
+
+            $scope.$watch('domainObject', setViewForDomainObject);
+            $scope.$watch('representation.selected.key', updateQueryParam);
         }
 
-        return ViewSwitcherController;
+        return BrowseObjectController;
     }
 );

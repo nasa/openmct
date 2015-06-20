@@ -62,8 +62,6 @@ define(
                         points: buf.getLength()
                     };
                 });
-
-                subplot.update();
             }
 
             return {

@@ -52,7 +52,7 @@ define(
          *
          * @constructor
          */
-        function PlotController($scope, telemetryFormatter, telemetryHandler) {
+        function PlotController($scope, telemetryFormatter, telemetryHandler, throttle) {
             var subPlotFactory = new SubPlotFactory(telemetryFormatter),
                 modeOptions = new PlotModeOptions([], subPlotFactory),
                 subplots = [],
@@ -60,6 +60,7 @@ define(
                 limitTracker,
                 updater,
                 handle,
+                scheduleUpdate,
                 domainOffset;
 
             // Populate the scope with axis information (specifically, options
@@ -91,9 +92,7 @@ define(
 
             // Update all sub-plots
             function update() {
-                modeOptions.getModeHandler()
-                    .getSubPlots()
-                    .forEach(updateSubplot);
+                scheduleUpdate();
             }
 
             // Reinstantiate the plot updater (e.g. because we have a
@@ -171,6 +170,12 @@ define(
 
             // Unsubscribe when the plot is destroyed
             $scope.$on("$destroy", releaseSubscription);
+            
+            // Create a throttled update function
+            scheduleUpdate = throttle(function () {
+                modeOptions.getModeHandler().getSubPlots()
+                    .forEach(updateSubplot);
+            });
 
             return {
                 /**

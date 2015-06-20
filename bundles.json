@@ -9,6 +9,7 @@
     "platform/commonUI/general",
     "platform/commonUI/inspect",
     "platform/containment",
+    "platform/execution",
     "platform/telemetry",
     "platform/features/layout",
     "platform/features/pages",
