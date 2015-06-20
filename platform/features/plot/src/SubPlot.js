@@ -270,6 +270,7 @@ define(
                     if (panStart) {
                         updatePan();
                         updateDrawingBounds();
+                        updateTicks();
                     }
                 },
                 /**
@@ -307,6 +308,7 @@ define(
                         marqueeStart = undefined;
                         updateMarqueeBox();
                         updateDrawingBounds();
+                        updateTicks();
                     }
                     if (panStart) {
                         // End panning
