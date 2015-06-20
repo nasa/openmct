@@ -51,7 +51,13 @@ define(
          *
          * @constructor
          */
-        function PlotController($scope, telemetryFormatter, telemetryHandler, throttle) {
+        function PlotController(
+            $scope,
+            telemetryFormatter,
+            telemetryHandler,
+            throttle,
+            PLOT_FIXED_DURATION
+        ) {
             var subPlotFactory = new SubPlotFactory(telemetryFormatter),
                 modeOptions = new PlotModeOptions([], subPlotFactory),
                 subplots = [],
@@ -100,7 +106,7 @@ define(
                     handle,
                     ($scope.axes[0].active || {}).key,
                     ($scope.axes[1].active || {}).key,
-                    15000 // 15 seconds
+                    PLOT_FIXED_DURATION
                 );
             }
 
