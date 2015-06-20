@@ -58,6 +58,7 @@ define(
                 marqueeStart,
                 panStart,
                 panStartBounds,
+                subPlotBounds,
                 hoverCoordinates,
                 isHovering = false;
 
@@ -90,8 +91,7 @@ define(
             // pixel coordinates in the canvas area) from a mouse
             // event object.
             function toMousePosition($event) {
-                var target = $event.target,
-                    bounds = target.getBoundingClientRect();
+                var bounds = subPlotBounds;
 
                 return {
                     x: $event.clientX - bounds.left,
@@ -262,8 +262,24 @@ define(
                  */
                 hover: function ($event) {
                     isHovering = true;
+                    subPlotBounds = $event.target.getBoundingClientRect();
                     mousePosition = toMousePosition($event);
                     updateHoverCoordinates();
+                    if (marqueeStart) {
+                        updateMarqueeBox();
+                    }
+                    if (panStart) {
+                        updatePan();
+                        updateDrawingBounds();
+                        updateTicks();
+                    }
+                },
+                /**
+                 * Continue a previously-start pan or zoom gesture.
+                 * @param $event the mouse event
+                 */
+                continueDrag: function ($event) {
+                    mousePosition = toMousePosition($event);
                     if (marqueeStart) {
                         updateMarqueeBox();
                     }
@@ -277,7 +293,8 @@ define(
                  * Initiate a marquee zoom action.
                  * @param $event the mouse event
                  */
-                startMarquee: function ($event) {
+                startDrag: function ($event) {
+                    subPlotBounds = $event.target.getBoundingClientRect();
                     mousePosition = toMousePosition($event);
                     if (event.altKey) {
                         // Start panning
@@ -301,8 +318,9 @@ define(
                  * Complete a marquee zoom action.
                  * @param $event the mouse event
                  */
-                endMarquee: function ($event) {
+                endDrag: function ($event) {
                     mousePosition = toMousePosition($event);
+                    subPlotBounds = undefined;
                     if (marqueeStart) {
                         marqueeZoom(marqueeStart, mousePosition);
                         marqueeStart = undefined;
