@@ -56,6 +56,8 @@ define(
                 domainOffset,
                 mousePosition,
                 marqueeStart,
+                panStart,
+                panStartBounds,
                 hoverCoordinates,
                 isHovering = false;
 
@@ -155,6 +157,25 @@ define(
                     tickGenerator.generateRangeTicks(RANGE_TICKS);
             }
 
+            function updatePan() {
+                var start, current, delta, nextOrigin;
+
+                // Clear the previous panning pan-zoom state
+                panZoomStack.popPanZoom();
+
+                // Calculate what the new resulting pan-zoom should be
+                start = mousePositionToDomainRange(panStart);
+                current = mousePositionToDomainRange(mousePosition);
+                delta = [ current[0] - start[0], current[1] - start[1] ];
+                nextOrigin = [
+                    panStartBounds.origin[0] - delta[0],
+                    panStartBounds.origin[1] - delta[1]
+                ];
+
+                // ...and push a new one at the current mouse position
+                panZoomStack.pushPanZoom(nextOrigin, panStartBounds.dimensions);
+            }
+
 
             // Perform a marquee zoom.
             function marqueeZoom(start, end) {
@@ -246,14 +267,34 @@ define(
                     if (marqueeStart) {
                         updateMarqueeBox();
                     }
+                    if (panStart) {
+                        updatePan();
+                        updateDrawingBounds();
+                    }
                 },
                 /**
                  * Initiate a marquee zoom action.
                  * @param $event the mouse event
                  */
                 startMarquee: function ($event) {
-                    mousePosition = marqueeStart = toMousePosition($event);
-                    updateMarqueeBox();
+                    mousePosition = toMousePosition($event);
+                    if (event.altKey) {
+                        // Start panning
+                        panStart = mousePosition;
+                        panStartBounds = panZoomStack.getPanZoom();
+                        // We're starting a pan, so add this back as a
+                        // state on the stack; it will get replaced
+                        // during the pan.
+                        panZoomStack.pushPanZoom(
+                            panStartBounds.origin,
+                            panStartBounds.dimensions
+                        );
+                        $event.preventDefault();
+                    } else {
+                        // Start marquee zooming
+                        marqueeStart = mousePosition;
+                        updateMarqueeBox();
+                    }
                 },
                 /**
                  * Complete a marquee zoom action.
@@ -266,6 +307,11 @@ define(
                         marqueeStart = undefined;
                         updateMarqueeBox();
                         updateDrawingBounds();
+                    }
+                    if (panStart) {
+                        // End panning
+                        panStart = undefined;
+                        panStartBounds = undefined;
                     }
                 },
                 /**
