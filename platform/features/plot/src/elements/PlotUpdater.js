@@ -146,17 +146,16 @@ define(
                         return lineBuffer.getRangeExtrema();
                     }).reduce(reduceExtrema);
 
+                    // Calculate best-fit dimensions
                     dimensions = (rangeExtrema[0] === rangeExtrema[1]) ?
                             [dimensionsOf(domainExtrema), 2.0 ] :
                             [dimensionsOf(domainExtrema), dimensionsOf(rangeExtrema)];
                     origin = [originOf(domainExtrema), originOf(rangeExtrema)];
 
+                    // ...then enforce a fixed duration if needed
                     if (fixedDuration !== undefined) {
-                        origin[0] = Math.min(
-                            origin[0],
-                            origin[0] + dimensions[0] - fixedDuration
-                        );
-                        dimensions[0] = Math.max(dimensions[0], fixedDuration);
+                        origin[0] = origin[0] + dimensions[0] - fixedDuration;
+                        dimensions[0] = fixedDuration;
                     }
                 }
             }
@@ -169,7 +168,9 @@ define(
                 function enforceDurationForBuffer(plotLineBuffer) {
                     var index = plotLineBuffer.findInsertionIndex(cutoff);
                     if (index > 0) {
-                        plotLineBuffer.trim(index);
+                        // Leave one point untrimmed, such that line will
+                        // continue off left edge of visible plot area.
+                        plotLineBuffer.trim(index - 1);
                     }
                 }
 
@@ -196,7 +197,10 @@ define(
             // Update plot extremea and enforce maximum duration
             function updateBounds() {
                 updateExtrema();
-                enforceDuration();
+                // Currently not called; this will trim out off-screen
+                // data from the plot, but doing this will disallow things
+                // like pan-back, so debatable if we really want to do this
+                //enforceDuration();
             }
 
             // Handle new telemetry data
