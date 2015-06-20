@@ -43,9 +43,9 @@ define(
                 var mid = Math.floor((min + max) / 2),
                     found = buffer[mid * 2];
 
-                // Collisions are not wanted
+                // On collisions, insert at same index
                 if (found === value) {
-                    return -1;
+                    return mid;
                 }
 
                 // Otherwise, if we're down to a single index,

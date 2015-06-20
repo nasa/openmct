@@ -99,7 +99,8 @@ define(
                 updater = new PlotUpdater(
                     handle,
                     ($scope.axes[0].active || {}).key,
-                    ($scope.axes[1].active || {}).key
+                    ($scope.axes[1].active || {}).key,
+                    15000 // 15 seconds
                 );
             }
 
@@ -161,7 +162,7 @@ define(
 
             // Unsubscribe when the plot is destroyed
             $scope.$on("$destroy", releaseSubscription);
-            
+
             // Create a throttled update function
             scheduleUpdate = throttle(function () {
                 modeOptions.getModeHandler().getSubPlots()

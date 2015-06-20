@@ -42,8 +42,10 @@ define(
          * @param {TelemetryHandle} handle the handle to telemetry access
          * @param {string} domain the key to use when looking up domain values
          * @param {string} range the key to use when looking up range values
+         * @param {number} maxDuration maximum plot duration to display
+         * @param {number} maxPoints maximum number of points to display
          */
-        function PlotUpdater(handle, domain, range, maxPoints) {
+        function PlotUpdater(handle, domain, range, fixedDuration, maxPoints) {
             var ids = [],
                 lines = {},
                 dimensions = [0, 0],
@@ -107,6 +109,7 @@ define(
                 lines = next;
             }
 
+
             // Initialize the domain offset, based on these observed values
             function initializeDomainOffset(values) {
                 domainOffset =
@@ -147,6 +150,35 @@ define(
                             [dimensionsOf(domainExtrema), 2.0 ] :
                             [dimensionsOf(domainExtrema), dimensionsOf(rangeExtrema)];
                     origin = [originOf(domainExtrema), originOf(rangeExtrema)];
+
+                    if (fixedDuration !== undefined) {
+                        origin[0] = Math.min(
+                            origin[0],
+                            origin[0] + dimensions[0] - fixedDuration
+                        );
+                        dimensions[0] = Math.max(dimensions[0], fixedDuration);
+                    }
+                }
+            }
+
+            // Enforce maximum duration on all plot lines; not that
+            // domain extrema must be up-to-date for this to behave correctly.
+            function enforceDuration() {
+                var cutoff;
+
+                function enforceDurationForBuffer(plotLineBuffer) {
+                    var index = plotLineBuffer.findInsertionIndex(cutoff);
+                    if (index > 0) {
+                        plotLineBuffer.trim(index);
+                    }
+                }
+
+                if (fixedDuration !== undefined &&
+                        domainExtrema !== undefined &&
+                            (domainExtrema[1] - domainExtrema[0] > fixedDuration)) {
+                    cutoff = domainExtrema[1] - fixedDuration;
+                    bufferArray.forEach(enforceDurationForBuffer);
+                    updateExtrema(); // Extrema may have changed now
                 }
             }
 
@@ -159,6 +191,12 @@ define(
                         handle.getRangeValue(domainObject, range)
                     );
                 }
+            }
+
+            // Update plot extremea and enforce maximum duration
+            function updateBounds() {
+                updateExtrema();
+                enforceDuration();
             }
 
             // Handle new telemetry data
@@ -180,8 +218,8 @@ define(
                 // Add new data
                 objects.forEach(addPointFor);
 
-                // Finally, update extrema
-                updateExtrema();
+                // Then, update extrema
+                updateBounds();
             }
 
             // Add historical data for this domain object
@@ -213,12 +251,12 @@ define(
                     line.addSeries(series, domain, range);
                 }
 
-                // Finally, update extrema
-                updateExtrema();
+                // Update extrema
+                updateBounds();
             }
 
             // Use a default MAX_POINTS if none is provided
-            maxPoints = maxPoints || MAX_POINTS;
+            maxPoints = maxPoints !== undefined ? maxPoints : MAX_POINTS;
 
             // Initially prepare state for these objects.
             // Note that this may be an empty array at this time,
