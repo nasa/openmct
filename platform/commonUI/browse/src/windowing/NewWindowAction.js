@@ -44,8 +44,7 @@ define(
                 perform: function () {
                     // Places the current Url into a variable
                     // Then the Url is opened using $window
-                    var currentUrl = $window.location.href;
-                    $window.open(currentUrl);
+                    $window.open($window.location.href);
                 }
             };
         }
