@@ -22,7 +22,7 @@
 /*global define,Promise*/
 
 /**
- * Module defining NewWindowAction. Created by vwoeltje on 11/18/14.
+ * Module defining NewTabAction (Originally NewWindowAction). Created by vwoeltje on 11/18/14.
  */
 define(
     [],

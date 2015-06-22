@@ -22,8 +22,8 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine,afterEach,window*/
 
 define(
-    ["../../src/windowing/NewWindowAction"],
-    function (NewWindowAction) {
+    ["../../src/windowing/NewTabAction"],
+    function (NewTabAction) {
         "use strict";
         
         describe("The new tab action", function () {
