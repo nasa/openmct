@@ -39,11 +39,13 @@ define(
         function NewWindowAction($window) {
             return {
                 /**
-                 * Open the object in a new window (currently a stub)
+                 * Open the object in a new window
                  */
                 perform: function () {
+                    // Places the current Url into a variable
+                    // Then the Url is opened using $window
                     var currentUrl = $window.location.href;
-                    window.open(currentUrl);
+                    $window.open(currentUrl);
                 },
                 
                 getMetadata: function () {
