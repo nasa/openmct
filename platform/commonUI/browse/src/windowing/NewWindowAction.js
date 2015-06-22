@@ -46,17 +46,6 @@ define(
                     // Then the Url is opened using $window
                     var currentUrl = $window.location.href;
                     $window.open(currentUrl);
-                },
-                
-                getMetadata: function () {
-                    // We override getMetadata, this is temporary
-                    // Until the css/html code views the button on
-                    // its own
-                    var metadata = Object.create(NewWindowAction);
-                    metadata.glyph = "y";
-                    metadata.description = "ENTER DESC HERE";
-                    metadata.group = "windowing";
-                    return metadata;
                 }
             };
         }
