@@ -1,0 +1,45 @@
+{
+    "name": "Event Message Generator",
+    "description": "Example of a component that produces event data.",
+    "extensions": {
+        "components": [
+            {
+                "implementation": "EventTelemetryProvider.js",
+                "type": "provider",
+                "provides": "telemetryService",
+                "depends": [ "$q", "$timeout" ]
+            }
+        ],
+        "types": [
+            {
+                "key": "eventGenerator",
+                "name": "Event Message Generator",
+                "glyph": "f",
+                "description": "An event message generator",
+                "features": "creation",
+                "model": {
+                    "telemetry": {
+                        "period": 10
+                    }
+                },
+                "telemetry": {
+                    "source": "eventGenerator",
+                    "ranges": [
+                        { "format": "string" }
+                    ]
+                },
+                "properties": [
+                    {
+                        "name": "Period",
+                        "control": "textfield",
+                        "cssclass": "l-small l-numeric",
+                        "key": "period",
+                        "required": true,
+                        "property": [ "telemetry", "period" ],
+                        "pattern": "^\\d*(\\.\\d*)?$"
+                    }
+                ]
+            }
+        ]
+    }
+}
