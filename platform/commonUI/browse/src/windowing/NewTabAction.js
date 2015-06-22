@@ -30,8 +30,8 @@ define(
         "use strict";
 
         /**
-         * The new window action allows a domain object to be opened
-         * into a new browser window. (Currently this is a stub, present
+         * The new tab action allows a domain object to be opened
+         * into a new browser tab. (Currently this is a stub, present
          * to allow the control to appear in the appropriate location in
          * the user interface.)
          * @constructor
@@ -39,7 +39,7 @@ define(
         function NewTabAction($window) {
             return {
                 /**
-                 * Open the object in a new window
+                 * Open the object in a new tab
                  */
                 perform: function () {
                     // Places the current Url into a variable
