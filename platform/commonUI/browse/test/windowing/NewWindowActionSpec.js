@@ -32,6 +32,9 @@ define(
                 mockCurrentUrl;
 
             beforeEach(function () {
+                // Creates a mockWindow from $window, then
+                // the mockWindow's location.href is set
+                // to a mock Url
                 mockWindow = jasmine.createSpyObj("$window", ["open", "location"]);   
                 mockWindow.location.href = "http://www.mockUrl.com";
                 action = new NewWindowAction(mockWindow);
@@ -39,6 +42,8 @@ define(
             });
 
             it("New window is opened", function () {
+                // The expection is that the mockWindow
+                // will be called with it's location.href
                 action.perform();
                 expect(mockWindow.open).toHaveBeenCalledWith("http://www.mockUrl.com");
             });
