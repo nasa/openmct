@@ -43,6 +43,17 @@ define(
                  */
                 perform: function () {
                     $window.alert("Not yet functional. This will open objects in a new window.");
+                },
+                
+                getMetadata: function () {
+                    // We override getMetadata, this is temporary
+                    // Until the css/html code views the button on
+                    // its own
+                    var metadata = Object.create(NewWindowAction);
+                    metadata.glyph = "y";
+                    metadata.description = "ENTER DESC HERE";
+                    metadata.group = "windowing";
+                    return metadata;
                 }
             };
         }
