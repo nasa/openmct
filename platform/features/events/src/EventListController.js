@@ -38,8 +38,7 @@ define(
 		 */
 		function EventListController($scope, formatter) {
 			var populator;
-
-
+            
 			// Get a set of populated, ready-to-display rows for the
 			// latest data values.
 			function getRows(telemetry) {
@@ -53,6 +52,9 @@ define(
 			function updateRows() {
 				var telemetry = $scope.telemetry;
 				$scope.rows = telemetry ? getRows(telemetry) : [];
+                // We want to display the rows in reverse order
+                // i.e. from the top to the bottom of the page
+                $scope.rows = $scope.rows.reverse();
 			}
 
 			// Set up columns based on telemetry metadata. This will

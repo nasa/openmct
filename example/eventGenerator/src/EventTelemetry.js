@@ -90,11 +90,13 @@ define(
 		        var ind = i%messages.length;
                 return "TEMP " + i.toString() + "-" + messages[ind][2] + "[" + domainDelta.toString() + "]";
 	        };
-
+            
+            
 	        generatorData.getSeverityValue = function (i) {
 		        var ind = i%messages.length;
 		        return messages[ind][0];
 	        };
+            
 
             return generatorData;
         }

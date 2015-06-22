@@ -38,7 +38,7 @@ define(
 			 * Look up the most recent values from a set of data objects.
 			 * Returns an array of objects in the order in which data
 			 * should be displayed; each element is an object with
-			 * two properties:
+             * two properties:
 			 *
 			 * * objectIndex: The index of the domain object associated
 			 *                with the data point to be displayed in that
