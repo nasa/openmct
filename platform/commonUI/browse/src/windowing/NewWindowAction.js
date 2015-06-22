@@ -42,7 +42,7 @@ define(
                  * Open the object in a new window (currently a stub)
                  */
                 perform: function () {
-                    $window.alert("Not yet functional. This will open objects in a new window.");
+                    $window.alert($window.location.href);
                 },
                 
                 getMetadata: function () {
