@@ -42,7 +42,8 @@ define(
                  * Open the object in a new window (currently a stub)
                  */
                 perform: function () {
-                    $window.alert($window.location.href);
+                    var currentUrl = $window.location.href;
+                    window.open(currentUrl);
                 },
                 
                 getMetadata: function () {
