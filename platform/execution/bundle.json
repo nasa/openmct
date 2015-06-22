@@ -1,0 +1,11 @@
+{
+    "extensions": {
+        "services": [
+            {
+                "key": "workerService",
+                "implementation": "WorkerService.js",
+                "depends": [ "$window", "workers[]" ]
+            }
+        ]
+    }
+}
