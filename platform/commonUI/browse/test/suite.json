@@ -10,6 +10,6 @@
     "navigation/NavigateAction",
     "navigation/NavigationService",
     "windowing/FullscreenAction",
-    "windowing/NewWindowAction",
+    "windowing/NewTabAction",
     "windowing/WindowTitler"
 ]

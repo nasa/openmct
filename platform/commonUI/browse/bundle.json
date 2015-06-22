@@ -92,8 +92,8 @@
             },
             {
                 "key": "window",
-                "implementation": "windowing/NewWindowAction.js",
-                "description": "Open this object in a new window",
+                "implementation": "windowing/NewTabAction.js",
+                "description": "Open this object in a new tab",
                 "category": "view-control",
                 "depends": [ "$window" ],
                 "group": "windowing",

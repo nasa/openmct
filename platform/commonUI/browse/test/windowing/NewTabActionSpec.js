@@ -19,36 +19,35 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
+/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine,afterEach,window*/
 
-/**
- * Module defining NewWindowAction. Created by vwoeltje on 11/18/14.
- */
 define(
-    [],
-    function () {
+    ["../../src/windowing/NewWindowAction"],
+    function (NewWindowAction) {
         "use strict";
+        
+        describe("The new tab action", function () {
+            var action,
+                mockWindow,
+                mockCurrentUrl;
 
-        /**
-         * The new window action allows a domain object to be opened
-         * into a new browser window. (Currently this is a stub, present
-         * to allow the control to appear in the appropriate location in
-         * the user interface.)
-         * @constructor
-         */
-        function NewWindowAction($window) {
-            return {
-                /**
-                 * Open the object in a new window
-                 */
-                perform: function () {
-                    // Places the current Url into a variable
-                    // Then the Url is opened using $window
-                    $window.open($window.location.href);
-                }
-            };
-        }
+            beforeEach(function () {
+                // Creates a mockWindow from $window, then
+                // the mockWindow's location.href is set
+                // to a mock Url
+                mockWindow = jasmine.createSpyObj("$window", ["open", "location"]);   
+                mockWindow.location.href = "http://www.mockUrl.com";
+                action = new NewTabAction(mockWindow);
+                
+            });
 
-        return NewWindowAction;
+            it("New tab with current url is opened", function () {
+                // The expection is that the mockWindow
+                // will be called with it's location.href
+                action.perform();
+                expect(mockWindow.open).toHaveBeenCalledWith("http://www.mockUrl.com");
+            });
+            
+        });
     }
 );
