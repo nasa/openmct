@@ -59,6 +59,7 @@ define(
                 releaseSubscription();
                 self.date = "";
                 self.time = "";
+                self.zone = "";
                 self.imageUrl = "";
                 self.handle = domainObject && telemetryHandler.handle(
                     domainObject,
@@ -78,11 +79,16 @@ define(
         ImageryController.prototype.updateValues = function () {
             var imageObject =
                     this.handle && this.handle.getTelemetryObjects()[0],
+                timestamp,
                 m;
             if (imageObject && !this.isPaused) {
-                m = moment.utc(this.handle.getDomainValue(imageObject));
-                this.date = m.format(DATE_FORMAT);
-                this.time = m.format(TIME_FORMAT);
+                timestamp = this.handle.getDomainValue(imageObject);
+                m = timestamp !== undefined ?
+                        moment.utc(timestamp) :
+                        undefined;
+                this.date = m ? m.format(DATE_FORMAT) : "";
+                this.time = m ? m.format(TIME_FORMAT) : "";
+                this.zone = m ? "UTC" : "";
                 this.imageUrl = this.handle.getRangeValue(imageObject);
             }
         };
@@ -112,7 +118,7 @@ define(
          * @returns {string} the time
          */
         ImageryController.prototype.getZone = function () {
-            return "UTC";
+            return this.zone;
         };
 
         /**
