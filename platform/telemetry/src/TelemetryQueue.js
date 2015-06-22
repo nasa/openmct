@@ -35,27 +35,67 @@ define(
          * @constructor
          */
         function TelemetryQueue() {
-            var queue = [];
+            // General approach here:
+            // * Maintain a queue as an array of objects containing key-value
+            //   pairs. Putting values into the queue will assign to the 
+            //   earliest-available queue position for the associated key 
+            //   (appending to the array if necessary.)
+            // * Maintain a set of counts for each key, such that determining
+            //   the next available queue position is easy; O(1) insertion.
+            // * When retrieving objects, pop off the queue and decrement 
+            //   counts. This provides O(n+k) or O(k) retrieval for a queue
+            //   of length n with k unique keys; this depends on whether
+            //   the browser's implementation of Array.prototype.shift is
+            //   O(n) or O(1).
+            
+            // Graphically (indexes at top, keys along side, values as *'s),
+            // if we have a queue that looks like:
+            //   0 1 2 3 4
+            // a * * * * *
+            // b * * 
+            // c * * *
+            //
+            // And we put a new value for b, we expect:
+            //   0 1 2 3 4
+            // a * * * * *
+            // b * * *
+            // c * * *            
+            var queue = [],
+                counts = {};
 
             // Look up an object in the queue that does not have a value
             // assigned to this key (or, add a new one)
             function getFreeObject(key) {
-                var index = 0, object;
+                var index = counts[key] || 0, object;
 
-                // Look for an existing queue position where we can store
-                // a value to this key without overwriting an existing value.
-                for (index = 0; index < queue.length; index += 1) {
-                    if (queue[index][key] === undefined) {
-                        return queue[index];
-                    }
+                // Track the largest free position for this key
+                counts[key] = index + 1;
+                
+                // If it's before the end of the queue, add it there
+                if (index < queue.length) {
+                    return queue[index];
                 }
 
-                // If we made it through the loop, values have been assigned
+                // Otherwise, values have been assigned
                 // to that key in all queued containers, so we need to queue
                 // up a new  container for key-value pairs.
                 object = {};
                 queue.push(object);
                 return object;
+            }
+            
+            // Decrement counts for a specific key
+            function decrementCount(key) {
+                if (counts[key] < 2) {
+                    delete counts[key];
+                } else {
+                    counts[key] -= 1;
+                }
+            }
+            
+            // Decrement all counts
+            function decrementCounts() {
+                Object.keys(counts).forEach(decrementCount);
             }
 
             return {
@@ -74,6 +114,8 @@ define(
                  * @return {object} key-value pairs
                  */
                 poll: function () {
+                    // Decrement counts for the object that will be popped
+                    decrementCounts();
                     return queue.shift();
                 },
                 /**
