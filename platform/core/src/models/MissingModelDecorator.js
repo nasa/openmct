@@ -26,6 +26,11 @@ define(
     function () {
         "use strict";
 
+        /**
+         * Adds placeholder domain object models for any models which
+         * fail to load from the underlying model service.
+         * @implements {ModelService}
+         */
         function MissingModelDecorator(modelService) {
             function missingModel(id) {
                 return {
