@@ -296,7 +296,8 @@ define(
                 startDrag: function ($event) {
                     subPlotBounds = $event.target.getBoundingClientRect();
                     mousePosition = toMousePosition($event);
-                    if (event.altKey) {
+                    // Treat any modifier key as a pan
+                    if (event.altKey || event.shiftKey || event.ctrlKey) {
                         // Start panning
                         panStart = mousePosition;
                         panStartBounds = panZoomStack.getPanZoom();
