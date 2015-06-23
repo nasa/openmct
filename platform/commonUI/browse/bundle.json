@@ -92,10 +92,11 @@
             },
             {
                 "key": "window",
+                "name": "Open in a new tab",
                 "implementation": "windowing/NewTabAction.js",
                 "description": "Open this object in a new tab",
-                "category": "view-control",
-                "depends": [ "$window" ],
+                "category": ["view-control", "contextual"],
+                "depends": [ "$window", "navigationService" ],
                 "group": "windowing",
                 "glyph": "y"
             },

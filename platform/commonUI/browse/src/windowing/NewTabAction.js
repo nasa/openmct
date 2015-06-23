@@ -36,15 +36,27 @@ define(
          * the user interface.)
          * @constructor
          */
-        function NewTabAction($window) {
+        function NewTabAction($window, navigationService) {
+            function getNavigatedObject() {
+                var navigatedObject = navigationService.getNavigation();
+                return navigatedObject;
+            }
+            
             return {
                 /**
                  * Open the object in a new tab
                  */
                 perform: function () {
-                    // Places the current Url into a variable
-                    // Then the Url is opened using $window
-                    $window.open($window.location.href);
+                    var currentDomainObject = getNavigatedObject(),
+                        context = currentDomainObject &&
+                            currentDomainObject.getCapability('context'),
+                        objectPath = context ? context.getPath() : [],
+                        ids = objectPath.map(function (currentDomainObject) {
+                            return currentDomainObject.getId();
+                        }),
+                        partialPath = "/browse/" + ids.slice(1).join("/");
+                    
+                    window.alert(partialPath);
                 }
             };
         }
