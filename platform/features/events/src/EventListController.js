@@ -24,7 +24,7 @@
 /**
  * Module defining EventListController. 
  * Created by chacskaylo on 06/18/2015. 
- * Modified by slhale on 06/23/2015.
+ * Modified by shale on 06/23/2015.
  */
 define(
 	["./DomainColumn", "./RangeColumn", "./EventListPopulator"],
@@ -114,12 +114,12 @@ define(
 				if (Object.keys(rangeKeys).length < 1) {
 					columns.push(new RangeColumn({name: "Message"}, formatter));
 				}
-
+                
 				// We have all columns now; use them to initializer
 				// the populator, which will use them to generate
 				// actual rows and headers.
 				populator = new EventListPopulator(columns);
-
+                
 				// Initialize headers
 				$scope.headers = populator.getHeaders();
 

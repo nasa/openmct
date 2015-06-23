@@ -24,7 +24,7 @@
 /**
  * Module defining EventTelemetry. 
  * Created by chacskaylo on 06/18/2015.
- * Modified by slhale on 06/23/2015. 
+ * Modified by shale on 06/23/2015. 
  */
 define(
     [],

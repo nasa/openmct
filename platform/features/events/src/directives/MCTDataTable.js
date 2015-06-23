@@ -22,7 +22,7 @@
 /*global define,Promise*/
 
 /**
- * Module defining MCTDataTable. Created by slhale on 06/22/2015.
+ * Module defining MCTDataTable. Created by shale on 06/22/2015.
  */
 define(
     [],
