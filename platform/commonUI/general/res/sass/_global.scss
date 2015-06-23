@@ -69,6 +69,10 @@ span {
 	*/
 }
 
+mct-container {
+	display: block;
+}
+
 .abs {
 	position: absolute;
 	top: 0;
@@ -115,6 +119,13 @@ span {
 .hide,
 .hidden {
 	display: none !important;
+}
+
+.paused {
+	&:not(.s-btn) {
+		border-color: $colorPausedBg !important;
+		color: $colorPausedBg !important;
+	}
 }
 
 .sep {

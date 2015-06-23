@@ -9,6 +9,7 @@
     "capabilities/ContextualDomainObject",
     "capabilities/CoreCapabilityProvider",
     "capabilities/DelegationCapability",
+    "capabilities/MetadataCapability",
     "capabilities/MutationCapability",
     "capabilities/PersistenceCapability",
     "capabilities/RelationshipCapability",
@@ -23,6 +24,7 @@
     "objects/DomainObjectProvider",
 
     "services/Now",
+    "services/Throttle",
 
     "types/MergeModels",
     "types/TypeCapability",

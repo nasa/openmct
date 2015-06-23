@@ -1,0 +1,75 @@
+{
+    "name": "Entanglement",
+    "description": "Tools to assist you in entangling the world of WARP.",
+    "configuration": {},
+    "extensions": {
+        "actions": [
+            {
+                "key": "move",
+                "name": "Move",
+                "description": "Move object to another location.",
+                "glyph": "f",
+                "category": "contextual",
+                "implementation": "actions/MoveAction.js",
+                "depends": ["locationService", "moveService"]
+            },
+            {
+                "key": "copy",
+                "name": "Duplicate",
+                "description": "Duplicate object to another location.",
+                "glyph": "+",
+                "category": "contextual",
+                "implementation": "actions/CopyAction.js",
+                "depends": ["locationService", "copyService"]
+            },
+            {
+                "key": "link",
+                "name": "Create Link",
+                "description": "Create Link to object in another location.",
+                "glyph": "\u00E8",
+                "category": "contextual",
+                "implementation": "actions/LinkAction.js",
+                "depends": ["locationService", "linkService"]
+            }
+        ],
+        "components": [
+        ],
+        "controllers": [
+        ],
+        "capabilities": [
+        ],
+        "services": [
+            {
+                "key": "moveService",
+                "name": "Move Service",
+                "description": "Provides a service for moving objects",
+                "implementation": "services/MoveService.js",
+                "depends": ["policyService", "linkService"]
+            },
+            {
+                "key": "linkService",
+                "name": "Link Service",
+                "description": "Provides a service for linking objects",
+                "implementation": "services/LinkService.js",
+                "depends": ["policyService"]
+            },
+            {
+                "key": "copyService",
+                "name": "Copy Service",
+                "description": "Provides a service for copying objects",
+                "implementation": "services/CopyService.js",
+                "depends": ["$q", "creationService", "policyService"]
+            },
+            {
+                "key": "locationService",
+                "name": "Location Service",
+                "description": "Provides a service for prompting a user for locations.",
+                "implementation": "services/LocationService.js",
+                "depends": ["dialogService"]
+            }
+
+        ],
+        "licenses": [
+        ]
+    }
+}

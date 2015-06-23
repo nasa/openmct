@@ -34,8 +34,10 @@ define(
                 mockQ,
                 mockLog,
                 mockParentObject,
+                mockNewObject,
                 mockMutationCapability,
                 mockPersistenceCapability,
+                mockCompositionCapability,
                 mockCapabilities,
                 creationService;
 
@@ -69,6 +71,10 @@ define(
                     "parentObject",
                     [ "getId", "getCapability", "useCapability" ]
                 );
+                mockNewObject = jasmine.createSpyObj(
+                    "newObject",
+                    [ "getId" ]
+                );
                 mockMutationCapability = jasmine.createSpyObj(
                     "mutation",
                     [ "invoke" ]
@@ -77,9 +83,14 @@ define(
                     "persistence",
                     [ "persist", "getSpace" ]
                 );
+                mockCompositionCapability = jasmine.createSpyObj(
+                    "composition",
+                    ["invoke"]
+                );
                 mockCapabilities = {
                     mutation: mockMutationCapability,
-                    persistence: mockPersistenceCapability
+                    persistence: mockPersistenceCapability,
+                    composition: mockCompositionCapability
                 };
 
                 mockPersistenceService.createObject.andReturn(
@@ -93,8 +104,15 @@ define(
                     return mockCapabilities[key].invoke(value);
                 });
 
+                mockPersistenceCapability.persist.andReturn(
+                    mockPromise(true)
+                );
+
                 mockMutationCapability.invoke.andReturn(mockPromise(true));
                 mockPersistenceCapability.getSpace.andReturn("testSpace");
+                mockCompositionCapability.invoke.andReturn(
+                    mockPromise([mockNewObject])
+                );
 
                 creationService = new CreationService(
                     mockPersistenceService,

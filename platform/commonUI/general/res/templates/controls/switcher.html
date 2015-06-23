@@ -21,25 +21,29 @@
 -->
 <span ng-controller="ViewSwitcherController">
 
-    <div class="menu-element btn icon-btn very-subtle btn-menu dropdown click-invoke"
-         ng-if="view.length > 1"
-         ng-controller="ClickAwayController as toggle">
+    <div
+	    class="view-switcher menu-element btn btn-menu dropdown click-invoke"
+	    ng-if="view.length > 1"
+	    ng-controller="ClickAwayController as toggle"
+	    >
 
-        <span class="l-click-area" ng-click="toggle.toggle()"></span>
+        <span
+	        class="l-click-area"
+	        ng-click="toggle.toggle()"
+	        title="{{ngModel.selected.name}}"
+	        ></span>
 
         <span class="ui-symbol icon type-icon">{{ngModel.selected.glyph}}</span>
-        <span>{{ngModel.selected.name}}</span>
-        <span class='ui-symbol icon invoke-menu'>v</span>
+        <span class="name">{{ngModel.selected.name}}</span>
+        <span class='ui-symbol invoke-menu'>v</span>
 
 
         <div class="menu dropdown" ng-show="toggle.isActive()">
             <ul>
                 <li ng-repeat="option in view">
-                    <a href="" ng-click="ngModel.selected = option; toggle.setState(false)">
-                        <span class="ui-symbol type-icon icon">
-                            {{option.glyph}}
-                        </span>
-                        {{option.name}}
+                    <a ng-click="ngModel.selected = option; toggle.setState(false)">
+                        <span class="ui-symbol type-icon icon">{{option.glyph}}</span>
+	                    {{option.name}}
                     </a>
                 </li>
             </ul>

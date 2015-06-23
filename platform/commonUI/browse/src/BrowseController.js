@@ -29,7 +29,8 @@ define(
     function () {
         "use strict";
 
-        var ROOT_OBJECT = "ROOT";
+        var ROOT_ID = "ROOT",
+            DEFAULT_PATH = "mine";
 
         /**
          * The BrowseController is used to populate the initial scope in Browse
@@ -40,35 +41,98 @@ define(
          *
          * @constructor
          */
-        function BrowseController($scope, objectService, navigationService) {
+        function BrowseController($scope, $route, $location, objectService, navigationService) {
+            var path = [ROOT_ID].concat(
+                ($route.current.params.ids || DEFAULT_PATH).split("/")
+            );
+
+            function updateRoute(domainObject) {
+                var context = domainObject &&
+                        domainObject.getCapability('context'),
+                    objectPath = context ? context.getPath() : [],
+                    ids = objectPath.map(function (domainObject) {
+                        return domainObject.getId();
+                    }),
+                    priorRoute = $route.current,
+                    // Act as if params HADN'T changed to avoid page reload
+                    unlisten;
+
+                unlisten = $scope.$on('$locationChangeSuccess', function () {
+                    $route.current = priorRoute;
+                    unlisten();
+                });
+
+                $location.path("/browse/" + ids.slice(1).join("/"));
+            }
+
             // Callback for updating the in-scope reference to the object
             // that is currently navigated-to.
             function setNavigation(domainObject) {
                 $scope.navigatedObject = domainObject;
                 $scope.treeModel.selectedObject = domainObject;
                 navigationService.setNavigation(domainObject);
+                updateRoute(domainObject);
+            }
+
+            function navigateTo(domainObject) {
+                // Check if an object has been navigated-to already...
+                // If not, or if an ID path has been explicitly set in the URL,
+                // navigate to the URL-specified object.
+                if (!navigationService.getNavigation() || $route.current.params.ids) {
+                    // If not, pick a default as the last
+                    // root-level component (usually "mine")
+                    navigationService.setNavigation(domainObject);
+                    $scope.navigatedObject = domainObject;
+                } else {
+                    // Otherwise, just expose the currently navigated object.
+                    $scope.navigatedObject = navigationService.getNavigation();
+                    updateRoute($scope.navigatedObject);
+                }
+            }
+
+            function findObject(domainObjects, id) {
+                var i;
+                for (i = 0; i < domainObjects.length; i += 1) {
+                    if (domainObjects[i].getId() === id) {
+                        return domainObjects[i];
+                    }
+                }
+            }
+
+            // Navigate to the domain object identified by path[index],
+            // which we expect to find in the composition of the passed
+            // domain object.
+            function doNavigate(domainObject, index) {
+                var composition = domainObject.useCapability("composition");
+                if (composition) {
+                    composition.then(function (c) {
+                        var nextObject = findObject(c, path[index]);
+                        if (nextObject) {
+                            if (index + 1 >= path.length) {
+                                navigateTo(nextObject);
+                            } else {
+                                doNavigate(nextObject, index + 1);
+                            }
+                        } else {
+                            // Couldn't find the next element of the path
+                            // so navigate to the last path object we did find
+                            navigateTo(domainObject);
+                        }
+                    });
+                } else {
+                    // Similar to above case; this object has no composition,
+                    // so navigate to it instead of subsequent path elements.
+                    navigateTo(domainObject);
+                }
             }
 
             // Load the root object, put it in the scope.
             // Also, load its immediate children, and (possibly)
             // navigate to one of them, so that navigation state has
             // a useful initial value.
-            objectService.getObjects([ROOT_OBJECT]).then(function (objects) {
-                var composition = objects[ROOT_OBJECT].useCapability("composition");
-                $scope.domainObject = objects[ROOT_OBJECT];
-                if (composition) {
-                    composition.then(function (c) {
-                        // Check if an object has been navigated-to already...
-                        if (!navigationService.getNavigation()) {
-                            // If not, pick a default as the last
-                            // root-level component (usually "mine")
-                            navigationService.setNavigation(c[c.length - 1]);
-                        } else {
-                            // Otherwise, just expose it in the scope
-                            $scope.navigatedObject = navigationService.getNavigation();
-                        }
-                    });
-                }
+            objectService.getObjects([path[0]]).then(function (objects) {
+                $scope.domainObject = objects[path[0]];
+                doNavigate($scope.domainObject, 1);
             });
 
             // Provide a model for the tree to modify

@@ -19,12 +19,18 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@import "compass";
-@import "compass/css3";
-@import "compass/css3/border-radius";
-@import "compass/css3/opacity";
-@import "compass/utilities";
-
-@import "constants";
-@import "mixins";
-@import "plots/plots-main";
+/*global define*/
+define({
+    BUBBLE_TEMPLATE: "<mct-container key=\"bubble\" " +
+                "bubble-title=\"{{bubbleTitle}}\" " +
+                "bubble-layout=\"{{bubbleLayout}}\" " +
+	            "class=\"bubble-container\">" +
+                "<mct-include key=\"bubbleTemplate\" ng-model=\"bubbleModel\">" +
+                "</mct-include>" +
+                "</mct-container>",
+    // Pixel offset for bubble, to align arrow position
+    BUBBLE_OFFSET: [ 0, -26 ],
+	// Max width and margins allowed for bubbles; defined in /platform/commonUI/general/res/sass/_constants.scss
+	BUBBLE_MARGIN_LR: 10,
+	BUBBLE_MAX_WIDTH: 300
+});

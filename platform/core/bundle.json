@@ -177,6 +177,10 @@
                 "depends": [ "persistenceService", "PERSISTENCE_SPACE" ]
             },
             {
+                "key": "metadata",
+                "implementation": "capabilities/MetadataCapability.js"
+            },
+            {
                 "key": "mutation",
                 "implementation": "capabilities/MutationCapability.js",
                 "depends": [ "now" ]
@@ -191,6 +195,11 @@
             {
                 "key": "now",
                 "implementation": "services/Now.js"
+            },
+            {
+                "key": "throttle",
+                "implementation": "services/Throttle.js",
+                "depends": [ "$timeout" ]
             }
         ],
         "roots": [

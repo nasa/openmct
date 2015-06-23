@@ -7,7 +7,9 @@
     "platform/commonUI/edit",
     "platform/commonUI/dialog",
     "platform/commonUI/general",
+    "platform/commonUI/inspect",
     "platform/containment",
+    "platform/execution",
     "platform/telemetry",
     "platform/features/layout",
     "platform/features/pages",
@@ -15,8 +17,8 @@
     "platform/features/scrolling",
     "platform/forms",
     "platform/persistence/queue",
-    "platform/persistence/elastic",
     "platform/policy",
 
+    "example/persistence",
     "example/generator"
 ]

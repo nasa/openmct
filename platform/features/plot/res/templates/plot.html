@@ -87,10 +87,10 @@
                 </mct-chart>
 
                 <!-- TODO: Move into correct position; make part of group; infer from set of actions -->
-                <div class="gl-plot-local-controls"
+                <div class="l-local-controls gl-plot-local-controls"
                      ng-if="$first"
                      ng-show="representation.showControls"
-                     style="position: absolute; top: 8px; right: 8px;">
+                    >
 
                     <a href=""
                        class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
@@ -108,7 +108,7 @@
                         <span class="ui-symbol icon">I</span>
                     </a>
 
-                    <div class="menu-element btn icon-btn very-subtle btn-menu dropdown click-invoke"
+                    <div class="menu-element btn s-very-subtle btn-menu dropdown menus-to-left"
                          ng-if="plot.getModeOptions().length > 1"
                          ng-controller="ClickAwayController as toggle">
 
@@ -116,7 +116,7 @@
 
                         <span class="ui-symbol icon type-icon">{{plot.getMode().glyph}}</span>
                         <span>{{plot.getMode().name}}</span>
-                        <span class='ui-symbol icon invoke-menu'>v</span>
+                        <span class='ui-symbol invoke-menu'>v</span>
 
                         <div class="menu dropdown" ng-show="toggle.isActive()">
                             <ul>

@@ -77,7 +77,8 @@ define(
                 // Get the object's model and clone it, so the
                 // mutator function has a temporary copy to work with.
                 var model = domainObject.getModel(),
-                    clone = JSON.parse(JSON.stringify(model));
+                    clone = JSON.parse(JSON.stringify(model)),
+                    useTimestamp = arguments.length > 1;
 
                 // Function to handle copying values to the actual
                 function handleMutation(mutationResult) {
@@ -94,8 +95,7 @@ define(
                         if (model !== result) {
                             copyValues(model, result);
                         }
-                        model.modified = (typeof timestamp === 'number') ?
-                                timestamp : now();
+                        model.modified = useTimestamp ? timestamp : now();
                     }
 
                     // Report the result of the mutation

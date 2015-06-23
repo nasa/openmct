@@ -27,6 +27,7 @@
 		border: 1px solid $bc;
 		&:hover {
 			border-color: lighten($bc, 10%);
+			z-index: 2;
 		}
 		.contents {
 //			overflow: hidden;
@@ -46,12 +47,25 @@
 		bottom: $myM;
 		left: $myM;
 	}
-}
-
-.edit-main .frame.child-frame.panel {
-	&:hover {
-		border-color: $colorKey;
-		@include boxShdwLarge();
+	&.frame-template {
+		// Hide the view switcher by default when it's in an element that's in a frame context
+		// Frame template is used because we need to target the lowest nested frame
+		// This has the effect of hiding the view switcher in nested frames in edit mode, which is desirable currently (as it's non-functional)
+		.view-switcher {
+			//display: none;
+			opacity: 0;
+			z-index: 10;
+		}
+		&:hover .view-switcher {
+			// Show the view switcher on frame hover
+			//display: inline-block !important;
+			opacity: 1;
+		}
 	}
-
+	.view-switcher {
+		// Hide the name when the view switcher is in a frame context
+		.name {
+			display: none;
+		}
+	}
 }

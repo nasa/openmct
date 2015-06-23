@@ -41,7 +41,7 @@
                 @include box-sizing(border-box);
 				border-top: 1px solid lighten($bg, 20%);
 				line-height: $menuLineH;
-				padding: $interiorMarginSm $interiorMargin * 2 $interiorMarginSm ($interiorMargin * 3) + $treeTypeIconW;
+				padding: $interiorMarginSm $interiorMargin * 2 $interiorMarginSm ($interiorMargin * 2) + $treeTypeIconW;
 				white-space: nowrap;
 				&:first-child {
 					border: none;
@@ -168,7 +168,7 @@
     position: absolute;
     height: 200px;
     width: 170px;
-    z-index: 59;
+    z-index: 70;
     .context-menu-wrapper {
         position: absolute;
         height: 100%;

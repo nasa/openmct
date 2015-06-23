@@ -35,10 +35,10 @@
             <span class='field control date'>
                 <input type='text'
                        name='date'
-                       placeholder="YYYY-DDD"
-                       ng-pattern="/\d\d\d\d-\d\d\d/"
+                       placeholder="{{format}}"
+                       ng-pattern="/\d\d\d\d-\d\d-\d\d/"
                        ng-model='datetime.date'
-                       ng-required='true'/>
+                       ng-required='ngRequired || partiallyComplete'/>
             </span>
             <span class='field control time sm'>
                 <input type='text'
@@ -49,7 +49,7 @@
                        integer
                        ng-pattern='/\d+/'
                        ng-model="datetime.hour"
-                       ng-required='true'/>
+                       ng-required='ngRequired || partiallyComplete'/>
             </span>
             <span class='field control time sm'>
                 <input type='text'
@@ -60,7 +60,7 @@
                        integer
                        ng-pattern='/\d+/'
                        ng-model="datetime.min"
-                       ng-required='true'/>
+                       ng-required='ngRequired || partiallyComplete'/>
             </span>
             <span class='field control time sm'>
                 <input type='text'
@@ -71,7 +71,7 @@
                        integer
                        ng-pattern='/\d+/'
                        ng-model="datetime.sec"
-                       ng-required='true'/>
+                       ng-required='ngRequired || partiallyComplete'/>
             </span>
             <span class='field control timezone'>
                 UTC

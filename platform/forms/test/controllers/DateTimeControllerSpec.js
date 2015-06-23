@@ -47,7 +47,7 @@ define(
             it("converts date-time input into a timestamp", function () {
                 mockScope.ngModel = {};
                 mockScope.field = "test";
-                mockScope.datetime.date = "2014-332";
+                mockScope.datetime.date = "2014-11-28";
                 mockScope.datetime.hour = 22;
                 mockScope.datetime.min = 55;
                 mockScope.datetime.sec = 13;
@@ -57,6 +57,54 @@ define(
                 expect(mockScope.ngModel.test).toEqual(1417215313000);
             });
 
+            it("reports when form input is partially complete", function () {
+                // This is needed to flag the control's state as invalid
+                // when it is partially complete without having it treated
+                // as required.
+                mockScope.ngModel = {};
+                mockScope.field = "test";
+                mockScope.datetime.date = "2014-11-28";
+                mockScope.datetime.hour = 22;
+                mockScope.datetime.min = 55;
+                // mockScope.datetime.sec = 13;
+
+                mockScope.$watch.mostRecentCall.args[1]();
+
+                expect(mockScope.partiallyComplete).toBeTruthy();
+            });
+
+            it("reports 'undefined' for empty input", function () {
+                mockScope.ngModel = { test: 12345 };
+                mockScope.field = "test";
+                mockScope.$watch.mostRecentCall.args[1]();
+                // Clear all inputs
+                mockScope.datetime = {};
+                mockScope.$watch.mostRecentCall.args[1]();
+
+                // Should have cleared out the time stamp
+                expect(mockScope.ngModel.test).toBeUndefined();
+            });
+
+
+            it("exposes date-time format for placeholder", function () {
+                expect(mockScope.format).toEqual(jasmine.any(String));
+                expect(mockScope.format.length).toBeGreaterThan(0);
+            });
+            it("initializes form fields with values from ng-model", function () {
+                mockScope.ngModel = { test: 1417215313000 };
+                mockScope.field = "test";
+                mockScope.$watch.calls.forEach(function (call) {
+                    if (call.args[0] === 'ngModel[field]') {
+                        call.args[1](mockScope.ngModel.test);
+                    }
+                });
+                expect(mockScope.datetime).toEqual({
+                    date: "2014-11-28",
+                    hour: "22",
+                    min: "55",
+                    sec: "13"
+                });
+            });
         });
     }
 );

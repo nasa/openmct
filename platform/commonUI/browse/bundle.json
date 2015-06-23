@@ -2,19 +2,26 @@
     "extensions": {
         "routes": [
             {
-                "when": "/browse",
-                "templateUrl": "templates/browse.html"
+                "when": "/browse/:ids*",
+                "templateUrl": "templates/browse.html",
+                "reloadOnSearch": false
             },
             {
                 "when": "",
-                "templateUrl": "templates/browse.html"
+                "templateUrl": "templates/browse.html",
+                "reloadOnSearch": false
             }
         ],
         "controllers": [
             {
                 "key": "BrowseController",
                 "implementation": "BrowseController.js",
-                "depends": [ "$scope", "objectService", "navigationService" ]
+                "depends": [ "$scope", "$route", "$location", "objectService", "navigationService" ]
+            },
+            {
+                "key": "BrowseObjectController",
+                "implementation": "BrowseObjectController.js",
+                "depends": [ "$scope", "$location", "$route" ]
             },
             {
                 "key": "CreateMenuController",
@@ -57,7 +64,8 @@
             {
                 "key": "grid-item",
                 "templateUrl": "templates/items/grid-item.html",
-                "uses": [ "type", "action" ]
+                "uses": [ "type", "action" ],
+                "gestures": [ "info", "menu" ]
             },
             {
                 "key": "object-header",
