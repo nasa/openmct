@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,xit*/
 
 /**
  * MergeModelsSpec. Created by vwoeltje on 11/6/14.
@@ -79,14 +79,14 @@ define(
                 );
             });
 
-            it("watches for telemetry controller changes", function () {
+            xit("watches for telemetry controller changes", function () {
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "telemetry",
                     jasmine.any(Function)
                 );
             });
 
-            it("provides a column for each name and each unique domain, range", function () {
+            xit("provides a column for each name and each unique domain, range", function () {
                 // Should have six columns based on metadata above,
                 // (name, d0, d1, d2, r0, r1)
                 mockScope.$watch.mostRecentCall.args[1](mockTelemetry);
@@ -100,7 +100,7 @@ define(
                     .not.toThrow();
             });
 
-            it("provides default columns if domain/range metadata is unavailable", function () {
+            xit("provides default columns if domain/range metadata is unavailable", function () {
                 mockTelemetry.getMetadata.andReturn([]);
                 mockScope.$watch.mostRecentCall.args[1](mockTelemetry);
                 expect(mockScope.headers).toEqual(["Name", "Time", "Value"]);
