@@ -22,20 +22,16 @@
 /*global define,Promise*/
 
 /**
- * Module defining EventMsgColumn. Created by chacskaylo on 06/18/2015.
+ * Module defining MCTDataTable. Created by slhale on 06/22/2015.
  */
 define(
     [],
     function () {
         "use strict";
         
-        // This is defined at the top of EventListController.js
-        // TODO: Access the real one 
-		var ROW_COUNT = 100;
-        
         function MCTDataTable($anchorScroll) {
             return {
-                restrict: "E", 
+                restrict: "E",
                 templateUrl: "platform/features/events/res/templates/mct-data-table.html",
                 scope: {
                     headers: "=",
@@ -44,7 +40,8 @@ define(
                 },
                 link: function ($scope, $element) {
                     var currentHeight,
-                        previousHeight;
+                        previousHeight,
+                        scrollParent;
                     
                     // If the scroll is set to ascending, we want to 
                     // check when elements are added to the table, and move the scroll
@@ -55,20 +52,17 @@ define(
                         $scope.$watch("rows", function () {
                             // Wait until the page as been repainted (otherwise the 
                             // height will always be zero)
-                            window.requestAnimationFrame( function () {
+                            window.requestAnimationFrame(function () {
                                 previousHeight = currentHeight;
-                                // The offsetHeight of the table body 
-                                currentHeight = 
-                                    $element[0].firstElementChild.firstElementChild.nextElementSibling.offsetHeight;
+                                // The height of the table body 
+                                currentHeight = $element[0].firstElementChild.firstElementChild.nextElementSibling.clientHeight;
                                 
-                                console.log("current height ", currentHeight);
-                            });
-                            // TODO: Find a more eloquent way to determine repaint completion
-                            
-                            // Check to see that maximum table rows has not been reached 
-                            if ($scope.rows.length < ROW_COUNT) {
+                                // One of the parents is a div that has vscroll
+                                scrollParent = $element[0].parentElement.parentElement.parentElement.parentElement.parentElement;
+
                                 // Move the scrollbar down the amount that the height has changed
-                            } 
+                                scrollParent.scrollTop = scrollParent.scrollTop + (currentHeight - previousHeight);
+                            });
                         });
                     }
                 }
