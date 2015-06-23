@@ -93,15 +93,18 @@ define(
 
             function link($scope, element, attrs) {
                 var activeRepresenters = representers.map(function (Representer) {
-                    return new Representer($scope, element, attrs);
-                });
+                        return new Representer($scope, element, attrs);
+                    }),
+                    toClear = [], // Properties to clear out of scope on change
+                    counter = 0;
 
                 // Populate scope with any capabilities indicated by the
                 // representation's extension definition
                 function refreshCapabilities() {
                     var domainObject = $scope.domainObject,
                         representation = lookup($scope.key, domainObject),
-                        uses = ((representation || {}).uses || []);
+                        uses = ((representation || {}).uses || []),
+                        myCounter = counter;
 
                     if (domainObject) {
                         // Update model
@@ -115,10 +118,16 @@ define(
                                 " for representation ",
                                 $scope.key
                             ].join(""));
+
                             $q.when(
                                 domainObject.useCapability(used)
                             ).then(function (c) {
-                                $scope[used] = c;
+                                // Avoid clobbering capabilities from
+                                // subsequent representations;
+                                // Angular reuses scopes.
+                                if (counter === myCounter) {
+                                    $scope[used] = c;
+                                }
                             });
                         });
                     }
@@ -130,8 +139,7 @@ define(
                 function refresh() {
                     var domainObject = $scope.domainObject,
                         representation = lookup($scope.key, domainObject),
-                        uses = ((representation || {}).uses || []),
-                        gestureKeys = ((representation || {}).gestures || []);
+                        uses = ((representation || {}).uses || []);
 
                     // Create an empty object named "representation", for this
                     // representation to store local variables into.
@@ -152,9 +160,19 @@ define(
                         $log.warn("No representation found for " + $scope.key);
                     }
 
+                    // Clear out the scope from the last representation
+                    toClear.forEach(function (property) {
+                        delete $scope[property];
+                    });
+
                     // Populate scope with fields associated with the current
                     // domain object (if one has been passed in)
                     if (domainObject) {
+                        // Track how many representations we've made in this scope,
+                        // to ensure that the correct representations are matched to
+                        // the correct object/key pairs.
+                        counter += 1;
+
                         // Initialize any capabilities
                         refreshCapabilities();
 
@@ -168,6 +186,10 @@ define(
                         activeRepresenters.forEach(function (representer) {
                             representer.represent(representation, domainObject);
                         });
+
+                        // Track which properties we want to clear from scope
+                        // next change object/key pair changes
+                        toClear = uses.concat(['model']);
                     }
                 }
 
