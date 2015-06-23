@@ -28,7 +28,8 @@ define(
     [],
     function () {
         "use strict";
-
+        var ROOT_ID = "ROOT",
+            DEFAULT_PATH = "mine";
         /**
          * The new tab action allows a domain object to be opened
          * into a new browser tab. (Currently this is a stub, present
@@ -36,7 +37,7 @@ define(
          * the user interface.)
          * @constructor
          */
-        function NewTabAction($window, navigationService) {
+        function NewTabAction($window, $route, $location, navigationService) {
             function getNavigatedObject() {
                 var navigatedObject = navigationService.getNavigation();
                 return navigatedObject;
@@ -47,6 +48,8 @@ define(
                  * Open the object in a new tab
                  */
                 perform: function () {
+                    
+                    
                     var currentDomainObject = getNavigatedObject(),
                         context = currentDomainObject &&
                             currentDomainObject.getCapability('context'),
@@ -54,7 +57,8 @@ define(
                         ids = objectPath.map(function (currentDomainObject) {
                             return currentDomainObject.getId();
                         }),
-                        partialPath = "/browse/" + ids.slice(1).join("/");
+                        viewKey = $location.search().view,
+                        partialPath = "index.html#/browse/" + ids.slice(1).join("/") + "?view=" + viewKey;
                     
                     window.alert(partialPath);
                 }
