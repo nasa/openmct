@@ -136,7 +136,7 @@ define(
             }
 
             // Update dimensions and origin based on extrema of plots
-            function updateExtrema() {
+            function updateBounds() {
                 if (bufferArray.length > 0) {
                     domainExtrema = bufferArray.map(function (lineBuffer) {
                         return lineBuffer.getDomainExtrema();
@@ -179,7 +179,7 @@ define(
                             (domainExtrema[1] - domainExtrema[0] > fixedDuration)) {
                     cutoff = domainExtrema[1] - fixedDuration;
                     bufferArray.forEach(enforceDurationForBuffer);
-                    updateExtrema(); // Extrema may have changed now
+                    updateBounds(); // Extrema may have changed now
                 }
             }
 
@@ -192,15 +192,6 @@ define(
                         handle.getRangeValue(domainObject, range)
                     );
                 }
-            }
-
-            // Update plot extremea and enforce maximum duration
-            function updateBounds() {
-                updateExtrema();
-                // Currently not called; this will trim out off-screen
-                // data from the plot, but doing this will disallow things
-                // like pan-back, so debatable if we really want to do this
-                //enforceDuration();
             }
 
             // Handle new telemetry data
