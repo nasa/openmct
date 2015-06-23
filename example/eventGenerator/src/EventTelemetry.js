@@ -22,7 +22,9 @@
 /*global define,Promise*/
 
 /**
- * Module defining EventTelemetry. Created by chacskaylo on 06/18/2015.
+ * Module defining EventTelemetry. 
+ * Created by chacskaylo on 06/18/2015.
+ * Modified by slhale on 06/23/2015. 
  */
 define(
     [],
@@ -79,11 +81,12 @@ define(
                 return i * interval +
                         (domain !== 'delta' ? firstObservedTime : 0);
             };
-
+            
 	        generatorData.getRangeValue = function (i, range) {
-		        var domainDelta = this.getDomainValue(i) - firstObservedTime;
-		        var ind = i%messages.length;
+		        var domainDelta = this.getDomainValue(i) - firstObservedTime,
+                    ind = i % messages.length;
                 return "TEMP " + i.toString() + "-" + messages[ind][0] + "[" + domainDelta.toString() + "]";
+                // TODO: Unsure why we are prepeding 'TEMP'
 	        };
             
             return generatorData;
