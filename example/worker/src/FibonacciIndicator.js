@@ -20,17 +20,51 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*global define*/
-define({
-    BUBBLE_TEMPLATE: "<mct-container key=\"bubble\" " +
-                "bubble-title=\"{{bubbleTitle}}\" " +
-                "bubble-layout=\"{{bubbleLayout}}\" " +
-	            "class=\"bubble-container\">" +
-                "<mct-include key=\"bubbleTemplate\" ng-model=\"bubbleModel\">" +
-                "</mct-include>" +
-                "</mct-container>",
-    // Pixel offset for bubble, to align arrow position
-    BUBBLE_OFFSET: [ 0, -26 ],
-	// Max width and margins allowed for bubbles; defined in /platform/commonUI/general/res/sass/_constants.scss
-	BUBBLE_MARGIN_LR: 10,
-	BUBBLE_MAX_WIDTH: 300
-});
+
+define(
+    [],
+    function () {
+        "use strict";
+
+        /**
+         * Displays Fibonacci numbers in the status area.
+         * @constructor
+         */
+        function FibonacciIndicator(workerService, $rootScope) {
+            var latest,
+                counter = 0,
+                worker = workerService.run('example.fibonacci');
+
+            function requestNext() {
+                worker.postMessage([counter]);
+                counter += 1;
+            }
+
+            function handleResponse(event) {
+                latest = event.data;
+                $rootScope.$apply();
+                requestNext();
+            }
+
+            worker.onmessage = handleResponse;
+            requestNext();
+
+            return {
+                getGlyph: function () {
+                    return "?";
+                },
+                getText: function () {
+                    return latest;
+                },
+                getGlyphClass: function () {
+                    return "";
+                },
+                getDescription: function () {
+                    return "";
+                }
+            };
+        }
+
+        return FibonacciIndicator;
+    }
+);

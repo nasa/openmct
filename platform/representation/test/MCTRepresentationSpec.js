@@ -212,6 +212,25 @@ define(
                 // Should have gotten a warning - that's an unknown key
                 expect(mockLog.warn).toHaveBeenCalled();
             });
+
+            it("clears out obsolete peroperties from scope", function () {
+                mctRepresentation.link(mockScope, mockElement);
+
+                mockScope.key = "def";
+                mockScope.domainObject = mockDomainObject;
+                mockDomainObject.useCapability.andReturn("some value");
+
+                // Trigger the watch
+                mockScope.$watch.calls[0].args[1]();
+                expect(mockScope.testCapability).toBeDefined();
+
+                // Change the view
+                mockScope.key = "xyz";
+
+                // Trigger the watch again; should clear capability from scope
+                mockScope.$watch.calls[0].args[1]();
+                expect(mockScope.testCapability).toBeUndefined();
+            });
         });
     }
 );
