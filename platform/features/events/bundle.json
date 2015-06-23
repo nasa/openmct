@@ -24,7 +24,7 @@
             {
                 "key": "mctDataTable",
                 "implementation": "directives/MCTDataTable.js",
-                "depends": [ "$anchorScroll" ]
+                "depends": [ "$window" ]
             }
         ]
     }

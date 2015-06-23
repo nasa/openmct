@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
+/*global define,Promise,window*/
 
 /**
  * Module defining MCTDataTable. Created by shale on 06/22/2015.
@@ -29,7 +29,7 @@ define(
     function () {
         "use strict";
         
-        function MCTDataTable($anchorScroll) {
+        function MCTDataTable($window) {
             return {
                 restrict: "E",
                 templateUrl: "platform/features/events/res/templates/mct-data-table.html",
@@ -52,7 +52,7 @@ define(
                         $scope.$watch("rows", function () {
                             // Wait until the page as been repainted (otherwise the 
                             // height will always be zero)
-                            window.requestAnimationFrame(function () {
+                            $window.requestAnimationFrame(function () {
                                 previousHeight = currentHeight;
                                 // The height of the table body 
                                 currentHeight = $element[0].firstElementChild.firstElementChild.nextElementSibling.clientHeight;
