@@ -297,7 +297,7 @@ define(
                     subPlotBounds = $event.target.getBoundingClientRect();
                     mousePosition = toMousePosition($event);
                     // Treat any modifier key as a pan
-                    if (event.altKey || event.shiftKey || event.ctrlKey) {
+                    if ($event.altKey || $event.shiftKey || $event.ctrlKey) {
                         // Start panning
                         panStart = mousePosition;
                         panStartBounds = panZoomStack.getPanZoom();

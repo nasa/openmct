@@ -81,10 +81,11 @@ define(
             });
 
             it("invokes mctDragDown when dragging begins", function () {
-                mockElement.on.mostRecentCall.args[1](testEvent(42, 60));
+                var event = testEvent(42, 60);
+                mockElement.on.mostRecentCall.args[1](event);
                 expect(mockScope.$eval).toHaveBeenCalledWith(
                     testAttrs.mctDragDown,
-                    { delta: [0, 0] }
+                    { delta: [0, 0], $event: event }
                 );
             });
 
@@ -101,23 +102,27 @@ define(
             });
 
             it("invokes mctDrag expression during drag", function () {
+                var event;
+
                 mockElement.on.mostRecentCall.args[1](testEvent(42, 60));
 
                 // Find and invoke the mousemove listener
                 mockBody.on.calls.forEach(function (call) {
                     if (call.args[0] === 'mousemove') {
-                        call.args[1](testEvent(52, 200));
+                        call.args[1](event = testEvent(52, 200));
                     }
                 });
 
                 // Should have passed that delta to mct-drag expression
                 expect(mockScope.$eval).toHaveBeenCalledWith(
                     testAttrs.mctDrag,
-                    { delta: [10, 140] }
+                    { delta: [10, 140], $event: event }
                 );
             });
 
             it("invokes mctDragUp expression after drag", function () {
+                var event;
+
                 mockElement.on.mostRecentCall.args[1](testEvent(42, 60));
 
                 // Find and invoke the mousemove listener
@@ -129,7 +134,7 @@ define(
                 // Find and invoke the mousemove listener
                 mockBody.on.calls.forEach(function (call) {
                     if (call.args[0] === 'mouseup') {
-                        call.args[1](testEvent(40, 71));
+                        call.args[1](event = testEvent(40, 71));
                     }
                 });
 
@@ -138,7 +143,7 @@ define(
                 // initial position
                 expect(mockScope.$eval).toHaveBeenCalledWith(
                     testAttrs.mctDragUp,
-                    { delta: [-2, 11] }
+                    { delta: [-2, 11], $event: event }
                 );
 
                 // Should also have unregistered listeners
