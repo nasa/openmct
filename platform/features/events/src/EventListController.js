@@ -22,11 +22,13 @@
 /*global define,Promise*/
 
 /**
- * Module defining ListController. Created by chacskaylo on 06/18/2015.
+ * Module defining EventListController. 
+ * Created by chacskaylo on 06/18/2015. 
+ * Modified by slhale on 06/23/2015.
  */
 define(
-	["./SeverityColumn", "./DomainColumn", "./EventMsgColumn", "./EventListPopulator"],
-	function (SeverityColumn, DomainColumn, EventMsgColumn, EventListPopulator) {
+	["./DomainColumn", "./RangeColumn", "./EventListPopulator"],
+	function (DomainColumn, RangeColumn, EventListPopulator) {
 		"use strict";
 
 		var ROW_COUNT = 100;
@@ -44,7 +46,7 @@ define(
 			function getRows(telemetry) {
 				var datas = telemetry.getResponse(),
 					objects = telemetry.getTelemetryObjects();
-
+                
 				return populator.getRows(datas, objects, ROW_COUNT);
 			}
 
@@ -62,7 +64,7 @@ define(
 			// well as a column for the domain object name.
 			function setupColumns(telemetry) {
 				var domainKeys = {},
-					eventMsgKeys = {},
+					rangeKeys = {},
 					columns = [],
 					metadata;
 
@@ -76,16 +78,16 @@ define(
 					}
 				}
 
-				// Add a event string col to the set of columns, if a range
+                // Add a range col to the set of columns, if a range
 				// with the same key has not yet been included.
-				function addEventMsg(eventMsg) {
-					var key = eventMsg.key;
-					if (key && !eventMsgKeys[key]) {
-						eventMsgKeys[key] = true;
-						columns.push(new EventMsgColumn(eventMsg, formatter));
+				function addRange(range) {
+					var key = range.key;
+					if (key && !rangeKeys[key]) {
+						rangeKeys[key] = true;
+						columns.push(new RangeColumn(range, formatter));
 					}
 				}
-
+                
 				// We cannot proceed if the telemetry controller
 				// is not available; clear all rows/columns.
 				if (!telemetry) {
@@ -100,26 +102,17 @@ define(
 				(metadata || []).forEach(function (metadata) {
 					(metadata.domains || []).forEach(addDomain);
 				});
-				//(metadata || []).forEach(function (metadata) {
-				//	(metadata.ranges || []).forEach(addRange);
-				//});
 				(metadata || []).forEach(function (metadata) {
-					(metadata.ranges || []).forEach(addEventMsg);
+					(metadata.ranges || []).forEach(addRange);
 				});
-
-
-
-
-				// Add default severity, domain, range columns if none
+                
+                // Add default domain and range columns if none
 				// were described in metadata.
-				if (Object.keys(domainKeys).length < 1) {
-					columns.push(new SeverityColumn({name: "Severity"}, formatter));
-				}
 				if (Object.keys(domainKeys).length < 1) {
 					columns.push(new DomainColumn({name: "Time"}, formatter));
 				}
-				if (Object.keys(eventMsgKeys).length < 1) {
-					columns.push(new EventMsgColumn({name: "Event Message"}, formatter));
+				if (Object.keys(rangeKeys).length < 1) {
+					columns.push(new RangeColumn({name: "Message"}, formatter));
 				}
 
 				// We have all columns now; use them to initializer
