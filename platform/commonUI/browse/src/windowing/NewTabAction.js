@@ -37,9 +37,11 @@ define(
          * the user interface.)
          * @constructor
          */
-        function NewTabAction($window, $route, $location, context) {
-
-            
+        function NewTabAction(urlService, $window, $route, $location, context) {
+            // Returns the selected domain object
+            // when using the context menu or the top right button
+            // based on the context and the existance of the object
+            // It is set to object an returned
             function getSelectedObject() {
                 var object,
                     newParent;
@@ -53,25 +55,13 @@ define(
             }
             
             return {
-                /**
-                 * Open the object in a new tab
-                 */
-                perform: function () {
-                    var selectedDomainObject = getSelectedObject(),
-                        mode = "browse",
-                        context = selectedDomainObject &&
-                            selectedDomainObject.getCapability('context'),
-                        objectPath = context ? context.getPath() : [],
-                        ids = objectPath.map(function (selectedDomainObject) {
-                            return selectedDomainObject.getId();
-                        }),
-                        viewPath = "?view=" + $location.search().view,
-                        partialPath = "index.html#/" + mode + "/" +
-                            ids.slice(1).join("/") + viewPath;
-                    
-                    window.open(partialPath, "_blank");
-                    
-                    
+                // Performs the open in new tab function
+                // By calling the url service, the mode needed
+                // (browse) and the domainObject is passed in and
+                // the path is returned and opened in a new tab
+                perform: function () {                    
+                    window.open(urlService.urlFor("browse", getSelectedObject()),
+                                "_blank");
                 }
             };
         }
