@@ -19,6 +19,13 @@
                 "implementation": "EventListController.js",
                 "depends": [ "$scope", "telemetryFormatter" ]
             }
+        ],
+        "directives": [
+            {
+                "key": "mctDataTable",
+                "implementation": "MCTDataTable.js",
+                "depends": [ "$anchorScroll" ]
+            }
         ]
     }
 
