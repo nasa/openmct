@@ -1,20 +1,50 @@
 {
     "extensions": {
-        "types": [
+        "templates": [
             {
-                "key": "infobubble",
-                "name": "Info Bubble",
-                "glyph": "\u00EA",
-                "description": "Static markup for info bubbles",
-                "features": [ "creation" ]
+                "key": "info-table",
+                "templateUrl": "info-table.html"
+            },
+            {
+                "key": "info-bubble",
+                "templateUrl": "info-bubble.html"
             }
         ],
-        "views": [
+        "containers": [
             {
-                "templateUrl": "infobubble.html",
-                "name": "Info Bubble",
-                "type": "infobubble",
-                "key": "infobubble"
+                "key": "bubble",
+                "templateUrl": "bubble.html",
+                "attributes": [ "bubbleTitle", "bubbleLayout" ],
+                "alias": "bubble"
+            }
+        ],
+        "gestures": [
+            {
+                "key": "info",
+                "implementation": "gestures/InfoGesture.js",
+                "depends": [
+                    "$timeout",
+                    "infoService",
+                    "INFO_HOVER_DELAY"
+                ]
+            }
+        ],
+        "services": [
+            {
+                "key": "infoService",
+                "implementation": "services/InfoService.js",
+                "depends": [
+                    "$compile",
+                    "$document",
+                    "$window",
+                    "$rootScope"
+                ]
+            }
+        ],
+        "constants": [
+            {
+                "key": "INFO_HOVER_DELAY",
+                "value": 2000
             }
         ]
     }

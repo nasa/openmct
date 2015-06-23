@@ -22,8 +22,8 @@
 /*global define,moment*/
 
 define(
-    ['../lib/moment.min.js'],
-    function () {
+    ['moment'],
+    function (moment) {
         "use strict";
 
         // Date format to use for domain values; in particular,

@@ -19,35 +19,25 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
+//************************************************* GENERAL
+.bubble-container {
+	pointer-events: none;
+}
+
+
 //************************************************* LAYOUT
 
-.l-bubble-wrapper {
-	position: absolute;
-	z-index: 70;
-	.l-bubble {
-		padding: $bubblePad $bubblePad*2;
-		.l-btn.close {
-			padding: 0 2px;
-			position: absolute;
-			right: $interiorMargin;
-			top: $interiorMargin;
-		}
-	}
-	.arw {
-		position: absolute;
-		&.arw-up {
-			bottom: 100%;
-
-		}
-		&.arw-down {
-			top: 100%;
-		}
-	}
-
+.l-infobubble-wrapper {
+	$arwSize: 5px;
+	@include box-shadow(rgba(black, 0.4) 0 1px 5px);
+	position: relative;
+	z-index: 50;
 	.l-infobubble {
 		display: inline-block;
-		max-width: 250px;
-		//padding: 5px 10px;
+		min-width: $bubbleMinW;
+		max-width: $bubbleMaxW;
+		padding: 5px 10px;
 		&:before {
 			content:"";
 			position: absolute;
@@ -114,27 +104,17 @@
 	}
 
 	&.arw-down {
-
-	}
-}
-
-.l-thumbsbubble-wrapper {
-	$closeBtnD: 15px;
-	position: absolute;
-	left: $interiorMarginLg;
-	right: $interiorMarginLg;
-	height: $imageThumbsWrapperH + $bubblePad*2 + $interiorMargin;
-	width: auto;
-	.l-thumbsbubble {
-		@include absPosDefault();
-		.l-image-thumbs-wrapper {
-			height: auto;
-			top: $bubblePad !important; right: $closeBtnD + ($interiorMargin*2); bottom: $bubblePad !important; left: $bubblePad;
+		margin-bottom: $arwSize*2;
+		.l-infobubble::before {
+			left: 50%;
+			top: 100%;
+			margin-left: -1 * $arwSize;
+			border-left: $arwSize solid transparent;
+			border-right: $arwSize solid transparent;
+			border-top: ($arwSize * 1.5) solid $colorInfoBubbleBg;
 		}
 	}
 	.arw {
-		//left: 50%;
-		//margin-left: $bubbleArwSize / -2;
 		z-index: 2;
 	}
 	&.arw-up .arw.arw-down,
@@ -142,15 +122,6 @@
 }
 
 //************************************************* LOOK AND FEEL
-
-.s-bubble-wrapper {
-	//@include box-shadow(rgba(black, 0.4) 0 1px 5px);
-}
-
-.s-bubble {
-	@include border-radius($basicCr);
-	@include box-shadow(rgba(black, 0.4) 0 1px 5px);
-}
 
 .l-thumbsbubble-wrapper {
 	.arw-up {
@@ -162,6 +133,8 @@
 }
 .s-infobubble {
 	$emFg: darken($colorInfoBubbleFg, 20%);
+	@include border-radius($basicCr);
+	@include box-shadow(rgba(black, 0.4) 0 1px 5px);
 	background: $colorInfoBubbleBg;
 	color: $colorInfoBubbleFg;
 	font-size: 0.8rem;

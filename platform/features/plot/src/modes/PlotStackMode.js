@@ -58,8 +58,6 @@ define(
                     color: PlotPalette.getFloatColor(0),
                     points: buffer.getLength()
                 }];
-
-                subplot.update();
             }
 
             function plotTelemetry(prepared) {

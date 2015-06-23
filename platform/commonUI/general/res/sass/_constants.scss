@@ -67,6 +67,8 @@ $colorLimitRed: #aa0000;
 $colorTelemFresh: #fff;
 $colorTelemStale: #888;
 $styleTelemState: italic;
+$colorInfoBubbleFg: #666;
+$colorInfoBubbleBg: #ddd;
 
 // Ratios
 $ltGamma: 20%;
@@ -150,6 +152,9 @@ $imageThumbPad: 1px;
 // Bubbles
 $bubbleArwSize: 10px;
 $bubblePad: $interiorMargin;
+$bubbleMinW: 100px;
+$bubbleMaxW: 300px;
+
 
 // Timing
 $controlFadeMs: 100ms;

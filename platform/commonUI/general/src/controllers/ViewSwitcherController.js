@@ -53,12 +53,14 @@ define(
 
             // Get list of views, read from capability
             function updateOptions(views) {
-                $timeout(function () {
-                    $scope.ngModel.selected = findMatchingOption(
-                        views || [],
-                        ($scope.ngModel || {}).selected
-                    );
-                }, 0);
+                if (Array.isArray(views)) {
+                    $timeout(function () {
+                        $scope.ngModel.selected = findMatchingOption(
+                            views,
+                            ($scope.ngModel || {}).selected
+                        );
+                    }, 0);
+                }
             }
 
             // Update view options when the in-scope results of using the
