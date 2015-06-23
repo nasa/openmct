@@ -30,11 +30,15 @@ define(
         "use strict";
 
         /**
-         * The navigation service maintains the application's current
-         * navigation state, and allows listening for changes thereto.
-         * @constructor
+         * The url service handles calls for url paths
+         * using domain objects.
          */
         function UrlService($location) {
+            // Returns the url for the mode wanted
+            // and the domainObject passed in. A path
+            // is returned. The view is defaulted to
+            // the current location's (current object's)
+            // view set.
             function urlFor(mode, domainObject) {
                 var context = domainObject &&
                         domainObject.getCapability('context'),
@@ -48,9 +52,14 @@ define(
             }
             
             return {
-                
+               /**
+                 * Returns the Url path for a specific domain object
+                 * @param {value} value of the browse or edit mode 
+                 *        for the path
+                 * @param {DomainObject} value of the domain object 
+                 *        to get the path of
+                 */
                 urlFor: urlFor   
-            
             };
         }
 
