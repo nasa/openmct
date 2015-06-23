@@ -30,9 +30,9 @@ $pad: $interiorMargin * $baseRatio;
 	text-decoration: none;
 	&.lg,
 	&.create-btn {
-		$h: $ueTopBarH - $interiorMargin;
+		$h: $ueTopBarH; // - $interiorMargin;
 		height: $h;
-		line-height: $h;
+		//line-height: $h;
 		padding: 0 $pad * 3;
 	}
 	&.create-btn {
@@ -40,7 +40,7 @@ $pad: $interiorMargin * $baseRatio;
 			margin-left: $pad * -1;
 		}
 		>.ui-symbol {
-			font-size: 1.1em;
+			//font-size: 1.1em; // Normalizing for new icomoon symbols font
 		}
 	}
 	&.sm {
@@ -115,7 +115,7 @@ $pad: $interiorMargin * $baseRatio;
 	&.labeled {
 		padding: 0 $pad/2;
 		.icon {
-			font-size: 1.5em;
+			//font-size: 1.5em;
 		}
 		.title-label {
 			margin-left: $interiorMargin;

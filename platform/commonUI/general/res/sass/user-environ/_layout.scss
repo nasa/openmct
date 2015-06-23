@@ -119,10 +119,8 @@
 	}
 
 	.bottom-bar {
+        @include absPosDefault($bodyMargin);
 		top: auto;
-		right: $bodyMargin;
-		bottom: $bodyMargin;
-		left: $bodyMargin;
 		height: $ueFooterH;
 		.status-holder {
 			right: $ueAppLogoW + $bodyMargin;
@@ -208,22 +206,18 @@
 	    }
 	    .tree-holder {
 		    overflow: auto;
-		    top: $ueTopBarH + $interiorMargin;
+		    top: $ueTopBarH + $interiorMarginLg;
 	    }
     }
     &.items {
         .object-browse-bar {
-//            bottom: auto;
 	        .left.abs,
 	        .right.abs {
 		        top: auto;
 	        }
-	        .right.abs {
-		        bottom: $interiorMargin;
-	        }
         }
         .object-holder {
-            top: $ueTopBarH + $interiorMargin;
+            top: $ueTopBarH + $interiorMarginLg;
         }
     }
 	&.edit-main {

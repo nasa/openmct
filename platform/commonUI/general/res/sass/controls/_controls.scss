@@ -186,8 +186,8 @@
 	.icon:not(.invoke-menu) {
 		//		position: relative;
 		//		top: -0.04em;
-		font-size: 150%;
-		vertical-align: middle;
+		//font-size: 150%;
+		//vertical-align: middle;
 	}
 }
 
@@ -361,7 +361,7 @@ label.checkbox.custom {
 			color: lighten($colorBodyFg, 40%);
 		}
 		.type-icon {
-			font-size: 1.5em;
+			font-size: 120%;
 			margin-right: $interiorMargin;
 			vertical-align: middle;
 		}
