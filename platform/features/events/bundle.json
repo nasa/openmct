@@ -23,7 +23,7 @@
         "directives": [
             {
                 "key": "mctDataTable",
-                "implementation": "MCTDataTable.js",
+                "implementation": "directives/MCTDataTable.js",
                 "depends": [ "$anchorScroll" ]
             }
         ]

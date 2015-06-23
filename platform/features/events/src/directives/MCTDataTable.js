@@ -40,18 +40,18 @@ define(
                 scope: {
                     headers: "=",
                     rows: "=",
-                    scrollDirection: "="
+                    ascendingScroll: "="
                 },
                 link: function ($scope, $element) {
                     var currentHeight,
                         previousHeight;
                     
-                    // If the chosen scoll ascending is descending, we want to 
+                    // If the scroll is set to ascending, we want to 
                     // check when elements are added to the table, and move the scroll
                     // bar accordingly. 
                     // (When viewing at the bottom of the page, the scroll bar will 
                     // stay at the bottom despite additions to the table)
-                    if ($scope.scrollDirection === "ascending") {
+                    if ($scope.ascendingScroll) {
                         $scope.$watch("rows", function () {
                             // Wait until the page as been repainted (otherwise the 
                             // height will always be zero)
@@ -60,6 +60,8 @@ define(
                                 // The offsetHeight of the table body 
                                 currentHeight = 
                                     $element[0].firstElementChild.firstElementChild.nextElementSibling.offsetHeight;
+                                
+                                console.log("current height ", currentHeight);
                             });
                             // TODO: Find a more eloquent way to determine repaint completion
                             

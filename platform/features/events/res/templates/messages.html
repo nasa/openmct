@@ -22,23 +22,7 @@
 <div class="w1" ng-controller="TelemetryController as telemetry">
 	<div class="w2"
 	     ng-controller="EventListController">
-        <mct-data-table scroll-direction="descending" headers="headers" rows="rows"></mct-data-table>
-        <!--  <table class="tabular">
-            <thead>
-                <tr>
-                    <th ng-repeat="header in headers">
-                        {{header}}
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="row in rows">
-                    <td ng-repeat="cell in row">
-                        {{cell}}
-                    </td>
-                </tr>
-            </tbody>
-        </table> -->
+        <mct-data-table headers="headers" rows="rows" ascending-scroll="true"></mct-data-table>
 	</div>
 </div>
 
