@@ -57,19 +57,21 @@ define(
                  * Open the object in a new tab
                  */
                 perform: function () {
-                    var genPath = [ROOT_ID].concat(($route.current.params.ids || DEFAULT_PATH)),
-                        selectedDomainObject = getSelectedObject(),
+                    var selectedDomainObject = getSelectedObject(),
+                        mode = "browse",
                         context = selectedDomainObject &&
                             selectedDomainObject.getCapability('context'),
                         objectPath = context ? context.getPath() : [],
                         ids = objectPath.map(function (selectedDomainObject) {
                             return selectedDomainObject.getId();
                         }),
-                        viewKey = $location.search().view,
-                        partialPath = "index.html#/browse/" + ids.slice(1).join("/") +
-                            "?view=" + viewKey;
+                        viewPath = "?view=" + $location.search().view,
+                        partialPath = "index.html#/" + mode + "/" +
+                            ids.slice(1).join("/") + viewPath;
                     
                     window.open(partialPath, "_blank");
+                    
+                    
                 }
             };
         }
