@@ -70,6 +70,15 @@
         $h: $w - 20;
         $plw: 50%; //$w * 0.5;
         $prw: 50%; //$w - $plw;
+	    $bg: $colorKey;
+	    $fg: $colorKeyFg;
+	    $colorMid: lighten($bg, 25%);
+	    $bgHover: $bg;
+	    @include containerSubtle(darken($bg, 15%), $fg);
+	    display: block;
+	    .icon {
+		    color: $colorMid;
+	    }
         width: $w;
         height: $h;
         .contents {
@@ -91,10 +100,14 @@
                         @include border-radius($controlCr);
 //                        @include test(red);
                         border-top: none;
+	                    color: $fg;
 //                        font-size: 0.85em;
 //                        line-height: 20px;
                         &:hover {
                             background: $bgHover;
+	                        .icon {
+		                        color: lighten($bg, 50%);
+	                        }
                         }
                         .icon {
                             @include txtShdwSubtle(0.4);
@@ -111,34 +124,33 @@
                 width: $prw;
             }
         }
-    }
-    .menu-item-description {
-        .desc-area {
-//            @include test(green);
-            &.icon {
-                //@include test(red);
-                $h: 150px;
-                position: relative;
-                color: lighten($bg, 30%);
-                font-size: 8em;
-                left: 0;
-                height: $h;
-                line-height: $h;
-	            margin-bottom: $interiorMargin * 5;
-//                top: 0; right: 0; bottom: 5em; left: 0;
-//                height: 5em;
-                text-align: center;
-            }
-            &.title {
-                color: lighten($bg, 60%);
-                font-size: 1.2em;
-                margin-bottom: 0.5em;
-            }
-	        &.description {
-		        color: lighten($bg, 30%);
-		        font-size: 0.8em;
-	        }
-        }
+	    .menu-item-description {
+		    .desc-area {
+			    //            @include test(green);
+			    &.icon {
+				    //@include test(red);
+				    $h: 150px;
+				    position: relative;
+				    font-size: 8em;
+				    left: 0;
+				    height: $h;
+				    line-height: $h;
+				    margin-bottom: $interiorMargin * 5;
+				    text-align: center;
+			    }
+			    &.title {
+				    color: $fg;
+				    font-size: 1.2em;
+				    margin-bottom: 0.5em;
+			    }
+			    &.description {
+				    //color: lighten($bg, 30%);
+				    color: $fg;
+				    font-size: 0.8em;
+				    line-height: 1.5em;
+			    }
+		    }
+	    }
     }
     .context-menu {
         $bg: lighten($colorBodyBg, 25%);

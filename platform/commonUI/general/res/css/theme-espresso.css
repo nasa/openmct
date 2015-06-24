@@ -1364,21 +1364,21 @@ mct-container {
     content: "+";
     font-family: symbolsfont;
     font-size: 0.8em; }
-  /* line 46, ../sass/controls/_buttons.scss */
+  /* line 45, ../sass/controls/_buttons.scss */
   .btn.create-btn .menu,
   .l-btn.create-btn .menu {
     margin-left: -7.5px; }
-  /* line 53, ../sass/controls/_buttons.scss */
+  /* line 52, ../sass/controls/_buttons.scss */
   .btn.sm,
   .l-btn.sm {
     padding: 0 5px; }
-  /* line 56, ../sass/controls/_buttons.scss */
+  /* line 55, ../sass/controls/_buttons.scss */
   .btn.vsm,
   .l-btn.vsm {
     padding: 0 2.5px; }
 
 /*********************************** STYLE STYLES */
-/* line 62, ../sass/controls/_buttons.scss */
+/* line 61, ../sass/controls/_buttons.scss */
 .btn,
 .s-btn,
 .icon-btn,
@@ -1392,7 +1392,7 @@ mct-container {
   text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px;
   cursor: pointer;
   text-decoration: none; }
-  /* line 71, ../sass/controls/_buttons.scss */
+  /* line 70, ../sass/controls/_buttons.scss */
   .btn.major,
   .s-btn.major,
   .major.icon-btn,
@@ -1441,7 +1441,7 @@ mct-container {
     .major.btn-menu.icon-btn .invoke-menu,
     .major.btn-menu.s-icon-btn .invoke-menu {
       color: #52d4ff; }
-    /* line 76, ../sass/controls/_buttons.scss */
+    /* line 75, ../sass/controls/_buttons.scss */
     .btn.major:hover,
     .s-btn.major:hover,
     .major.icon-btn:hover,
@@ -1489,13 +1489,13 @@ mct-container {
       .major.icon-btn:hover.btn-menu .invoke-menu,
       .major.s-icon-btn:hover.btn-menu .invoke-menu {
         color: #6bdaff; }
-    /* line 80, ../sass/controls/_buttons.scss */
+    /* line 79, ../sass/controls/_buttons.scss */
     .btn.major .invoke-menu,
     .s-btn.major .invoke-menu,
     .major.icon-btn .invoke-menu,
     .major.s-icon-btn .invoke-menu {
       color: #ccf2ff; }
-  /* line 84, ../sass/controls/_buttons.scss */
+  /* line 83, ../sass/controls/_buttons.scss */
   .btn.subtle,
   .s-btn.subtle,
   .subtle.icon-btn,
@@ -1543,7 +1543,7 @@ mct-container {
     .subtle.btn-menu.icon-btn .invoke-menu,
     .subtle.btn-menu.s-icon-btn .invoke-menu {
       color: #a8a8a8; }
-  /* line 87, ../sass/controls/_buttons.scss */
+  /* line 86, ../sass/controls/_buttons.scss */
   .btn.very-subtle, .btn.s-very-subtle,
   .s-btn.very-subtle,
   .very-subtle.icon-btn,
@@ -1603,7 +1603,7 @@ mct-container {
     .s-very-subtle.btn-menu.icon-btn .invoke-menu,
     .s-very-subtle.btn-menu.s-icon-btn .invoke-menu {
       color: #757575; }
-    /* line 90, ../sass/controls/_buttons.scss */
+    /* line 89, ../sass/controls/_buttons.scss */
     .btn.very-subtle.paused, .btn.s-very-subtle.paused,
     .s-btn.very-subtle.paused,
     .very-subtle.paused.icon-btn,
@@ -1663,7 +1663,7 @@ mct-container {
       .s-very-subtle.paused.btn-menu.icon-btn .invoke-menu,
       .s-very-subtle.paused.btn-menu.s-icon-btn .invoke-menu {
         color: #feb04d; }
-      /* line 92, ../sass/controls/_buttons.scss */
+      /* line 91, ../sass/controls/_buttons.scss */
       .btn.very-subtle.paused .icon:before, .btn.s-very-subtle.paused .icon:before,
       .s-btn.very-subtle.paused .icon:before,
       .very-subtle.paused.icon-btn .icon:before,
@@ -1673,31 +1673,31 @@ mct-container {
       .s-very-subtle.paused.s-icon-btn .icon:before {
         content: "\0000EF"; }
 
-/* line 99, ../sass/controls/_buttons.scss */
+/* line 98, ../sass/controls/_buttons.scss */
 .icon-btn,
 .s-icon-btn {
   font-size: 1em; }
-  /* line 103, ../sass/controls/_buttons.scss */
+  /* line 102, ../sass/controls/_buttons.scss */
   .icon-btn .icon,
   .s-icon-btn .icon {
     color: #0099cc; }
-  /* line 107, ../sass/controls/_buttons.scss */
+  /* line 106, ../sass/controls/_buttons.scss */
   .icon-btn.paused .icon,
   .s-icon-btn.paused .icon {
     color: #fff; }
-  /* line 115, ../sass/controls/_buttons.scss */
+  /* line 114, ../sass/controls/_buttons.scss */
   .icon-btn:not(.disabled):not(.paused):hover .icon,
   .s-icon-btn:not(.disabled):not(.paused):hover .icon {
     color: #33ccff; }
-  /* line 122, ../sass/controls/_buttons.scss */
+  /* line 121, ../sass/controls/_buttons.scss */
   .icon-btn.labeled,
   .s-icon-btn.labeled {
     padding: 0 3.75px; }
-    /* line 127, ../sass/controls/_buttons.scss */
+    /* line 126, ../sass/controls/_buttons.scss */
     .icon-btn.labeled .title-label,
     .s-icon-btn.labeled .title-label {
       margin-left: 5px; }
-  /* line 133, ../sass/controls/_buttons.scss */
+  /* line 132, ../sass/controls/_buttons.scss */
   .icon-btn.pause-play.paused,
   .s-icon-btn.pause-play.paused {
     -moz-animation-name: pulse;
@@ -1715,17 +1715,17 @@ mct-container {
     -moz-animation-timing-function: ease-in-out;
     -webkit-animation-timing-function: ease-in-out;
     animation-timing-function: ease-in-out; }
-  /* line 136, ../sass/controls/_buttons.scss */
+  /* line 135, ../sass/controls/_buttons.scss */
   .icon-btn.pause-play .icon:before,
   .s-icon-btn.pause-play .icon:before {
     content: "\0000F1"; }
-  /* line 142, ../sass/controls/_buttons.scss */
+  /* line 141, ../sass/controls/_buttons.scss */
   .icon-btn.show-thumbs .icon:before,
   .s-icon-btn.show-thumbs .icon:before {
     content: "\000039"; }
 
 /*********************************** LAYOUT STYLES */
-/* line 149, ../sass/controls/_buttons.scss */
+/* line 148, ../sass/controls/_buttons.scss */
 span.btn,
 span.btn span,
 span.l-btn,
@@ -2488,9 +2488,35 @@ label.checkbox.custom {
           left: 10px; }
   /* line 68, ../sass/controls/_menus.scss */
   .menu-element .super-menu {
+    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwOGViZCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwN2FhMyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+    background-size: 100%;
+    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #008ebd), color-stop(100%, #007aa3));
+    background-image: -moz-linear-gradient(#008ebd, #007aa3);
+    background-image: -webkit-linear-gradient(#008ebd, #007aa3);
+    background-image: linear-gradient(#008ebd, #007aa3);
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+    border: none;
+    border-top: 1px solid #0095c7;
+    color: #fff;
+    display: inline-block;
+    display: block;
     width: 450px;
     height: 430px; }
-    /* line 75, ../sass/controls/_menus.scss */
+    /* line 160, ../sass/_mixins.scss */
+    .menu-element .super-menu.btn-menu .invoke-menu {
+      color: #05c1ff; }
+    /* line 79, ../sass/controls/_menus.scss */
+    .menu-element .super-menu .icon {
+      color: #4dd2ff; }
+    /* line 84, ../sass/controls/_menus.scss */
     .menu-element .super-menu .contents {
       overflow: hidden;
       position: absolute;
@@ -2500,12 +2526,12 @@ label.checkbox.custom {
       left: 5px;
       width: auto;
       height: auto; }
-    /* line 78, ../sass/controls/_menus.scss */
+    /* line 87, ../sass/controls/_menus.scss */
     .menu-element .super-menu .pane {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box; }
-      /* line 80, ../sass/controls/_menus.scss */
+      /* line 89, ../sass/controls/_menus.scss */
       .menu-element .super-menu .pane.left {
         border-right: 1px solid rgba(255, 255, 255, 0.2);
         left: 0;
@@ -2514,49 +2540,53 @@ label.checkbox.custom {
         width: 50%;
         overflow-x: hidden;
         overflow-y: auto; }
-        /* line 90, ../sass/controls/_menus.scss */
+        /* line 99, ../sass/controls/_menus.scss */
         .menu-element .super-menu .pane.left ul li {
           -moz-border-radius: 2px;
           -webkit-border-radius: 2px;
           border-radius: 2px;
-          border-top: none; }
-          /* line 96, ../sass/controls/_menus.scss */
+          border-top: none;
+          color: #fff; }
+          /* line 106, ../sass/controls/_menus.scss */
           .menu-element .super-menu .pane.left ul li:hover {
-            background: #737373; }
-          /* line 99, ../sass/controls/_menus.scss */
+            background: #0099cc; }
+            /* line 108, ../sass/controls/_menus.scss */
+            .menu-element .super-menu .pane.left ul li:hover .icon {
+              color: #ccf2ff; }
+          /* line 112, ../sass/controls/_menus.scss */
           .menu-element .super-menu .pane.left ul li .icon {
             text-shadow: rgba(0, 0, 0, 0.4) 0 1px 2px;
             left: 5px; }
-      /* line 106, ../sass/controls/_menus.scss */
+      /* line 119, ../sass/controls/_menus.scss */
       .menu-element .super-menu .pane.right {
         left: auto;
         right: 0;
         padding: 25px;
         width: 50%; }
-  /* line 118, ../sass/controls/_menus.scss */
-  .menu-element .menu-item-description .desc-area.icon {
-    position: relative;
-    color: #8c8c8c;
-    font-size: 8em;
-    left: 0;
-    height: 150px;
-    line-height: 150px;
-    margin-bottom: 25px;
-    text-align: center; }
-  /* line 132, ../sass/controls/_menus.scss */
-  .menu-element .menu-item-description .desc-area.title {
-    color: #d9d9d9;
-    font-size: 1.2em;
-    margin-bottom: 0.5em; }
-  /* line 137, ../sass/controls/_menus.scss */
-  .menu-element .menu-item-description .desc-area.description {
-    color: #8c8c8c;
-    font-size: 0.8em; }
-  /* line 143, ../sass/controls/_menus.scss */
+    /* line 130, ../sass/controls/_menus.scss */
+    .menu-element .super-menu .menu-item-description .desc-area.icon {
+      position: relative;
+      font-size: 8em;
+      left: 0;
+      height: 150px;
+      line-height: 150px;
+      margin-bottom: 25px;
+      text-align: center; }
+    /* line 141, ../sass/controls/_menus.scss */
+    .menu-element .super-menu .menu-item-description .desc-area.title {
+      color: #fff;
+      font-size: 1.2em;
+      margin-bottom: 0.5em; }
+    /* line 146, ../sass/controls/_menus.scss */
+    .menu-element .super-menu .menu-item-description .desc-area.description {
+      color: #fff;
+      font-size: 0.8em;
+      line-height: 1.5em; }
+  /* line 155, ../sass/controls/_menus.scss */
   .menu-element .context-menu {
     font-size: 0.80rem;
     pointer-events: auto; }
-    /* line 149, ../sass/controls/_menus.scss */
+    /* line 161, ../sass/controls/_menus.scss */
     .menu-element .context-menu.menu {
       background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzkxOTE5MSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzg1ODU4NSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
@@ -2580,42 +2610,42 @@ label.checkbox.custom {
       /* line 160, ../sass/_mixins.scss */
       .menu-element .context-menu.menu.btn-menu .invoke-menu {
         color: #b5b5b5; }
-      /* line 151, ../sass/controls/_menus.scss */
+      /* line 163, ../sass/controls/_menus.scss */
       .menu-element .context-menu.menu ul li {
         padding-left: 30px; }
-        /* line 153, ../sass/controls/_menus.scss */
+        /* line 165, ../sass/controls/_menus.scss */
         .menu-element .context-menu.menu ul li a {
           color: white; }
-        /* line 154, ../sass/controls/_menus.scss */
+        /* line 166, ../sass/controls/_menus.scss */
         .menu-element .context-menu.menu ul li .icon {
           color: #1ac6ff; }
-        /* line 157, ../sass/controls/_menus.scss */
+        /* line 169, ../sass/controls/_menus.scss */
         .menu-element .context-menu.menu ul li .type-icon {
           left: 5px; }
-        /* line 160, ../sass/controls/_menus.scss */
+        /* line 172, ../sass/controls/_menus.scss */
         .menu-element .context-menu.menu ul li:hover .icon {
           color: #33ccff; }
 
-/* line 168, ../sass/controls/_menus.scss */
+/* line 180, ../sass/controls/_menus.scss */
 .context-menu-holder {
   pointer-events: none;
   position: absolute;
   height: 200px;
   width: 170px;
   z-index: 70; }
-  /* line 174, ../sass/controls/_menus.scss */
+  /* line 186, ../sass/controls/_menus.scss */
   .context-menu-holder .context-menu-wrapper {
     position: absolute;
     height: 100%;
     width: 100%; }
-  /* line 181, ../sass/controls/_menus.scss */
+  /* line 193, ../sass/controls/_menus.scss */
   .context-menu-holder.go-left .context-menu {
     right: 0; }
-  /* line 182, ../sass/controls/_menus.scss */
+  /* line 194, ../sass/controls/_menus.scss */
   .context-menu-holder.go-up .context-menu {
     bottom: 0; }
 
-/* line 185, ../sass/controls/_menus.scss */
+/* line 197, ../sass/controls/_menus.scss */
 .btn-bar.right .menu,
 .menus-to-left .menu {
   left: auto;
