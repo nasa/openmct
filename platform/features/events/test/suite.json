@@ -3,5 +3,6 @@
     "EventListController",
     "EventListPopulator",
     "MCTDataTable",
+    "MessagesViewPolicy",
     "RangeColumn"
 ]

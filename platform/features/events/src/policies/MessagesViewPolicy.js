@@ -51,6 +51,8 @@ define(
                         if (domainObject.getModel().type !== 'eventGenerator') {
                             return false;
                         }
+                        
+                        // TODO: This may later apply to more types beyond just eventGenerator.
                     }
                     
                     // Like all policies, allow by default.
