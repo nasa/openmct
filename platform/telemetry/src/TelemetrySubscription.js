@@ -154,6 +154,14 @@ define(
                 return objects;
             }
 
+            function unsubscribeAll() {
+                return unsubscribePromise.then(function (unsubscribes) {
+                    return $q.all(unsubscribes.map(function (unsubscribe) {
+                        return unsubscribe();
+                    }));
+                });
+            }
+
             function initialize() {
                 // Get a reference to relevant objects (those with telemetry
                 // capabilities) and subscribe to their telemetry updates.
@@ -176,7 +184,7 @@ define(
             function modelChange(model) {
                 if (!idsMatch((model || {}).composition || [])) {
                     // Reinitialize if composition has changed
-                    initialize();
+                    unsubscribeAll().then(initialize);
                 }
             }
 
@@ -201,11 +209,7 @@ define(
                     if (unlistenToMutation) {
                         unlistenToMutation();
                     }
-                    return unsubscribePromise.then(function (unsubscribes) {
-                        return $q.all(unsubscribes.map(function (unsubscribe) {
-                            return unsubscribe();
-                        }));
-                    });
+                    return unsubscribeAll();
                 },
                 /**
                  * Get the most recent domain value that has been observed
