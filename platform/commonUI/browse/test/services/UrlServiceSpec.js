@@ -44,7 +44,7 @@ define(
                 urlService = new UrlService(mockLocation);
             });
             
-            it("Get url for a domainObject and mode", function () {
+            it("get url for a domainObject and mode", function () {
                 // The mockDomainObject is initialized as a 
                 // spy object to ultimately be passed into the
                 // urlService urlFor function

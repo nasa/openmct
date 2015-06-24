@@ -65,11 +65,11 @@ define(
                 
             });
                         
-            it("New tab with current url is opened", function () {
+            it("new tab with current url is opened", function () {
                 actionCurrent.perform();
             });
             
-            it("New tab with a selected url is opened", function () {
+            it("new tab with a selected url is opened", function () {
                 actionSelected.perform();
             });
             
