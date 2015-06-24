@@ -16,7 +16,7 @@
             {
                 "key": "BrowseController",
                 "implementation": "BrowseController.js",
-                "depends": [ "$scope", "$route", "$location", "objectService", "navigationService" ]
+                "depends": [ "$scope", "$route", "$location", "objectService", "navigationService", "urlService"]
             },
             {
                 "key": "BrowseObjectController",
