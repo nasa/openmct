@@ -30,12 +30,12 @@ define(
         "use strict";
 
         describe("The url service", function () {
-            var mockUrl,
-                mockUrlFor,
-                urlService,
+            var urlService,
                 mockLocation;
 
             beforeEach(function () {
+                // Creates a mockLocation, used to 
+                // do the view search
                 mockLocation = jasmine.createSpyObj(
                     "$location",
                     [ "path", "search" ]
@@ -45,6 +45,9 @@ define(
             });
             
             it("Get url for a domainObject and mode", function () {
+                // The mockDomainObject is initialized as a 
+                // spy object to ultimately be passed into the
+                // urlService urlFor function
                 var mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     [ "getId", "getCapability", "getModel", "useCapability" ]
@@ -54,22 +57,31 @@ define(
                         { key: 'abc' },
                         { key: 'def', someKey: 'some value' },
                         { key: 'xyz' }
-                    ];
+                    ],
+                    mockMode = "browse";
                 
+                // The mockContext is set a path
+                // for the mockDomainObject
                 mockContext.getPath.andReturn(
                     [mockDomainObject]
                 );
                 
+                // view capability used with the testviews made
                 mockDomainObject.useCapability.andCallFake(function (c) {
                     return (c === 'view') && testViews;
                 });
                 
+                // context capability used with the mockContext created
+                // so the variables including context in the urlFor are
+                // initialized and reached
                 mockDomainObject.getCapability.andCallFake(function (c) {
                     return c === 'context' && mockContext;
                 });
                 
+                // Uses the mockLocation to get the current
+                // "mock" website's view
                 mockLocation.search.andReturn({ view: 'def' });
-                urlService.urlFor("browse", mockDomainObject);
+                urlService.urlFor(mockMode, mockDomainObject);
             });
         });
     }

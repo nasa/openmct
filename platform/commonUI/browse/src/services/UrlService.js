@@ -47,8 +47,14 @@ define(
                         return domainObject.getId();
                     }),
                     viewPath = "?view=" + $location.search().view,
+                    // Parses the path together. Starts with the 
+                    // default index.html file, then the mode passed
+                    // into the service, followed by ids in the url
+                    // joined by '/', and lastly the view path from
+                    // the current location
                     path = "index.html#/" + mode + "/" +
                         ids.slice(1).join("/") + viewPath;
+                
                 return path;
             }
             

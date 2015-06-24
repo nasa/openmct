@@ -32,9 +32,7 @@ define(
             DEFAULT_PATH = "/mine";
         /**
          * The new tab action allows a domain object to be opened
-         * into a new browser tab. (Currently this is a stub, present
-         * to allow the control to appear in the appropriate location in
-         * the user interface.)
+         * into a new browser tab.
          * @constructor
          */
         function NewTabAction(urlService, $window, context) {

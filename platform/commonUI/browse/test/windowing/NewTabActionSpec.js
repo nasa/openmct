@@ -27,38 +27,50 @@ define(
         "use strict";
         
         describe("The new tab action", function () {
-            var action,
-                action2,
+            var actionSelected,
+                actionCurrent,
                 mockWindow,
                 mockDomainObject,
-                mockContext,
-                mock2Context,
+                mockContextCurrent,
+                mockContextSelected,
                 mockUrlService;
 
             beforeEach(function () {
-                // Creates a mockWindow from $window, then
-                // the mockWindow's location.href is set
-                // to a mock Url
                 mockWindow = jasmine.createSpyObj("$window", ["open", "location"]);
 
-                mockContext = jasmine.createSpyObj("context", ["selectedObject",
+                // Context if the current object is selected
+                // For example, when the top right new tab
+                // button is clicked, the user is using the 
+                // current domainObject
+                mockContextCurrent = jasmine.createSpyObj("context", ["domainObject"]);
+                
+                // Context if the selected object is selected
+                // For example, when an object in the left
+                // tree is opened in a new tab using the
+                // context menu
+                mockContextSelected = jasmine.createSpyObj("context", ["selectedObject",
                                                                "domainObject"]);
                 
-                mock2Context = jasmine.createSpyObj("context", ["domainObject"]);
-                
+                // Mocks the urlService used to make the new tab's url from a
+                // domainObject and mode
                 mockUrlService = jasmine.createSpyObj("urlService", ["urlFor"]);
                 
+                // Action done using the current context or mockContextCurrent
+                actionCurrent = new NewTabAction(mockUrlService, mockWindow,
+                                                 mockContextCurrent);
                 
-                action = new NewTabAction(mockUrlService, mockWindow, mockContext);
-                action2 = new NewTabAction(mockUrlService, mockWindow, mock2Context);
+                // Action done using the selected context or mockContextSelected
+                actionSelected = new NewTabAction(mockUrlService, mockWindow,
+                                                  mockContextSelected);
                 
             });
                         
             it("New tab with current url is opened", function () {
-                // The expection is that the mockWindow
-                // will be called with it's location.href
-                action.perform();
-                action2.perform();
+                actionCurrent.perform();
+            });
+            
+            it("New tab with a selected url is opened", function () {
+                actionSelected.perform();
             });
             
         });
