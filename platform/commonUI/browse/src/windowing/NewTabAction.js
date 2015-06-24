@@ -37,16 +37,14 @@ define(
          * the user interface.)
          * @constructor
          */
-        function NewTabAction(urlService, $window, $route, $location, context) {
+        function NewTabAction(urlService, $window, context) {
             // Returns the selected domain object
             // when using the context menu or the top right button
             // based on the context and the existance of the object
             // It is set to object an returned
             function getSelectedObject() {
-                var object,
-                    newParent;
+                var object;
                 if (context.selectedObject) {
-                    newParent = context.domainObject;
                     object = context.selectedObject;
                 } else {
                     object = context.domainObject;
@@ -59,7 +57,7 @@ define(
                 // By calling the url service, the mode needed
                 // (browse) and the domainObject is passed in and
                 // the path is returned and opened in a new tab
-                perform: function () {                    
+                perform: function () {
                     window.open(urlService.urlFor("browse", getSelectedObject()),
                                 "_blank");
                 }

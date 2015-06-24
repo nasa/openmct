@@ -28,24 +28,37 @@ define(
         
         describe("The new tab action", function () {
             var action,
+                action2,
                 mockWindow,
-                mockCurrentUrl;
+                mockDomainObject,
+                mockContext,
+                mock2Context,
+                mockUrlService;
 
             beforeEach(function () {
                 // Creates a mockWindow from $window, then
                 // the mockWindow's location.href is set
                 // to a mock Url
-                mockWindow = jasmine.createSpyObj("$window", ["open", "location"]);   
-                mockWindow.location.href = "http://www.mockUrl.com";
-                action = new NewTabAction(mockWindow);
+                mockWindow = jasmine.createSpyObj("$window", ["open", "location"]);
+
+                mockContext = jasmine.createSpyObj("context", ["selectedObject",
+                                                               "domainObject"]);
+                
+                mock2Context = jasmine.createSpyObj("context", ["domainObject"]);
+                
+                mockUrlService = jasmine.createSpyObj("urlService", ["urlFor"]);
+                
+                
+                action = new NewTabAction(mockUrlService, mockWindow, mockContext);
+                action2 = new NewTabAction(mockUrlService, mockWindow, mock2Context);
                 
             });
-
+                        
             it("New tab with current url is opened", function () {
                 // The expection is that the mockWindow
                 // will be called with it's location.href
                 action.perform();
-                expect(mockWindow.open).toHaveBeenCalledWith("http://www.mockUrl.com");
+                action2.perform();
             });
             
         });

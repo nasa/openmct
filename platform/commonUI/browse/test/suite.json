@@ -9,6 +9,7 @@
     "creation/LocatorController",
     "navigation/NavigateAction",
     "navigation/NavigationService",
+    "services/UrlService",
     "windowing/FullscreenAction",
     "windowing/NewTabAction",
     "windowing/WindowTitler"

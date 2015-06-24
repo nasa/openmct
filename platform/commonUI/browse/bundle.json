@@ -101,7 +101,7 @@
                 "implementation": "windowing/NewTabAction.js",
                 "description": "Open this object in a new tab",
                 "category": ["view-control", "contextual"],
-                "depends": [ "urlService", "$window", "$route", "$location" ],
+                "depends": [ "urlService", "$window" ],
                 "group": "windowing",
                 "glyph": "y"
             },

@@ -44,7 +44,8 @@ define(
                         domainObject.getCapability('context'),
                     objectPath = context ? context.getPath() : [],
                     ids = objectPath.map(function (domainObject) {
-                        return domainObject.getId();}),
+                        return domainObject.getId();
+                    }),
                     viewPath = "?view=" + $location.search().view,
                     path = "index.html#/" + mode + "/" +
                         ids.slice(1).join("/") + viewPath;
@@ -59,7 +60,7 @@ define(
                  * @param {DomainObject} value of the domain object 
                  *        to get the path of
                  */
-                urlFor: urlFor   
+                urlFor: urlFor
             };
         }
 
