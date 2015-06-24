@@ -44,7 +44,7 @@
         "constants": [
             {
                 "key": "INFO_HOVER_DELAY",
-                "value": 500
+                "value": 2000
             }
         ]
     }

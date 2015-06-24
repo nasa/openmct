@@ -35,8 +35,8 @@
             <span class='field control date'>
                 <input type='text'
                        name='date'
-                       placeholder="YYYY-DDD"
-                       ng-pattern="/\d\d\d\d-\d\d\d/"
+                       placeholder="{{format}}"
+                       ng-pattern="/\d\d\d\d-\d\d-\d\d/"
                        ng-model='datetime.date'
                        ng-required='ngRequired || partiallyComplete'/>
             </span>

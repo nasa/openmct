@@ -1,0 +1,16 @@
+{
+    "extensions": {
+        "indicators": [
+            {
+                "implementation": "FibonacciIndicator.js",
+                "depends": [ "workerService", "$rootScope" ]
+            }
+        ],
+        "workers": [
+            {
+                "key": "example.fibonacci",
+                "scriptUrl": "FibonacciWorker.js"
+            }
+        ]
+    }
+}
