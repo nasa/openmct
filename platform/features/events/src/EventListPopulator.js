@@ -139,8 +139,10 @@ define(
 
 					// Each value will become a row, which will contain
 					// some value in each column (rendering by the
-					// column object itself)
-					return values.map(function (value) {
+					// column object itself) 
+                    // Additionally, we want to display the rows in reverse 
+                    // order. (i.e. from the top to the bottom of the page)
+                    return values.map(function (value) {
 						return columns.map(function (column) {
 							return column.getValue(
 								objects[value.objectIndex],
@@ -148,7 +150,7 @@ define(
 								value.pointIndex
 							);
 						});
-					});
+					}).reverse();
 				}
 			};
 		}

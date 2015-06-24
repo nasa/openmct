@@ -54,9 +54,6 @@ define(
 			function updateRows() {
 				var telemetry = $scope.telemetry;
 				$scope.rows = telemetry ? getRows(telemetry) : [];
-                // We want to display the rows in reverse order
-                // i.e. from the top to the bottom of the page
-                $scope.rows = $scope.rows.reverse();
 			}
 
 			// Set up columns based on telemetry metadata. This will
