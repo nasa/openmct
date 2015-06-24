@@ -72,6 +72,13 @@ define(
          * @constructor
          */
         function MutationCapability(now, domainObject) {
+            var listeners = [];
+
+            function notifyListeners(model) {
+                listeners.forEach(function (listener) {
+                    listener(model);
+                });
+            }
 
             function mutate(mutator, timestamp) {
                 // Get the object's model and clone it, so the
@@ -96,6 +103,7 @@ define(
                             copyValues(model, result);
                         }
                         model.modified = useTimestamp ? timestamp : now();
+                        notifyListeners(model);
                     }
 
                     // Report the result of the mutation
@@ -105,6 +113,15 @@ define(
                 // Invoke the provided mutator, then make changes to
                 // the underlying model (if applicable.)
                 return fastPromise(mutator(clone)).then(handleMutation);
+            }
+
+            function listen(listener) {
+                listeners.push(listener);
+                return function unlisten() {
+                    listeners = listeners.filter(function (l) {
+                        return l !== listener;
+                    });
+                };
             }
 
             return {
@@ -139,7 +156,16 @@ define(
                  * @returns {Promise.<boolean>} a promise for the result
                  *         of the mutation; true if changes were made.
                  */
-                mutate: mutate
+                mutate: mutate,
+                /**
+                 * Listen for mutations of this domain object's model.
+                 * The provided listener will be invoked with the domain
+                 * object's new model after any changes. To stop listening,
+                 * invoke the function returned by this method.
+                 * @param {Function} listener function to call on mutation
+                 * @returns {Function} a function to stop listening
+                 */
+                listen: listen
             };
         }
 

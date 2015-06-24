@@ -83,6 +83,26 @@ define(
                 // Should have gotten a timestamp from 'now'
                 expect(testModel.modified).toEqual(42);
             });
+
+            it("notifies listeners of mutation", function () {
+                var mockCallback = jasmine.createSpy('callback');
+                mutation.listen(mockCallback);
+                mutation.invoke(function (m) {
+                    m.number = 8;
+                });
+                expect(mockCallback).toHaveBeenCalled();
+                expect(mockCallback.mostRecentCall.args[0].number)
+                    .toEqual(8);
+            });
+
+            it("allows listeners to stop listening", function () {
+                var mockCallback = jasmine.createSpy('callback');
+                mutation.listen(mockCallback)(); // Unlisten immediately
+                mutation.invoke(function (m) {
+                    m.number = 8;
+                });
+                expect(mockCallback).not.toHaveBeenCalled();
+            });
         });
     }
 );
