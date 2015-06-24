@@ -59,6 +59,7 @@ define(
                 telemetryObjects = [],
                 pool = lossless ? new TelemetryQueue() : new TelemetryTable(),
                 metadatas,
+                unlistenToMutation,
                 updatePending;
 
             // Look up domain objects which have telemetry capabilities.
@@ -153,16 +154,41 @@ define(
                 return objects;
             }
 
-            // Get a reference to relevant objects (those with telemetry
-            // capabilities) and subscribe to their telemetry updates.
-            // Keep a reference to their promised return values, as these
-            // will be unsubscribe functions. (This must be a promise
-            // because delegation is supported, and retrieving delegate
-            // telemetry-capable objects may be an asynchronous operation.)
-            telemetryObjectPromise = promiseRelevantObjects(domainObject);
-            unsubscribePromise = telemetryObjectPromise
-                    .then(cacheObjectReferences)
-                    .then(subscribeAll);
+            function initialize() {
+                // Get a reference to relevant objects (those with telemetry
+                // capabilities) and subscribe to their telemetry updates.
+                // Keep a reference to their promised return values, as these
+                // will be unsubscribe functions. (This must be a promise
+                // because delegation is supported, and retrieving delegate
+                // telemetry-capable objects may be an asynchronous operation.)
+                telemetryObjectPromise = promiseRelevantObjects(domainObject);
+                unsubscribePromise = telemetryObjectPromise
+                        .then(cacheObjectReferences)
+                        .then(subscribeAll);
+            }
+
+            function idsMatch(ids) {
+                return ids.every(function (id, index) {
+                    return telemetryObjects[index].getId() === id;
+                });
+            }
+
+            function modelChange(model) {
+                if (!idsMatch((model || {}).composition || [])) {
+                    // Reinitialize if composition has changed
+                    initialize();
+                }
+            }
+
+            function addMutationListener() {
+                var mutation = domainObject.getCapability('mutation');
+                if (mutation) {
+                    return mutation.listen(modelChange);
+                }
+            }
+
+            initialize();
+            unlistenToMutation = addMutationListener();
 
             return {
                 /**
@@ -172,6 +198,9 @@ define(
                  * @memberof TelemetrySubscription
                  */
                 unsubscribe: function () {
+                    if (unlistenToMutation) {
+                        unlistenToMutation();
+                    }
                     return unsubscribePromise.then(function (unsubscribes) {
                         return $q.all(unsubscribes.map(function (unsubscribe) {
                             return unsubscribe();
