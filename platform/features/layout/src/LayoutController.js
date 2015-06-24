@@ -90,6 +90,10 @@ define(
             function lookupPanels(ids) {
                 var configuration = $scope.configuration || {};
 
+                // ids is read from model.composition and may be undefined;
+                // fall back to an array if that occurs
+                ids = ids || [];
+
                 // Pull panel positions from configuration
                 rawPositions = shallowCopy(configuration.panels || {}, ids);
 

@@ -36,6 +36,7 @@ define(
                 mockElement,
                 mockCanvas,
                 mockGL,
+                mockC2d,
                 mockPromise,
                 mctChart;
 
@@ -47,13 +48,14 @@ define(
                 mockScope =
                     jasmine.createSpyObj("$scope", ["$watchCollection", "$on"]);
                 mockElement =
-                    jasmine.createSpyObj("element", ["find"]);
+                    jasmine.createSpyObj("element", ["find", "html"]);
                 mockInterval.cancel = jasmine.createSpy("cancelInterval");
                 mockPromise = jasmine.createSpyObj("promise", ["then"]);
 
 
                 // mct-chart uses GLChart, so it needs WebGL API
-                mockCanvas = jasmine.createSpyObj("canvas", [ "getContext" ]);
+                mockCanvas =
+                    jasmine.createSpyObj("canvas", [ "getContext", "addEventListener" ]);
                 mockGL = jasmine.createSpyObj(
                     "gl",
                     [
@@ -81,6 +83,7 @@ define(
                         "drawArrays"
                     ]
                 );
+                mockC2d = jasmine.createSpyObj('c2d', ['clearRect']);
                 mockGL.ARRAY_BUFFER = "ARRAY_BUFFER";
                 mockGL.DYNAMIC_DRAW = "DYNAMIC_DRAW";
                 mockGL.TRIANGLE_FAN = "TRIANGLE_FAN";
@@ -93,7 +96,9 @@ define(
                 });
 
                 mockElement.find.andReturn([mockCanvas]);
-                mockCanvas.getContext.andReturn(mockGL);
+                mockCanvas.getContext.andCallFake(function (type) {
+                    return { webgl: mockGL, '2d': mockC2d }[type];
+                });
                 mockInterval.andReturn(mockPromise);
 
                 mctChart = new MCTChart(mockInterval, mockLog);
@@ -167,6 +172,15 @@ define(
                 mockCanvas.getContext.andReturn(undefined);
                 mctChart.link(mockScope, mockElement);
                 expect(mockLog.warn).toHaveBeenCalled();
+            });
+
+            it("falls back to Canvas 2d API if WebGL context is lost", function () {
+                mctChart.link(mockScope, mockElement);
+                expect(mockCanvas.addEventListener)
+                    .toHaveBeenCalledWith("webglcontextlost", jasmine.any(Function));
+                expect(mockCanvas.getContext).not.toHaveBeenCalledWith('2d');
+                mockCanvas.addEventListener.mostRecentCall.args[1]();
+                expect(mockCanvas.getContext).toHaveBeenCalledWith('2d');
             });
 
             it("logs nothing in nominal situations (WebGL available)", function () {
