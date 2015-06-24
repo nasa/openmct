@@ -86,7 +86,7 @@ define(
                 });
             });
 
-            it("returns rows in reverse domain order", function () {
+            it("returns rows in most-recent-last order", function () {
                 var rows = populator.getRows(mockDatas, mockDomainObjects, 84),
                     previous = Number.NEGATIVE_INFINITY;
 

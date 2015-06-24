@@ -2,6 +2,6 @@
     "DomainColumn",
     "EventListController",
     "EventListPopulator",
-    "MessagesViewPolicy",
+    "policies/MessagesViewPolicy",
     "RangeColumn"
 ]
