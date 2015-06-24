@@ -22,7 +22,7 @@
 /*global define,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
- *  EventSpec. Created by shale on 06/23/2015.
+ *  EventSpec. Created by vwoeltje on 11/6/14. Modified by shale on 06/23/2015.
  */
 define(
     ["../src/DomainColumn"],
