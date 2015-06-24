@@ -191,7 +191,8 @@ define(
             }
 
             function addMutationListener() {
-                var mutation = domainObject.getCapability('mutation');
+                var mutation = domainObject &&
+                    domainObject.getCapability('mutation');
                 if (mutation) {
                     return mutation.listen(modelChange);
                 }

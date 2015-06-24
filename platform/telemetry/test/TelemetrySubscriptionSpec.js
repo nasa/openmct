@@ -32,6 +32,7 @@ define(
                 mockDomainObject,
                 mockCallback,
                 mockTelemetry,
+                mockMutation,
                 mockUnsubscribe,
                 mockSeries,
                 testMetadata,
@@ -59,6 +60,10 @@ define(
                     "telemetry",
                     ["subscribe", "getMetadata"]
                 );
+                mockMutation = jasmine.createSpyObj(
+                    "mutation",
+                    ["mutate", "listen"]
+                );
                 mockUnsubscribe = jasmine.createSpy("unsubscribe");
                 mockSeries = jasmine.createSpyObj(
                     "series",
@@ -68,7 +73,12 @@ define(
                 mockQ.when.andCallFake(mockPromise);
 
                 mockDomainObject.hasCapability.andReturn(true);
-                mockDomainObject.getCapability.andReturn(mockTelemetry);
+                mockDomainObject.getCapability.andCallFake(function (c) {
+                    return {
+                        telemetry: mockTelemetry,
+                        mutation: mockMutation
+                    }[c];
+                });
                 mockDomainObject.getId.andReturn('test-id');
 
                 mockTelemetry.subscribe.andReturn(mockUnsubscribe);
