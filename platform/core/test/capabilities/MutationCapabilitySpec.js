@@ -25,21 +25,30 @@
  * MutationCapabilitySpec. Created by vwoeltje on 11/6/14.
  */
 define(
-    ["../../src/capabilities/MutationCapability"],
-    function (MutationCapability) {
+    [
+        "../../src/capabilities/MutationCapability",
+        "../../src/services/Topic"
+    ],
+    function (MutationCapability, Topic) {
         "use strict";
 
         describe("The mutation capability", function () {
             var testModel,
+                topic,
                 mockNow,
                 domainObject = { getModel: function () { return testModel; } },
                 mutation;
 
             beforeEach(function () {
                 testModel = { number: 6 };
+                topic = new Topic();
                 mockNow = jasmine.createSpy('now');
                 mockNow.andReturn(12321);
-                mutation = new MutationCapability(mockNow, domainObject);
+                mutation = new MutationCapability(
+                    topic,
+                    mockNow,
+                    domainObject
+                );
             });
 
             it("allows mutation of a model", function () {

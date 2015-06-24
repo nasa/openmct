@@ -71,7 +71,7 @@ define(
          *        which will expose this capability
          * @constructor
          */
-        function MutationCapability(now, domainObject) {
+        function MutationCapability(topic, now, domainObject) {
             var listeners = [];
 
             function notifyListeners(model) {
