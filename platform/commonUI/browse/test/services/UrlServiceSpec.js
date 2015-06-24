@@ -33,10 +33,7 @@ define(
             var mockUrl,
                 mockUrlFor,
                 urlService,
-                mockLocation,
-                mockDomainObject,
-                mockMode,
-                mockObject;
+                mockLocation;
 
             beforeEach(function () {
                 mockLocation = jasmine.createSpyObj(
@@ -52,16 +49,25 @@ define(
                     "domainObject",
                     [ "getId", "getCapability", "getModel", "useCapability" ]
                 ),
+                    mockContext = jasmine.createSpyObj('context', ['getPath']),
                     testViews = [
                         { key: 'abc' },
                         { key: 'def', someKey: 'some value' },
                         { key: 'xyz' }
                     ];
-
+                
+                mockContext.getPath.andReturn(
+                    [mockDomainObject]
+                );
+                
                 mockDomainObject.useCapability.andCallFake(function (c) {
                     return (c === 'view') && testViews;
                 });
-                mockDomainObject.getId.andReturn(true);
+                
+                mockDomainObject.getCapability.andCallFake(function (c) {
+                    return c === 'context' && mockContext;
+                });
+                
                 mockLocation.search.andReturn({ view: 'def' });
                 urlService.urlFor("browse", mockDomainObject);
             });
