@@ -50,6 +50,7 @@ define(
                 origin = [0, 0],
                 domainExtrema,
                 rangeExtrema,
+                buffers = {},
                 bufferArray = [],
                 domainOffset;
 
@@ -61,11 +62,10 @@ define(
             // Check if this set of ids matches the current set of ids
             // (used to detect if line preparation can be skipped)
             function idsMatch(nextIds) {
-                return nextIds.map(function (id, index) {
-                    return ids[index] === id;
-                }).reduce(function (a, b) {
-                    return a && b;
-                }, true);
+                return ids.length === nextIds.length &&
+                    nextIds.every(function (id, index) {
+                        return ids[index] === id;
+                    });
             }
 
             // Prepare plot lines for this group of telemetry objects
@@ -74,7 +74,7 @@ define(
                     next = {};
 
                 // Detect if we already have everything we need prepared
-                if (ids.length === nextIds.length && idsMatch(nextIds)) {
+                if (idsMatch(nextIds)) {
                     // Nothing to prepare, move on
                     return;
                 }
@@ -88,13 +88,13 @@ define(
 
                     // Create buffers for these objects
                     bufferArray = ids.map(function (id) {
-                        var buffer = new PlotLineBuffer(
-                                domainOffset,
-                                INITIAL_SIZE,
-                                maxPoints
-                            );
-                        next[id] = lines[id] || new PlotLine(buffer);
-                        return buffer;
+                        buffers[id] = buffers[id] || new PlotLineBuffer(
+                            domainOffset,
+                            INITIAL_SIZE,
+                            maxPoints
+                        );
+                        next[id] = lines[id] || new PlotLine(buffers[id]);
+                        return buffers[id];
                     });
                 }
 

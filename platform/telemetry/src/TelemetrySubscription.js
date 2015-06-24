@@ -147,7 +147,8 @@ define(
                 telemetryObjects = objects;
                 metadatas = objects.map(lookupMetadata);
                 // Fire callback, as this will be the first time that
-                // telemetry objects are available
+                // telemetry objects are available, or these objects
+                // will have changed.
                 if (callback) {
                     callback();
                 }
@@ -176,9 +177,10 @@ define(
             }
 
             function idsMatch(ids) {
-                return ids.every(function (id, index) {
-                    return telemetryObjects[index].getId() === id;
-                });
+                return ids.length === telemetryObjects.length &&
+                    ids.every(function (id, index) {
+                        return telemetryObjects[index].getId() === id;
+                    });
             }
 
             function modelChange(model) {
