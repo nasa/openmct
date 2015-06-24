@@ -155,6 +155,16 @@ define(
                     }
                 }
 
+                // Switch from WebGL to plain 2D if context is lost
+                function fallbackFromWebGL() {
+                    element.html(TEMPLATE);
+                    canvas = element.find("canvas")[0];
+                    chart = getChart([Canvas2DChart], canvas);
+                    if (chart) {
+                        doDraw(scope.draw);
+                    }
+                }
+
                 // Try to initialize a chart.
                 chart = getChart([GLChart, Canvas2DChart], canvas);
 
@@ -163,6 +173,11 @@ define(
                 if (!chart) {
                     return;
                 }
+
+                // WebGL is a bit of a special case; it may work, then fail
+                // later for various reasons, so we need to listen for this
+                // and fall back to plain canvas drawing when it occurs.
+                canvas.addEventListener("webglcontextlost", fallbackFromWebGL);
 
                 // Check for resize, on a timer
                 activeInterval = $interval(drawIfResized, 1000);
