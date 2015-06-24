@@ -29,7 +29,7 @@ define(
         var STACKED = {
                 key: "stacked",
                 name: "Stacked",
-                glyph: "8",
+                glyph: "m",
                 factory: PlotStackMode
             },
             OVERLAID = {

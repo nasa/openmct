@@ -84,7 +84,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -105,38 +105,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -1348,7 +1348,7 @@ mct-container {
 /* line 26, ../sass/controls/_buttons.scss */
 .btn,
 .l-btn {
-  line-height: 1.25em;
+  line-height: 1.5em;
   padding: 0 7.5px;
   text-decoration: none; }
   /* line 31, ../sass/controls/_buttons.scss */
@@ -1356,22 +1356,29 @@ mct-container {
   .l-btn.lg,
   .l-btn.create-btn {
     height: 24px;
+    line-height: 22px;
     padding: 0 22.5px; }
-  /* line 39, ../sass/controls/_buttons.scss */
+  /* line 40, ../sass/controls/_buttons.scss */
+  .btn.create-btn:before,
+  .l-btn.create-btn:before {
+    content: "+";
+    font-family: symbolsfont;
+    font-size: 0.8em; }
+  /* line 46, ../sass/controls/_buttons.scss */
   .btn.create-btn .menu,
   .l-btn.create-btn .menu {
     margin-left: -7.5px; }
-  /* line 46, ../sass/controls/_buttons.scss */
+  /* line 53, ../sass/controls/_buttons.scss */
   .btn.sm,
   .l-btn.sm {
     padding: 0 5px; }
-  /* line 49, ../sass/controls/_buttons.scss */
+  /* line 56, ../sass/controls/_buttons.scss */
   .btn.vsm,
   .l-btn.vsm {
     padding: 0 2.5px; }
 
 /*********************************** STYLE STYLES */
-/* line 55, ../sass/controls/_buttons.scss */
+/* line 62, ../sass/controls/_buttons.scss */
 .btn,
 .s-btn,
 .icon-btn,
@@ -1384,9 +1391,8 @@ mct-container {
   box-sizing: border-box;
   text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px;
   cursor: pointer;
-  line-height: 1.2em;
   text-decoration: none; }
-  /* line 64, ../sass/controls/_buttons.scss */
+  /* line 71, ../sass/controls/_buttons.scss */
   .btn.major,
   .s-btn.major,
   .major.icon-btn,
@@ -1435,7 +1441,7 @@ mct-container {
     .major.btn-menu.icon-btn .invoke-menu,
     .major.btn-menu.s-icon-btn .invoke-menu {
       color: #52d4ff; }
-    /* line 69, ../sass/controls/_buttons.scss */
+    /* line 76, ../sass/controls/_buttons.scss */
     .btn.major:hover,
     .s-btn.major:hover,
     .major.icon-btn:hover,
@@ -1483,13 +1489,13 @@ mct-container {
       .major.icon-btn:hover.btn-menu .invoke-menu,
       .major.s-icon-btn:hover.btn-menu .invoke-menu {
         color: #6bdaff; }
-    /* line 73, ../sass/controls/_buttons.scss */
+    /* line 80, ../sass/controls/_buttons.scss */
     .btn.major .invoke-menu,
     .s-btn.major .invoke-menu,
     .major.icon-btn .invoke-menu,
     .major.s-icon-btn .invoke-menu {
       color: #ccf2ff; }
-  /* line 77, ../sass/controls/_buttons.scss */
+  /* line 84, ../sass/controls/_buttons.scss */
   .btn.subtle,
   .s-btn.subtle,
   .subtle.icon-btn,
@@ -1537,7 +1543,7 @@ mct-container {
     .subtle.btn-menu.icon-btn .invoke-menu,
     .subtle.btn-menu.s-icon-btn .invoke-menu {
       color: #a8a8a8; }
-  /* line 80, ../sass/controls/_buttons.scss */
+  /* line 87, ../sass/controls/_buttons.scss */
   .btn.very-subtle, .btn.s-very-subtle,
   .s-btn.very-subtle,
   .very-subtle.icon-btn,
@@ -1597,7 +1603,7 @@ mct-container {
     .s-very-subtle.btn-menu.icon-btn .invoke-menu,
     .s-very-subtle.btn-menu.s-icon-btn .invoke-menu {
       color: #757575; }
-    /* line 83, ../sass/controls/_buttons.scss */
+    /* line 90, ../sass/controls/_buttons.scss */
     .btn.very-subtle.paused, .btn.s-very-subtle.paused,
     .s-btn.very-subtle.paused,
     .very-subtle.paused.icon-btn,
@@ -1657,7 +1663,7 @@ mct-container {
       .s-very-subtle.paused.btn-menu.icon-btn .invoke-menu,
       .s-very-subtle.paused.btn-menu.s-icon-btn .invoke-menu {
         color: #feb04d; }
-      /* line 85, ../sass/controls/_buttons.scss */
+      /* line 92, ../sass/controls/_buttons.scss */
       .btn.very-subtle.paused .icon:before, .btn.s-very-subtle.paused .icon:before,
       .s-btn.very-subtle.paused .icon:before,
       .very-subtle.paused.icon-btn .icon:before,
@@ -1667,31 +1673,31 @@ mct-container {
       .s-very-subtle.paused.s-icon-btn .icon:before {
         content: "\0000EF"; }
 
-/* line 92, ../sass/controls/_buttons.scss */
+/* line 99, ../sass/controls/_buttons.scss */
 .icon-btn,
 .s-icon-btn {
   font-size: 1em; }
-  /* line 96, ../sass/controls/_buttons.scss */
+  /* line 103, ../sass/controls/_buttons.scss */
   .icon-btn .icon,
   .s-icon-btn .icon {
     color: #0099cc; }
-  /* line 100, ../sass/controls/_buttons.scss */
+  /* line 107, ../sass/controls/_buttons.scss */
   .icon-btn.paused .icon,
   .s-icon-btn.paused .icon {
     color: #fff; }
-  /* line 108, ../sass/controls/_buttons.scss */
+  /* line 115, ../sass/controls/_buttons.scss */
   .icon-btn:not(.disabled):not(.paused):hover .icon,
   .s-icon-btn:not(.disabled):not(.paused):hover .icon {
     color: #33ccff; }
-  /* line 115, ../sass/controls/_buttons.scss */
+  /* line 122, ../sass/controls/_buttons.scss */
   .icon-btn.labeled,
   .s-icon-btn.labeled {
     padding: 0 3.75px; }
-    /* line 120, ../sass/controls/_buttons.scss */
+    /* line 127, ../sass/controls/_buttons.scss */
     .icon-btn.labeled .title-label,
     .s-icon-btn.labeled .title-label {
       margin-left: 5px; }
-  /* line 126, ../sass/controls/_buttons.scss */
+  /* line 133, ../sass/controls/_buttons.scss */
   .icon-btn.pause-play.paused,
   .s-icon-btn.pause-play.paused {
     -moz-animation-name: pulse;
@@ -1709,17 +1715,17 @@ mct-container {
     -moz-animation-timing-function: ease-in-out;
     -webkit-animation-timing-function: ease-in-out;
     animation-timing-function: ease-in-out; }
-  /* line 129, ../sass/controls/_buttons.scss */
+  /* line 136, ../sass/controls/_buttons.scss */
   .icon-btn.pause-play .icon:before,
   .s-icon-btn.pause-play .icon:before {
     content: "\0000F1"; }
-  /* line 135, ../sass/controls/_buttons.scss */
+  /* line 142, ../sass/controls/_buttons.scss */
   .icon-btn.show-thumbs .icon:before,
   .s-icon-btn.show-thumbs .icon:before {
     content: "\000039"; }
 
 /*********************************** LAYOUT STYLES */
-/* line 142, ../sass/controls/_buttons.scss */
+/* line 149, ../sass/controls/_buttons.scss */
 span.btn,
 span.btn span,
 span.l-btn,
@@ -2505,7 +2511,7 @@ label.checkbox.custom {
         left: 0;
         padding-right: 5px;
         right: auto;
-        width: 225px !important;
+        width: 50%;
         overflow-x: hidden;
         overflow-y: auto; }
         /* line 90, ../sass/controls/_menus.scss */
@@ -2523,11 +2529,11 @@ label.checkbox.custom {
             left: 5px; }
       /* line 106, ../sass/controls/_menus.scss */
       .menu-element .super-menu .pane.right {
-        left: 225px;
+        left: auto;
         right: 0;
         padding: 25px;
-        width: 225px !important; }
-  /* line 117, ../sass/controls/_menus.scss */
+        width: 50%; }
+  /* line 118, ../sass/controls/_menus.scss */
   .menu-element .menu-item-description .desc-area.icon {
     position: relative;
     color: #8c8c8c;
@@ -2535,21 +2541,22 @@ label.checkbox.custom {
     left: 0;
     height: 150px;
     line-height: 150px;
+    margin-bottom: 25px;
     text-align: center; }
-  /* line 130, ../sass/controls/_menus.scss */
-  .menu-element .menu-item-description .desc-area.description {
-    color: #8c8c8c;
-    font-size: 0.8em; }
-  /* line 134, ../sass/controls/_menus.scss */
+  /* line 132, ../sass/controls/_menus.scss */
   .menu-element .menu-item-description .desc-area.title {
     color: #d9d9d9;
     font-size: 1.2em;
-    margin-bottom: 1rem; }
-  /* line 141, ../sass/controls/_menus.scss */
+    margin-bottom: 0.5em; }
+  /* line 137, ../sass/controls/_menus.scss */
+  .menu-element .menu-item-description .desc-area.description {
+    color: #8c8c8c;
+    font-size: 0.8em; }
+  /* line 143, ../sass/controls/_menus.scss */
   .menu-element .context-menu {
     font-size: 0.80rem;
     pointer-events: auto; }
-    /* line 147, ../sass/controls/_menus.scss */
+    /* line 149, ../sass/controls/_menus.scss */
     .menu-element .context-menu.menu {
       background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzkxOTE5MSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzg1ODU4NSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
@@ -2573,42 +2580,42 @@ label.checkbox.custom {
       /* line 160, ../sass/_mixins.scss */
       .menu-element .context-menu.menu.btn-menu .invoke-menu {
         color: #b5b5b5; }
-      /* line 149, ../sass/controls/_menus.scss */
+      /* line 151, ../sass/controls/_menus.scss */
       .menu-element .context-menu.menu ul li {
         padding-left: 30px; }
-        /* line 151, ../sass/controls/_menus.scss */
+        /* line 153, ../sass/controls/_menus.scss */
         .menu-element .context-menu.menu ul li a {
           color: white; }
-        /* line 152, ../sass/controls/_menus.scss */
+        /* line 154, ../sass/controls/_menus.scss */
         .menu-element .context-menu.menu ul li .icon {
           color: #1ac6ff; }
-        /* line 155, ../sass/controls/_menus.scss */
+        /* line 157, ../sass/controls/_menus.scss */
         .menu-element .context-menu.menu ul li .type-icon {
           left: 5px; }
-        /* line 158, ../sass/controls/_menus.scss */
+        /* line 160, ../sass/controls/_menus.scss */
         .menu-element .context-menu.menu ul li:hover .icon {
           color: #33ccff; }
 
-/* line 166, ../sass/controls/_menus.scss */
+/* line 168, ../sass/controls/_menus.scss */
 .context-menu-holder {
   pointer-events: none;
   position: absolute;
   height: 200px;
   width: 170px;
   z-index: 70; }
-  /* line 172, ../sass/controls/_menus.scss */
+  /* line 174, ../sass/controls/_menus.scss */
   .context-menu-holder .context-menu-wrapper {
     position: absolute;
     height: 100%;
     width: 100%; }
-  /* line 179, ../sass/controls/_menus.scss */
+  /* line 181, ../sass/controls/_menus.scss */
   .context-menu-holder.go-left .context-menu {
     right: 0; }
-  /* line 180, ../sass/controls/_menus.scss */
+  /* line 182, ../sass/controls/_menus.scss */
   .context-menu-holder.go-up .context-menu {
     bottom: 0; }
 
-/* line 183, ../sass/controls/_menus.scss */
+/* line 185, ../sass/controls/_menus.scss */
 .btn-bar.right .menu,
 .menus-to-left .menu {
   left: auto;
@@ -3229,10 +3236,10 @@ label.form-control.checkbox input {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 25, ../sass/forms/_validation.scss */
+/* line 23, ../sass/forms/_validation.scss */
 .validates > .label {
   padding-right: 25px; }
-  /* line 28, ../sass/forms/_validation.scss */
+  /* line 26, ../sass/forms/_validation.scss */
   .validates > .label::after {
     display: block;
     position: absolute;
@@ -3243,21 +3250,25 @@ label.form-control.checkbox input {
     height: auto;
     width: 15px;
     font-family: symbolsfont;
-    font-size: 1.1em;
+    font-size: 0.7em;
     text-align: right;
     vertical-align: middle; }
-/* line 46, ../sass/forms/_validation.scss */
+/* line 44, ../sass/forms/_validation.scss */
 .validates.invalid > .label::after, .validates.invalid.req > .label::after {
   color: #ff9900;
   content: "x"; }
-/* line 53, ../sass/forms/_validation.scss */
+/* line 51, ../sass/forms/_validation.scss */
 .validates.valid > .label::after, .validates.valid.req > .label::after {
   color: #33cc33;
   content: "2"; }
-/* line 59, ../sass/forms/_validation.scss */
+/* line 57, ../sass/forms/_validation.scss */
 .validates.req > .label::after {
   color: #ffc700;
   content: "*"; }
+
+/* line 63, ../sass/forms/_validation.scss */
+.req {
+  font-size: 0.7em; }
 
 /* line 66, ../sass/forms/_validation.scss */
 span.req {
@@ -4001,17 +4012,18 @@ input[type="text"] {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 1.3em; }
-/* line 55, ../sass/overlay/_overlay.scss */
+  font-size: 1.3em;
+  margin-bottom: 5px; }
+/* line 56, ../sass/overlay/_overlay.scss */
 .overlay .top-bar {
   height: 60px; }
-/* line 59, ../sass/overlay/_overlay.scss */
+/* line 60, ../sass/overlay/_overlay.scss */
 .overlay .editor {
   top: 70px;
   bottom: 50px;
   left: 0;
   right: 0; }
-/* line 65, ../sass/overlay/_overlay.scss */
+/* line 66, ../sass/overlay/_overlay.scss */
 .overlay .bottom-bar {
   top: auto;
   right: 0;
@@ -4020,10 +4032,10 @@ input[type="text"] {
   font-size: 1em;
   height: 40px;
   text-align: right; }
-  /* line 70, ../sass/overlay/_overlay.scss */
+  /* line 71, ../sass/overlay/_overlay.scss */
   .overlay .bottom-bar .btn {
     margin-left: 10px; }
-/* line 74, ../sass/overlay/_overlay.scss */
+/* line 75, ../sass/overlay/_overlay.scss */
 .overlay .contents.l-dialog {
   top: 5px;
   right: 5px;
