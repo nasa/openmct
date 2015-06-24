@@ -36,7 +36,10 @@ define(
             var testModel,
                 topic,
                 mockNow,
-                domainObject = { getModel: function () { return testModel; } },
+                domainObject = {
+                    getId: function () { return "test-id"; },
+                    getModel: function () { return testModel; }
+                },
                 mutation;
 
             beforeEach(function () {
@@ -111,6 +114,22 @@ define(
                     m.number = 8;
                 });
                 expect(mockCallback).not.toHaveBeenCalled();
+            });
+
+            it("shares listeners across instances", function () {
+                var mockCallback = jasmine.createSpy('callback'),
+                    otherMutation = new MutationCapability(
+                        topic,
+                        mockNow,
+                        domainObject
+                    );
+                mutation.listen(mockCallback);
+                otherMutation.invoke(function (m) {
+                    m.number = 8;
+                });
+                expect(mockCallback).toHaveBeenCalled();
+                expect(mockCallback.mostRecentCall.args[0].number)
+                    .toEqual(8);
             });
         });
     }

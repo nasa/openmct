@@ -29,6 +29,8 @@ define(
     function () {
         "use strict";
 
+        var TOPIC_PREFIX = "mutation:";
+
         // Utility function to overwrite a destination object
         // with the contents of a source object.
         function copyValues(destination, source) {
@@ -72,13 +74,7 @@ define(
          * @constructor
          */
         function MutationCapability(topic, now, domainObject) {
-            var listeners = [];
-
-            function notifyListeners(model) {
-                listeners.forEach(function (listener) {
-                    listener(model);
-                });
-            }
+            var t = topic(TOPIC_PREFIX + domainObject.getId());
 
             function mutate(mutator, timestamp) {
                 // Get the object's model and clone it, so the
@@ -103,7 +99,7 @@ define(
                             copyValues(model, result);
                         }
                         model.modified = useTimestamp ? timestamp : now();
-                        notifyListeners(model);
+                        t.notify(model);
                     }
 
                     // Report the result of the mutation
@@ -116,12 +112,7 @@ define(
             }
 
             function listen(listener) {
-                listeners.push(listener);
-                return function unlisten() {
-                    listeners = listeners.filter(function (l) {
-                        return l !== listener;
-                    });
-                };
+                return t.listen(listener);
             }
 
             return {
