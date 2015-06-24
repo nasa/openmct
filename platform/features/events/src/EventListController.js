@@ -35,7 +35,7 @@ define(
 
 		/**
 		 * The EventListController is responsible for populating
-		 * the contents of the scrolling list view.
+		 * the contents of the event list view.
 		 * @constructor
 		 */
 		function EventListController($scope, formatter) {

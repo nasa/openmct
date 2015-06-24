@@ -28,7 +28,7 @@ define(
 
 		/**
 		 * The EventListPopulator is responsible for filling in the
-		 * values which should appear within columns of a scrolling list
+		 * values which should appear within columns of a event list
 		 * view, based on received telemetry data.
 		 * @constructor
 		 * @param {Column[]} columns the columns to be populated
@@ -124,7 +124,7 @@ define(
 					});
 				},
 				/**
-				 * Get the contents of rows for the scrolling list view.
+				 * Get the contents of rows for the event list view.
 				 * @param {TelemetrySeries[]} datas the data sets
 				 * @param {DomainObject[]} objects the domain objects which
 				 *        provided the data sets; these should match
