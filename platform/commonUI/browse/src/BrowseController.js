@@ -41,19 +41,13 @@ define(
          *
          * @constructor
          */
-        function BrowseController($scope, $route, $location, objectService, navigationService) {
+        function BrowseController($scope, $route, $location, objectService, navigationService, urlService) {
             var path = [ROOT_ID].concat(
                 ($route.current.params.ids || DEFAULT_PATH).split("/")
             );
 
             function updateRoute(domainObject) {
-                var context = domainObject &&
-                        domainObject.getCapability('context'),
-                    objectPath = context ? context.getPath() : [],
-                    ids = objectPath.map(function (domainObject) {
-                        return domainObject.getId();
-                    }),
-                    priorRoute = $route.current,
+                var priorRoute = $route.current,
                     // Act as if params HADN'T changed to avoid page reload
                     unlisten;
 
@@ -61,8 +55,10 @@ define(
                     $route.current = priorRoute;
                     unlisten();
                 });
-
-                $location.path("/browse/" + ids.slice(1).join("/"));
+                // urlService.urlFor used to adjust current
+                // path to new, addressed, path based on
+                // domainObject
+                $location.path(urlService.urlFor("browse", domainObject));
             }
 
             // Callback for updating the in-scope reference to the object

@@ -4863,6 +4863,3 @@ input[type="text"] {
 /* line 32, ../sass/_hide-non-functional.scss */
 .browse-mode .browse-area.holder {
   top: 5px; }
-  /* line 39, ../sass/_hide-non-functional.scss */
-  .browse-mode .browse-area.holder > .contents.split-layout .object-browse-bar .btn.key-window {
-    display: none; }
