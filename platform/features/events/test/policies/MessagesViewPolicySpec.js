@@ -25,7 +25,7 @@
  *  EventSpec. Created by shale on 06/24/2015.
  */
 define(
-    ["../src/policies/MessagesViewPolicy"],
+    ["../../src/policies/MessagesViewPolicy"],
     function (MessagesViewPolicy) {
         "use strict";
 

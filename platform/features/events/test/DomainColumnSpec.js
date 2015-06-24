@@ -31,7 +31,7 @@ define(
 
         var TEST_DOMAIN_VALUE = "some formatted domain value";
 
-        describe("A domain column", function () {
+        describe("An event list domain column", function () {
             var mockDataSet,
                 testMetadata,
                 mockFormatter,

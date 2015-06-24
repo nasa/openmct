@@ -31,7 +31,7 @@ define(
 
         var TEST_RANGE_VALUE = "some formatted range value";
 
-        describe("A range column", function () {
+        describe("An event list range column", function () {
             var mockDataSet,
                 testMetadata,
                 mockFormatter,
