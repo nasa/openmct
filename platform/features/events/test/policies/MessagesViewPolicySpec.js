@@ -32,6 +32,7 @@ define(
         describe("The messages view policy", function () {
             var mockDomainObject,
                 testType,
+                telemetryType,
                 policy;
 
             beforeEach(function () {
@@ -42,18 +43,18 @@ define(
                 mockDomainObject.getModel.andCallFake(function (c) {
                     return {type: testType};
                 });
-
+                
                 policy = new MessagesViewPolicy();
             });
 
-            it("disallows the message view for non Event Generators", function () {
-                testType = 'notAnEventGenerator';
+            it("disallows the message view for objects without string telemetry", function () {
+                telemetryType = 'notString';
                 expect(policy.allow({ key: 'messages' }, mockDomainObject))
                     .toBeFalsy();
             });
 
-            it("allows the message view for Event Generators", function () {
-                testType = 'eventGenerator';
+            it("allows the message view for objects with string telemetry", function () {
+                telemetryType = 'string';
                 expect(policy.allow({ key: 'messages' }, mockDomainObject))
                     .toBeTruthy();
             });

@@ -35,6 +35,16 @@ define(
          */
         function MessagesViewPolicy() {
             
+            function hasStringTelemetry(domainObject) {
+                var telemetry = domainObject &&
+                        domainObject.getCapability('telemetry'),
+                    metadata = telemetry ? telemetry.getMetadata() : {},
+                    ranges = metadata.ranges || [];
+
+                return ranges.some(function (range) {
+                    return range.format === 'string';
+                });
+            }
             return {
                 /**
                  * Check whether or not a given action is allowed by this
@@ -47,12 +57,10 @@ define(
                     // This policy only applies for the Messages view
                     if (view.key === 'messages') {
                         // The Messages view is allowed only if the domain 
-                        // object is a Event Message Generator
-                        if (domainObject.getModel().type !== 'eventGenerator') {
+                        // object has string telemetry
+                        if (!hasStringTelemetry(domainObject)) {
                             return false;
                         }
-                        
-                        // TODO: This may later apply to more types beyond just eventGenerator.
                     }
                     
                     // Like all policies, allow by default.
