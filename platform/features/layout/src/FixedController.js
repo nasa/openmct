@@ -27,8 +27,7 @@ define(
         "use strict";
 
         var DEFAULT_DIMENSIONS = [ 2, 1 ],
-            DEFAULT_GRID_SIZE = [64, 16],
-            DEFAULT_GRID_EXTENT = [4, 4];
+            DEFAULT_GRID_SIZE = [64, 16];
 
         /**
          * The FixedController is responsible for supporting the
@@ -40,7 +39,6 @@ define(
          */
         function FixedController($scope, $q, dialogService, telemetrySubscriber, telemetryFormatter) {
             var gridSize = DEFAULT_GRID_SIZE,
-                gridExtent = DEFAULT_GRID_EXTENT,
                 dragging,
                 subscription,
                 elementProxies = [],
@@ -283,18 +281,6 @@ define(
                  */
                 getGridSize: function () {
                     return gridSize;
-                },
-                /**
-                 * Set the size of the viewable fixed position area.
-                 * @memberof FixedController#
-                 * @param bounds the width/height, as reported by mct-resize
-                 */
-                setBounds: function (bounds) {
-                    var w = Math.ceil(bounds.width / gridSize[0]),
-                        h = Math.ceil(bounds.height / gridSize[1]);
-                    if (w !== gridExtent[0] || h !== gridExtent[1]) {
-                        gridExtent = [w, h];
-                    }
                 },
                 /**
                  * Get an array of elements in this panel; these are
