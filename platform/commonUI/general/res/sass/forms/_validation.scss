@@ -20,23 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .validates {
-    $symbolW: 15px;
-    $symbolM: $interiorMargin * 2;
     > .label {
         //        @include test(green, 0.1);
-        padding-right: $symbolW + $symbolM; // Keep room for validation element
+        padding-right: $reqSymbolW + $reqSymbolM; // Keep room for validation element
         &::after {
             //            @include test(yellow, 0.3);
             display: block;
             position: absolute;
             top: 0;
-            right: $symbolM;
+            right: $reqSymbolM;
             bottom: 0;
             left: auto;
             height: auto;
-            width: $symbolW;
+            width: $reqSymbolW;
             font-family: symbolsfont;
-            font-size: 1.1em;
+            font-size: $reqSymbolFontSize;
             text-align: right;
             vertical-align: middle;
         }
@@ -62,7 +60,9 @@
         }
     }
 }
-
+.req {
+	font-size: $reqSymbolFontSize;
+}
 span.req {
     color: $colorFormRequired;
 }

@@ -32,6 +32,7 @@ define(
                 completionCapability,
                 object,
                 mockQ,
+                mockType,
                 cache;
 
 
@@ -40,10 +41,13 @@ define(
                 return {
                     getId: function () { return id; },
                     getModel: function () { return {}; },
-                    getCapability: function (name) {
-                        return completionCapability;
+                    getCapability: function (key) {
+                        return {
+                            editor: completionCapability,
+                            type: mockType
+                        }[key];
                     },
-                    hasCapability: function (name) {
+                    hasCapability: function (key) {
                         return false;
                     }
                 };
@@ -62,6 +66,8 @@ define(
 
             beforeEach(function () {
                 mockQ = jasmine.createSpyObj('$q', ['when', 'all']);
+                mockType = jasmine.createSpyObj('type', ['hasFeature']);
+                mockType.hasFeature.andReturn(true);
                 captured = {};
                 completionCapability = {
                     save: function () {
@@ -150,6 +156,17 @@ define(
                 // wrapped.
                 expect(cache.getEditableObject(wrappedObject))
                     .toBe(wrappedObject);
+            });
+
+            it("does not wrap non-editable objects", function () {
+                var domainObject = new TestObject('test-id');
+
+                mockType.hasFeature.andCallFake(function (key) {
+                    return key !== 'creation';
+                });
+
+                expect(cache.getEditableObject(domainObject))
+                    .toBe(domainObject);
             });
 
 

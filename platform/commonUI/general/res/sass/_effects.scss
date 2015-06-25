@@ -43,16 +43,26 @@ a.disabled {
 	@include test();
 }
 
+@mixin customKeyframes($animName: pulse, $op0: 0.5) {
+	@include keyframes($animName) {
+		0%   { opacity: $op0; }
+		100% { opacity: 1; }
+	}
+	@include animation-name(pulse, 0.2);
+}
+
 @include keyframes(pulse) {
-	0%   { opacity: 0.5; }
+	0%   { opacity: 0.2; }
 	100% { opacity: 1; }
 }
 
-@mixin pulse($dur: 500ms) {
+
+@mixin pulse($dur: 500ms, $iteration: infinite) {
+	//@include customKeyframes(pulse, 0.2);
 	@include animation-name(pulse);
 	@include animation-duration($dur);
 	@include animation-direction(alternate);
-	@include animation-iteration-count(infinite);
+	@include animation-iteration-count($iteration);
 	@include animation-timing-function(ease-in-out);
 }
 

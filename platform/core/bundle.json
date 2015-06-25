@@ -71,6 +71,12 @@
                 "implementation": "models/CachingModelDecorator.js"
             },
             {
+                "provides": "modelService",
+                "type": "decorator",
+                "priority": "fallback",
+                "implementation": "models/MissingModelDecorator.js"
+            },
+            {
                 "provides": "typeService",
                 "type": "provider",
                 "implementation": "types/TypeProvider.js",
@@ -130,8 +136,13 @@
                 "name": "Folder",
                 "glyph": "F",
                 "features": "creation",
-                "description": "A folder, useful for storing and organizing domain objects.",
+                "description": "Useful for storing and organizing domain objects.",
                 "model": { "composition": [] }
+            },
+            {
+                "key": "unknown",
+                "name": "Unknown Type",
+                "glyph": "?"
             }
         ],
         "capabilities": [

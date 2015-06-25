@@ -27,23 +27,28 @@
 	}
     .item {
         &.grid-item {
+            //div { @include test() }
             $d: $ueBrowseGridItemLg;
+            $transTime: 200ms;
             @include btnSubtle($colorItemBase);
             box-sizing: border-box;
             cursor: pointer;
             float: left;
             height: $d;
-//            padding-bottom: 32%;
             width: $d;
             margin-bottom: $interiorMarginSm;
             margin-right: $interiorMarginSm;
             position: relative;
+            .item-main .item-type {
+                @include trans-prop-nice("color", $transTime);
+            }
             &:hover .item-main {
 	            .item-type {
 		            color: $colorKey !important;
                 }
 	            .item-open {
-		            display: block;
+		            //display: block;
+                    opacity: 1;
 	            }
             }
 	        .contents {
@@ -70,24 +75,26 @@
             }
             .item-main {
 	            $h: $ueBrowseGridItemLg;
-	            $lh: $h * 0.9;
-//                @include test();
-                div {
-//                  background: rgba(deeppink, 0.2);
-                }
+	            $lh: $h * 0.8;
+                //top: $ueBrowseGridItemTopBarH; bottom: $ueBrowseGridItemBottomBarH;
+                line-height: $lh;
 	            z-index: 1;
                 .item-type {
                     color: $colorItemFg;
                     text-align: center;
-                    font-size: 7em;
-                    line-height: $lh;
+                    font-size: 6em;
+                    //line-height: $lh;
                 }
                 .item-open {
-//                    color: lighten($colorItemBase, 15%);
-	                display: none;
-                    font-size: 5em;
-                    line-height: $lh;
-                    left: auto; width: 30px;
+                    //@include test();
+                    @include trans-prop-nice("opacity", $transTime);
+                    opacity: 0;
+	                //display: none;
+                    font-size: 3em;
+                    //line-height: $lh;
+                    left: auto; width: 50px;
+                    pointer-events: none;
+                    text-align: right;
                 }
             }
             .title {

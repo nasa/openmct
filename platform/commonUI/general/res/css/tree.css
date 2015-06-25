@@ -114,7 +114,7 @@ ul.tree {
       -webkit-transition: background-color 0.25s;
       transition: background-color 0.25s;
       display: block;
-      font-size: 0.80rem;
+      font-size: 0.80em;
       height: 1.4rem;
       line-height: 1.4rem;
       margin-bottom: 3px;
@@ -123,6 +123,7 @@ ul.tree {
       ul.tree li span.tree-item .view-control {
         display: inline-block;
         margin-left: 5px;
+        font-size: 0.75em;
         width: 10px; }
         /* line 44, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item .view-control:hover {
