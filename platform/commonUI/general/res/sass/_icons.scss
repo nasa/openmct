@@ -53,8 +53,8 @@
     //@include invokeMenu(); // $colorKey
 	text-shadow: none;
     display: inline-block;
-    font-size: 0.8rem;
-    vertical-align: middle;
+    //font-size: 0.8rem;// Normalizing for new icomoon symbols font
+    //vertical-align: middle;// Normalizing for new icomoon symbols font
 }
 
 .btn-menu .invoke-menu,
@@ -72,13 +72,16 @@
 .menu .type-icon,
 .tree-item .type-icon,
 .super-menu.menu .type-icon {
-    font-size: $menuLineH * 0.8; //.93
-    line-height: $menuLineH * 1.13;
+    //font-size: $menuLineH * 0.8; //.93 // Normalizing for new icomoon symbols font
+    //line-height: $menuLineH * 1.13; // Normalizing for new icomoon symbols font
     position: absolute;
 }
 
+.tree-item .type-icon {
+    font-size: 16px; // 16px is crisp size
+}
 
 .super-menu.menu.dropdown .icon {
-	font-size: $menuLineH * 0.95
+	//font-size: $menuLineH * 0.95 // Normalizing for new icomoon symbols font
 }
 

@@ -75,7 +75,7 @@ $ltGamma: 20%;
 $btnFontSizeToH: 0.45;
 
 // User Environment
-$ueTopBarH: 30px; // Change to 45px when breadcrumb is enabled
+$ueTopBarH: 24px; // Change to when breadcrumb is enabled
 $ueTopBarEditH: 30px;
 $ueTopBarBtnH: 35px;
 $ueFooterH: 20px;
@@ -96,7 +96,7 @@ $ovrFooterH: 40px;
 //Items
 $ueBrowseGridItemLg: 200px;
 $ueBrowseGridItemTopBarH: 20px;
-$ueBrowseGridItemBottomBarH: 40px;
+$ueBrowseGridItemBottomBarH: 30px;
 $colorItemBase: lighten($colorBodyBg, 5%);
 $colorItemFg: lighten($colorItemBase, 20%);
 $colorItemSelected: $colorKey;
@@ -158,3 +158,8 @@ $bubbleMaxW: 300px;
 
 // Timing
 $controlFadeMs: 100ms;
+
+// Forms
+$reqSymbolW: 15px;
+$reqSymbolM: $interiorMargin * 2;
+$reqSymbolFontSize: 0.7em;

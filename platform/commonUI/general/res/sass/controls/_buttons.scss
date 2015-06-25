@@ -25,22 +25,28 @@ $pad: $interiorMargin * $baseRatio;
 /******* LAYOUT AND SIZING */
 .btn,
 .l-btn {
-	line-height: 1.25em;
+	line-height: 1.5em; // Was 1.25em
 	padding: 0 $pad;
 	text-decoration: none;
 	&.lg,
 	&.create-btn {
-		$h: $ueTopBarH - $interiorMargin;
+		$h: $ueTopBarH; // - $interiorMargin;
 		height: $h;
-		line-height: $h;
+		line-height: $h - 2;
+		//padding: 0 $pad * 6 0 $pad;
 		padding: 0 $pad * 3;
 	}
 	&.create-btn {
+		&:before {
+			content:"+";
+			font-family: symbolsfont;
+			font-size: 0.8em;
+		}
 		.menu {
 			margin-left: $pad * -1;
 		}
 		>.ui-symbol {
-			font-size: 1.1em;
+			//font-size: 1.1em; // Normalizing for new icomoon symbols font
 		}
 	}
 	&.sm {
@@ -59,7 +65,7 @@ $pad: $interiorMargin * $baseRatio;
 	@include box-sizing(border-box);
 	@include text-shadow(rgba(black, 0.3) 0 1px 1px);
 	cursor: pointer;
-	line-height: 1.2em;
+	//line-height: 1.2em;
 	text-decoration: none;
 	&.major {
 		$bg: $colorKey;
@@ -115,7 +121,7 @@ $pad: $interiorMargin * $baseRatio;
 	&.labeled {
 		padding: 0 $pad/2;
 		.icon {
-			font-size: 1.5em;
+			//font-size: 1.5em;
 		}
 		.title-label {
 			margin-left: $interiorMargin;

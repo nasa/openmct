@@ -68,8 +68,17 @@
     .super-menu {
         $w: 450px;
         $h: $w - 20;
-        $plw: $w * 0.5;
-        $prw: $w - $plw;
+        $plw: 50%; //$w * 0.5;
+        $prw: 50%; //$w - $plw;
+	    $bg: $colorKey;
+	    $fg: $colorKeyFg;
+	    $colorMid: lighten($bg, 25%);
+	    $bgHover: $bg;
+	    @include containerSubtle(darken($bg, 15%), $fg);
+	    display: block;
+	    .icon {
+		    color: $colorMid;
+	    }
         width: $w;
         height: $h;
         .contents {
@@ -78,12 +87,12 @@
         .pane {
             @include box-sizing(border-box);
             &.left {
-//                @include test();
+                //@include test();
                 border-right: 1px solid rgba(white, 0.2);
                 left: 0;
                 padding-right: $interiorMargin;
                 right: auto;
-                width: $plw !important;
+                width: $plw;
                 overflow-x: hidden;
                 overflow-y: auto;
                 ul {
@@ -91,10 +100,14 @@
                         @include border-radius($controlCr);
 //                        @include test(red);
                         border-top: none;
+	                    color: $fg;
 //                        font-size: 0.85em;
 //                        line-height: 20px;
                         &:hover {
                             background: $bgHover;
+	                        .icon {
+		                        color: lighten($bg, 50%);
+	                        }
                         }
                         .icon {
                             @include txtShdwSubtle(0.4);
@@ -104,39 +117,40 @@
                 }
             }
             &.right {
-                left: $plw;
+	            //@include test(red);
+	            left: auto;
                 right: 0;
                 padding: $interiorMargin * 5;
-                width: $prw !important;
+                width: $prw;
             }
         }
-    }
-    .menu-item-description {
-        .desc-area {
-//            @include test(green);
-            &.icon {
-//                @include test(red);
-                $h: 150px;
-                position: relative;
-                color: lighten($bg, 30%);
-                font-size: 8em;
-                left: 0;
-                height: $h;
-                line-height: $h;
-//                top: 0; right: 0; bottom: 5em; left: 0;
-//                height: 5em;
-                text-align: center;
-            }
-            &.description {
-                color: lighten($bg, 30%);
-                font-size: 0.8em;
-            }
-            &.title {
-                color: lighten($bg, 60%);
-                font-size: 1.2em;
-                margin-bottom: 1rem;
-            }
-        }
+	    .menu-item-description {
+		    .desc-area {
+			    //            @include test(green);
+			    &.icon {
+				    //@include test(red);
+				    $h: 150px;
+				    position: relative;
+				    font-size: 8em;
+				    left: 0;
+				    height: $h;
+				    line-height: $h;
+				    margin-bottom: $interiorMargin * 5;
+				    text-align: center;
+			    }
+			    &.title {
+				    color: $fg;
+				    font-size: 1.2em;
+				    margin-bottom: 0.5em;
+			    }
+			    &.description {
+				    //color: lighten($bg, 30%);
+				    color: $fg;
+				    font-size: 0.8em;
+				    line-height: 1.5em;
+			    }
+		    }
+	    }
     }
     .context-menu {
         $bg: lighten($colorBodyBg, 25%);

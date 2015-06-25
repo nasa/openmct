@@ -36,6 +36,7 @@ define(
                 mockObjectService,
                 mockNavigationService,
                 mockRootObject,
+                mockUrlService,
                 mockDomainObject,
                 mockNextObject,
                 controller;
@@ -57,6 +58,10 @@ define(
                 mockLocation = jasmine.createSpyObj(
                     "$location",
                     [ "path" ]
+                );
+                mockUrlService = jasmine.createSpyObj(
+                    "urlService",
+                    ["urlFor"]
                 );
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",
@@ -102,7 +107,8 @@ define(
                     mockRoute,
                     mockLocation,
                     mockObjectService,
-                    mockNavigationService
+                    mockNavigationService,
+                    mockUrlService
                 );
             });
 
@@ -112,7 +118,8 @@ define(
                     mockRoute,
                     mockLocation,
                     mockObjectService,
-                    mockNavigationService
+                    mockNavigationService,
+                    mockUrlService
                 );
                 expect(mockNavigationService.setNavigation)
                     .toHaveBeenCalledWith(mockDomainObject);
@@ -125,7 +132,8 @@ define(
                     mockRoute,
                     mockLocation,
                     mockObjectService,
-                    mockNavigationService
+                    mockNavigationService,
+                    mockUrlService
                 );
                 expect(mockScope.navigatedObject).toBe(mockDomainObject);
             });
@@ -200,7 +208,8 @@ define(
 
             it("updates the displayed route to reflect current navigation", function () {
                 var mockContext = jasmine.createSpyObj('context', ['getPath']),
-                    mockUnlisten = jasmine.createSpy('unlisten');
+                    mockUnlisten = jasmine.createSpy('unlisten'),
+                    mockMode = "browse";
 
                 mockContext.getPath.andReturn(
                     [mockRootObject, mockDomainObject, mockNextObject]
@@ -213,7 +222,11 @@ define(
                 mockNavigationService.addListener.mostRecentCall.args[0](
                     mockNextObject
                 );
-                expect(mockLocation.path).toHaveBeenCalledWith("/browse/mine/next");
+                // location.path to be called with the urlService's 
+                // urlFor function with the next domainObject and mode
+                expect(mockLocation.path).toHaveBeenCalledWith(
+                    mockUrlService.urlFor(mockMode, mockNextObject)
+                );
 
                 // Exercise the Angular workaround
                 mockScope.$on.mostRecentCall.args[1]();

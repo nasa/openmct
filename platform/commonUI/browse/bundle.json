@@ -16,7 +16,7 @@
             {
                 "key": "BrowseController",
                 "implementation": "BrowseController.js",
-                "depends": [ "$scope", "$route", "$location", "objectService", "navigationService" ]
+                "depends": [ "$scope", "$route", "$location", "objectService", "navigationService", "urlService"]
             },
             {
                 "key": "BrowseObjectController",
@@ -65,7 +65,7 @@
                 "key": "grid-item",
                 "templateUrl": "templates/items/grid-item.html",
                 "uses": [ "type", "action" ],
-                "gestures": [ "info", "menu" ]
+                "gestures": [ "info","menu" ]
             },
             {
                 "key": "object-header",
@@ -79,10 +79,15 @@
                 "implementation": "navigation/NavigationService.js"
             },
             {
+                "key": "urlService",
+                "implementation": "services/UrlService.js",
+                "depends": [ "$location" ]
+            },            
+            {
                 "key": "creationService",
                 "implementation": "creation/CreationService.js",
                 "depends": [ "persistenceService", "$q", "$log" ]
-            }
+            }        
         ],
         "actions": [
             {
@@ -92,10 +97,11 @@
             },
             {
                 "key": "window",
-                "implementation": "windowing/NewWindowAction.js",
-                "description": "Open this object in a new window",
-                "category": "view-control",
-                "depends": [ "$window" ],
+                "name": "Open in a new tab",
+                "implementation": "windowing/NewTabAction.js",
+                "description": "Open this object in a new tab",
+                "category": ["view-control", "contextual"],
+                "depends": [ "urlService", "$window" ],
                 "group": "windowing",
                 "glyph": "y"
             },

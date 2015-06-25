@@ -22,31 +22,46 @@
 /*global define,Promise*/
 
 /**
- * Module defining NewWindowAction. Created by vwoeltje on 11/18/14.
+ * Module defining NewTabAction (Originally NewWindowAction). Created by vwoeltje on 11/18/14.
  */
 define(
     [],
     function () {
         "use strict";
-
+        var ROOT_ID = "ROOT",
+            DEFAULT_PATH = "/mine";
         /**
-         * The new window action allows a domain object to be opened
-         * into a new browser window. (Currently this is a stub, present
-         * to allow the control to appear in the appropriate location in
-         * the user interface.)
+         * The new tab action allows a domain object to be opened
+         * into a new browser tab.
          * @constructor
          */
-        function NewWindowAction($window) {
+        function NewTabAction(urlService, $window, context) {
+            // Returns the selected domain object
+            // when using the context menu or the top right button
+            // based on the context and the existance of the object
+            // It is set to object an returned
+            function getSelectedObject() {
+                var object;
+                if (context.selectedObject) {
+                    object = context.selectedObject;
+                } else {
+                    object = context.domainObject;
+                }
+                return object;
+            }
+            
             return {
-                /**
-                 * Open the object in a new window (currently a stub)
-                 */
+                // Performs the open in new tab function
+                // By calling the url service, the mode needed
+                // (browse) and the domainObject is passed in and
+                // the path is returned and opened in a new tab
                 perform: function () {
-                    $window.alert("Not yet functional. This will open objects in a new window.");
+                    $window.open(urlService.urlFor("browse", getSelectedObject()),
+                                "_blank");
                 }
             };
         }
 
-        return NewWindowAction;
+        return NewTabAction;
     }
 );

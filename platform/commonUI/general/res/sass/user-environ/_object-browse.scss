@@ -21,7 +21,7 @@
  *****************************************************************************/
 .object-browse-bar {
     height: $ueTopBarH;
-    //line-height: $ueTopBarBtnH;
+    line-height: $ueTopBarH;
     .items-select {
         .btn-menu {
             margin-right: $interiorMargin * 3;

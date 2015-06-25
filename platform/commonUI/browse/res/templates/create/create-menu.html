@@ -24,7 +24,7 @@
         <ul>
 
             <li ng-repeat="createAction in createActions">
-                <a href=''
+                <a
                    ng-click="createAction.perform()"
                    ng-mouseover="representation.activeMetadata = createAction.getMetadata()"
                    ng-mouseleave="representation.activeMetadata = undefined">

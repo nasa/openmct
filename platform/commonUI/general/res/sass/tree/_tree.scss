@@ -29,7 +29,7 @@ ul.tree {
 			@include border-radius($basicCr);
 			@include single-transition(background-color, 0.25s);
 			display: block;
-			font-size: 0.80rem;
+			font-size: 0.80em;
 			height: $menuLineH;
 			line-height: $menuLineH;
 			margin-bottom: $interiorMarginSm;
@@ -38,7 +38,7 @@ ul.tree {
 			.view-control {
 				display: inline-block;
                 margin-left: $interiorMargin;
-				//                vertical-align: middle;
+				font-size: 0.75em;
 				width: $treeVCW;
 				$runningItemW: $interiorMargin + $treeVCW;
 				&:hover {
