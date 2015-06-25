@@ -1,0 +1,37 @@
+{
+    "name": "Event Messages",
+    "description": "List of time-ordered event messages",
+    "extensions": {
+        "views": [
+            {
+                "key": "messages",
+                "name": "RT Messages",
+                "glyph": "5",
+                "description": "Scrolling list of messages.",
+                "templateUrl": "templates/messages.html",
+                "needs": [ "telemetry" ],
+                "delegation": true
+            }
+        ],
+        "controllers": [
+            {
+                "key": "RTEventListController",
+                "implementation": "RTEventListController.js",
+                "depends": [ "$scope", "telemetryHandler", "telemetryFormatter" ]
+            }
+        ],
+        "directives": [
+            {
+                "key": "mctDataTable",
+                "implementation": "directives/MCTDataTable.js",
+                "depends": [ "$window" ]
+            }
+        ],
+        "policies": [
+            {
+                "category": "view",
+                "implementation": "policies/MessagesViewPolicy.js"
+            }
+        ]
+    }
+}
