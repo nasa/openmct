@@ -74,7 +74,7 @@
 
 
 .treeview .wait-spinner {
-	$d: 18px;
+	$d: 10px;
 	@include wait-spinner(0.25em, $colorKey);
 	height: $d; width: $d;
 	margin: 0 !important;
