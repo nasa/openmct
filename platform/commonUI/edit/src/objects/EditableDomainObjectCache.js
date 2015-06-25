@@ -68,12 +68,19 @@ define(
                  * @returns {DomainObject} the domain object in an editable form
                  */
                 getEditableObject: function (domainObject) {
+                    var type = domainObject.getCapability('type');
+
                     // Track the top-level domain object; this will have
                     // some special behavior for its context capability.
                     root = root || domainObject;
 
                     // Avoid double-wrapping (WTD-1017)
                     if (domainObject.hasCapability('editor')) {
+                        return domainObject;
+                    }
+
+                    // Don't bother wrapping non-editable objects
+                    if (!type || !type.hasFeature('creation')) {
                         return domainObject;
                     }
 
