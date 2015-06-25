@@ -226,20 +226,20 @@ a.disabled {
 
 @-moz-keyframes pulse {
   0% {
-    opacity: 0.5; }
+    opacity: 0.2; }
   100% {
     opacity: 1; } }
 @-webkit-keyframes pulse {
   0% {
-    opacity: 0.5; }
+    opacity: 0.2; }
   100% {
     opacity: 1; } }
 @keyframes pulse {
   0% {
-    opacity: 0.5; }
+    opacity: 0.2; }
   100% {
     opacity: 1; } }
-/* line 59, ../sass/_effects.scss */
+/* line 69, ../sass/_effects.scss */
 .pulse {
   -moz-animation-name: pulse;
   -webkit-animation-name: pulse;
