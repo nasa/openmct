@@ -25,6 +25,12 @@
                 "implementation": "PlotController.js",
                 "depends": [ "$scope", "telemetryFormatter", "telemetryHandler", "throttle" ]
             }
+        ],
+        "policies": [
+            {
+                "category": "view",
+                "implementation": "policies/PlotViewPolicy.js"
+            }
         ]
     }
 }
