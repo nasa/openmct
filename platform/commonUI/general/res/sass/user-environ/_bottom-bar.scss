@@ -21,7 +21,7 @@
  *****************************************************************************/
 .ue-bottom-bar {
 	color: lighten($colorBodyBg, 30%);
-	font-size: 0.7em;
+	font-size: 0.65rem;
 	line-height: $ueFooterH - 4px;
 	.status-holder {
 		@include border-radius($basicCr * 1.75);
@@ -52,9 +52,9 @@
 		@include box-shadow(inset rgba(black, 0.5) 0 0 3px);
 		@include text-shadow(rgba(black, 0.3) 0 0 2px);
 		display: inline-block;
-		font-size: 1.25em;
-		vertical-align: middle;
-		margin-right: $interiorMargin;
+		//font-size: 1.25em; // Normalized for new wtdsymbols font v2
+		//vertical-align: middle; // Normalized for new wtdsymbols font v2
+		margin-right: $interiorMarginSm;
 		&.ok {
 			color: #009900;
 		}
