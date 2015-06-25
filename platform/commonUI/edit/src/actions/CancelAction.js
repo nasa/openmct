@@ -50,11 +50,10 @@ define(
             // Discard the current root view (which will be the editing
             // UI, which will have been pushed atop the Browise UI.)
             function returnToBrowse() {
-                var urlBrowse = $location.path(urlService.urlForLocation(
+                $location.path($location.path(urlService.urlForLocation(
                     "browse",
                     domainObject
-                ));
-                $location.path(urlBrowse);
+                )));
             }
 
             return {
