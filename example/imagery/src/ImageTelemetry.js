@@ -22,7 +22,7 @@
 /*global define,Promise*/
 
 /**
- * Module defining SinewaveTelemetry. Created by vwoeltje on 11/12/14.
+ * Module defining ImageTelemetry. Created by vwoeltje on 06/22/15.
  */
 define(
     [],
