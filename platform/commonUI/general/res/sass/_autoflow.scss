@@ -31,11 +31,15 @@
 		bottom: auto;
 		height: $headerH;
 		line-height: $headerH;
+		min-width: $colW;
 		span {
 			vertical-align: middle;
 		}
 		.l-filter {
 			margin-left: $interiorMargin;
+			input.t-filter-input {
+				width: 100px;
+			}
 		}
 	}
 
