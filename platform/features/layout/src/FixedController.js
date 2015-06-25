@@ -60,7 +60,7 @@ define(
                 cellStyles = [];
 
                 // Update grid size from model
-                gridSize = ($scope.model || {}).layoutGrid || gridSize;
+                gridSize = ($scope.model || {}).layoutGrid || DEFAULT_GRID_SIZE;
 
                 for (x = 0; x < gridExtent[0]; x += 1) {
                     for (y = 0; y < gridExtent[1]; y += 1) {
@@ -134,6 +134,16 @@ define(
                         element.value = values[id];
                     });
                 }
+            }
+
+            // Update element positions when grid size changes
+            function updateElementPositions(layoutGrid) {
+                // Update grid size from model
+                gridSize = layoutGrid || DEFAULT_GRID_SIZE;
+
+                elementProxies.forEach(function (elementProxy) {
+                    elementProxy.style = convertPosition(elementProxy);
+                });
             }
 
             // Update telemetry values based on new data available
@@ -276,6 +286,9 @@ define(
 
             // Position panes when the model field changes
             $scope.$watch("model.composition", updateComposition);
+
+            // Detect changes to grid size
+            $scope.$watch("model.layoutGrid", updateElementPositions);
 
             // Subscribe to telemetry when an object is available
             $scope.$watch("domainObject", subscribe);
