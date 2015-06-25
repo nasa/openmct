@@ -30,6 +30,7 @@ define(
             var mockLocation,
                 mockDomainObject,
                 mockEditorCapability,
+                mockUrlService,
                 actionContext,
                 action;
 
@@ -54,6 +55,10 @@ define(
                     "editor",
                     [ "save", "cancel" ]
                 );
+                mockUrlService = jasmine.createSpyObj(
+                    "urlService",
+                    ["urlForLocation"]
+                );
 
 
                 actionContext = {
@@ -64,7 +69,7 @@ define(
                 mockDomainObject.getCapability.andReturn(mockEditorCapability);
                 mockEditorCapability.save.andReturn(mockPromise(true));
 
-                action = new SaveAction(mockLocation, actionContext);
+                action = new SaveAction(mockLocation, mockUrlService, actionContext);
 
             });
 
@@ -91,7 +96,9 @@ define(
 
             it("returns to browse when performed", function () {
                 action.perform();
-                expect(mockLocation.path).toHaveBeenCalledWith("/browse");
+                expect(mockLocation.path).toHaveBeenCalledWith(
+                    mockUrlService.urlForLocation("browse", mockDomainObject)
+                );
             });
         });
     }

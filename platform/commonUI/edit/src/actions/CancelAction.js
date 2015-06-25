@@ -30,7 +30,7 @@ define(
          * Edit Mode. Exits the editing user interface and invokes object
          * capabilities to persist the changes that have been made.
          */
-        function CancelAction($log, $location, urlService, navigationService, context) {
+        function CancelAction($location, urlService, context) {
             var domainObject = context.domainObject;
 
             // Look up the object's "editor.completion" capability;
@@ -50,7 +50,7 @@ define(
             // Discard the current root view (which will be the editing
             // UI, which will have been pushed atop the Browise UI.)
             function returnToBrowse() {
-                var urlBrowse = $location.path(urlService.urlForNewTab(
+                var urlBrowse = $location.path(urlService.urlForLocation(
                     "browse",
                     domainObject
                 ));
