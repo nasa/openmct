@@ -84,7 +84,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -105,38 +105,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -226,20 +226,20 @@ a.disabled {
 
 @-moz-keyframes pulse {
   0% {
-    opacity: 0.5; }
+    opacity: 0.2; }
   100% {
     opacity: 1; } }
 @-webkit-keyframes pulse {
   0% {
-    opacity: 0.5; }
+    opacity: 0.2; }
   100% {
     opacity: 1; } }
 @keyframes pulse {
   0% {
-    opacity: 0.5; }
+    opacity: 0.2; }
   100% {
     opacity: 1; } }
-/* line 59, ../sass/_effects.scss */
+/* line 69, ../sass/_effects.scss */
 .pulse {
   -moz-animation-name: pulse;
   -webkit-animation-name: pulse;
@@ -657,26 +657,26 @@ mct-container {
   overflow-y: auto; }
 
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
- * as represented by the Administrator of the National Aeronautics and Space
- * Administration. All rights reserved.
- *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- * Open MCT Web includes source code licensed under additional open source
- * licenses. See the Open Source Licenses file (LICENSES.md) included with
- * this source code distribution or the Licensing information page available
- * at runtime from the About dialog for additional information.
- *****************************************************************************/
+* Open MCT Web, Copyright (c) 2014-2015, United States Government
+* as represented by the Administrator of the National Aeronautics and Space
+* Administration. All rights reserved.
+*
+* Open MCT Web is licensed under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+* http://www.apache.org/licenses/LICENSE-2.0.
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+* WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+* License for the specific language governing permissions and limitations
+* under the License.
+*
+* Open MCT Web includes source code licensed under additional open source
+* licenses. See the Open Source Licenses file (LICENSES.md) included with
+* this source code distribution or the Licensing information page available
+* at runtime from the About dialog for additional information.
+*****************************************************************************/
 /* line 23, ../sass/_fixed-position.scss */
 .t-fixed-position.l-fixed-position {
   position: absolute;
@@ -686,33 +686,33 @@ mct-container {
   left: 0;
   width: auto;
   height: auto; }
-  /* line 29, ../sass/_fixed-position.scss */
+  /* line 33, ../sass/_fixed-position.scss */
   .t-fixed-position.l-fixed-position .l-grid-holder {
     position: relative;
     height: 100%;
     width: 100%; }
-    /* line 32, ../sass/_fixed-position.scss */
+    /* line 37, ../sass/_fixed-position.scss */
     .t-fixed-position.l-fixed-position .l-grid-holder .l-grid {
       position: absolute;
       height: 100%;
       width: 100%;
       pointer-events: none;
       z-index: 0; }
-/* line 42, ../sass/_fixed-position.scss */
+/* line 48, ../sass/_fixed-position.scss */
 .t-fixed-position .l-fixed-position-item {
   position: absolute;
   border: 1px solid transparent; }
-  /* line 46, ../sass/_fixed-position.scss */
+  /* line 52, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item.s-selected {
     -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
     -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
     box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
     border-color: #0099cc;
     cursor: move; }
-  /* line 51, ../sass/_fixed-position.scss */
+  /* line 57, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item.s-not-selected {
     opacity: 0.8; }
-  /* line 55, ../sass/_fixed-position.scss */
+  /* line 61, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item .l-fixed-position-box,
   .t-fixed-position .l-fixed-position-item .l-fixed-position-image,
   .t-fixed-position .l-fixed-position-item .l-fixed-position-text {
@@ -721,62 +721,56 @@ mct-container {
     box-sizing: border-box;
     height: 100%;
     width: 100%; }
-  /* line 65, ../sass/_fixed-position.scss */
+  /* line 72, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item .l-fixed-position-image {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center; }
-  /* line 71, ../sass/_fixed-position.scss */
+  /* line 78, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item .l-fixed-position-text {
     text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px;
     border: 1px solid transparent;
     font-size: 0.8rem;
     line-height: 100%; }
-    /* line 77, ../sass/_fixed-position.scss */
+    /* line 84, ../sass/_fixed-position.scss */
     .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-static-text {
       padding: 1px; }
-    /* line 82, ../sass/_fixed-position.scss */
+    /* line 89, ../sass/_fixed-position.scss */
     .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem {
-      overflow: hidden;
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      width: auto;
-      height: auto;
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
-      padding: 2px;
-      width: 50%; }
-      /* line 88, ../sass/_fixed-position.scss */
+      display: block;
+      padding: 2px; }
+      /* line 96, ../sass/_fixed-position.scss */
       .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-title {
-        right: auto;
-        left: 1px; }
-      /* line 92, ../sass/_fixed-position.scss */
+        float: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: auto; }
+      /* line 105, ../sass/_fixed-position.scss */
       .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-value {
-        right: 1px;
-        left: auto;
+        -moz-border-radius: 2px;
+        -webkit-border-radius: 2px;
+        border-radius: 2px;
+        float: right;
+        margin-left: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
         text-align: right; }
-        /* line 97, ../sass/_fixed-position.scss */
+        /* line 116, ../sass/_fixed-position.scss */
         .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-value.telem-only {
-          left: 1px;
-          width: auto; }
-        /* line 102, ../sass/_fixed-position.scss */
-        .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-value .l-value-bg {
-          -moz-border-radius: 2px;
-          -webkit-border-radius: 2px;
-          border-radius: 2px;
-          padding: 0 4px; }
-/* line 112, ../sass/_fixed-position.scss */
+          margin-left: 0;
+          width: 100%; }
+/* line 126, ../sass/_fixed-position.scss */
 .t-fixed-position .l-fixed-position-item-handle {
   background: rgba(0, 153, 204, 0.5);
   cursor: crosshair;
   border: 1px solid #0099cc;
   position: absolute; }
 
-/* line 126, ../sass/_fixed-position.scss */
+/* line 140, ../sass/_fixed-position.scss */
 .edit-mode .t-fixed-position.l-fixed-position .l-grid-holder .l-grid.l-grid-x {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuMCIgeTE9IjAuNSIgeDI9IjEuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSIxcHgiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMC4wNSIvPjxzdG9wIG9mZnNldD0iMXB4IiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuMCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=');
   background-size: 100%;
@@ -784,7 +778,7 @@ mct-container {
   background-image: -webkit-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
   background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
   background-repeat: repeat-x; }
-/* line 130, ../sass/_fixed-position.scss */
+/* line 144, ../sass/_fixed-position.scss */
 .edit-mode .t-fixed-position.l-fixed-position .l-grid-holder .l-grid.l-grid-y {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjEuMCIgeDI9IjAuNSIgeTI9IjAuMCI+PHN0b3Agb2Zmc2V0PSIxcHgiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMC4wNSIvPjxzdG9wIG9mZnNldD0iMXB4IiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuMCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=');
   background-size: 100%;
@@ -792,10 +786,10 @@ mct-container {
   background-image: -webkit-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
   background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
   background-repeat: repeat-y; }
-/* line 138, ../sass/_fixed-position.scss */
+/* line 152, ../sass/_fixed-position.scss */
 .edit-mode .t-fixed-position .l-fixed-position-item:not(.s-selected) {
   border: 1px dotted rgba(0, 153, 204, 0.75); }
-  /* line 140, ../sass/_fixed-position.scss */
+  /* line 154, ../sass/_fixed-position.scss */
   .edit-mode .t-fixed-position .l-fixed-position-item:not(.s-selected):hover {
     border: 1px dotted #0099cc; }
 
@@ -4679,8 +4673,8 @@ input[type="text"] {
   border-style: solid;
   border-width: 0.25em;
   border-radius: 100%;
-  height: 18px;
-  width: 18px;
+  height: 10px;
+  width: 10px;
   margin: 0 !important;
   padding: 0 !important;
   top: 2px;
@@ -4747,20 +4741,24 @@ input[type="text"] {
   .autoflow .l-autoflow-header {
     bottom: auto;
     height: 22px;
-    line-height: 22px; }
-    /* line 34, ../sass/_autoflow.scss */
+    line-height: 22px;
+    min-width: 225px; }
+    /* line 35, ../sass/_autoflow.scss */
     .autoflow .l-autoflow-header span {
       vertical-align: middle; }
-    /* line 37, ../sass/_autoflow.scss */
+    /* line 38, ../sass/_autoflow.scss */
     .autoflow .l-autoflow-header .l-filter {
       margin-left: 5px; }
-  /* line 42, ../sass/_autoflow.scss */
+      /* line 40, ../sass/_autoflow.scss */
+      .autoflow .l-autoflow-header .l-filter input.t-filter-input {
+        width: 100px; }
+  /* line 46, ../sass/_autoflow.scss */
   .autoflow .l-autoflow-items {
     overflow-x: scroll;
     overflow-y: hidden;
     top: 32px;
     white-space: nowrap; }
-    /* line 48, ../sass/_autoflow.scss */
+    /* line 52, ../sass/_autoflow.scss */
     .autoflow .l-autoflow-items .l-autoflow-col {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
@@ -4771,7 +4769,7 @@ input[type="text"] {
       padding-right: 5px;
       vertical-align: top;
       width: 225px; }
-      /* line 58, ../sass/_autoflow.scss */
+      /* line 62, ../sass/_autoflow.scss */
       .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row {
         -moz-box-sizing: border-box;
         -webkit-box-sizing: border-box;
@@ -4783,47 +4781,47 @@ input[type="text"] {
         margin-bottom: 1px;
         margin-top: 1px;
         position: relative; }
-        /* line 67, ../sass/_autoflow.scss */
+        /* line 71, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row:first-child {
           border-top: none; }
-        /* line 70, ../sass/_autoflow.scss */
+        /* line 74, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row:hover {
           background: rgba(255, 255, 255, 0.1); }
-        /* line 75, ../sass/_autoflow.scss */
+        /* line 79, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row.s-stale .l-autoflow-item.l {
           color: rgba(255, 255, 255, 0.3) !important;
           font-style: italic; }
-        /* line 76, ../sass/_autoflow.scss */
+        /* line 80, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row.s-stale .l-autoflow-item.r {
           color: rgba(255, 255, 255, 0.5) !important;
           font-style: italic; }
-        /* line 79, ../sass/_autoflow.scss */
+        /* line 83, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row:not(.s-stale) .l-autoflow-item.r {
           color: #b3b3b3; }
-        /* line 83, ../sass/_autoflow.scss */
+        /* line 87, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row.first-in-group {
           border-top: 1px solid gray; }
-        /* line 86, ../sass/_autoflow.scss */
+        /* line 90, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row .l-autoflow-item {
           display: block; }
-          /* line 88, ../sass/_autoflow.scss */
+          /* line 92, ../sass/_autoflow.scss */
           .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row .l-autoflow-item.l {
             float: none;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             width: auto; }
-          /* line 95, ../sass/_autoflow.scss */
+          /* line 99, ../sass/_autoflow.scss */
           .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row .l-autoflow-item.r {
             -moz-border-radius: 2px;
             -webkit-border-radius: 2px;
             border-radius: 2px;
             float: right;
             margin-left: 5px;
-            padding-left: 2px;
-            padding-right: 2px;
+            padding-left: 5px;
+            padding-right: 5px;
             text-align: right; }
-      /* line 106, ../sass/_autoflow.scss */
+      /* line 110, ../sass/_autoflow.scss */
       .autoflow .l-autoflow-items .l-autoflow-col:first-child {
         border-left: none;
         padding-left: 0; }

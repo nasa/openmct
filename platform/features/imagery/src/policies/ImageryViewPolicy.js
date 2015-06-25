@@ -19,53 +19,41 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.disabled,
-a.disabled {
-	@include opacity($controlDisabledOpacity);
-	pointer-events: none !important;
-	cursor: default !important;
-}
+/*global define*/
 
-.incised {
-    @include boxIncised(0.8);
-    border-bottom: 1px solid rgba(#fff, 0.3);
-}
+define(
+    function () {
+        "use strict";
 
-.outline {
-    @include boxOutline();
-}
+        /**
+         * Policy preventing the Imagery view from being made available for
+         * domain objects which do not have associated image telemetry.
+         * @implements {Policy}
+         */
+        function ImageryViewPolicy() {
+            function hasImageTelemetry(domainObject) {
+                var telemetry = domainObject &&
+                        domainObject.getCapability('telemetry'),
+                    metadata = telemetry ? telemetry.getMetadata() : {},
+                    ranges = metadata.ranges || [];
 
-.test-stripes {
-	@include bgDiagonalStripes();
-}
+                return ranges.some(function (range) {
+                    return range.format === 'imageUrl' ||
+                            range.format === 'image';
+                });
+            }
 
-.test {
-	@include test();
-}
+            return {
+                allow: function (view, domainObject) {
+                    if (view.key === 'imagery') {
+                        return hasImageTelemetry(domainObject);
+                    }
 
-@mixin customKeyframes($animName: pulse, $op0: 0.5) {
-	@include keyframes($animName) {
-		0%   { opacity: $op0; }
-		100% { opacity: 1; }
-	}
-	@include animation-name(pulse, 0.2);
-}
+                    return true;
+                }
+            };
+        }
 
-@include keyframes(pulse) {
-	0%   { opacity: 0.2; }
-	100% { opacity: 1; }
-}
-
-
-@mixin pulse($dur: 500ms, $iteration: infinite) {
-	//@include customKeyframes(pulse, 0.2);
-	@include animation-name(pulse);
-	@include animation-duration($dur);
-	@include animation-direction(alternate);
-	@include animation-iteration-count($iteration);
-	@include animation-timing-function(ease-in-out);
-}
-
-.pulse {
-	@include pulse(750ms);
-}
+        return ImageryViewPolicy;
+    }
+);
