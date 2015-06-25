@@ -65,22 +65,6 @@ define(
                 return newTabPath;
             }
             
-            function urlForEdit(mode, domainObject) {
-                var context = domainObject &&
-                        domainObject.getCapability('context'),
-                    objectPath = context ? context.getPath() : [],
-                    ids = objectPath.map(function (domainObject) {
-                        return domainObject.getId();
-                    }),
-                    // Parses the path together. Starts with the 
-                    // default index.html file, then the mode passed
-                    // into the service, followed by ids in the url
-                    // joined by '/', and lastly the view path from
-                    // the current location
-                    path = mode + "/";
-                return path;
-            }
-            
             return {
                /**
                  * Returns the Url path for a specific domain object
@@ -100,9 +84,7 @@ define(
                  * @param {DomainObject} value of the domain object 
                  *        to get the path of
                  */
-                urlForLocation: urlForLocation,
-                
-                urlForEdit: urlForEdit
+                urlForLocation: urlForLocation
             };
         }
 
