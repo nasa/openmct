@@ -80,7 +80,7 @@
             },
             {
                 "key": "urlService",
-                "implementation": "services/UrlService.js",
+                "implementation": "../../general/src/services/UrlService.js",
                 "depends": [ "$location" ]
             },            
             {
