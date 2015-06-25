@@ -61,7 +61,7 @@ define(
                 );
                 mockUrlService = jasmine.createSpyObj(
                     "urlService",
-                    ["urlFor"]
+                    ["urlForLocation"]
                 );
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",
@@ -225,7 +225,7 @@ define(
                 // location.path to be called with the urlService's 
                 // urlFor function with the next domainObject and mode
                 expect(mockLocation.path).toHaveBeenCalledWith(
-                    mockUrlService.urlFor(mockMode, mockNextObject)
+                    mockUrlService.urlForLocation(mockMode, mockNextObject)
                 );
 
                 // Exercise the Angular workaround
