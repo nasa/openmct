@@ -19,51 +19,51 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,moment*/
+/*global define,Float32Array*/
 
 /**
- * Module defining DomainColumn. Created by vwoeltje on 11/18/14.
+ * Prepares data to be rendered in a GL Plot. Handles
+ * the conversion from data API to displayable buffers.
  */
 define(
     [],
     function () {
-        "use strict";
+        'use strict';
+
+        var MAX_POINTS = 86400,
+            INITIAL_SIZE = 675; // 1/128 of MAX_POINTS
 
         /**
-         * A column which will report telemetry domain values
-         * (typically, timestamps.) Used by the ScrollingListController.
-         *
          * @constructor
-         * @param domainMetadata an object with the machine- and human-
-         *        readable names for this domain (in `key` and `name`
-         *        fields, respectively.)
-         * @param {TelemetryFormatter} telemetryFormatter the telemetry
-         *        formatting service, for making values human-readable.
+         * @param {TelemetryHandle} handle the handle to telemetry access
+         * @param {string} range the key to use when looking up range values
          */
-        function DomainColumn(domainMetadata, telemetryFormatter) {
+        function PlotLimitTracker(handle, range) {
+            var legendClasses = {};
+
+            function updateLimit(telemetryObject) {
+                var limit = telemetryObject.getCapability('limit'),
+                    datum = handle.getDatum(telemetryObject);
+
+                if (limit && datum) {
+                    legendClasses[telemetryObject.getId()] =
+                        (limit.evaluate(datum, range) || {}).cssClass;
+                }
+            }
+
             return {
-                /**
-                 * Get the title to display in this column's header.
-                 * @returns {string} the title to display
-                 */
-                getTitle: function () {
-                    return domainMetadata.name;
+                update: function () {
+                    legendClasses = {};
+                    handle.getTelemetryObjects().forEach(updateLimit);
                 },
-                /**
-                 * Get the text to display inside a row under this
-                 * column.
-                 * @returns {string} the text to display
-                 */
-                getValue: function (domainObject, datum) {
-                    return {
-                        text: telemetryFormatter.formatDomainValue(
-                            datum[domainMetadata.key]
-                        )
-                    };
+                getLegendClass: function (domainObject) {
+                    var id = domainObject && domainObject.getId();
+                    return id && legendClasses[id];
                 }
             };
         }
 
-        return DomainColumn;
+        return PlotLimitTracker;
+
     }
 );

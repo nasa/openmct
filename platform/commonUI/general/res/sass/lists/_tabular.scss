@@ -122,9 +122,18 @@
 		}
 		td, .td {
 			border-top: 1px solid $tabularColorBorder;
+			color: $colorTelemFresh;
 			padding: $tabularTdPadTB $tabularTdPadLR;
 			&.numeric {
 				text-align: right;
+			}
+			&.s-cell-type-value {
+				text-align: right;
+				.l-cell-contents {
+					@include border-radius($smallCr);
+					padding-left: $itemPadLR;
+					padding-right: $itemPadLR;
+				}
 			}
 		}
 	}

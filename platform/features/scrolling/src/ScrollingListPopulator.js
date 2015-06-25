@@ -111,6 +111,25 @@ define(
                 return latest;
             }
 
+            // From a telemetry series, retrieve a single data point
+            // containing all fields for domains/ranges
+            function makeDatum(domainObject, series, index) {
+                var telemetry = domainObject.getCapability('telemetry'),
+                    metadata = telemetry ? telemetry.getMetadata() : {},
+                    result = {};
+
+                (metadata.domains || []).forEach(function (domain) {
+                    result[domain.key] =
+                        series.getDomainValue(index, domain.key);
+                });
+
+                (metadata.ranges || []).forEach(function (range) {
+                    result[range.key] =
+                        series.getRangeValue(index, range.key);
+                });
+
+                return result;
+            }
 
             return {
                 /**
@@ -141,11 +160,16 @@ define(
                     // some value in each column (rendering by the
                     // column object itself)
                     return values.map(function (value) {
+                        var datum = makeDatum(
+                            objects[value.objectIndex],
+                            datas[value.objectIndex],
+                            value.pointIndex
+                        );
+
                         return columns.map(function (column) {
                             return column.getValue(
                                 objects[value.objectIndex],
-                                datas[value.objectIndex],
-                                value.pointIndex
+                                datum
                             );
                         });
                     });

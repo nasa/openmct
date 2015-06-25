@@ -123,7 +123,13 @@ define(
 
             // Update the displayed value for this object
             function updateValue(telemetryObject) {
-                var id = telemetryObject && telemetryObject.getId();
+                var id = telemetryObject && telemetryObject.getId(),
+                    limit = telemetryObject &&
+                        telemetryObject.getCapability('limit'),
+                    datum = telemetryObject &&
+                        subscription.getDatum(telemetryObject),
+                    alarm = limit && datum && limit.evaluate(datum);
+
                 if (id) {
                     (elementProxiesById[id] || []).forEach(function (element) {
                         names[id] = telemetryObject.getModel().name;
@@ -132,6 +138,7 @@ define(
                         );
                         element.name = names[id];
                         element.value = values[id];
+                        element.cssClass = alarm && alarm.cssClass;
                     });
                 }
             }

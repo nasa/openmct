@@ -54,10 +54,16 @@ define(
                  * column.
                  * @returns {string} the text to display
                  */
-                getValue: function (domainObject, data, index) {
-                    return telemetryFormatter.formatRangeValue(
-                        data.getRangeValue(index, rangeMetadata.key)
-                    );
+                getValue: function (domainObject, datum) {
+                    var range = rangeMetadata.key,
+                        limit = domainObject.getCapability('limit'),
+                        value = datum[range],
+                        alarm = limit.evaluate(datum, range);
+
+                    return {
+                        cssClass: alarm && alarm.cssClass,
+                        text: telemetryFormatter.formatRangeValue(value)
+                    };
                 }
             };
         }

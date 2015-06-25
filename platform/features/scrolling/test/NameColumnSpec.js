@@ -49,7 +49,7 @@ define(
             });
 
             it("looks up name from an object's model", function () {
-                expect(column.getValue(mockDomainObject))
+                expect(column.getValue(mockDomainObject).text)
                     .toEqual("Test object name");
             });
 

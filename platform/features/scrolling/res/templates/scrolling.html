@@ -38,8 +38,9 @@
 			</thead>
 			<tbody>
 			<tr ng-repeat="row in rows">
-				<td ng-repeat="cell in row">
-					{{cell}}
+				<td ng-repeat="cell in row"
+                    ng-class="cell.cssClass">
+					{{cell.text}}
 				</td>
 			</tr>
 			</tbody>
