@@ -116,14 +116,7 @@
                 "key": "topbar-edit",
                 "templateUrl": "templates/topbar-edit.html"
             }
-        ],
-        "services": [
-            {
-                "key": "urlService",
-                "implementation": "../../general/src/services/UrlService.js",
-                "depends": [ "$location" ]
-            }    
-        ],        
+        ],     
         "representers": [
             {
                 "implementation": "representers/EditRepresenter.js",
