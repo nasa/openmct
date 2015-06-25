@@ -18,6 +18,7 @@
     "elements/PlotUpdater",
     "modes/PlotModeOptions",
     "modes/PlotOverlayMode",
-    "modes/PlotStackMode"
+    "modes/PlotStackMode",
+    "policies/PlotViewPolicy"
 ]
 
