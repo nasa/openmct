@@ -31,7 +31,7 @@ define(
          * Edit Mode. Exits the editing user interface and invokes object
          * capabilities to persist the changes that have been made.
          */
-        function SaveAction($location, context) {
+        function SaveAction($location, urlService, navigationService, context) {
             var domainObject = context.domainObject;
 
             // Invoke any save behavior introduced by the editor capability;
@@ -45,7 +45,7 @@ define(
             // Discard the current root view (which will be the editing
             // UI, which will have been pushed atop the Browise UI.)
             function returnToBrowse() {
-                return $location.path("/browse");
+                return $location.path(urlService.urlForNewTab("browse", domainObject));
             }
 
             return {

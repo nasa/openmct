@@ -51,8 +51,7 @@ define(
                     // into the service, followed by ids in the url
                     // joined by '/', and lastly the view path from
                     // the current location
-                    path = "/" + mode + "/" +
-                        ids.slice(1).join("/");
+                    path = mode + "/" + ids.slice(1).join("/");
                 return path;
             }
             
@@ -61,9 +60,25 @@ define(
             // includes the view and the index path
             function urlForNewTab(mode, domainObject) {
                 var viewPath = "?view=" + $location.search().view,
-                    newTabPath = "index.html#" +
-                        urlForLocation(mode, domainObject) + viewPath;
+                    newTabPath =
+                        "index.html#" + urlForLocation(mode, domainObject) + viewPath;
                 return newTabPath;
+            }
+            
+            function urlForEdit(mode, domainObject) {
+                var context = domainObject &&
+                        domainObject.getCapability('context'),
+                    objectPath = context ? context.getPath() : [],
+                    ids = objectPath.map(function (domainObject) {
+                        return domainObject.getId();
+                    }),
+                    // Parses the path together. Starts with the 
+                    // default index.html file, then the mode passed
+                    // into the service, followed by ids in the url
+                    // joined by '/', and lastly the view path from
+                    // the current location
+                    path = mode + "/";
+                return path;
             }
             
             return {
@@ -85,7 +100,9 @@ define(
                  * @param {DomainObject} value of the domain object 
                  *        to get the path of
                  */
-                urlForLocation: urlForLocation
+                urlForLocation: urlForLocation,
+                
+                urlForEdit: urlForEdit
             };
         }
 
