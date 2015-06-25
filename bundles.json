@@ -11,6 +11,7 @@
     "platform/containment",
     "platform/execution",
     "platform/telemetry",
+    "platform/features/imagery",
     "platform/features/layout",
     "platform/features/pages",
     "platform/features/plot",
@@ -19,6 +20,7 @@
     "platform/persistence/queue",
     "platform/policy",
 
+    "example/imagery",
     "example/persistence",
     "example/generator"
 ]
