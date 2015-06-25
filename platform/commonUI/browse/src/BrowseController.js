@@ -55,10 +55,11 @@ define(
                     $route.current = priorRoute;
                     unlisten();
                 });
-                // urlService.urlFor used to adjust current
+                // urlService.urlForLocation used to adjust current
                 // path to new, addressed, path based on
                 // domainObject
-                $location.path(urlService.urlFor("browse", domainObject));
+                $location.path(urlService.urlForLocation("browse", domainObject));
+                
             }
 
             // Callback for updating the in-scope reference to the object

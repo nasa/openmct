@@ -56,7 +56,7 @@ define(
                 // (browse) and the domainObject is passed in and
                 // the path is returned and opened in a new tab
                 perform: function () {
-                    $window.open(urlService.urlFor("browse", getSelectedObject()),
+                    $window.open(urlService.urlForNewTab("browse", getSelectedObject()),
                                 "_blank");
                 }
             };
