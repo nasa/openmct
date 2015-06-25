@@ -253,6 +253,7 @@ define(
                 if (e.isDefaultPrevented()) {
                     return;
                 }
+                e.preventDefault();
                 // Store the position of this element.
                 addElement({
                     type: "fixed.telemetry",

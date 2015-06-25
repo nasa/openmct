@@ -28,6 +28,7 @@ define(
 
         describe("The Layout controller", function () {
             var mockScope,
+                mockEvent,
                 testModel,
                 testConfiguration,
                 controller;
@@ -36,6 +37,10 @@ define(
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     [ "$watch", "$on", "commit" ]
+                );
+                mockEvent = jasmine.createSpyObj(
+                    'event',
+                    [ 'preventDefault', 'isDefaultPrevented' ]
                 );
 
                 testModel = {
@@ -144,16 +149,31 @@ define(
                 // Notify that a drop occurred
                 testModel.composition.push('d');
                 mockScope.$on.mostRecentCall.args[1](
-                    {},
+                    mockEvent,
                     'd',
                     { x: 300, y: 100 }
                 );
                 expect(testConfiguration.panels.d).toBeDefined();
+                expect(mockEvent.preventDefault).toHaveBeenCalled();
 
                 // Should have triggered commit (provided by
                 // EditRepresenter) with some message.
                 expect(mockScope.commit)
                     .toHaveBeenCalledWith(jasmine.any(String));
+            });
+
+            it("ignores drops when default has been prevented", function () {
+                // Avoids redundant drop-handling, WTD-1233
+                mockEvent.isDefaultPrevented.andReturn(true);
+
+                // Notify that a drop occurred
+                testModel.composition.push('d');
+                mockScope.$on.mostRecentCall.args[1](
+                    mockEvent,
+                    'd',
+                    { x: 300, y: 100 }
+                );
+                expect(testConfiguration.panels.d).not.toBeDefined();
             });
         });
     }
