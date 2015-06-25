@@ -64,10 +64,7 @@ define(
                         telemetryObjects[0] && telemetryObjects[0].getId();
 
                 columns = [];
-
-                if (telemetryObjects > 1 || id !== firstId) {
-                    columns.push(new NameColumn());
-                }
+                
                 columns.push(new DomainColumn(telemetryFormatter));
                 columns.push(new RangeColumn());
 
@@ -92,9 +89,11 @@ define(
                         domainValue !== undefined) {
                     // Instead of unshift (scrolling), use push (messages)
                     rows.push(columns.map(function (column) {
-                        return column.getValue(telemetryObject, handle);
+                        return column.getValue(telemetryObject, handle).text;
                     }));
-                    rows.splice(ROW_COUNT, Number.MAX_VALUE);
+                    // Remove first rows when adding past the max rows limit
+                    //rows.splice(ROW_COUNT, Number.MAX_VALUE);
+                    rows.splice(0, rows.length - ROW_COUNT);
                     lastUpdated[id] = domainValue;
                 }
             }

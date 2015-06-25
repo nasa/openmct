@@ -4,11 +4,11 @@
     "extensions": {
         "views": [
             {
-                "key": "messages",
+                "key": "rtmessages",
                 "name": "RT Messages",
                 "glyph": "5",
-                "description": "Scrolling list of messages.",
-                "templateUrl": "templates/messages.html",
+                "description": "Scrolling list of real time messages.",
+                "templateUrl": "templates/rtmessages.html",
                 "needs": [ "telemetry" ],
                 "delegation": true
             }
@@ -22,15 +22,15 @@
         ],
         "directives": [
             {
-                "key": "mctDataTable",
-                "implementation": "directives/MCTDataTable.js",
+                "key": "mctRtDataTable",
+                "implementation": "directives/MCTRTDataTable.js",
                 "depends": [ "$window" ]
             }
         ],
         "policies": [
             {
                 "category": "view",
-                "implementation": "policies/MessagesViewPolicy.js"
+                "implementation": "policies/RTMessagesViewPolicy.js"
             }
         ]
     }

@@ -19,10 +19,10 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="w1" ng-controller="TelemetryController as telemetry">
+<div class="w1">
 	<div class="w2"
-	     ng-controller="EventListController">
-        <mct-data-table headers="headers" rows="rows" ascending-scroll="true"></mct-data-table>
+	     ng-controller="RTEventListController as rtevent">
+        <mct-rt-data-table headers="rtevent.headers()" rows="rtevent.rows()" ascending-scroll="true"></mct-rt-data-table>
 	</div>
 </div>
 

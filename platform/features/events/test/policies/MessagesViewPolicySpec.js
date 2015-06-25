@@ -31,37 +31,50 @@ define(
 
         describe("The messages view policy", function () {
             var mockDomainObject,
-                testType,
+                mockTelemetry,
                 telemetryType,
+                testType,
+                testView,
+                testMetadata,
                 policy;
 
             beforeEach(function () {
+                
+                testView = { key: "string" };
+                testMetadata = {};
+                
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    ['getModel']
+                    ['getModel', 'getCapability']
                 );
+                mockTelemetry = jasmine.createSpyObj(
+                    'telemetry',
+                    ['getMetadata']
+                );
+                
                 mockDomainObject.getModel.andCallFake(function (c) {
                     return {type: testType};
                 });
+                mockDomainObject.getCapability.andCallFake(function (c) {
+                    return c === 'telemetry' ? mockTelemetry : undefined;
+                });
+                mockTelemetry.getMetadata.andReturn(testMetadata);
                 
                 policy = new MessagesViewPolicy();
             });
-
+            
             it("disallows the message view for objects without string telemetry", function () {
-                telemetryType = 'notString';
-                expect(policy.allow({ key: 'messages' }, mockDomainObject))
-                    .toBeFalsy();
+                testMetadata.ranges = [ { format: 'notString' } ];
+                expect(policy.allow({ key: 'messages' }, mockDomainObject)).toBeFalsy();
             });
 
             it("allows the message view for objects with string telemetry", function () {
-                telemetryType = 'string';
-                expect(policy.allow({ key: 'messages' }, mockDomainObject))
-                    .toBeTruthy();
+                testMetadata.ranges = [ { format: 'string' } ];
+                expect(policy.allow({ key: 'messages' }, mockDomainObject)).toBeTruthy();
             });
 
             it("returns true when the current view is not the Messages view", function () {
-                expect(policy.allow({ key: 'notMessages' }, mockDomainObject))
-                    .toBeTruthy();
+                expect(policy.allow({ key: 'notMessages' }, mockDomainObject)).toBeTruthy();
             });
         });
     }

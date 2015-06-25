@@ -19,10 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
+/*global define,moment*/
 
 /**
- * Module defining DomainColumn. Created by vwoeltje on 11/18/14.
+ * Module defining DomainColumn. 
+ * Created by vwoeltje on 11/18/14. Modified by shale on 06/25/2015.
  */
 define(
     [],
@@ -31,7 +32,7 @@ define(
 
         /**
          * A column which will report telemetry range values
-         * (typically, measurements.) Used by the ScrollingListController.
+         * (typically, measurements.) Used by the RTScrollingListController.
          *
          * @constructor
          * @param rangeMetadata an object with the machine- and human-
@@ -40,24 +41,24 @@ define(
          * @param {TelemetryFormatter} telemetryFormatter the telemetry
          *        formatting service, for making values human-readable.
          */
-        function RangeColumn(rangeMetadata, telemetryFormatter) {
+        function RangeColumn() {
             return {
                 /**
                  * Get the title to display in this column's header.
                  * @returns {string} the title to display
                  */
                 getTitle: function () {
-                    return rangeMetadata.name;
+                    return "Message";
                 },
                 /**
                  * Get the text to display inside a row under this
                  * column.
                  * @returns {string} the text to display
                  */
-                getValue: function (domainObject, data, index) {
-                    return telemetryFormatter.formatRangeValue(
-                        data.getRangeValue(index, rangeMetadata.key)
-                    );
+                getValue: function (domainObject, handle) {
+                    return {
+                        text: handle.getRangeValue(domainObject)
+                    };
                 }
             };
         }

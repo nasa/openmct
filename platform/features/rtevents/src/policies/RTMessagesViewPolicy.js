@@ -33,14 +33,15 @@ define(
          * Policy controlling when the Messages view should be avaliable.
          * @constructor
          */
-        function MessagesViewPolicy() {
+        function RTMessagesViewPolicy() {
             
             function hasStringTelemetry(domainObject) {
                 var telemetry = domainObject &&
                         domainObject.getCapability('telemetry'),
                     metadata = telemetry ? telemetry.getMetadata() : {},
+                    data = telemetry ? telemetry.requestData() : {},
                     ranges = metadata.ranges || [];
-
+                
                 return ranges.some(function (range) {
                     return range.format === 'string';
                 });
@@ -54,8 +55,8 @@ define(
                  * @returns {boolean} true if not disallowed
                  */
                 allow: function (view, domainObject) {
-                    // This policy only applies for the Messages view
-                    if (view.key === 'messages') {
+                    // This policy only applies for the RT Messages view
+                    if (view.key === 'rtmessages') {
                         // The Messages view is allowed only if the domain 
                         // object has string telemetry
                         if (!hasStringTelemetry(domainObject)) {
@@ -69,6 +70,6 @@ define(
             };
         }
 
-        return MessagesViewPolicy;
+        return RTMessagesViewPolicy;
     }
 );

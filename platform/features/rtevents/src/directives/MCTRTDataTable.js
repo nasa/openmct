@@ -22,17 +22,17 @@
 /*global define,Promise*/
 
 /**
- * Module defining MCTDataTable. Created by shale on 06/22/2015.
+ * Module defining MCTRTDataTable. Created by shale on 06/25/2015.
  */
 define(
     [],
     function () {
         "use strict";
         
-        function MCTDataTable($window) {
+        function MCTRTDataTable($window) {
             return {
                 restrict: "E",
-                templateUrl: "platform/features/events/res/templates/mct-data-table.html",
+                templateUrl: "platform/features/rtevents/res/templates/mct-rt-data-table.html",
                 scope: {
                     headers: "=",
                     rows: "=",
@@ -49,7 +49,7 @@ define(
                     // (When viewing at the bottom of the page, the scroll bar will 
                     // stay at the bottom despite additions to the table)
                     if ($scope.ascendingScroll) {
-                        $scope.$watch("rows", function () {
+                        $scope.$watchCollection("rows", function () {
                             // Wait until the page as been repainted (otherwise the 
                             // height will always be zero)
                             $window.requestAnimationFrame(function () {
@@ -59,7 +59,7 @@ define(
                                 
                                 // One of the parents is a div that has vscroll
                                 scrollParent = $element[0].parentElement.parentElement.parentElement.parentElement.parentElement;
-
+                                
                                 // Move the scrollbar down the amount that the height has changed
                                 scrollParent.scrollTop = scrollParent.scrollTop + (currentHeight - previousHeight);
                             });
@@ -69,6 +69,6 @@ define(
             };
         }
         
-        return MCTDataTable;
+        return MCTRTDataTable;
     }
 );

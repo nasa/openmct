@@ -40,24 +40,26 @@ define(
          * @param {TelemetryFormatter} telemetryFormatter the telemetry
          *        formatting service, for making values human-readable.
          */
-        function DomainColumn(domainMetadata, telemetryFormatter) {
+        function DomainColumn(telemetryFormatter) {
             return {
                 /**
                  * Get the title to display in this column's header.
                  * @returns {string} the title to display
                  */
                 getTitle: function () {
-                    return domainMetadata.name;
+                    return "Time";
                 },
                 /**
                  * Get the text to display inside a row under this
                  * column.
                  * @returns {string} the text to display
                  */
-                getValue: function (domainObject, data, index) {
-                    return telemetryFormatter.formatDomainValue(
-                        data.getDomainValue(index, domainMetadata.key)
-                    );
+                getValue: function (domainObject, handle) {
+                    return {
+                        text: telemetryFormatter.formatDomainValue(
+                            handle.getDomainValue(domainObject)
+                        )
+                    };
                 }
             };
         }
