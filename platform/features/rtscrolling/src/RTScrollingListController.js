@@ -29,7 +29,7 @@ define(
     function (NameColumn, DomainColumn, RangeColumn) {
         "use strict";
 
-        var ROW_COUNT = 18;
+        var ROW_COUNT = 100;
 
         /**
          * The RTScrollingListController is responsible for populating
@@ -92,6 +92,7 @@ define(
                     rows.unshift(columns.map(function (column) {
                         return column.getValue(telemetryObject, handle);
                     }));
+                    rows.splice(ROW_COUNT, Number.MAX_VALUE);
                     lastUpdated[id] = domainValue;
                 }
             }
