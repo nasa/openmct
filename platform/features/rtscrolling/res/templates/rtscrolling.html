@@ -38,7 +38,8 @@
             </thead>
             <tbody>
             <tr ng-repeat="row in rtscroll.rows()">
-                <td ng-repeat="cell in row">
+                <td ng-repeat="cell in row"
+                    ng-class="cell.cssClass">
                     {{cell.text}}
                 </td>
             </tr>

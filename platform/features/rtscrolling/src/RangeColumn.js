@@ -41,6 +41,13 @@ define(
          *        formatting service, for making values human-readable.
          */
         function RangeColumn() {
+            function findRange(domainObject) {
+                var telemetry = domainObject.getCapability('telemetry'),
+                    metadata = telemetry ? telemetry.getMetadata() : {},
+                    ranges = metadata.ranges || [{}];
+                return ranges[0].key;
+            }
+
             return {
                 /**
                  * Get the title to display in this column's header.
@@ -55,8 +62,17 @@ define(
                  * @returns {string} the text to display
                  */
                 getValue: function (domainObject, handle) {
+                    var range = findRange(domainObject),
+                        limit = domainObject.getCapability('limit'),
+                        value = handle.getRangeValue(domainObject),
+                        alarm = limit && limit.evaluate(
+                            handle.getDatum(domainObject),
+                            range
+                        );
+
                     return {
-                        text: handle.getRangeValue(domainObject)
+                        cssClass: alarm && alarm.cssClass,
+                        text: value
                     };
                 }
             };
