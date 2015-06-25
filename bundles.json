@@ -17,6 +17,7 @@
     "platform/features/plot",
     "platform/features/scrolling",
     "platform/features/events",
+    "platform/features/rtevents",
     "platform/forms",
     "platform/persistence/queue",
     "platform/policy",
