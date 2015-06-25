@@ -109,6 +109,9 @@ define(
 
             // Position a panel after a drop event
             function handleDrop(e, id, position) {
+                if (e.isDefaultPrevented()) {
+                    return;
+                }
                 // Ensure that configuration field is populated
                 $scope.configuration = $scope.configuration || {};
                 // Make sure there is a "panels" field in the
@@ -129,6 +132,10 @@ define(
                 }
                 // Populate template-facing position for this id
                 populatePosition(id);
+                // Layout may contain embedded views which will
+                // listen for drops, so call preventDefault() so
+                // that they can recognize that this event is handled.
+                e.preventDefault();
             }
 
             // Position panes when the model field changes
