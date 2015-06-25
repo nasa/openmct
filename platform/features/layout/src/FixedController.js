@@ -43,7 +43,6 @@ define(
                 gridExtent = DEFAULT_GRID_EXTENT,
                 dragging,
                 subscription,
-                cellStyles = [],
                 elementProxies = [],
                 names = {}, // Cache names by ID
                 values = {}, // Cache values by ID
@@ -51,29 +50,6 @@ define(
                 handles = [],
                 moveHandle,
                 selection;
-
-            // Refresh cell styles (e.g. because grid extent changed)
-            function refreshCellStyles() {
-                var x, y;
-
-                // Clear previous styles
-                cellStyles = [];
-
-                // Update grid size from model
-                gridSize = ($scope.model || {}).layoutGrid || DEFAULT_GRID_SIZE;
-
-                for (x = 0; x < gridExtent[0]; x += 1) {
-                    for (y = 0; y < gridExtent[1]; y += 1) {
-                        // Position blocks; subtract out border size from w/h
-                        cellStyles.push({
-                            left: x * gridSize[0] + 'px',
-                            top: y * gridSize[1] + 'px',
-                            width: gridSize[0] - 1 + 'px',
-                            height: gridSize[1] - 1 + 'px'
-                        });
-                    }
-                }
-            }
 
             // Convert from element x/y/width/height to an
             // apropriate ng-style argument, to position elements.
@@ -299,19 +275,7 @@ define(
             // Position panes where they are dropped
             $scope.$on("mctDrop", handleDrop);
 
-            // Initialize styles (position etc.) for cells
-            refreshCellStyles();
-
             return {
-                /**
-                 * Get styles for all background cells, as will populate the
-                 * ng-style tag.
-                 * @memberof FixedController#
-                 * @returns {Array} cell styles
-                 */
-                getCellStyles: function () {
-                    return cellStyles;
-                },
                 /**
                  * Get the size of the grid, in pixels. The returned array
                  * is in the form `[x, y]`.
@@ -330,7 +294,6 @@ define(
                         h = Math.ceil(bounds.height / gridSize[1]);
                     if (w !== gridExtent[0] || h !== gridExtent[1]) {
                         gridExtent = [w, h];
-                        refreshCellStyles();
                     }
                 },
                 /**
