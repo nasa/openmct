@@ -52,7 +52,9 @@ define(
                     unlisten;
 
                 unlisten = $scope.$on('$locationChangeSuccess', function () {
-                    $route.current = priorRoute;
+                    if ($location.path().indexOf("/browse/") === 0) {
+                        $route.current = priorRoute;
+                    }
                     unlisten();
                 });
                 // urlService.urlForLocation used to adjust current
