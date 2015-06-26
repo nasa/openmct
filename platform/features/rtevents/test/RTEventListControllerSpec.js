@@ -31,28 +31,16 @@ define(
 
         describe("The real time event list controller", function () {
             var mockScope,
-                mockTelemetry,
+                //mockTelemetry,
                 mockTelemetryHandler,
                 mockHandle,
                 mockTelemetryFormatter,
-                testMetadata,
                 controller;
-/*
-            var mockDomainObject,
-                mockTelemetryHandler,
-                mockHandle,
-                mockFormatter,
-                column;
-*/
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     [ "$on", "$watch" ]
-                );
-                mockTelemetry = jasmine.createSpyObj(
-                    "telemetryController",
-                    [ "getResponse", "getMetadata", "getTelemetryObjects" ]
                 );
                 mockTelemetryHandler = jasmine.createSpyObj(
                     "telemetryHandler",
@@ -66,32 +54,13 @@ define(
                     "formatter",
                     ["formatDomainValue", "formatRangeValue"]
                 );
-                testMetadata = [
-                    {
-                        domains: [
-                            { key: "d0", name: "D0" },
-                            { key: "d1", name: "D1" }
-                        ],
-                        ranges: [
-                            { key: "r0", name: "R0" },
-                            { key: "r1", name: "R1" }
-                        ]
-                    },
-                    {
-                        domains: [
-                            { key: "d0", name: "D0" },
-                            { key: "d2", name: "D2" }
-                        ],
-                        ranges: [
-                            { key: "r0", name: "R0" }
-                        ]
-                    }
-                ];
-                mockTelemetry.getMetadata.andReturn(testMetadata);
-                mockTelemetry.getResponse.andReturn([]);
-                mockTelemetry.getTelemetryObjects.andReturn([]);
-                mockScope.telemetry = mockTelemetry;
+                
                 controller = new RTEventListController(mockScope, mockTelemetryHandler, mockTelemetryFormatter);
+                
+                // Add some data into the table
+                controller.setUpColumns([{id: 'a'}, {id: 'b'}]);
+            }
+                
             });
 
             it("listens for telemetry data updates", function () {
@@ -107,12 +76,13 @@ define(
                     jasmine.any(Function)
                 );
             });
-
-            it("provides a column for each unique domain and range", function () {
-                // Should have five columns based on metadata above,
-                // (d0, d1, d2, r0, r1)
-                mockScope.$watch.mostRecentCall.args[1](mockTelemetry);
-                expect(mockScope.headers).toEqual(["D0", "D1", "D2", "R0", "R1"]);
+            
+            it("provides a domain and a range column", function () {
+                // Should have two columns
+                expect(controller.rows()[0].length).toEqual([]);
+                
+                // And they should have these headers 
+                expect(controller.headers()).toEqual(["Time", "Message"]);
             });
 
             it("does not throw if telemetry controller is undefined", function () {
@@ -120,12 +90,6 @@ define(
                 mockScope.telemetry = undefined;
                 expect(mockScope.$watch.mostRecentCall.args[1])
                     .not.toThrow();
-            });
-
-            it("provides default columns if domain/range metadata is unavailable", function () {
-                mockTelemetry.getMetadata.andReturn([]);
-                mockScope.$watch.mostRecentCall.args[1](mockTelemetry);
-                expect(mockScope.headers).toEqual(["Time", "Message"]);
             });
         });
     }
