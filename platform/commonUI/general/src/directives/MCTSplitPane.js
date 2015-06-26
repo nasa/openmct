@@ -27,9 +27,7 @@ define(
         'use strict';
 
         // Pixel width to allocate for the splitter itself
-        var SPLITTER_WIDTH = 8,
-            HALF_WIDTH = SPLITTER_WIDTH / 2,
-            DEFAULT_ANCHOR = 'left',
+        var DEFAULT_ANCHOR = 'left',
             CHILDREN_WARNING_MESSAGE = [
                 "Invalid mct-split-pane contents.",
                 "This element should contain exactly three",
@@ -111,21 +109,29 @@ define(
                     return "calc(" + styleValue + " + " + offset + "px)";
                 }
 
+                // Get relevant size (height or width) of DOM element
+                function getSize(splitter) {
+                    return anchor.orientation === 'vertical' ?
+                            splitter.offsetWidth : splitter.offsetHeight;
+                }
+
                 // Apply styles to child elements
                 function updateChildren(children) {
                     // Pick out correct elements to update, flowing from
                     // selected anchor edge.
                     var first = children.eq(anchor.reversed ? 0 : 2),
                         splitter = children.eq(1),
-                        last = children.eq(anchor.reversed ? 2 : 0);
+                        last = children.eq(anchor.reversed ? 2 : 0),
+                        splitterSize = getSize(splitter[0]),
+                        halfSize = splitterSize / 2;
 
                     first.css(anchor.edge, "0px");
-                    first.css(anchor.dimension, calc(-HALF_WIDTH));
+                    first.css(anchor.dimension, calc(-halfSize));
 
-                    splitter.css(anchor.edge, calc(-HALF_WIDTH));
-                    splitter.css(anchor.dimension, SPLITTER_WIDTH + "px");
+                    splitter.css(anchor.edge, calc(-halfSize));
+                    splitter.css(anchor.dimension, splitterSize + "px");
 
-                    last.css(anchor.edge, calc(HALF_WIDTH));
+                    last.css(anchor.edge, calc(halfSize));
                     last.css(anchor.opposite, "0px");
                 }
 
