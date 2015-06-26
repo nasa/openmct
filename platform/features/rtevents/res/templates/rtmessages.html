@@ -19,31 +19,10 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="w1" ng-controller="TelemetryController as telemetry">
+<div class="w1">
 	<div class="w2"
-	     ng-controller="ScrollingListController">
-		<!-- To add filtering, add class 'filterable' to <table> and uncomment 2nd <tr> in <thead> -->
-		<table class="tabular fixed-header">
-			<thead>
-			<tr>
-				<th ng-repeat="header in headers">
-					{{header}}
-				</th>
-			</tr>
-			<!--tr>
-				<th ng-repeat="header in headers">
-					<input type="text" />
-				</th>
-			</tr-->
-			</thead>
-			<tbody>
-			<tr ng-repeat="row in rows">
-				<td ng-repeat="cell in row">
-					{{cell}}
-				</td>
-			</tr>
-			</tbody>
-		</table>
+	     ng-controller="RTEventListController as rtevent">
+        <mct-rt-data-table headers="rtevent.headers()" rows="rtevent.rows()" ascending-scroll="true"></mct-rt-data-table>
 	</div>
 </div>
 

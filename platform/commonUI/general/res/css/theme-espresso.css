@@ -1185,104 +1185,101 @@ mct-container {
   border-collapse: collapse;
   color: #fff;
   display: table;
-  font-size: 0.8em;
+  font-size: 0.75em;
   position: relative;
-  height: 100%;
   width: 100%; }
   /* line 37, ../sass/lists/_tabular.scss */
   .tabular thead, .tabular .thead,
   .tabular tbody tr, .tabular .tbody .tr {
-    display: table;
+    width: 100%; }
+  /* line 45, ../sass/lists/_tabular.scss */
+  .tabular thead tr, .tabular thead .tr, .tabular .thead tr, .tabular .thead .tr {
+    height: 18px; }
+  /* line 48, ../sass/lists/_tabular.scss */
+  .tabular thead:before, .tabular .thead:before {
+    content: "";
+    display: block;
+    z-index: 0;
+    position: absolute;
     width: 100%;
-    table-layout: fixed; }
-  /* line 43, ../sass/lists/_tabular.scss */
-  .tabular thead, .tabular .thead {
-    width: calc(100% - 10px); }
-    /* line 45, ../sass/lists/_tabular.scss */
-    .tabular thead tr, .tabular thead .tr, .tabular .thead tr, .tabular .thead .tr {
-      height: 18px; }
-    /* line 48, ../sass/lists/_tabular.scss */
-    .tabular thead:before, .tabular .thead:before {
-      content: "";
-      display: block;
-      z-index: 0;
-      position: absolute;
-      width: 100%;
-      height: 18px;
-      background: rgba(255, 255, 255, 0.15); }
+    height: 18px;
+    background: rgba(255, 255, 255, 0.15); }
   /* line 58, ../sass/lists/_tabular.scss */
   .tabular tbody, .tabular .tbody {
-    overflow: hidden;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    width: auto;
-    height: auto;
-    top: 18px;
-    display: block;
-    overflow-y: scroll; }
-    /* line 66, ../sass/lists/_tabular.scss */
+    display: table-row-group; }
+    /* line 65, ../sass/lists/_tabular.scss */
     .tabular tbody tr:hover, .tabular tbody .tr:hover, .tabular .tbody tr:hover, .tabular .tbody .tr:hover {
       background: rgba(255, 255, 255, 0.1); }
-  /* line 74, ../sass/lists/_tabular.scss */
-  .tabular tr:first-child .td, .tabular .tr:first-child .td {
-    border-top: none; }
-  /* line 77, ../sass/lists/_tabular.scss */
-  .tabular tr th, .tabular tr .th, .tabular tr td, .tabular tr .td, .tabular .tr th, .tabular .tr .th, .tabular .tr td, .tabular .tr .td {
-    display: table-cell; }
-  /* line 80, ../sass/lists/_tabular.scss */
-  .tabular tr th, .tabular tr .th, .tabular .tr th, .tabular .tr .th {
-    border: none;
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    color: #b3b3b3;
-    padding: 0 5px;
-    white-space: nowrap;
-    vertical-align: middle;
-    			/*	em {
-                        //background: rgba(green, 0.2);
-                        border-left: 1px solid $tabularColorBorder;
-                        color: $tabularColorHeaderFg;
-                        cursor: pointer;
-                        display: block;
-                        font-style: normal;
-                        font-weight: bold;
-                        height: $tabularHeaderH;
-                        line-height: $tabularHeaderH;
-                        margin-left: - $tabularTdPadLR;
-                        padding: 0 $tabularTdPadLR;
-                        position: absolute;
-                        top: 0;
-                        vertical-align: middle;
-                        &:hover {
-                            color: lighten($tabularColorHeaderFg, 20%);
-                        }
-                    }*/ }
-    /* line 87, ../sass/lists/_tabular.scss */
-    .tabular tr th:first-child, .tabular tr .th:first-child, .tabular .tr th:first-child, .tabular .tr .th:first-child {
-      border-left: none; }
-    /* line 91, ../sass/lists/_tabular.scss */
-    .tabular tr th.sort .icon-sorting:before, .tabular tr .th.sort .icon-sorting:before, .tabular .tr th.sort .icon-sorting:before, .tabular .tr .th.sort .icon-sorting:before {
-      display: inline-block;
-      font-family: symbolsfont;
-      margin-left: 5px; }
-    /* line 96, ../sass/lists/_tabular.scss */
-    .tabular tr th.sort.asc .icon-sorting:before, .tabular tr .th.sort.asc .icon-sorting:before, .tabular .tr th.sort.asc .icon-sorting:before, .tabular .tr .th.sort.asc .icon-sorting:before {
-      content: '0'; }
-    /* line 99, ../sass/lists/_tabular.scss */
-    .tabular tr th.sort.desc .icon-sorting:before, .tabular tr .th.sort.desc .icon-sorting:before, .tabular .tr th.sort.desc .icon-sorting:before, .tabular .tr .th.sort.desc .icon-sorting:before {
-      content: '1'; }
-  /* line 123, ../sass/lists/_tabular.scss */
-  .tabular tr td, .tabular tr .td, .tabular .tr td, .tabular .tr .td {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 2px 5px; }
-    /* line 126, ../sass/lists/_tabular.scss */
-    .tabular tr td.numeric, .tabular tr .td.numeric, .tabular .tr td.numeric, .tabular .tr .td.numeric {
-      text-align: right; }
-  /* line 132, ../sass/lists/_tabular.scss */
+  /* line 70, ../sass/lists/_tabular.scss */
+  .tabular tr, .tabular .tr {
+    display: table-row; }
+    /* line 72, ../sass/lists/_tabular.scss */
+    .tabular tr:first-child .td, .tabular .tr:first-child .td {
+      border-top: none; }
+    /* line 75, ../sass/lists/_tabular.scss */
+    .tabular tr th, .tabular tr .th, .tabular tr td, .tabular tr .td, .tabular .tr th, .tabular .tr .th, .tabular .tr td, .tabular .tr .td {
+      display: table-cell; }
+    /* line 78, ../sass/lists/_tabular.scss */
+    .tabular tr th, .tabular tr .th, .tabular .tr th, .tabular .tr .th {
+      border: none;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      color: #b3b3b3;
+      padding: 0 5px;
+      white-space: nowrap;
+      vertical-align: middle; }
+      /* line 85, ../sass/lists/_tabular.scss */
+      .tabular tr th:first-child, .tabular tr .th:first-child, .tabular .tr th:first-child, .tabular .tr .th:first-child {
+        border-left: none; }
+      /* line 89, ../sass/lists/_tabular.scss */
+      .tabular tr th.sort .icon-sorting:before, .tabular tr .th.sort .icon-sorting:before, .tabular .tr th.sort .icon-sorting:before, .tabular .tr .th.sort .icon-sorting:before {
+        display: inline-block;
+        font-family: symbolsfont;
+        margin-left: 5px; }
+      /* line 94, ../sass/lists/_tabular.scss */
+      .tabular tr th.sort.asc .icon-sorting:before, .tabular tr .th.sort.asc .icon-sorting:before, .tabular .tr th.sort.asc .icon-sorting:before, .tabular .tr .th.sort.asc .icon-sorting:before {
+        content: '0'; }
+      /* line 97, ../sass/lists/_tabular.scss */
+      .tabular tr th.sort.desc .icon-sorting:before, .tabular tr .th.sort.desc .icon-sorting:before, .tabular .tr th.sort.desc .icon-sorting:before, .tabular .tr .th.sort.desc .icon-sorting:before {
+        content: '1'; }
+    /* line 102, ../sass/lists/_tabular.scss */
+    .tabular tr td, .tabular tr .td, .tabular .tr td, .tabular .tr .td {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      min-width: 110px;
+      padding: 2px 5px;
+      vertical-align: top; }
+      /* line 107, ../sass/lists/_tabular.scss */
+      .tabular tr td.numeric, .tabular tr .td.numeric, .tabular .tr td.numeric, .tabular .tr .td.numeric {
+        text-align: right; }
+  /* line 113, ../sass/lists/_tabular.scss */
   .tabular.filterable tbody, .tabular.filterable .tbody {
     top: 36px; }
+  /* line 118, ../sass/lists/_tabular.scss */
+  .tabular.fixed-header {
+    height: 100%; }
+    /* line 120, ../sass/lists/_tabular.scss */
+    .tabular.fixed-header thead, .tabular.fixed-header .thead,
+    .tabular.fixed-header tbody tr, .tabular.fixed-header .tbody .tr {
+      display: table;
+      table-layout: fixed; }
+    /* line 125, ../sass/lists/_tabular.scss */
+    .tabular.fixed-header thead, .tabular.fixed-header .thead {
+      width: calc(100% - 10px); }
+    /* line 128, ../sass/lists/_tabular.scss */
+    .tabular.fixed-header tbody, .tabular.fixed-header .tbody {
+      overflow: hidden;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      width: auto;
+      height: auto;
+      top: 18px;
+      display: block;
+      overflow-y: scroll; }
+  /* line 136, ../sass/lists/_tabular.scss */
+  .tabular.t-event-messages td, .tabular.t-event-messages .td {
+    min-width: 150px; }
 
 /* line 1, ../sass/controls/_breadcrumb.scss */
 .l-breadcrumb {
