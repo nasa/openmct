@@ -101,7 +101,7 @@ define(
                 );
                 mockEvent = jasmine.createSpyObj(
                     'event',
-                    [ 'preventDefault', 'isDefaultPrevented' ]
+                    [ 'preventDefault' ]
                 );
 
                 testGrid = [ 123, 456 ];
@@ -326,7 +326,7 @@ define(
 
             it("ignores drops when default has been prevented", function () {
                 // Avoids redundant drop-handling, WTD-1233
-                mockEvent.isDefaultPrevented.andReturn(true);
+                mockEvent.defaultPrevented = true;
 
                 // Notify that a drop occurred
                 testModel.composition.push('d');

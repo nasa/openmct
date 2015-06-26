@@ -109,7 +109,7 @@ define(
 
             // Position a panel after a drop event
             function handleDrop(e, id, position) {
-                if (e.isDefaultPrevented()) {
+                if (e.defaultPrevented) {
                     return;
                 }
                 // Ensure that configuration field is populated

@@ -250,7 +250,7 @@ define(
             // Position a panel after a drop event
             function handleDrop(e, id, position) {
                 // Don't handle this event if it has already been handled
-                if (e.isDefaultPrevented()) {
+                if (e.defaultPrevented) {
                     return;
                 }
                 e.preventDefault();
