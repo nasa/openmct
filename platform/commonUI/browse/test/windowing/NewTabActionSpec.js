@@ -53,7 +53,7 @@ define(
                 
                 // Mocks the urlService used to make the new tab's url from a
                 // domainObject and mode
-                mockUrlService = jasmine.createSpyObj("urlService", ["urlFor"]);
+                mockUrlService = jasmine.createSpyObj("urlService", ["urlForNewTab"]);
                 
                 // Action done using the current context or mockContextCurrent
                 actionCurrent = new NewTabAction(mockUrlService, mockWindow,

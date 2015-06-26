@@ -13,5 +13,6 @@
     "directives/MCTDrag",
     "directives/MCTResize",
     "directives/MCTScroll",
+    "services/UrlService",
     "StyleSheetLoader"
 ]

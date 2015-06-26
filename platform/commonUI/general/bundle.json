@@ -3,6 +3,13 @@
     "description": "General UI elements, meant to be reused across modes",
     "resources": "res",
     "extensions": {
+        "services": [
+            {
+                "key": "urlService",
+                "implementation": "/services/UrlService.js",
+                "depends": [ "$location" ]
+            }    
+        ],        
         "runs": [
             {
                 "implementation": "StyleSheetLoader.js",

@@ -67,7 +67,7 @@
                 "implementation": "actions/SaveAction.js",
                 "name": "Save",
                 "description": "Save changes made to these objects.",
-                "depends": [ "$location" ],
+                "depends": [ "$location", "urlService" ],
                 "priority": "mandatory"
             },
             {
@@ -76,7 +76,7 @@
                 "implementation": "actions/CancelAction.js",
                 "name": "Cancel",
                 "description": "Discard changes made to these objects.",
-                "depends": [ "$location" ]
+                "depends": [ "$location", "urlService" ]
             }
         ],
         "policies": [
@@ -116,7 +116,7 @@
                 "key": "topbar-edit",
                 "templateUrl": "templates/topbar-edit.html"
             }
-        ],
+        ],     
         "representers": [
             {
                 "implementation": "representers/EditRepresenter.js",
