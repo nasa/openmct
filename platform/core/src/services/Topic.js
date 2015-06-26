@@ -40,7 +40,7 @@ define(
          *
          * Named topics are shared; multiple calls to `topic`
          * with the same argument will return a single object instance.
-         * Anonymous topics (where `topic`has been called with no
+         * Anonymous topics (where `topic` has been called with no
          * arguments) are private; each call returns a new instance.
          *
          * @returns {Function}
