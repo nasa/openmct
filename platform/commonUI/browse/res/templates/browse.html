@@ -24,6 +24,8 @@
     <div class="holder browse-area s-browse-area abs" ng-controller="BrowseController">
         <mct-split-pane class='split-layout vertical contents abs'
                         anchor='left'
+                        minimum="150"
+                        maximum="800"
                         initial="25%">
             <div class='split-pane-component treeview pane'>
                 <mct-representation key="'create-button'" mct-object="navigatedObject">

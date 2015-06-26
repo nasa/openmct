@@ -79,6 +79,8 @@ define(
          *   edge.
          * * `anchor`: Plain string, one of "left", "right", "top",
          *    or "bottom".
+         * * `maximum`: Maximum pixel width, as a literal numeric value
+         * * `minimum`: Minimum pixel width, as a literal numeric value
          *
          * When used, an `mct-split-pane` element should contain exactly
          * three child elements, where the middle is an `mct-splitter`
@@ -99,6 +101,8 @@ define(
 
             function controller($scope, $element, $attrs) {
                 var anchorKey = $attrs.anchor || DEFAULT_ANCHOR,
+                    maximum = parseInt($attrs.maximum, 10),
+                    minimum = parseInt($attrs.minimum, 10),
                     anchor,
                     styleValue = $attrs.initial,
                     positionParsed = $parse($attrs.position),
@@ -148,11 +152,27 @@ define(
                     updateChildren(children);
                 }
 
+                // Enforce minimum/maximum positions
+                function enforceExtrema() {
+                    // Pick default min/max
+                    var min = isNaN(minimum) ? 0 : minimum,
+                        max = isNaN(maximum) ?
+                                Number.POSITIVE_INFINITY : maximum;
+                    // Disallow a max greater than the element's size
+                    max = Math.min($element[0].offsetWidth, max);
+                    // Finally, restrict position to allowed min/max
+                    position = Math.max(position, min);
+                    position = Math.min(position, max);
+                }
+
                 // Getter-setter for the pixel offset of the splitter,
                 // relative to the current edge.
                 function getSetPosition(value) {
+                    var min, max;
                     if (typeof value === 'number') {
                         position = value;
+                        enforceExtrema();
+
                         // Pass change up so this state can be shared
                         if (positionParsed.assign) {
                             positionParsed.assign($scope, value);
