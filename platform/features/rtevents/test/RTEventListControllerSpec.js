@@ -32,8 +32,18 @@ define(
         describe("The real time event list controller", function () {
             var mockScope,
                 mockTelemetry,
+                mockTelemetryHandler,
+                mockHandle,
+                mockTelemetryFormatter,
                 testMetadata,
                 controller;
+/*
+            var mockDomainObject,
+                mockTelemetryHandler,
+                mockHandle,
+                mockFormatter,
+                column;
+*/
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
@@ -43,6 +53,18 @@ define(
                 mockTelemetry = jasmine.createSpyObj(
                     "telemetryController",
                     [ "getResponse", "getMetadata", "getTelemetryObjects" ]
+                );
+                mockTelemetryHandler = jasmine.createSpyObj(
+                    "telemetryHandler",
+                    ["handle"]
+                );
+                mockHandle = jasmine.createSpyObj(
+                    "handle",
+                    ["getDomainValue", "getRangeValue"]
+                );
+                mockTelemetryFormatter = jasmine.createSpyObj(
+                    "formatter",
+                    ["formatDomainValue", "formatRangeValue"]
                 );
                 testMetadata = [
                     {
@@ -69,7 +91,7 @@ define(
                 mockTelemetry.getResponse.andReturn([]);
                 mockTelemetry.getTelemetryObjects.andReturn([]);
                 mockScope.telemetry = mockTelemetry;
-                controller = new RTEventListController(mockScope);
+                controller = new RTEventListController(mockScope, mockTelemetryHandler, mockTelemetryFormatter);
             });
 
             it("listens for telemetry data updates", function () {

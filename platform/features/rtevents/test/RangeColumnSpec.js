@@ -32,49 +32,52 @@ define(
         var TEST_RANGE_VALUE = "some formatted range value";
 
         describe("A real time event list range column", function () {
-            var mockDataSet,
-                testMetadata,
+            var mockDomainObject,
+                mockTelemetryHandler,
+                mockHandle,
                 mockFormatter,
                 column;
 
             beforeEach(function () {
-                mockDataSet = jasmine.createSpyObj(
-                    "data",
-                    [ "getRangeValue" ]
+                mockDomainObject = jasmine.createSpyObj(
+                    "domainObject",
+                    ["getModel", "getCapability"]
+                );
+                mockTelemetryHandler = jasmine.createSpyObj(
+                    "telemetryHandler",
+                    ["handle"]
+                );
+                mockHandle = jasmine.createSpyObj(
+                    "handle",
+                    ["getDomainValue", "getRangeValue"]
                 );
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
-                    [ "formatDomainValue", "formatRangeValue" ]
+                    ["formatDomainValue", "formatRangeValue"]
                 );
-                testMetadata = {
-                    key: "testKey",
-                    name: "Test Name"
-                };
                 mockFormatter.formatRangeValue.andReturn(TEST_RANGE_VALUE);
 
-                column = new RangeColumn(testMetadata, mockFormatter);
+                column = new RangeColumn();
             });
 
-            it("reports a column header from range metadata", function () {
-                expect(column.getTitle()).toEqual("Test Name");
+            it("reports a range column header as 'Message'", function () {
+                expect(column.getTitle()).toEqual("Message");
             });
 
-            it("looks up data from a data set", function () {
-                column.getValue(undefined, mockDataSet, 42);
-                expect(mockDataSet.getRangeValue)
-                    .toHaveBeenCalledWith(42, "testKey");
+            it("retrives data from a telemetry provider", function () {
+                column.getValue(mockDomainObject, mockHandle);
+                expect(mockHandle.getRangeValue).toHaveBeenCalled();
             });
 
-            it("formats range values as time", function () {
-                mockDataSet.getRangeValue.andReturn(123.45678);
-                expect(column.getValue(undefined, mockDataSet, 42))
-                    .toEqual(TEST_RANGE_VALUE);
-
-                // Make sure that service interactions were as expected
-                expect(mockFormatter.formatRangeValue)
-                    .toHaveBeenCalledWith(123.45678);
-                expect(mockFormatter.formatDomainValue)
-                    .not.toHaveBeenCalled();
+            it("does not format range values", function () {
+                mockHandle.getRangeValue.andReturn(123.45678);
+                // Does not format range value as time
+                expect(column.getValue(mockDomainObject, mockHandle).text)
+                    .not.toEqual(TEST_RANGE_VALUE);
+                // There should be no additional formatting
+                // i.e. the message string stays a string
+                expect(column.getValue(mockDomainObject, mockHandle).text)
+                    .toEqual(123.45678);
             });
         });
     }

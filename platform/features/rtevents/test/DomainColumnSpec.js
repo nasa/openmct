@@ -32,44 +32,48 @@ define(
         var TEST_DOMAIN_VALUE = "some formatted domain value";
 
         describe("A real time event list domain column", function () {
-            var mockDataSet,
-                testMetadata,
+            var mockDomainObject,
+                mockTelemetryHandler,
+                mockHandle,
                 mockFormatter,
                 column;
 
             beforeEach(function () {
-                mockDataSet = jasmine.createSpyObj(
-                    "data",
-                    [ "getDomainValue" ]
+                mockDomainObject = jasmine.createSpyObj(
+                    "domainObject",
+                    ["getModel", "getCapability"]
+                );
+                mockTelemetryHandler = jasmine.createSpyObj(
+                    "telemetryHandler",
+                    ["handle"]
+                );
+                mockHandle = jasmine.createSpyObj(
+                    "handle",
+                    ["getDomainValue", "getRangeValue"]
                 );
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
-                    [ "formatDomainValue", "formatRangeValue" ]
+                    ["formatDomainValue", "formatRangeValue"]
                 );
-                testMetadata = {
-                    key: "testKey",
-                    name: "Test Name"
-                };
                 mockFormatter.formatDomainValue.andReturn(TEST_DOMAIN_VALUE);
-
-                column = new DomainColumn(testMetadata, mockFormatter);
+                
+                column = new DomainColumn(mockFormatter);
             });
 
-            it("reports a column header from domain metadata", function () {
-                expect(column.getTitle()).toEqual("Test Name");
+            it("reports the domain column header as 'Time'", function () {
+                expect(column.getTitle()).toEqual("Time");
             });
 
-            it("looks up data from a data set", function () {
-                column.getValue(undefined, mockDataSet, 42);
-                expect(mockDataSet.getDomainValue)
-                    .toHaveBeenCalledWith(42, "testKey");
+            it("retrives data from a telemetry provider", function () {
+                column.getValue(mockDomainObject, mockHandle);
+                expect(mockHandle.getDomainValue).toHaveBeenCalled();
             });
 
             it("formats domain values as time", function () {
-                mockDataSet.getDomainValue.andReturn(402513731000);
+                mockHandle.getDomainValue.andReturn(402513731000);
 
                 // Should have just given the value the formatter gave
-                expect(column.getValue(undefined, mockDataSet, 42))
+                expect(column.getValue(mockDomainObject, mockHandle).text)
                     .toEqual(TEST_DOMAIN_VALUE);
 
                 // Make sure that service interactions were as expected
