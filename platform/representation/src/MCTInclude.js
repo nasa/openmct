@@ -53,17 +53,17 @@ define(
          * @param {TemplateDefinition[]} templates an array of
          *        template extensions
          */
-        function MCTInclude(templates) {
+        function MCTInclude(templates, $sce) {
             var templateMap = {};
 
             // Prepopulate templateMap for easy look up by key
             templates.forEach(function (template) {
                 var key = template.key,
-                    path = [
+                    path = $sce.trustAsResourceUrl([
                         template.bundle.path,
                         template.bundle.resources,
                         template.templateUrl
-                    ].join("/");
+                    ].join("/"));
                 // First found should win (priority ordering)
                 templateMap[key] = templateMap[key] || path;
             });

@@ -26,7 +26,7 @@
     width: auto; height: auto;
 }
 
-@mixin trans-prop-nice($props, $t) {
+@mixin trans-prop-nice($props, $t: 500ms) {
 	@if $t == 0 {
 		@include transition-property(none);
 	} @else {

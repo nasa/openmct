@@ -226,20 +226,20 @@ a.disabled {
 
 @-moz-keyframes pulse {
   0% {
-    opacity: 0.5; }
+    opacity: 0.2; }
   100% {
     opacity: 1; } }
 @-webkit-keyframes pulse {
   0% {
-    opacity: 0.5; }
+    opacity: 0.2; }
   100% {
     opacity: 1; } }
 @keyframes pulse {
   0% {
-    opacity: 0.5; }
+    opacity: 0.2; }
   100% {
     opacity: 1; } }
-/* line 59, ../sass/_effects.scss */
+/* line 69, ../sass/_effects.scss */
 .pulse {
   -moz-animation-name: pulse;
   -webkit-animation-name: pulse;
@@ -657,26 +657,26 @@ mct-container {
   overflow-y: auto; }
 
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
- * as represented by the Administrator of the National Aeronautics and Space
- * Administration. All rights reserved.
- *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- * Open MCT Web includes source code licensed under additional open source
- * licenses. See the Open Source Licenses file (LICENSES.md) included with
- * this source code distribution or the Licensing information page available
- * at runtime from the About dialog for additional information.
- *****************************************************************************/
+* Open MCT Web, Copyright (c) 2014-2015, United States Government
+* as represented by the Administrator of the National Aeronautics and Space
+* Administration. All rights reserved.
+*
+* Open MCT Web is licensed under the Apache License, Version 2.0 (the
+* "License"); you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+* http://www.apache.org/licenses/LICENSE-2.0.
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+* WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+* License for the specific language governing permissions and limitations
+* under the License.
+*
+* Open MCT Web includes source code licensed under additional open source
+* licenses. See the Open Source Licenses file (LICENSES.md) included with
+* this source code distribution or the Licensing information page available
+* at runtime from the About dialog for additional information.
+*****************************************************************************/
 /* line 23, ../sass/_fixed-position.scss */
 .t-fixed-position.l-fixed-position {
   position: absolute;
@@ -686,33 +686,33 @@ mct-container {
   left: 0;
   width: auto;
   height: auto; }
-  /* line 29, ../sass/_fixed-position.scss */
+  /* line 33, ../sass/_fixed-position.scss */
   .t-fixed-position.l-fixed-position .l-grid-holder {
     position: relative;
     height: 100%;
     width: 100%; }
-    /* line 32, ../sass/_fixed-position.scss */
+    /* line 37, ../sass/_fixed-position.scss */
     .t-fixed-position.l-fixed-position .l-grid-holder .l-grid {
       position: absolute;
       height: 100%;
       width: 100%;
       pointer-events: none;
       z-index: 0; }
-/* line 42, ../sass/_fixed-position.scss */
+/* line 48, ../sass/_fixed-position.scss */
 .t-fixed-position .l-fixed-position-item {
   position: absolute;
   border: 1px solid transparent; }
-  /* line 46, ../sass/_fixed-position.scss */
+  /* line 52, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item.s-selected {
     -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
     -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
     box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
     border-color: #0099cc;
     cursor: move; }
-  /* line 51, ../sass/_fixed-position.scss */
+  /* line 57, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item.s-not-selected {
     opacity: 0.8; }
-  /* line 55, ../sass/_fixed-position.scss */
+  /* line 61, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item .l-fixed-position-box,
   .t-fixed-position .l-fixed-position-item .l-fixed-position-image,
   .t-fixed-position .l-fixed-position-item .l-fixed-position-text {
@@ -721,62 +721,56 @@ mct-container {
     box-sizing: border-box;
     height: 100%;
     width: 100%; }
-  /* line 65, ../sass/_fixed-position.scss */
+  /* line 72, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item .l-fixed-position-image {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center; }
-  /* line 71, ../sass/_fixed-position.scss */
+  /* line 78, ../sass/_fixed-position.scss */
   .t-fixed-position .l-fixed-position-item .l-fixed-position-text {
     text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px;
     border: 1px solid transparent;
     font-size: 0.8rem;
     line-height: 100%; }
-    /* line 77, ../sass/_fixed-position.scss */
+    /* line 84, ../sass/_fixed-position.scss */
     .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-static-text {
       padding: 1px; }
-    /* line 82, ../sass/_fixed-position.scss */
+    /* line 89, ../sass/_fixed-position.scss */
     .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem {
-      overflow: hidden;
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      width: auto;
-      height: auto;
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
-      padding: 2px;
-      width: 50%; }
-      /* line 88, ../sass/_fixed-position.scss */
+      display: block;
+      padding: 2px; }
+      /* line 96, ../sass/_fixed-position.scss */
       .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-title {
-        right: auto;
-        left: 1px; }
-      /* line 92, ../sass/_fixed-position.scss */
+        float: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: auto; }
+      /* line 105, ../sass/_fixed-position.scss */
       .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-value {
-        right: 1px;
-        left: auto;
+        -moz-border-radius: 2px;
+        -webkit-border-radius: 2px;
+        border-radius: 2px;
+        float: right;
+        margin-left: 5px;
+        padding-left: 5px;
+        padding-right: 5px;
         text-align: right; }
-        /* line 97, ../sass/_fixed-position.scss */
+        /* line 116, ../sass/_fixed-position.scss */
         .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-value.telem-only {
-          left: 1px;
-          width: auto; }
-        /* line 102, ../sass/_fixed-position.scss */
-        .t-fixed-position .l-fixed-position-item .l-fixed-position-text.l-telemetry .l-elem.l-value .l-value-bg {
-          -moz-border-radius: 2px;
-          -webkit-border-radius: 2px;
-          border-radius: 2px;
-          padding: 0 4px; }
-/* line 112, ../sass/_fixed-position.scss */
+          margin-left: 0;
+          width: 100%; }
+/* line 126, ../sass/_fixed-position.scss */
 .t-fixed-position .l-fixed-position-item-handle {
   background: rgba(0, 153, 204, 0.5);
   cursor: crosshair;
   border: 1px solid #0099cc;
   position: absolute; }
 
-/* line 126, ../sass/_fixed-position.scss */
+/* line 140, ../sass/_fixed-position.scss */
 .edit-mode .t-fixed-position.l-fixed-position .l-grid-holder .l-grid.l-grid-x {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuMCIgeTE9IjAuNSIgeDI9IjEuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSIxcHgiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMC4wNSIvPjxzdG9wIG9mZnNldD0iMXB4IiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuMCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=');
   background-size: 100%;
@@ -784,7 +778,7 @@ mct-container {
   background-image: -webkit-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
   background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
   background-repeat: repeat-x; }
-/* line 130, ../sass/_fixed-position.scss */
+/* line 144, ../sass/_fixed-position.scss */
 .edit-mode .t-fixed-position.l-fixed-position .l-grid-holder .l-grid.l-grid-y {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjEuMCIgeDI9IjAuNSIgeTI9IjAuMCI+PHN0b3Agb2Zmc2V0PSIxcHgiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMC4wNSIvPjxzdG9wIG9mZnNldD0iMXB4IiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuMCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjAiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPjwvc3ZnPiA=');
   background-size: 100%;
@@ -792,10 +786,10 @@ mct-container {
   background-image: -webkit-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
   background-image: linear-gradient(0deg, rgba(255, 255, 255, 0.05) 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
   background-repeat: repeat-y; }
-/* line 138, ../sass/_fixed-position.scss */
+/* line 152, ../sass/_fixed-position.scss */
 .edit-mode .t-fixed-position .l-fixed-position-item:not(.s-selected) {
   border: 1px dotted rgba(0, 153, 204, 0.75); }
-  /* line 140, ../sass/_fixed-position.scss */
+  /* line 154, ../sass/_fixed-position.scss */
   .edit-mode .t-fixed-position .l-fixed-position-item:not(.s-selected):hover {
     border: 1px dotted #0099cc; }
 
@@ -1191,104 +1185,101 @@ mct-container {
   border-collapse: collapse;
   color: #fff;
   display: table;
-  font-size: 0.8em;
+  font-size: 0.75em;
   position: relative;
-  height: 100%;
   width: 100%; }
   /* line 37, ../sass/lists/_tabular.scss */
   .tabular thead, .tabular .thead,
   .tabular tbody tr, .tabular .tbody .tr {
-    display: table;
+    width: 100%; }
+  /* line 45, ../sass/lists/_tabular.scss */
+  .tabular thead tr, .tabular thead .tr, .tabular .thead tr, .tabular .thead .tr {
+    height: 18px; }
+  /* line 48, ../sass/lists/_tabular.scss */
+  .tabular thead:before, .tabular .thead:before {
+    content: "";
+    display: block;
+    z-index: 0;
+    position: absolute;
     width: 100%;
-    table-layout: fixed; }
-  /* line 43, ../sass/lists/_tabular.scss */
-  .tabular thead, .tabular .thead {
-    width: calc(100% - 10px); }
-    /* line 45, ../sass/lists/_tabular.scss */
-    .tabular thead tr, .tabular thead .tr, .tabular .thead tr, .tabular .thead .tr {
-      height: 18px; }
-    /* line 48, ../sass/lists/_tabular.scss */
-    .tabular thead:before, .tabular .thead:before {
-      content: "";
-      display: block;
-      z-index: 0;
-      position: absolute;
-      width: 100%;
-      height: 18px;
-      background: rgba(255, 255, 255, 0.15); }
+    height: 18px;
+    background: rgba(255, 255, 255, 0.15); }
   /* line 58, ../sass/lists/_tabular.scss */
   .tabular tbody, .tabular .tbody {
-    overflow: hidden;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    width: auto;
-    height: auto;
-    top: 18px;
-    display: block;
-    overflow-y: scroll; }
-    /* line 66, ../sass/lists/_tabular.scss */
+    display: table-row-group; }
+    /* line 65, ../sass/lists/_tabular.scss */
     .tabular tbody tr:hover, .tabular tbody .tr:hover, .tabular .tbody tr:hover, .tabular .tbody .tr:hover {
       background: rgba(255, 255, 255, 0.1); }
-  /* line 74, ../sass/lists/_tabular.scss */
-  .tabular tr:first-child .td, .tabular .tr:first-child .td {
-    border-top: none; }
-  /* line 77, ../sass/lists/_tabular.scss */
-  .tabular tr th, .tabular tr .th, .tabular tr td, .tabular tr .td, .tabular .tr th, .tabular .tr .th, .tabular .tr td, .tabular .tr .td {
-    display: table-cell; }
-  /* line 80, ../sass/lists/_tabular.scss */
-  .tabular tr th, .tabular tr .th, .tabular .tr th, .tabular .tr .th {
-    border: none;
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    color: #b3b3b3;
-    padding: 0 5px;
-    white-space: nowrap;
-    vertical-align: middle;
-    			/*	em {
-                        //background: rgba(green, 0.2);
-                        border-left: 1px solid $tabularColorBorder;
-                        color: $tabularColorHeaderFg;
-                        cursor: pointer;
-                        display: block;
-                        font-style: normal;
-                        font-weight: bold;
-                        height: $tabularHeaderH;
-                        line-height: $tabularHeaderH;
-                        margin-left: - $tabularTdPadLR;
-                        padding: 0 $tabularTdPadLR;
-                        position: absolute;
-                        top: 0;
-                        vertical-align: middle;
-                        &:hover {
-                            color: lighten($tabularColorHeaderFg, 20%);
-                        }
-                    }*/ }
-    /* line 87, ../sass/lists/_tabular.scss */
-    .tabular tr th:first-child, .tabular tr .th:first-child, .tabular .tr th:first-child, .tabular .tr .th:first-child {
-      border-left: none; }
-    /* line 91, ../sass/lists/_tabular.scss */
-    .tabular tr th.sort .icon-sorting:before, .tabular tr .th.sort .icon-sorting:before, .tabular .tr th.sort .icon-sorting:before, .tabular .tr .th.sort .icon-sorting:before {
-      display: inline-block;
-      font-family: symbolsfont;
-      margin-left: 5px; }
-    /* line 96, ../sass/lists/_tabular.scss */
-    .tabular tr th.sort.asc .icon-sorting:before, .tabular tr .th.sort.asc .icon-sorting:before, .tabular .tr th.sort.asc .icon-sorting:before, .tabular .tr .th.sort.asc .icon-sorting:before {
-      content: '0'; }
-    /* line 99, ../sass/lists/_tabular.scss */
-    .tabular tr th.sort.desc .icon-sorting:before, .tabular tr .th.sort.desc .icon-sorting:before, .tabular .tr th.sort.desc .icon-sorting:before, .tabular .tr .th.sort.desc .icon-sorting:before {
-      content: '1'; }
-  /* line 123, ../sass/lists/_tabular.scss */
-  .tabular tr td, .tabular tr .td, .tabular .tr td, .tabular .tr .td {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 2px 5px; }
-    /* line 126, ../sass/lists/_tabular.scss */
-    .tabular tr td.numeric, .tabular tr .td.numeric, .tabular .tr td.numeric, .tabular .tr .td.numeric {
-      text-align: right; }
-  /* line 132, ../sass/lists/_tabular.scss */
+  /* line 70, ../sass/lists/_tabular.scss */
+  .tabular tr, .tabular .tr {
+    display: table-row; }
+    /* line 72, ../sass/lists/_tabular.scss */
+    .tabular tr:first-child .td, .tabular .tr:first-child .td {
+      border-top: none; }
+    /* line 75, ../sass/lists/_tabular.scss */
+    .tabular tr th, .tabular tr .th, .tabular tr td, .tabular tr .td, .tabular .tr th, .tabular .tr .th, .tabular .tr td, .tabular .tr .td {
+      display: table-cell; }
+    /* line 78, ../sass/lists/_tabular.scss */
+    .tabular tr th, .tabular tr .th, .tabular .tr th, .tabular .tr .th {
+      border: none;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      color: #b3b3b3;
+      padding: 0 5px;
+      white-space: nowrap;
+      vertical-align: middle; }
+      /* line 85, ../sass/lists/_tabular.scss */
+      .tabular tr th:first-child, .tabular tr .th:first-child, .tabular .tr th:first-child, .tabular .tr .th:first-child {
+        border-left: none; }
+      /* line 89, ../sass/lists/_tabular.scss */
+      .tabular tr th.sort .icon-sorting:before, .tabular tr .th.sort .icon-sorting:before, .tabular .tr th.sort .icon-sorting:before, .tabular .tr .th.sort .icon-sorting:before {
+        display: inline-block;
+        font-family: symbolsfont;
+        margin-left: 5px; }
+      /* line 94, ../sass/lists/_tabular.scss */
+      .tabular tr th.sort.asc .icon-sorting:before, .tabular tr .th.sort.asc .icon-sorting:before, .tabular .tr th.sort.asc .icon-sorting:before, .tabular .tr .th.sort.asc .icon-sorting:before {
+        content: '0'; }
+      /* line 97, ../sass/lists/_tabular.scss */
+      .tabular tr th.sort.desc .icon-sorting:before, .tabular tr .th.sort.desc .icon-sorting:before, .tabular .tr th.sort.desc .icon-sorting:before, .tabular .tr .th.sort.desc .icon-sorting:before {
+        content: '1'; }
+    /* line 102, ../sass/lists/_tabular.scss */
+    .tabular tr td, .tabular tr .td, .tabular .tr td, .tabular .tr .td {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      min-width: 110px;
+      padding: 2px 5px;
+      vertical-align: top; }
+      /* line 107, ../sass/lists/_tabular.scss */
+      .tabular tr td.numeric, .tabular tr .td.numeric, .tabular .tr td.numeric, .tabular .tr .td.numeric {
+        text-align: right; }
+  /* line 113, ../sass/lists/_tabular.scss */
   .tabular.filterable tbody, .tabular.filterable .tbody {
     top: 36px; }
+  /* line 118, ../sass/lists/_tabular.scss */
+  .tabular.fixed-header {
+    height: 100%; }
+    /* line 120, ../sass/lists/_tabular.scss */
+    .tabular.fixed-header thead, .tabular.fixed-header .thead,
+    .tabular.fixed-header tbody tr, .tabular.fixed-header .tbody .tr {
+      display: table;
+      table-layout: fixed; }
+    /* line 125, ../sass/lists/_tabular.scss */
+    .tabular.fixed-header thead, .tabular.fixed-header .thead {
+      width: calc(100% - 10px); }
+    /* line 128, ../sass/lists/_tabular.scss */
+    .tabular.fixed-header tbody, .tabular.fixed-header .tbody {
+      overflow: hidden;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      width: auto;
+      height: auto;
+      top: 18px;
+      display: block;
+      overflow-y: scroll; }
+  /* line 136, ../sass/lists/_tabular.scss */
+  .tabular.t-event-messages td, .tabular.t-event-messages .td {
+    min-width: 150px; }
 
 /* line 1, ../sass/controls/_breadcrumb.scss */
 .l-breadcrumb {
@@ -4824,8 +4815,8 @@ input[type="text"] {
             border-radius: 2px;
             float: right;
             margin-left: 5px;
-            padding-left: 2px;
-            padding-right: 2px;
+            padding-left: 5px;
+            padding-right: 5px;
             text-align: right; }
       /* line 110, ../sass/_autoflow.scss */
       .autoflow .l-autoflow-items .l-autoflow-col:first-child {

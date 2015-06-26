@@ -1,0 +1,35 @@
+{
+    "name": "Plot view for telemetry",
+    "extensions": {
+        "views": [
+            {
+                "name": "Imagery",
+                "key": "imagery",
+                "glyph": "\u00E3",
+                "templateUrl": "templates/imagery.html",
+                "priority": "preferred",
+                "needs": [ "telemetry" ]
+            }
+        ],
+        "policies": [
+            {
+                "category": "view",
+                "implementation": "policies/ImageryViewPolicy.js"
+            }
+        ],
+        "controllers": [
+            {
+                "key": "ImageryController",
+                "implementation": "controllers/ImageryController.js",
+                "depends": [ "$scope", "telemetryHandler" ]
+            }
+        ],
+        "directives": [
+            {
+                "key": "mctBackgroundImage",
+                "implementation": "directives/MCTBackgroundImage.js",
+                "depends": [ "$document" ]
+            }
+        ]
+    }
+}
