@@ -32,7 +32,9 @@ define(
                 mockDomainObject,
                 mockCallback,
                 mockTelemetry,
+                mockMutation,
                 mockUnsubscribe,
+                mockUnlisten,
                 mockSeries,
                 testMetadata,
                 subscription;
@@ -59,7 +61,12 @@ define(
                     "telemetry",
                     ["subscribe", "getMetadata"]
                 );
+                mockMutation = jasmine.createSpyObj(
+                    "mutation",
+                    ["mutate", "listen"]
+                );
                 mockUnsubscribe = jasmine.createSpy("unsubscribe");
+                mockUnlisten = jasmine.createSpy("unlisten");
                 mockSeries = jasmine.createSpyObj(
                     "series",
                     [ "getPointCount", "getDomainValue", "getRangeValue" ]
@@ -68,11 +75,18 @@ define(
                 mockQ.when.andCallFake(mockPromise);
 
                 mockDomainObject.hasCapability.andReturn(true);
-                mockDomainObject.getCapability.andReturn(mockTelemetry);
+                mockDomainObject.getCapability.andCallFake(function (c) {
+                    return {
+                        telemetry: mockTelemetry,
+                        mutation: mockMutation
+                    }[c];
+                });
                 mockDomainObject.getId.andReturn('test-id');
 
                 mockTelemetry.subscribe.andReturn(mockUnsubscribe);
                 mockTelemetry.getMetadata.andReturn(testMetadata);
+
+                mockMutation.listen.andReturn(mockUnlisten);
 
                 mockSeries.getPointCount.andReturn(42);
                 mockSeries.getDomainValue.andReturn(123456);
@@ -212,6 +226,22 @@ define(
 
                 expect(mockCallback2)
                     .toHaveBeenCalledWith([ mockDomainObject ]);
+            });
+
+            it("reinitializes on mutation", function () {
+                expect(mockTelemetry.subscribe.calls.length).toEqual(1);
+                // Notify of a mutation which appears to change composition
+                mockMutation.listen.mostRecentCall.args[0]({
+                    composition: ['Z']
+                });
+                // Use subscribe call as an indication of reinitialization
+                expect(mockTelemetry.subscribe.calls.length).toEqual(2);
+            });
+
+            it("stops listening for mutation on unsubscribe", function () {
+                expect(mockUnlisten).not.toHaveBeenCalled();
+                subscription.unsubscribe();
+                expect(mockUnlisten).toHaveBeenCalled();
             });
         });
     }

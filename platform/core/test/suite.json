@@ -25,6 +25,7 @@
 
     "services/Now",
     "services/Throttle",
+    "services/Topic",
 
     "types/MergeModels",
     "types/TypeCapability",
