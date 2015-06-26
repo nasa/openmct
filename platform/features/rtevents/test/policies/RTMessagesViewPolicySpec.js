@@ -39,9 +39,7 @@ define(
                 policy;
 
             beforeEach(function () {
-                
-                testView = { key: "string" };
-                testMetadata = {};
+                testMetadata = {ranges};
                 
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
@@ -58,7 +56,7 @@ define(
                 mockDomainObject.getCapability.andCallFake(function (c) {
                     return c === 'telemetry' ? mockTelemetry : undefined;
                 });
-                mockTelemetry.getMetadata.andReturn(testMetadata);
+                mockTelemetry.getMetadata = testMetadata;
                 
                 policy = new RTMessagesViewPolicy();
             });
