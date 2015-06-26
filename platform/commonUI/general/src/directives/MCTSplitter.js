@@ -27,7 +27,7 @@ define(
         'use strict';
 
         // Pixel width to allocate for the splitter itself
-        var SPLITTER_TEMPLATE = "<div class=\"splitter\" " +
+        var SPLITTER_TEMPLATE = "<div class='abs'" +
                 "mct-drag-down=\"splitter.startMove()\" " +
                 "mct-drag=\"splitter.move(delta)\"></div>",
             OFFSETS_BY_EDGE = {
@@ -44,6 +44,8 @@ define(
         function MCTSplitter() {
             function link(scope, element, attrs, mctSplitPane) {
                 var initialPosition;
+
+                element.addClass("splitter");
 
                 scope.splitter = {
                     // Begin moving this splitter

@@ -97,11 +97,11 @@ define(
                 bottom: true
             };
 
-            function controller(scope, element, attrs) {
-                var anchorKey = attrs.anchor || DEFAULT_ANCHOR,
+            function controller($scope, $element, $attrs) {
+                var anchorKey = $attrs.anchor || DEFAULT_ANCHOR,
                     anchor,
-                    styleValue = attrs.initial,
-                    positionParsed = $parse(attrs.position),
+                    styleValue = $attrs.initial,
+                    positionParsed = $parse($attrs.position),
                     position; // Start undefined, until explicitly set
 
                 // Convert a pixel offset to a calc expression
@@ -119,29 +119,28 @@ define(
                 function updateChildren(children) {
                     // Pick out correct elements to update, flowing from
                     // selected anchor edge.
-                    var first = children.eq(anchor.reversed ? 0 : 2),
+                    var first = children.eq(anchor.reversed ? 2 : 0),
                         splitter = children.eq(1),
-                        last = children.eq(anchor.reversed ? 2 : 0),
+                        last = children.eq(anchor.reversed ? 0 : 2),
                         splitterSize = getSize(splitter[0]),
-                        halfSize = splitterSize / 2;
+                        offsetSize = splitterSize / 2;
 
                     first.css(anchor.edge, "0px");
-                    first.css(anchor.dimension, calc(-halfSize));
+                    first.css(anchor.dimension, calc(-offsetSize));
 
-                    splitter.css(anchor.edge, calc(-halfSize));
-                    splitter.css(anchor.dimension, splitterSize + "px");
+                    splitter.css(anchor.edge, styleValue);
 
-                    last.css(anchor.edge, calc(halfSize));
+                    last.css(anchor.edge, calc(offsetSize));
                     last.css(anchor.opposite, "0px");
                 }
 
                 // Update positioning of contained elements
                 function updateElementPositions() {
-                    var children = element.children();
+                    var children = $element.children();
 
                     // Check to make sure contents are well-formed
                     if (children.length !== 3 ||
-                            children[1].nodeName !== 'mct-splitter') {
+                            children[1].nodeName.toLowerCase() !== 'mct-splitter') {
                         $log.warn(CHILDREN_WARNING_MESSAGE);
                         return;
                     }
@@ -156,7 +155,7 @@ define(
                         position = value;
                         // Pass change up so this state can be shared
                         if (positionParsed.assign) {
-                            positionParsed.assign(scope, value);
+                            positionParsed.assign($scope, value);
                         }
                         styleValue = position + 'px';
                         updateElementPositions();
@@ -171,7 +170,7 @@ define(
                 }
                 anchor = ANCHORS[anchorKey];
 
-                scope.$watch(attrs.position, getSetPosition);
+                $scope.$watch($attrs.position, getSetPosition);
 
                 // Initialize positions
                 updateElementPositions();
@@ -187,7 +186,7 @@ define(
 
             return {
                 // Restrict to attributes
-                restrict: "A",
+                restrict: "E",
                 // Expose its controller
                 controller: controller
             };
