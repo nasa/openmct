@@ -82,8 +82,9 @@
 
                 <mct-chart draw="subplot.getDrawingObject()"
                            ng-mousemove="subplot.hover($event)"
-                           ng-mousedown="subplot.startMarquee($event)"
-                           ng-mouseup="subplot.endMarquee($event); plot.update()">
+                           mct-drag="subplot.continueDrag($event)"
+                           mct-drag-down="subplot.startDrag($event)"
+                           mct-drag-up="subplot.endDrag($event); plot.update()">
                 </mct-chart>
 
                 <!-- TODO: Move into correct position; make part of group; infer from set of actions -->

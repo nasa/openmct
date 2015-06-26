@@ -23,7 +23,21 @@
             {
                 "key": "PlotController",
                 "implementation": "PlotController.js",
-                "depends": [ "$scope", "telemetryFormatter", "telemetryHandler", "throttle" ]
+                "depends": [
+                    "$scope",
+                    "telemetryFormatter",
+                    "telemetryHandler",
+                    "throttle",
+                    "PLOT_FIXED_DURATION"
+                ]
+            }
+        ],
+        "constants": [
+            {
+                "key": "PLOT_FIXED_DURATION",
+                "value": 900000,
+                "priority": "fallback",
+                "comment": "Fifteen minutes."
             }
         ],
         "policies": [

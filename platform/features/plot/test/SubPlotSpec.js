@@ -127,7 +127,7 @@ define(
 
                 // Simulate a marquee zoom. Note that the mockElement
                 // is 100 by 100 and starts at 10,20
-                subplot.startMarquee({
+                subplot.startDrag({
                     target: mockElement,
                     clientX: 60,
                     clientY: 45
@@ -137,7 +137,7 @@ define(
                     clientX: 75,
                     clientY: 85
                 });
-                subplot.endMarquee({
+                subplot.endDrag({
                     target: mockElement,
                     clientX: 80,
                     clientY: 95
@@ -162,7 +162,7 @@ define(
 
                 // Simulate a marquee zoom. Note that the mockElement
                 // is 100 by 100 and starts at 10,20
-                subplot.startMarquee({
+                subplot.startDrag({
                     target: mockElement,
                     clientX: 60,
                     clientY: 45
@@ -172,7 +172,7 @@ define(
                     clientX: 75,
                     clientY: 85
                 });
-                subplot.endMarquee({
+                subplot.endDrag({
                     target: mockElement,
                     clientX: 60,
                     clientY: 45
