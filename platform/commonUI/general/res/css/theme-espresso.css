@@ -41,6 +41,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/************************** FEATURES */
+/************************** VERY INFLUENTIAL GLOBAL DIMENSIONS */
+/************************** COLORS AND SHADING */
+/************************** RATIOS */
+/************************** LAYOUT */
+/************************** CONTROLS */
+/************************** PATHS */
+/************************** TIMINGS */
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -2465,33 +2473,35 @@ label.checkbox.custom {
         line-height: 1.4rem;
         padding: 3px 10px 3px 30px;
         white-space: nowrap; }
-        /* line 46, ../sass/controls/_menus.scss */
+        /* line 45, ../sass/controls/_menus.scss */
         .menu-element .menu ul li:first-child {
           border: none; }
-        /* line 49, ../sass/controls/_menus.scss */
+        /* line 48, ../sass/controls/_menus.scss */
         .menu-element .menu ul li:hover {
           background: #737373; }
-          /* line 51, ../sass/controls/_menus.scss */
+          /* line 50, ../sass/controls/_menus.scss */
           .menu-element .menu ul li:hover a {
             color: #fff; }
-          /* line 54, ../sass/controls/_menus.scss */
+          /* line 53, ../sass/controls/_menus.scss */
           .menu-element .menu ul li:hover .icon {
             color: #33ccff; }
-        /* line 58, ../sass/controls/_menus.scss */
+        /* line 57, ../sass/controls/_menus.scss */
         .menu-element .menu ul li a {
           color: #d9d9d9;
           display: block; }
-        /* line 62, ../sass/controls/_menus.scss */
+        /* line 61, ../sass/controls/_menus.scss */
         .menu-element .menu ul li .type-icon {
           left: 10px; }
   /* line 68, ../sass/controls/_menus.scss */
+  .menu-element .context-menu,
   .menu-element .super-menu {
-    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwOGViZCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwN2FhMyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+    pointer-events: auto;
+    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzhjOGM4YyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzgwODA4MCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
-    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #008ebd), color-stop(100%, #007aa3));
-    background-image: -moz-linear-gradient(#008ebd, #007aa3);
-    background-image: -webkit-linear-gradient(#008ebd, #007aa3);
-    background-image: linear-gradient(#008ebd, #007aa3);
+    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #8c8c8c), color-stop(100%, #808080));
+    background-image: -moz-linear-gradient(#8c8c8c, #808080);
+    background-image: -webkit-linear-gradient(#8c8c8c, #808080);
+    background-image: linear-gradient(#8c8c8c, #808080);
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
     border-radius: 2px;
@@ -2502,19 +2512,39 @@ label.checkbox.custom {
     -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
     box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
     border: none;
-    border-top: 1px solid #0095c7;
-    color: #fff;
-    display: inline-block;
-    display: block;
-    width: 450px;
-    height: 430px; }
+    border-top: 1px solid #919191;
+    color: #999;
+    display: inline-block; }
     /* line 160, ../sass/_mixins.scss */
+    .menu-element .context-menu.btn-menu .invoke-menu,
     .menu-element .super-menu.btn-menu .invoke-menu {
-      color: #05c1ff; }
-    /* line 79, ../sass/controls/_menus.scss */
-    .menu-element .super-menu .icon {
-      color: #4dd2ff; }
-    /* line 84, ../sass/controls/_menus.scss */
+      color: #b0b0b0; }
+    /* line 76, ../sass/controls/_menus.scss */
+    .menu-element .context-menu ul li,
+    .menu-element .super-menu ul li {
+      padding-left: 25px; }
+      /* line 78, ../sass/controls/_menus.scss */
+      .menu-element .context-menu ul li a,
+      .menu-element .super-menu ul li a {
+        color: white; }
+      /* line 79, ../sass/controls/_menus.scss */
+      .menu-element .context-menu ul li .icon,
+      .menu-element .super-menu ul li .icon {
+        color: #24c8ff; }
+      /* line 82, ../sass/controls/_menus.scss */
+      .menu-element .context-menu ul li .type-icon,
+      .menu-element .super-menu ul li .type-icon {
+        left: 5px; }
+      /* line 85, ../sass/controls/_menus.scss */
+      .menu-element .context-menu ul li:hover .icon,
+      .menu-element .super-menu ul li:hover .icon {
+        color: #3dcfff; }
+  /* line 92, ../sass/controls/_menus.scss */
+  .menu-element .super-menu {
+    display: block;
+    width: 500px;
+    height: 480px; }
+    /* line 102, ../sass/controls/_menus.scss */
     .menu-element .super-menu .contents {
       overflow: hidden;
       position: absolute;
@@ -2524,12 +2554,12 @@ label.checkbox.custom {
       left: 5px;
       width: auto;
       height: auto; }
-    /* line 87, ../sass/controls/_menus.scss */
+    /* line 105, ../sass/controls/_menus.scss */
     .menu-element .super-menu .pane {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box; }
-      /* line 89, ../sass/controls/_menus.scss */
+      /* line 107, ../sass/controls/_menus.scss */
       .menu-element .super-menu .pane.left {
         border-right: 1px solid rgba(255, 255, 255, 0.2);
         left: 0;
@@ -2538,30 +2568,23 @@ label.checkbox.custom {
         width: 50%;
         overflow-x: hidden;
         overflow-y: auto; }
-        /* line 99, ../sass/controls/_menus.scss */
+        /* line 117, ../sass/controls/_menus.scss */
         .menu-element .super-menu .pane.left ul li {
           -moz-border-radius: 2px;
           -webkit-border-radius: 2px;
           border-radius: 2px;
-          border-top: none;
-          color: #fff; }
-          /* line 106, ../sass/controls/_menus.scss */
-          .menu-element .super-menu .pane.left ul li:hover {
-            background: #0099cc; }
-            /* line 108, ../sass/controls/_menus.scss */
-            .menu-element .super-menu .pane.left ul li:hover .icon {
-              color: #ccf2ff; }
-          /* line 112, ../sass/controls/_menus.scss */
-          .menu-element .super-menu .pane.left ul li .icon {
-            text-shadow: rgba(0, 0, 0, 0.4) 0 1px 2px;
-            left: 5px; }
-      /* line 119, ../sass/controls/_menus.scss */
+          padding-left: 30px;
+          border-top: none; }
+      /* line 124, ../sass/controls/_menus.scss */
       .menu-element .super-menu .pane.right {
         left: auto;
         right: 0;
         padding: 25px;
         width: 50%; }
-    /* line 130, ../sass/controls/_menus.scss */
+        /* line 130, ../sass/controls/_menus.scss */
+        .menu-element .super-menu .pane.right .icon {
+          color: #fff; }
+    /* line 137, ../sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.icon {
       position: relative;
       font-size: 8em;
@@ -2570,80 +2593,40 @@ label.checkbox.custom {
       line-height: 150px;
       margin-bottom: 25px;
       text-align: center; }
-    /* line 141, ../sass/controls/_menus.scss */
+    /* line 147, ../sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.title {
       color: #fff;
       font-size: 1.2em;
       margin-bottom: 0.5em; }
-    /* line 146, ../sass/controls/_menus.scss */
+    /* line 152, ../sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.description {
       color: #fff;
       font-size: 0.8em;
       line-height: 1.5em; }
-  /* line 155, ../sass/controls/_menus.scss */
+  /* line 161, ../sass/controls/_menus.scss */
   .menu-element .context-menu {
-    font-size: 0.80rem;
-    pointer-events: auto; }
-    /* line 161, ../sass/controls/_menus.scss */
-    .menu-element .context-menu.menu {
-      background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzkxOTE5MSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzg1ODU4NSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-      background-size: 100%;
-      background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #919191), color-stop(100%, #858585));
-      background-image: -moz-linear-gradient(#919191, #858585);
-      background-image: -webkit-linear-gradient(#919191, #858585);
-      background-image: linear-gradient(#919191, #858585);
-      -moz-border-radius: 2px;
-      -webkit-border-radius: 2px;
-      border-radius: 2px;
-      -moz-box-sizing: border-box;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
-      -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-      -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-      box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-      border: none;
-      border-top: 1px solid #969696;
-      color: #999;
-      display: inline-block; }
-      /* line 160, ../sass/_mixins.scss */
-      .menu-element .context-menu.menu.btn-menu .invoke-menu {
-        color: #b5b5b5; }
-      /* line 163, ../sass/controls/_menus.scss */
-      .menu-element .context-menu.menu ul li {
-        padding-left: 30px; }
-        /* line 165, ../sass/controls/_menus.scss */
-        .menu-element .context-menu.menu ul li a {
-          color: white; }
-        /* line 166, ../sass/controls/_menus.scss */
-        .menu-element .context-menu.menu ul li .icon {
-          color: #1ac6ff; }
-        /* line 169, ../sass/controls/_menus.scss */
-        .menu-element .context-menu.menu ul li .type-icon {
-          left: 5px; }
-        /* line 172, ../sass/controls/_menus.scss */
-        .menu-element .context-menu.menu ul li:hover .icon {
-          color: #33ccff; }
+    font-size: 0.80rem; }
 
-/* line 180, ../sass/controls/_menus.scss */
+/* line 166, ../sass/controls/_menus.scss */
 .context-menu-holder {
   pointer-events: none;
   position: absolute;
   height: 200px;
   width: 170px;
   z-index: 70; }
-  /* line 186, ../sass/controls/_menus.scss */
+  /* line 172, ../sass/controls/_menus.scss */
   .context-menu-holder .context-menu-wrapper {
     position: absolute;
     height: 100%;
     width: 100%; }
-  /* line 193, ../sass/controls/_menus.scss */
+  /* line 179, ../sass/controls/_menus.scss */
   .context-menu-holder.go-left .context-menu {
     right: 0; }
-  /* line 194, ../sass/controls/_menus.scss */
+  /* line 180, ../sass/controls/_menus.scss */
   .context-menu-holder.go-up .context-menu {
     bottom: 0; }
 
-/* line 197, ../sass/controls/_menus.scss */
+/* line 183, ../sass/controls/_menus.scss */
 .btn-bar.right .menu,
 .menus-to-left .menu {
   left: auto;
@@ -4044,7 +4027,7 @@ input[type="text"] {
 /* line 60, ../sass/overlay/_overlay.scss */
 .overlay .editor {
   top: 70px;
-  bottom: 52px;
+  bottom: 50px;
   left: 0;
   right: 0; }
 /* line 66, ../sass/overlay/_overlay.scss */
@@ -4053,13 +4036,13 @@ input[type="text"] {
   right: 0;
   bottom: 0;
   left: 0;
-  font-size: 1em;
-  height: 42px;
+  overflow: visible;
+  height: 40px;
   text-align: right; }
-  /* line 71, ../sass/overlay/_overlay.scss */
+  /* line 72, ../sass/overlay/_overlay.scss */
   .overlay .bottom-bar .btn {
     margin-left: 10px; }
-/* line 75, ../sass/overlay/_overlay.scss */
+/* line 76, ../sass/overlay/_overlay.scss */
 .overlay .contents.l-dialog {
   top: 5px;
   right: 5px;
