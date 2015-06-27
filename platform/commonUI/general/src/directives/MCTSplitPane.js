@@ -108,15 +108,16 @@ define(
                     positionParsed = $parse($attrs.position),
                     position; // Start undefined, until explicitly set
 
-                // Convert a pixel offset to a calc expression
-                function calc(offset) {
-                    return "calc(" + styleValue + " + " + offset + "px)";
+                // Create a calc CSS expression
+                function calcSum(a, b) {
+                    return "calc(" + a + " + " + b + ")";
                 }
 
                 // Get relevant size (height or width) of DOM element
-                function getSize(splitter) {
-                    return anchor.orientation === 'vertical' ?
-                            splitter.offsetWidth : splitter.offsetHeight;
+                function getSize(domElement) {
+                    return (anchor.orientation === 'vertical' ?
+                            domElement.offsetWidth : domElement.offsetHeight)
+                            + "px";
                 }
 
                 // Apply styles to child elements
@@ -127,14 +128,17 @@ define(
                         splitter = children.eq(1),
                         last = children.eq(anchor.reversed ? 0 : 2),
                         splitterSize = getSize(splitter[0]),
-                        offsetSize = splitterSize / 2;
+                        firstSize;
 
                     first.css(anchor.edge, "0px");
-                    first.css(anchor.dimension, calc(-offsetSize));
+                    first.css(anchor.dimension, styleValue);
 
-                    splitter.css(anchor.edge, styleValue);
+                    // Get actual size (to obey min-width)
+                    firstSize = getSize(first[0]);
 
-                    last.css(anchor.edge, calc(offsetSize));
+                    splitter.css(anchor.edge, firstSize);
+
+                    last.css(anchor.edge, calcSum(firstSize, splitterSize));
                     last.css(anchor.opposite, "0px");
                 }
 
