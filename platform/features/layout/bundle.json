@@ -194,6 +194,12 @@
                 "templateUrl": "templates/elements/image.html"
             }
         ],
+        "policies": [
+            {
+                "category": "composition",
+                "implementation": "LayoutCompositionPolicy.js"
+            }
+        ],
         "types": [
             {
                 "key": "layout",
