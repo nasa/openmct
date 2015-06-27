@@ -222,15 +222,20 @@ define(
                 mockNavigationService.addListener.mostRecentCall.args[0](
                     mockNextObject
                 );
+                
+                // Allows the path index to be checked
+                // prior to setting $route.current                
+                mockLocation.path.andReturn("/browse/");
+                
+                // Exercise the Angular workaround
+                mockScope.$on.mostRecentCall.args[1]();
+                expect(mockUnlisten).toHaveBeenCalled();
+                
                 // location.path to be called with the urlService's 
                 // urlFor function with the next domainObject and mode
                 expect(mockLocation.path).toHaveBeenCalledWith(
                     mockUrlService.urlForLocation(mockMode, mockNextObject)
                 );
-
-                // Exercise the Angular workaround
-                mockScope.$on.mostRecentCall.args[1]();
-                expect(mockUnlisten).toHaveBeenCalled();
             });
 
         });
