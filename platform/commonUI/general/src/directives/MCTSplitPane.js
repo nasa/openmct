@@ -72,8 +72,6 @@ define(
          * Implements `mct-split-pane` directive.
          *
          * This takes the following attributes:
-         * * `initial`: Initial positioning to use, as a plain string.
-         *   For example, "30%"
          * * `position`: Two-way bound scope variable which will contain
          *   the pixel position of the splitter, offset from the appropriate
          *   edge.
@@ -106,7 +104,7 @@ define(
             function controller($scope, $element, $attrs) {
                 var anchorKey = $attrs.anchor || DEFAULT_ANCHOR,
                     anchor,
-                    styleValue = $attrs.initial,
+                    styleValue,
                     positionParsed = $parse($attrs.position),
                     position; // Start undefined, until explicitly set
 
@@ -133,11 +131,13 @@ define(
                         firstSize;
 
                     first.css(anchor.edge, "0px");
-                    first.css(anchor.dimension, styleValue);
+                    if (styleValue !== undefined) {
+                        first.css(anchor.dimension, styleValue);
+                    }
 
                     // Get actual size (to obey min-width etc.)
                     firstSize = getSize(first[0]);
-
+                    first.css(anchor.dimension, firstSize);
                     splitter.css(anchor.edge, firstSize);
 
                     last.css(anchor.edge, calcSum(firstSize, splitterSize));
@@ -191,6 +191,9 @@ define(
 
                 $scope.$watch($attrs.position, getSetPosition);
 
+                $element.addClass("split-layout");
+                $element.addClass(anchor.orientation);
+
                 // Initialize positions
                 updateElementPositions();
 
@@ -207,7 +210,7 @@ define(
                 // Restrict to attributes
                 restrict: "E",
                 // Expose its controller
-                controller: controller
+                controller: ['$scope', '$element', '$attrs', controller]
             };
         }
 
