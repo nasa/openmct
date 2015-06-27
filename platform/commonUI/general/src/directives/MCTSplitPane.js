@@ -79,8 +79,6 @@ define(
          *   edge.
          * * `anchor`: Plain string, one of "left", "right", "top",
          *    or "bottom".
-         * * `maximum`: Maximum pixel width, as a literal numeric value
-         * * `minimum`: Minimum pixel width, as a literal numeric value
          *
          * When used, an `mct-split-pane` element should contain exactly
          * three child elements, where the middle is an `mct-splitter`
@@ -88,6 +86,12 @@ define(
          * or top-to-bottom order (depending on anchoring.) If the contents
          * do not match this form, `mct-split-pane` will issue a warning
          * and its behavior will be undefined.
+         *
+         * This directive works by setting the width of the element
+         * nearest the anchor edge, and then positioning the other elements
+         * based on its observed width. As such, `min-width`, `max-width`,
+         * etc. can be set on that element to control the splitter's
+         * allowable positions.
          *
          * @constructor
          */
@@ -101,8 +105,6 @@ define(
 
             function controller($scope, $element, $attrs) {
                 var anchorKey = $attrs.anchor || DEFAULT_ANCHOR,
-                    maximum = parseInt($attrs.maximum, 10),
-                    minimum = parseInt($attrs.minimum, 10),
                     anchor,
                     styleValue = $attrs.initial,
                     positionParsed = $parse($attrs.position),
@@ -133,7 +135,7 @@ define(
                     first.css(anchor.edge, "0px");
                     first.css(anchor.dimension, styleValue);
 
-                    // Get actual size (to obey min-width)
+                    // Get actual size (to obey min-width etc.)
                     firstSize = getSize(first[0]);
 
                     splitter.css(anchor.edge, firstSize);
@@ -158,15 +160,8 @@ define(
 
                 // Enforce minimum/maximum positions
                 function enforceExtrema() {
-                    // Pick default min/max
-                    var min = isNaN(minimum) ? 0 : minimum,
-                        max = isNaN(maximum) ?
-                                Number.POSITIVE_INFINITY : maximum;
-                    // Disallow a max greater than the element's size
-                    max = Math.min($element[0].offsetWidth, max);
-                    // Finally, restrict position to allowed min/max
-                    position = Math.max(position, min);
-                    position = Math.min(position, max);
+                    position = Math.max(position, 0);
+                    position = Math.min(position, $element[0].offsetWidth);
                 }
 
                 // Getter-setter for the pixel offset of the splitter,
