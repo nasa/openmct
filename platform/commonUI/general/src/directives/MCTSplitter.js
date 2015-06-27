@@ -47,20 +47,23 @@ define(
 
                 element.addClass("splitter");
 
+                // Now that we have the above class, the splitter width
+                // will have changed, so trigger a positioning update.
+                mctSplitPane.position(mctSplitPane.position());
+
                 scope.splitter = {
                     // Begin moving this splitter
                     startMove: function () {
                         var splitter = element[0];
-                        initialPosition = splitter[OFFSETS_BY_EDGE[
-                            mctSplitPane.anchor().edge
-                        ]];
+                        initialPosition = mctSplitPane.position();
                     },
                     // Handle user changes to splitter position
                     move: function (delta) {
                         var anchor = mctSplitPane.anchor(),
-                            pixelDelta = delta[
-                                anchor.orientation === "vertical" ? 0 : 1
-                            ];
+                            index = anchor.orientation === "vertical" ? 0 : 1,
+                            pixelDelta = delta[index] *
+                                (anchor.reversed ? -1 : 1);
+
                         // Update the position of this splitter
                         mctSplitPane.position(initialPosition + pixelDelta);
                     }

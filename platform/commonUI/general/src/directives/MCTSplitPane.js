@@ -104,7 +104,6 @@ define(
             function controller($scope, $element, $attrs) {
                 var anchorKey = $attrs.anchor || DEFAULT_ANCHOR,
                     anchor,
-                    styleValue,
                     positionParsed = $parse($attrs.position),
                     position; // Start undefined, until explicitly set
 
@@ -116,8 +115,7 @@ define(
                 // Get relevant size (height or width) of DOM element
                 function getSize(domElement) {
                     return (anchor.orientation === 'vertical' ?
-                            domElement.offsetWidth : domElement.offsetHeight)
-                            + "px";
+                            domElement.offsetWidth : domElement.offsetHeight);
                 }
 
                 // Apply styles to child elements
@@ -131,17 +129,18 @@ define(
                         firstSize;
 
                     first.css(anchor.edge, "0px");
-                    if (styleValue !== undefined) {
-                        first.css(anchor.dimension, styleValue);
-                    }
+                    first.css(anchor.dimension, (position - splitterSize) + 'px');
 
                     // Get actual size (to obey min-width etc.)
                     firstSize = getSize(first[0]);
-                    first.css(anchor.dimension, firstSize);
-                    splitter.css(anchor.edge, firstSize);
+                    first.css(anchor.dimension, firstSize + 'px');
+                    splitter.css(anchor.edge, (firstSize + splitterSize) + 'px');
+                    splitter.css(anchor.opposite, "auto");
 
-                    last.css(anchor.edge, calcSum(firstSize, splitterSize));
+                    last.css(anchor.edge, (firstSize + splitterSize * 3) + 'px');
                     last.css(anchor.opposite, "0px");
+
+                    position = firstSize + splitterSize;
                 }
 
                 // Update positioning of contained elements
@@ -171,13 +170,12 @@ define(
                     if (typeof value === 'number') {
                         position = value;
                         enforceExtrema();
+                        updateElementPositions();
 
                         // Pass change up so this state can be shared
                         if (positionParsed.assign) {
-                            positionParsed.assign($scope, value);
+                            positionParsed.assign($scope, position);
                         }
-                        styleValue = position + 'px';
-                        updateElementPositions();
                     }
                     return position;
                 }
@@ -195,7 +193,9 @@ define(
                 $element.addClass(anchor.orientation);
 
                 // Initialize positions
-                updateElementPositions();
+                getSetPosition(getSize(
+                    $element.children().eq(anchor.reversed ? 2 : 0)[0]
+                ));
 
                 // Interface exposed by controller, for mct-splitter to user
                 return {
