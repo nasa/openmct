@@ -289,27 +289,29 @@ a {
 
 /* line 31, ../sass/_global.scss */
 body, html {
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: grayscale;
   background-color: #333;
   color: #999;
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 100%;
   height: 100%;
   width: 100%;
   overflow: hidden; }
 
-/* line 41, ../sass/_global.scss */
+/* line 44, ../sass/_global.scss */
 em {
   font-style: normal; }
 
-/* line 46, ../sass/_global.scss */
+/* line 49, ../sass/_global.scss */
 input, textarea {
   font-family: Helvetica, Arial, sans-serif; }
 
-/* line 50, ../sass/_global.scss */
+/* line 53, ../sass/_global.scss */
 h1, h2, h3 {
   margin: 0; }
 
-/* line 54, ../sass/_global.scss */
+/* line 57, ../sass/_global.scss */
 h1 {
   font-size: 1.7em;
   font-weight: normal !important;
@@ -317,21 +319,21 @@ h1 {
   margin-bottom: 20px;
   margin-top: 0; }
 
-/* line 62, ../sass/_global.scss */
+/* line 65, ../sass/_global.scss */
 p {
   margin-bottom: 10px; }
 
-/* line 66, ../sass/_global.scss */
+/* line 69, ../sass/_global.scss */
 span {
   /* 618 DEBUG
   box-sizing: border-box;
   */ }
 
-/* line 72, ../sass/_global.scss */
+/* line 75, ../sass/_global.scss */
 mct-container {
   display: block; }
 
-/* line 76, ../sass/_global.scss */
+/* line 79, ../sass/_global.scss */
 .abs, .btn-menu span.l-click-area {
   position: absolute;
   top: 0;
@@ -341,51 +343,51 @@ mct-container {
   height: auto;
   width: auto; }
 
-/* line 86, ../sass/_global.scss */
+/* line 89, ../sass/_global.scss */
 .code, .codehilite {
   font-family: "Lucida Console", monospace;
   font-size: 0.7em;
   line-height: 150%;
   white-space: pre; }
 
-/* line 93, ../sass/_global.scss */
+/* line 96, ../sass/_global.scss */
 .codehilite {
   background-color: rgba(255, 255, 255, 0.1);
   padding: 1em; }
 
-/* line 99, ../sass/_global.scss */
+/* line 102, ../sass/_global.scss */
 .align-right {
   text-align: right; }
 
-/* line 103, ../sass/_global.scss */
+/* line 106, ../sass/_global.scss */
 .centered {
   text-align: center; }
 
-/* line 107, ../sass/_global.scss */
+/* line 110, ../sass/_global.scss */
 .no-margin {
   margin: 0; }
 
-/* line 111, ../sass/_global.scss */
+/* line 114, ../sass/_global.scss */
 .colorKey {
   color: #0099cc; }
 
-/* line 115, ../sass/_global.scss */
+/* line 118, ../sass/_global.scss */
 .ds {
   -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px; }
 
-/* line 119, ../sass/_global.scss */
+/* line 122, ../sass/_global.scss */
 .hide,
 .hidden {
   display: none !important; }
 
-/* line 125, ../sass/_global.scss */
+/* line 128, ../sass/_global.scss */
 .paused:not(.s-btn):not(.icon-btn) {
   border-color: #c56f01 !important;
   color: #c56f01 !important; }
 
-/* line 131, ../sass/_global.scss */
+/* line 134, ../sass/_global.scss */
 .sep {
   color: rgba(255, 255, 255, 0.2); }
 
@@ -446,10 +448,10 @@ mct-container {
  *****************************************************************************/
 /* line 32, ../sass/user-environ/_layout.scss */
 .holder-all {
-  top: 3px;
-  right: 3px;
-  bottom: 3px;
-  left: 3px; }
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0; }
 
 /* line 40, ../sass/user-environ/_layout.scss */
 .browse-area,
@@ -504,10 +506,10 @@ mct-container {
 .user-environ .browse-area,
 .user-environ .edit-area,
 .user-environ .editor {
-  top: 34px;
-  right: 5px;
-  bottom: 30px;
-  left: 5px; }
+  top: 39px;
+  right: 10px;
+  bottom: 35px;
+  left: 10px; }
 /* line 102, ../sass/user-environ/_layout.scss */
 .user-environ .browse-area > .contents,
 .user-environ .edit-area > .contents {
@@ -515,7 +517,7 @@ mct-container {
   right: 0; }
 /* line 108, ../sass/user-environ/_layout.scss */
 .user-environ .edit-area {
-  top: 40px; }
+  top: 45px; }
   /* line 111, ../sass/user-environ/_layout.scss */
   .user-environ .edit-area .tool-bar {
     bottom: auto;
@@ -528,27 +530,28 @@ mct-container {
 .user-environ .bottom-bar {
   overflow: hidden;
   position: absolute;
-  top: 5px;
-  right: 5px;
-  bottom: 5px;
-  left: 5px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   width: auto;
   height: auto;
   top: auto;
-  height: 20px; }
-  /* line 125, ../sass/user-environ/_layout.scss */
+  height: 25px; }
+  /* line 126, ../sass/user-environ/_layout.scss */
   .user-environ .bottom-bar .status-holder {
-    right: 110px; }
-  /* line 128, ../sass/user-environ/_layout.scss */
+    z-index: 1; }
+  /* line 130, ../sass/user-environ/_layout.scss */
   .user-environ .bottom-bar .app-logo {
     left: auto;
-    width: 105px; }
+    width: 105px;
+    z-index: 2; }
 
-/* line 135, ../sass/user-environ/_layout.scss */
+/* line 138, ../sass/user-environ/_layout.scss */
 .cols {
   overflow: hidden;
   *zoom: 1; }
-  /* line 137, ../sass/user-environ/_layout.scss */
+  /* line 140, ../sass/user-environ/_layout.scss */
   .cols .col {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -559,100 +562,100 @@ mct-container {
     margin-left: 1.5%;
     padding-left: 5px;
     position: relative; }
-    /* line 145, ../sass/user-environ/_layout.scss */
+    /* line 148, ../sass/user-environ/_layout.scss */
     .cols .col:first-child {
       margin-left: 0;
       padding-left: 0; }
-  /* line 152, ../sass/user-environ/_layout.scss */
+  /* line 155, ../sass/user-environ/_layout.scss */
   .cols.cols-2 .col-1 {
     min-width: 250px;
     width: 48.5%; }
-  /* line 158, ../sass/user-environ/_layout.scss */
+  /* line 161, ../sass/user-environ/_layout.scss */
   .cols.cols-2-ff .col-100px {
     width: 100px; }
-  /* line 165, ../sass/user-environ/_layout.scss */
+  /* line 168, ../sass/user-environ/_layout.scss */
   .cols.cols-6 .col-1 {
     min-width: 83.33333px;
     width: 15.16667%; }
-  /* line 171, ../sass/user-environ/_layout.scss */
+  /* line 174, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-1 {
     min-width: 31.25px;
     width: 4.75%; }
-  /* line 174, ../sass/user-environ/_layout.scss */
+  /* line 177, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-2 {
     min-width: 62.5px;
     width: 11%; }
-  /* line 177, ../sass/user-environ/_layout.scss */
+  /* line 180, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-7 {
     min-width: 218.75px;
     width: 42.25%; }
-  /* line 183, ../sass/user-environ/_layout.scss */
+  /* line 186, ../sass/user-environ/_layout.scss */
   .cols.cols-32 .col-2 {
     min-width: 31.25px;
     width: 4.75%; }
-  /* line 186, ../sass/user-environ/_layout.scss */
+  /* line 189, ../sass/user-environ/_layout.scss */
   .cols.cols-32 .col-15 {
     min-width: 234.375px;
     width: 45.375%; }
-  /* line 190, ../sass/user-environ/_layout.scss */
+  /* line 193, ../sass/user-environ/_layout.scss */
   .cols .l-row {
     overflow: hidden;
     *zoom: 1;
     padding: 5px 0; }
 
-/* line 196, ../sass/user-environ/_layout.scss */
+/* line 199, ../sass/user-environ/_layout.scss */
 .pane {
   position: absolute; }
-  /* line 199, ../sass/user-environ/_layout.scss */
+  /* line 202, ../sass/user-environ/_layout.scss */
   .pane.treeview .create-btn-holder {
     bottom: auto;
     top: 0;
     height: 24px; }
-    /* line 202, ../sass/user-environ/_layout.scss */
+    /* line 205, ../sass/user-environ/_layout.scss */
     .pane.treeview .create-btn-holder .wrapper.menu-element {
       position: absolute;
       bottom: 5px; }
-  /* line 207, ../sass/user-environ/_layout.scss */
+  /* line 210, ../sass/user-environ/_layout.scss */
   .pane.treeview .tree-holder {
     overflow: auto;
     top: 34px; }
-  /* line 214, ../sass/user-environ/_layout.scss */
+  /* line 217, ../sass/user-environ/_layout.scss */
   .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .btn-menu span.left.l-click-area, .btn-menu .pane.items .object-browse-bar span.left.l-click-area,
   .pane.items .object-browse-bar .right.abs,
   .pane.items .object-browse-bar .btn-menu span.right.l-click-area,
   .btn-menu .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
-  /* line 219, ../sass/user-environ/_layout.scss */
+  /* line 222, ../sass/user-environ/_layout.scss */
   .pane.items .object-holder {
     top: 34px; }
-  /* line 224, ../sass/user-environ/_layout.scss */
+  /* line 227, ../sass/user-environ/_layout.scss */
   .pane.edit-main .object-holder {
     top: 0; }
-  /* line 230, ../sass/user-environ/_layout.scss */
+  /* line 233, ../sass/user-environ/_layout.scss */
   .pane .object-holder {
     overflow: auto; }
 
-/* line 238, ../sass/user-environ/_layout.scss */
+/* line 241, ../sass/user-environ/_layout.scss */
 .split-layout.horizontal > .pane {
   margin-top: 5px; }
-  /* line 241, ../sass/user-environ/_layout.scss */
+  /* line 244, ../sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane:first-child {
     margin-top: 0; }
-/* line 248, ../sass/user-environ/_layout.scss */
+/* line 251, ../sass/user-environ/_layout.scss */
 .split-layout.vertical > .pane {
   margin-left: 5px; }
-  /* line 250, ../sass/user-environ/_layout.scss */
+  /* line 253, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane > .holder {
     left: 0;
     right: 0; }
-  /* line 254, ../sass/user-environ/_layout.scss */
+  /* line 257, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane:first-child {
     margin-left: 0; }
-    /* line 256, ../sass/user-environ/_layout.scss */
+    /* line 259, ../sass/user-environ/_layout.scss */
     .split-layout.vertical > .pane:first-child .holder {
       right: 5px; }
 
-/* line 265, ../sass/user-environ/_layout.scss */
+/* line 268, ../sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
 
@@ -4041,7 +4044,7 @@ input[type="text"] {
 /* line 60, ../sass/overlay/_overlay.scss */
 .overlay .editor {
   top: 70px;
-  bottom: 50px;
+  bottom: 52px;
   left: 0;
   right: 0; }
 /* line 66, ../sass/overlay/_overlay.scss */
@@ -4051,7 +4054,7 @@ input[type="text"] {
   bottom: 0;
   left: 0;
   font-size: 1em;
-  height: 40px;
+  height: 42px;
   text-align: right; }
   /* line 71, ../sass/overlay/_overlay.scss */
   .overlay .bottom-bar .btn {
@@ -4141,10 +4144,10 @@ input[type="text"] {
 /* line 27, ../sass/user-environ/_top-bar.scss */
 .top-bar.browse, .top-bar.edit {
   border-bottom: 1px solid #4d4d4d;
-  top: 5px;
-  right: 5px;
+  top: 10px;
+  right: 10px;
   bottom: auto;
-  left: 5px;
+  left: 10px;
   height: 30px; }
 /* line 37, ../sass/user-environ/_top-bar.scss */
 .top-bar .title {
@@ -4189,54 +4192,60 @@ input[type="text"] {
  *****************************************************************************/
 /* line 22, ../sass/user-environ/_bottom-bar.scss */
 .ue-bottom-bar {
+  background: #000;
   color: gray;
-  font-size: 0.65rem;
-  line-height: 16px; }
-  /* line 26, ../sass/user-environ/_bottom-bar.scss */
+  font-size: .7rem; }
+  /* line 28, ../sass/user-environ/_bottom-bar.scss */
   .ue-bottom-bar .status-holder {
-    -moz-border-radius: 3.5px;
-    -webkit-border-radius: 3.5px;
-    border-radius: 3.5px;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    background: #000;
-    border-bottom: 1px solid #4d4d4d;
-    padding: 2px 5px;
+    overflow: hidden;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    bottom: 5px;
+    left: 5px;
+    width: auto;
+    height: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 15px;
+    right: 120px;
     text-transform: uppercase; }
-  /* line 34, ../sass/user-environ/_bottom-bar.scss */
+  /* line 39, ../sass/user-environ/_bottom-bar.scss */
   .ue-bottom-bar .app-logo {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    cursor: pointer;
-    font-size: 0.8em;
-    line-height: 10px;
-    padding-top: 1px;
-    text-transform: uppercase; }
-    /* line 41, ../sass/user-environ/_bottom-bar.scss */
+    overflow: hidden;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    bottom: 5px;
+    left: 5px;
+    width: auto;
+    height: auto;
+    left: auto;
+    cursor: pointer; }
+    /* line 48, ../sass/user-environ/_bottom-bar.scss */
     .ue-bottom-bar .app-logo.logo-openmctweb {
       background: url("../images/logo-openmctweb.svg") no-repeat center center; }
 
-/* line 47, ../sass/user-environ/_bottom-bar.scss */
+/* line 54, ../sass/user-environ/_bottom-bar.scss */
 .status.block {
-  display: inline-block;
-  margin-right: 20px; }
-  /* line 50, ../sass/user-environ/_bottom-bar.scss */
+  display: inline;
+  margin-right: 10px; }
+  /* line 58, ../sass/user-environ/_bottom-bar.scss */
   .status.block .status-indicator {
-    -moz-border-radius: 1.8px;
-    -webkit-border-radius: 1.8px;
-    border-radius: 1.8px;
-    -moz-box-shadow: inset rgba(0, 0, 0, 0.5) 0 0 3px;
-    -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 0 3px;
-    box-shadow: inset rgba(0, 0, 0, 0.5) 0 0 3px;
-    text-shadow: rgba(0, 0, 0, 0.3) 0 0 2px;
     display: inline-block;
-    margin-right: 3px; }
-    /* line 58, ../sass/user-environ/_bottom-bar.scss */
+    margin-right: 3px;
+    color: #0099cc; }
+    /* line 65, ../sass/user-environ/_bottom-bar.scss */
     .status.block .status-indicator.ok {
       color: #009900; }
-    /* line 61, ../sass/user-environ/_bottom-bar.scss */
+    /* line 68, ../sass/user-environ/_bottom-bar.scss */
     .status.block .status-indicator.caution {
       color: #ffaa00; }
 
@@ -4878,4 +4887,4 @@ input[type="text"] {
   display: none; }
 /* line 32, ../sass/_hide-non-functional.scss */
 .browse-mode .browse-area.holder {
-  top: 5px; }
+  top: 10px; }
