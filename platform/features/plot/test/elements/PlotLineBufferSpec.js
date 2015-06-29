@@ -83,9 +83,6 @@ define(
                 expect(buffer.findInsertionIndex(10)).toEqual(4);
                 expect(buffer.findInsertionIndex(14.5)).toEqual(5);
                 expect(buffer.findInsertionIndex(20)).toEqual(6);
-
-                // 9 is already in there, disallow insertion
-                expect(buffer.findInsertionIndex(9)).toEqual(-1);
             });
 
             it("allows insertion in the middle", function () {

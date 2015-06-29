@@ -39,34 +39,52 @@ define(
             // is returned. The view is defaulted to
             // the current location's (current object's)
             // view set.
-            function urlFor(mode, domainObject) {
+            function urlForLocation(mode, domainObject) {
                 var context = domainObject &&
                         domainObject.getCapability('context'),
                     objectPath = context ? context.getPath() : [],
                     ids = objectPath.map(function (domainObject) {
                         return domainObject.getId();
                     }),
-                    viewPath = "?view=" + $location.search().view,
                     // Parses the path together. Starts with the 
                     // default index.html file, then the mode passed
                     // into the service, followed by ids in the url
                     // joined by '/', and lastly the view path from
                     // the current location
-                    path = "index.html#/" + mode + "/" +
-                        ids.slice(1).join("/") + viewPath;
-                
+                    path = mode + "/" + ids.slice(1).join("/");
                 return path;
+            }
+            
+            // Uses the Url for the current location
+            // from the urlForLocation function and
+            // includes the view and the index path
+            function urlForNewTab(mode, domainObject) {
+                var viewPath = "?view=" + $location.search().view,
+                    newTabPath =
+                        "index.html#" + urlForLocation(mode, domainObject) + viewPath;
+                return newTabPath;
             }
             
             return {
                /**
                  * Returns the Url path for a specific domain object
+                 * without the index.html path and the view path
                  * @param {value} value of the browse or edit mode 
                  *        for the path
                  * @param {DomainObject} value of the domain object 
                  *        to get the path of
                  */
-                urlFor: urlFor
+                urlForNewTab: urlForNewTab,
+               /**
+                 * Returns the Url path for a specific domain object
+                 * including the index.html path and the view path
+                 * allowing a new tab to hold the correct characteristics
+                 * @param {value} value of the browse or edit mode 
+                 *        for the path
+                 * @param {DomainObject} value of the domain object 
+                 *        to get the path of
+                 */
+                urlForLocation: urlForLocation
             };
         }
 

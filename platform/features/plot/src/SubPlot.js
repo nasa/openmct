@@ -56,6 +56,9 @@ define(
                 domainOffset,
                 mousePosition,
                 marqueeStart,
+                panStart,
+                panStartBounds,
+                subPlotBounds,
                 hoverCoordinates,
                 isHovering = false;
 
@@ -88,8 +91,7 @@ define(
             // pixel coordinates in the canvas area) from a mouse
             // event object.
             function toMousePosition($event) {
-                var target = $event.target,
-                    bounds = target.getBoundingClientRect();
+                var bounds = subPlotBounds;
 
                 return {
                     x: $event.clientX - bounds.left,
@@ -153,6 +155,25 @@ define(
                     tickGenerator.generateDomainTicks(DOMAIN_TICKS);
                 rangeTicks =
                     tickGenerator.generateRangeTicks(RANGE_TICKS);
+            }
+
+            function updatePan() {
+                var start, current, delta, nextOrigin;
+
+                // Clear the previous panning pan-zoom state
+                panZoomStack.popPanZoom();
+
+                // Calculate what the new resulting pan-zoom should be
+                start = mousePositionToDomainRange(panStart);
+                current = mousePositionToDomainRange(mousePosition);
+                delta = [ current[0] - start[0], current[1] - start[1] ];
+                nextOrigin = [
+                    panStartBounds.origin[0] - delta[0],
+                    panStartBounds.origin[1] - delta[1]
+                ];
+
+                // ...and push a new one at the current mouse position
+                panZoomStack.pushPanZoom(nextOrigin, panStartBounds.dimensions);
             }
 
 
@@ -241,31 +262,77 @@ define(
                  */
                 hover: function ($event) {
                     isHovering = true;
+                    subPlotBounds = $event.target.getBoundingClientRect();
                     mousePosition = toMousePosition($event);
                     updateHoverCoordinates();
                     if (marqueeStart) {
                         updateMarqueeBox();
+                    }
+                    if (panStart) {
+                        updatePan();
+                        updateDrawingBounds();
+                        updateTicks();
+                    }
+                },
+                /**
+                 * Continue a previously-start pan or zoom gesture.
+                 * @param $event the mouse event
+                 */
+                continueDrag: function ($event) {
+                    mousePosition = toMousePosition($event);
+                    if (marqueeStart) {
+                        updateMarqueeBox();
+                    }
+                    if (panStart) {
+                        updatePan();
+                        updateDrawingBounds();
+                        updateTicks();
                     }
                 },
                 /**
                  * Initiate a marquee zoom action.
                  * @param $event the mouse event
                  */
-                startMarquee: function ($event) {
-                    mousePosition = marqueeStart = toMousePosition($event);
-                    updateMarqueeBox();
+                startDrag: function ($event) {
+                    subPlotBounds = $event.target.getBoundingClientRect();
+                    mousePosition = toMousePosition($event);
+                    // Treat any modifier key as a pan
+                    if ($event.altKey || $event.shiftKey || $event.ctrlKey) {
+                        // Start panning
+                        panStart = mousePosition;
+                        panStartBounds = panZoomStack.getPanZoom();
+                        // We're starting a pan, so add this back as a
+                        // state on the stack; it will get replaced
+                        // during the pan.
+                        panZoomStack.pushPanZoom(
+                            panStartBounds.origin,
+                            panStartBounds.dimensions
+                        );
+                        $event.preventDefault();
+                    } else {
+                        // Start marquee zooming
+                        marqueeStart = mousePosition;
+                        updateMarqueeBox();
+                    }
                 },
                 /**
                  * Complete a marquee zoom action.
                  * @param $event the mouse event
                  */
-                endMarquee: function ($event) {
+                endDrag: function ($event) {
                     mousePosition = toMousePosition($event);
+                    subPlotBounds = undefined;
                     if (marqueeStart) {
                         marqueeZoom(marqueeStart, mousePosition);
                         marqueeStart = undefined;
                         updateMarqueeBox();
                         updateDrawingBounds();
+                        updateTicks();
+                    }
+                    if (panStart) {
+                        // End panning
+                        panStart = undefined;
+                        panStartBounds = undefined;
                     }
                 },
                 /**

@@ -57,13 +57,17 @@ define(
                 // mouse may leave this element during the drag.
                 var body = $document.find('body'),
                     initialPosition,
+                    $event,
                     delta;
 
                 // Utility function to cause evaluation of mctDrag,
                 // mctDragUp, etc
                 function fireListener(name) {
                     // Evaluate the expression, with current delta
-                    scope.$eval(attrs[name], { delta: delta });
+                    scope.$eval(attrs[name], {
+                        delta: delta,
+                        $event: $event
+                    });
 
                     // Trigger prompt digestion
                     scope.$apply();
@@ -82,6 +86,9 @@ define(
                     delta = currentPosition.map(function (v, i) {
                         return v - initialPosition[i];
                     });
+
+                    // Also track the plain event for firing listeners
+                    $event = event;
                 }
 
                 // Called during a drag, on mousemove
@@ -106,7 +113,7 @@ define(
 
                     fireListener("mctDragUp");
 
-                    // Clear out start-of-drag position
+                    // Clear out start-of-drag position, target
                     initialPosition = undefined;
 
                     // Don't show selection highlights, etc
@@ -131,6 +138,7 @@ define(
 
                     // Don't show selection highlights, etc
                     event.preventDefault();
+
                     return false;
                 }
 

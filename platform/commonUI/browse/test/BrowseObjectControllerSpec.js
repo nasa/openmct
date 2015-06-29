@@ -68,6 +68,10 @@ define(
                 fireWatch("representation.selected.key", "xyz");
                 expect(mockLocation.search).toHaveBeenCalledWith('view', "xyz");
 
+                // Allows the path index to be checked
+                // prior to setting $route.current
+                mockLocation.path.andReturn("/browse/");
+                
                 // Exercise the Angular workaround
                 mockScope.$on.mostRecentCall.args[1]();
                 expect(mockUnlisten).toHaveBeenCalled();
