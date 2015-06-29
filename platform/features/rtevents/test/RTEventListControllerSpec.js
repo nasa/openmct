@@ -35,7 +35,6 @@ define(
                 mockTelemetryHandler,
                 mockHandle,
                 mockTelemetryFormatter,
-                mockColumn,
                 controller;
             
             beforeEach(function () {
@@ -58,10 +57,6 @@ define(
                 mockTelemetryFormatter = jasmine.createSpyObj(
                     "formatter",
                     ["formatDomainValue", "formatRangeValue"]
-                );
-                mockColumn = jasmine.createSpyObj(
-                    "column",
-                    ["getValue"]
                 );
                 
                 controller = new RTEventListController(mockScope, mockTelemetryHandler, mockTelemetryFormatter);
