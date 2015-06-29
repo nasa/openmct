@@ -34,6 +34,7 @@ define(
                 mockFormatter,
                 mockDomainObject,
                 mockSubscription,
+                mockEvent,
                 testGrid,
                 testModel,
                 testValues,
@@ -97,6 +98,10 @@ define(
                 mockSubscription = jasmine.createSpyObj(
                     'subscription',
                     [ 'unsubscribe', 'getTelemetryObjects', 'getRangeValue', 'getDatum' ]
+                );
+                mockEvent = jasmine.createSpyObj(
+                    'event',
+                    [ 'preventDefault' ]
                 );
 
                 testGrid = [ 123, 456 ];
@@ -302,7 +307,7 @@ define(
                 // Notify that a drop occurred
                 testModel.composition.push('d');
                 findOn('mctDrop')(
-                    {},
+                    mockEvent,
                     'd',
                     { x: 300, y: 100 }
                 );
@@ -310,10 +315,29 @@ define(
                 // Should have added an element
                 expect(testConfiguration.elements.length).toEqual(4);
 
+                // ...and prevented default...
+                expect(mockEvent.preventDefault).toHaveBeenCalled();
+
                 // Should have triggered commit (provided by
                 // EditRepresenter) with some message.
                 expect(mockScope.commit)
                     .toHaveBeenCalledWith(jasmine.any(String));
+            });
+
+            it("ignores drops when default has been prevented", function () {
+                // Avoids redundant drop-handling, WTD-1233
+                mockEvent.defaultPrevented = true;
+
+                // Notify that a drop occurred
+                testModel.composition.push('d');
+                findOn('mctDrop')(
+                    mockEvent,
+                    'd',
+                    { x: 300, y: 100 }
+                );
+
+                // Should NOT have added an element
+                expect(testConfiguration.elements.length).toEqual(3);
             });
 
             it("unsubscribes when destroyed", function () {

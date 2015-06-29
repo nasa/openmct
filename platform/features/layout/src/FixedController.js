@@ -256,6 +256,11 @@ define(
 
             // Position a panel after a drop event
             function handleDrop(e, id, position) {
+                // Don't handle this event if it has already been handled
+                if (e.defaultPrevented) {
+                    return;
+                }
+                e.preventDefault();
                 // Store the position of this element.
                 addElement({
                     type: "fixed.telemetry",
