@@ -74,7 +74,6 @@ define(
                 
                 // Subscribe to the RT telemetry
                 // second argument of: $scope.$watch("domainObject", makeSubscription);
-                ////// TODO: Maybe use some instead of forEach?
                 mockScope.$watch.calls.forEach(function (c) {
                     // There are two possible calls of $watch, so we need to filter 
                     // through the calls to get the correct kind 
