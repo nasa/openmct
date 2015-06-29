@@ -10,6 +10,12 @@
                 "depends": [ "$q", "$timeout" ]
             }
         ],
+        "capabilities": [
+            {
+                "key": "limit",
+                "implementation": "SinewaveLimitCapability.js"
+            }
+        ],
         "types": [
             {
                 "key": "generator",
@@ -23,7 +29,23 @@
                     }
                 },
                 "telemetry": {
-                    "source": "generator"
+                    "source": "generator",
+                    "domains": [
+                        {
+                            "key": "time",
+                            "name": "Time"
+                        }
+                    ],
+                    "ranges": [
+                        {
+                            "key": "sin",
+                            "name": "Sine"
+                        },
+                        {
+                            "key": "cos",
+                            "name": "Cosine"
+                        }
+                    ]
                 },
                 "properties": [
                     {

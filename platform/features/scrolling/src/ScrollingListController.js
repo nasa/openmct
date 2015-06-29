@@ -58,11 +58,10 @@ define(
             // Set up columns based on telemetry metadata. This will
             // include one column for each domain and range type, as
             // well as a column for the domain object name.
-            function setupColumns(telemetry) {
+            function setupColumns(metadatas) {
                 var domainKeys = {},
                     rangeKeys = {},
-                    columns = [],
-                    metadata;
+                    columns = [];
 
                 // Add a domain to the set of columns, if a domain
                 // with the same key has not yet been inclued.
@@ -84,9 +83,9 @@ define(
                     }
                 }
 
-                // We cannot proceed if the telemetry controller
-                // is not available; clear all rows/columns.
-                if (!telemetry) {
+                // We cannot proceed if metadata is not available;
+                // clear all rows/columns.
+                if (!Array.isArray(metadatas)) {
                     columns = [];
                     $scope.rows = [];
                     $scope.headers = [];
@@ -96,11 +95,10 @@ define(
                 columns = [ new NameColumn() ];
 
                 // Add domain, range columns
-                metadata = telemetry.getMetadata();
-                (metadata || []).forEach(function (metadata) {
+                metadatas.forEach(function (metadata) {
                     (metadata.domains || []).forEach(addDomain);
                 });
-                (metadata || []).forEach(function (metadata) {
+                metadatas.forEach(function (metadata) {
                     (metadata.ranges || []).forEach(addRange);
                 });
 
@@ -126,7 +124,7 @@ define(
             }
 
             $scope.$on("telemetryUpdate", updateRows);
-            $scope.$watch("telemetry", setupColumns);
+            $scope.$watch("telemetry.getMetadata()", setupColumns);
         }
 
         return ScrollingListController;

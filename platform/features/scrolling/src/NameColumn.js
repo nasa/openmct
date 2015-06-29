@@ -50,7 +50,9 @@ define(
                  * @returns {string} the text to display
                  */
                 getValue: function (domainObject) {
-                    return domainObject.getModel().name;
+                    return {
+                        text: domainObject.getModel().name
+                    };
                 }
             };
         }

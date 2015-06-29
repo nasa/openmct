@@ -29,10 +29,11 @@ define(
         "./elements/PlotUpdater",
         "./elements/PlotPalette",
         "./elements/PlotAxis",
+        "./elements/PlotLimitTracker",
         "./modes/PlotModeOptions",
         "./SubPlotFactory"
     ],
-    function (PlotUpdater, PlotPalette, PlotAxis, PlotModeOptions, SubPlotFactory) {
+    function (PlotUpdater, PlotPalette, PlotAxis, PlotLimitTracker, PlotModeOptions, SubPlotFactory) {
         "use strict";
 
         var AXIS_DEFAULTS = [
@@ -62,6 +63,7 @@ define(
                 modeOptions = new PlotModeOptions([], subPlotFactory),
                 subplots = [],
                 cachedObjects = [],
+                limitTracker,
                 updater,
                 handle,
                 scheduleUpdate,
@@ -108,6 +110,10 @@ define(
                     ($scope.axes[1].active || {}).key,
                     PLOT_FIXED_DURATION
                 );
+                limitTracker = new PlotLimitTracker(
+                    handle,
+                    ($scope.axes[1].active || {}).key
+                );
             }
 
             // Handle new telemetry data in this plot
@@ -118,6 +124,9 @@ define(
                 if (updater) {
                     updater.update();
                     modeOptions.getModeHandler().plotTelemetry(updater);
+                }
+                if (limitTracker) {
+                    limitTracker.update();
                 }
                 update();
             }
@@ -237,6 +246,15 @@ define(
                  */
                 getSubPlots: function () {
                     return modeOptions.getModeHandler().getSubPlots();
+                },
+                /**
+                 * Get the CSS class to apply to the legend for this domain
+                 * object; this will reflect limit state.
+                 * @returns {string} the CSS class
+                 */
+                getLegendClass: function (telemetryObject) {
+                    return limitTracker &&
+                        limitTracker.getLegendClass(telemetryObject);
                 },
                 /**
                  * Explicitly update all plots.

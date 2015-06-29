@@ -19,151 +19,162 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-    <span ng-controller="PlotController as plot"
-          ng-mouseleave="representation.showControls = false">
+<span ng-controller="PlotController as plot"
+      ng-mouseleave="representation.showControls = false">
 
-        <div class="gl-plot"
-             ng-style="{ height: 100 / plot.getSubPlots().length + '%'}"
-             ng-repeat="subplot in plot.getSubPlots()">
-            <div class="gl-plot-legend">
-                <span class='plot-legend-item'
-                      ng-repeat="telemetryObject in subplot.getTelemetryObjects()">
-                    <span class='plot-color-swatch'
-                          ng-style="{ 'background-color': plot.getColor($index) }">
-                    </span>
-                    <span class='title-label'>{{telemetryObject.getModel().name}}</span>
+    <div class="gl-plot"
+         ng-style="{ height: 100 / plot.getSubPlots().length + '%'}"
+         ng-repeat="subplot in plot.getSubPlots()">
+        <div class="gl-plot-legend">
+            <!-- ng-class is temporarily hard-coded in next element -->
+            <span
+                class='plot-legend-item'
+                ng-repeat="telemetryObject in subplot.getTelemetryObjects()"
+                ng-class="plot.getLegendClass(telemetryObject)"
+                >
+                <span class='plot-color-swatch'
+                      ng-style="{ 'background-color': plot.getColor($index) }">
                 </span>
-            </div>
-
-            <div class="gl-plot-coords"
-                 ng-if="subplot.isHovering() && subplot.getHoverCoordinates()">
-                {{subplot.getHoverCoordinates()}}
-            </div>
-
-            <div class="gl-plot-axis-area gl-plot-y">
-
-                <div class="gl-plot-label gl-plot-y-label">
-                    {{axes[1].active.name}}
-                </div>
-
-                <div ng-repeat="tick in subplot.getRangeTicks()"
-                     class="gl-plot-tick gl-plot-y-tick-label"
-                     ng-style="{ bottom: (100 * $index / (subplot.getRangeTicks().length - 1)) + '%' }">
-                    {{tick.label}}
-                </div>
-
-                <div class="gl-plot-y-options gl-plot-local-controls"
-                     ng-show="representation.showControls"
-                     ng-if="axes[1].options.length > 0">
-                    <div class='form-control shell select'>
-                        <select class="form-control input shell select"
-                                ng-model="axes[1].active"
-                                ng-options="option.name for option in axes[1].options">
-                        </select>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="gl-plot-display-area"
-                 ng-mouseenter="subplot.isHovering(true); representation.showControls = true;"
-                 ng-mouseleave="subplot.isHovering(false)">
-
-                <div class="gl-plot-hash hash-v"
-                     ng-repeat="tick in subplot.getDomainTicks()"
-                     ng-style="{ left: (100 * $index / (subplot.getDomainTicks().length - 1)) + '%', height: '100%' }"
-                     ng-show="$index > 0 && $index < (subplot.getDomainTicks().length - 1)">
-                </div>
-                <div class="gl-plot-hash hash-h"
-                     ng-repeat="tick in subplot.getRangeTicks()"
-                     ng-style="{ bottom: (100 * $index / (subplot.getRangeTicks().length - 1)) + '%', width: '100%' }"
-                     ng-show="$index > 0 && $index < (subplot.getRangeTicks().length - 1)">
-                </div>
-
-                <mct-chart draw="subplot.getDrawingObject()"
-                           ng-mousemove="subplot.hover($event)"
-                           mct-drag="subplot.continueDrag($event)"
-                           mct-drag-down="subplot.startDrag($event)"
-                           mct-drag-up="subplot.endDrag($event); plot.update()">
-                </mct-chart>
-
-                <!-- TODO: Move into correct position; make part of group; infer from set of actions -->
-                <div class="l-local-controls gl-plot-local-controls"
-                     ng-if="$first"
-                     ng-show="representation.showControls"
-                    >
-
-                    <a href=""
-                       class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
-                       ng-click="plot.stepBackPanZoom()"
-                       ng-show="plot.isZoomed()"
-                       title="Restore previous pan/zoom">
-                        <span class="ui-symbol icon">&lt;</span>
-                    </a>
-
-                    <a href=""
-                       class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
-                       ng-click="plot.unzoom()"
-                       ng-show="plot.isZoomed()"
-                       title="Reset pan/zoom">
-                        <span class="ui-symbol icon">I</span>
-                    </a>
-
-                    <div class="menu-element btn s-very-subtle btn-menu dropdown menus-to-left"
-                         ng-if="plot.getModeOptions().length > 1"
-                         ng-controller="ClickAwayController as toggle">
-
-                        <span class="l-click-area" ng-click="toggle.toggle()"></span>
-
-                        <span class="ui-symbol icon type-icon">{{plot.getMode().glyph}}</span>
-                        <span>{{plot.getMode().name}}</span>
-                        <span class='ui-symbol invoke-menu'>v</span>
-
-                        <div class="menu dropdown" ng-show="toggle.isActive()">
-                            <ul>
-                                <li ng-repeat="option in plot.getModeOptions()">
-                                    <a href="" ng-click="plot.setMode(option); toggle.setState(false)">
-                                        <span class="ui-symbol type-icon icon">
-                                            {{option.glyph}}
-                                        </span>
-                                        {{option.name}}
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                </div>
-
-                <span class="t-wait-spinner loading" ng-show="plot.isRequestPending()">
-                </span>
-            </div>
-            <div ng-if="$last" class="gl-plot-axis-area gl-plot-x">
-
-                <div ng-repeat="tick in subplot.getDomainTicks()"
-                     class="gl-plot-tick gl-plot-x-tick-label"
-                     ng-show="$index > 0 && $index < (subplot.getDomainTicks().length - 1)"
-                     ng-style="{ left: (100 * $index / (subplot.getDomainTicks().length - 1)) + '%' }">
-                    {{tick.label}}
-                </div>
-
-                <div class="gl-plot-label gl-plot-x-label">
-                    {{axes[0].active.name}}
-                </div>
-
-
-                <div class="gl-plot-x-options gl-plot-local-controls"
-                     ng-show="representation.showControls"
-                     ng-if="axes[0].options.length > 0">
-                    <div class='form-control shell select'>
-                        <select class="form-control input shell select"
-                                ng-model="axes[0].active"
-                                ng-options="option.name for option in axes[0].options">
-                        </select>
-                    </div>
-                </div>
-
-            </div>
+                <span class='title-label'>{{telemetryObject.getModel().name}}</span>
+            </span>
         </div>
-    </span>
+
+        <div
+            class="gl-plot-coords"
+            ng-if="subplot.isHovering() && subplot.getHoverCoordinates()"
+            >
+            {{subplot.getHoverCoordinates()}}
+        </div>
+
+        <div class="gl-plot-axis-area gl-plot-y">
+
+            <div class="gl-plot-label gl-plot-y-label">
+                {{axes[1].active.name}}
+            </div>
+
+            <div ng-repeat="tick in subplot.getRangeTicks()"
+                 class="gl-plot-tick gl-plot-y-tick-label"
+                 ng-style="{ bottom: (100 * $index / (subplot.getRangeTicks().length - 1)) + '%' }">
+                {{tick.label}}
+            </div>
+
+            <div class="gl-plot-y-options gl-plot-local-controls"
+                 ng-show="representation.showControls"
+                 ng-if="axes[1].options.length > 0">
+                <div class='form-control shell select'>
+                    <select class="form-control input shell select"
+                            ng-model="axes[1].active"
+                            ng-options="option.name for option in axes[1].options">
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="gl-plot-display-area"
+             ng-mouseenter="subplot.isHovering(true); representation.showControls = true;"
+             ng-mouseleave="subplot.isHovering(false)">
+
+            <!-- Out-of-bounds data indicators -->
+            <!-- ng-show is temporarily hard-coded in next element -->
+            <div ng-show="false" class="l-oob-data l-oob-data-up"></div>
+            <div ng-show="false" class="l-oob-data l-oob-data-dwn"></div>
+
+            <div class="gl-plot-hash hash-v"
+                 ng-repeat="tick in subplot.getDomainTicks()"
+                 ng-style="{ left: (100 * $index / (subplot.getDomainTicks().length - 1)) + '%', height: '100%' }"
+                 ng-show="$index > 0 && $index < (subplot.getDomainTicks().length - 1)">
+            </div>
+            <div class="gl-plot-hash hash-h"
+                 ng-repeat="tick in subplot.getRangeTicks()"
+                 ng-style="{ bottom: (100 * $index / (subplot.getRangeTicks().length - 1)) + '%', width: '100%' }"
+                 ng-show="$index > 0 && $index < (subplot.getRangeTicks().length - 1)">
+            </div>
+
+            <mct-chart draw="subplot.getDrawingObject()"
+                       ng-mousemove="subplot.hover($event)"
+                       mct-drag="subplot.continueDrag($event)"
+                       mct-drag-down="subplot.startDrag($event)"
+                       mct-drag-up="subplot.endDrag($event); plot.update()">
+            </mct-chart>
+
+            <!-- TODO: Move into correct position; make part of group; infer from set of actions -->
+            <div class="l-local-controls gl-plot-local-controls"
+                 ng-if="$first"
+                 ng-show="representation.showControls"
+                 style="position: absolute; top: 8px; right: 8px;">
+
+                <a href=""
+                   class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
+                   ng-click="plot.stepBackPanZoom()"
+                   ng-show="plot.isZoomed()"
+                   title="Restore previous pan/zoom">
+                    <span class="ui-symbol icon">&lt;</span>
+                </a>
+
+                <a href=""
+                   class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
+                   ng-click="plot.unzoom()"
+                   ng-show="plot.isZoomed()"
+                   title="Reset pan/zoom">
+                    <span class="ui-symbol icon">I</span>
+                </a>
+
+                <div class="menu-element btn s-very-subtle btn-menu dropdown menus-to-left"
+                     ng-if="plot.getModeOptions().length > 1"
+                     ng-controller="ClickAwayController as toggle">
+
+                    <span class="l-click-area" ng-click="toggle.toggle()"></span>
+
+                    <span class="ui-symbol icon type-icon">{{plot.getMode().glyph}}</span>
+                    <span>{{plot.getMode().name}}</span>
+                    <span class='ui-symbol invoke-menu'>v</span>
+
+                    <div class="menu dropdown" ng-show="toggle.isActive()">
+                        <ul>
+                            <li ng-repeat="option in plot.getModeOptions()">
+                                <a href="" ng-click="plot.setMode(option); toggle.setState(false)">
+                                    <span class="ui-symbol type-icon icon">
+                                        {{option.glyph}}
+                                    </span>
+                                    {{option.name}}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <span class="t-wait-spinner loading" ng-show="plot.isRequestPending()">
+            </span>
+        </div>
+        <div ng-if="$last" class="gl-plot-axis-area gl-plot-x">
+
+            <div ng-repeat="tick in subplot.getDomainTicks()"
+                 class="gl-plot-tick gl-plot-x-tick-label"
+                 ng-show="$index > 0 && $index < (subplot.getDomainTicks().length - 1)"
+                 ng-style="{ left: (100 * $index / (subplot.getDomainTicks().length - 1)) + '%' }">
+                {{tick.label}}
+            </div>
+
+            <div class="gl-plot-label gl-plot-x-label">
+                {{axes[0].active.name}}
+            </div>
+
+
+            <div class="gl-plot-x-options gl-plot-local-controls"
+                 ng-show="representation.showControls"
+                 ng-if="axes[0].options.length > 0">
+                <div class='form-control shell select'>
+                    <select class="form-control input shell select"
+                            ng-model="axes[0].active"
+                            ng-options="option.name for option in axes[0].options">
+                    </select>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</span>
 

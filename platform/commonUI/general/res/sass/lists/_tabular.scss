@@ -102,10 +102,19 @@
 		td, .td {
 			border-top: 1px solid $tabularColorBorder;
 			min-width: 110px;
+			color: $colorTelemFresh;
 			padding: $tabularTdPadTB $tabularTdPadLR;
 			vertical-align: top;
 			&.numeric {
 				text-align: right;
+			}
+			&.s-cell-type-value {
+				text-align: right;
+				.l-cell-contents {
+					@include border-radius($smallCr);
+					padding-left: $itemPadLR;
+					padding-right: $itemPadLR;
+				}
 			}
 		}
 	}

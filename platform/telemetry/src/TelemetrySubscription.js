@@ -26,7 +26,6 @@ define(
     function (TelemetryQueue, TelemetryTable, TelemetryDelegator) {
         "use strict";
 
-
         /**
          * A TelemetrySubscription tracks latest values for streaming
          * telemetry data and handles notifying interested observers.
@@ -93,10 +92,38 @@ define(
                 updatePending = false;
             }
 
+
+            // Look up metadata associated with an object's telemetry
+            function lookupMetadata(domainObject) {
+                var telemetryCapability =
+                    domainObject.getCapability("telemetry");
+                return telemetryCapability &&
+                        telemetryCapability.getMetadata();
+            }
+
+            // From a telemetry series, retrieve a single data point
+            // containing all fields for domains/ranges
+            function makeDatum(domainObject, series, index) {
+                var metadata = lookupMetadata(domainObject),
+                    result = {};
+
+                (metadata.domains || []).forEach(function (domain) {
+                    result[domain.key] =
+                        series.getDomainValue(index, domain.key);
+                });
+
+                (metadata.ranges || []).forEach(function (range) {
+                    result[range.key] =
+                        series.getRangeValue(index, range.key);
+                });
+
+                return result;
+            }
+
             // Update the latest telemetry data for a specific
             // domain object. This will notify listeners.
-            function update(domainObject, telemetry) {
-                var count = telemetry && telemetry.getPointCount();
+            function update(domainObject, series) {
+                var count = series && series.getPointCount();
 
                 // Only schedule notification if there isn't already
                 // a notification pending (and if we actually have
@@ -109,8 +136,9 @@ define(
                 // Update the latest-value table
                 if (count > 0) {
                     pool.put(domainObject.getId(), {
-                        domain: telemetry.getDomainValue(count - 1),
-                        range: telemetry.getRangeValue(count - 1)
+                        domain: series.getDomainValue(count - 1),
+                        range: series.getRangeValue(count - 1),
+                        datum: makeDatum(domainObject, series, count - 1)
                     });
                 }
             }
@@ -123,14 +151,6 @@ define(
                 return telemetryCapability.subscribe(function (telemetry) {
                     update(domainObject, telemetry);
                 });
-            }
-
-            // Look up metadata associated with an object's telemetry
-            function lookupMetadata(domainObject) {
-                var telemetryCapability =
-                    domainObject.getCapability("telemetry");
-                return telemetryCapability &&
-                        telemetryCapability.getMetadata();
             }
 
             // Prepare subscriptions to all relevant telemetry-providing
@@ -249,6 +269,16 @@ define(
                 getRangeValue: function (domainObject) {
                     var id = domainObject.getId();
                     return (latestValues[id] || {}).range;
+                },
+                /**
+                 * Get the latest telemetry datum for this domain object.
+                 *
+                 * @param {DomainObject} domainObject the object of interest
+                 * @returns {TelemetryDatum} the most recent datum
+                 */
+                getDatum: function (domainObject) {
+                    var id = domainObject.getId();
+                    return (latestValues[id] || {}).datum;
                 },
                 /**
                  * Get all telemetry-providing domain objects which are

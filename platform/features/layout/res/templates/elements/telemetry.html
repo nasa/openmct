@@ -26,13 +26,13 @@
     <span
         class="l-elem l-value l-obj-val-format"
         data-value="{{ngModel.value}}"
-        ng-class="{ 'telem-only': !ngModel.element.titled }"
+        ng-class="ngModel.cssClass"
         >
         {{ngModel.value}}
     </span>
     <span
         class="l-elem l-title"
-         ng-show="ngModel.element.titled"
+        ng-show="ngModel.element.titled"
         >
         {{ngModel.name}}
     </span>
