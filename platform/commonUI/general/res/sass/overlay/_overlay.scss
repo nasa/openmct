@@ -65,7 +65,8 @@
     
     .bottom-bar {
         top: auto; right: 0; bottom: 0; left: 0;
-        font-size: 1em;
+	    overflow: visible;
+        //font-size: 1em;
         height: $ovrFooterH;
         text-align: right;
         .btn {

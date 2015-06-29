@@ -20,10 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// Features
+/************************** FEATURES */
 $enableImageryThumbs: false; // Set to true if historical imagery thumbnails are supported
 
-// Margins, spacing, radii
+/************************** VERY INFLUENTIAL GLOBAL DIMENSIONS */
 $bodyMargin: 10px;
 $interiorMargin: 5px;
 $interiorMarginLg: $interiorMargin * 2;
@@ -33,7 +33,7 @@ $controlCr: 2px;
 $smallCr: 2px;
 $badgeW: 35px;
 
-// Colors and shading
+/************************** COLORS AND SHADING */
 $colorBodyBg: #333;
 $colorBodyFg: #999;
 $colorFooterBg: #000;
@@ -44,64 +44,68 @@ $colorAlt1: #ffc700;
 $colorAlert: #ff3c00;
 $colorPausedBg: #c56f01;
 $colorPausedFg: #fff;
-$colorCheck: $colorKey;
 $colorCreateBtn: $colorKey;
+$colorGridLines: rgba(#fff, 0.05);
+// Menu colors
+$colorMenuBg: lighten($colorBodyBg, 23%);
+$colorMenuFg: lighten($colorMenuBg, 70%);
+$colorMenuIc: lighten($colorKey, 17%);
 $colorInteriorBorder: lighten($colorBodyBg, 10%);
 $colorObjFrameBg: darken($colorBodyBg, 5%);
+// Form colors
+$colorCheck: $colorKey;
 $colorFormRequired: #ffc700;
 $colorFormValid: #33cc33;
 $colorFormError: #cc0000;
 $colorFormInvalid: #ff9900;
-$colorGridLines: rgba(#fff, 0.05);
+// Limits and staleness colors
 $colorLimitYellow: #9d7500;
 $colorLimitRed: #aa0000;
 $colorTelemFresh: #fff;
 $colorTelemStale: #888;
 $styleTelemStale: italic;
+// Bubble colors
 $colorInfoBubbleFg: #666;
 $colorInfoBubbleBg: #ddd;
 $colorThumbsBubbleFg: lighten($colorBodyFg, 10%);
 $colorThumbsBubbleBg: lighten($colorBodyBg, 10%);
-$colorLimitYellow: #9d7500;
-$colorLimitRed: #aa0000;
-$colorTelemFresh: #fff;
-$colorTelemStale: #888;
-$styleTelemState: italic;
-$colorInfoBubbleFg: #666;
-$colorInfoBubbleBg: #ddd;
-
-// Ratios
-$ltGamma: 20%;
-$btnFontSizeToH: 0.45;
-
-// User Environment
-$ueTopBarH: 24px; // Change to when breadcrumb is enabled
-$ueTopBarEditH: 30px;
-$ueTopBarBtnH: 35px;
-$ueFooterH: 20px;
-$ueColMargin: 1.5%;
-$ueAppLogoW: 105px;
-//$ueBrowseViewBarH: $ueTopBarH; // was 30px
-$ueEditToolBarH: 25px;
-$ueBrowseLeftPaneW: 25%;
-$ueEditLeftPaneW: 75%;
-
 // Overlay
 $colorOvrBlocker: rgba(black, 0.7);
 $colorOvrBg: $colorBodyBg;
 $colorOvrFg: $colorBodyFg;
-$ovrTopBarH: 60px;
-$ovrFooterH: 40px;
-
-//Items
-$ueBrowseGridItemLg: 200px;
-$ueBrowseGridItemTopBarH: 20px;
-$ueBrowseGridItemBottomBarH: 30px;
+// Items
 $colorItemBase: lighten($colorBodyBg, 5%);
 $colorItemFg: lighten($colorItemBase, 20%);
 $colorItemSelected: $colorKey;
-$itemPadLR: 5px;
+// Tabular
+$tabularColorBorder: rgba(white, 0.1);
+$tabularColorBodyBg: darken($colorBodyBg, 10%);
+$tabularColorBodyFg: lighten($tabularColorBodyBg, 40%);
+$tabularColorHeaderBg: lighten($colorBodyBg, 10%);
+$tabularColorHeaderFg: lighten($tabularColorHeaderBg, 40%);
 
+/************************** RATIOS */
+$ltGamma: 20%;
+$btnFontSizeToH: 0.45;
+
+/************************** LAYOUT */
+$ueTopBarH: 24px; // Change when breadcrumb is enabled
+$ueTopBarEditH: 30px;
+$ueTopBarBtnH: 35px;
+$ueFooterH: 25px;
+$ueColMargin: 1.5%;
+$ueAppLogoW: 105px;
+$ueEditToolBarH: 25px;
+$ueBrowseLeftPaneW: 25%;
+$ueEditLeftPaneW: 75%;
+// Overlay
+$ovrTopBarH: 60px;
+$ovrFooterH: 40px;
+// Items
+$ueBrowseGridItemLg: 200px;
+$ueBrowseGridItemTopBarH: 20px;
+$ueBrowseGridItemBottomBarH: 30px;
+$itemPadLR: 5px;
 // Tree
 $treeVCW: 10px;
 $treeTypeIconW: 20px;
@@ -109,18 +113,33 @@ $treeContextTriggerW: 20px;
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
 $colorItemTreeVCHover: $colorAlt1;
-
-//Tabular
+// Tabular
 $tabularHeaderH: 18px;
 $tabularTdPadLR: $itemPadLR;
 $tabularTdPadTB: 2px;
-$tabularColorBorder: rgba(white, 0.1);
-$tabularColorBodyBg: darken($colorBodyBg, 10%);
-$tabularColorBodyFg: lighten($tabularColorBodyBg, 40%);
-$tabularColorHeaderBg: lighten($colorBodyBg, 10%);
-$tabularColorHeaderFg: lighten($tabularColorHeaderBg, 40%);
+// Imagery
+$imageMainControlBarH: 20px;
+$imageThumbsD: 120px;
+$imageThumbsWrapperH: $imageThumbsD * 1.4;
+$imageThumbPad: 1px;
+// Ticks
+$ticksH: 25px;
+$tickLblVMargin: 3px;
+$tickLblH: 15px;
+$tickLblW: 50px;
+$tickH: $ticksH - $tickLblVMargin - $tickLblH;
+$tickW: 1px;
+// Bubbles
+$bubbleArwSize: 10px;
+$bubblePad: $interiorMargin;
+$bubbleMinW: 100px;
+$bubbleMaxW: 300px;
+// Forms
+$reqSymbolW: 15px;
+$reqSymbolM: $interiorMargin * 2;
+$reqSymbolFontSize: 0.7em;
 
-// Controls
+/************************** CONTROLS */
 $controlCr: $basicCr;
 $controlDisabledOpacity: 0.3;
 $formLabelW: 20%;
@@ -132,34 +151,9 @@ $scrollbarTrackColorBg: rgba(#000, 0.4);
 $btnStdH: 25px;
 $btnToolbarH: $btnStdH;
 
-// Paths
+/************************** PATHS */
 $dirImgs: '../images/'; // Relative to platform/css/ directory
 
-// Ticks
-$ticksH: 25px;
-$tickLblVMargin: 3px;
-$tickLblH: 15px;
-$tickLblW: 50px;
-$tickH: $ticksH - $tickLblVMargin - $tickLblH;
-$tickW: 1px;
-
-// Imagery
-$imageMainControlBarH: 20px;
-$imageThumbsD: 120px;
-$imageThumbsWrapperH: $imageThumbsD * 1.4;
-$imageThumbPad: 1px;
-
-// Bubbles
-$bubbleArwSize: 10px;
-$bubblePad: $interiorMargin;
-$bubbleMinW: 100px;
-$bubbleMaxW: 300px;
-
-
-// Timing
+/************************** TIMINGS */
 $controlFadeMs: 100ms;
 
-// Forms
-$reqSymbolW: 15px;
-$reqSymbolM: $interiorMargin * 2;
-$reqSymbolFontSize: 0.7em;

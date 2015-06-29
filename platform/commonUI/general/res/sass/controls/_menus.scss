@@ -37,7 +37,6 @@
 		ul {
 			@include menuUlReset();
 			li {
-//				@include border-radius($controlCr);
                 @include box-sizing(border-box);
 				border-top: 1px solid lighten($bg, 20%);
 				line-height: $menuLineH;
@@ -65,20 +64,39 @@
 			}
 		}
 	}
+
+	.context-menu,
+	.super-menu {
+		$bg: $colorMenuBg;
+		$fg: $colorMenuFg;
+		$ic: $colorMenuIc;
+		//font-size: 0.80rem;
+		pointer-events: auto;
+		@include containerSubtle($bg);
+		ul li {
+			padding-left: 25px;
+			a { color: $fg; }
+			.icon {
+				color: $ic;
+			}
+			.type-icon {
+				left: $interiorMargin;
+			}
+			&:hover .icon {
+				color: lighten($ic, 5%);
+			}
+		}
+	}
+
+
     .super-menu {
-        $w: 450px;
+        $w: 500px;
         $h: $w - 20;
         $plw: 50%; //$w * 0.5;
         $prw: 50%; //$w - $plw;
-	    $bg: $colorKey;
-	    $fg: $colorKeyFg;
-	    $colorMid: lighten($bg, 25%);
-	    $bgHover: $bg;
-	    @include containerSubtle(darken($bg, 15%), $fg);
+	    $fg: #fff; //lighten($colorBodyFg, 40%);
+	    $bgHover: $colorKey; //$bg;
 	    display: block;
-	    .icon {
-		    color: $colorMid;
-	    }
         width: $w;
         height: $h;
         .contents {
@@ -98,21 +116,8 @@
                 ul {
                     li {
                         @include border-radius($controlCr);
-//                        @include test(red);
+	                    padding-left: 30px;
                         border-top: none;
-	                    color: $fg;
-//                        font-size: 0.85em;
-//                        line-height: 20px;
-                        &:hover {
-                            background: $bgHover;
-	                        .icon {
-		                        color: lighten($bg, 50%);
-	                        }
-                        }
-                        .icon {
-                            @include txtShdwSubtle(0.4);
-                            left: $interiorMargin;
-                        }
                     }
                 }
             }
@@ -122,13 +127,14 @@
                 right: 0;
                 padding: $interiorMargin * 5;
                 width: $prw;
+	            .icon {
+		            color: $fg;
+	            }
             }
         }
 	    .menu-item-description {
 		    .desc-area {
-			    //            @include test(green);
 			    &.icon {
-				    //@include test(red);
 				    $h: 150px;
 				    position: relative;
 				    font-size: 8em;
@@ -153,27 +159,7 @@
 	    }
     }
     .context-menu {
-        $bg: lighten($colorBodyBg, 25%);
-        $fg: lighten($bg, 70%);
-        $ic: lighten($colorKey, 15%);
         font-size: 0.80rem;
-        pointer-events: auto;
-        &.menu {
-            @include containerSubtle($bg);
-            ul li {
-                padding-left: 30px;
-                a { color: $fg; }
-                .icon {
-                    color: $ic;
-                }
-                .type-icon {
-                    left: $interiorMargin;
-                }
-                &:hover .icon {
-                    color: lighten($ic, 5%);
-                }
-            }
-        }
     }
 }
 
