@@ -3,7 +3,6 @@
 	// Layout
 	&:hover {
 		.l-btn.control {
-			//display: inline-block;
 			opacity: 1;
 		}
 	}
@@ -20,6 +19,9 @@
 			position: absolute;
 			left: 0;
 			z-index: 1;
+			.ui-symbol.direction {
+				font-size: 0.8em;
+			}
 		}
 		&:hover .l-elem.l-value {
 			left: 20px;
@@ -35,10 +37,10 @@
 	}
 	.l-btn.control {
 		@include trans-prop-nice-fade($transTime);
-		//display: none;
 		opacity: 0;
-		font-size: 0.9em;
-		line-height: 1em;
+		font-size: 0.65em;
+		vertical-align: top;
+		//line-height: 1em;
 	}
 
 }

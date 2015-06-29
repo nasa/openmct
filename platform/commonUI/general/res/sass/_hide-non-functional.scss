@@ -31,7 +31,7 @@
 
 	.browse-area.holder {
 		// When .browse.top-bar is hidden, set the top of the browse-area holder
-		top: $interiorMargin;
+		top: $bodyMargin;
 		> .contents.split-layout {
 			// Don't pad in from top and bottom
 			//top: 0; bottom: 0;
