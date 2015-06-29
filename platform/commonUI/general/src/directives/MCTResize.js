@@ -73,6 +73,7 @@ define(
                             lastBounds.width !== bounds.width ||
                             lastBounds.height !== bounds.height) {
                         scope.$eval(attrs.mctResize, { bounds: bounds });
+                        scope.$apply(); // Trigger a digest
                         lastBounds = bounds;
                     }
                 }
@@ -85,7 +86,7 @@ define(
                         height: element[0].offsetHeight
                     });
                     if (active) {
-                        $timeout(onInterval, currentInterval());
+                        $timeout(onInterval, currentInterval(), false);
                     }
                 }
 
