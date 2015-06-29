@@ -3003,13 +3003,13 @@ label.checkbox.custom {
 /* line 5, ../sass/features/_time-display.scss */
 .l-time-display:hover .l-btn.control {
   opacity: 1; }
-/* line 10, ../sass/features/_time-display.scss */
+/* line 9, ../sass/features/_time-display.scss */
 .l-time-display .l-elem-wrapper {
   position: relative; }
-/* line 13, ../sass/features/_time-display.scss */
+/* line 12, ../sass/features/_time-display.scss */
 .l-time-display .l-elem {
   display: inline-block; }
-/* line 18, ../sass/features/_time-display.scss */
+/* line 17, ../sass/features/_time-display.scss */
 .l-time-display.l-timer .l-elem.l-value {
   -moz-transition-property: left;
   -o-transition-property: left;
@@ -3026,13 +3026,16 @@ label.checkbox.custom {
   position: absolute;
   left: 0;
   z-index: 1; }
-/* line 24, ../sass/features/_time-display.scss */
+  /* line 22, ../sass/features/_time-display.scss */
+  .l-time-display.l-timer .l-elem.l-value .ui-symbol.direction {
+    font-size: 0.8em; }
+/* line 26, ../sass/features/_time-display.scss */
 .l-time-display.l-timer:hover .l-elem.l-value {
   left: 20px; }
-/* line 31, ../sass/features/_time-display.scss */
+/* line 33, ../sass/features/_time-display.scss */
 .l-time-display .l-elem .value.active, .l-time-display .l-elem.value.active {
   color: #fff; }
-/* line 36, ../sass/features/_time-display.scss */
+/* line 38, ../sass/features/_time-display.scss */
 .l-time-display .l-btn.control {
   -moz-transition-property: visibility, opacity, background-color, border-color;
   -o-transition-property: visibility, opacity, background-color, border-color;
@@ -3047,8 +3050,8 @@ label.checkbox.custom {
   -webkit-transition-timing-function: ease-in-out;
   transition-timing-function: ease-in-out;
   opacity: 0;
-  font-size: 0.9em;
-  line-height: 1em; }
+  font-size: 0.65em;
+  vertical-align: top; }
 
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
