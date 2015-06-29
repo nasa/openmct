@@ -32,7 +32,7 @@ define(
 
         /**
          * A column which will report telemetry range values
-         * (typically, measurements.) Used by the RTScrollingListController.
+         * (typically, measurements.) Used by the RTEventListController.
          *
          * @constructor
          * @param rangeMetadata an object with the machine- and human-

@@ -46,6 +46,7 @@ define(
                 rows = [];
 
             function getTelemetryObjects() {
+                //console.log("handle.getTelemetryObjects() ", handle.getTelemetryObjects());
                 return handle ? handle.getTelemetryObjects() : [];
             }
 
@@ -65,7 +66,7 @@ define(
 
                 columns = [];
                 
-                columns.push(new DomainColumn(telemetryFormatter, telemetryHandler.getMetadata()));
+                columns.push(new DomainColumn(telemetryFormatter));
                 columns.push(new RangeColumn());
 
                 headers = columns.map(function (column) {
@@ -92,7 +93,6 @@ define(
                         return column.getValue(telemetryObject, handle).text;
                     }));
                     // Remove first rows when adding past the max rows limit
-                    //rows.splice(ROW_COUNT, Number.MAX_VALUE);
                     rows.splice(0, rows.length - ROW_COUNT);
                     lastUpdated[id] = domainValue;
                 }
