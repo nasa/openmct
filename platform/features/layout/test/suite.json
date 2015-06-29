@@ -2,6 +2,7 @@
     "FixedController",
     "FixedDragHandle",
     "FixedProxy",
+    "LayoutCompositionPolicy",
     "LayoutController",
     "LayoutDrag",
     "elements/AccessorMutator",

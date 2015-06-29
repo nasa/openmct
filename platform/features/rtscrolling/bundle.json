@@ -1,0 +1,25 @@
+{
+    "name": "Scrolling Lists",
+    "description": "Time-ordered list of latest data.",
+    "extensions": {
+        "views": [
+            {
+                "key": "scrolling",
+                "name": "Scrolling",
+                "glyph": "5",
+                "description": "Scrolling list of data values.",
+                "templateUrl": "templates/rtscrolling.html",
+                "needs": [ "telemetry" ],
+                "delegation": true
+            }
+        ],
+        "controllers": [
+            {
+                "key": "RTScrollingListController",
+                "implementation": "RTScrollingListController.js",
+                "depends": [ "$scope", "telemetryHandler", "telemetryFormatter" ]
+            }
+        ]
+    }
+
+}
