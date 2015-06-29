@@ -137,11 +137,6 @@ define(
                 );
             });
 
-            it("provides styles for cells", function () {
-                expect(controller.getCellStyles())
-                    .toEqual(jasmine.any(Array));
-            });
-
             it("subscribes when a domain object is available", function () {
                 mockScope.domainObject = mockDomainObject;
                 findWatch("domainObject")(mockDomainObject);
@@ -266,25 +261,19 @@ define(
                 expect(elements[2].value).toEqual("Formatted 31.42");
             });
 
-            it("adds grid cells to fill boundaries", function () {
-                var s1 = {
-                        width: testGrid[0] * 8,
-                        height: testGrid[1] * 4
-                    },
-                    s2 = {
-                        width: testGrid[0] * 10,
-                        height: testGrid[1] * 6
-                    };
+            it("updates elements styles when grid size changes", function () {
+                var originalLeft;
 
+                mockScope.domainObject = mockDomainObject;
                 mockScope.model = testModel;
+                findWatch("domainObject")(mockDomainObject);
+                findWatch("model.modified")(1);
                 findWatch("model.composition")(mockScope.model.composition);
-
-                // Set first bounds
-                controller.setBounds(s1);
-                expect(controller.getCellStyles().length).toEqual(32); // 8 * 4
-                // Set new bounds
-                controller.setBounds(s2);
-                expect(controller.getCellStyles().length).toEqual(60); // 10 * 6
+                findWatch("model.layoutGrid")([10, 10]);
+                originalLeft = controller.getElements()[0].style.left;
+                findWatch("model.layoutGrid")([20, 20]);
+                expect(controller.getElements()[0].style.left)
+                    .not.toEqual(originalLeft);
             });
 
             it("listens for drop events", function () {
@@ -328,6 +317,7 @@ define(
             });
 
             it("exposes its grid size", function () {
+                findWatch('model.layoutGrid')(testGrid);
                 // Template needs to be able to pass this into line
                 // elements to size SVGs appropriately
                 expect(controller.getGridSize()).toEqual(testGrid);

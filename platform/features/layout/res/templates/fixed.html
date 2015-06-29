@@ -20,14 +20,13 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="t-fixed-position l-fixed-position"
-     ng-controller="FixedController as controller"
-     mct-resize="controller.setBounds(bounds)">
+     ng-controller="FixedController as controller">
 
     <!-- Background grid -->
     <div class="l-grid-holder" ng-click="controller.clearSelection()">
-	    <div class="l-grid l-grid-x"
+        <div class="l-grid l-grid-x"
              ng-style="{ 'background-size': controller.getGridSize() [0] + 'px 100%' }"></div>
-	    <div class="l-grid l-grid-y"
+        <div class="l-grid l-grid-y"
              ng-style="{ 'background-size': '100% ' + controller.getGridSize() [1] + 'px' }"></div>
     </div>
 

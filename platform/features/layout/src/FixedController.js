@@ -27,8 +27,7 @@ define(
         "use strict";
 
         var DEFAULT_DIMENSIONS = [ 2, 1 ],
-            DEFAULT_GRID_SIZE = [64, 16],
-            DEFAULT_GRID_EXTENT = [4, 4];
+            DEFAULT_GRID_SIZE = [64, 16];
 
         /**
          * The FixedController is responsible for supporting the
@@ -40,10 +39,8 @@ define(
          */
         function FixedController($scope, $q, dialogService, telemetrySubscriber, telemetryFormatter) {
             var gridSize = DEFAULT_GRID_SIZE,
-                gridExtent = DEFAULT_GRID_EXTENT,
                 dragging,
                 subscription,
-                cellStyles = [],
                 elementProxies = [],
                 names = {}, // Cache names by ID
                 values = {}, // Cache values by ID
@@ -51,29 +48,6 @@ define(
                 handles = [],
                 moveHandle,
                 selection;
-
-            // Refresh cell styles (e.g. because grid extent changed)
-            function refreshCellStyles() {
-                var x, y;
-
-                // Clear previous styles
-                cellStyles = [];
-
-                // Update grid size from model
-                gridSize = ($scope.model || {}).layoutGrid || gridSize;
-
-                for (x = 0; x < gridExtent[0]; x += 1) {
-                    for (y = 0; y < gridExtent[1]; y += 1) {
-                        // Position blocks; subtract out border size from w/h
-                        cellStyles.push({
-                            left: x * gridSize[0] + 'px',
-                            top: y * gridSize[1] + 'px',
-                            width: gridSize[0] - 1 + 'px',
-                            height: gridSize[1] - 1 + 'px'
-                        });
-                    }
-                }
-            }
 
             // Convert from element x/y/width/height to an
             // apropriate ng-style argument, to position elements.
@@ -141,6 +115,16 @@ define(
                         element.cssClass = alarm && alarm.cssClass;
                     });
                 }
+            }
+
+            // Update element positions when grid size changes
+            function updateElementPositions(layoutGrid) {
+                // Update grid size from model
+                gridSize = layoutGrid || DEFAULT_GRID_SIZE;
+
+                elementProxies.forEach(function (elementProxy) {
+                    elementProxy.style = convertPosition(elementProxy);
+                });
             }
 
             // Update telemetry values based on new data available
@@ -284,6 +268,9 @@ define(
             // Position panes when the model field changes
             $scope.$watch("model.composition", updateComposition);
 
+            // Detect changes to grid size
+            $scope.$watch("model.layoutGrid", updateElementPositions);
+
             // Subscribe to telemetry when an object is available
             $scope.$watch("domainObject", subscribe);
 
@@ -293,19 +280,7 @@ define(
             // Position panes where they are dropped
             $scope.$on("mctDrop", handleDrop);
 
-            // Initialize styles (position etc.) for cells
-            refreshCellStyles();
-
             return {
-                /**
-                 * Get styles for all background cells, as will populate the
-                 * ng-style tag.
-                 * @memberof FixedController#
-                 * @returns {Array} cell styles
-                 */
-                getCellStyles: function () {
-                    return cellStyles;
-                },
                 /**
                  * Get the size of the grid, in pixels. The returned array
                  * is in the form `[x, y]`.
@@ -313,19 +288,6 @@ define(
                  */
                 getGridSize: function () {
                     return gridSize;
-                },
-                /**
-                 * Set the size of the viewable fixed position area.
-                 * @memberof FixedController#
-                 * @param bounds the width/height, as reported by mct-resize
-                 */
-                setBounds: function (bounds) {
-                    var w = Math.ceil(bounds.width / gridSize[0]),
-                        h = Math.ceil(bounds.height / gridSize[1]);
-                    if (w !== gridExtent[0] || h !== gridExtent[1]) {
-                        gridExtent = [w, h];
-                        refreshCellStyles();
-                    }
                 },
                 /**
                  * Get an array of elements in this panel; these are
