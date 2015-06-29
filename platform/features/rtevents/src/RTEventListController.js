@@ -65,7 +65,7 @@ define(
 
                 columns = [];
                 
-                columns.push(new DomainColumn(telemetryFormatter));
+                columns.push(new DomainColumn(telemetryFormatter, telemetryHandler.getMetadata()));
                 columns.push(new RangeColumn());
 
                 headers = columns.map(function (column) {

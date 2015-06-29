@@ -30,14 +30,19 @@ define(
         "use strict";
 
         describe("The real time event list controller", function () {
-            var mockScope,
-                //mockTelemetry,
+            var mockDomainObject,
+                mockScope,
                 mockTelemetryHandler,
                 mockHandle,
                 mockTelemetryFormatter,
+                mockColumn,
                 controller;
-
+            
             beforeEach(function () {
+                mockDomainObject = jasmine.createSpyObj(
+                    "domainObject",
+                    [ "getId", "getModel", "getCapability" ]
+                );
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     [ "$on", "$watch" ]
@@ -48,48 +53,83 @@ define(
                 );
                 mockHandle = jasmine.createSpyObj(
                     "handle",
-                    ["getDomainValue", "getRangeValue"]
+                    ["getDomainValue", "getRangeValue", "getTelemetryObjects", "unsubscribe"]
                 );
                 mockTelemetryFormatter = jasmine.createSpyObj(
                     "formatter",
                     ["formatDomainValue", "formatRangeValue"]
                 );
+                mockColumn = jasmine.createSpyObj(
+                    "column",
+                    ["getValue"]
+                );
                 
                 controller = new RTEventListController(mockScope, mockTelemetryHandler, mockTelemetryFormatter);
                 
-                // Add some data into the table
-                controller.setUpColumns([{id: 'a'}, {id: 'b'}]);
-            }
+                mockHandle.getDomainValue.andReturn("domain value");
+                mockHandle.getRangeValue.andReturn("range value");
                 
+                mockTelemetryHandler.handle.andReturn(mockHandle);
+                mockHandle.getTelemetryObjects.andReturn([mockDomainObject]);
+                
+                // Subscribe to the RT telemetry
+                // second argument of: $scope.$watch("domainObject", makeSubscription);
+                ////// TODO: Maybe use some instead of forEach?
+                mockScope.$watch.calls.forEach(function (c) {
+                    // There are two possible calls of $watch, so we need to filter 
+                    // through the calls to get the correct kind 
+                    if (c.args[0] === 'domainObject') {
+                        c.args[1]();
+                    }
+                });
+                
+                // callback, passed into telemetry handler
+                mockTelemetryHandler.handle.mostRecentCall.args[1]();
+                
+                // Update the telemetry objects
+                // second argument of: $scope.$watch(getTelemetryObjects, updateObjects);
+                mockScope.$watch.calls.forEach(function (c) {
+                    // There are two possible calls of $watch, so we need to filter 
+                    // through the calls to get the correct kind 
+                    if (c.args[0] !== 'domainObject') {
+                        c.args[1]([mockDomainObject]);
+                    }
+                });
+                
+            });
+            
+            it("provides a domain and a range column", function () {
+                // Should have two columns with these headers 
+                expect(controller.headers()).toEqual(["Time", "Message"]);
             });
 
             it("listens for telemetry data updates", function () {
-                expect(mockScope.$on).toHaveBeenCalledWith(
-                    "telemetryUpdate",
-                    jasmine.any(Function)
-                );
-            });
-
-            it("watches for telemetry controller changes", function () {
+                // Of the two possible $watch calls, this corresponds to 
+                // $scope.$watch(getTelemetryObjects, updateObjects);
                 expect(mockScope.$watch).toHaveBeenCalledWith(
-                    "telemetry",
+                    jasmine.any(Function),
                     jasmine.any(Function)
                 );
             });
             
-            it("provides a domain and a range column", function () {
-                // Should have two columns
-                expect(controller.rows()[0].length).toEqual([]);
-                
-                // And they should have these headers 
-                expect(controller.headers()).toEqual(["Time", "Message"]);
+            it("makes telemetry subscriptions", function () {
+                // Of the two possible $watch calls, this corresponds to 
+                // $scope.$watch("domainObject", makeSubscription);
+                expect(mockScope.$watch).toHaveBeenCalledWith(
+                    "domainObject",
+                    jasmine.any(Function)
+                );
             });
-
-            it("does not throw if telemetry controller is undefined", function () {
-                // Just a general robustness check
-                mockScope.telemetry = undefined;
-                expect(mockScope.$watch.mostRecentCall.args[1])
-                    .not.toThrow();
+            
+            it("releases telemetry subscriptions on destruction", function () {
+                // Call the second argument of
+                // $scope.$on("$destroy", releaseSubscription);
+                mockScope.$on.mostRecentCall.args[1]();
+                
+                expect(mockScope.$on).toHaveBeenCalledWith(
+                    "$destroy",
+                    jasmine.any(Function)
+                );
             });
         });
     }
