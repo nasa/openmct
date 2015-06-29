@@ -29,51 +29,54 @@ define(
     function (RTMessagesViewPolicy) {
         "use strict";
 
-        describe("The real time messages view policy", function () {
-            var mockDomainObject,
+        describe("The real time Messages view policy", function () {
+            var testView,
+                mockDomainObject,
                 mockTelemetry,
-                telemetryType,
-                testType,
-                testView,
                 testMetadata,
                 policy;
 
             beforeEach(function () {
-                testMetadata = {ranges};
-                
+                testView = { key: "rtmessages" };
+                testMetadata = {};
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
-                    ['getModel', 'getCapability']
+                    ['getId', 'getModel', 'getCapability']
                 );
                 mockTelemetry = jasmine.createSpyObj(
                     'telemetry',
                     ['getMetadata']
                 );
-                
-                mockDomainObject.getModel.andCallFake(function (c) {
-                    return {type: testType};
-                });
                 mockDomainObject.getCapability.andCallFake(function (c) {
                     return c === 'telemetry' ? mockTelemetry : undefined;
                 });
-                mockTelemetry.getMetadata = testMetadata;
-                
+                mockTelemetry.getMetadata.andReturn(testMetadata);
+
                 policy = new RTMessagesViewPolicy();
             });
-            
-            it("disallows the message view for objects without string telemetry", function () {
-                testMetadata.ranges = [ { format: 'notString' } ];
-                expect(policy.allow({ key: 'messages' }, mockDomainObject)).toBeFalsy();
+
+            it("allows the real time messages view for domain objects with string telemetry", function () {
+                testMetadata.ranges = [ { key: "foo", format: "string" } ];
+                expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
             });
 
-            it("allows the message view for objects with string telemetry", function () {
-                testMetadata.ranges = [ { format: 'string' } ];
-                expect(policy.allow({ key: 'messages' }, mockDomainObject)).toBeTruthy();
+            it("disallows the real time messages view for domain objects without string telemetry", function () {
+                testMetadata.ranges = [ { key: "foo", format: "somethingElse" } ];
+                expect(policy.allow(testView, mockDomainObject)).toBeFalsy();
             });
 
-            it("returns true when the current view is not the Messages view", function () {
-                expect(policy.allow({ key: 'notMessages' }, mockDomainObject)).toBeTruthy();
+            it("disallows the real time messages view for domain objects without telemetry", function () {
+                testMetadata.ranges = [ { key: "foo", format: "string" } ];
+                mockDomainObject.getCapability.andReturn(undefined);
+                expect(policy.allow(testView, mockDomainObject)).toBeFalsy();
             });
+
+            it("allows other views", function () {
+                testView.key = "somethingElse";
+                testMetadata.ranges = [ { key: "foo", format: "somethingElse" } ];
+                expect(policy.allow(testView, mockDomainObject)).toBeTruthy();
+            });
+
         });
     }
 );

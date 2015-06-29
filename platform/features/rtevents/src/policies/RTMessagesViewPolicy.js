@@ -30,7 +30,7 @@ define(
         "use strict";
 
         /**
-         * Policy controlling when the Messages view should be avaliable.
+         * Policy controlling when the real time Messages view should be avaliable.
          * @constructor
          */
         function RTMessagesViewPolicy() {
@@ -39,7 +39,6 @@ define(
                 var telemetry = domainObject &&
                         domainObject.getCapability('telemetry'),
                     metadata = telemetry ? telemetry.getMetadata() : {},
-                    data = telemetry ? telemetry.requestData() : {},
                     ranges = metadata.ranges || [];
                 
                 return ranges.some(function (range) {
