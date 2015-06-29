@@ -2268,18 +2268,43 @@ label.checkbox.custom {
     color: #757575; }
   /* line 176, ../sass/_mixins.scss */
   .slider .knob:before {
+    -moz-transition-property: "border-color";
+    -o-transition-property: "border-color";
+    -webkit-transition-property: "border-color";
+    transition-property: "border-color";
+    -moz-transition-duration: 0.75s;
+    -o-transition-duration: 0.75s;
+    -webkit-transition-duration: 0.75s;
+    transition-duration: 0.75s;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
     content: '';
     display: block;
     height: auto;
+    pointer-events: none;
     position: absolute;
     z-index: 2;
     border-left: 1px solid rgba(0, 0, 0, 0.3);
     left: 2px;
     bottom: 5px;
     top: 5px; }
-  /* line 197, ../sass/_mixins.scss */
+  /* line 198, ../sass/_mixins.scss */
   .slider .knob:not(.disabled):hover:before {
-    border-color: rgba(0, 153, 204, 0.9); }
+    -moz-transition-property: "border-color";
+    -o-transition-property: "border-color";
+    -webkit-transition-property: "border-color";
+    transition-property: "border-color";
+    -moz-transition-duration: 50ms;
+    -o-transition-duration: 50ms;
+    -webkit-transition-duration: 50ms;
+    transition-duration: 50ms;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    border-color: #0099cc; }
   /* line 409, ../sass/controls/_controls.scss */
   .slider .knob:before {
     top: 1px;
@@ -2444,7 +2469,7 @@ label.checkbox.custom {
     .menu-element .menu ul {
       margin: 0;
       padding: 0; }
-      /* line 264, ../sass/_mixins.scss */
+      /* line 266, ../sass/_mixins.scss */
       .menu-element .menu ul li {
         list-style-type: none;
         margin: 0;
@@ -4523,18 +4548,43 @@ input[type="text"] {
     height: 5px; }
     /* line 176, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:before {
+      -moz-transition-property: "border-color";
+      -o-transition-property: "border-color";
+      -webkit-transition-property: "border-color";
+      transition-property: "border-color";
+      -moz-transition-duration: 0.75s;
+      -o-transition-duration: 0.75s;
+      -webkit-transition-duration: 0.75s;
+      transition-duration: 0.75s;
+      -moz-transition-timing-function: ease-in-out;
+      -o-transition-timing-function: ease-in-out;
+      -webkit-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out;
       content: '';
       display: block;
       height: auto;
+      pointer-events: none;
       position: absolute;
       z-index: 2;
       border-top: 1px dotted #1a1a1a;
       top: 2px;
       left: 5px;
       right: 5px; }
-    /* line 197, ../sass/_mixins.scss */
+    /* line 198, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:not(.disabled):hover:before {
-      border-color: rgba(0, 153, 204, 0.9); }
+      -moz-transition-property: "border-color";
+      -o-transition-property: "border-color";
+      -webkit-transition-property: "border-color";
+      transition-property: "border-color";
+      -moz-transition-duration: 50ms;
+      -o-transition-duration: 50ms;
+      -webkit-transition-duration: 50ms;
+      transition-duration: 50ms;
+      -moz-transition-timing-function: ease-in-out;
+      -o-transition-timing-function: ease-in-out;
+      -webkit-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out;
+      border-color: #0099cc; }
 /* line 63, ../sass/helpers/_splitter.scss */
 .split-layout.vertical .pane {
   top: 0;
@@ -4552,18 +4602,43 @@ input[type="text"] {
   width: 5px; }
   /* line 176, ../sass/_mixins.scss */
   .split-layout.vertical > .splitter:before {
+    -moz-transition-property: "border-color";
+    -o-transition-property: "border-color";
+    -webkit-transition-property: "border-color";
+    transition-property: "border-color";
+    -moz-transition-duration: 0.75s;
+    -o-transition-duration: 0.75s;
+    -webkit-transition-duration: 0.75s;
+    transition-duration: 0.75s;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
     content: '';
     display: block;
     height: auto;
+    pointer-events: none;
     position: absolute;
     z-index: 2;
     border-left: 1px dotted #1a1a1a;
     left: 2px;
     bottom: 5px;
     top: 5px; }
-  /* line 197, ../sass/_mixins.scss */
+  /* line 198, ../sass/_mixins.scss */
   .split-layout.vertical > .splitter:not(.disabled):hover:before {
-    border-color: rgba(0, 153, 204, 0.9); }
+    -moz-transition-property: "border-color";
+    -o-transition-property: "border-color";
+    -webkit-transition-property: "border-color";
+    transition-property: "border-color";
+    -moz-transition-duration: 50ms;
+    -o-transition-duration: 50ms;
+    -webkit-transition-duration: 50ms;
+    transition-duration: 50ms;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    border-color: #0099cc; }
 
 /* line 86, ../sass/helpers/_splitter.scss */
 .browse-area .splitter {

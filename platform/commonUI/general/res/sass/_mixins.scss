@@ -174,10 +174,11 @@
 
 @mixin controlGrippy($b, $direction: horizontal, $w: 1px, $style: dotted) {
 	&:before {
-		// Grippy
+		@include trans-prop-nice("border-color",0.75s);
 		content: '';
 		display: block;
 		height: auto;
+		pointer-events: none;
 		position: absolute;
 		z-index: 2;
 
@@ -195,7 +196,8 @@
 		}
 	}
 	&:not(.disabled):hover:before {
-		border-color: rgba($colorKey, 0.9);
+		@include trans-prop-nice("border-color",50ms);
+		border-color: $colorKey;
 	}
 }
 
