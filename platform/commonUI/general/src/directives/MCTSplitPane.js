@@ -155,7 +155,7 @@ define(
                 // Enforce minimum/maximum positions
                 function enforceExtrema() {
                     position = Math.max(position, 0);
-                    position = Math.min(position, $element[0].offsetWidth);
+                    position = Math.min(position, getSize($element[0]));
                 }
 
                 // Getter-setter for the pixel offset of the splitter,
