@@ -107,11 +107,6 @@ define(
                     positionParsed = $parse($attrs.position),
                     position; // Start undefined, until explicitly set
 
-                // Create a calc CSS expression
-                function calcSum(a, b) {
-                    return "calc(" + a + " + " + b + ")";
-                }
-
                 // Get relevant size (height or width) of DOM element
                 function getSize(domElement) {
                     return (anchor.orientation === 'vertical' ?
