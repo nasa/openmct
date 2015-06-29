@@ -47,6 +47,8 @@ define(
                  * @returns {string} the title to display
                  */
                 getTitle: function () {
+                    // At the moment there does not appear to be a way to get the 
+                    // column's title through metadata for real time telemetry
                     return "Time";
                 },
                 /**
