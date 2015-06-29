@@ -65,7 +65,7 @@ define(
             function makeMockDomainObject(id) {
                 var mockObject = jasmine.createSpyObj(
                     'domainObject-' + id,
-                    [ 'getId', 'getModel' ]
+                    [ 'getId', 'getModel', 'getCapability' ]
                 );
                 mockObject.getId.andReturn(id);
                 mockObject.getModel.andReturn({ name: "Point " + id});
@@ -96,7 +96,7 @@ define(
                 );
                 mockSubscription = jasmine.createSpyObj(
                     'subscription',
-                    [ 'unsubscribe', 'getTelemetryObjects', 'getRangeValue' ]
+                    [ 'unsubscribe', 'getTelemetryObjects', 'getRangeValue', 'getDatum' ]
                 );
 
                 testGrid = [ 123, 456 ];

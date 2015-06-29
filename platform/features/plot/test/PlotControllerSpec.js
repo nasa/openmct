@@ -66,6 +66,7 @@ define(
                         "getMetadata",
                         "getDomainValue",
                         "getRangeValue",
+                        "getDatum",
                         "request"
                     ]
                 );
