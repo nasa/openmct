@@ -50,9 +50,7 @@
 	&.frame-template {
 		// Hide the view switcher by default when it's in an element that's in a frame context
 		// Frame template is used because we need to target the lowest nested frame
-		// This has the effect of hiding the view switcher in nested frames in edit mode, which is desirable currently (as it's non-functional)
 		.view-switcher {
-			//display: none;
 			opacity: 0;
 			z-index: 10;
 		}
