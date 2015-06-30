@@ -35,20 +35,22 @@ define(
          * menu. 
          * @constructor
          */
-        function MenuArrowController($rootScope, $scope) {
+        function MenuArrowController($scope) {
             
-            function contextMenu() {
+            function showMenu(event) {
                 console.log('contextMenu() called');
                 //console.log('editor? ', $scope.domainObject.hasCapability('editor'));
-                
+                /*
                 if (true || $scope.domainObject.hasCapability('editor')) {
-                    //$rootScope.$broadcast('contextmenu');
-                    $scope.$emit('contextmenu');
+                    $scope.$emit('contextmenu', event);
                 }
+                */
+                
+                $scope.domainObject.getCapability('action').perform({key: 'contextMenu', event: event});
             }
             
             return {
-                contextMenu: contextMenu
+                showMenu: showMenu
             };
         }
 

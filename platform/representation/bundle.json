@@ -49,6 +49,13 @@
                 "implementation": "services/DndService.js",
                 "depends": [ "$log" ]
             }
+        ],
+        "actions": [
+            {
+                "key": "contextMenu",
+                "implementation": "actions/ContextMenuAction.js",
+                "depends": [ "$compile", "$document", "$window", "$rootScope" ]
+            }
         ]
     }
 }
