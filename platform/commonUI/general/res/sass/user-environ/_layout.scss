@@ -199,6 +199,8 @@
 .pane {
     position: absolute;
     &.treeview {
+        min-width: 150px;
+        max-width: 50%;
 	    .create-btn-holder {
 		    bottom: auto; top: 0;
 		    height: $ueTopBarH;
@@ -210,6 +212,7 @@
 	    .tree-holder {
 		    overflow: auto;
 		    top: $ueTopBarH + $interiorMarginLg;
+            padding-right: $interiorMargin;
 	    }
     }
     &.items {
@@ -257,7 +260,7 @@
 			&:first-child {
 				margin-left: 0;
 				.holder {
-					right: $interiorMargin;
+					right: $interiorMarginSm;
 				}
 			}
 		}
