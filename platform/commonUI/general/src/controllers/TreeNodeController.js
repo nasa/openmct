@@ -139,20 +139,6 @@ define(
                 checkSelection();
             }
             
-            // If we are in edit mode, then a left-click on the 
-            // down arrow next to a domain object's title should display
-            // a context menu
-            function contextMenu() {
-                //console.log('contextMenu() called');
-                
-                if ($scope.domainObject.hasCapability('editor') || true) {
-                    //console.log('contextMenu() believes in edit mode');
-                    
-                    $rootScope.$broadcast('leftContextual');
-                    console.log('contextMenu() broadcasted from root');
-                }
-            }
-
             // Listen for changes which will effect display parameters
             $scope.$watch("ngModel.selectedObject", setSelection);
             $scope.$watch("domainObject", checkSelection);
@@ -180,13 +166,7 @@ define(
                  */
                 isSelected: function () {
                     return isSelected;
-                }, 
-                /**
-                 * This method should be called when the down arrow next 
-                 * to a domain object's title is (left) clicked. If in edit
-                 * mode, this activates a context menu. 
-                 */
-                contextMenu: contextMenu
+                }
             };
         }
 
