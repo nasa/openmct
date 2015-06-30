@@ -2201,6 +2201,13 @@ label.checkbox.custom {
       height: auto; }
 
 /* line 351, ../sass/controls/_controls.scss */
+.context-available {
+  color: #0099cc; }
+  /* line 355, ../sass/controls/_controls.scss */
+  .context-available:hover {
+    color: deepskyblue; }
+
+/* line 360, ../sass/controls/_controls.scss */
 .view-switcher {
   -moz-transition-property: visibility, opacity, background-color, border-color;
   -o-transition-property: visibility, opacity, background-color, border-color;
@@ -2216,30 +2223,37 @@ label.checkbox.custom {
   transition-timing-function: ease-in-out; }
 
 /******************************************************** OBJECT-HEADER */
-/* line 356, ../sass/controls/_controls.scss */
+/* line 365, ../sass/controls/_controls.scss */
 .object-header {
   display: inline-block;
   font-size: 1em; }
-  /* line 360, ../sass/controls/_controls.scss */
+  /* line 369, ../sass/controls/_controls.scss */
   .object-header .label .title-label {
     color: white; }
-  /* line 363, ../sass/controls/_controls.scss */
+  /* line 372, ../sass/controls/_controls.scss */
   .object-header .label .type-icon {
     font-size: 120%;
     margin-right: 5px;
     vertical-align: middle; }
+  /* line 377, ../sass/controls/_controls.scss */
+  .object-header .label .context-available {
+    opacity: 0;
+    font-size: 0.8em; }
+  /* line 382, ../sass/controls/_controls.scss */
+  .object-header .label:hover .context-available {
+    opacity: 1; }
 
-/* line 373, ../sass/controls/_controls.scss */
+/* line 391, ../sass/controls/_controls.scss */
 .top-bar .object-header,
 .object-browse-bar .object-header {
   font-size: 1.1em; }
-  /* line 375, ../sass/controls/_controls.scss */
+  /* line 393, ../sass/controls/_controls.scss */
   .top-bar .object-header span,
   .object-browse-bar .object-header span {
     display: inline-block; }
 
 /******************************************************** SLIDERS */
-/* line 387, ../sass/controls/_controls.scss */
+/* line 405, ../sass/controls/_controls.scss */
 .slider .slot {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -2260,7 +2274,7 @@ label.checkbox.custom {
   right: 0;
   bottom: auto;
   left: 0; }
-/* line 398, ../sass/controls/_controls.scss */
+/* line 416, ../sass/controls/_controls.scss */
 .slider .knob {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzUyNTI1MiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzQ1NDU0NSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background-size: 100%;
@@ -2343,12 +2357,12 @@ label.checkbox.custom {
     -webkit-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
     border-color: #0099cc; }
-  /* line 409, ../sass/controls/_controls.scss */
+  /* line 427, ../sass/controls/_controls.scss */
   .slider .knob:before {
     top: 1px;
     bottom: 3px;
     left: 5px; }
-/* line 416, ../sass/controls/_controls.scss */
+/* line 434, ../sass/controls/_controls.scss */
 .slider .range {
   background: rgba(0, 153, 204, 0.6);
   cursor: ew-resize;
@@ -2359,12 +2373,12 @@ label.checkbox.custom {
   left: auto;
   height: auto;
   width: auto; }
-  /* line 426, ../sass/controls/_controls.scss */
+  /* line 444, ../sass/controls/_controls.scss */
   .slider .range:hover {
     background: rgba(0, 153, 204, 0.7); }
 
 /******************************************************** BROWSER ELEMENTS */
-/* line 434, ../sass/controls/_controls.scss */
+/* line 452, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -2381,7 +2395,7 @@ label.checkbox.custom {
   height: 10px;
   width: 10px; }
 
-/* line 440, ../sass/controls/_controls.scss */
+/* line 458, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar-thumb {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzY2NjY2NiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background-size: 100%;
@@ -2399,7 +2413,7 @@ label.checkbox.custom {
   -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
   box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
   border-top: 1px solid gray; }
-  /* line 447, ../sass/controls/_controls.scss */
+  /* line 465, ../sass/controls/_controls.scss */
   ::-webkit-scrollbar-thumb:hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzgwODA4MCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzczNzM3MyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -2408,7 +2422,7 @@ label.checkbox.custom {
     background-image: -webkit-linear-gradient(#808080, #737373 20px);
     background-image: linear-gradient(#808080, #737373 20px); }
 
-/* line 452, ../sass/controls/_controls.scss */
+/* line 470, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar-corner {
   background: rgba(0, 0, 0, 0.4); }
 

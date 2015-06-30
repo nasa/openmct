@@ -348,6 +348,15 @@ label.checkbox.custom {
 	}
 }
 
+.context-available {
+	$c: $colorKey;
+	color: $c;
+	//padding: 0 5px;
+	&:hover {
+		color: lighten($c, 10%);
+	}
+}
+
 .view-switcher {
 	@include trans-prop-nice-fade($controlFadeMs);
 }
@@ -364,6 +373,15 @@ label.checkbox.custom {
 			font-size: 120%;
 			margin-right: $interiorMargin;
 			vertical-align: middle;
+		}
+		.context-available {
+			opacity: 0;
+			font-size: 0.8em;
+		}
+		&:hover {
+			.context-available {
+				opacity: 1;
+			}
 		}
 	}
 }
