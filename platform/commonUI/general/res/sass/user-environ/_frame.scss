@@ -27,7 +27,7 @@
 		border: 1px solid $bc;
 		&:hover {
 			border-color: lighten($bc, 10%);
-			z-index: 2;
+			//z-index: 2;
 		}
 		.contents {
 //			overflow: hidden;

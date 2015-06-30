@@ -92,7 +92,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -113,38 +113,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -1256,26 +1256,37 @@ mct-container {
     .tabular tr td, .tabular tr .td, .tabular .tr td, .tabular .tr .td {
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       min-width: 110px;
+      color: #fff;
       padding: 2px 5px;
       vertical-align: top; }
-      /* line 107, ../sass/lists/_tabular.scss */
+      /* line 108, ../sass/lists/_tabular.scss */
       .tabular tr td.numeric, .tabular tr .td.numeric, .tabular .tr td.numeric, .tabular .tr .td.numeric {
         text-align: right; }
-  /* line 113, ../sass/lists/_tabular.scss */
+      /* line 111, ../sass/lists/_tabular.scss */
+      .tabular tr td.s-cell-type-value, .tabular tr .td.s-cell-type-value, .tabular .tr td.s-cell-type-value, .tabular .tr .td.s-cell-type-value {
+        text-align: right; }
+        /* line 113, ../sass/lists/_tabular.scss */
+        .tabular tr td.s-cell-type-value .l-cell-contents, .tabular tr .td.s-cell-type-value .l-cell-contents, .tabular .tr td.s-cell-type-value .l-cell-contents, .tabular .tr .td.s-cell-type-value .l-cell-contents {
+          -moz-border-radius: 2px;
+          -webkit-border-radius: 2px;
+          border-radius: 2px;
+          padding-left: 5px;
+          padding-right: 5px; }
+  /* line 122, ../sass/lists/_tabular.scss */
   .tabular.filterable tbody, .tabular.filterable .tbody {
     top: 36px; }
-  /* line 118, ../sass/lists/_tabular.scss */
+  /* line 127, ../sass/lists/_tabular.scss */
   .tabular.fixed-header {
     height: 100%; }
-    /* line 120, ../sass/lists/_tabular.scss */
+    /* line 129, ../sass/lists/_tabular.scss */
     .tabular.fixed-header thead, .tabular.fixed-header .thead,
     .tabular.fixed-header tbody tr, .tabular.fixed-header .tbody .tr {
       display: table;
       table-layout: fixed; }
-    /* line 125, ../sass/lists/_tabular.scss */
+    /* line 134, ../sass/lists/_tabular.scss */
     .tabular.fixed-header thead, .tabular.fixed-header .thead {
       width: calc(100% - 10px); }
-    /* line 128, ../sass/lists/_tabular.scss */
+    /* line 137, ../sass/lists/_tabular.scss */
     .tabular.fixed-header tbody, .tabular.fixed-header .tbody {
       overflow: hidden;
       position: absolute;
@@ -1288,7 +1299,7 @@ mct-container {
       top: 18px;
       display: block;
       overflow-y: scroll; }
-  /* line 136, ../sass/lists/_tabular.scss */
+  /* line 145, ../sass/lists/_tabular.scss */
   .tabular.t-event-messages td, .tabular.t-event-messages .td {
     min-width: 150px; }
 
@@ -2852,8 +2863,7 @@ label.checkbox.custom {
   -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
   box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
-  border-color: #0099cc;
-  z-index: 2; }
+  border-color: #0099cc; }
   /* line 93, ../sass/edit/_editor.scss */
   .edit-main .frame.child-frame.panel:hover .view-switcher {
     opacity: 1; }
@@ -4105,8 +4115,7 @@ input[type="text"] {
   border: 1px solid #4d4d4d; }
   /* line 28, ../sass/user-environ/_frame.scss */
   .frame.child-frame.panel:hover {
-    border-color: #666666;
-    z-index: 2; }
+    border-color: #666666; }
 /* line 36, ../sass/user-environ/_frame.scss */
 .frame > .object-header.abs, .btn-menu .frame > span.object-header.l-click-area {
   font-size: 0.75em;

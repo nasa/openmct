@@ -89,7 +89,7 @@
         &:hover {
             @include boxShdwLarge();
             border-color: $colorKey;
-            z-index: 2;
+            //z-index: 2;
             .view-switcher {
                 opacity: 1;
             }
