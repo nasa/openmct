@@ -2532,29 +2532,24 @@ label.checkbox.custom {
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
         border-top: 1px solid #737373;
+        color: #d9d9d9;
         line-height: 1.4rem;
         padding: 3px 10px 3px 30px;
         white-space: nowrap; }
-        /* line 45, ../sass/controls/_menus.scss */
+        /* line 46, ../sass/controls/_menus.scss */
         .menu-element .menu ul li:first-child {
           border: none; }
-        /* line 48, ../sass/controls/_menus.scss */
+        /* line 49, ../sass/controls/_menus.scss */
         .menu-element .menu ul li:hover {
-          background: #737373; }
-          /* line 50, ../sass/controls/_menus.scss */
-          .menu-element .menu ul li:hover a {
-            color: #fff; }
-          /* line 53, ../sass/controls/_menus.scss */
+          background: #737373;
+          color: #fff; }
+          /* line 55, ../sass/controls/_menus.scss */
           .menu-element .menu ul li:hover .icon {
             color: #33ccff; }
-        /* line 57, ../sass/controls/_menus.scss */
-        .menu-element .menu ul li a {
-          color: #d9d9d9;
-          display: block; }
-        /* line 61, ../sass/controls/_menus.scss */
+        /* line 63, ../sass/controls/_menus.scss */
         .menu-element .menu ul li .type-icon {
           left: 10px; }
-  /* line 68, ../sass/controls/_menus.scss */
+  /* line 70, ../sass/controls/_menus.scss */
   .menu-element .context-menu,
   .menu-element .super-menu {
     pointer-events: auto;
@@ -2581,32 +2576,32 @@ label.checkbox.custom {
     .menu-element .context-menu.btn-menu .invoke-menu,
     .menu-element .super-menu.btn-menu .invoke-menu {
       color: #b0b0b0; }
-    /* line 76, ../sass/controls/_menus.scss */
+    /* line 78, ../sass/controls/_menus.scss */
     .menu-element .context-menu ul li,
     .menu-element .super-menu ul li {
       padding-left: 25px; }
-      /* line 78, ../sass/controls/_menus.scss */
+      /* line 80, ../sass/controls/_menus.scss */
       .menu-element .context-menu ul li a,
       .menu-element .super-menu ul li a {
         color: white; }
-      /* line 79, ../sass/controls/_menus.scss */
+      /* line 81, ../sass/controls/_menus.scss */
       .menu-element .context-menu ul li .icon,
       .menu-element .super-menu ul li .icon {
         color: #24c8ff; }
-      /* line 82, ../sass/controls/_menus.scss */
+      /* line 84, ../sass/controls/_menus.scss */
       .menu-element .context-menu ul li .type-icon,
       .menu-element .super-menu ul li .type-icon {
         left: 5px; }
-      /* line 85, ../sass/controls/_menus.scss */
+      /* line 87, ../sass/controls/_menus.scss */
       .menu-element .context-menu ul li:hover .icon,
       .menu-element .super-menu ul li:hover .icon {
         color: #3dcfff; }
-  /* line 92, ../sass/controls/_menus.scss */
+  /* line 94, ../sass/controls/_menus.scss */
   .menu-element .super-menu {
     display: block;
     width: 500px;
     height: 480px; }
-    /* line 102, ../sass/controls/_menus.scss */
+    /* line 104, ../sass/controls/_menus.scss */
     .menu-element .super-menu .contents {
       overflow: hidden;
       position: absolute;
@@ -2616,12 +2611,12 @@ label.checkbox.custom {
       left: 5px;
       width: auto;
       height: auto; }
-    /* line 105, ../sass/controls/_menus.scss */
+    /* line 107, ../sass/controls/_menus.scss */
     .menu-element .super-menu .pane {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box; }
-      /* line 107, ../sass/controls/_menus.scss */
+      /* line 109, ../sass/controls/_menus.scss */
       .menu-element .super-menu .pane.left {
         border-right: 1px solid rgba(255, 255, 255, 0.2);
         left: 0;
@@ -2630,23 +2625,23 @@ label.checkbox.custom {
         width: 50%;
         overflow-x: hidden;
         overflow-y: auto; }
-        /* line 117, ../sass/controls/_menus.scss */
+        /* line 119, ../sass/controls/_menus.scss */
         .menu-element .super-menu .pane.left ul li {
           -moz-border-radius: 2px;
           -webkit-border-radius: 2px;
           border-radius: 2px;
           padding-left: 30px;
           border-top: none; }
-      /* line 124, ../sass/controls/_menus.scss */
+      /* line 126, ../sass/controls/_menus.scss */
       .menu-element .super-menu .pane.right {
         left: auto;
         right: 0;
         padding: 25px;
         width: 50%; }
-        /* line 130, ../sass/controls/_menus.scss */
+        /* line 132, ../sass/controls/_menus.scss */
         .menu-element .super-menu .pane.right .icon {
           color: #fff; }
-    /* line 137, ../sass/controls/_menus.scss */
+    /* line 139, ../sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.icon {
       position: relative;
       font-size: 8em;
@@ -2655,40 +2650,40 @@ label.checkbox.custom {
       line-height: 150px;
       margin-bottom: 25px;
       text-align: center; }
-    /* line 147, ../sass/controls/_menus.scss */
+    /* line 149, ../sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.title {
       color: #fff;
       font-size: 1.2em;
       margin-bottom: 0.5em; }
-    /* line 152, ../sass/controls/_menus.scss */
+    /* line 154, ../sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.description {
       color: #fff;
       font-size: 0.8em;
       line-height: 1.5em; }
-  /* line 161, ../sass/controls/_menus.scss */
+  /* line 163, ../sass/controls/_menus.scss */
   .menu-element .context-menu {
     font-size: 0.80rem; }
 
-/* line 166, ../sass/controls/_menus.scss */
+/* line 168, ../sass/controls/_menus.scss */
 .context-menu-holder {
   pointer-events: none;
   position: absolute;
   height: 200px;
   width: 170px;
   z-index: 70; }
-  /* line 172, ../sass/controls/_menus.scss */
+  /* line 174, ../sass/controls/_menus.scss */
   .context-menu-holder .context-menu-wrapper {
     position: absolute;
     height: 100%;
     width: 100%; }
-  /* line 179, ../sass/controls/_menus.scss */
+  /* line 181, ../sass/controls/_menus.scss */
   .context-menu-holder.go-left .context-menu {
     right: 0; }
-  /* line 180, ../sass/controls/_menus.scss */
+  /* line 182, ../sass/controls/_menus.scss */
   .context-menu-holder.go-up .context-menu {
     bottom: 0; }
 
-/* line 183, ../sass/controls/_menus.scss */
+/* line 185, ../sass/controls/_menus.scss */
 .btn-bar.right .menu,
 .menus-to-left .menu {
   left: auto;
