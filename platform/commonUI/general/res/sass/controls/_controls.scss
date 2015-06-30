@@ -182,7 +182,7 @@
 	display: inline-block;
 	font-size: $h * $btnFontSizeToH;
 	height: $h;
-	line-height: $h;
+	line-height: $h - 3;
 	.icon:not(.invoke-menu) {
 		//		position: relative;
 		//		top: -0.04em;
