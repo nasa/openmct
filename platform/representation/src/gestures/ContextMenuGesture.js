@@ -61,8 +61,7 @@ define(
                     goUp = eventCoors[1] + menuDim[1] > winDim[1],
                     menu;
                 
-                //console.log('in showMenu() in ContextMenuGesture');
-                //console.log('domainObject is ', domainObject);
+                console.log('in showMenu() in ContextMenuGesture');
                 
                 // Remove the context menu
                 function dismiss() {
@@ -92,6 +91,8 @@ define(
                     "context-menu-holder": true
                 };
 
+                console.log(scope);
+                
                 // Create the context menu
                 menu = $compile(MENU_TEMPLATE)(scope);
 
@@ -107,7 +108,10 @@ define(
 
             // When context menu event occurs, show object actions instead
             element.on('contextmenu', showMenu);
-            $rootScope.$on('leftContextual', showMenu);
+            
+            // This allows actions besides only right-clicks to trigger a 
+            // context menu 
+            $rootScope.$on('contextmenu', showMenu);
 
             return {
                 /**
