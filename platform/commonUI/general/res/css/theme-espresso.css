@@ -612,16 +612,16 @@ mct-container {
     padding: 5px 0; }
 
 /* line 201, ../sass/user-environ/_layout.scss */
-.browse-mode .split-layout .pane.left {
+.browse-mode .split-layout .split-pane-component.pane.left {
   min-width: 150px;
   max-width: 50%; }
 
 /* line 210, ../sass/user-environ/_layout.scss */
-.edit-mode .split-layout .pane.right {
+.edit-mode .split-layout .split-pane-component.pane.right {
   min-width: 150px;
   max-width: 50%; }
   /* line 213, ../sass/user-environ/_layout.scss */
-  .edit-mode .split-layout .pane.right .pane.bottom {
+  .edit-mode .split-layout .split-pane-component.pane.right .split-pane-component.pane.bottom {
     min-height: 50px;
     max-height: 80%; }
 
@@ -4985,14 +4985,14 @@ input[type="text"] {
   width: 100%; }
 
 /* line 5, ../sass/_initialization.scss */
-.browse-mode .split-layout .pane.left {
+.browse-mode .split-layout .split-pane-component.pane.left {
   width: 15%; }
 
 /* line 13, ../sass/_initialization.scss */
-.edit-mode .split-layout .pane.right {
+.edit-mode .split-layout .split-pane-component.pane.right {
   width: 15%; }
   /* line 15, ../sass/_initialization.scss */
-  .edit-mode .split-layout .pane.right .pane.bottom {
+  .edit-mode .split-layout .split-pane-component.pane.right .pane.bottom {
     height: 30%; }
 
 /*****************************************************************************

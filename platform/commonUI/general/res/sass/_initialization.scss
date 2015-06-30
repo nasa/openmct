@@ -2,7 +2,7 @@
 
 .browse-mode {
     .split-layout {
-        .pane.left {
+        .split-pane-component.pane.left {
             width: 15%;
         }
     }
@@ -10,7 +10,7 @@
 
 .edit-mode {
     .split-layout {
-        .pane.right {
+        .split-pane-component.pane.right {
             width: 15%;
             .pane.bottom {
                 height: 30%;
