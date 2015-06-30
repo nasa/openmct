@@ -36,7 +36,7 @@
             {
                 "key": "MenuArrowController",
                 "implementation": "MenuArrowController",
-                "depends": [ "$rootScope" ]
+                "depends": [ "$rootScope", "$scope" ]
             }
         ],
         "controls": [
@@ -80,7 +80,8 @@
             {
                 "key": "menu-arrow",
                 "templateUrl": "templates/menu-arrow.html",
-                "uses": [ "type" ]
+                "uses": [ "action" ],
+                "gestures": [ "menu" ]
             }
         ],
         "services": [

@@ -51,6 +51,8 @@ define(
          *                       in the context menu will be performed
          */
         function ContextMenuGesture($compile, $document, $window, $rootScope, element, domainObject) {
+            var turnOffMenu;
+            
             function showMenu(event) {
                 var winDim = [$window.innerWidth, $window.innerHeight],
                     eventCoors = [event.pageX, event.pageY],
@@ -91,10 +93,12 @@ define(
                     "context-menu-holder": true
                 };
 
-                console.log(scope);
+                console.log("scope ", scope);
                 
                 // Create the context menu
                 menu = $compile(MENU_TEMPLATE)(scope);
+                
+                console.log("menu ", menu);
 
                 // Add the menu to the body
                 body.append(menu);
@@ -109,10 +113,10 @@ define(
             // When context menu event occurs, show object actions instead
             element.on('contextmenu', showMenu);
             
-            // This allows actions besides only right-clicks to trigger a 
-            // context menu 
-            $rootScope.$on('contextmenu', showMenu);
-
+            // This allows actions besides right-clicks to trigger a context menu 
+            // Assigning turnOffMenu to stop multiple pickups of the broadcast
+            turnOffMenu = $rootScope.$on('contextmenu', showMenu);
+            
             return {
                 /**
                  * Detach any event handlers associated with this gesture,
@@ -126,6 +130,7 @@ define(
                         dismissExistingMenu();
                     }
                     element.off('contextmenu', showMenu);
+                    turnOffMenu();
                 }
             };
         }
