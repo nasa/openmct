@@ -187,6 +187,20 @@ define(
                 expect(updater.getDomainOffset()).toBeDefined();
             });
 
+            it("provides some margin for the range", function () {
+                var mockObject = mockSubscription.getTelemetryObjects()[0];
+
+                mockSeries.getPointCount.andReturn(3);
+                mockSeries.getDomainValue.andCallFake(function (i) {
+                    return 1000 + i * 1000;
+                });
+                mockSeries.getRangeValue.andCallFake(function (i) {
+                    return 10 + i; // 10, 20, 30
+                });
+                updater.addHistorical(mockObject, mockSeries);
+                expect(updater.getOrigin()[1]).toBeLessThan(10);
+                expect(updater.getDimensions()[1]).toBeGreaterThan(20);
+            });
 
         });
     }

@@ -31,6 +31,7 @@ define(
         'use strict';
 
         var MAX_POINTS = 86400,
+            PADDING_RATIO = 0.10, // Padding percentage for top & bottom
             INITIAL_SIZE = 675; // 1/128 of MAX_POINTS
 
         /**
@@ -135,6 +136,16 @@ define(
                 return extrema[0];
             }
 
+            // Expand range slightly so points near edges are visible
+            function expandRange() {
+                var padding = PADDING_RATIO * dimensions[1],
+                    top;
+                padding = Math.max(padding, 1.0);
+                top = Math.ceil(origin[1] + dimensions[1] + padding / 2);
+                origin[1] = Math.floor(origin[1] - padding / 2);
+                dimensions[1] = top - origin[1];
+            }
+
             // Update dimensions and origin based on extrema of plots
             function updateBounds() {
                 if (bufferArray.length > 0) {
@@ -147,10 +158,12 @@ define(
                     }).reduce(reduceExtrema);
 
                     // Calculate best-fit dimensions
-                    dimensions = (rangeExtrema[0] === rangeExtrema[1]) ?
-                            [dimensionsOf(domainExtrema), 2.0 ] :
-                            [dimensionsOf(domainExtrema), dimensionsOf(rangeExtrema)];
+                    dimensions =
+                        [dimensionsOf(domainExtrema), dimensionsOf(rangeExtrema)];
                     origin = [originOf(domainExtrema), originOf(rangeExtrema)];
+
+                    // Enforce some minimum visible area
+                    expandRange();
 
                     // ...then enforce a fixed duration if needed
                     if (fixedDuration !== undefined) {
