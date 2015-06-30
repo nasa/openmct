@@ -25,6 +25,7 @@ $pad: $interiorMargin * $baseRatio;
 /******* LAYOUT AND SIZING */
 .btn,
 .l-btn {
+	@include user-select(none);
 	line-height: 1.5em; // Was 1.25em
 	padding: 0 $pad;
 	text-decoration: none;

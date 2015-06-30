@@ -16,7 +16,7 @@
             {
                 "key": "BrowseController",
                 "implementation": "BrowseController.js",
-                "depends": [ "$scope", "$route", "$location", "objectService", "navigationService", "urlService"]
+                "depends": [ "$scope", "$route", "$location", "objectService", "navigationService", "urlService" ]
             },
             {
                 "key": "BrowseObjectController",
@@ -77,12 +77,7 @@
             {
                 "key": "navigationService",
                 "implementation": "navigation/NavigationService.js"
-            },
-            {
-                "key": "urlService",
-                "implementation": "services/UrlService.js",
-                "depends": [ "$location" ]
-            },            
+            },        
             {
                 "key": "creationService",
                 "implementation": "creation/CreationService.js",
@@ -99,18 +94,20 @@
                 "key": "window",
                 "name": "Open in a new tab",
                 "implementation": "windowing/NewTabAction.js",
-                "description": "Open this object in a new tab",
+                "description": "Open in a new browser tab",
                 "category": ["view-control", "contextual"],
                 "depends": [ "urlService", "$window" ],
                 "group": "windowing",
-                "glyph": "y"
+                "glyph": "y",
+			  	"priority": "preferred"
             },
             {
                 "key": "fullscreen",
                 "implementation": "windowing/FullscreenAction.js",
                 "category": "view-control",
                 "group": "windowing",
-                "glyph": "z"
+                "glyph": "z",
+			  	"priority": "default"
             }
         ],
         "views": [

@@ -3,6 +3,13 @@
     "description": "General UI elements, meant to be reused across modes",
     "resources": "res",
     "extensions": {
+        "services": [
+            {
+                "key": "urlService",
+                "implementation": "/services/UrlService.js",
+                "depends": [ "$location" ]
+            }
+        ],
         "runs": [
             {
                 "implementation": "StyleSheetLoader.js",
@@ -124,6 +131,15 @@
                 "key": "mctScrollY",
                 "implementation": "directives/MCTScroll.js",
                 "depends": [ "$parse", "MCT_SCROLL_Y_PROPERTY", "MCT_SCROLL_Y_ATTRIBUTE" ]
+            },
+            {
+                "key": "mctSplitPane",
+                "implementation": "directives/MCTSplitPane.js",
+                "depends": [ "$parse", "$log" ]
+            },
+            {
+                "key": "mctSplitter",
+                "implementation": "directives/MCTSplitter.js"
             }
         ],
         "constants": [

@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <div class='abs bottom-bar ue-bottom-bar' ng-controller="BottomBarController as bar">
-    <div id='status' class='status-holder abs'>
+    <div id='status' class='status-holder'>
         <mct-include ng-repeat="indicator in bar.getIndicators()"
                      ng-model="indicator.ngModel"
                      key="indicator.template">

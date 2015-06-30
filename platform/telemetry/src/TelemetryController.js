@@ -342,7 +342,7 @@ define(
                  * the second form, it returns an array ordered in
                  * same manner as `getMetadata()` or
                  * `getTelemetryObjects()`; that is, the telemetry
-                 * response at agiven index will correspond to the
+                 * response at a given index will correspond to the
                  * telemetry-providing domain object at the same index.
                  * @returns {Array} an array of responses
                  */

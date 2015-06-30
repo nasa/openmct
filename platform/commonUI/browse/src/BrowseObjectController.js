@@ -54,7 +54,11 @@ define(
                 if (viewKey) {
                     $location.search('view', viewKey);
                     unlisten = $scope.$on('$locationChangeSuccess', function () {
-                        $route.current = priorRoute;
+                        // Checks path to make sure /browse/ is at front
+                        // if so, change $route.current
+                        if ($location.path().indexOf("/browse/") === 0) {
+                            $route.current = priorRoute;
+                        }
                         unlisten();
                     });
                 }

@@ -30,18 +30,18 @@
 	border-collapse: collapse;
 	color: #fff;
 	display: table;
-	font-size: 0.8em;
+	font-size: 0.75em;
 	position: relative;
-	height: 100%;
+	//height: 100%; MOVED
 	width: 100%;
 	thead, .thead,
 	tbody tr, .tbody .tr {
-		display: table;
+		//display: table; MOVED
 		width: 100%;
-		table-layout: fixed;
+		//table-layout: fixed; MOVED
 	}
 	thead, .thead {
-		width: calc(100% - 10px);
+		//width: calc(100% - 10px); MOVED
 		tr, .tr {
 			height: $tabularHeaderH;
 		}
@@ -56,12 +56,11 @@
 		}
 	}
 	tbody, .tbody {
-		@include absPosDefault(0);
-		top: $tabularHeaderH;
-		//display: table-row-group;
-		display: block;
-		//width: 100%;
-		overflow-y: scroll;
+		//@include absPosDefault(0); MOVED
+		//top: $tabularHeaderH; MOVED
+		//display: block; MOVED
+		//overflow-y: scroll; MOVED
+		display: table-row-group;
 		tr, .tr {
 			&:hover {
 				background: rgba(white, 0.1);
@@ -69,8 +68,7 @@
 		}
 	}
 	tr, .tr {
-		//display: table-row;
-		//width: 100%;
+		display: table-row;
 		&:first-child .td {
 			border-top: none;
 		}
@@ -100,30 +98,13 @@
 					content: '1';
 				}
 			}
-			/*	em {
-                    //background: rgba(green, 0.2);
-                    border-left: 1px solid $tabularColorBorder;
-                    color: $tabularColorHeaderFg;
-                    cursor: pointer;
-                    display: block;
-                    font-style: normal;
-                    font-weight: bold;
-                    height: $tabularHeaderH;
-                    line-height: $tabularHeaderH;
-                    margin-left: - $tabularTdPadLR;
-                    padding: 0 $tabularTdPadLR;
-                    position: absolute;
-                    top: 0;
-                    vertical-align: middle;
-                    &:hover {
-                        color: lighten($tabularColorHeaderFg, 20%);
-                    }
-                }*/
 		}
 		td, .td {
 			border-top: 1px solid $tabularColorBorder;
+			min-width: 110px;
 			color: $colorTelemFresh;
 			padding: $tabularTdPadTB $tabularTdPadLR;
+			vertical-align: top;
 			&.numeric {
 				text-align: right;
 			}
@@ -140,6 +121,29 @@
 	&.filterable {
 		tbody, .tbody {
 			top: $tabularHeaderH * 2;
+		}
+	}
+
+	&.fixed-header {
+		height: 100%;
+		thead, .thead,
+		tbody tr, .tbody .tr {
+			display: table;
+			table-layout: fixed;
+		}
+		thead, .thead {
+			width: calc(100% - 10px);
+		}
+		tbody, .tbody {
+			@include absPosDefault(0);
+			top: $tabularHeaderH;
+			display: block;
+			overflow-y: scroll;
+		}
+	}
+	&.t-event-messages {
+		td, .td {
+			min-width: 150px;
 		}
 	}
 }

@@ -183,7 +183,7 @@
             {
                 "key": "mutation",
                 "implementation": "capabilities/MutationCapability.js",
-                "depends": [ "now" ]
+                "depends": [ "topic", "now" ]
             },
             {
                 "key": "delegation",
@@ -200,6 +200,10 @@
                 "key": "throttle",
                 "implementation": "services/Throttle.js",
                 "depends": [ "$timeout" ]
+            },
+            {
+                "key": "topic",
+                "implementation": "services/Topic.js"
             }
         ],
         "roots": [

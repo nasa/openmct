@@ -25,21 +25,33 @@
  * MutationCapabilitySpec. Created by vwoeltje on 11/6/14.
  */
 define(
-    ["../../src/capabilities/MutationCapability"],
-    function (MutationCapability) {
+    [
+        "../../src/capabilities/MutationCapability",
+        "../../src/services/Topic"
+    ],
+    function (MutationCapability, Topic) {
         "use strict";
 
         describe("The mutation capability", function () {
             var testModel,
+                topic,
                 mockNow,
-                domainObject = { getModel: function () { return testModel; } },
+                domainObject = {
+                    getId: function () { return "test-id"; },
+                    getModel: function () { return testModel; }
+                },
                 mutation;
 
             beforeEach(function () {
                 testModel = { number: 6 };
+                topic = new Topic();
                 mockNow = jasmine.createSpy('now');
                 mockNow.andReturn(12321);
-                mutation = new MutationCapability(mockNow, domainObject);
+                mutation = new MutationCapability(
+                    topic,
+                    mockNow,
+                    domainObject
+                );
             });
 
             it("allows mutation of a model", function () {
@@ -82,6 +94,42 @@ define(
                 }, 42);
                 // Should have gotten a timestamp from 'now'
                 expect(testModel.modified).toEqual(42);
+            });
+
+            it("notifies listeners of mutation", function () {
+                var mockCallback = jasmine.createSpy('callback');
+                mutation.listen(mockCallback);
+                mutation.invoke(function (m) {
+                    m.number = 8;
+                });
+                expect(mockCallback).toHaveBeenCalled();
+                expect(mockCallback.mostRecentCall.args[0].number)
+                    .toEqual(8);
+            });
+
+            it("allows listeners to stop listening", function () {
+                var mockCallback = jasmine.createSpy('callback');
+                mutation.listen(mockCallback)(); // Unlisten immediately
+                mutation.invoke(function (m) {
+                    m.number = 8;
+                });
+                expect(mockCallback).not.toHaveBeenCalled();
+            });
+
+            it("shares listeners across instances", function () {
+                var mockCallback = jasmine.createSpy('callback'),
+                    otherMutation = new MutationCapability(
+                        topic,
+                        mockNow,
+                        domainObject
+                    );
+                mutation.listen(mockCallback);
+                otherMutation.invoke(function (m) {
+                    m.number = 8;
+                });
+                expect(mockCallback).toHaveBeenCalled();
+                expect(mockCallback.mostRecentCall.args[0].number)
+                    .toEqual(8);
             });
         });
     }

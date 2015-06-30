@@ -30,7 +30,7 @@
 }
 
 .holder-all {
-	$myM: $interiorMarginSm;
+	$myM: 0; // $interiorMarginSm;
 	top: $myM;
 	right: $myM;
 	bottom: $myM;
@@ -93,7 +93,7 @@
 	.editor {
 		top: $bodyMargin + $ueTopBarH + ($interiorMargin);
 		right: $bodyMargin;
-		bottom: $bodyMargin + $ueFooterH + $interiorMargin;
+		bottom: $ueFooterH + $bodyMargin;
 		left: $bodyMargin;
 	}
 
@@ -119,15 +119,18 @@
 	}
 
 	.bottom-bar {
-        @include absPosDefault($bodyMargin);
+        //@include absPosDefault($bodyMargin);
+		@include absPosDefault(0);// New status bar design
 		top: auto;
 		height: $ueFooterH;
 		.status-holder {
-			right: $ueAppLogoW + $bodyMargin;
+			//right: $ueAppLogoW + $bodyMargin; New status bar design
+			z-index: 1;
 		}
 		.app-logo {
 			left: auto;
 			width: $ueAppLogoW;
+			z-index: 2;
 		}
 	}
 }

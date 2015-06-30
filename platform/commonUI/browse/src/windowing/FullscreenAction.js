@@ -29,8 +29,8 @@ define(
     function () {
         "use strict";
 
-        var ENTER_FULLSCREEN = "Enter full screen mode.",
-            EXIT_FULLSCREEN = "Exit full screen mode.";
+        var ENTER_FULLSCREEN = "Enter full screen mode",
+            EXIT_FULLSCREEN = "Exit full screen mode";
 
         /**
          * The fullscreen action toggles between fullscreen display

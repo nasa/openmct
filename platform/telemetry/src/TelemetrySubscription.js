@@ -58,6 +58,7 @@ define(
                 telemetryObjects = [],
                 pool = lossless ? new TelemetryQueue() : new TelemetryTable(),
                 metadatas,
+                unlistenToMutation,
                 updatePending;
 
             // Look up domain objects which have telemetry capabilities.
@@ -166,23 +167,59 @@ define(
                 telemetryObjects = objects;
                 metadatas = objects.map(lookupMetadata);
                 // Fire callback, as this will be the first time that
-                // telemetry objects are available
+                // telemetry objects are available, or these objects
+                // will have changed.
                 if (callback) {
                     callback();
                 }
                 return objects;
             }
 
-            // Get a reference to relevant objects (those with telemetry
-            // capabilities) and subscribe to their telemetry updates.
-            // Keep a reference to their promised return values, as these
-            // will be unsubscribe functions. (This must be a promise
-            // because delegation is supported, and retrieving delegate
-            // telemetry-capable objects may be an asynchronous operation.)
-            telemetryObjectPromise = promiseRelevantObjects(domainObject);
-            unsubscribePromise = telemetryObjectPromise
-                    .then(cacheObjectReferences)
-                    .then(subscribeAll);
+            function unsubscribeAll() {
+                return unsubscribePromise.then(function (unsubscribes) {
+                    return $q.all(unsubscribes.map(function (unsubscribe) {
+                        return unsubscribe();
+                    }));
+                });
+            }
+
+            function initialize() {
+                // Get a reference to relevant objects (those with telemetry
+                // capabilities) and subscribe to their telemetry updates.
+                // Keep a reference to their promised return values, as these
+                // will be unsubscribe functions. (This must be a promise
+                // because delegation is supported, and retrieving delegate
+                // telemetry-capable objects may be an asynchronous operation.)
+                telemetryObjectPromise = promiseRelevantObjects(domainObject);
+                unsubscribePromise = telemetryObjectPromise
+                        .then(cacheObjectReferences)
+                        .then(subscribeAll);
+            }
+
+            function idsMatch(ids) {
+                return ids.length === telemetryObjects.length &&
+                    ids.every(function (id, index) {
+                        return telemetryObjects[index].getId() === id;
+                    });
+            }
+
+            function modelChange(model) {
+                if (!idsMatch((model || {}).composition || [])) {
+                    // Reinitialize if composition has changed
+                    unsubscribeAll().then(initialize);
+                }
+            }
+
+            function addMutationListener() {
+                var mutation = domainObject &&
+                    domainObject.getCapability('mutation');
+                if (mutation) {
+                    return mutation.listen(modelChange);
+                }
+            }
+
+            initialize();
+            unlistenToMutation = addMutationListener();
 
             return {
                 /**
@@ -192,11 +229,10 @@ define(
                  * @memberof TelemetrySubscription
                  */
                 unsubscribe: function () {
-                    return unsubscribePromise.then(function (unsubscribes) {
-                        return $q.all(unsubscribes.map(function (unsubscribe) {
-                            return unsubscribe();
-                        }));
-                    });
+                    if (unlistenToMutation) {
+                        unlistenToMutation();
+                    }
+                    return unsubscribeAll();
                 },
                 /**
                  * Get the most recent domain value that has been observed

@@ -40,6 +40,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/************************** FEATURES */
+/************************** VERY INFLUENTIAL GLOBAL DIMENSIONS */
+/************************** COLORS AND SHADING */
+/************************** RATIOS */
+/************************** LAYOUT */
+/************************** CONTROLS */
+/************************** PATHS */
+/************************** TIMINGS */
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -95,7 +103,7 @@
 ul.tree {
   margin: 0;
   padding: 0; }
-  /* line 264, ../sass/_mixins.scss */
+  /* line 266, ../sass/_mixins.scss */
   ul.tree li {
     list-style-type: none;
     margin: 0;

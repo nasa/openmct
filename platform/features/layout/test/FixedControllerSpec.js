@@ -34,6 +34,7 @@ define(
                 mockFormatter,
                 mockDomainObject,
                 mockSubscription,
+                mockEvent,
                 testGrid,
                 testModel,
                 testValues,
@@ -98,6 +99,10 @@ define(
                     'subscription',
                     [ 'unsubscribe', 'getTelemetryObjects', 'getRangeValue', 'getDatum' ]
                 );
+                mockEvent = jasmine.createSpyObj(
+                    'event',
+                    [ 'preventDefault' ]
+                );
 
                 testGrid = [ 123, 456 ];
                 testModel = {
@@ -135,11 +140,6 @@ define(
                     mockSubscriber,
                     mockFormatter
                 );
-            });
-
-            it("provides styles for cells", function () {
-                expect(controller.getCellStyles())
-                    .toEqual(jasmine.any(Array));
             });
 
             it("subscribes when a domain object is available", function () {
@@ -266,25 +266,19 @@ define(
                 expect(elements[2].value).toEqual("Formatted 31.42");
             });
 
-            it("adds grid cells to fill boundaries", function () {
-                var s1 = {
-                        width: testGrid[0] * 8,
-                        height: testGrid[1] * 4
-                    },
-                    s2 = {
-                        width: testGrid[0] * 10,
-                        height: testGrid[1] * 6
-                    };
+            it("updates elements styles when grid size changes", function () {
+                var originalLeft;
 
+                mockScope.domainObject = mockDomainObject;
                 mockScope.model = testModel;
+                findWatch("domainObject")(mockDomainObject);
+                findWatch("model.modified")(1);
                 findWatch("model.composition")(mockScope.model.composition);
-
-                // Set first bounds
-                controller.setBounds(s1);
-                expect(controller.getCellStyles().length).toEqual(32); // 8 * 4
-                // Set new bounds
-                controller.setBounds(s2);
-                expect(controller.getCellStyles().length).toEqual(60); // 10 * 6
+                findWatch("model.layoutGrid")([10, 10]);
+                originalLeft = controller.getElements()[0].style.left;
+                findWatch("model.layoutGrid")([20, 20]);
+                expect(controller.getElements()[0].style.left)
+                    .not.toEqual(originalLeft);
             });
 
             it("listens for drop events", function () {
@@ -302,7 +296,7 @@ define(
                 // Notify that a drop occurred
                 testModel.composition.push('d');
                 findOn('mctDrop')(
-                    {},
+                    mockEvent,
                     'd',
                     { x: 300, y: 100 }
                 );
@@ -310,10 +304,29 @@ define(
                 // Should have added an element
                 expect(testConfiguration.elements.length).toEqual(4);
 
+                // ...and prevented default...
+                expect(mockEvent.preventDefault).toHaveBeenCalled();
+
                 // Should have triggered commit (provided by
                 // EditRepresenter) with some message.
                 expect(mockScope.commit)
                     .toHaveBeenCalledWith(jasmine.any(String));
+            });
+
+            it("ignores drops when default has been prevented", function () {
+                // Avoids redundant drop-handling, WTD-1233
+                mockEvent.defaultPrevented = true;
+
+                // Notify that a drop occurred
+                testModel.composition.push('d');
+                findOn('mctDrop')(
+                    mockEvent,
+                    'd',
+                    { x: 300, y: 100 }
+                );
+
+                // Should NOT have added an element
+                expect(testConfiguration.elements.length).toEqual(3);
             });
 
             it("unsubscribes when destroyed", function () {
@@ -328,6 +341,7 @@ define(
             });
 
             it("exposes its grid size", function () {
+                findWatch('model.layoutGrid')(testGrid);
                 // Template needs to be able to pass this into line
                 // elements to size SVGs appropriately
                 expect(controller.getGridSize()).toEqual(testGrid);

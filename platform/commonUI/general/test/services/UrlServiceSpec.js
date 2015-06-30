@@ -31,7 +31,11 @@ define(
 
         describe("The url service", function () {
             var urlService,
-                mockLocation;
+                mockLocation,
+                mockDomainObject,
+                mockContext,
+                mockMode,
+                testViews;
 
             beforeEach(function () {
                 // Creates a mockLocation, used to 
@@ -41,24 +45,20 @@ define(
                     [ "path", "search" ]
                 );
                 
-                urlService = new UrlService(mockLocation);
-            });
-            
-            it("get url for a domainObject and mode", function () {
-                // The mockDomainObject is initialized as a 
+                 // The mockDomainObject is initialized as a 
                 // spy object to ultimately be passed into the
                 // urlService urlFor function
-                var mockDomainObject = jasmine.createSpyObj(
+                mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     [ "getId", "getCapability", "getModel", "useCapability" ]
-                ),
-                    mockContext = jasmine.createSpyObj('context', ['getPath']),
-                    testViews = [
-                        { key: 'abc' },
-                        { key: 'def', someKey: 'some value' },
-                        { key: 'xyz' }
-                    ],
-                    mockMode = "browse";
+                );
+                mockContext = jasmine.createSpyObj('context', ['getPath']);
+                testViews = [
+                    { key: 'abc' },
+                    { key: 'def', someKey: 'some value' },
+                    { key: 'xyz' }
+                ];
+                mockMode = "browse";
                 
                 // The mockContext is set a path
                 // for the mockDomainObject
@@ -81,8 +81,17 @@ define(
                 // Uses the mockLocation to get the current
                 // "mock" website's view
                 mockLocation.search.andReturn({ view: 'def' });
-                urlService.urlFor(mockMode, mockDomainObject);
+                
+                urlService = new UrlService(mockLocation);
             });
+            
+            it("get url for a location using domainObject and mode", function () {
+                urlService.urlForLocation(mockMode, mockDomainObject);
+            });
+            
+            it("get url for a new tab using domainObject and mode", function () {
+                urlService.urlForNewTab(mockMode, mockDomainObject);
+            });            
         });
     }
 );

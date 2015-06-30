@@ -29,10 +29,13 @@ a {
 }
 
 body, html {
+	-webkit-font-smoothing: subpixel-antialiased;
+	-moz-osx-font-smoothing: grayscale;
 	background-color: $colorBodyBg;
 	color: $colorBodyFg;
-	font-family: Helvetica, Arial, sans-serif;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 100%;
+	//font-weight: 500;
 	height: 100%;
 	width: 100%;
 	overflow: hidden;
