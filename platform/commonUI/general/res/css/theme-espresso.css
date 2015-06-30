@@ -1726,35 +1726,25 @@ mct-container {
     .icon-btn.labeled .title-label,
     .s-icon-btn.labeled .title-label {
       margin-left: 5px; }
-  /* line 133, ../sass/controls/_buttons.scss */
-  .icon-btn.pause-play.paused,
-  .s-icon-btn.pause-play.paused {
-    -moz-animation-name: pulse;
-    -webkit-animation-name: pulse;
-    animation-name: pulse;
-    -moz-animation-duration: 500ms;
-    -webkit-animation-duration: 500ms;
-    animation-duration: 500ms;
-    -moz-animation-direction: alternate;
-    -webkit-animation-direction: alternate;
-    animation-direction: alternate;
-    -moz-animation-iteration-count: infinite;
-    -webkit-animation-iteration-count: infinite;
-    animation-iteration-count: infinite;
-    -moz-animation-timing-function: ease-in-out;
-    -webkit-animation-timing-function: ease-in-out;
-    animation-timing-function: ease-in-out; }
-  /* line 136, ../sass/controls/_buttons.scss */
-  .icon-btn.pause-play .icon:before,
-  .s-icon-btn.pause-play .icon:before {
-    content: "\0000F1"; }
-  /* line 142, ../sass/controls/_buttons.scss */
+  /* line 132, ../sass/controls/_buttons.scss */
+  .icon-btn.pause-play,
+  .s-icon-btn.pause-play {
+    /*		&.paused {
+    			.icon {
+    				@include pulse(500ms);
+    			}
+    		}*/ }
+    /* line 138, ../sass/controls/_buttons.scss */
+    .icon-btn.pause-play .icon:before,
+    .s-icon-btn.pause-play .icon:before {
+      content: "\0000F1"; }
+  /* line 144, ../sass/controls/_buttons.scss */
   .icon-btn.show-thumbs .icon:before,
   .s-icon-btn.show-thumbs .icon:before {
     content: "\000039"; }
 
 /*********************************** LAYOUT STYLES */
-/* line 149, ../sass/controls/_buttons.scss */
+/* line 151, ../sass/controls/_buttons.scss */
 span.btn,
 span.btn span,
 span.l-btn,
@@ -2930,11 +2920,11 @@ label.checkbox.custom {
   /* line 18, ../sass/features/_imagery.scss */
   .l-image-main-wrapper .l-image-main {
     background-color: rgba(255, 255, 255, 0.1);
-    bottom: 25px; }
+    bottom: 27px; }
   /* line 22, ../sass/features/_imagery.scss */
   .l-image-main-wrapper .l-image-main-controlbar {
     top: auto;
-    height: 20px; }
+    height: 22px; }
 
 /* line 28, ../sass/features/_imagery.scss */
 .l-image-thumbs-wrapper {
@@ -2958,7 +2948,7 @@ label.checkbox.custom {
 /* line 53, ../sass/features/_imagery.scss */
 .l-image-main-controlbar {
   font-size: 0.8em;
-  line-height: 20px; }
+  line-height: 22px; }
   /* line 57, ../sass/features/_imagery.scss */
   .l-image-main-controlbar .left, .l-image-main-controlbar .right {
     direction: rtl;
@@ -4847,28 +4837,58 @@ input[type="text"] {
 /* line 22, ../sass/_autoflow.scss */
 .autoflow {
   font-size: 0.75rem; }
-  /* line 30, ../sass/_autoflow.scss */
+  /* line 32, ../sass/_autoflow.scss */
+  .autoflow:hover .l-autoflow-header .l-btn.change-column-width {
+    -moz-transition-property: visibility, opacity, background-color, border-color;
+    -o-transition-property: visibility, opacity, background-color, border-color;
+    -webkit-transition-property: visibility, opacity, background-color, border-color;
+    transition-property: visibility, opacity, background-color, border-color;
+    -moz-transition-duration: 50ms;
+    -o-transition-duration: 50ms;
+    -webkit-transition-duration: 50ms;
+    transition-duration: 50ms;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    opacity: 1; }
+  /* line 40, ../sass/_autoflow.scss */
   .autoflow .l-autoflow-header {
     bottom: auto;
     height: 22px;
     line-height: 22px;
     min-width: 225px; }
-    /* line 35, ../sass/_autoflow.scss */
+    /* line 45, ../sass/_autoflow.scss */
     .autoflow .l-autoflow-header span {
       vertical-align: middle; }
-    /* line 38, ../sass/_autoflow.scss */
+    /* line 48, ../sass/_autoflow.scss */
+    .autoflow .l-autoflow-header .l-btn.change-column-width {
+      -moz-transition-property: visibility, opacity, background-color, border-color;
+      -o-transition-property: visibility, opacity, background-color, border-color;
+      -webkit-transition-property: visibility, opacity, background-color, border-color;
+      transition-property: visibility, opacity, background-color, border-color;
+      -moz-transition-duration: 500ms;
+      -o-transition-duration: 500ms;
+      -webkit-transition-duration: 500ms;
+      transition-duration: 500ms;
+      -moz-transition-timing-function: ease-in-out;
+      -o-transition-timing-function: ease-in-out;
+      -webkit-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out;
+      opacity: 0; }
+    /* line 52, ../sass/_autoflow.scss */
     .autoflow .l-autoflow-header .l-filter {
       margin-left: 5px; }
-      /* line 40, ../sass/_autoflow.scss */
+      /* line 54, ../sass/_autoflow.scss */
       .autoflow .l-autoflow-header .l-filter input.t-filter-input {
         width: 100px; }
-  /* line 46, ../sass/_autoflow.scss */
+  /* line 60, ../sass/_autoflow.scss */
   .autoflow .l-autoflow-items {
     overflow-x: scroll;
     overflow-y: hidden;
     top: 32px;
     white-space: nowrap; }
-    /* line 52, ../sass/_autoflow.scss */
+    /* line 66, ../sass/_autoflow.scss */
     .autoflow .l-autoflow-items .l-autoflow-col {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
@@ -4879,7 +4899,7 @@ input[type="text"] {
       padding-right: 5px;
       vertical-align: top;
       width: 225px; }
-      /* line 62, ../sass/_autoflow.scss */
+      /* line 76, ../sass/_autoflow.scss */
       .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row {
         -moz-box-sizing: border-box;
         -webkit-box-sizing: border-box;
@@ -4891,37 +4911,37 @@ input[type="text"] {
         margin-bottom: 1px;
         margin-top: 1px;
         position: relative; }
-        /* line 71, ../sass/_autoflow.scss */
+        /* line 85, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row:first-child {
           border-top: none; }
-        /* line 74, ../sass/_autoflow.scss */
+        /* line 88, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row:hover {
           background: rgba(255, 255, 255, 0.1); }
-        /* line 79, ../sass/_autoflow.scss */
+        /* line 93, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row.s-stale .l-autoflow-item.l {
           color: rgba(255, 255, 255, 0.3) !important;
           font-style: italic; }
-        /* line 80, ../sass/_autoflow.scss */
+        /* line 94, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row.s-stale .l-autoflow-item.r {
           color: rgba(255, 255, 255, 0.5) !important;
           font-style: italic; }
-        /* line 83, ../sass/_autoflow.scss */
+        /* line 97, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row:not(.s-stale) .l-autoflow-item.r {
           color: #b3b3b3; }
-        /* line 87, ../sass/_autoflow.scss */
+        /* line 101, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row.first-in-group {
           border-top: 1px solid gray; }
-        /* line 90, ../sass/_autoflow.scss */
+        /* line 104, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row .l-autoflow-item {
           display: block; }
-          /* line 92, ../sass/_autoflow.scss */
+          /* line 106, ../sass/_autoflow.scss */
           .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row .l-autoflow-item.l {
             float: none;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             width: auto; }
-          /* line 99, ../sass/_autoflow.scss */
+          /* line 113, ../sass/_autoflow.scss */
           .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row .l-autoflow-item.r {
             -moz-border-radius: 2px;
             -webkit-border-radius: 2px;
@@ -4931,7 +4951,7 @@ input[type="text"] {
             padding-left: 5px;
             padding-right: 5px;
             text-align: right; }
-      /* line 110, ../sass/_autoflow.scss */
+      /* line 124, ../sass/_autoflow.scss */
       .autoflow .l-autoflow-items .l-autoflow-col:first-child {
         border-left: none;
         padding-left: 0; }

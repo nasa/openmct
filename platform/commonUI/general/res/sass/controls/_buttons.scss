@@ -130,9 +130,11 @@ $pad: $interiorMargin * $baseRatio;
 	}
 
 	&.pause-play {
-		&.paused {
-			@include pulse(500ms);
-		}
+/*		&.paused {
+			.icon {
+				@include pulse(500ms);
+			}
+		}*/
 		.icon:before {
 			content:"\0000F1";
 		}
