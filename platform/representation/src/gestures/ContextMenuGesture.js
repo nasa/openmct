@@ -60,7 +60,10 @@ define(
                     goLeft = eventCoors[0] + menuDim[0] > winDim[0],
                     goUp = eventCoors[1] + menuDim[1] > winDim[1],
                     menu;
-
+                
+                //console.log('in showMenu() in ContextMenuGesture');
+                //console.log('domainObject is ', domainObject);
+                
                 // Remove the context menu
                 function dismiss() {
                     menu.remove();
@@ -104,6 +107,7 @@ define(
 
             // When context menu event occurs, show object actions instead
             element.on('contextmenu', showMenu);
+            $rootScope.$on('leftContextual', showMenu);
 
             return {
                 /**

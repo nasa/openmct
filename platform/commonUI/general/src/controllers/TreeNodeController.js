@@ -50,7 +50,7 @@ define(
          * expand-to-show-navigated-object behavior.)
          * @constructor
          */
-        function TreeNodeController($scope, $timeout) {
+        function TreeNodeController($scope, $timeout, $rootScope) {
             var selectedObject = ($scope.ngModel || {}).selectedObject,
                 isSelected = false,
                 hasBeenExpanded = false;
@@ -138,6 +138,20 @@ define(
                 selectedObject = object;
                 checkSelection();
             }
+            
+            // If we are in edit mode, then a left-click on the 
+            // down arrow next to a domain object's title should display
+            // a context menu
+            function contextMenu() {
+                //console.log('contextMenu() called');
+                
+                if ($scope.domainObject.hasCapability('editor') || true) {
+                    //console.log('contextMenu() believes in edit mode');
+                    
+                    $rootScope.$broadcast('leftContextual');
+                    console.log('contextMenu() broadcasted from root');
+                }
+            }
 
             // Listen for changes which will effect display parameters
             $scope.$watch("ngModel.selectedObject", setSelection);
@@ -166,7 +180,13 @@ define(
                  */
                 isSelected: function () {
                     return isSelected;
-                }
+                }, 
+                /**
+                 * This method should be called when the down arrow next 
+                 * to a domain object's title is (left) clicked. If in edit
+                 * mode, this activates a context menu. 
+                 */
+                contextMenu: contextMenu
             };
         }
 
