@@ -611,64 +611,71 @@ mct-container {
     *zoom: 1;
     padding: 5px 0; }
 
-/* line 199, ../sass/user-environ/_layout.scss */
+/* line 201, ../sass/user-environ/_layout.scss */
+.browse-mode .split-layout .pane.left {
+  min-width: 150px;
+  max-width: 50%; }
+
+/* line 210, ../sass/user-environ/_layout.scss */
+.edit-mode .split-layout .pane.right {
+  min-width: 150px;
+  max-width: 50%; }
+  /* line 213, ../sass/user-environ/_layout.scss */
+  .edit-mode .split-layout .pane.right .pane.bottom {
+    min-height: 50px;
+    max-height: 80%; }
+
+/* line 221, ../sass/user-environ/_layout.scss */
 .pane {
   position: absolute; }
-  /* line 201, ../sass/user-environ/_layout.scss */
-  .pane.treeview {
-    min-width: 150px;
-    max-width: 50%; }
-    /* line 204, ../sass/user-environ/_layout.scss */
-    .pane.treeview .create-btn-holder {
-      bottom: auto;
-      top: 0;
-      height: 24px; }
-      /* line 207, ../sass/user-environ/_layout.scss */
-      .pane.treeview .create-btn-holder .wrapper.menu-element {
-        position: absolute;
-        bottom: 5px; }
-    /* line 212, ../sass/user-environ/_layout.scss */
-    .pane.treeview .tree-holder {
-      overflow: auto;
-      top: 34px;
-      padding-right: 5px; }
-  /* line 220, ../sass/user-environ/_layout.scss */
+  /* line 224, ../sass/user-environ/_layout.scss */
+  .pane.treeview.left .create-btn-holder {
+    bottom: auto;
+    top: 0;
+    height: 24px; }
+    /* line 227, ../sass/user-environ/_layout.scss */
+    .pane.treeview.left .create-btn-holder .wrapper.menu-element {
+      position: absolute;
+      bottom: 5px; }
+  /* line 232, ../sass/user-environ/_layout.scss */
+  .pane.treeview.left .tree-holder {
+    overflow: auto;
+    top: 34px;
+    padding-right: 5px; }
+  /* line 240, ../sass/user-environ/_layout.scss */
   .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .btn-menu span.left.l-click-area, .btn-menu .pane.items .object-browse-bar span.left.l-click-area,
   .pane.items .object-browse-bar .right.abs,
   .pane.items .object-browse-bar .btn-menu span.right.l-click-area,
   .btn-menu .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
-  /* line 225, ../sass/user-environ/_layout.scss */
+  /* line 245, ../sass/user-environ/_layout.scss */
   .pane.items .object-holder {
     top: 34px; }
-  /* line 230, ../sass/user-environ/_layout.scss */
-  .pane.edit-main .object-holder {
-    top: 0; }
-  /* line 236, ../sass/user-environ/_layout.scss */
+  /* line 249, ../sass/user-environ/_layout.scss */
   .pane .object-holder {
     overflow: auto; }
 
-/* line 244, ../sass/user-environ/_layout.scss */
+/* line 257, ../sass/user-environ/_layout.scss */
 .split-layout.horizontal > .pane {
   margin-top: 5px; }
-  /* line 247, ../sass/user-environ/_layout.scss */
+  /* line 260, ../sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane:first-child {
     margin-top: 0; }
-/* line 254, ../sass/user-environ/_layout.scss */
+/* line 267, ../sass/user-environ/_layout.scss */
 .split-layout.vertical > .pane {
   margin-left: 5px; }
-  /* line 256, ../sass/user-environ/_layout.scss */
+  /* line 269, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane > .holder {
     left: 0;
     right: 0; }
-  /* line 260, ../sass/user-environ/_layout.scss */
+  /* line 273, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane:first-child {
     margin-left: 0; }
-    /* line 262, ../sass/user-environ/_layout.scss */
+    /* line 275, ../sass/user-environ/_layout.scss */
     .split-layout.vertical > .pane:first-child .holder {
       right: 3px; }
 
-/* line 271, ../sass/user-environ/_layout.scss */
+/* line 284, ../sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
 
@@ -1922,7 +1929,7 @@ a.l-btn span {
       content: "^";
       display: block;
       font-family: 'symbolsfont';
-      font-size: 1.2em;
+      font-size: 0.9em;
       position: absolute;
       right: 5px;
       text-transform: none;
@@ -3146,8 +3153,8 @@ label.checkbox.custom {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 24, ../sass/forms/_elems.scss */
-.form .section-header {
+/* line 22, ../sass/forms/_elems.scss */
+.section-header {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
@@ -3155,13 +3162,14 @@ label.checkbox.custom {
   font-size: 0.8em;
   margin-top: 5px;
   padding: 5px; }
-  /* line 30, ../sass/forms/_elems.scss */
-  .form .section-header:first-child {
+  /* line 28, ../sass/forms/_elems.scss */
+  .section-header:first-child {
     margin-top: 0; }
-/* line 34, ../sass/forms/_elems.scss */
+
+/* line 35, ../sass/forms/_elems.scss */
 .form .form-section {
   position: relative; }
-/* line 38, ../sass/forms/_elems.scss */
+/* line 39, ../sass/forms/_elems.scss */
 .form .form-row {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -3172,10 +3180,10 @@ label.checkbox.custom {
   margin-top: 5px;
   padding: 5px;
   position: relative; }
-  /* line 45, ../sass/forms/_elems.scss */
+  /* line 46, ../sass/forms/_elems.scss */
   .form .form-row.first {
     border-top: none; }
-  /* line 49, ../sass/forms/_elems.scss */
+  /* line 50, ../sass/forms/_elems.scss */
   .form .form-row .label,
   .form .form-row .controls {
     -moz-box-sizing: border-box;
@@ -3187,47 +3195,47 @@ label.checkbox.custom {
     font-size: 0.75rem;
     line-height: 22px;
     min-height: 22px; }
-  /* line 60, ../sass/forms/_elems.scss */
+  /* line 61, ../sass/forms/_elems.scss */
   .form .form-row > .label {
     float: left;
     position: relative;
     white-space: nowrap;
     width: 20%; }
-  /* line 68, ../sass/forms/_elems.scss */
+  /* line 69, ../sass/forms/_elems.scss */
   .form .form-row .value {
     color: #cccccc; }
-  /* line 72, ../sass/forms/_elems.scss */
+  /* line 73, ../sass/forms/_elems.scss */
   .form .form-row .controls {
     float: left;
     position: relative;
     width: 79.9%; }
-    /* line 79, ../sass/forms/_elems.scss */
+    /* line 80, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-composite-control.l-checkbox {
       display: inline-block;
       line-height: 14px;
       margin-right: 5px; }
-    /* line 88, ../sass/forms/_elems.scss */
+    /* line 89, ../sass/forms/_elems.scss */
     .form .form-row .controls input[type="text"] {
       height: 22px;
       line-height: 22px;
       margin-top: -4px;
       vertical-align: baseline; }
-    /* line 95, ../sass/forms/_elems.scss */
+    /* line 96, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-med input[type="text"] {
       width: 200px; }
-    /* line 99, ../sass/forms/_elems.scss */
+    /* line 100, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-small input[type="text"] {
       width: 50px; }
-    /* line 103, ../sass/forms/_elems.scss */
+    /* line 104, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-numeric input[type="text"] {
       text-align: right; }
-    /* line 107, ../sass/forms/_elems.scss */
+    /* line 108, ../sass/forms/_elems.scss */
     .form .form-row .controls .select {
       margin-right: 5px; }
-  /* line 112, ../sass/forms/_elems.scss */
+  /* line 113, ../sass/forms/_elems.scss */
   .form .form-row .field-hints {
     color: #666666; }
-  /* line 116, ../sass/forms/_elems.scss */
+  /* line 117, ../sass/forms/_elems.scss */
   .form .form-row .selector-list {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -3240,7 +3248,7 @@ label.checkbox.custom {
     position: relative;
     height: 150px;
     overflow: auto; }
-    /* line 127, ../sass/forms/_elems.scss */
+    /* line 128, ../sass/forms/_elems.scss */
     .form .form-row .selector-list .wrapper {
       overflow-y: auto;
       position: absolute;
@@ -3249,24 +3257,24 @@ label.checkbox.custom {
       bottom: 5px;
       left: 5px; }
 
-/* line 141, ../sass/forms/_elems.scss */
+/* line 142, ../sass/forms/_elems.scss */
 label.form-control.checkbox input {
   margin-right: 5px;
   vertical-align: top; }
 
-/* line 147, ../sass/forms/_elems.scss */
+/* line 148, ../sass/forms/_elems.scss */
 .hint,
 .s-hint {
   font-size: 0.9em; }
 
-/* line 152, ../sass/forms/_elems.scss */
+/* line 153, ../sass/forms/_elems.scss */
 .l-result {
   display: inline-block;
   min-width: 32px;
   min-height: 32px;
   position: relative;
   vertical-align: top; }
-  /* line 159, ../sass/forms/_elems.scss */
+  /* line 160, ../sass/forms/_elems.scss */
   .l-result div.s-hint {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -4947,9 +4955,16 @@ input[type="text"] {
   height: 100%;
   width: 100%; }
 
-/* line 6, ../sass/_initialization.scss */
-.browse-mode .split-layout .pane .treeview {
+/* line 5, ../sass/_initialization.scss */
+.browse-mode .split-layout .pane.left {
   width: 15%; }
+
+/* line 13, ../sass/_initialization.scss */
+.edit-mode .split-layout .pane.right {
+  width: 15%; }
+  /* line 15, ../sass/_initialization.scss */
+  .edit-mode .split-layout .pane.right .pane.bottom {
+    height: 30%; }
 
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government

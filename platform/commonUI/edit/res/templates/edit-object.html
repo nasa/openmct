@@ -23,74 +23,47 @@
                     mct-object="domainObject"
                     ng-model="representation">
 </mct-representation>
-<div class="holder edit-area abs"
-     ng-controller="SplitPaneController as vSplitter">
-    <mct-toolbar name="mctToolbar"
-                 structure="toolbar.structure"
-                 ng-model="toolbar.state">
-    </mct-toolbar>
-    <div class='split-layout vertical contents abs work-area'>
-        <div
-            class='abs pane left edit-main'
-            ng-style="{ right: (vSplitter.state()+5) + 'px'}"
-            >
-            <div class='holder abs object-holder'>
+<div class="holder edit-area abs">
+    <mct-split-pane class='contents abs' anchor='right'>
+        <div class='split-pane-component pane left edit-main'>
+            <mct-toolbar name="mctToolbar"
+                         structure="toolbar.structure"
+                         ng-model="toolbar.state">
+            </mct-toolbar>
+            <div class='holder abs object-holder work-area'>
                 <mct-representation key="representation.selected.key"
                                     toolbar="toolbar"
                                     mct-object="representation.selected.key && domainObject">
                 </mct-representation>
             </div>
         </div>
-
-        <!-- MAIN VERTICAL SPLITTER -->
+        <mct-splitter></mct-splitter>
         <div
-            class="splitter"
-            ng-style="{ right: vSplitter.state() + 'px'}"
-            mct-drag-down="vSplitter.startMove()"
-            mct-drag="vSplitter.move(-delta[0], 100, 1000)"
-            ></div>
-
-
-        <div
-            class='abs pane right edit-objects menus-to-left'
+            class='split-pane-component pane right edit-objects menus-to-left'
             ng-controller='EditPanesController as editPanes'
-            ng-style="{ width: (vSplitter.state()-4) + 'px', right: '0px'}"
             >
-            <div
-                class='holder abs split-layout horizontal'
-                ng-controller="SplitPaneController as hSplitter"
-                >
-	            <div
+            <mct-split-pane class='contents abs' anchor='bottom'>
+                <div
                     class="abs pane top accordion"
-                    ng-style="{ bottom: (hSplitter.state()+8) + 'px', top: '0px' }"
                     ng-controller="ToggleController as toggle"
                     >
                     <mct-container key="accordion" title="Library">
                         <mct-representation key="'tree'"
-                                            alias="foo1"
                                             mct-object="editPanes.getRoot()">
                         </mct-representation>
                     </mct-container>
-		        </div>
-                <!-- HORZ SPLITTER -->
-                <div
-                        class="splitter"
-                        ng-style="{ bottom: hSplitter.state() + 'px', top: 'auto' }"
-                        mct-drag-down="hSplitter.startMove()"
-                        mct-drag="hSplitter.move(-delta[1], 120, 1000)"
-                        >
                 </div>
-	            <div
+                <mct-splitter></mct-splitter>
+                <div
                     class="abs pane bottom accordion"
-                    ng-style="{ bottom: '0px', height: (hSplitter.state()-4) + 'px'}"
                     ng-controller="ToggleController as toggle"
                     >
                     <mct-container key="accordion" title="Elements">
                         <mct-representation key="'edit-elements'" mct-object="domainObject">
                         </mct-representation>
                     </mct-container>
-				</div>
-            </div>
+                </div>
+            </mct-split-pane>
         </div>
-    </div>
+    </mct-split-pane>
 </div>
