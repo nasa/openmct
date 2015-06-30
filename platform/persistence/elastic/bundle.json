@@ -17,7 +17,7 @@
             },
             {
                 "key": "ELASTIC_ROOT",
-                "value": "http://localhost:9200",
+                "value": "/elastic",
                 "priority": "fallback"
             },
             {
