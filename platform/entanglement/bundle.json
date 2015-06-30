@@ -37,6 +37,12 @@
         "controllers": [
         ],
         "capabilities": [
+            {
+                "key": "location",
+                "name": "Location Capability",
+                "description": "Provides a capability for retrieving the location of an object based upon it's context.",
+                "implementation": "capabilities/LocationCapability"
+            }
         ],
         "services": [
             {
