@@ -27,6 +27,16 @@
 	$valPad: 5px;
 	$rowH: 15px;
 	font-size: 0.75rem;
+
+	&:hover {
+		.l-autoflow-header .l-btn.change-column-width {
+			@include trans-prop-nice-fade(50ms);
+			opacity: 1;
+		}
+	}
+
+
+
 	.l-autoflow-header {
 		bottom: auto;
 		height: $headerH;
@@ -34,6 +44,10 @@
 		min-width: $colW;
 		span {
 			vertical-align: middle;
+		}
+		.l-btn.change-column-width {
+			@include trans-prop-nice-fade(500ms);
+			opacity: 0;
 		}
 		.l-filter {
 			margin-left: $interiorMargin;
