@@ -112,10 +112,35 @@ define(
                 return $q.when(
                     uuid()
                 ).then(function (id) {
+                    model = addLocationToModel(id, model, parent);
                     return doPersist(persistence.getSpace(), id, model);
                 }).then(function (id) {
                     return addToComposition(id, parent, persistence);
                 });
+            }
+
+            // Store the location of an object relative to it's parent.
+            function addLocationToModel(modelId, model, parent) {
+                var context = parent.getCapability("context"),
+                    pathObjects,
+                    pathIds;
+
+                if (!context) {
+                    $log.warn('No parent context, location will not be set.');
+                    return model;
+                }
+
+                pathObjects = context.getPath();
+                if (!pathObjects || !pathObjects.length) {
+                    pathObjects = [];
+                }
+                pathIds = pathObjects.map(function (object) {
+                    return object.getId();
+                });
+                pathIds.push(modelId);
+
+                model.location = pathIds.join('/');
+                return model;
             }
 
             return {
