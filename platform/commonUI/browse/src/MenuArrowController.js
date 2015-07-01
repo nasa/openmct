@@ -22,12 +22,15 @@
 /*global define*/
 
 /**
- * Module defining ObjectHeaderController. Created by shale on 06/30/2015.
+ * Module defining MenuArrowController. Created by shale on 06/30/2015.
  */
 define(
     [],
     function () {
         "use strict";
+        
+        var ROOT_ID = "ROOT",
+            DEFAULT_PATH = "mine";
 
         /**
          * A left-click on the menu arrow should display a 
@@ -35,10 +38,10 @@ define(
          * menu. 
          * @constructor
          */
-        function MenuArrowController($scope) {
+        function MenuArrowController($scope, $route, domainObject) {
             
             function showMenu(event) {
-                console.log('contextMenu() called');
+                console.log('showMenu() called');
                 //console.log('editor? ', $scope.domainObject.hasCapability('editor'));
                 /*
                 if (true || $scope.domainObject.hasCapability('editor')) {
@@ -46,9 +49,14 @@ define(
                 }
                 */
                 
-                $scope.domainObject.getCapability('action').perform({key: 'contextMenu', event: event});
+                //console.log('domainObject ', domainObject);
+                //console.log('$scope.domainObject ', $scope.domainObject);
+                console.log('event ', event);
+                
+                //$scope.domainObject.getCapability('action').perform({key: 'contextMenu', event: event});
+                domainObject.getCapability('action').perform({key: 'contextMenu', event: event});
             }
-            
+
             return {
                 showMenu: showMenu
             };
