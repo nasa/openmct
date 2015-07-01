@@ -66,7 +66,10 @@
 	                .left, .right {
 		                width: auto;
 		                .icon {
-			                margin-left: $interiorMargin;
+			                margin-left: $interiorMarginSm;
+                            &.l-link-icon {
+                                color: $colorIconLink;
+                            }
 		                }
 	                }
                 }
@@ -95,14 +98,13 @@
                     top: $iconMargin - 10;
                     //line-height: $lh;
                     .l-link-icon {
-                        //@include test(blue);
-                        //@include trans-prop-nice("color", $transTime);
-                        color: darken($colorIconLink, 35%);
+                        // When the link icon is in the item-type icon holder
+                        color: darken($colorIconLink, 25%);
                         height: 36px;
                         line-height: 36px;
                         position: absolute;
                         font-size: 32px;
-                        right: -10px;
+                        right: -13px;
                         bottom: -10px;
                         z-index: 2;
                     }
