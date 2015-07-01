@@ -27,17 +27,18 @@
                 <mct-include key="_checkbox"></mct-include>
             </div>
             <div class='right abs'>
-                <div class='ui-symbol icon alert hidden' onclick="alert('Not yet functional. When this is visible, it means that this object needs to be updated. Clicking will allow that action via a dialog.');">!</div>
+                <div class='ui-symbol icon l-icon-alert'></div>
                 <div class='ui-symbol icon profile' title="Shared">P</div>
-                <!-- this will be toggled by a ng-show -->
-                <span class='ui-symbol icon l-link-icon' title="This object is a link">&#xf4;</span>
             </div>
         </div>
         <div class='item-main abs'>
             <div class='ui-symbol icon lg item-type'>
                 {{type.getGlyph()}}
                 <!-- this will be toggled by a ng-show -->
-                <span class='ui-symbol icon l-link-icon' title="This object is a link">&#xf4;</span>
+                <span
+	                class='ui-symbol icon l-icon-link' title="This object is a link"
+	                ng-show = "true"
+	                ></span>
             </div>
             <div class='ui-symbol icon abs item-open'>}</div>
         </div>
