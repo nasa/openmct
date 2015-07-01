@@ -99,20 +99,20 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 22, ../sass/tree/_tree.scss */
+/* line 23, ../sass/tree/_tree.scss */
 ul.tree {
   margin: 0;
   padding: 0; }
-  /* line 266, ../sass/_mixins.scss */
+  /* line 276, ../sass/_mixins.scss */
   ul.tree li {
     list-style-type: none;
     margin: 0;
     padding: 0; }
-  /* line 24, ../sass/tree/_tree.scss */
+  /* line 25, ../sass/tree/_tree.scss */
   ul.tree li {
     display: block;
     position: relative; }
-    /* line 27, ../sass/tree/_tree.scss */
+    /* line 28, ../sass/tree/_tree.scss */
     ul.tree li span.tree-item {
       -moz-border-radius: 2px;
       -webkit-border-radius: 2px;
@@ -127,16 +127,16 @@ ul.tree {
       line-height: 1.5rem;
       margin-bottom: 3px;
       position: relative; }
-      /* line 38, ../sass/tree/_tree.scss */
+      /* line 39, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item .view-control {
         display: inline-block;
         margin-left: 5px;
         font-size: 0.75em;
         width: 10px; }
-        /* line 44, ../sass/tree/_tree.scss */
+        /* line 45, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item .view-control:hover {
           color: #ffc700; }
-      /* line 49, ../sass/tree/_tree.scss */
+      /* line 50, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item .label {
         display: block;
         overflow: hidden;
@@ -147,8 +147,8 @@ ul.tree {
         left: 0px;
         width: auto;
         height: auto;
-        left: 20px; }
-        /* line 55, ../sass/tree/_tree.scss */
+        left: 15px; }
+        /* line 57, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item .label .type-icon {
           overflow: false;
           position: absolute;
@@ -160,32 +160,32 @@ ul.tree {
           height: auto;
           text-shadow: rgba(0, 0, 0, 0.6) 0 1px 2px;
           color: #0099cc;
+          left: 5px;
           right: auto;
           width: 1em; }
-          /* line 60, ../sass/tree/_tree.scss */
-          ul.tree li span.tree-item .label .type-icon .alert {
-            text-shadow: rgba(0, 0, 0, 0.3) 0 1px 2px;
-            background: #333;
-            color: #ff3c00;
-            font-size: 0.7em;
-            margin-top: -3px;
-            top: 0;
-            right: auto;
-            bottom: auto;
-            left: 9px;
-            height: auto;
-            width: auto;
-            position: absolute;
-            z-index: 2; }
-          /* line 75, ../sass/tree/_tree.scss */
-          ul.tree li span.tree-item .label .type-icon .icon.l-link-icon {
+          /* line 65, ../sass/tree/_tree.scss */
+          ul.tree li span.tree-item .label .type-icon .icon.l-icon-link, ul.tree li span.tree-item .label .type-icon .icon.l-icon-alert {
             text-shadow: black 0 1px 2px;
-            color: #49dedb;
             position: absolute;
-            font-size: 0.5em;
-            right: -5px;
-            bottom: -8px;
             z-index: 2; }
+          /* line 71, ../sass/tree/_tree.scss */
+          ul.tree li span.tree-item .label .type-icon .icon.l-icon-alert {
+            color: #ff3c00;
+            font-size: 8px;
+            line-height: 8px;
+            height: 8px;
+            width: 8px;
+            top: 1px;
+            right: -2px; }
+          /* line 77, ../sass/tree/_tree.scss */
+          ul.tree li span.tree-item .label .type-icon .icon.l-icon-link {
+            color: #49dedb;
+            font-size: 8px;
+            line-height: 8px;
+            height: 8px;
+            width: 8px;
+            left: -3px;
+            bottom: 5px; }
         /* line 86, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item .label .title-label {
           overflow: hidden;
@@ -197,7 +197,7 @@ ul.tree {
           width: auto;
           height: auto;
           display: block;
-          left: 25px;
+          left: 30px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap; }

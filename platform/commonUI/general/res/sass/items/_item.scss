@@ -45,7 +45,7 @@
             &:hover .item-main {
 	            .item-type {
 		            color: $colorKey !important;
-                    .l-link-icon {
+                    .l-icon-link {
                         color: $colorIconLink;
                     }
                 }
@@ -67,7 +67,7 @@
 		                width: auto;
 		                .icon {
 			                margin-left: $interiorMarginSm;
-                            &.l-link-icon {
+                            &.l-icon-link {
                                 color: $colorIconLink;
                             }
 		                }
@@ -97,15 +97,15 @@
                     height: $iconD;
                     top: $iconMargin - 10;
                     //line-height: $lh;
-                    .l-link-icon {
+                    .l-icon-link {
                         // When the link icon is in the item-type icon holder
                         color: darken($colorIconLink, 25%);
                         height: 36px;
                         line-height: 36px;
                         position: absolute;
                         font-size: 32px;
-                        right: -13px;
-                        bottom: -10px;
+                        left: 0px;
+                        bottom: 10px;
                         z-index: 2;
                     }
                 }

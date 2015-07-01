@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 ul.tree {
 	@include menuUlReset();
 	li {
@@ -48,45 +49,44 @@ ul.tree {
 
 			.label {
 				display: block;
-//				border: 1px solid rgba(blue, 0.5);
+//				@include test(orange);
 				@include absPosDefault();
-				left: $runningItemW + $interiorMargin;
+				//left: $runningItemW + $interiorMargin; // Adding pad to left to make room for link icon
+				left: $runningItemW;
 
 				.type-icon {
 					@include absPosDefault(0, false);
 					@include txtShdwSubtle(0.6);
 					color: $colorItemTreeIcon;
+					left: $interiorMargin;
                     right: auto; width: 1em;
-					.alert {
-						@include txtShdwSubtle(0.3);
-						background: $colorBodyBg;
-						color: $colorAlert;
-						font-size: 0.7em;
-						margin-top: -3px;
-						top: 0;
-						right: auto;
-						bottom: auto;
-						left: 9px;
-						height: auto;
-						width: auto;
-						position: absolute;
-						z-index: 2;
-					}
-					.icon.l-link-icon {
-                        @include txtShdwSubtle(1);
-                        $d: 20px;
-                        color: $colorIconLink;
-						position: absolute;
-                        font-size: 0.5em;
-						right: -5px;
-						bottom: -8px;
-						z-index: 2;
+
+					.icon {
+						&.l-icon-link,
+						&.l-icon-alert {
+							@include txtShdwSubtle(1);
+							position: absolute;
+							z-index: 2;
+						}
+						&.l-icon-alert {
+							$d: 8px;
+							@include ancillaryIcon($d, $colorAlert);
+							top: 1px;
+							right: -2px;
+						}
+						&.l-icon-link {
+							$d: 8px;
+							@include ancillaryIcon($d, $colorIconLink);
+							left: -3px;
+							bottom: 5px;
+
+						}
 					}
 				}
 				.title-label {
 					@include absPosDefault();
 					display: block;
-					left: $runningItemW + ($interiorMargin * 2);
+					left: $runningItemW + ($interiorMargin * 3);
 	                //right: $treeContextTriggerW + $interiorMargin;
 					overflow: hidden;
 					text-overflow: ellipsis;
