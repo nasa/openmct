@@ -29,7 +29,7 @@ ul.tree {
 			@include border-radius($basicCr);
 			@include single-transition(background-color, 0.25s);
 			display: block;
-			font-size: 0.80em;
+			font-size: 0.8em;
 			height: $menuLineH;
 			line-height: $menuLineH;
 			margin-bottom: $interiorMarginSm;
@@ -53,9 +53,10 @@ ul.tree {
 				left: $runningItemW + $interiorMargin;
 
 				.type-icon {
-					@include absPosDefault();
+					@include absPosDefault(0, false);
 					@include txtShdwSubtle(0.6);
 					color: $colorItemTreeIcon;
+                    right: auto; width: 1em;
 					.alert {
 						@include txtShdwSubtle(0.3);
 						background: $colorBodyBg;
@@ -71,11 +72,21 @@ ul.tree {
 						position: absolute;
 						z-index: 2;
 					}
+					.icon.l-link-icon {
+                        @include txtShdwSubtle(1);
+                        $d: 20px;
+                        color: $colorIconLink;
+						position: absolute;
+                        font-size: 0.5em;
+						right: -5px;
+						bottom: -8px;
+						z-index: 2;
+					}
 				}
 				.title-label {
 					@include absPosDefault();
 					display: block;
-					left: $runningItemW + ($interiorMargin);
+					left: $runningItemW + ($interiorMargin * 2);
 	                //right: $treeContextTriggerW + $interiorMargin;
 					overflow: hidden;
 					text-overflow: ellipsis;

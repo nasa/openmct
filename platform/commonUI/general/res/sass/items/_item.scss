@@ -29,6 +29,9 @@
         &.grid-item {
             //div { @include test() }
             $d: $ueBrowseGridItemLg;
+            //$iconD: 100px;
+            $iconMargin: 40px;
+            $iconD: ($d - ($iconMargin * 2)) * 0.85;
             $transTime: 200ms;
             @include btnSubtle($colorItemBase);
             box-sizing: border-box;
@@ -39,12 +42,12 @@
             margin-bottom: $interiorMarginSm;
             margin-right: $interiorMarginSm;
             position: relative;
-            .item-main .item-type {
-                @include trans-prop-nice("color", $transTime);
-            }
             &:hover .item-main {
 	            .item-type {
 		            color: $colorKey !important;
+                    .l-link-icon {
+                        color: $colorIconLink;
+                    }
                 }
 	            .item-open {
 		            //display: block;
@@ -80,10 +83,29 @@
                 line-height: $lh;
 	            z-index: 1;
                 .item-type {
+                    //@include trans-prop-nice("color", $transTime);
+                    @include absPosDefault($iconMargin, false);
+                    //@include test(red);
                     color: $colorItemFg;
                     text-align: center;
-                    font-size: 6em;
+                    font-size: $iconD * 0.95; //6em;
+                    line-height: $iconD;
+                    bottom: auto;
+                    height: $iconD;
+                    top: $iconMargin - 10;
                     //line-height: $lh;
+                    .l-link-icon {
+                        //@include test(blue);
+                        //@include trans-prop-nice("color", $transTime);
+                        color: darken($colorIconLink, 35%);
+                        height: 36px;
+                        line-height: 36px;
+                        position: absolute;
+                        font-size: 32px;
+                        right: -10px;
+                        bottom: -10px;
+                        z-index: 2;
+                    }
                 }
                 .item-open {
                     //@include test();
