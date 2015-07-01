@@ -1,8 +1,8 @@
 {
 	"metadata": {
 		"name": "WTD Symbols v2.",
-		"lastOpened": 1435266597671,
-		"created": 1435266594435
+		"lastOpened": 1435765696898,
+		"created": 1435764071891
 	},
 	"iconSets": [
 		{
@@ -10,7 +10,7 @@
 				{
 					"order": 1,
 					"id": 75,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 123,
 					"name": "icon-pointer-left",
 					"tempChar": ""
@@ -18,7 +18,7 @@
 				{
 					"order": 3,
 					"id": 74,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 125,
 					"name": "icon-pointer-right",
 					"tempChar": ""
@@ -26,7 +26,7 @@
 				{
 					"order": 4,
 					"id": 73,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 80,
 					"name": "icon-person",
 					"tempChar": ""
@@ -34,7 +34,7 @@
 				{
 					"order": 5,
 					"id": 72,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 232,
 					"name": "icon-chain-links",
 					"tempChar": ""
@@ -42,7 +42,7 @@
 				{
 					"order": 6,
 					"id": 71,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 115,
 					"name": "icon-database-in-brackets",
 					"tempChar": ""
@@ -50,7 +50,7 @@
 				{
 					"order": 7,
 					"id": 70,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 114,
 					"name": "icon-refresh",
 					"tempChar": ""
@@ -58,7 +58,7 @@
 				{
 					"order": 8,
 					"id": 69,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 108,
 					"name": "icon-lock",
 					"tempChar": ""
@@ -66,7 +66,7 @@
 				{
 					"order": 9,
 					"id": 68,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 51,
 					"name": "icon-box-with-dashed-lines",
 					"tempChar": ""
@@ -74,7 +74,7 @@
 				{
 					"order": 10,
 					"id": 67,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 58880,
 					"name": "icon-box-with-arrow-cursor",
 					"tempChar": ""
@@ -82,7 +82,7 @@
 				{
 					"order": 11,
 					"id": 66,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 65,
 					"name": "icon-activity-mode",
 					"tempChar": ""
@@ -90,7 +90,7 @@
 				{
 					"order": 12,
 					"id": 65,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 97,
 					"name": "icon-activity",
 					"tempChar": ""
@@ -98,7 +98,7 @@
 				{
 					"order": 13,
 					"id": 64,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 33,
 					"name": "icon-alert-rect",
 					"tempChar": ""
@@ -106,7 +106,7 @@
 				{
 					"order": 14,
 					"id": 63,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 58883,
 					"name": "icon-alert-triangle",
 					"tempChar": ""
@@ -114,7 +114,7 @@
 				{
 					"order": 15,
 					"id": 62,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 238,
 					"name": "icon-arrow-double-down",
 					"tempChar": ""
@@ -122,7 +122,7 @@
 				{
 					"order": 16,
 					"id": 61,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 235,
 					"name": "icon-arrow-double-up",
 					"tempChar": ""
@@ -130,7 +130,7 @@
 				{
 					"order": 2,
 					"id": 60,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 118,
 					"name": "icon-arrow-down",
 					"tempChar": ""
@@ -138,7 +138,7 @@
 				{
 					"order": 19,
 					"id": 59,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 60,
 					"name": "icon-arrow-left",
 					"tempChar": ""
@@ -146,7 +146,7 @@
 				{
 					"order": 20,
 					"id": 58,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 62,
 					"name": "icon-arrow-right",
 					"tempChar": ""
@@ -154,7 +154,7 @@
 				{
 					"order": 21,
 					"id": 57,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 236,
 					"name": "icon-arrow-tall-down",
 					"tempChar": ""
@@ -162,7 +162,7 @@
 				{
 					"order": 22,
 					"id": 56,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 237,
 					"name": "icon-arrow-tall-up",
 					"tempChar": ""
@@ -170,7 +170,7 @@
 				{
 					"order": 23,
 					"id": 55,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 94,
 					"name": "icon-arrow-up",
 					"tempChar": ""
@@ -178,7 +178,7 @@
 				{
 					"order": 24,
 					"id": 54,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 73,
 					"name": "icon-arrows-out",
 					"tempChar": ""
@@ -186,7 +186,7 @@
 				{
 					"order": 25,
 					"id": 53,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 58893,
 					"name": "icon-arrows-right-left",
 					"tempChar": ""
@@ -194,7 +194,7 @@
 				{
 					"order": 33,
 					"id": 52,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 53,
 					"name": "icon-arrows-up-down",
 					"tempChar": ""
@@ -202,7 +202,7 @@
 				{
 					"order": 26,
 					"id": 51,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 42,
 					"name": "icon-asterisk",
 					"tempChar": ""
@@ -210,7 +210,7 @@
 				{
 					"order": 27,
 					"id": 50,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 72,
 					"name": "icon-autoflow-tabular",
 					"tempChar": ""
@@ -218,7 +218,7 @@
 				{
 					"order": 28,
 					"id": 49,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 224,
 					"name": "icon-box-round-corners",
 					"tempChar": ""
@@ -226,7 +226,7 @@
 				{
 					"order": 29,
 					"id": 48,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 50,
 					"name": "icon-check",
 					"tempChar": ""
@@ -234,7 +234,7 @@
 				{
 					"order": 30,
 					"id": 47,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 67,
 					"name": "icon-clock",
 					"tempChar": ""
@@ -242,7 +242,7 @@
 				{
 					"order": 31,
 					"id": 46,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 46,
 					"name": "icon-connectivity",
 					"tempChar": ""
@@ -250,7 +250,7 @@
 				{
 					"order": 32,
 					"id": 45,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 100,
 					"name": "icon-database-query",
 					"tempChar": ""
@@ -258,7 +258,7 @@
 				{
 					"order": 17,
 					"id": 44,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 68,
 					"name": "icon-database",
 					"tempChar": ""
@@ -266,7 +266,7 @@
 				{
 					"order": 35,
 					"id": 43,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 81,
 					"name": "icon-dictionary",
 					"tempChar": ""
@@ -274,7 +274,7 @@
 				{
 					"order": 36,
 					"id": 42,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 242,
 					"name": "icon-duplicate",
 					"tempChar": ""
@@ -282,7 +282,7 @@
 				{
 					"order": 37,
 					"id": 41,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 102,
 					"name": "icon-folder-new",
 					"tempChar": ""
@@ -290,7 +290,7 @@
 				{
 					"order": 38,
 					"id": 40,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 70,
 					"name": "icon-folder",
 					"tempChar": ""
@@ -298,7 +298,7 @@
 				{
 					"order": 39,
 					"id": 39,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 95,
 					"name": "icon-fullscreen-collapse",
 					"tempChar": ""
@@ -306,7 +306,7 @@
 				{
 					"order": 40,
 					"id": 38,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 122,
 					"name": "icon-fullscreen-expand",
 					"tempChar": ""
@@ -314,7 +314,7 @@
 				{
 					"order": 41,
 					"id": 37,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 71,
 					"name": "icon-gear",
 					"tempChar": ""
@@ -322,7 +322,7 @@
 				{
 					"order": 49,
 					"id": 34,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 227,
 					"name": "icon-image",
 					"tempChar": ""
@@ -330,7 +330,7 @@
 				{
 					"order": 42,
 					"id": 33,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 225,
 					"name": "icon-layers",
 					"tempChar": ""
@@ -338,7 +338,7 @@
 				{
 					"order": 43,
 					"id": 32,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 76,
 					"name": "icon-layout",
 					"tempChar": ""
@@ -346,15 +346,15 @@
 				{
 					"order": 44,
 					"id": 31,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 226,
 					"name": "icon-line-horz",
 					"tempChar": ""
 				},
 				{
-					"order": 45,
+					"order": 75,
 					"id": 30,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 244,
 					"name": "icon-link",
 					"tempChar": ""
@@ -362,7 +362,7 @@
 				{
 					"order": 46,
 					"id": 29,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 88,
 					"name": "icon-magnify-in",
 					"tempChar": ""
@@ -370,7 +370,7 @@
 				{
 					"order": 47,
 					"id": 28,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 89,
 					"name": "icon-magnify-out",
 					"tempChar": ""
@@ -378,7 +378,7 @@
 				{
 					"order": 48,
 					"id": 27,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 77,
 					"name": "icon-magnify",
 					"tempChar": ""
@@ -386,7 +386,7 @@
 				{
 					"order": 34,
 					"id": 26,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 109,
 					"name": "icon-menu",
 					"tempChar": ""
@@ -394,7 +394,7 @@
 				{
 					"order": 50,
 					"id": 25,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 243,
 					"name": "icon-move",
 					"tempChar": ""
@@ -402,7 +402,7 @@
 				{
 					"order": 51,
 					"id": 24,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 121,
 					"name": "icon-new-window",
 					"tempChar": ""
@@ -410,7 +410,7 @@
 				{
 					"order": 52,
 					"id": 23,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 111,
 					"name": "icon-object",
 					"tempChar": ""
@@ -418,7 +418,7 @@
 				{
 					"order": 73,
 					"id": 77,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 63,
 					"name": "icon-object-unknown",
 					"tempChar": ""
@@ -426,7 +426,7 @@
 				{
 					"order": 53,
 					"id": 22,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 86,
 					"name": "icon-packet",
 					"tempChar": ""
@@ -434,7 +434,7 @@
 				{
 					"order": 54,
 					"id": 21,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 234,
 					"name": "icon-page",
 					"tempChar": ""
@@ -442,7 +442,7 @@
 				{
 					"order": 55,
 					"id": 20,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 241,
 					"name": "icon-pause",
 					"tempChar": ""
@@ -450,7 +450,7 @@
 				{
 					"order": 56,
 					"id": 19,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 112,
 					"name": "icon-pencil",
 					"tempChar": ""
@@ -458,7 +458,7 @@
 				{
 					"order": 65,
 					"id": 18,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 79,
 					"name": "icon-people",
 					"tempChar": ""
@@ -466,7 +466,7 @@
 				{
 					"order": 57,
 					"id": 17,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 239,
 					"name": "icon-play",
 					"tempChar": ""
@@ -474,7 +474,7 @@
 				{
 					"order": 58,
 					"id": 16,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 233,
 					"name": "icon-plot-resource",
 					"tempChar": ""
@@ -482,7 +482,7 @@
 				{
 					"order": 59,
 					"id": 15,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 43,
 					"name": "icon-plus",
 					"tempChar": ""
@@ -490,7 +490,7 @@
 				{
 					"order": 60,
 					"id": 76,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 45,
 					"name": "icon-minus",
 					"tempChar": ""
@@ -498,7 +498,7 @@
 				{
 					"order": 61,
 					"id": 11,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 54,
 					"name": "icon-sine",
 					"tempChar": ""
@@ -506,7 +506,7 @@
 				{
 					"order": 62,
 					"id": 10,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 228,
 					"name": "icon-T",
 					"tempChar": ""
@@ -514,7 +514,7 @@
 				{
 					"order": 63,
 					"id": 9,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 116,
 					"name": "icon-telemetry-panel",
 					"tempChar": ""
@@ -522,7 +522,7 @@
 				{
 					"order": 64,
 					"id": 8,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 84,
 					"name": "icon-telemetry",
 					"tempChar": ""
@@ -530,7 +530,7 @@
 				{
 					"order": 18,
 					"id": 7,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 246,
 					"name": "icon-thumbs-strip",
 					"tempChar": ""
@@ -538,7 +538,7 @@
 				{
 					"order": 67,
 					"id": 6,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 83,
 					"name": "icon-timeline",
 					"tempChar": ""
@@ -546,7 +546,7 @@
 				{
 					"order": 68,
 					"id": 5,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 245,
 					"name": "icon-timer",
 					"tempChar": ""
@@ -554,7 +554,7 @@
 				{
 					"order": 69,
 					"id": 4,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 90,
 					"name": "icon-trash",
 					"tempChar": ""
@@ -562,7 +562,7 @@
 				{
 					"order": 70,
 					"id": 3,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 229,
 					"name": "icon-two-parts-both",
 					"tempChar": ""
@@ -570,7 +570,7 @@
 				{
 					"order": 71,
 					"id": 2,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 231,
 					"name": "icon-two-parts-one-only",
 					"tempChar": ""
@@ -578,7 +578,7 @@
 				{
 					"order": 72,
 					"id": 1,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 120,
 					"name": "icon-x-heavy",
 					"tempChar": ""
@@ -586,7 +586,7 @@
 				{
 					"order": 66,
 					"id": 0,
-					"prevSize": 16,
+					"prevSize": 32,
 					"code": 58946,
 					"name": "icon-x",
 					"tempChar": ""
@@ -1297,7 +1297,7 @@
 				{
 					"id": 30,
 					"paths": [
-						"M832 0h-640c-105.6 0-192 86.4-192 192v640c0 105.6 86.4 192 192 192h640c105.6 0 192-86.4 192-192v-640c0-105.6-86.4-192-192-192zM832 640l-128-128-512 320 320-512-128-128h448v448z"
+						"M1024 512l-512-512v307.2l-512 204.8v256h512v256z"
 					],
 					"attrs": [
 						{}
