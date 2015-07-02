@@ -92,7 +92,12 @@ define(
 
                 // Add the menu to the body
                 body.append(menu);
-
+                
+                // Stop propagation so that clicks on the menu do not close the menu
+                menu.on('mousedown', function (event) {
+                    event.stopPropagation();
+                });
+                
                 // Dismiss the menu when body is clicked elsewhere
                 // ('mousedown' because 'click' breaks left-click context menus)
                 body.on('mousedown', dismiss);
