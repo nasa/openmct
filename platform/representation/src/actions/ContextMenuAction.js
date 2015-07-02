@@ -50,7 +50,7 @@ define(
         function ContextMenuAction($compile, $document, $window, $rootScope, actionContext) {
             
             function perform() {
-                //console.log('in perform()');
+                console.log('in perform()');
                 var winDim = [$window.innerWidth, $window.innerHeight],
                     eventCoors = [actionContext.event.pageX, actionContext.event.pageY],
                     menuDim = GestureConstants.MCT_MENU_DIMENSIONS,

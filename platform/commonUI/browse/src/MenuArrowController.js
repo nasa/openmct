@@ -36,7 +36,7 @@ define(
          * @constructor
          */
         function MenuArrowController($scope) {
-            var domainObject = $scope.domainObject,
+            var //domainObject = $scope.domainObject,
                 context;
             
             function showMenu(event) {
@@ -44,18 +44,19 @@ define(
                 
                 console.log('$scope ', $scope);
                 console.log('$scope.domainObject ', $scope.domainObject);
-                console.log('domainObject ', domainObject);
+                //console.log('domainObject ', domainObject);
                 console.log('event ', event);
                 
-                context = {key: 'menu', event: event, domainObject: domainObject};
-                domainObject.getCapability('action').perform(context);
+                context = {key: 'menu', event: event, domainObject: $scope.domainObject};
+                $scope.domainObject.getCapability('action').perform(context);
             }
-            
+            /*
             // attempt to set the domain object
             $scope.$watch('domainObject', function (c) {
                 domainObject = c;
                 console.log('watcher called');
             });
+            */
             
             return {
                 showMenu: showMenu
