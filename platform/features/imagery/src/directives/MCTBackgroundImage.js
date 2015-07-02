@@ -64,7 +64,7 @@ define(
 
                     if (!url) {
                         loaded = myCounter;
-                        element.css('background-image', undefined);
+                        element.css('background-image', 'none');
                     } else {
                         image = $document[0].createElement('img');
                         image.src = url;

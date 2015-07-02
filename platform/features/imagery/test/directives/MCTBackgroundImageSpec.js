@@ -92,7 +92,7 @@ define(
 
                 expect(mockElement.css.mostRecentCall.args).toEqual([
                     "background-image",
-                    undefined
+                    "none"
                 ]);
             });
         });
