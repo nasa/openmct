@@ -49,7 +49,7 @@ define(
                 console.log('event ', event);
                 console.log('domainObject ', domainObject);
                 console.log('domainObject action', domainObject.getCapability('action'));
-                console.log('domainObject actions', domainObject.getCapability('action').getActions('contextMenu'));
+                console.log('domainObject actions', domainObject.getCapability('action').getActions('menu'));
                 
                 actionContext = {key: 'menu', domainObject: domainObject, event: event};
                 stop = domainObject.getCapability('action').perform(actionContext);

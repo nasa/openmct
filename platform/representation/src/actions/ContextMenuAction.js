@@ -37,79 +37,69 @@ define(
             dismissExistingMenu;
 
         /**
-         * Add listeners to a representation such that it launches a
-         * custom context menu for the domain object it contains.
+         * Launches a custom context menu for the domain object it contains.
          *
          * @constructor
          * @param $compile Angular's $compile service
          * @param $document the current document
          * @param $window the active window
          * @param $rootScope Angular's root scope
-         * @param element the jqLite-wrapped element which should exhibit
-         *                the context mennu
-         * @param {DomainObject} domainObject the object on which actions
-         *                       in the context menu will be performed
+         * @param actionContexr the context in which the action
+         *                      should be performed
          */
         function ContextMenuAction($compile, $document, $window, $rootScope, actionContext) {
-            //var turnOffMenu;
             
-            console.log('in ContextMenuAction');
-            console.log('contextMenuAction event ', event);
-            
-            //function showMenu(event) {
-            var winDim = [$window.innerWidth, $window.innerHeight],
-                eventCoors = [actionContext.event.pageX, actionContext.event.pageY],
-                menuDim = GestureConstants.MCT_MENU_DIMENSIONS,
-                body = $document.find('body'),
-                scope = $rootScope.$new(),
-                goLeft = eventCoors[0] + menuDim[0] > winDim[0],
-                goUp = eventCoors[1] + menuDim[1] > winDim[1],
-                menu;
+            function perform() {
+                //console.log('in perform()');
+                var winDim = [$window.innerWidth, $window.innerHeight],
+                    eventCoors = [actionContext.event.pageX, actionContext.event.pageY],
+                    menuDim = GestureConstants.MCT_MENU_DIMENSIONS,
+                    body = $document.find('body'),
+                    scope = $rootScope.$new(),
+                    goLeft = eventCoors[0] + menuDim[0] > winDim[0],
+                    goUp = eventCoors[1] + menuDim[1] > winDim[1],
+                    menu;
 
-            // Remove the context menu
-            function dismiss() {
-                menu.remove();
-                body.off("click", dismiss);
-                dismissExistingMenu = undefined;
+                // Remove the context menu
+                function dismiss() {
+                    menu.remove();
+                    body.off("click", dismiss);
+                    dismissExistingMenu = undefined;
+                }
+
+                // Dismiss any menu which was already showing
+                if (dismissExistingMenu) {
+                    dismissExistingMenu();
+                }
+
+                // ...and record the presence of this menu.
+                dismissExistingMenu = dismiss;
+
+                // Set up the scope, including menu positioning
+                scope.domainObject = actionContext.domainObject;
+                scope.menuStyle = {};
+                scope.menuStyle[goLeft ? "right" : "left"] =
+                    (goLeft ? (winDim[0] - eventCoors[0]) : eventCoors[0]) + 'px';
+                scope.menuStyle[goUp ? "bottom" : "top"] =
+                    (goUp ? (winDim[1] - eventCoors[1]) : eventCoors[1]) + 'px';
+                scope.menuClass = {
+                    "go-left": goLeft,
+                    "go-up": goUp,
+                    "context-menu-holder": true
+                };
+
+                // Create the context menu
+                menu = $compile(MENU_TEMPLATE)(scope);
+
+                // Add the menu to the body
+                body.append(menu);
+
+                // Dismiss the menu when body is clicked elsewhere
+                body.on('click', dismiss);
+
+                // Don't launch browser's context menu
+                actionContext.event.preventDefault();
             }
-
-            // Dismiss any menu which was already showing
-            if (dismissExistingMenu) {
-                dismissExistingMenu();
-            }
-
-            // ...and record the presence of this menu.
-            dismissExistingMenu = dismiss;
-
-            // Set up the scope, including menu positioning
-            scope.domainObject = domainObject;
-            scope.menuStyle = {};
-            scope.menuStyle[goLeft ? "right" : "left"] =
-                (goLeft ? (winDim[0] - eventCoors[0]) : eventCoors[0]) + 'px';
-            scope.menuStyle[goUp ? "bottom" : "top"] =
-                (goUp ? (winDim[1] - eventCoors[1]) : eventCoors[1]) + 'px';
-            scope.menuClass = {
-                "go-left": goLeft,
-                "go-up": goUp,
-                "context-menu-holder": true
-            };
-
-            console.log("ContextMenuAction scope ", scope);
-
-            // Create the context menu
-            menu = $compile(MENU_TEMPLATE)(scope);
-
-            console.log("ContextMenuAction menu ", menu);
-
-            // Add the menu to the body
-            body.append(menu);
-
-            // Dismiss the menu when body is clicked elsewhere
-            body.on('click', dismiss);
-
-            // Don't launch browser's context menu
-            actionContext.event.preventDefault();
-            //}
             
             return {
                 /**
@@ -122,7 +112,8 @@ define(
                     if (dismissExistingMenu) {
                         dismissExistingMenu();
                     }
-                }
+                },
+                perform: perform
             };
         }
 
