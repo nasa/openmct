@@ -45,12 +45,6 @@ define(
             
             // When context menu event occurs, show object actions instead
             element.on('contextmenu', function (event) {
-                console.log('in ContextMenuGesture');
-                console.log('event ', event);
-                console.log('domainObject ', domainObject);
-                console.log('domainObject action', domainObject.getCapability('action'));
-                console.log('domainObject actions', domainObject.getCapability('action').getActions('menu'));
-                
                 actionContext = {key: 'menu', domainObject: domainObject, event: event};
                 stop = domainObject.getCapability('action').perform(actionContext);
             });
