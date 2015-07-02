@@ -50,7 +50,6 @@ define(
         function ContextMenuAction($compile, $document, $window, $rootScope, actionContext) {
             
             function perform() {
-                console.log('in perform()');
                 var winDim = [$window.innerWidth, $window.innerHeight],
                     eventCoors = [actionContext.event.pageX, actionContext.event.pageY],
                     menuDim = GestureConstants.MCT_MENU_DIMENSIONS,
@@ -95,7 +94,8 @@ define(
                 body.append(menu);
 
                 // Dismiss the menu when body is clicked elsewhere
-                body.on('click', dismiss);
+                // ('mousedown' because 'click' breaks left-click context menus)
+                body.on('mousedown', dismiss);
 
                 // Don't launch browser's context menu
                 actionContext.event.preventDefault();
