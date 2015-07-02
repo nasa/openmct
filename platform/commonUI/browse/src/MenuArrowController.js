@@ -29,9 +29,6 @@ define(
     function () {
         "use strict";
         
-        var ROOT_ID = "ROOT",
-            DEFAULT_PATH = "mine";
-
         /**
          * A left-click on the menu arrow should display a 
          * context menu. This controller launches the context 
@@ -43,14 +40,12 @@ define(
                 context;
             
             function showMenu(event) {
-                /*
                 console.log('showMenu() called');
                 
                 console.log('$scope ', $scope);
                 console.log('$scope.domainObject ', $scope.domainObject);
                 console.log('domainObject ', domainObject);
                 console.log('event ', event);
-                */
                 
                 context = {key: 'menu', event: event, domainObject: domainObject};
                 domainObject.getCapability('action').perform(context);
@@ -59,7 +54,7 @@ define(
             // attempt to set the domain object
             $scope.$watch('domainObject', function (c) {
                 domainObject = c;
-                //console.log('watcher called');
+                console.log('watcher called');
             });
             
             return {

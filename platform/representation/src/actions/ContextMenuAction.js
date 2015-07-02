@@ -50,17 +50,15 @@ define(
          * @param {DomainObject} domainObject the object on which actions
          *                       in the context menu will be performed
          */
-        function ContextMenuAction($compile, $document, $window, $rootScope, element, domainObject, event) {
+        function ContextMenuAction($compile, $document, $window, $rootScope, actionContext) {
             //var turnOffMenu;
             
-            /*
             console.log('in ContextMenuAction');
             console.log('contextMenuAction event ', event);
-            */
             
             //function showMenu(event) {
             var winDim = [$window.innerWidth, $window.innerHeight],
-                eventCoors = [event.pageX, event.pageY],
+                eventCoors = [actionContext.event.pageX, actionContext.event.pageY],
                 menuDim = GestureConstants.MCT_MENU_DIMENSIONS,
                 body = $document.find('body'),
                 scope = $rootScope.$new(),
@@ -96,12 +94,12 @@ define(
                 "context-menu-holder": true
             };
 
-            //console.log("ContextMenuAction scope ", scope);
+            console.log("ContextMenuAction scope ", scope);
 
             // Create the context menu
             menu = $compile(MENU_TEMPLATE)(scope);
 
-            //console.log("ContextMenuAction menu ", menu);
+            console.log("ContextMenuAction menu ", menu);
 
             // Add the menu to the body
             body.append(menu);
@@ -110,7 +108,7 @@ define(
             body.on('click', dismiss);
 
             // Don't launch browser's context menu
-            event.preventDefault();
+            actionContext.event.preventDefault();
             //}
             
             return {
