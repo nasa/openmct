@@ -23,11 +23,11 @@
 
 
 /**
- * Module defining ContextMenuGestureSpec. Created by vwoeltje on 11/22/14.
+ * Module defining ContextMenuActionSpec. Created by shale on 07/02/2015.
  */
 define(
-    ["../../src/gestures/ContextMenuGesture"],
-    function (ContextMenuGesture) {
+    ["../../src/actions/ContextMenuAction", "../../src/gestures/GestureConstants"],
+    function (ContextMenuAction, GestureConstants) {
         "use strict";
 
         var JQLITE_FUNCTIONS = [ "on", "off", "find", "append", "remove" ],
@@ -35,7 +35,7 @@ define(
             MENU_DIMENSIONS = GestureConstants.MCT_MENU_DIMENSIONS;
 
 
-        describe("The 'context menu' gesture", function () {
+        describe("The 'context menu' action", function () {
             var mockCompile,
                 mockCompiledTemplate,
                 mockMenu,
@@ -83,26 +83,65 @@ define(
                 fireGesture =  mockElement.on.mostRecentCall.args[1];
             });
 
-            it("attaches a callback for context menu events", function () {
-                expect(mockElement.on).toHaveBeenCalledWith(
-                    "contextmenu",
-                    jasmine.any(Function)
-                );
+            it("compiles and adds a menu to the DOM on a contextmenu event", function () {
+                // Make sure that callback really is for the contextmenu event
+                expect(mockElement.on.mostRecentCall.args[0]).toEqual("contextmenu");
+
+                fireGesture(mockEvent);
+
+                expect(mockBody.append).toHaveBeenCalledWith(mockMenu);
             });
 
-            it("detaches a callback for context menu events when destroyed", function () {
-                expect(mockElement.off).not.toHaveBeenCalled();
-
-                gesture.destroy();
-
-                expect(mockElement.off).toHaveBeenCalledWith(
-                    "contextmenu",
-                    mockElement.on.mostRecentCall.args[1]
-                );
+            it("prevents the default context menu behavior", function () {
+                fireGesture(mockEvent);
+                expect(mockEvent.preventDefault).toHaveBeenCalled();
             });
-            
-            ////// Is this one here or in action spec? (shale)
-            /*
+
+            it("positions menus where clicked", function () {
+                mockEvent.pageX = 10;
+                mockEvent.pageY = 5;
+                fireGesture(mockEvent);
+                expect(mockScope.menuStyle.left).toEqual("10px");
+                expect(mockScope.menuStyle.top).toEqual("5px");
+                expect(mockScope.menuStyle.right).toBeUndefined();
+                expect(mockScope.menuStyle.bottom).toBeUndefined();
+                expect(mockScope.menuClass['go-up']).toBeFalsy();
+                expect(mockScope.menuClass['go-left']).toBeFalsy();
+            });
+
+            it("repositions menus near the screen edge", function () {
+                mockEvent.pageX = mockWindow.innerWidth - 10;
+                mockEvent.pageY = mockWindow.innerHeight - 5;
+                fireGesture(mockEvent);
+                expect(mockScope.menuStyle.right).toEqual("10px");
+                expect(mockScope.menuStyle.bottom).toEqual("5px");
+                expect(mockScope.menuStyle.left).toBeUndefined();
+                expect(mockScope.menuStyle.top).toBeUndefined();
+                expect(mockScope.menuClass['go-up']).toBeTruthy();
+                expect(mockScope.menuClass['go-left']).toBeTruthy();
+            });
+
+            it("removes a menu when body is clicked", function () {
+                // Show the menu
+                fireGesture(mockEvent);
+
+                // Verify precondition
+                expect(mockBody.off).not.toHaveBeenCalled();
+
+                // Find and fire body's click listener
+                mockBody.on.calls.forEach(function (call) {
+                    if (call.args[0] === 'click') {
+                        call.args[1]();
+                    }
+                });
+
+                // Menu should have been removed
+                expect(mockMenu.remove).toHaveBeenCalled();
+
+                // Listener should have been detached from body
+                expect(mockBody.off).toHaveBeenCalled();
+            });
+
             it("removes listeners from body if destroyed while menu is showing", function () {
                 // Show the menu
                 fireGesture(mockEvent);
@@ -118,7 +157,6 @@ define(
                 expect(mockBody.off).toHaveBeenCalled();
                 expect(mockMenu.remove).toHaveBeenCalled();
             });
-            */
 
         });
     }
