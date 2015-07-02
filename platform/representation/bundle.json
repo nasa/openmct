@@ -52,7 +52,7 @@
         ],
         "actions": [
             {
-                "key": "contextMenu",
+                "key": "menu",
                 "implementation": "actions/ContextMenuAction.js",
                 "depends": [ "$compile", "$document", "$window", "$rootScope" ]
             }

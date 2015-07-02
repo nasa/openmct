@@ -52,14 +52,14 @@ define(
                 console.log('event ', event);
                 */
                 
-                context = {key: 'contextMenu', event: event, domainObject: domainObject};
+                context = {key: 'menu', event: event, domainObject: domainObject};
                 domainObject.getCapability('action').perform(context);
             }
             
             // attempt to set the domain object
             $scope.$watch('domainObject', function (c) {
                 domainObject = c;
-                console.log('watcher called');
+                //console.log('watcher called');
             });
             
             return {
