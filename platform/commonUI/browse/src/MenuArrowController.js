@@ -38,25 +38,30 @@ define(
          * menu. 
          * @constructor
          */
-        function MenuArrowController($scope, $route, domainObject) {
+        function MenuArrowController($scope) {
+            var domainObject = $scope.domainObject,
+                context;
             
             function showMenu(event) {
-                console.log('showMenu() called');
-                //console.log('editor? ', $scope.domainObject.hasCapability('editor'));
                 /*
-                if (true || $scope.domainObject.hasCapability('editor')) {
-                    $scope.$emit('contextmenu', event);
-                }
+                console.log('showMenu() called');
+                
+                console.log('$scope ', $scope);
+                console.log('$scope.domainObject ', $scope.domainObject);
+                console.log('domainObject ', domainObject);
+                console.log('event ', event);
                 */
                 
-                //console.log('domainObject ', domainObject);
-                //console.log('$scope.domainObject ', $scope.domainObject);
-                console.log('event ', event);
-                
-                //$scope.domainObject.getCapability('action').perform({key: 'contextMenu', event: event});
-                domainObject.getCapability('action').perform({key: 'contextMenu', event: event});
+                context = {key: 'contextMenu', event: event, domainObject: domainObject};
+                domainObject.getCapability('action').perform(context);
             }
-
+            
+            // attempt to set the domain object
+            $scope.$watch('domainObject', function (c) {
+                domainObject = c;
+                console.log('watcher called');
+            });
+            
             return {
                 showMenu: showMenu
             };

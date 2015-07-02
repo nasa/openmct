@@ -52,8 +52,11 @@ define(
          */
         function ContextMenuAction($compile, $document, $window, $rootScope, element, domainObject, event) {
             //var turnOffMenu;
+            
+            /*
             console.log('in ContextMenuAction');
             console.log('contextMenuAction event ', event);
+            */
             
             //function showMenu(event) {
             var winDim = [$window.innerWidth, $window.innerHeight],
@@ -93,12 +96,12 @@ define(
                 "context-menu-holder": true
             };
 
-            console.log("ContextMenuAction scope ", scope);
+            //console.log("ContextMenuAction scope ", scope);
 
             // Create the context menu
             menu = $compile(MENU_TEMPLATE)(scope);
 
-            console.log("ContextMenuAction menu ", menu);
+            //console.log("ContextMenuAction menu ", menu);
 
             // Add the menu to the body
             body.append(menu);
