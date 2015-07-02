@@ -25,217 +25,58 @@
  * MenuArrowControllerSpec. Created by shale on 07/02/2015.
  */
 define(
-    ["../src/BrowseController"],
-    function (BrowseController) {
+    ["../src/MenuArrowController"],
+    function (MenuArrowController) {
         "use strict";
+        
+        //var JQLITE_FUNCTIONS = [ "on", "off", "find", "append", "remove" ],
+        //    DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability" ];
 
-        describe("The browse controller", function () {
+        
+        describe("The menu arrow controller", function () {
             var mockScope,
-                mockRoute,
-                mockLocation,
-                mockObjectService,
-                mockNavigationService,
-                mockRootObject,
-                mockUrlService,
                 mockDomainObject,
-                mockNextObject,
+                mockEvent,
+                mockContextMenuAction,
+                mockActionContext,
                 controller;
-
-            function mockPromise(value) {
-                return {
-                    then: function (callback) {
-                        return mockPromise(callback(value));
-                    }
-                };
-            }
-
+            
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
                     [ "$on", "$watch" ]
                 );
-                mockRoute = { current: { params: {} } };
-                mockLocation = jasmine.createSpyObj(
-                    "$location",
-                    [ "path" ]
-                );
-                mockUrlService = jasmine.createSpyObj(
-                    "urlService",
-                    ["urlForLocation"]
-                );
-                mockObjectService = jasmine.createSpyObj(
-                    "objectService",
-                    [ "getObjects" ]
-                );
-                mockNavigationService = jasmine.createSpyObj(
-                    "navigationService",
-                    [
-                        "getNavigation",
-                        "setNavigation",
-                        "addListener",
-                        "removeListener"
-                    ]
-                );
-                mockRootObject = jasmine.createSpyObj(
-                    "domainObject",
-                    [ "getId", "getCapability", "getModel", "useCapability" ]
-                );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
-                    [ "getId", "getCapability", "getModel", "useCapability" ]
+                    [ "getCapability" ]
                 );
-                mockNextObject = jasmine.createSpyObj(
-                    "nextObject",
-                    [ "getId", "getCapability", "getModel", "useCapability" ]
+                mockEvent = jasmine.createSpyObj(
+                    "event",
+                    [ "preventDefault" ]
                 );
-
-                mockObjectService.getObjects.andReturn(mockPromise({
-                    ROOT: mockRootObject
-                }));
-                mockRootObject.useCapability.andReturn(mockPromise([
-                    mockDomainObject
-                ]));
-                mockDomainObject.useCapability.andReturn(mockPromise([
-                    mockNextObject
-                ]));
-                mockNextObject.useCapability.andReturn(undefined);
-                mockNextObject.getId.andReturn("next");
-                mockDomainObject.getId.andReturn("mine");
-
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService,
-                    mockUrlService
+                mockContextMenuAction = jasmine.createSpyObj(
+                    "menu",
+                    [ "perform", "destroy" ]
                 );
-            });
-
-            it("uses composition to set the navigated object, if there is none", function () {
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService,
-                    mockUrlService
-                );
-                expect(mockNavigationService.setNavigation)
-                    .toHaveBeenCalledWith(mockDomainObject);
-            });
-
-            it("does not try to override navigation", function () {
-                mockNavigationService.getNavigation.andReturn(mockDomainObject);
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService,
-                    mockUrlService
-                );
-                expect(mockScope.navigatedObject).toBe(mockDomainObject);
-            });
-
-            it("updates scope when navigated object changes", function () {
-                // Should have registered a listener - call it
-                mockNavigationService.addListener.mostRecentCall.args[0](
-                    mockDomainObject
-                );
-                expect(mockScope.navigatedObject).toEqual(mockDomainObject);
-            });
-
-            it("releases its navigation listener when its scope is destroyed", function () {
-                expect(mockScope.$on).toHaveBeenCalledWith(
-                    "$destroy",
-                    jasmine.any(Function)
-                );
-                mockScope.$on.mostRecentCall.args[1]();
-                // Should remove the listener it added earlier
-                expect(mockNavigationService.removeListener).toHaveBeenCalledWith(
-                    mockNavigationService.addListener.mostRecentCall.args[0]
-                );
-            });
-
-            it("uses route parameters to choose initially-navigated object", function () {
-                mockRoute.current.params.ids = "mine/next";
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService
-                );
-                expect(mockScope.navigatedObject).toBe(mockNextObject);
-                expect(mockNavigationService.setNavigation)
-                    .toHaveBeenCalledWith(mockNextObject);
-            });
-
-            it("handles invalid IDs by going as far as possible", function () {
-                // Idea here is that if we get a bad path of IDs,
-                // browse controller should traverse down it until
-                // it hits an invalid ID.
-                mockRoute.current.params.ids = "mine/junk";
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService
-                );
-                expect(mockScope.navigatedObject).toBe(mockDomainObject);
-                expect(mockNavigationService.setNavigation)
-                    .toHaveBeenCalledWith(mockDomainObject);
-            });
-
-            it("handles compositionless objects by going as far as possible", function () {
-                // Idea here is that if we get a path which passes
-                // through an object without a composition, browse controller
-                // should stop at it since remaining IDs cannot be loaded.
-                mockRoute.current.params.ids = "mine/next/junk";
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService
-                );
-                expect(mockScope.navigatedObject).toBe(mockNextObject);
-                expect(mockNavigationService.setNavigation)
-                    .toHaveBeenCalledWith(mockNextObject);
-            });
-
-            it("updates the displayed route to reflect current navigation", function () {
-                var mockContext = jasmine.createSpyObj('context', ['getPath']),
-                    mockUnlisten = jasmine.createSpy('unlisten'),
-                    mockMode = "browse";
-
-                mockContext.getPath.andReturn(
-                    [mockRootObject, mockDomainObject, mockNextObject]
-                );
-                mockNextObject.getCapability.andCallFake(function (c) {
-                    return c === 'context' && mockContext;
+                mockActionContext = {key: 'menu', domainObject: mockDomainObject, event: mockEvent};
+                
+                mockScope.domainObject = mockDomainObject;
+                mockDomainObject.getCapability.andReturn(function (c) {
+                    //return c === 'action' ? mockContextMenuAction : undefined;
+                    return mockContextMenuAction;
                 });
-                mockScope.$on.andReturn(mockUnlisten);
-                // Provide a navigation change
-                mockNavigationService.addListener.mostRecentCall.args[0](
-                    mockNextObject
-                );
                 
-                // Allows the path index to be checked
-                // prior to setting $route.current                
-                mockLocation.path.andReturn("/browse/");
+                controller = new MenuArrowController(mockScope);
+            });
+            
+            it(" calls the context menu action when clicked", function () {
+                // Simulate a click on the menu arrow
+                controller.showMenu(mockEvent);
                 
-                // Exercise the Angular workaround
-                mockScope.$on.mostRecentCall.args[1]();
-                expect(mockUnlisten).toHaveBeenCalled();
+                //stop = $scope.domainObject.getCapability('action').perform(actionContext);
                 
-                // location.path to be called with the urlService's 
-                // urlFor function with the next domainObject and mode
-                expect(mockLocation.path).toHaveBeenCalledWith(
-                    mockUrlService.urlForLocation(mockMode, mockNextObject)
-                );
+                expect(mockDomainObject.getCapability).toHaveBeenCalled();
+                    //.toHaveBeenCalledWith('action');
             });
 
         });
