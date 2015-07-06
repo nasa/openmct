@@ -47,6 +47,11 @@
 	@include border-radius($basicCr * 1.5);
 }
 
+// style="min-width: 150px; max-width: 800px; width: 25%;"
+.browser-manage {
+    width: 100%;
+}
+
 .contents {
     $myM: 0; //$interiorMargin;
     box-sizing: border-box;
