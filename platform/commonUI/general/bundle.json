@@ -44,6 +44,10 @@
                 "templateUrl": "templates/controls/action-button.html"
             },
             {
+                "key": "menu-button",
+                "templateUrl": "templates/controls/menu-button.html"
+            },
+            {
                 "key": "input-filter",
                 "templateUrl": "templates/controls/input-filter.html"
             },
