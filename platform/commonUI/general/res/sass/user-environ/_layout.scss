@@ -55,21 +55,17 @@ $min-large: 770px;
 
 // style="min-width: 150px; max-width: 800px; width: 25%;"
 .browser-manage {
-//    @media only screen and ($max-name : $max-small) {
-//        width: 100%;
-//    }
-//    
-//    @media only screen and ($min-name : $min-large) {
+    @include phone {
+        width: 150px;
+    }
+    @include tablet {
+        width: 150px; 
+    }    
+    @include desktop {
         min-width: 150px;
         max-width: 800px;
-        width: 25%;
-//    }
-}
-
-.rem-display {
-//    @media only screen and ($max-name : $max-small) {
-//        display: none;
-//    }
+        width: 25%;   
+    }   
 }
 
 .contents {
