@@ -33,6 +33,14 @@ $controlCr: 2px;
 $smallCr: 2px;
 $badgeW: 35px;
 
+/************************** WINDOW DIMENSIONS FOR RWD */
+$phoMaxW: 400px;
+$phoneMaxH: 680px;
+$tabMaxW: 800px;
+$tabMaxH: 1280px;
+$compMinW: 801px; 
+$compMinH: 1281px;
+
 /************************** COLORS AND SHADING */
 $colorBodyBg: #333;
 $colorBodyFg: #999;
@@ -103,6 +111,7 @@ $ovrTopBarH: 60px;
 $ovrFooterH: 40px;
 // Items
 $ueBrowseGridItemLg: 200px;
+$ueBrowseGridItemSm: 100%;
 $ueBrowseGridItemTopBarH: 20px;
 $ueBrowseGridItemBottomBarH: 30px;
 $itemPadLR: 5px;
