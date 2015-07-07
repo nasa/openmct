@@ -65,7 +65,7 @@
                     ng-style="{ bottom: (hSplitter.state()+8) + 'px', top: '0px' }"
                     ng-controller="ToggleController as toggle"
                     >
-                    <mct-container key="accordion" title="Library">
+                    <mct-container key="accordion" label="Library">
                         <mct-representation key="'tree'"
                                             alias="foo1"
                                             mct-object="editPanes.getRoot()">
@@ -85,7 +85,7 @@
                     ng-style="{ bottom: '0px', height: (hSplitter.state()-4) + 'px'}"
                     ng-controller="ToggleController as toggle"
                     >
-                    <mct-container key="accordion" title="Elements">
+                    <mct-container key="accordion" label="Elements">
                         <mct-representation key="'edit-elements'" mct-object="domainObject">
                         </mct-representation>
                     </mct-container>
