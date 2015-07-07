@@ -28,6 +28,7 @@
     .item {
         &.grid-item {
             //div { @include test() }
+            // Sets grid item width
             $d: $ueBrowseGridItemLg;
             $transTime: 200ms;
             @include btnSubtle($colorItemBase);
