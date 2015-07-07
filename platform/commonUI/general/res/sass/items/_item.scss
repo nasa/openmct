@@ -28,15 +28,37 @@
     .item {
         &.grid-item {
             //div { @include test() }
-            // Sets grid item width
-            $d: $ueBrowseGridItemLg;
+            // NOTE: Sets grid item width
+            $dWid: $ueBrowseGridItemLg;
+            $dHei: $ueBrowseGridItemLg;
+            @include phone {
+                $dWid: 100%;
+                $dHei: $ueBrowseGridItemLg/4;
+                width: $dWid;
+                height: $dHei;
+            }
+            
+            @include tablet {
+                $dWid: 100%;
+                $dHei: $ueBrowseGridItemLg/2;
+                width: $dWid;
+                height: $dHei;
+            }
+            
+            @include desktop {
+                $dWid: $ueBrowseGridItemLg;
+                $dHei: $ueBrowseGridItemLg;
+                width: $dWid;
+                height: $dHei; 
+            }
+            
             $transTime: 200ms;
             @include btnSubtle($colorItemBase);
             box-sizing: border-box;
             cursor: pointer;
-            float: left;
-            height: $d;
-            width: $d;
+            float: left;     
+            width: $dWid;
+            height: $dHei;
             margin-bottom: $interiorMarginSm;
             margin-right: $interiorMarginSm;
             position: relative;
