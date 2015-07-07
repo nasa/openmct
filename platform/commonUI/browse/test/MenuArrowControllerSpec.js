@@ -29,11 +29,7 @@ define(
     function (MenuArrowController) {
         "use strict";
         
-        //var JQLITE_FUNCTIONS = [ "on", "off", "find", "append", "remove" ],
-        //    DOMAIN_OBJECT_METHODS = [ "getId", "getModel", "getCapability", "hasCapability", "useCapability" ];
-
-        
-        describe("The menu arrow controller", function () {
+        describe("The menu arrow controller ", function () {
             var mockScope,
                 mockDomainObject,
                 mockEvent,
@@ -44,7 +40,7 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$on", "$watch" ]
+                    [ "" ]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
@@ -55,30 +51,31 @@ define(
                     [ "preventDefault" ]
                 );
                 mockContextMenuAction = jasmine.createSpyObj(
-                    "menu",
-                    [ "perform", "destroy" ]
+                    "action",
+                    [ "perform", "getActions" ]
                 );
-                mockActionContext = {key: 'menu', domainObject: mockDomainObject, event: mockEvent};
+                mockActionContext = jasmine.createSpyObj(
+                    "actionContext",
+                    [ "" ]
+                );
                 
+                mockActionContext.domainObject = mockDomainObject;
+                mockActionContext.event = mockEvent;
                 mockScope.domainObject = mockDomainObject;
-                mockDomainObject.getCapability.andReturn(function (c) {
-                    //return c === 'action' ? mockContextMenuAction : undefined;
-                    return mockContextMenuAction;
-                });
+                mockDomainObject.getCapability.andReturn(mockContextMenuAction);
+                mockContextMenuAction.perform.andReturn(jasmine.any(Function));
                 
                 controller = new MenuArrowController(mockScope);
             });
             
-            it(" calls the context menu action when clicked", function () {
+            it("calls the context menu action when clicked", function () {
                 // Simulate a click on the menu arrow
                 controller.showMenu(mockEvent);
                 
-                //stop = $scope.domainObject.getCapability('action').perform(actionContext);
-                
-                expect(mockDomainObject.getCapability).toHaveBeenCalled();
-                    //.toHaveBeenCalledWith('action');
+                // Expect the menu action to be performed 
+                expect(mockDomainObject.getCapability).toHaveBeenCalledWith('action');
+                expect(mockContextMenuAction.perform).toHaveBeenCalled();
             });
-
         });
     }
 );

@@ -70,26 +70,6 @@ define(
                     mockDomainObject.calls
                 );
             });
-            
-            ////// Is this one here or in action spec? (shale)
-            /*
-            it("removes listeners from body if destroyed while menu is showing", function () {
-                // Show the menu
-                fireGesture(mockEvent);
-
-                // Verify preconditions
-                expect(mockBody.off).not.toHaveBeenCalled();
-                expect(mockMenu.remove).not.toHaveBeenCalled();
-
-                // Destroy the menu
-                gesture.destroy();
-
-                // Verify menu was removed and listener detached
-                expect(mockBody.off).toHaveBeenCalled();
-                expect(mockMenu.remove).toHaveBeenCalled();
-            });
-            */
-
         });
     }
 );
