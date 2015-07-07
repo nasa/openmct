@@ -97,6 +97,13 @@
                 }
             }
             .item-main {
+                @include phone {
+                    display: none;
+                }
+                @include tablet {
+                    display: none;   
+                }
+                
 	            $h: $ueBrowseGridItemLg;
 	            $lh: $h * 0.8;
                 //top: $ueBrowseGridItemTopBarH; bottom: $ueBrowseGridItemBottomBarH;
