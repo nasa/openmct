@@ -22,7 +22,7 @@
 .items-holder {
     .item {
         &.grid-item {
-            // NOTE: Sets grid item width
+//            NOTE: Sets grid item width
             $dWid: $ueBrowseGridItemLg;
             $dHei: $ueBrowseGridItemLg;
             @include phone {
