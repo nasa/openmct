@@ -43,13 +43,34 @@
  *****************************************************************************/
 /************************** FEATURES */
 /************************** VERY INFLUENTIAL GLOBAL DIMENSIONS */
-/************************** WINDOW DIMENSIONS FOR RWD */
 /************************** COLORS AND SHADING */
 /************************** RATIOS */
 /************************** LAYOUT */
 /************************** CONTROLS */
 /************************** PATHS */
 /************************** TIMINGS */
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/************************** WINDOW DIMENSIONS FOR RWD */
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -179,6 +200,27 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 	}
 }
 */
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -474,22 +516,7 @@ mct-container {
   -webkit-border-radius: 3px;
   border-radius: 3px; }
 
-@media screen and (max-width: 514px) {
-  /* line 59, ../sass/user-environ/_layout.scss */
-  .browse-manage {
-    width: 100px; } }
-@media screen and (min-width: 515px) and (max-width: 800px) {
-  /* line 59, ../sass/user-environ/_layout.scss */
-  .browse-manage {
-    width: 150px; } }
-@media screen and (min-width: 801px) {
-  /* line 59, ../sass/user-environ/_layout.scss */
-  .browse-manage {
-    min-width: 150px;
-    max-width: 800px;
-    width: 25%; } }
-
-/* line 73, ../sass/user-environ/_layout.scss */
+/* line 51, ../sass/user-environ/_layout.scss */
 .contents {
   box-sizing: border-box;
   position: absolute;
@@ -497,36 +524,36 @@ mct-container {
   right: 0;
   bottom: 0;
   left: 0; }
-  /* line 81, ../sass/user-environ/_layout.scss */
+  /* line 59, ../sass/user-environ/_layout.scss */
   .contents.nomargin {
     right: 0px;
     bottom: 0px;
     left: 0px; }
 
-/* line 90, ../sass/user-environ/_layout.scss */
+/* line 68, ../sass/user-environ/_layout.scss */
 .bar .icon.major {
   margin-right: 5px; }
-/* line 93, ../sass/user-environ/_layout.scss */
+/* line 71, ../sass/user-environ/_layout.scss */
 .bar.abs, .btn-menu span.bar.l-click-area {
   text-wrap: none;
   white-space: nowrap; }
-/* line 97, ../sass/user-environ/_layout.scss */
+/* line 75, ../sass/user-environ/_layout.scss */
 .bar.left,
 .bar .left {
   width: 45% !important;
   right: auto !important; }
-/* line 102, ../sass/user-environ/_layout.scss */
+/* line 80, ../sass/user-environ/_layout.scss */
 .bar.right,
 .bar .right {
   width: 45% !important;
   left: auto !important;
   text-align: right; }
-  /* line 107, ../sass/user-environ/_layout.scss */
+  /* line 85, ../sass/user-environ/_layout.scss */
   .bar.right .icon.major,
   .bar .right .icon.major {
     margin-left: 15px; }
 
-/* line 114, ../sass/user-environ/_layout.scss */
+/* line 92, ../sass/user-environ/_layout.scss */
 .user-environ .browse-area,
 .user-environ .edit-area,
 .user-environ .editor {
@@ -534,23 +561,23 @@ mct-container {
   right: 10px;
   bottom: 35px;
   left: 10px; }
-/* line 125, ../sass/user-environ/_layout.scss */
+/* line 103, ../sass/user-environ/_layout.scss */
 .user-environ .browse-area > .contents,
 .user-environ .edit-area > .contents {
   left: 0;
   right: 0; }
-/* line 131, ../sass/user-environ/_layout.scss */
+/* line 109, ../sass/user-environ/_layout.scss */
 .user-environ .edit-area {
   top: 45px; }
-  /* line 134, ../sass/user-environ/_layout.scss */
+  /* line 112, ../sass/user-environ/_layout.scss */
   .user-environ .edit-area .tool-bar {
     bottom: auto;
     height: 30px;
     line-height: 25px; }
-  /* line 139, ../sass/user-environ/_layout.scss */
+  /* line 117, ../sass/user-environ/_layout.scss */
   .user-environ .edit-area .work-area {
     top: 40px; }
-/* line 144, ../sass/user-environ/_layout.scss */
+/* line 122, ../sass/user-environ/_layout.scss */
 .user-environ .bottom-bar {
   overflow: hidden;
   position: absolute;
@@ -562,20 +589,20 @@ mct-container {
   height: auto;
   top: auto;
   height: 25px; }
-  /* line 149, ../sass/user-environ/_layout.scss */
+  /* line 127, ../sass/user-environ/_layout.scss */
   .user-environ .bottom-bar .status-holder {
     z-index: 1; }
-  /* line 153, ../sass/user-environ/_layout.scss */
+  /* line 131, ../sass/user-environ/_layout.scss */
   .user-environ .bottom-bar .app-logo {
     left: auto;
     width: 105px;
     z-index: 2; }
 
-/* line 161, ../sass/user-environ/_layout.scss */
+/* line 139, ../sass/user-environ/_layout.scss */
 .cols {
   overflow: hidden;
   *zoom: 1; }
-  /* line 163, ../sass/user-environ/_layout.scss */
+  /* line 141, ../sass/user-environ/_layout.scss */
   .cols .col {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -586,102 +613,138 @@ mct-container {
     margin-left: 1.5%;
     padding-left: 5px;
     position: relative; }
-    /* line 171, ../sass/user-environ/_layout.scss */
+    /* line 149, ../sass/user-environ/_layout.scss */
     .cols .col:first-child {
       margin-left: 0;
       padding-left: 0; }
-  /* line 178, ../sass/user-environ/_layout.scss */
+  /* line 156, ../sass/user-environ/_layout.scss */
   .cols.cols-2 .col-1 {
     min-width: 250px;
     width: 48.5%; }
-  /* line 184, ../sass/user-environ/_layout.scss */
+  /* line 162, ../sass/user-environ/_layout.scss */
   .cols.cols-2-ff .col-100px {
     width: 100px; }
-  /* line 191, ../sass/user-environ/_layout.scss */
+  /* line 169, ../sass/user-environ/_layout.scss */
   .cols.cols-6 .col-1 {
     min-width: 83.33333px;
     width: 15.16667%; }
-  /* line 197, ../sass/user-environ/_layout.scss */
+  /* line 175, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-1 {
     min-width: 31.25px;
     width: 4.75%; }
-  /* line 200, ../sass/user-environ/_layout.scss */
+  /* line 178, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-2 {
     min-width: 62.5px;
     width: 11%; }
-  /* line 203, ../sass/user-environ/_layout.scss */
+  /* line 181, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-7 {
     min-width: 218.75px;
     width: 42.25%; }
-  /* line 209, ../sass/user-environ/_layout.scss */
+  /* line 187, ../sass/user-environ/_layout.scss */
   .cols.cols-32 .col-2 {
     min-width: 31.25px;
     width: 4.75%; }
-  /* line 212, ../sass/user-environ/_layout.scss */
+  /* line 190, ../sass/user-environ/_layout.scss */
   .cols.cols-32 .col-15 {
     min-width: 234.375px;
     width: 45.375%; }
-  /* line 216, ../sass/user-environ/_layout.scss */
+  /* line 194, ../sass/user-environ/_layout.scss */
   .cols .l-row {
     overflow: hidden;
     *zoom: 1;
     padding: 5px 0; }
 
-/* line 222, ../sass/user-environ/_layout.scss */
+/* line 200, ../sass/user-environ/_layout.scss */
 .pane {
   position: absolute; }
-  /* line 225, ../sass/user-environ/_layout.scss */
+  /* line 203, ../sass/user-environ/_layout.scss */
   .pane.treeview .create-btn-holder {
     bottom: auto;
     top: 0;
     height: 24px; }
-    /* line 228, ../sass/user-environ/_layout.scss */
+    /* line 206, ../sass/user-environ/_layout.scss */
     .pane.treeview .create-btn-holder .wrapper.menu-element {
       position: absolute;
       bottom: 5px; }
-  /* line 233, ../sass/user-environ/_layout.scss */
+  /* line 211, ../sass/user-environ/_layout.scss */
   .pane.treeview .tree-holder {
     overflow: auto;
     top: 34px; }
-  /* line 240, ../sass/user-environ/_layout.scss */
+  /* line 218, ../sass/user-environ/_layout.scss */
   .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .btn-menu span.left.l-click-area, .btn-menu .pane.items .object-browse-bar span.left.l-click-area,
   .pane.items .object-browse-bar .right.abs,
   .pane.items .object-browse-bar .btn-menu span.right.l-click-area,
   .btn-menu .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
-  /* line 245, ../sass/user-environ/_layout.scss */
+  /* line 223, ../sass/user-environ/_layout.scss */
   .pane.items .object-holder {
     top: 34px; }
-  /* line 250, ../sass/user-environ/_layout.scss */
+  /* line 228, ../sass/user-environ/_layout.scss */
   .pane.edit-main .object-holder {
     top: 0; }
-  /* line 256, ../sass/user-environ/_layout.scss */
+  /* line 234, ../sass/user-environ/_layout.scss */
   .pane .object-holder {
     overflow: auto; }
 
-/* line 264, ../sass/user-environ/_layout.scss */
+/* line 242, ../sass/user-environ/_layout.scss */
 .split-layout.horizontal > .pane {
   margin-top: 5px; }
-  /* line 267, ../sass/user-environ/_layout.scss */
+  /* line 245, ../sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane:first-child {
     margin-top: 0; }
-/* line 274, ../sass/user-environ/_layout.scss */
+/* line 252, ../sass/user-environ/_layout.scss */
 .split-layout.vertical > .pane {
   margin-left: 5px; }
-  /* line 276, ../sass/user-environ/_layout.scss */
+  /* line 254, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane > .holder {
     left: 0;
     right: 0; }
-  /* line 280, ../sass/user-environ/_layout.scss */
+  /* line 258, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane:first-child {
     margin-left: 0; }
-    /* line 282, ../sass/user-environ/_layout.scss */
+    /* line 260, ../sass/user-environ/_layout.scss */
     .split-layout.vertical > .pane:first-child .holder {
       right: 5px; }
 
-/* line 291, ../sass/user-environ/_layout.scss */
+/* line 269, ../sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
+
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+@media screen and (max-width: 514px) {
+  /* line 31, ../sass/mobile/_layout.scss */
+  .browse-manage {
+    width: 100px; } }
+@media screen and (min-width: 515px) and (max-width: 800px) {
+  /* line 31, ../sass/mobile/_layout.scss */
+  .browse-manage {
+    width: 150px; } }
+@media screen and (min-width: 801px) {
+  /* line 31, ../sass/mobile/_layout.scss */
+  .browse-manage {
+    min-width: 150px;
+    max-width: 800px;
+    width: 25%; } }
 
 /*****************************************************************************
 * Open MCT Web, Copyright (c) 2014-2015, United States Government
@@ -1450,7 +1513,7 @@ mct-container {
     color: #999;
     display: inline-block;
     color: #ccf2ff; }
-    /* line 180, ../sass/_mixins.scss */
+    /* line 153, ../sass/_mixins.scss */
     .btn.major:not(.disabled):hover,
     .s-btn.major:not(.disabled):hover,
     .major.icon-btn:not(.disabled):hover,
@@ -1462,13 +1525,13 @@ mct-container {
       background-image: -webkit-linear-gradient(#2ecbff, #14c4ff);
       background-image: linear-gradient(#2ecbff, #14c4ff);
       color: #bdbdbd; }
-      /* line 183, ../sass/_mixins.scss */
+      /* line 156, ../sass/_mixins.scss */
       .btn.major:not(.disabled):hover.btn-menu .invoke-menu,
       .s-btn.major:not(.disabled):hover.btn-menu .invoke-menu,
       .major.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
       .major.s-icon-btn:not(.disabled):hover.btn-menu .invoke-menu {
         color: #75ddff; }
-    /* line 188, ../sass/_mixins.scss */
+    /* line 161, ../sass/_mixins.scss */
     .btn.major.btn-menu .invoke-menu,
     .s-btn.major.btn-menu .invoke-menu,
     .major.btn-menu.icon-btn .invoke-menu,
@@ -1498,7 +1561,7 @@ mct-container {
       border-top: 1px solid #2ecbff;
       color: #ccf2ff;
       display: inline-block; }
-      /* line 180, ../sass/_mixins.scss */
+      /* line 153, ../sass/_mixins.scss */
       .btn.major:hover:not(.disabled):hover,
       .s-btn.major:hover:not(.disabled):hover,
       .major.icon-btn:hover:not(.disabled):hover,
@@ -1510,13 +1573,13 @@ mct-container {
         background-image: -webkit-linear-gradient(#47d1ff, #2ecbff);
         background-image: linear-gradient(#47d1ff, #2ecbff);
         color: white; }
-        /* line 183, ../sass/_mixins.scss */
+        /* line 156, ../sass/_mixins.scss */
         .btn.major:hover:not(.disabled):hover.btn-menu .invoke-menu,
         .s-btn.major:hover:not(.disabled):hover.btn-menu .invoke-menu,
         .major.icon-btn:hover:not(.disabled):hover.btn-menu .invoke-menu,
         .major.s-icon-btn:hover:not(.disabled):hover.btn-menu .invoke-menu {
           color: #8fe3ff; }
-      /* line 188, ../sass/_mixins.scss */
+      /* line 161, ../sass/_mixins.scss */
       .btn.major:hover.btn-menu .invoke-menu,
       .s-btn.major:hover.btn-menu .invoke-menu,
       .major.icon-btn:hover.btn-menu .invoke-menu,
@@ -1552,7 +1615,7 @@ mct-container {
     border-top: 1px solid #8a8a8a;
     color: #cccccc;
     display: inline-block; }
-    /* line 180, ../sass/_mixins.scss */
+    /* line 153, ../sass/_mixins.scss */
     .btn.subtle:not(.disabled):hover,
     .s-btn.subtle:not(.disabled):hover,
     .subtle.icon-btn:not(.disabled):hover,
@@ -1564,13 +1627,13 @@ mct-container {
       background-image: -webkit-linear-gradient(#969696, #8a8a8a);
       background-image: linear-gradient(#969696, #8a8a8a);
       color: #f0f0f0; }
-      /* line 183, ../sass/_mixins.scss */
+      /* line 156, ../sass/_mixins.scss */
       .btn.subtle:not(.disabled):hover.btn-menu .invoke-menu,
       .s-btn.subtle:not(.disabled):hover.btn-menu .invoke-menu,
       .subtle.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
       .subtle.s-icon-btn:not(.disabled):hover.btn-menu .invoke-menu {
         color: #bababa; }
-    /* line 188, ../sass/_mixins.scss */
+    /* line 161, ../sass/_mixins.scss */
     .btn.subtle.btn-menu .invoke-menu,
     .s-btn.subtle.btn-menu .invoke-menu,
     .subtle.btn-menu.icon-btn .invoke-menu,
@@ -1603,7 +1666,7 @@ mct-container {
     border-top: 1px solid #575757;
     color: #999;
     display: inline-block; }
-    /* line 180, ../sass/_mixins.scss */
+    /* line 153, ../sass/_mixins.scss */
     .btn.very-subtle:not(.disabled):hover, .btn.s-very-subtle:not(.disabled):hover,
     .s-btn.very-subtle:not(.disabled):hover,
     .very-subtle.icon-btn:not(.disabled):hover,
@@ -1618,7 +1681,7 @@ mct-container {
       background-image: -webkit-linear-gradient(#636363, #575757);
       background-image: linear-gradient(#636363, #575757);
       color: #bdbdbd; }
-      /* line 183, ../sass/_mixins.scss */
+      /* line 156, ../sass/_mixins.scss */
       .btn.very-subtle:not(.disabled):hover.btn-menu .invoke-menu, .btn.s-very-subtle:not(.disabled):hover.btn-menu .invoke-menu,
       .s-btn.very-subtle:not(.disabled):hover.btn-menu .invoke-menu,
       .very-subtle.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
@@ -1627,7 +1690,7 @@ mct-container {
       .s-very-subtle.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
       .s-very-subtle.s-icon-btn:not(.disabled):hover.btn-menu .invoke-menu {
         color: #878787; }
-    /* line 188, ../sass/_mixins.scss */
+    /* line 161, ../sass/_mixins.scss */
     .btn.very-subtle.btn-menu .invoke-menu, .btn.s-very-subtle.btn-menu .invoke-menu,
     .s-btn.very-subtle.btn-menu .invoke-menu,
     .very-subtle.btn-menu.icon-btn .invoke-menu,
@@ -1663,7 +1726,7 @@ mct-container {
       border-top: 1px solid #fe9510;
       color: #fff;
       display: inline-block; }
-      /* line 180, ../sass/_mixins.scss */
+      /* line 153, ../sass/_mixins.scss */
       .btn.very-subtle.paused:not(.disabled):hover, .btn.s-very-subtle.paused:not(.disabled):hover,
       .s-btn.very-subtle.paused:not(.disabled):hover,
       .very-subtle.paused.icon-btn:not(.disabled):hover,
@@ -1678,7 +1741,7 @@ mct-container {
         background-image: -webkit-linear-gradient(#fea029, #fe9510);
         background-image: linear-gradient(#fea029, #fe9510);
         color: white; }
-        /* line 183, ../sass/_mixins.scss */
+        /* line 156, ../sass/_mixins.scss */
         .btn.very-subtle.paused:not(.disabled):hover.btn-menu .invoke-menu, .btn.s-very-subtle.paused:not(.disabled):hover.btn-menu .invoke-menu,
         .s-btn.very-subtle.paused:not(.disabled):hover.btn-menu .invoke-menu,
         .very-subtle.paused.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
@@ -1687,7 +1750,7 @@ mct-container {
         .s-very-subtle.paused.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
         .s-very-subtle.paused.s-icon-btn:not(.disabled):hover.btn-menu .invoke-menu {
           color: #fec070; }
-      /* line 188, ../sass/_mixins.scss */
+      /* line 161, ../sass/_mixins.scss */
       .btn.very-subtle.paused.btn-menu .invoke-menu, .btn.s-very-subtle.paused.btn-menu .invoke-menu,
       .s-btn.very-subtle.paused.btn-menu .invoke-menu,
       .very-subtle.paused.btn-menu.icon-btn .invoke-menu,
@@ -2149,7 +2212,7 @@ label.checkbox.custom {
   			color: lighten($c, 10%);
   		}
   	}*/ }
-  /* line 180, ../sass/_mixins.scss */
+  /* line 153, ../sass/_mixins.scss */
   .btn-menu:not(.disabled):hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzYzNjM2MyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU3NTc1NyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -2158,10 +2221,10 @@ label.checkbox.custom {
     background-image: -webkit-linear-gradient(#636363, #575757);
     background-image: linear-gradient(#636363, #575757);
     color: #bdbdbd; }
-    /* line 183, ../sass/_mixins.scss */
+    /* line 156, ../sass/_mixins.scss */
     .btn-menu:not(.disabled):hover.btn-menu .invoke-menu {
       color: #878787; }
-  /* line 188, ../sass/_mixins.scss */
+  /* line 161, ../sass/_mixins.scss */
   .btn-menu.btn-menu .invoke-menu {
     color: #757575; }
   /* line 285, ../sass/controls/_controls.scss */
@@ -2293,7 +2356,7 @@ label.checkbox.custom {
   auto: 0;
   bottom: auto;
   left: auto; }
-  /* line 180, ../sass/_mixins.scss */
+  /* line 153, ../sass/_mixins.scss */
   .slider .knob:not(.disabled):hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzYzNjM2MyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU3NTc1NyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -2302,13 +2365,13 @@ label.checkbox.custom {
     background-image: -webkit-linear-gradient(#636363, #575757);
     background-image: linear-gradient(#636363, #575757);
     color: #bdbdbd; }
-    /* line 183, ../sass/_mixins.scss */
+    /* line 156, ../sass/_mixins.scss */
     .slider .knob:not(.disabled):hover.btn-menu .invoke-menu {
       color: #878787; }
-  /* line 188, ../sass/_mixins.scss */
+  /* line 161, ../sass/_mixins.scss */
   .slider .knob.btn-menu .invoke-menu {
     color: #757575; }
-  /* line 204, ../sass/_mixins.scss */
+  /* line 177, ../sass/_mixins.scss */
   .slider .knob:before {
     -moz-transition-property: "border-color";
     -o-transition-property: "border-color";
@@ -2332,7 +2395,7 @@ label.checkbox.custom {
     left: 2px;
     bottom: 5px;
     top: 5px; }
-  /* line 226, ../sass/_mixins.scss */
+  /* line 199, ../sass/_mixins.scss */
   .slider .knob:not(.disabled):hover:before {
     -moz-transition-property: "border-color";
     -o-transition-property: "border-color";
@@ -2504,14 +2567,14 @@ label.checkbox.custom {
     padding: 3px 0;
     position: absolute;
     z-index: 10; }
-    /* line 188, ../sass/_mixins.scss */
+    /* line 161, ../sass/_mixins.scss */
     .menu-element .menu.btn-menu .invoke-menu {
       color: #828282; }
     /* line 37, ../sass/controls/_menus.scss */
     .menu-element .menu ul {
       margin: 0;
       padding: 0; }
-      /* line 294, ../sass/_mixins.scss */
+      /* line 267, ../sass/_mixins.scss */
       .menu-element .menu ul li {
         list-style-type: none;
         margin: 0;
@@ -2567,7 +2630,7 @@ label.checkbox.custom {
     border-top: 1px solid #919191;
     color: #999;
     display: inline-block; }
-    /* line 188, ../sass/_mixins.scss */
+    /* line 161, ../sass/_mixins.scss */
     .menu-element .context-menu.btn-menu .invoke-menu,
     .menu-element .super-menu.btn-menu .invoke-menu {
       color: #b0b0b0; }
@@ -3430,7 +3493,7 @@ input[type="text"] {
   margin: 0 0 2px 2px;
   overflow: hidden;
   position: relative; }
-  /* line 180, ../sass/_mixins.scss */
+  /* line 153, ../sass/_mixins.scss */
   .form-control.select:not(.disabled):hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzYzNjM2MyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU3NTc1NyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -3439,10 +3502,10 @@ input[type="text"] {
     background-image: -webkit-linear-gradient(#636363, #575757);
     background-image: linear-gradient(#636363, #575757);
     color: #bdbdbd; }
-    /* line 183, ../sass/_mixins.scss */
+    /* line 156, ../sass/_mixins.scss */
     .form-control.select:not(.disabled):hover.btn-menu .invoke-menu {
       color: #878787; }
-  /* line 188, ../sass/_mixins.scss */
+  /* line 161, ../sass/_mixins.scss */
   .form-control.select.btn-menu .invoke-menu {
     color: #757575; }
   /* line 29, ../sass/forms/_selects.scss */
@@ -4060,7 +4123,7 @@ input[type="text"] {
   bottom: 15%;
   left: 15%;
   z-index: 101; }
-  /* line 188, ../sass/_mixins.scss */
+  /* line 161, ../sass/_mixins.scss */
   .overlay > .holder.btn-menu .invoke-menu {
     color: #757575; }
   /* line 45, ../sass/overlay/_overlay.scss */
@@ -4568,7 +4631,7 @@ input[type="text"] {
     right: 0;
     width: auto;
     height: 5px; }
-    /* line 204, ../sass/_mixins.scss */
+    /* line 177, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:before {
       -moz-transition-property: "border-color";
       -o-transition-property: "border-color";
@@ -4592,7 +4655,7 @@ input[type="text"] {
       top: 2px;
       left: 5px;
       right: 5px; }
-    /* line 226, ../sass/_mixins.scss */
+    /* line 199, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:not(.disabled):hover:before {
       -moz-transition-property: "border-color";
       -o-transition-property: "border-color";
@@ -4622,7 +4685,7 @@ input[type="text"] {
   bottom: 0;
   cursor: col-resize;
   width: 5px; }
-  /* line 204, ../sass/_mixins.scss */
+  /* line 177, ../sass/_mixins.scss */
   .split-layout.vertical > .splitter:before {
     -moz-transition-property: "border-color";
     -o-transition-property: "border-color";
@@ -4646,7 +4709,7 @@ input[type="text"] {
     left: 2px;
     bottom: 5px;
     top: 5px; }
-  /* line 226, ../sass/_mixins.scss */
+  /* line 199, ../sass/_mixins.scss */
   .split-layout.vertical > .splitter:not(.disabled):hover:before {
     -moz-transition-property: "border-color";
     -o-transition-property: "border-color";

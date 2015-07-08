@@ -96,6 +96,7 @@
 	                padding: $interiorMargin;
                 }
             }
+//            NOTE: make icon disappear
             .item-main {
                 @include phone {
                     display: none;

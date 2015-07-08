@@ -19,15 +19,44 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@import "compass";
-@import "compass/css3";
-@import "compass/css3/border-radius";
-@import "compass/css3/opacity";
-@import "compass/utilities";
-
-@import "constants";
-@import "mobile/constants";
-@import "mixins";
-@import "mobile/mixins";
-@import "items/item";
-@import "mobile/item";
+.items-holder {
+    .item {
+        &.grid-item {
+            // NOTE: Sets grid item width
+            $dWid: $ueBrowseGridItemLg;
+            $dHei: $ueBrowseGridItemLg;
+            @include phone {
+                $dWid: 100%;
+                $dHei: $ueBrowseGridItemLg/4;
+                width: $dWid;
+                height: $dHei;
+            }
+            
+            @include tablet {
+                $dWid: 100%;
+                $dHei: $ueBrowseGridItemLg/2;
+                width: $dWid;
+                height: $dHei;
+            }
+            
+            @include desktop {
+                $dWid: $ueBrowseGridItemLg;
+                $dHei: $ueBrowseGridItemLg;
+                width: $dWid;
+                height: $dHei; 
+            }
+            
+            .bar {
+//            NOTE: make icon disappear
+            .item-main {
+                @include phone {
+                    display: none;
+                }
+                @include tablet {
+                    display: none;   
+                }
+                }
+            }
+        }
+    }
+}

@@ -42,7 +42,6 @@
  *****************************************************************************/
 /************************** FEATURES */
 /************************** VERY INFLUENTIAL GLOBAL DIMENSIONS */
-/************************** WINDOW DIMENSIONS FOR RWD */
 /************************** COLORS AND SHADING */
 /************************** RATIOS */
 /************************** LAYOUT */
@@ -104,7 +103,7 @@
 ul.tree {
   margin: 0;
   padding: 0; }
-  /* line 294, ../sass/_mixins.scss */
+  /* line 267, ../sass/_mixins.scss */
   ul.tree li {
     list-style-type: none;
     margin: 0;

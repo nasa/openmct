@@ -19,15 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@import "compass";
-@import "compass/css3";
-@import "compass/css3/border-radius";
-@import "compass/css3/opacity";
-@import "compass/utilities";
 
-@import "constants";
-@import "mobile/constants";
-@import "mixins";
-@import "mobile/mixins";
-@import "items/item";
-@import "mobile/item";
+/************************** WINDOW DIMENSIONS FOR RWD */
+$phoMaxW: 514px;
+$tabMinW: 515px;
+$tabMaxW: 800px;
+$compMinW: 801px; 
+$compMinH: 1281px;

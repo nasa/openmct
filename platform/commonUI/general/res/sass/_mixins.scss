@@ -20,33 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// Mixins for devices
-@mixin phone {
-    @media screen and (max-width: $phoMaxW) {
-        @content
-    }
-}
-
-@mixin tablet {
-    @media screen and (min-width: $tabMinW) and (max-width: $tabMaxW) {
-        @content
-    }
-}
-
-@mixin phoneandtablet {
-    @media screen and (max-width: $tabMaxW) {
-        @content
-    }
-}
-
-@mixin desktop {
-    @media screen and (min-width: $compMinW) {
-        @content
-    }
-}
-
-
-
 @mixin absPosDefault($offset: 0px, $overflowHidden: hidden) {
     overflow: $overflowHidden;
     position: absolute;

@@ -42,13 +42,34 @@
  *****************************************************************************/
 /************************** FEATURES */
 /************************** VERY INFLUENTIAL GLOBAL DIMENSIONS */
-/************************** WINDOW DIMENSIONS FOR RWD */
 /************************** COLORS AND SHADING */
 /************************** RATIOS */
 /************************** LAYOUT */
 /************************** CONTROLS */
 /************************** PATHS */
 /************************** TIMINGS */
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/************************** WINDOW DIMENSIONS FOR RWD */
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -79,6 +100,27 @@
 	}
 }
 */
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -152,7 +194,7 @@
       .items-holder .item.grid-item {
         width: 200px;
         height: 200px; } }
-    /* line 180, ../sass/_mixins.scss */
+    /* line 153, ../sass/_mixins.scss */
     .items-holder .item.grid-item:not(.disabled):hover {
       background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzcwNzA3MCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzYzNjM2MyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
@@ -161,10 +203,10 @@
       background-image: -webkit-linear-gradient(#707070, #636363);
       background-image: linear-gradient(#707070, #636363);
       color: #bdbdbd; }
-      /* line 183, ../sass/_mixins.scss */
+      /* line 156, ../sass/_mixins.scss */
       .items-holder .item.grid-item:not(.disabled):hover.btn-menu .invoke-menu {
         color: #949494; }
-    /* line 188, ../sass/_mixins.scss */
+    /* line 161, ../sass/_mixins.scss */
     .items-holder .item.grid-item.btn-menu .invoke-menu {
       color: #828282; }
     /* line 65, ../sass/items/_item.scss */
@@ -210,24 +252,24 @@
       top: auto;
       height: 30px;
       padding: 5px; }
-    /* line 99, ../sass/items/_item.scss */
+    /* line 100, ../sass/items/_item.scss */
     .items-holder .item.grid-item .item-main {
       line-height: 160px;
       z-index: 1; }
       @media screen and (max-width: 514px) {
-        /* line 99, ../sass/items/_item.scss */
+        /* line 100, ../sass/items/_item.scss */
         .items-holder .item.grid-item .item-main {
           display: none; } }
       @media screen and (min-width: 515px) and (max-width: 800px) {
-        /* line 99, ../sass/items/_item.scss */
+        /* line 100, ../sass/items/_item.scss */
         .items-holder .item.grid-item .item-main {
           display: none; } }
-      /* line 112, ../sass/items/_item.scss */
+      /* line 113, ../sass/items/_item.scss */
       .items-holder .item.grid-item .item-main .item-type {
         color: #737373;
         text-align: center;
         font-size: 6em; }
-      /* line 118, ../sass/items/_item.scss */
+      /* line 119, ../sass/items/_item.scss */
       .items-holder .item.grid-item .item-main .item-open {
         -moz-transition-property: "opacity";
         -o-transition-property: "opacity";
@@ -247,17 +289,17 @@
         width: 50px;
         pointer-events: none;
         text-align: right; }
-    /* line 130, ../sass/items/_item.scss */
+    /* line 131, ../sass/items/_item.scss */
     .items-holder .item.grid-item .title {
       text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px;
       color: #cccccc;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis; }
-    /* line 138, ../sass/items/_item.scss */
+    /* line 139, ../sass/items/_item.scss */
     .items-holder .item.grid-item .details {
       font-size: 0.8em; }
-    /* line 141, ../sass/items/_item.scss */
+    /* line 142, ../sass/items/_item.scss */
     .items-holder .item.grid-item.selected {
       background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzBhYzJmZiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwYjRmMCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
@@ -279,7 +321,7 @@
       color: #999;
       display: inline-block;
       color: #80dfff; }
-      /* line 180, ../sass/_mixins.scss */
+      /* line 153, ../sass/_mixins.scss */
       .items-holder .item.grid-item.selected:not(.disabled):hover {
         background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzJlY2JmZiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzE0YzRmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
         background-size: 100%;
@@ -288,21 +330,66 @@
         background-image: -webkit-linear-gradient(#2ecbff, #14c4ff);
         background-image: linear-gradient(#2ecbff, #14c4ff);
         color: #bdbdbd; }
-        /* line 183, ../sass/_mixins.scss */
+        /* line 156, ../sass/_mixins.scss */
         .items-holder .item.grid-item.selected:not(.disabled):hover.btn-menu .invoke-menu {
           color: #75ddff; }
-      /* line 188, ../sass/_mixins.scss */
+      /* line 161, ../sass/_mixins.scss */
       .items-holder .item.grid-item.selected.btn-menu .invoke-menu {
         color: #52d4ff; }
-      /* line 146, ../sass/items/_item.scss */
+      /* line 147, ../sass/items/_item.scss */
       .items-holder .item.grid-item.selected .item-type, .items-holder .item.grid-item.selected .top-bar .icon:not(.alert) {
         color: #80dfff; }
-      /* line 147, ../sass/items/_item.scss */
+      /* line 148, ../sass/items/_item.scss */
       .items-holder .item.grid-item.selected .item-main .item-open {
         color: #80dfff; }
-      /* line 148, ../sass/items/_item.scss */
+      /* line 149, ../sass/items/_item.scss */
       .items-holder .item.grid-item.selected .title {
         color: white; }
-      /* line 150, ../sass/items/_item.scss */
+      /* line 151, ../sass/items/_item.scss */
       .items-holder .item.grid-item.selected:hover .item-main .item-type {
         color: white !important; }
+
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+@media screen and (max-width: 514px) {
+  /* line 24, ../sass/mobile/_item.scss */
+  .items-holder .item.grid-item {
+    width: 100%;
+    height: 50px; } }
+@media screen and (min-width: 515px) and (max-width: 800px) {
+  /* line 24, ../sass/mobile/_item.scss */
+  .items-holder .item.grid-item {
+    width: 100%;
+    height: 100px; } }
+@media screen and (min-width: 801px) {
+  /* line 24, ../sass/mobile/_item.scss */
+  .items-holder .item.grid-item {
+    width: 200px;
+    height: 200px; } }
+@media screen and (max-width: 514px) {
+  /* line 51, ../sass/mobile/_item.scss */
+  .items-holder .item.grid-item .bar .item-main {
+    display: none; } }
+@media screen and (min-width: 515px) and (max-width: 800px) {
+  /* line 51, ../sass/mobile/_item.scss */
+  .items-holder .item.grid-item .bar .item-main {
+    display: none; } }
