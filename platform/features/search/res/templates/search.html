@@ -21,18 +21,29 @@
 -->
 <!-- Based on items -->
 <div class='items-holder grid abs'>
+    
     <!-- Search bar -->
-    <div id="all">
+    <div>
         <form>
             Search in this folder: <br>
             <input type="text" name="searchform">
             <input type="submit" value="Search">
         </form>
     </div> 
-        
+    
+    <!-- some spacing -->
+    <div style="height: 20px"></div>
+    
     <!-- Results list -->
-    <mct-representation key="'search-item'"
-                        ng-repeat="childObject in composition"
-                        mct-object="childObject">
-    </mct-representation>
+    <ul>
+        <li>
+            <mct-representation key="'search-item'"><!--
+                            ng-repeat="childObject in composition"
+                            mct-object="childObject"--></mct-representation>
+        </li>
+        <li>
+            <mct-representation key="'search-item'"></mct-representation>
+        </li>
+    </ul>
+    
 </div>

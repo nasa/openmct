@@ -17,6 +17,14 @@
                 "implementation": "SearchController.js",
                 "depends": [ "$scope" ]
             }
+        ],
+        "representations": [
+            {
+                "key": "search-item",
+                "templateUrl": "templates/search-item.html",
+                "uses": [ "type", "action" ],
+                "gestures": [ "info", "menu" ]
+            }
         ]
     }
 }
