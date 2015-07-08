@@ -24,10 +24,14 @@
 // NOTE: Added to adjust the browse folder tree list view
 
 .holder-hide {
-    @include phoneandtablet {
+    @include phone {
+        @include transition-duration(.2s);
+        left: -108px;
+    }
+    @include tablet {
         @include transition-duration(.2s);
         left: -150px;
-    }
+    }     
 }
 
 .holder-show {
