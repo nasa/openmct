@@ -22,7 +22,7 @@
 /*global define,Promise*/
 
 /**
- * Module defining ListController. Created by vwoeltje on 11/18/14.
+ * Module defining SearchController. Created by shale on 07/08/2015.
  */
 define(function () {
     
@@ -32,8 +32,7 @@ define(function () {
         
         // Indexes the filetree into a searchable format
         function indexTree() {
-            var persistence = $scope.domainObject.getCapability('persistence');
-            return persistence && persistence.persist(); 
+            
         }
         
         // Search through items for items which have the search term 
