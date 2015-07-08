@@ -25,12 +25,14 @@
 
 .holder-hide {
     @include phoneandtablet {
+        @include transition-duration(.2s);
         left: -150px;
     }
 }
 
 .holder-show {
     @include phoneandtablet {
+        @include transition-duration(.2s);
         left: 0px;
     } 
 }

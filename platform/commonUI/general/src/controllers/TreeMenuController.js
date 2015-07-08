@@ -34,7 +34,11 @@ define(
                         document.getElementById("myElement").className =
                             document.getElementById("myElement")
                             .className.replace(/(?:^|\s)holder-hide(?!\S)/g, '');
+                        document.getElementById("myElement").className += " holder-show";
                     } else {
+                        document.getElementById("myElement").className =
+                            document.getElementById("myElement")
+                            .className.replace(/(?:^|\s)holder-show(?!\S)/g, '');
                         document.getElementById("myElement").className += " holder-hide";
                     }
                     
