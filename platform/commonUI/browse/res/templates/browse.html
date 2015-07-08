@@ -19,11 +19,11 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div content="jquery-wrapper" class="abs holder-all browse-mode">
+<div id="myElement" content="jquery-wrapper" class="abs holder-all browse-mode holder-hide">
     <mct-include key="'topbar-browse'"></mct-include>
     <div class="holder browse-area s-browse-area abs" ng-controller="BrowseController">
         <mct-split-pane class='contents abs' anchor='left'>
-            <div class='split-pane-component treeview pane browse-manage'>
+            <div class='split-pane-component treeview pane browse-manage createtreebtns'>
                 <mct-representation key="'create-button'" mct-object="navigatedObject">
                 </mct-representation>
                 <div class='holder tree-holder abs'>

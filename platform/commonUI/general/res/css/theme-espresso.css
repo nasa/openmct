@@ -731,16 +731,26 @@ mct-container {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+@media screen and (max-width: 800px) {
+  /* line 26, ../sass/mobile/_layout.scss */
+  .holder-hide {
+    left: -150px; } }
+
+@media screen and (max-width: 800px) {
+  /* line 32, ../sass/mobile/_layout.scss */
+  .holder-show {
+    left: -150px; } }
+
 @media screen and (max-width: 514px) {
-  /* line 31, ../sass/mobile/_layout.scss */
+  /* line 38, ../sass/mobile/_layout.scss */
   .browse-manage {
     width: 100px; } }
 @media screen and (min-width: 515px) and (max-width: 800px) {
-  /* line 31, ../sass/mobile/_layout.scss */
+  /* line 38, ../sass/mobile/_layout.scss */
   .browse-manage {
     width: 150px; } }
 @media screen and (min-width: 801px) {
-  /* line 31, ../sass/mobile/_layout.scss */
+  /* line 38, ../sass/mobile/_layout.scss */
   .browse-manage {
     min-width: 150px;
     max-width: 800px;

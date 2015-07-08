@@ -19,32 +19,30 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global define,Promise*/
 
-// style="min-width: 150px; max-width: 800px; width: 25%;"
-// NOTE: Added to adjust the browse folder tree list view
+define(
+    [],
+    function () {
+        "use strict";
 
-.holder-hide {
-    @include phoneandtablet {
-        left: -150px;
+        function TreeMenuController($scope, $document) {
+            return {
+                toggle: function () {
+                    if (document.getElementById("myElement").
+                            className.match(/(?:^|\s)holder-hide(?!\S)/)) {
+                        document.getElementById("myElement").className =
+                            document.getElementById("myElement")
+                            .className.replace(/(?:^|\s)holder-hide(?!\S)/g, '');
+                    } else {
+                        document.getElementById("myElement").className += " holder-hide";
+                    }
+                    
+                }
+            };
+
+        }
+
+        return TreeMenuController;
     }
-}
-
-.holder-show {
-    @include phoneandtablet {
-        left: 0px;
-    } 
-}
-
-.browse-manage {
-    @include phone {
-        width: 100px;
-    }
-    @include tablet {
-        width: 150px;
-    }    
-    @include desktop {
-        min-width: 150px;
-        max-width: 800px;
-        width: 25%;   
-    }   
-}
+);

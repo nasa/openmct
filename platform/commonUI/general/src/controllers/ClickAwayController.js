@@ -58,9 +58,6 @@ define(
                     activate();
                 }
             }
-            function changeTree() {
-                console.log("WWWWW");
-            }
             
             
 
@@ -96,10 +93,6 @@ define(
                  */
                 toggle: function () {
                     changeState();
-                },
-                
-                showtree: function () {
-                    changeTree();
                 }
             };
 
