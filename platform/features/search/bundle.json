@@ -1,0 +1,22 @@
+{
+    "name": "Search View",
+    "description": "Allows the user to search through the file three.",
+    "extensions": {
+        "views": [
+            {
+                "key": "search",
+                "name": "Search",
+                "glyph": "5",
+                "description": "Search functionality.",
+                "templateUrl": "templates/search.html"
+            }
+        ],
+        "controllers": [ 
+            {
+                "key": "SearchController",
+                "implementation": "SearchController.js",
+                "depends": [ "$scope" ]
+            }
+        ]
+    }
+}
