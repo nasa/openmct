@@ -475,18 +475,16 @@ mct-container {
   border-radius: 3px; }
 
 @media screen and (max-width: 514px) {
-  /* line 57, ../sass/user-environ/_layout.scss */
-  .browser-manage {
-    width: 150px; } }
+  /* line 59, ../sass/user-environ/_layout.scss */
+  .browse-manage {
+    width: 100px; } }
 @media screen and (min-width: 515px) and (max-width: 800px) {
-  /* line 57, ../sass/user-environ/_layout.scss */
-  .browser-manage {
-    min-width: 150px;
-    max-width: 300px;
-    width: 25%; } }
+  /* line 59, ../sass/user-environ/_layout.scss */
+  .browse-manage {
+    width: 150px; } }
 @media screen and (min-width: 801px) {
-  /* line 57, ../sass/user-environ/_layout.scss */
-  .browser-manage {
+  /* line 59, ../sass/user-environ/_layout.scss */
+  .browse-manage {
     min-width: 150px;
     max-width: 800px;
     width: 25%; } }
@@ -1452,7 +1450,7 @@ mct-container {
     color: #999;
     display: inline-block;
     color: #ccf2ff; }
-    /* line 174, ../sass/_mixins.scss */
+    /* line 180, ../sass/_mixins.scss */
     .btn.major:not(.disabled):hover,
     .s-btn.major:not(.disabled):hover,
     .major.icon-btn:not(.disabled):hover,
@@ -1464,13 +1462,13 @@ mct-container {
       background-image: -webkit-linear-gradient(#2ecbff, #14c4ff);
       background-image: linear-gradient(#2ecbff, #14c4ff);
       color: #bdbdbd; }
-      /* line 177, ../sass/_mixins.scss */
+      /* line 183, ../sass/_mixins.scss */
       .btn.major:not(.disabled):hover.btn-menu .invoke-menu,
       .s-btn.major:not(.disabled):hover.btn-menu .invoke-menu,
       .major.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
       .major.s-icon-btn:not(.disabled):hover.btn-menu .invoke-menu {
         color: #75ddff; }
-    /* line 182, ../sass/_mixins.scss */
+    /* line 188, ../sass/_mixins.scss */
     .btn.major.btn-menu .invoke-menu,
     .s-btn.major.btn-menu .invoke-menu,
     .major.btn-menu.icon-btn .invoke-menu,
@@ -1500,7 +1498,7 @@ mct-container {
       border-top: 1px solid #2ecbff;
       color: #ccf2ff;
       display: inline-block; }
-      /* line 174, ../sass/_mixins.scss */
+      /* line 180, ../sass/_mixins.scss */
       .btn.major:hover:not(.disabled):hover,
       .s-btn.major:hover:not(.disabled):hover,
       .major.icon-btn:hover:not(.disabled):hover,
@@ -1512,13 +1510,13 @@ mct-container {
         background-image: -webkit-linear-gradient(#47d1ff, #2ecbff);
         background-image: linear-gradient(#47d1ff, #2ecbff);
         color: white; }
-        /* line 177, ../sass/_mixins.scss */
+        /* line 183, ../sass/_mixins.scss */
         .btn.major:hover:not(.disabled):hover.btn-menu .invoke-menu,
         .s-btn.major:hover:not(.disabled):hover.btn-menu .invoke-menu,
         .major.icon-btn:hover:not(.disabled):hover.btn-menu .invoke-menu,
         .major.s-icon-btn:hover:not(.disabled):hover.btn-menu .invoke-menu {
           color: #8fe3ff; }
-      /* line 182, ../sass/_mixins.scss */
+      /* line 188, ../sass/_mixins.scss */
       .btn.major:hover.btn-menu .invoke-menu,
       .s-btn.major:hover.btn-menu .invoke-menu,
       .major.icon-btn:hover.btn-menu .invoke-menu,
@@ -1554,7 +1552,7 @@ mct-container {
     border-top: 1px solid #8a8a8a;
     color: #cccccc;
     display: inline-block; }
-    /* line 174, ../sass/_mixins.scss */
+    /* line 180, ../sass/_mixins.scss */
     .btn.subtle:not(.disabled):hover,
     .s-btn.subtle:not(.disabled):hover,
     .subtle.icon-btn:not(.disabled):hover,
@@ -1566,13 +1564,13 @@ mct-container {
       background-image: -webkit-linear-gradient(#969696, #8a8a8a);
       background-image: linear-gradient(#969696, #8a8a8a);
       color: #f0f0f0; }
-      /* line 177, ../sass/_mixins.scss */
+      /* line 183, ../sass/_mixins.scss */
       .btn.subtle:not(.disabled):hover.btn-menu .invoke-menu,
       .s-btn.subtle:not(.disabled):hover.btn-menu .invoke-menu,
       .subtle.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
       .subtle.s-icon-btn:not(.disabled):hover.btn-menu .invoke-menu {
         color: #bababa; }
-    /* line 182, ../sass/_mixins.scss */
+    /* line 188, ../sass/_mixins.scss */
     .btn.subtle.btn-menu .invoke-menu,
     .s-btn.subtle.btn-menu .invoke-menu,
     .subtle.btn-menu.icon-btn .invoke-menu,
@@ -1605,7 +1603,7 @@ mct-container {
     border-top: 1px solid #575757;
     color: #999;
     display: inline-block; }
-    /* line 174, ../sass/_mixins.scss */
+    /* line 180, ../sass/_mixins.scss */
     .btn.very-subtle:not(.disabled):hover, .btn.s-very-subtle:not(.disabled):hover,
     .s-btn.very-subtle:not(.disabled):hover,
     .very-subtle.icon-btn:not(.disabled):hover,
@@ -1620,7 +1618,7 @@ mct-container {
       background-image: -webkit-linear-gradient(#636363, #575757);
       background-image: linear-gradient(#636363, #575757);
       color: #bdbdbd; }
-      /* line 177, ../sass/_mixins.scss */
+      /* line 183, ../sass/_mixins.scss */
       .btn.very-subtle:not(.disabled):hover.btn-menu .invoke-menu, .btn.s-very-subtle:not(.disabled):hover.btn-menu .invoke-menu,
       .s-btn.very-subtle:not(.disabled):hover.btn-menu .invoke-menu,
       .very-subtle.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
@@ -1629,7 +1627,7 @@ mct-container {
       .s-very-subtle.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
       .s-very-subtle.s-icon-btn:not(.disabled):hover.btn-menu .invoke-menu {
         color: #878787; }
-    /* line 182, ../sass/_mixins.scss */
+    /* line 188, ../sass/_mixins.scss */
     .btn.very-subtle.btn-menu .invoke-menu, .btn.s-very-subtle.btn-menu .invoke-menu,
     .s-btn.very-subtle.btn-menu .invoke-menu,
     .very-subtle.btn-menu.icon-btn .invoke-menu,
@@ -1665,7 +1663,7 @@ mct-container {
       border-top: 1px solid #fe9510;
       color: #fff;
       display: inline-block; }
-      /* line 174, ../sass/_mixins.scss */
+      /* line 180, ../sass/_mixins.scss */
       .btn.very-subtle.paused:not(.disabled):hover, .btn.s-very-subtle.paused:not(.disabled):hover,
       .s-btn.very-subtle.paused:not(.disabled):hover,
       .very-subtle.paused.icon-btn:not(.disabled):hover,
@@ -1680,7 +1678,7 @@ mct-container {
         background-image: -webkit-linear-gradient(#fea029, #fe9510);
         background-image: linear-gradient(#fea029, #fe9510);
         color: white; }
-        /* line 177, ../sass/_mixins.scss */
+        /* line 183, ../sass/_mixins.scss */
         .btn.very-subtle.paused:not(.disabled):hover.btn-menu .invoke-menu, .btn.s-very-subtle.paused:not(.disabled):hover.btn-menu .invoke-menu,
         .s-btn.very-subtle.paused:not(.disabled):hover.btn-menu .invoke-menu,
         .very-subtle.paused.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
@@ -1689,7 +1687,7 @@ mct-container {
         .s-very-subtle.paused.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
         .s-very-subtle.paused.s-icon-btn:not(.disabled):hover.btn-menu .invoke-menu {
           color: #fec070; }
-      /* line 182, ../sass/_mixins.scss */
+      /* line 188, ../sass/_mixins.scss */
       .btn.very-subtle.paused.btn-menu .invoke-menu, .btn.s-very-subtle.paused.btn-menu .invoke-menu,
       .s-btn.very-subtle.paused.btn-menu .invoke-menu,
       .very-subtle.paused.btn-menu.icon-btn .invoke-menu,
@@ -2151,7 +2149,7 @@ label.checkbox.custom {
   			color: lighten($c, 10%);
   		}
   	}*/ }
-  /* line 174, ../sass/_mixins.scss */
+  /* line 180, ../sass/_mixins.scss */
   .btn-menu:not(.disabled):hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzYzNjM2MyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU3NTc1NyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -2160,10 +2158,10 @@ label.checkbox.custom {
     background-image: -webkit-linear-gradient(#636363, #575757);
     background-image: linear-gradient(#636363, #575757);
     color: #bdbdbd; }
-    /* line 177, ../sass/_mixins.scss */
+    /* line 183, ../sass/_mixins.scss */
     .btn-menu:not(.disabled):hover.btn-menu .invoke-menu {
       color: #878787; }
-  /* line 182, ../sass/_mixins.scss */
+  /* line 188, ../sass/_mixins.scss */
   .btn-menu.btn-menu .invoke-menu {
     color: #757575; }
   /* line 285, ../sass/controls/_controls.scss */
@@ -2295,7 +2293,7 @@ label.checkbox.custom {
   auto: 0;
   bottom: auto;
   left: auto; }
-  /* line 174, ../sass/_mixins.scss */
+  /* line 180, ../sass/_mixins.scss */
   .slider .knob:not(.disabled):hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzYzNjM2MyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU3NTc1NyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -2304,13 +2302,13 @@ label.checkbox.custom {
     background-image: -webkit-linear-gradient(#636363, #575757);
     background-image: linear-gradient(#636363, #575757);
     color: #bdbdbd; }
-    /* line 177, ../sass/_mixins.scss */
+    /* line 183, ../sass/_mixins.scss */
     .slider .knob:not(.disabled):hover.btn-menu .invoke-menu {
       color: #878787; }
-  /* line 182, ../sass/_mixins.scss */
+  /* line 188, ../sass/_mixins.scss */
   .slider .knob.btn-menu .invoke-menu {
     color: #757575; }
-  /* line 198, ../sass/_mixins.scss */
+  /* line 204, ../sass/_mixins.scss */
   .slider .knob:before {
     -moz-transition-property: "border-color";
     -o-transition-property: "border-color";
@@ -2334,7 +2332,7 @@ label.checkbox.custom {
     left: 2px;
     bottom: 5px;
     top: 5px; }
-  /* line 220, ../sass/_mixins.scss */
+  /* line 226, ../sass/_mixins.scss */
   .slider .knob:not(.disabled):hover:before {
     -moz-transition-property: "border-color";
     -o-transition-property: "border-color";
@@ -2506,14 +2504,14 @@ label.checkbox.custom {
     padding: 3px 0;
     position: absolute;
     z-index: 10; }
-    /* line 182, ../sass/_mixins.scss */
+    /* line 188, ../sass/_mixins.scss */
     .menu-element .menu.btn-menu .invoke-menu {
       color: #828282; }
     /* line 37, ../sass/controls/_menus.scss */
     .menu-element .menu ul {
       margin: 0;
       padding: 0; }
-      /* line 288, ../sass/_mixins.scss */
+      /* line 294, ../sass/_mixins.scss */
       .menu-element .menu ul li {
         list-style-type: none;
         margin: 0;
@@ -2569,7 +2567,7 @@ label.checkbox.custom {
     border-top: 1px solid #919191;
     color: #999;
     display: inline-block; }
-    /* line 182, ../sass/_mixins.scss */
+    /* line 188, ../sass/_mixins.scss */
     .menu-element .context-menu.btn-menu .invoke-menu,
     .menu-element .super-menu.btn-menu .invoke-menu {
       color: #b0b0b0; }
@@ -3432,7 +3430,7 @@ input[type="text"] {
   margin: 0 0 2px 2px;
   overflow: hidden;
   position: relative; }
-  /* line 174, ../sass/_mixins.scss */
+  /* line 180, ../sass/_mixins.scss */
   .form-control.select:not(.disabled):hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzYzNjM2MyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU3NTc1NyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -3441,10 +3439,10 @@ input[type="text"] {
     background-image: -webkit-linear-gradient(#636363, #575757);
     background-image: linear-gradient(#636363, #575757);
     color: #bdbdbd; }
-    /* line 177, ../sass/_mixins.scss */
+    /* line 183, ../sass/_mixins.scss */
     .form-control.select:not(.disabled):hover.btn-menu .invoke-menu {
       color: #878787; }
-  /* line 182, ../sass/_mixins.scss */
+  /* line 188, ../sass/_mixins.scss */
   .form-control.select.btn-menu .invoke-menu {
     color: #757575; }
   /* line 29, ../sass/forms/_selects.scss */
@@ -4062,7 +4060,7 @@ input[type="text"] {
   bottom: 15%;
   left: 15%;
   z-index: 101; }
-  /* line 182, ../sass/_mixins.scss */
+  /* line 188, ../sass/_mixins.scss */
   .overlay > .holder.btn-menu .invoke-menu {
     color: #757575; }
   /* line 45, ../sass/overlay/_overlay.scss */
@@ -4570,7 +4568,7 @@ input[type="text"] {
     right: 0;
     width: auto;
     height: 5px; }
-    /* line 198, ../sass/_mixins.scss */
+    /* line 204, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:before {
       -moz-transition-property: "border-color";
       -o-transition-property: "border-color";
@@ -4594,7 +4592,7 @@ input[type="text"] {
       top: 2px;
       left: 5px;
       right: 5px; }
-    /* line 220, ../sass/_mixins.scss */
+    /* line 226, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:not(.disabled):hover:before {
       -moz-transition-property: "border-color";
       -o-transition-property: "border-color";
@@ -4624,7 +4622,7 @@ input[type="text"] {
   bottom: 0;
   cursor: col-resize;
   width: 5px; }
-  /* line 198, ../sass/_mixins.scss */
+  /* line 204, ../sass/_mixins.scss */
   .split-layout.vertical > .splitter:before {
     -moz-transition-property: "border-color";
     -o-transition-property: "border-color";
@@ -4648,7 +4646,7 @@ input[type="text"] {
     left: 2px;
     bottom: 5px;
     top: 5px; }
-  /* line 220, ../sass/_mixins.scss */
+  /* line 226, ../sass/_mixins.scss */
   .split-layout.vertical > .splitter:not(.disabled):hover:before {
     -moz-transition-property: "border-color";
     -o-transition-property: "border-color";

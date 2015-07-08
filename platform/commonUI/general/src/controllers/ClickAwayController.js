@@ -58,6 +58,11 @@ define(
                     activate();
                 }
             }
+            function changeTree() {
+                console.log("WWWWW");
+            }
+            
+            
 
             // Callback used by the document listener. Deactivates;
             // note also $scope.$apply is invoked to indicate that
@@ -91,6 +96,10 @@ define(
                  */
                 toggle: function () {
                     changeState();
+                },
+                
+                showtree: function () {
+                    changeTree();
                 }
             };
 

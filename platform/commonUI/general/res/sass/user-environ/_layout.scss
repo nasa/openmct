@@ -48,18 +48,20 @@
 	@include border-radius($basicCr * 1.5);
 }
 
-$min-name: min-device-width;
-$max-name: max-device-width;
-$max-small: 769px;
-$min-large: 770px;
-
 // style="min-width: 150px; max-width: 800px; width: 25%;"
-.browser-manage {
+// NOTE: Added to adjust the browse folder tree list view
+//.hider-check {
+//    @include phoneandtablet {
+//        
+//    } 
+//}
+
+.browse-manage {
     @include phone {
-        width: 150px;
+        width: 100px;
     }
     @include tablet {
-        width: 150px; 
+        width: 150px;
     }    
     @include desktop {
         min-width: 150px;

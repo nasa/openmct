@@ -33,6 +33,12 @@
     }
 }
 
+@mixin phoneandtablet {
+    @media screen and (max-width: $tabMaxW) {
+        @content
+    }
+}
+
 @mixin desktop {
     @media screen and (min-width: $compMinW) {
         @content
