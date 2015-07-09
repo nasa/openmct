@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <div ng-controller="BrowseController">
-    <div content="jquery-wrapper" class="abs holder-all browse-mode holder-hide" ng-class="treeCl ? 'holder-show' : 'holder-hide'">
+    <div content="jquery-wrapper" class="abs holder-all browse-mode holder-hide" ng-class="treeClass ? 'holder-show' : 'holder-hide'">
         <mct-include key="'topbar-browse'"></mct-include>
         <div class="holder browse-area s-browse-area abs">
             <mct-split-pane class='contents abs' anchor='left'>
@@ -42,7 +42,7 @@
                     </div>
                 </div>
             </mct-split-pane>
-            <div class="s-very-subtle key-properties ui-symbol mobile-menu-icon button-hide" ng-class="treeCl ? 'button-show' : 'button-hide'" 
+            <div class="s-very-subtle key-properties ui-symbol mobile-menu-icon button-hide" ng-class="treeClass ? 'button-show' : 'button-hide'" 
                             ng-click="treeSlide()">m</div>        
         </div>
         <mct-include key="'bottombar'"></mct-include>

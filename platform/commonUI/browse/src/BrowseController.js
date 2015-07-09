@@ -142,7 +142,7 @@ define(
             };
             
             $scope.treeSlide = function () {
-                $scope.treeCl = !$scope.treeCl;
+                $scope.treeClass = !$scope.treeClass;
             };
 
             // Listen for changes in navigation state.
