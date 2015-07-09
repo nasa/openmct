@@ -35,11 +35,7 @@
 }
 
 .holder-show {
-    @include phone {
-        @include transition-duration(.2s);
-        left: 0px;
-    }
-    @include tablet {
+    @include phoneandtablet {
         @include transition-duration(.2s);
         left: 0px;
     }     
@@ -47,7 +43,7 @@
 
 .button-hide {
     position: absolute;
-//    @include transition-duration(.2s);
+    @include transition-duration(.2s);
     @include phone {
         left: 108px;
     }
@@ -64,6 +60,13 @@
     @include tablet {
         left: 15px;
     }
+}
+
+.mobile-menu-icon {
+    top: $interiorMargin;
+    @include desktop {
+        display: none;
+    }       
 }
 
 .browse-manage {
