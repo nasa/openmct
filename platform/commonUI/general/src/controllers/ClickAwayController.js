@@ -58,8 +58,6 @@ define(
                     activate();
                 }
             }
-            
-            
 
             // Callback used by the document listener. Deactivates;
             // note also $scope.$apply is invoked to indicate that
