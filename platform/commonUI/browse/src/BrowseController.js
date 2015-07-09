@@ -142,18 +142,10 @@ define(
             };
             
             $scope.treeSlide = function () {
-                console.log("Clicked");
-                if (document.getElementById("myElement").
-                        className.match(/(?:^|\s)holder-hide(?!\S)/)) {
-                    document.getElementById("myElement").className =
-                        document.getElementById("myElement")
-                        .className.replace(/(?:^|\s)holder-hide(?!\S)/g, '');
-                    document.getElementById("myElement").className += " holder-show";
-                } else {
-                    document.getElementById("myElement").className =
-                        document.getElementById("myElement")
-                        .className.replace(/(?:^|\s)holder-show(?!\S)/g, '');
-                    document.getElementById("myElement").className += " holder-hide";
+                if ($scope.treeCl) {
+                    $scope.treeCl = false;
+                } else if (!$scope.treeCl) {
+                    $scope.treeCl = true;
                 }
             };
 
