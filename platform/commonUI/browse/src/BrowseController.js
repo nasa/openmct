@@ -140,6 +140,22 @@ define(
             $scope.treeModel = {
                 selectedObject: navigationService.getNavigation()
             };
+            
+            $scope.treeSlide = function () {
+                console.log("Clicked");
+                if (document.getElementById("myElement").
+                        className.match(/(?:^|\s)holder-hide(?!\S)/)) {
+                    document.getElementById("myElement").className =
+                        document.getElementById("myElement")
+                        .className.replace(/(?:^|\s)holder-hide(?!\S)/g, '');
+                    document.getElementById("myElement").className += " holder-show";
+                } else {
+                    document.getElementById("myElement").className =
+                        document.getElementById("myElement")
+                        .className.replace(/(?:^|\s)holder-show(?!\S)/g, '');
+                    document.getElementById("myElement").className += " holder-hide";
+                }
+            };
 
             // Listen for changes in navigation state.
             navigationService.addListener(setNavigation);

@@ -748,7 +748,15 @@ mct-container {
     transition-duration: 0.2s;
     left: -150px; } }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 514px) {
+  /* line 37, ../sass/mobile/_layout.scss */
+  .holder-show {
+    -moz-transition-duration: 0.2s;
+    -o-transition-duration: 0.2s;
+    -webkit-transition-duration: 0.2s;
+    transition-duration: 0.2s;
+    left: 0px; } }
+@media screen and (min-width: 515px) and (max-width: 800px) {
   /* line 37, ../sass/mobile/_layout.scss */
   .holder-show {
     -moz-transition-duration: 0.2s;
@@ -757,16 +765,40 @@ mct-container {
     transition-duration: 0.2s;
     left: 0px; } }
 
+/* line 48, ../sass/mobile/_layout.scss */
+.button-hide {
+  position: absolute; }
+  @media screen and (max-width: 514px) {
+    /* line 48, ../sass/mobile/_layout.scss */
+    .button-hide {
+      left: 108px; } }
+  @media screen and (min-width: 515px) and (max-width: 800px) {
+    /* line 48, ../sass/mobile/_layout.scss */
+    .button-hide {
+      left: 150px; } }
+
+/* line 59, ../sass/mobile/_layout.scss */
+.object-header-mobile {
+  position: relative; }
+  @media screen and (max-width: 514px) {
+    /* line 59, ../sass/mobile/_layout.scss */
+    .object-header-mobile {
+      left: 17px; } }
+  @media screen and (min-width: 515px) and (max-width: 800px) {
+    /* line 59, ../sass/mobile/_layout.scss */
+    .object-header-mobile {
+      left: 15px; } }
+
 @media screen and (max-width: 514px) {
-  /* line 44, ../sass/mobile/_layout.scss */
+  /* line 69, ../sass/mobile/_layout.scss */
   .browse-manage {
     width: 100px; } }
 @media screen and (min-width: 515px) and (max-width: 800px) {
-  /* line 44, ../sass/mobile/_layout.scss */
+  /* line 69, ../sass/mobile/_layout.scss */
   .browse-manage {
     width: 150px; } }
 @media screen and (min-width: 801px) {
-  /* line 44, ../sass/mobile/_layout.scss */
+  /* line 69, ../sass/mobile/_layout.scss */
   .browse-manage {
     min-width: 150px;
     max-width: 800px;

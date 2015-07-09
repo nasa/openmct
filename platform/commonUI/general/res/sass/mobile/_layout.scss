@@ -35,10 +35,35 @@
 }
 
 .holder-show {
-    @include phoneandtablet {
+    @include phone {
         @include transition-duration(.2s);
         left: 0px;
-    } 
+    }
+    @include tablet {
+        @include transition-duration(.2s);
+        left: 0px;
+    }     
+}
+
+.button-hide {
+    position: absolute;
+//    @include transition-duration(.2s);
+    @include phone {
+        left: 108px;
+    }
+    @include tablet {
+        left: 150px;
+    }     
+}
+
+.object-header-mobile {
+    position: relative;
+    @include phone {
+        left: 23px;
+    }
+    @include tablet {
+        left: 15px;
+    }
 }
 
 .browse-manage {
