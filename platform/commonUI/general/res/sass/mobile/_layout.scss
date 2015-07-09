@@ -87,6 +87,13 @@ $hideRatioTab: 1.38;
     }       
 }
 
+.exclude-mobile {
+    @include phoneandtablet {
+        display: none;
+    }       
+}
+
+
 .browse-manage {
     @include phone {
         width: $leftPhone;
