@@ -84,12 +84,7 @@
                 "key": "ClickAwayController",
                 "implementation": "controllers/ClickAwayController.js",
                 "depends": [ "$scope", "$document" ]
-            },
-            {
-                "key": "TreeMenuController",
-                "implementation": "controllers/TreeMenuController.js",
-                "depends": [ "$element", "$document" ]
-            },            
+            },          
             {
                 "key": "ViewSwitcherController",
                 "implementation": "controllers/ViewSwitcherController.js",
