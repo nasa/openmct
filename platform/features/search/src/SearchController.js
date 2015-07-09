@@ -31,6 +31,75 @@ define(function () {
         var items = [],
             searchResults = [];
         
+        // Converts the filetree into a list
+        // Eventually, plan to call search service
+        // (but do here for now)
+        function listify() {
+            // For now, we want this view to only be in the My Items folder 
+            if ($scope.domainObject.getId() === 'mine') {
+                var list = listHelper($scope.domainObject);
+                //debugger;
+                //console.log('out ', out);
+                return list.then(function (c) {
+                    //console.log('c ', c);
+                    return c;
+                });
+            }
+            // Fallback if we aren't in My Items
+            return items;
+        }
+        
+        // Recursive helper function to go through the tree
+        function listHelper(current) {
+            var composition;
+            
+            if (current.hasCapability('composition')) {
+                composition = current.getCapability('composition');
+            } else {
+                // Base case.
+                return current;
+            }
+            
+            // Recursive case. Is asynchronous.
+            return composition.invoke().then(function (children) {
+                
+                var subList = [current],
+                    i;
+                for (i = 0; i < children.length; i += 1) {
+                    subList.push(listHelper(children[i]));
+                    //console.log('subList', subList, 'index', i);
+                }
+                //console.log('sublist ', subList);
+                return subList;
+                
+                /*
+                var array = [current].concat(children.forEach(listHelper));
+                console.log('array ', array);
+                return array;
+                */
+            });
+        }
+        
+        // Search through items for items which have the search term 
+        // in the title
+        function search(term) {
+            // modify searchResults
+            
+            return searchResults;
+        }
+        
+        // When the search view is opened, call listify()
+        // When the search button is pressed, call search()
+        
+        $scope.items = listify();
+        $scope.results = search();
+    }
+    return SearchController;
+});
+
+
+ ///// Old stuff to look at later 
+
         // Get the root object
         /*
         objectService.getObjects(['root']).then(function (objects) {
@@ -56,58 +125,3 @@ define(function () {
         
 
         
-        // Converts the filetree into a list
-        // Eventually, plan to call search service
-        // (but do here for now)
-        function listify() {
-            // For now, we want this view to only be in the My Items folder 
-            if ($scope.domainObject.getId() === 'mine') {
-                var out = listHelper($scope.domainObject);
-                //console.log('out', out);
-                return out;
-            }
-            // Fallback if we aren't in My Items
-            return items;
-        }
-        // Recursive helper function to go through the tree
-        function listHelper(current) {
-            //console.log('current', current);
-            //console.log('current.getID', current.getId());
-            var composition;
-            if (current.hasCapability('composition')) {
-                composition = current.getCapability('composition');
-            } else {
-                //console.log('does not have capability');
-                return current;
-            }
-            composition.invoke().then(function (children) {
-                if (children === []) {
-                    return current;
-                } else {
-                    var subList = [current],
-                        i;
-                    for (i = 0; i < children.length; i += 1) {
-                        subList.concat(listHelper(children[i]));
-                    }
-                    //console.log('subList ', subList); ////////////
-                    return subList;
-                }
-            });
-        }
-        
-        // Search through items for items which have the search term 
-        // in the title
-        function search(term) {
-            // modify searchResults
-            
-            return searchResults;
-        }
-        
-        // When the search view is opened, call listify()
-        // When the search button is pressed, call search()
-        
-        $scope.items = listify();
-        $scope.results = search();
-    }
-    return SearchController;
-});
