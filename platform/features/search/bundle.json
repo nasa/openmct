@@ -1,6 +1,6 @@
 {
     "name": "Search View",
-    "description": "Allows the user to search through the file three.",
+    "description": "Allows the user to search through the file tree.",
     "extensions": {
         "views": [
             {
@@ -15,14 +15,14 @@
             {
                 "key": "SearchController",
                 "implementation": "SearchController.js",
-                "depends": [ "$scope" ]
+                "depends": [ "$scope", "objectService" ]
             }
         ],
         "representations": [
             {
                 "key": "search-item",
                 "templateUrl": "templates/search-item.html",
-                "uses": [ "type", "action" ],
+                "uses": [ "type", "action", "composition" ],
                 "gestures": [ "info", "menu" ]
             }
         ]

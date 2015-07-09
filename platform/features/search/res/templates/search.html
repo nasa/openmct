@@ -20,14 +20,23 @@
  at runtime from the About dialog for additional information.
 -->
 <!-- Based on items -->
-<div class='items-holder grid abs'>
+<div class="items-holder grid abs"
+     ng-controller="SearchController as controller">
     
     <!-- Search bar -->
-    <div>
+    <div id="formid">
         <form>
+            <div>
+                <label for="searchinput">Search this folder:</label>
+                <input type="text" id="searchinput" />
+            </div>
+            <!--
             Search in this folder: <br>
-            <input type="text" name="searchform">
-            <input type="submit" value="Search">
+            <input type="text" name="searchform"> -->
+            <div class="button">
+                <button type="submit">Search</button>
+            </div>
+            <!-- input type="submit" value="Search" -->
         </form>
     </div> 
     
@@ -42,7 +51,9 @@
                             mct-object="childObject"--></mct-representation>
         </li>
         <li>
-            <mct-representation key="'search-item'"></mct-representation>
+            <mct-representation key="'search-item'"
+                            ng-repeat="result in results"
+                            mct-object="result"></mct-representation>
         </li>
     </ul>
     
