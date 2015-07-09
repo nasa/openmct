@@ -28,37 +28,14 @@
     .item {
         &.grid-item {
             //div { @include test() }
-            // NOTE: Sets grid item width
-            $dWid: $ueBrowseGridItemLg;
-            $dHei: $ueBrowseGridItemLg;
-            @include phone {
-                $dWid: 100%;
-                $dHei: $ueBrowseGridItemLg/4;
-                width: $dWid;
-                height: $dHei;
-            }
-            
-            @include tablet {
-                $dWid: 100%;
-                $dHei: $ueBrowseGridItemLg/2;
-                width: $dWid;
-                height: $dHei;
-            }
-            
-            @include desktop {
-                $dWid: $ueBrowseGridItemLg;
-                $dHei: $ueBrowseGridItemLg;
-                width: $dWid;
-                height: $dHei; 
-            }
-            
+            $d: $ueBrowseGridItemLg;
             $transTime: 200ms;
             @include btnSubtle($colorItemBase);
             box-sizing: border-box;
             cursor: pointer;
-            float: left;     
-            width: $dWid;
-            height: $dHei;
+            float: left;
+            height: $d;
+            width: $d;
             margin-bottom: $interiorMarginSm;
             margin-right: $interiorMarginSm;
             position: relative;
@@ -96,15 +73,7 @@
 	                padding: $interiorMargin;
                 }
             }
-//            NOTE: make icon disappear
             .item-main {
-                @include phone {
-                    display: none;
-                }
-                @include tablet {
-                    display: none;   
-                }
-                
 	            $h: $ueBrowseGridItemLg;
 	            $lh: $h * 0.8;
                 //top: $ueBrowseGridItemTopBarH; bottom: $ueBrowseGridItemBottomBarH;
