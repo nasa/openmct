@@ -23,14 +23,20 @@
 // style="min-width: 150px; max-width: 800px; width: 25%;"
 // NOTE: Added to adjust the browse folder tree list view
 
+$leftPhone: 46%;
+$leftTab: 28%;
+
+$hideRatioPhone: 1.8;
+$hideRatioTab: 1.38;
+
 .holder-hide {
     @include phone {
         @include transition-duration(.2s);
-        left: -108px;
+        left: (-1 * $hideRatioPhone) * $leftPhone;
     }
     @include tablet {
         @include transition-duration(.2s);
-        left: -150px;
+        left: (-1 * $hideRatioTab) * $leftTab;
     }     
 }
 
@@ -41,24 +47,36 @@
     }     
 }
 
+.button-show {
+    position: absolute;
+    @include phone {
+        @include transition-duration(.2s);
+        left: ($hideRatioPhone) * $leftPhone;
+    }
+    @include tablet {
+        @include transition-duration(.2s);
+        left: ($hideRatioTab) * $leftTab;
+    }      
+}
+
 .button-hide {
     position: absolute;
     @include transition-duration(.2s);
     @include phone {
-        left: 108px;
+        left: $leftPhone;
     }
     @include tablet {
-        left: 150px;
+        left: $leftTab;
     }     
 }
 
 .object-header-mobile {
     position: relative;
     @include phone {
-        left: 23px;
+        left: $leftPhone/10;
     }
     @include tablet {
-        left: 15px;
+        left: $leftTab/10;
     }
 }
 
@@ -71,10 +89,10 @@
 
 .browse-manage {
     @include phone {
-        width: 100px;
+        width: $leftPhone;
     }
     @include tablet {
-        width: 150px;
+        width: $leftTab;
     }    
     @include desktop {
         min-width: 150px;

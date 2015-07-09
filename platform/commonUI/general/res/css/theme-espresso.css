@@ -732,24 +732,24 @@ mct-container {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 @media screen and (max-width: 514px) {
-  /* line 26, ../sass/mobile/_layout.scss */
+  /* line 32, ../sass/mobile/_layout.scss */
   .holder-hide {
     -moz-transition-duration: 0.2s;
     -o-transition-duration: 0.2s;
     -webkit-transition-duration: 0.2s;
     transition-duration: 0.2s;
-    left: -108px; } }
+    left: -82.8%; } }
 @media screen and (min-width: 515px) and (max-width: 800px) {
-  /* line 26, ../sass/mobile/_layout.scss */
+  /* line 32, ../sass/mobile/_layout.scss */
   .holder-hide {
     -moz-transition-duration: 0.2s;
     -o-transition-duration: 0.2s;
     -webkit-transition-duration: 0.2s;
     transition-duration: 0.2s;
-    left: -150px; } }
+    left: -38.64%; } }
 
 @media screen and (max-width: 800px) {
-  /* line 37, ../sass/mobile/_layout.scss */
+  /* line 43, ../sass/mobile/_layout.scss */
   .holder-show {
     -moz-transition-duration: 0.2s;
     -o-transition-duration: 0.2s;
@@ -757,7 +757,27 @@ mct-container {
     transition-duration: 0.2s;
     left: 0px; } }
 
-/* line 44, ../sass/mobile/_layout.scss */
+/* line 50, ../sass/mobile/_layout.scss */
+.button-show {
+  position: absolute; }
+  @media screen and (max-width: 514px) {
+    /* line 50, ../sass/mobile/_layout.scss */
+    .button-show {
+      -moz-transition-duration: 0.2s;
+      -o-transition-duration: 0.2s;
+      -webkit-transition-duration: 0.2s;
+      transition-duration: 0.2s;
+      left: 82.8%; } }
+  @media screen and (min-width: 515px) and (max-width: 800px) {
+    /* line 50, ../sass/mobile/_layout.scss */
+    .button-show {
+      -moz-transition-duration: 0.2s;
+      -o-transition-duration: 0.2s;
+      -webkit-transition-duration: 0.2s;
+      transition-duration: 0.2s;
+      left: 38.64%; } }
+
+/* line 62, ../sass/mobile/_layout.scss */
 .button-hide {
   position: absolute;
   -moz-transition-duration: 0.2s;
@@ -765,44 +785,44 @@ mct-container {
   -webkit-transition-duration: 0.2s;
   transition-duration: 0.2s; }
   @media screen and (max-width: 514px) {
-    /* line 44, ../sass/mobile/_layout.scss */
+    /* line 62, ../sass/mobile/_layout.scss */
     .button-hide {
-      left: 108px; } }
+      left: 46%; } }
   @media screen and (min-width: 515px) and (max-width: 800px) {
-    /* line 44, ../sass/mobile/_layout.scss */
+    /* line 62, ../sass/mobile/_layout.scss */
     .button-hide {
-      left: 150px; } }
+      left: 28%; } }
 
-/* line 55, ../sass/mobile/_layout.scss */
+/* line 73, ../sass/mobile/_layout.scss */
 .object-header-mobile {
   position: relative; }
   @media screen and (max-width: 514px) {
-    /* line 55, ../sass/mobile/_layout.scss */
+    /* line 73, ../sass/mobile/_layout.scss */
     .object-header-mobile {
-      left: 23px; } }
+      left: 4.6%; } }
   @media screen and (min-width: 515px) and (max-width: 800px) {
-    /* line 55, ../sass/mobile/_layout.scss */
+    /* line 73, ../sass/mobile/_layout.scss */
     .object-header-mobile {
-      left: 15px; } }
+      left: 2.8%; } }
 
-/* line 65, ../sass/mobile/_layout.scss */
+/* line 83, ../sass/mobile/_layout.scss */
 .mobile-menu-icon {
   top: 5px; }
   @media screen and (min-width: 801px) {
-    /* line 65, ../sass/mobile/_layout.scss */
+    /* line 83, ../sass/mobile/_layout.scss */
     .mobile-menu-icon {
       display: none; } }
 
 @media screen and (max-width: 514px) {
-  /* line 72, ../sass/mobile/_layout.scss */
+  /* line 90, ../sass/mobile/_layout.scss */
   .browse-manage {
-    width: 100px; } }
+    width: 46%; } }
 @media screen and (min-width: 515px) and (max-width: 800px) {
-  /* line 72, ../sass/mobile/_layout.scss */
+  /* line 90, ../sass/mobile/_layout.scss */
   .browse-manage {
-    width: 150px; } }
+    width: 28%; } }
 @media screen and (min-width: 801px) {
-  /* line 72, ../sass/mobile/_layout.scss */
+  /* line 90, ../sass/mobile/_layout.scss */
   .browse-manage {
     min-width: 150px;
     max-width: 800px;
