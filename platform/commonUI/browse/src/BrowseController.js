@@ -142,11 +142,7 @@ define(
             };
             
             $scope.treeSlide = function () {
-                if ($scope.treeCl) {
-                    $scope.treeCl = false;
-                } else if (!$scope.treeCl) {
-                    $scope.treeCl = true;
-                }
+                $scope.treeCl = !$scope.treeCl;
             };
 
             // Listen for changes in navigation state.
