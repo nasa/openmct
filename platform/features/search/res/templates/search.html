@@ -24,32 +24,15 @@
      ng-controller="SearchController as controller">
     
     <!-- Search bar -->
-    <div id="formid">
-        <form>
-            <!--
-            <div>
-                <label for="searchinput">Search this folder:</label>
-                <input type="text" id="searchinput" />
-            </div>
-            -->
-            <div style="height: 30px">Search:</div>
-            <input type="text" 
-                   id="searchinput" 
-                   name="searchform"
-                   value="input search term here"/>
-            <!--
-            <div class="button">
-                <button type="submit">Search</button>
-            </div>
-            -->
-            <!--
-            <input type="submit" value="go" />
-            -->
-            <span class="button">
-                <button type="button"
-                        ng-click="controller.search('')">Go</button>
-            </span>
-        </form>
+    <div>
+        <div style="height: 30px">Search:</div>
+        <input type="text" 
+               id="searchinput" 
+               value=""/>
+        <span class="button">
+            <button type="button"
+                    ng-click="controller.search()">Go</button>
+        </span>
     </div> 
     
     <!-- some spacing -->
@@ -62,5 +45,6 @@
     </div>
     <mct-representation key="'grid-item'"
                     ng-repeat="result in results"
-                    mct-object="result"></mct-representation>
+                    mct-object="result">
+    </mct-representation>
 </div>

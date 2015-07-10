@@ -43,13 +43,13 @@ define(function () {
             return composition.invoke().then(function (children) {
                 var subList = [current],
                     i;
-                console.log('children ', children);
+                //console.log('children ', children);
                 for (i = 0; i < children.length; i += 1) {
-                    console.log('children[', i, ']', children[i]); 
+                    //console.log('children[', i, ']', children[i]); 
                     subList.push(listHelper(children[i]));
-                    console.log('subList', subList, 'index', i);
+                    //console.log('subList', subList, 'index', i);
                 }
-                console.log('sublist ', subList);
+                //console.log('sublist ', subList);
                 return subList;
             });
         }
@@ -75,25 +75,26 @@ define(function () {
             // Aquire My Items (root folder)
             return objectService.getObjects(['mine']).then(function (objects) {
                 return listHelper(objects.mine).then(function (c) {
-                    console.log('final result ', c);
+                    //console.log('final result ', c);
                     return c;
                 });
             });
         }
         
         // Search through items for items which contain the search term in the name
-        function search(term) {
-            console.log('search called, with term ', term);
-            var searchResults = [],
+        function search() {
+            var term,
+                searchResults = [],
                 itemsLength,
                 itemModel,
                 itemName,
                 i;
             
+            // Search for user input by element id
+            term = document.getElementById("searchinput").value;
+            
             // Make not case sensitive
-            if (term) {
-                term = term.toLocaleLowerCase();
-            }
+            term = term.toLocaleLowerCase();
             
             // Get items list
             return listify().then(function (items) {
@@ -133,30 +134,6 @@ define(function () {
 
  ///// Old stuff to look at later 
 
-        // Get the root object
-        /*
-        objectService.getObjects(['root']).then(function (objects) {
-            console.log('rootObject 1', rootObject);
-            rootObject = objects.root;
-            console.log('rootObject 2', rootObject);
-            
-            
-            
-            console.log('hasCapability("editor") ', rootObject.hasCapability('editor'));
-            console.log('getModel() ', rootObject.getModel());
-            console.log('getId() ', rootObject.getId());
-            
-            // Get the children of the root object 
-            console.log('hasCapability("composition") ', rootObject.hasCapability('composition'));
-            if (rootObject.hasCapability('composition')) {
-                rootComposition = rootObject.getCapability('composition').invoke();
-                console.log('rootComposition ', rootComposition);
-            }
-        });
-        console.log('rootObject 3', rootObject);
-        */
-        
-
                 // Recursive search 
                 /*
                 var subList = [current],
@@ -187,19 +164,3 @@ define(function () {
                 //    return c;
                 //});
                 */
-
-
-            /*
-            // For now, we want this view to only be in the My Items folder 
-            if ($scope.domainObject.getId() === 'mine') {
-                var list = listHelper($scope.domainObject);
-                //debugger;
-                console.log(' ');
-                console.log('list ', list);
-                return list.then(function (c) {
-                    console.log('final result ', c);
-                    return c;
-                });
-            }
-            */
-        
