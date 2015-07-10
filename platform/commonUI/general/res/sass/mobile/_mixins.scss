@@ -43,7 +43,8 @@
 //}
 
 @mixin desktop {
-    @media #{$compBoth} {
+    @media #{$compWidth},
+           #{$compHeight} {
         @content
     }
 }
