@@ -82,30 +82,35 @@ define(function () {
             });
         }
         
-        // Search through items for items which contain the search term 
-        // in the title
+        // Search through items for items which contain the search term in the name
         function search(term) {
             console.log('search called, with term ', term);
             var searchResults = [],
                 itemsLength,
+                itemModel,
                 itemName,
                 i;
+            
             // Make not case sensitive
             if (term) {
                 term = term.toLocaleLowerCase();
             }
             
-            // refresh items list
+            // Refresh items list
             return listify().then( function () {
-                itemsLength = $scope.items.length; // Slight time optimization
+                // Slight time optimization
+                itemsLength = $scope.items.length;
+                
                 for (i = 0; i < itemsLength; i += 1) {
-                    itemName = $scope.items[i].getModel().name;
-                    console.log('items[', i, '] name', itemName);
-                    if (itemName.toLocaleLowerCase().includes(term)) {
+                    itemModel = $scope.items[i].getModel();
+                    itemName = itemModel.name.toLocaleLowerCase();
+                    
+                    // Include any matching items, except folders 
+                    if (itemName.includes(term) && itemModel.type !== 'folder') {
                         searchResults.push($scope.items[i]);
                     }
                 }
-                console.log('search results ', searchResults);
+                
                 $scope.results = searchResults; // Somewhat redundant
                 return searchResults;
             });
