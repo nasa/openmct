@@ -76,7 +76,6 @@ define(function () {
             return objectService.getObjects(['mine']).then(function (objects) {
                 return listHelper(objects.mine).then(function (c) {
                     console.log('final result ', c);
-                    $scope.items = c; // Somewhat redundant
                     return c;
                 });
             });
@@ -96,37 +95,33 @@ define(function () {
                 term = term.toLocaleLowerCase();
             }
             
-            // Refresh items list
-            return listify().then( function () {
-                // Slight time optimization
-                itemsLength = $scope.items.length;
+            // Get items list
+            return listify().then(function (items) {
+                // (slight time optimization)
+                itemsLength = items.length;
                 
+                // Then filter through the items list
                 for (i = 0; i < itemsLength; i += 1) {
-                    itemModel = $scope.items[i].getModel();
+                    itemModel = items[i].getModel();
                     itemName = itemModel.name.toLocaleLowerCase();
                     
                     // Include any matching items, except folders 
                     if (itemName.includes(term) && itemModel.type !== 'folder') {
-                        searchResults.push($scope.items[i]);
+                        searchResults.push(items[i]);
                     }
                 }
                 
-                $scope.results = searchResults; // Somewhat redundant
+                $scope.results = searchResults; // Some redundancy
                 return searchResults;
             });
         }
         
-        // When the search view is opened, call listify()
-        // When the search button is pressed, call search()
-        
-        $scope.items = listify();
         $scope.results = search();
         
         return {
             search: search,
-            /**
-             * Check to see if there are any search results to display.
-            */
+            
+            // Check to see if there are any search results to display.
             areResults: function () {
                 return $scope.results.length !== 0;
             }
