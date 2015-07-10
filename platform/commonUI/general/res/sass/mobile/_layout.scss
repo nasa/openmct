@@ -35,10 +35,14 @@
 }
 
 .holder-show {
-    @include phoneandtablet {
+    @include phone {
         @include transition-duration(.2s);
         left: 0px;
-    }     
+    }
+    @include tablet {
+        @include transition-duration(.2s);
+        left: 0px;
+    }         
 }
 
 .button-show {
@@ -80,13 +84,6 @@
         display: none;
     }       
 }
-
-.exclude-mobile {
-    @include phoneandtablet {
-        display: none;
-    }       
-}
-
 
 .browse-manage {
     @include phone {

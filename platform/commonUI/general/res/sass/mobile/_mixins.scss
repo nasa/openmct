@@ -22,25 +22,31 @@
 
 // NOTE: Mixins for devices
 @mixin phone {
-    @media screen and (max-width: $phoMaxW) {
+    @media #{$phoneWidth},
+           #{$phoneHeight} {
         @content
     }
 }
 
 @mixin tablet {
-    @media screen and (min-width: $tabMinW) and (max-width: $tabMaxW) {
+    @media #{$tabletWidth},
+           #{$tabletHeight} {
         @content
     }
 }
 
-@mixin phoneandtablet {
-    @media screen and (max-width: $tabMaxW) {
-        @content
-    }
-}
+//@mixin phoneandtablet {
+//    @media screen and (max-width: $tabMaxW) and (orientation: portrait),
+//           screen and (max-width: $tabMaxH) and (orientation: landscape) {
+//        @content
+//    }
+//}
 
 @mixin desktop {
-    @media screen and (min-width: $compMinW) {
+    @media screen and (min-width: $compMinW) and (orientation: portrait),
+           screen and (min-device-width: $compMinW) and (orientation: portrait),
+           screen and (min-width: $compMinH) and (orientation: landscape),
+           screen and (min-device-width: $compMinH) and (orientation: landscape) {
         @content
     }
 }

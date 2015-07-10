@@ -22,19 +22,39 @@
 
 /************************** WINDOW DIMENSIONS FOR RWD */
 $phoMaxW: 514px;
-$phoMaxH: 740px;
-    
-$tabMinW: 515px;
-$tabMinH: 741px;
+$phoWidPorCheck: "(max-width: #{$phoMaxW})";
+$phoWidLanCheck: "(max-height: #{$phoMaxW})";
 
+$phoMaxH: 740px;
+$phoHeiPorCheck: "(max-height: #{$phoMaxH})";
+$phoHeiLanCheck: "(max-width: #{$phoMaxH})";
+
+$tabMinW: 515px;
 $tabMaxW: 800px;
-$tabMaxH: 1280px;
+$tabWidPorCheck: "(min-width: #{$tabMinW}) and (max-width: #{$tabMaxW})";
+$tabWidLanCheck: "(min-height: #{$tabMinW}) and (max-height: #{$tabMaxW})";
+
+$tabMinH: 741px;
+$tabMaxH: 1024px;
+$tabHeiPorCheck: "(min-height: #{$tabMinH}) and (max-height: #{$tabMaxH})";
+$tabHeiLanCheck: "(min-width: #{$tabMinH}) and (max-width: #{$tabMaxH})";
+
+$mobileDevice: "(max-device-width: #{$tabMaxW}) and (max-device-height: #{$tabMaxH})";
+
+$phoneWidth: "screen and #{$phoWidPorCheck} and #{$phoHeiPorCheck} and #{$mobileDevice} and (orientation: portrait)";
+$phoneHeight: "screen and #{$phoWidLanCheck} and #{$phoHeiLanCheck} and (orientation: landscape)";
+
+$tabletWidth: "screen and #{$tabWidPorCheck} and #{$tabHeiPorCheck} and #{$mobileDevice} and (orientation: portrait)";
+$tabletHeight: "screen and #{$tabWidLanCheck} and #{$tabHeiLanCheck} and (orientation: landscape)";
 
 $compMinW: 801px;
+$compMinH: 1025px;
 
-$leftPhone: 46%;
-$leftTab: 28%;
+$deskTopDevice: "(min-device-width: #{$compMinW}) and (min-device-height: #{$compMinH})";
 
-$hideRatioPhone: 1.8;
-$hideRatioTab: 1.38;
+$leftPhone: $phoMaxW/2;
+$leftTab: $tabMaxW/2;
+
+$hideRatioPhone: 1;
+$hideRatioTab: 1;
 
