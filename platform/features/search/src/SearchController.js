@@ -44,7 +44,7 @@ define(function () {
                 var subList = [current],
                     i;
                 //console.log('children ', children);
-                for (i = 0; i < children.length; i += 1) {
+                for (i = 0; i < children.length; i++) {
                     //console.log('children[', i, ']', children[i]); 
                     subList.push(listHelper(children[i]));
                     //console.log('subList', subList, 'index', i);
@@ -102,7 +102,7 @@ define(function () {
                 itemsLength = items.length;
                 
                 // Then filter through the items list
-                for (i = 0; i < itemsLength; i += 1) {
+                for (i = 0; i < itemsLength; i++) {
                     itemModel = items[i].getModel();
                     itemName = itemModel.name.toLocaleLowerCase();
                     
