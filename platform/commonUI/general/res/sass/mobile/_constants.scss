@@ -48,6 +48,8 @@ $tabletHeight: "screen and #{$tabWidLanCheck} and #{$tabHeiLanCheck} and (orient
 $compMinW: 801px;
 $compMinH: 1025px;
 
+$compBoth: "screen and (min-device-width: #{$compMinW}) and (min-device-height: #{$compMinH})";
+
 $leftPhone: $phoMaxW/2;
 $leftTab: $tabMaxW/2;
 
