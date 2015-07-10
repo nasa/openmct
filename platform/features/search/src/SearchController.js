@@ -41,28 +41,31 @@ define(function () {
             
             // Recursive case. Is asynchronous.
             return composition.invoke().then(function (children) {
-                console.log('children (pre) ', children);
-                //(children.forEach(listHelper)).then(function (subList) {
-                //    console.log('children (post) ', children);
-                //    return [current].concat(children);
-                //});
-                children.forEach(listHelper);
-                console.log('children (post) ', children);
-                return [current].concat(children);
-                /*
-                var subList = [current];
+                var subList = [current],
+                    i;
                 console.log('children ', children);
-                for (var i = 0; i < children.length; i += 1) {
+                for (i = 0; i < children.length; i += 1) {
                     console.log('children[', i, ']', children[i]); 
-                    //subList.push(listHelper(children[i]));
-                    listHelper(children[i]).then(function (c) {
-                        subList.concat(c);
-                    });
+                    subList.push(listHelper(children[i]));
                     console.log('subList', subList, 'index', i);
                 }
                 console.log('sublist ', subList);
                 return subList;
-                */
+            });
+        }
+        
+        // Recursive helper function to go through the tree
+        function listHelper2(current) {
+            return current.getCapability('composition').invoke().then(function (children) {
+                return [current].concat(children.forEach(function (child) {
+                    if (child.hasCapability('composition')) {
+                        return listHelper2(child);//.then(function (c) {
+                        //    return c;
+                        //});
+                    } else {
+                        return child;
+                    }
+                }));
             });
         }
         
@@ -71,9 +74,9 @@ define(function () {
         function listify() {
             // Aquire My Items (root folder)
             return objectService.getObjects(['mine']).then(function (objects) {
-                console.log(' ');
                 return listHelper(objects.mine).then(function (c) {
                     console.log('final result ', c);
+                    $scope.items = c; // Somewhat redundant
                     return c;
                 });
             });
@@ -82,14 +85,23 @@ define(function () {
         // Search through items for items which contain the search term 
         // in the title
         function search(term) {
+            console.log('search called');
+            console.log('search term ', term);
             var searchResults = [],
-                itemsLength = $scope.items.length, // Slight time optimization
+                itemsLength,
                 i;
+            // refresh items list
+            listify();
+            itemsLength = $scope.items.length; // Slight time optimization
+            
             for (i = 0; i < itemsLength; i += 1) {
-                if ($scope.items[i].includes(term)) {
+                console.log('items[', i, '].getModel', $scope.items[i].getModel());
+                if ($scope.items[i].getModel().name.includes(term)) {
                     searchResults.push($scope.items[i]);
                 }
             }
+            console.log('search results ', searchResults);
+            $scope.results = searchResults; // Somewhat redundant
             return searchResults;
         }
         
@@ -98,6 +110,10 @@ define(function () {
         
         $scope.items = listify();
         $scope.results = search();
+        
+        return {
+            search: search
+        };
     }
     return SearchController;
 });
@@ -146,6 +162,18 @@ define(function () {
                 var array = [current].concat(children.forEach(listHelper));
                 console.log('array ', array);
                 return array;
+                */
+                /*
+                var subList = [];//= Promise.all([]);
+                subList.push(current);
+                for (var i = 0, len = children.length; i < len; i++) {
+                    listHelper(children[i]).then(function (c) {
+                        subList.concat(c);
+                    });
+                }
+                return subList;//.then(function (c) {
+                //    return c;
+                //});
                 */
 
 

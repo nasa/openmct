@@ -19,24 +19,35 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<!-- Based on items -->
+<!-- Based on items view -->
 <div class="items-holder grid abs"
      ng-controller="SearchController as controller">
     
     <!-- Search bar -->
     <div id="formid">
         <form>
+            <!--
             <div>
                 <label for="searchinput">Search this folder:</label>
                 <input type="text" id="searchinput" />
             </div>
+            -->
+            Search: <br>
+            <input type="text" 
+                   id="searchinput" 
+                   name="searchform" />
             <!--
-            Search in this folder: <br>
-            <input type="text" name="searchform"> -->
             <div class="button">
                 <button type="submit">Search</button>
             </div>
-            <!-- input type="submit" value="Search" -->
+            -->
+            <!--
+            <input type="submit" value="go" />
+            -->
+            <span class="button">
+                <button type="button"
+                        ng-click="controller.search()">Go</button>
+            </span>
         </form>
     </div> 
     
