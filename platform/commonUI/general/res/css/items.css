@@ -352,7 +352,7 @@
   .items-holder .item.grid-item {
     width: 100%;
     height: 50px; } }
-@media screen and (min-device-width: 515px) and (max-device-width: 799px) and (min-device-height: 741px) and (max-device-height: 1024px) and (orientation: portrait), screen and (min-device-height: 515px) and (max-device-height: 799px) and (min-device-width: 741px) and (max-device-width: 1024px) and (orientation: landscape) {
+@media screen and (min-device-width: 515px) and (max-device-width: 799px) and (min-device-height: 741px) and (max-device-height: 1024px) and (orientation: portrait), screen and (min-device-height: 515px) and (max-device-height: 799px) and (min-device-width: 741px) and (max-device-width: 1024px) and (max-width: 1024px) and (orientation: landscape) {
   /* line 24, ../sass/mobile/_item.scss */
   .items-holder .item.grid-item {
     width: 100%;
@@ -366,7 +366,7 @@
   /* line 49, ../sass/mobile/_item.scss */
   .items-holder .item.grid-item .icon {
     display: none; } }
-@media screen and (min-device-width: 515px) and (max-device-width: 799px) and (min-device-height: 741px) and (max-device-height: 1024px) and (orientation: portrait), screen and (min-device-height: 515px) and (max-device-height: 799px) and (min-device-width: 741px) and (max-device-width: 1024px) and (orientation: landscape) {
+@media screen and (min-device-width: 515px) and (max-device-width: 799px) and (min-device-height: 741px) and (max-device-height: 1024px) and (orientation: portrait), screen and (min-device-height: 515px) and (max-device-height: 799px) and (min-device-width: 741px) and (max-device-width: 1024px) and (max-width: 1024px) and (orientation: landscape) {
   /* line 49, ../sass/mobile/_item.scss */
   .items-holder .item.grid-item .icon {
     display: none; } }

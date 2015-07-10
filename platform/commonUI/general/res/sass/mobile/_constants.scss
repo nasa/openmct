@@ -37,7 +37,7 @@ $tabWidLanCheck: "(min-device-height: #{$tabMinW}) and (max-device-height: #{$ta
 $tabMinH: 741px;
 $tabMaxH: 1024px;
 $tabHeiPorCheck: "(min-device-height: #{$tabMinH}) and (max-device-height: #{$tabMaxH})";
-$tabHeiLanCheck: "(min-device-width: #{$tabMinH}) and (max-device-width: #{$tabMaxH})";
+$tabHeiLanCheck: "(min-device-width: #{$tabMinH}) and (max-device-width: #{$tabMaxH}) and (max-width: #{$tabMaxH})";
 
 $phoneWidth: "screen and #{$phoWidPorCheck} and #{$phoHeiPorCheck} and (orientation: portrait)";
 $phoneHeight: "screen and #{$phoWidLanCheck} and #{$phoHeiLanCheck} and (orientation: landscape)";
