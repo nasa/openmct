@@ -357,7 +357,7 @@
   .items-holder .item.grid-item {
     width: 100%;
     height: 100px; } }
-@media screen and (min-device-width: 801px) and (orientation: portrait), screen and (min-device-width: 1025px) and (orientation: landscape) {
+@media screen and (min-device-width: 801px) and (min-device-height: 1025px) {
   /* line 24, ../sass/mobile/_item.scss */
   .items-holder .item.grid-item {
     width: 200px;

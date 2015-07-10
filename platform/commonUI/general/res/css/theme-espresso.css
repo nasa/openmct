@@ -816,7 +816,7 @@ mct-container {
 /* line 81, ../sass/mobile/_layout.scss */
 .mobile-menu-icon {
   top: 5px; }
-  @media screen and (min-device-width: 801px) and (orientation: portrait), screen and (min-device-width: 1025px) and (orientation: landscape) {
+  @media screen and (min-device-width: 801px) and (min-device-height: 1025px) {
     /* line 81, ../sass/mobile/_layout.scss */
     .mobile-menu-icon {
       display: none; } }
@@ -829,7 +829,7 @@ mct-container {
   /* line 88, ../sass/mobile/_layout.scss */
   .browse-manage {
     width: 400px; } }
-@media screen and (min-device-width: 801px) and (orientation: portrait), screen and (min-device-width: 1025px) and (orientation: landscape) {
+@media screen and (min-device-width: 801px) and (min-device-height: 1025px) {
   /* line 88, ../sass/mobile/_layout.scss */
   .browse-manage {
     min-width: 150px;

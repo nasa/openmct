@@ -43,8 +43,7 @@
 //}
 
 @mixin desktop {
-    @media screen and (min-device-width: $compMinW) and (orientation: portrait),
-           screen and (min-device-width: $compMinH) and (orientation: landscape) {
+    @media #{$compBoth} {
         @content
     }
 }
