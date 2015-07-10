@@ -118,7 +118,13 @@ define(function () {
         $scope.results = search();
         
         return {
-            search: search
+            search: search,
+            /**
+             * Check to see if there are any search results to display.
+            */
+            areResults: function () {
+                return $scope.results.length !== 0;
+            }
         };
     }
     return SearchController;

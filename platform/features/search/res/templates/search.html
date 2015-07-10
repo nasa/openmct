@@ -32,10 +32,11 @@
                 <input type="text" id="searchinput" />
             </div>
             -->
-            Search: <br>
+            <div style="height: 30px">Search:</div>
             <input type="text" 
                    id="searchinput" 
-                   name="searchform" />
+                   name="searchform"
+                   value="input search term here"/>
             <!--
             <div class="button">
                 <button type="submit">Search</button>
@@ -46,26 +47,20 @@
             -->
             <span class="button">
                 <button type="button"
-                        ng-click="controller.search()">Go</button>
+                        ng-click="controller.search('')">Go</button>
             </span>
         </form>
     </div> 
     
     <!-- some spacing -->
-    <div style="height: 20px"></div>
+    <div style="height: 30px"></div>
     
     <!-- Results list -->
-    <ul>
-        <li>
-            <mct-representation key="'search-item'"><!--
-                            ng-repeat="childObject in composition"
-                            mct-object="childObject"--></mct-representation>
-        </li>
-        <li>
-            <mct-representation key="'search-item'"
-                            ng-repeat="result in results"
-                            mct-object="result"></mct-representation>
-        </li>
-    </ul>
-    
+    <div ng-if="controller.areResults()"
+         style="height: 30px">
+            Results:
+    </div>
+    <mct-representation key="'search-item'"
+                    ng-repeat="result in results"
+                    mct-object="result"></mct-representation>
 </div>
