@@ -46,15 +46,12 @@
                 height: $dHei; 
             }
             
-            .bar {
-//            NOTE: make icon disappear
-            .item-main {
+            .icon {
                 @include phone {
                     display: none;
                 }
                 @include tablet {
                     display: none;   
-                }
                 }
             }
         }
