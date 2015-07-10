@@ -22,35 +22,31 @@
 
 /************************** WINDOW DIMENSIONS FOR RWD */
 $phoMaxW: 514px;
-$phoWidPorCheck: "(max-width: #{$phoMaxW})";
-$phoWidLanCheck: "(max-height: #{$phoMaxW})";
+$phoWidPorCheck: "(max-device-width: #{$phoMaxW})";
+$phoWidLanCheck: "(max-device-height: #{$phoMaxW})";
 
 $phoMaxH: 740px;
-$phoHeiPorCheck: "(max-height: #{$phoMaxH})";
-$phoHeiLanCheck: "(max-width: #{$phoMaxH})";
+$phoHeiPorCheck: "(max-device-height: #{$phoMaxH})";
+$phoHeiLanCheck: "(max-device-width: #{$phoMaxH})";
 
 $tabMinW: 515px;
 $tabMaxW: 800px;
-$tabWidPorCheck: "(min-width: #{$tabMinW}) and (max-width: #{$tabMaxW})";
-$tabWidLanCheck: "(min-height: #{$tabMinW}) and (max-height: #{$tabMaxW})";
+$tabWidPorCheck: "(min-device-width: #{$tabMinW}) and (max-device-width: #{$tabMaxW})";
+$tabWidLanCheck: "(min-device-height: #{$tabMinW}) and (max-device-height: #{$tabMaxW})";
 
 $tabMinH: 741px;
 $tabMaxH: 1024px;
-$tabHeiPorCheck: "(min-height: #{$tabMinH}) and (max-height: #{$tabMaxH})";
-$tabHeiLanCheck: "(min-width: #{$tabMinH}) and (max-width: #{$tabMaxH})";
+$tabHeiPorCheck: "(min-device-height: #{$tabMinH}) and (max-device-height: #{$tabMaxH})";
+$tabHeiLanCheck: "(min-device-width: #{$tabMinH}) and (max-device-width: #{$tabMaxH})";
 
-$mobileDevice: "(max-device-width: #{$tabMaxW}) and (max-device-height: #{$tabMaxH})";
-
-$phoneWidth: "screen and #{$phoWidPorCheck} and #{$phoHeiPorCheck} and #{$mobileDevice} and (orientation: portrait)";
+$phoneWidth: "screen and #{$phoWidPorCheck} and #{$phoHeiPorCheck} and (orientation: portrait)";
 $phoneHeight: "screen and #{$phoWidLanCheck} and #{$phoHeiLanCheck} and (orientation: landscape)";
 
-$tabletWidth: "screen and #{$tabWidPorCheck} and #{$tabHeiPorCheck} and #{$mobileDevice} and (orientation: portrait)";
+$tabletWidth: "screen and #{$tabWidPorCheck} and #{$tabHeiPorCheck} and (orientation: portrait)";
 $tabletHeight: "screen and #{$tabWidLanCheck} and #{$tabHeiLanCheck} and (orientation: landscape)";
 
 $compMinW: 801px;
 $compMinH: 1025px;
-
-$deskTopDevice: "(min-device-width: #{$compMinW}) and (min-device-height: #{$compMinH})";
 
 $leftPhone: $phoMaxW/2;
 $leftTab: $tabMaxW/2;
