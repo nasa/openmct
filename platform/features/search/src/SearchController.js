@@ -88,13 +88,20 @@ define(function () {
             console.log('search called, with term ', term);
             var searchResults = [],
                 itemsLength,
+                itemName,
                 i;
+            // Make not case sensitive
+            if (term) {
+                term = term.toLocaleLowerCase();
+            }
+            
             // refresh items list
             return listify().then( function () {
                 itemsLength = $scope.items.length; // Slight time optimization
                 for (i = 0; i < itemsLength; i += 1) {
-                    console.log('items[', i, '].getModel', $scope.items[i].getModel());
-                    if ($scope.items[i].getModel().name.includes(term)) {
+                    itemName = $scope.items[i].getModel().name;
+                    console.log('items[', i, '] name', itemName);
+                    if (itemName.toLocaleLowerCase().includes(term)) {
                         searchResults.push($scope.items[i]);
                     }
                 }
