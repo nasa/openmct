@@ -85,24 +85,23 @@ define(function () {
         // Search through items for items which contain the search term 
         // in the title
         function search(term) {
-            console.log('search called');
-            console.log('search term ', term);
+            console.log('search called, with term ', term);
             var searchResults = [],
                 itemsLength,
                 i;
             // refresh items list
-            listify();
-            itemsLength = $scope.items.length; // Slight time optimization
-            
-            for (i = 0; i < itemsLength; i += 1) {
-                console.log('items[', i, '].getModel', $scope.items[i].getModel());
-                if ($scope.items[i].getModel().name.includes(term)) {
-                    searchResults.push($scope.items[i]);
+            return listify().then( function () {
+                itemsLength = $scope.items.length; // Slight time optimization
+                for (i = 0; i < itemsLength; i += 1) {
+                    console.log('items[', i, '].getModel', $scope.items[i].getModel());
+                    if ($scope.items[i].getModel().name.includes(term)) {
+                        searchResults.push($scope.items[i]);
+                    }
                 }
-            }
-            console.log('search results ', searchResults);
-            $scope.results = searchResults; // Somewhat redundant
-            return searchResults;
+                console.log('search results ', searchResults);
+                $scope.results = searchResults; // Somewhat redundant
+                return searchResults;
+            });
         }
         
         // When the search view is opened, call listify()
