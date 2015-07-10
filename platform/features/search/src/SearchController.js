@@ -28,31 +28,10 @@ define(function () {
     "use strict";
     
     function SearchController($scope, objectService) {
-        var items = [],
-            searchResults = [];
-        
-        // Converts the filetree into a list
-        // Eventually, plan to call search service
-        // (but do here for now)
-        function listify() {
-            // For now, we want this view to only be in the My Items folder 
-            if ($scope.domainObject.getId() === 'mine') {
-                var list = listHelper($scope.domainObject);
-                //debugger;
-                //console.log('out ', out);
-                return list.then(function (c) {
-                    //console.log('c ', c);
-                    return c;
-                });
-            }
-            // Fallback if we aren't in My Items
-            return items;
-        }
         
         // Recursive helper function to go through the tree
         function listHelper(current) {
             var composition;
-            
             if (current.hasCapability('composition')) {
                 composition = current.getCapability('composition');
             } else {
@@ -62,29 +41,55 @@ define(function () {
             
             // Recursive case. Is asynchronous.
             return composition.invoke().then(function (children) {
-                
-                var subList = [current],
-                    i;
-                for (i = 0; i < children.length; i += 1) {
-                    subList.push(listHelper(children[i]));
-                    //console.log('subList', subList, 'index', i);
-                }
-                //console.log('sublist ', subList);
-                return subList;
-                
+                console.log('children (pre) ', children);
+                //(children.forEach(listHelper)).then(function (subList) {
+                //    console.log('children (post) ', children);
+                //    return [current].concat(children);
+                //});
+                children.forEach(listHelper);
+                console.log('children (post) ', children);
+                return [current].concat(children);
                 /*
-                var array = [current].concat(children.forEach(listHelper));
-                console.log('array ', array);
-                return array;
+                var subList = [current];
+                console.log('children ', children);
+                for (var i = 0; i < children.length; i += 1) {
+                    console.log('children[', i, ']', children[i]); 
+                    //subList.push(listHelper(children[i]));
+                    listHelper(children[i]).then(function (c) {
+                        subList.concat(c);
+                    });
+                    console.log('subList', subList, 'index', i);
+                }
+                console.log('sublist ', subList);
+                return subList;
                 */
             });
         }
         
-        // Search through items for items which have the search term 
+        // Converts the filetree into a list
+        // Eventually, plan to call search service (but do here for now)
+        function listify() {
+            // Aquire My Items (root folder)
+            return objectService.getObjects(['mine']).then(function (objects) {
+                console.log(' ');
+                return listHelper(objects.mine).then(function (c) {
+                    console.log('final result ', c);
+                    return c;
+                });
+            });
+        }
+        
+        // Search through items for items which contain the search term 
         // in the title
         function search(term) {
-            // modify searchResults
-            
+            var searchResults = [],
+                itemsLength = $scope.items.length, // Slight time optimization
+                i;
+            for (i = 0; i < itemsLength; i += 1) {
+                if ($scope.items[i].includes(term)) {
+                    searchResults.push($scope.items[i]);
+                }
+            }
             return searchResults;
         }
         
@@ -124,4 +129,37 @@ define(function () {
         */
         
 
+                // Recursive search 
+                /*
+                var subList = [current],
+                    i;
+                console.log('children ', children);
+                for (i = 0; i < children.length; i += 1) {
+                    console.log('children[', i, ']', children[i]); 
+                    subList.push(listHelper(children[i]));
+                    console.log('subList', subList, 'index', i);
+                }
+                console.log('sublist ', subList);
+                return subList;
+                */
+                /*
+                var array = [current].concat(children.forEach(listHelper));
+                console.log('array ', array);
+                return array;
+                */
+
+
+            /*
+            // For now, we want this view to only be in the My Items folder 
+            if ($scope.domainObject.getId() === 'mine') {
+                var list = listHelper($scope.domainObject);
+                //debugger;
+                console.log(' ');
+                console.log('list ', list);
+                return list.then(function (c) {
+                    console.log('final result ', c);
+                    return c;
+                });
+            }
+            */
         
