@@ -510,13 +510,13 @@ mct-container {
 .editor {
   position: absolute; }
 
-/* line 47, ../sass/user-environ/_layout.scss */
+/* line 46, ../sass/user-environ/_layout.scss */
 .editor {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px; }
 
-/* line 51, ../sass/user-environ/_layout.scss */
+/* line 50, ../sass/user-environ/_layout.scss */
 .contents {
   box-sizing: border-box;
   position: absolute;
@@ -524,36 +524,36 @@ mct-container {
   right: 0;
   bottom: 0;
   left: 0; }
-  /* line 59, ../sass/user-environ/_layout.scss */
+  /* line 58, ../sass/user-environ/_layout.scss */
   .contents.nomargin {
     right: 0px;
     bottom: 0px;
     left: 0px; }
 
-/* line 68, ../sass/user-environ/_layout.scss */
+/* line 67, ../sass/user-environ/_layout.scss */
 .bar .icon.major {
   margin-right: 5px; }
-/* line 71, ../sass/user-environ/_layout.scss */
+/* line 70, ../sass/user-environ/_layout.scss */
 .bar.abs, .btn-menu span.bar.l-click-area {
   text-wrap: none;
   white-space: nowrap; }
-/* line 75, ../sass/user-environ/_layout.scss */
+/* line 74, ../sass/user-environ/_layout.scss */
 .bar.left,
 .bar .left {
   width: 45% !important;
   right: auto !important; }
-/* line 80, ../sass/user-environ/_layout.scss */
+/* line 79, ../sass/user-environ/_layout.scss */
 .bar.right,
 .bar .right {
   width: 45% !important;
   left: auto !important;
   text-align: right; }
-  /* line 85, ../sass/user-environ/_layout.scss */
+  /* line 84, ../sass/user-environ/_layout.scss */
   .bar.right .icon.major,
   .bar .right .icon.major {
     margin-left: 15px; }
 
-/* line 92, ../sass/user-environ/_layout.scss */
+/* line 91, ../sass/user-environ/_layout.scss */
 .user-environ .browse-area,
 .user-environ .edit-area,
 .user-environ .editor {
@@ -561,23 +561,23 @@ mct-container {
   right: 10px;
   bottom: 35px;
   left: 10px; }
-/* line 103, ../sass/user-environ/_layout.scss */
+/* line 102, ../sass/user-environ/_layout.scss */
 .user-environ .browse-area > .contents,
 .user-environ .edit-area > .contents {
   left: 0;
   right: 0; }
-/* line 109, ../sass/user-environ/_layout.scss */
+/* line 108, ../sass/user-environ/_layout.scss */
 .user-environ .edit-area {
   top: 45px; }
-  /* line 112, ../sass/user-environ/_layout.scss */
+  /* line 111, ../sass/user-environ/_layout.scss */
   .user-environ .edit-area .tool-bar {
     bottom: auto;
     height: 30px;
     line-height: 25px; }
-  /* line 117, ../sass/user-environ/_layout.scss */
+  /* line 116, ../sass/user-environ/_layout.scss */
   .user-environ .edit-area .work-area {
     top: 40px; }
-/* line 122, ../sass/user-environ/_layout.scss */
+/* line 121, ../sass/user-environ/_layout.scss */
 .user-environ .bottom-bar {
   overflow: hidden;
   position: absolute;
@@ -589,20 +589,20 @@ mct-container {
   height: auto;
   top: auto;
   height: 25px; }
-  /* line 127, ../sass/user-environ/_layout.scss */
+  /* line 126, ../sass/user-environ/_layout.scss */
   .user-environ .bottom-bar .status-holder {
     z-index: 1; }
-  /* line 131, ../sass/user-environ/_layout.scss */
+  /* line 130, ../sass/user-environ/_layout.scss */
   .user-environ .bottom-bar .app-logo {
     left: auto;
     width: 105px;
     z-index: 2; }
 
-/* line 139, ../sass/user-environ/_layout.scss */
+/* line 138, ../sass/user-environ/_layout.scss */
 .cols {
   overflow: hidden;
   *zoom: 1; }
-  /* line 141, ../sass/user-environ/_layout.scss */
+  /* line 140, ../sass/user-environ/_layout.scss */
   .cols .col {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -613,100 +613,100 @@ mct-container {
     margin-left: 1.5%;
     padding-left: 5px;
     position: relative; }
-    /* line 149, ../sass/user-environ/_layout.scss */
+    /* line 148, ../sass/user-environ/_layout.scss */
     .cols .col:first-child {
       margin-left: 0;
       padding-left: 0; }
-  /* line 156, ../sass/user-environ/_layout.scss */
+  /* line 155, ../sass/user-environ/_layout.scss */
   .cols.cols-2 .col-1 {
     min-width: 250px;
     width: 48.5%; }
-  /* line 162, ../sass/user-environ/_layout.scss */
+  /* line 161, ../sass/user-environ/_layout.scss */
   .cols.cols-2-ff .col-100px {
     width: 100px; }
-  /* line 169, ../sass/user-environ/_layout.scss */
+  /* line 168, ../sass/user-environ/_layout.scss */
   .cols.cols-6 .col-1 {
     min-width: 83.33333px;
     width: 15.16667%; }
-  /* line 175, ../sass/user-environ/_layout.scss */
+  /* line 174, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-1 {
     min-width: 31.25px;
     width: 4.75%; }
-  /* line 178, ../sass/user-environ/_layout.scss */
+  /* line 177, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-2 {
     min-width: 62.5px;
     width: 11%; }
-  /* line 181, ../sass/user-environ/_layout.scss */
+  /* line 180, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-7 {
     min-width: 218.75px;
     width: 42.25%; }
-  /* line 187, ../sass/user-environ/_layout.scss */
+  /* line 186, ../sass/user-environ/_layout.scss */
   .cols.cols-32 .col-2 {
     min-width: 31.25px;
     width: 4.75%; }
-  /* line 190, ../sass/user-environ/_layout.scss */
+  /* line 189, ../sass/user-environ/_layout.scss */
   .cols.cols-32 .col-15 {
     min-width: 234.375px;
     width: 45.375%; }
-  /* line 194, ../sass/user-environ/_layout.scss */
+  /* line 193, ../sass/user-environ/_layout.scss */
   .cols .l-row {
     overflow: hidden;
     *zoom: 1;
     padding: 5px 0; }
 
-/* line 200, ../sass/user-environ/_layout.scss */
+/* line 199, ../sass/user-environ/_layout.scss */
 .pane {
   position: absolute; }
-  /* line 203, ../sass/user-environ/_layout.scss */
+  /* line 202, ../sass/user-environ/_layout.scss */
   .pane.treeview .create-btn-holder {
     bottom: auto;
     top: 0;
     height: 24px; }
-    /* line 206, ../sass/user-environ/_layout.scss */
+    /* line 205, ../sass/user-environ/_layout.scss */
     .pane.treeview .create-btn-holder .wrapper.menu-element {
       position: absolute;
       bottom: 5px; }
-  /* line 211, ../sass/user-environ/_layout.scss */
+  /* line 210, ../sass/user-environ/_layout.scss */
   .pane.treeview .tree-holder {
     overflow: auto;
     top: 34px; }
-  /* line 218, ../sass/user-environ/_layout.scss */
+  /* line 217, ../sass/user-environ/_layout.scss */
   .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .btn-menu span.left.l-click-area, .btn-menu .pane.items .object-browse-bar span.left.l-click-area,
   .pane.items .object-browse-bar .right.abs,
   .pane.items .object-browse-bar .btn-menu span.right.l-click-area,
   .btn-menu .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
-  /* line 223, ../sass/user-environ/_layout.scss */
+  /* line 222, ../sass/user-environ/_layout.scss */
   .pane.items .object-holder {
     top: 34px; }
-  /* line 228, ../sass/user-environ/_layout.scss */
+  /* line 227, ../sass/user-environ/_layout.scss */
   .pane.edit-main .object-holder {
     top: 0; }
-  /* line 234, ../sass/user-environ/_layout.scss */
+  /* line 233, ../sass/user-environ/_layout.scss */
   .pane .object-holder {
     overflow: auto; }
 
-/* line 242, ../sass/user-environ/_layout.scss */
+/* line 241, ../sass/user-environ/_layout.scss */
 .split-layout.horizontal > .pane {
   margin-top: 5px; }
-  /* line 245, ../sass/user-environ/_layout.scss */
+  /* line 244, ../sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane:first-child {
     margin-top: 0; }
-/* line 252, ../sass/user-environ/_layout.scss */
+/* line 251, ../sass/user-environ/_layout.scss */
 .split-layout.vertical > .pane {
   margin-left: 5px; }
-  /* line 254, ../sass/user-environ/_layout.scss */
+  /* line 253, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane > .holder {
     left: 0;
     right: 0; }
-  /* line 258, ../sass/user-environ/_layout.scss */
+  /* line 257, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane:first-child {
     margin-left: 0; }
-    /* line 260, ../sass/user-environ/_layout.scss */
+    /* line 259, ../sass/user-environ/_layout.scss */
     .split-layout.vertical > .pane:first-child .holder {
       right: 5px; }
 
-/* line 269, ../sass/user-environ/_layout.scss */
+/* line 268, ../sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
 
@@ -732,7 +732,7 @@ mct-container {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 @media screen and (max-width: 514px) {
-  /* line 32, ../sass/mobile/_layout.scss */
+  /* line 26, ../sass/mobile/_layout.scss */
   .holder-hide {
     -moz-transition-duration: 0.2s;
     -o-transition-duration: 0.2s;
@@ -740,7 +740,7 @@ mct-container {
     transition-duration: 0.2s;
     left: -82.8%; } }
 @media screen and (min-width: 515px) and (max-width: 800px) {
-  /* line 32, ../sass/mobile/_layout.scss */
+  /* line 26, ../sass/mobile/_layout.scss */
   .holder-hide {
     -moz-transition-duration: 0.2s;
     -o-transition-duration: 0.2s;
@@ -749,7 +749,7 @@ mct-container {
     left: -38.64%; } }
 
 @media screen and (max-width: 800px) {
-  /* line 43, ../sass/mobile/_layout.scss */
+  /* line 37, ../sass/mobile/_layout.scss */
   .holder-show {
     -moz-transition-duration: 0.2s;
     -o-transition-duration: 0.2s;
@@ -757,11 +757,11 @@ mct-container {
     transition-duration: 0.2s;
     left: 0px; } }
 
-/* line 50, ../sass/mobile/_layout.scss */
+/* line 44, ../sass/mobile/_layout.scss */
 .button-show {
   position: absolute; }
   @media screen and (max-width: 514px) {
-    /* line 50, ../sass/mobile/_layout.scss */
+    /* line 44, ../sass/mobile/_layout.scss */
     .button-show {
       -moz-transition-duration: 0.2s;
       -o-transition-duration: 0.2s;
@@ -769,7 +769,7 @@ mct-container {
       transition-duration: 0.2s;
       left: 82.8%; } }
   @media screen and (min-width: 515px) and (max-width: 800px) {
-    /* line 50, ../sass/mobile/_layout.scss */
+    /* line 44, ../sass/mobile/_layout.scss */
     .button-show {
       -moz-transition-duration: 0.2s;
       -o-transition-duration: 0.2s;
@@ -777,7 +777,7 @@ mct-container {
       transition-duration: 0.2s;
       left: 38.64%; } }
 
-/* line 62, ../sass/mobile/_layout.scss */
+/* line 56, ../sass/mobile/_layout.scss */
 .button-hide {
   position: absolute;
   -moz-transition-duration: 0.2s;
@@ -785,49 +785,49 @@ mct-container {
   -webkit-transition-duration: 0.2s;
   transition-duration: 0.2s; }
   @media screen and (max-width: 514px) {
-    /* line 62, ../sass/mobile/_layout.scss */
+    /* line 56, ../sass/mobile/_layout.scss */
     .button-hide {
       left: 46%; } }
   @media screen and (min-width: 515px) and (max-width: 800px) {
-    /* line 62, ../sass/mobile/_layout.scss */
+    /* line 56, ../sass/mobile/_layout.scss */
     .button-hide {
       left: 28%; } }
 
-/* line 73, ../sass/mobile/_layout.scss */
+/* line 67, ../sass/mobile/_layout.scss */
 .object-header-mobile {
   position: relative; }
   @media screen and (max-width: 514px) {
-    /* line 73, ../sass/mobile/_layout.scss */
+    /* line 67, ../sass/mobile/_layout.scss */
     .object-header-mobile {
       left: 4.6%; } }
   @media screen and (min-width: 515px) and (max-width: 800px) {
-    /* line 73, ../sass/mobile/_layout.scss */
+    /* line 67, ../sass/mobile/_layout.scss */
     .object-header-mobile {
       left: 2.8%; } }
 
-/* line 83, ../sass/mobile/_layout.scss */
+/* line 77, ../sass/mobile/_layout.scss */
 .mobile-menu-icon {
   top: 5px; }
   @media screen and (min-width: 801px) {
-    /* line 83, ../sass/mobile/_layout.scss */
+    /* line 77, ../sass/mobile/_layout.scss */
     .mobile-menu-icon {
       display: none; } }
 
 @media screen and (max-width: 800px) {
-  /* line 90, ../sass/mobile/_layout.scss */
+  /* line 84, ../sass/mobile/_layout.scss */
   .exclude-mobile {
     display: none; } }
 
 @media screen and (max-width: 514px) {
-  /* line 97, ../sass/mobile/_layout.scss */
+  /* line 91, ../sass/mobile/_layout.scss */
   .browse-manage {
     width: 46%; } }
 @media screen and (min-width: 515px) and (max-width: 800px) {
-  /* line 97, ../sass/mobile/_layout.scss */
+  /* line 91, ../sass/mobile/_layout.scss */
   .browse-manage {
     width: 28%; } }
 @media screen and (min-width: 801px) {
-  /* line 97, ../sass/mobile/_layout.scss */
+  /* line 91, ../sass/mobile/_layout.scss */
   .browse-manage {
     min-width: 150px;
     max-width: 800px;
