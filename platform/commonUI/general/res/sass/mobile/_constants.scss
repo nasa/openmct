@@ -63,7 +63,7 @@ $compHeight: "screen and #{$compWidLanCheck} and #{$compHeiLanCheck} and (orient
 //$compBoth: "screen and (min-device-width: #{$compMinW}) and (min-device-height: #{$compMinH})";
 
 $leftPhone: $phoMaxW/2;
-$leftTab: $tabMaxW/2;
+$leftTab: $tabMaxH/2;
 
 $hideRatioPhone: 1;
 $hideRatioTab: 1;
