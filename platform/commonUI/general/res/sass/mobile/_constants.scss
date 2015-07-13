@@ -32,7 +32,10 @@ $tabMaxH: 1024px;
 
 $compMinW: 800px;
 $compMinH: 1025px;
+
 /************************** WINDOW CHECKS FOR RWD */
+$screenPortrait: "screen and (orientation: portrait)";
+$screenLandscape: "screen and (orientation: landscape)";
 
 $phoWidPorCheck: "(max-width: #{$phoMaxW})";
 $phoHeiPorCheck: "(max-height: #{$phoMaxH})";
@@ -49,18 +52,14 @@ $tabHeiLanCheck: "(min-width: #{$tabMinH}) and (max-width: #{$tabMaxH})";
 $mobileDevice: "(max-device-width: #{$tabMaxW}) and (max-device-height: #{$tabMaxH})";
 $mobileDeviceEmu: "(max-device-width: #{$tabMaxH}) and (max-device-height: #{$tabMaxW})";
 
+/************************** WINDOWS FOR RWD */
+$phoneWidth: "#{$screenPortrait} and #{$phoWidPorCheck} and #{$phoHeiPorCheck} and #{$mobileDevice}";
+$phoneHeight: "#{$screenLandscape} and #{$phoWidLanCheck} and #{$phoHeiLanCheck} and #{$mobileDevice}";
+$phoneHeightEmu: "#{$screenLandscape} and #{$phoWidLanCheck} and #{$phoHeiLanCheck} and #{$mobileDeviceEmu}";
 
-
-
-$phoneWidth: "screen and (orientation: portrait) and #{$phoWidPorCheck} and #{$phoHeiPorCheck} and #{$mobileDevice}";
-$phoneHeight: "screen and (orientation: landscape) and #{$phoWidLanCheck} and #{$phoHeiLanCheck} and #{$mobileDevice}";
-$phoneHeightEmu: "screen and (orientation: landscape) and #{$phoWidLanCheck} and #{$phoHeiLanCheck} and #{$mobileDeviceEmu}";
-
-$tabletWidth: "screen and (orientation: portrait) and #{$tabWidPorCheck} and #{$tabHeiPorCheck} and #{$mobileDevice}";
-$tabletHeight: "screen and (orientation: landscape) and #{$tabWidLanCheck} and #{$tabHeiLanCheck} and #{$mobileDevice}";
-$tabletHeightEmu: "screen and (orientation: landscape) and #{$tabWidLanCheck} and #{$tabHeiLanCheck} and #{$mobileDeviceEmu}";
-
-
+$tabletWidth: "#{$screenPortrait} and #{$tabWidPorCheck} and #{$tabHeiPorCheck} and #{$mobileDevice}";
+$tabletHeight: "#{$screenLandscape} and #{$tabWidLanCheck} and #{$tabHeiLanCheck} and #{$mobileDevice}";
+$tabletHeightEmu: "#{$screenLandscape} and #{$tabWidLanCheck} and #{$tabHeiLanCheck} and #{$mobileDeviceEmu}";
 
 $desktopDevicePortrait: "(min-device-width: #{$compMinW}) and (min-device-height: #{$compMinH})";
 $desktopDeviceLandscape: "(min-device-width: #{$compMinH}) and (min-device-height: #{$compMinW})";
