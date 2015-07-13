@@ -22,17 +22,17 @@
 
 // NOTE: Mixins for devices
 @mixin phone {
-    @media #{$phoneWidth},
-           #{$phoneHeight},
-           #{$phoneHeightEmu}{
+    @media #{$phonePortrait},
+           #{$phoneLandscape},
+           #{$phoneLandscapeEmu}{
         @content
     }
 }
 
 @mixin tablet {
-    @media #{$tabletWidth},
-           #{$tabletHeight},
-           #{$tabletHeightEmu}{
+    @media #{$tabletPortrait},
+           #{$tabletLandscape},
+           #{$tabletLandscapeEmu}{
         @content
     }
 }

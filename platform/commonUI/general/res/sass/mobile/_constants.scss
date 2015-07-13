@@ -33,33 +33,32 @@ $tabMaxH: 1024px;
 $compMinW: 800px;
 $compMinH: 1025px;
 
-/************************** WINDOW CHECKS FOR RWD */
+/************************** WINDOW CHECKS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
 $screenPortrait: "screen and (orientation: portrait)";
 $screenLandscape: "screen and (orientation: landscape)";
 
-$phoWidPorCheck: "(max-width: #{$phoMaxW})";
-$phoHeiPorCheck: "(max-height: #{$phoMaxH})";
-
-$phoWidLanCheck: "(max-height: #{$phoMaxW})";
-$phoHeiLanCheck: "(max-width: #{$phoMaxH})";
+$phonePortraitCheck: "(max-width: #{$phoMaxW}) and (max-height: #{$phoMaxH})";
+$phoneLandscapeCheck: "(max-height: #{$phoMaxW}) and (max-width: #{$phoMaxH})";
 
 $tabWidPorCheck: "(min-width: #{$tabMinW}) and (max-width: #{$tabMaxW})";
 $tabHeiPorCheck: "(min-height: #{$tabMinH}) and (max-height: #{$tabMaxH})";
+$tabletPortraitCheck: "#{$tabWidPorCheck} and #{$tabHeiPorCheck}";
 
 $tabWidLanCheck: "(min-height: #{$tabMinW}) and (max-height: #{$tabMaxW})";
 $tabHeiLanCheck: "(min-width: #{$tabMinH}) and (max-width: #{$tabMaxH})";
+$tabletLandscapeCheck: "#{$tabWidLanCheck} and #{$tabHeiLanCheck}";
 
 $mobileDevice: "(max-device-width: #{$tabMaxW}) and (max-device-height: #{$tabMaxH})";
 $mobileDeviceEmu: "(max-device-width: #{$tabMaxH}) and (max-device-height: #{$tabMaxW})";
 
-/************************** WINDOWS FOR RWD */
-$phoneWidth: "#{$screenPortrait} and #{$phoWidPorCheck} and #{$phoHeiPorCheck} and #{$mobileDevice}";
-$phoneHeight: "#{$screenLandscape} and #{$phoWidLanCheck} and #{$phoHeiLanCheck} and #{$mobileDevice}";
-$phoneHeightEmu: "#{$screenLandscape} and #{$phoWidLanCheck} and #{$phoHeiLanCheck} and #{$mobileDeviceEmu}";
+/************************** WINDOWS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
+$phonePortrait: "#{$screenPortrait} and #{$phonePortraitCheck} and #{$mobileDevice}";
+$phoneLandscape: "#{$screenLandscape} and #{$phoneLandscapeCheck} and #{$mobileDevice}";
+$phoneLandscapeEmu: "#{$screenLandscape} and #{$phoneLandscapeCheck} and #{$mobileDeviceEmu}";
 
-$tabletWidth: "#{$screenPortrait} and #{$tabWidPorCheck} and #{$tabHeiPorCheck} and #{$mobileDevice}";
-$tabletHeight: "#{$screenLandscape} and #{$tabWidLanCheck} and #{$tabHeiLanCheck} and #{$mobileDevice}";
-$tabletHeightEmu: "#{$screenLandscape} and #{$tabWidLanCheck} and #{$tabHeiLanCheck} and #{$mobileDeviceEmu}";
+$tabletPortrait: "#{$screenPortrait} and #{$tabletPortraitCheck} and #{$mobileDevice}";
+$tabletLandscape: "#{$screenLandscape} and #{$tabletLandscapeCheck} and #{$mobileDevice}";
+$tabletLandscapeEmu: "#{$screenLandscape} and #{$tabletLandscapeCheck} and #{$mobileDeviceEmu}";
 
 $desktopDevicePortrait: "(min-device-width: #{$compMinW}) and (min-device-height: #{$compMinH})";
 $desktopDeviceLandscape: "(min-device-width: #{$compMinH}) and (min-device-height: #{$compMinW})";
@@ -67,9 +66,7 @@ $desktopDeviceLandscape: "(min-device-width: #{$compMinH}) and (min-device-heigh
 $compWidth: "screen and #{$desktopDevicePortrait}";
 $compHeight: "screen and #{$desktopDeviceLandscape}";
 
-$leftPhone: $phoMaxW/2;
-$leftTab: $tabMaxW/2;
+/************************** DEVICE PARAMETERS FOR MENUS */
 
-$hideRatioPhone: 1;
-$hideRatioTab: 1;
-
+$phoneSlideMenuWidth: $phoMaxW/2;
+$tabletSlideMenuWidth: $tabMaxW/2;

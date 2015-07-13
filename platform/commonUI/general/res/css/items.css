@@ -70,8 +70,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /************************** WINDOW DIMENSIONS FOR RWD */
-/************************** WINDOW CHECKS FOR RWD */
-/************************** WINDOWS FOR RWD */
+/************************** WINDOW CHECKS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
+/************************** WINDOWS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
+/************************** DEVICE PARAMETERS FOR MENUS */
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space

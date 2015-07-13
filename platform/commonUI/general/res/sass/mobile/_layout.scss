@@ -26,11 +26,11 @@
 .holder-hide {
     @include phone {
         @include transition-duration(.2s);
-        left: (-1 * $hideRatioPhone) * $leftPhone;
+        left: (-1) * $phoneSlideMenuWidth;
     }
     @include tablet {
         @include transition-duration(.2s);
-        left: (-1 * $hideRatioTab) * $leftTab;
+        left: (-1) * $tabletSlideMenuWidth;
     }     
 }
 
@@ -49,11 +49,11 @@
     position: absolute;
     @include phone {
         @include transition-duration(.2s);
-        left: ($hideRatioPhone) * $leftPhone;
+        left: $phoneSlideMenuWidth;
     }
     @include tablet {
         @include transition-duration(.2s);
-        left: ($hideRatioTab) * $leftTab;
+        left: $tabletSlideMenuWidth;
     }      
 }
 
@@ -61,20 +61,20 @@
     position: absolute;
     @include transition-duration(.2s);
     @include phone {
-        left: $leftPhone;
+        left: $phoneSlideMenuWidth;
     }
     @include tablet {
-        left: $leftTab;
+        left: $tabletSlideMenuWidth;
     }     
 }
 
 .object-header-mobile {
     position: relative;
     @include phone {
-        left: $leftPhone/10;
+        left: $phoneSlideMenuWidth/10;
     }
     @include tablet {
-        left: $leftTab/10;
+        left: $tabletSlideMenuWidth/10;
     }
 }
 
@@ -87,10 +87,10 @@
 
 .browse-manage {
     @include phone {
-        width: $leftPhone;
+        width: $phoneSlideMenuWidth;
     }
     @include tablet {
-        width: $leftTab;
+        width: $tabletSlideMenuWidth;
     }    
     @include desktop {
         min-width: 150px;
