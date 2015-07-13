@@ -30,12 +30,12 @@ $phoHeiPorCheck: "(max-height: #{$phoMaxH})";
 $phoHeiLanCheck: "(max-width: #{$phoMaxH})";
 
 $tabMinW: 515px;
-$tabMaxW: 800px;
+$tabMaxW: 799px;
 $tabWidPorCheck: "(min-width: #{$tabMinW}) and (max-width: #{$tabMaxW})";
 $tabWidLanCheck: "(min-height: #{$tabMinW}) and (max-height: #{$tabMaxW})";
 
 $tabMinH: 741px;
-$tabMaxH: 1024px;
+$tabMaxH: 1023px;
 $tabHeiPorCheck: "(min-height: #{$tabMinH}) and (max-height: #{$tabMaxH})";
 $tabHeiLanCheck: "(min-width: #{$tabMinH}) and (max-width: #{$tabMaxH})";
 
@@ -47,8 +47,8 @@ $phoneHeight: "screen and #{$phoWidLanCheck} and #{$phoHeiLanCheck} and (orienta
 $tabletWidth: "screen and #{$tabWidPorCheck} and #{$tabHeiPorCheck} and #{$mobileDevice} and (orientation: portrait)";
 $tabletHeight: "screen and #{$tabWidLanCheck} and #{$tabHeiLanCheck} and (orientation: landscape)";
 
-$compMinW: 801px;
-$compMinH: 1025px;
+$compMinW: 800px;
+$compMinH: 1024px;
 
 $desktopDevicePortrait: "(min-device-width: #{$compMinW}) and (min-device-height: #{$compMinH})";
 $desktopDeviceLandscape: "(min-device-width: #{$compMinH}) and (min-device-height: #{$compMinW})";
