@@ -80,9 +80,24 @@
 
 .mobile-menu-icon {
     top: $interiorMargin;
+    @include phone {
+        font-size: 125%;
+    }
+    @include tablet {
+        font-size: 175%;
+    }      
     @include desktop {
         display: none;
     }       
+}
+
+.mobile-hide {
+    @include phone {
+        display: none;
+    }
+    @include tablet {
+        display: none;
+    }      
 }
 
 .browse-manage {
