@@ -54,7 +54,7 @@ $desktopDevicePortrait: "(min-device-width: #{$compMinW}) and (min-device-height
 $desktopDeviceLandscape: "(min-device-width: #{$compMinH}) and (min-device-height: #{$compMinW})";
 
 $compWidth: "screen and #{$desktopDevicePortrait} and (orientation: portrait)";
-$compHeight: "screen and #{$desktopDevicePortrait} and (orientation: landscape)";
+$compHeight: "screen and #{$desktopDeviceLandscape} and (orientation: landscape)";
 
 $leftPhone: $phoMaxW/2;
 $leftTab: $tabMaxW/2;
