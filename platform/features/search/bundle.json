@@ -15,22 +15,21 @@
             {
                 "key": "SearchController",
                 "implementation": "SearchController.js",
-                "depends": [ "$scope", "queryService" ]
+                "depends": [ "$scope", "$http", "objectService", "queryService", "ELASTIC_ROOT" ]
             }
         ],
         "representations": [
             {
                 "key": "search-item",
                 "templateUrl": "templates/search-item.html",
-                "uses": [ "type", "action", "composition" ],
-                "gestures": [ "info", "menu" ]
+                "uses": [ "grid-item" ]
             }
         ],
         "services": [
             {
                 "key": "queryService",
                 "implementation": "QueryService.js",
-                "depends": [ "objectService" ]
+                "depends": [ "objectService", "ELASTIC_ROOT" ]
             }
         ]
     }

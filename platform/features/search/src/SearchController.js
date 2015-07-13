@@ -27,7 +27,11 @@
 define(function () {
     "use strict";
     
-    function SearchController($scope, queryService) {
+    // JSLint doesn't like underscore-prefixed properties,
+    // so hide them here.
+    var ID = "_id";
+    
+    function SearchController($scope, $http, objectService, queryService, ROOT) {
         
         // Search through items for items which contain the search term in the name
         function search() {
@@ -45,7 +49,7 @@ define(function () {
             term = term.toLocaleLowerCase();
             
             // Get items list
-            return queryService.listify().then(function (items) {
+            return queryService.getItems().then(function (items) {
                 // (slight time optimization)
                 itemsLength = items.length;
                 
@@ -69,8 +73,52 @@ define(function () {
             });
         }
         
+        function search2() {
+            var term = document.getElementById("searchinput").value;
+            
+            $http({
+                method: "GET",
+                url: ROOT + "/_search",
+                data: {
+                    query: {
+                        term: {
+                            name: term
+                        }
+                    }
+                }
+            }).then(function (raw) {
+                var id;
+                var output = raw.data.hits.hits;
+                var outputLength = output.length;
+                console.log('raw', raw);
+                console.log('output, pre', output);
+                
+                var i;
+                for (i = 0; i < output.length; i++) {
+                    output[i] = output[i][ID];
+                    console.log('output [', i, ']', output[i]);
+                    
+                    objectService.getObjects([ output[i] ]).then(function (obj) {
+                        output[i] = obj;
+                        // Manually get the member name to get to the actual object
+                        for (var prop in output[i]) {
+                            console.log('prop [', i, ']', output[i][prop]);
+                            output[i] = output[i][prop];
+                            debugger;
+                        }
+                    });
+                    console.log('output [', i, ']', output[i]);
+                    
+                }
+                console.log('output, post', output);
+                
+                $scope.results = output;
+                //return output;
+            });
+        }
+
         return {
-            search: search,
+            search: search2,
             
             // Check to see if there are any search results to display.
             areResults: function () {
@@ -79,6 +127,14 @@ define(function () {
                 } else {
                     return false;
                 }
+            },
+            
+            getObjectByID: function (id) {
+                console.log('getObjectByID called');
+                objectService.getObjects([id]).then(function (out) {
+                    console.log('object gotten by id', out[id]);
+                    return out[id];
+                });
             }
         };
     }

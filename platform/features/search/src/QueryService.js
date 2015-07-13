@@ -33,7 +33,7 @@ define(
          * of objects in the filetree which is searchable. 
          * @constructor
          */
-        function QueryService(objectService) {
+        function QueryService(objectService, ROOT) {
             // Recursive helper function to go through the tree
             function listHelper(current) {
                 var composition;
@@ -43,51 +43,116 @@ define(
                     // Base case.
                     return current;
                 }
-
+                
                 // Recursive case. Is asynchronous.
                 return composition.invoke().then(function (children) {
                     var subList = [current],
                         i;
-                    //console.log('children ', children);
                     for (i = 0; i < children.length; i++) {
-                        //console.log('children[', i, ']', children[i]); 
                         subList.push(listHelper(children[i]));
-                        //console.log('subList', subList, 'index', i);
                     }
-                    //console.log('sublist ', subList);
                     return subList;
                 });
             }
-
-            // Recursive helper function to go through the tree
-            function listHelper2(current) {
-                return current.getCapability('composition').invoke().then(function (children) {
-                    return [current].concat(children.forEach(function (child) {
-                        if (child.hasCapability('composition')) {
-                            return listHelper2(child);//.then(function (c) {
-                            //    return c;
-                            //});
-                        } else {
-                            return child;
-                        }
-                    }));
-                });
-            }
-
+            
             // Converts the filetree into a list
             // Eventually, plan to call search service (but do here for now)
-            function listify() {
+            function getItems() {
+                console.log('in getItems()');
+                debugger;
+                /*
+                var elasticsearch = require(['platform/persistence/elastic'], function (elasticsearch) {
+                    debugger;
+                    
+                    console.log('elasticsearch (inside) ', elasticsearch);
+                    
+                    var client = new elasticsearch.Client({
+                        host: ROOT
+                    });
+                    console.log('client', client);
+                    
+                    var testsearch = client.search({q: 'name=test123'});//[params, [callback]]);
+                    console.log('search', testsearch);
+                });
+                */
+                var elasticsearch = require('elasticsearch');
+                
+                debugger; 
+                
+                console.log('elasticsearch (outside) ', elasticsearch);
+                    
+                var client = new elasticsearch.Client({
+                    host: ROOT
+                });
+                console.log('client', client);
+
+                var testsearch = client.search({q: 'name=test123'});//[params, [callback]]);
+                console.log('search', testsearch);
+                
+                
+                /*
+                console.log('elasticsearch', elasticsearch);
+                var client = new elasticsearch.Client({
+                    host: 'localhost:9200'
+                });
+                console.log('client', client);
+                var test = client.search();//[params, [callback]]);
+                console.log('search', test);
+                */
+                
+                /*
+                var elasticApp = angular.module('elasticApp', ['elasticsearch']);
+                console.log('elasticApp', elasticApp);
+                
+                var client = elasticApp.service('client', function (esFactory) {
+                    return esFactory({
+                        host: 'localhost:8080'
+                    });
+                });
+                console.log('client', client);
+                */
+                /*
+                var controller = elasticApp.controller('ElasticController', function ($scope, client, esFactory) {
+                    client.cluster.state({
+                        metric: [
+                            'cluster_name',
+                            'nodes',
+                            'master_node',
+                            'version'
+                        ]
+                    }).then(function (resp) {
+                        $scope.clusterState = resp;
+                        $scope.error = null;
+                    }).catch(function (err) {
+                        $scope.clusterState = null;
+                        $scope.error = err;
+                        // if the err is a NoConnections error, then the client was not able to
+                        // connect to elasticsearch. In that case, create a more detailed error
+                        // message
+                        if (err instanceof esFactory.errors.NoConnections) {
+                            $scope.error = new Error('Unable to connect to elasticsearch. ' +
+                                                     'Make sure that it is running and listening ' + 
+                                                     'at http://localhost:9200');
+                        }
+                    });
+                });
+                console.log('controller', controller);
+                */
+                /*
+                var testSearch = client.search();//[params, [callback]]);
+                console.log('search', testSearch);
+                */
+                
                 // Aquire My Items (root folder)
                 return objectService.getObjects(['mine']).then(function (objects) {
                     return listHelper(objects.mine).then(function (c) {
-                        //console.log('final result ', c);
                         return c;
                     });
                 });
             }
             
             return {
-                listify: listify
+                getItems: getItems
             };
         }
 
