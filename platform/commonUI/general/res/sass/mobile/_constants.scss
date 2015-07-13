@@ -50,7 +50,11 @@ $tabletHeight: "screen and #{$tabWidLanCheck} and #{$tabHeiLanCheck} and (orient
 $compMinW: 801px;
 $compMinH: 1025px;
 
-$deskTopDevice: "(min-device-width: #{$compMinW}) and (min-device-height: #{$compMinH})";
+$desktopDevicePortrait: "(min-device-width: #{$compMinW}) and (min-device-height: #{$compMinH})";
+$desktopDeviceLandscape: "(min-device-width: #{$compMinH}) and (min-device-height: #{$compMinW})";
+
+$compWidth: "screen and #{$desktopDevicePortrait} and (orientation: portrait)";
+$compHeight: "screen and #{$desktopDevicePortrait} and (orientation: landscape)";
 
 $leftPhone: $phoMaxW/2;
 $leftTab: $tabMaxW/2;
