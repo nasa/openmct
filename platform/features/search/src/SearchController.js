@@ -76,6 +76,7 @@ define(function () {
         function search2() {
             var term = document.getElementById("searchinput").value;
             
+            // Get the data...
             $http({
                 method: "GET",
                 url: ROOT + "/_search",
@@ -87,17 +88,21 @@ define(function () {
                     }
                 }
             }).then(function (raw) {
-                var id;
-                var output = raw.data.hits.hits;
-                var outputLength = output.length;
+                // ...then process the data 
+                var output = raw.data.hits.hits,
+                    outputLength = output.length,
+                    id,
+                    i;
+                
                 console.log('raw', raw);
                 console.log('output, pre', output);
                 
-                var i;
-                for (i = 0; i < output.length; i++) {
+                for (i = 0; i < outputLength; i++) {
+                    // Get the object's ID
                     output[i] = output[i][ID];
                     console.log('output [', i, ']', output[i]);
                     
+                    // Get the object itself from its ID
                     objectService.getObjects([ output[i] ]).then(function (obj) {
                         output[i] = obj;
                         // Manually get the member name to get to the actual object
@@ -112,8 +117,8 @@ define(function () {
                 }
                 console.log('output, post', output);
                 
+                // Don't need to return, just set scope's version 
                 $scope.results = output;
-                //return output;
             });
         }
 
