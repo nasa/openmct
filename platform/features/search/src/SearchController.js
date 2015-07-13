@@ -51,12 +51,16 @@ define(function () {
                 
                 // Then filter through the items list
                 for (i = 0; i < itemsLength; i++) {
-                    itemModel = items[i].getModel();
-                    itemName = itemModel.name.toLocaleLowerCase();
-                    
-                    // Include any matching items, except folders 
-                    if (itemName.includes(term) && itemModel.type !== 'folder') {
-                        searchResults.push(items[i]);
+                    // Prevent errors from getModel not being defined
+                    if (items[i].getModel) {
+                        itemModel = items[i].getModel();
+                        itemName = itemModel.name.toLocaleLowerCase();
+
+                        // Include any matching items, except folders 
+                        // TODO: Should have a policy for this 
+                        if (itemName.includes(term) && itemModel.type !== 'folder') {
+                            searchResults.push(items[i]);
+                        }
                     }
                 }
                 
@@ -65,14 +69,16 @@ define(function () {
             });
         }
         
-        $scope.results = search();
-        
         return {
             search: search,
             
             // Check to see if there are any search results to display.
             areResults: function () {
-                return $scope.results.length !== 0;
+                if ($scope.results) {
+                    return $scope.results.length > 0;
+                } else {
+                    return false;
+                }
             }
         };
     }
