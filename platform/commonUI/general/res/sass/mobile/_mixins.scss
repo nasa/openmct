@@ -37,16 +37,9 @@
     }
 }
 
-//@mixin phoneandtablet {
-//    @media screen and (max-width: $tabMaxW) and (orientation: portrait),
-//           screen and (max-width: $tabMaxH) and (orientation: landscape) {
-//        @content
-//    }
-//}
-
 @mixin desktop {
-    @media #{$compWidth},
-           #{$compHeight} {
+    @media #{$desktopPortrait},
+           #{$desktopLandscape} {
         @content
     }
 }
