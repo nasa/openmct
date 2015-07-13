@@ -23,14 +23,16 @@
 // NOTE: Mixins for devices
 @mixin phone {
     @media #{$phoneWidth},
-           #{$phoneHeight} {
+           #{$phoneHeight},
+           #{$phoneHeightEmu}{
         @content
     }
 }
 
 @mixin tablet {
     @media #{$tabletWidth},
-           #{$tabletHeight} {
+           #{$tabletHeight},
+           #{$tabletHeightEmu}{
         @content
     }
 }
