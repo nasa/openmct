@@ -731,7 +731,7 @@ mct-container {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@media screen and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1023px) and (orientation: portrait), screen and (max-height: 514px) and (max-width: 740px) and (orientation: landscape) {
+@media screen and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) and (orientation: portrait), screen and (max-height: 514px) and (max-width: 740px) and (orientation: landscape) {
   /* line 26, ../sass/mobile/_layout.scss */
   .holder-hide {
     -moz-transition-duration: 0.2s;
@@ -739,7 +739,7 @@ mct-container {
     -webkit-transition-duration: 0.2s;
     transition-duration: 0.2s;
     left: -257px; } }
-@media screen and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1023px) and (max-device-width: 799px) and (max-device-height: 1023px) and (orientation: portrait), screen and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1023px) and (orientation: landscape) {
+@media screen and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px) and (orientation: portrait), screen and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (orientation: landscape) {
   /* line 26, ../sass/mobile/_layout.scss */
   .holder-hide {
     -moz-transition-duration: 0.2s;
@@ -748,7 +748,7 @@ mct-container {
     transition-duration: 0.2s;
     left: -399.5px; } }
 
-@media screen and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1023px) and (orientation: portrait), screen and (max-height: 514px) and (max-width: 740px) and (orientation: landscape) {
+@media screen and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) and (orientation: portrait), screen and (max-height: 514px) and (max-width: 740px) and (orientation: landscape) {
   /* line 37, ../sass/mobile/_layout.scss */
   .holder-show {
     -moz-transition-duration: 0.2s;
@@ -756,7 +756,7 @@ mct-container {
     -webkit-transition-duration: 0.2s;
     transition-duration: 0.2s;
     left: 0px; } }
-@media screen and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1023px) and (max-device-width: 799px) and (max-device-height: 1023px) and (orientation: portrait), screen and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1023px) and (orientation: landscape) {
+@media screen and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px) and (orientation: portrait), screen and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (orientation: landscape) {
   /* line 37, ../sass/mobile/_layout.scss */
   .holder-show {
     -moz-transition-duration: 0.2s;
@@ -768,7 +768,7 @@ mct-container {
 /* line 48, ../sass/mobile/_layout.scss */
 .button-show {
   position: absolute; }
-  @media screen and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1023px) and (orientation: portrait), screen and (max-height: 514px) and (max-width: 740px) and (orientation: landscape) {
+  @media screen and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) and (orientation: portrait), screen and (max-height: 514px) and (max-width: 740px) and (orientation: landscape) {
     /* line 48, ../sass/mobile/_layout.scss */
     .button-show {
       -moz-transition-duration: 0.2s;
@@ -776,7 +776,7 @@ mct-container {
       -webkit-transition-duration: 0.2s;
       transition-duration: 0.2s;
       left: 257px; } }
-  @media screen and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1023px) and (max-device-width: 799px) and (max-device-height: 1023px) and (orientation: portrait), screen and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1023px) and (orientation: landscape) {
+  @media screen and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px) and (orientation: portrait), screen and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (orientation: landscape) {
     /* line 48, ../sass/mobile/_layout.scss */
     .button-show {
       -moz-transition-duration: 0.2s;
@@ -792,11 +792,11 @@ mct-container {
   -o-transition-duration: 0.2s;
   -webkit-transition-duration: 0.2s;
   transition-duration: 0.2s; }
-  @media screen and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1023px) and (orientation: portrait), screen and (max-height: 514px) and (max-width: 740px) and (orientation: landscape) {
+  @media screen and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) and (orientation: portrait), screen and (max-height: 514px) and (max-width: 740px) and (orientation: landscape) {
     /* line 60, ../sass/mobile/_layout.scss */
     .button-hide {
       left: 257px; } }
-  @media screen and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1023px) and (max-device-width: 799px) and (max-device-height: 1023px) and (orientation: portrait), screen and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1023px) and (orientation: landscape) {
+  @media screen and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px) and (orientation: portrait), screen and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (orientation: landscape) {
     /* line 60, ../sass/mobile/_layout.scss */
     .button-hide {
       left: 399.5px; } }
@@ -804,11 +804,11 @@ mct-container {
 /* line 71, ../sass/mobile/_layout.scss */
 .object-header-mobile {
   position: relative; }
-  @media screen and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1023px) and (orientation: portrait), screen and (max-height: 514px) and (max-width: 740px) and (orientation: landscape) {
+  @media screen and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) and (orientation: portrait), screen and (max-height: 514px) and (max-width: 740px) and (orientation: landscape) {
     /* line 71, ../sass/mobile/_layout.scss */
     .object-header-mobile {
       left: 25.7px; } }
-  @media screen and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1023px) and (max-device-width: 799px) and (max-device-height: 1023px) and (orientation: portrait), screen and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1023px) and (orientation: landscape) {
+  @media screen and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px) and (orientation: portrait), screen and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (orientation: landscape) {
     /* line 71, ../sass/mobile/_layout.scss */
     .object-header-mobile {
       left: 39.95px; } }
@@ -816,20 +816,20 @@ mct-container {
 /* line 81, ../sass/mobile/_layout.scss */
 .mobile-menu-icon {
   top: 5px; }
-  @media screen and (min-device-width: 800px) and (min-device-height: 1024px) and (orientation: portrait), screen and (min-device-width: 1024px) and (min-device-height: 800px) and (orientation: landscape) {
+  @media screen and (min-device-width: 800px) and (min-device-height: 1025px) and (orientation: portrait), screen and (min-device-width: 1025px) and (min-device-height: 800px) and (orientation: landscape) {
     /* line 81, ../sass/mobile/_layout.scss */
     .mobile-menu-icon {
       display: none; } }
 
-@media screen and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1023px) and (orientation: portrait), screen and (max-height: 514px) and (max-width: 740px) and (orientation: landscape) {
+@media screen and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) and (orientation: portrait), screen and (max-height: 514px) and (max-width: 740px) and (orientation: landscape) {
   /* line 88, ../sass/mobile/_layout.scss */
   .browse-manage {
     width: 257px; } }
-@media screen and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1023px) and (max-device-width: 799px) and (max-device-height: 1023px) and (orientation: portrait), screen and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1023px) and (orientation: landscape) {
+@media screen and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px) and (orientation: portrait), screen and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (orientation: landscape) {
   /* line 88, ../sass/mobile/_layout.scss */
   .browse-manage {
     width: 399.5px; } }
-@media screen and (min-device-width: 800px) and (min-device-height: 1024px) and (orientation: portrait), screen and (min-device-width: 1024px) and (min-device-height: 800px) and (orientation: landscape) {
+@media screen and (min-device-width: 800px) and (min-device-height: 1025px) and (orientation: portrait), screen and (min-device-width: 1025px) and (min-device-height: 800px) and (orientation: landscape) {
   /* line 88, ../sass/mobile/_layout.scss */
   .browse-manage {
     min-width: 150px;
