@@ -27,59 +27,7 @@
 define(function () {
     "use strict";
     
-    function SearchController($scope, objectService) {
-        
-        // Recursive helper function to go through the tree
-        function listHelper(current) {
-            var composition;
-            if (current.hasCapability('composition')) {
-                composition = current.getCapability('composition');
-            } else {
-                // Base case.
-                return current;
-            }
-            
-            // Recursive case. Is asynchronous.
-            return composition.invoke().then(function (children) {
-                var subList = [current],
-                    i;
-                //console.log('children ', children);
-                for (i = 0; i < children.length; i++) {
-                    //console.log('children[', i, ']', children[i]); 
-                    subList.push(listHelper(children[i]));
-                    //console.log('subList', subList, 'index', i);
-                }
-                //console.log('sublist ', subList);
-                return subList;
-            });
-        }
-        
-        // Recursive helper function to go through the tree
-        function listHelper2(current) {
-            return current.getCapability('composition').invoke().then(function (children) {
-                return [current].concat(children.forEach(function (child) {
-                    if (child.hasCapability('composition')) {
-                        return listHelper2(child);//.then(function (c) {
-                        //    return c;
-                        //});
-                    } else {
-                        return child;
-                    }
-                }));
-            });
-        }
-        
-        // Converts the filetree into a list
-        // Eventually, plan to call search service (but do here for now)
-        function listify() {
-            // Aquire My Items (root folder)
-            return objectService.getObjects(['mine']).then(function (objects) {
-                return listHelper(objects.mine).then(function (c) {
-                    //console.log('final result ', c);
-                    return c;
-                });
-            });
-        }
+    function SearchController($scope, queryService) {
         
         // Search through items for items which contain the search term in the name
         function search() {
@@ -97,7 +45,7 @@ define(function () {
             term = term.toLocaleLowerCase();
             
             // Get items list
-            return listify().then(function (items) {
+            return queryService.listify().then(function (items) {
                 // (slight time optimization)
                 itemsLength = items.length;
                 
