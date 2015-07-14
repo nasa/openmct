@@ -153,6 +153,46 @@ define(
                 return searchTerm;
             }
             
+            // Processes results from the format that elasticsearch resturns to 
+            // a list of objects in the format that mct-representation can use. 
+            function processResults(rawResults) {
+                var results = rawResults.data.hits.hits,
+                    resultsLength = results.length,
+                    ids = [],
+                    i;
+                
+                if (rawResults.data.hits.total > resultsLength) {
+                    // TODO: Somehow communicate this to the user 
+                    console.log('Total number of results greater than displayed results');
+                }
+                
+                // Get the result objects' IDs
+                for (i = 0; i < resultsLength; i += 1) {
+                    ids.push(results[i][ID]);
+                }
+                
+                // Get the domain objects from their IDs
+                return objectService.getObjects(ids).then(function (objects) {
+                    var output = [],
+                        id,
+                        j;
+                    
+                    for (j = 0; j < resultsLength; j += 1) {
+                        id = ids[j];
+                        
+                        // Include any item except folders 
+                        // TODO: Should have a policy for this 
+                        if (objects[id].getModel) {
+                            if (objects[id].getModel().type !== "folder") {
+                                output.push(objects[id]);
+                            }
+                        }
+                    }
+                    
+                    return output;
+                });
+            }
+            
             // Use elasticsearch's search to search through all the objects
             function queryElasticsearch(inputID, maxResults) {
                 var searchTerm;
@@ -165,18 +205,10 @@ define(
                 }
                 
                 // Get the user input 
-                if (inputID) {
-                    searchTerm = document.getElementById(inputID).value;
-                } else {
-                    // Backward compatibility? 
-                    // TODO: May be unnecsisary 
-                    searchTerm = document.getElementById("searchinput").value;
-                }
+                searchTerm = document.getElementById(inputID).value;
                 
                 // Process search term
                 searchTerm = processSearchTerm(searchTerm);
-                
-                console.log(searchTerm);
                 
                 // Get the data...
                 return $http({
@@ -185,50 +217,11 @@ define(
                                 "&size=" + maxResults
                 }).then(function (rawResults) {
                     // ...then process the data 
-                    var results = rawResults.data.hits.hits,
-                        resultsLength = results.length,
-                        ids = [],
-                        i;
-
-                    if (rawResults.data.hits.total > resultsLength) {
-                        // TODO: Somehow communicate this to the user 
-                        console.log('Total number of results greater than displayed results');
-                    }
-
-                    // Get the result objects' IDs
-                    for (i = 0; i < resultsLength; i += 1) {
-                        ids.push(results[i][ID]);
-                    }
-
-                    // Get the domain objects from their IDs
-                    return objectService.getObjects(ids).then(function (objects) {
-                        var output = [],
-                            id,
-                            j;
-
-                        for (j = 0; j < resultsLength; j += 1) {
-                            id = ids[j];
-
-                            // Include any item except folders 
-                            // TODO: Should have a policy for this 
-                            if (objects[id].getModel) {
-                                if (objects[id].getModel().type !== "folder") {
-                                    output.push(objects[id]);
-                                }
-                            }
-                        }
-
-                        return output;
-                    });
+                    return processResults(rawResults);
                 });
             }
             
             return {
-                // Only used in the fallback case of not having elasticsearch 
-                // or equivalent. Returns a list of all of the domain objects 
-                // in the tree. 
-                getItems: getItems,
-                
                 // Takes a serach term and (optionally) the max number of results.
                 query: queryElasticsearch
             };
