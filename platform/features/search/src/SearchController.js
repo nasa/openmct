@@ -120,6 +120,7 @@ define(function () {
         }
 
         return {
+            // Search the database using the user input from id "searchinput"
             search: function () {
                 search2().then( function (c) {
                     $scope.results = c;
@@ -133,14 +134,6 @@ define(function () {
                 } else {
                     return false;
                 }
-            },
-            
-            getObjectByID: function (id) {
-                console.log('getObjectByID called');
-                objectService.getObjects([id]).then(function (out) {
-                    console.log('object gotten by id', out[id]);
-                    return out[id];
-                });
             }
         };
     }
