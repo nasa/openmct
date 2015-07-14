@@ -44,7 +44,7 @@
     }         
 }
 
-.button-show {
+.button-pos {
     position: absolute;
     @include transition-duration(.2s);
     @include phone {        
@@ -53,17 +53,6 @@
     @include tablet {
         left: $tabletSlideMenuWidth;
     }      
-}
-
-.button-hide {
-    position: absolute;
-    @include transition-duration(.2s);
-    @include phone {
-        left: $phoneSlideMenuWidth;
-    }
-    @include tablet {
-        left: $tabletSlideMenuWidth;
-    }     
 }
 
 .object-header-mobile {
