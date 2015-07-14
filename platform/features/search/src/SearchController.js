@@ -77,8 +77,17 @@ define(function () {
         }
         
         // Use elasticsearch's search to search through all the objects
-        function searchElastic() {
-            var searchTerm = document.getElementById("searchinput").value;
+        function searchElastic(inputID) {
+            var searchTerm;
+            
+            // Get the user input 
+            if (inputID) {
+                searchTerm = document.getElementById(inputID).value;
+            } else {
+                // Backward compatibility? 
+                // TODO: May be unnecsisary 
+                searchTerm = document.getElementById("searchinput").value;
+            }
             
             // Get the data...
             return $http({
@@ -131,8 +140,8 @@ define(function () {
 
         return {
             // Search the database using the user input of id "searchinput"
-            search: function () {
-                searchElastic().then( function (c) {
+            search: function (inputID) {
+                searchElastic(inputID).then( function (c) {
                     $scope.results = c;
                 });
             },
