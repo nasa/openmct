@@ -107,17 +107,6 @@ define(
             }
             
             return {
-                /**
-                 * Dismiss any visible menu.
-                 * @method
-                 * @memberof ContextMenuAction
-                 */
-                destroy: function () {
-                    // Scope has been destroyed, so remove all listeners.
-                    if (dismissExistingMenu) {
-                        dismissExistingMenu();
-                    }
-                },
                 perform: perform
             };
         }

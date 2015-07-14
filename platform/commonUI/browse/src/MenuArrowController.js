@@ -36,18 +36,13 @@ define(
          * @constructor
          */
         function MenuArrowController($scope) {
-            var stop;
-            
             function showMenu(event) {
                 var actionContext = {key: 'menu', domainObject: $scope.domainObject, event: event};
-                stop = $scope.domainObject.getCapability('action').perform(actionContext);
+                $scope.domainObject.getCapability('action').perform(actionContext);
             }
             
             return {
-                showMenu: showMenu,
-                destroy: function () {
-                    stop();
-                }
+                showMenu: showMenu
             };
         }
 
