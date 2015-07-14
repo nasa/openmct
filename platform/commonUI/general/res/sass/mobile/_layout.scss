@@ -35,24 +35,22 @@
 }
 
 .holder-show {
+    @include transition-duration(.2s);
     @include phone {
-        @include transition-duration(.2s);
         left: 0px;
     }
     @include tablet {
-        @include transition-duration(.2s);
         left: 0px;
     }         
 }
 
 .button-show {
     position: absolute;
-    @include phone {
-        @include transition-duration(.2s);
+    @include transition-duration(.2s);
+    @include phone {        
         left: $phoneSlideMenuWidth;
     }
     @include tablet {
-        @include transition-duration(.2s);
         left: $tabletSlideMenuWidth;
     }      
 }
