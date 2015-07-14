@@ -135,23 +135,6 @@ define(
                 // Listener should have been detached from body
                 expect(mockBody.off).toHaveBeenCalled();
             });
-
-            it("removes listeners from body if destroyed while menu is showing", function () {
-                // Show the menu
-                action.perform();
-                
-                // Verify preconditions
-                expect(mockBody.off).not.toHaveBeenCalled();
-                expect(mockMenu.remove).not.toHaveBeenCalled();
-
-                // Destroy the menu
-                action.destroy();
-
-                // Verify menu was removed and listener detached
-                expect(mockBody.off).toHaveBeenCalled();
-                expect(mockMenu.remove).toHaveBeenCalled();
-            });
-
         });
     }
 );
