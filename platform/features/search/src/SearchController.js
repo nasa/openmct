@@ -92,14 +92,16 @@ define(function () {
             // Get the data...
             return $http({
                 method: "GET",
-                url: ROOT + "/_search",
+                url: ROOT + "/_search/?q=name:'" + searchTerm + "'"
+                /*,
                 data: {
                     query: {
-                        term: {
-                            name: searchTerm
+                        term : {
+                            _source: { name : "test123" }
                         }
                     }
                 }
+                */
             }).then(function (rawResults) {
                 // ...then process the data 
                 var results = rawResults.data.hits.hits,
@@ -107,7 +109,7 @@ define(function () {
                     ids = [],
                     i;
                 
-                //console.log('raw results', rawResults);
+                console.log('raw results', rawResults);
                 
                 // Get the result objects' IDs
                 for (i = 0; i < resultsLength; i += 1) {
@@ -132,7 +134,7 @@ define(function () {
                         }
                     }
                     
-                    //console.log('final output', output);
+                    console.log('final output', output);
                     return output;
                 });
             });
