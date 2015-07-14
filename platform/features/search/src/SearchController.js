@@ -89,19 +89,14 @@ define(function () {
                 searchTerm = document.getElementById("searchinput").value;
             }
             
+            // Process search term
+            // Put wildcards on front and end to allow substring behavior
+            searchTerm = '*' + searchTerm + '*';
+            
             // Get the data...
             return $http({
                 method: "GET",
-                url: ROOT + "/_search/?q=name:'" + searchTerm + "'"
-                /*,
-                data: {
-                    query: {
-                        term : {
-                            _source: { name : "test123" }
-                        }
-                    }
-                }
-                */
+                url: ROOT + "/_search/?q=name:" + searchTerm
             }).then(function (rawResults) {
                 // ...then process the data 
                 var results = rawResults.data.hits.hits,
