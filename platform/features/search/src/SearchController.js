@@ -57,7 +57,7 @@ define(function () {
                 itemsLength = items.length;
                 
                 // Then filter through the items list
-                for (i = 0; i < itemsLength; i++) {
+                for (i = 0; i < itemsLength; i += 1) {
                     // Prevent errors from getModel not being defined
                     if (items[i].getModel) {
                         itemModel = items[i].getModel();
@@ -110,17 +110,17 @@ define(function () {
                 //console.log('raw results', rawResults);
                 
                 // Get the result objects' IDs
-                for (i = 0; i < resultsLength; i++) {
+                for (i = 0; i < resultsLength; i += 1) {
                     ids.push(results[i][ID]);
                 }
                 
                 // Get the domain objects from their IDs
                 return objectService.getObjects(ids).then(function (objects) {
                     var output = [],
-                        id, 
+                        id,
                         j;
                     
-                    for (j = 0; j < resultsLength; j++) {
+                    for (j = 0; j < resultsLength; j += 1) {
                         id = ids[j];
                         
                         // Include any item except folders 
@@ -141,7 +141,7 @@ define(function () {
         return {
             // Search the database using the user input of id "searchinput"
             search: function (inputID) {
-                searchElastic(inputID).then( function (c) {
+                searchElastic(inputID).then(function (c) {
                     $scope.results = c;
                 });
             },
