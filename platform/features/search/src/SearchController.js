@@ -77,8 +77,15 @@ define(function () {
         }
         
         // Use elasticsearch's search to search through all the objects
-        function searchElastic(inputID) {
+        function searchElastic(inputID, maxResults) {
             var searchTerm;
+            
+            // Check to see if the user provided a maximum 
+            // number of results to display
+            if (!maxResults) {
+                // Else, we provide a default value 
+                maxResults = 25;
+            }
             
             // Get the user input 
             if (inputID) {
@@ -96,7 +103,8 @@ define(function () {
             // Get the data...
             return $http({
                 method: "GET",
-                url: ROOT + "/_search/?q=name:" + searchTerm
+                url: ROOT + "/_search/?q=name:" + searchTerm + 
+                            "&size=" + maxResults
             }).then(function (rawResults) {
                 // ...then process the data 
                 var results = rawResults.data.hits.hits,
