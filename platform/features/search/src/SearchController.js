@@ -30,13 +30,14 @@ define(function () {
     // JSLint doesn't like underscore-prefixed properties,
     // so hide them here.
     var ID = "_id",
-        SOURCE = "_source";
+        SOURCE = "_source"; // TODO: Do we need this one? 
     
     function SearchController($scope, $http, objectService, queryService, ROOT) {
         
-        /*
-        // Search through items for items which contain the search term in the name
-        function search() {
+        // Search through items for items manually 
+        // This is a fallback if other search services aren't avaliable
+        // ... currently only searches 1 layer down (TODO)
+        function searchFallback() {
             var term,
                 searchResults = [],
                 itemsLength,
@@ -70,14 +71,14 @@ define(function () {
                     }
                 }
                 
-                $scope.results = searchResults; // Some redundancy
+                //$scope.results = searchResults; // Some redundancy
                 return searchResults;
             });
         }
-        */
         
-        function search2() {
-            var term = document.getElementById("searchinput").value;
+        // Use elasticsearch's search to search through all the objects
+        function searchElastic() {
+            var searchTerm = document.getElementById("searchinput").value;
             
             // Get the data...
             return $http({
@@ -86,7 +87,7 @@ define(function () {
                 data: {
                     query: {
                         term: {
-                            name: term
+                            name: searchTerm
                         }
                     }
                 }
@@ -97,12 +98,14 @@ define(function () {
                     ids = [],
                     i;
                 
+                //console.log('raw results', rawResults);
+                
                 // Get the result objects' IDs
                 for (i = 0; i < resultsLength; i++) {
                     ids.push(results[i][ID]);
                 }
                 
-                // Get the objects themselves from their IDs
+                // Get the domain objects from their IDs
                 return objectService.getObjects(ids).then(function (objects) {
                     var output = [],
                         id, 
@@ -120,16 +123,16 @@ define(function () {
                         }
                     }
                     
-                    console.log('final output', output);
+                    //console.log('final output', output);
                     return output;
                 });
             });
         }
 
         return {
-            // Search the database using the user input from id "searchinput"
+            // Search the database using the user input of id "searchinput"
             search: function () {
-                search2().then( function (c) {
+                searchElastic().then( function (c) {
                     $scope.results = c;
                 });
             },
@@ -146,37 +149,3 @@ define(function () {
     }
     return SearchController;
 });
-
-
- ///// Old stuff to look at later 
-
-                // Recursive search 
-                /*
-                var subList = [current],
-                    i;
-                console.log('children ', children);
-                for (i = 0; i < children.length; i += 1) {
-                    console.log('children[', i, ']', children[i]); 
-                    subList.push(listHelper(children[i]));
-                    console.log('subList', subList, 'index', i);
-                }
-                console.log('sublist ', subList);
-                return subList;
-                */
-                /*
-                var array = [current].concat(children.forEach(listHelper));
-                console.log('array ', array);
-                return array;
-                */
-                /*
-                var subList = [];//= Promise.all([]);
-                subList.push(current);
-                for (var i = 0, len = children.length; i < len; i++) {
-                    listHelper(children[i]).then(function (c) {
-                        subList.concat(c);
-                    });
-                }
-                return subList;//.then(function (c) {
-                //    return c;
-                //});
-                */
