@@ -140,8 +140,13 @@ define(
                     searchTerm = document.getElementById("searchinput").value;
                 }
 
-                // Process search term
-                // Put wildcards on front and end to allow substring behavior
+                // Process search term.
+                // Put wildcards on front and end to allow substring behavior.
+                // This works when options like AND and OR are not used, which is 
+                // the case most of the time. 
+                // e.g. The input 'sine' become '*sine*', but the input 
+                //      'sine OR telemetry' becomes '*sine OR telemetry*' instead of 
+                //      '*sine* OR *telemetry*'
                 searchTerm = '*' + searchTerm + '*';
 
                 // Get the data...
