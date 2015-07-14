@@ -92,7 +92,7 @@ define(function () {
                 // ...then process the data 
                 var results = rawResults.data.hits.hits,
                     resultsLength = results.length,
-                    output,
+                    output = [],
                     id,
                     i;
                 
@@ -102,7 +102,7 @@ define(function () {
                 for (i = 0; i < resultsLength; i++) {
                     // Get the object's ID
                     results[i] = results[i][ID];
-                    console.log('output [', i, ']', output[i]);
+                    console.log('results [', i, '] (id)', results[i]);
                     
                     // Get the object itself from its ID
                     objectService.getObjects([ results[i] ]).then(function (obj) {
@@ -113,8 +113,8 @@ define(function () {
                             debugger;
                         }
                     });
-                    console.log('results [', i, ']', results[i]);
-                    console.log('output [', i, ']', output[i]);
+                    console.log('results [', i, '] (id)', results[i]);
+                    console.log('output [', i, '] (obj)', output[i]);
                 }
                 console.log('results, post', results);
                 console.log('output, post', output);
