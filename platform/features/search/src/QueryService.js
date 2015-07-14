@@ -108,7 +108,6 @@ define(
                             itemName = itemModel.name.toLocaleLowerCase();
 
                             // Include any matching items, except folders 
-                            // TODO: Should have a policy for this 
                             if (itemName.includes(term) && itemModel.type !== "folder") {
                                 searchResults.push(items[i]);
                             }
@@ -153,7 +152,7 @@ define(
                 return searchTerm;
             }
             
-            // Processes results from the format that elasticsearch resturns to 
+            // Processes results from the format that elasticsearch returns to 
             // a list of objects in the format that mct-representation can use. 
             function processResults(rawResults) {
                 var results = rawResults.data.hits.hits,
@@ -181,7 +180,6 @@ define(
                         id = ids[j];
                         
                         // Include any item except folders 
-                        // TODO: Should have a policy for this 
                         if (objects[id].getModel) {
                             if (objects[id].getModel().type !== "folder") {
                                 output.push(objects[id]);
@@ -200,8 +198,9 @@ define(
                 // Check to see if the user provided a maximum 
                 // number of results to display
                 if (!maxResults) {
-                    // Else, we provide a default value 
-                    maxResults = 25;
+                    // Else, we provide a default value. This is an 
+                    // arbitrary big number. 
+                    maxResults = 2048;
                 }
                 
                 // Get the user input 
