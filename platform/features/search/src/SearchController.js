@@ -29,7 +29,8 @@ define(function () {
     
     // JSLint doesn't like underscore-prefixed properties,
     // so hide them here.
-    var ID = "_id";
+    var ID = "_id",
+        SOURCE = "_source";
     
     function SearchController($scope, $http, objectService, queryService, ROOT) {
         
@@ -77,7 +78,7 @@ define(function () {
             var term = document.getElementById("searchinput").value;
             
             // Get the data...
-            $http({
+            $scope.results = $http({
                 method: "GET",
                 url: ROOT + "/_search",
                 data: {
@@ -87,38 +88,38 @@ define(function () {
                         }
                     }
                 }
-            }).then(function (raw) {
+            }).then(function (rawResults) {
                 // ...then process the data 
-                var output = raw.data.hits.hits,
-                    outputLength = output.length,
+                var results = rawResults.data.hits.hits,
+                    resultsLength = results.length,
+                    output,
                     id,
                     i;
                 
-                console.log('raw', raw);
-                console.log('output, pre', output);
+                console.log('raw', rawResults);
+                console.log('results, pre', results);
                 
-                for (i = 0; i < outputLength; i++) {
+                for (i = 0; i < resultsLength; i++) {
                     // Get the object's ID
-                    output[i] = output[i][ID];
+                    results[i] = results[i][ID];
                     console.log('output [', i, ']', output[i]);
                     
                     // Get the object itself from its ID
-                    objectService.getObjects([ output[i] ]).then(function (obj) {
-                        output[i] = obj;
+                    objectService.getObjects([ results[i] ]).then(function (obj) {
                         // Manually get the member name to get to the actual object
-                        for (var prop in output[i]) {
-                            console.log('prop [', i, ']', output[i][prop]);
-                            output[i] = output[i][prop];
+                        for (var prop in obj) {
+                            console.log('prop [', i, ']', obj[prop]);
+                            output.push(obj[prop]);
                             debugger;
                         }
                     });
+                    console.log('results [', i, ']', results[i]);
                     console.log('output [', i, ']', output[i]);
-                    
                 }
+                console.log('results, post', results);
                 console.log('output, post', output);
                 
-                // Don't need to return, just set scope's version 
-                $scope.results = output;
+                return output;
             });
         }
 
