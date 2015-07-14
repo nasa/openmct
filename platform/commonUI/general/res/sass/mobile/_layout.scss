@@ -84,7 +84,13 @@
     }
     @include tablet {
         display: none;
-    }      
+    }
+}
+
+.phone-hide {
+    @include phone {
+        display: none;
+    }
 }
 
 .browse-manage {
