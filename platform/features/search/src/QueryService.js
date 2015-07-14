@@ -139,16 +139,26 @@ define(
                     // TODO: May be unnecsisary 
                     searchTerm = document.getElementById("searchinput").value;
                 }
-
+                
                 // Process search term.
-                // Put wildcards on front and end to allow substring behavior.
-                // This works when options like AND and OR are not used, which is 
-                // the case most of the time. 
-                // e.g. The input 'sine' become '*sine*', but the input 
-                //      'sine OR telemetry' becomes '*sine OR telemetry*' instead of 
-                //      '*sine* OR *telemetry*'
-                searchTerm = '*' + searchTerm + '*';
-
+                // Allow exact searches by checking to see if the first and last 
+                // chars are quotes. 
+                if ((searchTerm.substr(0, 1) === '"' && searchTerm.substr(searchTerm.length - 1, 1) === '"') ||
+                    (searchTerm.substr(0, 1) === "'" && searchTerm.substr(searchTerm.length - 1, 1) === "'")) {
+                    // Remove the quotes, because of how elasticsearch processses.
+                    // This will mean that elasticsearch will return any object that has
+                    // that searchTerm as a part of the name _separated by spaces_.
+                    searchTerm = searchTerm.substring(1, searchTerm.length - 1);
+                } else {
+                    // Put wildcards on front and end to allow substring behavior.
+                    // This works when options like AND and OR are not used, which is 
+                    // the case most of the time. 
+                    // e.g. The input 'sine' become '*sine*', but the input 
+                    //      'sine OR telemetry' becomes '*sine OR telemetry*' instead of 
+                    //      '*sine* OR *telemetry*'
+                    searchTerm = '*' + searchTerm + '*';
+                }
+                
                 // Get the data...
                 return $http({
                     method: "GET",
