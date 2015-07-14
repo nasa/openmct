@@ -110,7 +110,14 @@ define(function () {
                     
                     for (j = 0; j < resultsLength; j++) {
                         id = ids[j];
-                        output.push(objects[id]);
+                        
+                        // Include any item except folders 
+                        // TODO: Should have a policy for this 
+                        if (objects[id].getModel) {
+                            if (objects[id].getModel().type !== "folder") {
+                                output.push(objects[id]);
+                            }
+                        }
                     }
                     
                     console.log('final output', output);
