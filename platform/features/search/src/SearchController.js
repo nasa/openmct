@@ -34,6 +34,7 @@ define(function () {
     
     function SearchController($scope, $http, objectService, queryService, ROOT) {
         
+        /*
         // Search through items for items which contain the search term in the name
         function search() {
             var term,
@@ -63,7 +64,7 @@ define(function () {
 
                         // Include any matching items, except folders 
                         // TODO: Should have a policy for this 
-                        if (itemName.includes(term) && itemModel.type !== 'folder') {
+                        if (itemName.includes(term) && itemModel.type !== "folder") {
                             searchResults.push(items[i]);
                         }
                     }
@@ -73,12 +74,13 @@ define(function () {
                 return searchResults;
             });
         }
+        */
         
         function search2() {
             var term = document.getElementById("searchinput").value;
             
             // Get the data...
-            $scope.results = $http({
+            return $http({
                 method: "GET",
                 url: ROOT + "/_search",
                 data: {
@@ -92,39 +94,37 @@ define(function () {
                 // ...then process the data 
                 var results = rawResults.data.hits.hits,
                     resultsLength = results.length,
-                    output = [],
-                    id,
+                    ids = [],
                     i;
                 
-                console.log('raw', rawResults);
-                console.log('results, pre', results);
-                
+                // Get the result objects' IDs
                 for (i = 0; i < resultsLength; i++) {
-                    // Get the object's ID
-                    results[i] = results[i][ID];
-                    console.log('results [', i, '] (id)', results[i]);
-                    
-                    // Get the object itself from its ID
-                    objectService.getObjects([ results[i] ]).then(function (obj) {
-                        // Manually get the member name to get to the actual object
-                        for (var prop in obj) {
-                            console.log('prop [', i, ']', obj[prop]);
-                            output.push(obj[prop]);
-                            debugger;
-                        }
-                    });
-                    console.log('results [', i, '] (id)', results[i]);
-                    console.log('output [', i, '] (obj)', output[i]);
+                    ids.push(results[i][ID]);
                 }
-                console.log('results, post', results);
-                console.log('output, post', output);
                 
-                return output;
+                // Get the objects themselves from their IDs
+                return objectService.getObjects(ids).then(function (objects) {
+                    var output = [],
+                        id, 
+                        j;
+                    
+                    for (j = 0; j < resultsLength; j++) {
+                        id = ids[j];
+                        output.push(objects[id]);
+                    }
+                    
+                    console.log('final output', output);
+                    return output;
+                });
             });
         }
 
         return {
-            search: search2,
+            search: function () {
+                search2().then( function (c) {
+                    $scope.results = c;
+                });
+            },
             
             // Check to see if there are any search results to display.
             areResults: function () {
