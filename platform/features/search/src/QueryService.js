@@ -144,7 +144,7 @@ define(
                 // Allow exact searches by checking to see if the first and last 
                 // chars are quotes. 
                 if ((searchTerm.substr(0, 1) === '"' && searchTerm.substr(searchTerm.length - 1, 1) === '"') ||
-                    (searchTerm.substr(0, 1) === "'" && searchTerm.substr(searchTerm.length - 1, 1) === "'")) {
+                        (searchTerm.substr(0, 1) === "'" && searchTerm.substr(searchTerm.length - 1, 1) === "'")) {
                     // Remove the quotes, because of how elasticsearch processses.
                     // This will mean that elasticsearch will return any object that has
                     // that searchTerm as a part of the name _separated by spaces_.
@@ -158,11 +158,13 @@ define(
                     //      '*sine* OR *telemetry*'
                     searchTerm = '*' + searchTerm + '*';
                 }
+                // Assume that the search term is for the name by default
+                searchTerm = "name:" + searchTerm;
                 
                 // Get the data...
                 return $http({
                     method: "GET",
-                    url: ROOT + "/_search/?q=name:" + searchTerm +
+                    url: ROOT + "/_search/?q=" + searchTerm +
                                 "&size=" + maxResults
                 }).then(function (rawResults) {
                     // ...then process the data 
