@@ -118,6 +118,13 @@ define(
 
             });
 
+            it("provides an empty series when telemetry is missing", function () {
+                var series;
+                mockTelemetryService.requestTelemetry.andReturn(mockPromise({}));
+                telemetry.requestData({}).then(function (s) { series = s; });
+                expect(series.getPointCount()).toEqual(0);
+            });
+
             it("provides telemetry metadata", function () {
                 expect(telemetry.getMetadata()).toEqual({
                     id: "testId", // from domain object
