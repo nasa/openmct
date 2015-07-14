@@ -28,13 +28,19 @@ define(
     [],
     function () {
         "use strict";
+        
+        // JSLint doesn't like underscore-prefixed properties,
+        // so hide them here.
+        var ID = "_id";
+        
         /**
          * The query service is responsible for creating an index 
          * of objects in the filetree which is searchable. 
          * @constructor
          */
-        function QueryService(objectService, ROOT) {
-            // Recursive helper function to go through the tree
+        function QueryService($http, objectService, ROOT) {
+            
+            // Recursive helper function for getItems
             function listHelper(current) {
                 var composition;
                 if (current.hasCapability('composition')) {
@@ -48,7 +54,7 @@ define(
                 return composition.invoke().then(function (children) {
                     var subList = [current],
                         i;
-                    for (i = 0; i < children.length; i++) {
+                    for (i = 0; i < children.length; i += 1) {
                         subList.push(listHelper(children[i]));
                     }
                     return subList;
@@ -56,93 +62,8 @@ define(
             }
             
             // Converts the filetree into a list
-            // Eventually, plan to call search service (but do here for now)
+            // Used for the fallback 
             function getItems() {
-                console.log('in getItems()');
-                debugger;
-                /*
-                var elasticsearch = require(['platform/persistence/elastic'], function (elasticsearch) {
-                    debugger;
-                    
-                    console.log('elasticsearch (inside) ', elasticsearch);
-                    
-                    var client = new elasticsearch.Client({
-                        host: ROOT
-                    });
-                    console.log('client', client);
-                    
-                    var testsearch = client.search({q: 'name=test123'});//[params, [callback]]);
-                    console.log('search', testsearch);
-                });
-                */
-                var elasticsearch = require('elasticsearch');
-                
-                debugger; 
-                
-                console.log('elasticsearch (outside) ', elasticsearch);
-                    
-                var client = new elasticsearch.Client({
-                    host: ROOT
-                });
-                console.log('client', client);
-
-                var testsearch = client.search({q: 'name=test123'});//[params, [callback]]);
-                console.log('search', testsearch);
-                
-                
-                /*
-                console.log('elasticsearch', elasticsearch);
-                var client = new elasticsearch.Client({
-                    host: 'localhost:9200'
-                });
-                console.log('client', client);
-                var test = client.search();//[params, [callback]]);
-                console.log('search', test);
-                */
-                
-                /*
-                var elasticApp = angular.module('elasticApp', ['elasticsearch']);
-                console.log('elasticApp', elasticApp);
-                
-                var client = elasticApp.service('client', function (esFactory) {
-                    return esFactory({
-                        host: 'localhost:8080'
-                    });
-                });
-                console.log('client', client);
-                */
-                /*
-                var controller = elasticApp.controller('ElasticController', function ($scope, client, esFactory) {
-                    client.cluster.state({
-                        metric: [
-                            'cluster_name',
-                            'nodes',
-                            'master_node',
-                            'version'
-                        ]
-                    }).then(function (resp) {
-                        $scope.clusterState = resp;
-                        $scope.error = null;
-                    }).catch(function (err) {
-                        $scope.clusterState = null;
-                        $scope.error = err;
-                        // if the err is a NoConnections error, then the client was not able to
-                        // connect to elasticsearch. In that case, create a more detailed error
-                        // message
-                        if (err instanceof esFactory.errors.NoConnections) {
-                            $scope.error = new Error('Unable to connect to elasticsearch. ' +
-                                                     'Make sure that it is running and listening ' + 
-                                                     'at http://localhost:9200');
-                        }
-                    });
-                });
-                console.log('controller', controller);
-                */
-                /*
-                var testSearch = client.search();//[params, [callback]]);
-                console.log('search', testSearch);
-                */
-                
                 // Aquire My Items (root folder)
                 return objectService.getObjects(['mine']).then(function (objects) {
                     return listHelper(objects.mine).then(function (c) {
@@ -151,8 +72,131 @@ define(
                 });
             }
             
+            // Search through items for items manually 
+            // This is a fallback if other search services aren't avaliable
+            // ... currently only searches 1 layer down (TODO)
+            function queryFallback(inputID) {
+                var term,
+                    searchResults = [],
+                    itemsLength,
+                    itemModel,
+                    itemName,
+                    i;
+
+                // Get the user input 
+                if (inputID) {
+                    term = document.getElementById(inputID).value;
+                } else {
+                    // Backward compatibility? 
+                    // TODO: May be unnecsisary 
+                    term = document.getElementById("searchinput").value;
+                }
+                
+                // Make not case sensitive
+                term = term.toLocaleLowerCase();
+
+                // Get items list
+                return getItems().then(function (items) {
+                    // (slight time optimization)
+                    itemsLength = items.length;
+
+                    // Then filter through the items list
+                    for (i = 0; i < itemsLength; i += 1) {
+                        // Prevent errors from getModel not being defined
+                        if (items[i].getModel) {
+                            itemModel = items[i].getModel();
+                            itemName = itemModel.name.toLocaleLowerCase();
+
+                            // Include any matching items, except folders 
+                            // TODO: Should have a policy for this 
+                            if (itemName.includes(term) && itemModel.type !== "folder") {
+                                searchResults.push(items[i]);
+                            }
+                        }
+                    }
+
+                    //$scope.results = searchResults; // Some redundancy
+                    return searchResults;
+                });
+            }
+            
+            // Use elasticsearch's search to search through all the objects
+            function queryElasticsearch(inputID, maxResults) {
+                var searchTerm;
+
+                // Check to see if the user provided a maximum 
+                // number of results to display
+                if (!maxResults) {
+                    // Else, we provide a default value 
+                    maxResults = 25;
+                }
+                
+                // Get the user input 
+                if (inputID) {
+                    searchTerm = document.getElementById(inputID).value;
+                } else {
+                    // Backward compatibility? 
+                    // TODO: May be unnecsisary 
+                    searchTerm = document.getElementById("searchinput").value;
+                }
+
+                // Process search term
+                // Put wildcards on front and end to allow substring behavior
+                searchTerm = '*' + searchTerm + '*';
+
+                // Get the data...
+                return $http({
+                    method: "GET",
+                    url: ROOT + "/_search/?q=name:" + searchTerm +
+                                "&size=" + maxResults
+                }).then(function (rawResults) {
+                    // ...then process the data 
+                    var results = rawResults.data.hits.hits,
+                        resultsLength = results.length,
+                        ids = [],
+                        i;
+
+                    if (rawResults.data.hits.total > resultsLength) {
+                        // TODO: Somehow communicate this to the user 
+                        console.log('Total number of results greater than displayed results');
+                    }
+
+                    // Get the result objects' IDs
+                    for (i = 0; i < resultsLength; i += 1) {
+                        ids.push(results[i][ID]);
+                    }
+
+                    // Get the domain objects from their IDs
+                    return objectService.getObjects(ids).then(function (objects) {
+                        var output = [],
+                            id,
+                            j;
+
+                        for (j = 0; j < resultsLength; j += 1) {
+                            id = ids[j];
+
+                            // Include any item except folders 
+                            // TODO: Should have a policy for this 
+                            if (objects[id].getModel) {
+                                if (objects[id].getModel().type !== "folder") {
+                                    output.push(objects[id]);
+                                }
+                            }
+                        }
+
+                        return output;
+                    });
+                });
+            }
+            
             return {
-                getItems: getItems
+                // Only used in the fallback case of not having elasticsearch 
+                // or equivalent. Returns a list of all of the domain objects 
+                // in the tree. 
+                getItems: getItems,
+                
+                // Takes a serach term and (optionally) the max number of results.
+                query: queryElasticsearch
             };
         }
 

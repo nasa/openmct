@@ -15,7 +15,7 @@
             {
                 "key": "SearchController",
                 "implementation": "SearchController.js",
-                "depends": [ "$scope", "$http", "objectService", "queryService", "ELASTIC_ROOT" ]
+                "depends": [ "$scope", "queryService" ]
             }
         ],
         "representations": [
@@ -29,7 +29,7 @@
             {
                 "key": "queryService",
                 "implementation": "QueryService.js",
-                "depends": [ "objectService", "ELASTIC_ROOT" ]
+                "depends": [ "$http", "objectService", "ELASTIC_ROOT" ]
             }
         ]
     }
