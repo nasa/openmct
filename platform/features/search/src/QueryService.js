@@ -41,7 +41,7 @@ define(
         function QueryService($http, objectService, ROOT) {
             
             // Recursive helper function for getItems
-            function listHelper(current) {
+            function itemsHelper(current) {
                 var composition;
                 if (current.hasCapability('composition')) {
                     composition = current.getCapability('composition');
@@ -55,7 +55,7 @@ define(
                     var subList = [current],
                         i;
                     for (i = 0; i < children.length; i += 1) {
-                        subList.push(listHelper(children[i]));
+                        subList.push(itemsHelper(children[i]));
                     }
                     return subList;
                 });
@@ -66,7 +66,7 @@ define(
             function getItems() {
                 // Aquire My Items (root folder)
                 return objectService.getObjects(['mine']).then(function (objects) {
-                    return listHelper(objects.mine).then(function (c) {
+                    return itemsHelper(objects.mine).then(function (c) {
                         return c;
                     });
                 });
@@ -121,6 +121,14 @@ define(
             
             // Currently specific to elasticsearch
             function processSearchTerm(searchTerm) {
+                // Shave any spaces off of the ends of the input
+                while (searchTerm.substr(0, 1) === ' ') {
+                    searchTerm = searchTerm.substring(1, searchTerm.length);
+                }
+                while (searchTerm.substr(searchTerm.length - 1, 1) === ' ') {
+                    searchTerm = searchTerm.substring(0, searchTerm.length - 1);
+                }
+                
                 // Allow exact searches by checking to see if the first and last 
                 // chars are quotes. 
                 if ((searchTerm.substr(0, 1) === '"' && searchTerm.substr(searchTerm.length - 1, 1) === '"') ||

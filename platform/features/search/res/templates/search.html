@@ -19,7 +19,7 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<!-- Based on items view -->
+
 <div class="items-holder grid abs"
      ng-controller="SearchController as controller">
     
@@ -28,11 +28,9 @@
         <div style="height: 30px">Search:</div>
         <input type="text" 
                id="searchinput" 
-               value=""/>
-        <span class="button">
-            <button type="button"
-                    ng-click="controller.search('searchinput')">Go</button>
-        </span>
+               value=""
+               ng-keyup="controller.search('searchinput')"
+               style="width: 66%"/>
     </div> 
     
     <!-- some spacing -->
