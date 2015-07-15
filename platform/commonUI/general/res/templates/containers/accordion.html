@@ -19,10 +19,16 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="accordion-head" ng-click="toggle.toggle()">
-    {{container.title}}
+<div
+    class="accordion-head"
+    ng-click="toggle.toggle()"
+    ng-class="{ expanded:!toggle.isActive() }"
+    >
+    {{container.label}}
 </div>
-<div class="accordion-contents"
-     ng-show="!toggle.isActive()"
-     ng-transclude>
+<div
+    class="accordion-contents"
+    ng-show="!toggle.isActive()"
+    ng-transclude
+    >
 </div>

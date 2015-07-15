@@ -22,7 +22,7 @@
 $yBarW: 60px;
 $yLabelW: auto;
 $xBarH: 32px;
-$legendH: 24px;
+$legendH: 20px;
 $colorHash: rgba(white, 0.3);
 $styleHash: dashed;
 $swatchD: 8px;
@@ -201,6 +201,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 	.legend-item {
 		display: inline-block;
 		margin-right: $interiorMarginLg;
+		margin-bottom: $interiorMarginSm;
 		span {
 			vertical-align: middle;
 		}

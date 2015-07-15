@@ -79,7 +79,7 @@
 			content: "^";
 			display: block;
 			font-family: 'symbolsfont';
-			font-size: 1.2em;
+			font-size: 0.9em;
 			position: absolute;
 			right: $interiorMargin;
 			text-transform: none;
@@ -182,7 +182,7 @@
 	display: inline-block;
 	font-size: $h * $btnFontSizeToH;
 	height: $h;
-	line-height: $h;
+	line-height: $h - 3;
 	.icon:not(.invoke-menu) {
 		//		position: relative;
 		//		top: -0.04em;
@@ -348,6 +348,15 @@ label.checkbox.custom {
 	}
 }
 
+.context-available {
+	$c: $colorKey;
+	color: $c;
+	//padding: 0 5px;
+	&:hover {
+		color: lighten($c, 10%);
+	}
+}
+
 .view-switcher {
 	@include trans-prop-nice-fade($controlFadeMs);
 }
@@ -364,6 +373,15 @@ label.checkbox.custom {
 			font-size: 120%;
 			margin-right: $interiorMargin;
 			vertical-align: middle;
+		}
+		.context-available {
+			opacity: 0;
+			font-size: 0.8em;
+		}
+		&:hover {
+			.context-available {
+				opacity: 1;
+			}
 		}
 	}
 }

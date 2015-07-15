@@ -164,7 +164,7 @@
             {
                 "key": "accordion",
                 "templateUrl": "templates/containers/accordion.html",
-                "attributes": [ "title" ]
+                "attributes": [ "label" ]
             }
         ],
         "representations": [

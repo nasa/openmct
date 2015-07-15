@@ -196,9 +196,31 @@
     }
 }
 
+.browse-mode {
+    .split-layout {
+        .split-pane-component.pane.left {
+            min-width: 150px;
+            max-width: 50%;
+        }
+    }
+}
+
+.edit-mode {
+    .split-layout {
+        .split-pane-component.pane.right {
+            min-width: 150px;
+            max-width: 50%;
+            .split-pane-component.pane.bottom {
+                min-height: 50px;
+                max-height: 80%;
+            }
+        }
+    }
+}
+
 .pane {
     position: absolute;
-    &.treeview {
+    &.treeview.left {
 	    .create-btn-holder {
 		    bottom: auto; top: 0;
 		    height: $ueTopBarH;
@@ -210,6 +232,7 @@
 	    .tree-holder {
 		    overflow: auto;
 		    top: $ueTopBarH + $interiorMarginLg;
+            padding-right: $interiorMargin;
 	    }
     }
     &.items {
@@ -223,13 +246,6 @@
             top: $ueTopBarH + $interiorMarginLg;
         }
     }
-	&.edit-main {
-		.object-holder {
-			top: 0;
-		}
-	}
-	&.edit-objects {
-	}
 	.object-holder {
 		overflow: auto;
 	}
@@ -257,7 +273,7 @@
 			&:first-child {
 				margin-left: 0;
 				.holder {
-					right: $interiorMargin;
+					right: $interiorMarginSm;
 				}
 			}
 		}

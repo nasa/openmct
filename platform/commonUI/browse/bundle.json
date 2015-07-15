@@ -92,7 +92,7 @@
             },
             {
                 "key": "window",
-                "name": "Open in a new tab",
+                "name": "Open In New Tab",
                 "implementation": "windowing/NewTabAction.js",
                 "description": "Open in a new browser tab",
                 "category": ["view-control", "contextual"],

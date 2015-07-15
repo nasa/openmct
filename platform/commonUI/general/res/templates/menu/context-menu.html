@@ -23,15 +23,14 @@
     <div class="menu context-menu dropdown">
         <ul>
 
-            <li ng-repeat="menuAction in menuActions">
-                <a href=""
-                   ng-click="menuAction.perform()"
-                   title="{{menuAction.getMetadata().description}}">
-                    <span class="ui-symbol icon type-icon">
-                        {{menuAction.getMetadata().glyph}}
-                    </span>
-                    {{menuAction.getMetadata().name}}
-                </a>
+            <li ng-repeat="menuAction in menuActions"
+                ng-click="menuAction.perform()"
+                title="{{menuAction.getMetadata().description}}"
+                >
+                <span class="ui-symbol icon type-icon">
+                    {{menuAction.getMetadata().glyph}}
+                </span>
+                {{menuAction.getMetadata().name}}
             </li>
 
         </ul>
