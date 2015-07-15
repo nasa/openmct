@@ -35,8 +35,12 @@ define(
             SCORE = "_score";
         
         /**
-         * The query service is responsible for creating an index 
-         * of objects in the filetree which is searchable. 
+         * The query service is responsible for searching through 
+         *   objects in the filetree. There are multiple possible 
+         *   implementations for querying. Currently there is 
+         *   queryManual (which manually steps through the filetree)
+         *   and queryElasticsearch (which passes the work on to 
+         *   elasticsearch). 
          * @constructor
          */
         function QueryService($http, objectService, ROOT) {
@@ -46,14 +50,12 @@ define(
             
             // Recursive helper function for getItems
             function itemsHelper(children, i) {
-                var composition;
                 if (i >= children.length) {
                     // Done!
                     return children;
                 } else if (children[i].hasCapability('composition')) {
                     // This child has children
-                    composition = children[i].getCapability('composition');
-                    return composition.invoke().then(function (grandchildren) {
+                    return children[i].getCapability('composition').invoke().then(function (grandchildren) {
                         // Add grandchildren to the end of the list
                         // They will also be checked for composition
                         return itemsHelper(children.concat(grandchildren), i + 1);
@@ -76,8 +78,23 @@ define(
                 });
             }
             
-            // Search through filetree for items manually 
-            // This is a fallback if other search services aren't avaliable
+            /**
+             * Searches through the filetree for domain objects which match 
+             *   the search term. This function is to be used as a fallback 
+             *   in the case where other search services are not avaliable. 
+             * Notes: 
+             *   * The order of the results is not guarenteed.
+             *   * A domain object qualifies as a match for a search term if 
+             *     the object's name property contains the search term as a 
+             *     substring. 
+             *   * Folders are not included in the results.
+             *   * Wildcards are not supported. 
+             * 
+             * @param inputID the name of the ID property of the html text 
+             *   input where this funcion should find the search term 
+             * @param maxResults (optional) the maximum number of results 
+             *   that this function should return 
+             */
             function queryManual(inputID, maxResults) {
                 var term,
                     searchResults = [],
@@ -178,7 +195,7 @@ define(
                 var results = rawResults.data.hits.hits,
                     resultsLength = results.length,
                     ids = [],
-                    scores = [],
+                    //scores = [],
                     i;
                 
                 if (rawResults.data.hits.total > resultsLength) {
@@ -191,12 +208,13 @@ define(
                     ids.push(results[i][ID]);
                 }
                 
+                /*
                 // Get the result objects' scores
                 for (i = 0; i < resultsLength; i += 1) {
                     scores.push(results[i][SCORE]);
                 }
-                
-                //console.log('scores', scores);
+                console.log('scores', scores);
+                */
                 
                 // Get the domain objects from their IDs
                 return objectService.getObjects(ids).then(function (objects) {
@@ -219,15 +237,27 @@ define(
                 });
             }
             
-            // Use elasticsearch's search to search through all the objects
+            /**
+             * Searches through the filetree for domain objects using a search 
+             *   term. This is done through querying elasticsearch. 
+             * Notes:
+             *   * The order of the results is from highest to lowest score,
+             *      as elsaticsearch determines them to be. 
+             *   * Folders are not included in the results.
+             *   * Wildcards are supported. 
+             * 
+             * @param inputID the name of the ID property of the html text 
+             *   input where this funcion should find the search term 
+             * @param maxResults (optional) the maximum number of results 
+             *   that this function should return 
+             */
             function queryElasticsearch(inputID, maxResults) {
                 var searchTerm;
 
                 // Check to see if the user provided a maximum 
                 // number of results to display
                 if (!maxResults) {
-                    // Else, we provide a default value. This is an 
-                    // arbitrary big number. 
+                    // Else, we provide a default value. 
                     maxResults = DEFAULT_MAX_RESULTS;
                 }
                 
@@ -249,9 +279,7 @@ define(
             }
             
             return {
-                // Takes a serach term and (optionally) the max number of results.
-                // Currently queryElasticsearch and queryManual are valid implementations.
-                query: queryManual
+                query: queryElasticsearch
             };
         }
 
