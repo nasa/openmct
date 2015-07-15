@@ -246,6 +246,8 @@ define(
              *      as elsaticsearch determines them to be. 
              *   * Folders are not included in the results.
              *   * Wildcards are supported. 
+             *   * More search details at 
+             *      https://www.elastic.co/guide/en/elasticsearch/reference/current/search-uri-request.html
              * 
              * @param inputID the name of the ID property of the html text 
              *   input where this funcion should find the search term 
@@ -280,7 +282,7 @@ define(
             }
             
             return {
-                query: queryElasticsearch
+                query: queryManual
             };
         }
 
