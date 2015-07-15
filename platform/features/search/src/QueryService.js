@@ -145,6 +145,22 @@ define(
             
             /////////////// The following is for Elastic Search /////////////////
             
+            // Check to see if the input has any special options
+            function isDefaultInput(searchTerm) {
+                // If the input has quotes, not default
+                if ((searchTerm.substr(0, 1) === '"' && searchTerm.substr(searchTerm.length - 1, 1) === '"') ||
+                        (searchTerm.substr(0, 1) === "'" && searchTerm.substr(searchTerm.length - 1, 1) === "'")) {
+                    return false;
+                }
+                
+                // If the input has a property option, not default
+                if (searchTerm.includes('name:') || searchTerm.includes('type:')) {
+                    return false;
+                }
+                
+                return true;
+            }
+            
             // Currently specific to elasticsearch
             function processSearchTerm(searchTerm) {
                 // Shave any spaces off of the ends of the input
@@ -155,35 +171,15 @@ define(
                     searchTerm = searchTerm.substring(0, searchTerm.length - 1);
                 }
                 
-                /*
-                // Allow exact searches by checking to see if the first and last 
-                // chars are quotes. 
-                if ((searchTerm.substr(0, 1) === '"' && searchTerm.substr(searchTerm.length - 1, 1) === '"') ||
-                        (searchTerm.substr(0, 1) === "'" && searchTerm.substr(searchTerm.length - 1, 1) === "'")) {
-                    // Remove the quotes, because of how elasticsearch processses.
-                    // This will mean that elasticsearch will return any object that has
-                    // that searchTerm as a part of the name _separated by spaces_.
-                    searchTerm = searchTerm.substring(1, searchTerm.length - 1);
-                }
-                // If the search starts with 'type:', then search for domain object type, rather 
-                // than the domain object name.
-                else 
-                */
-                if (searchTerm.includes('type:')) {
-                    // Do nothing for now 
-                } else if (searchTerm.includes('name:')) {
-                    // Do nothing for now 
-                } else {
-                    // Put wildcards on front and end to allow substring behavior.
-                    // This works when options like AND and OR are not used, which is 
-                    // the case most of the time. 
-                    // e.g. The input 'sine' become '*sine*', but the input 
-                    //      'sine OR telemetry' becomes '*sine OR telemetry*' instead of 
-                    //      '*sine* OR *telemetry*'
-                    //searchTerm = '*' + searchTerm + '*';
+                if (isDefaultInput(searchTerm)) {
+                    // Elasticsearch splits terms up by spaces
+                    // Add wildcards to the font and end of each subterm
+                    searchTerm = searchTerm.split(' ').map(function (s) {
+                        return '*' + s + '*';
+                    }).join(' ');
                     
-                    // Assume that the search term is for the name by default
-                    searchTerm = "name:" + searchTerm;
+                    // Searching 'name' by default
+                    searchTerm = 'name:' + searchTerm;
                 }
                 
                 //console.log('processed serach term ', searchTerm);
@@ -282,7 +278,7 @@ define(
             }
             
             return {
-                query: queryManual
+                query: queryElasticsearch
             };
         }
 
