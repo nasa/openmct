@@ -31,7 +31,8 @@ define(
         
         // JSLint doesn't like underscore-prefixed properties,
         // so hide them here.
-        var ID = "_id";
+        var ID = "_id",
+            SCORE = "_score";
         
         /**
          * The query service is responsible for creating an index 
@@ -204,6 +205,7 @@ define(
                     searchTerm = searchTerm.substring(0, searchTerm.length - 1);
                 }
                 
+                /*
                 // Allow exact searches by checking to see if the first and last 
                 // chars are quotes. 
                 if ((searchTerm.substr(0, 1) === '"' && searchTerm.substr(searchTerm.length - 1, 1) === '"') ||
@@ -231,7 +233,9 @@ define(
                     // Assume that the search term is for the name by default
                     searchTerm = "name:" + searchTerm;
                 }
+                */
                 
+                //console.log('processed serach term ', searchTerm);
                 return searchTerm;
             }
             
@@ -241,6 +245,7 @@ define(
                 var results = rawResults.data.hits.hits,
                     resultsLength = results.length,
                     ids = [],
+                    scores = [],
                     i;
                 
                 if (rawResults.data.hits.total > resultsLength) {
@@ -252,6 +257,13 @@ define(
                 for (i = 0; i < resultsLength; i += 1) {
                     ids.push(results[i][ID]);
                 }
+                
+                // Get the result objects' scores
+                for (i = 0; i < resultsLength; i += 1) {
+                    scores.push(results[i][SCORE]);
+                }
+                
+                //console.log('scores', scores);
                 
                 // Get the domain objects from their IDs
                 return objectService.getObjects(ids).then(function (objects) {
@@ -305,7 +317,7 @@ define(
             
             return {
                 // Takes a serach term and (optionally) the max number of results.
-                query: queryFallback
+                query: queryElasticsearch
             };
         }
 
