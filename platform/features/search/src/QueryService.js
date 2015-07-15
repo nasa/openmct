@@ -44,7 +44,7 @@ define(
          * @constructor
          */
         function QueryService($http, objectService, ROOT) {
-            var DEFAULT_MAX_RESULTS = 2048;
+            var DEFAULT_MAX_RESULTS = 100;
             
             /////////////// The following is for non-Elastic Search ///////////////// 
             
@@ -162,14 +162,6 @@ define(
                 return true;
             }
             
-            // Add wildcards to the font and end of each subterm
-            // Used by queryElasticsearch()
-            function addWildcards(searchTerm) {
-                return searchTerm.split(' ').map(function (s) {
-                    return '*' + s + '*';
-                }).join(' ');
-            }
-            
             // Add the fuzziness operator to the search term 
             // Used by queryElasticsearch()
             function addFuzziness(searchTerm, editDistance) {
@@ -180,7 +172,6 @@ define(
                 return searchTerm.split(' ').map(function (s) {
                     return s + '~' + editDistance;
                 }).join(' ');
-                //searchTerm + '~' + editDistance;
             }
             
             // Currently specific to elasticsearch
@@ -196,13 +187,12 @@ define(
                 
                 if (isDefaultInput(searchTerm)) {
                     // Add fuzziness for completeness
-                    searchTerm = addFuzziness(searchTerm, 1);
+                    searchTerm = addFuzziness(searchTerm, 2);
                     
                     // Searching 'name' by default
                     searchTerm = 'name:' + searchTerm;
                 }
                 
-                //console.log('processed search term ', searchTerm);
                 return searchTerm;
             }
             
@@ -250,7 +240,7 @@ define(
              * Searches through the filetree for domain objects using a search 
              *   term. This is done through querying elasticsearch. 
              * Notes:
-             *   * The order of the results is from highest to lowest score,
+             *   * The order of the results is from highest to lowest score, 
              *     as elsaticsearch determines them to be. 
              *   * Folders are not included in the results.
              *   * Wildcards are supported. 
@@ -266,7 +256,7 @@ define(
              */
             function queryElasticsearch(inputID, maxResults) {
                 var searchTerm;
-
+                
                 // Check to see if the user provided a maximum 
                 // number of results to display
                 if (!maxResults) {

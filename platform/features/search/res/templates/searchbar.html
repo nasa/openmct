@@ -22,14 +22,10 @@
 <span ng-controller="SearchbarController as controller">
     <!-- Search bar input -->
     <div>
-        <span>
-            Search:
-        </span>
         <input type="text" 
                id="searchbarinput" 
                value=""
-               ng-keyup="controller.search('searchbarinput')"
-               style="width: 100%"/>
+               ng-keyup="controller.search('searchbarinput')" />
     </div>
     
     <!-- Results list -->
