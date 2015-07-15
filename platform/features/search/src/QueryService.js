@@ -167,7 +167,9 @@ define(
                 }
                 // If the search starts with 'type:', then search for domain object type, rather 
                 // than the domain object name.
-                else if (searchTerm.includes('type:')) {
+                else 
+                */
+                if (searchTerm.includes('type:')) {
                     // Do nothing for now 
                 } else if (searchTerm.includes('name:')) {
                     // Do nothing for now 
@@ -178,12 +180,11 @@ define(
                     // e.g. The input 'sine' become '*sine*', but the input 
                     //      'sine OR telemetry' becomes '*sine OR telemetry*' instead of 
                     //      '*sine* OR *telemetry*'
-                    searchTerm = '*' + searchTerm + '*';
+                    //searchTerm = '*' + searchTerm + '*';
                     
                     // Assume that the search term is for the name by default
                     searchTerm = "name:" + searchTerm;
                 }
-                */
                 
                 //console.log('processed serach term ', searchTerm);
                 return searchTerm;
