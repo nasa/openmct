@@ -24,24 +24,22 @@
 
 .browse-wrapper,
 .pane-special {
+    @include transition-duration(.2s);
     position: absolute;
     left: 0; top: 0;
     right: 0; left: 0;
     white-space: nowrap;
     height: 100%;
-//    overflow: hidden;
 }
 
 .browse-hidetree {
     .pane-special.left {
-//        background-color: #FFF;
-//        right: auto;
-//        width: 50px;
+        @include transition-duration(.2s);
         display: none !important;
     }
 
     .pane-special.right {
-//        background-color: #325DE6;
+        @include transition-duration(.2s);
         width: auto !important;
         left: 0px !important;
     }    
@@ -49,14 +47,14 @@
 
 .browse-showtree {
     .pane-special.left {
+        @include transition-duration(.2s);
         display: block !important;
-//        background-color: #FFF;
         width: 300px !important;
         right: auto !important;
     }
     
     .pane-special.right {
-//        background-color: #325DE6;
+        @include transition-duration(.2s);
         left: 300px !important;
         width: auto !important;
     }
@@ -67,11 +65,12 @@
 
 .button-pos {
     position: absolute;
-    @include transition-duration(.2s);   
+    @include transition-duration(.2s);
 }
 
 .object-header-mobile {
     position: relative;
+    left: 30px;
 }
 
 .mobile-menu-icon {
