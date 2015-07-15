@@ -48,10 +48,10 @@ define(
             function itemsHelper(children, i) {
                 var composition;
                 if (i >= children.length) {
-                    // Base case, is a leaf
+                    // Done!
                     return children;
                 } else if (children[i].hasCapability('composition')) {
-                    // Handle this child's children
+                    // This child has children
                     composition = children[i].getCapability('composition');
                     return composition.invoke().then(function (grandchildren) {
                         // Add grandchildren to the end of the list
@@ -59,6 +59,7 @@ define(
                         return itemsHelper(children.concat(grandchildren), i + 1);
                     });
                 } else {
+                    // This child is a leaf
                     return itemsHelper(children, i + 1);
                 }
             }
@@ -68,13 +69,14 @@ define(
             function getItems() {
                 // Aquire My Items (root folder)
                 return objectService.getObjects(['mine']).then(function (objects) {
+                    // Get all of its descendents
                     return itemsHelper([objects.mine], 0).then(function (c) {
                         return c;
                     });
                 });
             }
             
-            // Search through items for items manually 
+            // Search through filetree for items manually 
             // This is a fallback if other search services aren't avaliable
             function queryManual(inputID, maxResults) {
                 var term,
@@ -87,8 +89,7 @@ define(
                 // Check to see if the user provided a maximum 
                 // number of results to display
                 if (!maxResults) {
-                    // Else, we provide a default value. This is an 
-                    // arbitrary big number. 
+                    // Else, we provide a default value. 
                     maxResults = DEFAULT_MAX_RESULTS;
                 }
                 
