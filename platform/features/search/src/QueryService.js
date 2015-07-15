@@ -40,6 +40,51 @@ define(
          */
         function QueryService($http, objectService, ROOT) {
             
+            /////////////// The following is for non-Elastic Search /////////////////
+            /*
+            function foo (children, i) {
+                if children [i] does not have composition, 
+                    return children
+                if children [i] does have composition, 
+                    return merge([children before i], foo(children[i], i++), [children after i]);
+            }
+            */
+            
+            // Recursive helper function for getItems
+            function itemsHelper2(children, i) {
+                
+                console.log('itemshelpher2 called..... children', children);
+                
+                var composition;
+                if (i >= children.length) {
+                    
+                    console.log('base case..... children', children);
+
+                    // Base case.
+                    return children;
+                } else if (children[i].hasCapability('composition')) {
+                    composition = children[i].getCapability('composition');
+                    
+                    console.log('composition..... child[', i, ']', children[i]);
+                    console.log('................ children', children);
+                    
+                    return composition.invoke().then(function (grandchildren) {
+                        
+                        console.log('grandchildren', grandchildren);
+                        
+                        return itemsHelper2(
+                            children.splice(0, i).concat(grandchildren, children.splice(i + 1, children.length)),
+                        i);
+                    });
+                } else {
+                    
+                    console.log('not composition..... child[', i, ']', children[i]);
+
+                    return itemsHelper2(children, i + 1);
+                }
+                
+            }
+            
             // Recursive helper function for getItems
             function itemsHelper(current) {
                 var composition;
@@ -52,21 +97,49 @@ define(
                 
                 // Recursive case. Is asynchronous.
                 return composition.invoke().then(function (children) {
+                    
+                    
+                    // Second attempt
+                    /*
+                    // "global" variables
+                    var children;
+                    
+                    // Helper function for itemsHelper to help with loops asynchronously 
+                    var looper = function (children, childIndex) {
+                        return itemsHelper(children[childIndex]).then(function (c) {
+                            childIndex++;
+                            if (childIndex >= children.length) {
+                                return children;
+                            } else {
+                                return looper(children, childIndex);
+                            }
+                            //return remainingChildren.concat(c);
+                        });
+                    }
+                    
+                    // Kickoff the helper-helper
+                    return itemsHelperHelper(children, 0).concat();
+                    */
+                    
+                    // First attempt
+                    /*
                     var subList = [current],
                         i;
                     for (i = 0; i < children.length; i += 1) {
                         subList.push(itemsHelper(children[i]));
                     }
                     return subList;
+                    */
                 });
             }
+            
             
             // Converts the filetree into a list
             // Used for the fallback 
             function getItems() {
                 // Aquire My Items (root folder)
                 return objectService.getObjects(['mine']).then(function (objects) {
-                    return itemsHelper(objects.mine).then(function (c) {
+                    return itemsHelper2([objects.mine], 0).then(function (c) {
                         return c;
                     });
                 });
@@ -118,6 +191,8 @@ define(
                     return searchResults;
                 });
             }
+            
+            /////////////// The following is for Elastic Search /////////////////
             
             // Currently specific to elasticsearch
             function processSearchTerm(searchTerm) {
@@ -230,7 +305,7 @@ define(
             
             return {
                 // Takes a serach term and (optionally) the max number of results.
-                query: queryElasticsearch
+                query: queryFallback
             };
         }
 
