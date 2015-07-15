@@ -16,13 +16,25 @@
                 "key": "SearchController",
                 "implementation": "SearchController.js",
                 "depends": [ "$scope", "queryService" ]
+            },
+            {
+                "key": "SearchbarController",
+                "implementation": "SearchbarController.js",
+                "depends": [ "$scope", "queryService" ]
+            }
+        ],
+        "templates": [
+            {
+                "key": "searchbar",
+                "templateUrl": "templates/searchbar.html",
+                "uses": [ "composition" ]
             }
         ],
         "representations": [
             {
-                "key": "search-item",
-                "templateUrl": "templates/search-item.html",
-                "uses": [ "grid-item" ]
+                "key": "searchbar-item",
+                "templateUrl": "templates/searchbar-item.html",
+                "uses": [ "composition" ]
             }
         ],
         "services": [
