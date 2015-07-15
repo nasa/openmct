@@ -161,6 +161,26 @@ define(
                 return true;
             }
             
+            // Add wildcards to the font and end of each subterm
+            function addWildcards(searchTerm) {
+                return searchTerm.split(' ').map(function (s) {
+                    return '*' + s + '*';
+                }).join(' ');
+            }
+            
+            // Add the fuzziness operator to the search term 
+            function addFuzziness(searchTerm, editDistance) {
+                if (!editDistance) {
+                    editDistance = '';
+                }
+                
+                return searchTerm.split(' ').map(function (s) {
+                    return s + '~' + editDistance;
+                }).join(' ');
+                //searchTerm + '~' + editDistance;
+                
+            }
+            
             // Currently specific to elasticsearch
             function processSearchTerm(searchTerm) {
                 // Shave any spaces off of the ends of the input
@@ -172,17 +192,14 @@ define(
                 }
                 
                 if (isDefaultInput(searchTerm)) {
-                    // Elasticsearch splits terms up by spaces
-                    // Add wildcards to the font and end of each subterm
-                    searchTerm = searchTerm.split(' ').map(function (s) {
-                        return '*' + s + '*';
-                    }).join(' ');
+                    // Add fuzziness for completeness
+                    searchTerm = addFuzziness(searchTerm);
                     
                     // Searching 'name' by default
                     searchTerm = 'name:' + searchTerm;
                 }
                 
-                //console.log('processed serach term ', searchTerm);
+                console.log('processed search term ', searchTerm);
                 return searchTerm;
             }
             
