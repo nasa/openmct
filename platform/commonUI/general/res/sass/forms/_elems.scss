@@ -19,18 +19,19 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+.section-header {
+	@include border-radius(3px);
+	background: rgba(white, 0.1);
+	font-size: 0.8em;
+	margin-top: $interiorMargin;
+	padding: $interiorMargin;
+	&:first-child {
+		margin-top: 0;
+	}
+}
+
 .form {
 //	@include test(orange);
-	.section-header {
-		@include border-radius(3px);
-		background: rgba(white, 0.1);
-		font-size: 0.8em;
-		margin-top: $interiorMargin;
-		padding: $interiorMargin;
-		&:first-child {
-			margin-top: 0;
-		}
-	}
 	.form-section {
 		position: relative;
 	}

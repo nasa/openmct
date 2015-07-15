@@ -611,59 +611,71 @@ mct-container {
     *zoom: 1;
     padding: 5px 0; }
 
-/* line 199, ../sass/user-environ/_layout.scss */
+/* line 201, ../sass/user-environ/_layout.scss */
+.browse-mode .split-layout .split-pane-component.pane.left {
+  min-width: 150px;
+  max-width: 50%; }
+
+/* line 210, ../sass/user-environ/_layout.scss */
+.edit-mode .split-layout .split-pane-component.pane.right {
+  min-width: 150px;
+  max-width: 50%; }
+  /* line 213, ../sass/user-environ/_layout.scss */
+  .edit-mode .split-layout .split-pane-component.pane.right .split-pane-component.pane.bottom {
+    min-height: 50px;
+    max-height: 80%; }
+
+/* line 221, ../sass/user-environ/_layout.scss */
 .pane {
   position: absolute; }
-  /* line 202, ../sass/user-environ/_layout.scss */
-  .pane.treeview .create-btn-holder {
+  /* line 224, ../sass/user-environ/_layout.scss */
+  .pane.treeview.left .create-btn-holder {
     bottom: auto;
     top: 0;
     height: 24px; }
-    /* line 205, ../sass/user-environ/_layout.scss */
-    .pane.treeview .create-btn-holder .wrapper.menu-element {
+    /* line 227, ../sass/user-environ/_layout.scss */
+    .pane.treeview.left .create-btn-holder .wrapper.menu-element {
       position: absolute;
       bottom: 5px; }
-  /* line 210, ../sass/user-environ/_layout.scss */
-  .pane.treeview .tree-holder {
+  /* line 232, ../sass/user-environ/_layout.scss */
+  .pane.treeview.left .tree-holder {
     overflow: auto;
-    top: 34px; }
-  /* line 217, ../sass/user-environ/_layout.scss */
+    top: 34px;
+    padding-right: 5px; }
+  /* line 240, ../sass/user-environ/_layout.scss */
   .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .btn-menu span.left.l-click-area, .btn-menu .pane.items .object-browse-bar span.left.l-click-area,
   .pane.items .object-browse-bar .right.abs,
   .pane.items .object-browse-bar .btn-menu span.right.l-click-area,
   .btn-menu .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
-  /* line 222, ../sass/user-environ/_layout.scss */
+  /* line 245, ../sass/user-environ/_layout.scss */
   .pane.items .object-holder {
     top: 34px; }
-  /* line 227, ../sass/user-environ/_layout.scss */
-  .pane.edit-main .object-holder {
-    top: 0; }
-  /* line 233, ../sass/user-environ/_layout.scss */
+  /* line 249, ../sass/user-environ/_layout.scss */
   .pane .object-holder {
     overflow: auto; }
 
-/* line 241, ../sass/user-environ/_layout.scss */
+/* line 257, ../sass/user-environ/_layout.scss */
 .split-layout.horizontal > .pane {
   margin-top: 5px; }
-  /* line 244, ../sass/user-environ/_layout.scss */
+  /* line 260, ../sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane:first-child {
     margin-top: 0; }
-/* line 251, ../sass/user-environ/_layout.scss */
+/* line 267, ../sass/user-environ/_layout.scss */
 .split-layout.vertical > .pane {
   margin-left: 5px; }
-  /* line 253, ../sass/user-environ/_layout.scss */
+  /* line 269, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane > .holder {
     left: 0;
     right: 0; }
-  /* line 257, ../sass/user-environ/_layout.scss */
+  /* line 273, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane:first-child {
     margin-left: 0; }
-    /* line 259, ../sass/user-environ/_layout.scss */
+    /* line 275, ../sass/user-environ/_layout.scss */
     .split-layout.vertical > .pane:first-child .holder {
-      right: 5px; }
+      right: 3px; }
 
-/* line 268, ../sass/user-environ/_layout.scss */
+/* line 284, ../sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
 
@@ -1063,26 +1075,32 @@ mct-container {
   text-shadow: none;
   display: inline-block; }
 
-/* line 60, ../sass/_icons.scss */
+/* line 57, ../sass/_icons.scss */
 .btn-menu .invoke-menu,
 .icon.major .invoke-menu {
   margin-left: 3px; }
 
-/*
-.object-header .type-icon {
-    color: $colorKey;
-	margin-right: $interiorMarginSm;
-}
-*/
-/* line 72, ../sass/_icons.scss */
+/* line 62, ../sass/_icons.scss */
 .menu .type-icon,
 .tree-item .type-icon,
 .super-menu.menu .type-icon {
   position: absolute; }
 
-/* line 80, ../sass/_icons.scss */
+/* line 68, ../sass/_icons.scss */
 .tree-item .type-icon {
   font-size: 16px; }
+
+/* line 72, ../sass/_icons.scss */
+.l-icon-link:before {
+  content: "\f4"; }
+
+/* line 76, ../sass/_icons.scss */
+.l-icon-alert {
+  display: none !important; }
+  /* line 78, ../sass/_icons.scss */
+  .l-icon-alert:before {
+    color: #ff3c00;
+    content: "!"; }
 
 /*.s-limit-upr,
 .s-limit-lwr {
@@ -1256,26 +1274,37 @@ mct-container {
     .tabular tr td, .tabular tr .td, .tabular .tr td, .tabular .tr .td {
       border-top: 1px solid rgba(255, 255, 255, 0.1);
       min-width: 110px;
+      color: #fff;
       padding: 2px 5px;
       vertical-align: top; }
-      /* line 107, ../sass/lists/_tabular.scss */
+      /* line 108, ../sass/lists/_tabular.scss */
       .tabular tr td.numeric, .tabular tr .td.numeric, .tabular .tr td.numeric, .tabular .tr .td.numeric {
         text-align: right; }
-  /* line 113, ../sass/lists/_tabular.scss */
+      /* line 111, ../sass/lists/_tabular.scss */
+      .tabular tr td.s-cell-type-value, .tabular tr .td.s-cell-type-value, .tabular .tr td.s-cell-type-value, .tabular .tr .td.s-cell-type-value {
+        text-align: right; }
+        /* line 113, ../sass/lists/_tabular.scss */
+        .tabular tr td.s-cell-type-value .l-cell-contents, .tabular tr .td.s-cell-type-value .l-cell-contents, .tabular .tr td.s-cell-type-value .l-cell-contents, .tabular .tr .td.s-cell-type-value .l-cell-contents {
+          -moz-border-radius: 2px;
+          -webkit-border-radius: 2px;
+          border-radius: 2px;
+          padding-left: 5px;
+          padding-right: 5px; }
+  /* line 122, ../sass/lists/_tabular.scss */
   .tabular.filterable tbody, .tabular.filterable .tbody {
     top: 36px; }
-  /* line 118, ../sass/lists/_tabular.scss */
+  /* line 127, ../sass/lists/_tabular.scss */
   .tabular.fixed-header {
     height: 100%; }
-    /* line 120, ../sass/lists/_tabular.scss */
+    /* line 129, ../sass/lists/_tabular.scss */
     .tabular.fixed-header thead, .tabular.fixed-header .thead,
     .tabular.fixed-header tbody tr, .tabular.fixed-header .tbody .tr {
       display: table;
       table-layout: fixed; }
-    /* line 125, ../sass/lists/_tabular.scss */
+    /* line 134, ../sass/lists/_tabular.scss */
     .tabular.fixed-header thead, .tabular.fixed-header .thead {
       width: calc(100% - 10px); }
-    /* line 128, ../sass/lists/_tabular.scss */
+    /* line 137, ../sass/lists/_tabular.scss */
     .tabular.fixed-header tbody, .tabular.fixed-header .tbody {
       overflow: hidden;
       position: absolute;
@@ -1288,7 +1317,7 @@ mct-container {
       top: 18px;
       display: block;
       overflow-y: scroll; }
-  /* line 136, ../sass/lists/_tabular.scss */
+  /* line 145, ../sass/lists/_tabular.scss */
   .tabular.t-event-messages td, .tabular.t-event-messages .td {
     min-width: 150px; }
 
@@ -1423,7 +1452,7 @@ mct-container {
     color: #999;
     display: inline-block;
     color: #ccf2ff; }
-    /* line 152, ../sass/_mixins.scss */
+    /* line 162, ../sass/_mixins.scss */
     .btn.major:not(.disabled):hover,
     .s-btn.major:not(.disabled):hover,
     .major.icon-btn:not(.disabled):hover,
@@ -1435,13 +1464,13 @@ mct-container {
       background-image: -webkit-linear-gradient(#2ecbff, #14c4ff);
       background-image: linear-gradient(#2ecbff, #14c4ff);
       color: #bdbdbd; }
-      /* line 155, ../sass/_mixins.scss */
+      /* line 165, ../sass/_mixins.scss */
       .btn.major:not(.disabled):hover.btn-menu .invoke-menu,
       .s-btn.major:not(.disabled):hover.btn-menu .invoke-menu,
       .major.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
       .major.s-icon-btn:not(.disabled):hover.btn-menu .invoke-menu {
         color: #75ddff; }
-    /* line 160, ../sass/_mixins.scss */
+    /* line 170, ../sass/_mixins.scss */
     .btn.major.btn-menu .invoke-menu,
     .s-btn.major.btn-menu .invoke-menu,
     .major.btn-menu.icon-btn .invoke-menu,
@@ -1471,7 +1500,7 @@ mct-container {
       border-top: 1px solid #2ecbff;
       color: #ccf2ff;
       display: inline-block; }
-      /* line 152, ../sass/_mixins.scss */
+      /* line 162, ../sass/_mixins.scss */
       .btn.major:hover:not(.disabled):hover,
       .s-btn.major:hover:not(.disabled):hover,
       .major.icon-btn:hover:not(.disabled):hover,
@@ -1483,13 +1512,13 @@ mct-container {
         background-image: -webkit-linear-gradient(#47d1ff, #2ecbff);
         background-image: linear-gradient(#47d1ff, #2ecbff);
         color: white; }
-        /* line 155, ../sass/_mixins.scss */
+        /* line 165, ../sass/_mixins.scss */
         .btn.major:hover:not(.disabled):hover.btn-menu .invoke-menu,
         .s-btn.major:hover:not(.disabled):hover.btn-menu .invoke-menu,
         .major.icon-btn:hover:not(.disabled):hover.btn-menu .invoke-menu,
         .major.s-icon-btn:hover:not(.disabled):hover.btn-menu .invoke-menu {
           color: #8fe3ff; }
-      /* line 160, ../sass/_mixins.scss */
+      /* line 170, ../sass/_mixins.scss */
       .btn.major:hover.btn-menu .invoke-menu,
       .s-btn.major:hover.btn-menu .invoke-menu,
       .major.icon-btn:hover.btn-menu .invoke-menu,
@@ -1525,7 +1554,7 @@ mct-container {
     border-top: 1px solid #8a8a8a;
     color: #cccccc;
     display: inline-block; }
-    /* line 152, ../sass/_mixins.scss */
+    /* line 162, ../sass/_mixins.scss */
     .btn.subtle:not(.disabled):hover,
     .s-btn.subtle:not(.disabled):hover,
     .subtle.icon-btn:not(.disabled):hover,
@@ -1537,13 +1566,13 @@ mct-container {
       background-image: -webkit-linear-gradient(#969696, #8a8a8a);
       background-image: linear-gradient(#969696, #8a8a8a);
       color: #f0f0f0; }
-      /* line 155, ../sass/_mixins.scss */
+      /* line 165, ../sass/_mixins.scss */
       .btn.subtle:not(.disabled):hover.btn-menu .invoke-menu,
       .s-btn.subtle:not(.disabled):hover.btn-menu .invoke-menu,
       .subtle.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
       .subtle.s-icon-btn:not(.disabled):hover.btn-menu .invoke-menu {
         color: #bababa; }
-    /* line 160, ../sass/_mixins.scss */
+    /* line 170, ../sass/_mixins.scss */
     .btn.subtle.btn-menu .invoke-menu,
     .s-btn.subtle.btn-menu .invoke-menu,
     .subtle.btn-menu.icon-btn .invoke-menu,
@@ -1576,7 +1605,7 @@ mct-container {
     border-top: 1px solid #575757;
     color: #999;
     display: inline-block; }
-    /* line 152, ../sass/_mixins.scss */
+    /* line 162, ../sass/_mixins.scss */
     .btn.very-subtle:not(.disabled):hover, .btn.s-very-subtle:not(.disabled):hover,
     .s-btn.very-subtle:not(.disabled):hover,
     .very-subtle.icon-btn:not(.disabled):hover,
@@ -1591,7 +1620,7 @@ mct-container {
       background-image: -webkit-linear-gradient(#636363, #575757);
       background-image: linear-gradient(#636363, #575757);
       color: #bdbdbd; }
-      /* line 155, ../sass/_mixins.scss */
+      /* line 165, ../sass/_mixins.scss */
       .btn.very-subtle:not(.disabled):hover.btn-menu .invoke-menu, .btn.s-very-subtle:not(.disabled):hover.btn-menu .invoke-menu,
       .s-btn.very-subtle:not(.disabled):hover.btn-menu .invoke-menu,
       .very-subtle.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
@@ -1600,7 +1629,7 @@ mct-container {
       .s-very-subtle.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
       .s-very-subtle.s-icon-btn:not(.disabled):hover.btn-menu .invoke-menu {
         color: #878787; }
-    /* line 160, ../sass/_mixins.scss */
+    /* line 170, ../sass/_mixins.scss */
     .btn.very-subtle.btn-menu .invoke-menu, .btn.s-very-subtle.btn-menu .invoke-menu,
     .s-btn.very-subtle.btn-menu .invoke-menu,
     .very-subtle.btn-menu.icon-btn .invoke-menu,
@@ -1636,7 +1665,7 @@ mct-container {
       border-top: 1px solid #fe9510;
       color: #fff;
       display: inline-block; }
-      /* line 152, ../sass/_mixins.scss */
+      /* line 162, ../sass/_mixins.scss */
       .btn.very-subtle.paused:not(.disabled):hover, .btn.s-very-subtle.paused:not(.disabled):hover,
       .s-btn.very-subtle.paused:not(.disabled):hover,
       .very-subtle.paused.icon-btn:not(.disabled):hover,
@@ -1651,7 +1680,7 @@ mct-container {
         background-image: -webkit-linear-gradient(#fea029, #fe9510);
         background-image: linear-gradient(#fea029, #fe9510);
         color: white; }
-        /* line 155, ../sass/_mixins.scss */
+        /* line 165, ../sass/_mixins.scss */
         .btn.very-subtle.paused:not(.disabled):hover.btn-menu .invoke-menu, .btn.s-very-subtle.paused:not(.disabled):hover.btn-menu .invoke-menu,
         .s-btn.very-subtle.paused:not(.disabled):hover.btn-menu .invoke-menu,
         .very-subtle.paused.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
@@ -1660,7 +1689,7 @@ mct-container {
         .s-very-subtle.paused.icon-btn:not(.disabled):hover.btn-menu .invoke-menu,
         .s-very-subtle.paused.s-icon-btn:not(.disabled):hover.btn-menu .invoke-menu {
           color: #fec070; }
-      /* line 160, ../sass/_mixins.scss */
+      /* line 170, ../sass/_mixins.scss */
       .btn.very-subtle.paused.btn-menu .invoke-menu, .btn.s-very-subtle.paused.btn-menu .invoke-menu,
       .s-btn.very-subtle.paused.btn-menu .invoke-menu,
       .very-subtle.paused.btn-menu.icon-btn .invoke-menu,
@@ -1703,35 +1732,25 @@ mct-container {
     .icon-btn.labeled .title-label,
     .s-icon-btn.labeled .title-label {
       margin-left: 5px; }
-  /* line 133, ../sass/controls/_buttons.scss */
-  .icon-btn.pause-play.paused,
-  .s-icon-btn.pause-play.paused {
-    -moz-animation-name: pulse;
-    -webkit-animation-name: pulse;
-    animation-name: pulse;
-    -moz-animation-duration: 500ms;
-    -webkit-animation-duration: 500ms;
-    animation-duration: 500ms;
-    -moz-animation-direction: alternate;
-    -webkit-animation-direction: alternate;
-    animation-direction: alternate;
-    -moz-animation-iteration-count: infinite;
-    -webkit-animation-iteration-count: infinite;
-    animation-iteration-count: infinite;
-    -moz-animation-timing-function: ease-in-out;
-    -webkit-animation-timing-function: ease-in-out;
-    animation-timing-function: ease-in-out; }
-  /* line 136, ../sass/controls/_buttons.scss */
-  .icon-btn.pause-play .icon:before,
-  .s-icon-btn.pause-play .icon:before {
-    content: "\0000F1"; }
-  /* line 142, ../sass/controls/_buttons.scss */
+  /* line 132, ../sass/controls/_buttons.scss */
+  .icon-btn.pause-play,
+  .s-icon-btn.pause-play {
+    /*		&.paused {
+    			.icon {
+    				@include pulse(500ms);
+    			}
+    		}*/ }
+    /* line 138, ../sass/controls/_buttons.scss */
+    .icon-btn.pause-play .icon:before,
+    .s-icon-btn.pause-play .icon:before {
+      content: "\0000F1"; }
+  /* line 144, ../sass/controls/_buttons.scss */
   .icon-btn.show-thumbs .icon:before,
   .s-icon-btn.show-thumbs .icon:before {
     content: "\000039"; }
 
 /*********************************** LAYOUT STYLES */
-/* line 149, ../sass/controls/_buttons.scss */
+/* line 151, ../sass/controls/_buttons.scss */
 span.btn,
 span.btn span,
 span.l-btn,
@@ -1906,7 +1925,7 @@ a.l-btn span {
       content: "^";
       display: block;
       font-family: 'symbolsfont';
-      font-size: 1.2em;
+      font-size: 0.9em;
       position: absolute;
       right: 5px;
       text-transform: none;
@@ -2004,7 +2023,7 @@ a.l-btn span {
   display: inline-block;
   font-size: 11.25px;
   height: 25px;
-  line-height: 25px; }
+  line-height: 22px; }
 
 /* line 194, ../sass/controls/_controls.scss */
 label.checkbox.custom {
@@ -2122,7 +2141,7 @@ label.checkbox.custom {
   			color: lighten($c, 10%);
   		}
   	}*/ }
-  /* line 152, ../sass/_mixins.scss */
+  /* line 162, ../sass/_mixins.scss */
   .btn-menu:not(.disabled):hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzYzNjM2MyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU3NTc1NyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -2131,10 +2150,10 @@ label.checkbox.custom {
     background-image: -webkit-linear-gradient(#636363, #575757);
     background-image: linear-gradient(#636363, #575757);
     color: #bdbdbd; }
-    /* line 155, ../sass/_mixins.scss */
+    /* line 165, ../sass/_mixins.scss */
     .btn-menu:not(.disabled):hover.btn-menu .invoke-menu {
       color: #878787; }
-  /* line 160, ../sass/_mixins.scss */
+  /* line 170, ../sass/_mixins.scss */
   .btn-menu.btn-menu .invoke-menu {
     color: #757575; }
   /* line 285, ../sass/controls/_controls.scss */
@@ -2178,6 +2197,13 @@ label.checkbox.custom {
       height: auto; }
 
 /* line 351, ../sass/controls/_controls.scss */
+.context-available {
+  color: #0099cc; }
+  /* line 355, ../sass/controls/_controls.scss */
+  .context-available:hover {
+    color: deepskyblue; }
+
+/* line 360, ../sass/controls/_controls.scss */
 .view-switcher {
   -moz-transition-property: visibility, opacity, background-color, border-color;
   -o-transition-property: visibility, opacity, background-color, border-color;
@@ -2193,30 +2219,37 @@ label.checkbox.custom {
   transition-timing-function: ease-in-out; }
 
 /******************************************************** OBJECT-HEADER */
-/* line 356, ../sass/controls/_controls.scss */
+/* line 365, ../sass/controls/_controls.scss */
 .object-header {
   display: inline-block;
   font-size: 1em; }
-  /* line 360, ../sass/controls/_controls.scss */
+  /* line 369, ../sass/controls/_controls.scss */
   .object-header .label .title-label {
     color: white; }
-  /* line 363, ../sass/controls/_controls.scss */
+  /* line 372, ../sass/controls/_controls.scss */
   .object-header .label .type-icon {
     font-size: 120%;
     margin-right: 5px;
     vertical-align: middle; }
+  /* line 377, ../sass/controls/_controls.scss */
+  .object-header .label .context-available {
+    opacity: 0;
+    font-size: 0.8em; }
+  /* line 382, ../sass/controls/_controls.scss */
+  .object-header .label:hover .context-available {
+    opacity: 1; }
 
-/* line 373, ../sass/controls/_controls.scss */
+/* line 391, ../sass/controls/_controls.scss */
 .top-bar .object-header,
 .object-browse-bar .object-header {
   font-size: 1.1em; }
-  /* line 375, ../sass/controls/_controls.scss */
+  /* line 393, ../sass/controls/_controls.scss */
   .top-bar .object-header span,
   .object-browse-bar .object-header span {
     display: inline-block; }
 
 /******************************************************** SLIDERS */
-/* line 387, ../sass/controls/_controls.scss */
+/* line 405, ../sass/controls/_controls.scss */
 .slider .slot {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -2237,7 +2270,7 @@ label.checkbox.custom {
   right: 0;
   bottom: auto;
   left: 0; }
-/* line 398, ../sass/controls/_controls.scss */
+/* line 416, ../sass/controls/_controls.scss */
 .slider .knob {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzUyNTI1MiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzQ1NDU0NSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background-size: 100%;
@@ -2266,7 +2299,7 @@ label.checkbox.custom {
   auto: 0;
   bottom: auto;
   left: auto; }
-  /* line 152, ../sass/_mixins.scss */
+  /* line 162, ../sass/_mixins.scss */
   .slider .knob:not(.disabled):hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzYzNjM2MyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU3NTc1NyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -2275,13 +2308,13 @@ label.checkbox.custom {
     background-image: -webkit-linear-gradient(#636363, #575757);
     background-image: linear-gradient(#636363, #575757);
     color: #bdbdbd; }
-    /* line 155, ../sass/_mixins.scss */
+    /* line 165, ../sass/_mixins.scss */
     .slider .knob:not(.disabled):hover.btn-menu .invoke-menu {
       color: #878787; }
-  /* line 160, ../sass/_mixins.scss */
+  /* line 170, ../sass/_mixins.scss */
   .slider .knob.btn-menu .invoke-menu {
     color: #757575; }
-  /* line 176, ../sass/_mixins.scss */
+  /* line 186, ../sass/_mixins.scss */
   .slider .knob:before {
     -moz-transition-property: "border-color";
     -o-transition-property: "border-color";
@@ -2305,7 +2338,7 @@ label.checkbox.custom {
     left: 2px;
     bottom: 5px;
     top: 5px; }
-  /* line 198, ../sass/_mixins.scss */
+  /* line 208, ../sass/_mixins.scss */
   .slider .knob:not(.disabled):hover:before {
     -moz-transition-property: "border-color";
     -o-transition-property: "border-color";
@@ -2320,12 +2353,12 @@ label.checkbox.custom {
     -webkit-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
     border-color: #0099cc; }
-  /* line 409, ../sass/controls/_controls.scss */
+  /* line 427, ../sass/controls/_controls.scss */
   .slider .knob:before {
     top: 1px;
     bottom: 3px;
     left: 5px; }
-/* line 416, ../sass/controls/_controls.scss */
+/* line 434, ../sass/controls/_controls.scss */
 .slider .range {
   background: rgba(0, 153, 204, 0.6);
   cursor: ew-resize;
@@ -2336,12 +2369,12 @@ label.checkbox.custom {
   left: auto;
   height: auto;
   width: auto; }
-  /* line 426, ../sass/controls/_controls.scss */
+  /* line 444, ../sass/controls/_controls.scss */
   .slider .range:hover {
     background: rgba(0, 153, 204, 0.7); }
 
 /******************************************************** BROWSER ELEMENTS */
-/* line 434, ../sass/controls/_controls.scss */
+/* line 452, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -2358,7 +2391,7 @@ label.checkbox.custom {
   height: 10px;
   width: 10px; }
 
-/* line 440, ../sass/controls/_controls.scss */
+/* line 458, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar-thumb {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzY2NjY2NiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background-size: 100%;
@@ -2376,7 +2409,7 @@ label.checkbox.custom {
   -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
   box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
   border-top: 1px solid gray; }
-  /* line 447, ../sass/controls/_controls.scss */
+  /* line 465, ../sass/controls/_controls.scss */
   ::-webkit-scrollbar-thumb:hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzgwODA4MCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzczNzM3MyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -2385,7 +2418,7 @@ label.checkbox.custom {
     background-image: -webkit-linear-gradient(#808080, #737373 20px);
     background-image: linear-gradient(#808080, #737373 20px); }
 
-/* line 452, ../sass/controls/_controls.scss */
+/* line 470, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar-corner {
   background: rgba(0, 0, 0, 0.4); }
 
@@ -2477,14 +2510,14 @@ label.checkbox.custom {
     padding: 3px 0;
     position: absolute;
     z-index: 10; }
-    /* line 160, ../sass/_mixins.scss */
+    /* line 170, ../sass/_mixins.scss */
     .menu-element .menu.btn-menu .invoke-menu {
       color: #828282; }
     /* line 37, ../sass/controls/_menus.scss */
     .menu-element .menu ul {
       margin: 0;
       padding: 0; }
-      /* line 266, ../sass/_mixins.scss */
+      /* line 276, ../sass/_mixins.scss */
       .menu-element .menu ul li {
         list-style-type: none;
         margin: 0;
@@ -2495,29 +2528,24 @@ label.checkbox.custom {
         -webkit-box-sizing: border-box;
         box-sizing: border-box;
         border-top: 1px solid #737373;
+        color: #d9d9d9;
         line-height: 1.4rem;
         padding: 3px 10px 3px 30px;
         white-space: nowrap; }
-        /* line 45, ../sass/controls/_menus.scss */
+        /* line 46, ../sass/controls/_menus.scss */
         .menu-element .menu ul li:first-child {
           border: none; }
-        /* line 48, ../sass/controls/_menus.scss */
+        /* line 49, ../sass/controls/_menus.scss */
         .menu-element .menu ul li:hover {
-          background: #737373; }
-          /* line 50, ../sass/controls/_menus.scss */
-          .menu-element .menu ul li:hover a {
-            color: #fff; }
-          /* line 53, ../sass/controls/_menus.scss */
+          background: #737373;
+          color: #fff; }
+          /* line 55, ../sass/controls/_menus.scss */
           .menu-element .menu ul li:hover .icon {
             color: #33ccff; }
-        /* line 57, ../sass/controls/_menus.scss */
-        .menu-element .menu ul li a {
-          color: #d9d9d9;
-          display: block; }
-        /* line 61, ../sass/controls/_menus.scss */
+        /* line 63, ../sass/controls/_menus.scss */
         .menu-element .menu ul li .type-icon {
           left: 10px; }
-  /* line 68, ../sass/controls/_menus.scss */
+  /* line 70, ../sass/controls/_menus.scss */
   .menu-element .context-menu,
   .menu-element .super-menu {
     pointer-events: auto;
@@ -2540,36 +2568,36 @@ label.checkbox.custom {
     border-top: 1px solid #919191;
     color: #999;
     display: inline-block; }
-    /* line 160, ../sass/_mixins.scss */
+    /* line 170, ../sass/_mixins.scss */
     .menu-element .context-menu.btn-menu .invoke-menu,
     .menu-element .super-menu.btn-menu .invoke-menu {
       color: #b0b0b0; }
-    /* line 76, ../sass/controls/_menus.scss */
+    /* line 78, ../sass/controls/_menus.scss */
     .menu-element .context-menu ul li,
     .menu-element .super-menu ul li {
       padding-left: 25px; }
-      /* line 78, ../sass/controls/_menus.scss */
+      /* line 80, ../sass/controls/_menus.scss */
       .menu-element .context-menu ul li a,
       .menu-element .super-menu ul li a {
         color: white; }
-      /* line 79, ../sass/controls/_menus.scss */
+      /* line 81, ../sass/controls/_menus.scss */
       .menu-element .context-menu ul li .icon,
       .menu-element .super-menu ul li .icon {
         color: #24c8ff; }
-      /* line 82, ../sass/controls/_menus.scss */
+      /* line 84, ../sass/controls/_menus.scss */
       .menu-element .context-menu ul li .type-icon,
       .menu-element .super-menu ul li .type-icon {
         left: 5px; }
-      /* line 85, ../sass/controls/_menus.scss */
+      /* line 87, ../sass/controls/_menus.scss */
       .menu-element .context-menu ul li:hover .icon,
       .menu-element .super-menu ul li:hover .icon {
         color: #3dcfff; }
-  /* line 92, ../sass/controls/_menus.scss */
+  /* line 94, ../sass/controls/_menus.scss */
   .menu-element .super-menu {
     display: block;
     width: 500px;
     height: 480px; }
-    /* line 102, ../sass/controls/_menus.scss */
+    /* line 104, ../sass/controls/_menus.scss */
     .menu-element .super-menu .contents {
       overflow: hidden;
       position: absolute;
@@ -2579,12 +2607,12 @@ label.checkbox.custom {
       left: 5px;
       width: auto;
       height: auto; }
-    /* line 105, ../sass/controls/_menus.scss */
+    /* line 107, ../sass/controls/_menus.scss */
     .menu-element .super-menu .pane {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box; }
-      /* line 107, ../sass/controls/_menus.scss */
+      /* line 109, ../sass/controls/_menus.scss */
       .menu-element .super-menu .pane.left {
         border-right: 1px solid rgba(255, 255, 255, 0.2);
         left: 0;
@@ -2593,23 +2621,23 @@ label.checkbox.custom {
         width: 50%;
         overflow-x: hidden;
         overflow-y: auto; }
-        /* line 117, ../sass/controls/_menus.scss */
+        /* line 119, ../sass/controls/_menus.scss */
         .menu-element .super-menu .pane.left ul li {
           -moz-border-radius: 2px;
           -webkit-border-radius: 2px;
           border-radius: 2px;
           padding-left: 30px;
           border-top: none; }
-      /* line 124, ../sass/controls/_menus.scss */
+      /* line 126, ../sass/controls/_menus.scss */
       .menu-element .super-menu .pane.right {
         left: auto;
         right: 0;
         padding: 25px;
         width: 50%; }
-        /* line 130, ../sass/controls/_menus.scss */
+        /* line 132, ../sass/controls/_menus.scss */
         .menu-element .super-menu .pane.right .icon {
           color: #fff; }
-    /* line 137, ../sass/controls/_menus.scss */
+    /* line 139, ../sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.icon {
       position: relative;
       font-size: 8em;
@@ -2618,40 +2646,40 @@ label.checkbox.custom {
       line-height: 150px;
       margin-bottom: 25px;
       text-align: center; }
-    /* line 147, ../sass/controls/_menus.scss */
+    /* line 149, ../sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.title {
       color: #fff;
       font-size: 1.2em;
       margin-bottom: 0.5em; }
-    /* line 152, ../sass/controls/_menus.scss */
+    /* line 154, ../sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.description {
       color: #fff;
       font-size: 0.8em;
       line-height: 1.5em; }
-  /* line 161, ../sass/controls/_menus.scss */
+  /* line 163, ../sass/controls/_menus.scss */
   .menu-element .context-menu {
     font-size: 0.80rem; }
 
-/* line 166, ../sass/controls/_menus.scss */
+/* line 168, ../sass/controls/_menus.scss */
 .context-menu-holder {
   pointer-events: none;
   position: absolute;
   height: 200px;
   width: 170px;
   z-index: 70; }
-  /* line 172, ../sass/controls/_menus.scss */
+  /* line 174, ../sass/controls/_menus.scss */
   .context-menu-holder .context-menu-wrapper {
     position: absolute;
     height: 100%;
     width: 100%; }
-  /* line 179, ../sass/controls/_menus.scss */
+  /* line 181, ../sass/controls/_menus.scss */
   .context-menu-holder.go-left .context-menu {
     right: 0; }
-  /* line 180, ../sass/controls/_menus.scss */
+  /* line 182, ../sass/controls/_menus.scss */
   .context-menu-holder.go-up .context-menu {
     bottom: 0; }
 
-/* line 183, ../sass/controls/_menus.scss */
+/* line 185, ../sass/controls/_menus.scss */
 .btn-bar.right .menu,
 .menus-to-left .menu {
   left: auto;
@@ -2786,6 +2814,9 @@ label.checkbox.custom {
   width: 15px;
   height: 15px; }
   /* line 35, ../sass/edit/_editor.scss */
+  .edit-main .edit-corner:hover {
+    z-index: 11; }
+  /* line 38, ../sass/edit/_editor.scss */
   .edit-main .edit-corner.edit-resize-nw {
     -moz-border-radius-bottomright: 5px;
     -webkit-border-bottom-right-radius: 5px;
@@ -2793,7 +2824,15 @@ label.checkbox.custom {
     cursor: nw-resize;
     top: 0;
     left: 0; }
-  /* line 40, ../sass/edit/_editor.scss */
+  /* line 43, ../sass/edit/_editor.scss */
+  .edit-main .edit-corner.edit-resize-ne {
+    -moz-border-radius-bottomleft: 5px;
+    -webkit-border-bottom-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    cursor: ne-resize;
+    top: 0;
+    right: 0; }
+  /* line 48, ../sass/edit/_editor.scss */
   .edit-main .edit-corner.edit-resize-se {
     -moz-border-radius-topleft: 5px;
     -webkit-border-top-left-radius: 5px;
@@ -2801,7 +2840,7 @@ label.checkbox.custom {
     cursor: se-resize;
     bottom: 0;
     right: 0; }
-  /* line 45, ../sass/edit/_editor.scss */
+  /* line 53, ../sass/edit/_editor.scss */
   .edit-main .edit-corner.edit-resize-sw {
     -moz-border-radius-topright: 5px;
     -webkit-border-top-right-radius: 5px;
@@ -2809,13 +2848,13 @@ label.checkbox.custom {
     cursor: sw-resize;
     bottom: 0;
     left: 0; }
-/* line 53, ../sass/edit/_editor.scss */
+/* line 61, ../sass/edit/_editor.scss */
 .edit-main .edit-handle {
   top: 15px;
   right: 15px;
   bottom: 15px;
   left: 15px; }
-  /* line 55, ../sass/edit/_editor.scss */
+  /* line 63, ../sass/edit/_editor.scss */
   .edit-main .edit-handle.edit-move {
     cursor: move;
     left: 0;
@@ -2823,44 +2862,43 @@ label.checkbox.custom {
     top: 0;
     bottom: 0;
     z-index: 1; }
-  /* line 65, ../sass/edit/_editor.scss */
+  /* line 73, ../sass/edit/_editor.scss */
   .edit-main .edit-handle.edit-resize-n {
     top: 0px;
     bottom: auto;
     height: 15px;
     cursor: n-resize; }
-  /* line 70, ../sass/edit/_editor.scss */
+  /* line 78, ../sass/edit/_editor.scss */
   .edit-main .edit-handle.edit-resize-e {
     right: 0px;
     left: auto;
     width: 15px;
     cursor: e-resize; }
-  /* line 75, ../sass/edit/_editor.scss */
+  /* line 83, ../sass/edit/_editor.scss */
   .edit-main .edit-handle.edit-resize-s {
     bottom: 0px;
     top: auto;
     height: 15px;
     cursor: s-resize; }
-  /* line 80, ../sass/edit/_editor.scss */
+  /* line 88, ../sass/edit/_editor.scss */
   .edit-main .edit-handle.edit-resize-w {
     left: 0px;
     right: auto;
     width: 15px;
     cursor: w-resize; }
-/* line 89, ../sass/edit/_editor.scss */
+/* line 97, ../sass/edit/_editor.scss */
 .edit-main .frame.child-frame.panel:hover {
   -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
   box-shadow: rgba(0, 0, 0, 0.7) 0 3px 10px;
-  border-color: #0099cc;
-  z-index: 2; }
-  /* line 93, ../sass/edit/_editor.scss */
+  border-color: #0099cc; }
+  /* line 101, ../sass/edit/_editor.scss */
   .edit-main .frame.child-frame.panel:hover .view-switcher {
     opacity: 1; }
-  /* line 96, ../sass/edit/_editor.scss */
+  /* line 104, ../sass/edit/_editor.scss */
   .edit-main .frame.child-frame.panel:hover .edit-corner {
     background-color: rgba(0, 153, 204, 0.8); }
-    /* line 98, ../sass/edit/_editor.scss */
+    /* line 106, ../sass/edit/_editor.scss */
     .edit-main .frame.child-frame.panel:hover .edit-corner:hover {
       background-color: #0099cc; }
 
@@ -2888,11 +2926,11 @@ label.checkbox.custom {
   /* line 18, ../sass/features/_imagery.scss */
   .l-image-main-wrapper .l-image-main {
     background-color: rgba(255, 255, 255, 0.1);
-    bottom: 25px; }
+    bottom: 27px; }
   /* line 22, ../sass/features/_imagery.scss */
   .l-image-main-wrapper .l-image-main-controlbar {
     top: auto;
-    height: 20px; }
+    height: 22px; }
 
 /* line 28, ../sass/features/_imagery.scss */
 .l-image-thumbs-wrapper {
@@ -2916,7 +2954,7 @@ label.checkbox.custom {
 /* line 53, ../sass/features/_imagery.scss */
 .l-image-main-controlbar {
   font-size: 0.8em;
-  line-height: 20px; }
+  line-height: 22px; }
   /* line 57, ../sass/features/_imagery.scss */
   .l-image-main-controlbar .left, .l-image-main-controlbar .right {
     direction: rtl;
@@ -3120,8 +3158,8 @@ label.checkbox.custom {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 24, ../sass/forms/_elems.scss */
-.form .section-header {
+/* line 22, ../sass/forms/_elems.scss */
+.section-header {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
@@ -3129,13 +3167,14 @@ label.checkbox.custom {
   font-size: 0.8em;
   margin-top: 5px;
   padding: 5px; }
-  /* line 30, ../sass/forms/_elems.scss */
-  .form .section-header:first-child {
+  /* line 28, ../sass/forms/_elems.scss */
+  .section-header:first-child {
     margin-top: 0; }
-/* line 34, ../sass/forms/_elems.scss */
+
+/* line 35, ../sass/forms/_elems.scss */
 .form .form-section {
   position: relative; }
-/* line 38, ../sass/forms/_elems.scss */
+/* line 39, ../sass/forms/_elems.scss */
 .form .form-row {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -3146,10 +3185,10 @@ label.checkbox.custom {
   margin-top: 5px;
   padding: 5px;
   position: relative; }
-  /* line 45, ../sass/forms/_elems.scss */
+  /* line 46, ../sass/forms/_elems.scss */
   .form .form-row.first {
     border-top: none; }
-  /* line 49, ../sass/forms/_elems.scss */
+  /* line 50, ../sass/forms/_elems.scss */
   .form .form-row .label,
   .form .form-row .controls {
     -moz-box-sizing: border-box;
@@ -3161,47 +3200,47 @@ label.checkbox.custom {
     font-size: 0.75rem;
     line-height: 22px;
     min-height: 22px; }
-  /* line 60, ../sass/forms/_elems.scss */
+  /* line 61, ../sass/forms/_elems.scss */
   .form .form-row > .label {
     float: left;
     position: relative;
     white-space: nowrap;
     width: 20%; }
-  /* line 68, ../sass/forms/_elems.scss */
+  /* line 69, ../sass/forms/_elems.scss */
   .form .form-row .value {
     color: #cccccc; }
-  /* line 72, ../sass/forms/_elems.scss */
+  /* line 73, ../sass/forms/_elems.scss */
   .form .form-row .controls {
     float: left;
     position: relative;
     width: 79.9%; }
-    /* line 79, ../sass/forms/_elems.scss */
+    /* line 80, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-composite-control.l-checkbox {
       display: inline-block;
       line-height: 14px;
       margin-right: 5px; }
-    /* line 88, ../sass/forms/_elems.scss */
+    /* line 89, ../sass/forms/_elems.scss */
     .form .form-row .controls input[type="text"] {
       height: 22px;
       line-height: 22px;
       margin-top: -4px;
       vertical-align: baseline; }
-    /* line 95, ../sass/forms/_elems.scss */
+    /* line 96, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-med input[type="text"] {
       width: 200px; }
-    /* line 99, ../sass/forms/_elems.scss */
+    /* line 100, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-small input[type="text"] {
       width: 50px; }
-    /* line 103, ../sass/forms/_elems.scss */
+    /* line 104, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-numeric input[type="text"] {
       text-align: right; }
-    /* line 107, ../sass/forms/_elems.scss */
+    /* line 108, ../sass/forms/_elems.scss */
     .form .form-row .controls .select {
       margin-right: 5px; }
-  /* line 112, ../sass/forms/_elems.scss */
+  /* line 113, ../sass/forms/_elems.scss */
   .form .form-row .field-hints {
     color: #666666; }
-  /* line 116, ../sass/forms/_elems.scss */
+  /* line 117, ../sass/forms/_elems.scss */
   .form .form-row .selector-list {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -3214,7 +3253,7 @@ label.checkbox.custom {
     position: relative;
     height: 150px;
     overflow: auto; }
-    /* line 127, ../sass/forms/_elems.scss */
+    /* line 128, ../sass/forms/_elems.scss */
     .form .form-row .selector-list .wrapper {
       overflow-y: auto;
       position: absolute;
@@ -3223,24 +3262,24 @@ label.checkbox.custom {
       bottom: 5px;
       left: 5px; }
 
-/* line 141, ../sass/forms/_elems.scss */
+/* line 142, ../sass/forms/_elems.scss */
 label.form-control.checkbox input {
   margin-right: 5px;
   vertical-align: top; }
 
-/* line 147, ../sass/forms/_elems.scss */
+/* line 148, ../sass/forms/_elems.scss */
 .hint,
 .s-hint {
   font-size: 0.9em; }
 
-/* line 152, ../sass/forms/_elems.scss */
+/* line 153, ../sass/forms/_elems.scss */
 .l-result {
   display: inline-block;
   min-width: 32px;
   min-height: 32px;
   position: relative;
   vertical-align: top; }
-  /* line 159, ../sass/forms/_elems.scss */
+  /* line 160, ../sass/forms/_elems.scss */
   .l-result div.s-hint {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -3403,7 +3442,7 @@ input[type="text"] {
   margin: 0 0 2px 2px;
   overflow: hidden;
   position: relative; }
-  /* line 152, ../sass/_mixins.scss */
+  /* line 162, ../sass/_mixins.scss */
   .form-control.select:not(.disabled):hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzYzNjM2MyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU3NTc1NyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -3412,10 +3451,10 @@ input[type="text"] {
     background-image: -webkit-linear-gradient(#636363, #575757);
     background-image: linear-gradient(#636363, #575757);
     color: #bdbdbd; }
-    /* line 155, ../sass/_mixins.scss */
+    /* line 165, ../sass/_mixins.scss */
     .form-control.select:not(.disabled):hover.btn-menu .invoke-menu {
       color: #878787; }
-  /* line 160, ../sass/_mixins.scss */
+  /* line 170, ../sass/_mixins.scss */
   .form-control.select.btn-menu .invoke-menu {
     color: #757575; }
   /* line 29, ../sass/forms/_selects.scss */
@@ -3720,7 +3759,7 @@ input[type="text"] {
       overflow: hidden; }
     /* line 50, ../sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-axis-area.gl-plot-y {
-      top: 29px;
+      top: 25px;
       right: auto;
       bottom: 37px;
       left: 0;
@@ -3737,7 +3776,7 @@ input[type="text"] {
     color: #e6e6e6;
     padding: 2px 5px;
     position: absolute;
-    top: 39px;
+    top: 35px;
     right: auto;
     bottom: auto;
     left: 70px;
@@ -3748,7 +3787,7 @@ input[type="text"] {
   /* line 76, ../sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-display-area {
     position: absolute;
-    top: 29px;
+    top: 25px;
     right: 0;
     bottom: 37px;
     left: 60px;
@@ -3816,7 +3855,7 @@ input[type="text"] {
     right: 0;
     bottom: auto;
     left: 0;
-    height: 24px;
+    height: 20px;
     overflow-x: hidden;
     overflow-y: auto; }
   /* line 157, ../sass/plots/_plots-main.scss */
@@ -3874,14 +3913,15 @@ input[type="text"] {
 .legend .plot-legend-item,
 .legend .legend-item {
   display: inline-block;
-  margin-right: 10px; }
-  /* line 204, ../sass/plots/_plots-main.scss */
+  margin-right: 10px;
+  margin-bottom: 3px; }
+  /* line 205, ../sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item span,
   .gl-plot-legend .legend-item span,
   .legend .plot-legend-item span,
   .legend .legend-item span {
     vertical-align: middle; }
-  /* line 207, ../sass/plots/_plots-main.scss */
+  /* line 208, ../sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item .plot-color-swatch,
   .gl-plot-legend .plot-legend-item .color-swatch,
   .gl-plot-legend .legend-item .plot-color-swatch,
@@ -3897,7 +3937,7 @@ input[type="text"] {
     height: 8px;
     width: 8px; }
 
-/* line 220, ../sass/plots/_plots-main.scss */
+/* line 221, ../sass/plots/_plots-main.scss */
 .gl-plot-legend .plot-legend-item {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -3905,22 +3945,22 @@ input[type="text"] {
   color: #fff;
   line-height: 1.5em;
   padding: 0px 5px; }
-  /* line 226, ../sass/plots/_plots-main.scss */
+  /* line 227, ../sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item .plot-color-swatch {
     border: 1px solid #333;
     height: 9px;
     width: 9px; }
 
-/* line 234, ../sass/plots/_plots-main.scss */
+/* line 235, ../sass/plots/_plots-main.scss */
 .tick {
   position: absolute;
   border: 0 rgba(255, 255, 255, 0.3) solid; }
-  /* line 237, ../sass/plots/_plots-main.scss */
+  /* line 238, ../sass/plots/_plots-main.scss */
   .tick.tick-x {
     border-right-width: 1px;
     height: 100%; }
 
-/* line 243, ../sass/plots/_plots-main.scss */
+/* line 244, ../sass/plots/_plots-main.scss */
 .gl-plot-tick,
 .tick-label {
   font-size: 0.7rem;
@@ -3928,7 +3968,7 @@ input[type="text"] {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis; }
-  /* line 251, ../sass/plots/_plots-main.scss */
+  /* line 252, ../sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-x-tick-label, .gl-plot-tick.tick-label-x,
   .tick-label.gl-plot-x-tick-label,
   .tick-label.tick-label-x {
@@ -3939,7 +3979,7 @@ input[type="text"] {
     width: 20%;
     margin-left: -10%;
     text-align: center; }
-  /* line 261, ../sass/plots/_plots-main.scss */
+  /* line 262, ../sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-y-tick-label, .gl-plot-tick.tick-label-y,
   .tick-label.gl-plot-y-tick-label,
   .tick-label.tick-label-y {
@@ -3949,18 +3989,18 @@ input[type="text"] {
     margin-bottom: -0.5em;
     text-align: right; }
 
-/* line 273, ../sass/plots/_plots-main.scss */
+/* line 274, ../sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-x-tick-label {
   top: 5px; }
-/* line 276, ../sass/plots/_plots-main.scss */
+/* line 277, ../sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-y-tick-label {
   right: 5px;
   left: 5px; }
 
-/* line 283, ../sass/plots/_plots-main.scss */
+/* line 284, ../sass/plots/_plots-main.scss */
 .tick-label.tick-label-x {
   top: 0; }
-/* line 286, ../sass/plots/_plots-main.scss */
+/* line 287, ../sass/plots/_plots-main.scss */
 .tick-label.tick-label-y {
   right: 0;
   left: 0; }
@@ -4033,7 +4073,7 @@ input[type="text"] {
   bottom: 15%;
   left: 15%;
   z-index: 101; }
-  /* line 160, ../sass/_mixins.scss */
+  /* line 170, ../sass/_mixins.scss */
   .overlay > .holder.btn-menu .invoke-menu {
     color: #757575; }
   /* line 45, ../sass/overlay/_overlay.scss */
@@ -4105,8 +4145,7 @@ input[type="text"] {
   border: 1px solid #4d4d4d; }
   /* line 28, ../sass/user-environ/_frame.scss */
   .frame.child-frame.panel:hover {
-    border-color: #666666;
-    z-index: 2; }
+    border-color: #666666; }
 /* line 36, ../sass/user-environ/_frame.scss */
 .frame > .object-header.abs, .btn-menu .frame > span.object-header.l-click-area {
   font-size: 0.75em;
@@ -4120,14 +4159,14 @@ input[type="text"] {
   right: 5px;
   bottom: 5px;
   left: 5px; }
-/* line 54, ../sass/user-environ/_frame.scss */
+/* line 53, ../sass/user-environ/_frame.scss */
 .frame.frame-template .view-switcher {
   opacity: 0;
   z-index: 10; }
-/* line 59, ../sass/user-environ/_frame.scss */
+/* line 57, ../sass/user-environ/_frame.scss */
 .frame.frame-template:hover .view-switcher {
   opacity: 1; }
-/* line 67, ../sass/user-environ/_frame.scss */
+/* line 65, ../sass/user-environ/_frame.scss */
 .frame .view-switcher .name {
   display: none; }
 
@@ -4541,7 +4580,7 @@ input[type="text"] {
     right: 0;
     width: auto;
     height: 5px; }
-    /* line 176, ../sass/_mixins.scss */
+    /* line 186, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:before {
       -moz-transition-property: "border-color";
       -o-transition-property: "border-color";
@@ -4565,7 +4604,7 @@ input[type="text"] {
       top: 2px;
       left: 5px;
       right: 5px; }
-    /* line 198, ../sass/_mixins.scss */
+    /* line 208, ../sass/_mixins.scss */
     .split-layout.horizontal > .splitter:not(.disabled):hover:before {
       -moz-transition-property: "border-color";
       -o-transition-property: "border-color";
@@ -4595,7 +4634,7 @@ input[type="text"] {
   bottom: 0;
   cursor: col-resize;
   width: 5px; }
-  /* line 176, ../sass/_mixins.scss */
+  /* line 186, ../sass/_mixins.scss */
   .split-layout.vertical > .splitter:before {
     -moz-transition-property: "border-color";
     -o-transition-property: "border-color";
@@ -4619,7 +4658,7 @@ input[type="text"] {
     left: 2px;
     bottom: 5px;
     top: 5px; }
-  /* line 198, ../sass/_mixins.scss */
+  /* line 208, ../sass/_mixins.scss */
   .split-layout.vertical > .splitter:not(.disabled):hover:before {
     -moz-transition-property: "border-color";
     -o-transition-property: "border-color";
@@ -4804,28 +4843,58 @@ input[type="text"] {
 /* line 22, ../sass/_autoflow.scss */
 .autoflow {
   font-size: 0.75rem; }
-  /* line 30, ../sass/_autoflow.scss */
+  /* line 32, ../sass/_autoflow.scss */
+  .autoflow:hover .l-autoflow-header .l-btn.change-column-width {
+    -moz-transition-property: visibility, opacity, background-color, border-color;
+    -o-transition-property: visibility, opacity, background-color, border-color;
+    -webkit-transition-property: visibility, opacity, background-color, border-color;
+    transition-property: visibility, opacity, background-color, border-color;
+    -moz-transition-duration: 50ms;
+    -o-transition-duration: 50ms;
+    -webkit-transition-duration: 50ms;
+    transition-duration: 50ms;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    opacity: 1; }
+  /* line 40, ../sass/_autoflow.scss */
   .autoflow .l-autoflow-header {
     bottom: auto;
     height: 22px;
     line-height: 22px;
     min-width: 225px; }
-    /* line 35, ../sass/_autoflow.scss */
+    /* line 45, ../sass/_autoflow.scss */
     .autoflow .l-autoflow-header span {
       vertical-align: middle; }
-    /* line 38, ../sass/_autoflow.scss */
+    /* line 48, ../sass/_autoflow.scss */
+    .autoflow .l-autoflow-header .l-btn.change-column-width {
+      -moz-transition-property: visibility, opacity, background-color, border-color;
+      -o-transition-property: visibility, opacity, background-color, border-color;
+      -webkit-transition-property: visibility, opacity, background-color, border-color;
+      transition-property: visibility, opacity, background-color, border-color;
+      -moz-transition-duration: 500ms;
+      -o-transition-duration: 500ms;
+      -webkit-transition-duration: 500ms;
+      transition-duration: 500ms;
+      -moz-transition-timing-function: ease-in-out;
+      -o-transition-timing-function: ease-in-out;
+      -webkit-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out;
+      opacity: 0; }
+    /* line 52, ../sass/_autoflow.scss */
     .autoflow .l-autoflow-header .l-filter {
       margin-left: 5px; }
-      /* line 40, ../sass/_autoflow.scss */
+      /* line 54, ../sass/_autoflow.scss */
       .autoflow .l-autoflow-header .l-filter input.t-filter-input {
         width: 100px; }
-  /* line 46, ../sass/_autoflow.scss */
+  /* line 60, ../sass/_autoflow.scss */
   .autoflow .l-autoflow-items {
     overflow-x: scroll;
     overflow-y: hidden;
     top: 32px;
     white-space: nowrap; }
-    /* line 52, ../sass/_autoflow.scss */
+    /* line 66, ../sass/_autoflow.scss */
     .autoflow .l-autoflow-items .l-autoflow-col {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
@@ -4836,7 +4905,7 @@ input[type="text"] {
       padding-right: 5px;
       vertical-align: top;
       width: 225px; }
-      /* line 62, ../sass/_autoflow.scss */
+      /* line 76, ../sass/_autoflow.scss */
       .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row {
         -moz-box-sizing: border-box;
         -webkit-box-sizing: border-box;
@@ -4848,37 +4917,37 @@ input[type="text"] {
         margin-bottom: 1px;
         margin-top: 1px;
         position: relative; }
-        /* line 71, ../sass/_autoflow.scss */
+        /* line 85, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row:first-child {
           border-top: none; }
-        /* line 74, ../sass/_autoflow.scss */
+        /* line 88, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row:hover {
           background: rgba(255, 255, 255, 0.1); }
-        /* line 79, ../sass/_autoflow.scss */
+        /* line 93, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row.s-stale .l-autoflow-item.l {
           color: rgba(255, 255, 255, 0.3) !important;
           font-style: italic; }
-        /* line 80, ../sass/_autoflow.scss */
+        /* line 94, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row.s-stale .l-autoflow-item.r {
           color: rgba(255, 255, 255, 0.5) !important;
           font-style: italic; }
-        /* line 83, ../sass/_autoflow.scss */
+        /* line 97, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row:not(.s-stale) .l-autoflow-item.r {
           color: #b3b3b3; }
-        /* line 87, ../sass/_autoflow.scss */
+        /* line 101, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row.first-in-group {
           border-top: 1px solid gray; }
-        /* line 90, ../sass/_autoflow.scss */
+        /* line 104, ../sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row .l-autoflow-item {
           display: block; }
-          /* line 92, ../sass/_autoflow.scss */
+          /* line 106, ../sass/_autoflow.scss */
           .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row .l-autoflow-item.l {
             float: none;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             width: auto; }
-          /* line 99, ../sass/_autoflow.scss */
+          /* line 113, ../sass/_autoflow.scss */
           .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row .l-autoflow-item.r {
             -moz-border-radius: 2px;
             -webkit-border-radius: 2px;
@@ -4888,7 +4957,7 @@ input[type="text"] {
             padding-left: 5px;
             padding-right: 5px;
             text-align: right; }
-      /* line 110, ../sass/_autoflow.scss */
+      /* line 124, ../sass/_autoflow.scss */
       .autoflow .l-autoflow-items .l-autoflow-col:first-child {
         border-left: none;
         padding-left: 0; }
@@ -4920,6 +4989,17 @@ input[type="text"] {
   display: block;
   height: 100%;
   width: 100%; }
+
+/* line 5, ../sass/_initialization.scss */
+.browse-mode .split-layout .split-pane-component.pane.left {
+  width: 15%; }
+
+/* line 13, ../sass/_initialization.scss */
+.edit-mode .split-layout .split-pane-component.pane.right {
+  width: 15%; }
+  /* line 15, ../sass/_initialization.scss */
+  .edit-mode .split-layout .split-pane-component.pane.right .pane.bottom {
+    height: 30%; }
 
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
