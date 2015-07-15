@@ -20,49 +20,58 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// style="min-width: 150px; max-width: 800px; width: 25%;"
-// NOTE: Added to adjust the browse folder tree list view
+// NOTE: Added to adjust the browse folder left list view
 
-.holder-hide {
-    @include phone {
-        @include transition-duration(.2s);
-        left: (-1) * $phoneSlideMenuWidth;
-    }
-    @include tablet {
-        @include transition-duration(.2s);
-        left: (-1) * $tabletSlideMenuWidth;
-    }     
+.browse-wrapper,
+.pane-special {
+    position: absolute;
+    left: 0; top: 0;
+    right: 0; left: 0;
+    white-space: nowrap;
+    height: 100%;
+//    overflow: hidden;
 }
 
-.holder-show {
-    @include transition-duration(.2s);
-    @include phone {
-        left: 0px;
+.browse-hidetree {
+    .pane-special.left {
+//        background-color: #FFF;
+//        right: auto;
+//        width: 50px;
+        display: none !important;
     }
-    @include tablet {
-        left: 0px;
-    }         
+
+    .pane-special.right {
+//        background-color: #325DE6;
+        width: auto !important;
+        left: 0px !important;
+    }    
 }
+
+.browse-showtree {
+    .pane-special.left {
+        display: block !important;
+//        background-color: #FFF;
+        width: 300px !important;
+        right: auto !important;
+    }
+    
+    .pane-special.right {
+//        background-color: #325DE6;
+        left: 300px !important;
+        width: auto !important;
+    }
+}
+
+
+
 
 .button-pos {
     position: absolute;
-    @include transition-duration(.2s);
-    @include phone {        
-        left: $phoneSlideMenuWidth;
-    }
-    @include tablet {
-        left: $tabletSlideMenuWidth;
-    }      
+    @include transition-duration(.2s);   
 }
 
 .object-header-mobile {
     position: relative;
-    @include phone {
-        left: $phoneSlideMenuWidth/10;
-    }
-    @include tablet {
-        left: $tabletSlideMenuWidth/10;
-    }
 }
 
 .mobile-menu-icon {
@@ -91,18 +100,4 @@
     @include phone {
         display: none;
     }
-}
-
-.browse-manage {
-    @include phone {
-        width: $phoneSlideMenuWidth;
-    }
-    @include tablet {
-        width: $tabletSlideMenuWidth;
-    }    
-    @include desktop {
-        min-width: 150px;
-        max-width: 800px;
-        width: 25%;   
-    }   
 }

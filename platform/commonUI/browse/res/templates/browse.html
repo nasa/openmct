@@ -19,12 +19,18 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
+
 <div ng-controller="BrowseController">
-    <div content="jquery-wrapper" class="abs holder-all browse-mode holder-hide" ng-class="treeClass ? 'holder-show' : 'holder-hide'">
+    <div content="jquery-wrapper" class="abs holder-all browse-mode">
         <mct-include key="'topbar-browse'"></mct-include>
-        <div class="holder browse-area s-browse-area abs">
-            <mct-split-pane class='contents abs' anchor='left'>
-                <div class='split-pane-component treeview pane browse-manage createtreebtns'>
+        
+        <!-- WRAPPER CLASS IS HERE-->
+        <!-- NG-CLASS HERE TO SWITCH THE PARENT CLASS FOR pane-special's left and right-->
+        <div class="holder browse-area s-browse-area abs browse-wrapper" ng-class="treeClass ? 'browse-showtree' : 'browse-hidetree'"  anchor='left'>
+            <mct-split-pane class='contents abs'>
+            
+                <!-- TREE MENU: ADDED THE PANE LEFT HERE, similar to .pane.left example-->
+                <div class='split-pane-component treeview pane pane-special left'>  
                     <mct-representation key="'create-button'" mct-object="navigatedObject">
                     </mct-representation>
                     <div class='holder tree-holder abs'>
@@ -34,16 +40,19 @@
                         </mct-representation>
                     </div>
                 </div>
+                
                 <mct-splitter class="mobile-hide"></mct-splitter>
-                <div class='split-pane-component items pane'>
-                    <div class='holder abs hider-check' id='content-area'>
+                
+                    <!-- ITEMS MENU: ADDED THE PANE RIGHT HERE, similar to .pane.right example-->
+                    <div class='split-pane-component items pane pane-special right'>
+                    <div class='holder abs' id='content-area'>
                         <mct-representation mct-object="navigatedObject" key="'browse-object'">
                         </mct-representation>
                     </div>
-                </div>
+                    <div class="s-very-subtle key-properties ui-symbol mobile-menu-icon button-pos" 
+                            ng-click="treeSlide()">m</div>                        
+                </div>                     
             </mct-split-pane>
-            <div class="s-very-subtle key-properties ui-symbol mobile-menu-icon button-pos" 
-                            ng-click="treeSlide()">m</div>        
         </div>
         <mct-include key="'bottombar'"></mct-include>
     </div>
