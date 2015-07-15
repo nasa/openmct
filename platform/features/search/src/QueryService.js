@@ -40,6 +40,7 @@ define(
          * @constructor
          */
         function QueryService($http, objectService, ROOT) {
+            var DEFAULT_MAX_RESULTS = 2048;
             
             /////////////// The following is for non-Elastic Search ///////////////// 
             
@@ -75,14 +76,22 @@ define(
             
             // Search through items for items manually 
             // This is a fallback if other search services aren't avaliable
-            function queryManual(inputID) {
+            function queryManual(inputID, maxResults) {
                 var term,
                     searchResults = [],
-                    itemsLength,
+                    resultsLength,
                     itemModel,
                     itemName,
                     i;
-
+                
+                // Check to see if the user provided a maximum 
+                // number of results to display
+                if (!maxResults) {
+                    // Else, we provide a default value. This is an 
+                    // arbitrary big number. 
+                    maxResults = DEFAULT_MAX_RESULTS;
+                }
+                
                 // Get the user input
                 term = document.getElementById(inputID).value;
                 
@@ -91,10 +100,15 @@ define(
 
                 // Get items list
                 return getItems().then(function (items) {
-                    itemsLength = items.length;
+                    // Keep track of the number of results to display
+                    if (items.length < maxResults) {
+                        resultsLength = items.length;
+                    } else {
+                        resultsLength = maxResults;
+                    }
 
                     // Then filter through the items list
-                    for (i = 0; i < itemsLength; i += 1) {
+                    for (i = 0; i < resultsLength; i += 1) {
                         // Prevent errors from getModel not being defined
                         if (items[i].getModel) {
                             itemModel = items[i].getModel();
@@ -106,8 +120,7 @@ define(
                             }
                         }
                     }
-
-                    //$scope.results = searchResults; // Some redundancy
+                    
                     return searchResults;
                 });
             }
@@ -214,7 +227,7 @@ define(
                 if (!maxResults) {
                     // Else, we provide a default value. This is an 
                     // arbitrary big number. 
-                    maxResults = 2048;
+                    maxResults = DEFAULT_MAX_RESULTS;
                 }
                 
                 // Get the user input 
