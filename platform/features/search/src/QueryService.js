@@ -48,7 +48,7 @@ define(
             
             /////////////// The following is for non-Elastic Search ///////////////// 
             
-            // Recursive helper function for getItems
+            // Recursive helper function for getItems()
             function itemsHelper(children, i) {
                 if (i >= children.length) {
                     // Done!
@@ -67,7 +67,7 @@ define(
             }
             
             // Converts the filetree into a list
-            // Used for queryManual 
+            // Used for queryManual()
             function getItems() {
                 // Aquire My Items (root folder)
                 return objectService.getObjects(['mine']).then(function (objects) {
@@ -85,8 +85,8 @@ define(
              * Notes: 
              *   * The order of the results is not guarenteed.
              *   * A domain object qualifies as a match for a search term if 
-             *     the object's name property contains the search term as a 
-             *     substring. 
+             *     the object's name property contains the exact search term 
+             *     as a substring. 
              *   * Folders are not included in the results.
              *   * Wildcards are not supported. 
              * 
@@ -146,6 +146,7 @@ define(
             /////////////// The following is for Elastic Search /////////////////
             
             // Check to see if the input has any special options
+            // Used by queryElasticsearch()
             function isDefaultInput(searchTerm) {
                 // If the input has quotes, not default
                 if ((searchTerm.substr(0, 1) === '"' && searchTerm.substr(searchTerm.length - 1, 1) === '"') ||
@@ -162,6 +163,7 @@ define(
             }
             
             // Add wildcards to the font and end of each subterm
+            // Used by queryElasticsearch()
             function addWildcards(searchTerm) {
                 return searchTerm.split(' ').map(function (s) {
                     return '*' + s + '*';
@@ -169,6 +171,7 @@ define(
             }
             
             // Add the fuzziness operator to the search term 
+            // Used by queryElasticsearch()
             function addFuzziness(searchTerm, editDistance) {
                 if (!editDistance) {
                     editDistance = '';
@@ -178,10 +181,10 @@ define(
                     return s + '~' + editDistance;
                 }).join(' ');
                 //searchTerm + '~' + editDistance;
-                
             }
             
             // Currently specific to elasticsearch
+            // Used by queryElasticsearch()
             function processSearchTerm(searchTerm) {
                 // Shave any spaces off of the ends of the input
                 while (searchTerm.substr(0, 1) === ' ') {
@@ -193,23 +196,23 @@ define(
                 
                 if (isDefaultInput(searchTerm)) {
                     // Add fuzziness for completeness
-                    searchTerm = addFuzziness(searchTerm);
+                    searchTerm = addFuzziness(searchTerm, 1);
                     
                     // Searching 'name' by default
                     searchTerm = 'name:' + searchTerm;
                 }
                 
-                console.log('processed search term ', searchTerm);
+                //console.log('processed search term ', searchTerm);
                 return searchTerm;
             }
             
             // Processes results from the format that elasticsearch returns to 
             // a list of objects in the format that mct-representation can use. 
+            // Used by queryElasticsearch()
             function processResults(rawResults) {
                 var results = rawResults.data.hits.hits,
                     resultsLength = results.length,
                     ids = [],
-                    //scores = [],
                     i;
                 
                 if (rawResults.data.hits.total > resultsLength) {
@@ -221,14 +224,6 @@ define(
                 for (i = 0; i < resultsLength; i += 1) {
                     ids.push(results[i][ID]);
                 }
-                
-                /*
-                // Get the result objects' scores
-                for (i = 0; i < resultsLength; i += 1) {
-                    scores.push(results[i][SCORE]);
-                }
-                console.log('scores', scores);
-                */
                 
                 // Get the domain objects from their IDs
                 return objectService.getObjects(ids).then(function (objects) {
@@ -256,11 +251,13 @@ define(
              *   term. This is done through querying elasticsearch. 
              * Notes:
              *   * The order of the results is from highest to lowest score,
-             *      as elsaticsearch determines them to be. 
+             *     as elsaticsearch determines them to be. 
              *   * Folders are not included in the results.
              *   * Wildcards are supported. 
              *   * More search details at 
-             *      https://www.elastic.co/guide/en/elasticsearch/reference/current/search-uri-request.html
+             *     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-uri-request.html
+             *   * Fuzziness is used to produce more results that are still
+             *     relevant. (All results within a certain edit distance.)
              * 
              * @param inputID the name of the ID property of the html text 
              *   input where this funcion should find the search term 
