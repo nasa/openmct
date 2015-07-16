@@ -29,7 +29,7 @@ define(function () {
     
     
     function SearchController($scope, searchService, objectService) {
-        $scope.pageLength = 4;
+        $scope.pageLength = 16;
         
         function page(start, howMany) {
             if (!howMany) {

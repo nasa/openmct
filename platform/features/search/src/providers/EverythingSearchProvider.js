@@ -97,20 +97,33 @@ define(
                 return score;
             }
             
+            // Determines if this item can be a valid result for this search term
+            function validResult(item, term) {
+                var itemModel = item.object.getModel(),
+                    itemName = itemModel.name.toLocaleLowerCase(),
+                    itemType = itemModel.type.toLocaleLowerCase();
+                
+                return itemName.includes(term) || itemType.includes(term);
+            }
+            
+            // Determines if this item is a valid type for a search result
+            function validType(item) {
+                var itemModel = item.object.getModel();
+                
+                // Only folders are disallowed
+                return itemModel.type !== "folder";
+            }
+            
             // Filter through a list of searchResults based on a search term 
             function filterResults(results, term, resultsLength) {
                 var searchResults = [],
-                    itemModel,
-                    itemName;
+                    itemModel;
                 
                 for (var i = 0; i < resultsLength; i += 1) {
                     // Prevent errors from getModel not being defined
                     if (results[i].object.getModel) {
-                        itemModel = results[i].object.getModel();
-                        itemName = itemModel.name.toLocaleLowerCase();
-
-                        // Include any matching items, except folders 
-                        if (itemName.includes(term) && itemModel.type !== "folder") {
+                        // Include any items that match the term and are of valid type
+                        if (validResult(results[i], term) && validType(results[i])) {
                             // Score the result
                             score(results[i], term);
                             // Add the result to the result list
