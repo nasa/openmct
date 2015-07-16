@@ -90,16 +90,15 @@ define(
             // merges the results lists so that there are not redundant 
             // results 
             function mergeResults(inputID) {
-                var resultsPromises = [],
-                    mergedResults;
+                var resultsPromises = [];
                 
+                // Get result list promises
                 for (var i = 0; i < providers.length; i += 1) {
                     resultsPromises.push(providers[i].query(inputID));
                 }
                 
-                mergedResults = getPromisedResults(resultsPromises, 0, []);
-                
-                return mergedResults.then(function (c) {
+                // Wait for the promises to fufill
+                return getPromisedResults(resultsPromises, 0, []).then(function (c) {
                     // Get rid of the repeated objects and put in correct order
                     c = filterRepeats(c);
                     c = orderByScore(c);
