@@ -78,7 +78,7 @@
                 height: inherit;
                 overflow-y: hidden;
                 overflow-x: hidden;
-            }         
+            }
         }
         @include phonePortrait {
             width: $phoneMenuSizePortrait !important;
