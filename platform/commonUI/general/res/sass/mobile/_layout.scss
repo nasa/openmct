@@ -136,7 +136,7 @@
 }
 
 .mobile-menu-icon {
-    top: $interiorMargin;
+    display: inline-block;
     @include phone {
         font-size: 125%;
     }
@@ -152,6 +152,13 @@
 .mobile-hide {
     @include phoneandtablet {
         display: none;
+    }
+}
+
+.mobile-text-hide {
+    @include phoneandtablet {
+        width: 0px;
+        overflow:hidden;
     }
 }
 
