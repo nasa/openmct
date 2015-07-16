@@ -53,8 +53,7 @@
             {
                 "provides": "searchService",
                 "type": "aggregator",
-                "implementation": "SearchAggregator.js",
-                "depends": [ "$q" ]
+                "implementation": "SearchAggregator.js"
             }
         ]
     }

@@ -37,7 +37,7 @@ define(
          * @param {SearchProvider[]} providers the search providers to be
          *        aggregated
          */
-        function SearchAggregator($q, providers) {
+        function SearchAggregator(providers) {
             
             function getPromisedResults(resultsPromises, promiseIndex, finalResults) {
                 if (promiseIndex >= resultsPromises.length) {
