@@ -27,7 +27,18 @@
 define(function () {
     "use strict";
     
+    
     function SearchController($scope, searchService, objectService) {
+        $scope.pageLength = 4;
+        
+        function page(start, howMany) {
+            if (!howMany) {
+                howMany = $scope.pageLength;
+            }
+
+            $scope.index = start;
+            $scope.page = $scope.results.slice(start, start + howMany);
+        }
         
         function getResults(inputID) {
             
@@ -37,6 +48,8 @@ define(function () {
             
             searchService.query(inputID).then(function (c) {
                 $scope.results = c;
+                $scope.index = 0;
+                page($scope.index, $scope.pageLength);
             });
         }
         
@@ -51,16 +64,38 @@ define(function () {
                 } else {
                     return false;
                 }
-            }/*,
+            },
             
-            // Get a domain object from its ID
-            getObjectByID: function (id) {
-                return objectService.getObjects([id]).then(function (objects) {
-                    var obj = objects[id];
-                    console.log('get object', obj);
-                    return obj;
-                });
-            }*/
+            // Check to see if there are enough results to be paging them
+            arePaging: function () {
+                return $scope.results.length > $scope.page.length;
+            },
+            
+            canGoBack: function () {
+                return $scope.index > 0;
+            },
+            
+            canGoForward: function () {
+                return ($scope.index + $scope.pageLength) < $scope.results.length;
+            },
+            
+            nextPage: function(howMany) {
+                if (!howMany) {
+                    howMany = $scope.pageLength;
+                }
+                
+                $scope.index = $scope.index + howMany;
+                $scope.page = $scope.results.slice($scope.index, $scope.index + howMany);
+            },
+            
+            previousPage: function(howMany) {
+                if (!howMany) {
+                    howMany = $scope.pageLength;
+                }
+                
+                $scope.index = $scope.index - howMany;
+                $scope.page = $scope.results.slice($scope.index, $scope.index + howMany);
+            }
         };
     }
     return SearchController;

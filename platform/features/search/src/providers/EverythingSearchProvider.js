@@ -89,10 +89,10 @@ define(
             // Very rudimentary 
             function score(item, term) {
                 var name = item.object.getModel().name,
-                    numWordsinName = name.split(' ').length,
-                    numWordsinTerm = term.split(' ').length,
+                    //numWordsinName = name.split(' ').length,
+                    //numWordsinTerm = term.split(' ').length,
                     weight = 1.5,
-                    score = (term.length / name.length)/*(numWordsinTerm / numWordsinName)*/  * weight;
+                    score = (term.length / name.length) * weight;
                 
                 return score;
             }

@@ -55,7 +55,6 @@ define(
                 var ids = [];
                 
                 for (var i = 0; i < results.length; i += 1) {
-                    //if (ids.includes(results[i].id)) {
                     if (ids.indexOf(results[i].id) !== -1) {
                         // If this result's ID is already there, remove the object
                         results.splice(i, 1);
