@@ -92,7 +92,7 @@ define(
                     searchTerm = 'name:' + searchTerm;
                 }
                 
-                console.log('search term ', searchTerm);
+                //console.log('search term ', searchTerm);
                 return searchTerm;
             }
             
@@ -102,6 +102,8 @@ define(
                 var results = rawResults.data.hits.hits,
                     resultsLength = results.length,
                     ids = [],
+                    scores = {},
+                    searchResults = [],
                     i;
                 
                 if (rawResults.data.hits.total > resultsLength) {
@@ -114,24 +116,36 @@ define(
                     ids.push(results[i][ID]);
                 }
                 
+                // Get the result objects' scores
+                for (i = 0; i < resultsLength; i += 1) {
+                    //scores.push(results[i][SCORE]);
+                    scores[ ids[i] ] = results[i][SCORE];
+                }
+                
                 // Get the domain objects from their IDs
                 return objectService.getObjects(ids).then(function (objects) {
-                    var output = [],
-                        id,
+                    var id,
                         j;
                     
+                    // Filter by search term
                     for (j = 0; j < resultsLength; j += 1) {
                         id = ids[j];
                         
                         // Include any item except folders 
                         if (objects[id].getModel) {
                             if (objects[id].getModel().type !== "folder") {
-                                output.push(objects[id]);
+                                // Format the results as searchResult objects
+                                searchResults.push({
+                                    id: id,
+                                    object: objects[id],
+                                    score: scores[id]
+                                });
                             }
                         }
                     }
                     
-                    return output;
+                    //console.log('searchResults (in ES provider)', searchResults);
+                    return searchResults;
                 });
             }
             

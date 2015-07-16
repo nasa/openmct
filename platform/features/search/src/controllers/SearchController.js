@@ -27,15 +27,22 @@
 define(function () {
     "use strict";
     
-    function SearchController($scope, searchService) {
+    function SearchController($scope, searchService, objectService) {
+        
+        function getResults(inputID) {
+            
+            // Later, the search result format will be different
+            // Will need to compile search result list (for this 
+            // result page) here, using pseudo linkedlist searchResult
+            
+            searchService.query(inputID).then(function (c) {
+                $scope.results = c;
+            });
+        }
         
         return {
             // Search the database using the user input of id "searchinput"
-            search: function (inputID) {
-                searchService.query(inputID).then(function (c) {
-                    $scope.results = c;
-                });
-            },
+            search: getResults,
             
             // Check to see if there are any search results to display.
             areResults: function () {
@@ -44,7 +51,16 @@ define(function () {
                 } else {
                     return false;
                 }
-            }
+            }/*,
+            
+            // Get a domain object from its ID
+            getObjectByID: function (id) {
+                return objectService.getObjects([id]).then(function (objects) {
+                    var obj = objects[id];
+                    console.log('get object', obj);
+                    return obj;
+                });
+            }*/
         };
     }
     return SearchController;

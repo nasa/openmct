@@ -67,8 +67,20 @@ define(
                 // Aquire My Items (root folder)
                 return objectService.getObjects(['mine']).then(function (objects) {
                     // Get all of its descendents
-                    return itemsHelper([objects.mine], 0).then(function (c) {
-                        return c;
+                    return itemsHelper([objects.mine], 0).then(function (items) {
+                        // Turn them into searchResult objects (object, id, and score)
+                        var searchResultItems = [];
+                        
+                        for (var i = 0; i < items.length; i += 1) {
+                            searchResultItems.push({
+                                id: items[i].getId(),
+                                object: items[i],
+                                score: 1 // TODO: Find how to score these properly
+                            });
+                        }
+                        
+                        //console.log('searchResultItems (in Everything)', searchResultItems);
+                        return searchResultItems;
                     });
                 });
             }
@@ -112,10 +124,10 @@ define(
                 term = term.toLocaleLowerCase();
 
                 // Get items list
-                return getItems().then(function (items) {
+                return getItems().then(function (searchResultItems) {
                     // Keep track of the number of results to display
-                    if (items.length < maxResults) {
-                        resultsLength = items.length;
+                    if (searchResultItems.length < maxResults) {
+                        resultsLength = searchResultItems.length;
                     } else {
                         resultsLength = maxResults;
                     }
@@ -123,17 +135,18 @@ define(
                     // Then filter through the items list
                     for (i = 0; i < resultsLength; i += 1) {
                         // Prevent errors from getModel not being defined
-                        if (items[i].getModel) {
-                            itemModel = items[i].getModel();
+                        if (searchResultItems[i].object.getModel) {
+                            itemModel = searchResultItems[i].object.getModel();
                             itemName = itemModel.name.toLocaleLowerCase();
 
                             // Include any matching items, except folders 
                             if (itemName.includes(term) && itemModel.type !== "folder") {
-                                searchResults.push(items[i]);
+                                searchResults.push(searchResultItems[i]);
                             }
                         }
                     }
                     
+                    //console.log('filtered searchResults (in Everything)', searchResults);
                     return searchResults;
                 });
             }

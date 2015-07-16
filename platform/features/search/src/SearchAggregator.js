@@ -50,12 +50,48 @@ define(
                 }
             }
             
+            // Remove extra objects that have the same ID 
+            function filterRepeats(results) {
+                var ids = [];
+                
+                for (var i = 0; i < results.length; i += 1) {
+                    //if (ids.includes(results[i].id)) {
+                    if (ids.indexOf(results[i].id) !== -1) {
+                        // If this result's ID is already there, remove the object
+                        results.splice(i, 1);
+                        // Reduce loop index because we shortened the array 
+                        i -= 1;
+                    } else {
+                        // Otherwise add the ID to the list of the ones we have seen 
+                        ids.push(results[i].id);
+                    }
+                }
+                
+                return results;
+            }
+            
+            // Order the objects from highest to lowest score in the array
+            function orderByScore(results) {
+                
+                results = results.sort(function (a, b) {
+                    if (a.score > b.score) {
+                        return -1;
+                    } else if (b.score < a.score) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+                
+                return results;
+            }
+            
             // Calls the searches of each of the providers, then 
             // merges the results lists so that there are not redundant 
             // results 
             function mergeResults(inputID) {
                 var resultsPromises = [],
-                    mergedResults = [];
+                    mergedResults;
                 
                 for (var i = 0; i < providers.length; i += 1) {
                     resultsPromises.push(providers[i].query(inputID));
@@ -63,9 +99,10 @@ define(
                 
                 mergedResults = getPromisedResults(resultsPromises, 0, []);
                 
-                //return mergedResults;
                 return mergedResults.then(function (c) {
-                    //console.log('returning ', c);
+                    // Get rid of the repeated objects and put in correct order
+                    c = filterRepeats(c);
+                    c = orderByScore(c);
                     return c;
                 });
             }
