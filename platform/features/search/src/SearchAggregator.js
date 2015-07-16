@@ -22,7 +22,7 @@
 /*global define*/
 
 /**
- * Module defining ModelAggregator. Created by vwoeltje on 11/7/14.
+ * Module defining SearchAggregator. Created by shale on 07/16/2015.
  */
 define(
     [],
@@ -30,15 +30,19 @@ define(
         "use strict";
 
         /**
-         * Allows multiple services which provide models for domain objects
+         * Allows multiple services which provide search functionality 
          * to be treated as one.
          *
          * @constructor
-         * @param {ModelProvider[]} providers the model providers to be
+         * @param {SearchProvider[]} providers the search providers to be
          *        aggregated
          */
-        function ModelAggregator($q, providers) {
-
+        function SearchAggregator($q, providers) {
+            return {
+                query: providers[0].query
+            };
+            
+/*
             // Pick a domain object model to use, favoring the one
             // with the most recent timestamp
             function pick(a, b) {
@@ -78,6 +82,7 @@ define(
                  *          where keys are object identifiers and values
                  *          are object models.
                  */
+/*
                 getModels: function (ids) {
                     return $q.all(providers.map(function (provider) {
                         return provider.getModels(ids);
@@ -86,8 +91,9 @@ define(
                     });
                 }
             };
+*/
         }
 
-        return ModelAggregator;
+        return SearchAggregator;
     }
 );

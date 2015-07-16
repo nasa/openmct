@@ -37,11 +37,24 @@
                 "uses": [ "composition" ]
             }
         ],
-        "services": [
+        "components": [
             {
-                "key": "searchService",
-                "implementation": "SearchService.js",
+                "provides": "searchService",
+                "type": "provider",
+                "implementation": "providers/ElasticsearchSearchProvider.js",
                 "depends": [ "$http", "objectService", "ELASTIC_ROOT" ]
+            },
+            {
+                "provides": "searchService",
+                "type": "provider",
+                "implementation": "providers/EverythingSearchProvider.js",
+                "depends": [ "objectService" ]
+            },
+            {
+                "provides": "searchService",
+                "type": "aggregator",
+                "implementation": "SearchAggregator.js",
+                "depends": [ "$q" ]
             }
         ]
     }
