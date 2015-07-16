@@ -24,7 +24,6 @@
 
 .browse-wrapper,
 .pane-special {
-//    @include transition-duration(.2s);
     @include phone {
         position: absolute;
         left: 0; top: 0;
@@ -33,6 +32,7 @@
         height: 100%;
     }
     @include tablet {
+        @include transition-duration(.2s);
         position: absolute;
         left: 0; top: 0;
         right: 0; left: 0;
@@ -41,8 +41,10 @@
     }
 }
 
-$phoneMenuSize: 80%;
-$tabletMenuSize: 60%;
+$phoneMenuSizePortrait: 80%;
+$phoneMenuSizeLandscape: 30%;
+$tabletMenuSizePortrait: 40%;
+$tabletMenuSizeLandscape: 25%;
 $desktopMenuSize: 25%;
 
 
@@ -56,23 +58,19 @@ $desktopMenuSize: 25%;
 
 .browse-hidetree {
     .pane-special.left {
-        @include phone {
+        @include phoneandtablet {
             @include transition-duration(.2s);
-            display: none !important;
-        }
-        @include tablet {
-            @include transition-duration(.2s);
-            display: none !important;
+            width: 0px !important;
+            right: auto !important;
+            
+            .createBtnPos {
+                display: none;
+            }            
         }
     }
 
     .pane-special.right {       
-        @include phone {
-            @include transition-duration(.2s);
-            width: auto !important;
-            left: 0px !important;
-        }
-        @include tablet {
+        @include phoneandtablet {
             @include transition-duration(.2s);
             width: auto !important;
             left: 0px !important;
@@ -82,39 +80,58 @@ $desktopMenuSize: 25%;
 
 .browse-showtree {
     .pane-special.left {      
-        @include phone {
+        @include phonePortrait {
             @include transition-duration(.2s);
             display: block !important;
-            width: $phoneMenuSize !important;
+            width: $phoneMenuSizePortrait !important;
             right: auto !important;
         }
-        @include tablet {
+        @include phoneLandscape {
             @include transition-duration(.2s);
             display: block !important;
-            width: $tabletMenuSize !important;
+            width: $phoneMenuSizeLandscape !important;
+            right: auto !important;
+        }
+        @include tabletPortrait {
+            @include transition-duration(.2s);
+            display: block !important;
+            width: $tabletMenuSizePortrait !important;
+            right: auto !important;
+        }
+        @include tabletLandscape {
+            @include transition-duration(.2s);
+            display: block !important;
+            width: $tabletMenuSizeLandscape !important;
             right: auto !important;
         }
     }
     
     .pane-special.right {
-        @include phone {
+        @include phonePortrait {
             @include transition-duration(.2s);
-            left: $phoneMenuSize !important;
+            left: $phoneMenuSizePortrait !important;
             width: auto !important;
         }
-        @include tablet {
+        @include phoneLandscape {
             @include transition-duration(.2s);
-            left: $tabletMenuSize !important;
+            left: $phoneMenuSizeLandscape !important;
+            width: auto !important;
+        }
+        @include tabletPortrait {
+            @include transition-duration(.2s);
+            left: $tabletMenuSizePortrait !important;
+            width: auto !important;
+        }
+        @include tabletLandscape {
+            @include transition-duration(.2s);
+            left: $tabletMenuSizeLandscape !important;
             width: auto !important;
         }
     }
 }
 
 .mobile-splitter {
-    @include phone {
-        display: none;
-    }
-    @include tablet {
+    @include phoneandtablet {
         display: none;
     }
 }
@@ -127,11 +144,7 @@ $desktopMenuSize: 25%;
 }
 
 .object-header-mobile {
-    @include phone {
-        position: relative;
-        left: 30px;
-    }
-    @include tablet {
+    @include phoneandtablet {
         position: relative;
         left: 30px;
     }
@@ -152,10 +165,7 @@ $desktopMenuSize: 25%;
 
 
 .mobile-hide {
-    @include phone {
-        display: none;
-    }
-    @include tablet {
+    @include phoneandtablet {
         display: none;
     }
 }

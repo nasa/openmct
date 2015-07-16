@@ -63,6 +63,17 @@
     }
 }
 
+@mixin phoneandtablet {
+    @media #{$phonePortrait},
+           #{$phoneLandscape},
+           #{$phoneLandscapeEmu},
+           #{$tabletPortrait},
+           #{$tabletLandscape},
+           #{$tabletLandscapeEmu}{
+        @content
+    }
+}
+
 @mixin desktop {
     @media #{$desktopPortrait},
            #{$desktopLandscape} {
