@@ -24,42 +24,100 @@
 
 .browse-wrapper,
 .pane-special {
-    @include transition-duration(.2s);
-    position: absolute;
-    left: 0; top: 0;
-    right: 0; left: 0;
-    white-space: nowrap;
-    height: 100%;
+//    @include transition-duration(.2s);
+    @include phone {
+        position: absolute;
+        left: 0; top: 0;
+        right: 0; left: 0;
+        white-space: nowrap;
+        height: 100%;
+    }
+    @include tablet {
+        position: absolute;
+        left: 0; top: 0;
+        right: 0; left: 0;
+        white-space: nowrap;
+        height: 100%;        
+    }
+}
+
+$phoneMenuSize: 80%;
+$tabletMenuSize: 60%;
+$desktopMenuSize: 25%;
+
+
+.desktop-browse {
+    @include desktop {
+        min-width: 150px;
+        max-width: 800px;
+        width: $desktopMenuSize;   
+    }   
 }
 
 .browse-hidetree {
     .pane-special.left {
-        @include transition-duration(.2s);
-        display: none !important;
+        @include phone {
+            @include transition-duration(.2s);
+            display: none !important;
+        }
+        @include tablet {
+            @include transition-duration(.2s);
+            display: none !important;
+        }
     }
 
-    .pane-special.right {
-        @include transition-duration(.2s);
-        width: auto !important;
-        left: 0px !important;
+    .pane-special.right {       
+        @include phone {
+            @include transition-duration(.2s);
+            width: auto !important;
+            left: 0px !important;
+        }
+        @include tablet {
+            @include transition-duration(.2s);
+            width: auto !important;
+            left: 0px !important;
+        }
     }    
 }
 
 .browse-showtree {
-    .pane-special.left {
-        @include transition-duration(.2s);
-        display: block !important;
-        width: 300px !important;
-        right: auto !important;
+    .pane-special.left {      
+        @include phone {
+            @include transition-duration(.2s);
+            display: block !important;
+            width: $phoneMenuSize !important;
+            right: auto !important;
+        }
+        @include tablet {
+            @include transition-duration(.2s);
+            display: block !important;
+            width: $tabletMenuSize !important;
+            right: auto !important;
+        }
     }
     
     .pane-special.right {
-        @include transition-duration(.2s);
-        left: 300px !important;
-        width: auto !important;
+        @include phone {
+            @include transition-duration(.2s);
+            left: $phoneMenuSize !important;
+            width: auto !important;
+        }
+        @include tablet {
+            @include transition-duration(.2s);
+            left: $tabletMenuSize !important;
+            width: auto !important;
+        }
     }
 }
 
+.mobile-splitter {
+    @include phone {
+        display: none;
+    }
+    @include tablet {
+        display: none;
+    }
+}
 
 
 
@@ -69,8 +127,14 @@
 }
 
 .object-header-mobile {
-    position: relative;
-    left: 30px;
+    @include phone {
+        position: relative;
+        left: 30px;
+    }
+    @include tablet {
+        position: relative;
+        left: 30px;
+    }
 }
 
 .mobile-menu-icon {
@@ -85,6 +149,7 @@
         display: none;
     }       
 }
+
 
 .mobile-hide {
     @include phone {

@@ -24,7 +24,20 @@
 @mixin phone {
     @media #{$phonePortrait},
            #{$phoneLandscape},
-           #{$phoneLandscapeEmu}{
+           #{$phoneLandscapeEmu} {
+        @content
+    }
+}
+
+@mixin phonePortrait {
+    @media #{$phonePortrait} {
+        @content
+    }
+}
+
+@mixin phoneLandscape {
+    @media #{$phoneLandscape},
+           #{$phoneLandscapeEmu} {
         @content
     }
 }
@@ -32,7 +45,20 @@
 @mixin tablet {
     @media #{$tabletPortrait},
            #{$tabletLandscape},
-           #{$tabletLandscapeEmu}{
+           #{$tabletLandscapeEmu} {
+        @content
+    }
+}
+
+@mixin tabletPortrait {
+    @media #{$tabletPortrait} {
+        @content
+    }
+}
+
+@mixin tabletLandscape {
+    @media #{$tabletLandscape},
+           #{$tabletLandscapeEmu} {
         @content
     }
 }

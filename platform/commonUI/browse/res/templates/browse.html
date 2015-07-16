@@ -26,11 +26,11 @@
         
         <!-- WRAPPER CLASS IS HERE-->
         <!-- NG-CLASS HERE TO SWITCH THE PARENT CLASS FOR pane-special's left and right-->
-        <div class="holder browse-area s-browse-area abs browse-wrapper" ng-class="treeClass ? 'browse-showtree' : 'browse-hidetree'"  anchor='left'>
-            <mct-split-pane class='contents abs'>
+        <div class="holder browse-area s-browse-area abs browse-wrapper" ng-class="treeClass ? 'browse-showtree' : 'browse-hidetree'">
+            <mct-split-pane class='contents abs' anchor='left'>
             
                 <!-- TREE MENU: ADDED THE PANE LEFT HERE, similar to .pane.left example-->
-                <div class='split-pane-component treeview pane pane-special left'>  
+                <div class='split-pane-component treeview pane pane-special left desktop-browse'>  
                     <mct-representation key="'create-button'" mct-object="navigatedObject">
                     </mct-representation>
                     <div class='holder tree-holder abs'>
@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 
-                <mct-splitter class="mobile-hide"></mct-splitter>
+                <mct-splitter class="mobile-splitter"></mct-splitter>
                 
                     <!-- ITEMS MENU: ADDED THE PANE RIGHT HERE, similar to .pane.right example-->
                     <div class='split-pane-component items pane pane-special right'>
