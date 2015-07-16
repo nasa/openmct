@@ -40,7 +40,7 @@ define(function () {
             $scope.page = $scope.results.slice(start, start + howMany);
         }
         
-        function getResults(inputID) {
+        function search(inputID) {
             
             // Later, the search result format will be different
             // Will need to compile search result list (for this 
@@ -55,7 +55,7 @@ define(function () {
         
         return {
             // Search the database using the user input of id "searchinput"
-            search: getResults,
+            search: search,
             
             // Check to see if there are any search results to display.
             areResults: function () {
@@ -71,15 +71,18 @@ define(function () {
                 return $scope.results.length > $scope.page.length;
             },
             
+            // Check to see if are items such that we can go back a page 
             canGoBack: function () {
                 return $scope.index > 0;
             },
             
+            // Check to see if are items such that we can go forward a page 
             canGoForward: function () {
                 return ($scope.index + $scope.pageLength) < $scope.results.length;
             },
             
-            nextPage: function(howMany) {
+            // Change the items in scope to be the ones in the next page
+            nextPage: function (howMany) {
                 if (!howMany) {
                     howMany = $scope.pageLength;
                 }
@@ -88,7 +91,8 @@ define(function () {
                 $scope.page = $scope.results.slice($scope.index, $scope.index + howMany);
             },
             
-            previousPage: function(howMany) {
+            // Change the items in scope to be the ones in the previous page
+            previousPage: function (howMany) {
                 if (!howMany) {
                     howMany = $scope.pageLength;
                 }
