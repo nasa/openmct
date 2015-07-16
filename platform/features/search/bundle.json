@@ -14,13 +14,13 @@
         "controllers": [ 
             {
                 "key": "SearchController",
-                "implementation": "SearchController.js",
-                "depends": [ "$scope", "queryService" ]
+                "implementation": "controllers/SearchController.js",
+                "depends": [ "$scope", "searchService" ]
             },
             {
                 "key": "SearchbarController",
-                "implementation": "SearchbarController.js",
-                "depends": [ "$scope", "queryService" ]
+                "implementation": "controllers/SearchbarController.js",
+                "depends": [ "$scope", "searchService" ]
             }
         ],
         "templates": [
@@ -39,8 +39,8 @@
         ],
         "services": [
             {
-                "key": "queryService",
-                "implementation": "QueryService.js",
+                "key": "searchService",
+                "implementation": "SearchService.js",
                 "depends": [ "$http", "objectService", "ELASTIC_ROOT" ]
             }
         ]

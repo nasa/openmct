@@ -43,7 +43,7 @@ define(
          *   elasticsearch). 
          * @constructor
          */
-        function QueryService($http, objectService, ROOT) {
+        function SearchService($http, objectService, ROOT) {
             var DEFAULT_MAX_RESULTS = 100;
             
             /////////////// The following is for non-Elastic Search ///////////////// 
@@ -286,6 +286,6 @@ define(
             };
         }
 
-        return QueryService;
+        return SearchService;
     }
 );

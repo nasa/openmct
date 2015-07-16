@@ -22,17 +22,17 @@
 /*global define*/
 
 /**
- * Module defining SearchController. Created by shale on 07/08/2015.
+ * Module defining SearchbarController. Created by shale on 07/15/2015.
  */
 define(function () {
     "use strict";
     
-    function SearchController($scope, queryService) {
+    function SearchbarController($scope, searchService) {
         
         return {
             // Search the database using the user input of id "searchinput"
             search: function (inputID) {
-                queryService.query(inputID).then(function (c) {
+                searchService.query(inputID).then(function (c) {
                     $scope.results = c;
                 });
             },
@@ -47,5 +47,5 @@ define(function () {
             }
         };
     }
-    return SearchController;
+    return SearchbarController;
 });
