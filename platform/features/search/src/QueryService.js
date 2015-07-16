@@ -147,15 +147,7 @@ define(
             
             // Check to see if the input has any special options
             // Used by queryElasticsearch()
-            function isDefaultInput(searchTerm) {
-                // If the input has quotes, not default
-                /*
-                if ((searchTerm.substr(0, 1) === '"' && searchTerm.substr(searchTerm.length - 1, 1) === '"') ||
-                        (searchTerm.substr(0, 1) === "'" && searchTerm.substr(searchTerm.length - 1, 1) === "'")) {
-                    return false;
-                }
-                */
-                
+            function isDefaultFormat(searchTerm) {
                 // If the input has a property option, not default
                 if (searchTerm.includes('name:') || searchTerm.includes('type:')) {
                     return false;
@@ -192,7 +184,7 @@ define(
                     searchTerm = searchTerm.substring(0, searchTerm.length - 1);
                 }
                 
-                if (isDefaultInput(searchTerm)) {
+                if (isDefaultFormat(searchTerm)) {
                     // Add fuzziness for completeness
                     searchTerm = addFuzziness(searchTerm);
                     
@@ -252,10 +244,10 @@ define(
              *     as elsaticsearch determines them to be. 
              *   * Folders are not included in the results.
              *   * Wildcards are supported. 
-             *   * More search details at 
-             *     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-uri-request.html
              *   * Fuzziness is used to produce more results that are still
              *     relevant. (All results within a certain edit distance.)
+             *   * More search details at 
+             *     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-uri-request.html
              * 
              * @param inputID the name of the ID property of the html text 
              *   input where this funcion should find the search term 
