@@ -67,5 +67,8 @@ $desktopPortrait: "screen and #{$desktopPortraitCheck}";
 $desktopLandscape: "screen and #{$desktopLanscapeCheck}";
 
 /************************** DEVICE PARAMETERS FOR MENUS */
-$phoneSlideMenuWidth: $phoMaxW/2;
-$tabletSlideMenuWidth: $tabMaxW/2;
+$phoneMenuSizePortrait: 80%;
+$phoneMenuSizeLandscape: 30%;
+$tabletMenuSizePortrait: 40%;
+$tabletMenuSizeLandscape: 25%;
+$desktopMenuSize: 25%;

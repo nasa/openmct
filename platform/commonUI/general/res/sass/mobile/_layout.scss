@@ -33,12 +33,6 @@
     }
 }
 
-$phoneMenuSizePortrait: 80%;
-$phoneMenuSizeLandscape: 30%;
-$tabletMenuSizePortrait: 40%;
-$tabletMenuSizeLandscape: 25%;
-$desktopMenuSize: 25%;
-
 
 .desktop-browse {
     @include desktop {
@@ -56,7 +50,8 @@ $desktopMenuSize: 25%;
             right: auto !important;
             
             .createBtnPos {
-                display: none;
+                overflow-y: hidden;
+                overflow-x: hidden;
             }            
         }
     }
@@ -76,6 +71,11 @@ $desktopMenuSize: 25%;
             @include transition-duration(.2s);
             display: block !important;
             right: auto !important;
+            
+            .createBtnPos {
+                overflow-y: hidden;
+                overflow-x: hidden;
+            }                
         }
         @include phonePortrait {
             width: $phoneMenuSizePortrait !important;
