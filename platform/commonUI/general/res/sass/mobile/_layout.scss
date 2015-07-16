@@ -59,7 +59,7 @@
     }
 
     .pane-special.right {       
-        @include phoneandtablet {
+        @include phoneandtablet {         
             @include slMenuTransitions;
             width: auto !important;
             left: 0px !important;
@@ -93,7 +93,6 @@
             width: $tabletMenuSizeLandscape !important;
         }
     }
-    
     .pane-special.right {
         @include phoneandtablet {
             @include slMenuTransitions;
@@ -123,8 +122,10 @@
 
 
 .button-pos {
-    position: absolute;
-    @include slMenuTransitions;
+    @include phoneandtablet {
+        position: absolute;
+        @include slMenuTransitions;
+    }
 }
 
 .object-header-mobile {
