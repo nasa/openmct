@@ -31,16 +31,16 @@
             
                 <!-- TREE MENU: ADDED THE PANE LEFT HERE, similar to .pane.left example-->
                 <div class='split-pane-component treeview pane pane-special left desktop-browse'>  
-                     <div class='createBtnPos'>
-                        <mct-representation key="'create-button'" mct-object="navigatedObject">
-                        </mct-representation>
-                    </div>
                     <div class='holder tree-holder abs'>
                         <mct-representation key="'tree'"
                                             mct-object="domainObject"
                                             ng-model="treeModel">
                         </mct-representation>
                     </div>
+                     <div class='createBtnPos'>
+                        <mct-representation key="'create-button'" mct-object="navigatedObject">
+                        </mct-representation>
+                    </div>                    
                 </div>
                 
                 <mct-splitter class="mobile-splitter"></mct-splitter>

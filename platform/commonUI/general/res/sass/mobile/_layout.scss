@@ -42,10 +42,12 @@
     }   
 }
 
+
+
 .browse-hidetree {
     .pane-special.left {
         @include phoneandtablet {
-            @include transition-duration(.2s);
+            @include slMenuTransitions;
             width: 0px !important;
             right: auto !important;
             
@@ -58,7 +60,7 @@
 
     .pane-special.right {       
         @include phoneandtablet {
-            @include transition-duration(.2s);
+            @include slMenuTransitions;
             width: auto !important;
             left: 0px !important;
         }
@@ -68,14 +70,15 @@
 .browse-showtree {
     .pane-special.left {
         @include phoneandtablet {
-            @include transition-duration(.2s);
+            @include slMenuTransitions;
             display: block !important;
             right: auto !important;
             
             .createBtnPos {
+                height: inherit;
                 overflow-y: hidden;
                 overflow-x: hidden;
-            }                
+            }         
         }
         @include phonePortrait {
             width: $phoneMenuSizePortrait !important;
@@ -93,8 +96,8 @@
     
     .pane-special.right {
         @include phoneandtablet {
-            @include transition-duration(.2s);
-            width: auto !important;   
+            @include slMenuTransitions;
+            width: auto !important;
         }
         @include phonePortrait {
             left: $phoneMenuSizePortrait !important;
@@ -121,7 +124,7 @@
 
 .button-pos {
     position: absolute;
-    @include transition-duration(.2s);
+    @include slMenuTransitions;
 }
 
 .object-header-mobile {

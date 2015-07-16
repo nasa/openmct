@@ -80,3 +80,8 @@
         @content
     }
 }
+
+@mixin slMenuTransitions {
+    @include transition-duration(.5s);
+    transition-timing-function: ease;
+}
