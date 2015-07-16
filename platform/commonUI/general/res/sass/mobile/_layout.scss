@@ -24,20 +24,12 @@
 
 .browse-wrapper,
 .pane-special {
-    @include phone {
+    @include phoneandtablet {
         position: absolute;
         left: 0; top: 0;
         right: 0; left: 0;
         white-space: nowrap;
         height: 100%;
-    }
-    @include tablet {
-        @include transition-duration(.2s);
-        position: absolute;
-        left: 0; top: 0;
-        right: 0; left: 0;
-        white-space: nowrap;
-        height: 100%;        
     }
 }
 
@@ -79,53 +71,42 @@ $desktopMenuSize: 25%;
 }
 
 .browse-showtree {
-    .pane-special.left {      
-        @include phonePortrait {
+    .pane-special.left {
+        @include phoneandtablet {
             @include transition-duration(.2s);
             display: block !important;
-            width: $phoneMenuSizePortrait !important;
             right: auto !important;
+        }
+        @include phonePortrait {
+            width: $phoneMenuSizePortrait !important;
         }
         @include phoneLandscape {
-            @include transition-duration(.2s);
-            display: block !important;
             width: $phoneMenuSizeLandscape !important;
-            right: auto !important;
         }
         @include tabletPortrait {
-            @include transition-duration(.2s);
-            display: block !important;
             width: $tabletMenuSizePortrait !important;
-            right: auto !important;
         }
         @include tabletLandscape {
-            @include transition-duration(.2s);
-            display: block !important;
             width: $tabletMenuSizeLandscape !important;
-            right: auto !important;
         }
     }
     
     .pane-special.right {
-        @include phonePortrait {
+        @include phoneandtablet {
             @include transition-duration(.2s);
+            width: auto !important;   
+        }
+        @include phonePortrait {
             left: $phoneMenuSizePortrait !important;
-            width: auto !important;
         }
         @include phoneLandscape {
-            @include transition-duration(.2s);
             left: $phoneMenuSizeLandscape !important;
-            width: auto !important;
         }
         @include tabletPortrait {
-            @include transition-duration(.2s);
             left: $tabletMenuSizePortrait !important;
-            width: auto !important;
         }
         @include tabletLandscape {
-            @include transition-duration(.2s);
             left: $tabletMenuSizeLandscape !important;
-            width: auto !important;
         }
     }
 }
