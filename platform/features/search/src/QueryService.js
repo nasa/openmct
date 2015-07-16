@@ -149,10 +149,12 @@ define(
             // Used by queryElasticsearch()
             function isDefaultInput(searchTerm) {
                 // If the input has quotes, not default
+                /*
                 if ((searchTerm.substr(0, 1) === '"' && searchTerm.substr(searchTerm.length - 1, 1) === '"') ||
                         (searchTerm.substr(0, 1) === "'" && searchTerm.substr(searchTerm.length - 1, 1) === "'")) {
                     return false;
                 }
+                */
                 
                 // If the input has a property option, not default
                 if (searchTerm.includes('name:') || searchTerm.includes('type:')) {
@@ -170,7 +172,12 @@ define(
                 }
                 
                 return searchTerm.split(' ').map(function (s) {
-                    return s + '~' + editDistance;
+                    if (s.includes('"')) {
+                        console.log('true');
+                        return s;
+                    } else {
+                        return s + '~' + editDistance;
+                    }
                 }).join(' ');
             }
             
@@ -187,12 +194,13 @@ define(
                 
                 if (isDefaultInput(searchTerm)) {
                     // Add fuzziness for completeness
-                    searchTerm = addFuzziness(searchTerm, 2);
+                    searchTerm = addFuzziness(searchTerm);
                     
                     // Searching 'name' by default
                     searchTerm = 'name:' + searchTerm;
                 }
                 
+                console.log('search term ', searchTerm);
                 return searchTerm;
             }
             
