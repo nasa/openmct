@@ -76,7 +76,7 @@ define(
                 results = results.sort(function (a, b) {
                     if (a.score > b.score) {
                         return -1;
-                    } else if (b.score < a.score) {
+                    } else if (b.score > a.score) {
                         return 1;
                     } else {
                         return 0;

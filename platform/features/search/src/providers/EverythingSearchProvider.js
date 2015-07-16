@@ -75,7 +75,7 @@ define(
                             searchResultItems.push({
                                 id: items[i].getId(),
                                 object: items[i],
-                                score: 1 // TODO: Find how to score these properly
+                                score: 0 // Assign actual score when filtering for term
                             });
                         }
                         
@@ -83,6 +83,43 @@ define(
                         return searchResultItems;
                     });
                 });
+            }
+            
+            // Generate a score for an item based on its similarity to a search term
+            // Very rudimentary 
+            function score(item, term) {
+                var name = item.object.getModel().name,
+                    numWordsinName = name.split(' ').length,
+                    numWordsinTerm = term.split(' ').length,
+                    weight = 1.5,
+                    score = (term.length / name.length)/*(numWordsinTerm / numWordsinName)*/  * weight;
+                
+                return score;
+            }
+            
+            // Filter through a list of searchResults based on a search term 
+            function filterResults(results, term, resultsLength) {
+                var searchResults = [],
+                    itemModel,
+                    itemName;
+                
+                for (var i = 0; i < resultsLength; i += 1) {
+                    // Prevent errors from getModel not being defined
+                    if (results[i].object.getModel) {
+                        itemModel = results[i].object.getModel();
+                        itemName = itemModel.name.toLocaleLowerCase();
+
+                        // Include any matching items, except folders 
+                        if (itemName.includes(term) && itemModel.type !== "folder") {
+                            // Score the result
+                            score(results[i], term);
+                            // Add the result to the result list
+                            searchResults.push(results[i]);
+                        }
+                    }
+                }
+                
+                return searchResults;
             }
             
             /**
@@ -105,10 +142,7 @@ define(
             function queryManual(inputID, maxResults) {
                 var term,
                     searchResults = [],
-                    resultsLength,
-                    itemModel,
-                    itemName,
-                    i;
+                    resultsLength;
                 
                 // Check to see if the user provided a maximum 
                 // number of results to display
@@ -133,18 +167,7 @@ define(
                     }
 
                     // Then filter through the items list
-                    for (i = 0; i < resultsLength; i += 1) {
-                        // Prevent errors from getModel not being defined
-                        if (searchResultItems[i].object.getModel) {
-                            itemModel = searchResultItems[i].object.getModel();
-                            itemName = itemModel.name.toLocaleLowerCase();
-
-                            // Include any matching items, except folders 
-                            if (itemName.includes(term) && itemModel.type !== "folder") {
-                                searchResults.push(searchResultItems[i]);
-                            }
-                        }
-                    }
+                    searchResults = filterResults(searchResultItems, term, resultsLength);
                     
                     //console.log('filtered searchResults (in Everything)', searchResults);
                     return searchResults;
