@@ -38,60 +38,41 @@ define(
          *        aggregated
          */
         function SearchAggregator($q, providers) {
-            return {
-                query: providers[0].query
-            };
             
-/*
-            // Pick a domain object model to use, favoring the one
-            // with the most recent timestamp
-            function pick(a, b) {
-                var aModified = (a || {}).modified || Number.NEGATIVE_INFINITY,
-                    bModified = (b || {}).modified || Number.NEGATIVE_INFINITY;
-                return (aModified > bModified) ? a : (b || a);
-            }
-
-            // Merge results from multiple providers into one
-            // large result object.
-            function mergeModels(provided, ids) {
-                var result = {};
-                ids.forEach(function (id) {
-                    provided.forEach(function (models) {
-                        if (models[id]) {
-                            result[id] = pick(result[id], models[id]);
-                        }
-                    });
-                });
-                return result;
-            }
-
-            return {
-                /**
-                 * Get models with the specified identifiers.
-                 *
-                 * This will invoke the `getModels()` method of all providers
-                 * given at constructor-time, and aggregate the result into
-                 * one object.
-                 *
-                 * Note that the returned object may contain a subset or a
-                 * superset of the models requested.
-                 *
-                 * @param {string[]} ids an array of domain object identifiers
-                 * @returns {Promise.<object>} a promise for  an object
-                 *          containing key-value pairs,
-                 *          where keys are object identifiers and values
-                 *          are object models.
-                 */
-/*
-                getModels: function (ids) {
-                    return $q.all(providers.map(function (provider) {
-                        return provider.getModels(ids);
-                    })).then(function (provided) {
-                        return mergeModels(provided, ids);
+            function getPromisedResults(resultsPromises, promiseIndex, finalResults) {
+                if (promiseIndex >= resultsPromises.length) {
+                    return finalResults;
+                } else {
+                    return resultsPromises[promiseIndex].then(function (results) {
+                        finalResults = finalResults.concat(results);
+                        return getPromisedResults(resultsPromises, promiseIndex + 1, finalResults);
                     });
                 }
+            }
+            
+            // Calls the searches of each of the providers, then 
+            // merges the results lists so that there are not redundant 
+            // results 
+            function mergeResults(inputID) {
+                var resultsPromises = [],
+                    mergedResults = [];
+                
+                for (var i = 0; i < providers.length; i += 1) {
+                    resultsPromises.push(providers[i].query(inputID));
+                }
+                
+                mergedResults = getPromisedResults(resultsPromises, 0, []);
+                
+                //return mergedResults;
+                return mergedResults.then(function (c) {
+                    //console.log('returning ', c);
+                    return c;
+                });
+            }
+            
+            return {
+                query: mergeResults
             };
-*/
         }
 
         return SearchAggregator;

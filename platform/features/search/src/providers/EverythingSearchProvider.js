@@ -28,7 +28,9 @@ define(
     [],
     function () {
         "use strict";
-
+        
+        var DEFAULT_MAX_RESULTS = 100;
+        
         /**
          * A model service which reads domain object models from an external
          * persistence service.
