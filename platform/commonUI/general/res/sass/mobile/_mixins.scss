@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// NOTE: Mixins for devices
+// Phones in any orientation
 @mixin phone {
     @media #{$phonePortrait},
            #{$phoneLandscape},
@@ -29,12 +29,14 @@
     }
 }
 
+//Phones in portrait orientation
 @mixin phonePortrait {
     @media #{$phonePortrait} {
         @content
     }
 }
 
+// Phones in landscape orientation
 @mixin phoneLandscape {
     @media #{$phoneLandscape},
            #{$phoneLandscapeEmu} {
@@ -42,6 +44,7 @@
     }
 }
 
+// Tablets in any orientation
 @mixin tablet {
     @media #{$tabletPortrait},
            #{$tabletLandscape},
@@ -50,12 +53,14 @@
     }
 }
 
+// Tablets in portrait orientation
 @mixin tabletPortrait {
     @media #{$tabletPortrait} {
         @content
     }
 }
 
+// Tablets in landscape orientation
 @mixin tabletLandscape {
     @media #{$tabletLandscape},
            #{$tabletLandscapeEmu} {
@@ -63,6 +68,7 @@
     }
 }
 
+// Phones and tablets in any orientation
 @mixin phoneandtablet {
     @media #{$phonePortrait},
            #{$phoneLandscape},
@@ -74,6 +80,7 @@
     }
 }
 
+// Desktop monitors in any orientation
 @mixin desktop {
     @media #{$desktopPortrait},
            #{$desktopLandscape} {
