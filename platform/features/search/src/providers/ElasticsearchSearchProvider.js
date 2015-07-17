@@ -98,7 +98,7 @@ define(
             
             // Processes results from the format that elasticsearch returns to 
             // a list of objects in the format that mct-representation can use
-            function processResults(rawResults) {
+            function processResults(rawResults, validType) {
                 var results = rawResults.data.hits.hits,
                     resultsLength = results.length,
                     ids = [],
@@ -131,9 +131,10 @@ define(
                     for (j = 0; j < resultsLength; j += 1) {
                         id = ids[j];
                         
-                        // Include any item except folders 
+                        // Include items we can get models for
                         if (objects[id].getModel) {
-                            if (objects[id].getModel().type !== "folder") {
+                            // Check to see if they are allowed to be included 
+                            if (validType(objects[id].getModel())) {
                                 // Format the results as searchResult objects
                                 searchResults.push({
                                     id: id,
@@ -155,7 +156,6 @@ define(
              * Notes:
              *   * The order of the results is from highest to lowest score, 
              *     as elsaticsearch determines them to be. 
-             *   * Folders are not included in the results.
              *   * Wildcards are supported. 
              *   * Fuzziness is used to produce more results that are still
              *     relevant. (All results within a certain edit distance.)
@@ -164,10 +164,13 @@ define(
              * 
              * @param inputID the name of the ID property of the html text 
              *   input where this funcion should find the search term 
+             * @param validType a function which takes a model for an object
+             *   and determines if it is of a valid type to include in the 
+             *   final list of results
              * @param maxResults (optional) the maximum number of results 
              *   that this function should return 
              */
-            function queryElasticsearch(inputID, maxResults) {
+            function queryElasticsearch(inputID, validType, maxResults) {
                 var searchTerm;
                 
                 // Check to see if the user provided a maximum 
@@ -190,7 +193,7 @@ define(
                                 "&size=" + maxResults
                 }).then(function (rawResults) {
                     // ...then process the data 
-                    return processResults(rawResults);
+                    return processResults(rawResults, validType);
                 });
             }
             

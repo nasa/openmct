@@ -47,7 +47,7 @@
             {
                 "provides": "searchService",
                 "type": "provider",
-                "implementation": "providers/EverythingSearchProvider.js",
+                "implementation": "providers/GenericSearchProvider.js",
                 "depends": [ "objectService" ]
             },
             {

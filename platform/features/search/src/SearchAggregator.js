@@ -39,15 +39,12 @@ define(
          */
         function SearchAggregator(providers) {
             
-            function getPromisedResults(resultsPromises, promiseIndex, finalResults) {
-                if (promiseIndex >= resultsPromises.length) {
-                    return finalResults;
-                } else {
-                    return resultsPromises[promiseIndex].then(function (results) {
-                        finalResults = finalResults.concat(results);
-                        return getPromisedResults(resultsPromises, promiseIndex + 1, finalResults);
-                    });
-                }
+            // Determines if a searchResult object is a valid type 
+            // to be displayed as a final result. Is passed to the 
+            // search providers as an argument.
+            function validType(model) {
+                // Nothing is currently disallowed
+                return true;
             }
             
             // Remove extra objects that have the same ID 
@@ -85,6 +82,17 @@ define(
                 return results;
             }
             
+            function getPromisedResults(resultsPromises, promiseIndex, finalResults) {
+                if (promiseIndex >= resultsPromises.length) {
+                    return finalResults;
+                } else {
+                    return resultsPromises[promiseIndex].then(function (results) {
+                        finalResults = finalResults.concat(results);
+                        return getPromisedResults(resultsPromises, promiseIndex + 1, finalResults);
+                    });
+                }
+            }
+            
             // Recieves results in the format of a serachResult object. It 
             // has the members id, object, and score. It has a function 
             // next() which returns the next highest score search result 
@@ -98,7 +106,7 @@ define(
                 
                 // Get result list promises
                 for (var i = 0; i < providers.length; i += 1) {
-                    resultsPromises.push(providers[i].query(inputID));
+                    resultsPromises.push(providers[i].query(inputID, validType));
                 }
                 
                 // Wait for the promises to fufill

@@ -22,7 +22,7 @@
 /*global define*/
 
 /**
- * Module defining EverythingSearchProvider. Created by shale on 07/16/2015.
+ * Module defining GenericSearchProvider. Created by shale on 07/16/2015.
  */
 define(
     [],
@@ -42,7 +42,7 @@ define(
          * @param {string} SPACE the name of the persistence space from which
          *        models should be retrieved.
          */
-        function EverythingSearchProvider(objectService) {
+        function GenericSearchProvider(objectService) {
             
             // Recursive helper function for getItems()
             function itemsHelper(children, i) {
@@ -98,7 +98,7 @@ define(
             }
             
             // Determines if this item can be a valid result for this search term
-            function validResult(item, term) {
+            function match(item, term) {
                 var itemModel = item.object.getModel(),
                     itemName = itemModel.name.toLocaleLowerCase(),
                     itemType = itemModel.type.toLocaleLowerCase();
@@ -106,16 +106,8 @@ define(
                 return itemName.includes(term) || itemType.includes(term);
             }
             
-            // Determines if this item is a valid type for a search result
-            function validType(item) {
-                var itemModel = item.object.getModel();
-                
-                // Only folders are disallowed
-                return itemModel.type !== "folder";
-            }
-            
             // Filter through a list of searchResults based on a search term 
-            function filterResults(results, term, resultsLength) {
+            function filterResults(results, term, resultsLength, validType) {
                 var searchResults = [],
                     itemModel;
                 
@@ -123,7 +115,7 @@ define(
                     // Prevent errors from getModel not being defined
                     if (results[i].object.getModel) {
                         // Include any items that match the term and are of valid type
-                        if (validResult(results[i], term) && validType(results[i])) {
+                        if (match(results[i], term) && validType(results[i].object.getModel())) {
                             // Score the result
                             score(results[i], term);
                             // Add the result to the result list
@@ -144,15 +136,17 @@ define(
              *   * A domain object qualifies as a match for a search term if 
              *     the object's name property contains the exact search term 
              *     as a substring. 
-             *   * Folders are not included in the results.
              *   * Wildcards are not supported. 
              * 
              * @param inputID the name of the ID property of the html text 
              *   input where this funcion should find the search term 
+             * @param validType a function which takes a model for an object
+             *   and determines if it is of a valid type to include in the 
+             *   final list of results
              * @param maxResults (optional) the maximum number of results 
              *   that this function should return 
              */
-            function queryManual(inputID, maxResults) {
+            function queryManual(inputID, validType, maxResults) {
                 var term,
                     searchResults = [],
                     resultsLength;
@@ -180,7 +174,7 @@ define(
                     }
 
                     // Then filter through the items list
-                    searchResults = filterResults(searchResultItems, term, resultsLength);
+                    searchResults = filterResults(searchResultItems, term, resultsLength, validType);
                     
                     //console.log('filtered searchResults (in Everything)', searchResults);
                     return searchResults;
@@ -193,6 +187,6 @@ define(
         }
 
 
-        return EverythingSearchProvider;
+        return GenericSearchProvider;
     }
 );
