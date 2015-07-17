@@ -112,8 +112,6 @@
     }
 }
 
-
-
 .button-pos {
     @include phoneandtablet {
         position: absolute;
@@ -125,37 +123,6 @@
     @include phoneandtablet {
         position: relative;
         left: 30px;
-    }
-}
-
-.mobile-menu-icon {
-    display: inline-block;
-    @include phone {
-        font-size: 125%;
-    }
-    @include tablet {
-        font-size: 175%;
-    }      
-    @include desktop {
-        display: none;
-    }       
-}
-
-.mobile-super-menu {
-    @include phoneandtablet {
-        width: 100% !important;
-    }
-}
-
-.mobile-super-menu-text {
-    overflow-x: hidden !important;
-    text-overflow: ellipsis !important;
-}
-
-.mobile-right-create {
-    @include phoneandtablet {
-        width: 0px !important;
-        padding: 0px !important;
     }
 }
 
