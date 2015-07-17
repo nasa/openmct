@@ -29,6 +29,13 @@ define(
     function () {
         "use strict";
 
+        var ZERO = function () { return 0; },
+            EMPTY_SERIES = {
+                getPointCount: ZERO,
+                getDomainValue: ZERO,
+                getRangeValue: ZERO
+            };
+
         /**
          * A telemetry capability provides a means of requesting telemetry
          * for a specific object, and for unwrapping the response (to get
@@ -102,7 +109,8 @@ define(
                 // Pull out the relevant field from the larger,
                 // structured response.
                 function getRelevantResponse(response) {
-                    return ((response || {})[source] || {})[key] || {};
+                    return ((response || {})[source] || {})[key] ||
+                            EMPTY_SERIES;
                 }
 
                 // Issue a request to the service
