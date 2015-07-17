@@ -88,7 +88,7 @@ define(
             // Process the search input. Makes an array of search terms
             // by splitting up the input at spaces. 
             function process(input) {
-                return input.split(' ');
+                return input.toLocaleLowerCase().split(' ');
             }
             
             // Generate a score for an item based on its similarity to a search term.
@@ -96,23 +96,29 @@ define(
             // object name.
             function score(item, terms, originalInput) {
                 var name = item.object.getModel().name.toLocaleLowerCase(),
-                    weight = 1.5,
-                    score = 0;// = (term.length / name.length) * weight;
+                    weight = .65,
+                    score = 0;
+                
+                // Make the score really big if the item name and 
+                // the original search input are the same
+                if (name === originalInput.toLocaleLowerCase()) {
+                    score = 42;
+                }
                 
                 for (var i = 0; i < terms.length; i++) {
                     // Increase the score if the term is in the item name
                     if (name.includes(terms[i])) {
                         score++;
-                    }
-                    
-                    // Make the score really big if the item name and 
-                    // the original search input are the same
-                    if (name === originalInput.toLocaleLowerCase()) {
-                        score += 50;
+                        
+                        // Add extra to the score if the search term exists
+                        // as its own term within the items
+                        if (name.split(' ').indexOf(terms[i]) !== -1) {
+                            score += .5;
+                        }
                     }
                 }
                 
-                return score / weight;
+                return score * weight;
             }
             
             // Filter through a list of searchResults based on a search term 
