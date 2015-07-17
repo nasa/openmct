@@ -92,6 +92,7 @@
             </div>
 
             <mct-chart draw="subplot.getDrawingObject()"
+                       ng-if="subplot.getTelemetryObjects().length > 0"
                        ng-mousemove="subplot.hover($event)"
                        mct-drag="subplot.continueDrag($event)"
                        mct-drag-down="subplot.startDrag($event)"
