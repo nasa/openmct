@@ -85,6 +85,11 @@ define(
                 return results;
             }
             
+            // Recieves results in the format of a serachResult object. It 
+            // has the members id, object, and score. It has a function 
+            // next() which returns the next highest score search result 
+            // for that search. 
+            
             // Calls the searches of each of the providers, then 
             // merges the results lists so that there are not redundant 
             // results 
