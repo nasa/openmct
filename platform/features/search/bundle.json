@@ -41,14 +41,14 @@
             {
                 "provides": "searchService",
                 "type": "provider",
-                "implementation": "providers/ElasticsearchSearchProvider.js",
-                "depends": [ "$http", "objectService", "ELASTIC_ROOT" ]
+                "implementation": "providers/GenericSearchProvider.js",
+                "depends": [ "objectService" ]
             },
             {
                 "provides": "searchService",
                 "type": "provider",
-                "implementation": "providers/GenericSearchProvider.js",
-                "depends": [ "objectService" ]
+                "implementation": "providers/ElasticsearchSearchProvider.js",
+                "depends": [ "$http", "objectService", "ELASTIC_ROOT" ]
             },
             {
                 "provides": "searchService",

@@ -85,39 +85,51 @@ define(
                 });
             }
             
-            // Generate a score for an item based on its similarity to a search term
-            // Very rudimentary 
-            function score(item, term) {
-                var name = item.object.getModel().name,
-                    //numWordsinName = name.split(' ').length,
-                    //numWordsinTerm = term.split(' ').length,
-                    weight = 1.5,
-                    score = (term.length / name.length) * weight;
-                
-                return score;
+            // Process the search input. Makes an array of search terms
+            // by splitting up the input at spaces. 
+            function process(input) {
+                return input.split(' ');
             }
             
-            // Determines if this item can be a valid result for this search term
-            function match(item, term) {
-                var itemModel = item.object.getModel(),
-                    itemName = itemModel.name.toLocaleLowerCase(),
-                    itemType = itemModel.type.toLocaleLowerCase();
+            // Generate a score for an item based on its similarity to a search term.
+            // The score is equal to the number of terms that are a substring of the 
+            // object name.
+            function score(item, terms, originalInput) {
+                var name = item.object.getModel().name.toLocaleLowerCase(),
+                    weight = 1.5,
+                    score = 0;// = (term.length / name.length) * weight;
                 
-                return itemName.includes(term) || itemType.includes(term);
+                for (var i = 0; i < terms.length; i++) {
+                    // Increase the score if the term is in the item name
+                    if (name.includes(terms[i])) {
+                        score++;
+                    }
+                    
+                    // Make the score really big if the item name and 
+                    // the original search input are the same
+                    if (name === originalInput.toLocaleLowerCase()) {
+                        score += 50;
+                    }
+                }
+                
+                return score / weight;
             }
             
             // Filter through a list of searchResults based on a search term 
-            function filterResults(results, term, resultsLength, validType) {
-                var searchResults = [],
+            function filterResults(results, originalInput, resultsLength, validType) {
+                var terms, 
+                    searchResults = [],
                     itemModel;
+                
+                // Split the original search input into search terms
+                terms = process(originalInput);
                 
                 for (var i = 0; i < resultsLength; i += 1) {
                     // Prevent errors from getModel not being defined
                     if (results[i].object.getModel) {
-                        // Include any items that match the term and are of valid type
-                        if (match(results[i], term) && validType(results[i].object.getModel())) {
-                            // Score the result
-                            score(results[i], term);
+                        results[i].score = score(results[i], terms, originalInput);
+                        // Include any items that match the terms and are of valid type
+                        if (results[i].score > 0 && validType(results[i].object.getModel())) {
                             // Add the result to the result list
                             searchResults.push(results[i]);
                         }
@@ -146,8 +158,9 @@ define(
              * @param maxResults (optional) the maximum number of results 
              *   that this function should return 
              */
-            function queryManual(inputID, validType, maxResults) {
-                var term,
+            function queryGeneric(inputID, validType, maxResults) {
+                var input,
+                    terms = [],
                     searchResults = [],
                     resultsLength;
                 
@@ -159,11 +172,8 @@ define(
                 }
                 
                 // Get the user input
-                term = document.getElementById(inputID).value;
+                input = document.getElementById(inputID).value;
                 
-                // Make not case sensitive
-                term = term.toLocaleLowerCase();
-
                 // Get items list
                 return getItems().then(function (searchResultItems) {
                     // Keep track of the number of results to display
@@ -174,7 +184,7 @@ define(
                     }
 
                     // Then filter through the items list
-                    searchResults = filterResults(searchResultItems, term, resultsLength, validType);
+                    searchResults = filterResults(searchResultItems, input, resultsLength, validType);
                     
                     //console.log('filtered searchResults (in Everything)', searchResults);
                     return searchResults;
@@ -182,7 +192,7 @@ define(
             }
             
             return {
-                query: queryManual
+                query: queryGeneric
             };
         }
 

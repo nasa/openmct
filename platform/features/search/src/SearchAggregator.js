@@ -79,6 +79,12 @@ define(
                     }
                 });
                 
+                /*
+                for (var i = 0; i < results.length; i++) {
+                    console.log('score', results[i].score, 'for', results[i].object.getModel().name);
+                }
+                */
+                
                 return results;
             }
             
