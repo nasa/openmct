@@ -50,11 +50,8 @@
             @include slMenuTransitions;
             width: 0px !important;
             right: auto !important;
-            
-            .createBtnPos {
-                overflow-y: hidden;
-                overflow-x: hidden;
-            }            
+            overflow-y: hidden;
+            overflow-x: hidden;       
         }
     }
 
@@ -73,12 +70,8 @@
             @include slMenuTransitions;
             display: block !important;
             right: auto !important;
-            
-            .createBtnPos {
-                height: inherit;
-                overflow-y: hidden;
-                overflow-x: hidden;
-            }
+            overflow-y: hidden;
+            overflow-x: hidden;
         }
         @include phonePortrait {
             width: $phoneMenuSizePortrait !important;
@@ -148,17 +141,27 @@
     }       
 }
 
+.mobile-super-menu {
+    @include phoneandtablet {
+        width: 100% !important;
+    }
+}
+
+.mobile-super-menu-text {
+    overflow-x: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+.mobile-right-create {
+    @include phoneandtablet {
+        width: 0px !important;
+        padding: 0px !important;
+    }
+}
 
 .mobile-hide {
     @include phoneandtablet {
         display: none;
-    }
-}
-
-.mobile-text-hide {
-    @include phoneandtablet {
-        width: 0px;
-        overflow:hidden;
     }
 }
 
