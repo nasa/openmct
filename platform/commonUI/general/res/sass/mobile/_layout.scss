@@ -70,8 +70,6 @@
             @include slMenuTransitions;
             display: block !important;
             right: auto !important;
-            overflow-y: hidden;
-            overflow-x: hidden;
         }
         @include phonePortrait {
             width: $phoneMenuSizePortrait !important;

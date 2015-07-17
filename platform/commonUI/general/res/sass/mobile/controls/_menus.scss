@@ -14,8 +14,6 @@
 
 .mobile-super-menu {
     @include phoneandtablet {
-        width: 100% !important;
-        height: 1000% !important;
         border-right: 0px !important;
         padding-right: 0px !important;
     }
