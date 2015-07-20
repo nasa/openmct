@@ -29,6 +29,9 @@ define(
     function () {
         "use strict";
 
+        var DEFUALT_TIMEOUT =  1000,
+            DEFAULT_MAX_RESULTS = 100;
+        
         /**
          * Allows multiple services which provide search functionality 
          * to be treated as one.
@@ -112,7 +115,11 @@ define(
                 
                 // Get result list promises
                 for (var i = 0; i < providers.length; i += 1) {
-                    resultsPromises.push(providers[i].query(inputID, validType));
+                    resultsPromises.push(
+                        providers[i].query(
+                            inputID, validType, DEFAULT_MAX_RESULTS, DEFUALT_TIMEOUT
+                        )
+                    );
                 }
                 
                 // Wait for the promises to fufill

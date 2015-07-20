@@ -33,8 +33,7 @@ define(
         // so hide them here.
         var ID = "_id",
             SCORE = "_score",
-            DEFAULT_MAX_RESULTS = 100,
-            DEFAULT_TIMEOUT = 1000;
+            DEFAULT_MAX_RESULTS = 100;
         
         /**
          * A model service which reads domain object models from an external
@@ -171,9 +170,12 @@ define(
              *   final list of results
              * @param maxResults (optional) the maximum number of results 
              *   that this function should return 
+             * @param timeout (optional) the time after which the search should 
+             *   stop calculations and return partial results
              */
-            function queryElasticsearch(inputID, validType, maxResults) {
-                var searchTerm;
+            function queryElasticsearch(inputID, validType, maxResults, timeout) {
+                var searchTerm,
+                    esQuery;
                 
                 // Check to see if the user provided a maximum 
                 // number of results to display
@@ -188,12 +190,17 @@ define(
                 // Process search term
                 searchTerm = processSearchTerm(searchTerm);
                 
+                // Create the query to elasticsearch
+                esQuery = ROOT + "/_search/?q=" + searchTerm +
+                                 "&size=" + maxResults;
+                if (timeout) {
+                    esQuery += "&timeout=" + timeout;
+                }
+                
                 // Get the data...
                 return $http({
                     method: "GET",
-                    url: ROOT + "/_search/?q=" + searchTerm +
-                                "&size=" + maxResults +
-                                "&timeout=" + DEFAULT_TIMEOUT
+                    url: esQuery
                 }).then(function (rawResults) {
                     // ...then process the data 
                     return processResults(rawResults, validType);

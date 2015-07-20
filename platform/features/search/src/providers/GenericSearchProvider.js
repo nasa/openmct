@@ -43,7 +43,7 @@ define(
          * @param {WorkerService} workerService the service which allows
          *        more easy creation of web workers.
          */
-        function GenericSearchProvider(/*$rootScope, */objectService, /*workerService*/) {
+        function GenericSearchProvider($rootScope, objectService, workerService) {
             /*
             var worker = workerService.run('genericSearchWorker'),
                 lastestItems;
@@ -88,7 +88,7 @@ define(
             // Recursive helper function for getItems()
             function itemsHelper(children, i) {
                 var date = new Date;
-                if (date.getTime() >= stopTime) {
+                if (stopTime && date.getTime() >= stopTime) {
                     // This indexing of items has timed out 
                     console.log('timed out');
                     console.log('returning', children);
@@ -110,14 +110,18 @@ define(
             }
             
             // Converts the filetree into a list
-            function getItems() {
+            function getItems(timeout) {
                 // Aquire My Items (root folder)
                 return objectService.getObjects(['mine']).then(function (objects) {
                     // Get all of its descendents
                     
-                    // Set a timeout for itemsHelper
-                    var date = new Date;
-                    stopTime = date.getTime() + DEFAULT_TIMEOUT;
+                    if (timeout) {
+                        // Set a timeout for itemsHelper
+                        var date = new Date;
+                        stopTime = date.getTime() + timeout;
+                    }
+                    // If there was no timeout provided, leave undefined
+                    // itemsHelper should just treat this as having no timeout
                     
                     return itemsHelper([objects.mine], 0).then(function (items) {
                         // Turn them into searchResult objects (object, id, and score)
@@ -217,8 +221,10 @@ define(
              *   final list of results
              * @param maxResults (optional) the maximum number of results 
              *   that this function should return 
+             * @param timeout (optional) the time after which the search should 
+             *   stop calculations and return partial results
              */
-            function queryGeneric(inputID, validType, maxResults) {
+            function queryGeneric(inputID, validType, maxResults, timeout) {
                 var input,
                     terms = [],
                     searchResults = [],
@@ -231,12 +237,13 @@ define(
                     maxResults = DEFAULT_MAX_RESULTS;
                 }
                 
+                
                 // Get the user input
                 input = document.getElementById(inputID).value;
                 
                 // Get items list
                 //requestItems(); // Test out the worker
-                return getItems().then(function (searchResultItems) {
+                return getItems(timeout).then(function (searchResultItems) {
                     // Keep track of the number of results to display
                     if (searchResultItems.length < maxResults) {
                         resultsLength = searchResultItems.length;
