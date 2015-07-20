@@ -41,6 +41,8 @@ define(
          *        aggregated
          */
         function SearchAggregator(providers) {
+            var compiledResults = [];
+            
             
             // Determines if a searchResult object is a valid type 
             // to be displayed as a final result. Is passed to the 
@@ -82,15 +84,15 @@ define(
                     }
                 });
                 
-                /*
                 for (var i = 0; i < results.length; i++) {
                     console.log('score', results[i].score, 'for', results[i].object.getModel().name);
                 }
-                */
                 
                 return results;
             }
             
+            // 'Loop' over the promises using recursion so that the promises are fufilled by the
+            // time that we are done
             function getPromisedResults(resultsPromises, promiseIndex, finalResults) {
                 if (promiseIndex >= resultsPromises.length) {
                     return finalResults;
@@ -102,6 +104,60 @@ define(
                 }
             }
             
+            function getPromisedItems(promises, index, fufilledPromises) {
+                if (index >= promises.length) {
+                    return fufilledPromises;
+                } else {
+                    return promises[index].then(function (results) {
+                        fufilledPromises = fufilledPromises.concat(results);
+                        return getPromisedItems(promises, index + 1, fufilledPromises);
+                    });
+                }
+            }
+            
+            // Add more results to compiledResults
+            // (As if the user presed 'load more results')
+            function loadMore() {
+                
+            }
+            
+            // Add x number of items to the compiledResults as the initial number of results that 
+            // we display 
+            function initialLoad(firstPromises) {
+                return getPromisedItems(firstPromises, 0, []).then(function (current) {
+                    // Push the firsts onto the compiledResults
+                    for (var i = 0; i < current.length; i++) {
+                        if (current[i]) {
+                            compiledResults.push(current[i]);
+                        }
+                    }
+                    // Look for more results n times and add them to compiledResults
+                    var outOfResults = [];
+                    for (var i = 0; i < DEFAULT_MAX_RESULTS; i++) {
+                        // If all of the providers are returning undefined, there are 
+                        // no more results to load
+                        if (current.every(function (c) {
+                                        return c === undefined;
+                                    })) {
+                            break;
+                        }
+                        
+                        // For each provider, load the next result and add it to compiledResults
+                        for (var j = 0; j < current.length; j++) {
+                            if (current[j]) {
+                                var nextResult = current[j].next();
+                                if (nextResult) {
+                                    compiledResults.push(nextResult);
+                                }
+                                current[j] = nextResult;
+                            }
+                        }
+                    }
+                    
+                    return compiledResults;
+                });
+            }
+            
             // Recieves results in the format of a serachResult object. It 
             // has the members id, object, and score. It has a function 
             // next() which returns the next highest score search result 
@@ -111,11 +167,15 @@ define(
             // merges the results lists so that there are not redundant 
             // results 
             function mergeResults(inputID) {
-                var resultsPromises = [];
+                //var resultsPromises = [];
                 
-                // Get result list promises
+                // The first result from each provider. Each should have a next() function.
+                var firstPromises = [];
+                
+                // Get the initial result promises
                 for (var i = 0; i < providers.length; i += 1) {
-                    resultsPromises.push(
+                    //resultsPromises.push(
+                    firstPromises.push(
                         providers[i].query(
                             inputID, validType, DEFAULT_MAX_RESULTS, DEFUALT_TIMEOUT
                         )
@@ -123,12 +183,20 @@ define(
                 }
                 
                 // Wait for the promises to fufill
+                return initialLoad(firstPromises).then(function (c) {
+                    // Get rid of the repeated objects and put in correct order
+                    c = filterRepeats(c);
+                    c = orderByScore(c);
+                    return c;
+                });
+                /*
                 return getPromisedResults(resultsPromises, 0, []).then(function (c) {
                     // Get rid of the repeated objects and put in correct order
                     c = filterRepeats(c);
                     c = orderByScore(c);
                     return c;
                 });
+                */
             }
             
             return {
