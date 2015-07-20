@@ -88,6 +88,7 @@
     }
 }
 
+// Transition used for the slide menu
 @mixin slMenuTransitions {
     @include transition-duration(.35s);
     transition-timing-function: ease;
