@@ -765,10 +765,10 @@ mct-container {
     -o-transition-property: opacity;
     -webkit-transition-property: opacity;
     transition-property: opacity;
-    -moz-transition-duration: 0.35s;
-    -o-transition-duration: 0.35s;
-    -webkit-transition-duration: 0.35s;
-    transition-duration: 0.35s;
+    -moz-transition-duration: 0.4s;
+    -o-transition-duration: 0.4s;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
     -moz-transition-timing-function: ease-in-out;
     -o-transition-timing-function: ease-in-out;
     -webkit-transition-timing-function: ease-in-out;
