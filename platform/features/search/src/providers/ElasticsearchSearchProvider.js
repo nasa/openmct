@@ -33,7 +33,8 @@ define(
         // so hide them here.
         var ID = "_id",
             SCORE = "_score",
-            DEFAULT_MAX_RESULTS = 100;
+            DEFAULT_MAX_RESULTS = 100,
+            DEFAULT_TIMEOUT = 1000;
         
         /**
          * A model service which reads domain object models from an external
@@ -191,7 +192,8 @@ define(
                 return $http({
                     method: "GET",
                     url: ROOT + "/_search/?q=" + searchTerm +
-                                "&size=" + maxResults
+                                "&size=" + maxResults +
+                                "&timeout=" + DEFAULT_TIMEOUT
                 }).then(function (rawResults) {
                     // ...then process the data 
                     return processResults(rawResults, validType);
