@@ -89,6 +89,6 @@
 }
 
 @mixin slMenuTransitions {
-    @include transition-duration(.2s);
+    @include transition-duration(.35s);
     transition-timing-function: ease;
 }

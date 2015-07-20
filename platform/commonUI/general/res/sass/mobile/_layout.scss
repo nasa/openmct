@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// NOTE: Added to adjust the browse folder left list view
-
 .browse-wrapper,
 .pane-special {
     @include phoneandtablet {
@@ -48,8 +46,10 @@
     .pane-special.left {
         @include phoneandtablet {
             @include slMenuTransitions;
-            width: 0px !important;
-            right: auto !important;
+            @include trans-prop-nice(opacity, .35s);
+            opacity: 0;
+            right: 100% !important;
+            width: auto !important;
             overflow-y: hidden;
             overflow-x: hidden;       
         }
@@ -58,8 +58,8 @@
     .pane-special.right {       
         @include phoneandtablet {         
             @include slMenuTransitions;
-            width: auto !important;
-            left: 0px !important;
+            left: auto !important;
+            width: 100% !important;
         }
     }    
 }
@@ -68,8 +68,28 @@
     .pane-special.left {
         @include phoneandtablet {
             @include slMenuTransitions;
+            @include trans-prop-nice(opacity, .4s);
+            opacity: 1;
             display: block !important;
-            right: auto !important;
+            width: auto !important;
+        }
+        @include phonePortrait {
+            right: $phoneMenuSizePortrait !important;
+        }
+        @include phoneLandscape {
+            right: $phoneMenuSizeLandscape !important;
+        }
+        @include tabletPortrait {
+            right: $tabletMenuSizePortrait !important;
+        }
+        @include tabletLandscape {
+            right: $tabletMenuSizeLandscape !important;
+        }
+    }
+    .pane-special.right {
+        @include phoneandtablet {
+            @include slMenuTransitions;
+            left: auto !important;
         }
         @include phonePortrait {
             width: $phoneMenuSizePortrait !important;
@@ -82,24 +102,6 @@
         }
         @include tabletLandscape {
             width: $tabletMenuSizeLandscape !important;
-        }
-    }
-    .pane-special.right {
-        @include phoneandtablet {
-            @include slMenuTransitions;
-            width: auto !important;
-        }
-        @include phonePortrait {
-            left: $phoneMenuSizePortrait !important;
-        }
-        @include phoneLandscape {
-            left: $phoneMenuSizeLandscape !important;
-        }
-        @include tabletPortrait {
-            left: $tabletMenuSizePortrait !important;
-        }
-        @include tabletLandscape {
-            left: $tabletMenuSizeLandscape !important;
         }
     }
 }
@@ -118,9 +120,13 @@
 }
 
 .object-header-mobile {
-    @include phoneandtablet {
+    @include phone {
         position: relative;
         left: 30px;
+    }    
+    @include tablet {
+        position: relative;
+        left: 35px;
     }
 }
 
