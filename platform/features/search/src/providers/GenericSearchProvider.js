@@ -29,24 +29,71 @@ define(
     function () {
         "use strict";
         
-        var DEFAULT_MAX_RESULTS = 100;
+        var DEFAULT_MAX_RESULTS = 100,
+            DEFAULT_TIMEOUT = 1000,
+            stopTime;
         
         /**
-         * A model service which reads domain object models from an external
-         * persistence service.
+         * A search service which searches through domain objects in 
+         * the filetree without using external search implementations.
          *
          * @constructor
-         * @param {PersistenceService} persistenceService the service in which
-         *        domain object models are persisted.
-         * @param $q Angular's $q service, for working with promises
-         * @param {string} SPACE the name of the persistence space from which
-         *        models should be retrieved.
+         * @param {ObjectService} objectService the service from which
+         *        domain objects can be gotten.
+         * @param {WorkerService} workerService the service which allows
+         *        more easy creation of web workers.
          */
-        function GenericSearchProvider(objectService) {
+        function GenericSearchProvider(/*$rootScope, */objectService, /*workerService*/) {
+            /*
+            var worker = workerService.run('genericSearchWorker'),
+                lastestItems;
+
+            function requestItems() {
+                // Aquire My Items (root folder)
+                // I don't think we can do this part in the webworker because of the objectService
+                return objectService.getObjects(['mine']).then(function (objects) {
+                    // Get the webworker to go through the tree 
+                    console.log('about to post');
+                    console.log('objects.mine', objects.mine);
+                    console.log('objects.mine stringify', JSON.stringify(objects.mine));
+                    console.log('objectService', objectService);
+                    console.log('objectService stringify', JSON.stringify(objectService));
+                    
+                    // Testing making JSON object
+                    var jsonObj = {};
+                    var getC = JSON.stringify(objects.mine.getCapability);
+                    console.log('empty json', jsonObj);
+                    jsonObj = {
+                        getCapability: getC,
+                        getId: objects.mine.getId,
+                        getModel: objects.mine.getModel,
+                        hasCapability: objects.mine.hasCapability,
+                        useCapability: objects.mine.useCapability
+                    };
+                    console.log('json', jsonObj);
+                    
+                    worker.postMessage(jsonObj); // Not working :(
+                    console.log('posted');
+                });
+                //counter += 1;
+            }
+            */
+
+            function handleResponse(event) {
+                latest = event.data;
+                $rootScope.$apply();
+                //requestNext();
+            }
             
             // Recursive helper function for getItems()
             function itemsHelper(children, i) {
-                if (i >= children.length) {
+                var date = new Date;
+                if (date.getTime() >= stopTime) {
+                    // This indexing of items has timed out 
+                    console.log('timed out');
+                    console.log('returning', children);
+                    return children;
+                } else if (i >= children.length) {
                     // Done!
                     return children;
                 } else if (children[i].hasCapability('composition')) {
@@ -67,6 +114,11 @@ define(
                 // Aquire My Items (root folder)
                 return objectService.getObjects(['mine']).then(function (objects) {
                     // Get all of its descendents
+                    
+                    // Set a timeout for itemsHelper
+                    var date = new Date;
+                    stopTime = date.getTime() + DEFAULT_TIMEOUT;
+                    
                     return itemsHelper([objects.mine], 0).then(function (items) {
                         // Turn them into searchResult objects (object, id, and score)
                         var searchResultItems = [];
@@ -84,6 +136,8 @@ define(
                     });
                 });
             }
+            
+            
             
             // Process the search input. Makes an array of search terms
             // by splitting up the input at spaces. 
@@ -181,6 +235,7 @@ define(
                 input = document.getElementById(inputID).value;
                 
                 // Get items list
+                //requestItems(); // Test out the worker
                 return getItems().then(function (searchResultItems) {
                     // Keep track of the number of results to display
                     if (searchResultItems.length < maxResults) {

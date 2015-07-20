@@ -47,6 +47,7 @@ define(
          *        models should be retrieved.
          */
         function ElasticsearchSearchProvider($http, objectService, ROOT) {
+            // TODO: Fix the above docstring 
             
             // Check to see if the input has any special options
             function isDefaultFormat(searchTerm) {
