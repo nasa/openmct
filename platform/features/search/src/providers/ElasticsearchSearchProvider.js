@@ -144,6 +144,8 @@ define(
                     scores[ ids[i] ] = results[i][SCORE];
                 }
                 
+                //console.log('scores {}', scores);
+                
                 // Get the domain objects from their IDs
                 return objectService.getObjects(ids).then(function (objects) {
                     
@@ -166,7 +168,13 @@ define(
                         }
                     }
                     
-                    console.log('setting latest search results with', searchResults);
+                    /*
+                    for (var k = 0; k < searchResults.length; k++) {
+                        console.log('ES score', searchResults[k].score, 'for', searchResults[k].object.getModel().name);
+                    }
+                    */
+                    
+                    //console.log('setting latest search results with', searchResults);
                     latestSearchResults = searchResults;
                     return searchResults;
                 });

@@ -226,7 +226,7 @@ define(
                         // Prevent errors from getModel not being defined
                         if (latestItems[i].object.getModel) {
                             latestItems[i].score = score(latestItems[i], curentSearchTerms, currentSeachInput);
-
+                            //console.log('item', latestItems[i].object.getModel().name, 'score', latestItems[i].score);
                             // Include any items that match the terms and are of valid type
                             if (latestItems[i].score > 0 && validType(latestItems[i].object.getModel())) {
                                 // Add the result to the result list
@@ -310,7 +310,7 @@ define(
                     
                     // Get the first search result
                     var firstResult = first(input);
-                    console.log('generic return', firstResult);
+                    //console.log('generic return', firstResult);
                     
                     return firstResult;
                 });
