@@ -20,11 +20,11 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="contents" ng-controller="CreateMenuController">
-    <div class="pane left menu-items mobile-super-menu">
+    <div class="pane left menu-items">
         <ul>
 
             <li ng-repeat="createAction in createActions">
-                <a class="mobile-super-menu-text"
+                <a
                    ng-click="createAction.perform()"
                    ng-mouseover="representation.activeMetadata = createAction.getMetadata()"
                    ng-mouseleave="representation.activeMetadata = undefined">
@@ -37,7 +37,7 @@
 
         </ul>
     </div>
-    <div class="pane right menu-item-description mobile-right-create">
+    <div class="pane right menu-item-description">
         <div class="desc-area ui-symbol icon type-icon">
             {{representation.activeMetadata.glyph}}
         </div>

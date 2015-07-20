@@ -19,10 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
+// Sets the size of the items in the folder
+// representation. Instead of a grid,
+// a list is used.
 .items-holder {
     .item {
         &.grid-item {
-//            NOTE: Sets grid item width
             $dWid: $ueBrowseGridItemLg;
             $dHei: $ueBrowseGridItemLg;
             @include phone {
@@ -47,11 +50,8 @@
             }
             
             .icon {
-                @include phone {
+                @include phoneandtablet {
                     display: none;
-                }
-                @include tablet {
-                    display: none;   
                 }
             }
         }

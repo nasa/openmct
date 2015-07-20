@@ -23,14 +23,9 @@
 <div ng-controller="BrowseController">
     <div content="jquery-wrapper" class="abs holder-all browse-mode">
         <mct-include key="'topbar-browse'"></mct-include>
-        
-        <!-- WRAPPER CLASS IS HERE-->
-        <!-- NG-CLASS HERE TO SWITCH THE PARENT CLASS FOR pane-special's left and right-->
         <div class="holder browse-area s-browse-area abs browse-wrapper" ng-class="treeClass ? 'browse-showtree' : 'browse-hidetree'">
             <mct-split-pane class='contents abs' anchor='left'>
-            
-                <!-- TREE MENU: ADDED THE PANE LEFT HERE, similar to .pane.left example-->
-                <div class='split-pane-component treeview pane pane-special left desktop-browse'>  
+                <div class='split-pane-component treeview pane mobile-pane left-menu desktop-browse'>  
                     <div class='holder tree-holder abs'>
                         <mct-representation key="'tree'"
                                             mct-object="domainObject"
@@ -41,9 +36,8 @@
                         </mct-representation>
                 </div>
                 
-                <mct-splitter class="mobile-splitter"></mct-splitter>
-                    <!-- ITEMS MENU: ADDED THE PANE RIGHT HERE, similar to .pane.right example-->
-                        <div class='split-pane-component items pane pane-special right'>
+                <mct-splitter class="mobile-hide"></mct-splitter>
+                        <div class='split-pane-component items pane mobile-pane right-repr'>
                             <div class='holder abs' id='content-area'>
                                 <mct-representation mct-object="navigatedObject" key="'browse-object'">
                                 </mct-representation>

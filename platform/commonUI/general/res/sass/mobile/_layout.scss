@@ -20,8 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+// Wrapper of the entire 2 panes, only enacted on
+// phone and tablet. Also for the panes
 .browse-wrapper,
-.pane-special {
+.mobile-pane {
     @include phoneandtablet {
         position: absolute;
         left: 0; top: 0;
@@ -31,7 +33,8 @@
     }
 }
 
-
+// Default views of the panels
+// if in desktop browser
 .desktop-browse {
     @include desktop {
         min-width: 150px;
@@ -40,10 +43,11 @@
     }   
 }
 
-
-
+// When the tree is hidden, these are the
+// classes used for the left menu and the
+// right representation.
 .browse-hidetree {
-    .pane-special.left {
+    .mobile-pane.left-menu {
         @include phoneandtablet {
             @include slMenuTransitions;
             @include trans-prop-nice(opacity, .35s);
@@ -55,7 +59,7 @@
         }
     }
 
-    .pane-special.right {       
+    .mobile-pane.right-repr {       
         @include phoneandtablet {         
             @include slMenuTransitions;
             left: auto !important;
@@ -64,8 +68,13 @@
     }    
 }
 
+// When the tree is shown, these are
+// the classes used for the left menu
+// and the right menu (for each device &
+// orientation combination, separate 
+// parameters are used)
 .browse-showtree {
-    .pane-special.left {
+    .mobile-pane.left-menu {
         @include phoneandtablet {
             @include slMenuTransitions;
             @include trans-prop-nice(opacity, .4s);
@@ -74,44 +83,39 @@
             width: auto !important;
         }
         @include phonePortrait {
-            right: $phoneMenuSizePortrait !important;
+            right: $phoneRepSizePortrait !important;
         }
         @include phoneLandscape {
-            right: $phoneMenuSizeLandscape !important;
+            right: $phoneRepSizeLandscape !important;
         }
         @include tabletPortrait {
-            right: $tabletMenuSizePortrait !important;
+            right: $tabletRepSizePortrait !important;
         }
         @include tabletLandscape {
-            right: $tabletMenuSizeLandscape !important;
+            right: $tabletRepSizeLandscape !important;
         }
     }
-    .pane-special.right {
+    .mobile-pane.right-repr {
         @include phoneandtablet {
             @include slMenuTransitions;
             left: auto !important;
         }
         @include phonePortrait {
-            width: $phoneMenuSizePortrait !important;
+            width: $phoneRepSizePortrait !important;
         }
         @include phoneLandscape {
-            width: $phoneMenuSizeLandscape !important;
+            width: $phoneRepSizeLandscape !important;
         }
         @include tabletPortrait {
-            width: $tabletMenuSizePortrait !important;
+            width: $tabletRepSizePortrait !important;
         }
         @include tabletLandscape {
-            width: $tabletMenuSizeLandscape !important;
+            width: $tabletRepSizeLandscape !important;
         }
     }
 }
 
-.mobile-splitter {
-    @include phoneandtablet {
-        display: none;
-    }
-}
-
+// Button position is set as absolute with transitions
 .button-pos {
     @include phoneandtablet {
         position: absolute;
@@ -119,6 +123,9 @@
     }
 }
 
+// Object header must be moved
+// over to make space for the 
+// hamburger icon
 .object-header-mobile {
     @include phone {
         position: relative;
@@ -130,12 +137,14 @@
     }
 }
 
+// Hides objects on phone and tablet
 .mobile-hide {
     @include phoneandtablet {
         display: none;
     }
 }
 
+// Hides objects only on the phone
 .phone-hide {
     @include phone {
         display: none;
