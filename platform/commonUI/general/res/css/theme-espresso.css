@@ -761,6 +761,7 @@ mct-container {
     -webkit-transition-duration: 0.35s;
     transition-duration: 0.35s;
     transition-timing-function: ease;
+    backface-visibility: hidden;
     -moz-transition-property: opacity;
     -o-transition-property: opacity;
     -webkit-transition-property: opacity;
@@ -786,6 +787,7 @@ mct-container {
     -webkit-transition-duration: 0.35s;
     transition-duration: 0.35s;
     transition-timing-function: ease;
+    backface-visibility: hidden;
     left: auto !important;
     width: 100% !important; } }
 
@@ -797,6 +799,7 @@ mct-container {
     -webkit-transition-duration: 0.35s;
     transition-duration: 0.35s;
     transition-timing-function: ease;
+    backface-visibility: hidden;
     -moz-transition-property: opacity;
     -o-transition-property: opacity;
     -webkit-transition-property: opacity;
@@ -836,6 +839,7 @@ mct-container {
     -webkit-transition-duration: 0.35s;
     transition-duration: 0.35s;
     transition-timing-function: ease;
+    backface-visibility: hidden;
     left: auto !important; } }
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) {
   /* line 98, ../sass/mobile/_layout.scss */
@@ -862,7 +866,8 @@ mct-container {
     -o-transition-duration: 0.35s;
     -webkit-transition-duration: 0.35s;
     transition-duration: 0.35s;
-    transition-timing-function: ease; } }
+    transition-timing-function: ease;
+    backface-visibility: hidden; } }
 
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px) {
   /* line 129, ../sass/mobile/_layout.scss */

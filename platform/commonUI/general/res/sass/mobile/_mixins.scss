@@ -92,4 +92,5 @@
 @mixin slMenuTransitions {
     @include transition-duration(.35s);
     transition-timing-function: ease;
+    backface-visibility: hidden;
 }
