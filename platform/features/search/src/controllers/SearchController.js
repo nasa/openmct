@@ -49,7 +49,6 @@ define(function () {
                 if (areOld) {
                     // Then wait and try to update again
                     searchService.updateResults();
-                    var latest = searchService.getLatestResults(0, numResults);
                     $timeout(waitForLatest, 100);
                 } else {
                     // We got the latest results now 
@@ -60,10 +59,17 @@ define(function () {
         }
         
         return {
-            // Search the database using the user input of id "searchinput"
+            /**
+             * Search the filetree.
+             * 
+             * @param inputID The name of the ID property of the html text 
+             *   input where this funcion should find the search term.
+             */
             search: search,
             
-            // Check to see if there are any search results to display.
+            /**
+             * Checks to see if there are any search results to display.
+             */
             areResults: function () {
                 if ($scope.results) {
                     return $scope.results.length > 0;

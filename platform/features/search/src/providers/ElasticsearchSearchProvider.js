@@ -144,29 +144,7 @@ define(
                 });
             }
             
-            /**
-             * Searches through the filetree for domain objects using a search 
-             *   term. This is done through querying elasticsearch. 
-             * Notes:
-             *   * The order of the results is from highest to lowest score, 
-             *     as elsaticsearch determines them to be. 
-             *   * Wildcards are supported. 
-             *   * Fuzziness is used to produce more results that are still
-             *     relevant. (All results within a certain edit distance.)
-             *   * More search details at 
-             *     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-uri-request.html
-             * 
-             * @param inputID the name of the ID property of the html text 
-             *   input where this funcion should find the search term 
-             * @param timestamp the time at which this function was called,
-             *   this timestamp will be associated with the latest results
-             *   list, which allows the aggregator to see if it has been 
-             *   updated 
-             * @param maxResults (optional) the maximum number of results 
-             *   that this function should return 
-             * @param timeout (optional) the time after which the search should 
-             *   stop calculations and return partial results
-             */
+            // For documentation, see query below.
             function queryElasticsearch(inputID, timestamp, maxResults, timeout) {
                 var searchTerm,
                     esQuery;
@@ -202,12 +180,43 @@ define(
             }
             
             return {
+                /**
+                 * Searches through the filetree for domain objects using a search 
+                 *   term. This is done through querying elasticsearch. 
+                 * Notes:
+                 *   * The order of the results is from highest to lowest score, 
+                 *     as elsaticsearch determines them to be. 
+                 *   * Wildcards are supported. 
+                 *   * Fuzziness is used to produce more results that are still
+                 *     relevant. (All results within a certain edit distance.)
+                 *   * More search details at 
+                 *     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-uri-request.html
+                 * 
+                 * @param inputID the name of the ID property of the html text 
+                 *   input where this funcion should find the search term 
+                 * @param timestamp the time at which this function was called,
+                 *   this timestamp will be associated with the latest results
+                 *   list, which allows the aggregator to see if it has been 
+                 *   updated 
+                 * @param maxResults (optional) the maximum number of results 
+                 *   that this function should return 
+                 * @param timeout (optional) the time after which the search should 
+                 *   stop calculations and return partial results
+                 */
                 query: queryElasticsearch,
                 
+                /** 
+                 * Get the latest search results that have been calculated. The 
+                 *   format of the returned objects are searchResult objects, which
+                 *   have the members id, object, and score. 
+                 */
                 getLatestResults: function () {
                     return latestResults;
                 },
                 
+                /** 
+                 * Get the timestamp for the last update of latestResults.
+                 */
                 getLatestTimestamp: function () {
                     return lastSearchTimestamp;
                 }

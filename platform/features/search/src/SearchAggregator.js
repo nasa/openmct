@@ -44,7 +44,7 @@ define(
             var latestMergedResults = [],
                 lastMergeTimestamps = [];
             
-            // Remove extra objects that have the same ID 
+            // Remove duplicate objects that have the same ID 
             function filterRepeats(results) {
                 var ids = [],
                     idToIndicies = {}, // 'dictionary' mapping IDs to a list of indicies 
@@ -104,6 +104,7 @@ define(
                 return results;
             }
             
+            // For documentation, see updateResults below.
             function updateResults() {
                 var newerResults = [],
                     providerTimestamps = [];
@@ -123,17 +124,7 @@ define(
                 lastMergeTimestamps = providerTimestamps;
             }
             
-            /** 
-             * Sends a query to each of the providers, then updates the globl
-             *   latestMergedResults accordingly. 
-             *
-             * @param inputID The name of the ID property of the html text 
-             *   input where this funcion should find the search term.
-             * @param timestamp (optional) The time at which this function
-             *   was called. This timestamp will be associated with the 
-             *   latest results list, which allows us to see if it has been 
-             *   updated. If not provided, this aggregator will. 
-             */
+            // For documentation, see sendQuery below.
             function queryAll(inputID, timestamp) {
                 // If there's not a timestamp, make this time the timestamp
                 if (!timestamp) {
@@ -151,18 +142,48 @@ define(
             }
             
             return {
+                /** 
+                 * Sends a query to each of the providers, then updates the global
+                 *   latestMergedResults accordingly. 
+                 *
+                 * @param inputID The name of the ID property of the html text 
+                 *   input where this funcion should find the search term.
+                 * @param timestamp (optional) The time at which this function
+                 *   was called. This timestamp will be associated with the 
+                 *   latest results list, which allows us to see if it has been 
+                 *   updated. If not provided, this aggregator will. 
+                 */
                 sendQuery: queryAll,
+                
+                /** 
+                 * Updates the global latestMergedResults and lastMergeTimestamps 
+                 *   by checking the latest results of each of the providers. 
+                 */
                 updateResults: updateResults,
+                
+                /** 
+                 * Get the latest search results that have been calculated. The 
+                 *   format of the returned objects are searchResult objects, which
+                 *   have the members id, object, and score. 
+                 *
+                 * @param start (optional) The index of latestMergedResults at
+                 *   which to start getting results. 
+                 * @param stop (optional) The index of latestMergedResults at
+                 *   which to stop getting results. 
+                 */
                 getLatestResults: function (start, stop) {
                     // TODO: Make sure that slice handles out of bounds 
                     // By default if there are no start or stop provided, will return 
                     // the entire thing. 
-                    var a = latestMergedResults.slice(start, stop);
-                    return a;
+                    return latestMergedResults.slice(start, stop);
                 },
+                
+                /** 
+                 * Get the timestamps for each of the provider's last controbutions
+                 *   to the latestMergedResults.
+                 */
                 getLatestTimestamps: function () {
-                    var b = lastMergeTimestamps;
-                    return b;
+                    return lastMergeTimestamps;
                 }
             };
         }
