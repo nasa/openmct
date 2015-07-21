@@ -76,8 +76,14 @@
             terms = terms.substring(0, terms.length - 1);
         }
         
-        // Then split it at the spaces
-        terms = terms.split(' ');
+        // Then split it at spaces and asterisks
+        terms = terms.split(/ |\*/);
+        
+        // Remove any empty strings from the terms
+        while (terms.indexOf('') !== -1) {
+            terms.splice(terms.indexOf(''), 1);
+        }
+        
         return terms;
     }
     

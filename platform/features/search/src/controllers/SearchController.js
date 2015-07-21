@@ -27,7 +27,7 @@
 define(function () {
     "use strict";
     
-    var INITIAL_LOAD_NUMBER = 5,
+    var INITIAL_LOAD_NUMBER = 20,
         LOAD_INCREMENT = 5;
     
     function SearchController($scope, $timeout, searchService) {

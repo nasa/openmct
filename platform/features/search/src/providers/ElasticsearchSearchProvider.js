@@ -186,7 +186,6 @@ define(
                  * Notes:
                  *   * The order of the results is from highest to lowest score, 
                  *     as elsaticsearch determines them to be. 
-                 *   * Wildcards are supported. 
                  *   * Fuzziness is used to produce more results that are still
                  *     relevant. (All results within a certain edit distance.)
                  *   * More search details at 
