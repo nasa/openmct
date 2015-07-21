@@ -21,6 +21,9 @@
  *****************************************************************************/
 /*global self*/
 
+/**
+ * Module defining GenericSearchWorker. Created by shale on 07/21/2015.
+ */
 (function () {
     "use strict";
     
@@ -39,12 +42,13 @@
     }
     
     /** 
+     * Indexes an item to indexedItems.
      * 
+     * @param data An object which contains:
+     *           * model: The model of the domain object
+     *           * id: The ID of the domain object
      */
     function index(data) {
-        // Takes an object model
-        // Add to indexedItems
-        
         // TODO: Since this is only within genericsearch, do 
         //       we really need to check if the index already holds it? 
         //       This might depend on how often/when we clear indexedItems.
@@ -107,18 +111,20 @@
     }
     
     /** 
+     * Gets search results from the indexedItems based on provided search
+     *   input. Returns matching results from indexedItems, as well as the
+     *   timestamp that was passed to it.
      * 
+     * @param data An object which contains:
+     *           * input: The original string which we are searching with
+     *           * maxNumber: The maximum number of search results desired
+     *           * timestamp: The time identifier from when the query was made
      */
     function search(data) {
-        // Takes a search input and the number of items to find
-        // Converts it into search terms
-        // Gets matches from indexedItems
-        
-        // This results array will hold objects which are composed of 
-        // the object's id, model, and score. (The score is wrt only this 
+        // This results 'dictionary' will have domain object ID keys which 
+        // point to the domain object's score. (The score is wrt only this 
         // specific search input.)
-        // TODO: It may be unnecissary for results to have models in it.
-        var results = [],
+        var results = {},
             input = data.input.toLocaleLowerCase(),
             terms = convertToTerms(input), 
             timesToLoop = Math.min(indexedItems.length, data.maxNumber);
@@ -126,11 +132,10 @@
         for (var i = 0; i < timesToLoop; i++) {
             var score = scoreItem(indexedItems[i], input, terms);
             if (score > 0) {
-                results.push({
-                    id: indexedItems[i].id,
-                    model: indexedItems[i].model,
+                results[indexedItems[i].id] = {
                     score: score
-                });
+                };
+                console.log(results[indexedItems[i].id]);
             }
         }
         
