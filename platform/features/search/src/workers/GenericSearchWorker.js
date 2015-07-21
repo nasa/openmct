@@ -55,6 +55,12 @@
                 model: data.model
             });
         }
+        
+        var message = {
+            request: 'index', 
+            results: undefined
+        };
+        return message;
     }
     
     // Helper function for serach()
@@ -123,7 +129,11 @@
         
         console.log('webworker results', results);
         
-        return results;
+        var message = {
+            request: 'search', 
+            results: results
+        };
+        return message;
         
         // TODO: After a search is completed, do we need to 
         //       clear out indexedItems? 

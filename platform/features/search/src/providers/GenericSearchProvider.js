@@ -43,11 +43,11 @@ define(
          * @param {WorkerService} workerService the service which allows
          *        more easy creation of web workers.
          */
-        function GenericSearchProvider($rootScope, objectService, workerService) {
+        function GenericSearchProvider($rootScope, $timeout, objectService, workerService) {
             var validType = function () {return true;};
             
             var worker = workerService.run('genericSearchWorker'),
-                lastestItems;
+                latestResults = [];
 
             /*
             function requestItems() {
@@ -96,18 +96,27 @@ define(
             // Tell the worker to search for items it has that match this searchInput.
             // Takes the searchInput, as well as a max number of results (will return 
             // less than that if there are fewer matches).
-            function workerSearch(searchInput, numberOfResults) {
+            function workerSearch(searchInput, maxResults) {
                 var message = {
                     request: 'search', 
                     input: searchInput,
-                    maxNumber: numberOfResults
+                    maxNumber: maxResults
                 };
                 worker.postMessage(message);
             }
             
+            worker.onmessage = handleResponse;
+            
             function handleResponse(event) {
                 //latest = event.data;
+                
                 console.log('handleResponse', event.data);
+                if (event.data.request === 'search') {
+                    latestResults = event.data.results;
+                    console.log('updated latestResults', latestResults);
+                }
+                // If the message was from 'index', we don't need to do anything
+                
                 //$rootScope.$apply();
                 //requestNext();
             }
@@ -149,6 +158,15 @@ define(
                     // itemsHelper should just treat this as having no timeout
                     
                     return itemsHelper([objects.mine], 0).then(function (items) {
+                        // Add each item that itemsHelper found to the web worker index
+                        // TODO: Try to do this within itemsHelper. Perhaps just 
+                        //       need to add this to the last two if statements? 
+                        for (var i = 0; i < items.length; i++) {
+                            indexItem(items[i]);
+                        }
+                        return; // We don't need to return anything anymore
+                        // TODO: Fix return statements. Do we need them still?
+                        /*
                         // Turn them into searchResult objects (object, id, and score)
                         var searchResultItems = [];
                         
@@ -165,10 +183,12 @@ define(
                         
                         //console.log('searchResultItems (in Everything)', searchResultItems);
                         return searchResultItems;
+                        */
                     });
                 });
             }
             
+            /*
             // Process the search input. Makes an array of search terms
             // by splitting up the input at spaces. 
             function process(input) {
@@ -228,6 +248,7 @@ define(
                 
                 return searchResults;
             }
+            */
             
             /**
              * Searches through the filetree for domain objects which match 
@@ -274,7 +295,28 @@ define(
                 
                 // Get items list
                 //requestItems(); // Test out the worker
-                return getItems(timeout).then(function (searchResultItems) {
+                return getItems(timeout).then(function (/*searchResultItems*/) {
+                    var test = workerSearch(input, maxResults);
+                    console.log('test', test);
+                    
+                    // Wait for latestResults to be not empty, then return
+                    function wait(){
+                        if (latestResults.length === 0){
+                            console.log('waiting');
+                            console.log('latestResults', latestResults);
+                            $timeout(wait, 100);
+                        } else {
+                            console.log('done waiting');
+                            //test = latestResults;
+                            return latestResults;
+                        }
+                    }
+                    console.log('about to wait');
+                    wait();
+                    
+                    console.log('returning (not)');
+                    //return test;
+                    /*
                     // Keep track of the number of results to display
                     if (searchResultItems.length < maxResults) {
                         resultsLength = searchResultItems.length;
@@ -290,11 +332,16 @@ define(
                     
                     //console.log('filtered searchResults (in Everything)', searchResults);
                     return searchResults;
+                    */
                 });
             }
             
             return {
-                query: queryGeneric
+                query: queryGeneric,
+                
+                getLatest: function () {
+                    return latestResults;
+                }
             };
         }
 
