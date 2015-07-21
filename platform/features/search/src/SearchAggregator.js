@@ -42,14 +42,6 @@ define(
          */
         function SearchAggregator(providers) {
             
-            // Determines if a searchResult object is a valid type 
-            // to be displayed as a final result. Is passed to the 
-            // search providers as an argument.
-            function validType(model) {
-                // Nothing is currently disallowed
-                return true;
-            }
-            
             // Remove extra objects that have the same ID 
             function filterRepeats(results) {
                 var ids = [],
@@ -161,7 +153,7 @@ define(
                 for (var i = 0; i < providers.length; i += 1) {
                     resultsPromises.push(
                         providers[i].query(
-                            inputID, validType, DEFAULT_MAX_RESULTS, DEFUALT_TIMEOUT
+                            inputID, DEFAULT_MAX_RESULTS, DEFUALT_TIMEOUT
                         )
                     );
                 }

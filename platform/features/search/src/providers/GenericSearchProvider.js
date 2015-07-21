@@ -44,8 +44,6 @@ define(
          *        more easy creation of web workers.
          */
         function GenericSearchProvider($rootScope, $timeout, objectService, workerService) {
-            var validType = function () {return true;};
-            
             var worker = workerService.run('genericSearchWorker'),
                 latestResults = [];
 
@@ -263,15 +261,12 @@ define(
              * 
              * @param inputID the name of the ID property of the html text 
              *   input where this funcion should find the search term 
-             * @param passedValidType (optional) a function which takes a 
-             *   model for an object and determines if it is a valid type to
-             *   include in the final list of results; default returns true
              * @param maxResults (optional) the maximum number of results 
              *   that this function should return 
              * @param timeout (optional) the time after which the search should 
              *   stop calculations and return partial results
              */
-            function queryGeneric(inputID, passedValidType, maxResults, timeout) {
+            function queryGeneric(inputID, maxResults, timeout) {
                 var input,
                     terms = [],
                     searchResults = [],
@@ -283,12 +278,6 @@ define(
                     // Else, we provide a default value. 
                     maxResults = DEFAULT_MAX_RESULTS;
                 }
-                
-                // Check to see if a valid type function was provided
-                if (passedValidType) {
-                    validType = passedValidType;
-                }
-                
                 
                 // Get the user input
                 input = document.getElementById(inputID).value;

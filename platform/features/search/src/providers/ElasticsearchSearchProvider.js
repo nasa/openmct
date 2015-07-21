@@ -48,7 +48,6 @@ define(
          */
         function ElasticsearchSearchProvider($http, objectService, ROOT) {
             // TODO: Fix the above docstring 
-            var validType = function () {return true;};
             
             // Check to see if the input has any special options
             function isDefaultFormat(searchTerm) {
@@ -99,7 +98,7 @@ define(
             
             // Processes results from the format that elasticsearch returns to 
             // a list of objects in the format that mct-representation can use
-            function processResults(rawResults, validType) {
+            function processResults(rawResults) {
                 var results = rawResults.data.hits.hits,
                     resultsLength = results.length,
                     ids = [],
@@ -130,15 +129,12 @@ define(
                         
                         // Include items we can get models for
                         if (objects[id].getModel) {
-                            // Check to see if they are allowed to be included 
-                            if (validType(objects[id].getModel())) {
-                                // Format the results as searchResult objects
-                                searchResults.push({
-                                    id: id,
-                                    object: objects[id],
-                                    score: scores[id]
-                                });
-                            }
+                            // Format the results as searchResult objects
+                            searchResults.push({
+                                id: id,
+                                object: objects[id],
+                                score: scores[id]
+                            });
                         }
                     }
                     
@@ -161,15 +157,12 @@ define(
              * 
              * @param inputID the name of the ID property of the html text 
              *   input where this funcion should find the search term 
-             * @param passedValidType (optional) a function which takes a 
-             *   model for an object and determines if it is a valid type to
-             *   include in the final list of results; default returns true
              * @param maxResults (optional) the maximum number of results 
              *   that this function should return 
              * @param timeout (optional) the time after which the search should 
              *   stop calculations and return partial results
              */
-            function queryElasticsearch(inputID, passedValidType, maxResults, timeout) {
+            function queryElasticsearch(inputID, maxResults, timeout) {
                 var searchTerm,
                     esQuery;
                 
@@ -178,11 +171,6 @@ define(
                 if (!maxResults) {
                     // Else, we provide a default value. 
                     maxResults = DEFAULT_MAX_RESULTS;
-                }
-                
-                // Check to see if a valid type function was provided 
-                if (passedValidType) {
-                    validType = passedValidType;
                 }
                 
                 // Get the user input 
@@ -204,7 +192,7 @@ define(
                     url: esQuery
                 }).then(function (rawResults) {
                     // ...then process the data 
-                    return processResults(rawResults, validType);
+                    return processResults(rawResults);
                 });
             }
             
