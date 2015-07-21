@@ -36,4 +36,11 @@
                             mct-object="result.object">
         </mct-representation>
     </div>
+    
+    <!-- Load more? --> 
+    <div ng-if="controller.areMore()">
+        <button ng-click="controller.loadMore()"> 
+            Load more
+        </button>
+    </div>
 </span>

@@ -27,23 +27,81 @@
 define(function () {
     "use strict";
     
-    function SearchbarController($scope, searchService) {
+    var INITIAL_LOAD_NUMBER = 20,
+        LOAD_INCREMENT = 5;
+    
+    function SearchbarController($scope, $timeout, searchService) {
+        // Starting amount of results to load. Will get increased. 
+        var numResults = INITIAL_LOAD_NUMBER;
+        
+        function update(timestamp) {
+            // Get the results 
+            $scope.results = searchService.getLatestResults(0, numResults);
+            
+            // Check to make sure that these results are the latest ones
+            function waitForLatest() {
+                var timestamps = searchService.getLatestTimestamps(),
+                    areOld = timestamps.some(function(c) {return c < timestamp;});
+                // If any of the timestamps are older than the one we made the query with
+                if (areOld) {
+                    // Then wait and try to update again
+                    searchService.updateResults();
+                    $timeout(waitForLatest, 100);
+                } else {
+                    // We got the latest results now 
+                    $scope.results = searchService.getLatestResults(0, numResults);
+                }
+            }
+            waitForLatest();
+        }
+        
+        function search(inputID) {
+            var date = new Date(),
+                timestamp = date.getTime();
+            
+            // Reset 'load more'
+            numResults = INITIAL_LOAD_NUMBER;
+            
+            // Send the query
+            searchService.sendQuery(inputID, timestamp);
+            
+            update(timestamp);
+        }
         
         return {
-            // Search the database using the user input of id "searchinput"
-            search: function (inputID) {
-                searchService.query(inputID).then(function (c) {
-                    $scope.results = c;
-                });
-            },
+            /**
+             * Search the filetree.
+             * 
+             * @param inputID The name of the ID property of the html text 
+             *   input where this funcion should find the search term.
+             */
+            search: search,
             
-            // Check to see if there are any search results to display.
+            /**
+             * Checks to see if there are any search results to display.
+             */
             areResults: function () {
                 if ($scope.results) {
                     return $scope.results.length > 0;
                 } else {
                     return false;
                 }
+            },
+            
+            /**
+             * Checks to see if there are more search results to display.
+             */
+            areMore: function () {
+                return numResults < searchService.getNumResults();
+            }, 
+            
+            /**
+             * Increases the number of search results to display, and then 
+             *   load them. 
+             */
+            loadMore: function () {
+                numResults += LOAD_INCREMENT;
+                update();
             }
         };
     }

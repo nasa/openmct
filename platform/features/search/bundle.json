@@ -20,7 +20,7 @@
             {
                 "key": "SearchbarController",
                 "implementation": "controllers/SearchbarController.js",
-                "depends": [ "$scope", "searchService" ]
+                "depends": [ "$scope", "$timeout", "searchService" ]
             }
         ],
         "templates": [
