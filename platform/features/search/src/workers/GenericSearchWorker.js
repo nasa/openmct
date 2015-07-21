@@ -28,6 +28,7 @@
     // {id: domainObject's ID, model: domainObject's model}
     var indexedItems = [];
     
+    // Helper function for index()
     function conainsItem(id) {
         for (var i = 0; i < indexedItems.length; i++) {
             if (indexedItems[i].id === id) {
@@ -37,10 +38,17 @@
         return false;
     }
     
+    /** 
+     * 
+     */
     function index(data) {
         // Takes an object model
         // Add to indexedItems
         console.log('webworker index', data);
+        
+        // TODO: Since this is only within genericsearch, do 
+        //       we really need to check if the index already holds it? 
+        //       This might depend on how often/when we clear indexedItems.
         if (!conainsItem(data.id)) {
             indexedItems.push({
                 id: data.id,
@@ -49,12 +57,77 @@
         }
     }
     
+    // Helper function for serach()
+    function convertToTerms(input) {
+        return input.split(' ');
+    }
+    
+    // Helper function for search()
+    function scoreItem(item, input, terms) {
+        var name = item.model.name.toLocaleLowerCase(),
+            weight = 0.65,
+            score = 0.0;
+
+        // Make the score really big if the item name and 
+        // the original search input are the same
+        if (name === input) {
+            score = 42;
+        }
+
+        for (var i = 0; i < terms.length; i++) {
+            // Increase the score if the term is in the item name
+            if (name.includes(terms[i])) {
+                score++;
+
+                // Add extra to the score if the search term exists
+                // as its own term within the items
+                // TODO: This may be undesired
+                if (name.split(' ').indexOf(terms[i]) !== -1) {
+                    score += .5;
+                }
+            }
+        }
+
+        return score * weight;
+    }
+    
+    /** 
+     * 
+     */
     function search(data) {
         // Takes a search input and the number of items to find
         // Converts it into search terms
         // Gets matches from indexedItems
         console.log('webworker search', data);
         console.log('webworker indexedItems', indexedItems);
+        
+        // This results array will hold objects which are composed of 
+        // the object's id, model, and score. (The score is wrt only this 
+        // specific search input.)
+        // TODO: It may be unnecissary for results to have models in it.
+        var results = [],
+            input = data.input.toLocaleLowerCase(),
+            terms = convertToTerms(input), 
+            timesToLoop = Math.min(indexedItems.length, data.maxNumber);
+        
+        for (var i = 0; i < timesToLoop; i++) {
+            var score = scoreItem(indexedItems[i], input, terms);
+            if (score > 0) {
+                results.push({
+                    id: indexedItems[i].id,
+                    model: indexedItems[i].model,
+                    score: score
+                });
+            }
+        }
+        
+        console.log('webworker results', results);
+        
+        return results;
+        
+        // TODO: After a search is completed, do we need to 
+        //       clear out indexedItems? 
+        //       When do we need to clear out inedxedItems?
     }
     
     self.onmessage = function (event) {

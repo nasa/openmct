@@ -100,7 +100,7 @@ define(
                 var message = {
                     request: 'search', 
                     input: searchInput,
-                    number: numberOfResults
+                    maxNumber: numberOfResults
                 };
                 worker.postMessage(message);
             }
