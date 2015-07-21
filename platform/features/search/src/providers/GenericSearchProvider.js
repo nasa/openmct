@@ -85,8 +85,12 @@ define(
                     }
                     objectService.getObjects(ids).then(function (objects) {
                         latestResults = [];
-                        for (var i in objects) {
-                            latestResults.push(objects[i]);
+                        for (var id in objects) {
+                            latestResults.push({
+                                object: objects[id],
+                                id: id
+                                // TODO: Make the event.data.results able to get score from id
+                            });
                         }
                         lastSearchTimestamp = event.data.timestamp;
                         console.log('updated latestResults', latestResults, 'with time', lastSearchTimestamp);

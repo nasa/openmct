@@ -29,16 +29,6 @@ define(function () {
     
     
     function SearchController($scope, searchService, objectService) {
-        $scope.pageLength = 16;
-        
-        function page(start, howMany) {
-            if (!howMany) {
-                howMany = $scope.pageLength;
-            }
-
-            $scope.index = start;
-            $scope.page = $scope.results.slice(start, start + howMany);
-        }
         
         function search(inputID) {
             
@@ -47,10 +37,10 @@ define(function () {
             // result page) here, using pseudo linkedlist searchResult
             
             searchService.sendQuery(inputID).then(function (c) {
-                $scope.results = c;
-                $scope.index = 0;
-                page($scope.index, $scope.pageLength);
+                //$scope.results = c;
             });
+            $scope.results = searchService.getLatestResults(0, 5);
+            console.log('$scope results', $scope.results);
         }
         
         return {
@@ -64,41 +54,6 @@ define(function () {
                 } else {
                     return false;
                 }
-            },
-            
-            // Check to see if there are enough results to be paging them
-            arePaging: function () {
-                return $scope.results.length > $scope.page.length;
-            },
-            
-            // Check to see if are items such that we can go back a page 
-            canGoBack: function () {
-                return $scope.index > 0;
-            },
-            
-            // Check to see if are items such that we can go forward a page 
-            canGoForward: function () {
-                return ($scope.index + $scope.pageLength) < $scope.results.length;
-            },
-            
-            // Change the items in scope to be the ones in the next page
-            nextPage: function (howMany) {
-                if (!howMany) {
-                    howMany = $scope.pageLength;
-                }
-                
-                $scope.index = $scope.index + howMany;
-                $scope.page = $scope.results.slice($scope.index, $scope.index + howMany);
-            },
-            
-            // Change the items in scope to be the ones in the previous page
-            previousPage: function (howMany) {
-                if (!howMany) {
-                    howMany = $scope.pageLength;
-                }
-                
-                $scope.index = $scope.index - howMany;
-                $scope.page = $scope.results.slice($scope.index, $scope.index + howMany);
             }
         };
     }

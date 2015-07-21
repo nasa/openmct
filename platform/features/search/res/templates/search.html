@@ -42,22 +42,10 @@
         <p>
             Results:
         </p>
-        <div ng-if="controller.arePaging()">
-            <button ng-if="controller.canGoBack()"
-                    ng-click="controller.previousPage()"> 
-                Previous Page
-            </button>
-            showing results {{ index+1 }} - {{ index + pageLength }} 
-            of {{ results.length }} 
-            <button ng-if="controller.canGoForward()"
-                    ng-click="controller.nextPage()"> 
-                Next Page
-            </button>
-        </div>
     </div>
     <div>
         <mct-representation key="'grid-item'"
-                        ng-repeat="result in page"
+                        ng-repeat="result in results"
                         mct-object="result.object">
         </mct-representation>
     </div>

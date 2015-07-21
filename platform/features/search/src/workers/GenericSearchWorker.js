@@ -57,8 +57,7 @@
         }
         
         var message = {
-            request: 'index', 
-            results: undefined
+            request: 'index'
         };
         return message;
     }
