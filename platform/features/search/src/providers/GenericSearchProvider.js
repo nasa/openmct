@@ -43,7 +43,7 @@ define(
          * @param {WorkerService} workerService the service which allows
          *        more easy creation of web workers.
          */
-        function GenericSearchProvider($rootScope, $timeout, objectService, workerService) {
+        function GenericSearchProvider($rootScope, objectService, workerService) {
             var worker = workerService.run('genericSearchWorker'),
                 latestResults = [],
                 lastSearchTimestamp = 0;
@@ -94,7 +94,6 @@ define(
                         lastSearchTimestamp = event.data.timestamp;
                     });
                 }
-                // If the message was from 'index', we don't need to do anything
             }
             
             // Recursive helper function for getItems()

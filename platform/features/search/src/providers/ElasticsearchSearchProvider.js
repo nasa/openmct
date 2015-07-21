@@ -36,18 +36,17 @@ define(
             DEFAULT_MAX_RESULTS = 100;
         
         /**
-         * A model service which reads domain object models from an external
-         * persistence service.
+         * A search service which searches through domain objects in 
+         * the filetree using ElasticSearch.
          *
          * @constructor
-         * @param {PersistenceService} persistenceService the service in which
-         *        domain object models are persisted.
-         * @param $q Angular's $q service, for working with promises
-         * @param {string} SPACE the name of the persistence space from which
-         *        models should be retrieved.
+         * @param $http Angular's $http service, for working with urls
+         * @param {ObjectService} objectService the service from which
+         *        domain objects can be gotten.
+         * @param ROOT the constant ELASTIC_ROOT which allows us to 
+         *        interact with ElasticSearch.
          */
         function ElasticsearchSearchProvider($http, objectService, ROOT) {
-            // TODO: Fix the above docstring 
             
             // Check to see if the input has any special options
             function isDefaultFormat(searchTerm) {

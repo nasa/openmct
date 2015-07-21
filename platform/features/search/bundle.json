@@ -42,7 +42,7 @@
                 "provides": "searchService",
                 "type": "provider",
                 "implementation": "providers/GenericSearchProvider.js",
-                "depends": [ "$rootScope", "$timeout", "objectService", "workerService" ]
+                "depends": [ "$rootScope", "objectService", "workerService" ]
             },
             {
                 "provides": "searchService",

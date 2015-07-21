@@ -146,10 +146,6 @@ define(
                     providers[i].query(inputID, timestamp, DEFAULT_MAX_RESULTS, DEFUALT_TIMEOUT);
                 }
                 
-                // TODO: Then we want to 'Get the latest results from all the providers'
-                //       And then we might also want to check to see if the timestamp 
-                //       is correct. 
-                
                 // Update the merged results list 
                 updateResults();
             }

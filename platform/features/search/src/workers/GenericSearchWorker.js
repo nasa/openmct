@@ -75,6 +75,7 @@
         while (terms.substr(terms.length - 1, 1) === ' ') {
             terms = terms.substring(0, terms.length - 1);
         }
+        
         // Then split it at the spaces
         terms = terms.split(' ');
         console.log('terms', terms);
@@ -153,8 +154,7 @@
     
     self.onmessage = function (event) {
         if (event.data.request === 'index') {
-            // TODO: Don't really need to post here. 
-            self.postMessage(index(event.data));
+            index(event.data);
         } else if (event.data.request === 'search') {
             self.postMessage(search(event.data));
         }
