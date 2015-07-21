@@ -24,20 +24,41 @@
 (function () {
     "use strict";
     
+    // An array of objects composed of domain object IDs and models
+    // {id: domainObject's ID, model: domainObject's model}
     var indexedItems = [];
+    
+    function conainsItem(id) {
+        for (var i = 0; i < indexedItems.length; i++) {
+            if (indexedItems[i].id === id) {
+                return true;
+            }
+        }
+        return false;
+    }
     
     function index(data) {
         // Takes an object model
         // Add to indexedItems
+        console.log('webworker index', data);
+        if (!conainsItem(data.id)) {
+            indexedItems.push({
+                id: data.id,
+                model: data.model
+            });
+        }
     }
     
     function search(data) {
         // Takes a search input and the number of items to find
         // Converts it into search terms
         // Gets matches from indexedItems
+        console.log('webworker search', data);
+        console.log('webworker indexedItems', indexedItems);
     }
     
     self.onmessage = function (event) {
+        console.log('webworker onmessage');
         if (event.data.request === 'index') {
             self.postMessage(index(event.data));
         } else if (event.data.request === 'search') {

@@ -85,7 +85,8 @@ define(
             function indexItem(domainObject) {
                 var message = {
                     request: 'index', 
-                    model: domainObject.getModel()
+                    model: domainObject.getModel(),
+                    id: domainObject.getId()
                 };
                 // Note that getModel() by definition returns a JavaScript object
                 // that can be losslesly converted to a JSON object.
@@ -106,7 +107,7 @@ define(
             
             function handleResponse(event) {
                 //latest = event.data;
-                //console.log('handleResponse', event.data);
+                console.log('handleResponse', event.data);
                 //$rootScope.$apply();
                 //requestNext();
             }
@@ -152,6 +153,9 @@ define(
                         var searchResultItems = [];
                         
                         for (var i = 0; i < items.length; i += 1) {
+                            // Test out calling worker indexItem
+                            indexItem(items[i]);
+                            
                             searchResultItems.push({
                                 id: items[i].getId(),
                                 object: items[i],
@@ -164,8 +168,6 @@ define(
                     });
                 });
             }
-            
-            
             
             // Process the search input. Makes an array of search terms
             // by splitting up the input at spaces. 
@@ -279,6 +281,9 @@ define(
                     } else {
                         resultsLength = maxResults;
                     }
+                    
+                    // Test out calling the web worker search
+                    workerSearch(input, maxResults);
 
                     // Then filter through the items list
                     searchResults = filterResults(searchResultItems, input, resultsLength);
