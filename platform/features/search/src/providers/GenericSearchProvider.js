@@ -46,10 +46,10 @@ define(
         function GenericSearchProvider($rootScope, objectService, workerService) {
             var validType = function () {return true;};
             
-            /*
             var worker = workerService.run('genericSearchWorker'),
                 lastestItems;
 
+            /*
             function requestItems() {
                 // Aquire My Items (root folder)
                 // I don't think we can do this part in the webworker because of the objectService
@@ -81,9 +81,33 @@ define(
             }
             */
 
+            // Tell the web worker to add a new item's model to its list of items.
+            function indexItem(domainObject) {
+                var message = {
+                    request: 'index', 
+                    model: domainObject.getModel()
+                };
+                // Note that getModel() by definition returns a JavaScript object
+                // that can be losslesly converted to a JSON object.
+                worker.postMessage(message);
+            }
+            
+            // Tell the worker to search for items it has that match this searchInput.
+            // Takes the searchInput, as well as a max number of results (will return 
+            // less than that if there are fewer matches).
+            function workerSearch(searchInput, numberOfResults) {
+                var message = {
+                    request: 'search', 
+                    input: searchInput,
+                    number: numberOfResults
+                };
+                worker.postMessage(message);
+            }
+            
             function handleResponse(event) {
-                latest = event.data;
-                $rootScope.$apply();
+                //latest = event.data;
+                //console.log('handleResponse', event.data);
+                //$rootScope.$apply();
                 //requestNext();
             }
             
