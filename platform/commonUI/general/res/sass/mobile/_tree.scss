@@ -21,8 +21,9 @@
  *****************************************************************************/
 .test-tree-words {
     @include phoneandtablet {
-        margin-bottom: 7px;
-        width: 90%;
+        margin-bottom: 4px;
+        margin-bottom: 4px;
+        width: 100%;
         text-overflow: ellipsis;
     }
 }
@@ -55,9 +56,8 @@ ul.tree {
                 }
                 
                 .view-control {
-                    position: relative;
-                    left: 100%;
-                    right: 0;
+                    position: absolute;
+                    right: 5px;
                     font-size: 1.5em;
                     $runningItemW: $interiorMargin + $treeVCW;
                 }                
