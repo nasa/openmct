@@ -42,7 +42,7 @@
                 "provides": "searchService",
                 "type": "provider",
                 "implementation": "providers/GenericSearchProvider.js",
-                "depends": [ "objectService" ]
+                "depends": [ "$rootScope", "objectService", "workerService" ]
             },
             {
                 "provides": "searchService",
@@ -54,6 +54,13 @@
                 "provides": "searchService",
                 "type": "aggregator",
                 "implementation": "SearchAggregator.js"
+            }
+        ],
+        "workers": [
+            {
+                "key": "genericSearchWorker",
+                "scriptUrl": "workers/GenericSearchWorker.js",
+                "depends": [ "objectService" ]
             }
         ]
     }
