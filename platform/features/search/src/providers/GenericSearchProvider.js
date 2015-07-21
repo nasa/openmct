@@ -44,6 +44,8 @@ define(
          *        more easy creation of web workers.
          */
         function GenericSearchProvider($rootScope, objectService, workerService) {
+            var validType = function () {return true;};
+            
             /*
             var worker = workerService.run('genericSearchWorker'),
                 lastestItems;
@@ -90,8 +92,6 @@ define(
                 var date = new Date;
                 if (stopTime && date.getTime() >= stopTime) {
                     // This indexing of items has timed out 
-                    console.log('timed out');
-                    console.log('returning', children);
                     return children;
                 } else if (i >= children.length) {
                     // Done!
@@ -180,7 +180,7 @@ define(
             }
             
             // Filter through a list of searchResults based on a search term 
-            function filterResults(results, originalInput, resultsLength, validType) {
+            function filterResults(results, originalInput, resultsLength) {
                 var terms, 
                     searchResults = [],
                     itemModel;
@@ -216,15 +216,15 @@ define(
              * 
              * @param inputID the name of the ID property of the html text 
              *   input where this funcion should find the search term 
-             * @param validType a function which takes a model for an object
-             *   and determines if it is of a valid type to include in the 
-             *   final list of results
+             * @param passedValidType (optional) a function which takes a 
+             *   model for an object and determines if it is a valid type to
+             *   include in the final list of results; default returns true
              * @param maxResults (optional) the maximum number of results 
              *   that this function should return 
              * @param timeout (optional) the time after which the search should 
              *   stop calculations and return partial results
              */
-            function queryGeneric(inputID, validType, maxResults, timeout) {
+            function queryGeneric(inputID, passedValidType, maxResults, timeout) {
                 var input,
                     terms = [],
                     searchResults = [],
@@ -235,6 +235,11 @@ define(
                 if (!maxResults) {
                     // Else, we provide a default value. 
                     maxResults = DEFAULT_MAX_RESULTS;
+                }
+                
+                // Check to see if a valid type function was provided
+                if (passedValidType) {
+                    validType = passedValidType;
                 }
                 
                 
@@ -252,7 +257,7 @@ define(
                     }
 
                     // Then filter through the items list
-                    searchResults = filterResults(searchResultItems, input, resultsLength, validType);
+                    searchResults = filterResults(searchResultItems, input, resultsLength);
                     
                     //console.log('filtered searchResults (in Everything)', searchResults);
                     return searchResults;

@@ -52,6 +52,47 @@ define(
             
             // Remove extra objects that have the same ID 
             function filterRepeats(results) {
+                var ids = [],
+                    idToIndicies = {}, // 'dictionary' mapping IDs to a list of indicies 
+                    filteredResults = [];
+                
+                // Create a list of indicies of objects that correspond to any object ID
+                for (var i = 0; i < results.length; i++) {
+                    var id = results[i].id;
+                    
+                    if (idToIndicies[id]) {
+                        // If the ID already exists in the dictionary, push this index to 
+                        // the end of the array it points to
+                        idToIndicies[id].push(i);
+                    } else {
+                        // Else make a new entry in the dictionary with this ID, pointing 
+                        // to this index
+                        idToIndicies[id] = [i];
+                        // And also add this ID to the list of IDs that we have seen
+                        ids.push(id);
+                    }
+                }
+                
+                // Now for each ID in the dictionary, we want to use the version of  
+                // the object that has a higher score
+                for (var i = 0; i < ids.length; i++) {
+                    var id = ids[i],
+                        indicies = idToIndicies[id],
+                        highestScoringObject;
+                    
+                    highestScoringObject = results[ indicies[0] ];
+                    for (var j = 0; j < indicies.length; j++) {
+                        // If the score of the object corresponding to this index of the results 
+                        // list has a higher score than the one we have, choose it instead
+                        if (results[indicies[j]].score > highestScoringObject.score) {
+                            highestScoringObject = results[indicies[j]];
+                        }
+                    }
+                    filteredResults.push(highestScoringObject);
+                }
+
+                return filteredResults;
+                /*
                 var ids = [];
                 
                 for (var i = 0; i < results.length; i += 1) {
@@ -67,6 +108,7 @@ define(
                 }
                 
                 return results;
+                */
             }
             
             // Order the objects from highest to lowest score in the array
@@ -91,6 +133,8 @@ define(
                 return results;
             }
             
+            // 'Loop' over the promises using recursion so that the promises are fufilled by the
+            // time that we are done
             function getPromisedResults(resultsPromises, promiseIndex, finalResults) {
                 if (promiseIndex >= resultsPromises.length) {
                     return finalResults;

@@ -48,6 +48,7 @@ define(
          */
         function ElasticsearchSearchProvider($http, objectService, ROOT) {
             // TODO: Fix the above docstring 
+            var validType = function () {return true;};
             
             // Check to see if the input has any special options
             function isDefaultFormat(searchTerm) {
@@ -67,7 +68,6 @@ define(
                 
                 return searchTerm.split(' ').map(function (s) {
                     if (s.includes('"')) {
-                        console.log('true');
                         return s;
                     } else {
                         return s + '~' + editDistance;
@@ -104,8 +104,7 @@ define(
                     resultsLength = results.length,
                     ids = [],
                     scores = {},
-                    searchResults = [],
-                    i;
+                    searchResults = [];
                 
                 if (rawResults.data.hits.total > resultsLength) {
                     // TODO: Somehow communicate this to the user 
@@ -113,24 +112,21 @@ define(
                 }
                 
                 // Get the result objects' IDs
-                for (i = 0; i < resultsLength; i += 1) {
+                for (var i = 0; i < resultsLength; i += 1) {
                     ids.push(results[i][ID]);
                 }
                 
                 // Get the result objects' scores
-                for (i = 0; i < resultsLength; i += 1) {
+                for (var i = 0; i < resultsLength; i += 1) {
                     //scores.push(results[i][SCORE]);
                     scores[ ids[i] ] = results[i][SCORE];
                 }
                 
                 // Get the domain objects from their IDs
                 return objectService.getObjects(ids).then(function (objects) {
-                    var id,
-                        j;
-                    
                     // Filter by search term
-                    for (j = 0; j < resultsLength; j += 1) {
-                        id = ids[j];
+                    for (var j = 0; j < resultsLength; j += 1) {
+                        var id = ids[j];
                         
                         // Include items we can get models for
                         if (objects[id].getModel) {
@@ -165,15 +161,15 @@ define(
              * 
              * @param inputID the name of the ID property of the html text 
              *   input where this funcion should find the search term 
-             * @param validType a function which takes a model for an object
-             *   and determines if it is of a valid type to include in the 
-             *   final list of results
+             * @param passedValidType (optional) a function which takes a 
+             *   model for an object and determines if it is a valid type to
+             *   include in the final list of results; default returns true
              * @param maxResults (optional) the maximum number of results 
              *   that this function should return 
              * @param timeout (optional) the time after which the search should 
              *   stop calculations and return partial results
              */
-            function queryElasticsearch(inputID, validType, maxResults, timeout) {
+            function queryElasticsearch(inputID, passedValidType, maxResults, timeout) {
                 var searchTerm,
                     esQuery;
                 
@@ -182,6 +178,11 @@ define(
                 if (!maxResults) {
                     // Else, we provide a default value. 
                     maxResults = DEFAULT_MAX_RESULTS;
+                }
+                
+                // Check to see if a valid type function was provided 
+                if (passedValidType) {
+                    validType = passedValidType;
                 }
                 
                 // Get the user input 
