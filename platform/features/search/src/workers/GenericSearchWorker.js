@@ -143,6 +143,7 @@
     self.onmessage = function (event) {
         console.log('webworker onmessage');
         if (event.data.request === 'index') {
+            // TODO: Don't really need to post here. 
             self.postMessage(index(event.data));
         } else if (event.data.request === 'search') {
             self.postMessage(search(event.data));

@@ -126,6 +126,7 @@ define(
                 return results;
             }
             
+            /*
             // 'Loop' over the promises using recursion so that the promises are fufilled by the
             // time that we are done
             function getPromisedResults(resultsPromises, promiseIndex, finalResults) {
@@ -138,6 +139,23 @@ define(
                     });
                 }
             }
+            */
+            
+            function updateResults() {
+                var newerResults = [];
+                
+                // For each provider, get its most recent results
+                for (var i = 0; i < providers.length; i += 1) {
+                    newerResults = newerResults.concat(providers[i].getLatest());
+                }
+                
+                // Clean up 
+                newerResults = filterRepeats(newerResults);
+                newerResults = orderByScore(newerResults);
+                
+                // After all that is done, now replace latestMergedResults with this
+                latestMergedResults = newerResults;
+            }
             
             // Calls the searches of each of the providers, then 
             // merges the results lists so that there are not redundant 
@@ -146,14 +164,14 @@ define(
              * 
              */
             function queryAll(inputID) {
-                var resultsPromises = [],
+                var promises = [],
                     date = new Date(),
                     timestamp = date.getTime();
                 
                 // Get result list promises
                 // TODO: This is now 'Send the query to all the providers'
                 for (var i = 0; i < providers.length; i += 1) {
-                    resultsPromises.push(
+                    promises.push(
                         providers[i].query(
                             inputID, timestamp, DEFAULT_MAX_RESULTS, DEFUALT_TIMEOUT
                         )
@@ -163,17 +181,18 @@ define(
                 //       And then we might also want to check to see if the timestamp 
                 //       is correct. 
                 
-                //var newerResults = [];
+                updateResults();
                 
-                
+                /*
                 // Wait for the promises to fufill
-                return getPromisedResults(resultsPromises, 0, []).then(function (c) {
+                return getPromisedResults(promises, 0, []).then(function (c) {
                     // Get rid of the repeated objects and put in correct order
                     c = filterRepeats(c);
                     c = orderByScore(c);
                     latestMergedResults = c;
                     return c;
                 });
+                */
             }
             
             // TODO: getLatestResults(start, stop) so you can choose which indicies to start and stop
