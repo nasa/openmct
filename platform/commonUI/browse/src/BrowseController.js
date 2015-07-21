@@ -143,8 +143,6 @@ define(
             
             $scope.treeSlide = function () {
                 $scope.treeClass = !$scope.treeClass;
-                // FUTURE: Remove before merge
-                console.log($scope.treeClass ? "browse-showtree" : "browse-hidetree");
             };
 
             // Listen for changes in navigation state.

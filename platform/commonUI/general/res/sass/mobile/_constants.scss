@@ -52,7 +52,7 @@ $tabHeiLanCheck: "(min-width: #{$tabMinH}) and (max-width: #{$tabMaxH})";
 $tabletLandscapeCheck: "#{$tabWidLanCheck} and #{$tabHeiLanCheck}";
 
 $desktopPortraitCheck: "(min-device-width: #{$compMinW}) and (min-device-height: #{$compMinH})";
-$desktopLanscapeCheck: "(min-device-width: #{$compMinH}) and (min-device-height: #{$compMinW})";
+$desktopLandscapeCheck: "(min-device-width: #{$compMinH}) and (min-device-height: #{$compMinW})";
 
 /************************** MEDIA QUERIES: WINDOWS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
 $phonePortrait: "#{$screenPortrait} and #{$phonePortraitCheck} and #{$mobileDevice}";
@@ -64,7 +64,7 @@ $tabletLandscape: "#{$screenLandscape} and #{$tabletLandscapeCheck} and #{$mobil
 $tabletLandscapeEmu: "#{$screenLandscape} and #{$tabletLandscapeCheck} and #{$mobileDeviceEmu}";
 
 $desktopPortrait: "screen and #{$desktopPortraitCheck}";
-$desktopLandscape: "screen and #{$desktopLanscapeCheck}";
+$desktopLandscape: "screen and #{$desktopLandscapeCheck}";
 
 /************************** DEVICE PARAMETERS FOR MENUS/REPRESENTATIONS */
 $phoneRepSizePortrait: 19px;

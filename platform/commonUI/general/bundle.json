@@ -8,6 +8,11 @@
                 "key": "urlService",
                 "implementation": "/services/UrlService.js",
                 "depends": [ "$location" ]
+            },
+            {
+                "key": "queryService",
+                "implementation": "/services/QueryService.js",
+                "depends": [ "$window" ]
             }
         ],
         "runs": [
@@ -60,7 +65,7 @@
             {
                 "key": "TreeNodeController",
                 "implementation": "controllers/TreeNodeController.js",
-                "depends": [ "$scope", "$timeout" ]
+                "depends": [ "$scope", "$timeout", "queryService" ]
             },
             {
                 "key": "ActionGroupController",
