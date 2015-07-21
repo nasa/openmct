@@ -46,6 +46,12 @@
             },
             {
                 "provides": "searchService",
+                "type": "provider",
+                "implementation": "providers/ElasticsearchSearchProvider.js",
+                "depends": [ "$http", "objectService", "ELASTIC_ROOT" ]
+            },
+            {
+                "provides": "searchService",
                 "type": "aggregator",
                 "implementation": "SearchAggregator.js"
             }

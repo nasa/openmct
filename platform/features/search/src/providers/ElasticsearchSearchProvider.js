@@ -40,13 +40,15 @@ define(
          * the filetree using ElasticSearch.
          *
          * @constructor
-         * @param $http Angular's $http service, for working with urls
+         * @param $http Angular's $http service, for working with urls.
          * @param {ObjectService} objectService the service from which
          *        domain objects can be gotten.
          * @param ROOT the constant ELASTIC_ROOT which allows us to 
          *        interact with ElasticSearch.
          */
         function ElasticsearchSearchProvider($http, objectService, ROOT) {
+            var latestResults = [], 
+                lastSearchTimestamp = 0;
             
             // Check to see if the input has any special options
             function isDefaultFormat(searchTerm) {
@@ -97,7 +99,7 @@ define(
             
             // Processes results from the format that elasticsearch returns to 
             // a list of objects in the format that mct-representation can use
-            function processResults(rawResults) {
+            function processResults(rawResults, timestamp) {
                 var results = rawResults.data.hits.hits,
                     resultsLength = results.length,
                     ids = [],
@@ -122,7 +124,6 @@ define(
                 
                 // Get the domain objects from their IDs
                 return objectService.getObjects(ids).then(function (objects) {
-                    // Filter by search term
                     for (var j = 0; j < resultsLength; j += 1) {
                         var id = ids[j];
                         
@@ -137,7 +138,8 @@ define(
                         }
                     }
                     
-                    //console.log('searchResults (in ES provider)', searchResults);
+                    latestResults = searchResults;
+                    lastSearchTimestamp = timestamp;
                     return searchResults;
                 });
             }
@@ -195,12 +197,20 @@ define(
                     url: esQuery
                 }).then(function (rawResults) {
                     // ...then process the data 
-                    return processResults(rawResults);
+                    return processResults(rawResults, timestamp);
                 });
             }
             
             return {
-                query: queryElasticsearch
+                query: queryElasticsearch,
+                
+                getLatestResults: function () {
+                    return latestResults;
+                },
+                
+                getLatestTimestamp: function () {
+                    return lastSearchTimestamp;
+                }
             };
         }
 

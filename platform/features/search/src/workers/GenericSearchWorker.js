@@ -78,7 +78,6 @@
         
         // Then split it at the spaces
         terms = terms.split(' ');
-        console.log('terms', terms);
         return terms;
     }
     
@@ -136,7 +135,6 @@
                 results[indexedItems[i].id] = {
                     score: score
                 };
-                console.log(results[indexedItems[i].id]);
             }
         }
         
