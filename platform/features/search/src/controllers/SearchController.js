@@ -28,19 +28,35 @@ define(function () {
     "use strict";
     
     
-    function SearchController($scope, searchService, objectService) {
+    function SearchController($scope, $timeout, searchService) {
         
         function search(inputID) {
+            var date = new Date(),
+                timestamp = date.getTime(),
+                numResults = 20;
             
-            // Later, the search result format will be different
-            // Will need to compile search result list (for this 
-            // result page) here, using pseudo linkedlist searchResult
+            // Send the query
+            searchService.sendQuery(inputID, timestamp);
             
-            searchService.sendQuery(inputID);/*.then(function (c) {
-                //$scope.results = c;
-            });*/
-            $scope.results = searchService.getLatestResults(0, 5);
-            console.log('$scope results', $scope.results);
+            // Get the results 
+            $scope.results = searchService.getLatestResults(0, numResults);
+            
+            // Check to make sure that these results are the latest ones
+            function waitForLatest() {
+                var timestamps = searchService.getLatestTimestamps(),
+                    areOld = timestamps.some(function(c) {return c < timestamp;});
+                // If any of the timestamps are older than the one we made the query with
+                if (areOld) {
+                    // Then wait and try to update again
+                    searchService.updateResults();
+                    var latest = searchService.getLatestResults(0, numResults);
+                    $timeout(waitForLatest, 100);
+                } else {
+                    // We got the latest results now 
+                    $scope.results = searchService.getLatestResults(0, numResults);
+                }
+            }
+            waitForLatest();
         }
         
         return {

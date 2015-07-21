@@ -41,7 +41,8 @@ define(
          *        aggregated
          */
         function SearchAggregator(providers) {
-            var latestMergedResults = [];
+            var latestMergedResults = [],
+                lastMergeTimestamps = [];
             
             // Remove extra objects that have the same ID 
             function filterRepeats(results) {
@@ -104,11 +105,13 @@ define(
             }
             
             function updateResults() {
-                var newerResults = [];
+                var newerResults = [],
+                    providerTimestamps = [];
                 
                 // For each provider, get its most recent results
                 for (var i = 0; i < providers.length; i += 1) {
-                    newerResults = newerResults.concat(providers[i].getLatest());
+                    newerResults = newerResults.concat(providers[i].getLatestResults());
+                    providerTimestamps.push(providers[i].getLatestTimestamp());
                 }
                 
                 // Clean up 
@@ -117,27 +120,32 @@ define(
                 
                 // After all that is done, now replace latestMergedResults with this
                 latestMergedResults = newerResults;
+                lastMergeTimestamps = providerTimestamps;
             }
             
-            // Calls the searches of each of the providers, then 
-            // merges the results lists so that there are not redundant 
-            // results 
             /** 
-             * 
+             * Sends a query to each of the providers, then updates the globl
+             *   latestMergedResults accordingly. 
+             *
+             * @param inputID The name of the ID property of the html text 
+             *   input where this funcion should find the search term.
+             * @param timestamp (optional) The time at which this function
+             *   was called. This timestamp will be associated with the 
+             *   latest results list, which allows us to see if it has been 
+             *   updated. If not provided, this aggregator will. 
              */
-            function queryAll(inputID) {
-                var promises = [],
-                    date = new Date(),
+            function queryAll(inputID, timestamp) {
+                // If there's not a timestamp, make this time the timestamp
+                if (!timestamp) {
+                    var date = new Date();
                     timestamp = date.getTime();
+                }
                 
                 // Send the query to all the providers
                 for (var i = 0; i < providers.length; i += 1) {
-                    promises.push(
-                        providers[i].query(
-                            inputID, timestamp, DEFAULT_MAX_RESULTS, DEFUALT_TIMEOUT
-                        )
-                    );
+                    providers[i].query(inputID, timestamp, DEFAULT_MAX_RESULTS, DEFUALT_TIMEOUT);
                 }
+                
                 // TODO: Then we want to 'Get the latest results from all the providers'
                 //       And then we might also want to check to see if the timestamp 
                 //       is correct. 
@@ -148,9 +156,17 @@ define(
             
             return {
                 sendQuery: queryAll,
+                updateResults: updateResults,
                 getLatestResults: function (start, stop) {
                     // TODO: Make sure that slice handles out of bounds 
-                    return latestMergedResults.slice(start, stop);
+                    // By default if there are no start or stop provided, will return 
+                    // the entire thing. 
+                    var a = latestMergedResults.slice(start, stop);
+                    return a;
+                },
+                getLatestTimestamps: function () {
+                    var b = lastMergeTimestamps;
+                    return b;
                 }
             };
         }

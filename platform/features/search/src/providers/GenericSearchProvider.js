@@ -46,7 +46,7 @@ define(
         function GenericSearchProvider($rootScope, $timeout, objectService, workerService) {
             var worker = workerService.run('genericSearchWorker'),
                 latestResults = [],
-                lastSearchTimestamp;
+                lastSearchTimestamp = 0;
 
             // Tell the web worker to add a new item's model to its list of items.
             function indexItem(domainObject) {
@@ -76,7 +76,6 @@ define(
             worker.onmessage = handleResponse;
             
             function handleResponse(event) {
-                console.log('handleResponse', event.data);
                 if (event.data.request === 'search') {
                     // Convert the ids given from the web worker into domain objects
                     var ids = [];
@@ -93,7 +92,6 @@ define(
                             });
                         }
                         lastSearchTimestamp = event.data.timestamp;
-                        console.log('updated latestResults', latestResults, 'with time', lastSearchTimestamp);
                     });
                 }
                 // If the message was from 'index', we don't need to do anything
@@ -197,8 +195,12 @@ define(
             return {
                 query: queryGeneric,
                 
-                getLatest: function () {
+                getLatestResults: function () {
                     return latestResults;
+                },
+                
+                getLatestTimestamp: function () {
+                    return lastSearchTimestamp;
                 }
             };
         }

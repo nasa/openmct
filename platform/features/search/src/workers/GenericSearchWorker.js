@@ -44,7 +44,6 @@
     function index(data) {
         // Takes an object model
         // Add to indexedItems
-        console.log('webworker index', data);
         
         // TODO: Since this is only within genericsearch, do 
         //       we really need to check if the index already holds it? 
@@ -64,7 +63,18 @@
     
     // Helper function for serach()
     function convertToTerms(input) {
-        return input.split(' ');
+        var terms = input;
+        // Shave any spaces off of the ends of the input
+        while (terms.substr(0, 1) === ' ') {
+            terms = terms.substring(1, terms.length);
+        }
+        while (terms.substr(terms.length - 1, 1) === ' ') {
+            terms = terms.substring(0, terms.length - 1);
+        }
+        // Then split it at the spaces
+        terms = terms.split(' ');
+        console.log('terms', terms);
+        return terms;
     }
     
     // Helper function for search()
@@ -103,8 +113,6 @@
         // Takes a search input and the number of items to find
         // Converts it into search terms
         // Gets matches from indexedItems
-        console.log('webworker search', data);
-        console.log('webworker indexedItems', indexedItems);
         
         // This results array will hold objects which are composed of 
         // the object's id, model, and score. (The score is wrt only this 
@@ -126,8 +134,6 @@
             }
         }
         
-        console.log('webworker results', results);
-        
         var message = {
             request: 'search', 
             results: results,
@@ -141,7 +147,6 @@
     }
     
     self.onmessage = function (event) {
-        console.log('webworker onmessage');
         if (event.data.request === 'index') {
             // TODO: Don't really need to post here. 
             self.postMessage(index(event.data));
