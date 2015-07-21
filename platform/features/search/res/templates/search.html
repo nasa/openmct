@@ -42,6 +42,11 @@
         <p>
             Results:
         </p>
+        <div ng-if="controller.areMore()">
+            <button ng-click="controller.loadMore()"> 
+                Load more
+            </button>
+        </div>
     </div>
     <div>
         <mct-representation key="'grid-item'"

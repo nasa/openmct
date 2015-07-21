@@ -184,6 +184,14 @@ define(
                  */
                 getLatestTimestamps: function () {
                     return lastMergeTimestamps;
+                },
+                
+                /** 
+                 * Get the number of search results that have been calculated most 
+                 *   recently. 
+                 */
+                getNumResults: function () {
+                    return latestMergedResults.length;
                 }
             };
         }
