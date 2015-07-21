@@ -46,7 +46,7 @@ define(function () {
             // Will need to compile search result list (for this 
             // result page) here, using pseudo linkedlist searchResult
             
-            searchService.query(inputID).then(function (c) {
+            searchService.sendQuery(inputID).then(function (c) {
                 $scope.results = c;
                 $scope.index = 0;
                 page($scope.index, $scope.pageLength);

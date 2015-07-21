@@ -45,39 +45,8 @@ define(
          */
         function GenericSearchProvider($rootScope, $timeout, objectService, workerService) {
             var worker = workerService.run('genericSearchWorker'),
-                latestResults = [];
-
-            /*
-            function requestItems() {
-                // Aquire My Items (root folder)
-                // I don't think we can do this part in the webworker because of the objectService
-                return objectService.getObjects(['mine']).then(function (objects) {
-                    // Get the webworker to go through the tree 
-                    console.log('about to post');
-                    console.log('objects.mine', objects.mine);
-                    console.log('objects.mine stringify', JSON.stringify(objects.mine));
-                    console.log('objectService', objectService);
-                    console.log('objectService stringify', JSON.stringify(objectService));
-                    
-                    // Testing making JSON object
-                    var jsonObj = {};
-                    var getC = JSON.stringify(objects.mine.getCapability);
-                    console.log('empty json', jsonObj);
-                    jsonObj = {
-                        getCapability: getC,
-                        getId: objects.mine.getId,
-                        getModel: objects.mine.getModel,
-                        hasCapability: objects.mine.hasCapability,
-                        useCapability: objects.mine.useCapability
-                    };
-                    console.log('json', jsonObj);
-                    
-                    worker.postMessage(jsonObj); // Not working :(
-                    console.log('posted');
-                });
-                //counter += 1;
-            }
-            */
+                latestResults = [],
+                lastSearchTimestamp;
 
             // Tell the web worker to add a new item's model to its list of items.
             function indexItem(domainObject) {
@@ -94,11 +63,12 @@ define(
             // Tell the worker to search for items it has that match this searchInput.
             // Takes the searchInput, as well as a max number of results (will return 
             // less than that if there are fewer matches).
-            function workerSearch(searchInput, maxResults) {
+            function workerSearch(searchInput, maxResults, timestamp) {
                 var message = {
                     request: 'search', 
                     input: searchInput,
-                    maxNumber: maxResults
+                    maxNumber: maxResults, 
+                    timestamp: timestamp
                 };
                 worker.postMessage(message);
             }
@@ -106,17 +76,23 @@ define(
             worker.onmessage = handleResponse;
             
             function handleResponse(event) {
-                //latest = event.data;
-                
                 console.log('handleResponse', event.data);
                 if (event.data.request === 'search') {
-                    latestResults = event.data.results;
-                    console.log('updated latestResults', latestResults);
+                    // Convert the ids given from the web worker into domain objects
+                    var ids = [];
+                    for (var i = 0; i < event.data.results.length; i++) {
+                        ids.push(event.data.results[i].id);
+                    }
+                    objectService.getObjects(ids).then(function (objects) {
+                        latestResults = [];
+                        for (var i in objects) {
+                            latestResults.push(objects[i]);
+                        }
+                        lastSearchTimestamp = event.data.timestamp;
+                        console.log('updated latestResults', latestResults, 'with time', lastSearchTimestamp);
+                    });
                 }
                 // If the message was from 'index', we don't need to do anything
-                
-                //$rootScope.$apply();
-                //requestNext();
             }
             
             // Recursive helper function for getItems()
@@ -164,89 +140,9 @@ define(
                         }
                         return; // We don't need to return anything anymore
                         // TODO: Fix return statements. Do we need them still?
-                        /*
-                        // Turn them into searchResult objects (object, id, and score)
-                        var searchResultItems = [];
-                        
-                        for (var i = 0; i < items.length; i += 1) {
-                            // Test out calling worker indexItem
-                            indexItem(items[i]);
-                            
-                            searchResultItems.push({
-                                id: items[i].getId(),
-                                object: items[i],
-                                score: 0 // Assign actual score when filtering for term
-                            });
-                        }
-                        
-                        //console.log('searchResultItems (in Everything)', searchResultItems);
-                        return searchResultItems;
-                        */
                     });
                 });
             }
-            
-            /*
-            // Process the search input. Makes an array of search terms
-            // by splitting up the input at spaces. 
-            function process(input) {
-                return input.toLocaleLowerCase().split(' ');
-            }
-            
-            // Generate a score for an item based on its similarity to a search term.
-            // The score is equal to the number of terms that are a substring of the 
-            // object name.
-            function score(item, terms, originalInput) {
-                var name = item.object.getModel().name.toLocaleLowerCase(),
-                    weight = .65,
-                    score = 0;
-                
-                // Make the score really big if the item name and 
-                // the original search input are the same
-                if (name === originalInput.toLocaleLowerCase()) {
-                    score = 42;
-                }
-                
-                for (var i = 0; i < terms.length; i++) {
-                    // Increase the score if the term is in the item name
-                    if (name.includes(terms[i])) {
-                        score++;
-                        
-                        // Add extra to the score if the search term exists
-                        // as its own term within the items
-                        if (name.split(' ').indexOf(terms[i]) !== -1) {
-                            score += .5;
-                        }
-                    }
-                }
-                
-                return score * weight;
-            }
-            
-            // Filter through a list of searchResults based on a search term 
-            function filterResults(results, originalInput, resultsLength) {
-                var terms, 
-                    searchResults = [],
-                    itemModel;
-                
-                // Split the original search input into search terms
-                terms = process(originalInput);
-                
-                for (var i = 0; i < resultsLength; i += 1) {
-                    // Prevent errors from getModel not being defined
-                    if (results[i].object.getModel) {
-                        results[i].score = score(results[i], terms, originalInput);
-                        // Include any items that match the terms and are of valid type
-                        if (results[i].score > 0 && validType(results[i].object.getModel())) {
-                            // Add the result to the result list
-                            searchResults.push(results[i]);
-                        }
-                    }
-                }
-                
-                return searchResults;
-            }
-            */
             
             /**
              * Searches through the filetree for domain objects which match 
@@ -261,12 +157,16 @@ define(
              * 
              * @param inputID the name of the ID property of the html text 
              *   input where this funcion should find the search term 
+             * @param timestamp the time at which this function was called,
+             *   this timestamp will be associated with the latest results
+             *   list, which allows the aggregator to see if it has been 
+             *   updated 
              * @param maxResults (optional) the maximum number of results 
              *   that this function should return 
              * @param timeout (optional) the time after which the search should 
              *   stop calculations and return partial results
              */
-            function queryGeneric(inputID, maxResults, timeout) {
+            function queryGeneric(inputID, timestamp, maxResults, timeout) {
                 var input,
                     terms = [],
                     searchResults = [],
@@ -285,9 +185,11 @@ define(
                 // Get items list
                 //requestItems(); // Test out the worker
                 return getItems(timeout).then(function (/*searchResultItems*/) {
-                    var test = workerSearch(input, maxResults);
-                    console.log('test', test);
                     
+                    workerSearch(input, maxResults, timestamp);
+                    return; // There's nothing we need to return here 
+                    
+                    /*
                     // Wait for latestResults to be not empty, then return
                     function wait(){
                         if (latestResults.length === 0){
@@ -301,10 +203,10 @@ define(
                         }
                     }
                     console.log('about to wait');
-                    wait();
+                    return wait();
+                    */
                     
-                    console.log('returning (not)');
-                    //return test;
+                    
                     /*
                     // Keep track of the number of results to display
                     if (searchResultItems.length < maxResults) {

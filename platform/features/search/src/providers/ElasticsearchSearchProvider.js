@@ -157,12 +157,16 @@ define(
              * 
              * @param inputID the name of the ID property of the html text 
              *   input where this funcion should find the search term 
+             * @param timestamp the time at which this function was called,
+             *   this timestamp will be associated with the latest results
+             *   list, which allows the aggregator to see if it has been 
+             *   updated 
              * @param maxResults (optional) the maximum number of results 
              *   that this function should return 
              * @param timeout (optional) the time after which the search should 
              *   stop calculations and return partial results
              */
-            function queryElasticsearch(inputID, maxResults, timeout) {
+            function queryElasticsearch(inputID, timestamp, maxResults, timeout) {
                 var searchTerm,
                     esQuery;
                 

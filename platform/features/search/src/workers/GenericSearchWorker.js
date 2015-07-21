@@ -131,7 +131,8 @@
         
         var message = {
             request: 'search', 
-            results: results
+            results: results,
+            timestamp: data.timestamp
         };
         return message;
         

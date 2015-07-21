@@ -41,6 +41,7 @@ define(
          *        aggregated
          */
         function SearchAggregator(providers) {
+            var latestMergedResults = [];
             
             // Remove extra objects that have the same ID 
             function filterRepeats(results) {
@@ -138,37 +139,53 @@ define(
                 }
             }
             
-            // Recieves results in the format of a serachResult object. It 
-            // has the members id, object, and score. It has a function 
-            // next() which returns the next highest score search result 
-            // for that search. 
-            
             // Calls the searches of each of the providers, then 
             // merges the results lists so that there are not redundant 
             // results 
-            function mergeResults(inputID) {
-                var resultsPromises = [];
+            /** 
+             * 
+             */
+            function queryAll(inputID) {
+                var resultsPromises = [],
+                    date = new Date(),
+                    timestamp = date.getTime();
                 
                 // Get result list promises
+                // TODO: This is now 'Send the query to all the providers'
                 for (var i = 0; i < providers.length; i += 1) {
                     resultsPromises.push(
                         providers[i].query(
-                            inputID, DEFAULT_MAX_RESULTS, DEFUALT_TIMEOUT
+                            inputID, timestamp, DEFAULT_MAX_RESULTS, DEFUALT_TIMEOUT
                         )
                     );
                 }
+                // TODO: Then we want to 'Get the latest results from all the providers'
+                //       And then we might also want to check to see if the timestamp 
+                //       is correct. 
+                
+                //var newerResults = [];
+                
                 
                 // Wait for the promises to fufill
                 return getPromisedResults(resultsPromises, 0, []).then(function (c) {
                     // Get rid of the repeated objects and put in correct order
                     c = filterRepeats(c);
                     c = orderByScore(c);
+                    latestMergedResults = c;
                     return c;
                 });
             }
             
+            // TODO: getLatestResults(start, stop) so you can choose which indicies to start and stop
+            //       at, which will allow for 'load more' option
+            //       may also need to include timestamp stuff in there 
+            
             return {
-                query: mergeResults
+                sendQuery: queryAll,
+                getLatestResults: function (start, stop) {
+                    // TODO: Make sure that slice handles out of bounds 
+                    return latestMergedResults.slice(start, stop);
+                }
             };
         }
 
