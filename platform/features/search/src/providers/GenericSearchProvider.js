@@ -187,47 +187,10 @@ define(
                 input = document.getElementById(inputID).value;
                 
                 // Get items list
-                //requestItems(); // Test out the worker
-                return getItems(timeout).then(function (/*searchResultItems*/) {
-                    
+                return getItems(timeout).then(function () {
+                    // Then get the worker to search through it
                     workerSearch(input, maxResults, timestamp);
                     return; // There's nothing we need to return here 
-                    
-                    /*
-                    // Wait for latestResults to be not empty, then return
-                    function wait(){
-                        if (latestResults.length === 0){
-                            console.log('waiting');
-                            console.log('latestResults', latestResults);
-                            $timeout(wait, 100);
-                        } else {
-                            console.log('done waiting');
-                            //test = latestResults;
-                            return latestResults;
-                        }
-                    }
-                    console.log('about to wait');
-                    return wait();
-                    */
-                    
-                    
-                    /*
-                    // Keep track of the number of results to display
-                    if (searchResultItems.length < maxResults) {
-                        resultsLength = searchResultItems.length;
-                    } else {
-                        resultsLength = maxResults;
-                    }
-                    
-                    // Test out calling the web worker search
-                    workerSearch(input, maxResults);
-
-                    // Then filter through the items list
-                    searchResults = filterResults(searchResultItems, input, resultsLength);
-                    
-                    //console.log('filtered searchResults (in Everything)', searchResults);
-                    return searchResults;
-                    */
                 });
             }
             

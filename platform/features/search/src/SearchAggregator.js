@@ -85,23 +85,6 @@ define(
                 }
 
                 return filteredResults;
-                /*
-                var ids = [];
-                
-                for (var i = 0; i < results.length; i += 1) {
-                    if (ids.indexOf(results[i].id) !== -1) {
-                        // If this result's ID is already there, remove the object
-                        results.splice(i, 1);
-                        // Reduce loop index because we shortened the array 
-                        i -= 1;
-                    } else {
-                        // Otherwise add the ID to the list of the ones we have seen 
-                        ids.push(results[i].id);
-                    }
-                }
-                
-                return results;
-                */
             }
             
             // Order the objects from highest to lowest score in the array
@@ -117,29 +100,8 @@ define(
                     }
                 });
                 
-                /*
-                for (var i = 0; i < results.length; i++) {
-                    console.log('score', results[i].score, 'for', results[i].object.getModel().name);
-                }
-                */
-                
                 return results;
             }
-            
-            /*
-            // 'Loop' over the promises using recursion so that the promises are fufilled by the
-            // time that we are done
-            function getPromisedResults(resultsPromises, promiseIndex, finalResults) {
-                if (promiseIndex >= resultsPromises.length) {
-                    return finalResults;
-                } else {
-                    return resultsPromises[promiseIndex].then(function (results) {
-                        finalResults = finalResults.concat(results);
-                        return getPromisedResults(resultsPromises, promiseIndex + 1, finalResults);
-                    });
-                }
-            }
-            */
             
             function updateResults() {
                 var newerResults = [];
@@ -168,8 +130,7 @@ define(
                     date = new Date(),
                     timestamp = date.getTime();
                 
-                // Get result list promises
-                // TODO: This is now 'Send the query to all the providers'
+                // Send the query to all the providers
                 for (var i = 0; i < providers.length; i += 1) {
                     promises.push(
                         providers[i].query(
@@ -181,23 +142,9 @@ define(
                 //       And then we might also want to check to see if the timestamp 
                 //       is correct. 
                 
+                // Update the merged results list 
                 updateResults();
-                
-                /*
-                // Wait for the promises to fufill
-                return getPromisedResults(promises, 0, []).then(function (c) {
-                    // Get rid of the repeated objects and put in correct order
-                    c = filterRepeats(c);
-                    c = orderByScore(c);
-                    latestMergedResults = c;
-                    return c;
-                });
-                */
             }
-            
-            // TODO: getLatestResults(start, stop) so you can choose which indicies to start and stop
-            //       at, which will allow for 'load more' option
-            //       may also need to include timestamp stuff in there 
             
             return {
                 sendQuery: queryAll,
