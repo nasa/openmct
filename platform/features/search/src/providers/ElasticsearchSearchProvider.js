@@ -48,8 +48,6 @@ define(
          */
         function ElasticsearchSearchProvider($http, objectService, ROOT) {
             // TODO: Fix the above docstring 
-            var latestSearchResults = [],
-                currentResultIndex = 0;
             
             // Check to see if the input has any special options
             function isDefaultFormat(searchTerm) {
@@ -69,6 +67,7 @@ define(
                 
                 return searchTerm.split(' ').map(function (s) {
                     if (s.includes('"')) {
+                        console.log('true');
                         return s;
                     } else {
                         return s + '~' + editDistance;
@@ -98,28 +97,6 @@ define(
                 return searchTerm;
             }
             
-            // Get the next search result 
-            function next() {
-                // Because elasticsearch only returns matching things, we just 
-                // need to step through the array
-                
-                currentResultIndex++;
-                
-                if (currentResultIndex > latestSearchResults.length) {
-                    // If we go past the end of the array, we return undefined
-                    return undefined;
-                } else {
-                    return latestSearchResults[currentResultIndex];
-                }
-            }
-            
-            function first() {
-                // Since next() immeditely does 'i++', start before the start of the array
-                currentResultIndex = -1;
-                var n = next();
-                return n;
-            }
-            
             // Processes results from the format that elasticsearch returns to 
             // a list of objects in the format that mct-representation can use
             function processResults(rawResults, validType) {
@@ -127,7 +104,8 @@ define(
                     resultsLength = results.length,
                     ids = [],
                     scores = {},
-                    searchResults = [];
+                    searchResults = [],
+                    i;
                 
                 if (rawResults.data.hits.total > resultsLength) {
                     // TODO: Somehow communicate this to the user 
@@ -135,23 +113,24 @@ define(
                 }
                 
                 // Get the result objects' IDs
-                for (var i = 0; i < resultsLength; i += 1) {
+                for (i = 0; i < resultsLength; i += 1) {
                     ids.push(results[i][ID]);
                 }
                 
                 // Get the result objects' scores
-                for (var i = 0; i < resultsLength; i += 1) {
+                for (i = 0; i < resultsLength; i += 1) {
+                    //scores.push(results[i][SCORE]);
                     scores[ ids[i] ] = results[i][SCORE];
                 }
                 
-                //console.log('scores {}', scores);
-                
                 // Get the domain objects from their IDs
                 return objectService.getObjects(ids).then(function (objects) {
+                    var id,
+                        j;
                     
                     // Filter by search term
-                    for (var j = 0; j < resultsLength; j += 1) {
-                        var id = ids[j];
+                    for (j = 0; j < resultsLength; j += 1) {
+                        id = ids[j];
                         
                         // Include items we can get models for
                         if (objects[id].getModel) {
@@ -161,21 +140,13 @@ define(
                                 searchResults.push({
                                     id: id,
                                     object: objects[id],
-                                    score: scores[id],
-                                    next: next
+                                    score: scores[id]
                                 });
                             }
                         }
                     }
                     
-                    /*
-                    for (var k = 0; k < searchResults.length; k++) {
-                        console.log('ES score', searchResults[k].score, 'for', searchResults[k].object.getModel().name);
-                    }
-                    */
-                    
-                    //console.log('setting latest search results with', searchResults);
-                    latestSearchResults = searchResults;
+                    //console.log('searchResults (in ES provider)', searchResults);
                     return searchResults;
                 });
             }
@@ -220,7 +191,8 @@ define(
                 searchTerm = processSearchTerm(searchTerm);
                 
                 // Create the query to elasticsearch
-                esQuery = ROOT + "/_search/?q=" + searchTerm + "&size=" + maxResults;
+                esQuery = ROOT + "/_search/?q=" + searchTerm +
+                                 "&size=" + maxResults;
                 if (timeout) {
                     esQuery += "&timeout=" + timeout;
                 }
@@ -231,11 +203,7 @@ define(
                     url: esQuery
                 }).then(function (rawResults) {
                     // ...then process the data 
-                    processResults(rawResults, validType);
-                    // and return the first result
-                    var f = first();
-                    // console.log('ES return', f);
-                    return f;
+                    return processResults(rawResults, validType);
                 });
             }
             

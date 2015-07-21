@@ -41,8 +41,6 @@ define(
          *        aggregated
          */
         function SearchAggregator(providers) {
-            var compiledResults = [];
-            
             
             // Determines if a searchResult object is a valid type 
             // to be displayed as a final result. Is passed to the 
@@ -54,64 +52,21 @@ define(
             
             // Remove extra objects that have the same ID 
             function filterRepeats(results) {
-                var ids = [],
-                    idToIndicies = {}, // 'dictionary' mapping IDs to a list of indicies 
-                    filteredResults = [];
+                var ids = [];
                 
-                // Create a list of indicies of objects that correspond to any object ID
-                for (var i = 0; i < results.length; i++) {
-                    var id = results[i].id;
-                    
-                    if (idToIndicies[id]) {
-                        // If the ID already exists in the dictionary, push this index to 
-                        // the end of the array it points to
-                        idToIndicies[id].push(i);
-                    } else {
-                        // Else make a new entry in the dictionary with this ID, pointing 
-                        // to this index
-                        idToIndicies[id] = [i];
-                        // And also add this ID to the list of IDs that we have seen
-                        ids.push(id);
-                    }
-                }
-                
-                // Now for each ID in the dictionary, we want to use the version of  
-                // the object that has a higher score
-                for (var i = 0; i < ids.length; i++) {
-                    var id = ids[i],
-                        indicies = idToIndicies[id],
-                        highestScoringObject;
-                    
-                    highestScoringObject = results[ indicies[0] ];
-                    for (var j = 0; j < indicies.length; j++) {
-                        // If the score of the object corresponding to this index of the results 
-                        // list has a higher score than the one we have, choose it instead
-                        if (results[indicies[j]].score > highestScoringObject.score) {
-                            highestScoringObject = results[indicies[j]];
-                        }
-                    }
-                    filteredResults.push(highestScoringObject);
-                }
-                
-                /*
                 for (var i = 0; i < results.length; i += 1) {
-                    if (results[i] === undefined) {
-                        // Catch any leftover undefined objects
-                        results.splice(i, 1);
-                        i--;
-                    } else if (ids.indexOf(results[i].id) !== -1) {
+                    if (ids.indexOf(results[i].id) !== -1) {
                         // If this result's ID is already there, remove the object
                         results.splice(i, 1);
                         // Reduce loop index because we shortened the array 
-                        i--;
+                        i -= 1;
                     } else {
                         // Otherwise add the ID to the list of the ones we have seen 
                         ids.push(results[i].id);
                     }
                 }
-                */
                 
-                return filteredResults;
+                return results;
             }
             
             // Order the objects from highest to lowest score in the array
@@ -136,8 +91,6 @@ define(
                 return results;
             }
             
-            // 'Loop' over the promises using recursion so that the promises are fufilled by the
-            // time that we are done
             function getPromisedResults(resultsPromises, promiseIndex, finalResults) {
                 if (promiseIndex >= resultsPromises.length) {
                     return finalResults;
@@ -149,60 +102,6 @@ define(
                 }
             }
             
-            function getPromisedItems(promises, index, fufilledPromises) {
-                if (index >= promises.length) {
-                    return fufilledPromises;
-                } else {
-                    return promises[index].then(function (results) {
-                        fufilledPromises = fufilledPromises.concat(results);
-                        return getPromisedItems(promises, index + 1, fufilledPromises);
-                    });
-                }
-            }
-            
-            // Add more results to compiledResults
-            // (As if the user presed 'load more results')
-            function loadMore() {
-                
-            }
-            
-            // Add x number of items to the compiledResults as the initial number of results that 
-            // we display 
-            function initialLoad(firstPromises) {
-                return getPromisedItems(firstPromises, 0, []).then(function (current) {
-                    // Push the firsts onto the compiledResults
-                    for (var i = 0; i < current.length; i++) {
-                        if (current[i]) {
-                            compiledResults.push(current[i]);
-                        }
-                    }
-                    // Look for more results n times and add them to compiledResults
-                    var outOfResults = [];
-                    for (var i = 0; i < DEFAULT_MAX_RESULTS; i++) {
-                        // If all of the providers are returning undefined, there are 
-                        // no more results to load
-                        if (current.every(function (c) {
-                                        return c === undefined;
-                                    })) {
-                            break;
-                        }
-                        
-                        // For each provider, load the next result and add it to compiledResults
-                        for (var j = 0; j < current.length; j++) {
-                            if (current[j]) {
-                                var nextResult = current[j].next();
-                                if (nextResult) {
-                                    compiledResults.push(nextResult);
-                                }
-                                current[j] = nextResult;
-                            }
-                        }
-                    }
-                    
-                    return compiledResults;
-                });
-            }
-            
             // Recieves results in the format of a serachResult object. It 
             // has the members id, object, and score. It has a function 
             // next() which returns the next highest score search result 
@@ -212,15 +111,11 @@ define(
             // merges the results lists so that there are not redundant 
             // results 
             function mergeResults(inputID) {
-                //var resultsPromises = [];
+                var resultsPromises = [];
                 
-                // The first result from each provider. Each should have a next() function.
-                var firstPromises = [];
-                
-                // Get the initial result promises
+                // Get result list promises
                 for (var i = 0; i < providers.length; i += 1) {
-                    //resultsPromises.push(
-                    firstPromises.push(
+                    resultsPromises.push(
                         providers[i].query(
                             inputID, validType, DEFAULT_MAX_RESULTS, DEFUALT_TIMEOUT
                         )
@@ -228,20 +123,12 @@ define(
                 }
                 
                 // Wait for the promises to fufill
-                return initialLoad(firstPromises).then(function (c) {
-                    // Get rid of the repeated objects and put in correct order
-                    c = filterRepeats(c);
-                    c = orderByScore(c);
-                    return c;
-                });
-                /*
                 return getPromisedResults(resultsPromises, 0, []).then(function (c) {
                     // Get rid of the repeated objects and put in correct order
                     c = filterRepeats(c);
                     c = orderByScore(c);
                     return c;
                 });
-                */
             }
             
             return {

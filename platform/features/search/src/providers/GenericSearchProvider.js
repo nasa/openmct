@@ -44,12 +44,6 @@ define(
          *        more easy creation of web workers.
          */
         function GenericSearchProvider($rootScope, objectService, workerService) {
-            var latestItems = [],
-                currentResultIndex = 0,
-                currentSeachInput = '',
-                curentSearchTerms = [],
-                validType = function () {return true;};
-            
             /*
             var worker = workerService.run('genericSearchWorker'),
                 lastestItems;
@@ -83,19 +77,21 @@ define(
                 });
                 //counter += 1;
             }
+            */
 
             function handleResponse(event) {
                 latest = event.data;
                 $rootScope.$apply();
                 //requestNext();
             }
-            */
             
             // Recursive helper function for getItems()
             function itemsHelper(children, i) {
                 var date = new Date;
                 if (stopTime && date.getTime() >= stopTime) {
                     // This indexing of items has timed out 
+                    console.log('timed out');
+                    console.log('returning', children);
                     return children;
                 } else if (i >= children.length) {
                     // Done!
@@ -135,8 +131,7 @@ define(
                             searchResultItems.push({
                                 id: items[i].getId(),
                                 object: items[i],
-                                score: 0, // Assign actual score when filtering for term
-                                next: next
+                                score: 0 // Assign actual score when filtering for term
                             });
                         }
                         
@@ -145,6 +140,8 @@ define(
                     });
                 });
             }
+            
+            
             
             // Process the search input. Makes an array of search terms
             // by splitting up the input at spaces. 
@@ -182,9 +179,8 @@ define(
                 return score * weight;
             }
             
-            /*
             // Filter through a list of searchResults based on a search term 
-            function filterResults(results, originalInput, resultsLength) {
+            function filterResults(results, originalInput, resultsLength, validType) {
                 var terms, 
                     searchResults = [],
                     itemModel;
@@ -206,51 +202,6 @@ define(
                 
                 return searchResults;
             }
-            */
-            
-            // Get the next item from latestItems
-            function next() {
-                var i = currentResultIndex,
-                    gotNext = false,
-                    nextResult;
-                
-                // Look for the next item that qualifies as a search result
-                while (!gotNext) {
-                    i++;
-                    if (i > latestItems.length) {
-                        // If we go past the end of the array, we return undefined
-                        gotNext = true;
-                        nextResult = undefined;
-                        //currentResultIndex = i;
-                    } else if (latestItems[i]) {
-                        // Prevent errors from getModel not being defined
-                        if (latestItems[i].object.getModel) {
-                            latestItems[i].score = score(latestItems[i], curentSearchTerms, currentSeachInput);
-                            //console.log('item', latestItems[i].object.getModel().name, 'score', latestItems[i].score);
-                            // Include any items that match the terms and are of valid type
-                            if (latestItems[i].score > 0 && validType(latestItems[i].object.getModel())) {
-                                // Add the result to the result list
-                                nextResult = latestItems[i];
-                                //nextResult.next = next;
-                                currentResultIndex = i;
-                                gotNext = true;
-                            }
-                        }
-                    }
-                }
-                
-                return nextResult;
-            }
-            
-            // Get the first result in latestItems that is a search result
-            function first(input) {
-                // Set up the global variables
-                currentSeachInput = input;
-                curentSearchTerms = process(input);
-                // Since next() immeditely does 'i++', start before the start of the array
-                currentResultIndex = -1;
-                return next();
-            }
             
             /**
              * Searches through the filetree for domain objects which match 
@@ -265,15 +216,15 @@ define(
              * 
              * @param inputID the name of the ID property of the html text 
              *   input where this funcion should find the search term 
-             * @param passedValidType (optional) a function which takes a model
-             *   for an object and determines if it is of a valid type to include
-             *   in the final list of results; default returns true
+             * @param validType a function which takes a model for an object
+             *   and determines if it is of a valid type to include in the 
+             *   final list of results
              * @param maxResults (optional) the maximum number of results 
              *   that this function should return 
              * @param timeout (optional) the time after which the search should 
              *   stop calculations and return partial results
              */
-            function queryGeneric(inputID, passedValidType, maxResults, timeout) {
+            function queryGeneric(inputID, validType, maxResults, timeout) {
                 var input,
                     terms = [],
                     searchResults = [],
@@ -286,8 +237,6 @@ define(
                     maxResults = DEFAULT_MAX_RESULTS;
                 }
                 
-                // Set the global validType function with the passed one
-                validType = passedValidType;
                 
                 // Get the user input
                 input = document.getElementById(inputID).value;
@@ -295,9 +244,6 @@ define(
                 // Get items list
                 //requestItems(); // Test out the worker
                 return getItems(timeout).then(function (searchResultItems) {
-                    // Set global items variable
-                    latestItems = searchResultItems;
-                    
                     // Keep track of the number of results to display
                     if (searchResultItems.length < maxResults) {
                         resultsLength = searchResultItems.length;
@@ -306,13 +252,10 @@ define(
                     }
 
                     // Then filter through the items list
-                    //searchResults = filterResults(searchResultItems, input, resultsLength);
+                    searchResults = filterResults(searchResultItems, input, resultsLength, validType);
                     
-                    // Get the first search result
-                    var firstResult = first(input);
-                    //console.log('generic return', firstResult);
-                    
-                    return firstResult;
+                    //console.log('filtered searchResults (in Everything)', searchResults);
+                    return searchResults;
                 });
             }
             
