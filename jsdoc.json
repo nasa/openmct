@@ -1,0 +1,10 @@
+{
+    "source": {
+        "include": [
+            "example/",
+            "platform/"
+        ],
+        "includePattern": "(example|platform)/.+\\.js$",
+        "excludePattern": ".+\\Spec\\.js$|lib/.+"
+    }
+}
