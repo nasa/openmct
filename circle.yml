@@ -1,0 +1,5 @@
+deployment:
+  production:
+    branch: continuous-deployment
+    commands:
+      - ./build-docs.sh
