@@ -309,13 +309,11 @@ ul.tree {
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
   /* line 22, ../sass/mobile/_tree.scss */
   .test-tree-words {
-    margin-bottom: 4px;
-    margin-bottom: 4px;
     width: 100%;
     text-overflow: ellipsis; } }
 
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 31, ../sass/mobile/_tree.scss */
+  /* line 29, ../sass/mobile/_tree.scss */
   ul.tree {
     margin: 0;
     padding: 0; }
@@ -324,24 +322,27 @@ ul.tree {
       list-style-type: none;
       margin: 0;
       padding: 0; }
-    /* line 40, ../sass/mobile/_tree.scss */
-    ul.tree li span.tree-item .label {
-      left: 3px; }
-      /* line 44, ../sass/mobile/_tree.scss */
-      ul.tree li span.tree-item .label .type-icon .alert {
-        right: auto;
-        left: 9px; }
-      /* line 49, ../sass/mobile/_tree.scss */
-      ul.tree li span.tree-item .label .title-label {
-        left: 20px; }
-    /* line 54, ../sass/mobile/_tree.scss */
-    ul.tree li span.tree-item .context-trigger {
-      right: 3px; }
-    /* line 58, ../sass/mobile/_tree.scss */
-    ul.tree li span.tree-item .view-control {
-      position: absolute;
-      right: 5px;
-      font-size: 1.5em; }
-    /* line 67, ../sass/mobile/_tree.scss */
+    /* line 33, ../sass/mobile/_tree.scss */
+    ul.tree li span.tree-item {
+      margin-top: 3px; }
+      /* line 39, ../sass/mobile/_tree.scss */
+      ul.tree li span.tree-item .label {
+        left: 3px; }
+        /* line 43, ../sass/mobile/_tree.scss */
+        ul.tree li span.tree-item .label .type-icon .alert {
+          right: auto;
+          left: 9px; }
+        /* line 48, ../sass/mobile/_tree.scss */
+        ul.tree li span.tree-item .label .title-label {
+          left: 20px; }
+      /* line 53, ../sass/mobile/_tree.scss */
+      ul.tree li span.tree-item .context-trigger {
+        right: 3px; }
+      /* line 57, ../sass/mobile/_tree.scss */
+      ul.tree li span.tree-item .view-control {
+        position: absolute;
+        right: 5px;
+        font-size: 1.5em; }
+    /* line 66, ../sass/mobile/_tree.scss */
     ul.tree ul.tree {
       margin-left: 3px; } }

@@ -38,7 +38,7 @@ define(
          * @param {DomainObject} domainObject the domain object for which to
          *        show information
          */
-        function InfoGesture($timeout, infoService, DELAY, element, domainObject) {
+        function InfoGesture($timeout, queryService, infoService, DELAY, element, domainObject) {
             var dismissBubble,
                 pendingBubble,
                 mousePosition,
@@ -75,21 +75,26 @@ define(
                 // Also need to track position during hover
                 element.on('mousemove', trackPosition);
 
-                // Show the bubble, after a suitable delay (if mouse has
-                // left before this time is up, this will be canceled.)
-                pendingBubble = $timeout(function () {
-                    dismissBubble = infoService.display(
-                        "info-table",
-                        domainObject.getModel().name,
-                        domainObject.useCapability('metadata'),
-                        mousePosition
-                    );
-                    element.off('mousemove', trackPosition);
-                    pendingBubble = undefined;
-                }, DELAY);
+                // Checks if you are on a mobile device, if the device is
+                // mobile, then hovering is not done.
+                if (!queryService.isMobile()) {
+                    // Show the bubble, after a suitable delay (if mouse has
+                    // left before this time is up, this will be canceled.)
+                    pendingBubble = $timeout(function () {
+                        dismissBubble = infoService.display(
+                            "info-table",
+                            domainObject.getModel().name,
+                            domainObject.useCapability('metadata'),
+                            mousePosition
+                        );
+                        element.off('mousemove', trackPosition);
 
+                        pendingBubble = undefined;
+                    }, DELAY);
+                }
                 element.on('mouseleave', hideBubble);
             }
+            
 
             // Show bubble (on a timeout) on mouse over
             element.on('mouseenter', showBubble);
