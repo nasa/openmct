@@ -271,37 +271,41 @@ ul.tree {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 28, ../sass/search/_search.scss */
+/* line 27, ../sass/search/_search.scss */
 .search-holder .searchbar {
   width: 100%;
   margin-top: 20px; }
-/* line 33, ../sass/search/_search.scss */
+/* line 32, ../sass/search/_search.scss */
 .search-holder .results {
   margin-top: 10px; }
-  /* line 36, ../sass/search/_search.scss */
+  /* line 35, ../sass/search/_search.scss */
   .search-holder .results .search-result-item {
     margin-bottom: 5px;
     background: #005177;
     border-radius: 2px;
     padding-top: 2px;
     padding-bottom: 1px; }
-    /* line 43, ../sass/search/_search.scss */
+    /* line 42, ../sass/search/_search.scss */
     .search-holder .results .search-result-item .label {
       left: 15px;
-      margin-left: 8px; }
-      /* line 53, ../sass/search/_search.scss */
+      margin-left: 6px; }
+      /* line 51, ../sass/search/_search.scss */
       .search-holder .results .search-result-item .label .title-label {
         display: inline-block;
         position: absolute;
         width: auto;
-        left: 31px;
+        left: 29px;
         right: 0;
         font-size: .8em;
         line-height: 17px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap; }
-/* line 72, ../sass/search/_search.scss */
+/* line 70, ../sass/search/_search.scss */
 .search-holder .load-more-button {
-  width: 100%;
-  margin-top: 5px; }
+  margin-top: 5px;
+  position: relative;
+  left: 25%;
+  height: 20px;
+  line-height: 11px;
+  font-size: 0.7em; }

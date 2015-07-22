@@ -22,8 +22,7 @@
 
 .search-holder {
     $iconWidth: 20px;
-    //$iconheight: 17px;
-    $leftMargin: 8px;
+    $leftMargin: 6px;
     
     .searchbar {
         width: 100%;
@@ -41,7 +40,6 @@
             padding-bottom: 1px;
             
             .label {
-                //position: absolute;
                 left: 15px;
                 margin-left: $leftMargin;
                 
@@ -70,7 +68,13 @@
 	}
     
     .load-more-button {
-        width: 100%;
         margin-top: 5px;
+        
+        position: relative;
+        left: 25%;
+        
+        height: 20px;
+        line-height: 11px;
+        font-size: 0.7em;
     }
 }
