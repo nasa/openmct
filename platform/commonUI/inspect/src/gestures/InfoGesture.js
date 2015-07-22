@@ -76,7 +76,8 @@ define(
                 element.on('mousemove', trackPosition);
 
                 // Checks if you are on a mobile device, if the device is
-                // mobile, then hovering is not done.
+                // not mobile (queryService.isMobile() = false), then
+                // the pendingBubble and therefore hovering is allowed
                 if (!queryService.isMobile()) {
                     // Show the bubble, after a suitable delay (if mouse has
                     // left before this time is up, this will be canceled.)

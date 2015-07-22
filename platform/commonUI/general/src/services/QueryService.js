@@ -25,37 +25,29 @@
  * Module defining QueryService.
  */
 
-var phoMaxWidth = 514,
-    phoMaxHeight = 740,
-
-    tabMinWidth = 515,
-    tabMaxWidth = 799,
-
-    tabMinHeight = 741,
-    tabMaxHeight = 1024,
-
-    compMinWidth = 800,
-    compMinHeight = 1025;
-
 define(
     [],
     function () {
         "use strict";
 
         /**
-         * The url service handles calls for url paths
-         * using domain objects.
+         * The query service handles calls for browser and userAgent
+         * info using a comparison between the userAgent and key
+         * device names
          */
         function QueryService($window) {
             
-            
-            
+            // Gets the UA name if it is one of the following.
+            // If it is not (a desktop for example) nothing is
+            // returned instead
             function getDeviceUA() {
                 var ua = navigator.userAgent;
                 return ua.match(/iPad|iPhone|Android/i) ?
                         ua.match(/iPad|iPhone|Android/i) : "";
             }
             
+            // Checks if gotten device is mobile,
+            // Mobile is defined as a phone or tablet
             function isMobile() {
                 if (getDeviceUA()) {
                     return true;
@@ -64,18 +56,27 @@ define(
                 }
             }
 
-            
+            // Returns the orientation of the device based on the
+            // device's window dimensions
             function getOrientation(screenWidth, screenHeight) {
-                if ($window.screen.width > $window.screen.height) {
+                if ($window.outerWidth > $window.outerHeight) {
                     return "landscape";
-                } else if ($window.screen.width < $window.screen.height) {
+                } else if ($window.outerWidth < $window.outerHeight) {
                     return "portrait";
                 }
             }
          
             return {
+                /**
+                 * Returns the orientation for the user's device
+                 */
                 getOrientation: getOrientation,
                 
+                /**
+                 * Returns the a boolean checking if the user is
+                 * on a mobile or non-mobile device. (mobile: true,
+                 * non-mobile: false)
+                 */
                 isMobile: isMobile
             };
         }

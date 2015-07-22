@@ -47,6 +47,8 @@
 // classes used for the left menu and the
 // right representation.
 .browse-hidetree {
+    // Sets the left tree menu when the tree
+    // is hidden. 
     .mobile-pane.left-menu {
         @include phoneandtablet {
             @include slMenuTransitions;
@@ -59,6 +61,8 @@
         }
     }
 
+    // Sets the right represenation when
+    // the tree is hidden. 
     .mobile-pane.right-repr {       
         @include phoneandtablet {         
             @include slMenuTransitions;
@@ -74,6 +78,8 @@
 // orientation combination, separate 
 // parameters are used)
 .browse-showtree {
+    // Sets the left tree menu when the tree
+    // is shown.     
     .mobile-pane.left-menu {
         @include phoneandtablet {
             @include slMenuTransitions;
@@ -82,6 +88,8 @@
             display: block !important;
             width: auto !important;
         }
+        // On both phones and tablets, the amount of
+        // space allowed for the right pane is specified
         @include phonePortrait {
             right: $phoneRepSizePortrait !important;
         }
@@ -95,11 +103,15 @@
             right: $tabletRepSizeLandscape !important;
         }
     }
+    // Sets the right represenation when
+    // the tree is shown.     
     .mobile-pane.right-repr {
         @include phoneandtablet {
             @include slMenuTransitions;
             left: auto !important;
         }
+        // On both phones and tablets, the width of
+        // the right pane is specified
         @include phonePortrait {
             width: $phoneRepSizePortrait !important;
         }

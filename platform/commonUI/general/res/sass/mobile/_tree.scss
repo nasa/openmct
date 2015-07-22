@@ -19,50 +19,37 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.test-tree-words {
-    @include phoneandtablet {
-        width: 100%;
-        text-overflow: ellipsis;
-    }
-}
+
 
 ul.tree {
+    // Only applies to phones and tablets
     @include phoneandtablet {
         @include menuUlReset();
         li {
             span.tree-item {
-                $runningItemW: 0;
-                $customMargin: auto;
-                $runningItemW: $interiorMargin + $treeVCW;
+                // Adds some space to the top of each tree item
                 margin-top: $interiorMarginSm;
-
-                .label {
-                    left: 3px;
-
-                    .type-icon {
-                        .alert {
-                            right: auto;
-                            left: 9px;
-                        }
-                    }
-                    .title-label {
-                        left: $runningItemW + ($interiorMargin);
-                    }
-                }
-
-                .context-trigger {
-                    right: $interiorMarginSm;
-                }
-                
                 .view-control {
                     position: absolute;
                     right: 5px;
                     font-size: 1.5em;
-                    $runningItemW: $interiorMargin + $treeVCW;
-                }                
+                }                   
+
+                .label {
+                    // Designates the starting left margin
+                    // (indentation) of 'My Items'
+                    left: 3px;
+                    // Allows tree item name to stop prior
+                    // to the arrow
+                    .title-label {
+                        right: 5px;
+                    }                    
+                }             
             }
         }
 
+        // Sets the margin on the left, which causes the
+        // running indentation after each folder is made
         ul.tree {
             margin-left: 3px;
         }
