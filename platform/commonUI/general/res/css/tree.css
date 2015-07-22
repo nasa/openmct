@@ -272,9 +272,9 @@ ul.tree {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* line 27, ../sass/search/_search.scss */
-.search .searchbar {
+.search .search-input {
   width: 100%;
-  margin-top: 20px; }
+  margin-top: 10px; }
 /* line 32, ../sass/search/_search.scss */
 .search .results {
   margin-top: 10px; }

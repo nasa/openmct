@@ -159,24 +159,31 @@ define(
                 // Get the user input 
                 searchTerm = document.getElementById(inputID).value;
                 
-                // Process search term
-                searchTerm = processSearchTerm(searchTerm);
-                
-                // Create the query to elasticsearch
-                esQuery = ROOT + "/_search/?q=" + searchTerm +
-                                 "&size=" + maxResults;
-                if (timeout) {
-                    esQuery += "&timeout=" + timeout;
+                // If the user input is empty, we want to have no search results.
+                if (searchTerm !== '') {
+                    // Process search term
+                    searchTerm = processSearchTerm(searchTerm);
+
+                    // Create the query to elasticsearch
+                    esQuery = ROOT + "/_search/?q=" + searchTerm +
+                                     "&size=" + maxResults;
+                    if (timeout) {
+                        esQuery += "&timeout=" + timeout;
+                    }
+
+                    // Get the data...
+                    return $http({
+                        method: "GET",
+                        url: esQuery
+                    }).then(function (rawResults) {
+                        // ...then process the data 
+                        return processResults(rawResults, timestamp);
+                    });
+                } else {
+                    latestResults = [];
+                    lastSearchTimestamp = timestamp;
+                    return latestResults;
                 }
-                
-                // Get the data...
-                return $http({
-                    method: "GET",
-                    url: esQuery
-                }).then(function (rawResults) {
-                    // ...then process the data 
-                    return processResults(rawResults, timestamp);
-                });
             }
             
             return {

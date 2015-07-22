@@ -135,12 +135,16 @@
             terms = convertToTerms(input), 
             timesToLoop = Math.min(indexedItems.length, data.maxNumber);
         
-        for (var i = 0; i < timesToLoop; i++) {
-            var score = scoreItem(indexedItems[i], input, terms);
-            if (score > 0) {
-                results[indexedItems[i].id] = {
-                    score: score
-                };
+        
+        // If the user input is empty, we want to have no search results.
+        if (input !== '') {
+            for (var i = 0; i < timesToLoop; i++) {
+                var score = scoreItem(indexedItems[i], input, terms);
+                if (score > 0) {
+                    results[indexedItems[i].id] = {
+                        score: score
+                    };
+                }
             }
         }
         
