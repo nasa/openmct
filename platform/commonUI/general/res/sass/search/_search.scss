@@ -29,10 +29,23 @@ span.searchbar {
         color: #ff0000;
         
 		.searchbar-item {
-            color: #aa00ff;
+			$runningItemW: 0;
+            color: #8800ff;
             
             .label {
-                color: #00aa00;  // Good up to here. 
+                color: #00aa00;
+                
+                .title-label {
+                    color: #aa00aa;
+                    
+					//@include absPosDefault();
+					display: block;
+					//left: $runningItemW + ($interiorMargin * 3);
+                    //left: 60px;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+                }
             }
 		}
 	}

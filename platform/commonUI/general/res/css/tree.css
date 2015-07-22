@@ -279,7 +279,14 @@ span.searchbar {
     color: #ff0000; }
     /* line 31, ../sass/search/_search.scss */
     span.searchbar .results .searchbar-item {
-      color: #aa00ff; }
-      /* line 34, ../sass/search/_search.scss */
+      color: #8800ff; }
+      /* line 35, ../sass/search/_search.scss */
       span.searchbar .results .searchbar-item .label {
         color: #00aa00; }
+        /* line 38, ../sass/search/_search.scss */
+        span.searchbar .results .searchbar-item .label .title-label {
+          color: #aa00aa;
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap; }
