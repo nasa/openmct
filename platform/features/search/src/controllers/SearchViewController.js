@@ -22,7 +22,7 @@
 /*global define*/
 
 /**
- * Module defining SearchbarController. Created by shale on 07/15/2015.
+ * Module defining SearchViewController. Created by shale on 07/08/2015.
  */
 define(function () {
     "use strict";
@@ -30,7 +30,7 @@ define(function () {
     var INITIAL_LOAD_NUMBER = 20,
         LOAD_INCREMENT = 5;
     
-    function SearchbarController($scope, $timeout, searchService) {
+    function SearchViewController($scope, $timeout, searchService) {
         // Starting amount of results to load. Will get increased. 
         var numResults = INITIAL_LOAD_NUMBER;
         
@@ -105,5 +105,5 @@ define(function () {
             }
         };
     }
-    return SearchbarController;
+    return SearchViewController;
 });

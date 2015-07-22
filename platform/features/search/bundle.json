@@ -4,13 +4,13 @@
     "extensions": {
         "controllers": [ 
             {
-                "key": "SearchbarController",
-                "implementation": "controllers/SearchbarController.js",
+                "key": "SearchController",
+                "implementation": "controllers/SearchController.js",
                 "depends": [ "$scope", "$timeout", "searchService" ]
             },
             {
-                "key": "SearchbarItemController",
-                "implementation": "controllers/SearchbarItemController.js",
+                "key": "SearchItemController",
+                "implementation": "controllers/SearchItemController.js",
                 "depends": [ "$scope" ]
             },
             {
@@ -21,15 +21,15 @@
         ],
         "templates": [
             {
-                "key": "searchbar",
-                "templateUrl": "templates/searchbar.html",
+                "key": "search",
+                "templateUrl": "templates/search.html",
                 "uses": [ "composition" ]
             }
         ],
         "representations": [
             {
-                "key": "searchbar-item",
-                "templateUrl": "templates/searchbar-item.html",
+                "key": "search-item",
+                "templateUrl": "templates/search-item.html",
                 "uses": [ "composition" ]
             }
         ],

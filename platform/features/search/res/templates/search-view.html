@@ -19,30 +19,39 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<span class="search-holder"
-      ng-controller="SearchbarController as controller">
-    <!-- Search bar input -->
+
+<div class="items-holder grid abs"
+     ng-controller="SearchViewController as controller">
+    
+    <!-- Search bar -->
     <div>
-        <input class="searchbar"
-               id="searchbarinput" 
-               type="text" 
+        <div style="height: 30px">Search:</div>
+        <input type="text" 
+               id="searchinput" 
                value=""
-               ng-keyup="controller.search('searchbarinput')" />
+               ng-keyup="controller.search('searchinput')"
+               style="width: 66%"/>
     </div>
+    
+    <!-- some spacing -->
+    <div style="height: 30px"></div>
     
     <!-- Results list -->
-    <div class="results">
-        <mct-representation key="'searchbar-item'"
-                            ng-repeat="result in results"
-                            mct-object="result.object">
+    <div ng-if="controller.areResults()"
+         style="height: 60px">
+        <p>
+            Results:
+        </p>
+        <div ng-if="controller.areMore()">
+            <button ng-click="controller.loadMore()"> 
+                Load more
+            </button>
+        </div>
+    </div>
+    <div>
+        <mct-representation key="'grid-item'"
+                        ng-repeat="result in results"
+                        mct-object="result.object">
         </mct-representation>
     </div>
-    
-    <!-- Load more? --> 
-    <div ng-if="controller.areMore()">
-        <button class="load-more-button btn very-subtle"
-                ng-click="controller.loadMore()"> 
-            Load more
-        </button>
-    </div>
-</span>
+</div>

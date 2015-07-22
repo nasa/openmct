@@ -22,7 +22,7 @@
 /*global define*/
 
 /**
- * Module defining SearchController. Created by shale on 07/08/2015.
+ * Module defining SearchController. Created by shale on 07/15/2015.
  */
 define(function () {
     "use strict";
