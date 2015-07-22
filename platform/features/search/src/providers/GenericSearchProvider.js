@@ -43,7 +43,7 @@ define(
          * @param {WorkerService} workerService the service which allows
          *        more easy creation of web workers.
          */
-        function GenericSearchProvider($rootScope, objectService, workerService) {
+        function GenericSearchProvider($rootScope, objectService, workerService, roots) {
             var worker = workerService.run('genericSearchWorker'),
                 latestResults = [],
                 lastSearchTimestamp = 0;
@@ -120,9 +120,15 @@ define(
             
             // Converts the filetree into a list
             function getItems(timeout) {
-                // Aquire My Items (root folder)
-                return objectService.getObjects(['mine']).then(function (objects) {
-                    // Get all of its descendents
+                var rootIds = [];
+                
+                for (var i = 0; i < roots.length; i++) {
+                    rootIds.push(roots[i].id);
+                }
+                
+                // Aquire root objects
+                return objectService.getObjects(rootIds).then(function (objectsById) {
+                    var objects = [];
                     
                     if (timeout) {
                         // Set a timeout for itemsHelper
@@ -132,7 +138,13 @@ define(
                     // If there was no timeout provided, leave undefined
                     // itemsHelper should just treat this as having no timeout
                     
-                    return itemsHelper([objects.mine], 0).then(function (items) {
+                    // Convert to the format itemsHelper takes
+                    for (var id in objectsById) {
+                        objects.push(objectsById[id]);
+                    }
+                    
+                    // Get all of its descendents
+                    return itemsHelper(objects, 0).then(function (items) {
                         // Add each item that itemsHelper found to the web worker index
                         // TODO: Try to do this within itemsHelper. Perhaps just 
                         //       need to add this to the last two if statements? 
