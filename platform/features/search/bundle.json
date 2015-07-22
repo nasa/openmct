@@ -2,21 +2,7 @@
     "name": "Search View",
     "description": "Allows the user to search through the file tree.",
     "extensions": {
-        "views": [
-            {
-                "key": "search",
-                "name": "Search",
-                "glyph": "5",
-                "description": "Search functionality.",
-                "templateUrl": "templates/search.html"
-            }
-        ],
         "controllers": [ 
-            {
-                "key": "SearchController",
-                "implementation": "controllers/SearchController.js",
-                "depends": [ "$scope", "$timeout",  "searchService" ]
-            },
             {
                 "key": "SearchbarController",
                 "implementation": "controllers/SearchbarController.js",
