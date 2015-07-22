@@ -19,7 +19,8 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<span ng-controller="SearchbarController as controller">
+<span class="searchbar"
+      ng-controller="SearchbarController as controller">
     <!-- Search bar input -->
     <div>
         <input type="text" 
@@ -30,7 +31,7 @@
     </div>
     
     <!-- Results list -->
-    <div>
+    <div class="results">
         <mct-representation key="'searchbar-item'"
                             ng-repeat="result in results"
                             mct-object="result.object">

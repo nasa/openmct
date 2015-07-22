@@ -675,7 +675,7 @@ mct-container {
     .split-layout.vertical > .pane:first-child .holder {
       right: 3px; }
 
-/* line 286, ../sass/user-environ/_layout.scss */
+/* line 284, ../sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
 
