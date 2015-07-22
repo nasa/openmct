@@ -19,14 +19,14 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<span class="searchbar"
+<span class="search-holder"
       ng-controller="SearchbarController as controller">
     <!-- Search bar input -->
     <div>
-        <input type="text" 
+        <input class="searchbar"
                id="searchbarinput" 
+               type="text" 
                value=""
-               style="width: 100%"
                ng-keyup="controller.search('searchbarinput')" />
     </div>
     
@@ -40,7 +40,8 @@
     
     <!-- Load more? --> 
     <div ng-if="controller.areMore()">
-        <button ng-click="controller.loadMore()"> 
+        <button class="load-more-button"
+                ng-click="controller.loadMore()"> 
             Load more
         </button>
     </div>

@@ -271,22 +271,20 @@ ul.tree {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 23, ../sass/search/_search.scss */
-span.searchbar {
-  color: #ff0099; }
-  /* line 26, ../sass/search/_search.scss */
-  span.searchbar .results {
-    color: #ff0000; }
-    /* line 31, ../sass/search/_search.scss */
-    span.searchbar .results .searchbar-item {
-      color: #8800ff; }
-      /* line 35, ../sass/search/_search.scss */
-      span.searchbar .results .searchbar-item .label {
-        color: #00aa00; }
-        /* line 38, ../sass/search/_search.scss */
-        span.searchbar .results .searchbar-item .label .title-label {
-          color: #aa00aa;
-          display: block;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap; }
+/* line 27, ../sass/search/_search.scss */
+span.search-holder .searchbar {
+  width: 100%;
+  margin-top: 20px; }
+/* line 44, ../sass/search/_search.scss */
+span.search-holder .results .searchbar-item .label .title-label {
+  position: relative;
+  left: 20px;
+  top: -17px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; }
+/* line 58, ../sass/search/_search.scss */
+span.search-holder .load-more-button {
+  width: 100%;
+  margin-top: 20px; }

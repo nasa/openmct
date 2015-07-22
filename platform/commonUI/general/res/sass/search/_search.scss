@@ -20,28 +20,33 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-span.searchbar {
-    color: #ff0099;
-	//@include menuUlReset();
+span.search-holder {
+    $iconwidth: 20px;
+    $iconheight: 17px;
+    
+    .searchbar {
+        width: 100%;
+        margin-top: 20px;
+    }
+    
 	.results {
-		//display: block;
-		//position: relative;
-        color: #ff0000;
         
 		.searchbar-item {
-			$runningItemW: 0;
-            color: #8800ff;
+            //margin-top: 5px;
             
             .label {
-                color: #00aa00;
+                
+				.type-icon {
+					.icon {
+					}
+				}
                 
                 .title-label {
-                    color: #aa00aa;
+                    position: relative;
+                    left: $iconwidth;
+                    top: -$iconheight;
                     
-					//@include absPosDefault();
 					display: block;
-					//left: $runningItemW + ($interiorMargin * 3);
-                    //left: 60px;
 					overflow: hidden;
 					text-overflow: ellipsis;
 					white-space: nowrap;
@@ -49,4 +54,9 @@ span.searchbar {
             }
 		}
 	}
+    
+    .load-more-button {
+        width: 100%;
+        margin-top: 20px;
+    }
 }
