@@ -25,22 +25,27 @@
     $leftMargin: 6px;
     
     .search-input {
-        width: 100%;
+        // Align with the top of the divider bar, below create button 
         margin-top: 10px;
+        width: 100%;
     }
     
 	.results {
+        // Spacing away from the search input
         margin-top: 10px;
         
 		.search-result-item {
+            // Space the results from each other
             margin-bottom: 5px;
+            
+            // Make the highlights the right color and shape
             background: $colorKeySelectedBg; // Later make this apply to only certain ones
             border-radius: 2px;
             padding-top: 2px;
             padding-bottom: 1px;
             
             .label {
-                left: 15px;
+                // Give some padding away from the left side
                 margin-left: $leftMargin;
                 
 				.type-icon {
@@ -52,13 +57,17 @@
                     display: inline-block;
                     position: absolute;
                     
+                    // Give some padding away from the left side
                     width: auto;
                     left: $leftMargin + 3px + $iconWidth;
                     right: 0;
                     
+                    // Size and position the text
                     font-size: .8em;
                     line-height: 17px;
                     
+                    // Hide overflow text
+                    // Only works when width is defined
 					overflow: hidden;
 					text-overflow: ellipsis;
 					white-space: nowrap;
@@ -68,11 +77,15 @@
 	}
     
     .load-more-button {
+        // Space away form the results list
         margin-top: 5px;
         
+        // Center it
         position: relative;
         left: 25%;
+        width: 50%;
         
+        // Make smallish button 
         height: 20px;
         line-height: 11px;
         font-size: 0.7em;

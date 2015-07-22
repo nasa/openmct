@@ -273,23 +273,22 @@ ul.tree {
  *****************************************************************************/
 /* line 27, ../sass/search/_search.scss */
 .search .search-input {
-  width: 100%;
-  margin-top: 10px; }
-/* line 32, ../sass/search/_search.scss */
+  margin-top: 10px;
+  width: 100%; }
+/* line 33, ../sass/search/_search.scss */
 .search .results {
   margin-top: 10px; }
-  /* line 35, ../sass/search/_search.scss */
+  /* line 37, ../sass/search/_search.scss */
   .search .results .search-result-item {
     margin-bottom: 5px;
     background: #005177;
     border-radius: 2px;
     padding-top: 2px;
     padding-bottom: 1px; }
-    /* line 42, ../sass/search/_search.scss */
+    /* line 47, ../sass/search/_search.scss */
     .search .results .search-result-item .label {
-      left: 15px;
       margin-left: 6px; }
-      /* line 51, ../sass/search/_search.scss */
+      /* line 56, ../sass/search/_search.scss */
       .search .results .search-result-item .label .title-label {
         display: inline-block;
         position: absolute;
@@ -301,11 +300,12 @@ ul.tree {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap; }
-/* line 70, ../sass/search/_search.scss */
+/* line 79, ../sass/search/_search.scss */
 .search .load-more-button {
   margin-top: 5px;
   position: relative;
   left: 25%;
+  width: 50%;
   height: 20px;
   line-height: 11px;
   font-size: 0.7em; }
