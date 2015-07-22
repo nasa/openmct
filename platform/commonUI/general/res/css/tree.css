@@ -69,6 +69,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/************************** MOBILE TREE MENU DIMENSIONS */
 /************************** WINDOW DIMENSIONS FOR RWD */
 /************************** MEDIA QUERIES: WINDOW CHECKS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
 /************************** MEDIA QUERIES: WINDOWS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
@@ -318,18 +319,21 @@ ul.tree {
       padding: 0; }
     /* line 29, ../sass/mobile/_tree.scss */
     ul.tree li span.tree-item {
+      height: 38px;
+      line-height: 38px;
       margin-top: 3px; }
-      /* line 32, ../sass/mobile/_tree.scss */
+      /* line 34, ../sass/mobile/_tree.scss */
       ul.tree li span.tree-item .view-control {
         position: absolute;
-        right: 5px;
-        font-size: 1.5em; }
-      /* line 38, ../sass/mobile/_tree.scss */
+        right: 13px;
+        font-size: 1.8em; }
+      /* line 40, ../sass/mobile/_tree.scss */
       ul.tree li span.tree-item .label {
-        left: 3px; }
-        /* line 44, ../sass/mobile/_tree.scss */
+        left: 3px;
+        font-size: 1.2em; }
+        /* line 47, ../sass/mobile/_tree.scss */
         ul.tree li span.tree-item .label .title-label {
-          right: 5px; }
-    /* line 53, ../sass/mobile/_tree.scss */
+          right: 16.9px; }
+    /* line 56, ../sass/mobile/_tree.scss */
     ul.tree ul.tree {
       margin-left: 3px; } }
