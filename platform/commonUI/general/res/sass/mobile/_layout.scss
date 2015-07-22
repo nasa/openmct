@@ -161,3 +161,9 @@
         display: none;
     }
 }
+
+.tree-holder {
+    @include phoneandtablet {
+        overflow-x: hidden !important;
+    }
+}
