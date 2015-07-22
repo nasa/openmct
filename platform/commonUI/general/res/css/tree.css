@@ -275,16 +275,24 @@ ul.tree {
 span.search-holder .searchbar {
   width: 100%;
   margin-top: 20px; }
-/* line 44, ../sass/search/_search.scss */
-span.search-holder .results .searchbar-item .label .title-label {
-  position: relative;
-  left: 20px;
-  top: -17px;
-  display: block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap; }
-/* line 58, ../sass/search/_search.scss */
+/* line 32, ../sass/search/_search.scss */
+span.search-holder .results {
+  margin-top: 10px; }
+  /* line 35, ../sass/search/_search.scss */
+  span.search-holder .results .search-result-item {
+    margin-bottom: 5px; }
+    /* line 45, ../sass/search/_search.scss */
+    span.search-holder .results .search-result-item .label .title-label {
+      display: inline-block;
+      position: absolute;
+      width: auto;
+      left: 20px;
+      right: 0;
+      font-size: .8em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap; }
+/* line 63, ../sass/search/_search.scss */
 span.search-holder .load-more-button {
   width: 100%;
-  margin-top: 20px; }
+  margin-top: 5px; }

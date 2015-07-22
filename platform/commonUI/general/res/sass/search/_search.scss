@@ -22,7 +22,7 @@
 
 span.search-holder {
     $iconwidth: 20px;
-    $iconheight: 17px;
+    //$iconheight: 17px;
     
     .searchbar {
         width: 100%;
@@ -30,9 +30,10 @@ span.search-holder {
     }
     
 	.results {
+        margin-top: 10px;
         
-		.searchbar-item {
-            //margin-top: 5px;
+		.search-result-item {
+            margin-bottom: 5px;
             
             .label {
                 
@@ -42,11 +43,15 @@ span.search-holder {
 				}
                 
                 .title-label {
-                    position: relative;
-                    left: $iconwidth;
-                    top: -$iconheight;
+                    display: inline-block;
+                    position: absolute;
                     
-					display: block;
+                    width: auto;
+                    left: $iconwidth;
+                    right: 0;
+                    
+                    font-size: .8em;
+                    
 					overflow: hidden;
 					text-overflow: ellipsis;
 					white-space: nowrap;
@@ -57,6 +62,6 @@ span.search-holder {
     
     .load-more-button {
         width: 100%;
-        margin-top: 20px;
+        margin-top: 5px;
     }
 }
