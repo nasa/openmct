@@ -271,28 +271,37 @@ ul.tree {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 27, ../sass/search/_search.scss */
-span.search-holder .searchbar {
+/* line 28, ../sass/search/_search.scss */
+.search-holder .searchbar {
   width: 100%;
   margin-top: 20px; }
-/* line 32, ../sass/search/_search.scss */
-span.search-holder .results {
+/* line 33, ../sass/search/_search.scss */
+.search-holder .results {
   margin-top: 10px; }
-  /* line 35, ../sass/search/_search.scss */
-  span.search-holder .results .search-result-item {
-    margin-bottom: 5px; }
-    /* line 45, ../sass/search/_search.scss */
-    span.search-holder .results .search-result-item .label .title-label {
-      display: inline-block;
-      position: absolute;
-      width: auto;
-      left: 20px;
-      right: 0;
-      font-size: .8em;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap; }
-/* line 63, ../sass/search/_search.scss */
-span.search-holder .load-more-button {
+  /* line 36, ../sass/search/_search.scss */
+  .search-holder .results .search-result-item {
+    margin-bottom: 5px;
+    background: #005177;
+    border-radius: 2px;
+    padding-top: 2px;
+    padding-bottom: 1px; }
+    /* line 43, ../sass/search/_search.scss */
+    .search-holder .results .search-result-item .label {
+      left: 15px;
+      margin-left: 8px; }
+      /* line 53, ../sass/search/_search.scss */
+      .search-holder .results .search-result-item .label .title-label {
+        display: inline-block;
+        position: absolute;
+        width: auto;
+        left: 31px;
+        right: 0;
+        font-size: .8em;
+        line-height: 17px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap; }
+/* line 72, ../sass/search/_search.scss */
+.search-holder .load-more-button {
   width: 100%;
   margin-top: 5px; }

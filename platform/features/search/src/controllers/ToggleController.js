@@ -19,58 +19,48 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global define,Promise*/
 
-.search-holder {
-    $iconWidth: 20px;
-    //$iconheight: 17px;
-    $leftMargin: 8px;
-    
-    .searchbar {
-        width: 100%;
-        margin-top: 20px;
-    }
-    
-	.results {
-        margin-top: 10px;
-        
-		.search-result-item {
-            margin-bottom: 5px;
-            background: $colorKeySelectedBg; // Later make this apply to only certain ones
-            border-radius: 2px;
-            padding-top: 2px;
-            padding-bottom: 1px;
-            
-            .label {
-                //position: absolute;
-                left: 15px;
-                margin-left: $leftMargin;
-                
-				.type-icon {
-					.icon {
-					}
-				}
-                
-                .title-label {
-                    display: inline-block;
-                    position: absolute;
-                    
-                    width: auto;
-                    left: $leftMargin + 3px + $iconWidth;
-                    right: 0;
-                    
-                    font-size: .8em;
-                    line-height: 17px;
-                    
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
+define(
+    [],
+    function () {
+        "use strict";
+
+        /**
+         * A ToggleController is used to activate/deactivate things.
+         * A common usage is for "twistie"
+         *
+         * @constructor
+         */
+        function ToggleController() {
+            var state = false;
+
+            return {
+                /**
+                 * Get the current state of the toggle.
+                 * @return {boolean} true if active
+                 */
+                isActive: function () {
+                    return state;
+                },
+                /**
+                 * Set a new state for the toggle.
+                 * @return {boolean} true to activate
+                 */
+                setState: function (newState) {
+                    state = newState;
+                },
+                /**
+                 * Toggle the current state; activate if it is inactive,
+                 * deactivate if it is active.
+                 */
+                toggle: function () {
+                    state = !state;
                 }
-            }
-		}
-	}
-    
-    .load-more-button {
-        width: 100%;
-        margin-top: 5px;
+            };
+
+        }
+
+        return ToggleController;
     }
-}
+);

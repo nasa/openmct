@@ -7,6 +7,16 @@
                 "key": "SearchbarController",
                 "implementation": "controllers/SearchbarController.js",
                 "depends": [ "$scope", "$timeout", "searchService" ]
+            },
+            {
+                "key": "SearchbarItemController",
+                "implementation": "controllers/SearchbarItemController.js",
+                "depends": [ "$scope" ]
+            },
+            {
+                "key": "ToggleController",
+                "implementation": "controllers/ToggleController.js",
+                "depends": [  ]
             }
         ],
         "templates": [
