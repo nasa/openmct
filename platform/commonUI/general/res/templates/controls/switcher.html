@@ -20,7 +20,6 @@
  at runtime from the About dialog for additional information.
 -->
 <span ng-controller="ViewSwitcherController">
-
     <div
 	    class="view-switcher menu-element btn btn-menu dropdown click-invoke"
 	    ng-if="view.length > 1"
@@ -40,21 +39,12 @@
 
         <div class="menu dropdown" ng-show="toggle.isActive()">
             <ul>
-                <li ng-repeat="option in view">
-                    <a ng-click="ngModel.selected = option; toggle.setState(false)">
-                        <span class="ui-symbol type-icon icon">{{option.glyph}}</span>
-	                    {{option.name}}
-                    </a>
+                <li ng-repeat="option in view"
+                    ng-click="ngModel.selected = option; toggle.setState(false)">
+                    <span class="ui-symbol type-icon icon">{{option.glyph}}</span>
+                    {{option.name}}
                 </li>
             </ul>
         </div>
     </div>
-
-	<!-- CH commented out 2/24/15 - really don't think we need this. Single view is what it is. -->
-    <!--span class="btn"
-          ng-if="view.length === 1">
-        <span class="ui-symbol icon type-icon">{{ngModel.selected.glyph}}</span>
-        <span>{{ngModel.selected.name}}</span>
-    </span-->
-
 </span>

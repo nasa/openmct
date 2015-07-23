@@ -32,10 +32,18 @@
     .edit-corner {
         width: $handleD;
         height: $handleD;
+        &:hover {
+            z-index: 11;
+        }
         &.edit-resize-nw {
             @include border-bottom-right-radius($cr);
             cursor: nw-resize;
             top: 0; left: 0;
+        }
+        &.edit-resize-ne {
+            @include border-bottom-left-radius($cr);
+            cursor: ne-resize;
+            top: 0; right: 0;
         }
         &.edit-resize-se {
             @include border-top-left-radius($cr);
@@ -89,7 +97,7 @@
         &:hover {
             @include boxShdwLarge();
             border-color: $colorKey;
-            z-index: 2;
+            //z-index: 2;
             .view-switcher {
                 opacity: 1;
             }

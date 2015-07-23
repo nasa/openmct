@@ -20,68 +20,63 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .triangle {
-    $myColor: $colorKey;
-    $mySize: 10px;
-    @include triangle-right($mySize, $myColor);
-    &.triangle-down {
-        @include triangle-down($mySize, $myColor);
-    }
+	$myColor: $colorKey;
+	$mySize: 10px;
+	@include triangle-right($mySize, $myColor);
+	&.triangle-down {
+		@include triangle-down($mySize, $myColor);
+	}
 }
 
 .ui-symbol {
-    $c: $colorKey;
-    &.icon {
-        color: $c;
-        @include txtShdwSubtle();
-        &.alert {
-            color: $colorAlert;
-            &:hover {
-                color: lighten($colorAlert, $ltGamma);
-            }
-        }
-        &.major {
-            font-size: 1.65em;
-        }
-    }
+	$c: $colorKey;
+	&.icon {
+		color: $c;
+		@include txtShdwSubtle();
+		&.alert {
+			color: $colorAlert;
+			&:hover {
+				color: lighten($colorAlert, $ltGamma);
+			}
+		}
+		&.major {
+			font-size: 1.65em;
+		}
+	}
 }
 
 .bar .icon {
-    display: inline-block;
+	display: inline-block;
 }
 
 .invoke-menu {
-    //@include invokeMenu(); // $colorKey
 	text-shadow: none;
-    display: inline-block;
-    //font-size: 0.8rem;// Normalizing for new icomoon symbols font
-    //vertical-align: middle;// Normalizing for new icomoon symbols font
+	display: inline-block;
 }
 
 .btn-menu .invoke-menu,
 .icon.major .invoke-menu {
-    margin-left: $interiorMarginSm;
+	margin-left: $interiorMarginSm;
 }
-
-/*
-.object-header .type-icon {
-    color: $colorKey;
-	margin-right: $interiorMarginSm;
-}
-*/
 
 .menu .type-icon,
 .tree-item .type-icon,
 .super-menu.menu .type-icon {
-    //font-size: $menuLineH * 0.8; //.93 // Normalizing for new icomoon symbols font
-    //line-height: $menuLineH * 1.13; // Normalizing for new icomoon symbols font
-    position: absolute;
+	position: absolute;
 }
 
 .tree-item .type-icon {
-    font-size: 16px; // 16px is crisp size
+	font-size: 16px; // 16px is crisp size
 }
 
-.super-menu.menu.dropdown .icon {
-	//font-size: $menuLineH * 0.95 // Normalizing for new icomoon symbols font
+.l-icon-link:before {
+	content: "\f4";
 }
 
+.l-icon-alert {
+	display: none !important; // Remove this when alerts are enabled
+	&:before {
+		color: $colorAlert;
+		content: "!";
+	}
+}

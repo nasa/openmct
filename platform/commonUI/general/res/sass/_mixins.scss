@@ -26,6 +26,16 @@
     width: auto; height: auto;
 }
 
+@mixin ancillaryIcon($d, $c) {
+	// Used for small icons used in combination with larger icons,
+	// like the link and alert icons in tree items.
+	color: $c;
+	font-size: $d;
+	line-height: $d;
+	height: $d;
+	width: $d;
+}
+
 @mixin trans-prop-nice($props, $t: 500ms) {
 	@if $t == 0 {
 		@include transition-property(none);
