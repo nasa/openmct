@@ -271,47 +271,51 @@ ul.tree {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 22, ../sass/search/_search.scss */
+/* line 23, ../sass/search/_search.scss */
 .search-holder {
   overflow-y: auto;
   padding-right: 5px; }
-  /* line 33, ../sass/search/_search.scss */
+  /* line 34, ../sass/search/_search.scss */
   .search-holder .search .search-input {
     margin-top: 10px;
     width: 100%; }
-  /* line 39, ../sass/search/_search.scss */
+  /* line 40, ../sass/search/_search.scss */
   .search-holder .search .load-icon {
     position: relative; }
-    /* line 41, ../sass/search/_search.scss */
+    /* line 42, ../sass/search/_search.scss */
     .search-holder .search .load-icon.loading {
       pointer-events: none;
       margin-left: 6px; }
-      /* line 45, ../sass/search/_search.scss */
+      /* line 46, ../sass/search/_search.scss */
       .search-holder .search .load-icon.loading .title-label {
         font-style: italic;
         font-size: .9em;
         opacity: 0.5;
         margin-left: 26px;
         line-height: 24px; }
-      /* line 55, ../sass/search/_search.scss */
+      /* line 56, ../sass/search/_search.scss */
       .search-holder .search .load-icon.loading .wait-spinner {
         margin-left: 6px; }
-    /* line 60, ../sass/search/_search.scss */
+    /* line 61, ../sass/search/_search.scss */
     .search-holder .search .load-icon:not(.loading) {
       cursor: pointer; }
-  /* line 65, ../sass/search/_search.scss */
+  /* line 66, ../sass/search/_search.scss */
   .search-holder .search .results {
     margin-top: 10px; }
-    /* line 69, ../sass/search/_search.scss */
+    /* line 70, ../sass/search/_search.scss */
     .search-holder .search .results .search-result-item {
+      -moz-transition: background-color 0.25s;
+      -o-transition: background-color 0.25s;
+      -webkit-transition: background-color 0.25s;
+      transition: background-color 0.25s;
       margin-bottom: 5px;
       border-radius: 2px;
       padding-top: 2px;
       padding-bottom: 1px; }
-      /* line 78, ../sass/search/_search.scss */
+      /* line 82, ../sass/search/_search.scss */
       .search-holder .search .results .search-result-item .label {
         margin-left: 6px; }
-        /* line 82, ../sass/search/_search.scss */
+        /* line 86, ../sass/search/_search.scss */
         .search-holder .search .results .search-result-item .label .title-label {
           display: inline-block;
           position: absolute;
@@ -323,27 +327,27 @@ ul.tree {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap; }
-      /* line 104, ../sass/search/_search.scss */
+      /* line 108, ../sass/search/_search.scss */
       .search-holder .search .results .search-result-item.selected {
         background: #005177;
         color: #fff; }
-        /* line 108, ../sass/search/_search.scss */
+        /* line 112, ../sass/search/_search.scss */
         .search-holder .search .results .search-result-item.selected .view-control {
           color: #0099cc; }
-        /* line 111, ../sass/search/_search.scss */
+        /* line 115, ../sass/search/_search.scss */
         .search-holder .search .results .search-result-item.selected .label .type-icon {
           color: #fff; }
-      /* line 118, ../sass/search/_search.scss */
+      /* line 122, ../sass/search/_search.scss */
       .search-holder .search .results .search-result-item:not(.selected):hover {
         background: #404040;
         color: #cccccc; }
-        /* line 121, ../sass/search/_search.scss */
+        /* line 125, ../sass/search/_search.scss */
         .search-holder .search .results .search-result-item:not(.selected):hover .context-trigger {
           display: block; }
-        /* line 124, ../sass/search/_search.scss */
+        /* line 128, ../sass/search/_search.scss */
         .search-holder .search .results .search-result-item:not(.selected):hover .icon {
           color: #33ccff; }
-  /* line 132, ../sass/search/_search.scss */
+  /* line 136, ../sass/search/_search.scss */
   .search-holder .search .load-more-button {
     margin-top: 5px;
     position: relative;

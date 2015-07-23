@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 .search-holder {
     $iconWidth: 20px;
     $leftMargin: 6px;
@@ -67,6 +68,9 @@
             margin-top: 10px;
 
             .search-result-item {
+                // Include transitions (for the highlights)
+                @include single-transition(background-color, 0.25s);
+                
                 // Space the results from each other
                 margin-bottom: 5px;
 

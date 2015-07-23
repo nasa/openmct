@@ -707,9 +707,6 @@ mct-container {
 /* line 42, ../sass/search/_layout.scss */
 .pane.treeview.left .tree-holder {
   top: 0; }
-  /* line 47, ../sass/search/_layout.scss */
-  .pane.treeview.left .tree-holder.search-in-use {
-    display: none; }
 
 /*****************************************************************************
 * Open MCT Web, Copyright (c) 2014-2015, United States Government
