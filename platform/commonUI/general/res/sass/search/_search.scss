@@ -35,6 +35,32 @@
             margin-top: 10px;
             width: 100%;
         }
+        
+        .load-icon {
+            position: relative;
+            &.loading {
+                pointer-events: none;
+                margin-left: $leftMargin;
+                
+                .title-label {
+                    // Text styling
+                    font-style: italic;
+                    font-size: .9em;
+                    opacity: 0.5;
+                    
+                    // Text positioning 
+                    margin-left: $iconWidth + $leftMargin;
+                    line-height: 24px;
+                }
+                .wait-spinner {
+                    margin-left: $leftMargin;
+                }
+            }
+
+            &:not(.loading) {
+                cursor: pointer;
+            }
+        }
 
         .results {
             // Spacing away from the search input
@@ -83,7 +109,21 @@
                         color: $colorItemTreeIcon;
                     }
                     .label .type-icon {
-                        color: #fff; //$colorItemTreeIconHover;
+                        color: #fff;
+                    }
+                }
+                
+                // Change styling when it's being hovered over
+                &:not(.selected) {
+                    &:hover {
+                        background: lighten($colorBodyBg, 5%);
+                        color: lighten($colorBodyFg, 20%);
+                        .context-trigger {
+                            display: block;
+                        }
+                        .icon {
+                            color: $colorItemTreeIconHover;
+                        }
                     }
                 }
             }

@@ -32,7 +32,8 @@ define(function () {
     
     function SearchController($scope, $timeout, searchService) {
         // Starting amount of results to load. Will get increased. 
-        var numResults = INITIAL_LOAD_NUMBER;
+        var numResults = INITIAL_LOAD_NUMBER,
+            loading = false;
         
         function update(timestamp) {
             // Get the results 
@@ -45,10 +46,12 @@ define(function () {
                 // If any of the timestamps are older than the one we made the query with
                 if (areOld) {
                     // Then wait and try to update again
+                    loading = true;
                     searchService.updateResults();
                     $timeout(waitForLatest, 100);
                 } else {
                     // We got the latest results now 
+                    loading = false;
                     $scope.results = searchService.getLatestResults(0, numResults);
                 }
             }
@@ -86,6 +89,10 @@ define(function () {
                 } else {
                     return false;
                 }
+            },
+            
+            isLoading: function () {
+                return loading;
             },
             
             /**
