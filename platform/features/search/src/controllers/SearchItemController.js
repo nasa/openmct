@@ -22,8 +22,7 @@
 /*global define*/
 
 /**
- * Module defining SearchItemController. Based on TreeNodeController.
- * Created by shale on 07/22/2015.
+ * Module defining SearchItemController. Created by shale on 07/22/2015.
  */
 define(function () {
     "use strict";

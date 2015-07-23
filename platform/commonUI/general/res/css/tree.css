@@ -273,46 +273,47 @@ ul.tree {
  *****************************************************************************/
 /* line 22, ../sass/search/_search.scss */
 .search-holder {
-  overflow-y: auto; }
-  /* line 30, ../sass/search/_search.scss */
+  overflow-y: auto;
+  padding-right: 5px; }
+  /* line 33, ../sass/search/_search.scss */
   .search-holder .search .search-input {
     margin-top: 10px;
     width: 100%; }
-  /* line 36, ../sass/search/_search.scss */
+  /* line 39, ../sass/search/_search.scss */
   .search-holder .search .results {
     margin-top: 10px; }
-    /* line 40, ../sass/search/_search.scss */
+    /* line 43, ../sass/search/_search.scss */
     .search-holder .search .results .search-result-item {
       margin-bottom: 5px;
       border-radius: 2px;
       padding-top: 2px;
       padding-bottom: 1px; }
-      /* line 49, ../sass/search/_search.scss */
+      /* line 52, ../sass/search/_search.scss */
       .search-holder .search .results .search-result-item .label {
         margin-left: 6px; }
-        /* line 53, ../sass/search/_search.scss */
+        /* line 56, ../sass/search/_search.scss */
         .search-holder .search .results .search-result-item .label .title-label {
           display: inline-block;
           position: absolute;
           left: 29px;
-          right: 0;
+          right: 5px;
           font-size: .8em;
           line-height: 17px;
           width: auto;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap; }
-      /* line 74, ../sass/search/_search.scss */
+      /* line 78, ../sass/search/_search.scss */
       .search-holder .search .results .search-result-item.selected {
         background: #005177;
         color: #fff; }
-        /* line 78, ../sass/search/_search.scss */
+        /* line 82, ../sass/search/_search.scss */
         .search-holder .search .results .search-result-item.selected .view-control {
           color: #0099cc; }
-        /* line 81, ../sass/search/_search.scss */
+        /* line 85, ../sass/search/_search.scss */
         .search-holder .search .results .search-result-item.selected .label .type-icon {
           color: #fff; }
-  /* line 88, ../sass/search/_search.scss */
+  /* line 92, ../sass/search/_search.scss */
   .search-holder .search .load-more-button {
     margin-top: 5px;
     position: relative;

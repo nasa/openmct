@@ -20,12 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .search-holder {
+    $iconWidth: 20px;
+    $leftMargin: 6px;
+    $rightPadding: 5px;
+    
     //position: relative;
     overflow-y: auto;   // This should make it scroll, but isn't wokring :(
+    padding-right: $rightPadding;
     
     .search {
-        $iconWidth: 20px;
-        $leftMargin: 6px;
         
         .search-input {
             // Align with the top of the divider bar, below create button 
@@ -56,7 +59,8 @@
 
                         // Give some padding away from the left side
                         left: $leftMargin + 3px + $iconWidth;
-                        right: 0;
+                        // and the right side
+                        right: $rightPadding;
 
                         // Size and position the text
                         font-size: .8em;
