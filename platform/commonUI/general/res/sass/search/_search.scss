@@ -72,12 +72,14 @@
                 @include single-transition(background-color, 0.25s);
                 
                 // Space the results from each other
-                margin-bottom: 5px;
+                margin-bottom: 2px;
 
-                // Make the highlights the right color and shape
+                // Make the highlights the right color and shape.
+                // Attempting to match the style in the tree, but we 
+                //   while having these be compact. 
                 border-radius: 2px;
-                padding-top: 2px;
-                padding-bottom: 1px;
+                padding-top: 4px;
+                padding-bottom: 2px;
 
                 .label {
                     // Give some padding away from the left side

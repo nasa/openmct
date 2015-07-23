@@ -308,14 +308,14 @@ ul.tree {
       -o-transition: background-color 0.25s;
       -webkit-transition: background-color 0.25s;
       transition: background-color 0.25s;
-      margin-bottom: 5px;
+      margin-bottom: 2px;
       border-radius: 2px;
-      padding-top: 2px;
-      padding-bottom: 1px; }
-      /* line 82, ../sass/search/_search.scss */
+      padding-top: 4px;
+      padding-bottom: 2px; }
+      /* line 84, ../sass/search/_search.scss */
       .search-holder .search .results .search-result-item .label {
         margin-left: 6px; }
-        /* line 86, ../sass/search/_search.scss */
+        /* line 88, ../sass/search/_search.scss */
         .search-holder .search .results .search-result-item .label .title-label {
           display: inline-block;
           position: absolute;
@@ -327,27 +327,27 @@ ul.tree {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap; }
-      /* line 108, ../sass/search/_search.scss */
+      /* line 110, ../sass/search/_search.scss */
       .search-holder .search .results .search-result-item.selected {
         background: #005177;
         color: #fff; }
-        /* line 112, ../sass/search/_search.scss */
+        /* line 114, ../sass/search/_search.scss */
         .search-holder .search .results .search-result-item.selected .view-control {
           color: #0099cc; }
-        /* line 115, ../sass/search/_search.scss */
+        /* line 117, ../sass/search/_search.scss */
         .search-holder .search .results .search-result-item.selected .label .type-icon {
           color: #fff; }
-      /* line 122, ../sass/search/_search.scss */
+      /* line 124, ../sass/search/_search.scss */
       .search-holder .search .results .search-result-item:not(.selected):hover {
         background: #404040;
         color: #cccccc; }
-        /* line 125, ../sass/search/_search.scss */
+        /* line 127, ../sass/search/_search.scss */
         .search-holder .search .results .search-result-item:not(.selected):hover .context-trigger {
           display: block; }
-        /* line 128, ../sass/search/_search.scss */
+        /* line 130, ../sass/search/_search.scss */
         .search-holder .search .results .search-result-item:not(.selected):hover .icon {
           color: #33ccff; }
-  /* line 136, ../sass/search/_search.scss */
+  /* line 138, ../sass/search/_search.scss */
   .search-holder .search .load-more-button {
     margin-top: 5px;
     position: relative;
