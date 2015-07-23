@@ -56,13 +56,6 @@ define(function () {
                     // We got the latest results now (and done loading)
                     loading = false;
                     $scope.results = searchService.getLatestResults(0, numResults);
-                    
-                    // Update whether the file tree should be displayed 
-                    if ($scope.results.length === 0) {
-                        $scope.ngModel.filter = false;
-                    } else {
-                        $scope.ngModel.filter = true;
-                    }
                 }
             }
             waitForLatest();
@@ -72,6 +65,13 @@ define(function () {
             var date = new Date(),
                 timestamp = date.getTime(),
                 inputText = document.getElementById(inputID).value;
+            
+            // Update whether the file tree should be displayed 
+            if (inputText === '') {
+                $scope.ngModel.search = false;
+            } else {
+                $scope.ngModel.search = true;
+            }
             
             // Reset 'load more'
             numResults = INITIAL_LOAD_NUMBER;
