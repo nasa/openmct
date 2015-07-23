@@ -52,7 +52,7 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$on", "$watch" ]
+                    [ "$on", "$watch", "treeSlide" ]
                 );
                 mockRoute = { current: { params: {} } };
                 mockLocation = jasmine.createSpyObj(
@@ -144,6 +144,11 @@ define(
                     mockDomainObject
                 );
                 expect(mockScope.navigatedObject).toEqual(mockDomainObject);
+            });
+            
+            it("updates boolean", function () {
+//                spyOn(mockScope, 'treeSlide').andCallThrough();
+                mockScope.treeSlide();
             });
 
             it("releases its navigation listener when its scope is destroyed", function () {
