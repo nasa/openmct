@@ -36,6 +36,9 @@ define(function () {
             loading = false;
         
         function update(timestamp) {
+            // We are loading results
+            loading = true;
+            
             // Get the results 
             $scope.results = searchService.getLatestResults(0, numResults);
             
@@ -43,14 +46,14 @@ define(function () {
             function waitForLatest() {
                 var timestamps = searchService.getLatestTimestamps(),
                     areOld = timestamps.some(function(c) {return c < timestamp;});
+                
                 // If any of the timestamps are older than the one we made the query with
                 if (areOld) {
                     // Then wait and try to update again
-                    loading = true;
                     searchService.updateResults();
-                    $timeout(waitForLatest, 100);
+                    $timeout(waitForLatest, 50);
                 } else {
-                    // We got the latest results now 
+                    // We got the latest results now (and done loading)
                     loading = false;
                     $scope.results = searchService.getLatestResults(0, numResults);
                 }
