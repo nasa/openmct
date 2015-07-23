@@ -58,7 +58,7 @@ define(
 
             // Returns the orientation of the device based on the
             // device's window dimensions
-            function getOrientation(screenWidth, screenHeight) {
+            function getOrientation() {
                 if ($window.outerWidth > $window.outerHeight) {
                     return "landscape";
                 } else if ($window.outerWidth < $window.outerHeight) {
