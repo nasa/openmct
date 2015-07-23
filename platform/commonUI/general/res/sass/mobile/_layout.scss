@@ -21,7 +21,8 @@
  *****************************************************************************/
 
 // Wrapper of the entire 2 panes, only enacted on
-// phone and tablet.
+// phone and tablet. Also for the panes
+
 .browse-wrapper,
 .mobile-pane {
     @include phoneandtablet {
@@ -50,7 +51,6 @@
     // is hidden. 
     .mobile-pane.left-menu {
         @include phoneandtablet {
-            @include slMenuTransitions;
             @include trans-prop-nice(opacity, .4s);
             opacity: 0;
             right: 100% !important;
@@ -81,7 +81,6 @@
     // is shown.     
     .mobile-pane.left-menu {
         @include phoneandtablet {
-            @include slMenuTransitions;
             @include trans-prop-nice(opacity, .4s);
             opacity: 1;
             display: block !important;
@@ -130,7 +129,6 @@
 .button-pos {
     @include phoneandtablet {
         position: absolute;
-        @include slMenuTransitions;
     }
 }
 
