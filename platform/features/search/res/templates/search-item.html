@@ -20,16 +20,16 @@
  at runtime from the About dialog for additional information.
 --> 
 
-<span ng-controller="ToggleController as toggle">
+<span ng-controller="SearchItemController as controller">
+    
     <div class="search-result-item"
-         ng-controller="SearchItemController as controller">
-        <mct-representation
-            key="'label'"
-            mct-object="domainObject"
-            ng-model="ngModel"
-            ng-click="ngModel.selectedObject = domainObject"
-            >
+         ng-class="{selected: controller.isSelected()}">
+        <mct-representation key="'label'"
+                            mct-object="domainObject"
+                            ng-model="ngModel"
+                            ng-click="ngModel.selectedObject = domainObject">
         </mct-representation>
+        
         <!--span
             class="search-result-item menus-to-left"
             ng-class="{selected: controller.isSelected()}"
@@ -42,18 +42,6 @@
                 >
                 {{toggle.isActive() ? "v" : ">"}}
             </span->
-        </span>
-        <span
-            class="tree-item-subtree"
-            ng-show="toggle.isActive()"
-            ng-if="model.composition !== undefined"
-            >
-            qwer
-            <!--mct-representation key="'subtree'"
-                                ng-model="ngModel"
-                                mct-object="treeNode.hasBeenExpanded() && domainObject">
-            </mct-representation->
-
         </span-->
     </div>
 </span>

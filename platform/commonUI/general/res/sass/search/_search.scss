@@ -42,7 +42,6 @@
                 margin-bottom: 5px;
 
                 // Make the highlights the right color and shape
-                background: $colorKeySelectedBg; // Later make this apply to only certain ones
                 border-radius: 2px;
                 padding-top: 2px;
                 padding-bottom: 1px;
@@ -61,7 +60,6 @@
                         position: absolute;
 
                         // Give some padding away from the left side
-                        width: auto;
                         left: $leftMargin + 3px + $iconWidth;
                         right: 0;
 
@@ -70,10 +68,23 @@
                         line-height: 17px;
 
                         // Hide overflow text
-                        // Only works when width is defined
+                        width: auto;
                         overflow: hidden;
                         text-overflow: ellipsis;
                         white-space: nowrap;
+                    }
+                }
+                
+                // Change styling when it's selected
+                &.selected {
+                    $c: #fff;
+                    background: $colorKeySelectedBg;
+                    color: $c;
+                    .view-control {
+                        color: $colorItemTreeIcon;
+                    }
+                    .label .type-icon {
+                        color: #fff; //$colorItemTreeIconHover;
                     }
                 }
             }

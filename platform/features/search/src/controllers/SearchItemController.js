@@ -22,16 +22,17 @@
 /*global define*/
 
 /**
- * Module defining SearchbarItemController. Based on TreeNodeController.
+ * Module defining SearchItemController. Based on TreeNodeController.
  * Created by shale on 07/22/2015.
  */
 define(function () {
     "use strict";
     
-    function SearchbarItemController($scope) {
-        var selectedObject = ($scope.ngModel || {}).selectedObject,
-            isSelected = false;
+    function SearchItemController($scope) {
+        var selectedObject = ($scope.ngModel || {}).selectedObject;//,
+            //isSelected = false;
         
+        /*
         // Consider the currently-navigated object and update
         // parameters which support display.
         function checkSelection() {
@@ -43,7 +44,7 @@ define(function () {
                         navObject.getCapability('context'),
                 nodePath,
                 navPath;
-
+                
             // Deselect; we will reselect below, iff we are
             // exactly at the end of the path.
             isSelected = false;
@@ -76,17 +77,17 @@ define(function () {
                 }
             }
         }
-
+        */
+            
         // Callback for the selection updates; track the currently
         // navigated object and update display parameters as needed.
         function setSelection(object) {
             selectedObject = object;
-            checkSelection();
         }
 
         // Listen for changes which will effect display parameters
         $scope.$watch("ngModel.selectedObject", setSelection);
-        $scope.$watch("domainObject", checkSelection);
+        //$scope.$watch("domainObject", checkSelection);
 
         return {
             /**
@@ -97,9 +98,10 @@ define(function () {
              * @returns true if this should be highlighted
              */
             isSelected: function () {
-                return isSelected;
+                // If this object is the same as the model's selected object
+                return $scope.ngModel.selectedObject === $scope.domainObject;
             }
         };
     }
-    return SearchbarItemController;
+    return SearchItemController;
 });

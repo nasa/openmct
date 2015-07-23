@@ -284,26 +284,35 @@ ul.tree {
     /* line 40, ../sass/search/_search.scss */
     .search-holder .search .results .search-result-item {
       margin-bottom: 5px;
-      background: #005177;
       border-radius: 2px;
       padding-top: 2px;
       padding-bottom: 1px; }
-      /* line 50, ../sass/search/_search.scss */
+      /* line 49, ../sass/search/_search.scss */
       .search-holder .search .results .search-result-item .label {
         margin-left: 6px; }
-        /* line 59, ../sass/search/_search.scss */
+        /* line 58, ../sass/search/_search.scss */
         .search-holder .search .results .search-result-item .label .title-label {
           display: inline-block;
           position: absolute;
-          width: auto;
           left: 29px;
           right: 0;
           font-size: .8em;
           line-height: 17px;
+          width: auto;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap; }
-  /* line 82, ../sass/search/_search.scss */
+      /* line 79, ../sass/search/_search.scss */
+      .search-holder .search .results .search-result-item.selected {
+        background: #005177;
+        color: #fff; }
+        /* line 83, ../sass/search/_search.scss */
+        .search-holder .search .results .search-result-item.selected .view-control {
+          color: #0099cc; }
+        /* line 86, ../sass/search/_search.scss */
+        .search-holder .search .results .search-result-item.selected .label .type-icon {
+          color: #fff; }
+  /* line 93, ../sass/search/_search.scss */
   .search-holder .search .load-more-button {
     margin-top: 5px;
     position: relative;
