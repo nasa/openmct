@@ -125,7 +125,7 @@ define(
             }
             
             // For documentation, see sendQuery below.
-            function queryAll(inputID, timestamp) {
+            function queryAll(inputText, timestamp) {
                 // If there's not a timestamp, make this time the timestamp
                 if (!timestamp) {
                     var date = new Date();
@@ -134,7 +134,7 @@ define(
                 
                 // Send the query to all the providers
                 for (var i = 0; i < providers.length; i += 1) {
-                    providers[i].query(inputID, timestamp, DEFAULT_MAX_RESULTS, DEFUALT_TIMEOUT);
+                    providers[i].query(inputText, timestamp, DEFAULT_MAX_RESULTS, DEFUALT_TIMEOUT);
                 }
                 
                 // Update the merged results list 
@@ -146,8 +146,7 @@ define(
                  * Sends a query to each of the providers, then updates the global
                  *   latestMergedResults accordingly. 
                  *
-                 * @param inputID The name of the ID property of the html text 
-                 *   input where this funcion should find the search term.
+                 * @param inputText The text input that is the query.
                  * @param timestamp (optional) The time at which this function
                  *   was called. This timestamp will be associated with the 
                  *   latest results list, which allows us to see if it has been 

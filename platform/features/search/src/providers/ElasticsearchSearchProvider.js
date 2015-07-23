@@ -145,9 +145,8 @@ define(
             }
             
             // For documentation, see query below.
-            function queryElasticsearch(inputID, timestamp, maxResults, timeout) {
-                var searchTerm,
-                    esQuery;
+            function queryElasticsearch(searchTerm, timestamp, maxResults, timeout) {
+                var esQuery;
                 
                 // Check to see if the user provided a maximum 
                 // number of results to display
@@ -155,9 +154,6 @@ define(
                     // Else, we provide a default value. 
                     maxResults = DEFAULT_MAX_RESULTS;
                 }
-                
-                // Get the user input 
-                searchTerm = document.getElementById(inputID).value;
                 
                 // If the user input is empty, we want to have no search results.
                 if (searchTerm !== '') {
@@ -198,7 +194,7 @@ define(
                  *   * More search details at 
                  *     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-uri-request.html
                  * 
-                 * @param inputID the name of the ID property of the html text 
+                 * @param searchTerm The text input that is the query. 
                  *   input where this funcion should find the search term 
                  * @param timestamp the time at which this function was called,
                  *   this timestamp will be associated with the latest results

@@ -158,9 +158,8 @@ define(
             }
             
             // For documentation, see query below.
-            function queryGeneric(inputID, timestamp, maxResults, timeout) {
-                var input,
-                    terms = [],
+            function queryGeneric(input, timestamp, maxResults, timeout) {
+                var terms = [],
                     searchResults = [],
                     resultsLength;
                 
@@ -170,9 +169,6 @@ define(
                     // Else, we provide a default value. 
                     maxResults = DEFAULT_MAX_RESULTS;
                 }
-                
-                // Get the user input
-                input = document.getElementById(inputID).value;
                 
                 // Get items list
                 return getItems(timeout).then(function () {
@@ -195,8 +191,7 @@ define(
                  *   * Scores are higher for matches that have more than one of 
                  *     the terms as substrings.
                  * 
-                 * @param inputID the name of the ID property of the html text 
-                 *   input where this funcion should find the search term 
+                 * @param input The text input that is the query.
                  * @param timestamp the time at which this function was called,
                  *   this timestamp will be associated with the latest results
                  *   list, which allows the aggregator to see if it has been 

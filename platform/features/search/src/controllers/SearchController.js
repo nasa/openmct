@@ -70,13 +70,14 @@ define(function () {
         
         function search(inputID) {
             var date = new Date(),
-                timestamp = date.getTime();
+                timestamp = date.getTime(),
+                inputText = document.getElementById(inputID).value;
             
             // Reset 'load more'
             numResults = INITIAL_LOAD_NUMBER;
             
             // Send the query
-            searchService.sendQuery(inputID, timestamp);
+            searchService.sendQuery(inputText, timestamp);
             
             update(timestamp);
         }
@@ -101,6 +102,10 @@ define(function () {
                 }
             },
             
+            /**
+             * Checks to see if we are still waiting for the results to be 
+             *   fully updated. 
+             */
             isLoading: function () {
                 return loading;
             },
