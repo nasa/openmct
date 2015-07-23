@@ -56,6 +56,13 @@ define(function () {
                     // We got the latest results now (and done loading)
                     loading = false;
                     $scope.results = searchService.getLatestResults(0, numResults);
+                    
+                    // Update whether the file tree should be displayed 
+                    if ($scope.results.length === 0) {
+                        $scope.ngModel.filter = false;
+                    } else {
+                        $scope.ngModel.filter = true;
+                    }
                 }
             }
             waitForLatest();
