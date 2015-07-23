@@ -19,7 +19,7 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<span class="search"
+<div class="search"
       ng-controller="SearchController as controller">
     <!-- Search bar input -->
     <div>
@@ -28,30 +28,38 @@
                type="text" 
                value=""
                ng-keyup="controller.search('searchbarinput')" />
+        <!--mct-control key="searchbar"
+                     ng-keyup="controller.search('searchbarinput')">asdf
+        </mct-control-->
     </div>
     
-    <!-- Results list -->
-    <div class="results">
-        <mct-representation key="'search-item'"
-                            ng-repeat="result in results"
-                            mct-object="result.object"
-                            ng-model="ngModel">
-        </mct-representation>
+    <!-- This div exists to determine scroll bar location -->
+    <div class="search-scroll">
+        
+        <!-- Results list -->
+        <div class="results">
+            <mct-representation key="'search-item'"
+                                ng-repeat="result in results"
+                                mct-object="result.object"
+                                ng-model="ngModel">
+            </mct-representation>
+        </div>
+
+        <!-- Loading icon -->
+        <div class="load-icon"
+             ng-class="{loading: controller.isLoading()}"
+             ng-if="controller.isLoading()">
+            <span class="icon wait-spinner"></span>
+            <span class="title-label">Loading...</span>
+        </div>
+
+        <!-- Load more button --> 
+        <div ng-if="controller.areMore()">
+            <button class="load-more-button btn very-subtle"
+                    ng-click="controller.loadMore()"> 
+                Load more
+            </button>
+        </div>
+        
     </div>
-    
-    <!-- Loading icon -->
-    <div class="load-icon"
-         ng-class="{loading: controller.isLoading()}"
-         ng-if="controller.isLoading()">
-        <span class="icon wait-spinner"></span>
-        <span class="title-label">Loading...</span>
-    </div>
-    
-    <!-- Load more button --> 
-    <div ng-if="controller.areMore()">
-        <button class="load-more-button btn very-subtle"
-                ng-click="controller.loadMore()"> 
-            Load more
-        </button>
-    </div>
-</span>
+</div>

@@ -704,7 +704,7 @@ mct-container {
 .split-layout.vertical > .pane:first-child .holder {
   position: relative; }
 
-/* line 42, ../sass/search/_layout.scss */
+/* line 44, ../sass/search/_layout.scss */
 .pane.treeview.left .tree-holder {
   top: 0; }
 

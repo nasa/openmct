@@ -39,6 +39,8 @@
 
 .pane {
     &.treeview.left {
+        //overflow: auto; // This one works! (But the bar goes too high)
+        
 	    .tree-holder {
             // Want tree holder to start right below the search bar
 		    top: 0;
@@ -46,7 +48,12 @@
             // Make tree invisible when there are things in search results
             &.search-in-use {
                 //display: none;
+                
             }
 	    }
+        
+        .search-holder {
+            //overflow: auto;
+        }
     }
 }
