@@ -18,6 +18,12 @@
                 "implementation": "controllers/ToggleController.js",
                 "depends": [  ]
             }
+        ],        
+        "controls": [
+            {
+                "key": "searchbar",
+                "templateUrl": "templates/searchbar.html"
+            }
         ],
         "templates": [
             {
