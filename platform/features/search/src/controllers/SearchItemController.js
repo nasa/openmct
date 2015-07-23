@@ -99,7 +99,9 @@ define(function () {
              */
             isSelected: function () {
                 // If this object is the same as the model's selected object
-                return $scope.ngModel.selectedObject === $scope.domainObject;
+                // Same being them having the same ID (this allows different
+                // instances of the same thing to be recognized as the same)
+                return $scope.ngModel.selectedObject.getId() === $scope.domainObject.getId();
             }
         };
     }
