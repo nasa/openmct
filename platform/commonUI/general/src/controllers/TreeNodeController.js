@@ -171,10 +171,7 @@ define(
                     // If this object is the same as the model's selected object
                     // Same being them having the same ID (this allows different
                     // instances of the same thing to be recognized as the same)
-                    if ($scope.ngModel.selectedObject.getId() === $scope.domainObject.getId()) {
-                        setSelection($scope.domainObject);
-                    }
-                    return isSelected;
+                    return $scope.ngModel.selectedObject.getId() === $scope.domainObject.getId();
                     
                     // TODO: Check to make sure this change doesn't break anything. 
                 }
