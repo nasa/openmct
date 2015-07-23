@@ -28,56 +28,8 @@ define(function () {
     "use strict";
     
     function SearchItemController($scope) {
-        var selectedObject = ($scope.ngModel || {}).selectedObject;//,
-            //isSelected = false;
+        var selectedObject = ($scope.ngModel || {}).selectedObject;
         
-        /*
-        // Consider the currently-navigated object and update
-        // parameters which support display.
-        function checkSelection() {
-            var nodeObject = $scope.domainObject,
-                navObject = selectedObject,
-                nodeContext = nodeObject &&
-                        nodeObject.getCapability('context'),
-                navContext = navObject &&
-                        navObject.getCapability('context'),
-                nodePath,
-                navPath;
-                
-            // Deselect; we will reselect below, iff we are
-            // exactly at the end of the path.
-            isSelected = false;
-
-            // Expand if necessary (if the navigated object will
-            // be in this node's subtree)
-            if (nodeContext && navContext) {
-                // Get the paths as arrays of identifiers
-                nodePath = nodeContext.getPath().map(getId);
-                navPath = navContext.getPath().map(getId);
-
-                // Check to see if the node's path lies entirely
-                // within the navigation path; otherwise, navigation
-                // has happened in some other subtree.
-                if (navPath.length >= nodePath.length &&
-                        checkPath(nodePath, navPath)) {
-
-                    // nodePath is along the navPath; if it's
-                    // at the end of the path, highlight;
-                    // otherwise, expand.
-                    if (nodePath.length === navPath.length) {
-                        isSelected = true;
-                    } else { // node path is shorter: Expand!
-                        if ($scope.toggle) {
-                            $scope.toggle.setState(true);
-                        }
-                        trackExpansion();
-                    }
-
-                }
-            }
-        }
-        */
-            
         // Callback for the selection updates; track the currently
         // navigated object and update display parameters as needed.
         function setSelection(object) {
@@ -86,14 +38,14 @@ define(function () {
 
         // Listen for changes which will effect display parameters
         $scope.$watch("ngModel.selectedObject", setSelection);
-        //$scope.$watch("domainObject", checkSelection);
 
         return {
             /**
              * Check whether or not the domain object represented by
-             * this tree node should be highlighted.
-             * An object will be highlighted if it matches
-             * ngModel.selectedObject
+             *   this search item should be highlighted.
+             * An object will be highlighted if its ID matches
+             *   ngModel.selectedObject
+             * 
              * @returns true if this should be highlighted
              */
             isSelected: function () {

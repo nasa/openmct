@@ -2,7 +2,7 @@
     "name": "Search View",
     "description": "Allows the user to search through the file tree.",
     "extensions": {
-        "controllers": [ 
+        "controllers": [
             {
                 "key": "SearchController",
                 "implementation": "controllers/SearchController.js",

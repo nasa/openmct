@@ -42,6 +42,11 @@
 	    .tree-holder {
             // Want tree holder to start right below the search bar
 		    top: 0;
+            
+            // Make tree invisible when there are things in search results
+            &.search-in-use {
+                display: none;
+            }
 	    }
     }
 }
