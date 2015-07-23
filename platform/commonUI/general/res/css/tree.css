@@ -271,41 +271,44 @@ ul.tree {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 27, ../sass/search/_search.scss */
-.search .search-input {
-  margin-top: 10px;
-  width: 100%; }
-/* line 33, ../sass/search/_search.scss */
-.search .results {
-  margin-top: 10px; }
-  /* line 37, ../sass/search/_search.scss */
-  .search .results .search-result-item {
-    margin-bottom: 5px;
-    background: #005177;
-    border-radius: 2px;
-    padding-top: 2px;
-    padding-bottom: 1px; }
-    /* line 47, ../sass/search/_search.scss */
-    .search .results .search-result-item .label {
-      margin-left: 6px; }
-      /* line 56, ../sass/search/_search.scss */
-      .search .results .search-result-item .label .title-label {
-        display: inline-block;
-        position: absolute;
-        width: auto;
-        left: 29px;
-        right: 0;
-        font-size: .8em;
-        line-height: 17px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap; }
-/* line 79, ../sass/search/_search.scss */
-.search .load-more-button {
-  margin-top: 5px;
-  position: relative;
-  left: 25%;
-  width: 50%;
-  height: 20px;
-  line-height: 11px;
-  font-size: 0.7em; }
+/* line 22, ../sass/search/_search.scss */
+.search-holder {
+  overflow-y: auto; }
+  /* line 30, ../sass/search/_search.scss */
+  .search-holder .search .search-input {
+    margin-top: 10px;
+    width: 100%; }
+  /* line 36, ../sass/search/_search.scss */
+  .search-holder .search .results {
+    margin-top: 10px; }
+    /* line 40, ../sass/search/_search.scss */
+    .search-holder .search .results .search-result-item {
+      margin-bottom: 5px;
+      background: #005177;
+      border-radius: 2px;
+      padding-top: 2px;
+      padding-bottom: 1px; }
+      /* line 50, ../sass/search/_search.scss */
+      .search-holder .search .results .search-result-item .label {
+        margin-left: 6px; }
+        /* line 59, ../sass/search/_search.scss */
+        .search-holder .search .results .search-result-item .label .title-label {
+          display: inline-block;
+          position: absolute;
+          width: auto;
+          left: 29px;
+          right: 0;
+          font-size: .8em;
+          line-height: 17px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap; }
+  /* line 82, ../sass/search/_search.scss */
+  .search-holder .search .load-more-button {
+    margin-top: 5px;
+    position: relative;
+    left: 25%;
+    width: 50%;
+    height: 20px;
+    line-height: 11px;
+    font-size: 0.7em; }

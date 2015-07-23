@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+// Overrides some styling in user-environ/_layout.scss
+
 .split-layout {
 	&.vertical {
 		>.pane {
@@ -32,6 +34,14 @@
 				}
 			}
 		}
-
 	}
+}
+
+.pane {
+    &.treeview.left {
+	    .tree-holder {
+            // Want tree holder to start right below the search bar
+		    top: 0;
+	    }
+    }
 }
