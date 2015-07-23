@@ -35,6 +35,15 @@ define(function () {
         var numResults = INITIAL_LOAD_NUMBER,
             loading = false;
         
+        //$scope.results = searchService.latestResults;
+        
+        // This allows us to directly access the search aggregator's members.
+        // Most important is latestResults, which is continuously updated. This
+        // means that this controller does not have to poll for results any more.
+        $scope.searchService = searchService;
+        // TODO: Modify search aggregator to have a search result array which 
+        //        is of a size that can be chosen and modified by this controller. 
+        
         function update(timestamp) {
             // We are loading results
             loading = true;

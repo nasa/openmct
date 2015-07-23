@@ -39,7 +39,7 @@
         <!-- Results list -->
         <div class="results">
             <mct-representation key="'search-item'"
-                                ng-repeat="result in results"
+                                ng-repeat="result in searchService.latestResults"
                                 mct-object="result.object"
                                 ng-model="ngModel">
             </mct-representation>

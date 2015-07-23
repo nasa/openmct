@@ -42,7 +42,8 @@ define(
          */
         function SearchAggregator(providers) {
             var latestMergedResults = [],
-                lastMergeTimestamps = [];
+                lastMergeTimestamps = [],
+                returnObject;
             
             // Remove duplicate objects that have the same ID 
             function filterRepeats(results) {
@@ -122,6 +123,7 @@ define(
                 // After all that is done, now replace latestMergedResults with this
                 latestMergedResults = newerResults;
                 lastMergeTimestamps = providerTimestamps;
+                returnObject.latestResults = latestMergedResults;
             }
             
             // For documentation, see sendQuery below.
@@ -141,7 +143,7 @@ define(
                 updateResults();
             }
             
-            return {
+            returnObject = {
                 /** 
                  * Sends a query to each of the providers, then updates the global
                  *   latestMergedResults accordingly. 
@@ -177,6 +179,14 @@ define(
                     return latestMergedResults.slice(start, stop);
                 },
                 
+                /**
+                 * The latest search results that have been calculated. The 
+                 *   format of the returned objects are searchResult objects, 
+                 *   which have the members id, object, and score. This array 
+                 *   is updated constantly. 
+                 */
+                latestResults: latestMergedResults,
+                
                 /** 
                  * Get the timestamps for each of the provider's last controbutions
                  *   to the latestMergedResults.
@@ -193,6 +203,7 @@ define(
                     return latestMergedResults.length;
                 }
             };
+            return returnObject;
         }
 
         return SearchAggregator;
