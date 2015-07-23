@@ -146,8 +146,10 @@ define(
                 expect(mockScope.navigatedObject).toEqual(mockDomainObject);
             });
             
-            it("updates boolean", function () {
-//                spyOn(mockScope, 'treeSlide').andCallThrough();
+            // Mocks the tree slide call that
+            // lets the html code know if the
+            // tree menu is open.
+            it("calls the treeSlide function", function () {
                 mockScope.treeSlide();
             });
 
