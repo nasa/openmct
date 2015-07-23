@@ -29,6 +29,7 @@ define(
         describe("The tree node controller", function () {
             var mockScope,
                 mockTimeout,
+                mockQueryService,
                 controller;
 
             function TestObject(id, context) {
@@ -43,7 +44,8 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj("$scope", ["$watch", "$on"]);
                 mockTimeout = jasmine.createSpy("$timeout");
-                controller = new TreeNodeController(mockScope, mockTimeout);
+                mockQueryService = jasmine.createSpyObj("queryService", ["isMobile"]);
+                controller = new TreeNodeController(mockScope, mockTimeout, mockQueryService);
             });
 
             it("allows tracking of expansion state", function () {
@@ -182,6 +184,10 @@ define(
                 expect(controller.hasBeenExpanded()).toBeFalsy();
                 expect(controller.isSelected()).toBeFalsy();
 
+            });
+            
+            it("check if tree node is in a mobile device", function () {
+                controller.checkMobile();
             });
         });
     }

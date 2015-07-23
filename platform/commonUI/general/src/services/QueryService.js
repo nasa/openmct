@@ -40,16 +40,15 @@ define(
             // Gets the UA name if it is one of the following.
             // If it is not (a desktop for example) nothing is
             // returned instead
-            function getDeviceUA() {
-                var ua = navigator.userAgent;
+            function getDeviceUA(ua) {
                 return ua.match(/iPad|iPhone|Android/i) ?
                         ua.match(/iPad|iPhone|Android/i) : "";
             }
             
             // Checks if gotten device is mobile,
             // Mobile is defined as a phone or tablet
-            function isMobile() {
-                if (getDeviceUA()) {
+            function isMobile(ua) {
+                if (getDeviceUA(ua)) {
                     return true;
                 } else {
                     return false;

@@ -30,7 +30,9 @@ ul.tree {
                 // Adds some space to the top of each tree item
                 height: $mobile-treeHeight;
                 line-height: $mobile-treeHeight;
-                margin-top: $interiorMarginSm;
+                padding-top: $interiorMarginSm;
+                padding-bottom: $interiorMarginSm;
+                margin-bottom: 0px;
                 .view-control {
                     position: absolute;
                     right: $mobile-treeRight;
@@ -54,7 +56,8 @@ ul.tree {
         // Sets the margin on the left, which causes the
         // running indentation after each folder is made
         ul.tree {
-            margin-left: $mobile-treeLeft;
+            margin-left: 0px;
+            padding-left: $mobile-treeLeft;
         }
     }
 }

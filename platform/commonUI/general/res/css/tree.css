@@ -321,19 +321,22 @@ ul.tree {
     ul.tree li span.tree-item {
       height: 38px;
       line-height: 38px;
-      margin-top: 3px; }
-      /* line 34, ../sass/mobile/_tree.scss */
+      padding-top: 3px;
+      padding-bottom: 3px;
+      margin-bottom: 0px; }
+      /* line 36, ../sass/mobile/_tree.scss */
       ul.tree li span.tree-item .view-control {
         position: absolute;
         right: 13px;
         font-size: 1.8em; }
-      /* line 40, ../sass/mobile/_tree.scss */
+      /* line 42, ../sass/mobile/_tree.scss */
       ul.tree li span.tree-item .label {
         left: 3px;
         font-size: 1.2em; }
-        /* line 47, ../sass/mobile/_tree.scss */
+        /* line 49, ../sass/mobile/_tree.scss */
         ul.tree li span.tree-item .label .title-label {
           right: 16.9px; }
-    /* line 56, ../sass/mobile/_tree.scss */
+    /* line 58, ../sass/mobile/_tree.scss */
     ul.tree ul.tree {
-      margin-left: 3px; } }
+      margin-left: 0px;
+      padding-left: 3px; } }

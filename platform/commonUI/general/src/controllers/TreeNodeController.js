@@ -88,7 +88,7 @@ define(
             }
             
             function checkMobile() {
-                return queryService.isMobile();
+                return queryService.isMobile(navigator.userAgent);
             }
             
             // Consider the currently-navigated object and update

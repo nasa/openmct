@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 // Wrapper of the entire 2 panes, only enacted on
-// phone and tablet. Also for the panes
+// phone and tablet.
 .browse-wrapper,
 .mobile-pane {
     @include phoneandtablet {

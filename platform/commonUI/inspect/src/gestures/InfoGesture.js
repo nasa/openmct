@@ -78,7 +78,7 @@ define(
                 // Checks if you are on a mobile device, if the device is
                 // not mobile (queryService.isMobile() = false), then
                 // the pendingBubble and therefore hovering is allowed
-                if (!queryService.isMobile()) {
+                if (!queryService.isMobile(navigator.userAgent)) {
                     // Show the bubble, after a suitable delay (if mouse has
                     // left before this time is up, this will be canceled.)
                     pendingBubble = $timeout(function () {
