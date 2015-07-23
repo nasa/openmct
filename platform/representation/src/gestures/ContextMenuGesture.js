@@ -50,7 +50,7 @@ define(
          * @param {DomainObject} domainObject the object on which actions
          *                       in the context menu will be performed
          */
-        function ContextMenuGesture($compile, $document, $window, $rootScope, element, domainObject) {
+        function ContextMenuGesture($compile, $document, $window, $rootScope, queryService, element, domainObject) {
             function showMenu(event) {
                 var winDim = [$window.innerWidth, $window.innerHeight],
                     eventCoors = [event.pageX, event.pageY],
@@ -102,8 +102,11 @@ define(
                 event.preventDefault();
             }
 
-            // When context menu event occurs, show object actions instead
-            element.on('contextmenu', showMenu);
+            // Iff the user is not on a mobile device, then when 
+            // the context menu event occurs, show object actions instead
+            if (!queryService.isMobile(navigator.userAgent)) {
+                element.on('contextmenu', showMenu);
+            }
 
             return {
                 /**

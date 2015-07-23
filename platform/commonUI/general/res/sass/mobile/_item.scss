@@ -33,13 +33,61 @@
                 $dHei: $ueBrowseGridItemLg/4;
                 width: $dWid;
                 height: $dHei;
+                
+                .item-main {
+                    .item-type {
+    //                     NOTE: [Mobile] Icon for the list/grid item inside folder
+    //                    display: none;
+                        font-size: 30px;
+                        line-height: $ueBrowseGridItemLg/5;
+                        text-align: left;
+
+                    }
+                    .item-open {
+    //                     NOTE: [Mobile] Icon for the open item inside folder
+                       display: none;
+
+                    }
+                }
+
+                .title {
+                    text-align: center;
+                }
+
+                .details {
+                    text-align: center;
+                }                
             }
             
             @include tablet {
                 $dWid: 100%;
-                $dHei: $ueBrowseGridItemLg/2;
+                $dHei: $ueBrowseGridItemLg/3;
                 width: $dWid;
                 height: $dHei;
+                
+                .item-main {
+                    .item-type {
+    //                     NOTE: [Mobile] Icon for the list/grid item inside folder
+    //                    display: none;
+                        font-size: 30px;
+                        line-height: $ueBrowseGridItemLg/4;
+                        text-align: left;
+
+                    }
+                    .item-open {
+    //                     NOTE: [Mobile] Icon for the open item inside folder
+                        display: none;
+
+                    }
+                }
+
+                .title {
+                    text-align: center;
+                }
+
+                .details {
+                    text-align: center;
+                }
             }
             
             @include desktop {
@@ -47,12 +95,6 @@
                 $dHei: $ueBrowseGridItemLg;
                 width: $dWid;
                 height: $dHei; 
-            }
-            
-            .icon {
-                @include phoneandtablet {
-                    display: none;
-                }
             }
         }
     }
