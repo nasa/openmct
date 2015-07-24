@@ -2,11 +2,11 @@
 
 # Script to build and deploy docs to github pages.
 
-# Any Content currently visible on the website will be replaced by 
+# Any Content currently visible on the website will be replaced by
 # this process.
 
 OUTPUT_DIRECTORY="docs"
-REPOSITORY_URL="git@github.com:larkin/openmctweb.git"
+REPOSITORY_URL="git@github.com:nasa/openmctweb.git"
 
 BUILD_SHA=`git rev-parse head`
 
