@@ -24,13 +24,26 @@
     <!-- Search bar input -->
     <div>
         <input class="search-input"
-               id="searchbarinput" 
                type="text" 
                value=""
-               ng-keyup="controller.search('searchbarinput')" />
-        <!--mct-control key="searchbar"
-                     ng-keyup="controller.search('searchbarinput')">asdf
-        </mct-control-->
+               ng-model="ngModel.input"
+               ng-keyup="controller.search()" />
+        <!--mct-control key="searchbar-control"
+                     ng-model="ngModel"
+                     structure="{cssclass: search-input, size: 50}">asdf
+        </mct-control>
+        <mct-control key="textfield"
+                     ng-model="ngModel"
+                     ng-required="false"
+                     ng-pattern=""
+                     structure="{cssclass: search-input, size: 50}">
+        </mct-control>
+        <mct-include key="textfield"
+                     ng-model="ngModel"
+                     ng-required="false"
+                     ng-pattern=""
+                     structure="{cssclass: search-input, size: 50}">
+        </mct-include-->
     </div>
     
     <!-- This div exists to determine scroll bar location -->
@@ -39,7 +52,7 @@
         <!-- Results list -->
         <div class="results">
             <mct-representation key="'search-item'"
-                                ng-repeat="result in searchService.latestResults"
+                                ng-repeat="result in results"
                                 mct-object="result.object"
                                 ng-model="ngModel">
             </mct-representation>

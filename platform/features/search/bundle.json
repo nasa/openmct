@@ -21,7 +21,7 @@
         ],        
         "controls": [
             {
-                "key": "searchbar",
+                "key": "searchbar-control",
                 "templateUrl": "templates/searchbar.html"
             }
         ],

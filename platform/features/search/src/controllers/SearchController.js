@@ -40,7 +40,7 @@ define(function () {
         // This allows us to directly access the search aggregator's members.
         // Most important is latestResults, which is continuously updated. This
         // means that this controller does not have to poll for results any more.
-        $scope.searchService = searchService;
+        //$scope.searchService = searchService;
         // TODO: Modify search aggregator to have a search result array which 
         //        is of a size that can be chosen and modified by this controller. 
         
@@ -70,10 +70,10 @@ define(function () {
             waitForLatest();
         }
         
-        function search(inputID) {
+        function search() {
             var date = new Date(),
                 timestamp = date.getTime(),
-                inputText = document.getElementById(inputID).value;
+                inputText = $scope.ngModel.input;//document.getElementById(inputID).value;
             
             // Update whether the file tree should be displayed 
             if (inputText === '') {
@@ -94,9 +94,7 @@ define(function () {
         return {
             /**
              * Search the filetree.
-             * 
-             * @param inputID The name of the ID property of the html text 
-             *   input where this funcion should find the search term.
+             * Assumes that there will be search text in ngModel.input
              */
             search: search,
             

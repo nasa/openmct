@@ -20,7 +20,15 @@
  at runtime from the About dialog for additional information.
 -->
 
-<input class="search-input"
+<!--input class="search-input"
        id="searchbarinput" 
        type="text" 
-       value="" />
+       value="" /-->
+
+
+<span class='form-control shell'>
+    <span class='field control {{structure.cssclass}}'>
+        <input type="text"
+               ng-model="ngModel">
+    </span>
+</span>
