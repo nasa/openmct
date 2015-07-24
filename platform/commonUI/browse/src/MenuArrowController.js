@@ -19,48 +19,33 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
+/*global define*/
 
 /**
- * Module defining ContextMenuGesture. 
- * Created by vwoeltje on 11/17/14. Modified by shale on 06/30/2015.
+ * Module defining MenuArrowController. Created by shale on 06/30/2015.
  */
 define(
+    [],
     function () {
         "use strict";
-
+        
         /**
-         * Add listeners to a representation such that it calls the
-         * context menu action for the domain object it contains.
-         *
+         * A left-click on the menu arrow should display a 
+         * context menu. This controller launches the context 
+         * menu. 
          * @constructor
-         * @param element the jqLite-wrapped element which should exhibit
-         *                the context mennu
-         * @param {DomainObject} domainObject the object on which actions
-         *                       in the context menu will be performed
          */
-        function ContextMenuGesture(element, domainObject) {
-            var actionContext,
-                stop;
-            
-            // When context menu event occurs, show object actions instead
-            element.on('contextmenu', function (event) {
-                actionContext = {key: 'menu', domainObject: domainObject, event: event};
-                stop = domainObject.getCapability('action').perform(actionContext);
-            });
+        function MenuArrowController($scope) {
+            function showMenu(event) {
+                var actionContext = {key: 'menu', domainObject: $scope.domainObject, event: event};
+                $scope.domainObject.getCapability('action').perform(actionContext);
+            }
             
             return {
-                /**
-                 * Detach any event handlers associated with this gesture.
-                 * @method
-                 * @memberof ContextMenuGesture
-                 */
-                destroy: function () {
-                    element.off('contextmenu', stop);
-                }
+                showMenu: showMenu
             };
         }
 
-        return ContextMenuGesture;
+        return MenuArrowController;
     }
 );

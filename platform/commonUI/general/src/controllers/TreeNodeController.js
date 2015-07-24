@@ -50,7 +50,7 @@ define(
          * expand-to-show-navigated-object behavior.)
          * @constructor
          */
-        function TreeNodeController($scope, $timeout) {
+        function TreeNodeController($scope, $timeout, $rootScope) {
             var selectedObject = ($scope.ngModel || {}).selectedObject,
                 isSelected = false,
                 hasBeenExpanded = false;
@@ -138,7 +138,7 @@ define(
                 selectedObject = object;
                 checkSelection();
             }
-
+            
             // Listen for changes which will effect display parameters
             $scope.$watch("ngModel.selectedObject", setSelection);
             $scope.$watch("domainObject", checkSelection);
