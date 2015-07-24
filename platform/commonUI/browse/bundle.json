@@ -32,6 +32,11 @@
                 "key": "LocatorController",
                 "implementation": "creation/LocatorController",
                 "depends": [ "$scope" ]
+            },
+            {
+                "key": "MenuArrowController",
+                "implementation": "MenuArrowController",
+                "depends": [ "$scope" ]
             }
         ],
         "controls": [
@@ -71,6 +76,12 @@
                 "key": "object-header",
                 "templateUrl": "templates/browse/object-header.html",
                 "uses": [ "type" ]
+            },
+            {
+                "key": "menu-arrow",
+                "templateUrl": "templates/menu-arrow.html",
+                "uses": [ "action" ],
+                "gestures": [ "menu" ]
             }
         ],
         "services": [

@@ -1,4 +1,5 @@
 [
+    "actions/ContextMenuAction",
     "gestures/ContextMenuGesture",
     "gestures/DragGesture",
     "gestures/DropGesture",
