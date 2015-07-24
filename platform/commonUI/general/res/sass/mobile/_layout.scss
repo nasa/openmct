@@ -47,6 +47,7 @@
 // classes used for the left menu and the
 // right representation.
 .browse-hidetree {
+    @include user-select(none);
     // Sets the left tree menu when the tree
     // is hidden. 
     .mobile-pane.left-menu {
@@ -77,6 +78,7 @@
 // orientation combination, separate 
 // parameters are used)
 .browse-showtree {
+    @include user-select(none);
     // Sets the left tree menu when the tree
     // is shown.     
     .mobile-pane.left-menu {
