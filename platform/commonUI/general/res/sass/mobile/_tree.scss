@@ -42,7 +42,7 @@ ul.tree {
                 .label {
                     // Designates the starting left margin
                     // (indentation) of 'My Items'
-                    left: $mobile-treeLeft;
+                    left: $mobile-startingTreeLeft;
                     font-size: 1.2em;
                     // Allows tree item name to stop prior
                     // to the arrow
@@ -56,8 +56,7 @@ ul.tree {
         // Sets the margin on the left, which causes the
         // running indentation after each folder is made
         ul.tree {
-            margin-left: 0px;
-            padding-left: $mobile-treeLeft;
+            margin-left: $mobile-runningTreeLeft;
         }
     }
 }

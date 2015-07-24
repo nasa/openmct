@@ -24,12 +24,10 @@
 // sized according to the device
 .mobile-menu-icon {
     display: inline-block;
-    @include phone {
-        font-size: 25px;
+    @include phoneandtablet {
+        font-size: 21px;
+        margin-top: 1px;
     }
-    @include tablet {
-        font-size: 29px;
-    }      
     @include desktop {
         display: none;
     }       

@@ -29,7 +29,8 @@ $tablet-itemHeight: $ueBrowseGridItemLg/3;
 
 /************************** MOBILE TREE MENU DIMENSIONS */
 $mobile-treeHeight: 38px;
-$mobile-treeLeft: 3px;
+$mobile-startingTreeLeft: 3px;
+$mobile-runningTreeLeft: 7px;
 $mobile-treeRight: 13px;
 
 /************************** WINDOW DIMENSIONS FOR RWD */

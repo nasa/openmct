@@ -136,13 +136,9 @@
 // over to make space for the 
 // hamburger icon
 .object-header-mobile {
-    @include phone {
+    @include phoneandtablet {
         position: relative;
-        left: 30px;
-    }    
-    @include tablet {
-        position: relative;
-        left: 35px;
+        left: 44px;
     }
 }
 

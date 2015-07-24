@@ -31,25 +31,21 @@
             $dHei: $ueBrowseGridItemLg;
             @include phoneandtablet {
                 $dWid: 100%;
-                
                 .bar {
                     &.bottom-bar.abs {
                         top: 0px;
                         height: auto;
                     }
-                }                                
-                
+                }
                 .item-main {
                     .item-type {
                         font-size: $mobile-listIcon;
                         text-align: left;
-
                     }
                     .item-open {
                        display: none;
                     }
                 }
-
                 .title, .details {
                     margin-left: $mobile-listIcon;
                 }             
@@ -64,13 +60,10 @@
                         line-height: $phone-itemHeight * .8;
                     }
                 }
-
                 .title {
                     margin-right: $mobile-listRight;
                     line-height: $phone-itemHeight * .5;
-    
                 }
-
                 .details {
                     margin-right: $mobile-listRight;
                     line-height: 0px;
@@ -81,21 +74,16 @@
                 $dHei: $tablet-itemHeight;
                 width: $dWid;
                 height: $dHei;
-                
                 .item-main {
                     .item-type {
                         font-size: $mobile-listIcon;
                         line-height: $tablet-itemHeight * .75;
-
                     }
                 }
-
                 .title {
                     margin-right: $mobile-listRight;
                     line-height: $tablet-itemHeight * .57;
-    
                 }
-
                 .details {
                     margin-right: $mobile-listRight;
                     line-height: 0px;
