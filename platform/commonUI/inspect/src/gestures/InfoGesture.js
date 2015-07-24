@@ -71,34 +71,34 @@ define(
 
             function showBubble(event) {
                 trackPosition(event);
-
+                
                 // Also need to track position during hover
                 element.on('mousemove', trackPosition);
 
-                // Checks if you are on a mobile device, if the device is
-                // not mobile (queryService.isMobile() = false), then
-                // the pendingBubble and therefore hovering is allowed
-                if (!queryService.isMobile(navigator.userAgent)) {
-                    // Show the bubble, after a suitable delay (if mouse has
-                    // left before this time is up, this will be canceled.)
-                    pendingBubble = $timeout(function () {
-                        dismissBubble = infoService.display(
-                            "info-table",
-                            domainObject.getModel().name,
-                            domainObject.useCapability('metadata'),
-                            mousePosition
-                        );
-                        element.off('mousemove', trackPosition);
+                // Show the bubble, after a suitable delay (if mouse has
+                // left before this time is up, this will be canceled.)
+                pendingBubble = $timeout(function () {
+                    dismissBubble = infoService.display(
+                        "info-table",
+                        domainObject.getModel().name,
+                        domainObject.useCapability('metadata'),
+                        mousePosition
+                    );
+                    element.off('mousemove', trackPosition);
 
-                        pendingBubble = undefined;
-                    }, DELAY);
-                }
+                    pendingBubble = undefined;
+                }, DELAY);
+
                 element.on('mouseleave', hideBubble);
             }
             
-
-            // Show bubble (on a timeout) on mouse over
-            element.on('mouseenter', showBubble);
+            // Checks if you are on a mobile device, if the device is
+            // not mobile (queryService.isMobile() = false), then
+            // the pendingBubble and therefore hovering is allowed
+            if (!queryService.isMobile(navigator.userAgent)) {
+                // Show bubble (on a timeout) on mouse over
+                element.on('mouseenter', showBubble);
+            }
 
             // Also make sure we dismiss bubble if representation is destroyed
             // before the mouse actually leaves it
