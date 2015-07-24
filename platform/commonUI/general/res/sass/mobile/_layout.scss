@@ -47,7 +47,14 @@
 // classes used for the left menu and the
 // right representation.
 .browse-hidetree {
-    @include user-select(none);
+    // NOTE: DISABLED SELECTION
+    // Selection disabled in both panes
+    // causing cut/copy/paste menu to
+    // not appear. Should me moved in
+    // future to properly work
+    @include phoneandtablet {
+        @include user-select(none);
+    }
     // Sets the left tree menu when the tree
     // is hidden. 
     .mobile-pane.left-menu {
@@ -78,7 +85,14 @@
 // orientation combination, separate 
 // parameters are used)
 .browse-showtree {
-    @include user-select(none);
+    // NOTE: DISABLED SELECTION
+    // Selection disabled in both panes
+    // causing cut/copy/paste menu to
+    // not appear. Should me moved in
+    // future to properly work
+    @include phoneandtablet {
+        @include user-select(none);
+    }
     // Sets the left tree menu when the tree
     // is shown.     
     .mobile-pane.left-menu {
