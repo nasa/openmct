@@ -180,10 +180,10 @@ define(
                 },
                 
                 /**
-                 * The latest search results that have been calculated. The 
-                 *   format of the returned objects are searchResult objects, 
-                 *   which have the members id, object, and score. This array 
-                 *   is updated constantly. 
+                 * An array containing the latest search results that have been 
+                 *   calculated. The format of the returned objects are searchResult 
+                 *   objects, which have the members id, object, and score. This 
+                 *   array is updated often. 
                  */
                 latestResults: latestMergedResults,
                 
