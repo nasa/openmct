@@ -20,6 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/************************** MOBILE REPRESENTATION ITEMS DIMENSIONS */
+$mobile-listIcon: 30px;
+$mobile-listRight: 10px;
+
+$phone-itemHeight: $ueBrowseGridItemLg/4;
+$tablet-itemHeight: $ueBrowseGridItemLg/3;
+
 /************************** MOBILE TREE MENU DIMENSIONS */
 $mobile-treeHeight: 38px;
 $mobile-treeLeft: 3px;

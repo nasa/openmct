@@ -23,70 +23,82 @@
 // Sets the size of the items in the folder
 // representation. Instead of a grid,
 // a list is used.
+
 .items-holder {
     .item {
         &.grid-item {
             $dWid: $ueBrowseGridItemLg;
             $dHei: $ueBrowseGridItemLg;
-            @include phone {
+            @include phoneandtablet {
                 $dWid: 100%;
-                $dHei: $ueBrowseGridItemLg/4;
-                width: $dWid;
-                height: $dHei;
+                
+                .bar {
+                    &.bottom-bar.abs {
+                        top: 0px;
+                        height: auto;
+                    }
+                }                                
                 
                 .item-main {
                     .item-type {
-    //                     NOTE: [Mobile] Icon for the list/grid item inside folder
-    //                    display: none;
-                        font-size: 30px;
-                        line-height: $ueBrowseGridItemLg/5;
+                        font-size: $mobile-listIcon;
                         text-align: left;
 
                     }
                     .item-open {
-    //                     NOTE: [Mobile] Icon for the open item inside folder
                        display: none;
+                    }
+                }
 
+                .title, .details {
+                    margin-left: $mobile-listIcon;
+                }             
+            }
+
+            @include phone {
+                $dHei: $phone-itemHeight;
+                width: $dWid;
+                height: $dHei;
+                .item-main {
+                    .item-type {
+                        line-height: $phone-itemHeight * .8;
                     }
                 }
 
                 .title {
-                    text-align: center;
+                    margin-right: $mobile-listRight;
+                    line-height: $phone-itemHeight * .5;
+    
                 }
 
                 .details {
-                    text-align: center;
+                    margin-right: $mobile-listRight;
+                    line-height: 0px;
                 }                
             }
             
             @include tablet {
-                $dWid: 100%;
-                $dHei: $ueBrowseGridItemLg/3;
+                $dHei: $tablet-itemHeight;
                 width: $dWid;
                 height: $dHei;
                 
                 .item-main {
                     .item-type {
-    //                     NOTE: [Mobile] Icon for the list/grid item inside folder
-    //                    display: none;
-                        font-size: 30px;
-                        line-height: $ueBrowseGridItemLg/4;
-                        text-align: left;
-
-                    }
-                    .item-open {
-    //                     NOTE: [Mobile] Icon for the open item inside folder
-                        display: none;
+                        font-size: $mobile-listIcon;
+                        line-height: $tablet-itemHeight * .75;
 
                     }
                 }
 
                 .title {
-                    text-align: center;
+                    margin-right: $mobile-listRight;
+                    line-height: $tablet-itemHeight * .57;
+    
                 }
 
                 .details {
-                    text-align: center;
+                    margin-right: $mobile-listRight;
+                    line-height: 0px;
                 }
             }
             

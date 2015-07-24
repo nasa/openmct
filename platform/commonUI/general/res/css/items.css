@@ -69,6 +69,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/************************** MOBILE REPRESENTATION ITEMS DIMENSIONS */
 /************************** MOBILE TREE MENU DIMENSIONS */
 /************************** WINDOW DIMENSIONS FOR RWD */
 /************************** MEDIA QUERIES: WINDOW CHECKS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
@@ -351,46 +352,56 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
+  /* line 36, ../sass/mobile/_item.scss */
+  .items-holder .item.grid-item .bar.bottom-bar.abs {
+    top: 0px;
+    height: auto; }
+  /* line 43, ../sass/mobile/_item.scss */
+  .items-holder .item.grid-item .item-main .item-type {
+    font-size: 30px;
+    text-align: left; }
+  /* line 48, ../sass/mobile/_item.scss */
+  .items-holder .item.grid-item .item-main .item-open {
+    display: none; }
+  /* line 53, ../sass/mobile/_item.scss */
+  .items-holder .item.grid-item .title, .items-holder .item.grid-item .details {
+    margin-left: 30px; } }
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 28, ../sass/mobile/_item.scss */
+  /* line 29, ../sass/mobile/_item.scss */
   .items-holder .item.grid-item {
     width: 100%;
     height: 50px; }
-    /* line 38, ../sass/mobile/_item.scss */
+    /* line 63, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .item-main .item-type {
-      font-size: 30px;
-      line-height: 40px;
-      text-align: left; }
-    /* line 46, ../sass/mobile/_item.scss */
-    .items-holder .item.grid-item .item-main .item-open {
-      display: none; }
-    /* line 53, ../sass/mobile/_item.scss */
+      line-height: 40px; }
+    /* line 68, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .title {
-      text-align: center; }
-    /* line 57, ../sass/mobile/_item.scss */
+      margin-right: 10px;
+      line-height: 25px; }
+    /* line 74, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .details {
-      text-align: center; } }
+      margin-right: 10px;
+      line-height: 0px; } }
 @media screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 28, ../sass/mobile/_item.scss */
+  /* line 29, ../sass/mobile/_item.scss */
   .items-holder .item.grid-item {
     width: 100%;
     height: 66.66667px; }
-    /* line 69, ../sass/mobile/_item.scss */
+    /* line 86, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .item-main .item-type {
       font-size: 30px;
-      line-height: 50px;
-      text-align: left; }
-    /* line 77, ../sass/mobile/_item.scss */
-    .items-holder .item.grid-item .item-main .item-open {
-      display: none; }
-    /* line 84, ../sass/mobile/_item.scss */
+      line-height: 50px; }
+    /* line 93, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .title {
-      text-align: center; }
-    /* line 88, ../sass/mobile/_item.scss */
+      margin-right: 10px;
+      line-height: 38px; }
+    /* line 99, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .details {
-      text-align: center; } }
+      margin-right: 10px;
+      line-height: 0px; } }
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 28, ../sass/mobile/_item.scss */
+  /* line 29, ../sass/mobile/_item.scss */
   .items-holder .item.grid-item {
     width: 200px;
     height: 200px; } }
