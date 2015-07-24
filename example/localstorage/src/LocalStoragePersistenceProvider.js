@@ -1,3 +1,4 @@
+/*global define,localStorage*/
 /**
  * Stubbed implementation of a persistence provider,
  * to permit objects to be created, saved, etc.
@@ -13,20 +14,21 @@ define(
                     as: function (value) {
                         return $q.when(value);
                     }
-                };
+                },
+                provider;
 
-            var setValue = function(key, value) {
+            function setValue(key, value) {
                 localStorage[key] = JSON.stringify(value);
-            };
+            }
 
-            var getValue = function(key) {
+            function getValue(key) {
                 if (localStorage[key]) {
                     return JSON.parse(localStorage[key]);
                 }
                 return {};
-            };
+            }
 
-            var provider = {
+            provider = {
                 listSpaces: function () {
                     return promises.as(spaces);
                 },
