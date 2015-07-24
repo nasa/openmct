@@ -13,17 +13,12 @@
                 "implementation": "controllers/SearchItemController.js",
                 "depends": [ "$scope" ]
             }
-        ],        
-        "controls": [
-            {
-                "key": "searchbar-control",
-                "templateUrl": "templates/searchbar.html"
-            }
         ],
         "templates": [
             {
                 "key": "search",
-                "templateUrl": "templates/search.html"
+                "templateUrl": "templates/search.html",
+                "uses": [ "controls", "forms" ]
             }
         ],
         "representations": [
