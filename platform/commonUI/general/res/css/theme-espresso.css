@@ -2902,7 +2902,7 @@ label.checkbox.custom {
     /* line 25, ../sass/mobile/controls/_menus.scss */
     .mobile-menu-icon {
       font-size: 21px;
-      margin-top: 1px; } }
+      padding-top: 1px; } }
   @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
     /* line 25, ../sass/mobile/controls/_menus.scss */
     .mobile-menu-icon {
