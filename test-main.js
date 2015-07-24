@@ -1,3 +1,4 @@
+/*global require,window*/
 var allTestFiles = [];
 var TEST_REGEXP = /(Spec)\.js$/;
 
@@ -12,7 +13,7 @@ Object.keys(window.__karma__.files).forEach(function(file) {
     }
 });
 
-// We will be handling es6-promise loading with a shim.
+// Force es6-promise to load.
 allTestFiles.unshift('es6-promise');
 
 require.config({
@@ -22,14 +23,6 @@ require.config({
     paths: {
         'es6-promise': 'platform/framework/lib/es6-promise-2.0.0.min',
         'moment-duration-format': 'warp/clock/lib/moment-duration-format'
-    },
-    shim: {
-        'es6-promise': {
-            init: function () {
-                console.log('I was inited!');
-                window.Promise = window.Promise || ES6Promise.Promise;
-            }
-        }
     },
 
     // dynamically load all test files
