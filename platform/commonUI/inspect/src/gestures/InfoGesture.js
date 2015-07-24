@@ -42,12 +42,21 @@ define(
             var dismissBubble,
                 pendingBubble,
                 mousePosition,
-                scopeOff;
+                touchPosition,
+                scopeOff,
+                touchDELAY = 500;
 
             function trackPosition(event) {
                 // Record mouse position, so bubble can be shown at latest
                 // mouse position (not just where the mouse entered)
                 mousePosition = [ event.clientX, event.clientY ];
+            }
+            
+            function trackTouchPosition(event) {
+                var tEvent = event.changedTouches[0];
+                // Record mouse position, so bubble can be shown at latest
+                // mouse position (not just where the mouse entered)
+                touchPosition = [ tEvent.clientX + 44, tEvent.clientY ];
             }
 
             function hideBubble() {
@@ -67,6 +76,7 @@ define(
                 // Also clear mouse position so we don't have a ton of tiny
                 // arrays allocated while user mouses over things
                 mousePosition = undefined;
+                touchPosition = undefined;
             }
 
             function showBubble(event) {
@@ -92,12 +102,28 @@ define(
                 element.on('mouseleave', hideBubble);
             }
             
+            function showTouchBubble(event) {
+                trackTouchPosition(event);
+                pendingBubble = $timeout(function () {
+                    dismissBubble = infoService.display(
+                        "info-table",
+                        domainObject.getModel().name,
+                        domainObject.useCapability('metadata'),
+                        touchPosition
+                    );
+                }, touchDELAY);
+
+                element.on('touchend', hideBubble);
+            }
+            
             // Checks if you are on a mobile device, if the device is
             // not mobile (queryService.isMobile() = false), then
             // the pendingBubble and therefore hovering is allowed
             if (!queryService.isMobile(navigator.userAgent)) {
                 // Show bubble (on a timeout) on mouse over
                 element.on('mouseenter', showBubble);
+            } else if (queryService.isMobile(navigator.userAgent)) {
+                element.on('touchstart', showTouchBubble);
             }
 
             // Also make sure we dismiss bubble if representation is destroyed
