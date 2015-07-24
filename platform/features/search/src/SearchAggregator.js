@@ -43,7 +43,7 @@ define(
         function SearchAggregator(providers) {
             var latestMergedResults = [],
                 lastMergeTimestamps = [],
-                returnObject;
+                aggregator = {};
             
             // Remove duplicate objects that have the same ID 
             function filterRepeats(results) {
@@ -123,7 +123,7 @@ define(
                 // After all that is done, now replace latestMergedResults with this
                 latestMergedResults = newerResults;
                 lastMergeTimestamps = providerTimestamps;
-                returnObject.latestResults = latestMergedResults;
+                aggregator.latestResults = latestMergedResults;
             }
             
             // For documentation, see sendQuery below.
@@ -143,7 +143,7 @@ define(
                 updateResults();
             }
             
-            returnObject = {
+            aggregator = {
                 /** 
                  * Sends a query to each of the providers, then updates the global
                  *   latestMergedResults accordingly. 
@@ -203,7 +203,8 @@ define(
                     return latestMergedResults.length;
                 }
             };
-            return returnObject;
+            
+            return aggregator;
         }
 
         return SearchAggregator;

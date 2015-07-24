@@ -12,11 +12,6 @@
                 "key": "SearchItemController",
                 "implementation": "controllers/SearchItemController.js",
                 "depends": [ "$scope" ]
-            },
-            {
-                "key": "ToggleController",
-                "implementation": "controllers/ToggleController.js",
-                "depends": [  ]
             }
         ],        
         "controls": [
@@ -28,15 +23,13 @@
         "templates": [
             {
                 "key": "search",
-                "templateUrl": "templates/search.html",
-                "uses": [ "composition" ]
+                "templateUrl": "templates/search.html"
             }
         ],
         "representations": [
             {
                 "key": "search-item",
-                "templateUrl": "templates/search-item.html",
-                "uses": [ "composition" ]
+                "templateUrl": "templates/search-item.html"
             }
         ],
         "components": [
