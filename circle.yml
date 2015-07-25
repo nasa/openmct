@@ -1,6 +1,6 @@
 deployment:
   production:
-    branch: continuous-deployment
+    branch: master
     commands:
       - ./build-docs.sh
       - git push git@heroku.com:openmctweb-demo.git $CIRCLE_SHA1:refs/heads/master
