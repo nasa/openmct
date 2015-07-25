@@ -34,10 +34,6 @@ BUILD_SHA=`git rev-parse head`
 REMOTE_NAME="documentation"
 WEBSITE_BRANCH="gh-pages"
 
-# Configure github for CircleCI user.
-git config user.email "buildbot@circleci.com"
-git config user.name "BuildBot"
-
 # Clean output directory, JSDOC will recreate
 if [ -d $OUTPUT_DIRECTORY ]; then
     rm -rf $OUTPUT_DIRECTORY || exit 1
@@ -48,6 +44,11 @@ cd $OUTPUT_DIRECTORY || exit 1
 
 echo "git init"
 git init
+
+# Configure github for CircleCI user.
+git config user.email "buildbot@circleci.com"
+git config user.name "BuildBot"
+
 echo "git remote add $REMOTE_NAME $REPOSITORY_URL"
 git remote add $REMOTE_NAME $REPOSITORY_URL
 echo "git add ."
