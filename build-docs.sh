@@ -16,8 +16,8 @@ REMOTE_NAME="documentation"
 WEBSITE_BRANCH="gh-pages"
 
 # Configure github for CircleCI user.
-git config --global user.email "buildbot@circleci.com"
-git config --global user.name "BuildBot"
+git config user.email "buildbot@circleci.com"
+git config user.name "BuildBot"
 
 # clean output directory
 if [ -d $OUTPUT_DIRECTORY ]; then
@@ -39,4 +39,4 @@ git commit -m "Generate docs from build $BUILD_SHA"
 echo "git push $REMOTE_NAME HEAD:$WEBSITE_BRANCH -f"
 git push $REMOTE_NAME HEAD:$WEBSITE_BRANCH -f
 
-echo "Documentation pushed gh-pages branch."
+echo "Documentation pushed to gh-pages branch."
