@@ -20,3 +20,5 @@ closed-lib
 # Node dependencies
 node_modules
 
+# Build documentation
+docs
