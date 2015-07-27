@@ -44,7 +44,7 @@ define(function () {
             var inputText = $scope.ngModel.input;
             
             // Update whether the file tree should be displayed 
-            if (inputText === '') {
+            if (inputText === '' || inputText === undefined) {
                 $scope.ngModel.search = false;
             } else {
                 $scope.ngModel.search = true;
