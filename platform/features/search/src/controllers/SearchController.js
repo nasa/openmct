@@ -34,11 +34,6 @@ define(function () {
         // Starting amount of results to load. Will get increased. 
         var numResults = INITIAL_LOAD_NUMBER;
         
-        // This allows us to directly access the search aggregator's members.
-        // Most important is latestResults, which is continuously updated. This
-        // means that this controller does not have to poll for results any more.
-        $scope.service = searchService;
-        
         // Function to be passed to the search service which allows it to set the 
         //   search template's results list 
         function setControllerResults(results) {
@@ -65,7 +60,7 @@ define(function () {
         return {
             /**
              * Search the filetree.
-             * Assumes that there will be search text in ngModel.input
+             * Assumes that any search text will be in ngModel.input
              */
             search: search,
             
@@ -84,10 +79,9 @@ define(function () {
              * Checks to see if we are still waiting for the results to be 
              *   fully updated. 
              */
-            /*
             isLoading: function () {
                 return searchService.isLoading();
-            },*/
+            },
             
             /**
              * Checks to see if there are more search results to display.

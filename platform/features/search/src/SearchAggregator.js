@@ -44,8 +44,7 @@ define(
             var latestMergedResults = [],
                 lastMergeTimestamps = [],
                 lastQueryTimestamp = 0,
-                loading,
-                aggregator = {};
+                loading;
             
             // Remove duplicate objects that have the same ID 
             function filterRepeats(results) {
@@ -125,16 +124,15 @@ define(
                 // After all that is done, now replace latestMergedResults with this
                 latestMergedResults = newerResults;
                 lastMergeTimestamps = providerTimestamps;
-                aggregator.latestResults = latestMergedResults;
             }
             
-            // Refresh
+            // For documentation, see refresh below.
             function refresh(callback) {
                 // We are loading results
                 loading = true;
                 
                 // Get the results 
-                //$scope.results = searchService.getLatestResults(0, numResults);
+                callback(latestMergedResults);
 
                 // Check to make sure that these results are the latest ones
                 function waitForLatest() {
@@ -148,7 +146,6 @@ define(
                     } else {
                         // We got the latest results now (and done loading)
                         loading = false;
-                        //$scope.results = searchService.getLatestResults(0, numResults);
                         callback(latestMergedResults);
                     }
                 }
@@ -178,12 +175,14 @@ define(
                 refresh(callback);
             }
             
-            aggregator = {
+            return {
                 /** 
                  * Sends a query to each of the providers, then updates the global
                  *   latestMergedResults accordingly. 
                  *
                  * @param inputText The text input that is the query.
+                 * @param callback A callback funtion which is a setter for the 
+                 *   results list, setting something for the user of this service.
                  * @param timestamp (optional) The time at which this function
                  *   was called. This timestamp will be associated with the 
                  *   latest results list, which allows us to see if it has been 
@@ -192,14 +191,12 @@ define(
                 sendQuery: queryAll,
                 
                 /** 
-                 * Updates the global latestMergedResults and lastMergeTimestamps 
-                 *   by checking the latest results of each of the providers. 
+                 * Repeatedly updates the latest results until those results are 
+                 *   recent enough to correspond to the most recent query made. 
+                 * 
+                 * @param callback A callback funtion which is a setter for the 
+                 *   results list, originally passed by the user of this service.
                  */
-                /*
-                updateResults: updateResults,
-                */
-                
-                // Maybe replaces updateResults
                 refresh: refresh,
                 
                 /** 
@@ -213,31 +210,8 @@ define(
                  *   which to stop getting results. 
                  */
                 getLatestResults: function (start, stop) {
-                    // TODO: Make sure that slice handles out of bounds 
-                    // By default if there are no start or stop provided, will return 
-                    // the entire thing. 
                     return latestMergedResults.slice(start, stop);
                 },
-                
-                /**
-                 * An array containing the latest search results that have been 
-                 *   calculated. The format of the returned objects are searchResult 
-                 *   objects, which have the members id, object, and score. This 
-                 *   array is updated often. 
-                 */
-                /*
-                latestResults: latestMergedResults,
-                */
-                
-                /** 
-                 * Get the timestamps for each of the provider's last controbutions
-                 *   to the latestMergedResults.
-                 */
-                /*
-                getLatestTimestamps: function () {
-                    return lastMergeTimestamps;
-                },
-                */
                 
                 /** 
                  * Get the number of search results that have been calculated most 
@@ -247,12 +221,14 @@ define(
                     return latestMergedResults.length;
                 },
                 
+                /**
+                 * Checks to see if we are still waiting for the results to be 
+                 *   fully updated. 
+                 */
                 isLoading: function () {
                     return loading;
                 }
             };
-            
-            return aggregator;
         }
 
         return SearchAggregator;

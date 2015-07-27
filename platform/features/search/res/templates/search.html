@@ -21,7 +21,6 @@
 -->
 <div class="search"
      ng-controller="SearchController as controller">
-    <!-- Using search service as 'service' -->
     
     <!-- Search bar input -->
     <div>
@@ -50,8 +49,8 @@
 
         <!-- Loading icon -->
         <div class="load-icon"
-             ng-class="{loading: service.isLoading()}"
-             ng-if="service.isLoading()">
+             ng-class="{loading: controller.isLoading()}"
+             ng-if="controller.isLoading()">
             <span class="icon wait-spinner"></span>
             <span class="title-label">Loading...</span>
         </div>
