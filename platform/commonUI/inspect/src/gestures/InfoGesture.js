@@ -125,9 +125,10 @@ define(
             if (!queryService.isMobile(navigator.userAgent)) {
                 // Show bubble (on a timeout) on mouse over
                 element.on('mouseenter', showBubble);
-            } else if (queryService.isMobile(navigator.userAgent)) {
-                element.on('touchstart', showTouchBubble);
             }
+//            else if (queryService.isMobile(navigator.userAgent)) {
+//                element.on('touchstart', showTouchBubble);
+//            }
 
             // Also make sure we dismiss bubble if representation is destroyed
             // before the mouse actually leaves it
