@@ -37,11 +37,6 @@
                 "key": "MenuArrowController",
                 "implementation": "MenuArrowController",
                 "depends": [ "$scope" ]
-            },
-            {
-                "key": "BackArrowController",
-                "implementation": "BackArrowController",
-                "depends": ["$location", "$route", "$location", "urlService" ]
             }
         ],
         "controls": [
