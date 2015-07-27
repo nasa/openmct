@@ -103,17 +103,20 @@ define(
             }
             
             function showTouchBubble(event) {
-                trackTouchPosition(event);
-                pendingBubble = $timeout(function () {
-                    dismissBubble = infoService.display(
-                        "info-table",
-                        domainObject.getModel().name,
-                        domainObject.useCapability('metadata'),
-                        touchPosition
-                    );
-                }, touchDELAY);
+                // Makes sure user is only touching one place
+                if (event.touches.length < 2) {
+                    trackTouchPosition(event);
+                    pendingBubble = $timeout(function () {
+                        dismissBubble = infoService.display(
+                            "info-table",
+                            domainObject.getModel().name,
+                            domainObject.useCapability('metadata'),
+                            touchPosition
+                        );
+                    }, touchDELAY);
 
-                element.on('touchend', hideBubble);
+                    element.on('touchend', hideBubble);
+                }
             }
             
             // Checks if you are on a mobile device, if the device is
