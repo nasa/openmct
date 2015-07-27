@@ -6,7 +6,7 @@
             {
                 "key": "SearchController",
                 "implementation": "controllers/SearchController.js",
-                "depends": [ "$scope", "$timeout", "searchService" ]
+                "depends": [ "$scope", "searchService" ]
             },
             {
                 "key": "SearchItemController",
@@ -43,7 +43,8 @@
             {
                 "provides": "searchService",
                 "type": "aggregator",
-                "implementation": "SearchAggregator.js"
+                "implementation": "SearchAggregator.js",
+                "depends": [ "$timeout" ]
             }
         ],
         "workers": [

@@ -20,14 +20,16 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="search"
-      ng-controller="SearchController as controller">
+     ng-controller="SearchController as controller">
+    <!-- Using search service as 'service' -->
+    
     <!-- Search bar input -->
     <div>
         <input class="search-input"
                type="text" 
                value=""
                ng-model="ngModel.input"
-               ng-change="controller.search()" />
+               ng-keyup="controller.search()" />
         <!--mct-control key="textfield"
                      ng-model="ngModel"
                      structure="{cssclass: 'search-input', size: '50px'}">
@@ -48,8 +50,8 @@
 
         <!-- Loading icon -->
         <div class="load-icon"
-             ng-class="{loading: controller.isLoading()}"
-             ng-if="controller.isLoading()">
+             ng-class="{loading: service.isLoading()}"
+             ng-if="service.isLoading()">
             <span class="icon wait-spinner"></span>
             <span class="title-label">Loading...</span>
         </div>

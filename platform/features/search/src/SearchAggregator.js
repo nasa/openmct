@@ -40,9 +40,11 @@ define(
          * @param {SearchProvider[]} providers the search providers to be
          *        aggregated
          */
-        function SearchAggregator(providers) {
+        function SearchAggregator($timeout, providers) {
             var latestMergedResults = [],
                 lastMergeTimestamps = [],
+                lastQueryTimestamp = 0,
+                loading,
                 aggregator = {};
             
             // Remove duplicate objects that have the same ID 
@@ -126,13 +128,43 @@ define(
                 aggregator.latestResults = latestMergedResults;
             }
             
+            // Refresh
+            function refresh(callback) {
+                // We are loading results
+                loading = true;
+                
+                // Get the results 
+                //$scope.results = searchService.getLatestResults(0, numResults);
+
+                // Check to make sure that these results are the latest ones
+                function waitForLatest() {
+                    var areOld = lastMergeTimestamps.some(function(c) {return c < lastQueryTimestamp;});
+                    
+                    // If any of the timestamps are older than the one we made the query with
+                    if (areOld) {
+                        // Then wait and try to update again
+                        updateResults();
+                        $timeout(waitForLatest, 50);
+                    } else {
+                        // We got the latest results now (and done loading)
+                        loading = false;
+                        //$scope.results = searchService.getLatestResults(0, numResults);
+                        callback(latestMergedResults);
+                    }
+                }
+                waitForLatest();
+            }
+            
             // For documentation, see sendQuery below.
-            function queryAll(inputText, timestamp) {
+            function queryAll(inputText, callback, timestamp) {
                 // If there's not a timestamp, make this time the timestamp
                 if (!timestamp) {
                     var date = new Date();
                     timestamp = date.getTime();
                 }
+                
+                // Update globals 
+                lastQueryTimestamp = timestamp;
                 
                 // Send the query to all the providers
                 for (var i = 0; i < providers.length; i += 1) {
@@ -141,6 +173,9 @@ define(
                 
                 // Update the merged results list 
                 updateResults();
+                
+                // Start refresh loop
+                refresh(callback);
             }
             
             aggregator = {
@@ -160,7 +195,12 @@ define(
                  * Updates the global latestMergedResults and lastMergeTimestamps 
                  *   by checking the latest results of each of the providers. 
                  */
+                /*
                 updateResults: updateResults,
+                */
+                
+                // Maybe replaces updateResults
+                refresh: refresh,
                 
                 /** 
                  * Get the latest search results that have been calculated. The 
@@ -185,15 +225,19 @@ define(
                  *   objects, which have the members id, object, and score. This 
                  *   array is updated often. 
                  */
+                /*
                 latestResults: latestMergedResults,
+                */
                 
                 /** 
                  * Get the timestamps for each of the provider's last controbutions
                  *   to the latestMergedResults.
                  */
+                /*
                 getLatestTimestamps: function () {
                     return lastMergeTimestamps;
                 },
+                */
                 
                 /** 
                  * Get the number of search results that have been calculated most 
@@ -201,6 +245,10 @@ define(
                  */
                 getNumResults: function () {
                     return latestMergedResults.length;
+                },
+                
+                isLoading: function () {
+                    return loading;
                 }
             };
             

@@ -30,50 +30,23 @@ define(function () {
     var INITIAL_LOAD_NUMBER = 20,
         LOAD_INCREMENT = 5;
     
-    function SearchController($scope, $timeout, searchService) {
+    function SearchController($scope, searchService) {
         // Starting amount of results to load. Will get increased. 
-        var numResults = INITIAL_LOAD_NUMBER,
-            loading = false;
-        
-        //$scope.results = searchService.latestResults;
+        var numResults = INITIAL_LOAD_NUMBER;
         
         // This allows us to directly access the search aggregator's members.
         // Most important is latestResults, which is continuously updated. This
         // means that this controller does not have to poll for results any more.
-        //$scope.searchService = searchService;
-        // TODO: Modify search aggregator to have a search result array which 
-        //        is of a size that can be chosen and modified by this controller. 
+        $scope.service = searchService;
         
-        function update(timestamp) {
-            // We are loading results
-            loading = true;
-            
-            // Get the results 
-            $scope.results = searchService.getLatestResults(0, numResults);
-            
-            // Check to make sure that these results are the latest ones
-            function waitForLatest() {
-                var timestamps = searchService.getLatestTimestamps(),
-                    areOld = timestamps.some(function(c) {return c < timestamp;});
-                
-                // If any of the timestamps are older than the one we made the query with
-                if (areOld) {
-                    // Then wait and try to update again
-                    searchService.updateResults();
-                    $timeout(waitForLatest, 50);
-                } else {
-                    // We got the latest results now (and done loading)
-                    loading = false;
-                    $scope.results = searchService.getLatestResults(0, numResults);
-                }
-            }
-            waitForLatest();
+        // Function to be passed to the search service which allows it to set the 
+        //   search template's results list 
+        function setControllerResults(results) {
+            $scope.results = results.slice(0, numResults);
         }
         
         function search() {
-            var date = new Date(),
-                timestamp = date.getTime(),
-                inputText = $scope.ngModel.input;
+            var inputText = $scope.ngModel.input;
             
             // Update whether the file tree should be displayed 
             if (inputText === '') {
@@ -86,9 +59,7 @@ define(function () {
             numResults = INITIAL_LOAD_NUMBER;
             
             // Send the query
-            searchService.sendQuery(inputText, timestamp);
-            
-            update(timestamp);
+            searchService.sendQuery(inputText, setControllerResults);
         }
         
         return {
@@ -113,9 +84,10 @@ define(function () {
              * Checks to see if we are still waiting for the results to be 
              *   fully updated. 
              */
+            /*
             isLoading: function () {
-                return loading;
-            },
+                return searchService.isLoading();
+            },*/
             
             /**
              * Checks to see if there are more search results to display.
@@ -130,7 +102,7 @@ define(function () {
              */
             loadMore: function () {
                 numResults += LOAD_INCREMENT;
-                update();
+                searchService.refresh(setControllerResults);
             }
         };
     }
