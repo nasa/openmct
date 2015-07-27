@@ -20,7 +20,9 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="search"
-      ng-controller="SearchController as controller">
+     ng-controller="SearchController as controller">
+    <!-- Using search service as 'service' (is in $scope) -->
+    
     <!-- Search bar input -->
     <div>
         <input class="search-input"
@@ -51,7 +53,7 @@
         <!-- Results list -->
         <div class="results">
             <mct-representation key="'search-item'"
-                                ng-repeat="result in results"
+                                ng-repeat="result in service.latestResults"
                                 mct-object="result.object"
                                 ng-model="ngModel">
             </mct-representation>
@@ -59,8 +61,8 @@
 
         <!-- Loading icon -->
         <div class="load-icon"
-             ng-class="{loading: controller.isLoading()}"
-             ng-if="controller.isLoading()">
+             ng-class="{loading: service.isLoading()}"
+             ng-if="service.isLoading()">
             <span class="icon wait-spinner"></span>
             <span class="title-label">Loading...</span>
         </div>

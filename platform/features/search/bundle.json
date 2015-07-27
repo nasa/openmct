@@ -43,7 +43,8 @@
             {
                 "provides": "searchService",
                 "type": "aggregator",
-                "implementation": "SearchAggregator.js"
+                "implementation": "SearchAggregator.js",
+                "depends": [ "$timeout" ]
             }
         ],
         "workers": [

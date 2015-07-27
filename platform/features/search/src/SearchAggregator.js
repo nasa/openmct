@@ -40,9 +40,11 @@ define(
          * @param {SearchProvider[]} providers the search providers to be
          *        aggregated
          */
-        function SearchAggregator(providers) {
+        function SearchAggregator($timeout, providers) {
             var latestMergedResults = [],
                 lastMergeTimestamps = [],
+                lastQueryTimestamp = 0,
+                loading = false,
                 aggregator = {};
             
             // Remove duplicate objects that have the same ID 
@@ -120,10 +122,27 @@ define(
                 newerResults = filterRepeats(newerResults);
                 newerResults = orderByScore(newerResults);
                 
-                // After all that is done, now replace latestMergedResults with this
+                // Now replace latestMergedResults 
                 latestMergedResults = newerResults;
                 lastMergeTimestamps = providerTimestamps;
                 aggregator.latestResults = latestMergedResults;
+                
+                // Update the loading status, and wait for latest results if needed
+                function waitForLatest() {
+                    var areOld = lastMergeTimestamps.some(function(c) {return c < lastQueryTimestamp;});
+
+                    // If any of the timestamps are older than the one we made the query with
+                    if (areOld) {
+                        // Then wait and try to update again
+                        //updateResults();
+                        loading = true;
+                        $timeout(waitForLatest, 50);
+                    } else {
+                        // We got the latest results now (and done loading)
+                        loading = false;
+                    }
+                }
+                waitForLatest();
             }
             
             // For documentation, see sendQuery below.
@@ -133,6 +152,8 @@ define(
                     var date = new Date();
                     timestamp = date.getTime();
                 }
+                
+                lastQueryTimestamp = timestamp;
                 
                 // Send the query to all the providers
                 for (var i = 0; i < providers.length; i += 1) {
@@ -201,6 +222,14 @@ define(
                  */
                 getNumResults: function () {
                     return latestMergedResults.length;
+                },
+                
+                /**
+                 * Checks to see if we are still waiting for the results to be 
+                 *   fully updated. 
+                 */
+                isLoading: function () {
+                    return loading;
                 }
             };
             

@@ -40,10 +40,11 @@ define(function () {
         // This allows us to directly access the search aggregator's members.
         // Most important is latestResults, which is continuously updated. This
         // means that this controller does not have to poll for results any more.
-        //$scope.searchService = searchService;
+        $scope.service = searchService;
         // TODO: Modify search aggregator to have a search result array which 
         //        is of a size that can be chosen and modified by this controller. 
         
+        /*
         function update(timestamp) {
             // We are loading results
             loading = true;
@@ -69,6 +70,7 @@ define(function () {
             }
             waitForLatest();
         }
+        */
         
         function search() {
             var date = new Date(),
@@ -88,8 +90,14 @@ define(function () {
             // Send the query
             searchService.sendQuery(inputText, timestamp);
             
-            update(timestamp);
+            //update(timestamp);
         }
+        
+        $scope.$watch("searchService.latestResults", function () {
+            console.log('watcher saw')
+            // Update the displayed result list
+            $scope.service = searchService;
+        });
         
         return {
             /**
@@ -113,9 +121,11 @@ define(function () {
              * Checks to see if we are still waiting for the results to be 
              *   fully updated. 
              */
+            /*
             isLoading: function () {
                 return loading;
             },
+            */
             
             /**
              * Checks to see if there are more search results to display.
