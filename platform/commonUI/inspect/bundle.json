@@ -24,6 +24,7 @@
                 "implementation": "gestures/InfoGesture.js",
                 "depends": [
                     "$timeout",
+                    "queryService",
                     "infoService",
                     "INFO_HOVER_DELAY"
                 ]

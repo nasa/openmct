@@ -36,6 +36,7 @@ define(
 
         describe("The 'context menu' gesture", function () {
             var mockElement,
+                mockQueryService,
                 mockDomainObject,
                 mockEvent,
                 gesture,
@@ -45,8 +46,9 @@ define(
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
                 mockEvent = jasmine.createSpyObj("event", ["preventDefault"]);
-
-                gesture = new ContextMenuGesture(mockElement, mockDomainObject);
+                mockQueryService = jasmine.createSpyObj("queryService", ["isMobile"]);
+                
+                gesture = new ContextMenuGesture(mockQueryService, mockElement, mockDomainObject);
 
                 // Capture the contextmenu callback
                 fireGesture =  mockElement.on.mostRecentCall.args[1];

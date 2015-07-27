@@ -50,7 +50,7 @@ define(
          * expand-to-show-navigated-object behavior.)
          * @constructor
          */
-        function TreeNodeController($scope, $timeout, $rootScope) {
+        function TreeNodeController($scope, $timeout, $rootScope, queryService) {
             var selectedObject = ($scope.ngModel || {}).selectedObject,
                 isSelected = false,
                 hasBeenExpanded = false;
@@ -86,7 +86,11 @@ define(
                     $timeout(function () { hasBeenExpanded = true; }, 0);
                 }
             }
-
+            
+            function checkMobile() {
+                return queryService.isMobile(navigator.userAgent);
+            }
+            
             // Consider the currently-navigated object and update
             // parameters which support display.
             function checkSelection() {
@@ -150,6 +154,9 @@ define(
                  * lazy loading of the node's subtree.
                  */
                 trackExpansion: trackExpansion,
+                
+                checkMobile: checkMobile,
+                
                 /**
                  * Check if this not has ever been expanded.
                  * @returns true if it has been expanded

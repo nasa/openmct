@@ -65,6 +65,28 @@ define(
                 $location.path(urlService.urlForLocation("browse", domainObject));
                 
             }
+            
+            function backArr(domainObject) {
+                var priorRoute = $route.current,
+                    // Act as if params HADN'T changed to avoid page reload
+                    unlisten;
+
+                unlisten = $scope.$on('$locationChangeSuccess', function () {
+                    // Checks path to make sure /browse/ is at front
+                    // if so, change $route.current                    
+                    if ($location.path().indexOf("/browse/") === 0) {
+                        $route.current = priorRoute;
+                    }
+                    unlisten();
+                });
+                // urlService.urlForLocation used to adjust current
+                // path to new, addressed, path based on
+                // domainObject
+                                
+                
+                var thing = urlService.urlForLocation("browse", domainObject);
+                $location.path(thing);
+            }
 
             // Callback for updating the in-scope reference to the object
             // that is currently navigated-to.
@@ -140,6 +162,10 @@ define(
             $scope.treeModel = {
                 selectedObject: navigationService.getNavigation()
             };
+            
+            $scope.treeSlide = function () {
+                $scope.treeClass = !$scope.treeClass;
+            };
 
             // Listen for changes in navigation state.
             navigationService.addListener(setNavigation);
@@ -151,6 +177,8 @@ define(
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);
             });
+            
+            $scope.backArrow = backArr;
 
         }
 

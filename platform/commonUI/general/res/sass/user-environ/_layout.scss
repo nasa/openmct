@@ -265,6 +265,7 @@
 	&.vertical {
 		// Slides left and right
 		>.pane {
+//            @include test();
 			margin-left: $interiorMargin;
 			>.holder {
 				left: 0;

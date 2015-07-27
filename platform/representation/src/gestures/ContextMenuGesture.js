@@ -39,16 +39,18 @@ define(
          * @param {DomainObject} domainObject the object on which actions
          *                       in the context menu will be performed
          */
-        function ContextMenuGesture(element, domainObject) {
+        function ContextMenuGesture(queryService, element, domainObject) {
             var actionContext,
                 stop;
             
             // When context menu event occurs, show object actions instead
-            element.on('contextmenu', function (event) {
-                actionContext = {key: 'menu', domainObject: domainObject, event: event};
-                stop = domainObject.getCapability('action').perform(actionContext);
-            });
-            
+            if (!queryService.isMobile(navigator.userAgent)) {
+                element.on('contextmenu', function (event) {
+                    actionContext = {key: 'menu', domainObject: domainObject, event: event};
+                    stop = domainObject.getCapability('action').perform(actionContext);
+                });
+            }
+
             return {
                 /**
                  * Detach any event handlers associated with this gesture.

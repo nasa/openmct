@@ -37,6 +37,11 @@
                 "key": "MenuArrowController",
                 "implementation": "MenuArrowController",
                 "depends": [ "$scope" ]
+            },
+            {
+                "key": "BackArrowController",
+                "implementation": "BackArrowController",
+                "depends": ["$location", "$route", "$location", "urlService" ]
             }
         ],
         "controls": [
@@ -82,6 +87,10 @@
                 "templateUrl": "templates/menu-arrow.html",
                 "uses": [ "action" ],
                 "gestures": [ "menu" ]
+            },
+            {
+                "key": "back-arrow",
+                "templateUrl": "templates/back-arrow.html"
             }
         ],
         "services": [

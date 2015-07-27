@@ -1,0 +1,199 @@
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+// Wrapper of the entire 2 panes, only enacted on
+// phone and tablet. Also for the panes
+
+.browse-wrapper,
+.mobile-pane {
+    @include phoneandtablet {
+        position: absolute;
+        left: 0; top: 0;
+        right: 0;
+        white-space: nowrap;
+    }
+}
+
+// Default views of the panels
+// if in desktop browser
+.desktop-browse {
+    @include desktop {
+        min-width: 150px;
+        max-width: 800px;
+        width: $desktopMenuSize;   
+    }   
+}
+
+// When the tree is hidden, these are the
+// classes used for the left menu and the
+// right representation.
+.browse-hidetree {
+    // NOTE: DISABLED SELECTION
+    // Selection disabled in both panes
+    // causing cut/copy/paste menu to
+    // not appear. Should me moved in
+    // future to properly work
+    @include phoneandtablet {
+        @include user-select(none);
+    }
+    // Sets the left tree menu when the tree
+    // is hidden. 
+    .mobile-pane.left-menu {
+        @include phoneandtablet {
+            @include trans-prop-nice(opacity, .4s);
+            opacity: 0;
+            right: 100% !important;
+            width: auto !important;
+            overflow-y: hidden;
+            overflow-x: hidden;       
+        }
+    }
+
+    // Sets the right represenation when
+    // the tree is hidden. 
+    .mobile-pane.right-repr {       
+        @include phoneandtablet {         
+            @include slMenuTransitions;
+            left: auto !important;
+            width: 100% !important;
+        }
+    }    
+}
+
+.mobile-tree-holder {
+    top: 30px;
+}
+
+// When the tree is shown, these are
+// the classes used for the left menu
+// and the right menu (for each device &
+// orientation combination, separate 
+// parameters are used)
+.browse-showtree {
+    // NOTE: DISABLED SELECTION
+    // Selection disabled in both panes
+    // causing cut/copy/paste menu to
+    // not appear. Should me moved in
+    // future to properly work
+    @include phoneandtablet {
+        @include user-select(none);
+    }
+    // Sets the left tree menu when the tree
+    // is shown.     
+    .mobile-pane.left-menu {
+        @include phoneandtablet {
+            @include trans-prop-nice(opacity, .4s);
+            opacity: 1;
+            display: block !important;
+            width: auto !important;
+        }
+        // On both phones and tablets, the amount of
+        // space allowed for the right pane is specified
+        @include phonePortrait {
+            right: $phoneRepSizePortrait !important;
+        }
+        @include phoneLandscape {
+            right: $phoneRepSizeLandscape !important;
+        }
+        @include tabletPortrait {
+            right: $tabletRepSizePortrait !important;
+        }
+        @include tabletLandscape {
+            right: $tabletRepSizeLandscape !important;
+        }
+    }
+    // Sets the right represenation when
+    // the tree is shown.     
+    .mobile-pane.right-repr {
+        @include phoneandtablet {
+            @include slMenuTransitions;
+            left: auto !important;
+        }
+        // On both phones and tablets, the width of
+        // the right pane is specified
+        @include phonePortrait {
+            width: $phoneRepSizePortrait !important;
+        }
+        @include phoneLandscape {
+            width: $phoneRepSizeLandscape !important;
+        }
+        @include tabletPortrait {
+            width: $tabletRepSizePortrait !important;
+        }
+        @include tabletLandscape {
+            width: $tabletRepSizeLandscape !important;
+        }
+    }
+}
+
+// Button position is set as absolute with transitions
+.button-pos {
+    @include phoneandtablet {
+        position: absolute;
+    }
+}
+
+// Object header must be moved
+// over to make space for the 
+// hamburger icon
+.object-header {
+    @include phoneandtablet {
+        position: relative;
+        left: 44px;        
+        .label {
+            .context-available {
+                opacity: 1 !important;
+            }
+        }
+    }
+}
+
+.mobile-back-arrow {
+    font-size: 0.8em;
+}
+
+
+.desktop-hide {
+    @include desktop {
+        display: none;
+    }
+}
+
+// Hides objects on phone and tablet
+.mobile-hide {
+    @include phoneandtablet {
+        display: none;
+    }
+}
+
+// Hides objects only on the phone
+.phone-hide {
+    @include phone {
+        display: none;
+    }
+}
+
+.tree-holder {
+    @include phoneandtablet {
+        overflow-x: hidden !important;
+    }
+}

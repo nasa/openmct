@@ -42,9 +42,12 @@ ul.tree {
 				font-size: 0.75em;
 				width: $treeVCW;
 				$runningItemW: $interiorMargin + $treeVCW;
-				&:hover {
-					color: $colorItemTreeVCHover;
-				}
+                // NOTE: [Mobile] Removed Hover on Mobile
+                @include desktop {
+                    &:hover {
+                        color: $colorItemTreeVCHover;
+                    }
+                }
 			}
 
 			.label {
@@ -120,16 +123,19 @@ ul.tree {
 			}
 
 			&:not(.selected) {
-				&:hover {
-					background: lighten($colorBodyBg, 5%);
-					color: lighten($colorBodyFg, 20%);
-					.context-trigger {
-						display: block;
-					}
-					.icon {
-						color: $colorItemTreeIconHover;
-					}
-				}
+                // NOTE: [Mobile] Removed Hover on Mobile
+                @include desktop {
+                    &:hover {
+                        background: lighten($colorBodyBg, 5%);
+                        color: lighten($colorBodyFg, 20%);
+                        .context-trigger {
+                            display: block;
+                        }
+                        .icon {
+                            color: $colorItemTreeIconHover;
+                        }
+                    }
+                }
 			}
 
 			&:not(.loading) {
