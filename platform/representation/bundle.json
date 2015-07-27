@@ -26,7 +26,7 @@
             {
                 "key": "menu",
                 "implementation": "gestures/ContextMenuGesture.js",
-                "depends": [ "$compile", "$document", "$window", "$rootScope" ]
+                "depends": []
             }
         ],
         "components": [
@@ -48,6 +48,13 @@
                 "key": "dndService",
                 "implementation": "services/DndService.js",
                 "depends": [ "$log" ]
+            }
+        ],
+        "actions": [
+            {
+                "key": "menu",
+                "implementation": "actions/ContextMenuAction.js",
+                "depends": [ "$compile", "$document", "$window", "$rootScope" ]
             }
         ]
     }

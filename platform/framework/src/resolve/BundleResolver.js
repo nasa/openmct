@@ -45,7 +45,7 @@ define(
              * into one large object containing resolved extensions from
              * all bundles (in the same form.)
              *
-             * @param {Object.<string, object[]>[]} resolvedBundles
+             * @param {Object.<string, object[]>|Array} resolvedBundles
              * @returns {Object.<string, object[]>}
              */
             function mergeResolvedBundles(resolvedBundles) {

@@ -1,0 +1,18 @@
+{
+    "extensions": {
+        "components": [
+            {
+                "provides": "persistenceService",
+                "type": "provider",
+                "implementation": "LocalStoragePersistenceProvider.js",
+                "depends": [ "$q", "PERSISTENCE_SPACE" ]
+            }
+        ],
+        "constants": [
+            {
+                "key": "PERSISTENCE_SPACE",
+                "value": "mct"
+            }
+        ]
+    }
+}

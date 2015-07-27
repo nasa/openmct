@@ -35,7 +35,7 @@ define(
          *
          * @param {string} id the object's unique identifier
          * @param {object} model the "JSONifiable" state of the object
-         * @param {Object.<string, Capability|function} capabilities all
+         * @param {Object.<string, Capability>|function} capabilities all
          *        capabilities to be exposed by this object
          * @constructor
          */
