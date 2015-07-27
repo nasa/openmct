@@ -121,7 +121,7 @@ define(
                 newerResults = filterRepeats(newerResults);
                 newerResults = orderByScore(newerResults);
                 
-                // After all that is done, now replace latestMergedResults with this
+                // Now replace latestMergedResults 
                 latestMergedResults = newerResults;
                 lastMergeTimestamps = providerTimestamps;
             }
