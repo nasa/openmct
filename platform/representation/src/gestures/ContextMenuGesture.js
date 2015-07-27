@@ -101,59 +101,6 @@ define(
                 // Don't launch browser's context menu
                 event.preventDefault();
             }
-            
-//            function showTouchMenu(event) {
-//                var winDim = [$window.innerWidth, $window.innerHeight],
-//                    eventCoors = [event.pageX, event.pageY],
-//                    menuDim = GestureConstants.MCT_MENU_DIMENSIONS,
-//                    body = $document.find('body'),
-//                    scope = $rootScope.$new(),
-//                    goLeft = eventCoors[0] + menuDim[0] > winDim[0],
-//                    goUp = eventCoors[1] + menuDim[1] > winDim[1],
-//                    menu;
-//
-//                // Remove the context menu
-//                function dismiss() {
-//                    menu.remove();
-//                    body.off("click", dismiss);
-//                    dismissExistingMenu = undefined;
-//                }
-//
-//                if (event.touches.length < 2) {
-//                    // Dismiss any menu which was already showing
-//                    if (dismissExistingMenu) {
-//                        dismissExistingMenu();
-//                    }
-//
-//                    // ...and record the presence of this menu.
-//                    dismissExistingMenu = dismiss;
-//
-//                    // Set up the scope, including menu positioning
-//                    scope.domainObject = domainObject;
-//                    scope.menuStyle = {};
-//                    scope.menuStyle[goLeft ? "right" : "left"] =
-//                        (goLeft ? (winDim[0] - eventCoors[0]) : eventCoors[0]) + 'px';
-//                    scope.menuStyle[goUp ? "bottom" : "top"] =
-//                        (goUp ? (winDim[1] - eventCoors[1]) : eventCoors[1]) + 'px';
-//                    scope.menuClass = {
-//                        "go-left": goLeft,
-//                        "go-up": goUp,
-//                        "context-menu-holder": true
-//                    };
-//
-//                    // Create the context menu
-//                    menu = $compile(MENU_TEMPLATE)(scope);
-//
-//                    // Add the menu to the body
-//                    body.append(menu);
-//
-//                    // Dismiss the menu when body is clicked elsewhere
-//                    body.on('click', dismiss);
-//
-//                    // Don't launch browser's context menu
-//                    event.preventDefault();
-//                }
-//            }
 
             // Iff the user is not on a mobile device, then when 
             // the context menu event occurs, show object actions instead
