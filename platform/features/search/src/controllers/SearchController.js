@@ -73,7 +73,7 @@ define(function () {
         function search() {
             var date = new Date(),
                 timestamp = date.getTime(),
-                inputText = $scope.ngModel.input;//document.getElementById(inputID).value;
+                inputText = $scope.ngModel.input;
             
             // Update whether the file tree should be displayed 
             if (inputText === '') {
