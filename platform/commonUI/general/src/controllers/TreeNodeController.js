@@ -165,13 +165,15 @@ define(
                  * @returns true if this should be highlighted
                  */
                 isSelected: function () {
-                    //return isSelected;
+                    return isSelected;
                     
                     // Modification for compatibility with search.
                     // If this object is the same as the model's selected object
                     // Same being them having the same ID (this allows different
                     // instances of the same thing to be recognized as the same)
-                    return getId($scope.ngModel.selectedObject) === getId($scope.domainObject);
+                    //return getId($scope.ngModel.selectedObject) === getId($scope.domainObject);
+                    
+                    // Not using modified version now because it breaks tests. 
                     
                     // TODO: Check to make sure this change doesn't break 
                     //       anything/find a better way to do this
