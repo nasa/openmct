@@ -249,6 +249,39 @@ define(
             // lets the html code know the back
             // arrow navigation needs to be done
             it("calls the backArrow function", function () {
+                var mockContext = jasmine.createSpyObj('context', ['getParent']),
+                    mockParent  = jasmine.createSpyObj(
+                        "domainObject",
+                        [ "getId", "getCapability", "getModel", "useCapability" ]
+                    );
+                mockNavigationService = jasmine.createSpyObj(
+                    "navigationService",
+                    [
+                        "getNavigation",
+                        "setNavigation",
+                        "addListener",
+                        "removeListener"
+                    ]
+                );
+                
+                mockRoute.current.params.ids = "mine/junk";
+                mockParent.getId.andReturn("mine");
+                
+                mockDomainObject.getCapability.andCallFake(function (c) {
+                    return c === 'context' && mockContext;
+                });
+                
+                mockNavigationService.getNavigation.andReturn(mockDomainObject);
+                mockContext.getParent.andReturn(mockParent);
+                
+                controller = new BrowseController(
+                    mockScope,
+                    mockRoute,
+                    mockLocation,
+                    mockObjectService,
+                    mockNavigationService
+                );
+                
                 mockScope.backArrow();
             });
         });

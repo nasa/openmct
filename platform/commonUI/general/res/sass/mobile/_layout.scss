@@ -167,12 +167,6 @@
     }
 }
 
-.mobile-back-arrow {
-//    display: none !important;
-//    font-size: 0.8em;
-}
-
-
 .desktop-hide {
     @include desktop {
         display: none;
@@ -183,6 +177,13 @@
 .mobile-hide {
     @include phoneandtablet {
         display: none;
+    }
+}
+
+// Hides objects on phone and tablet
+.mobile-unhide {
+    @include phoneandtablet {
+        display: inline-block;
     }
 }
 

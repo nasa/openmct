@@ -126,8 +126,16 @@ define(
                 }
             }
             
-            function updateRouteBackArrow() {
-//                console.log("Back Arrow");
+            // Uses the current navigation to get the 
+            // current ContextCapability, then the
+            // parent is gotten from that. If the parent
+            // is not the root, then user is navigated to
+            // parent
+            function navigateToParent() {
+                var parent = navigationService.getNavigation().getCapability('context').getParent();
+                if (parent.getId() !== ROOT_ID) {
+                    navigateTo(parent);
+                }
             }
 
             // Load the root object, put it in the scope.
@@ -144,10 +152,12 @@ define(
                 selectedObject: navigationService.getNavigation()
             };
             
+            // SlideMenu boolean used to hide and show
+            // tree menu
             $scope.treeSlide = function () {
                 $scope.treeClass = !$scope.treeClass;
             };
-
+            
             // Listen for changes in navigation state.
             navigationService.addListener(setNavigation);
 
@@ -159,7 +169,7 @@ define(
                 navigationService.removeListener(setNavigation);
             });
             
-            $scope.backArrow = updateRouteBackArrow;
+            $scope.backArrow = navigateToParent;
 
         }
 
