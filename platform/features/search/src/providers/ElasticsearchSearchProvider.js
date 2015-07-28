@@ -106,10 +106,12 @@ define(
                     scores = {},
                     searchResults = [];
                 
+                /*
                 if (rawResults.data.hits.total > resultsLength) {
                     // TODO: Somehow communicate this to the user 
                     console.log('Total number of results greater than displayed results');
                 }
+                */
                 
                 // Get the result objects' IDs
                 for (var i = 0; i < resultsLength; i += 1) {
