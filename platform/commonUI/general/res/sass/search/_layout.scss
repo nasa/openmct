@@ -21,39 +21,11 @@
  *****************************************************************************/
 
 // Overrides some styling in user-environ/_layout.scss
-
-.split-layout {
-	&.vertical {
-		>.pane {
-			&:first-child {
-				.holder {
-                    // Want tree holder to dissapear when search is activated.
-                    // Currently though, just have the tree holder position 
-                    //   relative to search.
-                    position: relative;
-				}
-			}
-		}
-	}
-}
-
 .pane {
     &.treeview.left {
-        //overflow: auto; // This one works! (But the bar goes too high)
-        
 	    .tree-holder {
-            // Want tree holder to start right below the search bar
-		    top: 0;
-            
-            // Make tree invisible when there are things in search results
-            &.search-in-use {
-                //display: none;
-                
-            }
+            // Want tree holder to start right below the search bar.
+		    top: 60px;
 	    }
-        
-        .search-holder {
-            //overflow: auto;
-        }
     }
 }

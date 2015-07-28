@@ -700,13 +700,9 @@ mct-container {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 29, ../sass/search/_layout.scss */
-.split-layout.vertical > .pane:first-child .holder {
-  position: relative; }
-
-/* line 44, ../sass/search/_layout.scss */
+/* line 26, ../sass/search/_layout.scss */
 .pane.treeview.left .tree-holder {
-  top: 0; }
+  top: 60px; }
 
 /*****************************************************************************
 * Open MCT Web, Copyright (c) 2014-2015, United States Government

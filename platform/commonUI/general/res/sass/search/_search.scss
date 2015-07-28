@@ -26,8 +26,9 @@
     $rightPadding: 5px;
     
     //position: relative;
-    //overflow-y: auto;  // This should make it scroll, but isn't wokring :(
+    overflow-y: auto;
     padding-right: $rightPadding;
+    top: 23px;
     
     .search {
         //height: auto;
