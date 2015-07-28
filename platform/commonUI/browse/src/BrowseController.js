@@ -127,7 +127,7 @@ define(
             }
             
             function updateRouteBackArrow() {
-                console.log("Back Arrow");
+//                console.log("Back Arrow");
             }
 
             // Load the root object, put it in the scope.
