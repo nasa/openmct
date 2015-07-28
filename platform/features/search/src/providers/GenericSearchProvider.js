@@ -42,8 +42,9 @@ define(
          *        domain objects can be gotten.
          * @param {WorkerService} workerService the service which allows
          *        more easy creation of web workers.
+         * @param {roots[]} roots an array of all the root domain objects.
          */
-        function GenericSearchProvider($rootScope, objectService, workerService, roots) {
+        function GenericSearchProvider(objectService, workerService, roots) {
             var worker = workerService.run('genericSearchWorker'),
                 latestResults = [],
                 lastSearchTimestamp = 0;
@@ -62,7 +63,7 @@ define(
             
             // Tell the worker to search for items it has that match this searchInput.
             // Takes the searchInput, as well as a max number of results (will return 
-            // less than that if there are fewer matches).
+            //   less than that if there are fewer matches).
             function workerSearch(searchInput, maxResults, timestamp) {
                 var message = {
                     request: 'search',
@@ -85,8 +86,8 @@ define(
                     }
                     objectService.getObjects(ids).then(function (objects) {
                         var id;
-                        
                         latestResults = [];
+                        
                         for (id in objects) {
                             latestResults.push({
                                 object: objects[id],

@@ -32,7 +32,7 @@
                 "provides": "searchService",
                 "type": "provider",
                 "implementation": "providers/GenericSearchProvider.js",
-                "depends": [ "$rootScope", "objectService", "workerService", "roots[]" ]
+                "depends": [ "objectService", "workerService", "roots[]" ]
             },
             {
                 "provides": "searchService",

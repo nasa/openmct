@@ -37,6 +37,8 @@ define(
          * to be treated as one.
          *
          * @constructor
+         * @param $timeout Angular's $timeout service, a replacement for 
+         *        JavaScript's setTimeout function.
          * @param {SearchProvider[]} providers the search providers to be
          *        aggregated
          */
