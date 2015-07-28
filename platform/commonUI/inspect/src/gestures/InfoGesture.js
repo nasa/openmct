@@ -52,12 +52,12 @@ define(
                 mousePosition = [ event.clientX, event.clientY ];
             }
             
-            function trackTouchPosition(event) {
-                var tEvent = event.changedTouches[0];
-                // Record mouse position, so bubble can be shown at latest
-                // mouse position (not just where the mouse entered)
-                touchPosition = [ tEvent.clientX + 44, tEvent.clientY ];
-            }
+//            function trackTouchPosition(event) {
+//                var tEvent = event.changedTouches[0];
+//                // Record mouse position, so bubble can be shown at latest
+//                // mouse position (not just where the mouse entered)
+//                touchPosition = [ tEvent.clientX + 44, tEvent.clientY ];
+//            }
 
             function hideBubble() {
                 // If a bubble is showing, dismiss it
@@ -102,22 +102,22 @@ define(
                 element.on('mouseleave', hideBubble);
             }
             
-            function showTouchBubble(event) {
-                // Makes sure user is only touching one place
-                if (event.touches.length < 2) {
-                    trackTouchPosition(event);
-                    pendingBubble = $timeout(function () {
-                        dismissBubble = infoService.display(
-                            "info-table",
-                            domainObject.getModel().name,
-                            domainObject.useCapability('metadata'),
-                            touchPosition
-                        );
-                    }, touchDELAY);
-
-                    element.on('touchend', hideBubble);
-                }
-            }
+//            function showTouchBubble(event) {
+//                // Makes sure user is only touching one place
+//                if (event.touches.length < 2) {
+//                    trackTouchPosition(event);
+//                    pendingBubble = $timeout(function () {
+//                        dismissBubble = infoService.display(
+//                            "info-table",
+//                            domainObject.getModel().name,
+//                            domainObject.useCapability('metadata'),
+//                            touchPosition
+//                        );
+//                    }, touchDELAY);
+//
+//                    element.on('touchend', hideBubble);
+//                }
+//            }
             
             // Checks if you are on a mobile device, if the device is
             // not mobile (queryService.isMobile() = false), then
@@ -126,9 +126,6 @@ define(
                 // Show bubble (on a timeout) on mouse over
                 element.on('mouseenter', showBubble);
             }
-//            else if (queryService.isMobile(navigator.userAgent)) {
-//                element.on('touchstart', showTouchBubble);
-//            }
 
             // Also make sure we dismiss bubble if representation is destroyed
             // before the mouse actually leaves it

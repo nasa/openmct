@@ -65,7 +65,7 @@
             {
                 "key": "TreeNodeController",
                 "implementation": "controllers/TreeNodeController.js",
-                "depends": [ "$scope", "$timeout", "$rootScope", "queryService" ]
+                "depends": [ "$scope", "$timeout", "queryService" ]
             },
             {
                 "key": "ActionGroupController",

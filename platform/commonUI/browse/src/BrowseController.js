@@ -64,23 +64,6 @@ define(
                 // domainObject
                 $location.path(urlService.urlForLocation("browse", domainObject));
             }
-            
-            function backArr() {
-                var priorRoute = $route.current,
-                    // Act as if params HADN'T changed to avoid page reload
-                    unlisten;
-
-                unlisten = $scope.$on('$locationChangeSuccess', function () {
-                    // Checks path to make sure /browse/ is at front
-                    // if so, change $route.current                    
-                    if ($location.path().indexOf("/browse/") === 0) {
-                        $route.current = priorRoute;
-                    }
-                    unlisten();
-                });
-                console.log(urlService.urlForBack("browse", $scope.navigatedObject));
-                $location.path(urlService.urlForBack("browse", $scope.navigatedObject));
-            }
 
             // Callback for updating the in-scope reference to the object
             // that is currently navigated-to.
@@ -142,6 +125,10 @@ define(
                     navigateTo(domainObject);
                 }
             }
+            
+            function updateRouteBackArrow() {
+                console.log("Back Arrow");
+            }
 
             // Load the root object, put it in the scope.
             // Also, load its immediate children, and (possibly)
@@ -172,7 +159,7 @@ define(
                 navigationService.removeListener(setNavigation);
             });
             
-            $scope.backArrow = backArr;
+            $scope.backArrow = updateRouteBackArrow;
 
         }
 

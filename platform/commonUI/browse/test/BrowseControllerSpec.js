@@ -52,7 +52,7 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$on", "$watch", "treeSlide" ]
+                    [ "$on", "$watch", "treeSlide", "backArrow" ]
                 );
                 mockRoute = { current: { params: {} } };
                 mockLocation = jasmine.createSpyObj(
@@ -244,7 +244,13 @@ define(
                     mockUrlService.urlForLocation(mockMode, mockNextObject)
                 );
             });
-
+            
+            // Mocks the back arrow call that
+            // lets the html code know the back
+            // arrow navigation needs to be done
+            it("calls the backArrow function", function () {
+                mockScope.backArrow();
+            });
         });
     }
 );

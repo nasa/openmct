@@ -187,7 +187,9 @@ define(
             });
             
             it("check if tree node is in a mobile device", function () {
-                controller.checkMobile();
+                if (controller) {
+                    controller.checkMobile();
+                }
             });
         });
     }

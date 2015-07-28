@@ -50,7 +50,7 @@ define(
          * expand-to-show-navigated-object behavior.)
          * @constructor
          */
-        function TreeNodeController($scope, $timeout, $rootScope, queryService) {
+        function TreeNodeController($scope, $timeout, queryService) {
             var selectedObject = ($scope.ngModel || {}).selectedObject,
                 isSelected = false,
                 hasBeenExpanded = false;
