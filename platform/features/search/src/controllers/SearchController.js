@@ -88,7 +88,7 @@ define(function () {
              */
             areMore: function () {
                 return numResults < searchService.getNumResults();
-            }, 
+            },
             
             /**
              * Increases the number of search results to display, and then 

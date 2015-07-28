@@ -47,7 +47,7 @@ define(
          *        interact with ElasticSearch.
          */
         function ElasticsearchSearchProvider($http, objectService, ROOT) {
-            var latestResults = [], 
+            var latestResults = [],
                 lastSearchTimestamp = 0;
             
             // Check to see if the input has any special options
@@ -104,7 +104,8 @@ define(
                     resultsLength = results.length,
                     ids = [],
                     scores = {},
-                    searchResults = [];
+                    searchResults = [],
+                    i;
                 
                 /*
                 if (rawResults.data.hits.total > resultsLength) {
@@ -114,20 +115,23 @@ define(
                 */
                 
                 // Get the result objects' IDs
-                for (var i = 0; i < resultsLength; i += 1) {
+                for (i = 0; i < resultsLength; i += 1) {
                     ids.push(results[i][ID]);
                 }
                 
                 // Get the result objects' scores
-                for (var i = 0; i < resultsLength; i += 1) {
+                for (i = 0; i < resultsLength; i += 1) {
                     //scores.push(results[i][SCORE]);
-                    scores[ ids[i] ] = results[i][SCORE];
+                    scores[ids[i]] = results[i][SCORE];
                 }
                 
                 // Get the domain objects from their IDs
                 return objectService.getObjects(ids).then(function (objects) {
-                    for (var j = 0; j < resultsLength; j += 1) {
-                        var id = ids[j];
+                    var j,
+                        id;
+                    
+                    for (j = 0; j < resultsLength; j += 1) {
+                        id = ids[j];
                         
                         // Include items we can get models for
                         if (objects[id].getModel) {

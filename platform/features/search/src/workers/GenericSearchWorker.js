@@ -33,7 +33,9 @@
     
     // Helper function for index()
     function conainsItem(id) {
-        for (var i = 0; i < indexedItems.length; i++) {
+        var i;
+        
+        for (i = 0; i < indexedItems.length; i += 1) {
             if (indexedItems[i].id === id) {
                 return true;
             }
@@ -49,6 +51,8 @@
      *           * id: The ID of the domain object
      */
     function index(data) {
+        var message;
+        
         // TODO: Since this is only within genericsearch, do 
         //       we really need to check if the index already holds it? 
         //       This might depend on how often/when we clear indexedItems.
@@ -59,7 +63,7 @@
             });
         }
         
-        var message = {
+        message = {
             request: 'index'
         };
         return message;
@@ -91,7 +95,8 @@
     function scoreItem(item, input, terms) {
         var name = item.model.name.toLocaleLowerCase(),
             weight = 0.65,
-            score = 0.0;
+            score = 0.0,
+            i;
 
         // Make the score really big if the item name and 
         // the original search input are the same
@@ -99,16 +104,16 @@
             score = 42;
         }
 
-        for (var i = 0; i < terms.length; i++) {
+        for (i = 0; i < terms.length; i += 1) {
             // Increase the score if the term is in the item name
             if (name.includes(terms[i])) {
-                score++;
+                score += 1;
 
                 // Add extra to the score if the search term exists
                 // as its own term within the items
                 // TODO: This may be undesired
                 if (name.split(' ').indexOf(terms[i]) !== -1) {
-                    score += .5;
+                    score += 0.5;
                 }
             }
         }
@@ -132,14 +137,16 @@
         // specific search input.)
         var results = {},
             input = data.input.toLocaleLowerCase(),
-            terms = convertToTerms(input), 
-            timesToLoop = Math.min(indexedItems.length, data.maxNumber);
-        
+            terms = convertToTerms(input),
+            timesToLoop = Math.min(indexedItems.length, data.maxNumber),
+            i,
+            score,
+            message;
         
         // If the user input is empty, we want to have no search results.
         if (input !== '') {
-            for (var i = 0; i < timesToLoop; i++) {
-                var score = scoreItem(indexedItems[i], input, terms);
+            for (i = 0; i < timesToLoop; i += 1) {
+                score = scoreItem(indexedItems[i], input, terms);
                 if (score > 0) {
                     results[indexedItems[i].id] = {
                         score: score
@@ -148,8 +155,8 @@
             }
         }
         
-        var message = {
-            request: 'search', 
+        message = {
+            request: 'search',
             results: results,
             timestamp: data.timestamp
         };

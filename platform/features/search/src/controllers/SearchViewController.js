@@ -41,7 +41,7 @@ define(function () {
             // Check to make sure that these results are the latest ones
             function waitForLatest() {
                 var timestamps = searchService.getLatestTimestamps(),
-                    areOld = timestamps.some(function(c) {return c < timestamp;});
+                    areOld = timestamps.some(function (c) {return c < timestamp; });
                 // If any of the timestamps are older than the one we made the query with
                 if (areOld) {
                     // Then wait and try to update again
@@ -93,7 +93,7 @@ define(function () {
              */
             areMore: function () {
                 return numResults < searchService.getNumResults();
-            }, 
+            },
             
             /**
              * Increases the number of search results to display, and then 

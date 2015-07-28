@@ -51,7 +51,7 @@ define(
             // Tell the web worker to add a new item's model to its list of items.
             function indexItem(domainObject) {
                 var message = {
-                    request: 'index', 
+                    request: 'index',
                     model: domainObject.getModel(),
                     id: domainObject.getId()
                 };
@@ -65,26 +65,29 @@ define(
             // less than that if there are fewer matches).
             function workerSearch(searchInput, maxResults, timestamp) {
                 var message = {
-                    request: 'search', 
+                    request: 'search',
                     input: searchInput,
-                    maxNumber: maxResults, 
+                    maxNumber: maxResults,
                     timestamp: timestamp
                 };
                 worker.postMessage(message);
             }
             
-            worker.onmessage = handleResponse;
-            
             function handleResponse(event) {
+                var ids,
+                    id;
+                
                 if (event.data.request === 'search') {
                     // Convert the ids given from the web worker into domain objects
-                    var ids = [];
-                    for (var id in event.data.results) {
+                    ids = [];
+                    for (id in event.data.results) {
                         ids.push(id);
                     }
                     objectService.getObjects(ids).then(function (objects) {
+                        var id;
+                        
                         latestResults = [];
-                        for (var id in objects) {
+                        for (id in objects) {
                             latestResults.push({
                                 object: objects[id],
                                 id: id,
@@ -96,9 +99,11 @@ define(
                 }
             }
             
+            worker.onmessage = handleResponse;
+            
             // Recursive helper function for getItems()
             function itemsHelper(children, i) {
-                var date = new Date;
+                var date = new Date();
                 if (stopTime && date.getTime() >= stopTime) {
                     // This indexing of items has timed out 
                     return children;
@@ -120,35 +125,40 @@ define(
             
             // Converts the filetree into a list
             function getItems(timeout) {
-                var rootIds = [];
+                var rootIds = [],
+                    i;
                 
-                for (var i = 0; i < roots.length; i++) {
+                for (i = 0; i < roots.length; i += 1) {
                     rootIds.push(roots[i].id);
                 }
                 
                 // Aquire root objects
                 return objectService.getObjects(rootIds).then(function (objectsById) {
-                    var objects = [];
+                    var objects = [],
+                        date,
+                        id;
                     
                     if (timeout) {
                         // Set a timeout for itemsHelper
-                        var date = new Date;
+                        date = new Date();
                         stopTime = date.getTime() + timeout;
                     }
                     // If there was no timeout provided, leave undefined
                     // itemsHelper should just treat this as having no timeout
                     
                     // Convert to the format itemsHelper takes
-                    for (var id in objectsById) {
+                    for (id in objectsById) {
                         objects.push(objectsById[id]);
                     }
                     
                     // Get all of its descendents
                     return itemsHelper(objects, 0).then(function (items) {
+                        var i;
+                        
                         // Add each item that itemsHelper found to the web worker index
                         // TODO: Try to do this within itemsHelper. Perhaps just 
                         //       need to add this to the last two if statements? 
-                        for (var i = 0; i < items.length; i++) {
+                        for (i = 0; i < items.length; i += 1) {
                             indexItem(items[i]);
                         }
                         return; // We don't need to return anything anymore

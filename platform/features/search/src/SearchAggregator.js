@@ -50,11 +50,16 @@ define(
             function filterRepeats(results) {
                 var ids = [],
                     idToIndicies = {}, // 'dictionary' mapping IDs to a list of indicies 
-                    filteredResults = [];
+                    filteredResults = [],
+                    i,
+                    id,
+                    indicies,
+                    highestScoringObject,
+                    j;
                 
                 // Create a list of indicies of objects that correspond to any object ID
-                for (var i = 0; i < results.length; i++) {
-                    var id = results[i].id;
+                for (i = 0; i < results.length; i += 1) {
+                    id = results[i].id;
                     
                     if (idToIndicies[id]) {
                         // If the ID already exists in the dictionary, push this index to 
@@ -71,13 +76,12 @@ define(
                 
                 // Now for each ID in the dictionary, we want to use the version of  
                 // the object that has a higher score
-                for (var i = 0; i < ids.length; i++) {
-                    var id = ids[i],
-                        indicies = idToIndicies[id],
-                        highestScoringObject;
+                for (i = 0; i < ids.length; i += 1) {
+                    id = ids[i];
+                    indicies = idToIndicies[id];
                     
-                    highestScoringObject = results[ indicies[0] ];
-                    for (var j = 0; j < indicies.length; j++) {
+                    highestScoringObject = results[indicies[0]];
+                    for (j = 0; j < indicies.length; j += 1) {
                         // If the score of the object corresponding to this index of the results 
                         // list has a higher score than the one we have, choose it instead
                         if (results[indicies[j]].score > highestScoringObject.score) {
@@ -109,10 +113,11 @@ define(
             // For documentation, see updateResults below.
             function updateResults() {
                 var newerResults = [],
-                    providerTimestamps = [];
+                    providerTimestamps = [],
+                    i;
                 
                 // For each provider, get its most recent results
-                for (var i = 0; i < providers.length; i += 1) {
+                for (i = 0; i < providers.length; i += 1) {
                     newerResults = newerResults.concat(providers[i].getLatestResults());
                     providerTimestamps.push(providers[i].getLatestTimestamp());
                 }
@@ -136,7 +141,7 @@ define(
 
                 // Check to make sure that these results are the latest ones
                 function waitForLatest() {
-                    var areOld = lastMergeTimestamps.some(function(c) {return c < lastQueryTimestamp;});
+                    var areOld = lastMergeTimestamps.some(function (c) {return c < lastQueryTimestamp; });
                     
                     // If any of the timestamps are older than the one we made the query with
                     if (areOld) {
@@ -154,9 +159,12 @@ define(
             
             // For documentation, see sendQuery below.
             function queryAll(inputText, callback, timestamp) {
+                var date,
+                    i;
+                
                 // If there's not a timestamp, make this time the timestamp
                 if (!timestamp) {
-                    var date = new Date();
+                    date = new Date();
                     timestamp = date.getTime();
                 }
                 
@@ -164,7 +172,7 @@ define(
                 lastQueryTimestamp = timestamp;
                 
                 // Send the query to all the providers
-                for (var i = 0; i < providers.length; i += 1) {
+                for (i = 0; i < providers.length; i += 1) {
                     providers[i].query(inputText, timestamp, DEFAULT_MAX_RESULTS, DEFUALT_TIMEOUT);
                 }
                 
