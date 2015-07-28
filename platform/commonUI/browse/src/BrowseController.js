@@ -63,10 +63,9 @@ define(
                 // path to new, addressed, path based on
                 // domainObject
                 $location.path(urlService.urlForLocation("browse", domainObject));
-                
             }
             
-            function backArr(domainObject) {
+            function backArr() {
                 var priorRoute = $route.current,
                     // Act as if params HADN'T changed to avoid page reload
                     unlisten;
@@ -79,13 +78,8 @@ define(
                     }
                     unlisten();
                 });
-                // urlService.urlForLocation used to adjust current
-                // path to new, addressed, path based on
-                // domainObject
-                                
-                
-                var thing = urlService.urlForLocation("browse", domainObject);
-                $location.path(thing);
+                console.log(urlService.urlForBack("browse", $scope.navigatedObject));
+                $location.path(urlService.urlForBack("browse", $scope.navigatedObject));
             }
 
             // Callback for updating the in-scope reference to the object

@@ -890,10 +890,6 @@ mct-container {
     .object-header .label .context-available {
       opacity: 1 !important; } }
 
-/* line 170, ../sass/mobile/_layout.scss */
-.mobile-back-arrow {
-  font-size: 0.8em; }
-
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
   /* line 175, ../sass/mobile/_layout.scss */
   .desktop-hide {

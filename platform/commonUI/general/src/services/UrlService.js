@@ -55,6 +55,23 @@ define(
                 return path;
             }
             
+            function urlForLastLocation(mode, domainObject) {
+                var context = domainObject &&
+                        domainObject.getCapability('context'),
+                    objectPath = context ? context.getPath() : [],
+                    editedPath = (objectPath.length > 1) ? objectPath.slice(0, -1) : objectPath,
+                    ids = editedPath.map(function (domainObject) {
+                        return domainObject.getId();
+                    }),
+                    // Parses the path together. Starts with the 
+                    // default index.html file, then the mode passed
+                    // into the service, followed by ids in the url
+                    // joined by '/', and lastly the view path from
+                    // the current location
+                    path = mode + "/" + ids.slice(1).join("/");
+                return path;
+            }
+            
             // Uses the Url for the current location
             // from the urlForLocation function and
             // includes the view and the index path
@@ -65,6 +82,12 @@ define(
                 return newTabPath;
             }
             
+            function urlForBack(mode, domainObject) {
+                var newTabPath =
+                        "index.html#/" + urlForLastLocation(mode, domainObject);
+                return newTabPath;
+            }
+                        
             return {
                /**
                  * Returns the Url path for a specific domain object
@@ -84,7 +107,9 @@ define(
                  * @param {DomainObject} value of the domain object 
                  *        to get the path of
                  */
-                urlForLocation: urlForLocation
+                urlForLocation: urlForLocation,
+                
+                urlForBack: urlForBack
             };
         }
 
