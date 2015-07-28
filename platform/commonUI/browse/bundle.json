@@ -85,6 +85,7 @@
             },
             {
                 "key": "back-arrow",
+                "uses": [ "type", "action" ],
                 "templateUrl": "templates/back-arrow.html"
             }
         ],

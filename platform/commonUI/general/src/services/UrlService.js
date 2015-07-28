@@ -55,14 +55,6 @@ define(
                 return path;
             }
             
-//            function idForLevelArrow(domainObject) {
-//                var context = domainObject &&
-//                        domainObject.getCapability('context'),
-//                    objectPath = context ? context.getPath() : [],
-//                    id = objectPath[objectPath.length - 2];
-//                return id;
-//            }
-            
             // Uses the Url for the current location
             // from the urlForLocation function and
             // includes the view and the index path
@@ -93,8 +85,6 @@ define(
                  *        to get the path of
                  */
                 urlForLocation: urlForLocation
-                
-//                idForLevelArrow: idForLevelArrow
             };
         }
 

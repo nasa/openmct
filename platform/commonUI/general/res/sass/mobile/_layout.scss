@@ -186,6 +186,13 @@
     }
 }
 
+// Hides objects on phone and tablet
+.mobile-unhide {
+    @include phoneandtablet {
+        display: inline-block;
+    }
+}
+
 // Hides objects only on the phone
 .phone-hide {
     @include phone {
