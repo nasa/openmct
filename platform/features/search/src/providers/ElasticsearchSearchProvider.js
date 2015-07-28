@@ -108,7 +108,7 @@ define(
                 
                 if (rawResults.data.hits.total > resultsLength) {
                     // TODO: Somehow communicate this to the user 
-                    console.log('Total number of results greater than displayed results');
+                    //console.log('Total number of results greater than displayed results');
                 }
                 
                 // Get the result objects' IDs
