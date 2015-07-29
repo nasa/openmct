@@ -42,22 +42,13 @@ define(
             var dismissBubble,
                 pendingBubble,
                 mousePosition,
-                touchPosition,
-                scopeOff,
-                touchDELAY = 500;
+                scopeOff;
 
             function trackPosition(event) {
                 // Record mouse position, so bubble can be shown at latest
                 // mouse position (not just where the mouse entered)
                 mousePosition = [ event.clientX, event.clientY ];
             }
-            
-//            function trackTouchPosition(event) {
-//                var tEvent = event.changedTouches[0];
-//                // Record mouse position, so bubble can be shown at latest
-//                // mouse position (not just where the mouse entered)
-//                touchPosition = [ tEvent.clientX + 44, tEvent.clientY ];
-//            }
 
             function hideBubble() {
                 // If a bubble is showing, dismiss it
@@ -76,7 +67,6 @@ define(
                 // Also clear mouse position so we don't have a ton of tiny
                 // arrays allocated while user mouses over things
                 mousePosition = undefined;
-                touchPosition = undefined;
             }
 
             function showBubble(event) {
@@ -101,23 +91,6 @@ define(
 
                 element.on('mouseleave', hideBubble);
             }
-            
-//            function showTouchBubble(event) {
-//                // Makes sure user is only touching one place
-//                if (event.touches.length < 2) {
-//                    trackTouchPosition(event);
-//                    pendingBubble = $timeout(function () {
-//                        dismissBubble = infoService.display(
-//                            "info-table",
-//                            domainObject.getModel().name,
-//                            domainObject.useCapability('metadata'),
-//                            touchPosition
-//                        );
-//                    }, touchDELAY);
-//
-//                    element.on('touchend', hideBubble);
-//                }
-//            }
             
             // Checks if you are on a mobile device, if the device is
             // not mobile (queryService.isMobile() = false), then
