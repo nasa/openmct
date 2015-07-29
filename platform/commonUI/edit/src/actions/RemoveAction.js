@@ -40,7 +40,7 @@ define(
          * @constructor
          * @memberof module:editor/actions/remove-action
          */
-        function RemoveAction($q, context) {
+        function RemoveAction($q, navigationService, context) {
             var object = (context || {}).domainObject;
 
             /**
@@ -69,6 +69,15 @@ define(
                 return persistence && persistence.persist();
             }
 
+            function checkCurrentObjectNavigation(parent) {
+                var currParent = navigationService.getNavigation().getCapability('context').getParent()
+                if(currParent.getId() === parent.getId()) {
+                    navigationService.setNavigation(parent);
+                } else {
+                    console.log("ALL GOOD");
+                }
+            }
+            
             /**
              * Remove the object from its parent, as identified by its context
              * capability.
@@ -77,6 +86,9 @@ define(
              */
             function removeFromContext(contextCapability) {
                 var parent = contextCapability.getParent();
+                // Goes to parent if deleting currently
+                // opened object
+                checkCurrentObjectNavigation(parent);
                 $q.when(
                     parent.useCapability('mutation', doMutate)
                 ).then(function () {

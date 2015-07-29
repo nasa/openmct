@@ -59,7 +59,7 @@
                 "glyph": "Z",
                 "name": "Remove",
                 "description": "Remove this object from its containing object.",
-                "depends": [ "$q" ]
+                "depends": [ "$q", "navigationService" ]
             },
             {
                 "key": "save",
