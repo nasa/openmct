@@ -75,6 +75,19 @@ define(
                     mockDomainObject.calls
                 );
             });
+            
+            it("mobile", function () {
+                mockQueryService.isMobile.andReturn(true);
+                gesture = new ContextMenuGesture(mockTimeout, mockQueryService, mockElement, mockDomainObject);
+                
+                // Capture the contextmenu callback
+                fireGesture =  mockElement.on.mostRecentCall.args[1];
+                
+                expect(mockElement.on).toHaveBeenCalledWith(
+                    "touchstart",
+                    jasmine.any(Function)
+                );
+            });
         });
     }
 );

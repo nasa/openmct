@@ -49,6 +49,8 @@ define(
                 mockDomainObject,
                 mockEvent,
                 mockActionContext,
+                mockNavigator,
+                mockStopPropagation,
                 action;
 
             beforeEach(function () {
@@ -63,7 +65,7 @@ define(
                 mockScope = {};
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
-                mockEvent = jasmine.createSpyObj("event", ["preventDefault"]);
+                mockEvent = jasmine.createSpyObj("event", ["preventDefault", "stopPropagation"]);
                 mockEvent.pageX = 0;
                 mockEvent.pageY = 0;
 
@@ -73,7 +75,7 @@ define(
                 mockRootScope.$new.andReturn(mockScope);
                 
                 mockActionContext = {key: 'menu', domainObject: mockDomainObject, event: mockEvent};
-
+                
                 action = new ContextMenuAction(
                     mockCompile,
                     mockDocument,
@@ -137,6 +139,44 @@ define(
 
                 // Listener should have been detached from body
                 expect(mockBody.off).toHaveBeenCalled();
+            });
+            
+            it("keeps a menu when menu is clicked", function () {
+                // Show the menu
+                mockEvent
+                action.perform();
+                
+                // Find and fire body's mousedown listener
+                mockMenu.on.calls.forEach(function (call) {
+                    if (call.args[0] === 'mousedown') {
+//                        call.args[1]();
+                    }
+                });
+
+                // Menu should have been removed
+                expect(mockMenu.remove).not.toHaveBeenCalled();
+
+                // Listener should have been detached from body
+                expect(mockBody.off).not.toHaveBeenCalled();
+            });
+            
+            it("mobile", function () {
+                mockQueryService.isMobile.andReturn(true);
+                action = new ContextMenuAction(
+                    mockCompile,
+                    mockDocument,
+                    mockWindow,
+                    mockRootScope,
+                    mockQueryService,
+                    mockActionContext
+                );
+                action.perform();
+                
+                mockMenu.on.calls.forEach(function (call) {
+                    if (call.args[0] === 'touchstart') {
+//                        call.args[1]();
+                    }
+                });
             });
         });
     }
