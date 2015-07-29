@@ -49,7 +49,6 @@ define(
                 mockQueryService = jasmine.createSpyObj("queryService", ["isMobile"]);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
                 mockEvent = jasmine.createSpyObj("event", ["preventDefault"]);
-                mockQueryService = jasmine.createSpyObj("queryService", ["isMobile"]);
                 
                 gesture = new ContextMenuGesture(mockTimeout, mockQueryService, mockElement, mockDomainObject);
 
