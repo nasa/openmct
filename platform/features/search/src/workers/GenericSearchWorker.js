@@ -61,13 +61,6 @@
                 model: data.model
             });
         }
-        
-        /*
-        message = {
-            request: 'index'
-        };
-        return message;
-        */
     }
     
     // Helper function for serach()

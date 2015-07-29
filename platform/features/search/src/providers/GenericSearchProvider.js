@@ -49,7 +49,7 @@ define(
                 latestResults = [],
                 lastSearchTimestamp = 0;
 
-            // Tell the web worker to add a new item's model to its list of items.
+            // Tell the web worker to add a domain object's model to its list of items.
             function indexItem(domainObject) {
                 var message;
                 
@@ -80,19 +80,20 @@ define(
             }
             
             function handleResponse(event) {
-                var ids,
+                var ids = [],
                     id;
                 
+                // If we have the results from a search 
                 if (event.data.request === 'search') {
                     // Convert the ids given from the web worker into domain objects
-                    ids = [];
                     for (id in event.data.results) {
                         ids.push(id);
                     }
                     objectService.getObjects(ids).then(function (objects) {
                         var id;
-                        latestResults = [];
                         
+                        // Reset and repopulate the latest results
+                        latestResults = [];
                         for (id in objects) {
                             latestResults.push({
                                 object: objects[id],
@@ -100,6 +101,7 @@ define(
                                 score: event.data.results[id].score
                             });
                         }
+                        // Update the timestamp to the one that this search was made with
                         lastSearchTimestamp = event.data.timestamp;
                     });
                 }
@@ -112,12 +114,6 @@ define(
                 // Index the current node
                 indexItem(children[i]);
                 
-                /*
-                if (stopTime && Date.now() >= stopTime) {
-                    // This indexing of items has timed out 
-                    return children;
-                } else 
-                */
                 if (i >= children.length) {
                     // Done!
                     return children;
@@ -147,16 +143,6 @@ define(
                     var objects = [],
                         id;
                     
-                    /*
-                    // TODO: Is this timeout necissary? 
-                    if (timeout) {
-                        // Set a timeout for itemsHelper
-                        stopTime = Date.now() + timeout;
-                    }
-                    // If there was no timeout provided, leave undefined
-                    // itemsHelper should just treat this as having no timeout
-                    */
-                    
                     // Get each of the objects in objectsById
                     for (id in objectsById) {
                         objects.push(objectsById[id]);
@@ -180,27 +166,17 @@ define(
                     maxResults = DEFAULT_MAX_RESULTS;
                 }
                 
-                /*
-                // Get items list
-                return getItems(timeout).then(function () {
-                    // Then get the worker to search through it
-                    workerSearch(input, maxResults, timestamp);
-                    return; // There's nothing we need to return here 
-                });
-                */
-                
                 // Instead, assume that the items have already been indexed, and 
                 //  just send the query to the worker.
-                
                 workerSearch(input, maxResults, timestamp);
             }
             
             // Index the tree's contents once at the beginning 
+            getItems();
             // TODO: Is this a good assumption that the tree's contents will not 
             //       change often enough? 
             // TODO: This makes the timeout parameter that queryGeneric takes 
             //       useless. See if timing out worker is an idea that works. 
-            getItems();
             
             
             return {

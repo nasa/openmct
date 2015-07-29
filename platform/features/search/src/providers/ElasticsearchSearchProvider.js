@@ -77,7 +77,7 @@ define(
             
             // Currently specific to elasticsearch
             function processSearchTerm(searchTerm) {
-                var spaceIndex; 
+                var spaceIndex;
                 
                 // Cut out any extra spaces
                 while (searchTerm.substr(0, 1) === ' ') {
@@ -88,7 +88,8 @@ define(
                 }
                 spaceIndex = searchTerm.indexOf('  ');
                 while (spaceIndex !== -1) {
-                    searchTerm = searchTerm.substring(0, spaceIndex) + searchTerm.substring(spaceIndex + 1, searchTerm.length);
+                    searchTerm = searchTerm.substring(0, spaceIndex) +
+                                    searchTerm.substring(spaceIndex + 1, searchTerm.length);
                     spaceIndex = searchTerm.indexOf('  ');
                 }
                 
@@ -105,7 +106,7 @@ define(
             }
             
             // Processes results from the format that elasticsearch returns to 
-            // a list of objects in the format that mct-representation can use
+            // a list of search result objects (that contain domain objects)
             function processResults(rawResults, timestamp) {
                 var results = rawResults.hits.hits,
                     resultsLength = results.length,
