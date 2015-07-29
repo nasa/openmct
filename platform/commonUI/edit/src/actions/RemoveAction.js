@@ -70,11 +70,9 @@ define(
             }
 
             function checkCurrentObjectNavigation(parent) {
-                var currParent = navigationService.getNavigation().getCapability('context').getParent()
-                if(currParent.getId() === parent.getId()) {
+                var currParent = navigationService.getNavigation().getCapability('context').getParent();
+                if (currParent.getId() === parent.getId()) {
                     navigationService.setNavigation(parent);
-                } else {
-                    console.log("ALL GOOD");
                 }
             }
             

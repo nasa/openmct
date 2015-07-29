@@ -28,6 +28,7 @@ define(
 
         describe("The Remove action", function () {
             var mockQ,
+                mockNavigationService,
                 mockDomainObject,
                 mockParent,
                 mockContext,
@@ -70,7 +71,16 @@ define(
                 mockMutation = jasmine.createSpyObj("mutation", [ "invoke" ]);
                 mockPersistence = jasmine.createSpyObj("persistence", [ "persist" ]);
                 mockType = jasmine.createSpyObj("type", [ "hasFeature" ]);
-
+                mockNavigationService = jasmine.createSpyObj(
+                    "navigationService",
+                    [
+                        "getNavigation",
+                        "setNavigation",
+                        "addListener",
+                        "removeListener"
+                    ]
+                );
+                
                 mockDomainObject.getId.andReturn("test");
                 mockDomainObject.getCapability.andReturn(mockContext);
                 mockContext.getParent.andReturn(mockParent);
@@ -88,7 +98,7 @@ define(
 
                 actionContext = { domainObject: mockDomainObject };
 
-                action = new RemoveAction(mockQ, actionContext);
+                action = new RemoveAction(mockQ, mockNavigationService, actionContext);
             });
 
             it("only applies to objects with parents", function () {
