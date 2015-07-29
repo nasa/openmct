@@ -43,6 +43,7 @@ define(
                 mockBody,
                 mockWindow,
                 mockRootScope,
+                mockQueryService,
                 mockScope,
                 mockElement,
                 mockDomainObject,
@@ -58,6 +59,7 @@ define(
                 mockBody = jasmine.createSpyObj("body", JQLITE_FUNCTIONS);
                 mockWindow = { innerWidth: MENU_DIMENSIONS[0] * 4, innerHeight: MENU_DIMENSIONS[1] * 4 };
                 mockRootScope = jasmine.createSpyObj("$rootScope", ["$new"]);
+                mockQueryService = jasmine.createSpyObj("queryService", ["isMobile"]);
                 mockScope = {};
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
@@ -77,6 +79,7 @@ define(
                     mockDocument,
                     mockWindow,
                     mockRootScope,
+                    mockQueryService,
                     mockActionContext
                 );
             });
