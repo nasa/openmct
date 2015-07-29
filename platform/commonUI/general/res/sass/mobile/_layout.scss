@@ -199,3 +199,8 @@
         overflow-x: hidden !important;
     }
 }
+.disable-select {
+    @include phoneandtablet {
+        @include user-select(none);
+    }
+}
