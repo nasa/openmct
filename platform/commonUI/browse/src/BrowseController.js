@@ -145,18 +145,15 @@ define(
                 } else {
                     $scope.atRoot = true;
                 }
-                console.log($scope.atRoot);
             }
             
             function checkRoot() {
-                var parent = navigationService.getNavigation().getCapability('context').getParent(),
-                    grandparent;
+                var parent = navigationService.getNavigation().getCapability('context').getParent();
                 if (parent.getId() !== ROOT_ID) {
                     $scope.atRoot = false;
                 } else {
                     $scope.atRoot = true;
                 }
-                console.log($scope.atRoot);
             }
 
             // Load the root object, put it in the scope.
