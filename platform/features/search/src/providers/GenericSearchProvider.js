@@ -47,8 +47,8 @@ define(
          */
         function GenericSearchProvider($q, objectService, workerService, roots) {
             var worker = workerService.run('genericSearchWorker'),
-                latestResults = [],
-                lastSearchTimestamp = 0,
+                //latestResults = [],
+                //lastSearchTimestamp = 0,
                 pendingQueries = {};
             // pendingQueries is a dictionary with the key value pairs st 
             // the key is the timestamp and the value is the promise
@@ -94,24 +94,26 @@ define(
                         ids.push(id);
                     }
                     objectService.getObjects(ids).then(function (objects) {
-                        var id;
+                        var results = [],
+                            id;
                         
                         // Reset and repopulate the latest results
-                        latestResults = [];
+                        //latestResults = [];
                         for (id in objects) {
-                            latestResults.push({
+                            //latestResults.push({
+                            results.push({
                                 object: objects[id],
                                 id: id,
                                 score: event.data.results[id].score
                             });
                         }
                         // Update the timestamp to the one that this search was made with
-                        lastSearchTimestamp = event.data.timestamp;
+                        //lastSearchTimestamp = event.data.timestamp;
                         
                         //console.log('provider - about to resolve', latestResults);
                         
                         // Resove the promise corresponding to this 
-                        pendingQueries[lastSearchTimestamp].resolve(latestResults);
+                        pendingQueries[event.data.timestamp].resolve(results);
                     });
                 }
             }
@@ -233,6 +235,7 @@ define(
                 getLatestTimestamp: function () {
                     return lastSearchTimestamp;
                 }
+
             };
         }
 
