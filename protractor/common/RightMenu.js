@@ -5,7 +5,7 @@ var RightMenu = (function () {
     }
     //RightMenu Click on Object
     RightMenu.prototype.delete = function (name, flag) {
-        if(flag === 'undefined'){
+        if(typeof flag === 'undefined'){
             flag = true;
         }
         if(flag === true){
