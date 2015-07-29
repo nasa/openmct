@@ -1,0 +1,118 @@
+var fullScreenFile = require("../common/Buttons");
+var createItem = require("../common/CreateItem")
+var itemEdit = require("../common/EditItem");
+var rightMenu = require("../common/RightMenu");
+var Drag = require("../common/drag");
+
+describe('Test Drag and Drop', function() {
+    var fullScreenClass = new fullScreenFile();
+    var createClass = new createItem();
+    var editItemClass = new itemEdit();
+    var rightMenuClass = new rightMenu();
+    var dragDrop = new Drag();
+
+    beforeEach(function() {
+            browser.ignoreSynchronization = true;
+            browser.get('http://localhost:1984/warp/');
+            browser.sleep(4000);  // 4 seconds
+    });
+    
+    it('should create a folder', function(){
+        var ITEM_NAME = "Folder";
+        var ITEM_TYPE = "folder";
+        var ITEM_MENU_GLYPH = 'F\nFolder';
+        var ITEM_GRID_SELECT = 'P\nF\nFolder\n0 Items';
+        
+        browser.wait(function() {
+           return createClass.createButton().click(); 
+        }).then(function (){
+            var folder =  createClass.selectNewItem(ITEM_TYPE);
+            expect(folder.getText()).toEqual([ ITEM_MENU_GLYPH ]);
+            browser.sleep(1000);
+            folder.click()  
+        }).then(function() {
+            browser.wait(function () {
+                return element.all(by.model('ngModel[field]')).isDisplayed();
+            })
+            createClass.fillFolderForum(ITEM_NAME, ITEM_TYPE).click();
+            browser.sleep(1000);
+            var item = editItemClass.SelectItem(ITEM_GRID_SELECT);
+            expect(item.count()).toBe(1);
+            browser.sleep(1000);
+        });
+    });
+    it('should create a timer',function (){
+        var ITEM_NAME = "Timer";
+        var ITEM_TYPE = "timer";
+        var ITEM_MENU_GLYPH = 'õ\nTimer';
+        var ITEM_GRID_SELECT = 'P\nõ\nTimer';
+        
+        browser.wait(function() {
+           return createClass.createButton().click(); 
+        }).then(function (){
+            var folder =  createClass.selectNewItem(ITEM_TYPE)
+            expect(folder.getText()).toEqual([ ITEM_MENU_GLYPH ]);
+            browser.sleep(1000);
+               folder.click()  
+        }).then(function() {
+            browser.wait(function () {
+                return element.all(by.model('ngModel[field]')).isDisplayed();
+            })
+            createClass.fillFolderForum(ITEM_NAME, ITEM_TYPE).click();
+            browser.sleep(1500);
+        }).then(function (){
+            var item = editItemClass.SelectItem(ITEM_GRID_SELECT);
+            expect(item.count()).toBe(1);
+            browser.sleep(1000);
+        });
+        
+    });
+    it('should drag timer into folder', function(){
+        var ITEM_SIDE_SELECT = ">\nF\nFolder"
+        var name = "õ\nTimer";
+        
+        rightMenuClass.select(ITEM_SIDE_SELECT, true).click();
+        browser.sleep(2000);
+        var object = element.all(by.css('.ng-isolate-scope.ng-pristine.ng-valid')).filter(function (ele){
+            return ele.getText().then(function(text) {
+                return text === name;
+            });
+        });
+        var clock = object.get(1);
+        var panel = element(by.css('.items-holder.grid.abs.ng-scope'));
+        
+        //drag
+        expect(panel.isPresent()).toBe(true)
+        expect(clock.isPresent()).toBe(true)        
+        browser.executeScript(dragDrop.DragDrop,clock.getWebElement(),panel.getWebElement())
+        browser.sleep(3000);
+        //check
+        var dragObject = element.all(by.repeater('childObject in composition')).filter(function (ele) {
+            return ele.getText().then(function(text) {
+                return text === "P\nõ\nTimer"
+            })
+        })//output console.log
+        /*expect(dragObject.get(0).isPresent()).toBe(true);
+        browser.manage().logs().get('browser').then(function(browserLogs) {
+            browserLogs.forEach(function(log){
+                console.log(log.message);
+           });
+        });*/
+    });
+    it('should delete the Folder Item', function(){
+        var ITEM_SIDE_SELECT = ">\nF\nFolder"
+        browser.wait(function() {
+            return element.all(by.css('.ui-symbol.view-control.ng-binding.ng-scope')).isDisplayed();
+        });
+        rightMenuClass.delete(ITEM_SIDE_SELECT);
+        browser.sleep(1000);
+    });
+    it('should delete the Timer Item', function(){
+        var ITEM_SIDE_SELECT = "õ\nTimer";
+        browser.wait(function() {
+            return element.all(by.css('.ui-symbol.view-control.ng-binding.ng-scope')).isDisplayed();
+        });
+        rightMenuClass.delete(ITEM_SIDE_SELECT);
+        browser.sleep(1000);
+    });
+});
