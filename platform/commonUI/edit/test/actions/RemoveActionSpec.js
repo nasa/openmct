@@ -65,6 +65,9 @@ define(
                     },
                     useCapability: function (k, v) {
                         return capabilities[k].invoke(v);
+                    },
+                    getId: function () {
+                        return "test";
                     }
                 };
                 mockContext = jasmine.createSpyObj("context", [ "getParent" ]);
@@ -80,12 +83,13 @@ define(
                         "removeListener"
                     ]
                 );
+                mockNavigationService.getNavigation.andReturn(mockDomainObject);
+                
                 
                 mockDomainObject.getId.andReturn("test");
                 mockDomainObject.getCapability.andReturn(mockContext);
                 mockContext.getParent.andReturn(mockParent);
                 mockType.hasFeature.andReturn(true);
-
 
                 capabilities = {
                     mutation: mockMutation,

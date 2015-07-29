@@ -301,7 +301,7 @@ define(
                     mockNavigationService
                 );
                 
-                mockScope.checkRoot();                
+                mockScope.checkRoot();
             });
             
             // Mocks the back arrow call that
