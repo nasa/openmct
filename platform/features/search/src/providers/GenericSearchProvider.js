@@ -51,14 +51,19 @@ define(
 
             // Tell the web worker to add a new item's model to its list of items.
             function indexItem(domainObject) {
-                var message = {
-                    request: 'index',
-                    model: domainObject.getModel(),
-                    id: domainObject.getId()
-                };
-                // Note that getModel() by definition returns a JavaScript object
-                // that can be losslesly converted to a JSON object.
-                worker.postMessage(message);
+                var message;
+                
+                // undefined check
+                if (domainObject && domainObject.getModel) {
+                    // Using model instead of whole domain object because
+                    //   it's a JSON object.
+                    message = {
+                        request: 'index',
+                        model: domainObject.getModel(),
+                        id: domainObject.getId()
+                    };
+                    worker.postMessage(message);
+                }
             }
             
             // Tell the worker to search for items it has that match this searchInput.
@@ -104,11 +109,16 @@ define(
             
             // Recursive helper function for getItems()
             function itemsHelper(children, i) {
-                var date = new Date();
-                if (stopTime && date.getTime() >= stopTime) {
+                // Index the current node
+                indexItem(children[i]);
+                
+                /*
+                if (stopTime && Date.now() >= stopTime) {
                     // This indexing of items has timed out 
                     return children;
-                } else if (i >= children.length) {
+                } else 
+                */
+                if (i >= children.length) {
                     // Done!
                     return children;
                 } else if (children[i].hasCapability('composition')) {
@@ -128,43 +138,32 @@ define(
             function getItems(timeout) {
                 var rootIds = [],
                     i;
-                
                 for (i = 0; i < roots.length; i += 1) {
                     rootIds.push(roots[i].id);
                 }
                 
                 // Aquire root objects
-                return objectService.getObjects(rootIds).then(function (objectsById) {
+                objectService.getObjects(rootIds).then(function (objectsById) {
                     var objects = [],
-                        date,
                         id;
                     
+                    /*
+                    // TODO: Is this timeout necissary? 
                     if (timeout) {
                         // Set a timeout for itemsHelper
-                        date = new Date();
-                        stopTime = date.getTime() + timeout;
+                        stopTime = Date.now() + timeout;
                     }
                     // If there was no timeout provided, leave undefined
                     // itemsHelper should just treat this as having no timeout
+                    */
                     
-                    // Convert to the format itemsHelper takes
+                    // Get each of the objects in objectsById
                     for (id in objectsById) {
                         objects.push(objectsById[id]);
                     }
                     
-                    // Get all of its descendents
-                    return itemsHelper(objects, 0).then(function (items) {
-                        var i;
-                        
-                        // Add each item that itemsHelper found to the web worker index
-                        // TODO: Try to do this within itemsHelper. Perhaps just 
-                        //       need to add this to the last two if statements? 
-                        for (i = 0; i < items.length; i += 1) {
-                            indexItem(items[i]);
-                        }
-                        return; // We don't need to return anything anymore
-                        // TODO: Fix return statements. Do we need them still?
-                    });
+                    // Index all of the roots' descendents
+                    itemsHelper(objects, 0);
                 });
             }
             
@@ -194,7 +193,6 @@ define(
                 //  just send the query to the worker.
                 
                 workerSearch(input, maxResults, timestamp);
-                return;
             }
             
             // Index the tree's contents once at the beginning 
