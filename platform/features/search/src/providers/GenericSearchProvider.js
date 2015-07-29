@@ -181,13 +181,29 @@ define(
                     maxResults = DEFAULT_MAX_RESULTS;
                 }
                 
+                /*
                 // Get items list
                 return getItems(timeout).then(function () {
                     // Then get the worker to search through it
                     workerSearch(input, maxResults, timestamp);
                     return; // There's nothing we need to return here 
                 });
+                */
+                
+                // Instead, assume that the items have already been indexed, and 
+                //  just send the query to the worker.
+                
+                workerSearch(input, maxResults, timestamp);
+                return;
             }
+            
+            // Index the tree's contents once at the beginning 
+            // TODO: Is this a good assumption that the tree's contents will not 
+            //       change often enough? 
+            // TODO: This makes the timeout parameter that queryGeneric takes 
+            //       useless. See if timing out worker is an idea that works. 
+            getItems();
+            
             
             return {
                 /**

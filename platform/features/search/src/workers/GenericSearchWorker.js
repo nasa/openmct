@@ -34,7 +34,6 @@
     // Helper function for index()
     function conainsItem(id) {
         var i;
-        
         for (i = 0; i < indexedItems.length; i += 1) {
             if (indexedItems[i].id === id) {
                 return true;
