@@ -63,10 +63,12 @@
             });
         }
         
+        /*
         message = {
             request: 'index'
         };
         return message;
+        */
     }
     
     // Helper function for serach()

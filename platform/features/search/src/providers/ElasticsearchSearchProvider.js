@@ -77,12 +77,19 @@ define(
             
             // Currently specific to elasticsearch
             function processSearchTerm(searchTerm) {
-                // Shave any spaces off of the ends of the input
+                var spaceIndex; 
+                
+                // Cut out any extra spaces
                 while (searchTerm.substr(0, 1) === ' ') {
                     searchTerm = searchTerm.substring(1, searchTerm.length);
                 }
                 while (searchTerm.substr(searchTerm.length - 1, 1) === ' ') {
                     searchTerm = searchTerm.substring(0, searchTerm.length - 1);
+                }
+                spaceIndex = searchTerm.indexOf('  ');
+                while (spaceIndex !== -1) {
+                    searchTerm = searchTerm.substring(0, spaceIndex) + searchTerm.substring(spaceIndex + 1, searchTerm.length);
+                    spaceIndex = searchTerm.indexOf('  ');
                 }
                 
                 if (isDefaultFormat(searchTerm)) {
@@ -100,7 +107,7 @@ define(
             // Processes results from the format that elasticsearch returns to 
             // a list of objects in the format that mct-representation can use
             function processResults(rawResults, timestamp) {
-                var results = rawResults.data.hits.hits,
+                var results = rawResults.hits.hits,
                     resultsLength = results.length,
                     ids = [],
                     scores = {},
@@ -177,9 +184,9 @@ define(
                     return $http({
                         method: "GET",
                         url: esQuery
-                    }).then(function (rawResults) {
+                    }).success(function (data, status) {
                         // ...then process the data 
-                        return processResults(rawResults, timestamp);
+                        return processResults(data, timestamp);
                     });
                 } else {
                     latestResults = [];
