@@ -37,16 +37,26 @@ define(
          * to be treated as one.
          *
          * @constructor
+         * @param $q 
          * @param $timeout Angular's $timeout service, a replacement for 
          *        JavaScript's setTimeout function.
          * @param {SearchProvider[]} providers the search providers to be
          *        aggregated
          */
-        function SearchAggregator($timeout, providers) {
-            var latestMergedResults = [],
-                lastMergeTimestamps = [],
-                lastQueryTimestamp = 0,
+        function SearchAggregator($q,/* $timeout, */providers) {
+            var //latestMergedResults = [],
+                //lastMergeTimestamps = [],
+                //lastQueryTimestamp = 0,
                 loading;
+            
+            function concatArrays(arrays) {
+                var i,
+                    array = [];
+                for (i = 0; i < arrays.length; i += 1) {
+                    array = array.concat(arrays[i]);
+                }
+                return array;
+            }
             
             // Remove duplicate objects that have the same ID 
             function filterRepeats(results) {
@@ -112,6 +122,7 @@ define(
                 return results;
             }
             
+            /*
             // For documentation, see updateResults below.
             function updateResults() {
                 var newerResults = [],
@@ -132,7 +143,9 @@ define(
                 latestMergedResults = newerResults;
                 lastMergeTimestamps = providerTimestamps;
             }
+            */
             
+            /*
             // For documentation, see refresh below.
             function refresh(callback) {
                 // We are loading results
@@ -158,20 +171,25 @@ define(
                 }
                 waitForLatest();
             }
+            */
             
             // For documentation, see sendQuery below.
             function queryAll(inputText, callback, timestamp) {
-                var date,
-                    i;
+                var i,
+                    resultPromises = [];
+                
+                // We are loading
+                loading = true;
                 
                 // If there's not a timestamp, make this time the timestamp
                 if (!timestamp) {
-                    date = new Date();
-                    timestamp = date.getTime();
+                    timestamp = Date.now();
                 }
                 
                 // Update globals 
-                lastQueryTimestamp = timestamp;
+                //lastQueryTimestamp = timestamp;
+                
+                /*
                 
                 // Send the query to all the providers
                 for (i = 0; i < providers.length; i += 1) {
@@ -183,6 +201,31 @@ define(
                 
                 // Start refresh loop
                 refresh(callback);
+                */
+                
+                // Instead, get back a bunch of promises from the providers
+                
+                // Send the query to all the providers
+                for (i = 0; i < providers.length; i += 1) {
+                    resultPromises.push(providers[i].query(inputText, timestamp, DEFAULT_MAX_RESULTS, DEFUALT_TIMEOUT));
+                }
+                //console.log('aggregator - result promises array', resultPromises);
+                
+                return $q.all(resultPromises).then(function (resultsArrays) {
+                    var results = concatArrays(resultsArrays);
+                    results = filterRepeats(results);
+                    results = orderByScore(results);
+                    
+                    // TODO: sync this with stuff,, timestamps
+                    //latestMergedResults = results;
+                    
+                    //console.log('aggregator - final results', results);
+                    
+                    // We are done loading 
+                    loading = false;
+                    
+                    return results;
+                });
             }
             
             return {
@@ -198,7 +241,7 @@ define(
                  *   latest results list, which allows us to see if it has been 
                  *   updated. If not provided, this aggregator will. 
                  */
-                sendQuery: queryAll,
+                query: queryAll,
                 
                 /** 
                  * Repeatedly updates the latest results until those results are 
@@ -207,7 +250,9 @@ define(
                  * @param callback A callback funtion which is a setter for the 
                  *   results list, originally passed by the user of this service.
                  */
+                /*
                 refresh: refresh,
+                */
                 
                 /** 
                  * Get the latest search results that have been calculated. The 
@@ -219,17 +264,21 @@ define(
                  * @param stop (optional) The index of latestMergedResults at
                  *   which to stop getting results. 
                  */
+                /*
                 getLatestResults: function (start, stop) {
                     return latestMergedResults.slice(start, stop);
                 },
+                */
                 
                 /** 
                  * Get the number of search results that have been calculated most 
                  *   recently. 
                  */
+                /*
                 getNumResults: function () {
                     return latestMergedResults.length;
                 },
+                */
                 
                 /**
                  * Checks to see if we are still waiting for the results to be 

@@ -108,12 +108,14 @@ define(
             // Processes results from the format that elasticsearch returns to 
             // a list of search result objects (that contain domain objects)
             function processResults(rawResults, timestamp) {
-                var results = rawResults.hits.hits,
+                var results = rawResults.data.hits.hits,
                     resultsLength = results.length,
                     ids = [],
                     scores = {},
                     searchResults = [],
                     i;
+                
+                //console.log('es provider - raw results', rawResults);
                 
                 /*
                 if (rawResults.data.hits.total > resultsLength) {
@@ -133,10 +135,14 @@ define(
                     scores[ids[i]] = results[i][SCORE];
                 }
                 
+                //console.log('es provider - ids', ids);
+                
                 // Get the domain objects from their IDs
                 return objectService.getObjects(ids).then(function (objects) {
                     var j,
                         id;
+                    
+                    //console.log('es provider - objects', objects);
                     
                     for (j = 0; j < resultsLength; j += 1) {
                         id = ids[j];
@@ -154,6 +160,9 @@ define(
                     
                     latestResults = searchResults;
                     lastSearchTimestamp = timestamp;
+                    
+                    //console.log('es provider - search results', searchResults);
+                    
                     return searchResults;
                 });
             }
@@ -185,11 +194,12 @@ define(
                     return $http({
                         method: "GET",
                         url: esQuery
-                    }).success(function (data, status) {
+                    }).then(function (rawResults) {
                         // ...then process the data 
-                        return processResults(data, timestamp);
+                        return processResults(rawResults, timestamp);
                     });
                 } else {
+                    //console.log('es provider - empty search input');
                     latestResults = [];
                     lastSearchTimestamp = timestamp;
                     return latestResults;

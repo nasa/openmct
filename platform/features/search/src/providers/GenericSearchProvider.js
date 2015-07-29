@@ -38,17 +38,21 @@ define(
          * the filetree without using external search implementations.
          *
          * @constructor
+         * @param $q 
          * @param {ObjectService} objectService the service from which
          *        domain objects can be gotten.
          * @param {WorkerService} workerService the service which allows
          *        more easy creation of web workers.
          * @param {roots[]} roots an array of all the root domain objects.
          */
-        function GenericSearchProvider(objectService, workerService, roots) {
+        function GenericSearchProvider($q, objectService, workerService, roots) {
             var worker = workerService.run('genericSearchWorker'),
                 latestResults = [],
-                lastSearchTimestamp = 0;
-
+                lastSearchTimestamp = 0,
+                pendingQueries = {};
+            // pendingQueries is a dictionary with the key value pairs st 
+            // the key is the timestamp and the value is the promise
+            
             // Tell the web worker to add a domain object's model to its list of items.
             function indexItem(domainObject) {
                 var message;
@@ -103,6 +107,11 @@ define(
                         }
                         // Update the timestamp to the one that this search was made with
                         lastSearchTimestamp = event.data.timestamp;
+                        
+                        //console.log('provider - about to resolve', latestResults);
+                        
+                        // Resove the promise corresponding to this 
+                        pendingQueries[lastSearchTimestamp].resolve(latestResults);
                     });
                 }
             }
@@ -153,11 +162,14 @@ define(
                 });
             }
             
+            
             // For documentation, see query below.
-            function queryGeneric(input, timestamp, maxResults, timeout) {
+            function query(input, timestamp, maxResults/*, timeout*/) {
                 var terms = [],
                     searchResults = [],
-                    resultsLength;
+                    defer = $q.defer();
+                
+                pendingQueries[timestamp] = defer;
                 
                 // Check to see if the user provided a maximum 
                 // number of results to display
@@ -169,13 +181,15 @@ define(
                 // Instead, assume that the items have already been indexed, and 
                 //  just send the query to the worker.
                 workerSearch(input, maxResults, timestamp);
+                
+                return defer.promise;
             }
             
             // Index the tree's contents once at the beginning 
             getItems();
             // TODO: Is this a good assumption that the tree's contents will not 
             //       change often enough? 
-            // TODO: This makes the timeout parameter that queryGeneric takes 
+            // TODO: This makes the timeout parameter that query takes 
             //       useless. See if timing out worker is an idea that works. 
             
             
@@ -202,7 +216,7 @@ define(
                  * @param timeout (optional) the time after which the search should 
                  *   stop calculations and return partial results
                  */
-                query: queryGeneric,
+                query: query,
                 
                 /** 
                  * Get the latest search results that have been calculated. The 

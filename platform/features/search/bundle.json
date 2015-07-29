@@ -32,7 +32,7 @@
                 "provides": "searchService",
                 "type": "provider",
                 "implementation": "providers/GenericSearchProvider.js",
-                "depends": [ "objectService", "workerService", "roots[]" ]
+                "depends": [ "$q", "objectService", "workerService", "roots[]" ]
             },
             {
                 "provides": "searchService",
@@ -44,7 +44,7 @@
                 "provides": "searchService",
                 "type": "aggregator",
                 "implementation": "SearchAggregator.js",
-                "depends": [ "$timeout" ]
+                "depends": [ "$q" ]
             }
         ],
         "workers": [
