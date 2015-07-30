@@ -40,7 +40,7 @@ define(
          * @constructor
          * @memberof module:editor/actions/remove-action
          */
-        function RemoveAction($q, context) {
+        function RemoveAction($q, navigationService, context) {
             var object = (context || {}).domainObject;
 
             /**
@@ -69,14 +69,25 @@ define(
                 return persistence && persistence.persist();
             }
 
+            // Checks current object with object being removed
+            function checkCurrentObjectNavigation(object, parent) {
+                var currentObj = navigationService.getNavigation();
+                if (currentObj.getId() === object.getId()) {
+                    navigationService.setNavigation(parent);
+                }
+            }
+            
             /**
              * Remove the object from its parent, as identified by its context
              * capability.
-             * @param {ContextCapability} contextCapability the "context" capability
-             *        of the domain object being removed.
+             * @param {object} domain object being removed contextCapability
+                      gotten from the "context" capability of this object
              */
-            function removeFromContext(contextCapability) {
-                var parent = contextCapability.getParent();
+            function removeFromContext(object) {
+                var contextCapability = object.getCapability('context'),
+                    parent = contextCapability.getParent();
+                // Navigates to parent if deleting current object
+                checkCurrentObjectNavigation(object, parent);
                 $q.when(
                     parent.useCapability('mutation', doMutate)
                 ).then(function () {
@@ -91,7 +102,7 @@ define(
                  *         fulfilled when the action has completed.
                  */
                 perform: function () {
-                    return $q.when(object.getCapability('context'))
+                    return $q.when(object)
                         .then(removeFromContext);
                 }
             };

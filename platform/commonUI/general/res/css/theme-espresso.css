@@ -901,19 +901,63 @@ mct-container {
     display: none; } }
 
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 184, ../sass/mobile/_layout.scss */
-  .mobile-unhide {
-    display: inline-block; } }
+  /* line 183, ../sass/mobile/_layout.scss */
+  .mobile-important-hide {
+    display: none !important; } }
+
+@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
+  /* line 189, ../sass/mobile/_layout.scss */
+  .mobile-back-hide {
+    pointer-events: none;
+    -moz-transition-property: opacity;
+    -o-transition-property: opacity;
+    -webkit-transition-property: opacity;
+    transition-property: opacity;
+    -moz-transition-duration: 0.4s;
+    -o-transition-duration: 0.4s;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    opacity: 0; } }
+
+@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
+  /* line 198, ../sass/mobile/_layout.scss */
+  .mobile-back-unhide {
+    pointer-events: all;
+    -moz-transition-property: opacity;
+    -o-transition-property: opacity;
+    -webkit-transition-property: opacity;
+    transition-property: opacity;
+    -moz-transition-duration: 0.4s;
+    -o-transition-duration: 0.4s;
+    -webkit-transition-duration: 0.4s;
+    transition-duration: 0.4s;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    opacity: 1; } }
 
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 191, ../sass/mobile/_layout.scss */
+  /* line 207, ../sass/mobile/_layout.scss */
   .phone-hide {
     display: none; } }
 
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 197, ../sass/mobile/_layout.scss */
+  /* line 213, ../sass/mobile/_layout.scss */
   .tree-holder {
     overflow-x: hidden !important; } }
+
+@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
+  /* line 218, ../sass/mobile/_layout.scss */
+  .mobile-disable-select {
+    -moz-user-select: -moz-none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none; } }
 
 /*****************************************************************************
 * Open MCT Web, Copyright (c) 2014-2015, United States Government

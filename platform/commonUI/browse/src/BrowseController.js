@@ -132,9 +132,27 @@ define(
             // is not the root, then user is navigated to
             // parent
             function navigateToParent() {
+                var parent = navigationService.getNavigation().getCapability('context').getParent(),
+                    grandparent;
+                if (parent.getId() !== ROOT_ID) {
+                    grandparent = parent.getCapability('context').getParent().getId();
+                    navigateTo(parent);
+                    if (grandparent && grandparent !== ROOT_ID) {
+                        $scope.atRoot = false;
+                    } else {
+                        $scope.atRoot = true;
+                    }
+                } else {
+                    $scope.atRoot = true;
+                }
+            }
+            
+            function checkRoot() {
                 var parent = navigationService.getNavigation().getCapability('context').getParent();
                 if (parent.getId() !== ROOT_ID) {
-                    navigateTo(parent);
+                    $scope.atRoot = false;
+                } else {
+                    $scope.atRoot = true;
                 }
             }
 
@@ -170,6 +188,8 @@ define(
             });
             
             $scope.backArrow = navigateToParent;
+            
+            $scope.checkRoot = checkRoot;
 
         }
 

@@ -39,15 +39,37 @@ define(
          * @param {DomainObject} domainObject the object on which actions
          *                       in the context menu will be performed
          */
-        function ContextMenuGesture(queryService, element, domainObject) {
+        function ContextMenuGesture($timeout, queryService, element, domainObject) {
             var actionContext,
-                stop;
+                stop,
+                isPressing,
+                longTouchTime = 500;
             
             // When context menu event occurs, show object actions instead
             if (!queryService.isMobile(navigator.userAgent)) {
                 element.on('contextmenu', function (event) {
                     actionContext = {key: 'menu', domainObject: domainObject, event: event};
                     stop = domainObject.getCapability('action').perform(actionContext);
+                });
+            } else if (queryService.isMobile(navigator.userAgent)) {
+                // If on mobile device, then start timeout for the single touch event
+                // during the timeout 'isPressing' is true.
+                element.on('touchstart', function (event) {
+                    if (event.touches.length < 2) {
+                        isPressing = true;
+                        // After the timeout, if 'isPressing' is
+                        // true, display context menu for object
+                        $timeout(function () {
+                            if (isPressing) {
+                                actionContext = {key: 'menu', domainObject: domainObject, event: event};
+                                stop = domainObject.getCapability('action').perform(actionContext);
+                            }
+                        }, longTouchTime);
+                    }
+                });
+                // Whenever the touch event ends, 'isPressing' is false.
+                element.on('touchend', function (event) {
+                    isPressing = false;
                 });
             }
 
