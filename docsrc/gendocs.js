@@ -7,7 +7,7 @@ var CONSTANTS = {
         DIAGRAM_HEIGHT: 500
     };
 
-GLOBAL.window = GLOBAL.window || {}; // nomnoml expects window to be defined
+GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be defined
 (function () {
     "use strict";
 
@@ -37,7 +37,7 @@ GLOBAL.window = GLOBAL.window || {}; // nomnoml expects window to be defined
             source = "";
 
         transform._transform = function (chunk, encoding, done) {
-            if (isBuilding) {
+            if (!isBuilding) {
                 if (chunk.trim().indexOf("```nomnoml") === 0) {
                     var outputFilename = prefix + '-' + counter + '.png';
                     outputPath = path.join(outputDirectory, outputFilename);
@@ -50,9 +50,10 @@ GLOBAL.window = GLOBAL.window || {}; // nomnoml expects window to be defined
                     ].join(""));
                     isBuilding = true;
                     source = "";
+                    counter += 1;
                 } else {
                     // Otherwise, pass through
-                    this.push(chunk);
+                    this.push(chunk + '\n');
                 }
             } else {
                 if (chunk.trim() === "```") {
@@ -60,16 +61,13 @@ GLOBAL.window = GLOBAL.window || {}; // nomnoml expects window to be defined
                     renderNomnoml(source, outputPath);
                     isBuilding = false;
                 } else {
-                    source += chunk;
+                    source += chunk + '\n';
                 }
             }
+            done();
         };
 
         return transform;
-    }
-
-    function concat() {
-
     }
 
     function gfmifier() {
@@ -77,9 +75,13 @@ GLOBAL.window = GLOBAL.window || {}; // nomnoml expects window to be defined
             markdown = "";
         transform._transform = function (chunk, encoding, done) {
             markdown += chunk;
+            done();
         };
-        transform._flush = function () {
-            this.push(markdown);
+        transform._flush = function (done) {
+            this.push("<html><body>\n");
+            this.push(showdown.parse(markdown));
+            this.push("\n</body></html>\n");
+            done();
         };
         return transform;
     }
