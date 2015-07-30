@@ -112,14 +112,17 @@ define(
                     }
                     // Order by score first, so that when removing repeats we keep the higher scored ones
                     orderByScore(results);
-                    totalSum = filterDuplicates(results, totalSum);
+                    totalSum -= filterDuplicates(results, totalSum);
                     
                     // We are done loading 
                     loading = false;
                     
                     return {
                         hits: results,
-                        total: totalSum
+                        total: totalSum,
+                        timedOut: resultObjects.some(function (obj) {
+                            return obj.timedOut;
+                        })
                     };
                 });
             }

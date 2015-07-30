@@ -71,12 +71,13 @@ define(
             // Tell the worker to search for items it has that match this searchInput.
             // Takes the searchInput, as well as a max number of results (will return 
             //   less than that if there are fewer matches).
-            function workerSearch(searchInput, maxResults, timestamp) {
+            function workerSearch(searchInput, maxResults, timestamp, timeout) {
                 var message = {
                     request: 'search',
                     input: searchInput,
                     maxNumber: maxResults,
-                    timestamp: timestamp
+                    timestamp: timestamp,
+                    timeout: timeout
                 };
                 worker.postMessage(message);
             }
@@ -108,7 +109,8 @@ define(
                         pendingQueries[event.data.timestamp].resolve(
                             {
                                 hits: searchResults,
-                                total: event.data.total
+                                total: event.data.total,
+                                timedOut: event.data.timedOut
                             }
                         );
                     });
@@ -163,7 +165,7 @@ define(
             
             
             // For documentation, see query below.
-            function query(input, timestamp, maxResults/*, timeout*/) {
+            function query(input, timestamp, maxResults, timeout) {
                 var terms = [],
                     searchResults = [],
                     defer = $q.defer();
@@ -176,10 +178,14 @@ define(
                     // Else, we provide a default value. 
                     maxResults = DEFAULT_MAX_RESULTS;
                 }
+                // Similarly, check if timeout was provided
+                if (!timeout) {
+                    timeout = DEFAULT_TIMEOUT;
+                }
                 
                 // Instead, assume that the items have already been indexed, and 
                 //   just send the query to the worker.
-                workerSearch(input, maxResults, timestamp);
+                workerSearch(input, maxResults, timestamp, timeout);
                 
                 return defer.promise;
             }
@@ -198,7 +204,7 @@ define(
                  *   the search term. This function is to be used as a fallback 
                  *   in the case where other search services are not avaliable.
                  *   Returns a promise for a result object that has the format
-                 *   {hits: searchResult[], total: number}
+                 *   {hits: searchResult[], total: number, timedOut: boolean}
                  *   where a searchResult has the format
                  *   {id: domainObject ID, object: domainObject, score: number}
                  * 

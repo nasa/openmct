@@ -132,37 +132,56 @@
         var results = {},
             input = data.input.toLocaleLowerCase(),
             terms = convertToTerms(input),
-            total,
             i,
-            score;
+            id,
+            score,
+            message = {
+                request: 'search',
+                results: {},
+                total: 0,
+                timestamp: data.timestamp, // TODO: This may be no longer necissary
+                timedOut: false
+            };
         
         // If the user input is empty, we want to have no search results.
         if (input !== '') {
             for (i = 0; i < indexedItems.length; i += 1) {
+                // If this is taking too long, then stop
+                if (Date.now() > data.timestamp + data.timeout) {
+                    message.timedOut = true;
+                    break;
+                }
+                
                 score = scoreItem(indexedItems[i], input, terms);
                 if (score > 0) {
                     results[indexedItems[i].id] = score;
+                    message.total += 1;
                 }
             }
         }
         
-        // Store the total hits number
-        total = results.length;
         // Truncate results if there are more than maxResults
-        if (results.length > data.maxNumber) {
-            results = results.slice(0, data.maxNumber);
+        if (message.total > data.maxResults) {
+            i = 0;
+            for (id in results) {
+                message.results[id] = results[id];
+                i += 1;
+                if (i >= data.maxResults) {
+                    break;
+                }
+            }
+            // TODO: This seems inefficient.
+        } else {
+            message.results = results;
         }
         
-        return {
-            request: 'search',
-            results: results,
-            total: total,
-            timestamp: data.timestamp
-        };
+        return message;
         
         // TODO: After a search is completed, do we need to 
         //       clear out indexedItems? 
         //       When do we need to clear out inedxedItems?
+        
+        // TODO: This function is too long. 
     }
     
     self.onmessage = function (event) {

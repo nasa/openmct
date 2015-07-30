@@ -130,7 +130,8 @@ define(
                     
                     return {
                         hits: searchResults,
-                        total: rawResults.data.hits.total
+                        total: rawResults.data.hits.total,
+                        timedOut: rawResults.data.timed_out
                     };
                 });
             }
@@ -180,7 +181,7 @@ define(
                  * Searches through the filetree for domain objects using a search 
                  *   term. This is done through querying elasticsearch. Returns a
                  *   promise for a result object that has the format
-                 *   {hits: searchResult[], total: number}
+                 *   {hits: searchResult[], total: number, timedOut: boolean}
                  *   where a searchResult has the format
                  *   {id: domainObject ID, object: domainObject, score: number}
                  *
