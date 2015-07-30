@@ -48,16 +48,6 @@ define(
          */
         function ElasticsearchSearchProvider($http, objectService, ROOT) {
             
-            // Check to see if the input has any special options
-            function isDefaultFormat(searchTerm) {
-                // If the input has a property option, not default
-                if (searchTerm.includes('name:') || searchTerm.includes('type:')) {
-                    return false;
-                }
-                
-                return true;
-            }
-            
             // Add the fuzziness operator to the search term 
             function addFuzziness(searchTerm, editDistance) {
                 if (!editDistance) {
@@ -91,13 +81,8 @@ define(
                     spaceIndex = searchTerm.indexOf('  ');
                 }
                 
-                if (isDefaultFormat(searchTerm)) {
-                    // Add fuzziness for completeness
-                    searchTerm = addFuzziness(searchTerm);
-                    
-                    // Searching 'name' by default
-                    searchTerm = 'name:' + searchTerm;
-                }
+                // Add fuzziness for completeness
+                searchTerm = addFuzziness(searchTerm);
                 
                 //console.log('search term ', searchTerm);
                 return searchTerm;
