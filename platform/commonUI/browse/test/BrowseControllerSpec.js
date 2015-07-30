@@ -39,6 +39,9 @@ define(
                 mockUrlService,
                 mockDomainObject,
                 mockNextObject,
+                mockParentContext,
+                mockParent,
+                mockGrandparent,
                 controller;
 
             function mockPromise(value) {
@@ -86,6 +89,17 @@ define(
                 );
                 mockNextObject = jasmine.createSpyObj(
                     "nextObject",
+                    [ "getId", "getCapability", "getModel", "useCapability" ]
+                );
+                
+
+                mockParentContext = jasmine.createSpyObj('context', ['getParent']);
+                mockParent  = jasmine.createSpyObj(
+                    "domainObject",
+                    [ "getId", "getCapability", "getModel", "useCapability" ]
+                );
+                mockGrandparent  = jasmine.createSpyObj(
+                    "domainObject",
                     [ "getId", "getCapability", "getModel", "useCapability" ]
                 );
 
@@ -246,25 +260,7 @@ define(
             });
             
             it("checks if the user is current navigated to the root", function () {
-                var mockContext = jasmine.createSpyObj('context', ['getParent']),
-                    mockParentContext = jasmine.createSpyObj('context', ['getParent']),
-                    mockParent  = jasmine.createSpyObj(
-                        "domainObject",
-                        [ "getId", "getCapability", "getModel", "useCapability" ]
-                    ),
-                    mockGrandparent  = jasmine.createSpyObj(
-                        "domainObject",
-                        [ "getId", "getCapability", "getModel", "useCapability" ]
-                    );
-                mockNavigationService = jasmine.createSpyObj(
-                    "navigationService",
-                    [
-                        "getNavigation",
-                        "setNavigation",
-                        "addListener",
-                        "removeListener"
-                    ]
-                );
+                var mockContext = jasmine.createSpyObj('context', ['getParent']);
                 
                 mockRoute.current.params.ids = "ROOT/mine";
                 mockParent.getId.andReturn("ROOT");
@@ -308,25 +304,7 @@ define(
             // lets the html code know the back
             // arrow navigation needs to be done
             it("calls the backArrow function", function () {
-                var mockContext = jasmine.createSpyObj('context', ['getParent']),
-                    mockParentContext = jasmine.createSpyObj('context', ['getParent']),
-                    mockParent  = jasmine.createSpyObj(
-                        "domainObject",
-                        [ "getId", "getCapability", "getModel", "useCapability" ]
-                    ),
-                    mockGrandparent  = jasmine.createSpyObj(
-                        "domainObject",
-                        [ "getId", "getCapability", "getModel", "useCapability" ]
-                    );
-                mockNavigationService = jasmine.createSpyObj(
-                    "navigationService",
-                    [
-                        "getNavigation",
-                        "setNavigation",
-                        "addListener",
-                        "removeListener"
-                    ]
-                );
+                var mockContext = jasmine.createSpyObj('context', ['getParent']);
                 
                 mockRoute.current.params.ids = "mine/junk";
                 mockParent.getId.andReturn("mine");
