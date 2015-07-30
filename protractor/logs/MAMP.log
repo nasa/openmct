@@ -1,5 +1,0 @@
-150729 13:03:53 mysqld_safe Logging to '/Users/jsanderf/Applications/MAMP/mysql/data/mysqld.log'.
-150729 13:03:53 mysqld_safe Starting mysqld.bin daemon with databases from /Users/jsanderf/Applications/MAMP/mysql/data
-/Users/jsanderf/Applications/MAMP/mysql/scripts/ctl.sh : mysql  started at port 3306
-Syntax OK
-/Users/jsanderf/Applications/MAMP/apache2/scripts/ctl.sh : httpd started at port 8080
