@@ -143,7 +143,6 @@ define(
             
             it("keeps a menu when menu is clicked", function () {
                 // Show the menu
-                mockEvent
                 action.perform();
                 
                 // Find and fire body's mousedown listener
