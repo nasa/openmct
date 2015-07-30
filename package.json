@@ -28,7 +28,9 @@
     "start": "node app.js",
     "test": "karma start --single-run",
     "jshint": "jshint platform example || exit 0",
-    "jsdoc": "jsdoc -c jsdoc.json -r -d docs/api"
+    "jsdoc": "jsdoc -c jsdoc.json -r -d docs/api",
+    "otherdoc": "node docsrc/gendocs.js --in docsrc --out docs",
+    "docs": "npm run jsdoc ; npm run otherdoc"
   },
   "repository": {
     "type": "git",
