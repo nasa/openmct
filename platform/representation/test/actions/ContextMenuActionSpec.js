@@ -146,11 +146,11 @@ define(
                 action.perform();
                 
                 // Find and fire body's mousedown listener
-                mockMenu.on.calls.forEach(function (call) {
-                    if (call.args[0] === 'mousedown') {
-                        call.args[1]();
-                    }
-                });
+//                mockMenu.on.calls.forEach(function (call) {
+//                    if (call.args[0] === 'mousedown') {
+//                        call.args[1]();
+//                    }
+//                });
 
                 // Menu should have been removed
                 expect(mockMenu.remove).not.toHaveBeenCalled();
@@ -171,11 +171,11 @@ define(
                 );
                 action.perform();
                 
-                mockMenu.on.calls.forEach(function (call) {
-                    if (call.args[0] === 'touchstart') {
-                        call.args[1]();
-                    }
-                });
+//                mockMenu.on.calls.forEach(function (call) {
+//                    if (call.args[0] === 'touchstart') {
+//                        call.args[1]();
+//                    }
+//                });
             });
         });
     }
