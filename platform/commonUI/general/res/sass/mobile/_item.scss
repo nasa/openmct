@@ -43,6 +43,7 @@
                         top: 0px;
                         left: 0px;
                         text-align: left;
+                        height: auto
                     }
                     .item-open {
                        display: none;
@@ -60,7 +61,6 @@
                 .item-main {
                     .item-type {
                         line-height: $phone-itemHeight * .8;
-                        height: auto;
                     }
                 }
                 .title {
