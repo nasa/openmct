@@ -149,7 +149,7 @@ define(
                 // Find and fire body's mousedown listener
                 mockMenu.on.calls.forEach(function (call) {
                     if (call.args[0] === 'mousedown') {
-//                        call.args[1]();
+                        call.args[1]();
                     }
                 });
 
@@ -174,7 +174,7 @@ define(
                 
                 mockMenu.on.calls.forEach(function (call) {
                     if (call.args[0] === 'touchstart') {
-//                        call.args[1]();
+                        call.args[1]();
                     }
                 });
             });
