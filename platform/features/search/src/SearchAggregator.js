@@ -48,9 +48,10 @@ define(
             //   array, and returns the number that were removed. 
             function filterDuplicates(results, total) {
                 var ids = [],
-                    numRemoved = 0;
+                    numRemoved = 0,
+                    i;
                 
-                for (var i = 0; i < results.length; i += 1) {
+                for (i = 0; i < results.length; i += 1) {
                     if (ids.indexOf(results[i].id) !== -1) {
                         // If this result's ID is already there, remove the object
                         results.splice(i, 1);

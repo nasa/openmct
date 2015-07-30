@@ -35,14 +35,6 @@ define(function () {
         var numResults = INITIAL_LOAD_NUMBER,
             fullResults = [];
         
-        /*
-        // Function to be passed to the search service which allows it to set the 
-        //   search template's results list 
-        function setControllerResults(results) {
-            $scope.results = results.slice(0, numResults);
-        }
-        */
-        
         function search() {
             var inputText = $scope.ngModel.input;
             
@@ -57,9 +49,7 @@ define(function () {
             numResults = INITIAL_LOAD_NUMBER;
             
             // Send the query
-            //searchService.sendQuery(inputText, setControllerResults);
             searchService.query(inputText).then(function (result) {
-                //console.log('controller - results', results);
                 fullResults = result.hits;
                 $scope.results = result.hits.slice(0, numResults);
             });
@@ -95,7 +85,8 @@ define(function () {
              * Checks to see if there are more search results to display.
              */
             areMore: function () {
-                return numResults < fullResults.length;//searchService.getNumResults();
+                return numResults < fullResults.length;
+                // TODO: See loadMore() todo.
             },
             
             /**
@@ -105,7 +96,8 @@ define(function () {
             loadMore: function () {
                 numResults += LOAD_INCREMENT;
                 $scope.results = fullResults.slice(0, numResults);
-                //searchService.refresh(setControllerResults);
+                // TODO: Let load more see if total > fullResults.length, and then
+                //       if so, resend a query.
             }
         };
     }
