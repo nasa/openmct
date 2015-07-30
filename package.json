@@ -16,13 +16,19 @@
     "karma-jasmine": "^0.1.5",
     "karma-phantomjs-launcher": "^0.1.4",
     "karma-requirejs": "^0.2.2",
-    "requirejs": "^2.1.17"
+    "requirejs": "^2.1.17",
+    "github-flavored-markdown": ">= 1.0.0",
+    "glob": ">= 3.0.0",
+    "split": "^1.0.0",
+    "mkdirp": "^0.5.1",
+    "nomnoml": "^0.0.3",
+    "canvas": "^1.2.7"
   },
   "scripts": {
     "start": "node app.js",
     "test": "karma start --single-run",
     "jshint": "jshint platform example || exit 0",
-    "jsdoc": "jsdoc -c jsdoc.json -r -d docs"
+    "jsdoc": "jsdoc -c jsdoc.json -r -d docs/api"
   },
   "repository": {
     "type": "git",
