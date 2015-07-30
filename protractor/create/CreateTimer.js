@@ -6,27 +6,24 @@ describe('Create Timer', function() {
     var createClass = new itemCreate();
     var editItemClass = new itemEdit();
     var rightMenu = new rightClick();
-    
+
     var ITEM_NAME = "Timer";
     var ITEM_TYPE = "timer";
     var ITEM_MENU_GLYPH = 'õ\nTimer';
     var ITEM_GRID_SELECT = 'P\nõ\nTimer';
-    
-    beforeEach(function() {
-            browser.ignoreSynchronization = true;
-            browser.get('http://localhost:1984/warp/');
-            browser.sleep(2000);  // 20 seconds
-    });
+
+    beforeEach(require('../common/Launch'));
+
     it('should Create Timer', function(){
         //button.click()
         browser.wait(function() {
-           createClass.createButton().click(); 
-           return true;    
+           createClass.createButton().click();
+           return true;
         }).then(function (){
             var folder =  createClass.selectNewItem(ITEM_TYPE)
             expect(folder.getText()).toEqual([ ITEM_MENU_GLYPH ]);
             browser.sleep(1000);
-               folder.click()  
+               folder.click()
         }).then(function() {
             browser.wait(function () {
                 return element.all(by.model('ngModel[field]')).isDisplayed();
@@ -37,7 +34,7 @@ describe('Create Timer', function() {
             var item = editItemClass.SelectItem(ITEM_GRID_SELECT);
             expect(item.count()).toBe(1);
             browser.sleep(1000);
-        });    
+        });
     });
     it('should test Timer', function(){
         browser.sleep(2000)
@@ -48,5 +45,5 @@ describe('Create Timer', function() {
             expect(time).toEqual("0D 00:00:01")
         })
     });
-     
+
 });

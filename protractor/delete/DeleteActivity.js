@@ -8,14 +8,10 @@ describe('Delete Activity', function() {
     var ITEM_MENU_GLYPH = 'a\nActivity';
     //var ITEM_GRID_SELECT = 'P\nS\nTimeline\n0 Items';
     var ITEM_SIDE_SELECT = ">\na\nActivity"
-    beforeEach(function() {
-            browser.ignoreSynchronization = true;
-            browser.get('http://localhost:1984/warp/');
-            browser.sleep(2000);  // 20 seconds
-    });
+    beforeEach(require('../common/Launch'));
     it('should delete the Activity', function(){
         clickClass.delete(ITEM_SIDE_SELECT);
         browser.sleep(1000);
     });
-     
+
 });

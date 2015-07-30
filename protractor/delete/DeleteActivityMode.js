@@ -8,14 +8,10 @@ describe('Delete Activity Mode', function() {
     var ITEM_MENU_GLYPH = 'A\nActivity Mode';
     var ITEM_GRID_SELECT = 'P\nA\nActivity Mode';
     var ITEM_SIDE_SELECT = "A\nActivity Mode"
-    beforeEach(function() {
-            browser.ignoreSynchronization = true;
-            browser.get('http://localhost:1984/warp/');
-            browser.sleep(2000);  // 20 seconds
-    });
+    beforeEach(require('../common/Launch'));
     it('should delete the Activty Mode', function(){
         clickClass.delete(ITEM_SIDE_SELECT);
         browser.sleep(1000);
     });
-     
+
 });

@@ -5,21 +5,17 @@ describe('Create Sine Wave Generator', function() {
     var ITEM_NAME = "Sine Wave G";
     var ITEM_TYPE = "sinewave";
     var ITEM_MENU_GLYPH = 'T\nSine Wave Generator'
-    beforeEach(function() {
-            browser.ignoreSynchronization = true;
-            browser.get('http://localhost:1984/warp/');
-            browser.sleep(2000);  // 20 seconds
-    });
+    beforeEach(require('../common/Launch'));
     it('should Create new Sin Wave Generator' , function(){
         //button.click()
         browser.wait(function() {
-           createClass.createButton().click(); 
-           return true;    
+           createClass.createButton().click();
+           return true;
         }).then(function (){
             var folder =  createClass.selectNewItem(ITEM_TYPE)
             expect(folder.getText()).toEqual([ ITEM_MENU_GLYPH ]);
             browser.sleep(1000);
-               folder.click()  
+               folder.click()
         }).then(function() {
             browser.wait(function () {
                 return element.all(by.model('ngModel[field]')).isDisplayed();
@@ -36,7 +32,7 @@ describe('Create Sine Wave Generator', function() {
             expect(checkfolder.getText()).toEqual([ '', 'Sine Wave G' ]);
 
         });
-            
+
     });
-     
+
 });

@@ -11,25 +11,21 @@ describe('Test Drag and Drop', function() {
     var rightMenuClass = new rightMenu();
     var dragDrop = new Drag();
 
-    beforeEach(function() {
-            browser.ignoreSynchronization = true;
-            browser.get('http://localhost:1984/warp/');
-            browser.sleep(4000);  // 4 seconds
-    });
-    
+    beforeEach(require('../common/Launch'));
+
     it('should create a folder', function(){
         var ITEM_NAME = "Folder";
         var ITEM_TYPE = "folder";
         var ITEM_MENU_GLYPH = 'F\nFolder';
         var ITEM_GRID_SELECT = 'P\nF\nFolder\n0 Items';
-        
+
         browser.wait(function() {
-           return createClass.createButton().click(); 
+           return createClass.createButton().click();
         }).then(function (){
             var folder =  createClass.selectNewItem(ITEM_TYPE);
             expect(folder.getText()).toEqual([ ITEM_MENU_GLYPH ]);
             browser.sleep(1000);
-            folder.click()  
+            folder.click()
         }).then(function() {
             browser.wait(function () {
                 return element.all(by.model('ngModel[field]')).isDisplayed();
@@ -46,14 +42,14 @@ describe('Test Drag and Drop', function() {
         var ITEM_TYPE = "timer";
         var ITEM_MENU_GLYPH = 'õ\nTimer';
         var ITEM_GRID_SELECT = 'P\nõ\nTimer';
-        
+
         browser.wait(function() {
-           return createClass.createButton().click(); 
+           return createClass.createButton().click();
         }).then(function (){
             var folder =  createClass.selectNewItem(ITEM_TYPE)
             expect(folder.getText()).toEqual([ ITEM_MENU_GLYPH ]);
             browser.sleep(1000);
-               folder.click()  
+               folder.click()
         }).then(function() {
             browser.wait(function () {
                 return element.all(by.model('ngModel[field]')).isDisplayed();
@@ -65,12 +61,12 @@ describe('Test Drag and Drop', function() {
             expect(item.count()).toBe(1);
             browser.sleep(1000);
         });
-        
+
     });
     it('should drag timer into folder', function(){
         var ITEM_SIDE_SELECT = ">\nF\nFolder"
         var name = "õ\nTimer";
-        
+
         rightMenuClass.select(ITEM_SIDE_SELECT, true).click();
         browser.sleep(2000);
         var object = element.all(by.css('.ng-isolate-scope.ng-pristine.ng-valid')).filter(function (ele){
@@ -80,10 +76,10 @@ describe('Test Drag and Drop', function() {
         });
         var clock = object.get(1);
         var panel = element(by.css('.items-holder.grid.abs.ng-scope'));
-        
+
         //drag
         expect(panel.isPresent()).toBe(true)
-        expect(clock.isPresent()).toBe(true)        
+        expect(clock.isPresent()).toBe(true)
         browser.executeScript(dragDrop.DragDrop,clock.getWebElement(),panel.getWebElement())
         browser.sleep(3000);
         //check

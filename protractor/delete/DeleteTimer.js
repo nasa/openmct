@@ -8,14 +8,10 @@ describe('Delete Timer', function() {
     var ITEM_MENU_GLYPH = 'õ\nTimer';
     var ITEM_GRID_SELECT = 'P\nõ\nTimer';
     var ITEM_SIDE_SELECT = "õ\nTimer"
-    beforeEach(function() {
-            browser.ignoreSynchronization = true;
-            browser.get('http://localhost:1984/warp/');
-            browser.sleep(2000);  // 20 seconds
-    });
+    beforeEach(require('../common/Launch'));
     it('should delete the Timer', function(){
         clickClass.delete(ITEM_SIDE_SELECT);
         browser.sleep(1000);
     });
-     
+
 });

@@ -8,22 +8,18 @@ describe('Create Display', function() {
     var ITEM_TYPE = "display";
     var ITEM_MENU_GLYPH = 'L\nDisplay Layout';
     var ITEM_GRID_SELECT = 'P\nL\nDisplay\n0 Items';
-    
-    beforeEach(function() {
-            browser.ignoreSynchronization = true;
-            browser.get('http://localhost:1984/warp/');
-            browser.sleep(2000);  // 20 seconds
-    });
+
+    beforeEach(require('../common/Launch'));
     it('should Create new Display', function(){
         //button.click()
         browser.wait(function() {
-           createClass.createButton().click(); 
-           return true;    
+           createClass.createButton().click();
+           return true;
         }).then(function (){
             var folder =  createClass.selectNewItem(ITEM_TYPE)
             expect(folder.getText()).toEqual([ ITEM_MENU_GLYPH ]);
             browser.sleep(1000);
-               folder.click()  
+               folder.click()
         }).then(function() {
             browser.wait(function () {
                 return element.all(by.model('ngModel[field]')).isDisplayed();
@@ -35,7 +31,7 @@ describe('Create Display', function() {
             expect(item.count()).toBe(1);
             browser.sleep(1000);
         });
-            
+
     });
-     
+
 });

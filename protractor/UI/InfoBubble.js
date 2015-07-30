@@ -11,11 +11,8 @@ describe('Test Info Bubble', function() {
     var rightMenuClass = new rightMenu();
     var dragDrop = new Drag();
 
-    beforeEach(function() {
-            browser.ignoreSynchronization = true;
-            browser.get('http://localhost:1984/warp/');
-            browser.sleep(4000);  // 4 seconds
-    });
+    beforeEach(require('../common/Launch'));
+
     it('should detect info bubble', function(){
         var myitem = (element.all(by.repeater('child in composition'))).get(0);
         browser.actions().mouseMove(myitem).perform();
