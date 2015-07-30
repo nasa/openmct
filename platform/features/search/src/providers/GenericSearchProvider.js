@@ -92,12 +92,12 @@ define(
                         ids.push(id);
                     }
                     objectService.getObjects(ids).then(function (objects) {
-                        var results = [],
+                        var searchResults = [],
                             id;
                         
                         // Reset and repopulate the latest results
                         for (id in objects) {
-                            results.push({
+                            searchResults.push({
                                 object: objects[id],
                                 id: id,
                                 score: event.data.results[id]
@@ -105,7 +105,12 @@ define(
                         }
                         
                         // Resove the promise corresponding to this 
-                        pendingQueries[event.data.timestamp].resolve(results);
+                        pendingQueries[event.data.timestamp].resolve(
+                            {
+                                hits: searchResults,
+                                total: searchResults.length // TODO: Make worker return this
+                            }
+                        );
                     });
                 }
             }
@@ -192,7 +197,11 @@ define(
                  * Searches through the filetree for domain objects which match 
                  *   the search term. This function is to be used as a fallback 
                  *   in the case where other search services are not avaliable.
-                 *   Returns a promise for an array of domain object results.
+                 *   Returns a promise for a result object that has the format
+                 *   {hits: searchResult[], total: number}
+                 *   where a searchResult has the format
+                 *   {id: domainObject ID, object: domainObject, score: number}
+                 * 
                  * Notes: 
                  *   * The order of the results is not guarenteed.
                  *   * A domain object qualifies as a match for a search input if 

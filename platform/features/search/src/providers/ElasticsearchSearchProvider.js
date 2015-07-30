@@ -89,7 +89,8 @@ define(
             }
             
             // Processes results from the format that elasticsearch returns to 
-            // a list of search result objects (that contain domain objects)
+            // a list of search result objects (that contain domain objects), then
+            // returns an object in the format {hits: searchResult[], total: number}
             function processResults(rawResults, timestamp) {
                 var results = rawResults.data.hits.hits,
                     resultsLength = results.length,
@@ -97,13 +98,6 @@ define(
                     scores = {},
                     searchResults = [],
                     i;
-                
-                /*
-                if (rawResults.data.hits.total > resultsLength) {
-                    // TODO: Somehow communicate this to the user 
-                    //console.log('Total number of results greater than displayed results');
-                }
-                */
                 
                 // Get the result objects' IDs
                 for (i = 0; i < resultsLength; i += 1) {
@@ -134,7 +128,10 @@ define(
                         }
                     }
                     
-                    return searchResults;
+                    return {
+                        hits: searchResults,
+                        total: rawResults.data.hits.total
+                    };
                 });
             }
             
@@ -151,7 +148,7 @@ define(
                 
                 // If the user input is empty, we want to have no search results.
                 if (searchTerm !== '') {
-                    // Process search term
+                    // Process the search term
                     searchTerm = processSearchTerm(searchTerm);
 
                     // Create the query to elasticsearch
@@ -170,7 +167,7 @@ define(
                         return processResults(rawResults, timestamp);
                     });
                 } else {
-                    return [];
+                    return {hits: [], total: 0};
                 }
             }
             
@@ -178,7 +175,11 @@ define(
                 /**
                  * Searches through the filetree for domain objects using a search 
                  *   term. This is done through querying elasticsearch. Returns a
-                 *   promise for an array of domain object results. 
+                 *   promise for a result object that has the format
+                 *   {hits: searchResult[], total: number}
+                 *   where a searchResult has the format
+                 *   {id: domainObject ID, object: domainObject, score: number}
+                 *
                  * Notes:
                  *   * The order of the results is from highest to lowest score, 
                  *     as elsaticsearch determines them to be. 

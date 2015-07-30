@@ -125,13 +125,13 @@ define(
                 }
                 
                 // Get promises for results arrays
-                return $q.all(resultPromises).then(function (resultsArrays) {
+                return $q.all(resultPromises).then(function (resultObjects) {
                     var results = [],
                         i;
                     
                     // Merge results 
-                    for (i = 0; i < resultsArrays.length; i += 1) {
-                        results = results.concat(resultsArrays[i]);
+                    for (i = 0; i < resultObjects.length; i += 1) {
+                        results = results.concat(resultObjects[i].hits);
                     }
                     results = filterRepeats(results);
                     results = orderByScore(results);
