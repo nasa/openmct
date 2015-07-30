@@ -132,14 +132,13 @@
         var results = {},
             input = data.input.toLocaleLowerCase(),
             terms = convertToTerms(input),
-            timesToLoop = Math.min(indexedItems.length, data.maxNumber),
+            total,
             i,
-            score,
-            message;
+            score;
         
         // If the user input is empty, we want to have no search results.
         if (input !== '') {
-            for (i = 0; i < timesToLoop; i += 1) {
+            for (i = 0; i < indexedItems.length; i += 1) {
                 score = scoreItem(indexedItems[i], input, terms);
                 if (score > 0) {
                     results[indexedItems[i].id] = score;
@@ -147,12 +146,19 @@
             }
         }
         
-        message = {
+        // Store the total hits number
+        total = results.length;
+        // Truncate results if there are more than maxResults
+        if (results.length > data.maxNumber) {
+            results = results.slice(0, data.maxNumber);
+        }
+        
+        return {
             request: 'search',
             results: results,
+            total: total,
             timestamp: data.timestamp
         };
-        return message;
         
         // TODO: After a search is completed, do we need to 
         //       clear out indexedItems? 

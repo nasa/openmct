@@ -108,7 +108,7 @@ define(
                         pendingQueries[event.data.timestamp].resolve(
                             {
                                 hits: searchResults,
-                                total: searchResults.length // TODO: Make worker return this
+                                total: event.data.total
                             }
                         );
                     });
