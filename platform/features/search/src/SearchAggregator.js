@@ -43,6 +43,8 @@ define(
          */
         function SearchAggregator($q, providers) {
             var loading;
+            //var loadingQueue = {};
+            // {key: value} are {timestamp: isLoading}
             
             // Takes an array of arrays and returns an array containing all 
             // of the sub-arrays' contents
@@ -120,17 +122,14 @@ define(
             }
             
             // For documentation, see sendQuery below.
-            function queryAll(inputText, timestamp) {
+            function queryAll(inputText) {
                 var i,
+                    timestamp = Date.now(),
                     resultPromises = [];
                 
                 // We are loading
                 loading = true;
-                
-                // If there's not a timestamp, make this time the timestamp
-                if (!timestamp) {
-                    timestamp = Date.now();
-                }
+                //loadingQueue[timestamp] = true;
                 
                 // Send the query to all the providers
                 for (i = 0; i < providers.length; i += 1) {
@@ -148,6 +147,7 @@ define(
                     
                     // We are done loading 
                     loading = false;
+                    //loadingQueue[timestamp] = false;
                     
                     return results;
                 });
@@ -159,10 +159,6 @@ define(
                  *   latestMergedResults accordingly. 
                  *
                  * @param inputText The text input that is the query.
-                 * @param timestamp (optional) The time at which this function
-                 *   was called. This timestamp will be associated with the 
-                 *   latest results list, which allows us to see if it has been 
-                 *   updated. If not provided, this aggregator will. 
                  */
                 query: queryAll,
                 
@@ -172,6 +168,14 @@ define(
                  */
                 isLoading: function () {
                     return loading;
+                    /*
+                    for (var timestamp in loadingQueue) {
+                        if (loadingQueue[timestamp] === true) {
+                            return true;
+                        }
+                    }
+                    return false;
+                    */
                 }
             };
         }
