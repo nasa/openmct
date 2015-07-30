@@ -34,7 +34,7 @@ define(
         
         /**
          * Allows multiple services which provide search functionality 
-         * to be treated as one.
+         *   to be treated as one.
          *
          * @constructor
          * @param $q Angular's $q, for promise consolidation
@@ -43,19 +43,6 @@ define(
          */
         function SearchAggregator($q, providers) {
             var loading;
-            //var loadingQueue = {};
-            // {key: value} are {timestamp: isLoading}
-            
-            // Takes an array of arrays and returns an array containing all 
-            // of the sub-arrays' contents
-            function concatArrays(arrays) {
-                var i,
-                    array = [];
-                for (i = 0; i < arrays.length; i += 1) {
-                    array = array.concat(arrays[i]);
-                }
-                return array;
-            }
             
             // Remove duplicate objects that have the same ID 
             function filterRepeats(results) {
@@ -129,7 +116,6 @@ define(
                 
                 // We are loading
                 loading = true;
-                //loadingQueue[timestamp] = true;
                 
                 // Send the query to all the providers
                 for (i = 0; i < providers.length; i += 1) {
@@ -140,14 +126,18 @@ define(
                 
                 // Get promises for results arrays
                 return $q.all(resultPromises).then(function (resultsArrays) {
+                    var results = [],
+                        i;
+                    
                     // Merge results 
-                    var results = concatArrays(resultsArrays);
+                    for (i = 0; i < resultsArrays.length; i += 1) {
+                        results = results.concat(resultsArrays[i]);
+                    }
                     results = filterRepeats(results);
                     results = orderByScore(results);
                     
                     // We are done loading 
                     loading = false;
-                    //loadingQueue[timestamp] = false;
                     
                     return results;
                 });
@@ -155,8 +145,8 @@ define(
             
             return {
                 /** 
-                 * Sends a query to each of the providers, then updates the global
-                 *   latestMergedResults accordingly. 
+                 * Sends a query to each of the providers. Returns a promise 
+                 *   for an array of domain object results. 
                  *
                  * @param inputText The text input that is the query.
                  */
@@ -168,14 +158,6 @@ define(
                  */
                 isLoading: function () {
                     return loading;
-                    /*
-                    for (var timestamp in loadingQueue) {
-                        if (loadingQueue[timestamp] === true) {
-                            return true;
-                        }
-                    }
-                    return false;
-                    */
                 }
             };
         }

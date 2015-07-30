@@ -33,7 +33,7 @@ define(
         // so hide them here.
         var ID = "_id",
             SCORE = "_score",
-            DEFAULT_MAX_RESULTS = 100;
+            DEFAULT_MAX_RESULTS = 999999;
         
         /**
          * A search service which searches through domain objects in 
@@ -47,8 +47,6 @@ define(
          *        interact with ElasticSearch.
          */
         function ElasticsearchSearchProvider($http, objectService, ROOT) {
-            var latestResults = [],
-                lastSearchTimestamp = 0;
             
             // Check to see if the input has any special options
             function isDefaultFormat(searchTerm) {
@@ -115,8 +113,6 @@ define(
                     searchResults = [],
                     i;
                 
-                //console.log('es provider - raw results', rawResults);
-                
                 /*
                 if (rawResults.data.hits.total > resultsLength) {
                     // TODO: Somehow communicate this to the user 
@@ -131,18 +127,13 @@ define(
                 
                 // Get the result objects' scores
                 for (i = 0; i < resultsLength; i += 1) {
-                    //scores.push(results[i][SCORE]);
                     scores[ids[i]] = results[i][SCORE];
                 }
-                
-                //console.log('es provider - ids', ids);
                 
                 // Get the domain objects from their IDs
                 return objectService.getObjects(ids).then(function (objects) {
                     var j,
                         id;
-                    
-                    //console.log('es provider - objects', objects);
                     
                     for (j = 0; j < resultsLength; j += 1) {
                         id = ids[j];
@@ -158,17 +149,12 @@ define(
                         }
                     }
                     
-                    latestResults = searchResults;
-                    lastSearchTimestamp = timestamp;
-                    
-                    //console.log('es provider - search results', searchResults);
-                    
                     return searchResults;
                 });
             }
             
             // For documentation, see query below.
-            function queryElasticsearch(searchTerm, timestamp, maxResults, timeout) {
+            function query(searchTerm, timestamp, maxResults, timeout) {
                 var esQuery;
                 
                 // Check to see if the user provided a maximum 
@@ -199,53 +185,33 @@ define(
                         return processResults(rawResults, timestamp);
                     });
                 } else {
-                    //console.log('es provider - empty search input');
-                    latestResults = [];
-                    lastSearchTimestamp = timestamp;
-                    return latestResults;
+                    return [];
                 }
             }
             
             return {
                 /**
                  * Searches through the filetree for domain objects using a search 
-                 *   term. This is done through querying elasticsearch. 
+                 *   term. This is done through querying elasticsearch. Returns a
+                 *   promise for an array of domain object results. 
                  * Notes:
                  *   * The order of the results is from highest to lowest score, 
                  *     as elsaticsearch determines them to be. 
-                 *   * Fuzziness is used to produce more results that are still
-                 *     relevant. (All results within a certain edit distance.)
-                 *   * More search details at 
+                 *   * Uses the fuzziness operator to get more results. 
+                 *   * More about this search's behavior at 
                  *     https://www.elastic.co/guide/en/elasticsearch/reference/current/search-uri-request.html
                  * 
                  * @param searchTerm The text input that is the query. 
-                 *   input where this funcion should find the search term 
-                 * @param timestamp the time at which this function was called,
-                 *   this timestamp will be associated with the latest results
-                 *   list, which allows the aggregator to see if it has been 
-                 *   updated 
-                 * @param maxResults (optional) the maximum number of results 
-                 *   that this function should return 
-                 * @param timeout (optional) the time after which the search should 
-                 *   stop calculations and return partial results
+                 * @param timestamp The time at which this function was called.
+                 *   This timestamp is used as a unique identifier for this 
+                 *   query and the corresponding results. 
+                 * @param maxResults (optional) The maximum number of results 
+                 *   that this function should return.
+                 * @param timeout (optional) The time after which the search should 
+                 *   stop calculations and return partial results. Elasticsearch 
+                 *   does not guarentee that this timeout will be strictly followed. 
                  */
-                query: queryElasticsearch,
-                
-                /** 
-                 * Get the latest search results that have been calculated. The 
-                 *   format of the returned objects are searchResult objects, which
-                 *   have the members id, object, and score. 
-                 */
-                getLatestResults: function () {
-                    return latestResults;
-                },
-                
-                /** 
-                 * Get the timestamp for the last update of latestResults.
-                 */
-                getLatestTimestamp: function () {
-                    return lastSearchTimestamp;
-                }
+                query: query
             };
         }
 

@@ -46,8 +46,8 @@
      * Indexes an item to indexedItems.
      * 
      * @param data An object which contains:
-     *           * model: The model of the domain object
-     *           * id: The ID of the domain object
+     *             * model: The model of the domain object
+     *             * id: The ID of the domain object
      */
     function index(data) {
         var message;
@@ -142,9 +142,7 @@
             for (i = 0; i < timesToLoop; i += 1) {
                 score = scoreItem(indexedItems[i], input, terms);
                 if (score > 0) {
-                    results[indexedItems[i].id] = {
-                        score: score
-                    };
+                    results[indexedItems[i].id] = score;
                 }
             }
         }

@@ -47,8 +47,6 @@ define(
          */
         function GenericSearchProvider($q, objectService, workerService, roots) {
             var worker = workerService.run('genericSearchWorker'),
-                //latestResults = [],
-                //lastSearchTimestamp = 0,
                 pendingQueries = {};
             // pendingQueries is a dictionary with the key value pairs st 
             // the key is the timestamp and the value is the promise
@@ -98,19 +96,13 @@ define(
                             id;
                         
                         // Reset and repopulate the latest results
-                        //latestResults = [];
                         for (id in objects) {
-                            //latestResults.push({
                             results.push({
                                 object: objects[id],
                                 id: id,
-                                score: event.data.results[id].score
+                                score: event.data.results[id]
                             });
                         }
-                        // Update the timestamp to the one that this search was made with
-                        //lastSearchTimestamp = event.data.timestamp;
-                        
-                        //console.log('provider - about to resolve', latestResults);
                         
                         // Resove the promise corresponding to this 
                         pendingQueries[event.data.timestamp].resolve(results);
@@ -174,14 +166,14 @@ define(
                 pendingQueries[timestamp] = defer;
                 
                 // Check to see if the user provided a maximum 
-                // number of results to display
+                //   number of results to display
                 if (!maxResults) {
                     // Else, we provide a default value. 
                     maxResults = DEFAULT_MAX_RESULTS;
                 }
                 
                 // Instead, assume that the items have already been indexed, and 
-                //  just send the query to the worker.
+                //   just send the query to the worker.
                 workerSearch(input, maxResults, timestamp);
                 
                 return defer.promise;
@@ -199,7 +191,8 @@ define(
                 /**
                  * Searches through the filetree for domain objects which match 
                  *   the search term. This function is to be used as a fallback 
-                 *   in the case where other search services are not avaliable. 
+                 *   in the case where other search services are not avaliable.
+                 *   Returns a promise for an array of domain object results.
                  * Notes: 
                  *   * The order of the results is not guarenteed.
                  *   * A domain object qualifies as a match for a search input if 
@@ -209,32 +202,15 @@ define(
                  *     the terms as substrings.
                  * 
                  * @param input The text input that is the query.
-                 * @param timestamp the time at which this function was called,
-                 *   this timestamp will be associated with the latest results
-                 *   list, which allows the aggregator to see if it has been 
-                 *   updated 
-                 * @param maxResults (optional) the maximum number of results 
-                 *   that this function should return 
-                 * @param timeout (optional) the time after which the search should 
-                 *   stop calculations and return partial results
+                 * @param timestamp The time at which this function was called.
+                 *   This timestamp is used as a unique identifier for this 
+                 *   query and the corresponding results. 
+                 * @param maxResults (optional) The maximum number of results 
+                 *   that this function should return. 
+                 * @param timeout (optional) The time after which the search should 
+                 *   stop calculations and return partial results.
                  */
-                query: query,
-                
-                /** 
-                 * Get the latest search results that have been calculated. The 
-                 *   format of the returned objects are searchResult objects, which
-                 *   have the members id, object, and score. 
-                 */
-                getLatestResults: function () {
-                    return latestResults;
-                },
-                
-                /** 
-                 * Get the timestamp for the last update of latestResults.
-                 */
-                getLatestTimestamp: function () {
-                    return lastSearchTimestamp;
-                }
+                query: query
 
             };
         }
