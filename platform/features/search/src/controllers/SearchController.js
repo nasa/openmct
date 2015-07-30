@@ -58,10 +58,10 @@ define(function () {
             
             // Send the query
             //searchService.sendQuery(inputText, setControllerResults);
-            searchService.query(inputText).then(function (results) {
+            searchService.query(inputText).then(function (result) {
                 //console.log('controller - results', results);
-                fullResults = results;
-                $scope.results = results.slice(0, numResults);
+                fullResults = result.hits;
+                $scope.results = result.hits.slice(0, numResults);
             });
         }
         

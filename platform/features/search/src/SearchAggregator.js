@@ -44,58 +44,33 @@ define(
         function SearchAggregator($q, providers) {
             var loading;
             
-            // Remove duplicate objects that have the same ID 
-            function filterRepeats(results) {
+            // Remove duplicate objects that have the same ID. Modifies the passed 
+            //   array, and returns the number that were removed. 
+            function filterDuplicates(results, total) {
                 var ids = [],
-                    idToIndicies = {}, // 'dictionary' mapping IDs to a list of indicies 
-                    filteredResults = [],
-                    i,
-                    id,
-                    indicies,
-                    highestScoringObject,
-                    j;
+                    numRemoved = 0;
                 
-                // Create a list of indicies of objects that correspond to any object ID
-                for (i = 0; i < results.length; i += 1) {
-                    id = results[i].id;
-                    
-                    if (idToIndicies[id]) {
-                        // If the ID already exists in the dictionary, push this index to 
-                        // the end of the array it points to
-                        idToIndicies[id].push(i);
+                for (var i = 0; i < results.length; i += 1) {
+                    if (ids.indexOf(results[i].id) !== -1) {
+                        // If this result's ID is already there, remove the object
+                        results.splice(i, 1);
+                        numRemoved += 1;
+                        
+                        // Reduce loop index because we shortened the array 
+                        i -= 1;
                     } else {
-                        // Else make a new entry in the dictionary with this ID, pointing 
-                        // to this index
-                        idToIndicies[id] = [i];
-                        // And also add this ID to the list of IDs that we have seen
-                        ids.push(id);
+                        // Otherwise add the ID to the list of the ones we have seen 
+                        ids.push(results[i].id);
                     }
                 }
                 
-                // Now for each ID in the dictionary, we want to use the version of  
-                // the object that has a higher score
-                for (i = 0; i < ids.length; i += 1) {
-                    id = ids[i];
-                    indicies = idToIndicies[id];
-                    
-                    highestScoringObject = results[indicies[0]];
-                    for (j = 0; j < indicies.length; j += 1) {
-                        // If the score of the object corresponding to this index of the results 
-                        // list has a higher score than the one we have, choose it instead
-                        if (results[indicies[j]].score > highestScoringObject.score) {
-                            highestScoringObject = results[indicies[j]];
-                        }
-                    }
-                    filteredResults.push(highestScoringObject);
-                }
-
-                return filteredResults;
+                return numRemoved;
             }
             
-            // Order the objects from highest to lowest score in the array
+            // Order the objects from highest to lowest score in the array.
+            // Modifies the passed array, as well as returns the modified array. 
             function orderByScore(results) {
-                
-                results = results.sort(function (a, b) {
+                results.sort(function (a, b) {
                     if (a.score > b.score) {
                         return -1;
                     } else if (b.score > a.score) {
@@ -104,7 +79,6 @@ define(
                         return 0;
                     }
                 });
-                
                 return results;
             }
             
@@ -127,26 +101,33 @@ define(
                 // Get promises for results arrays
                 return $q.all(resultPromises).then(function (resultObjects) {
                     var results = [],
+                        totalSum = 0,
                         i;
                     
                     // Merge results 
                     for (i = 0; i < resultObjects.length; i += 1) {
                         results = results.concat(resultObjects[i].hits);
+                        totalSum += resultObjects[i].total;
                     }
-                    results = filterRepeats(results);
-                    results = orderByScore(results);
+                    // Order by score first, so that when removing repeats we keep the higher scored ones
+                    orderByScore(results);
+                    totalSum = filterDuplicates(results, totalSum);
                     
                     // We are done loading 
                     loading = false;
                     
-                    return results;
+                    return {
+                        hits: results,
+                        total: totalSum
+                    };
                 });
             }
             
             return {
                 /** 
-                 * Sends a query to each of the providers. Returns a promise 
-                 *   for an array of domain object results. 
+                 * Sends a query to each of the providers. Returns a promise for
+                 *   a result object that has the format
+                 *   {hits: domainObject[], total: number}
                  *
                  * @param inputText The text input that is the query.
                  */
