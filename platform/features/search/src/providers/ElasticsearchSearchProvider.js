@@ -33,7 +33,7 @@ define(
         // so hide them here.
         var ID = "_id",
             SCORE = "_score",
-            DEFAULT_MAX_RESULTS = 999999;
+            DEFAULT_MAX_RESULTS = 100;
         
         /**
          * A search service which searches through domain objects in 
@@ -165,6 +165,10 @@ define(
                     }).then(function (rawResults) {
                         // ...then process the data 
                         return processResults(rawResults, timestamp);
+                    }).catch(function (err) {
+                        // In case of error, return nothing. (To prevent
+                        //   infinite loading time.)
+                        return {hits: [], total: 0};
                     });
                 } else {
                     return {hits: [], total: 0};
