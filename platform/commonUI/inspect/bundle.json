@@ -9,6 +9,13 @@
                 "key": "info-bubble",
                 "templateUrl": "info-bubble.html"
             }
+        ],      
+        "controllers": [
+            {
+                "key": "InfoController",
+                "implementation": "controllers/InfoController.js",
+                "depends": [ "$scope", "$timeout", "infoService" ]
+            }
         ],
         "containers": [
             {
@@ -41,11 +48,17 @@
                     "$rootScope"
                 ]
             }
-        ],
+        ],  
         "constants": [
             {
                 "key": "INFO_HOVER_DELAY",
                 "value": 2000
+            }
+        ],
+        "representations": [
+            {
+                "key": "info-button",
+                "templateUrl": "templates/info-button.html"
             }
         ]
     }

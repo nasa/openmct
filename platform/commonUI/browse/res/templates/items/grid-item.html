@@ -20,8 +20,8 @@
  at runtime from the About dialog for additional information.
 -->
 <!-- For selected, add class 'selected' to outer div -->
-<div class='item grid-item' ng-click='action.perform("navigate")'>
-    <div class="contents abs">
+<div class='item grid-item'>
+    <div class="contents abs mobile-grid-nav" ng-click='action.perform("navigate")'>
         <div class='top-bar bar abs'>
             <div class='left abs'>
                 <mct-include key="_checkbox"></mct-include>
@@ -43,5 +43,8 @@
                 </span>
             </div>
         </div>
+    </div>
+    <div class="contents abs mobile-info">
+        <mct-representation class="contents abs btn s-very-subtle desktop-hide" key="'info-button'" mct-object="domainObject"></mct-representation>
     </div>
 </div>
