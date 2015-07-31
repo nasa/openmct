@@ -52,9 +52,6 @@
     function index(data) {
         var message;
         
-        // TODO: Since this is only within genericsearch, do 
-        //       we really need to check if the index already holds it? 
-        //       This might depend on how often/when we clear indexedItems.
         if (!conainsItem(data.id)) {
             indexedItems.push({
                 id: data.id,
@@ -176,10 +173,6 @@
         }
         
         return message;
-        
-        // TODO: After a search is completed, do we need to 
-        //       clear out indexedItems? 
-        //       When do we need to clear out inedxedItems?
         
         // TODO: This function is too long. 
     }
