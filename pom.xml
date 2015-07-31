@@ -6,7 +6,7 @@
     <groupId>gov.nasa.arc.wtd</groupId>
     <artifactId>open-mct-web</artifactId>
     <name>Open MCT Web</name>
-    <version>0.7.2-SNAPSHOT</version>
+    <version>0.8.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <properties>
@@ -40,6 +40,8 @@
                                 <include>**/bundle.json</include>
                             </includes>
                             <excludes>
+                                <exclude>protractor/**/*</exclude>
+                                <exclude>node_modules/**/*</exclude>
                                 <exclude>platform/core/bundle.json</exclude>
                                 <exclude>example/**/*</exclude>
                                 <exclude>**/test/lib/*</exclude>
@@ -162,6 +164,7 @@
                         <exclude>**/lib/**</exclude>
                         <exclude>app.js</exclude>
                         <exclude>node_modules/**/*</exclude>
+                        <exclude>protractor/**/*</exclude>
                     </excludes>
                 </configuration>
                 <executions>
