@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,describe,it,expect,beforeEach,jasmine*/
 
 /**
  *  SearchSpec. Created by shale on 07/31/2015.
@@ -32,34 +32,88 @@ define(
         describe("The search controller", function () {
             var mockScope,
                 mockSearchService,
+                mockPromise,
                 controller;
 
+            function bigArray(size) {
+                var array = [],
+                    i;
+                for (i = 0; i < size; i += 1) {
+                    array.push(i);
+                }
+                return array;
+            }
+            
+            
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$on", "$watch" ]
+                    [ "" ]
                 );
+                mockScope.ngModel = {};
+                mockScope.ngModel.input = "test input";
+                
                 mockSearchService = jasmine.createSpyObj(
                     "searchService",
                     [ "query", "isLoading" ]
                 );
+                mockPromise = jasmine.createSpyObj(
+                    "promise",
+                    [ "then" ]
+                );
+                mockSearchService.query.andReturn(mockPromise);
                 
                 controller = new SearchController(mockScope, mockSearchService);
+                controller.search();
             });
             
             it("sends queries to the search service", function () {
+                expect(mockSearchService.query).toHaveBeenCalled();
+            });
+            
+            it("populates the results with results from the search service", function () {
+                expect(mockPromise.then).toHaveBeenCalledWith(jasmine.any(Function));
+                mockPromise.then.mostRecentCall.args[0]({hits: []});
                 
+                expect(mockScope.results).toBeDefined();
+            });
+            
+            it("checks if the search service is loading", function () {
+                controller.isLoading();
+                expect(mockSearchService.isLoading).toHaveBeenCalled();
             });
             
             it("displays only some results when there are many", function () {
+                expect(mockPromise.then).toHaveBeenCalledWith(jasmine.any(Function));
+                mockPromise.then.mostRecentCall.args[0]({hits: bigArray(100)});
                 
+                expect(mockScope.results).toBeDefined();
+                expect(mockScope.results.length).toBeLessThan(100);
             });
             
             it("can load more results", function () {
+                var oldSize;
                 
+                expect(mockPromise.then).toHaveBeenCalledWith(jasmine.any(Function));
+                mockPromise.then.mostRecentCall.args[0]({hits: bigArray(100)});
+                oldSize = mockScope.results.length;
+                
+                // If this doesn't pass, need to make the big array bigger
+                expect(controller.areMore()).toBeTruthy();
+                
+                controller.loadMore();
+                expect(mockScope.results.length).toBeGreaterThan(oldSize);
             });
             
-
+            it("sets the ngModel.search flag", function () {
+                // Flag should be true with nonempty input
+                expect(mockScope.ngModel.search).toEqual(true);
+                
+                // Flag should be flase with empty input
+                mockScope.ngModel.input = "";
+                controller.search();
+                expect(mockScope.ngModel.search).toEqual(false);
+            });
         });
     }
 );

@@ -63,17 +63,6 @@ define(function () {
             search: search,
             
             /**
-             * Checks to see if there are any search results to display.
-             */
-            areResults: function () {
-                if ($scope.results) {
-                    return $scope.results.length > 0;
-                } else {
-                    return false;
-                }
-            },
-            
-            /**
              * Checks to see if we are still waiting for the results to be 
              *   fully updated. 
              */

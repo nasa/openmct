@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,describe,it,expect,beforeEach,jasmine*/
 
 /**
  *  SearchSpec. Created by shale on 07/31/2015.
@@ -31,19 +31,40 @@ define(
 
         describe("The search item controller", function () {
             var mockScope,
+                mockDomainObject1,
+                mockDomainObject2,
                 controller;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$on", "$watch" ]
+                    [ "$watch" ]
                 );
+                mockDomainObject1 = jasmine.createSpyObj(
+                    "domainObject",
+                    [ "getId" ]
+                );
+                mockDomainObject1.getId.andReturn("1");
+                mockDomainObject2 = jasmine.createSpyObj(
+                    "domainObject",
+                    [ "getId" ]
+                );
+                mockDomainObject2.getId.andReturn("2");
+                
+                mockScope.ngModel = {};
+                mockScope.ngModel.selectedObject = mockDomainObject1;
+                mockScope.domainObject = mockDomainObject1;
                 
                 controller = new SearchItemController(mockScope);
             });
             
             it("keeps track of object selection", function () {
+                expect(controller.isSelected()).toBeTruthy();
                 
+                mockScope.ngModel.selectedObject = mockDomainObject2;
+                expect(mockScope.$watch).toHaveBeenCalled();
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject2);
+                expect(controller.isSelected()).toBeFalsy();
             });
 
         });
