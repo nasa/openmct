@@ -55,7 +55,7 @@ define(
                 }
                 
                 return searchTerm.split(' ').map(function (s) {
-                    if (s.includes('"')) {
+                    if (s.indexOf('"') !== -1) {
                         return s;
                     } else {
                         return s + '~' + editDistance;
@@ -166,7 +166,7 @@ define(
                     }).then(function (rawResults) {
                         // ...then process the data 
                         return processResults(rawResults, timestamp);
-                    }).catch(function (err) {
+                    })['catch'](function (err) {
                         // In case of error, return nothing. (To prevent
                         //   infinite loading time.)
                         return {hits: [], total: 0};

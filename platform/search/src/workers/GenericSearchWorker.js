@@ -97,7 +97,7 @@
 
         for (i = 0; i < terms.length; i += 1) {
             // Increase the score if the term is in the item name
-            if (name.includes(terms[i])) {
+            if (name.indexOf(terms[i]) !== -1) {
                 score += 1;
 
                 // Add extra to the score if the search term exists
