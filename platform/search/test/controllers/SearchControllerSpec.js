@@ -101,10 +101,9 @@ define(
                 var oldSize;
                 
                 expect(mockPromise.then).toHaveBeenCalledWith(jasmine.any(Function));
-                mockPromise.then.mostRecentCall.args[0]({hits: bigArray(100)});
+                mockPromise.then.mostRecentCall.args[0]({hits: bigArray(100), total: 1000});
                 oldSize = mockScope.results.length;
                 
-                // If this doesn't pass, need to make the big array bigger
                 expect(controller.areMore()).toBeTruthy();
                 
                 controller.loadMore();
