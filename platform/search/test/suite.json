@@ -3,5 +3,6 @@
     "controllers/SearchItemController",
     "SearchAggregator",
     "providers/ElasticsearchSearchProvider",
-    "providers/GenericSearchProvider"
+    "providers/GenericSearchProvider",
+    "workers/GenericSearchWorker"
 ]
