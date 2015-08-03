@@ -192,11 +192,6 @@ define(
             
             // Index the tree's contents once at the beginning 
             getItems();
-            // TODO: Is this a good assumption that the tree's contents will not 
-            //       change often enough? 
-            // TODO: This makes the timeout parameter that query takes 
-            //       useless. See if timing out worker is an idea that works. 
-            
             
             return {
                 /**

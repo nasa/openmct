@@ -102,7 +102,6 @@
 
                 // Add extra to the score if the search term exists
                 // as its own term within the items
-                // TODO: This may be undesired
                 if (name.split(' ').indexOf(terms[i]) !== -1) {
                     score += 0.5;
                 }
@@ -123,22 +122,21 @@
      *           * timestamp: The time identifier from when the query was made
      */
     function search(data) {
-        // This results 'dictionary' will have domain object ID keys which 
-        // point to the domain object's score. (The score is wrt only this 
-        // specific search input.)
+        // This results dictionary will have domain object ID keys which 
+        // point to the domain object's score. 
         var results = {},
             input = data.input.toLocaleLowerCase(),
             terms = convertToTerms(input),
-            i,
-            id,
-            score,
             message = {
                 request: 'search',
                 results: {},
                 total: 0,
-                timestamp: data.timestamp, // TODO: This may be no longer necissary
+                timestamp: data.timestamp,
                 timedOut: false
-            };
+            },
+            score,
+            i,
+            id;
         
         // If the user input is empty, we want to have no search results.
         if (input !== '') {
@@ -149,6 +147,7 @@
                     break;
                 }
                 
+                // Score and add items
                 score = scoreItem(indexedItems[i], input, terms);
                 if (score > 0) {
                     results[indexedItems[i].id] = score;
@@ -173,8 +172,6 @@
         }
         
         return message;
-        
-        // TODO: This function is too long. 
     }
     
     self.onmessage = function (event) {
