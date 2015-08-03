@@ -27,7 +27,8 @@ define(
         "use strict";
 
         var DEFAULT_DIMENSIONS = [ 12, 8 ],
-            DEFAULT_GRID_SIZE = [32, 32];
+            DEFAULT_GRID_SIZE = [32, 32],
+            MINIMUM_FRAME_SIZE = [ 320, 180 ];
 
         /**
          * The LayoutController is responsible for supporting the
@@ -67,12 +68,22 @@ define(
                 };
             }
 
+            // Generate default positions for a new panel
+            function defaultDimensions() {
+                return MINIMUM_FRAME_SIZE.map(function (min, i) {
+                    return Math.max(
+                        Math.ceil(min / gridSize[i]),
+                        DEFAULT_DIMENSIONS[i]
+                    );
+                });
+            }
+
             // Generate a default position (in its raw format) for a frame.
             // Use an index to ensure that default positions are unique.
             function defaultPosition(index) {
                 return {
                     position: [index, index],
-                    dimensions: DEFAULT_DIMENSIONS
+                    dimensions: defaultDimensions()
                 };
             }
 
@@ -107,6 +118,18 @@ define(
                 ids.forEach(populatePosition);
             }
 
+            // Update grid size when it changed
+            function updateGridSize(layoutGrid) {
+                var oldSize = gridSize;
+
+                gridSize = layoutGrid || DEFAULT_GRID_SIZE;
+
+                // Only update panel positions if this actually changed things
+                if (gridSize[0] !== oldSize[0] || gridSize[1] !== oldSize[1]) {
+                    lookupPanels(Object.keys(positions));
+                }
+            }
+
             // Position a panel after a drop event
             function handleDrop(e, id, position) {
                 if (e.defaultPrevented) {
@@ -137,6 +160,9 @@ define(
                 // that they can recognize that this event is handled.
                 e.preventDefault();
             }
+
+            // Watch for changes to the grid size in the model
+            $scope.$watch("model.layoutGrid", updateGridSize);
 
             // Position panes when the model field changes
             $scope.$watch("model.composition", lookupPanels);
