@@ -35,33 +35,28 @@
         </mct-control-->
     </div>
     
-    <!-- This div exists to determine scroll bar location -->
-    <div class="search-scroll">
-        
-        <!-- Results list -->
-        <div class="results">
-            <mct-representation key="'search-item'"
-                                ng-repeat="result in results"
-                                mct-object="result.object"
-                                ng-model="ngModel">
-            </mct-representation>
-        </div>
+    <!-- Results list -->
+    <div class="results">
+        <mct-representation key="'search-item'"
+                            ng-repeat="result in results"
+                            mct-object="result.object"
+                            ng-model="ngModel">
+        </mct-representation>
+    </div>
 
-        <!-- Loading icon -->
-        <div class="load-icon"
-             ng-class="{loading: controller.isLoading()}"
-             ng-if="controller.isLoading()">
-            <span class="icon wait-spinner"></span>
-            <span class="title-label">Loading...</span>
-        </div>
+    <!-- Loading icon -->
+    <div class="load-icon"
+         ng-class="{loading: controller.isLoading()}"
+         ng-if="controller.isLoading()">
+        <span class="icon wait-spinner"></span>
+        <span class="title-label">Loading...</span>
+    </div>
 
-        <!-- Load more button --> 
-        <div ng-if="controller.areMore()">
-            <button class="load-more-button btn very-subtle"
-                    ng-click="controller.loadMore()"> 
-                Load more
-            </button>
-        </div>
-        
+    <!-- Load more button --> 
+    <div ng-if="controller.areMore()">
+        <button class="load-more-button btn very-subtle"
+                ng-click="controller.loadMore()"> 
+            Load more
+        </button>
     </div>
 </div>

@@ -30,136 +30,128 @@
     padding-right: $rightPadding;
     top: 23px;
     
+    // Align with the top of the divider bar, below create button
+    margin-top: 10px;
+    
     .search {
-        //height: auto;
-        //overflow: auto;
         
         .search-input {
-            // Align with the top of the divider bar, below create button 
-            margin-top: 10px;
             width: 100%;
         }
         
-        .search-scroll {
-            height: 100%;
-            overflow: auto;
-            
-            .results {
-                // Spacing away from the search input
-                margin-top: 10px;
+        .results {
+            // Spacing away from the search input
+            margin-top: 10px;
 
-                .search-result-item {
-                    // Include transitions (for the highlights)
-                    @include single-transition(background-color, 0.25s);
+            .search-result-item {
+                // Include transitions (for the highlights)
+                @include single-transition(background-color, 0.25s);
 
-                    // Space the results from each other
-                    margin-bottom: 2px;
+                // Space the results from each other
+                margin-bottom: 2px;
 
-                    // Make the highlights the right color and shape.
-                    // Attempting to match the style in the tree, but  
-                    //   while having these be compact. 
-                    border-radius: 2px;
-                    padding-top: 4px;
-                    padding-bottom: 2px;
+                // Make the highlights the right color and shape.
+                // Attempting to match the style in the tree, but  
+                //   while having these be compact. 
+                border-radius: 2px;
+                padding-top: 4px;
+                padding-bottom: 2px;
 
-                    .label {
-                        // Give some padding away from the left side
-                        margin-left: $leftMargin;
-
-                        .title-label {
-                            display: inline-block;
-                            position: absolute;
-
-                            // Give some padding away from the left side
-                            left: $leftMargin + 3px + $iconWidth;
-                            // and the right side
-                            right: $rightPadding;
-
-                            // Size and position the text
-                            font-size: .8em;
-                            line-height: 17px;
-
-                            // Hide overflow text
-                            width: auto;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                            white-space: nowrap;
-                        }
-                    }
-
-                    // Change styling when it's selected
-                    &.selected {
-                        $c: #fff;
-                        background: $colorKeySelectedBg;
-                        color: $c;
-                        .view-control {
-                            color: $colorItemTreeIcon;
-                        }
-                        .label .type-icon {
-                            color: #fff;
-                        }
-                    }
-
-                    // Change styling when it's being hovered over
-                    &:not(.selected) {
-                        &:hover {
-                            background: lighten($colorBodyBg, 5%);
-                            color: lighten($colorBodyFg, 20%);
-                            .context-trigger {
-                                display: block;
-                            }
-                            .icon {
-                                color: $colorItemTreeIconHover;
-                            }
-                        }
-                    }
-                }
-            }
-
-            .load-icon {
-                position: relative;
-                &.loading {
-                    pointer-events: none;
+                .label {
+                    // Give some padding away from the left side
                     margin-left: $leftMargin;
 
                     .title-label {
-                        // Text styling
-                        font-style: italic;
-                        font-size: .9em;
-                        opacity: 0.5;
+                        display: inline-block;
+                        position: absolute;
 
-                        // Text positioning 
-                        margin-left: $iconWidth + $leftMargin;
-                        line-height: 24px;
-                    }
-                    .wait-spinner {
-                        margin-left: $leftMargin;
+                        // Give some padding away from the left side
+                        left: $leftMargin + 3px + $iconWidth;
+                        // and the right side
+                        right: $rightPadding;
+
+                        // Size and position the text
+                        font-size: .8em;
+                        line-height: 17px;
+
+                        // Hide overflow text
+                        width: auto;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
                     }
                 }
 
-                &:not(.loading) {
-                    cursor: pointer;
+                // Change styling when it's selected
+                &.selected {
+                    $c: #fff;
+                    background: $colorKeySelectedBg;
+                    color: $c;
+                    .view-control {
+                        color: $colorItemTreeIcon;
+                    }
+                    .label .type-icon {
+                        color: #fff;
+                    }
+                }
+
+                // Change styling when it's being hovered over
+                &:not(.selected) {
+                    &:hover {
+                        background: lighten($colorBodyBg, 5%);
+                        color: lighten($colorBodyFg, 20%);
+                        .context-trigger {
+                            display: block;
+                        }
+                        .icon {
+                            color: $colorItemTreeIconHover;
+                        }
+                    }
+                }
+            }
+        }
+
+        .load-icon {
+            position: relative;
+            &.loading {
+                pointer-events: none;
+                margin-left: $leftMargin;
+
+                .title-label {
+                    // Text styling
+                    font-style: italic;
+                    font-size: .9em;
+                    opacity: 0.5;
+
+                    // Text positioning 
+                    margin-left: $iconWidth + $leftMargin;
+                    line-height: 24px;
+                }
+                .wait-spinner {
+                    margin-left: $leftMargin;
                 }
             }
 
-            .load-more-button {
-                // Space away form the results list
-                margin-top: 5px;
-                margin-bottom: 5px;
-
-                // Center it
-                position: relative;
-                left: 25%;
-                width: 50%;
-
-                // Make smallish button 
-                height: 20px;
-                line-height: 11px;
-                font-size: 0.7em;
+            &:not(.loading) {
+                cursor: pointer;
             }
-            
-            // temp
-            //margin-bottom: 30px;
+        }
+
+        .load-more-button {
+            // Space away form the results list
+            margin-top: 5px;
+            margin-bottom: 5px;
+
+            // Center it
+            position: relative;
+            left: 25%;
+            width: 50%;
+            white-space: nowrap;
+
+            // Make smallish button 
+            height: 20px;
+            line-height: 11px;
+            font-size: 0.7em;
         }
     }
 }
