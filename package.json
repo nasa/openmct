@@ -28,8 +28,8 @@
     "start": "node app.js",
     "test": "karma start --single-run",
     "jshint": "jshint platform example || exit 0",
-    "jsdoc": "jsdoc -c jsdoc.json -r -d docs/api",
-    "otherdoc": "node docsrc/gendocs.js --in docsrc --out docs",
+    "jsdoc": "jsdoc -c jsdoc.json -r -d target/docs/api",
+    "otherdoc": "node docs/gendocs.js --in docs --out target/docs",
     "docs": "npm run jsdoc ; npm run otherdoc"
   },
   "repository": {
