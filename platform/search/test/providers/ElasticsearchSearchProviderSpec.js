@@ -47,7 +47,7 @@ define(
                 mockHttp = jasmine.createSpy("$http");
                 mockHttpPromise = jasmine.createSpyObj(
                     "promise",
-                    [ "then", "catch" ]
+                    [ "then" ]
                 );
                 mockHttp.andReturn(mockHttpPromise);
                 // allow chaining of promise.then().catch();
@@ -59,7 +59,7 @@ define(
                 );
                 mockObjectPromise = jasmine.createSpyObj(
                     "promise",
-                    [ "then", "catch" ]
+                    [ "then" ]
                 );
                 mockObjectService.getObjects.andReturn(mockObjectPromise);
                 
@@ -107,7 +107,7 @@ define(
             });
             
             it("returns something when there is an ElasticSearch error", function () {
-                mockProviderResults = mockHttpPromise['catch'].mostRecentCall.args[0]();
+                mockProviderResults = mockHttpPromise.then.mostRecentCall.args[1]();
                 expect(mockProviderResults).toBeDefined();
             });
         });

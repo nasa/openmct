@@ -166,7 +166,7 @@ define(
                     }).then(function (rawResults) {
                         // ...then process the data 
                         return processResults(rawResults, timestamp);
-                    })['catch'](function (err) {
+                    }, function (err) {
                         // In case of error, return nothing. (To prevent
                         //   infinite loading time.)
                         return {hits: [], total: 0};
