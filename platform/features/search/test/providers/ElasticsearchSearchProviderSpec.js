@@ -29,6 +29,11 @@ define(
     function (ElasticsearchSearchProvider) {
         "use strict";
 
+        // JSLint doesn't like underscore-prefixed properties,
+        // so hide them here.
+        var ID = "_id",
+            SCORE = "_score";
+        
         describe("The ElasticSearch search provider ", function () {
             var mockHttp,
                 mockHttpPromise,
@@ -72,25 +77,22 @@ define(
             });
             
             it("gets data from ElasticSearch", function () {
-                mockProviderResults = mockHttpPromise.then.mostRecentCall.args[0](
-                    {
-                    data: {
-                        hits: {
-                            hits: [
-                                {
-                                    _id: 1,
-                                    _score: 1
-                                },
-                                {
-                                    _id: 2,
-                                    _score: 2
-                                }
-                            ],
-                            total: 0
-                        },
-                        timed_out: false
-                    }
-                });
+                var data = {
+                    hits: {
+                        hits: [
+                            {},
+                            {}
+                        ],
+                        total: 0
+                    },
+                    timed_out: false
+                };
+                data.hits.hits[0][ID] = 1;
+                data.hits.hits[0][SCORE] = 1;
+                data.hits.hits[1][ID] = 2;
+                data.hits.hits[1][SCORE] = 2;
+                
+                mockProviderResults = mockHttpPromise.then.mostRecentCall.args[0]({data: data});
                 
                 expect(
                     mockObjectPromise.then.mostRecentCall.args[0]({
@@ -105,7 +107,7 @@ define(
             });
             
             it("returns something when there is an ElasticSearch error", function () {
-                mockProviderResults = mockHttpPromise.catch.mostRecentCall.args[0]();
+                mockProviderResults = mockHttpPromise['catch'].mostRecentCall.args[0]();
                 expect(mockProviderResults).toBeDefined();
             });
         });

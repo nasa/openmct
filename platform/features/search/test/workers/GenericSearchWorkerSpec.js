@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
+/*global define,describe,it,expect,runs,waitsFor,beforeEach,jasmine,Worker*/
 
 /**
  *  SearchSpec. Created by shale on 07/31/2015.
@@ -57,7 +57,7 @@ define(
                     resultsLength = 0;
                 
                 // Search something that should return all objects
-                runs(function() {
+                runs(function () {
                     worker.postMessage(
                         {
                             request: "search",
@@ -67,7 +67,7 @@ define(
                             timeout: 1000
                         }
                     );
-                });                
+                });
                 
                 worker.onmessage = function (event) {
                     var id;
@@ -79,11 +79,11 @@ define(
                     flag = true;
                 };
                 
-                waitsFor(function() {
+                waitsFor(function () {
                     return flag;
                 }, "The worker should be searching", 1000);
                 
-                runs(function() {
+                runs(function () {
                     expect(workerOutput).toBeDefined();
                     expect(resultsLength).toEqual(numObjects);
                 });
@@ -95,17 +95,17 @@ define(
                     resultsLength = 0;
                 
                 // Search something that should return 1 object
-                runs(function() {
+                runs(function () {
                     worker.postMessage(
                         {
                             request: "search",
-                            input: "0",
+                            input: "2",
                             maxNumber: 100,
                             timestamp: Date.now(),
                             timeout: 1000
                         }
                     );
-                });   
+                });
                 
                 worker.onmessage = function (event) {
                     var id;
@@ -117,14 +117,14 @@ define(
                     flag = true;
                 };
                 
-                waitsFor(function() {
+                waitsFor(function () {
                     return flag;
                 }, "The worker should be searching", 1000);
                 
-                runs(function() {
+                runs(function () {
                     expect(workerOutput).toBeDefined();
                     expect(resultsLength).toEqual(1);
-                    expect(workerOutput.results[0]).toBeDefined();
+                    expect(workerOutput.results[2]).toBeDefined();
                 });
             });
         });

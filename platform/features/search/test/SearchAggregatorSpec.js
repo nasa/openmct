@@ -65,11 +65,11 @@ define(
                     mockProviderResults.push({
                         hits: [
                             {
-                                id: i, 
+                                id: i,
                                 score: 42 - i
-                            }, 
+                            },
                             {
-                                id: i + 1, 
+                                id: i + 1,
                                 score: 42 - (2 * i)
                             }
                         ]
@@ -92,7 +92,7 @@ define(
             it("orders results by score", function () {
                 for (i = 1; i < mockAggregatorResults.hits.length; i += 1) {
                     expect(mockAggregatorResults.hits[i].score)
-                        .not.toBeGreaterThan(mockAggregatorResults.hits[i-1].score);
+                        .not.toBeGreaterThan(mockAggregatorResults.hits[i - 1].score);
                 }
             });
             
