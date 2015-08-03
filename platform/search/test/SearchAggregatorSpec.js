@@ -96,18 +96,6 @@ define(
                 }
             });
             
-            it("is loading until all the providers' promises fufill", function () {
-                expect(aggregator.isLoading()).toBeFalsy();
-                
-                // Send query
-                aggregator.query();
-                expect(aggregator.isLoading()).toBeTruthy();
-                
-                // Then resolve the promises
-                mockAggregatorResults = mockPromise.then.mostRecentCall.args[0]([]);
-                expect(aggregator.isLoading()).toBeFalsy();
-            });
-
         });
     }
 );

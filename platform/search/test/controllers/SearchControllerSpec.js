@@ -55,7 +55,7 @@ define(
                 
                 mockSearchService = jasmine.createSpyObj(
                     "searchService",
-                    [ "query", "isLoading" ]
+                    [ "query" ]
                 );
                 mockPromise = jasmine.createSpyObj(
                     "promise",
@@ -78,10 +78,16 @@ define(
                 expect(mockScope.results).toBeDefined();
             });
             
-            it("checks if the search service is loading", function () {
-                controller.isLoading();
-                expect(mockSearchService.isLoading).toHaveBeenCalled();
+            it("is loading until the service's promise fufills", function () {
+                // Send query
+                controller.search();
+                expect(controller.isLoading()).toBeTruthy();
+                
+                // Then resolve the promises
+                mockPromise.then.mostRecentCall.args[0]({hits: []});
+                expect(controller.isLoading()).toBeFalsy();
             });
+
             
             it("displays only some results when there are many", function () {
                 expect(mockPromise.then).toHaveBeenCalledWith(jasmine.any(Function));

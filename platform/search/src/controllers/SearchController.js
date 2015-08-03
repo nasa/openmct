@@ -33,10 +33,14 @@ define(function () {
     function SearchController($scope, searchService) {
         // Starting amount of results to load. Will get increased. 
         var numResults = INITIAL_LOAD_NUMBER,
+            loading = false,
             fullResults = [];
         
         function search() {
             var inputText = $scope.ngModel.input;
+            
+            // We are starting to load.
+            loading = true;
             
             // Update whether the file tree should be displayed 
             if (inputText === '' || inputText === undefined) {
@@ -52,6 +56,9 @@ define(function () {
             searchService.query(inputText).then(function (result) {
                 fullResults = result.hits;
                 $scope.results = result.hits.slice(0, numResults);
+                
+                // Now we are done loading.
+                loading = false;
             });
         }
         
@@ -67,7 +74,7 @@ define(function () {
              *   fully updated. 
              */
             isLoading: function () {
-                return searchService.isLoading();
+                return loading;
             },
             
             /**

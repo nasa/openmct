@@ -42,7 +42,6 @@ define(
          *        aggregated
          */
         function SearchAggregator($q, providers) {
-            var loading;
             
             // Remove duplicate objects that have the same ID. Modifies the passed 
             //   array, and returns the number that were removed. 
@@ -89,9 +88,6 @@ define(
                     timestamp = Date.now(),
                     resultPromises = [];
                 
-                // We are loading
-                loading = true;
-                
                 // Send the query to all the providers
                 for (i = 0; i < providers.length; i += 1) {
                     resultPromises.push(
@@ -114,9 +110,6 @@ define(
                     orderByScore(results);
                     totalSum -= filterDuplicates(results, totalSum);
                     
-                    // We are done loading 
-                    loading = false;
-                    
                     return {
                         hits: results,
                         total: totalSum,
@@ -135,15 +128,7 @@ define(
                  *
                  * @param inputText The text input that is the query.
                  */
-                query: queryAll,
-                
-                /**
-                 * Checks to see if we are still waiting for the results to be 
-                 *   fully updated. 
-                 */
-                isLoading: function () {
-                    return loading;
-                }
+                query: queryAll
             };
         }
 
