@@ -108,8 +108,8 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
         });
     });
 
-    // Also copy over all HTML files
-    glob(options['in'] + "/**/*.html", {}, function (err, files) {
+    // Also copy over all HTML, CSS, or PNG files
+    glob(options['in'] + "/**/*.@(html|css|png)", {}, function (err, files) {
         files.forEach(function (file) {
             var destination = file.replace(options['in'], options.out),
                 destPath = path.dirname(destination);
