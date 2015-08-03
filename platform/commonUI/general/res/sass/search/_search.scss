@@ -25,28 +25,24 @@
     $leftMargin: 6px;
     $rightPadding: 5px;
     
-    //position: relative;
-    overflow-y: auto;
     padding-right: $rightPadding;
     top: 23px;
     
+    // Align with the top of the divider bar, below create button 
+    margin-top: 10px;
+    
     .search {
-        //height: auto;
-        //overflow: auto;
         
         .search-input {
-            // Align with the top of the divider bar, below create button 
-            margin-top: 10px;
             width: 100%;
         }
         
         .search-scroll {
-            height: 100%;
-            overflow: auto;
+            // Spacing away from the search input
+            top: 25px;
+            overflow-y: auto;
             
             .results {
-                // Spacing away from the search input
-                margin-top: 10px;
 
                 .search-result-item {
                     // Include transitions (for the highlights)
@@ -151,15 +147,13 @@
                 position: relative;
                 left: 25%;
                 width: 50%;
+                white-space: nowrap;
 
                 // Make smallish button 
                 height: 20px;
                 line-height: 11px;
                 font-size: 0.7em;
             }
-            
-            // temp
-            //margin-bottom: 30px;
         }
     }
 }
