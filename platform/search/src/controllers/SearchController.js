@@ -34,9 +34,9 @@ define(function () {
         // Starting amount of results to load. Will get increased. 
         var numResults = INITIAL_LOAD_NUMBER,
             loading = false,
-            fullResults = [];
+            fullResults = {hits: []};
         
-        function search() {
+        function search(maxResults) {
             var inputText = $scope.ngModel.input;
             
             // We are starting to load.
@@ -49,12 +49,14 @@ define(function () {
                 $scope.ngModel.search = true;
             }
             
-            // Reset 'load more'
-            numResults = INITIAL_LOAD_NUMBER;
+            if (!maxResults) {
+                // Reset 'load more'
+                numResults = INITIAL_LOAD_NUMBER;
+            }
             
             // Send the query
-            searchService.query(inputText).then(function (result) {
-                fullResults = result.hits;
+            searchService.query(inputText, maxResults).then(function (result) {
+                fullResults = result;
                 $scope.results = result.hits.slice(0, numResults);
                 
                 // Now we are done loading.
@@ -66,6 +68,10 @@ define(function () {
             /**
              * Search the filetree.
              * Assumes that any search text will be in ngModel.input
+             *
+             * @param maxResults (optional) The maximum number of results 
+             *   that this function should return. If not provided, search
+             *   service default will be used. 
              */
             search: search,
             
@@ -81,8 +87,7 @@ define(function () {
              * Checks to see if there are more search results to display.
              */
             areMore: function () {
-                return numResults < fullResults.length;
-                // TODO: See loadMore() todo.
+                return numResults < fullResults.total;
             },
             
             /**
@@ -91,9 +96,13 @@ define(function () {
              */
             loadMore: function () {
                 numResults += LOAD_INCREMENT;
-                $scope.results = fullResults.slice(0, numResults);
-                // TODO: Let load more see if total > fullResults.length, and then
-                //       if so, resend a query.
+                
+                if (numResults > fullResults.hits.length && fullResults.hits.length < fullResults.total) {
+                    // Resend the query if we are out of items to display, but there are more to get
+                    search(numResults);
+                } else {
+                    $scope.results = fullResults.hits.slice(0, numResults);
+                }
             }
         };
     }

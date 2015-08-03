@@ -83,15 +83,19 @@ define(
             }
             
             // For documentation, see sendQuery below.
-            function queryAll(inputText) {
+            function queryAll(inputText, maxResults) {
                 var i,
                     timestamp = Date.now(),
                     resultPromises = [];
                 
+                if (!maxResults) {
+                    maxResults = DEFAULT_MAX_RESULTS;
+                }
+                
                 // Send the query to all the providers
                 for (i = 0; i < providers.length; i += 1) {
                     resultPromises.push(
-                        providers[i].query(inputText, timestamp, DEFAULT_MAX_RESULTS, DEFUALT_TIMEOUT)
+                        providers[i].query(inputText, timestamp, maxResults, DEFUALT_TIMEOUT)
                     );
                 }
                 
@@ -127,6 +131,9 @@ define(
                  *   {hits: domainObject[], total: number}
                  *
                  * @param inputText The text input that is the query.
+                 * @param maxResults (optional) The maximum number of results 
+                 *   that this function should return. If not provided, a
+                 *   default of 100 will be used. 
                  */
                 query: queryAll
             };
