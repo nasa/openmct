@@ -1,4 +1,6 @@
-#Overview
+# Framework Architecture
+
+## Overview
 
 The framework layer's most basic responsibility is allowing individual
 software components to communicate. The software components it recognizes
@@ -71,3 +73,38 @@ a simple sequence of steps.
 [Register with Angular]->[<state> Bootstrap application]
 [Bootstrap application]->[<end> End]
 ```
+
+## Architectural Paradigm
+
+Open MCT Web's architecture relies on a simple premise: Individual units
+(extensions) only have access to the dependencies they declare that they
+need, and they acquire references to these dependencies via dependency
+injection. This has several desirable traits:
+
+* Programming to an interface is enforced. Any given dependency can be
+  swapped out for something which exposes an equivalent interface. This
+  improves flexibility against refactoring, simplifies testing, and
+  provides a common mechanism for extension and reconfiguration.
+* The dependencies of a unit must be explicitly defined. This means that
+  it can be easily determined what a given unit's role is within the
+  larger system, in terms of what other components it will interact with.
+  It also helps to enforce good separation of concerns: When a set of
+  declared dependencies becomes long it is obvious, and this is usually
+  a sign that a given unit is involved in too many concerns and should
+  be refactored into smaller pieces.
+* Individual units do not need to be aware of the framework; they need
+  only be aware of the interfaces to the components they specifically
+  use. This avoids introducing a ubiquitous dependency upon the framework
+  layer itself; it is plausible to modify or replace the framework
+  without making changes to individual software components which run upon
+  the framework.
+
+A drawback to this approach is that it makes it difficult to define
+"the architecture" of Open MCT Web, in terms of describing the specific
+units that interact at run-time. The run-time architecture is determined
+by the framework as the consequence of wiring together dependencies.
+As such, the specific architecture of any given application built on
+Open MCT Web can look very different.
+
+The specific service infrastructure provided by the platform is described
+in the [Platform Architecture](Platform.html).
