@@ -86,11 +86,30 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
         return transform;
     }
 
+    function CustomRenderer() {
+        var renderer = new marked.Renderer(),
+            customRenderer = Object.create(renderer);
+        customRenderer.heading = function (text, level) {
+            var escapedText = (text || "").trim().toLowerCase().replace(/\W/g, "-"),
+                aOpen = "<a name=\"" + escapedText + "\" href=\"#" + escapedText + "\">",
+                aClose = "</a>";
+            return aOpen + renderer.heading.apply(renderer, arguments) + aClose;
+        };
+        // Change links to .md files to .html
+        customRenderer.link = function (href, title, text) {
+            // ...but only if they look like relative paths
+            return (href || "").indexOf(":") === -1 && href[0] !== "/" ?
+                renderer.link(href.replace(/md$/, "html"), title, text) :
+                renderer.link.apply(renderer, arguments);
+        };
+        return customRenderer;
+    }
+
     options['in'] = options['in'] || options.i;
     options.out = options.out || options.o;
 
     marked.setOptions({
-        renderer: new marked.Renderer(),
+        renderer: new CustomRenderer(),
         gfm: true,
         tables: true,
         breaks: false,

@@ -107,4 +107,4 @@ As such, the specific architecture of any given application built on
 Open MCT Web can look very different.
 
 The specific service infrastructure provided by the platform is described
-in the [Platform Architecture](Platform.html).
+in the [Platform Architecture](Platform.md).
