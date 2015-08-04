@@ -9,6 +9,38 @@ to provide an extensible baseline for applications which includes:
   of various kinds within the context of the common user interface.
 * A service infrastructure to support building additional components.
 
+## Platform Architecture
+
+While the framework provides a more general architectural paradigm for
+building application, the platform adds more specificity by defining
+additional extension types and allowing for integration with back end
+components.
+
+The run-time architecture of an Open MCT Web application can be categorized
+into certain high-level tiers:
+
+```nomnoml
+[Templates]->[<state> AngularJS]
+[AngularJS]->[Presentation Layer]
+[Presentation Layer]->[Information Model]
+[Presentation Layer]->[Service Infrastructure]
+[Information Model]->[Service Infrastructure]
+[Service Infrastructure]->[<state> Browser APIs]
+[Browser APIs]->[Back-end]
+```
+
+Applications built using Open MCT Web may add or configure functionality
+in any of these tiers.
+
+# Presentation Layer
+
+The presentation layer of Open MCT Web is responsible for providing
+information to display within templates, and for handling interactions
+which are initiated from templated DOM elements. AngularJS acts as
+an intermediary between the web page as the user sees it, and the
+presentation layer implemented as Open MCT Web extensions.
+
+
 # Information Model
 
 ```nomnoml
