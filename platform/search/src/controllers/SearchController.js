@@ -28,7 +28,7 @@ define(function () {
     "use strict";
     
     var INITIAL_LOAD_NUMBER = 20,
-        LOAD_INCREMENT = 5;
+        LOAD_INCREMENT = 20;
     
     function SearchController($scope, searchService) {
         // Starting amount of results to load. Will get increased. 
@@ -42,13 +42,6 @@ define(function () {
             // We are starting to load.
             loading = true;
             
-            // Update whether the file tree should be displayed 
-            if (inputText === '' || inputText === undefined) {
-                $scope.ngModel.search = false;
-            } else {
-                $scope.ngModel.search = true;
-            }
-            
             if (!maxResults) {
                 // Reset 'load more'
                 numResults = INITIAL_LOAD_NUMBER;
@@ -58,6 +51,13 @@ define(function () {
             searchService.query(inputText, maxResults).then(function (result) {
                 fullResults = result;
                 $scope.results = result.hits.slice(0, numResults);
+                
+                // Update whether the file tree should be displayed 
+                if (inputText === '' || inputText === undefined) {
+                    $scope.ngModel.search = false;
+                } else {
+                    $scope.ngModel.search = true;
+                }
                 
                 // Now we are done loading.
                 loading = false;
