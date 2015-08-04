@@ -42,6 +42,12 @@ define(function () {
             // We are starting to load.
             loading = true;
             
+            // Update whether the file tree should be displayed 
+            // Hide tree only when starting search 
+            if (inputText !== '' && inputText !== undefined) {
+                $scope.ngModel.search = true;
+            }
+            
             if (!maxResults) {
                 // Reset 'load more'
                 numResults = INITIAL_LOAD_NUMBER;
@@ -53,10 +59,9 @@ define(function () {
                 $scope.results = result.hits.slice(0, numResults);
                 
                 // Update whether the file tree should be displayed 
+                // Reveal tree only when finishing search
                 if (inputText === '' || inputText === undefined) {
                     $scope.ngModel.search = false;
-                } else {
-                    $scope.ngModel.search = true;
                 }
                 
                 // Now we are done loading.
