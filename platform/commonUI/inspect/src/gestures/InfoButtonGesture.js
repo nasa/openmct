@@ -39,7 +39,6 @@ define(
          */
         function InfoGestureButton($document, agentService, infoService, element, domainObject) {
             var dismissBubble,
-                pendingBubble,
                 touchPosition,
                 scopeOff,
                 body = $document.find('body');
@@ -59,6 +58,7 @@ define(
                     dismissBubble();
                     dismissBubble = undefined;
                 }
+                
                 // Detaches body touch listener
                 body.off('touchstart', hideBubble);
             }
@@ -68,17 +68,24 @@ define(
             // and then on any body touch the bubble is dismissed
             function showBubble(event) {
                 trackPosition(event);
-
+                
                 // Show the bubble, but on any touchstart on the
                 // body (anywhere) call hidebubble
-                pendingBubble =
-                    dismissBubble = infoService.display(
-                        "info-table",
-                        domainObject.getModel().name,
-                        domainObject.useCapability('metadata'),
-                        touchPosition
-                    );
-                body.on('touchstart', hideBubble);
+                dismissBubble = infoService.display(
+                    "info-table",
+                    domainObject.getModel().name,
+                    domainObject.useCapability('metadata'),
+                    touchPosition
+                );
+                
+                // On any touch on the body, default body touches/events
+                // are prevented, the bubble is dismissed, and the touchstart
+                // body event is unbound, reallowing gestures
+                body.on('touchstart', function (event) {
+                    event.preventDefault();
+                    hideBubble();
+                    body.unbind('touchstart');
+                });
             }
             
             // Checks if you are on a mobile device, if the device is

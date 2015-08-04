@@ -61,10 +61,11 @@ define(
                 //  info bubble positioned as normal (with triangle pointing 
                 //  to where clicked or pressed)
                 bubble.css('position', 'absolute');
-                if(agentService.isPhone(navigator.userAgent)) {                    
-                    bubble.css('right', 5 + 'px');
-                    bubble.css('left', 5 + 'px');
-                    bubble.css('top', 40 + 'px');
+                if (agentService.isPhone(navigator.userAgent)) {
+                    bubble.css('right', 0 + 'px');
+                    bubble.css('left', 0 + 'px');
+                    bubble.css('top', 'auto');
+                    bubble.css('bottom', 25 + 'px');
                 } else {
                     if (goLeft) {
                         bubble.css('right', (winDim[0] - position[0] + OFFSET[0]) + 'px');
@@ -79,7 +80,7 @@ define(
                 }
                 // Add the menu to the body
                 body.append(bubble);
-
+                
                 // Return a function to dismiss the bubble
                 return function () { bubble.remove(); };
             }
