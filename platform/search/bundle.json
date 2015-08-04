@@ -2,6 +2,13 @@
     "name": "Search",
     "description": "Allows the user to search through the file tree.",
     "extensions": {
+        "constants": [
+            {
+                "key": "GENERIC_SEARCH_ROOTS",
+                "value": [ "ROOT" ],
+                "priority": "fallback"
+            }
+        ],
         "controllers": [
             {
                 "key": "SearchController",
@@ -32,7 +39,7 @@
                 "provides": "searchService",
                 "type": "provider",
                 "implementation": "services/GenericSearchProvider.js",
-                "depends": [ "$q", "objectService", "workerService", "roots[]" ]
+                "depends": [ "$q", "objectService", "workerService", "GENERIC_SEARCH_ROOTS" ]
             },
             {
                 "provides": "searchService",

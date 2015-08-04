@@ -43,9 +43,10 @@ define(
          *        domain objects can be gotten.
          * @param {WorkerService} workerService The service which allows
          *        more easy creation of web workers.
-         * @param {roots[]} roots An array of all the root domain objects.
+         * @param {GENERIC_SEARCH_ROOTS} ROOTS An array of the root 
+         *        domain objects' IDs.
          */
-        function GenericSearchProvider($q, objectService, workerService, roots) {
+        function GenericSearchProvider($q, objectService, workerService, ROOTS) {
             var worker = workerService.run('genericSearchWorker'),
                 pendingQueries = {};
             // pendingQueries is a dictionary with the key value pairs st 
@@ -142,14 +143,8 @@ define(
             
             // Converts the filetree into a list
             function getItems(timeout) {
-                var rootIds = [],
-                    i;
-                for (i = 0; i < roots.length; i += 1) {
-                    rootIds.push(roots[i].id);
-                }
-                
                 // Aquire root objects
-                objectService.getObjects(rootIds).then(function (objectsById) {
+                objectService.getObjects(ROOTS).then(function (objectsById) {
                     var objects = [],
                         id;
                     
