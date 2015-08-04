@@ -31,7 +31,7 @@ define(
 
         describe("The generic search worker ", function () {
             // If this test fails, make sure this path is correct
-            var worker = new Worker('platform/search/src/workers/GenericSearchWorker.js'),
+            var worker = new Worker('platform/search/src/services/GenericSearchWorker.js'),
                 numObjects = 5;
             
             beforeEach(function () {

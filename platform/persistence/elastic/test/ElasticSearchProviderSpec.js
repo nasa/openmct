@@ -25,7 +25,7 @@
  *  SearchSpec. Created by shale on 07/31/2015.
  */
 define(
-    ["../../src/providers/ElasticSearchProvider"],
+    ["../src/ElasticSearchProvider"],
     function (ElasticSearchProvider) {
         "use strict";
 
@@ -68,7 +68,7 @@ define(
                     [ "getId", "getModel" ]
                 );
                 
-                provider = new ElasticsearchSearchProvider(mockHttp, mockObjectService, "");
+                provider = new ElasticSearchProvider(mockHttp, mockObjectService, "");
                 provider.query(' test  "query" ', 0, undefined, 1000);
             });
             
