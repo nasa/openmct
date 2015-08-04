@@ -82,10 +82,11 @@ define(
                 // Capture the contextmenu callback
                 fireGesture =  mockElement.on.mostRecentCall.args[1];
                 
-                expect(mockElement.on).toHaveBeenCalledWith(
-                    "touchstart",
-                    jasmine.any(Function)
-                );
+                mockMenu.on.calls.forEach(function (call) {
+                    if (call.args[0] === 'touchstart') {
+                        call.args[1](mockEvent);
+                    }
+                });
             });
         });
     }

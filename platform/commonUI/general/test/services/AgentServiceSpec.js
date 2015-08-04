@@ -53,8 +53,11 @@ define(
             it("get current device user agent", function () {
                 mockNavigator.userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36";
                 agentService.isMobile(mockNavigator.userAgent);
+                agentService.isPhone(mockNavigator.userAgent);
                 mockNavigator.userAgent = "Mozilla/5.0 (iPad; CPU OS 7_0 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53";
                 agentService.isMobile(mockNavigator.userAgent);
+                mockNavigator.userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 7_0 like Mac OS X; en-us) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53";
+                agentService.isPhone(mockNavigator.userAgent);
             });
             
             it("get orientation of the current device", function () {

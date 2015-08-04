@@ -53,6 +53,14 @@ define(
                 mockStopPropagation,
                 action;
 
+            function fireEvent(evt, value) {
+                mockElement.on.calls.forEach(function (call) {
+                    if (call.args[0] === evt) {
+                        call.args[1](value);
+                    }
+                });
+            }
+            
             beforeEach(function () {
                 mockCompile = jasmine.createSpy("$compile");
                 mockCompiledTemplate = jasmine.createSpy("template");
@@ -144,13 +152,12 @@ define(
             it("keeps a menu when menu is clicked", function () {
                 // Show the menu
                 action.perform();
-                
                 // Find and fire body's mousedown listener
-//                mockMenu.on.calls.forEach(function (call) {
-//                    if (call.args[0] === 'mousedown') {
-//                        call.args[1]();
-//                    }
-//                });
+                mockMenu.on.calls.forEach(function (call) {
+                    if (call.args[0] === 'mousedown') {
+                        call.args[1](mockEvent);
+                    }
+                });
 
                 // Menu should have been removed
                 expect(mockMenu.remove).not.toHaveBeenCalled();
@@ -171,11 +178,11 @@ define(
                 );
                 action.perform();
                 
-//                mockMenu.on.calls.forEach(function (call) {
-//                    if (call.args[0] === 'touchstart') {
-//                        call.args[1]();
-//                    }
-//                });
+                mockMenu.on.calls.forEach(function (call) {
+                    if (call.args[0] === 'touchstart') {
+                        call.args[1](mockEvent);
+                    }
+                });
             });
         });
     }
