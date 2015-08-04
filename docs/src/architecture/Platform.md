@@ -45,6 +45,48 @@ A domain object should be conceived of as the union of the following:
   has a different interface from a `telemetry` capability. Using
   capabilities requires some prior knowledge of their interface.
 
+## Capabilities and Services
+
+```nomnoml
+#direction: right
+[DomainObject]o-[FooCapability]
+[FooCapability]o-[FooService]
+[FooService]o-[foos]
+```
+
+At run-time, the user is primarily concerned with interacting with
+domain objects. These interactions are ultimately supported via back-end
+services, but to allow customization per-object, these are often mediated
+by capabilities.
+
+A common pattern that emerges in the Open MCT Platform is as follows:
+
+* A `DomainObject` has some particular behavior that will be supported
+  by a service.
+* A `Capability` of that domain object will define that behavior,
+  _for that domain object_, supported by a service.
+* A `Service` utilized by that capability will perform the actual behavior.
+* An extension category will be utilized by that capability to determine
+  the set of possible behaviors.
+
+Concrete examples of capabilities which follow this pattern
+(or a subset of this pattern) include:
+
+```nomnoml
+#direction: right
+[DomainObject]1 o- *[Capability]
+[Capability]<:--[TypeCapability]
+[Capability]<:--[ActionCapability]
+[Capability]<:--[PersistenceCapability]
+[Capability]<:--[TelemetryCapability]
+[TypeCapability]o-[TypeService]
+[TypeService]o-[types]
+[ActionCapability]o-[ActionService]
+[ActionService]o-[actions]
+[PersistenceCapability]o-[PersistenceService]
+[TelemetryCapability]o-[TelemetryService]
+```
+
 # Service Infrastructure
 
 Most services exposed by the Open MCT Web platform follow the
@@ -128,7 +170,8 @@ associated with domain objects.) These are retrieved by identifier.
 The platform includes multiple components of this variety:
 
 * `PersistedModelProvider` looks up domain object models from
-  a persistence store; this is how user-created and user-modified
+  a persistence store (the [`PersistenceService`](#persistence-service));
+  this is how user-created and user-modified
   domain object models are retrieved.
 * `RootModelProvider` provides domain object models that have been
   declared via the `roots` extension category. These will appear at the
@@ -203,3 +246,26 @@ There is no single definitive implementation of a `PersistenceService` in
 the platform. Optional adapters are provided to store and load documents
 from CouchDB and ElasticSearch, respectively; plugin authors may also
 write additional adapters to utilize different back end technologies.
+
+## Action Service
+
+```nomnoml
+[ActionService|
+  getActions(context : ActionContext) : Array.<Action>
+]
+[ActionProvider]--:>[ActionService]
+[CreateActionProvider]--:>[ActionService]
+[ActionAggregator]--:>[ActionService]
+[LoggingActionDecorator]--:>[ActionService]
+
+[LoggingActionDecorator]o-[ActionAggregator]
+[ActionAggregator]o-[ActionProvider]
+[ActionAggregator]o-[CreateActionProvider]
+
+[ActionProvider]o-[actions]
+[CreateActionProvider]o-[TypeService]
+```
+
+Actions are discrete tasks or behaviors that can be initiated by a user
+upon or using a domain object. Actions may appear as menu items or
+buttons in the user interface, or may be triggered by certain gestures.
