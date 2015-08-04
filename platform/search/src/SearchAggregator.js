@@ -46,12 +46,12 @@ define(
             // Remove duplicate objects that have the same ID. Modifies the passed 
             //   array, and returns the number that were removed. 
             function filterDuplicates(results, total) {
-                var ids = [],
+                var ids = {},
                     numRemoved = 0,
                     i;
                 
                 for (i = 0; i < results.length; i += 1) {
-                    if (ids.indexOf(results[i].id) !== -1) {
+                    if (ids[results[i].id]) {
                         // If this result's ID is already there, remove the object
                         results.splice(i, 1);
                         numRemoved += 1;
@@ -60,7 +60,7 @@ define(
                         i -= 1;
                     } else {
                         // Otherwise add the ID to the list of the ones we have seen 
-                        ids.push(results[i].id);
+                        ids[results[i].id] = true;
                     }
                 }
                 
