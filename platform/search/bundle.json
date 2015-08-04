@@ -51,8 +51,7 @@
         "workers": [
             {
                 "key": "genericSearchWorker",
-                "scriptUrl": "services/GenericSearchWorker.js",
-                "depends": [ "objectService" ]
+                "scriptUrl": "services/GenericSearchWorker.js"
             }
         ]
     }
