@@ -74,7 +74,30 @@ a simple sequence of steps.
 [Bootstrap application]->[<end> End]
 ```
 
+1. __Loading bundles.json.__ A file named `bundles.json` is loaded to determine
+   which bundles to load. Bundles are given in this file as relative paths
+   which point to bundle directories.
+2. __Load bundle.json files.__ Individual bundle definitions are loaded; a
+   `bundle.json` file is expected in each bundle directory.
+2. __Resolving implementations.__ Any scripts which provide implementations for
+   extensions exposed by bundles are loaded, using RequireJS.
+3. __Register with Angular.__ Resolved extensions are registered with Angular,
+   such that they can be used by the application at run-time. This stage
+   includes both registration of Angular built-ins (directives, controllers,
+   routes, constants, and services) as well as registration of non-Angular
+   extensions.
+4. __Bootstrap application.__ Once all extensions have been registered,
+   the Angular application
+   [is bootstrapped](https://docs.angularjs.org/guide/bootstrap).
+
 ## Architectural Paradigm
+
+```nomnoml
+[Extension]
+[Extension]o->[Dependency #1]
+[Extension]o->[Dependency #2]
+[Extension]o->[Dependency #3]
+```
 
 Open MCT Web's architecture relies on a simple premise: Individual units
 (extensions) only have access to the dependencies they declare that they
@@ -106,5 +129,76 @@ by the framework as the consequence of wiring together dependencies.
 As such, the specific architecture of any given application built on
 Open MCT Web can look very different.
 
+Keeping that in mind, there are a few useful patterns supported by the
+framework that are useful to keep in mind.
+
 The specific service infrastructure provided by the platform is described
 in the [Platform Architecture](Platform.md).
+
+### Extension Categories
+
+### Composite Services
+
+Composite services (registered via extension category `components`) are
+a pattern supported by the framework. These allow service instances to
+be built from multiple components at run-time; support for this pattern
+allows additional bundles to introduce or modify behavior associated
+with these services without modifying or replacing original service
+instances.
+
+```nomnoml
+#direction: down
+[<abstract> FooService]
+[FooDecorator #1]--:>[FooService]
+[FooDecorator #n]--:>[FooService]
+[FooAggregator]--:>[FooService]
+[FooProvider #1]--:>[FooService]
+[FooProvider #n]--:>[FooService]
+
+[FooDecorator #1]o->[<state> ...decorators...]
+[...decorators...]o->[FooDecorator #n]
+[FooDecorator #n]o->[FooAggregator]
+[FooAggregator]o->[FooProvider #1]
+[FooAggregator]o->[<state> ...providers...]
+[FooAggregator]o->[FooProvider #n]
+
+[FooDecorator #1]--[<note> Exposed as fooService]
+```
+
+In this pattern, components all implement an interface which is
+standardized for that service. Components additionally declare
+that they belong to one of three types:
+
+* __Providers.__ A provider actually implements the behavior
+  (satisfies the contract) for that kind of service. For instance,
+  if a service is responsible for looking up documents by an identifier,
+  one provider may do so by querying a database, while another may
+  do so by reading a static JSON document. From the outside, either
+  provider would look the same (they expose the same interface) and
+  they could be swapped out easily.
+* __Aggregator.__ An aggregator takes many providers and makes them
+  behave as one. Again, this implements the same interface as an
+  individual provider, so users of the service do not need to be
+  concerned about the difference between consulting many providers
+  and consulting one. Continuing with the example of a service that
+  looks up documents by identifiers, an aggregator here might consult
+  all providers, and return any document is found (perhaps picking one
+  over the other or merging documents if there are multiple matches.)
+* __Decorators.__ A decorator exposes the same interface as other
+  components, but instead of fully implementing the behavior associated
+  with that kind of service, it only acts as an intermediary, delegating
+  the actual behavior to a different component. Decorators may transform
+  inputs or outputs, or initiate some side effects associated with a
+  service. This is useful if certain common behavior associated with a
+  service (caching, for instance) may be useful across many different
+  implementations of that same service.
+
+The framework will register extensions in this category such that an
+aggregator will depend on all of its providers, and decorators will
+depend upon on one another in a chain. The result of this compositing step
+(the last decorator, if any; otherwise the aggregator, if any;
+otherwise a single provider) will be exposed as a single service that
+other extensions can acquire through dependency injection. Because all
+components of the same type of service expose the same interface, users
+of that service do not need to be aware that they are talking to an
+aggregator or a provider, for instance.
