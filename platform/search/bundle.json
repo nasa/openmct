@@ -2,31 +2,6 @@
     "name": "Search",
     "description": "Allows the user to search through the file tree.",
     "extensions": {
-        "controllers": [
-            {
-                "key": "SearchController",
-                "implementation": "controllers/SearchController.js",
-                "depends": [ "$scope", "searchService" ]
-            },
-            {
-                "key": "SearchItemController",
-                "implementation": "controllers/SearchItemController.js",
-                "depends": [ "$scope" ]
-            }
-        ],
-        "templates": [
-            {
-                "key": "search",
-                "templateUrl": "templates/search.html",
-                "uses": [ "controls", "forms" ]
-            }
-        ],
-        "representations": [
-            {
-                "key": "search-item",
-                "templateUrl": "templates/search-item.html"
-            }
-        ],
         "components": [
             {
                 "provides": "searchService",

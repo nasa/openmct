@@ -1,6 +1,4 @@
 [
-    "controllers/SearchController",
-    "controllers/SearchItemController",
     "SearchAggregator",
     "providers/ElasticsearchSearchProvider",
     "providers/GenericSearchProvider",
