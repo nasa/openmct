@@ -183,7 +183,7 @@ define(
                  *   promise for a result object that has the format
                  *   {hits: searchResult[], total: number, timedOut: boolean}
                  *   where a searchResult has the format
-                 *   {id: domainObject ID, object: domainObject, score: number}
+                 *   {id: string, object: domainObject, score: number}
                  *
                  * Notes:
                  *   * The order of the results is from highest to lowest score, 
