@@ -15,7 +15,7 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
         mkdirp = require("mkdirp"),
         path = require("path"),
         glob = require("glob"),
-        showdown = require("github-flavored-markdown"),
+        marked = require("marked"),
         split = require("split"),
         stream = require("stream"),
         nomnoml = require('nomnoml'),
@@ -79,7 +79,7 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
         };
         transform._flush = function (done) {
             this.push("<html><body>\n");
-            this.push(showdown.parse(markdown));
+            this.push(marked(markdown));
             this.push("\n</body></html>\n");
             done();
         };
@@ -88,6 +88,17 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
 
     options['in'] = options['in'] || options.i;
     options.out = options.out || options.o;
+
+    marked.setOptions({
+        renderer: new marked.Renderer(),
+        gfm: true,
+        tables: true,
+        breaks: false,
+        pedantic: false,
+        sanitize: true,
+        smartLists: true,
+        smartypants: false
+    });
 
     glob(options['in'] + "/**/*.md", {}, function (err, files) {
         files.forEach(function (file) {
