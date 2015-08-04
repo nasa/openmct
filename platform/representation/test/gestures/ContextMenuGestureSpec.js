@@ -81,12 +81,6 @@ define(
                 
                 // Capture the contextmenu callback
                 fireGesture =  mockElement.on.mostRecentCall.args[1];
-                
-                mockMenu.on.calls.forEach(function (call) {
-                    if (call.args[0] === 'touchstart') {
-                        call.args[1](mockEvent);
-                    }
-                });
             });
         });
     }
