@@ -50,7 +50,7 @@ define(
          * expand-to-show-navigated-object behavior.)
          * @constructor
          */
-        function TreeNodeController($scope, $timeout, queryService) {
+        function TreeNodeController($scope, $timeout, agentService) {
             var selectedObject = ($scope.ngModel || {}).selectedObject,
                 isSelected = false,
                 hasBeenExpanded = false;
@@ -88,7 +88,7 @@ define(
             }
             
             function checkMobile() {
-                return queryService.isMobile(navigator.userAgent);
+                return agentService.isMobile(navigator.userAgent);
             }
             
             // Consider the currently-navigated object and update

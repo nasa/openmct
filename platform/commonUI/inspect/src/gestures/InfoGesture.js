@@ -38,7 +38,7 @@ define(
          * @param {DomainObject} domainObject the domain object for which to
          *        show information
          */
-        function InfoGesture($timeout, queryService, infoService, DELAY, element, domainObject) {
+        function InfoGesture($timeout, agentService, infoService, DELAY, element, domainObject) {
             var dismissBubble,
                 pendingBubble,
                 mousePosition,
@@ -93,9 +93,9 @@ define(
             }
             
             // Checks if you are on a mobile device, if the device is
-            // not mobile (queryService.isMobile() = false), then
+            // not mobile (agentService.isMobile() = false), then
             // the pendingBubble and therefore hovering is allowed
-            if (!queryService.isMobile(navigator.userAgent)) {
+            if (!agentService.isMobile(navigator.userAgent)) {
                 // Show bubble (on a timeout) on mouse over
                 element.on('mouseenter', showBubble);
             }

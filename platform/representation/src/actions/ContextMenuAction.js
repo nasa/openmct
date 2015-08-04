@@ -47,7 +47,7 @@ define(
          * @param actionContexr the context in which the action
          *                      should be performed
          */
-        function ContextMenuAction($compile, $document, $window, $rootScope, queryService, actionContext) {
+        function ContextMenuAction($compile, $document, $window, $rootScope, agentService, actionContext) {
             
             function perform() {
                 var winDim = [$window.innerWidth, $window.innerHeight],
@@ -95,11 +95,11 @@ define(
                 
                 // Stop propagation so that clicks on the menu do not close the menu
                 // Stop propagation so that touches on the menu do not close the menu
-                if (!queryService.isMobile(navigator.userAgent)) {
+                if (!agentService.isMobile(navigator.userAgent)) {
                     menu.on('mousedown', function (event) {
                         event.stopPropagation();
                     });
-                } else if (queryService.isMobile(navigator.userAgent)) {
+                } else if (agentService.isMobile(navigator.userAgent)) {
                     menu.on('touchstart', function (event) {
                         event.stopPropagation();
                     });
@@ -108,9 +108,9 @@ define(
                 // Dismiss the menu when body is clicked/touched elsewhere
                 // ('mousedown' because 'click' breaks left-click context menus)
                 // ('touchstart' because 'touch' breaks context menus up)
-                if (!queryService.isMobile(navigator.userAgent)) {
+                if (!agentService.isMobile(navigator.userAgent)) {
                     body.on('mousedown', dismiss);
-                } else if (queryService.isMobile(navigator.userAgent)) {
+                } else if (agentService.isMobile(navigator.userAgent)) {
                     body.on('touchstart', dismiss);
                 }
                 

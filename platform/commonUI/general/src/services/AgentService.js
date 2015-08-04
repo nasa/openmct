@@ -22,7 +22,7 @@
 /*global define,Promise*/
 
 /**
- * Module defining QueryService.
+ * Module defining AgentService.
  */
 
 define(
@@ -35,7 +35,7 @@ define(
          * info using a comparison between the userAgent and key
          * device names
          */
-        function QueryService($window) {
+        function AgentService($window) {
             
             // Gets the UA name if it is one of the following.
             // If it is not (a desktop for example) nothing is
@@ -97,6 +97,6 @@ define(
             };
         }
 
-        return QueryService;
+        return AgentService;
     }
 );

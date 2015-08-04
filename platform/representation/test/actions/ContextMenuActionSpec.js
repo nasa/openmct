@@ -43,7 +43,7 @@ define(
                 mockBody,
                 mockWindow,
                 mockRootScope,
-                mockQueryService,
+                mockAgentService,
                 mockScope,
                 mockElement,
                 mockDomainObject,
@@ -61,7 +61,7 @@ define(
                 mockBody = jasmine.createSpyObj("body", JQLITE_FUNCTIONS);
                 mockWindow = { innerWidth: MENU_DIMENSIONS[0] * 4, innerHeight: MENU_DIMENSIONS[1] * 4 };
                 mockRootScope = jasmine.createSpyObj("$rootScope", ["$new"]);
-                mockQueryService = jasmine.createSpyObj("queryService", ["isMobile"]);
+                mockAgentService = jasmine.createSpyObj("agentService", ["isMobile"]);
                 mockScope = {};
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
@@ -81,7 +81,7 @@ define(
                     mockDocument,
                     mockWindow,
                     mockRootScope,
-                    mockQueryService,
+                    mockAgentService,
                     mockActionContext
                 );
             });
@@ -160,13 +160,13 @@ define(
             });
             
             it("mobile", function () {
-                mockQueryService.isMobile.andReturn(true);
+                mockAgentService.isMobile.andReturn(true);
                 action = new ContextMenuAction(
                     mockCompile,
                     mockDocument,
                     mockWindow,
                     mockRootScope,
-                    mockQueryService,
+                    mockAgentService,
                     mockActionContext
                 );
                 action.perform();

@@ -24,7 +24,7 @@
                 "implementation": "gestures/InfoGesture.js",
                 "depends": [
                     "$timeout",
-                    "queryService",
+                    "agentService",
                     "infoService",
                     "INFO_HOVER_DELAY"
                 ]
@@ -34,7 +34,7 @@
                 "implementation": "gestures/InfoButtonGesture.js",
                 "depends": [
                     "$document",
-                    "queryService",
+                    "agentService",
                     "infoService"
                 ]
             }
@@ -48,7 +48,7 @@
                     "$document",
                     "$window",
                     "$rootScope",
-                    "queryService"
+                    "agentService"
                 ]
             }
         ],  

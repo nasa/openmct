@@ -33,7 +33,7 @@ define(
          * Displays informative content ("info bubbles") for the user.
          * @constructor
          */
-        function InfoService($compile, $document, $window, $rootScope, queryService) {
+        function InfoService($compile, $document, $window, $rootScope, agentService) {
 
             function display(templateKey, title, content, position) {
                 var body = $document.find('body'),
@@ -61,7 +61,7 @@ define(
                 //  info bubble positioned as normal (with triangle pointing 
                 //  to where clicked or pressed)
                 bubble.css('position', 'absolute');
-                if(queryService.isPhone(navigator.userAgent)) {                    
+                if(agentService.isPhone(navigator.userAgent)) {                    
                     bubble.css('right', 5 + 'px');
                     bubble.css('left', 5 + 'px');
                     bubble.css('top', 40 + 'px');

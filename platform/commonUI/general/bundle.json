@@ -10,8 +10,8 @@
                 "depends": [ "$location" ]
             },
             {
-                "key": "queryService",
-                "implementation": "/services/QueryService.js",
+                "key": "agentService",
+                "implementation": "/services/AgentService.js",
                 "depends": [ "$window" ]
             }
         ],
@@ -65,7 +65,7 @@
             {
                 "key": "TreeNodeController",
                 "implementation": "controllers/TreeNodeController.js",
-                "depends": [ "$scope", "$timeout", "queryService" ]
+                "depends": [ "$scope", "$timeout", "agentService" ]
             },
             {
                 "key": "ActionGroupController",

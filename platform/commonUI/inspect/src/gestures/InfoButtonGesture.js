@@ -37,7 +37,7 @@ define(
          * @param {DomainObject} domainObject the domain object for which to
          *        show information
          */
-        function InfoGestureButton($document, queryService, infoService, element, domainObject) {
+        function InfoGestureButton($document, agentService, infoService, element, domainObject) {
             var dismissBubble,
                 pendingBubble,
                 touchPosition,
@@ -82,10 +82,10 @@ define(
             }
             
             // Checks if you are on a mobile device, if the device is
-            // mobile (queryService.isMobile() = true), then
+            // mobile (agentService.isMobile() = true), then
             // the a click on something (info button) brings up 
             // the bubble
-            if (queryService.isMobile(navigator.userAgent)) {
+            if (agentService.isMobile(navigator.userAgent)) {
                 element.on('click', showBubble);
             }
 
