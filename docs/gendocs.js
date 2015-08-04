@@ -99,7 +99,7 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
         customRenderer.link = function (href, title, text) {
             // ...but only if they look like relative paths
             return (href || "").indexOf(":") === -1 && href[0] !== "/" ?
-                renderer.link(href.replace(/md$/, "html"), title, text) :
+                renderer.link(href.replace(/\.md/, ".html"), title, text) :
                 renderer.link.apply(renderer, arguments);
         };
         return customRenderer;

@@ -1,6 +1,4 @@
-# Framework Architecture
-
-## Overview
+# Overview
 
 The framework layer's most basic responsibility is allowing individual
 software components to communicate. The software components it recognizes
@@ -135,7 +133,7 @@ framework that are useful to keep in mind.
 The specific service infrastructure provided by the platform is described
 in the [Platform Architecture](Platform.md).
 
-### Extension Categories
+## Extension Categories
 
 One of the capabilities that the framework component layers on top of
 AngularJS is support for many-to-one dependencies. That is, a specific
@@ -167,7 +165,7 @@ registry-based approach:
   the number of interfaces to manage within the system. Groups of
   extensions are provided as arrays.
 
-### Composite Services
+## Composite Services
 
 Composite services (registered via extension category `components`) are
 a pattern supported by the framework. These allow service instances to

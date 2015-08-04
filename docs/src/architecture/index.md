@@ -58,12 +58,12 @@ of the software.
 
 These layers are:
 
-* [_Framework_](Framework.html): The framework layer is responsible for
+* [_Framework_](Framework.md): The framework layer is responsible for
   managing the interactions between application components. It has no
   application-specific knowledge; at this layer, we have only
   established an abstraction by which different software components
   may communicate and/or interact.
-* _Platform_: The platform layer defines the general look, feel, and
+* [_Platform_](Platform.md): The platform layer defines the general look, feel, and
   behavior of Open MCT Web. This includes user-facing components like
   Browse mode and Edit mode, as well as underlying elements of the
   information model and the general service infrastructure.
