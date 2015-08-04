@@ -128,7 +128,9 @@ define(
                 /** 
                  * Sends a query to each of the providers. Returns a promise for
                  *   a result object that has the format
-                 *   {hits: domainObject[], total: number}
+                 *   {hits: searchResult[], total: number, timedOut: boolean}
+                 *   where a searchResult has the format
+                 *   {id: string, object: domainObject, score: number}
                  *
                  * @param inputText The text input that is the query.
                  * @param maxResults (optional) The maximum number of results 
