@@ -27,7 +27,7 @@ define(
         "use strict";
 
         var DEFAULT_DIMENSIONS = [ 12, 8 ],
-            DEFAULT_GRID_SIZE = [32, 32],
+            DEFAULT_GRID_SIZE = [ 32, 32 ],
             MINIMUM_FRAME_SIZE = [ 320, 180 ];
 
         /**
