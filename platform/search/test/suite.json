@@ -1,6 +1,5 @@
 [
     "SearchAggregator",
-    "providers/ElasticsearchSearchProvider",
-    "providers/GenericSearchProvider",
-    "workers/GenericSearchWorker"
+    "GenericSearchProvider",
+    "GenericSearchWorker"
 ]

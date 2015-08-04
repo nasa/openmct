@@ -8,6 +8,12 @@
                 "type": "provider",
                 "implementation": "ElasticPersistenceProvider.js",
                 "depends": [ "$http", "$q", "PERSISTENCE_SPACE", "ELASTIC_ROOT", "ELASTIC_PATH" ]
+            },
+            {
+                "provides": "searchService",
+                "type": "provider",
+                "implementation": "ElasticsearchSearchProvider.js",
+                "depends": [ "$http", "objectService", "ELASTIC_ROOT" ]
             }
         ],
         "constants": [
