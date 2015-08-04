@@ -55,6 +55,7 @@ define(
                 }
                 
                 return searchTerm.split(' ').map(function (s) {
+                    // Don't add fuzziness for quoted strings
                     if (s.indexOf('"') !== -1) {
                         return s;
                     } else {
@@ -84,13 +85,12 @@ define(
                 // Add fuzziness for completeness
                 searchTerm = addFuzziness(searchTerm);
                 
-                //console.log('search term ', searchTerm);
                 return searchTerm;
             }
             
             // Processes results from the format that elasticsearch returns to 
-            // a list of search result objects (that contain domain objects), then
-            // returns an object in the format {hits: searchResult[], total: number}
+            // a list of searchResult objects, then returns a result object 
+            // (See documentation for query for object descriptions)
             function processResults(rawResults, timestamp) {
                 var results = rawResults.data.hits.hits,
                     resultsLength = results.length,

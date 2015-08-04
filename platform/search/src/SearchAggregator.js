@@ -37,9 +37,9 @@ define(
          *   to be treated as one.
          *
          * @constructor
-         * @param $q Angular's $q, for promise consolidation
-         * @param {SearchProvider[]} providers the search providers to be
-         *        aggregated
+         * @param $q Angular's $q, for promise consolidation.
+         * @param {SearchProvider[]} providers The search providers to be
+         *        aggregated.
          */
         function SearchAggregator($q, providers) {
             
@@ -82,7 +82,7 @@ define(
                 return results;
             }
             
-            // For documentation, see sendQuery below.
+            // For documentation, see query below.
             function queryAll(inputText, maxResults) {
                 var i,
                     timestamp = Date.now(),

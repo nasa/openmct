@@ -32,6 +32,7 @@
     var indexedItems = [];
     
     // Helper function for index()
+    // Checks whether an item with this ID is already indexed
     function conainsItem(id) {
         var i;
         for (i = 0; i < indexedItems.length; i += 1) {
@@ -123,7 +124,7 @@
      */
     function search(data) {
         // This results dictionary will have domain object ID keys which 
-        // point to the domain object's score. 
+        // point to the value the domain object's score. 
         var results = {},
             input = data.input.toLocaleLowerCase(),
             terms = convertToTerms(input),
