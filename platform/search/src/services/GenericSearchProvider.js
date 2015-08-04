@@ -142,7 +142,7 @@ define(
             }
             
             // Converts the filetree into a list
-            function getItems(timeout) {
+            function getItems() {
                 // Aquire root objects
                 objectService.getObjects(ROOTS).then(function (objectsById) {
                     var objects = [],
