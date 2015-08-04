@@ -25,8 +25,8 @@
  *  SearchSpec. Created by shale on 07/31/2015.
  */
 define(
-    ["../../src/providers/ElasticsearchSearchProvider"],
-    function (ElasticsearchSearchProvider) {
+    ["../../src/providers/ElasticSearchProvider"],
+    function (ElasticSearchProvider) {
         "use strict";
 
         // JSLint doesn't like underscore-prefixed properties,

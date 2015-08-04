@@ -31,26 +31,20 @@
             {
                 "provides": "searchService",
                 "type": "provider",
-                "implementation": "providers/GenericSearchProvider.js",
+                "implementation": "services/GenericSearchProvider.js",
                 "depends": [ "$q", "objectService", "workerService", "roots[]" ]
             },
             {
                 "provides": "searchService",
-                "type": "provider",
-                "implementation": "providers/ElasticsearchSearchProvider.js",
-                "depends": [ "$http", "objectService", "ELASTIC_ROOT" ]
-            },
-            {
-                "provides": "searchService",
                 "type": "aggregator",
-                "implementation": "SearchAggregator.js",
+                "implementation": "services/SearchAggregator.js",
                 "depends": [ "$q" ]
             }
         ],
         "workers": [
             {
                 "key": "genericSearchWorker",
-                "scriptUrl": "workers/GenericSearchWorker.js",
+                "scriptUrl": "services/GenericSearchWorker.js",
                 "depends": [ "objectService" ]
             }
         ]

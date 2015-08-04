@@ -22,7 +22,7 @@
 /*global define*/
 
 /**
- * Module defining ElasticsearchSearchProvider. Created by shale on 07/16/2015.
+ * Module defining ElasticSearchProvider. Created by shale on 07/16/2015.
  */
 define(
     [],
@@ -46,7 +46,7 @@ define(
          * @param ROOT the constant ELASTIC_ROOT which allows us to 
          *        interact with ElasticSearch.
          */
-        function ElasticsearchSearchProvider($http, objectService, ROOT) {
+        function ElasticSearchProvider($http, objectService, ROOT) {
             
             // Add the fuzziness operator to the search term 
             function addFuzziness(searchTerm, editDistance) {
@@ -207,6 +207,6 @@ define(
         }
 
 
-        return ElasticsearchSearchProvider;
+        return ElasticSearchProvider;
     }
 );
