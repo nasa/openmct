@@ -137,6 +137,36 @@ in the [Platform Architecture](Platform.md).
 
 ### Extension Categories
 
+One of the capabilities that the framework component layers on top of
+AngularJS is support for many-to-one dependencies. That is, a specific
+extension may declare a dependency to _all extensions of a specific
+category_, instead of being limited to declaring specific dependencies.
+
+```nomnoml
+#direction: right
+[Specific Extension] 1 o-> * [Extension of Some Category]
+```
+
+This is useful for introducing specific extension points to an application.
+Some unit of software will depend upon all extensions of a given category
+and integrate their behavior into the system in some fashion; plugin authors
+can then add new extensions of that category to augment existing behaviors.
+
+Some developers may be familiar with the use of registries to achieve
+similar characteristics. This approach is similar, except that the registry
+is effectively implicit whenever a new extension category is used or
+depended-upon. This has some advantages over a more straightforward
+registry-based approach:
+
+* These many-to-one relationships are expressed as dependencies; an
+  extension category is registered as having dependencies on all individual
+  extensions of this category. This avoids ordering issues that may occur
+  with more conventional registries, which may be observed before all
+  dependencies are resolved.
+* The need for service registries of specific types is removed, reducing
+  the number of interfaces to manage within the system. Groups of
+  extensions are provided as arrays.
+
 ### Composite Services
 
 Composite services (registered via extension category `components`) are

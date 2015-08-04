@@ -11,6 +11,10 @@ The target audience includes:
   Open MCT Web into a larger system, who need to understand
   its inner workings sufficiently to complete this integration.
 
+As the focus of this document is on architecture, whenever possible
+implementation details (such as relevant API or JSON syntax) have been
+omitted. These details may be found in the developer guide.
+
 # Overview
 
 Open MCT Web is client software: It runs in a web browser and
