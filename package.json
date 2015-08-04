@@ -22,7 +22,8 @@
     "start": "node app.js",
     "test": "karma start --single-run",
     "jshint": "jshint platform example || exit 0",
-    "jsdoc": "jsdoc -c jsdoc.json -r -d docs"
+    "jsdoc": "jsdoc -c jsdoc.json -r -d docs",
+    "watch": "karma start"
   },
   "repository": {
     "type": "git",
