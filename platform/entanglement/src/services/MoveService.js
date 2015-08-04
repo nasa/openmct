@@ -77,13 +77,20 @@ define(
                                 return objectInNewContext;
                             }
 
+                            // TODO: recursively map new objects to old objects, use old object to determine if object was originally a link, and update new object if it was not.
+
                             return objectInNewContext.useCapability(
                                 'mutation',
                                 function (model) {
-                                    model.location =
-                                        locationCapability.getLocation();
+                                    model.location = objectInNewContext
+                                        .getCapability('location')
+                                        .getLocation();
                                 }
-                            );
+                            ).then(function() {
+                                return objectInNewContext
+                                    .getCapability('persistence')
+                                    .persist();
+                            });
                         })
                         .then(function () {
                             return object

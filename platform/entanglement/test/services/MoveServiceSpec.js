@@ -28,7 +28,12 @@ define(
         '../DomainObjectFactory',
         '../ControlledPromise'
     ],
-    function (MoveService, MockLinkService, domainObjectFactory) {
+    function (
+        MoveService,
+        MockLinkService,
+        domainObjectFactory,
+        ControlledPromise
+    ) {
         "use strict";
 
         describe("MoveService", function () {
@@ -141,9 +146,13 @@ define(
             describe("perform", function () {
 
                 var object,
-                    parentObject,
+                    newParent,
                     actionCapability,
-                    locationCapability;
+                    locationCapability,
+                    persistenceCapability,
+                    persistencePromise,
+                    mutationPromise,
+                    moveResult;
 
                 beforeEach(function () {
                     actionCapability = jasmine.createSpyObj(
@@ -153,28 +162,47 @@ define(
 
                     locationCapability = jasmine.createSpyObj(
                         'locationCapability',
-                        ['isOriginal']
+                        [
+                            'isOriginal',
+                            'getLocation'
+                        ]
                     );
+
+                    persistenceCapability = jasmine.createSpyObj(
+                        'persistenceCapability',
+                        ['persist']
+                    );
+
+                    persistencePromise = new ControlledPromise();
+                    persistenceCapability.persist.andReturn(persistencePromise);
+
+                    mutationPromise = new ControlledPromise();
 
                     object = domainObjectFactory({
                         name: 'object',
                         capabilities: {
                             action: actionCapability,
+                            mutation: {
+                                invoke: function (mutator) {
+                                    mutator(object.model);
+                                    return mutationPromise;
+                                }
+                            },
+                            persistence: persistenceCapability,
                             location: locationCapability
+                        },
+                        model: {
+                            location: 'otherThing'
                         }
                     });
 
-                    parentObject = domainObjectFactory({
-                        name: 'parentObject'
-                    });
-
-                    moveService.perform(object, parentObject);
+                    moveResult = moveService.perform(object, newParent);
                 });
 
-                it("links object to parentObject", function () {
+                it("links object to newParent", function () {
                     expect(linkService.perform).toHaveBeenCalledWith(
                         object,
-                        parentObject
+                        newParent
                     );
                 });
 
@@ -183,17 +211,135 @@ define(
                         .toHaveBeenCalledWith(jasmine.any(Function));
                 });
 
-
                 it("removes object when link is completed", function () {
-                    linkService.perform.mostRecentCall.promise.resolve()
+                    linkService.perform.mostRecentCall.promise.resolve();
                     expect(object.getCapability)
                         .toHaveBeenCalledWith('action');
                     expect(actionCapability.perform)
                         .toHaveBeenCalledWith('remove');
                 });
 
+                describe("when moving an original", function() {
+                    beforeEach(function () {
+                        locationCapability.isOriginal.andReturn(true);
+                        locationCapability.getLocation.andReturn('newParent');
+                        linkService.perform.mostRecentCall.promise.resolve();
+                    });
+
+                    it("updates location", function() {
+                       expect(object.model.location).toBe('newParent');
+                    });
+                    it("persists new model when mutation completes", function() {
+                        mutationPromise.resolve();
+                        expect(persistenceCapability.persist)
+                            .toHaveBeenCalled();
+                    });
+                });
+
+                describe("when moving a link", function() {
+                    beforeEach(function () {
+                        locationCapability.isOriginal.andReturn(false);
+                        locationCapability.getLocation.andReturn('newParent');
+                        linkService.perform.mostRecentCall.promise.resolve();
+                    });
+                    it("does not modify location", function() {
+                        expect(object.model.location).toBe('otherThing');
+                    });
+                    it("does not call persistence", function() {
+                        expect(persistenceCapability.persist)
+                            .not
+                            .toHaveBeenCalled();
+                    });
+                });
+
+                describe("when moving an object with children", function() {
+
+                    var children;
+
+                    beforeEach(function () {
+
+                        var instantMutator = function (index) {
+                            return {
+                                invoke: function (mutator) {
+                                    mutator(children[index].model);
+                                    return {
+                                        then: function(callback) {
+                                            callback();
+                                        }
+                                    };
+                                }
+                            };
+                        };
+
+                        children = [
+                            domainObjectFactory({
+                                id: 'childa',
+                                capabilities: {
+                                    location: jasmine.createSpyObj(
+                                        'childalocation',
+                                        ['isOriginal', 'getLocation']
+                                    ),
+                                    mutation: instantMutator(0)
+                                },
+                                model: {
+                                    location: 'childa-old-location'
+                                }
+                            }),
+                            domainObjectFactory({
+                                id: 'childb',
+                                capabilities: {
+                                    location: jasmine.createSpyObj(
+                                        'childblocation',
+                                        ['isOriginal', 'getLocation']
+                                    ),
+                                    mutation: instantMutator(1)
+                                },
+                                model: {
+                                    location: 'childb-old-location'
+                                }
+                            }),
+                            domainObjectFactory({
+                                id: 'childc',
+                                capabilities: {
+                                    location: jasmine.createSpyObj(
+                                        'childclocation',
+                                        ['isOriginal', 'getLocation']
+                                    ),
+                                    mutation: instantMutator(2)
+                                },
+                                model: {
+                                    location: 'childc-old-location'
+                                }
+                            })
+                        ];
+
+                        children[0].capabilities.location.isOriginal.andReturn(true);
+                        children[0].capabilities.location.getLocation.andReturn('childalocation');
+                        children[1].capabilities.location.isOriginal.andReturn(true);
+                        children[1].capabilities.location.getLocation.andReturn('childblocation');
+                        children[2].capabilities.location.isOriginal.andReturn(false);
+                        children[2].capabilities.location.getLocation.andReturn('childclocation');
+
+                        object.capabilities.composition = {
+                            invoke: function () {
+                                return {
+                                    then: function (callback) {
+                                        callback(children);
+                                    }
+                                };
+                            }
+                        };
+                        linkService.perform.mostRecentCall.promise.resolve();
+                    });
+
+
+                    it("recursively updates the location of originals", function () {
+                        expect(children[0].model.location).toBe('childalocation');
+                        expect(children[1].model.location).toBe('childblocation');
+                        expect(children[2].model.location).toBe('childc-old-location');
+                    });
+                });
             });
         });
-
     }
 );
