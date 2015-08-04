@@ -4432,6 +4432,17 @@ input[type="text"] {
   left: 5px;
   overflow: auto; }
 
+@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
+  /* line 6, ../sass/mobile/overlay/_overlay.scss */
+  .overlay > .holder {
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0; } }
+
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -4757,33 +4768,40 @@ input[type="text"] {
     margin-left: 20px; }
     /* line 80, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-left .l-infobubble::before {
-      right: 100%;
-      width: 0;
-      height: 0;
-      border-top: 6.66667px solid transparent;
-      border-bottom: 6.66667px solid transparent;
-      border-right: 10px solid #ddd; }
-  /* line 86, ../sass/helpers/_bubbles.scss */
-  .l-infobubble-wrapper.arw-right {
-    margin-right: 20px; }
-    /* line 88, ../sass/helpers/_bubbles.scss */
-    .l-infobubble-wrapper.arw-right .l-infobubble::before {
-      left: 100%;
-      width: 0;
-      height: 0;
-      border-top: 6.66667px solid transparent;
-      border-bottom: 6.66667px solid transparent;
-      border-left: 10px solid #ddd; }
-  /* line 95, ../sass/helpers/_bubbles.scss */
+      right: 100%; }
+      @media screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+        /* line 80, ../sass/helpers/_bubbles.scss */
+        .l-infobubble-wrapper.arw-left .l-infobubble::before {
+          width: 0;
+          height: 0;
+          border-top: 6.66667px solid transparent;
+          border-bottom: 6.66667px solid transparent;
+          border-right: 10px solid #ddd; } }
+  @media screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+    /* line 92, ../sass/helpers/_bubbles.scss */
+    .l-infobubble-wrapper.arw-right {
+      margin-right: 20px; } }
+  /* line 99, ../sass/helpers/_bubbles.scss */
+  .l-infobubble-wrapper.arw-right .l-infobubble::before {
+    left: 100%; }
+    @media screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+      /* line 99, ../sass/helpers/_bubbles.scss */
+      .l-infobubble-wrapper.arw-right .l-infobubble::before {
+        width: 0;
+        height: 0;
+        border-top: 6.66667px solid transparent;
+        border-bottom: 6.66667px solid transparent;
+        border-left: 10px solid #ddd; } }
+  /* line 112, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-top .l-infobubble::before {
     top: 20px; }
-  /* line 101, ../sass/helpers/_bubbles.scss */
+  /* line 118, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-btm .l-infobubble::before {
     bottom: 20px; }
-  /* line 106, ../sass/helpers/_bubbles.scss */
+  /* line 123, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-down {
     margin-bottom: 10px; }
-    /* line 108, ../sass/helpers/_bubbles.scss */
+    /* line 125, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-down .l-infobubble::before {
       left: 50%;
       top: 100%;
@@ -4791,21 +4809,21 @@ input[type="text"] {
       border-left: 5px solid transparent;
       border-right: 5px solid transparent;
       border-top: 7.5px solid #ddd; }
-  /* line 117, ../sass/helpers/_bubbles.scss */
+  /* line 134, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper .arw {
     z-index: 2; }
-  /* line 120, ../sass/helpers/_bubbles.scss */
+  /* line 137, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-up .arw.arw-down, .l-infobubble-wrapper.arw-down .arw.arw-up {
     display: none; }
 
-/* line 127, ../sass/helpers/_bubbles.scss */
+/* line 144, ../sass/helpers/_bubbles.scss */
 .l-thumbsbubble-wrapper .arw-up {
   width: 0;
   height: 0;
   border-left: 6.66667px solid transparent;
   border-right: 6.66667px solid transparent;
   border-bottom: 10px solid #4d4d4d; }
-/* line 130, ../sass/helpers/_bubbles.scss */
+/* line 147, ../sass/helpers/_bubbles.scss */
 .l-thumbsbubble-wrapper .arw-down {
   width: 0;
   height: 0;
@@ -4813,7 +4831,7 @@ input[type="text"] {
   border-right: 6.66667px solid transparent;
   border-top: 10px solid #4d4d4d; }
 
-/* line 134, ../sass/helpers/_bubbles.scss */
+/* line 151, ../sass/helpers/_bubbles.scss */
 .s-infobubble {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -4824,22 +4842,22 @@ input[type="text"] {
   background: #ddd;
   color: #666;
   font-size: 0.8rem; }
-  /* line 141, ../sass/helpers/_bubbles.scss */
+  /* line 158, ../sass/helpers/_bubbles.scss */
   .s-infobubble .title {
     color: #333333;
     font-weight: bold; }
-  /* line 146, ../sass/helpers/_bubbles.scss */
+  /* line 163, ../sass/helpers/_bubbles.scss */
   .s-infobubble tr td {
     border-top: 1px solid #c4c4c4;
     font-size: 0.9em; }
-  /* line 150, ../sass/helpers/_bubbles.scss */
+  /* line 167, ../sass/helpers/_bubbles.scss */
   .s-infobubble tr:first-child td {
     border-top: none; }
-  /* line 154, ../sass/helpers/_bubbles.scss */
+  /* line 171, ../sass/helpers/_bubbles.scss */
   .s-infobubble .value {
     color: #333333; }
 
-/* line 159, ../sass/helpers/_bubbles.scss */
+/* line 176, ../sass/helpers/_bubbles.scss */
 .s-thumbsbubble {
   background: #4d4d4d;
   color: #b3b3b3; }

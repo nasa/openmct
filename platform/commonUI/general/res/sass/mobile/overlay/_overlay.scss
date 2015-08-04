@@ -1,0 +1,11 @@
+.overlay {
+    @include phoneandtablet {
+        $m: 0;
+        // Removes curved edges on the dialog box
+        // and makes it take up fullscreen
+        >.holder {
+          @include border-radius($m);
+          top: $m; right: $m; bottom: $m; left: $m;
+        }
+    }
+}

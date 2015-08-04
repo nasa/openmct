@@ -75,7 +75,18 @@
            #{$phoneLandscapeEmu},
            #{$tabletPortrait},
            #{$tabletLandscape},
-           #{$tabletLandscapeEmu}{
+           #{$tabletLandscapeEmu} {
+        @content
+    }
+}
+
+// Desktop monitors in any orientation
+@mixin desktopandtablet {
+    @media #{$tabletPortrait},
+           #{$tabletLandscape},
+           #{$tabletLandscapeEmu},
+           #{$desktopPortrait},
+           #{$desktopLandscape} {
         @content
     }
 }

@@ -9,13 +9,6 @@
                 "key": "info-bubble",
                 "templateUrl": "info-bubble.html"
             }
-        ],      
-        "controllers": [
-            {
-                "key": "InfoController",
-                "implementation": "controllers/InfoController.js",
-                "depends": [ "$scope", "$timeout", "infoService" ]
-            }
         ],
         "containers": [
             {
@@ -35,6 +28,15 @@
                     "infoService",
                     "INFO_HOVER_DELAY"
                 ]
+            },
+            {
+                "key": "infobutton",
+                "implementation": "gestures/InfoButtonGesture.js",
+                "depends": [
+                    "$document",
+                    "queryService",
+                    "infoService"
+                ]
             }
         ],
         "services": [
@@ -45,7 +47,8 @@
                     "$compile",
                     "$document",
                     "$window",
-                    "$rootScope"
+                    "$rootScope",
+                    "queryService"
                 ]
             }
         ],  
@@ -58,7 +61,8 @@
         "representations": [
             {
                 "key": "info-button",
-                "templateUrl": "templates/info-button.html"
+                "templateUrl": "templates/info-button.html",
+                "gestures": [ "infobutton" ]
             }
         ]
     }

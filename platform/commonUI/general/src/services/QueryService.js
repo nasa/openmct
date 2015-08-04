@@ -54,6 +54,17 @@ define(
                     return false;
                 }
             }
+            
+            // Checks if device is phone,
+            // phone is designated as only an
+            // iPhone device
+            function isPhone(ua) {
+                if (getDeviceUA(ua) == "iPhone") {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
 
             // Returns the orientation of the device based on the
             // device's window dimensions
@@ -76,7 +87,13 @@ define(
                  * on a mobile or non-mobile device. (mobile: true,
                  * non-mobile: false)
                  */
-                isMobile: isMobile
+                isMobile: isMobile,
+                
+                /**
+                 * Returns the a boolean checking if the user is on
+                 * a phone device. (phone: true, non-phone: false)
+                 */
+                isPhone: isPhone
             };
         }
 
