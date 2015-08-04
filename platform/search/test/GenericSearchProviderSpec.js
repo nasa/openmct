@@ -25,7 +25,7 @@
  *  SearchSpec. Created by shale on 07/31/2015.
  */
 define(
-    ["../../src/providers/GenericSearchProvider"],
+    ["../src/GenericSearchProvider"],
     function (GenericSearchProvider) {
         "use strict";
 
