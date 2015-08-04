@@ -50,7 +50,7 @@ define(
          * var whenLinked = jasmine.createSpy('whenLinked');
          * linkService.perform(object, parentObject).then(whenLinked);
          * expect(whenLinked).not.toHaveBeenCalled();
-         * linkService.perform.mostRecentCall.resolve('someArg');
+         * linkService.perform.mostRecentCall.promise.resolve('someArg');
          * expect(whenLinked).toHaveBeenCalledWith('someArg');
          * ```
          */
@@ -65,19 +65,19 @@ define(
                 ]
             );
 
-            mockLinkService.perform.andCallFake(function () {
-                var performPromise,
-                    callExtensions,
-                    spy;
-
-                performPromise = new ControlledPromise();
+            mockLinkService.perform.andCallFake(function (object, newParent) {
+                var performPromise = new ControlledPromise();
 
                 this.perform.mostRecentCall.promise = performPromise;
                 this.perform.calls[this.perform.calls.length - 1].promise =
                     performPromise;
 
-
-                return performPromise;
+                return performPromise.then(function (overrideObject) {
+                    if (overrideObject) {
+                        return overrideObject;
+                    }
+                    return object;
+                });
             });
 
             return mockLinkService;
