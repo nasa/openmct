@@ -40,20 +40,38 @@ which are initiated from templated DOM elements. AngularJS acts as
 an intermediary between the web page as the user sees it, and the
 presentation layer implemented as Open MCT Web extensions.
 
+```nomnoml
+[Presentation Layer|
+  [Angular built-ins|
+    [routes]
+    [controllers]
+    [directives]
+  ]
+  [Domain object representation|
+    [views]
+    [representations]
+    [representers]
+    [gestures]
+  ]
+]
+```
+
 
 # Information Model
 
 ```nomnoml
 #direction: right
-[DomainObject|
-  getId() : string
-  getModel() : object
-  getCapability(key : string) : Capability
-  hasCapability(key : string) : boolean
-  useCapability(key : string, args...) : *
+[Information Model|
+  [DomainObject|
+    getId() : string
+    getModel() : object
+    getCapability(key : string) : Capability
+    hasCapability(key : string) : boolean
+    useCapability(key : string, args...) : *
+  ]
+  [DomainObject] 1 +- 1 [Model]
+  [DomainObject] 1 o- * [Capability]
 ]
-[DomainObject] 1 +- 1 [Model]
-[DomainObject] 1 o- * [Capability]
 ```
 
 Domain objects are the most fundamental component of Open MCT Web's
@@ -136,6 +154,28 @@ worrying about the details of composite services or implementing a new
 `ActionService` provider; however, the ability to implement a new provider
 remains useful when the expressive power of individual extensions is
 insufficient.
+
+```nomnoml
+[ Service Infrastructure |
+  [ObjectService]->[ModelService]
+  [ModelService]->[PersistenceService]
+  [ObjectService]->[CapabilityService]
+  [CapabilityService]->[capabilities]
+  [capabilities]->[TelemetryService]
+  [capabilities]->[PersistenceService]
+  [capabilities]->[TypeService]
+  [capabilities]->[ActionService]
+  [capabilities]->[ViewService]
+  [PersistenceService]->[<database> Document store]
+  [TelemetryService]->[<input> Data source]
+  [ActionService]->[actions]
+  [ActionService]->[PolicyService]
+  [ViewService]->[PolicyService]
+  [ViewService]->[views]
+  [PolicyService]->[policies]
+  [TypeService]->[types]
+]
+```
 
 ## Object Service
 
