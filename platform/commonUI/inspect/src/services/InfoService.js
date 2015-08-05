@@ -62,10 +62,10 @@ define(
                 //  to where clicked or pressed)
                 bubble.css('position', 'absolute');
                 if (agentService.isPhone(navigator.userAgent)) {
-                    bubble.css('right', 0 + 'px');
-                    bubble.css('left', 0 + 'px');
+                    bubble.css('right', '0px');
+                    bubble.css('left', '0px');
                     bubble.css('top', 'auto');
-                    bubble.css('bottom', 25 + 'px');
+                    bubble.css('bottom', '25px');
                 } else {
                     if (goLeft) {
                         bubble.css('right', (winDim[0] - position[0] + OFFSET[0]) + 'px');
