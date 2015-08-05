@@ -27,12 +27,14 @@ define(
         "use strict";
 
         describe("The info button gesture", function () {
-            var mockDocument,
+            var mockTimeout,
+                mockDocument,
                 mockAgentService,
                 mockInfoService,
                 testDelay = 12321,
                 mockElement,
                 mockDomainObject,
+                mockEvent,
                 mockScope,
                 mockOff,
                 testMetadata,
@@ -40,7 +42,16 @@ define(
                 mockHide,
                 gesture;
 
+            function fireEvent(evt, value) {
+                mockElement.on.calls.forEach(function (call) {
+                    if (call.args[0] === evt) {
+                        call.args[1](value);
+                    }
+                });
+            }
+            
             beforeEach(function () {
+                mockTimeout = jasmine.createSpy('$timeout');
                 mockDocument = jasmine.createSpyObj('$document', ['find']);
                 mockAgentService = jasmine.createSpyObj('agentService', ['isMobile', 'isPhone']);
                 mockInfoService = jasmine.createSpyObj(
@@ -63,13 +74,15 @@ define(
                 );
                 mockElement = jasmine.createSpyObj(
                     'element',
-                    [ 'on', 'off', 'scope', 'css' ]
+                    [ 'on', 'off', 'scope', 'css', 'click' ]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
                     [ 'getId', 'getCapability', 'useCapability', 'getModel' ]
                 );
-                
+                mockEvent = jasmine.createSpyObj("event", ["preventDefault", "stopPropagation"]);
+                mockEvent.pageX = 0;
+                mockEvent.pageY = 0;
                 mockScope = jasmine.createSpyObj('$scope', [ '$on' ]);
                 mockOff = jasmine.createSpy('$off');
                 testMetadata = [ { name: "Test name", value: "Test value" } ];
@@ -92,11 +105,12 @@ define(
                 );
             });
             
-            it("listens for click on the representation", function () {
+            it("expect click on the representation", function () {
                 expect(mockElement.on)
                     .toHaveBeenCalledWith('click', jasmine.any(Function));
+                
             });
-
+            
         });
     }
 );

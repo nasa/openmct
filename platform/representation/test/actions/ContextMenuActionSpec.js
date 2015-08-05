@@ -166,7 +166,7 @@ define(
                 expect(mockBody.off).not.toHaveBeenCalled();
             });
             
-            it("mobile", function () {
+            it("keeps a menu when menu is clicked on mobile", function () {
                 mockAgentService.isMobile.andReturn(true);
                 action = new ContextMenuAction(
                     mockCompile,

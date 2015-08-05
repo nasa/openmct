@@ -138,7 +138,7 @@ define(
                         mockAgentService
                     );
                     service.display('', '', {}, [0, 0]);
-                });                
+                });
             });
 
         });
