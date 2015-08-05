@@ -59,7 +59,7 @@ define(
             // phone is designated as only an
             // iPhone device
             function isPhone(ua) {
-                if (getDeviceUA(ua) == "iPhone") {
+                if (getDeviceUA(ua)[0] === "iPhone") {
                     return true;
                 } else {
                     return false;
