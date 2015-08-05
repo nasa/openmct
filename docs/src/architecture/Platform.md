@@ -167,7 +167,7 @@ insufficient.
   [capabilities]->[ActionService]
   [capabilities]->[ViewService]
   [PersistenceService]->[<database> Document store]
-  [TelemetryService]->[<input> Data source]
+  [TelemetryService]->[<input> Telemetry source]
   [ActionService]->[actions]
   [ActionService]->[PolicyService]
   [ViewService]->[PolicyService]
