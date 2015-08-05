@@ -19,19 +19,19 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,runs,waitsFor,beforeEach,jasmine,Worker*/
+/*global define,describe,it,expect,runs,waitsFor,beforeEach,jasmine,Worker,require*/
 
 /**
  *  SearchSpec. Created by shale on 07/31/2015.
  */
 define(
     [],
-    function (GenericSearchWorker) {
+    function () {
         "use strict";
 
         describe("The generic search worker ", function () {
             // If this test fails, make sure this path is correct
-            var worker = new Worker('platform/search/src/GenericSearchWorker.js'),
+            var worker = new Worker(require.toUrl('platform/search/src/GenericSearchWorker.js')),
                 numObjects = 5;
             
             beforeEach(function () {
