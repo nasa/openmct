@@ -23,6 +23,7 @@
 
 /**
  * Module defining ElasticsearchSearchProvider. Created by shale on 07/16/2015.
+ * This is not currently included in the bundle definition. 
  */
 define(
     [],
