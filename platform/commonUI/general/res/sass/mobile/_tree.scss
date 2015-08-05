@@ -38,19 +38,22 @@ ul.tree {
                     right: $mobile-treeRight;
                     font-size: 1.8em;
                     right: 0px;
-                    width: auto;
+                    width: 35px;
+                    text-align: center;
                 }                   
 
                 .label {
                     // Designates the starting left margin
                     // (indentation) of 'My Items'
+                    // Also adds right space for selection button
                     left: $mobile-startingTreeLeft;
+                    right: 45px;
                     font-size: 1.2em;
                     // Allows tree item name to stop prior
                     // to the arrow
                     .title-label {
                         right: $mobile-treeRight * 1.3;
-                    }                    
+                    }
                 }             
             }
         }

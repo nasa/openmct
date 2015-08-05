@@ -22,7 +22,7 @@
 /*global define,Promise*/
 
 /**
- * Module defining QueryService.
+ * Module defining AgentService.
  */
 
 define(
@@ -35,7 +35,7 @@ define(
          * info using a comparison between the userAgent and key
          * device names
          */
-        function QueryService($window) {
+        function AgentService($window) {
             
             // Gets the UA name if it is one of the following.
             // If it is not (a desktop for example) nothing is
@@ -49,6 +49,17 @@ define(
             // Mobile is defined as a phone or tablet
             function isMobile(ua) {
                 if (getDeviceUA(ua)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+            
+            // Checks if device is phone,
+            // phone is designated as only an
+            // iPhone device
+            function isPhone(ua) {
+                if (getDeviceUA(ua) == "iPhone") {
                     return true;
                 } else {
                     return false;
@@ -76,10 +87,16 @@ define(
                  * on a mobile or non-mobile device. (mobile: true,
                  * non-mobile: false)
                  */
-                isMobile: isMobile
+                isMobile: isMobile,
+                
+                /**
+                 * Returns the a boolean checking if the user is on
+                 * a phone device. (phone: true, non-phone: false)
+                 */
+                isPhone: isPhone
             };
         }
 
-        return QueryService;
+        return AgentService;
     }
 );

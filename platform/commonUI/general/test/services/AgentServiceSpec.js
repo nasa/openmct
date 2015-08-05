@@ -25,12 +25,12 @@
  * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
  */
 define(
-    ["../../src/services/QueryService"],
-    function (QueryService) {
+    ["../../src/services/AgentService"],
+    function (AgentService) {
         "use strict";
 
         describe("The url service", function () {
-            var queryService,
+            var agentService,
                 mockWindow,
                 mockNavigator;
 
@@ -47,24 +47,27 @@ define(
                     [ "userAgent" ]
                 );
                 
-                queryService = new QueryService(mockWindow);
+                agentService = new AgentService(mockWindow);
             });
             
             it("get current device user agent", function () {
                 mockNavigator.userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36";
-                queryService.isMobile(mockNavigator.userAgent);
+                agentService.isMobile(mockNavigator.userAgent);
+                agentService.isPhone(mockNavigator.userAgent);
                 mockNavigator.userAgent = "Mozilla/5.0 (iPad; CPU OS 7_0 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53";
-                queryService.isMobile(mockNavigator.userAgent);
+                agentService.isMobile(mockNavigator.userAgent);
+                mockNavigator.userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 7_0 like Mac OS X; en-us) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53";
+                agentService.isPhone(mockNavigator.userAgent);
             });
             
             it("get orientation of the current device", function () {
                 mockWindow.outerWidth = 768;
                 mockWindow.outerHeight = 1024;
-                queryService.getOrientation();
+                agentService.getOrientation();
                 
                 mockWindow.outerWidth = 1024;
                 mockWindow.outerHeight = 768;
-                queryService.getOrientation();
+                agentService.getOrientation();
             });
         });
     }

@@ -367,21 +367,33 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 35, ../sass/mobile/_item.scss */
+  /* line 34, ../sass/mobile/_item.scss */
+  .items-holder .item.grid-item .mobile-grid-nav {
+    top: 0px;
+    bottom: 0px;
+    right: 55px; }
+  /* line 39, ../sass/mobile/_item.scss */
+  .items-holder .item.grid-item .mobile-info {
+    text-align: center;
+    width: 50px;
+    right: 0px;
+    left: auto;
+    font-size: 1.3em; }
+  /* line 47, ../sass/mobile/_item.scss */
   .items-holder .item.grid-item .bar.bottom-bar.abs {
     top: 0px;
     height: auto; }
-  /* line 41, ../sass/mobile/_item.scss */
+  /* line 54, ../sass/mobile/_item.scss */
   .items-holder .item.grid-item .item-main .item-type {
     font-size: 30px;
     top: 0px;
     left: 0px;
     text-align: left;
     height: auto; }
-  /* line 48, ../sass/mobile/_item.scss */
+  /* line 61, ../sass/mobile/_item.scss */
   .items-holder .item.grid-item .item-main .item-open {
     display: none; }
-  /* line 52, ../sass/mobile/_item.scss */
+  /* line 65, ../sass/mobile/_item.scss */
   .items-holder .item.grid-item .title, .items-holder .item.grid-item .details {
     margin-left: 30px; } }
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px) {
@@ -389,14 +401,17 @@
   .items-holder .item.grid-item {
     width: 100%;
     height: 50px; }
-    /* line 62, ../sass/mobile/_item.scss */
+    /* line 74, ../sass/mobile/_item.scss */
+    .items-holder .item.grid-item .mobile-info {
+      line-height: 25px; }
+    /* line 78, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .item-main .item-type {
       line-height: 40px; }
-    /* line 66, ../sass/mobile/_item.scss */
+    /* line 82, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .title {
       margin-right: 10px;
       line-height: 25px; }
-    /* line 70, ../sass/mobile/_item.scss */
+    /* line 86, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .details {
       margin-right: 10px;
       line-height: 0px; } }
@@ -405,15 +420,18 @@
   .items-holder .item.grid-item {
     width: 100%;
     height: 66.66667px; }
-    /* line 81, ../sass/mobile/_item.scss */
+    /* line 96, ../sass/mobile/_item.scss */
+    .items-holder .item.grid-item .mobile-info {
+      line-height: 38px; }
+    /* line 100, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .item-main .item-type {
       font-size: 30px;
       line-height: 50px; }
-    /* line 86, ../sass/mobile/_item.scss */
+    /* line 105, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .title {
       margin-right: 10px;
       line-height: 38px; }
-    /* line 90, ../sass/mobile/_item.scss */
+    /* line 109, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .details {
       margin-right: 10px;
       line-height: 0px; } }

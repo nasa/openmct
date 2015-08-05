@@ -31,73 +31,69 @@ define(
          * bubble on hover.
          *
          * @constructor
-         * @param $timeout Angular's `$timeout`
+         * @param $document Angular's `$document`
          * @param {InfoService} infoService a service which shows info bubbles
-         * @param {number} DELAY delay, in milliseconds, before bubble appears
          * @param element jqLite-wrapped DOM element
          * @param {DomainObject} domainObject the domain object for which to
          *        show information
          */
-        function InfoGesture($timeout, agentService, infoService, DELAY, element, domainObject) {
+        function InfoGestureButton($document, agentService, infoService, element, domainObject) {
             var dismissBubble,
-                pendingBubble,
-                mousePosition,
-                scopeOff;
+                touchPosition,
+                scopeOff,
+                body = $document.find('body');
 
             function trackPosition(event) {
-                // Record mouse position, so bubble can be shown at latest
-                // mouse position (not just where the mouse entered)
-                mousePosition = [ event.clientX, event.clientY ];
+                // Record touch position, so bubble can be shown at latest
+                // touch position, also offset by 22px to left (accounts for
+                // a finger-sized touch on the info button)
+                touchPosition = [ event.clientX - 22, event.clientY ];
             }
 
+            // Hides the bubble and detaches the
+            // body hidebubble listener
             function hideBubble() {
                 // If a bubble is showing, dismiss it
                 if (dismissBubble) {
                     dismissBubble();
-                    element.off('mouseleave', hideBubble);
                     dismissBubble = undefined;
                 }
-                // If a bubble will be shown on a timeout, cancel that
-                if (pendingBubble) {
-                    $timeout.cancel(pendingBubble);
-                    element.off('mousemove', trackPosition);
-                    element.off('mouseleave', hideBubble);
-                    pendingBubble = undefined;
-                }
-                // Also clear mouse position so we don't have a ton of tiny
-                // arrays allocated while user mouses over things
-                mousePosition = undefined;
+                
+                // Detaches body touch listener
+                body.off('touchstart', hideBubble);
             }
-
+            
+            // Displays the bubble by tracking position of
+            // touch, using infoService to display the bubble,
+            // and then on any body touch the bubble is dismissed
             function showBubble(event) {
                 trackPosition(event);
                 
-                // Also need to track position during hover
-                element.on('mousemove', trackPosition);
-
-                // Show the bubble, after a suitable delay (if mouse has
-                // left before this time is up, this will be canceled.)
-                pendingBubble = $timeout(function () {
-                    dismissBubble = infoService.display(
-                        "info-table",
-                        domainObject.getModel().name,
-                        domainObject.useCapability('metadata'),
-                        mousePosition
-                    );
-                    element.off('mousemove', trackPosition);
-
-                    pendingBubble = undefined;
-                }, DELAY);
-
-                element.on('mouseleave', hideBubble);
+                // Show the bubble, but on any touchstart on the
+                // body (anywhere) call hidebubble
+                dismissBubble = infoService.display(
+                    "info-table",
+                    domainObject.getModel().name,
+                    domainObject.useCapability('metadata'),
+                    touchPosition
+                );
+                
+                // On any touch on the body, default body touches/events
+                // are prevented, the bubble is dismissed, and the touchstart
+                // body event is unbound, reallowing gestures
+                body.on('touchstart', function (event) {
+                    event.preventDefault();
+                    hideBubble();
+                    body.unbind('touchstart');
+                });
             }
             
             // Checks if you are on a mobile device, if the device is
-            // not mobile (agentService.isMobile() = false), then
-            // the pendingBubble and therefore hovering is allowed
-            if (!agentService.isMobile(navigator.userAgent)) {
-                // Show bubble (on a timeout) on mouse over
-                element.on('mouseenter', showBubble);
+            // mobile (agentService.isMobile() = true), then
+            // the a click on something (info button) brings up 
+            // the bubble
+            if (agentService.isMobile(navigator.userAgent)) {
+                element.on('click', showBubble);
             }
 
             // Also make sure we dismiss bubble if representation is destroyed
@@ -114,13 +110,13 @@ define(
                     // Dismiss any active bubble...
                     hideBubble();
                     // ...and detach listeners
-                    element.off('mouseenter', showBubble);
+                    element.off('click', showBubble);
                     scopeOff();
                 }
             };
         }
 
-        return InfoGesture;
+        return InfoGestureButton;
 
     }
 

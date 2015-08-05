@@ -33,7 +33,7 @@ define(
          * Displays informative content ("info bubbles") for the user.
          * @constructor
          */
-        function InfoService($compile, $document, $window, $rootScope) {
+        function InfoService($compile, $document, $window, $rootScope, agentService) {
 
             function display(templateKey, title, content, position) {
                 var body = $document.find('body'),
@@ -54,22 +54,33 @@ define(
                 // Create the context menu
                 bubble = $compile(BUBBLE_TEMPLATE)(scope);
 
-                // Position the bubble
+                // Position the bubble:
+                // Phone: On a phone the bubble is specifically positioned
+                //  so that it takes up the width of the screen.
+                // Tablet/Desktop: On other devices with larger screens, the
+                //  info bubble positioned as normal (with triangle pointing 
+                //  to where clicked or pressed)
                 bubble.css('position', 'absolute');
-                if (goLeft) {
-                    bubble.css('right', (winDim[0] - position[0] + OFFSET[0]) + 'px');
+                if (agentService.isPhone(navigator.userAgent)) {
+                    bubble.css('right', 0 + 'px');
+                    bubble.css('left', 0 + 'px');
+                    bubble.css('top', 'auto');
+                    bubble.css('bottom', 25 + 'px');
                 } else {
-                    bubble.css('left', position[0] + OFFSET[0] + 'px');
+                    if (goLeft) {
+                        bubble.css('right', (winDim[0] - position[0] + OFFSET[0]) + 'px');
+                    } else {
+                        bubble.css('left', position[0] + OFFSET[0] + 'px');
+                    }
+                    if (goUp) {
+                        bubble.css('bottom', (winDim[1] - position[1] + OFFSET[1]) + 'px');
+                    } else {
+                        bubble.css('top', position[1] + OFFSET[1] + 'px');
+                    }
                 }
-                if (goUp) {
-                    bubble.css('bottom', (winDim[1] - position[1] + OFFSET[1]) + 'px');
-                } else {
-                    bubble.css('top', position[1] + OFFSET[1] + 'px');
-                }
-
                 // Add the menu to the body
                 body.append(bubble);
-
+                
                 // Return a function to dismiss the bubble
                 return function () { bubble.remove(); };
             }

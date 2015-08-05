@@ -29,7 +29,7 @@ define(
         describe("The tree node controller", function () {
             var mockScope,
                 mockTimeout,
-                mockQueryService,
+                mockAgentService,
                 controller;
 
             function TestObject(id, context) {
@@ -44,8 +44,8 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj("$scope", ["$watch", "$on"]);
                 mockTimeout = jasmine.createSpy("$timeout");
-                mockQueryService = jasmine.createSpyObj("queryService", ["isMobile"]);
-                controller = new TreeNodeController(mockScope, mockTimeout, mockQueryService);
+                mockAgentService = jasmine.createSpyObj("agentService", ["isMobile"]);
+                controller = new TreeNodeController(mockScope, mockTimeout, mockAgentService);
             });
 
             it("allows tracking of expansion state", function () {

@@ -39,19 +39,19 @@ define(
          * @param {DomainObject} domainObject the object on which actions
          *                       in the context menu will be performed
          */
-        function ContextMenuGesture($timeout, queryService, element, domainObject) {
+        function ContextMenuGesture($timeout, agentService, element, domainObject) {
             var actionContext,
                 stop,
                 isPressing,
                 longTouchTime = 500;
             
             // When context menu event occurs, show object actions instead
-            if (!queryService.isMobile(navigator.userAgent)) {
+            if (!agentService.isMobile(navigator.userAgent)) {
                 element.on('contextmenu', function (event) {
                     actionContext = {key: 'menu', domainObject: domainObject, event: event};
                     stop = domainObject.getCapability('action').perform(actionContext);
                 });
-            } else if (queryService.isMobile(navigator.userAgent)) {
+            } else if (agentService.isMobile(navigator.userAgent)) {
                 // If on mobile device, then start timeout for the single touch event
                 // during the timeout 'isPressing' is true.
                 element.on('touchstart', function (event) {

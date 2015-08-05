@@ -31,11 +31,24 @@
             $dHei: $ueBrowseGridItemLg;
             @include phoneandtablet {
                 $dWid: 100%;
+                .mobile-grid-nav {
+                    top: 0px;
+                    bottom: 0px;
+                    right: 55px;
+                }
+                .mobile-info {
+                    text-align: center;
+                    width: 50px;
+                    right: 0px;
+                    left: auto;
+                    font-size: 1.3em;
+                }
                 .bar {
                     &.bottom-bar.abs {
                         top: 0px;
                         height: auto;
                     }
+                    
                 }
                 .item-main {
                     .item-type {
@@ -51,13 +64,16 @@
                 }
                 .title, .details {
                     margin-left: $mobile-listIcon;
-                }             
+                }
             }
 
             @include phone {
                 $dHei: $phone-itemHeight;
                 width: $dWid;
                 height: $dHei;
+                .mobile-info {
+                    line-height: $phone-itemHeight * .5;
+                }
                 .item-main {
                     .item-type {
                         line-height: $phone-itemHeight * .8;
@@ -77,6 +93,9 @@
                 $dHei: $tablet-itemHeight;
                 width: $dWid;
                 height: $dHei;
+                .mobile-info {
+                    line-height: $tablet-itemHeight * .57;
+                }
                 .item-main {
                     .item-type {
                         font-size: $mobile-listIcon;
