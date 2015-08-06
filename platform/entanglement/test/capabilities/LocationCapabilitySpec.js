@@ -3,64 +3,88 @@
 define(
     [
         '../../src/capabilities/LocationCapability',
-        '../DomainObjectFactory'
+        '../DomainObjectFactory',
+        '../ControlledPromise'
     ],
-    function (LocationCapability, domainObjectFactory) {
+    function (LocationCapability, domainObjectFactory, ControlledPromise) {
 
         describe("LocationCapability", function () {
 
-
-            // xit("applies to objects with a context capability", function () {
-            //     var domainObject = domainObjectFactory({
-            //         capabilities: {
-            //             context: true
-            //         }
-            //     });
-            //     expect(LocationCapability.appliesTo(domainObject)).toBe(true);
-            // });
-            //
-            // xit("does not apply to objects without context capability", function () {
-            //     var domainObject = domainObjectFactory();
-            //     expect(LocationCapability.appliesTo(domainObject)).toBe(false);
-            // });
-
             describe("instantiated with domain object", function () {
                 var locationCapability,
+                    persistencePromise,
+                    mutationPromise,
                     domainObject;
 
                 beforeEach(function () {
                     domainObject = domainObjectFactory({
                         capabilities: {
                             context: {
-                                getPath: function() {
-                                    return [
-                                        domainObjectFactory({id: 'root'}),
-                                        domainObjectFactory({id: 'parent'}),
-                                        domainObjectFactory({id: 'me'})
-                                    ];
+                                getParent: function() {
+                                    return domainObjectFactory({id: 'root'});
                                 }
-                            }
+                            },
+                            persistence: jasmine.createSpyObj(
+                                'persistenceCapability',
+                                ['persist']
+                            ),
+                            mutation: jasmine.createSpyObj(
+                                'mutationCapability',
+                                ['invoke']
+                            )
                         }
                     });
+
+                    persistencePromise = new ControlledPromise();
+                    domainObject.capabilities.persistence.persist.andReturn(
+                        persistencePromise
+                    );
+
+                    mutationPromise = new ControlledPromise();
+                    domainObject.capabilities.mutation.invoke.andCallFake(
+                        function (mutator) {
+                            return mutationPromise.then(function () {
+                                mutator(domainObject.model);
+                            });
+                        }
+                    );
 
                     locationCapability = new LocationCapability(domainObject);
                 });
 
                 it("returns location", function () {
                     expect(locationCapability.getLocation())
-                        .toBe('root/parent/me');
+                        .toBe('root');
                 });
 
                 it("knows when the object is an original", function () {
-                    domainObject.model.location = 'root/parent/me';
+                    domainObject.model.location = 'root';
                     expect(locationCapability.isOriginal()).toBe(true);
                     expect(locationCapability.isLink()).toBe(false);
                 });
 
                 it("knows when the object is a link.", function () {
-                    domainObject.model.location = 'root/another/location/me';
+                    domainObject.model.location = 'different-root';
                     expect(locationCapability.isLink()).toBe(true);
                     expect(locationCapability.isOriginal()).toBe(false);
+                });
+
+                it("can persist location", function () {
+                    var persistResult = locationCapability.persistLocation(),
+                        whenComplete = jasmine.createSpy('whenComplete');
+
+                    persistResult.then(whenComplete);
+
+                    expect(domainObject.model.location).not.toBeDefined();
+                    mutationPromise.resolve();
+                    expect(domainObject.model.location).toBe('root');
+
+                    expect(whenComplete).not.toHaveBeenCalled();
+                    expect(domainObject.capabilities.persistence.persist)
+                        .toHaveBeenCalled();
+
+                    persistencePromise.resolve();
+                    expect(whenComplete).toHaveBeenCalled();
                 });
 
             });

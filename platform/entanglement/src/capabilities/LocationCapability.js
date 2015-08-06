@@ -10,6 +10,23 @@ define(
         }
 
         /**
+         * Persist the current location of the current domain object as it's
+         * primary location.  Returns a promise.
+         */
+        LocationCapability.prototype.persistLocation = function () {
+            return this.domainObject.useCapability(
+                'mutation',
+                function (model) {
+                    model.location = this.getLocation();
+                }.bind(this)
+            ).then(function () {
+                return this.domainObject
+                    .getCapability('persistence')
+                    .persist();
+            }.bind(this));
+        };
+
+        /**
          * Return the current location of the current domain object.  Only
          * valid for domain objects that have a context capability.
          */
@@ -19,19 +36,10 @@ define(
                 pathIds;
 
             if (!context) {
-                return this.domainObject.getId();
+                return '';
             }
 
-            pathObjects = context.getPath();
-            if (!pathObjects) {
-                pathObjects = [];
-            }
-
-            pathIds = pathObjects.map(function (object) {
-                return object.getId();
-            });
-
-            return pathIds.join('/');
+            return context.getParent().getId();
         };
 
         /**
@@ -63,17 +71,6 @@ define(
         function createLocationCapability(domainObject) {
             return new LocationCapability(domainObject);
         }
-
-        /**
-         * Return true if the LocationCapability can apply to a given
-         * domainObject, otherwise return false.
-         */
-        createLocationCapability.appliesTo = function (domainObject) {
-            // if (!domainObject.hasCapability) {
-            //     return false;
-            // }
-            // return domainObject.hasCapability('context');
-        };
 
         return createLocationCapability;
     }

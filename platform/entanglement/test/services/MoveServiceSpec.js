@@ -149,9 +149,7 @@ define(
                     newParent,
                     actionCapability,
                     locationCapability,
-                    persistenceCapability,
-                    persistencePromise,
-                    mutationPromise,
+                    locationPromise,
                     moveResult;
 
                 beforeEach(function () {
@@ -164,35 +162,18 @@ define(
                         'locationCapability',
                         [
                             'isOriginal',
-                            'getLocation'
+                            'persistLocation'
                         ]
                     );
 
-                    persistenceCapability = jasmine.createSpyObj(
-                        'persistenceCapability',
-                        ['persist']
-                    );
-
-                    persistencePromise = new ControlledPromise();
-                    persistenceCapability.persist.andReturn(persistencePromise);
-
-                    mutationPromise = new ControlledPromise();
+                    locationPromise = new ControlledPromise();
+                    locationCapability.persistLocation.andReturn(locationPromise);
 
                     object = domainObjectFactory({
                         name: 'object',
                         capabilities: {
                             action: actionCapability,
-                            mutation: {
-                                invoke: function (mutator) {
-                                    mutator(object.model);
-                                    return mutationPromise;
-                                }
-                            },
-                            persistence: persistenceCapability,
                             location: locationCapability
-                        },
-                        model: {
-                            location: 'otherThing'
                         }
                     });
 
@@ -211,134 +192,48 @@ define(
                         .toHaveBeenCalledWith(jasmine.any(Function));
                 });
 
-                it("removes object when link is completed", function () {
-                    linkService.perform.mostRecentCall.promise.resolve();
-                    expect(object.getCapability)
-                        .toHaveBeenCalledWith('action');
-                    expect(actionCapability.perform)
-                        .toHaveBeenCalledWith('remove');
-                });
-
-                describe("when moving an original", function() {
+                describe("when moving an original", function () {
                     beforeEach(function () {
                         locationCapability.isOriginal.andReturn(true);
-                        locationCapability.getLocation.andReturn('newParent');
                         linkService.perform.mostRecentCall.promise.resolve();
                     });
 
-                    it("updates location", function() {
-                       expect(object.model.location).toBe('newParent');
-                    });
-                    it("persists new model when mutation completes", function() {
-                        mutationPromise.resolve();
-                        expect(persistenceCapability.persist)
+                    it("updates location", function () {
+                        expect(locationCapability.persistLocation)
                             .toHaveBeenCalled();
                     });
+
+                    describe("after location update", function () {
+                        beforeEach(function () {
+                            locationPromise.resolve();
+                        });
+
+                        it("removes object from parent", function () {
+                            expect(actionCapability.perform)
+                                .toHaveBeenCalledWith('remove');
+                        });
+                    });
+
                 });
 
-                describe("when moving a link", function() {
+                describe("when moving a link", function () {
                     beforeEach(function () {
                         locationCapability.isOriginal.andReturn(false);
-                        locationCapability.getLocation.andReturn('newParent');
                         linkService.perform.mostRecentCall.promise.resolve();
                     });
-                    it("does not modify location", function() {
-                        expect(object.model.location).toBe('otherThing');
-                    });
-                    it("does not call persistence", function() {
-                        expect(persistenceCapability.persist)
+
+                    it("does not update location", function () {
+                        expect(locationCapability.persistLocation)
                             .not
                             .toHaveBeenCalled();
                     });
-                });
 
-                describe("when moving an object with children", function() {
-
-                    var children;
-
-                    beforeEach(function () {
-
-                        var instantMutator = function (index) {
-                            return {
-                                invoke: function (mutator) {
-                                    mutator(children[index].model);
-                                    return {
-                                        then: function(callback) {
-                                            callback();
-                                        }
-                                    };
-                                }
-                            };
-                        };
-
-                        children = [
-                            domainObjectFactory({
-                                id: 'childa',
-                                capabilities: {
-                                    location: jasmine.createSpyObj(
-                                        'childalocation',
-                                        ['isOriginal', 'getLocation']
-                                    ),
-                                    mutation: instantMutator(0)
-                                },
-                                model: {
-                                    location: 'childa-old-location'
-                                }
-                            }),
-                            domainObjectFactory({
-                                id: 'childb',
-                                capabilities: {
-                                    location: jasmine.createSpyObj(
-                                        'childblocation',
-                                        ['isOriginal', 'getLocation']
-                                    ),
-                                    mutation: instantMutator(1)
-                                },
-                                model: {
-                                    location: 'childb-old-location'
-                                }
-                            }),
-                            domainObjectFactory({
-                                id: 'childc',
-                                capabilities: {
-                                    location: jasmine.createSpyObj(
-                                        'childclocation',
-                                        ['isOriginal', 'getLocation']
-                                    ),
-                                    mutation: instantMutator(2)
-                                },
-                                model: {
-                                    location: 'childc-old-location'
-                                }
-                            })
-                        ];
-
-                        children[0].capabilities.location.isOriginal.andReturn(true);
-                        children[0].capabilities.location.getLocation.andReturn('childalocation');
-                        children[1].capabilities.location.isOriginal.andReturn(true);
-                        children[1].capabilities.location.getLocation.andReturn('childblocation');
-                        children[2].capabilities.location.isOriginal.andReturn(false);
-                        children[2].capabilities.location.getLocation.andReturn('childclocation');
-
-                        object.capabilities.composition = {
-                            invoke: function () {
-                                return {
-                                    then: function (callback) {
-                                        callback(children);
-                                    }
-                                };
-                            }
-                        };
-                        linkService.perform.mostRecentCall.promise.resolve();
-                    });
-
-
-                    it("recursively updates the location of originals", function () {
-                        expect(children[0].model.location).toBe('childalocation');
-                        expect(children[1].model.location).toBe('childblocation');
-                        expect(children[2].model.location).toBe('childc-old-location');
+                    it("removes object from parent", function () {
+                        expect(actionCapability.perform)
+                            .toHaveBeenCalledWith('remove');
                     });
                 });
+
             });
         });
     }

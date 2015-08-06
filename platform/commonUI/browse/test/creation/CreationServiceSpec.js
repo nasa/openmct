@@ -103,21 +103,13 @@ define(
                     mockPromise(true)
                 );
 
-                mockContextCapability.getPath.andReturn([
-                    {
-                        getId: function () { return 'root'; }
-                    },
-                    {
-                        getId: function () { return 'parent'; }
-                    }
-                ]);
-
                 mockParentObject.getCapability.andCallFake(function (key) {
                     return mockCapabilities[key];
                 });
                 mockParentObject.useCapability.andCallFake(function (key, value) {
                     return mockCapabilities[key].invoke(value);
                 });
+                mockParentObject.getId.andReturn('parentId');
 
                 mockPersistenceCapability.persist.andReturn(
                     mockPromise(true)
@@ -209,14 +201,13 @@ define(
                 expect(mockLog.error).toHaveBeenCalled();
             });
 
-            it("stores location on new domainObjects", function() {
+            it("stores location on new domainObjects", function () {
                 var model = { name: "my model" };
                 var objectPromise = creationService.createObject(
                     model,
                     mockParentObject
                 );
-                expect(model.location).toBeDefined();
-                expect(model.location.indexOf('root/parent')).toBe(0);
+                expect(model.location).toBe('parentId');
             });
 
         });

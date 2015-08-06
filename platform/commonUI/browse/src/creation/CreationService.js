@@ -121,25 +121,8 @@ define(
 
             // Store the location of an object relative to it's parent.
             function addLocationToModel(modelId, model, parent) {
-                var context = parent.getCapability("context"),
-                    pathObjects,
-                    pathIds;
+                model.location = parent.getId();
 
-                if (!context) {
-                    $log.warn('No parent context, location will not be set.');
-                    return model;
-                }
-
-                pathObjects = context.getPath();
-                if (!pathObjects || !pathObjects.length) {
-                    pathObjects = [];
-                }
-                pathIds = pathObjects.map(function (object) {
-                    return object.getId();
-                });
-                pathIds.push(modelId);
-
-                model.location = pathIds.join('/');
                 return model;
             }
 

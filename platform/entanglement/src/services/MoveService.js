@@ -32,153 +32,6 @@ define(
          */
         function MoveService(policyService, linkService, $q) {
 
-
-            /**
-             * Returns a promise for a childSelector for a given object which
-             * returns all original children in that given object.
-             */
-            function getOriginalsInObject(object) {
-                var originalChildren = {};
-                return getOriginalChildren(object)
-                    .then(function recurseChildren(children) {
-                        var promises = [];
-                        children.children.forEach(function(child) {
-                            promises.push(getOriginalsInObject(child));
-                            originalChildren[child.getId()] = {};
-                        });
-                        return $q.all(promises);
-                    }).then(function prepareResponse(childResponses) {
-                        childResponses.forEach(function(childResp) {
-                            Object.keys(childResp).forEach(function(childId) {
-                                originalChildren[childId] = childResp[childId];
-                            });
-                        });
-                        var childSelector = {};
-                        childSelector[object.getId()] = originalChildren;
-                        return childSelector;
-                    });
-            }
-
-            /**
-             * Get the original children in an object.  Returns a promise for an object
-             * with a single key (the object's key), the value of which is an array
-             * of original children in that object.
-             */
-            function getOriginalChildren(object) {
-                if (!object.hasCapability('composition')) {
-                    return $q.when({
-                            objectId: object.getId(),
-                            children: []
-                    });
-                }
-                return object.useCapability('composition')
-                    .then(function filterToOriginal(children) {
-                        return children.filter(function(child) {
-                            if (child.hasCapability('location')) {
-                                return child.getCapability('location')
-                                    .isOriginal();
-                            }
-                            return false;
-                        });
-                    })
-                    .then(function returnAsObject(children) {
-                        return {
-                            objectId: object.getId(),
-                            children: children
-                        };
-                    });
-            }
-
-            /**
-             * Persist an instance of an object as the original location of
-             * that object.
-             */
-            function saveAsOriginal(newOriginal) {
-                return newOriginal.useCapability(
-                    'mutation',
-                    function (model) {
-                        model.location = newOriginal
-                            .getCapability('location')
-                            .getLocation();
-                    }
-                ).then(function() {
-                    return newOriginal
-                        .getCapability('persistence')
-                        .persist();
-                });
-            }
-
-            /**
-             * childrenSelector is an object where keys are childIds and values
-             * are childSelector objects.  Returns all children in the object
-             * which have a key in the childSelector, plus all children from
-             * recursive childSelection.
-             */
-            function getMatchingChildrenFromObject(object, childrenSelector) {
-                var selected = [];
-                if (!object.hasCapability('composition')) {
-                    return $q.when(selected);
-                }
-                return object.useCapability('composition')
-                    .then(function selectChildren(children) {
-                        var promises = [];
-                        children.forEach(function (child) {
-                            if (!childrenSelector[child.getId()]) {
-                                return;
-                            }
-                            selected.push(child);
-                            promises.push(getMatchingChildrenFromObject(
-                                child,
-                                childrenSelector[child.getId()]
-                            ));
-                        });
-
-                        return $q.all(promises)
-                            .then(function reduceResults (results) {
-                                return results.reduce(function(memo, result) {
-                                    return memo.concat(result);
-                                }, selected);
-                            });
-                    });
-            }
-
-
-            /**
-             * Uses the original object to determine which objects are originals,
-             * and then returns a function which, when given the same object in the
-             * new context, will update the location of all originals in the leaf
-             * to match the new context.
-             */
-            function updateOriginalLocation(object) {
-                var oldLocationCapability = object.getCapability('location');
-                if (!oldLocationCapability.isOriginal()) {
-                    return function (objectInNewContext) {
-                        return objectInNewContext;
-                    };
-                }
-                return function setOriginalLocation(objectInNewContext) {
-                    return saveAsOriginal(objectInNewContext)
-                        .then(function () {
-                            if (!object.hasCapability('composition')) {
-                                return objectInNewContext;
-                            }
-                            getOriginalsInObject(object)
-                                .then(function(childSelector) {
-                                    return getMatchingChildrenFromObject(
-                                        objectInNewContext,
-                                        childSelector[object.getId()]
-                                    );
-                                }).then(function(originalChildren) {
-                                    return $q.all(
-                                        originalChildren.map(saveAsOriginal)
-                                    );
-                                }).then(function() {
-                                    return objectInNewContext;
-                                });
-                        });
-                };
-            }
-
             return {
                 /**
                  * Returns `true` if `object` can be moved into
@@ -216,7 +69,16 @@ define(
                 perform: function (object, parentObject) {
                     return linkService
                         .perform(object, parentObject)
-                        .then(updateOriginalLocation(object))
+                        .then(function (objectInNewContext) {
+                            if (!object.hasCapability('location')) {
+                                return;
+                            }
+                            if (object.getCapability('location').isOriginal()) {
+                                return objectInNewContext
+                                    .getCapability('location')
+                                    .persistLocation();
+                            }
+                        })
                         .then(function () {
                             return object
                                 .getCapability('action')
