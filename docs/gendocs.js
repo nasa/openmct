@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 /*global require,process,GLOBAL*/
-/*jslint nomen: true*/
+/*jslint nomen: false */
 
 
 // Usage:
