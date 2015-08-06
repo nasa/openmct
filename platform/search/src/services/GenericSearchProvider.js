@@ -120,24 +120,21 @@ define(
             
             worker.onmessage = handleResponse;
             
-            // Helper function for getItems(). Indexes the tree. 
-            function itemsHelper(children, i) {
-                // Index the current node
-                indexItem(children[i]);
+            // Helper function for getItems(). Indexes the tree.
+            function indexItems(nodes) {
+                var i;
                 
-                if (i >= children.length) {
-                    // Done!
-                    return children;
-                } else if (children[i].hasCapability('composition')) {
-                    // This child has children
-                    return children[i].getCapability('composition').invoke().then(function (grandchildren) {
-                        // Add grandchildren to the end of the list
-                        // They will also be checked for composition
-                        return itemsHelper(children.concat(grandchildren), i + 1);
-                    });
-                } else {
-                    // This child is a leaf
-                    return itemsHelper(children, i + 1);
+                for (i = 0; i < nodes.length; i += 1) {
+                    // Index each item with the web worker
+                    indexItem(nodes[i]);
+                    
+                    if (nodes[i].hasCapability('composition')) {
+                        // This node has children
+                        nodes[i].getCapability('composition').invoke().then(function (children) {
+                            // Index the children 
+                            indexItems(children);
+                        });
+                    }
                 }
             }
             
@@ -154,7 +151,7 @@ define(
                     }
                     
                     // Index all of the roots' descendents
-                    itemsHelper(objects, 0);
+                    indexItems(objects);
                 });
             }
             
