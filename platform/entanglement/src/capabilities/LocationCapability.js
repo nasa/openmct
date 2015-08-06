@@ -14,16 +14,17 @@ define(
          * primary location.  Returns a promise.
          */
         LocationCapability.prototype.persistLocation = function () {
+            var capability = this;
             return this.domainObject.useCapability(
                 'mutation',
                 function (model) {
-                    model.location = this.getLocation();
-                }.bind(this)
+                    model.location = capability.getLocation();
+                }
             ).then(function () {
-                return this.domainObject
+                return capability.domainObject
                     .getCapability('persistence')
                     .persist();
-            }.bind(this));
+            });
         };
 
         /**
