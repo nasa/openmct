@@ -33,8 +33,20 @@
     
     .search {
         
-        .search-input {
+        .search-bar {
             width: 100%;
+            
+            .search-icon {
+                color: $colorItemTreeIcon;
+                float: left;
+                font-size: $iconWidth;
+                margin-right: 2px;
+            }
+            
+            .search-input {
+                width: 120px;
+                float: left;
+            }
         }
         
         .search-scroll {

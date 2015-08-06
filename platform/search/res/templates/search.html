@@ -23,15 +23,33 @@
      ng-controller="SearchController as controller">
     
     <!-- Search bar input -->
-    <div>
+    <!-- ui symbols for search are 'd' and 'M' -->
+    <div class="search-bar">
+        <div class="search-icon ui-symbol">
+            d
+        </div>
         <input class="search-input"
-               type="text" 
-               value=""
+               type="text"
                ng-model="ngModel.input"
                ng-keyup="controller.search()" />
+        
         <!--mct-control key="textfield"
+                     class="search-input"
+                     ng-model="ngModel.input">
+        </mct-control>
+        <!--input type="text"
+                  ng-required="false"
+                  ng-model="ngModel.index"
+                  name="mctControl" /-->
+        <!--mct-form structure="{sections: [rows: {control: 'textfield'}]}" ng-model="ngModle.input">
+        </mct-form>
+        <!--mct-control key="row.control"
                      ng-model="ngModel"
-                     structure="{cssclass: 'search-input', size: '50px'}">
+                     ng-required="row.required"
+                     ng-pattern="getRegExp(row.pattern)"
+                     options="row.options"
+                     structure="row"
+                     field="row.key">
         </mct-control-->
     </div>
     
