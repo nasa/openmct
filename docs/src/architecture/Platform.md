@@ -20,7 +20,7 @@ The run-time architecture of an Open MCT Web application can be categorized
 into certain high-level tiers:
 
 ```nomnoml
-[Templates]->[<state> AngularJS]
+[DOM]->[<state> AngularJS]
 [AngularJS]->[Presentation Layer]
 [Presentation Layer]->[Information Model]
 [Presentation Layer]->[Service Infrastructure]
@@ -30,7 +30,29 @@ into certain high-level tiers:
 ```
 
 Applications built using Open MCT Web may add or configure functionality
-in any of these tiers.
+in __any of these tiers__.
+
+* _DOM_: The rendered HTML document, composed from HTML templates which
+  have been processed by AngularJS and will be updated by AngularJS
+  to reflect changes from the presentation layer.
+* [_Presentation layer_](#presentation-layer): The presentation layer
+  is responsible for updating (and providing information to update)
+  the displayed state of the application. The presentation layer consists
+  primarily of _controllers_ and _directives_. The presentation layer is
+  concerned with inspecting the information model and preparing it for
+  display.
+* [_Information model_](#information-model): The information model
+  describes the state and behavior of the objects with which the user
+  interacts.
+* [_Service infrastructure_](#service-infrastructure): The service
+  infrastructure is responsible for providing the underlying general
+  functionality needed to support the information model. This includes
+  exposing underlying sets of extensions and mediating with the
+  back-end.
+* _Back-end_: The back-end is out of the scope of Open MCT Web, except
+  for the interfaces which are utilized by adapters participating in the
+  service infrastructure.
+
 
 # Presentation Layer
 
