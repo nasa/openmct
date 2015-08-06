@@ -402,16 +402,19 @@
     width: 100%;
     height: 50px; }
     /* line 74, ../sass/mobile/_item.scss */
+    .items-holder .item.grid-item .mobile-right {
+      top: 100%; }
+    /* line 77, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .mobile-info {
       line-height: 25px; }
-    /* line 78, ../sass/mobile/_item.scss */
+    /* line 81, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .item-main .item-type {
       line-height: 40px; }
-    /* line 82, ../sass/mobile/_item.scss */
+    /* line 85, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .title {
       margin-right: 10px;
       line-height: 25px; }
-    /* line 86, ../sass/mobile/_item.scss */
+    /* line 89, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .details {
       margin-right: 10px;
       line-height: 0px; } }
@@ -420,18 +423,21 @@
   .items-holder .item.grid-item {
     width: 100%;
     height: 66.66667px; }
-    /* line 96, ../sass/mobile/_item.scss */
+    /* line 99, ../sass/mobile/_item.scss */
+    .items-holder .item.grid-item .mobile-right {
+      top: 100%; }
+    /* line 103, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .mobile-info {
       line-height: 38px; }
-    /* line 100, ../sass/mobile/_item.scss */
+    /* line 107, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .item-main .item-type {
       font-size: 30px;
       line-height: 50px; }
-    /* line 105, ../sass/mobile/_item.scss */
+    /* line 112, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .title {
       margin-right: 10px;
       line-height: 38px; }
-    /* line 109, ../sass/mobile/_item.scss */
+    /* line 116, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .details {
       margin-right: 10px;
       line-height: 0px; } }
