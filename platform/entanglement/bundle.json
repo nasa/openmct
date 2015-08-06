@@ -50,7 +50,7 @@
                 "name": "Move Service",
                 "description": "Provides a service for moving objects",
                 "implementation": "services/MoveService.js",
-                "depends": ["policyService", "linkService"]
+                "depends": ["policyService", "linkService", "$q"]
             },
             {
                 "key": "linkService",
