@@ -25,7 +25,7 @@
  *  SearchSpec. Created by shale on 07/31/2015.
  */
 define(
-    ["../../src/services/GenericSearchProvider"],
+    ["../src/GenericSearchProvider"],
     function (GenericSearchProvider) {
         "use strict";
 
@@ -35,8 +35,8 @@ define(
                 mockObjectService,
                 mockObjectPromise,
                 mockDomainObjects,
-                mockComposition,
-                mockCompositionPromise,
+                mockCapability,
+                mockCapabilityPromise,
                 mockWorkerService,
                 mockWorker,
                 mockRoots = ['root1', 'root2'],
@@ -83,30 +83,31 @@ define(
                     mockDomainObjects[i] = (
                         jasmine.createSpyObj(
                             "domainObject",
-                            [ "getId", "getModel", "hasCapability", "getCapability"]
+                            [ "getId", "getModel", "hasCapability", "getCapability" ]
                         )
                     );
                     mockDomainObjects[i].getId.andReturn(i);
+                    mockDomainObjects[i].getCapability.andReturn(mockCapability);
                 }
                 // Give the first object children
                 mockDomainObjects[0].hasCapability.andReturn(true);
-                mockComposition = jasmine.createSpyObj(
-                    "composition",
-                    [ "invoke" ]
+                mockCapability = jasmine.createSpyObj(
+                    "capability",
+                    [ "invoke", "listen" ]
                 );
-                mockCompositionPromise = jasmine.createSpyObj(
+                mockCapabilityPromise = jasmine.createSpyObj(
                     "promise",
                     [ "then", "catch" ]
                 );
-                mockComposition.invoke.andReturn(mockCompositionPromise);
-                mockDomainObjects[0].getCapability.andReturn(mockComposition);
+                mockCapability.invoke.andReturn(mockCapabilityPromise);
+                mockDomainObjects[0].getCapability.andReturn(mockCapability);
                 
                 provider = new GenericSearchProvider(mockQ, mockObjectService, mockWorkerService, mockRoots);
             });
             
             it("indexes tree on initialization", function () {
                 mockObjectPromise.then.mostRecentCall.args[0](mockDomainObjects);
-                mockCompositionPromise.then.mostRecentCall.args[0](mockDomainObjects[1]);
+                mockCapabilityPromise.then.mostRecentCall.args[0](mockDomainObjects[1]);
                 
                 expect(mockObjectService.getObjects).toHaveBeenCalled();
                 expect(mockWorker.postMessage).toHaveBeenCalled();
