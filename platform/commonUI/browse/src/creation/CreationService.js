@@ -93,6 +93,12 @@ define(
                 });
             }
 
+            // Store the location of an object relative to it's parent.
+            function addLocationToModel(modelId, model, parent) {
+                model.location = parent.getId();
+                return model;
+            }
+
             // Create a new domain object with the provided model as a
             // member of the specified parent's composition
             function createObject(model, parent) {
@@ -117,13 +123,6 @@ define(
                 }).then(function (id) {
                     return addToComposition(id, parent, persistence);
                 });
-            }
-
-            // Store the location of an object relative to it's parent.
-            function addLocationToModel(modelId, model, parent) {
-                model.location = parent.getId();
-
-                return model;
             }
 
             return {

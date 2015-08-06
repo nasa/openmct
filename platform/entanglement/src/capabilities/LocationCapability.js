@@ -1,8 +1,8 @@
 /*global define */
 
 define(
-
     function () {
+        "use strict";
 
         function LocationCapability(domainObject) {
             this.domainObject = domainObject;

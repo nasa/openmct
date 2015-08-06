@@ -202,11 +202,12 @@ define(
             });
 
             it("stores location on new domainObjects", function () {
-                var model = { name: "my model" };
-                var objectPromise = creationService.createObject(
-                    model,
-                    mockParentObject
-                );
+                var model = { name: "my model" },
+                    objectPromise = creationService.createObject(
+                        model,
+                        mockParentObject
+                    );
+
                 expect(model.location).toBe('parentId');
             });
 

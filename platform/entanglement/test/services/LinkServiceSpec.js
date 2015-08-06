@@ -200,7 +200,7 @@ define(
                     mutationPromise.resolve();
                     persistencePromise.resolve();
                     compositionPromise.resolve([linkedObject]);
-                    expect(whenComplete).toHaveBeenCalledWith(linkedObject)
+                    expect(whenComplete).toHaveBeenCalledWith(linkedObject);
                 });
             });
         });
