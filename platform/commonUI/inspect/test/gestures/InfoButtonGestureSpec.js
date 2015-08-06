@@ -29,9 +29,9 @@ define(
         describe("The info button gesture", function () {
             var mockTimeout,
                 mockDocument,
+                mockBody,
                 mockAgentService,
                 mockInfoService,
-                testDelay = 12321,
                 mockElement,
                 mockDomainObject,
                 mockEvent,
@@ -40,19 +40,15 @@ define(
                 testMetadata,
                 mockPromise,
                 mockHide,
-                gesture;
-
-            function fireEvent(evt, value) {
-                mockElement.on.calls.forEach(function (call) {
-                    if (call.args[0] === evt) {
-                        call.args[1](value);
-                    }
-                });
-            }
+                gesture,
+                fireGesture,
+                fireDismissGesture;
             
             beforeEach(function () {
                 mockTimeout = jasmine.createSpy('$timeout');
                 mockDocument = jasmine.createSpyObj('$document', ['find']);
+                mockBody = jasmine.createSpyObj('body', [ 'on', 'off', 'scope', 'css', 'unbind' ]);
+                mockDocument.find.andReturn(mockBody);
                 mockAgentService = jasmine.createSpyObj('agentService', ['isMobile', 'isPhone']);
                 mockInfoService = jasmine.createSpyObj(
                     'infoService',
@@ -66,20 +62,7 @@ define(
                     'domainObject',
                     [ 'getId', 'getCapability', 'useCapability', 'getModel' ]
                 );
-                mockDocument = jasmine.createSpyObj('$document', ['find']);
-                mockAgentService = jasmine.createSpyObj('agentService', ['isMobile']);
-                mockInfoService = jasmine.createSpyObj(
-                    'infoService',
-                    [ 'display' ]
-                );
-                mockElement = jasmine.createSpyObj(
-                    'element',
-                    [ 'on', 'off', 'scope', 'css', 'click' ]
-                );
-                mockDomainObject = jasmine.createSpyObj(
-                    'domainObject',
-                    [ 'getId', 'getCapability', 'useCapability', 'getModel' ]
-                );
+                
                 mockEvent = jasmine.createSpyObj("event", ["preventDefault", "stopPropagation"]);
                 mockEvent.pageX = 0;
                 mockEvent.pageY = 0;
@@ -103,12 +86,58 @@ define(
                     mockElement,
                     mockDomainObject
                 );
+                fireGesture =  mockElement.on.mostRecentCall.args[1];
             });
             
             it("expect click on the representation", function () {
-                expect(mockElement.on)
-                    .toHaveBeenCalledWith('click', jasmine.any(Function));
+                // Fires a click call on element and then
+                // expects the click to have happened
+                fireGesture(mockEvent);
+                expect(mockElement.on).toHaveBeenCalledWith(
+                    "click",
+                    jasmine.any(Function)
+                );
+            });
+            
+            it("expect click then dismiss on the representation", function () {
+                // Fire the click and then expect the click
+                fireGesture(mockEvent);
+                expect(mockElement.on).toHaveBeenCalledWith(
+                    "click",
+                    jasmine.any(Function)
+                );
                 
+                // Get the touch start on the body
+                // and fire the dismiss gesture
+                fireDismissGesture =  mockBody.on.mostRecentCall.args[1];
+                fireDismissGesture(mockEvent);
+                // Expect Body to have been touched, event.preventDefault()
+                // to be called, then the mockBody listener to be detached
+                // lastly unbind the touchstart used to dismiss so other 
+                // events can be called
+                expect(mockBody.on).toHaveBeenCalledWith(
+                    "touchstart",
+                    jasmine.any(Function)
+                );
+                expect(mockEvent.preventDefault).toHaveBeenCalled();
+                expect(mockBody.off).toHaveBeenCalledWith(
+                    "touchstart",
+                    jasmine.any(Function)
+                );
+                expect(mockBody.unbind).toHaveBeenCalledWith(
+                    'touchstart'
+                );
+            });
+            
+            it("detaches a callback for info bubble events when destroyed", function () {
+                expect(mockElement.off).not.toHaveBeenCalled();
+
+                gesture.destroy();
+
+                expect(mockElement.off).toHaveBeenCalledWith(
+                    "click",
+                    jasmine.any(Function)
+                );
             });
             
         });
