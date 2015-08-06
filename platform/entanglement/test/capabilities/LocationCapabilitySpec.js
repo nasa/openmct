@@ -10,19 +10,19 @@ define(
         describe("LocationCapability", function () {
 
 
-            it("applies to objects with a context capability", function () {
-                var domainObject = domainObjectFactory({
-                    capabilities: {
-                        context: true
-                    }
-                });
-                expect(LocationCapability.appliesTo(domainObject)).toBe(true);
-            });
-
-            it("does not apply to objects without context capability", function () {
-                var domainObject = domainObjectFactory();
-                expect(LocationCapability.appliesTo(domainObject)).toBe(false);
-            });
+            // xit("applies to objects with a context capability", function () {
+            //     var domainObject = domainObjectFactory({
+            //         capabilities: {
+            //             context: true
+            //         }
+            //     });
+            //     expect(LocationCapability.appliesTo(domainObject)).toBe(true);
+            // });
+            //
+            // xit("does not apply to objects without context capability", function () {
+            //     var domainObject = domainObjectFactory();
+            //     expect(LocationCapability.appliesTo(domainObject)).toBe(false);
+            // });
 
             describe("instantiated with domain object", function () {
                 var locationCapability,
@@ -34,21 +34,9 @@ define(
                             context: {
                                 getPath: function() {
                                     return [
-                                        {
-                                            getId: function () {
-                                                return 'root';
-                                            }
-                                        },
-                                        {
-                                            getId: function () {
-                                                return 'parent';
-                                            }
-                                        },
-                                        {
-                                            getId: function () {
-                                                return 'me';
-                                            }
-                                        }
+                                        domainObjectFactory({id: 'root'}),
+                                        domainObjectFactory({id: 'parent'}),
+                                        domainObjectFactory({id: 'me'})
                                     ];
                                 }
                             }

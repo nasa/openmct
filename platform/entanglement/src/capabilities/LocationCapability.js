@@ -39,7 +39,7 @@ define(
          * original.
          */
         LocationCapability.prototype.isLink = function () {
-            if (this.getId() === "mine") {
+            if (this.domainObject.getId() === "mine") {
                 return false;
             }
             var model = this.domainObject.getModel();
@@ -52,7 +52,7 @@ define(
          * link.
          */
         LocationCapability.prototype.isOriginal = function () {
-            if (this.getId() === "mine") {
+            if (this.domainObject.getId() === "mine") {
                 return true;
             }
             var model = this.domainObject.getModel();
