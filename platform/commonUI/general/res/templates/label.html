@@ -24,5 +24,10 @@
         {{type.getGlyph()}}
         <span class='ui-symbol icon alert hidden'>!</span>
     </span>
-    <span class='title-label'>{{model.name}}</span>
+    <span class='title-label'>
+        {{model.name}}
+        <span>{{model.location}}</span>
+        <span>{{location.getLocation()}}</span>
+        <span ng-show="{{location.isLink}}">(link)</span>
+    </span>
 </span>

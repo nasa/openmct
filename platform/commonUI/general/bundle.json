@@ -196,7 +196,7 @@
             {
                 "key": "label",
                 "templateUrl": "templates/label.html",
-                "uses": [ "type" ],
+                "uses": [ "type", "location" ],
                 "gestures": [ "drag", "menu", "info" ]
             },
             {
