@@ -129,8 +129,12 @@ define(
                     if (node.hasCapability('composition')) {
                         // This node has children
                         node.getCapability('composition').invoke().then(function (children) {
-                            // Index the children 
-                            indexItems(children);
+                            // Index the children
+                            if (children.constructor === Array) {
+                                indexItems(children);
+                            } else {
+                                indexItems([children]);
+                            }
                         });
                     }
                 });
