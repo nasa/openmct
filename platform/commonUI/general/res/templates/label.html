@@ -22,11 +22,10 @@
 <span class="label s-label">
     <span class='ui-symbol icon type-icon'>
         {{type.getGlyph()}}
-        <!-- this will be toggled by a ng-show -->
         <span
-	        class='ui-symbol icon l-icon-link'
-            ng-show="true"
-	        ></span>
+            class='ui-symbol icon l-icon-link'
+            ng-show="location.isLink()"
+            ></span>
         <span class='ui-symbol icon l-icon-alert'></span>
     </span>
     <span class='title-label'>

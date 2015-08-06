@@ -34,11 +34,10 @@
         <div class='item-main abs'>
             <div class='ui-symbol icon lg item-type'>
                 {{type.getGlyph()}}
-                <!-- this will be toggled by a ng-show -->
                 <span
-	                class='ui-symbol icon l-icon-link' title="This object is a link"
-	                ng-show = "true"
-	                ></span>
+                    class="ui-symbol icon l-icon-link" title="This object is a link"
+                    ng-show="location.isLink()"
+                    ></span>
             </div>
             <div class='ui-symbol icon abs item-open'>}</div>
         </div>
