@@ -84,7 +84,7 @@
             <plugin>
                 <groupId>com.github.klieber</groupId>
                 <artifactId>phantomjs-maven-plugin</artifactId>
-                <version>0.2.1</version>
+                <version>0.7</version>
                 <executions>
                     <execution>
                         <goals>
@@ -93,7 +93,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <version>1.9.2</version>
+                    <version>2.0.0</version>
                 </configuration>
             </plugin>
 
@@ -115,7 +115,7 @@
                         <configuration>
                             <workingDirectory>.</workingDirectory>
                             <arguments>
-                                <argument>platform/framework/test/lib/run_jasmine_test.coffee</argument>
+                                <argument>platform/framework/test/lib/run_jasmine_test.js</argument>
                                 <argument>test.html</argument>
                                 <argument>${project.build.directory}/platform-test-results.html</argument>
                             </arguments>
