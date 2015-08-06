@@ -167,7 +167,7 @@ insufficient.
   [capabilities]->[ActionService]
   [capabilities]->[ViewService]
   [PersistenceService]->[<database> Document store]
-  [TelemetryService]->[<input> Telemetry source]
+  [TelemetryService]->[<database> Telemetry source]
   [ActionService]->[actions]
   [ActionService]->[PolicyService]
   [ViewService]->[PolicyService]
@@ -176,6 +176,29 @@ insufficient.
   [TypeService]->[types]
 ]
 ```
+
+A short summary of the roles of these services:
+
+* _[ObjectService](#object-service)_: Allows retrieval of domain objects by
+  their identifiers; in practice, often the main point of entry into the
+  [information model](#information-model).
+* _[ModelService](#model-service)_: Provides domain object models, retrieved
+  by their identifier.
+* _[CapabilityService](#capability-service)_: Provides capabilities, as they
+  apply to specific domain objects (as judged from their model.)
+* _[TelemetryService](#telemetry-service)_: Provides access to historical
+  and real-time telemetry data.
+* _[PersistenceService](#persistence-service)_: Provides the ability to
+  store and retrieve documents (such as domain object models.)
+* _[ActionService](#action-service)_: Provides distinct user actions that
+  can take place within the system (typically, upon or using domain objects.)
+* _[ViewService](#view-service)_: Provides views for domain objects. A view
+  is a user-selectable representation of a domain object (in practice, an
+  HTML template.)
+* _[PolicyService](#policy-service)_: Handles decisions about which
+  behavior are allowed within certain specific contexts.
+* _[TypeService](#type-service)_: Provides information to distinguish
+  different types of domain objects from one another within the system.
 
 ## Object Service
 
@@ -286,6 +309,124 @@ capabilities exposed via the `capabilities` extension category.
 Additionally, `platform/persistence/queue` decorates the persistence
 capability specifically to batch persistence attempts among multiple
 objects (this allows failures to be recognized and handled in groups.)
+
+## Telemetry Service
+
+```nomnoml
+[<abstract> TelemetryService|
+  requestData(requests : Array.<TelemetryRequest>) : Promise.<object>
+  subscribe(requests : Array.<TelemetryRequest>) : Function
+]<--:[TelemetryAggregator]
+```
+
+The telemetry service is responsible for acquiring telemetry data.
+
+Notably, the platform does not include any providers for
+`TelemetryService`; applications built on Open MCT Web will need to
+implement a provider for this service if they wish to expose telemetry
+data. This is usually the most important step for integrating Open MCT Web
+into an existing telemetry system.
+
+Requests for telemetry data are usually initiated in the
+[presentation layer](#presentation-layer) by some `Controller` referenced
+from a view. The `telemetryHandler` service is most commonly used (although
+one could also use an object's `telemetry` capability directly) as this
+handles capability delegation, by which a domain object such as a Telemetry
+Panel can declare that its `telemetry` capability should be handled by the
+objects it contains. Ultimately, the request for historical data and the
+new subscriptions will reach the `TelemetryService`, and, by way of the
+provider(s) which are present for that `TelemetryService`, will pass the
+same requests to the back-end.
+
+```nomnoml
+[<start> Start]->[Controller]
+[Controller]->[<state> declares object of interest]
+[declares object of interest]->[TelemetryHandler]
+[TelemetryHandler]->[<state> requests telemetry from capabilities]
+[TelemetryHandler]->[<state> subscribes to telemetry using capabilities]
+[requests telemetry from capabilities]->[TelemetryCapability]
+[subscribes to telemetry using capabilities]->[TelemetryCapability]
+[TelemetryCapability]->[<state> requests telemetry]
+[TelemetryCapability]->[<state> subscribes to telemetry]
+[requests telemetry]->[TelemetryService]
+[subscribes to telemetry]->[TelemetryService]
+[TelemetryService]->[<state> issues request]
+[TelemetryService]->[<state> updates subscriptions]
+[TelemetryService]->[<state> listens for real-time data]
+[issues request]->[<database> Telemetry Back-end]
+[updates subscriptions]->[Telemetry Back-end]
+[listens for real-time data]->[Telemetry Back-end]
+[Telemetry Back-end]->[<end> End]
+```
+
+The back-end, in turn, is expected to provide whatever historical
+telemetry is available to satisfy the request that has been issue.
+
+```nomnoml
+[<start> Start]->[<database> Telemetry Back-end]
+[Telemetry Back-end]->[<state> transmits historical telemetry]
+[transmits historical telemetry]->[TelemetryService]
+[TelemetryService]->[<state> packages telemetry, fulfills requests]
+[packages telemetry, fulfills requests]->[TelemetryCapability]
+[TelemetryCapability]->[<state> unpacks telemetry per-object, fulfills request]
+[unpacks telemetry per-object, fulfills request]->[TelemetryHandler]
+[TelemetryHandler]->[<state> exposes data]
+[TelemetryHandler]->[<state> notifies controller]
+[exposes data]->[Controller]
+[notifies controller]->[Controller]
+[Controller]->[<state> prepares data for template]
+[prepares data for template]->[Template]
+[Template]->[<state> displays data]
+[displays data]->[<end> End]
+```
+
+One peculiarity of this approach is that we package many responses
+together at once in the `TelemetryService`, then unpack these in the
+`TelemetryCapability`, then repackage these in the `TelemetryHandler`.
+The rationale for this is as follows:
+
+* In the `TelemetryService`, we want to have the ability to combine
+  multiple requests into one call to the back-end, as many back-ends
+  will support this. It follows that we give the response as a single
+  object, packages in a manner that allows responses to individual
+  requests to be easily identified.
+* In the `TelemetryCapability`, we want to provide telemetry for a
+  _single object_, so the telemetry data gets unpacked. This allows
+  for the unpacking of data to be handled in a single place, and
+  also permits a flexible substitution method; domain objects may have
+  implementations of the `telemetry` capability that do not use the
+  `TelemetryService` at all, while still maintaining compatibility
+  with any presentation layer code written to utilize this capability.
+  (This is true of capabilities generally.)
+* In the `TelemetryHandler`, we want to group multiple responses back
+  together again to make it easy for the presentation layer to consume.
+  In this case, the grouping is different from what may have occurred
+  in the `TelemetryService`; this grouping is based on what is expected
+  to be useful _in a specific view_. The `TelemetryService`
+  may be receiving requests from multiple views.
+
+```nomnoml
+[<start> Start]->[<database> Telemetry Back-end]
+[Telemetry Back-end]->[<state> notifies client of new data]
+[notifies client of new data]->[TelemetryService]
+[TelemetryService]->[<choice> relevant subscribers?]
+[relevant subscribers?] yes ->[<state> notify subscribers]
+[relevant subscribers?] no ->[<state> ignore]
+[ignore]->[<end> Ignored]
+[notify subscribers]->[TelemetryCapability]
+[TelemetryCapability]->[<state> notify listener]
+[notify listener]->[TelemetryHandler]
+[TelemetryHandler]->[<state> exposes data]
+[TelemetryHandler]->[<state> notifies controller]
+[exposes data]->[Controller]
+[notifies controller]->[Controller]
+[Controller]->[<state> prepares data for template]
+[prepares data for template]->[Template]
+[Template]->[<state> displays data]
+[displays data]->[<end> End]
+```
+
+
 
 ## Persistence Service
 
