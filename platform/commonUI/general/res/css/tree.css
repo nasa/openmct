@@ -123,8 +123,8 @@ ul.tree {
       transition: background-color 0.25s;
       display: block;
       font-size: 0.8em;
-      height: 1.4rem;
-      line-height: 1.4rem;
+      height: 1.5rem;
+      line-height: 1.5rem;
       margin-bottom: 3px;
       position: relative; }
       /* line 39, ../sass/tree/_tree.scss */

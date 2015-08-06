@@ -22,12 +22,14 @@
 <span class="label s-label">
     <span class='ui-symbol icon type-icon'>
         {{type.getGlyph()}}
-        <span class='ui-symbol icon alert hidden'>!</span>
+        <!-- this will be toggled by a ng-show -->
+        <span
+	        class='ui-symbol icon l-icon-link'
+            ng-show="true"
+	        ></span>
+        <span class='ui-symbol icon l-icon-alert'></span>
     </span>
     <span class='title-label'>
         {{model.name}}
-        <span>{{model.location}}</span>
-        <span>{{location.getLocation()}}</span>
-        <span ng-show="{{location.isLink}}">(link)</span>
     </span>
 </span>
