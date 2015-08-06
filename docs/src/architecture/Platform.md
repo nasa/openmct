@@ -34,7 +34,8 @@ in __any of these tiers__.
 
 * _DOM_: The rendered HTML document, composed from HTML templates which
   have been processed by AngularJS and will be updated by AngularJS
-  to reflect changes from the presentation layer.
+  to reflect changes from the presentation layer. User interactions
+  are initiated from here and invoke behavior in the presentation layer.
 * [_Presentation layer_](#presentation-layer): The presentation layer
   is responsible for updating (and providing information to update)
   the displayed state of the application. The presentation layer consists
@@ -53,6 +54,44 @@ in __any of these tiers__.
   for the interfaces which are utilized by adapters participating in the
   service infrastructure.
 
+## Application Start-up
+
+Once the
+[application has been initialized](Framework.md#application-initialization)
+Open MCT Web primarily operates in an event-driven paradigm; various
+events (mouse clicks, timers firing, receiving responses to XHRs) trigger
+the invocation of functions, typically in the presentation layer for
+user actions or in the service infrastructure for server responses.
+
+The "main point of entry" into an initialized Open MCT Web application
+is effectively the
+[route](https://docs.angularjs.org/api/ngRoute/service/$route#example)
+which is associated with the URL used to access Open MCT Web (or a
+default route.) This route will be associated with a template which
+will be displayed; this template will include references to directives
+and controllers which will be interpreted by Angular and used to
+initialize the state of the display in a manner which is backed by
+both the information model and the service infrastructure.
+
+```nomnoml
+[<start> Start]->[<state> page load]
+[page load]->[<state> route selection]
+[route selection]->[<state> compile, display template]
+[compile, display template]->[Template]
+[Template]->[<state> use Controllers]
+[Template]->[<state> use Directives]
+[use Controllers]->[Controllers]
+[use Directives]->[Directives]
+[Controllers]->[<state> consult information model]
+[consult information model]->[<state> expose data]
+[expose data]->[Angular]
+[Angular]->[<state> update display]
+[Directives]->[<state> add event listeners]
+[Directives]->[<state> update display]
+[add event listeners]->[<end> End]
+[update display]->[<end> End]
+```
+
 
 # Presentation Layer
 
@@ -68,6 +107,7 @@ presentation layer implemented as Open MCT Web extensions.
     [routes]
     [controllers]
     [directives]
+    [templates]
   ]
   [Domain object representation|
     [views]
@@ -78,6 +118,47 @@ presentation layer implemented as Open MCT Web extensions.
 ]
 ```
 
+## Angular built-ins
+
+Several extension categories in the presentation layer map directly
+to primitives from AngularJS:
+
+* [_Controllers_](https://docs.angularjs.org/guide/controller) provide
+  data to templates, and expose functionality that can be called from
+  templates.
+* [_Directives_](https://docs.angularjs.org/guide/directive) effectively
+  extend HTML to provide custom behavior associated with specific
+  attributes and tags.
+* [_Routes_](https://docs.angularjs.org/api/ngRoute/service/$route#example)
+  are used to associate specific URLs (including the fragment identifier)
+  with specific application states. (In Open MCT Web, these are used to
+  describe the mode of usage - e.g. browse or edit - as well as to
+  identify the object being used.)
+* [_Templates_](https://docs.angularjs.org/guide/templates) are partial
+  HTML documents that will be rendered and kept up-to-date by AngularJS.
+  Open MCT Web introduces a custom `mct-include` directive which acts
+  as a wrapper around `ng-include` to allow templates to be referred
+  to by symbolic names.
+
+## Domain object representation
+
+The remaining extension categories in the presentation layer are specific
+to displaying domain objects.
+
+* _Representations_ are templates that will be used to display
+  domain objects in specific ways (e.g. "as a tree node.")
+* _Views_ are representations which are exposed to the user as options
+  for displaying domain objects.
+* _Representers_ are extensions which modify or augment the process
+  of representing domain objects generally (e.g. by attaching
+  gestures to them.)
+* _Gestures_ provide associations between specific user actions
+  (expressed as DOM events) and resulting behavior upon domain objects
+  (typically expressed as members of the `actions` extension category)
+  that can be reused across domain objects. For instance, `drag` and
+  `drop` are both gestures associated with using drag-and-drop to
+  modify the composition of domain objects by interacting with their
+  representations.
 
 # Information Model
 
