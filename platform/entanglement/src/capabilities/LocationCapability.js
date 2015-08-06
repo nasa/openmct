@@ -6,6 +6,7 @@ define(
 
         function LocationCapability(domainObject) {
             this.domainObject = domainObject;
+            return this;
         }
 
         /**
@@ -38,6 +39,9 @@ define(
          * original.
          */
         LocationCapability.prototype.isLink = function () {
+            if (this.getId() === "mine") {
+                return false;
+            }
             var model = this.domainObject.getModel();
 
             return model.location !== this.getLocation();
@@ -48,19 +52,29 @@ define(
          * link.
          */
         LocationCapability.prototype.isOriginal = function () {
+            if (this.getId() === "mine") {
+                return true;
+            }
             var model = this.domainObject.getModel();
 
             return model.location === this.getLocation();
         };
 
+        function createLocationCapability(domainObject) {
+            return new LocationCapability(domainObject);
+        }
+
         /**
          * Return true if the LocationCapability can apply to a given
          * domainObject, otherwise return false.
          */
-        LocationCapability.appliesTo = function (domainObject) {
-            return domainObject.hasCapability('context');
+        createLocationCapability.appliesTo = function (domainObject) {
+            // if (!domainObject.hasCapability) {
+            //     return false;
+            // }
+            // return domainObject.hasCapability('context');
         };
 
-        return LocationCapability;
+        return createLocationCapability;
     }
 );

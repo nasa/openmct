@@ -25,7 +25,8 @@ define(
     [
         '../../src/services/MoveService',
         '../services/MockLinkService',
-        '../DomainObjectFactory'
+        '../DomainObjectFactory',
+        '../ControlledPromise'
     ],
     function (MoveService, MockLinkService, domainObjectFactory) {
         "use strict";
@@ -141,7 +142,8 @@ define(
 
                 var object,
                     parentObject,
-                    actionCapability;
+                    actionCapability,
+                    locationCapability;
 
                 beforeEach(function () {
                     actionCapability = jasmine.createSpyObj(
@@ -149,10 +151,16 @@ define(
                         ['perform']
                     );
 
+                    locationCapability = jasmine.createSpyObj(
+                        'locationCapability',
+                        ['isOriginal']
+                    );
+
                     object = domainObjectFactory({
                         name: 'object',
                         capabilities: {
-                            action: actionCapability
+                            action: actionCapability,
+                            location: locationCapability
                         }
                     });
 
@@ -175,8 +183,9 @@ define(
                         .toHaveBeenCalledWith(jasmine.any(Function));
                 });
 
+
                 it("removes object when link is completed", function () {
-                    linkService.perform.mostRecentCall.resolve();
+                    linkService.perform.mostRecentCall.promise.resolve()
                     expect(object.getCapability)
                         .toHaveBeenCalledWith('action');
                     expect(actionCapability.perform)
@@ -185,5 +194,6 @@ define(
 
             });
         });
+
     }
 );

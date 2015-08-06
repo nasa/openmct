@@ -69,6 +69,22 @@ define(
                 perform: function (object, parentObject) {
                     return linkService
                         .perform(object, parentObject)
+                        .then(function setOriginalLocation(objectInNewContext) {
+                            var locationCapability =
+                                object.getCapability('location');
+
+                            if (!locationCapability.isOriginal()) {
+                                return objectInNewContext;
+                            }
+
+                            return objectInNewContext.useCapability(
+                                'mutation',
+                                function (model) {
+                                    model.location =
+                                        locationCapability.getLocation();
+                                }
+                            );
+                        })
                         .then(function () {
                             return object
                                 .getCapability('action')
