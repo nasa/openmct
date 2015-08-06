@@ -1,8 +1,7 @@
 [
     "controllers/SearchController",
     "controllers/SearchItemController",
-    "SearchAggregator",
-    "providers/ElasticsearchSearchProvider",
-    "providers/GenericSearchProvider",
-    "workers/GenericSearchWorker"
+    "services/SearchAggregator",
+    "services/GenericSearchProvider",
+    "services/GenericSearchWorker"
 ]
