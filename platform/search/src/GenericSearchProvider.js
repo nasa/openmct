@@ -48,6 +48,7 @@ define(
          */
         function GenericSearchProvider($q, objectService, workerService, ROOTS) {
             var worker = workerService.run('genericSearchWorker'),
+                indexed = {},
                 pendingQueries = {};
             // pendingQueries is a dictionary with the key value pairs st 
             // the key is the timestamp and the value is the promise
@@ -123,19 +124,24 @@ define(
             // Helper function for getItems(). Indexes the tree.
             function indexItems(nodes) {
                 nodes.forEach(function (node) {
-                    // Index each item with the web worker
-                    indexItem(node);
+                    var id = node.getId();
                     
-                    if (node.hasCapability('composition')) {
-                        // This node has children
-                        node.getCapability('composition').invoke().then(function (children) {
-                            // Index the children
-                            if (children.constructor === Array) {
-                                indexItems(children);
-                            } else {
-                                indexItems([children]);
-                            }
-                        });
+                    if (!indexed[id]) {
+                        // Index each item with the web worker
+                        indexItem(node);
+                        indexed[id] = true;
+
+                        if (node.hasCapability('composition')) {
+                            // This node has children
+                            node.getCapability('composition').invoke().then(function (children) {
+                                // Index the children
+                                if (children.constructor === Array) {
+                                    indexItems(children);
+                                } else {
+                                    indexItems([children]);
+                                }
+                            });
+                        }
                     }
                 });
             }
