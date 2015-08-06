@@ -71,6 +71,9 @@
                 $dHei: $phone-itemHeight;
                 width: $dWid;
                 height: $dHei;
+                .mobile-right {
+                    top: 100%;
+                }
                 .mobile-info {
                     line-height: $phone-itemHeight * .5;
                 }
@@ -93,6 +96,10 @@
                 $dHei: $tablet-itemHeight;
                 width: $dWid;
                 height: $dHei;
+                .mobile-right {
+                    top: 100%;
+                }
+                
                 .mobile-info {
                     line-height: $tablet-itemHeight * .57;
                 }
