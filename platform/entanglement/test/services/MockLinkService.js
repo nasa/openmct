@@ -23,7 +23,10 @@
 /*global define,jasmine */
 
 define(
-    function () {
+    [
+        '../ControlledPromise'
+    ],
+    function (ControlledPromise) {
         "use strict";
 
         /**
@@ -67,26 +70,12 @@ define(
                     callExtensions,
                     spy;
 
-                performPromise = jasmine.createSpyObj(
-                    'performPromise',
-                    ['then']
-                );
+                performPromise = new ControlledPromise();
 
-                callExtensions = {
-                    promise: performPromise,
-                    resolve: function (resolveWith) {
-                        performPromise.then.calls.forEach(function (call) {
-                            call.args[0](resolveWith);
-                        });
-                    }
-                };
+                this.perform.mostRecentCall.promise = performPromise;
+                this.perform.calls[this.perform.calls.length - 1].promise =
+                    performPromise;
 
-                spy = this.perform;
-
-                Object.keys(callExtensions).forEach(function (key) {
-                    spy.mostRecentCall[key] = callExtensions[key];
-                    spy.calls[spy.calls.length - 1][key] = callExtensions[key];
-                });
 
                 return performPromise;
             });

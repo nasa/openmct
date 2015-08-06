@@ -25,7 +25,8 @@
 define(
     [
         '../../src/services/LinkService',
-        '../DomainObjectFactory'
+        '../DomainObjectFactory',
+        '../ControlledPromise'
     ],
     function (LinkService, domainObjectFactory) {
         "use strict";
@@ -176,6 +177,11 @@ define(
                         .toHaveBeenCalledWith('persistence');
 
                     expect(persistenceCapability.persist).toHaveBeenCalled();
+                });
+
+                it("returns object representing new link", function () {
+                    linkService.perform(object, parentObject);
+
                 });
             });
         });
