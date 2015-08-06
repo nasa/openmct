@@ -122,20 +122,23 @@ define(
             
             // Helper function for getItems(). Indexes the tree.
             function indexItems(nodes) {
-                var i;
-                
-                for (i = 0; i < nodes.length; i += 1) {
+                console.log('nodes', nodes);
+                nodes.forEach(function (node) {
                     // Index each item with the web worker
-                    indexItem(nodes[i]);
+                    indexItem(node);
                     
-                    if (nodes[i].hasCapability('composition')) {
+                    if (node.hasCapability('composition')) {
                         // This node has children
-                        nodes[i].getCapability('composition').invoke().then(function (children) {
-                            // Index the children 
-                            indexItems(children);
+                        node.getCapability('composition').invoke().then(function (children) {
+                            // Index the children
+                            if (children.constructor === Array) {
+                                indexItems(children);
+                            } else {
+                                indexItems([children]);
+                            }
                         });
                     }
-                }
+                });
             }
             
             // Converts the filetree into a list
