@@ -1,6 +1,31 @@
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 /*global require,process,GLOBAL*/
 /*jslint nomen: true*/
 
+
+// Usage:
+//   node gendocs.js --in <source directory> --out <dest directory>
 
 var CONSTANTS = {
         DIAGRAM_WIDTH: 800,
@@ -22,6 +47,7 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
         Canvas = require('canvas'),
         options = require("minimist")(process.argv.slice(2));
 
+    // Convert from nomnoml source to a target PNG file.
     function renderNomnoml(source, target) {
         var canvas =
             new Canvas(CONSTANTS.DIAGRAM_WIDTH, CONSTANTS.DIAGRAM_HEIGHT);
@@ -29,6 +55,11 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
         canvas.pngStream().pipe(fs.createWriteStream(target));
     }
 
+    // Stream transform.
+    // Pulls out nomnoml diagrams from fenced code blocks and renders them
+    // as PNG files in the output directory, prefixed with a provided name.
+    // The fenced code blocks will be replaced with Markdown in the
+    // output of this stream.
     function nomnomlifier(outputDirectory, prefix) {
         var transform = new stream.Transform({ objectMode: true }),
             isBuilding = false,
@@ -70,6 +101,7 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
         return transform;
     }
 
+    // Convert from Github-flavored Markdown to HTML
     function gfmifier() {
         var transform = new stream.Transform({ objectMode: true }),
             markdown = "";
@@ -86,6 +118,8 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
         return transform;
     }
 
+    // Custom renderer for marked; converts relative links from md to html,
+    // and makes headings linkable.
     function CustomRenderer() {
         var renderer = new marked.Renderer(),
             customRenderer = Object.create(renderer);
@@ -119,6 +153,9 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
         smartypants: false
     });
 
+    // Convert all markdown files.
+    // First, pull out nomnoml diagrams.
+    // Then, convert remaining Markdown to HTML.
     glob(options['in'] + "/**/*.md", {}, function (err, files) {
         files.forEach(function (file) {
             var destination = file.replace(options['in'], options.out)
