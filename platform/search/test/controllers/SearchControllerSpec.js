@@ -117,6 +117,7 @@ define(
                 // Flag should be flase with empty input
                 mockScope.ngModel.input = "";
                 controller.search();
+                mockPromise.then.mostRecentCall.args[0]({hits: [], total: 0});
                 expect(mockScope.ngModel.search).toEqual(false);
             });
         });
