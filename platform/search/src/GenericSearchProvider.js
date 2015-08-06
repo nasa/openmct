@@ -124,14 +124,15 @@ define(
             // Helper function for getItems(). Indexes the tree.
             function indexItems(nodes) {
                 nodes.forEach(function (node) {
-                    var id = node.getId();
+                    var id = node && node.getId && node.getId();
                     
+                    // If we have not yet indexed this item, index it 
                     if (!indexed[id]) {
                         // Index each item with the web worker
                         indexItem(node);
                         indexed[id] = true;
-
-                        if (node.hasCapability('composition')) {
+                        
+                        if (node.hasCapability && node.hasCapability('composition')) {
                             // This node has children
                             node.getCapability('composition').invoke().then(function (children) {
                                 // Index the children
@@ -142,6 +143,26 @@ define(
                                 }
                             });
                         }
+                    }
+                    
+                    // Watch for changes to this item, in case it gets new children 
+                    if (node && node.hasCapability && node.hasCapability('mutation')) {
+                        node.getCapability('mutation').listen(function (listener) {
+                            if (listener && listener.composition) {
+                                // If the node was mutated to have children, get the child domain objects
+                                objectService.getObjects(listener.composition).then(function (objectsById) {
+                                    var objects = [],
+                                        id;
+
+                                    // Get each of the domain objects in objectsById
+                                    for (id in objectsById) {
+                                        objects.push(objectsById[id]);
+                                    }
+                                    
+                                    indexItems(objects);
+                                });
+                            }
+                        });
                     }
                 });
             }
