@@ -426,7 +426,13 @@ The rationale for this is as follows:
 [displays data]->[<end> End]
 ```
 
-
+The flow of real-time data is similar, and is handled by a sequence
+of callbacks between the presentation layer component which is
+interested in data and the telemetry service. Providers in the
+telemetry service listen to the back-end for new data (via whatever
+mechanism their specific back-end supports), package this data in
+the same manner as historical data, and pass that to the callbacks
+which are associated with relevant requests.
 
 ## Persistence Service
 
@@ -470,15 +476,136 @@ write additional adapters to utilize different back end technologies.
 [CreateActionProvider]--:>[ActionService]
 [ActionAggregator]--:>[ActionService]
 [LoggingActionDecorator]--:>[ActionService]
+[PolicyActionDecorator]--:>[ActionService]
 
-[LoggingActionDecorator]o-[ActionAggregator]
+[LoggingActionDecorator]o-[PolicyActionDecorator]
+[PolicyActionDecorator]o-[ActionAggregator]
 [ActionAggregator]o-[ActionProvider]
 [ActionAggregator]o-[CreateActionProvider]
 
 [ActionProvider]o-[actions]
 [CreateActionProvider]o-[TypeService]
+[PolicyActionDecorator]o-[PolicyService]
 ```
 
 Actions are discrete tasks or behaviors that can be initiated by a user
 upon or using a domain object. Actions may appear as menu items or
 buttons in the user interface, or may be triggered by certain gestures.
+
+Responsibilities of platform components of the action service are as
+follows:
+
+* `ActionProvider` exposes actions registered via extension category
+  `actions`, supporting simple addition of new actions. Actions are
+  filtered down to match action contexts based on criteria defined as
+  part of an action's extension definition.
+* `CreateActionProvider` provides the various Create actions which
+  populate the Create menu. These are driven by the available types,
+  so do not map easily ot extension category `actions`; instead, these
+  are generated after looking up which actions are available from the
+  [`TypeService`](#type-service).
+* `ActionAggregator` merges together actions from multiple providers.
+* `PolicyActionDecorator` enforces the `action` policy category by
+  filtering out actions which violate this policy, as determined by
+  consulting the [`PolicyService`](#policy-service).
+* `LoggingActionDecorator` wraps exposed actions and writes to the
+  console when they are performed.
+
+## View Service
+
+```nomnoml
+[ViewService|
+  getViews(domainObject : DomainObject) : Array.<View>
+]
+[ViewProvider]--:>[ViewService]
+[PolicyViewDecorator]--:>[ViewService]
+
+[ViewProvider]o-[views]
+[PolicyViewDecorator]o-[ViewProvider]
+```
+
+The view service provides views that are relevant to a specified domain
+object. A "view" is a user-selectable visualization of a domain object.
+
+The responsibilities of components of the view service are as follows:
+
+* `ViewProvider` exposes views registered via extension category
+  `views`, supporting simple addition of new views. Views are
+  filtered down to match domain objects based on criteria defined as
+  part of a view's extension definition.
+* `PolicyViewDecorator` enforces the `view` policy category by
+  filtering out views which violate this policy, as determined by
+  consulting the [`PolicyService`](#policy-service).
+
+## Policy Service
+
+```nomnoml
+[PolicyService|
+  allow(category : string, candidate : object, context : object, callback? : Function) : boolean
+]
+[PolicyProvider]--:>[PolicyService]
+[PolicyProvider]o-[policies]
+```
+
+The policy service provides a general-purpose extensible decision-making
+mechanism; plugins can add new extensions of category `policies` to
+modify decisions of a known category.
+
+Often, the policy service is referenced from a decorator for another
+service, to filter down the results of using that service based on some
+appropriate policy category.
+
+The policy provider works by looking up all registered policy extensions
+which are relevant to a particular _category_, then consulting each in
+order to see if they allow a particular _candidate_ in a particular
+_context_; the types for the `candidate` and `context` arguments will
+vary depending on the `category`. Any one policy may disallow the
+decision as a whole.
+
+
+```nomnoml
+[<start> Start]->[<state> is something allowed?]
+[is something allowed?]->[PolicyService]
+[PolicyService]->[<state> look up relevant policies by category]
+[look up relevant policies by category]->[<state> consult policy #1]
+[consult policy #1]->[Policy #1]
+[Policy #1]->[<choice> policy #1 allows?]
+[policy #1 allows?] no ->[<state> decision disallowed]
+[policy #1 allows?] yes ->[<state> consult policy #2]
+[consult policy #2]->[Policy #2]
+[Policy #2]->[<choice> policy #2 allows?]
+[policy #2 allows?] no ->[<state> decision disallowed]
+[policy #2 allows?] yes ->[<state> consult policy #3]
+[consult policy #3]->[<state> ...]
+[...]->[<state> consult policy #n]
+[consult policy #n]->[Policy #n]
+[Policy #n]->[<choice> policy #n allows?]
+[policy #n allows?] no ->[<state> decision disallowed]
+[policy #n allows?] yes ->[<state> decision allowed]
+[decision disallowed]->[<end> Disallowed]
+[decision allowed]->[<end> Allowed]
+```
+
+The policy decision is effectively an "and" operation over the individual
+policy decisions: That is, all policies must agree to allow a particular
+policy decision, and the first policy to disallow a decision will cause
+the entire decision to be disallowed. As a consequence of this, policies
+should generally be written with a default behavior of "allow", and
+should only disallow the specific circumstances they are intended to
+disallow.
+
+## Type Service
+
+```nomnoml
+[TypeService|
+  listTypes() : Array.<Type>
+  getType(key : string) : Type
+]
+[TypeProvider]--:>[TypeService]
+[TypeProvider]o-[types]
+```
+
+The type service provides metadata about the different types of domain
+objects that exist within an Open MCT Web application. The platform
+implementation reads these types in from extension category `types`
+and wraps them in a JavaScript interface.
