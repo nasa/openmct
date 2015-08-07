@@ -31,7 +31,6 @@ define(
 
         var MENU_TEMPLATE = "<mct-representation key=\"'context-menu'\" " +
                 "mct-object=\"domainObject\" " +
-                "ng-click=\"dismiss()\" " +
                 "ng-class=\"menuClass\" " +
                 "ng-style=\"menuStyle\">" +
                 "</mct-representation>",
@@ -87,7 +86,6 @@ define(
                     "go-up": goUp,
                     "context-menu-holder": true
                 };
-                scope.dismiss = dismiss;
 
                 // Create the context menu
                 menu = $compile(MENU_TEMPLATE)(scope);
@@ -103,6 +101,7 @@ define(
                 // Dismiss the menu when body is clicked elsewhere
                 // ('mousedown' because 'click' breaks left-click context menus)
                 body.on('mousedown', dismiss);
+                menu.on('click', dismiss);
 
                 // Don't launch browser's context menu
                 actionContext.event.preventDefault();
