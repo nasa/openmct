@@ -31,7 +31,8 @@ define(
 
         var MENU_TEMPLATE = "<mct-representation key=\"'context-menu'\" " +
                 "mct-object=\"domainObject\" " +
-                "ng-class=\"menuClass\"" +
+                "ng-click=\"dismiss()\" " +
+                "ng-class=\"menuClass\" " +
                 "ng-style=\"menuStyle\">" +
                 "</mct-representation>",
             dismissExistingMenu;
@@ -48,7 +49,7 @@ define(
          *                      should be performed
          */
         function ContextMenuAction($compile, $document, $window, $rootScope, actionContext) {
-            
+
             function perform() {
                 var winDim = [$window.innerWidth, $window.innerHeight],
                     eventCoors = [actionContext.event.pageX, actionContext.event.pageY],
@@ -62,7 +63,7 @@ define(
                 // Remove the context menu
                 function dismiss() {
                     menu.remove();
-                    body.off("click", dismiss);
+                    body.off("mousedown", dismiss);
                     dismissExistingMenu = undefined;
                 }
 
@@ -86,18 +87,19 @@ define(
                     "go-up": goUp,
                     "context-menu-holder": true
                 };
+                scope.dismiss = dismiss;
 
                 // Create the context menu
                 menu = $compile(MENU_TEMPLATE)(scope);
 
                 // Add the menu to the body
                 body.append(menu);
-                
+
                 // Stop propagation so that clicks on the menu do not close the menu
                 menu.on('mousedown', function (event) {
                     event.stopPropagation();
                 });
-                
+
                 // Dismiss the menu when body is clicked elsewhere
                 // ('mousedown' because 'click' breaks left-click context menus)
                 body.on('mousedown', dismiss);
@@ -105,7 +107,7 @@ define(
                 // Don't launch browser's context menu
                 actionContext.event.preventDefault();
             }
-            
+
             return {
                 perform: perform
             };
