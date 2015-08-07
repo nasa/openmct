@@ -39,6 +39,7 @@ define(
          * which Angular templates first have access to the domain object
          * hierarchy.
          *
+         * @memberof platform/commonUI/browse
          * @constructor
          */
         function BrowseController($scope, $route, $location, objectService, navigationService, urlService) {
@@ -157,3 +158,4 @@ define(
         return BrowseController;
     }
 );
+

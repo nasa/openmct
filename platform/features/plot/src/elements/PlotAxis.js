@@ -31,6 +31,7 @@ define(
          * for the domain or range axis, sufficient to populate
          * selectors.
          *
+         * @memberof platform/features/plot
          * @constructor
          * @param {string} axisType the field in metadatas to
          *        look at for axis options; usually one of
@@ -70,12 +71,14 @@ define(
                  * an array of objects, where each object contains a
                  * "key" field and a "name" field (for machine- and
                  * human-readable names respectively)
+                 * @memberof platform/features/plot.PlotAxis#
                  */
                 options: options,
                 /**
                  * The currently chosen option for this axis. An
                  * initial value is provided; this will be updated
                  * directly form the plot template.
+                 * @memberof platform/features/plot.PlotAxis#
                  */
                 active: options[0] || defaultValue
             };

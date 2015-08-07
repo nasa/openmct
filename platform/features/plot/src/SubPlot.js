@@ -36,6 +36,7 @@ define(
          * A SubPlot is an individual plot within a Plot View (which
          * may contain multiple plots, specifically when in Stacked
          * plot mode.)
+         * @memberof platform/features/plot
          * @constructor
          * @param {DomainObject[]} telemetryObjects the domain objects
          *        which will be plotted in this sub-plot
@@ -214,6 +215,7 @@ define(
                  * represented in this sub-plot.
                  * @returns {DomainObject[]} the domain objects which
                  *          will have data plotted in this sub-plot
+                 * @memberof platform/features/plot.SubPlot#
                  */
                 getTelemetryObjects: function () {
                     return telemetryObjects;
@@ -223,6 +225,7 @@ define(
                  * template for this sub-plot's domain axis, as prepared
                  * by the PlotTickGenerator.
                  * @returns {Array} tick marks for the domain axis
+                 * @memberof platform/features/plot.SubPlot#
                  */
                 getDomainTicks: function () {
                     return domainTicks;
@@ -232,6 +235,7 @@ define(
                  * template for this sub-plot's range axis, as prepared
                  * by the PlotTickGenerator.
                  * @returns {Array} tick marks for the range axis
+                 * @memberof platform/features/plot.SubPlot#
                  */
                 getRangeTicks: function () {
                     return rangeTicks;
@@ -243,6 +247,7 @@ define(
                  * attribute, and should have the same internal format
                  * expected by that directive.
                  * @return {object} the drawing object
+                 * @memberof platform/features/plot.SubPlot#
                  */
                 getDrawingObject: function () {
                     return draw;
@@ -252,6 +257,7 @@ define(
                  * current mouse position.
                  * @returns {string[]} the displayable domain and range
                  *          coordinates over which the mouse is hovered
+                 * @memberof platform/features/plot.SubPlot#
                  */
                 getHoverCoordinates: function () {
                     return hoverCoordinates;
@@ -259,6 +265,7 @@ define(
                 /**
                  * Handle mouse movement over the chart area.
                  * @param $event the mouse event
+                 * @memberof platform/features/plot.SubPlot#
                  */
                 hover: function ($event) {
                     isHovering = true;
@@ -277,6 +284,7 @@ define(
                 /**
                  * Continue a previously-start pan or zoom gesture.
                  * @param $event the mouse event
+                 * @memberof platform/features/plot.SubPlot#
                  */
                 continueDrag: function ($event) {
                     mousePosition = toMousePosition($event);
@@ -292,6 +300,7 @@ define(
                 /**
                  * Initiate a marquee zoom action.
                  * @param $event the mouse event
+                 * @memberof platform/features/plot.SubPlot#
                  */
                 startDrag: function ($event) {
                     subPlotBounds = $event.target.getBoundingClientRect();
@@ -318,6 +327,7 @@ define(
                 /**
                  * Complete a marquee zoom action.
                  * @param $event the mouse event
+                 * @memberof platform/features/plot.SubPlot#
                  */
                 endDrag: function ($event) {
                     mousePosition = toMousePosition($event);
@@ -338,6 +348,7 @@ define(
                 /**
                  * Update the drawing bounds, marquee box, and
                  * tick marks for this subplot.
+                 * @memberof platform/features/plot.SubPlot#
                  */
                 update: function () {
                     updateDrawingBounds();
@@ -355,6 +366,7 @@ define(
                  * the value of this to position that marquee box
                  * correctly.
                  * @param {number} value the domain offset
+                 * @memberof platform/features/plot.SubPlot#
                  */
                 setDomainOffset: function (value) {
                     domainOffset = value;
@@ -365,6 +377,7 @@ define(
                  * an argument, set that state.
                  * @param {boolean} [state] the new hovering state
                  * @returns {boolean} the hovering state
+                 * @memberof platform/features/plot.SubPlot#
                  */
                 isHovering: function (state) {
                     if (state !== undefined) {
@@ -379,3 +392,4 @@ define(
 
     }
 );
+

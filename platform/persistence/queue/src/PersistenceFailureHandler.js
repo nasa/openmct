@@ -121,6 +121,8 @@ define(
                  * to overwrite/cancel as appropriate.
                  * @param {Array} failures persistence failures, as prepared
                  *        by PersistenceQueueHandler
+                 * @constructor
+                 * @memberof platform/persistence/queue
                  */
                 handle: handleFailures
             };

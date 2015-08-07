@@ -49,6 +49,7 @@ define(
         /**
          * Create a new chart which uses WebGL for rendering.
          *
+         * @memberof platform/features/plot
          * @constructor
          * @param {CanvasElement} canvas the canvas object to render upon
          * @throws {Error} an error is thrown if WebGL is unavailable.
@@ -115,6 +116,7 @@ define(
             return {
                 /**
                  * Clear the chart.
+                 * @memberof platform/features/plot.GLChart#
                  */
                 clear: function () {
                     // Set the viewport size; note that we use the width/height
@@ -134,6 +136,7 @@ define(
                  *        vertical dimensions of the chart
                  * @param {number[]} origin the horizontal/vertical
                  *        origin of the chart
+                 * @memberof platform/features/plot.GLChart#
                  */
                 setDimensions: function (dimensions, origin) {
                     if (dimensions && dimensions.length > 0 &&
@@ -151,6 +154,7 @@ define(
                  *        the line, as an RGBA color where each element
                  *        is in the range of 0.0-1.0
                  * @param {number} points the number of points to draw
+                 * @memberof platform/features/plot.GLChart#
                  */
                 drawLine: function (buf, color, points) {
                     doDraw(gl.LINE_STRIP, buf, color, points);
@@ -163,6 +167,7 @@ define(
                  * @param {number[]} color the color to use when drawing
                  *        the rectangle, as an RGBA color where each element
                  *        is in the range of 0.0-1.0
+                 * @memberof platform/features/plot.GLChart#
                  */
                 drawSquare: function (min, max, color) {
                     doDraw(gl.TRIANGLE_FAN, new Float32Array(

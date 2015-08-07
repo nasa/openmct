@@ -42,6 +42,7 @@ define(
          * @param {DomainObject} parentObject the domain object from which
          *        the wrapped object was retrieved
          *
+         * @memberof platform/core
          * @constructor
          */
         function ContextualDomainObject(domainObject, parentObject) {

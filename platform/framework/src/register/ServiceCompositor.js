@@ -33,6 +33,7 @@ define(
          * Handles service compositing; that is, building up services
          * from provider, aggregator, and decorator components.
          *
+         * @memberof platform/framework
          * @constructor
          */
         function ServiceCompositor(app, $log) {
@@ -221,6 +222,7 @@ define(
                  * method may not behave as expected.
                  *
                  * @param {Array} components extensions of category component
+                 * @memberof platform/framework.ServiceCompositor#
                  */
                 registerCompositeServices: registerCompositeServices
             };

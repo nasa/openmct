@@ -33,6 +33,7 @@ define(
          * Add event handlers to a representation such that it may be
          * dragged as the source for drag-drop composition.
          *
+         * @memberof platform/representation
          * @constructor
          * @param $log Angular's logging service
          * @param element the jqLite-wrapped element which should become
@@ -108,6 +109,7 @@ define(
                  * Detach any event handlers associated with this gesture.
                  * @memberof DragGesture
                  * @method
+                 * @memberof platform/representation.DragGesture#
                  */
                 destroy: function () {
                     // Detach listener

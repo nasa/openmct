@@ -48,6 +48,7 @@ define(
          * node expansion when this tree node's _subtree_ will contain
          * the navigated object (recursively, this becomes an
          * expand-to-show-navigated-object behavior.)
+         * @memberof platform/commonUI/general
          * @constructor
          */
         function TreeNodeController($scope, $timeout, $rootScope) {
@@ -148,11 +149,13 @@ define(
                  * This method should be called when a node is expanded
                  * to record that this has occurred, to support one-time
                  * lazy loading of the node's subtree.
+                 * @memberof platform/commonUI/general.TreeNodeController#
                  */
                 trackExpansion: trackExpansion,
                 /**
                  * Check if this not has ever been expanded.
                  * @returns true if it has been expanded
+                 * @memberof platform/commonUI/general.TreeNodeController#
                  */
                 hasBeenExpanded: function () {
                     return hasBeenExpanded;
@@ -163,6 +166,7 @@ define(
                  * An object will be highlighted if it matches
                  * ngModel.selectedObject
                  * @returns true if this should be highlighted
+                 * @memberof platform/commonUI/general.TreeNodeController#
                  */
                 isSelected: function () {
                     return isSelected;

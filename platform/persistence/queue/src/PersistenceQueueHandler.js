@@ -34,6 +34,8 @@ define(
          * @param $q Angular's $q, for promises
          * @param {PersistenceFailureHandler} handler to invoke in the event
          *        that a persistence attempt fails.
+         * @constructor
+         * @memberof platform/persistence/queue
          */
         function PersistenceQueueHandler($q, failureHandler) {
 
@@ -98,6 +100,7 @@ define(
                  *        associated domain objects, in id->object pairs.
                  * @param {PersistenceQueue} queue the persistence queue,
                  *        to requeue as necessary
+                 * @memberof platform/persistence/queue.PersistenceQueueHandler#
                  */
                 persist: function (persistences, domainObjects, queue) {
                     var ids = Object.keys(persistences);

@@ -35,6 +35,7 @@ define(
          * thereabout) which are applicable to a specific domain
          * object.
          *
+         * @memberof platform/core
          * @constructor
          */
         function ViewCapability(viewService, domainObject) {
@@ -44,6 +45,7 @@ define(
                  * this object.
                  * @returns {View[]} an array of view definitions
                  *          which are applicable to this object.
+                 * @memberof platform/core.ViewCapability#
                  */
                 invoke: function () {
                     return viewService.getViews(domainObject);

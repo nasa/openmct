@@ -33,6 +33,7 @@ define(
          * Add listeners to a representation such that it calls the
          * context menu action for the domain object it contains.
          *
+         * @memberof platform/representation
          * @constructor
          * @param element the jqLite-wrapped element which should exhibit
          *                the context mennu
@@ -54,6 +55,7 @@ define(
                  * Detach any event handlers associated with this gesture.
                  * @method
                  * @memberof ContextMenuGesture
+                 * @memberof platform/representation.ContextMenuGesture#
                  */
                 destroy: function () {
                     element.off('contextmenu', stop);

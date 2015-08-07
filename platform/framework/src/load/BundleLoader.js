@@ -39,6 +39,7 @@ define(
          * useful to the framework. This provides the base information which
          * will be used by later phases of framework layer initialization.
          *
+         * @memberof platform/framework
          * @constructor
          * @param {object} $http Angular's HTTP requester
          * @param {object} $log Angular's logging service
@@ -120,6 +121,7 @@ define(
                  * @param {string|string[]} an array of bundle names to load, or
                  *        the name of a JSON file containing that array
                  * @returns {Promise.<Bundle[]>}
+                 * @memberof platform/framework.BundleLoader#
                  */
                 loadBundles: loadBundles
             };

@@ -39,6 +39,8 @@ define(
          * Meant specifically for use by EditableDomainObject and the
          * associated cache; the constructor signature is particular
          * to a pattern used there and may contain unused arguments.
+         * @constructor
+         * @memberof platform/commonUI/edit
          */
         return function EditorCapability(
             persistenceCapability,
@@ -83,6 +85,7 @@ define(
                  *        object (and not other objects with associated changes)
                  * @returns {Promise} a promise that will be fulfilled after
                  *          persistence has completed.
+                 * @memberof platform/commonUI/edit.EditorCapability#
                  */
                 save: function (nonrecursive) {
                     return nonrecursive ?
@@ -95,6 +98,7 @@ define(
                  * been retrieved and modified during the editing session)
                  * @returns {Promise} a promise that will be fulfilled after
                  *          cancellation has completed.
+                 * @memberof platform/commonUI/edit.EditorCapability#
                  */
                 cancel: function () {
                     return resolvePromise(undefined);
@@ -102,6 +106,7 @@ define(
                 /**
                  * Check if there are any unsaved changes.
                  * @returns {boolean} true if there are unsaved changes
+                 * @memberof platform/commonUI/edit.EditorCapability#
                  */
                 dirty: function () {
                     return cache.dirty();

@@ -33,6 +33,7 @@ define(
          * A column which will report the name of the domain object
          * which exposed specific telemetry values.
          *
+         * @memberof platform/features/scrolling
          * @constructor
          */
         function NameColumn() {
@@ -40,6 +41,7 @@ define(
                 /**
                  * Get the title to display in this column's header.
                  * @returns {string} the title to display
+                 * @memberof platform/features/scrolling.NameColumn#
                  */
                 getTitle: function () {
                     return "Name";
@@ -48,6 +50,7 @@ define(
                  * Get the text to display inside a row under this
                  * column. This returns the domain object's name.
                  * @returns {string} the text to display
+                 * @memberof platform/features/scrolling.NameColumn#
                  */
                 getValue: function (domainObject) {
                     return {

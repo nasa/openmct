@@ -37,6 +37,7 @@ define(
          * require consulting the object service (e.g. to trigger a database
          * query to retrieve the nested object models.)
          *
+         * @memberof platform/core
          * @constructor
          */
         function CompositionCapability($injector, domainObject) {
@@ -94,6 +95,7 @@ define(
                  * Request the composition of this object.
                  * @returns {Promise.<DomainObject[]>} a list of all domain
                  *     objects which compose this domain object.
+                 * @memberof platform/core.CompositionCapability#
                  */
                 invoke: promiseComposition
             };

@@ -32,6 +32,7 @@ define(
          * The dialog service is responsible for handling window-modal
          * communication with the user, such as displaying forms for user
          * input.
+         * @memberof platform/commonUI/dialog
          * @constructor
          */
         function DialogService(overlayService, $q, $log) {
@@ -142,6 +143,7 @@ define(
                  *          user has supplied; this may be rejected if
                  *          user input cannot be obtained (for instance,
                  *          because the user cancelled the dialog)
+                 * @memberof platform/commonUI/dialog.DialogService#
                  */
                 getUserInput: getUserInput,
                 /**
@@ -149,6 +151,7 @@ define(
                  * which will be shown as buttons.
                  *
                  * @param dialogModel a description of the dialog to show
+                 * @memberof platform/commonUI/dialog.DialogService#
                  */
                 getUserChoice: getUserChoice
             };

@@ -35,12 +35,14 @@ define(
         /**
          * The fullscreen action toggles between fullscreen display
          * and regular in-window display.
+         * @memberof platform/commonUI/browse
          * @constructor
          */
         function FullscreenAction(context) {
             return {
                 /**
                  * Toggle full screen state
+                 * @memberof platform/commonUI/browse.FullscreenAction#
                  */
                 perform: function () {
                     screenfull.toggle();
@@ -48,6 +50,7 @@ define(
                 /**
                  * Get metadata about this action, including the
                  * applicable glyph to display.
+                 * @memberof platform/commonUI/browse.FullscreenAction#
                  */
                 getMetadata: function () {
                     // We override getMetadata, because the glyph and

@@ -33,6 +33,7 @@ define(
          * Allows multiple services which provide models for domain objects
          * to be treated as one.
          *
+         * @memberof platform/core
          * @constructor
          * @param {ModelProvider[]} providers the model providers to be
          *        aggregated
@@ -77,6 +78,7 @@ define(
                  *          containing key-value pairs,
                  *          where keys are object identifiers and values
                  *          are object models.
+                 * @memberof platform/core.ModelAggregator#
                  */
                 getModels: function (ids) {
                     return $q.all(providers.map(function (provider) {

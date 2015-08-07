@@ -33,6 +33,7 @@ define(
          * A telemetry aggregator makes many telemetry providers
          * appear as one.
          *
+         * @memberof platform/telemetry
          * @constructor
          */
         function TelemetryAggregator($q, telemetryProviders) {
@@ -84,6 +85,7 @@ define(
                  * @returns {Promise} a promise for telemetry data
                  *          which may (or may not, depending on
                  *          availability) satisfy the requests
+                 * @memberof platform/telemetry.TelemetryAggregator#
                  */
                 requestTelemetry: requestTelemetry,
                 /**
@@ -100,6 +102,7 @@ define(
                  *        requests to be subscribed upon
                  * @returns {Function} a function which can be called
                  *        to unsubscribe
+                 * @memberof platform/telemetry.TelemetryAggregator#
                  */
                 subscribe: subscribe
             };

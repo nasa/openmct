@@ -33,6 +33,7 @@ define(
         /**
          * Template-displayable drag handle for an element in fixed
          * position mode.
+         * @memberof platform/features/layout
          * @constructor
          */
         function FixedDragHandle(elementHandle, gridSize, update, commit) {
@@ -91,22 +92,26 @@ define(
                 /**
                  * Get a CSS style to position this drag handle.
                  * @returns CSS style object (for `ng-style`)
+                 * @memberof platform/features/layout.FixedDragHandle#
                  */
                 style: getStyle,
                 /**
                  * Start a drag gesture. This should be called when a drag
                  * begins to track initial state.
+                 * @memberof platform/features/layout.FixedDragHandle#
                  */
                 startDrag: startDrag,
                 /**
                  * Continue a drag gesture; update x/y positions.
                  * @param {number[]} delta x/y pixel difference since drag
                  *                   started
+                 * @memberof platform/features/layout.FixedDragHandle#
                  */
                 continueDrag: continueDrag,
                 /**
                  * End a drag gesture. This should be callled when a drag
                  * concludes to trigger commit of changes.
+                 * @memberof platform/features/layout.FixedDragHandle#
                  */
                 endDrag: endDrag
             };

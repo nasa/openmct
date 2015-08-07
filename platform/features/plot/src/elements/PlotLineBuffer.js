@@ -31,6 +31,7 @@ define(
          * @param {number} domainOffset number to subtract from domain values
          * @param {number} initialSize initial buffer size
          * @param {number} maxSize maximum buffer size
+         * @memberof platform/features/plot
          * @constructor
          */
         function PlotLineBuffer(domainOffset, initialSize, maxSize) {
@@ -104,6 +105,7 @@ define(
                 /**
                  * Get the WebGL-displayable buffer of points to plot.
                  * @returns {Float32Array} displayable buffer for this line
+                 * @memberof platform/features/plot.PlotLineBuffer#
                  */
                 getBuffer: function () {
                     return buffer;
@@ -111,6 +113,7 @@ define(
                 /**
                  * Get the number of points stored in this buffer.
                  * @returns {number} the number of points stored
+                 * @memberof platform/features/plot.PlotLineBuffer#
                  */
                 getLength: function () {
                     return length;
@@ -120,6 +123,7 @@ define(
                  * buffer. Unlike range extrema, these will change as the
                  * buffer gets trimmed.
                  * @returns {number[]} min, max domain values
+                 * @memberof platform/features/plot.PlotLineBuffer#
                  */
                 getDomainExtrema: function () {
                     // Since these are ordered in the buffer, assume
@@ -134,6 +138,7 @@ define(
                  * buffer. Note that these values may have been trimmed out at
                  * some point.
                  * @returns {number[]} min, max range values
+                 * @memberof platform/features/plot.PlotLineBuffer#
                  */
                 getRangeExtrema: function () {
                     return rangeExtrema;
@@ -146,6 +151,7 @@ define(
                  * @param {number} count number of values to remove
                  * @param {boolean} [fromEnd] true if the most recent
                  *        values should be removed
+                 * @memberof platform/features/plot.PlotLineBuffer#
                  */
                 trim: function (count, fromEnd) {
                     // If we're removing values from the start...
@@ -170,6 +176,7 @@ define(
                  *        series
                  * @returns {boolean} true if insertion succeeded; otherwise
                  *          false
+                 * @memberof platform/features/plot.PlotLineBuffer#
                  */
                 insert: function (series, index) {
                     var sz = series.getPointCount(),
@@ -211,6 +218,7 @@ define(
                 },
                 /**
                  * Append a single data point.
+                 * @memberof platform/features/plot.PlotLineBuffer#
                  */
                 insertPoint: function (domainValue, rangeValue, index) {
                     // Don't allow
@@ -241,6 +249,7 @@ define(
                  * occurs, this will return -1.
                  * @param {number} timestamp timestamp to insert
                  * @returns {number} the index for insertion (or -1)
+                 * @memberof platform/features/plot.PlotLineBuffer#
                  */
                 findInsertionIndex: function (timestamp) {
                     var value = timestamp - domainOffset;
@@ -259,3 +268,4 @@ define(
         return PlotLineBuffer;
     }
 );
+

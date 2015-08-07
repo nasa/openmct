@@ -11,6 +11,8 @@ define(
          * @property {string} name the human-readable name of this property
          * @property {string} value the human-readable value of this property,
          *           for this specific domain object
+         * @constructor
+         * @memberof platform/core
          */
 
         var TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
@@ -82,6 +84,7 @@ define(
                 /**
                  * Get metadata about this object.
                  * @returns {MetadataProperty[]} metadata about this object
+                 * @memberof platform/core.MetadataCapability#
                  */
                 invoke: getMetadata
             };
@@ -90,3 +93,4 @@ define(
         return MetadataCapability;
     }
 );
+

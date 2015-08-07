@@ -32,6 +32,7 @@ define(
         /**
          * The navigation service maintains the application's current
          * navigation state, and allows listening for changes thereto.
+         * @memberof platform/commonUI/browse
          * @constructor
          */
         function NavigationService() {
@@ -68,12 +69,14 @@ define(
             return {
                 /**
                  * Get the current navigation state.
+                 * @memberof platform/commonUI/browse.NavigationService#
                  */
                 getNavigation: getNavigation,
                 /**
                  * Set the current navigation state. Thiswill invoke listeners.
                  * @param {DomainObject} value the domain object to navigate
                  *        to
+                 * @memberof platform/commonUI/browse.NavigationService#
                  */
                 setNavigation: setNavigation,
                 /**
@@ -82,6 +85,7 @@ define(
                  * this changes.
                  * @param {function} callback the callback to invoke when
                  *        navigation state changes
+                 * @memberof platform/commonUI/browse.NavigationService#
                  */
                 addListener: addListener,
                 /**
@@ -89,6 +93,7 @@ define(
                  * @param {function} callback the callback which should
                  *        no longer be invoked when navigation state
                  *        changes
+                 * @memberof platform/commonUI/browse.NavigationService#
                  */
                 removeListener: removeListener
             };

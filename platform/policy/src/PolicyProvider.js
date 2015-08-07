@@ -30,6 +30,7 @@ define(
          * Provides an implementation of `policyService` which consults
          * various policy extensions to determine whether or not a specific
          * decision should be allowed.
+         * @memberof platform/policy
          * @constructor
          */
         function PolicyProvider(policies) {
@@ -74,6 +75,7 @@ define(
                  *        was disallowed (if its disallowed)
                  * @returns {boolean} true if the decision is allowed,
                  *          otherwise false.
+                 * @memberof platform/policy.PolicyProvider#
                  */
                 allow: function (category, candidate, context, callback) {
                     var policyList = policyMap[category] || [],

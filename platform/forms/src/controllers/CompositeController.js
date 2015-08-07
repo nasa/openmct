@@ -35,6 +35,7 @@ define(
          * filled in) should be disallowed. This is enforced in the template
          * by an ng-required directive, but that is supported by the
          * isNonEmpty check that this controller provides.
+         * @memberof platform/forms
          * @constructor
          */
         function CompositeController() {
@@ -55,6 +56,7 @@ define(
                  * @param {Array} value the array to check
                  * @returns {boolean} true if any non-undefined
                  *          element is in the array
+                 * @memberof platform/forms.CompositeController#
                  */
                 isNonEmpty: function (value) {
                     return Array.isArray(value) &&

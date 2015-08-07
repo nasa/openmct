@@ -30,6 +30,8 @@ define(
          * Adds placeholder domain object models for any models which
          * fail to load from the underlying model service.
          * @implements {ModelService}
+         * @constructor
+         * @memberof platform/core
          */
         function MissingModelDecorator(modelService) {
             function missingModel(id) {
@@ -57,3 +59,4 @@ define(
         return MissingModelDecorator;
     }
 );
+

@@ -28,6 +28,7 @@ define(
 
         /**
          * Handles the execution of WebWorkers.
+         * @memberof platform/execution
          * @constructor
          */
         function WorkerService($window, workers) {
@@ -55,6 +56,7 @@ define(
                  *
                  * @param {string} key symbolic identifier for the worker
                  * @returns {Worker} the running Worker
+                 * @memberof platform/execution.WorkerService#
                  */
                 run: function (key) {
                     var scriptUrl = workerUrls[key];
@@ -66,3 +68,4 @@ define(
         return WorkerService;
     }
 );
+

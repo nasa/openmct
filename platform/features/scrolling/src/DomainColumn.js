@@ -33,6 +33,7 @@ define(
          * A column which will report telemetry domain values
          * (typically, timestamps.) Used by the ScrollingListController.
          *
+         * @memberof platform/features/scrolling
          * @constructor
          * @param domainMetadata an object with the machine- and human-
          *        readable names for this domain (in `key` and `name`
@@ -45,6 +46,7 @@ define(
                 /**
                  * Get the title to display in this column's header.
                  * @returns {string} the title to display
+                 * @memberof platform/features/scrolling.DomainColumn#
                  */
                 getTitle: function () {
                     return domainMetadata.name;
@@ -53,6 +55,7 @@ define(
                  * Get the text to display inside a row under this
                  * column.
                  * @returns {string} the text to display
+                 * @memberof platform/features/scrolling.DomainColumn#
                  */
                 getValue: function (domainObject, datum) {
                     return {

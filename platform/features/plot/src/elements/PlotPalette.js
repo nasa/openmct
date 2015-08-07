@@ -78,6 +78,7 @@ define(
          * by index, in various color formats. All PlotPalette methods are
          * static, so there is no need for a constructor call; using
          * this will simply return PlotPalette itself.
+         * @memberof platform/features/plot
          * @constructor
          */
         function PlotPalette() {

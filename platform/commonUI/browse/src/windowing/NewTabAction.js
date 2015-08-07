@@ -33,6 +33,7 @@ define(
         /**
          * The new tab action allows a domain object to be opened
          * into a new browser tab.
+         * @memberof platform/commonUI/browse
          * @constructor
          */
         function NewTabAction(urlService, $window, context) {

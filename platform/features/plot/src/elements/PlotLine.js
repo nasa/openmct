@@ -70,6 +70,8 @@ define(
                  * Add a point to this plot line.
                  * @param {number} domainValue the domain value
                  * @param {number} rangeValue the range value
+                 * @constructor
+                 * @memberof platform/features/plot
                  */
                 addPoint: function (domainValue, rangeValue) {
                     var index;

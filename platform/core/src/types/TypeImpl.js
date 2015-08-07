@@ -42,6 +42,8 @@ define(
          *        key-value pairs describing a type and its
          *        relationship to other types.
          * @memberof module:core/type/type-impl
+         * @constructor
+         * @memberof platform/core
          */
         function TypeImpl(typeDef) {
             var inheritList = typeDef.inherits || [],
@@ -60,6 +62,7 @@ define(
                  *
                  * @returns {string} the key which identifies this type
                  * @memberof module:core/type/type-impl.TypeImpl#
+                 * @memberof platform/core.TypeImpl#
                  */
                 getKey: function () {
                     return typeDef.key;
@@ -71,6 +74,7 @@ define(
                  *
                  * @returns {string} the human-readable name of this type
                  * @memberof module:core/type/type-impl.TypeImpl#
+                 * @memberof platform/core.TypeImpl#
                  */
                 getName: function () {
                     return typeDef.name;
@@ -82,6 +86,7 @@ define(
                  *
                  * @returns {string} the human-readable description of this type
                  * @memberof module:core/type/type-impl.TypeImpl#
+                 * @memberof platform/core.TypeImpl#
                  */
                 getDescription: function () {
                     return typeDef.description;
@@ -94,6 +99,7 @@ define(
                  *
                  * @returns {string} the glyph to be displayed
                  * @memberof module:core/type/type-impl.TypeImpl#
+                 * @memberof platform/core.TypeImpl#
                  */
                 getGlyph: function () {
                     return typeDef.glyph;
@@ -105,6 +111,7 @@ define(
                  *
                  * @return {Array<TypeProperty>} properties associated with
                  *         objects of this type
+                 * @memberof platform/core.TypeImpl#
                  */
                 getProperties: function () {
                     return (typeDef.properties || []).map(TypeProperty);
@@ -114,6 +121,7 @@ define(
                  * this type.
                  *
                  * @return {object} initial domain object model
+                 * @memberof platform/core.TypeImpl#
                  */
                 getInitialModel: function () {
                     return typeDef.model || {};
@@ -126,6 +134,7 @@ define(
                  *
                  * @returns {object} the raw definition for this type
                  * @memberof module:core/type/type-impl.TypeImpl#
+                 * @memberof platform/core.TypeImpl#
                  */
                 getDefinition: function () {
                     return typeDef;
@@ -141,6 +150,7 @@ define(
                  *        object, which this
                  * @returns {boolean} true
                  * @memberof module:core/type/type-impl.TypeImpl#
+                 * @memberof platform/core.TypeImpl#
                  */
                 instanceOf: function instanceOf(key) {
 
@@ -162,6 +172,7 @@ define(
                  * the type definition's "feature" field.
                  * @param {string} feature a string identifying the feature
                  * @returns {boolean} true if the feature is supported
+                 * @memberof platform/core.TypeImpl#
                  */
                 hasFeature: function (feature) {
                     return featureSet[feature] || false;

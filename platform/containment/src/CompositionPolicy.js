@@ -28,6 +28,8 @@ define(
 
         /**
          * Defines composition policy as driven by type metadata.
+         * @constructor
+         * @memberof platform/containment
          */
         function CompositionPolicy($injector) {
             // We're really just wrapping the containment table and rephrasing
@@ -45,6 +47,7 @@ define(
                 /**
                  * Is the type identified by the candidate allowed to
                  * contain the type described by the context?
+                 * @memberof platform/containment.CompositionPolicy#
                  */
                 allow: function (candidate, context) {
                     return getTable().canContain(candidate, context);

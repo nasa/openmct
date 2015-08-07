@@ -55,6 +55,7 @@ define(
          * The role of a view provider and of a view capability is to
          * describe what views are available, not how to instantiate them.
          *
+         * @memberof platform/core
          * @constructor
          * @param {View[]} an array of view definitions
          */
@@ -145,6 +146,7 @@ define(
                  * @param {DomainObject} domainObject the domain object to view
                  * @returns {View[]} all views which can be used to visualize
                  *          this domain object.
+                 * @memberof platform/core.ViewProvider#
                  */
                 getViews: getViews
             };

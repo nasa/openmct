@@ -29,6 +29,7 @@ define(
         /**
          * Provides extension-introduced licenses information to the
          * licenses route.
+         * @memberof platform/commonUI/about
          * @constructor
          */
         function LicenseController(licenses) {
@@ -36,6 +37,7 @@ define(
                 /**
                  * Get license information.
                  * @returns {Array} license extensions
+                 * @memberof platform/commonUI/about.LicenseController#
                  */
                 licenses: function () {
                     return licenses;

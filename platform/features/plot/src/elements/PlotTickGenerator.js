@@ -31,6 +31,7 @@ define(
          * domain and range axes of the plot, to support the plot
          * template.
          *
+         * @memberof platform/features/plot
          * @constructor
          * @param {PlotPanZoomStack} panZoomStack the pan-zoom stack for
          *        this plot, used to determine plot boundaries
@@ -62,6 +63,7 @@ define(
                  * Generate tick marks for the domain axis.
                  * @param {number} count the number of ticks
                  * @returns {string[]} labels for those ticks
+                 * @memberof platform/features/plot.PlotTickGenerator#
                  */
                 generateDomainTicks: function (count) {
                     var panZoom = panZoomStack.getPanZoom();
@@ -77,6 +79,7 @@ define(
                  * Generate tick marks for the range axis.
                  * @param {number} count the number of ticks
                  * @returns {string[]} labels for those ticks
+                 * @memberof platform/features/plot.PlotTickGenerator#
                  */
                 generateRangeTicks: function (count) {
                     var panZoom = panZoomStack.getPanZoom();

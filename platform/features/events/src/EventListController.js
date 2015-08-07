@@ -36,6 +36,7 @@ define(
         /**
          * The EventListController is responsible for populating
          * the contents of the event list view.
+         * @memberof platform/features/events
          * @constructor
          */
         function EventListController($scope, formatter) {
@@ -131,3 +132,4 @@ define(
         return EventListController;
     }
 );
+

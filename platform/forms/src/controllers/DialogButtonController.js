@@ -29,6 +29,7 @@ define(
          * Controller for the `dialog-button` control type. Provides
          * structure for a button (embedded via the template) which
          * will show a dialog for editing a single property when clicked.
+         * @memberof platform/forms
          * @constructor
          * @param $scope the control's Angular scope
          * @param {DialogService} dialogService service to use to prompt
@@ -85,6 +86,7 @@ define(
                  * `button`; a dialog will be launched when this button
                  * is clicked.
                  * @returns dialog structure
+                 * @memberof platform/forms.DialogButtonController#
                  */
                 getButtonStructure: function () {
                     return buttonStructure;

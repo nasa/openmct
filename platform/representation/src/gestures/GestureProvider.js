@@ -40,6 +40,7 @@ define(
          * intermediary between these and the `mct-representation` directive
          * where they are used.
          *
+         * @memberof platform/representation
          * @constructor
          * @param {Gesture[]} gestures an array of all gestures which are
          *        available as extensions
@@ -100,6 +101,7 @@ define(
                  * @return {{ destroy: function }} an object with a `destroy`
                  *         method which can (and should) be used when a
                  *         gesture should no longer be applied to an element.
+                 * @memberof platform/representation.GestureProvider#
                  */
                 attachGestures: attachGestures
             };

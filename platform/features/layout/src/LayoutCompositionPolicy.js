@@ -29,12 +29,15 @@ define(
         /**
          * Defines composition policy for Display Layout objects.
          * They cannot contain folders.
+         * @constructor
+         * @memberof platform/features/layout
          */
         function LayoutCompositionPolicy() {
             return {
                 /**
                  * Is the type identified by the candidate allowed to
                  * contain the type described by the context?
+                 * @memberof platform/features/layout.LayoutCompositionPolicy#
                  */
                 allow: function (candidate, context) {
                     var isFolderInLayout =
@@ -50,3 +53,4 @@ define(
         return LayoutCompositionPolicy;
     }
 );
+

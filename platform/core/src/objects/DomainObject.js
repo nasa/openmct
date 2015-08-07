@@ -37,6 +37,7 @@ define(
          * @param {object} model the "JSONifiable" state of the object
          * @param {Object.<string, Capability>|function} capabilities all
          *        capabilities to be exposed by this object
+         * @memberof platform/core
          * @constructor
          */
         function DomainObject(id, model, capabilities) {
@@ -45,6 +46,7 @@ define(
                  * Get the unique identifier for this domain object.
                  * @return {string} the domain object's unique identifier
                  * @memberof DomainObject#
+                 * @memberof platform/core.DomainObject#
                  */
                 getId: function () {
                     return id;
@@ -59,6 +61,7 @@ define(
                  *
                  * @return {object} the domain object's persistent state
                  * @memberof DomainObject#
+                 * @memberof platform/core.DomainObject#
                  */
                 getModel: function () {
                     return model;
@@ -73,6 +76,7 @@ define(
                  * @return {Capability} the named capability, or undefined
                  *         if not present.
                  * @memberof DomainObject#
+                 * @memberof platform/core.DomainObject#
                  */
                 getCapability: function (name) {
                     var capability = capabilities[name];
@@ -87,6 +91,7 @@ define(
                  * @param {string} name the name of the capability to
                  *        check for
                  * @returns {boolean} true if provided
+                 * @memberof platform/core.DomainObject#
                  */
                 hasCapability: function hasCapability(name) {
                     return this.getCapability(name) !== undefined;
@@ -110,6 +115,7 @@ define(
                  * @param {...*} [arguments] to pass to the invocation
                  * @returns {*}
                  * @memberof DomainObject#
+                 * @memberof platform/core.DomainObject#
                  */
                 useCapability: function (name) {
                     // Get tail of args to pass to invoke

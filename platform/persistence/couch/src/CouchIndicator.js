@@ -55,6 +55,8 @@ define(
          * Indicator for the current CouchDB connection. Polls CouchDB
          * at a regular interval (defined by bundle constants) to ensure
          * that the database is available.
+         * @constructor
+         * @memberof platform/persistence/couch
          */
         function CouchIndicator($http, $interval, PATH, INTERVAL) {
             // Track the current connection state
@@ -87,6 +89,7 @@ define(
                  * to display in this indicator. This will return "D",
                  * which should appear as a database icon.
                  * @returns {string} the character of the database icon
+                 * @memberof platform/persistence/couch.CouchIndicator#
                  */
                 getGlyph: function () {
                     return "D";
@@ -96,6 +99,7 @@ define(
                  * This is used to color the glyph to match its
                  * state (one of ok, caution or err)
                  * @returns {string} the CSS class to apply to this glyph
+                 * @memberof platform/persistence/couch.CouchIndicator#
                  */
                 getGlyphClass: function () {
                     return state.glyphClass;
@@ -103,6 +107,7 @@ define(
                 /**
                  * Get the text that should appear in the indicator.
                  * @returns {string} brief summary of connection status
+                 * @memberof platform/persistence/couch.CouchIndicator#
                  */
                 getText: function () {
                     return state.text;
@@ -111,6 +116,7 @@ define(
                  * Get a longer-form description of the current connection
                  * space, suitable for display in a tooltip
                  * @returns {string} longer summary of connection status
+                 * @memberof platform/persistence/couch.CouchIndicator#
                  */
                 getDescription: function () {
                     return state.description;

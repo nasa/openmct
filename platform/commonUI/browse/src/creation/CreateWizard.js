@@ -37,6 +37,7 @@ define(
          * @param {TypeImpl} type the type of domain object to be created
          * @param {DomainObject} parent the domain object to serve as
          *        the initial parent for the created object, in the dialog
+         * @memberof platform/commonUI/browse
          * @constructor
          * @memberof module:core/action/create-wizard
          */
@@ -62,6 +63,7 @@ define(
                  *
                  * @return {FormModel} formModel the form model to
                  *         show in the create dialog
+                 * @memberof platform/commonUI/browse.CreateWizard#
                  */
                 getFormStructure: function () {
                     var sections = [];
@@ -100,6 +102,7 @@ define(
                  * in the structure.
                  *
                  * @returns {object} the initial value of the form
+                 * @memberof platform/commonUI/browse.CreateWizard#
                  */
                 getInitialFormValue: function () {
                     // Start with initial values for properties
@@ -116,6 +119,7 @@ define(
                  * Based on a populated form, get the domain object which
                  * should be used as a parent for the newly-created object.
                  * @return {DomainObject}
+                 * @memberof platform/commonUI/browse.CreateWizard#
                  */
                 getLocation: function (formValue) {
                     return formValue.createParent || parent;
@@ -124,6 +128,7 @@ define(
                  * Create the domain object model for a newly-created object,
                  * based on user input read from a formModel.
                  * @return {object} the domain object' model
+                 * @memberof platform/commonUI/browse.CreateWizard#
                  */
                 createModel: function (formValue) {
                     // Clone

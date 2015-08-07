@@ -44,6 +44,7 @@ define(
          * are applicable in a given plot view, maintains current
          * selection state thereof, and provides handlers for the
          * different behaviors associated with these modes.
+         * @memberof platform/features/plot
          * @constructor
          * @param {DomainObject[]} the telemetry objects being
          *        represented in this plot view
@@ -61,6 +62,7 @@ define(
                  * and view-level interactions with pan-zoom state.
                  * @returns {PlotOverlayMode|PlotStackMode} a handler
                  *          for the current mode
+                 * @memberof platform/features/plot.PlotModeOptions#
                  */
                 getModeHandler: function () {
                     // Lazily initialize
@@ -77,6 +79,7 @@ define(
                  * mode contains a `name` and `glyph` field suitable
                  * for display in a template.
                  * @return {Array} the available modes
+                 * @memberof platform/features/plot.PlotModeOptions#
                  */
                 getModeOptions: function () {
                     return options;
@@ -86,6 +89,7 @@ define(
                  * This will be one of the elements returned from
                  * `getModeOptions`.
                  * @return {object} the current mode
+                 * @memberof platform/features/plot.PlotModeOptions#
                  */
                 getMode: function () {
                     return mode;
@@ -96,6 +100,7 @@ define(
                  * returned by `getModeOptions`.
                  * @param {object} option one of the plot mode options
                  *        from `getModeOptions`
+                 * @memberof platform/features/plot.PlotModeOptions#
                  */
                 setMode: function (option) {
                     if (mode !== option) {

@@ -31,6 +31,7 @@ define(
          * in a reference to the telemetryFormatter, which will be
          * used to represent telemetry values (timestamps or data
          * values) as human-readable strings.
+         * @memberof platform/features/plot
          * @constructor
          */
         function SubPlotFactory(telemetryFormatter) {
@@ -44,6 +45,7 @@ define(
                  * @returns {SubPlot} the instantiated sub-plot
                  * @method
                  * @memberof SubPlotFactory
+                 * @memberof platform/features/plot.SubPlotFactory#
                  */
                 createSubPlot: function (telemetryObjects, panZoomStack) {
                     return new SubPlot(

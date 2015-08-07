@@ -33,6 +33,7 @@ define(
          * A left-click on the menu arrow should display a 
          * context menu. This controller launches the context 
          * menu. 
+         * @memberof platform/commonUI/browse
          * @constructor
          */
         function MenuArrowController($scope) {

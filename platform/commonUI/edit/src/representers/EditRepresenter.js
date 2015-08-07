@@ -41,6 +41,7 @@ define(
          * and may be reused for different domain objects and/or
          * representations resulting from changes there.
          *
+         * @memberof platform/commonUI/edit
          * @constructor
          */
         function EditRepresenter($q, $log, scope) {
@@ -113,10 +114,12 @@ define(
                  *        definition of the representation in use
                  * @param {DomainObject} domainObject the domain object
                  *        being represented
+                 * @memberof platform/commonUI/edit.EditRepresenter#
                  */
                 represent: represent,
                 /**
                  * Release any resources associated with this representer.
+                 * @memberof platform/commonUI/edit.EditRepresenter#
                  */
                 destroy: destroy
             };

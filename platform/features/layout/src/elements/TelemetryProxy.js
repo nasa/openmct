@@ -35,6 +35,7 @@ define(
          * Note that arguments here are meant to match those expected
          * by `Array.prototype.map`
          *
+         * @memberof platform/features/layout
          * @constructor
          * @param element the fixed position element, as stored in its
          *        configuration

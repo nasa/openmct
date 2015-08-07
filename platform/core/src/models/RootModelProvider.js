@@ -39,6 +39,7 @@ define(
          * exposes them all as composition of the root object ROOT,
          * whose model is also provided by this service.
          *
+         * @memberof platform/core
          * @constructor
          */
         function RootModelProvider(roots, $q, $log) {
@@ -68,6 +69,7 @@ define(
                  *          containing key-value pairs,
                  *          where keys are object identifiers and values
                  *          are object models.
+                 * @memberof platform/core.RootModelProvider#
                  */
                 getModels: function (ids) {
                     return baseProvider.getModels(ids).then(addRoot);

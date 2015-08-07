@@ -36,6 +36,7 @@ define(
          * those whose `composition` capability was used to access this
          * object.)
          *
+         * @memberof platform/core
          * @constructor
          */
         function ContextCapability(parentObject, domainObject) {
@@ -50,6 +51,7 @@ define(
                  *
                  * @returns {DomainObject} the immediate parent of this
                  *          domain object.
+                 * @memberof platform/core.ContextCapability#
                  */
                 getParent: function () {
                     return parentObject;
@@ -72,6 +74,7 @@ define(
                  * @returns {DomainObject[]} the full composition ancestry
                  *          of the domain object which exposed this
                  *          capability.
+                 * @memberof platform/core.ContextCapability#
                  */
                 getPath: function () {
                     var parentPath = [],
@@ -95,6 +98,7 @@ define(
                  *
                  * @returns {DomainObject} the deepest ancestor of the domain
                  *          object which exposed this capability.
+                 * @memberof platform/core.ContextCapability#
                  */
                 getRoot: function () {
                     var parentContext = parentObject &&

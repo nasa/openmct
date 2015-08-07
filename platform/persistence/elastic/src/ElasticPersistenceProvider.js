@@ -37,6 +37,7 @@ define(
          * The ElasticPersistenceProvider reads and writes JSON documents
          * (more specifically, domain object models) to/from an ElasticSearch
          * instance.
+         * @memberof platform/persistence/elastic
          * @constructor
          */
         function ElasticPersistenceProvider($http, $q, SPACE, ROOT, PATH) {
@@ -120,6 +121,7 @@ define(
                  *
                  * @returns {Promise.<string[]>} a promise for a list of
                  *          spaces supported by this provider
+                 * @memberof platform/persistence/elastic.ElasticPersistenceProvider#
                  */
                 listSpaces: function () {
                     return $q.when(spaces);
@@ -130,6 +132,7 @@ define(
                  * @param {string} space the space to check
                  * @returns {Promise.<string[]>} a promise for the list of
                  *          identifiers
+                 * @memberof platform/persistence/elastic.ElasticPersistenceProvider#
                  */
                 listObjects: function (space) {
                     return $q.when([]);
@@ -143,6 +146,7 @@ define(
                  * @returns {Promise.<boolean>} a promise for an indication
                  *          of the success (true) or failure (false) of this
                  *          operation
+                 * @memberof platform/persistence/elastic.ElasticPersistenceProvider#
                  */
                 createObject: function (space, key, value) {
                     return put(key, value).then(checkResponse);
@@ -156,6 +160,7 @@ define(
                  * @returns {Promise.<object>} a promise for the stored
                  *          object; this will resolve to undefined if no such
                  *          object is found.
+                 * @memberof platform/persistence/elastic.ElasticPersistenceProvider#
                  */
                 readObject: function (space, key) {
                     return get(key).then(getModel);
@@ -169,6 +174,7 @@ define(
                  * @returns {Promise.<boolean>} a promise for an indication
                  *          of the success (true) or failure (false) of this
                  *          operation
+                 * @memberof platform/persistence/elastic.ElasticPersistenceProvider#
                  */
                 updateObject: function (space, key, value) {
                     function checkUpdate(response) {
@@ -187,6 +193,7 @@ define(
                  * @returns {Promise.<boolean>} a promise for an indication
                  *          of the success (true) or failure (false) of this
                  *          operation
+                 * @memberof platform/persistence/elastic.ElasticPersistenceProvider#
                  */
                 deleteObject: function (space, key, value) {
                     return del(key).then(checkResponse);

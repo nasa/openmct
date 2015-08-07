@@ -31,6 +31,8 @@ define(
          * deep copy an object to another location of their choosing.
          *
          * @implements Action
+         * @constructor
+         * @memberof platform/entanglement
          */
         function CopyAction(locationService, copyService, context) {
 
@@ -90,3 +92,4 @@ define(
         return CopyAction;
     }
 );
+

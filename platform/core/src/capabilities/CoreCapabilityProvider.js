@@ -37,6 +37,7 @@ define(
          *        of constructor functions for capabilities, as
          *        exposed by extensions defined at the bundle level.
          *
+         * @memberof platform/core
          * @constructor
          */
         function CoreCapabilityProvider(capabilities, $log) {
@@ -84,6 +85,7 @@ define(
                  * @returns {Object.<string,function|Capability>} all
                  *     capabilities known to be valid for this model, as
                  *     key-value pairs
+                 * @memberof platform/core.CoreCapabilityProvider#
                  */
                 getCapabilities: getCapabilities
             };
@@ -92,3 +94,4 @@ define(
         return CoreCapabilityProvider;
     }
 );
+

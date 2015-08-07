@@ -42,6 +42,7 @@ define(
          * mode (typically triggered by the Edit button.) This will
          * show the user interface for editing (by way of a change in
          * route)
+         * @memberof platform/commonUI/edit
          * @constructor
          */
         function EditAction($location, navigationService, $log, context) {
@@ -63,6 +64,7 @@ define(
             return {
                 /**
                  * Enter edit mode.
+                 * @memberof platform/commonUI/edit.EditAction#
                  */
                 perform: function () {
                     navigationService.setNavigation(domainObject);

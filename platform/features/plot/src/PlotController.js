@@ -50,6 +50,7 @@ define(
          * * Handling user interactions.
          * * Deciding what needs to be drawn in the chart area.
          *
+         * @memberof platform/features/plot
          * @constructor
          */
         function PlotController(
@@ -190,6 +191,7 @@ define(
                  * for plotting the trace at the specified index.
                  * @param {number} index the index of the trace
                  * @returns {string} the color, in #RRGGBB form
+                 * @memberof platform/features/plot.PlotController#
                  */
                 getColor: function (index) {
                     return PlotPalette.getStringColor(index);
@@ -199,6 +201,7 @@ define(
                  * of its default state (to determine whether back/unzoom
                  * controls should be shown)
                  * @returns {boolean} true if not in default state
+                 * @memberof platform/features/plot.PlotController#
                  */
                 isZoomed: function () {
                     return modeOptions.getModeHandler().isZoomed();
@@ -206,12 +209,14 @@ define(
                 /**
                  * Undo the most recent pan/zoom change and restore
                  * the prior state.
+                 * @memberof platform/features/plot.PlotController#
                  */
                 stepBackPanZoom: function () {
                     return modeOptions.getModeHandler().stepBackPanZoom();
                 },
                 /**
                  * Undo all pan/zoom changes and restore the initial state.
+                 * @memberof platform/features/plot.PlotController#
                  */
                 unzoom: function () {
                     return modeOptions.getModeHandler().unzoom();
@@ -219,6 +224,7 @@ define(
                 /**
                  * Get the mode options (Stacked/Overlaid) that are applicable
                  * for this plot.
+                 * @memberof platform/features/plot.PlotController#
                  */
                 getModeOptions: function () {
                     return modeOptions.getModeOptions();
@@ -226,6 +232,7 @@ define(
                 /**
                  * Get the current mode that is applicable to this plot. This
                  * will include key, name, and glyph fields.
+                 * @memberof platform/features/plot.PlotController#
                  */
                 getMode: function () {
                     return modeOptions.getMode();
@@ -234,6 +241,7 @@ define(
                  * Set the mode which should be active in this plot.
                  * @param mode one of the mode options returned from
                  *        getModeOptions()
+                 * @memberof platform/features/plot.PlotController#
                  */
                 setMode: function (mode) {
                     modeOptions.setMode(mode);
@@ -243,6 +251,7 @@ define(
                  * Get all individual plots contained within this Plot view.
                  * (Multiple may be contained when in Stacked mode).
                  * @returns {SubPlot[]} all subplots in this Plot view
+                 * @memberof platform/features/plot.PlotController#
                  */
                 getSubPlots: function () {
                     return modeOptions.getModeHandler().getSubPlots();
@@ -251,6 +260,7 @@ define(
                  * Get the CSS class to apply to the legend for this domain
                  * object; this will reflect limit state.
                  * @returns {string} the CSS class
+                 * @memberof platform/features/plot.PlotController#
                  */
                 getLegendClass: function (telemetryObject) {
                     return limitTracker &&
@@ -258,10 +268,12 @@ define(
                 },
                 /**
                  * Explicitly update all plots.
+                 * @memberof platform/features/plot.PlotController#
                  */
                 update: update,
                 /**
                  * Check if a request is pending (to show the wait spinner)
+                 * @memberof platform/features/plot.PlotController#
                  */
                 isRequestPending: function () {
                     // Placeholder; this should reflect request state
@@ -274,3 +286,4 @@ define(
         return PlotController;
     }
 );
+

@@ -29,6 +29,8 @@ define(
          * Policy preventing the Plot view from being made available for
          * domain objects which have non-numeric telemetry.
          * @implements {Policy}
+         * @constructor
+         * @memberof platform/features/plot
          */
         function PlotViewPolicy() {
             function hasImageTelemetry(domainObject) {
@@ -63,3 +65,4 @@ define(
         return PlotViewPolicy;
     }
 );
+

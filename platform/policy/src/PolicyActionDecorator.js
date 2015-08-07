@@ -31,6 +31,8 @@ define(
          * @param {PolicyService} policyService the service which provides
          *        policy decisions
          * @param {ActionService} actionService the service to decorate
+         * @constructor
+         * @memberof platform/policy
          */
         function PolicyActionDecorator(policyService, actionService) {
             return {
@@ -40,6 +42,7 @@ define(
                  * are deemed inapplicable by policy.
                  * @param context the context in which the action will occur
                  * @returns {Action[]} applicable actions
+                 * @memberof platform/policy.PolicyActionDecorator#
                  */
                 getActions: function (context) {
                     // Check if an action is allowed by policy.

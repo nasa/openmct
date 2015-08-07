@@ -32,6 +32,7 @@ define(
         /**
          * Controller for the splitter in Browse mode. Current implementation
          * uses many hard-coded constants; this could be generalized.
+         * @memberof platform/commonUI/general
          * @constructor
          */
         function SplitPaneController() {
@@ -44,6 +45,7 @@ define(
                  * Get the current position of the splitter, in pixels
                  * from the left edge.
                  * @returns {number} position of the splitter, in pixels
+                 * @memberof platform/commonUI/general.SplitPaneController#
                  */
                 state: function (defaultState) {
                     // Set the state to the desired default, if we don't have a
@@ -58,6 +60,7 @@ define(
                  * Begin moving the splitter; this will note the splitter's
                  * current position, which is necessary for correct
                  * interpretation of deltas provided by mct-drag.
+                 * @memberof platform/commonUI/general.SplitPaneController#
                  */
                 startMove: function () {
                     start = current;
@@ -68,6 +71,7 @@ define(
                  * This movement is relative to the position of the
                  * splitter when startMove was last invoked.
                  * @param {number} delta number of pixels to move
+                 * @memberof platform/commonUI/general.SplitPaneController#
                  */
                 move: function (delta, minimum, maximum) {
                     // Ensure defaults for minimum/maximum

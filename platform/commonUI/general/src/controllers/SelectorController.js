@@ -30,6 +30,7 @@ define(
 
         /**
          * Controller for the domain object selector control.
+         * @memberof platform/commonUI/general
          * @constructor
          * @param {ObjectService} objectService service from which to
          *        read domain objects
@@ -102,6 +103,7 @@ define(
                 /**
                  * Get the root object to show in the left-hand tree.
                  * @returns {DomainObject} the root object
+                 * @memberof platform/commonUI/general.SelectorController#
                  */
                 root: function () {
                     return rootObject;
@@ -109,6 +111,7 @@ define(
                 /**
                  * Add a domain object to the list of selected objects.
                  * @param {DomainObject} the domain object to select
+                 * @memberof platform/commonUI/general.SelectorController#
                  */
                 select: function (domainObject) {
                     var id = domainObject && domainObject.getId(),
@@ -122,6 +125,7 @@ define(
                 /**
                  * Remove a domain object from the list of selected objects.
                  * @param {DomainObject} the domain object to select
+                 * @memberof platform/commonUI/general.SelectorController#
                  */
                 deselect: function (domainObject) {
                     var id = domainObject && domainObject.getId(),
@@ -140,6 +144,7 @@ define(
                 /**
                  * Get the currently-selected domain objects.
                  * @returns {DomainObject[]} the current selection
+                 * @memberof platform/commonUI/general.SelectorController#
                  */
                 selected: function () {
                     return selectedObjects;

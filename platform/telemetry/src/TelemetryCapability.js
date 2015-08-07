@@ -41,6 +41,7 @@ define(
          * for a specific object, and for unwrapping the response (to get
          * at the specific data which is appropriate to the domain object.)
          *
+         * @memberof platform/telemetry
          * @constructor
          */
         function TelemetryCapability($injector, $q, $log, domainObject) {
@@ -151,12 +152,14 @@ define(
                  *        specific request
                  * @returns {Promise} a promise for the resulting telemetry
                  *          object
+                 * @memberof platform/telemetry.TelemetryCapability#
                  */
                 requestData: requestTelemetry,
 
                 /**
                  * Get metadata about this domain object's associated
                  * telemetry.
+                 * @memberof platform/telemetry.TelemetryCapability#
                  */
                 getMetadata: function () {
                     // metadata just looks like a request,
@@ -174,6 +177,7 @@ define(
                  *        containing the data will be given as an argument.
                  * @param {TelemetryRequest} [request] parameters for the
                  *        subscription request
+                 * @memberof platform/telemetry.TelemetryCapability#
                  */
                 subscribe: subscribe
             };
@@ -191,3 +195,4 @@ define(
         return TelemetryCapability;
     }
 );
+

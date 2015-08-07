@@ -38,6 +38,8 @@ define(
          *           contains resource files used by this bundle
          * @property {Object.<string,ExtensionDefinition[]>} [extensions={}]
          *           all extensions exposed by this bundle
+         * @constructor
+         * @memberof platform/framework
          */
 
 
@@ -84,6 +86,7 @@ define(
                  * Get the path to this bundle.
                  * @memberof Bundle#
                  * @returns {string}
+                 * @memberof platform/framework.Bundle#
                  */
                 getPath: function () {
                     return path;
@@ -97,6 +100,7 @@ define(
                  * @param {string} [sourceFile] optionally, give a path to
                  *        a specific source file in the bundle.
                  * @returns {string}
+                 * @memberof platform/framework.Bundle#
                  */
                 getSourcePath: function (sourceFile) {
                     var subpath = sourceFile ?
@@ -114,6 +118,7 @@ define(
                  * @param {string} [resourceFile] optionally, give a path to
                  *        a specific resource file in the bundle.
                  * @returns {string}
+                 * @memberof platform/framework.Bundle#
                  */
                 getResourcePath: function (resourceFile) {
                     var subpath = resourceFile ?
@@ -131,6 +136,7 @@ define(
                  * @param {string} [libraryFile] optionally, give a path to
                  *        a specific library file in the bundle.
                  * @returns {string}
+                 * @memberof platform/framework.Bundle#
                  */
                 getLibraryPath: function (libraryFile) {
                     var subpath = libraryFile ?
@@ -145,6 +151,7 @@ define(
                  * it will resemble a require.config object.
                  * @memberof Bundle#
                  * @returns {object}
+                 * @memberof platform/framework.Bundle#
                  */
                 getConfiguration: function () {
                     return definition.configuration || {};
@@ -155,6 +162,7 @@ define(
                  * bundle) and the name (human-readable name for this
                  * bundle.)
                  * @returns {string} log-friendly name for this bundle
+                 * @memberof platform/framework.Bundle#
                  */
                 getLogName: function () {
                     return logName;
@@ -166,6 +174,7 @@ define(
                  * @param category
                  * @memberof Bundle#
                  * @returns {Array}
+                 * @memberof platform/framework.Bundle#
                  */
                 getExtensions: function (category) {
                     var extensions = definition.extensions[category] || [];
@@ -180,6 +189,7 @@ define(
                  *
                  * @memberof Bundle#
                  * @returns {Array}
+                 * @memberof platform/framework.Bundle#
                  */
                 getExtensionCategories: function () {
                     return Object.keys(definition.extensions);
@@ -190,6 +200,7 @@ define(
                  *
                  * @memberof Bundle#
                  * @returns {BundleDefinition} the raw definition of this bundle
+                 * @memberof platform/framework.Bundle#
                  */
                 getDefinition: function () {
                     return definition;

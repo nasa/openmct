@@ -38,6 +38,7 @@ define(
          * @param {DialogService} dialogService a service which will show the dialog
          * @param {DomainObject} object the object to be edited
          * @param {ActionContext} context the context in which this action is performed
+         * @memberof platform/commonUI/edit
          * @constructor
          */
         function PropertiesAction(dialogService, context) {
@@ -77,6 +78,7 @@ define(
                  * Perform this action.
                  * @return {Promise} a promise which will be
                  *         fulfilled when the action has completed.
+                 * @memberof platform/commonUI/edit.PropertiesAction#
                  */
                 perform: function () {
                     var type = object.getCapability('type');
@@ -105,4 +107,5 @@ define(
     }
 
 );
+
 

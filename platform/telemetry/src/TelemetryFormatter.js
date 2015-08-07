@@ -35,6 +35,7 @@ define(
          * The TelemetryFormatter is responsible for formatting (as text
          * for display) values along either the domain (usually time) or
          * the range (usually value) of a data series.
+         * @memberof platform/telemetry
          * @constructor
          */
         function TelemetryFormatter() {
@@ -56,6 +57,7 @@ define(
                  *        be treated as a standard timestamp.
                  * @returns {string} a textual representation of the
                  *        data and time, suitable for display.
+                 * @memberof platform/telemetry.TelemetryFormatter#
                  */
                 formatDomainValue: formatDomainValue,
                 /**
@@ -66,6 +68,7 @@ define(
                  *        be treated as a numeric value.
                  * @returns {string} a textual representation of the
                  *        value, suitable for display.
+                 * @memberof platform/telemetry.TelemetryFormatter#
                  */
                 formatRangeValue: formatRangeValue
             };

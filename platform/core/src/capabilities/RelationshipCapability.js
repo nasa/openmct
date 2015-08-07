@@ -38,6 +38,7 @@ define(
          * which are not intended to appear in the tree, but are instead
          * intended only for special, limited usage.
          *
+         * @memberof platform/core
          * @constructor
          */
         function RelationshipCapability($injector, domainObject) {
@@ -109,6 +110,7 @@ define(
                  * List all types of relationships exposed by this
                  * object.
                  * @returns {string[]} a list of all relationship types
+                 * @memberof platform/core.RelationshipCapability#
                  */
                 listRelationships: listRelationships,
                 /**
@@ -118,6 +120,7 @@ define(
                  * @param {string} key the type of relationship
                  * @returns {Promise.<DomainObject[]>} a promise for related
                  *          domain objects
+                 * @memberof platform/core.RelationshipCapability#
                  */
                 getRelatedObjects: promiseRelationships
             };

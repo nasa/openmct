@@ -30,6 +30,8 @@ define(
          * CopyService provides an interface for deep copying objects from one
          * location to another.  It also provides a method for determining if
          * an object can be copied to a specific location.
+         * @constructor
+         * @memberof platform/entanglement
          */
         function CopyService($q, creationService, policyService) {
 
@@ -46,6 +48,7 @@ define(
              *    create the duplicate in.
              * @returns {Promise} A promise that is fulfilled when the
              *    duplicate operation has completed.
+             * @memberof platform/entanglement.CopyService#
              */
             function duplicateObject(domainObject, parent) {
                 var model = JSON.parse(JSON.stringify(domainObject.getModel()));
@@ -78,6 +81,7 @@ define(
                 /**
                  * Returns true if `object` can be copied into
                  * `parentCandidate`'s composition.
+                 * @memberof platform/entanglement.CopyService#
                  */
                 validate: function (object, parentCandidate) {
                     if (!parentCandidate || !parentCandidate.getId) {
@@ -94,6 +98,7 @@ define(
                 },
                 /**
                 * Wrapper, @see {@link duplicateObject} for implementation.
+                * @memberof platform/entanglement.CopyService#
                 */
                 perform: function (object, parentObject) {
                     return duplicateObject(object, parentObject);
@@ -104,3 +109,4 @@ define(
         return CopyService;
     }
 );
+

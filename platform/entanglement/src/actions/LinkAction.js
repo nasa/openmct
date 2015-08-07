@@ -30,6 +30,8 @@ define(
          * link an object to another location of their choosing.
          *
          * @implements Action
+         * @constructor
+         * @memberof platform/entanglement
          */
         function LinkAction(locationService, linkService, context) {
 
@@ -87,3 +89,4 @@ define(
         return LinkAction;
     }
 );
+

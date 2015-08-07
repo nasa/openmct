@@ -30,12 +30,15 @@ define(
          * LinkService provides an interface for linking objects to additional
          * locations.  It also provides a method for determining if an object
          * can be copied to a specific location.
+         * @constructor
+         * @memberof platform/entanglement
          */
         function LinkService(policyService) {
             return {
                 /**
                  * Returns `true` if `object` can be linked into
                  * `parentCandidate`'s composition.
+                 * @memberof platform/entanglement.LinkService#
                  */
                 validate: function (object, parentCandidate) {
                     if (!parentCandidate || !parentCandidate.getId) {
@@ -58,6 +61,7 @@ define(
                  *
                  * @returns {Promise} A promise that is fulfilled when the
                  *    linking operation has completed.
+                 * @memberof platform/entanglement.LinkService#
                  */
                 perform: function (object, parentObject) {
                     return parentObject.useCapability('mutation', function (model) {
@@ -74,3 +78,4 @@ define(
         return LinkService;
     }
 );
+

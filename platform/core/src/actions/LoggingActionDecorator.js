@@ -34,6 +34,7 @@ define(
          * the actions it exposes always emit a log message when they are
          * performed.
          *
+         * @memberof platform/core
          * @constructor
          */
         function LoggingActionDecorator($log, actionService) {
@@ -77,6 +78,7 @@ define(
                  *
                  * @method
                  * @memberof LoggingActionDecorator
+                 * @memberof platform/core.LoggingActionDecorator#
                  */
                 getActions: function () {
                     return actionService.getActions.apply(

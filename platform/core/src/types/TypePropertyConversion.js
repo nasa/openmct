@@ -62,6 +62,8 @@ define(
         /**
          * Look up an appropriate conversion between form values and model
          * values, e.g. to numeric values.
+         * @constructor
+         * @memberof platform/core
          */
         function TypePropertyConversion(name) {
             if (name &&

@@ -36,6 +36,7 @@ define(
          * PlotPosition was instantiated. Care should be taken when retaining
          * PlotPosition objects across changes to the pan-zoom stack.
          *
+         * @memberof platform/features/plot
          * @constructor
          * @param {number} x the horizontal pixel position in the plot area
          * @param {number} y the vertical pixel position in the plot area
@@ -68,6 +69,7 @@ define(
                 /**
                  * Get the domain value corresponding to this pixel position.
                  * @returns {number} the domain value
+                 * @memberof platform/features/plot.PlotPosition#
                  */
                 getDomain: function () {
                     return position[0];
@@ -75,6 +77,7 @@ define(
                 /**
                  * Get the range value corresponding to this pixel position.
                  * @returns {number} the range value
+                 * @memberof platform/features/plot.PlotPosition#
                  */
                 getRange: function () {
                     return position[1];
@@ -84,6 +87,7 @@ define(
                  * pixel position.
                  * @returns {number[]} an array containing the domain and
                  *          the range value, in that order
+                 * @memberof platform/features/plot.PlotPosition#
                  */
                 getPosition: function () {
                     return position;

@@ -29,6 +29,7 @@ define(
         /**
          * Controller for the bottombar template. Exposes
          * available indicators (of extension category "indicators")
+         * @memberof platform/commonUI/general
          * @constructor
          */
         function BottomBarController(indicators) {
@@ -49,6 +50,7 @@ define(
                  * Get all indicators to display.
                  * @returns {Indicator[]} all indicators
                  *          to display in the bottom bar.
+                 * @memberof platform/commonUI/general.BottomBarController#
                  */
                 getIndicators: function () {
                     return indicators;

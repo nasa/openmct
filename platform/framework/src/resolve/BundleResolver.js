@@ -34,6 +34,7 @@ define(
          * initialization. During this phase, any scripts implementing
          * extensions provided by bundles are loaded.
          *
+         * @memberof platform/framework
          * @constructor
          */
         function BundleResolver(extensionResolver, requireConfigurator, $log) {
@@ -47,6 +48,7 @@ define(
              *
              * @param {Object.<string, object[]>|Array} resolvedBundles
              * @returns {Object.<string, object[]>}
+             * @memberof platform/framework.BundleResolver#
              */
             function mergeResolvedBundles(resolvedBundles) {
                 var result = {};
@@ -107,6 +109,7 @@ define(
                  *          key-value pairs, where keys are extension
                  *          categories and values are arrays of resolved
                  *          extensions belonging to those categories
+                 * @memberof platform/framework.BundleResolver#
                  */
                 resolveBundles: function (bundles) {
                     // First, make sure Require is suitably configured

@@ -34,6 +34,8 @@ define(
          * since it's delegated to a different policy category.
          * To avoid a circular dependency, the service is obtained via
          * Angular's `$injector`.
+         * @constructor
+         * @memberof platform/containment
          */
         function ComposeActionPolicy($injector) {
             var policyService;
@@ -61,6 +63,7 @@ define(
                  * Check whether or not a compose action should be allowed
                  * in this context.
                  * @returns {boolean} true if it may be allowed
+                 * @memberof platform/containment.ComposeActionPolicy#
                  */
                 allow: function (candidate, context) {
                     if (candidate.getMetadata().key === 'compose') {

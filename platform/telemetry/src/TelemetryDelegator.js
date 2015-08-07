@@ -29,6 +29,8 @@ define(
         /**
          * Used to handle telemetry delegation associated with a
          * given domain object.
+         * @constructor
+         * @memberof platform/telemetry
          */
         function TelemetryDelegator($q) {
             return {
@@ -38,6 +40,7 @@ define(
                  * or the objects it delegates)
                  * @returns {Promise.<DomainObject[]>} domain objects with
                  *          a telemetry capability
+                 * @memberof platform/telemetry.TelemetryDelegator#
                  */
                 promiseTelemetryObjects: function (domainObject) {
                     // If object has been cleared, there are no relevant

@@ -31,6 +31,7 @@ define(
 
         /**
          * Loads static models, provided as declared extensions of bundles.
+         * @memberof platform/core
          * @constructor
          */
         function StaticModelProvider(models, $q, $log) {
@@ -69,6 +70,7 @@ define(
                  *          ids and values are models
                  * @method
                  * @memberof StaticModelProvider#
+                 * @memberof platform/core.StaticModelProvider#
                  */
                 getModels: function (ids) {
                     var result = {};

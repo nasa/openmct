@@ -28,6 +28,7 @@ define(
 
         /**
          * Proxy for configuring a fixed position view via the toolbar.
+         * @memberof platform/features/layout
          * @constructor
          * @param {Function} addElementCallback callback to invoke when
          *        elements are created
@@ -41,6 +42,7 @@ define(
             return {
                 /**
                  * Add a new visual element to this view.
+                 * @memberof platform/features/layout.FixedProxy#
                  */
                 add: function (type) {
                     // Place a configured element into the view configuration

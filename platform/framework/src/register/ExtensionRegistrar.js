@@ -32,6 +32,7 @@ define(
         /**
          * Responsible for registering extensions with Angular.
          *
+         * @memberof platform/framework
          * @constructor
          * @param {angular.Module} the Angular application with which
          *        extensions should be registered
@@ -215,6 +216,7 @@ define(
                  *        extensions
                  * @returns {angular.Module} the application module with
                  *        which extensions were registered
+                 * @memberof platform/framework.ExtensionRegistrar#
                  */
                 registerExtensions: registerExtensionGroup
             };

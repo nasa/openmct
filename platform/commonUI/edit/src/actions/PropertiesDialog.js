@@ -37,6 +37,7 @@ define(
          * @param {TypeImpl} type the type of domain object for which properties
          *        will be specified
          * @param {DomainObject} the object for which properties will be set
+         * @memberof platform/commonUI/edit
          * @constructor
          * @memberof module:common/actions/properties-dialog
          */
@@ -47,6 +48,7 @@ define(
                 /**
                  * Get sections provided by this dialog.
                  * @return {FormStructure} the structure of this form
+                 * @memberof platform/commonUI/edit.PropertiesDialog#
                  */
                 getFormStructure: function () {
                     return {
@@ -66,6 +68,7 @@ define(
                  * Get the initial state of the form shown by this dialog
                  * (based on the object model)
                  * @returns {object} initial state of the form
+                 * @memberof platform/commonUI/edit.PropertiesDialog#
                  */
                 getInitialFormValue: function () {
                     // Start with initial values for properties
@@ -77,6 +80,7 @@ define(
                 },
                 /**
                  * Update a domain object model based on the value of a form.
+                 * @memberof platform/commonUI/edit.PropertiesDialog#
                  */
                 updateModel: function (model, formValue) {
                     // Update all properties

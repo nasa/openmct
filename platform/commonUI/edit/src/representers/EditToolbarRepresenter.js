@@ -33,6 +33,7 @@ define(
          * The EditToolbarRepresenter populates the toolbar in Edit mode
          * based on a view's definition.
          * @param {Scope} scope the Angular scope of the representation
+         * @memberof platform/commonUI/edit
          * @constructor
          */
         function EditToolbarRepresenter(scope, element, attrs) {
@@ -136,10 +137,12 @@ define(
                  *        definition of the representation in use
                  * @param {DomainObject} domainObject the domain object
                  *        being represented
+                 * @memberof platform/commonUI/edit.EditToolbarRepresenter#
                  */
                 represent: (attrs || {}).toolbar ? represent : noop,
                 /**
                  * Release any resources associated with this representer.
+                 * @memberof platform/commonUI/edit.EditToolbarRepresenter#
                  */
                 destroy: (attrs || {}).toolbar ? destroy : noop
             };

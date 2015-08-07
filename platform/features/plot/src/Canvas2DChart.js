@@ -29,6 +29,7 @@ define(
         /**
          * Create a new chart which uses Canvas's 2D API for rendering.
          *
+         * @memberof platform/features/plot
          * @constructor
          * @param {CanvasElement} canvas the canvas object to render upon
          * @throws {Error} an error is thrown if Canvas's 2D API is unavailable.
@@ -66,6 +67,7 @@ define(
             return {
                 /**
                  * Clear the chart.
+                 * @memberof platform/features/plot.Canvas2DChart#
                  */
                 clear: function () {
                     width = canvas.width;
@@ -78,6 +80,7 @@ define(
                  *        vertical dimensions of the chart
                  * @param {number[]} origin the horizontal/vertical
                  *        origin of the chart
+                 * @memberof platform/features/plot.Canvas2DChart#
                  */
                 setDimensions: function (newDimensions, newOrigin) {
                     dimensions = newDimensions;
@@ -92,6 +95,7 @@ define(
                  *        the line, as an RGBA color where each element
                  *        is in the range of 0.0-1.0
                  * @param {number} points the number of points to draw
+                 * @memberof platform/features/plot.Canvas2DChart#
                  */
                 drawLine: function (buf, color, points) {
                     var i;
@@ -123,6 +127,7 @@ define(
                  * @param {number[]} color the color to use when drawing
                  *        the rectangle, as an RGBA color where each element
                  *        is in the range of 0.0-1.0
+                 * @memberof platform/features/plot.Canvas2DChart#
                  */
                 drawSquare: function (min, max, color) {
                     var x1 = x(min[0]),

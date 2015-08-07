@@ -35,6 +35,7 @@ define(
          *
          * @param {ImplementationLoader} loader used to load implementations
          * @param {*} $log Angular's logging service
+         * @memberof platform/framework
          * @constructor
          */
         function ExtensionResolver(loader, $log) {
@@ -111,6 +112,7 @@ define(
                  * will additionally be attached to any loaded implementation.
                  *
                  * @param {Extension} extension
+                 * @memberof platform/framework.ExtensionResolver#
                  */
                 resolve: function (extension) {
                     // Log that loading has begun

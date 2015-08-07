@@ -34,6 +34,7 @@ define(
          * specify symbolic properties as strings (instead of numbers),
          * which will be looked up from the table `Constants.PRIORITY_LEVELS`.
          * @param $log Angular's logging service
+         * @memberof platform/framework
          * @constructor
          */
         function ExtensionSorter($log) {
@@ -103,6 +104,7 @@ define(
                  *
                  * @param {object[]} extensions array of resolved extensions
                  * @returns {object[]} the same extensions, in priority order
+                 * @memberof platform/framework.ExtensionSorter#
                  */
                 sort: function (extensions) {
                     return (extensions || [])

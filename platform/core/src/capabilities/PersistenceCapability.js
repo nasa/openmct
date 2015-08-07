@@ -40,6 +40,7 @@ define(
          * @param {DomainObject} the domain object which shall expose
          *        this capability
          *
+         * @memberof platform/core
          * @constructor
          */
         function PersistenceCapability(persistenceService, SPACE, domainObject) {
@@ -80,6 +81,7 @@ define(
                  * @returns {Promise} a promise which will be resolved
                  *          if persistence is successful, and rejected
                  *          if not.
+                 * @memberof platform/core.PersistenceCapability#
                  */
                 persist: function () {
                     updatePersistenceTimestamp();
@@ -94,6 +96,7 @@ define(
                  * persistence.
                  * @returns {Promise} a promise which will be resolved
                  *          when the update is complete
+                 * @memberof platform/core.PersistenceCapability#
                  */
                 refresh: function () {
                     var model = domainObject.getModel();
@@ -114,6 +117,7 @@ define(
                  *
                  * @returns {string} the name of the space which should
                  *          be used to persist this object
+                 * @memberof platform/core.PersistenceCapability#
                  */
                 getSpace: function () {
                     return SPACE;

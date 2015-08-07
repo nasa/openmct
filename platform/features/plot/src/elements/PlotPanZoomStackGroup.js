@@ -32,6 +32,7 @@ define(
          * remain independent upon the range axis. This supports panning
          * and zooming in stacked-plot mode (and, importantly,
          * stepping back through those states.)
+         * @memberof platform/features/plot
          * @constructor
          * @param {number} count the number of stacks to include in this
          *        group
@@ -112,6 +113,7 @@ define(
                  * stack, this acts as a no-op (that is, the lowest
                  * pan-zoom state on the stack cannot be popped, to ensure
                  * that some pan-zoom state is always available.)
+                 * @memberof platform/features/plot.PlotPanZoomStackGroup#
                  */
                 popPanZoom: popPanZoom,
 
@@ -123,6 +125,7 @@ define(
                  * interfering with the user's chosen pan/zoom states.
                  * @param {number[]} origin the base origin
                  * @param {number[]} dimensions the base dimensions
+                 * @memberof platform/features/plot.PlotPanZoomStackGroup#
                  */
                 setBasePanZoom: setBasePanZoom,
 
@@ -131,6 +134,7 @@ define(
                  * their bottom element; in effect, pop all elements
                  * but the last, e.g. to remove any temporary user
                  * modifications to pan-zoom state.
+                 * @memberof platform/features/plot.PlotPanZoomStackGroup#
                  */
                 clearPanZoom: clearPanZoom,
                 /**
@@ -140,6 +144,7 @@ define(
                  * panning or zooming relative to the base value has
                  * been applied.
                  * @returns {number} the depth of the stacks in this group
+                 * @memberof platform/features/plot.PlotPanZoomStackGroup#
                  */
                 getDepth: function () {
                     // All stacks are kept in sync, so look up depth
@@ -160,6 +165,7 @@ define(
                  * @param {number} index the index of the stack to get
                  * @returns {PlotPanZoomStack} the pan-zoom stack in the
                  *          group identified by that index
+                 * @memberof platform/features/plot.PlotPanZoomStackGroup#
                  */
                 getPanZoomStack: function (index) {
                     return decoratedStacks[index];

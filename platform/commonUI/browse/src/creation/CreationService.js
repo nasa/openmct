@@ -39,6 +39,7 @@ define(
          * persisting new domain objects. Handles all actual object
          * mutation and persistence associated with domain object
          * creation.
+         * @memberof platform/commonUI/browse
          * @constructor
          */
         function CreationService(persistenceService, $q, $log) {
@@ -131,6 +132,7 @@ define(
                  * @param {DomainObject} parent the domain object which
                  *        should contain the newly-created domain object
                  *        in its composition
+                 * @memberof platform/commonUI/browse.CreationService#
                  */
                 createObject: createObject
             };
@@ -139,3 +141,4 @@ define(
         return CreationService;
     }
 );
+

@@ -29,11 +29,14 @@ define(
         /**
          * Controller for embedded web pages; serves simply as a
          * wrapper for `$sce` to mark pages as trusted.
+         * @constructor
+         * @memberof platform/features/pages
          */
         function EmbeddedPageController($sce) {
             return {
                 /**
                  * Alias of `$sce.trustAsResourceUrl`.
+                 * @memberof platform/features/pages.EmbeddedPageController#
                  */
                 trust: function (url) {
                     return $sce.trustAsResourceUrl(url);

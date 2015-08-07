@@ -41,6 +41,8 @@ define(
          *        persistence when the queue is flushed
          * @param {number} [DELAY] optional; delay in milliseconds between
          *        attempts to flush the queue
+         * @constructor
+         * @memberof platform/persistence/queue
          */
         function PersistenceQueueImpl($q, $timeout, handler, DELAY) {
             var self,
@@ -118,6 +120,7 @@ define(
                  * @param {DomainObject} domainObject the domain object
                  * @param {PersistenceCapability} persistence the object's
                  *        undecorated persistence capability
+                 * @memberof platform/persistence/queue.PersistenceQueueImpl#
                  */
                 put: function (domainObject, persistence) {
                     var id = domainObject.getId();

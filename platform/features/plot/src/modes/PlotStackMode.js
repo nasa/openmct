@@ -29,6 +29,7 @@ define(
         /**
          * Handles plotting in Stacked mode. In stacked mode, there
          * is one sub-plot for each plotted object.
+         * @memberof platform/features/plot
          * @constructor
          * @param {DomainObject[]} the domain objects to be plotted
          */
@@ -77,12 +78,14 @@ define(
                 /**
                  * Plot telemetry to the sub-plot(s) managed by this mode.
                  * @param {PlotPreparer} prepared the prepared data to plot
+                 * @memberof platform/features/plot.PlotStackMode#
                  */
                 plotTelemetry: plotTelemetry,
                 /**
                  * Get all sub-plots to be displayed in this mode; used
                  * to populate the plot template.
                  * @return {SubPlot[]} all sub-plots to display in this mode
+                 * @memberof platform/features/plot.PlotStackMode#
                  */
                 getSubPlots: function () {
                     return subplots;
@@ -92,6 +95,7 @@ define(
                  * there are some temporary user modifications to the
                  * current pan-zoom state.)
                  * @returns {boolean} true if not in the base pan-zoom state
+                 * @memberof platform/features/plot.PlotStackMode#
                  */
                 isZoomed: function () {
                     return panZoomStackGroup.getDepth() > 1;
@@ -99,6 +103,7 @@ define(
                 /**
                  * Undo the most recent pan/zoom change and restore
                  * the prior state.
+                 * @memberof platform/features/plot.PlotStackMode#
                  */
                 stepBackPanZoom: function () {
                     panZoomStackGroup.popPanZoom();
@@ -108,6 +113,7 @@ define(
                 },
                 /**
                  * Undo all pan/zoom changes and restore the initial state.
+                 * @memberof platform/features/plot.PlotStackMode#
                  */
                 unzoom: function () {
                     panZoomStackGroup.clearPanZoom();

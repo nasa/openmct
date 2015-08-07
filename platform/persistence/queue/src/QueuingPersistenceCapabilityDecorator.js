@@ -35,6 +35,7 @@ define(
          * will be handled in batches (allowing failure notification to
          * also be presented in batches.)
          *
+         * @memberof platform/persistence/queue
          * @constructor
          */
         function QueuingPersistenceCapabilityDecorator(
@@ -87,6 +88,7 @@ define(
                  * @returns {Object.<string,function|Capability>} all
                  *     capabilities known to be valid for this model, as
                  *     key-value pairs
+                 * @memberof platform/persistence/queue.QueuingPersistenceCapabilityDecorator#
                  */
                 getCapabilities: getCapabilities
             };

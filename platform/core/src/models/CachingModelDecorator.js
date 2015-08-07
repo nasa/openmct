@@ -30,6 +30,7 @@ define(
          * The caching model decorator maintains a cache of loaded domain
          * object models, and ensures that duplicate models for the same
          * object are not provided.
+         * @memberof platform/core
          * @constructor
          */
         function CachingModelDecorator(modelService) {
@@ -114,6 +115,7 @@ define(
                  *          containing key-value pairs, where keys are
                  *          ids and values are models
                  * @method
+                 * @memberof platform/core.CachingModelDecorator#
                  */
                 getModels: function (ids) {
                     var neededIds = ids.filter(notCached);

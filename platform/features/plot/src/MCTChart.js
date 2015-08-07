@@ -61,6 +61,7 @@ define(
          *   * `color`: The color of the box, as a four-element RGBA
          *     array, where each element is in the range of 0.0-1.0
          *
+         * @memberof platform/features/plot
          * @constructor
          */
         function MCTChart($interval, $log) {
@@ -208,3 +209,4 @@ define(
         return MCTChart;
     }
 );
+

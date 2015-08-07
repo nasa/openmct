@@ -47,6 +47,7 @@ define(
          * * `parameters`, used to communicate display parameters to
          *   the included template (e.g. title.)
          *
+         * @memberof platform/representation
          * @constructor
          * @param {RepresentationDefinition[]} representations an array of
          *        representation extensions
@@ -238,3 +239,4 @@ define(
         return MCTRepresentation;
     }
 );
+

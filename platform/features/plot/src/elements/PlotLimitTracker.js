@@ -34,6 +34,7 @@ define(
             INITIAL_SIZE = 675; // 1/128 of MAX_POINTS
 
         /**
+         * @memberof platform/features/plot
          * @constructor
          * @param {TelemetryHandle} handle the handle to telemetry access
          * @param {string} range the key to use when looking up range values

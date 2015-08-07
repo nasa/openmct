@@ -29,6 +29,7 @@ define(
          * Handle for changing width/height properties of an element.
          * This is used to support drag handles for different
          * element types in a fixed position view.
+         * @memberof platform/features/layout
          * @constructor
          */
         function ResizeHandle(element, minWidth, minHeight) {
@@ -41,6 +42,7 @@ define(
                  * Get/set the x position of the lower-right corner
                  * of the handle-controlled element, changing size
                  * as necessary.
+                 * @memberof platform/features/layout.ResizeHandle#
                  */
                 x: function (value) {
                     if (arguments.length > 0) {
@@ -55,6 +57,7 @@ define(
                  * Get/set the y position of the lower-right corner
                  * of the handle-controlled element, changing size
                  * as necessary.
+                 * @memberof platform/features/layout.ResizeHandle#
                  */
                 y: function (value) {
                     if (arguments.length > 0) {

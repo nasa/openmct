@@ -33,6 +33,7 @@ define(
          * Handles registration of a few specific extension types that are
          * understood natively by Angular. This includes services and
          * directives.
+         * @memberof platform/framework
          * @constructor
          */
         function CustomRegistrars(app, $log) {

@@ -68,6 +68,8 @@ define(
          * which need to behave differently in edit mode,
          * and provides a "working copy" of the object's
          * model to allow changes to be easily cancelled.
+         * @constructor
+         * @memberof platform/commonUI/edit
          */
         function EditableDomainObject(domainObject, $q) {
             // The cache will hold all domain objects reached from

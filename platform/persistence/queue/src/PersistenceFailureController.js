@@ -29,11 +29,14 @@ define(
         /**
          * Controller to support the template to be shown in the
          * dialog shown for persistence failures.
+         * @constructor
+         * @memberof platform/persistence/queue
          */
         function PersistenceFailureController() {
             return {
                 /**
                  * Format a timestamp for display in the dialog.
+                 * @memberof platform/persistence/queue.PersistenceFailureController#
                  */
                 formatTimestamp: function (timestamp) {
                     return moment.utc(timestamp)
@@ -41,6 +44,7 @@ define(
                 },
                 /**
                  * Format a user name for display in the dialog.
+                 * @memberof platform/persistence/queue.PersistenceFailureController#
                  */
                 formatUsername: function (username) {
                     return username || Constants.UNKNOWN_USER;

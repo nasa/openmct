@@ -31,6 +31,7 @@ define(
          * actions for a given context, results from all
          * services will be assembled and concatenated.
          *
+         * @memberof platform/core
          * @constructor
          * @param {ActionProvider[]} actionProviders an array
          *        of action services
@@ -65,6 +66,7 @@ define(
                  *
                  * @method
                  * @memberof ActionAggregator
+                 * @memberof platform/core.ActionAggregator#
                  */
                 getActions: getActions
             };

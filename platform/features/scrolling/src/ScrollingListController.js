@@ -34,6 +34,7 @@ define(
         /**
          * The ScrollingListController is responsible for populating
          * the contents of the scrolling list view.
+         * @memberof platform/features/scrolling
          * @constructor
          */
         function ScrollingListController($scope, formatter) {
@@ -130,3 +131,4 @@ define(
         return ScrollingListController;
     }
 );
+

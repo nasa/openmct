@@ -34,6 +34,7 @@ define(
          * Fixed Position view. It arranges frames according to saved
          * configuration and provides methods for updating these based on
          * mouse movement.
+         * @memberof platform/features/layout
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
@@ -290,6 +291,7 @@ define(
                  * Get the size of the grid, in pixels. The returned array
                  * is in the form `[x, y]`.
                  * @returns {number[]} the grid size
+                 * @memberof platform/features/layout.FixedController#
                  */
                 getGridSize: function () {
                     return gridSize;
@@ -298,6 +300,7 @@ define(
                  * Get an array of elements in this panel; these are
                  * decorated proxies for both selection and display.
                  * @returns {Array} elements in this panel
+                 * @memberof platform/features/layout.FixedController#
                  */
                 getElements: function () {
                     return elementProxies;
@@ -306,6 +309,7 @@ define(
                  * Check if the element is currently selected, or (if no
                  * argument is supplied) get the currently selected element.
                  * @returns {boolean} true if selected
+                 * @memberof platform/features/layout.FixedController#
                  */
                 selected: function (element) {
                     return selection && ((arguments.length > 0) ?
@@ -314,10 +318,12 @@ define(
                 /**
                  * Set the active user selection in this view.
                  * @param element the element to select
+                 * @memberof platform/features/layout.FixedController#
                  */
                 select: select,
                 /**
                  * Clear the current user selection.
+                 * @memberof platform/features/layout.FixedController#
                  */
                 clearSelection: function () {
                     if (selection) {
@@ -329,6 +335,7 @@ define(
                 /**
                  * Get drag handles.
                  * @returns {Array} drag handles for the current selection
+                 * @memberof platform/features/layout.FixedController#
                  */
                 handles: function () {
                     return handles;
@@ -336,6 +343,7 @@ define(
                 /**
                  * Get the handle to handle dragging to reposition an element.
                  * @returns {FixedDragHandle} the drag handle
+                 * @memberof platform/features/layout.FixedController#
                  */
                 moveHandle: function () {
                     return moveHandle;
@@ -347,3 +355,4 @@ define(
         return FixedController;
     }
 );
+

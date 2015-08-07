@@ -38,6 +38,7 @@ define(
          * * Registering extensions with Angular
          * * Bootstrapping the Angular application.
          *
+         * @memberof platform/framework
          * @constructor
          * @param {BundleLoader} loader
          * @param {BundleResolver} resolver

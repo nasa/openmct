@@ -33,6 +33,7 @@ define(
          * The CreateActionProvider is an ActionProvider which introduces
          * a Create action for each creatable domain object type.
          *
+         * @memberof platform/commonUI/browse
          * @constructor
          * @param {TypeService} typeService the type service, used to discover
          *        available types
@@ -51,6 +52,7 @@ define(
                  * @memberof CreateActionProvider
                  * @method
                  * @returns {CreateAction[]}
+                 * @memberof platform/commonUI/browse.CreateActionProvider#
                  */
                 getActions: function (actionContext) {
                     var context = actionContext || {},

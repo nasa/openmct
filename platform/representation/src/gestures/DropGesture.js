@@ -33,6 +33,7 @@ define(
          * A DropGesture adds and maintains event handlers upon an element
          * such that it may act as a drop target for drag-drop composition.
 
+         * @memberof platform/representation
          * @constructor
          * @param $q Angular's $q, for promise handling
          * @param element the jqLite-wrapped representation element
@@ -124,6 +125,7 @@ define(
             return {
                 /**
                  * Detach any event handlers associated with this gesture.
+                 * @memberof platform/representation.DropGesture#
                  */
                 destroy: function () {
                     element.off('dragover', dragOver);

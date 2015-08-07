@@ -33,6 +33,7 @@ define(
          * A column which will report telemetry range values
          * (typically, measurements.) Used by the ScrollingListController.
          *
+         * @memberof platform/features/events
          * @constructor
          * @param rangeMetadata an object with the machine- and human-
          *        readable names for this range (in `key` and `name`
@@ -45,6 +46,7 @@ define(
                 /**
                  * Get the title to display in this column's header.
                  * @returns {string} the title to display
+                 * @memberof platform/features/events.RangeColumn#
                  */
                 getTitle: function () {
                     return rangeMetadata.name;
@@ -53,6 +55,7 @@ define(
                  * Get the text to display inside a row under this
                  * column.
                  * @returns {string} the text to display
+                 * @memberof platform/features/events.RangeColumn#
                  */
                 getValue: function (domainObject, data, index) {
                     return telemetryFormatter.formatRangeValue(

@@ -35,6 +35,7 @@ define(
          * The CouchPersistenceProvider reads and writes JSON documents
          * (more specifically, domain object models) to/from a CouchDB
          * instance.
+         * @memberof platform/persistence/couch
          * @constructor
          */
         function CouchPersistenceProvider($http, $q, SPACE, PATH) {
@@ -104,6 +105,7 @@ define(
                  *
                  * @returns {Promise.<string[]>} a promise for a list of
                  *          spaces supported by this provider
+                 * @memberof platform/persistence/couch.CouchPersistenceProvider#
                  */
                 listSpaces: function () {
                     return $q.when(spaces);
@@ -114,6 +116,7 @@ define(
                  * @param {string} space the space to check
                  * @returns {Promise.<string[]>} a promise for the list of
                  *          identifiers
+                 * @memberof platform/persistence/couch.CouchPersistenceProvider#
                  */
                 listObjects: function (space) {
                     return get("_all_docs").then(getIdsFromAllDocs);
@@ -127,6 +130,7 @@ define(
                  * @returns {Promise.<boolean>} a promise for an indication
                  *          of the success (true) or failure (false) of this
                  *          operation
+                 * @memberof platform/persistence/couch.CouchPersistenceProvider#
                  */
                 createObject: function (space, key, value) {
                     return put(key, new CouchDocument(key, value))
@@ -141,6 +145,7 @@ define(
                  * @returns {Promise.<object>} a promise for the stored
                  *          object; this will resolve to undefined if no such
                  *          object is found.
+                 * @memberof platform/persistence/couch.CouchPersistenceProvider#
                  */
                 readObject: function (space, key) {
                     return get(key).then(getModel);
@@ -154,6 +159,7 @@ define(
                  * @returns {Promise.<boolean>} a promise for an indication
                  *          of the success (true) or failure (false) of this
                  *          operation
+                 * @memberof platform/persistence/couch.CouchPersistenceProvider#
                  */
                 updateObject: function (space, key, value) {
                     return put(key, new CouchDocument(key, value, revs[key]))
@@ -169,6 +175,7 @@ define(
                  * @returns {Promise.<boolean>} a promise for an indication
                  *          of the success (true) or failure (false) of this
                  *          operation
+                 * @memberof platform/persistence/couch.CouchPersistenceProvider#
                  */
                 deleteObject: function (space, key, value) {
                     return put(key, new CouchDocument(key, value, revs[key], true))

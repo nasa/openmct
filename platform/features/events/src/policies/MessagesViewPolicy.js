@@ -31,6 +31,7 @@ define(
 
         /**
          * Policy controlling when the Messages view should be avaliable.
+         * @memberof platform/features/events
          * @constructor
          */
         function MessagesViewPolicy() {
@@ -52,6 +53,7 @@ define(
                  * @param {Action} action the action
                  * @param domainObject the domain object which will be viewed
                  * @returns {boolean} true if not disallowed
+                 * @memberof platform/features/events.MessagesViewPolicy#
                  */
                 allow: function (view, domainObject) {
                     // This policy only applies for the Messages view

@@ -33,6 +33,7 @@ define(
          * Responsible for loading extension implementations
          * (AMD modules.) Acts as a wrapper around RequireJS to
          * provide a promise-like API.
+         * @memberof platform/framework
          * @constructor
          * @param {*} require RequireJS, or an object with similar API
          * @param {*} $log Angular's logging service
@@ -57,6 +58,7 @@ define(
                  * @memberof ImplementationLoader#
                  * @param {string} path the path to the module to load
                  * @returns {Promise} a promise for the specified module.
+                 * @memberof platform/framework.ImplementationLoader#
                  */
                 load: loadModule
             };

@@ -34,6 +34,7 @@ define(
          * domain objects of a specific type. This is the action that
          * is performed when a user uses the Create menu.
          *
+         * @memberof platform/commonUI/browse
          * @constructor
          * @param {Type} type the type of domain object to create
          * @param {DomainObject} parent the domain object that should
@@ -95,6 +96,7 @@ define(
                  * This will prompt for user input first.
                  * @method
                  * @memberof CreateAction
+                 * @memberof platform/commonUI/browse.CreateAction#
                  */
                 perform: perform,
 
@@ -107,6 +109,7 @@ define(
                  * * `context`: The context in which this action will be performed.
                  *
                  * @return {object} metadata about the create action
+                 * @memberof platform/commonUI/browse.CreateAction#
                  */
                 getMetadata: function () {
                     return {

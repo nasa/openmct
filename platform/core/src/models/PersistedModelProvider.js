@@ -33,6 +33,7 @@ define(
          * A model service which reads domain object models from an external
          * persistence service.
          *
+         * @memberof platform/core
          * @constructor
          * @param {PersistenceService} persistenceService the service in which
          *        domain object models are persisted.
@@ -83,6 +84,7 @@ define(
                  *          containing key-value pairs,
                  *          where keys are object identifiers and values
                  *          are object models.
+                 * @memberof platform/core.PersistedModelProvider#
                  */
                 getModels: promiseModels
             };

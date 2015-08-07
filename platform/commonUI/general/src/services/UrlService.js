@@ -32,6 +32,8 @@ define(
         /**
          * The url service handles calls for url paths
          * using domain objects.
+         * @constructor
+         * @memberof platform/commonUI/general
          */
         function UrlService($location) {
             // Returns the url for the mode wanted
@@ -73,6 +75,7 @@ define(
                  *        for the path
                  * @param {DomainObject} value of the domain object 
                  *        to get the path of
+                 * @memberof platform/commonUI/general.UrlService#
                  */
                 urlForNewTab: urlForNewTab,
                /**
@@ -83,6 +86,7 @@ define(
                  *        for the path
                  * @param {DomainObject} value of the domain object 
                  *        to get the path of
+                 * @memberof platform/commonUI/general.UrlService#
                  */
                 urlForLocation: urlForLocation
             };

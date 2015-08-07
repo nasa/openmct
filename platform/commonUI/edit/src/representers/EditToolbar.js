@@ -38,6 +38,7 @@ define(
          *
          * @param structure toolbar structure, as provided by view definition
          * @param {Function} commit callback to invoke after changes
+         * @memberof platform/commonUI/edit
          * @constructor
          */
         function EditToolbar(structure, commit) {
@@ -221,6 +222,7 @@ define(
                  * Set the current selection. Visisbility of sections
                  * and items in the toolbar will be updated to match this.
                  * @param {Array} s the new selection
+                 * @memberof platform/commonUI/edit.EditToolbar#
                  */
                 setSelection: function (s) {
                     selection = s;
@@ -231,6 +233,7 @@ define(
                  * Get the structure of the toolbar, as appropriate to
                  * pass to `mct-toolbar`.
                  * @returns the toolbar structure
+                 * @memberof platform/commonUI/edit.EditToolbar#
                  */
                 getStructure: function () {
                     return toolbarStructure;
@@ -239,6 +242,7 @@ define(
                  * Get the current state of the toolbar, as appropriate
                  * to two-way bind to the state handled by `mct-toolbar`.
                  * @returns {Array} state of the toolbar
+                 * @memberof platform/commonUI/edit.EditToolbar#
                  */
                 getState: function () {
                     return toolbarState;
@@ -248,6 +252,7 @@ define(
                  * @param {number} index the index of the corresponding
                  *        element in the state array
                  * @param value the new value to convey to the selection
+                 * @memberof platform/commonUI/edit.EditToolbar#
                  */
                 updateState: function (index, value) {
                     return updateProperties(properties[index], value);
@@ -258,4 +263,5 @@ define(
         return EditToolbar;
     }
 );
+
 

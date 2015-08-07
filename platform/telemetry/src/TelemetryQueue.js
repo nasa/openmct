@@ -32,6 +32,7 @@ define(
          * a queued series of large objects, ensuring that no value is
          * overwritten (but consolidated non-overlapping keys into single
          * objects.)
+         * @memberof platform/telemetry
          * @constructor
          */
         function TelemetryQueue() {
@@ -102,6 +103,7 @@ define(
                 /**
                  * Check if any value groups remain in this pool.
                  * @return {boolean} true if value groups remain
+                 * @memberof platform/telemetry.TelemetryQueue#
                  */
                 isEmpty: function () {
                     return queue.length < 1;
@@ -112,6 +114,7 @@ define(
                  * where keys and values correspond to the arguments
                  * given to previous put functions.
                  * @return {object} key-value pairs
+                 * @memberof platform/telemetry.TelemetryQueue#
                  */
                 poll: function () {
                     // Decrement counts for the object that will be popped
@@ -122,6 +125,7 @@ define(
                  * Put a key-value pair into the pool.
                  * @param {string} key the key to store the value under
                  * @param {*} value the value to store
+                 * @memberof platform/telemetry.TelemetryQueue#
                  */
                 put: function (key, value) {
                     getFreeObject(key)[key] = value;

@@ -37,6 +37,7 @@ define(
          * along the domain axis, and the second element describes the same
          * along the range axis.
          *
+         * @memberof platform/features/plot
          * @constructor
          * @param {number[]} origin the plot's origin, initially
          * @param {number[]} dimensions the plot's dimensions, initially
@@ -91,6 +92,7 @@ define(
                  * panning or zooming relative to the base value has
                  * been applied.
                  * @returns {number} the depth of the stack
+                 * @memberof platform/features/plot.PlotPanZoomStack#
                  */
                 getDepth: getDepth,
 
@@ -99,6 +101,7 @@ define(
                  * become the active pan-zoom state.
                  * @param {number[]} origin the new origin
                  * @param {number[]} dimensions the new dimensions
+                 * @memberof platform/features/plot.PlotPanZoomStack#
                  */
                 pushPanZoom: pushPanZoom,
 
@@ -109,6 +112,7 @@ define(
                  * stack, this acts as a no-op (that is, the lowest
                  * pan-zoom state on the stack cannot be popped, to ensure
                  * that some pan-zoom state is always available.)
+                 * @memberof platform/features/plot.PlotPanZoomStack#
                  */
                 popPanZoom: popPanZoom,
 
@@ -119,6 +123,7 @@ define(
                  * interfering with the user's chosen zoom level.
                  * @param {number[]} origin the base origin
                  * @param {number[]} dimensions the base dimensions
+                 * @memberof platform/features/plot.PlotPanZoomStack#
                  */
                 setBasePanZoom: setBasePanZoom,
 
@@ -126,6 +131,7 @@ define(
                  * Clear the pan-zoom stack down to its bottom element;
                  * in effect, pop all elements but the last, e.g. to remove
                  * any temporary user modifications to pan-zoom state.
+                 * @memberof platform/features/plot.PlotPanZoomStack#
                  */
                 clearPanZoom: clearPanZoom,
 
@@ -134,6 +140,7 @@ define(
                  * of the stack), expressed as an object with "origin" and
                  * "dimensions" fields.
                  * @returns {object} the current pan-zoom state
+                 * @memberof platform/features/plot.PlotPanZoomStack#
                  */
                 getPanZoom: getPanZoom,
 
@@ -141,6 +148,7 @@ define(
                  * Get the current origin, as represented on the top of the
                  * stack.
                  * @returns {number[]} the current plot origin
+                 * @memberof platform/features/plot.PlotPanZoomStack#
                  */
                 getOrigin: getOrigin,
 
@@ -148,6 +156,7 @@ define(
                  * Get the current dimensions, as represented on the top of
                  * the stack.
                  * @returns {number[]} the current plot dimensions
+                 * @memberof platform/features/plot.PlotPanZoomStack#
                  */
                 getDimensions: getDimensions
             };

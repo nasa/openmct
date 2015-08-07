@@ -30,6 +30,8 @@ define(
          * move an object to another location of their choosing.
          *
          * @implements Action
+         * @constructor
+         * @memberof platform/entanglement
          */
         function MoveAction(locationService, moveService, context) {
 
@@ -88,3 +90,4 @@ define(
         return MoveAction;
     }
 );
+

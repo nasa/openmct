@@ -28,6 +28,7 @@ define(
 
         /**
          * Supports the Library and Elements panes in Edit mode.
+         * @memberof platform/commonUI/edit
          * @constructor
          */
         function EditPanesController($scope) {
@@ -56,6 +57,7 @@ define(
                  * Get the root-level domain object, as reported by the
                  * represented domain object.
                  * @returns {DomainObject} the root object
+                 * @memberof platform/commonUI/edit.EditPanesController#
                  */
                 getRoot: function () {
                     return root;

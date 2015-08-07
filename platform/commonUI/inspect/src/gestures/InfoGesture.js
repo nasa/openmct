@@ -30,6 +30,7 @@ define(
          * The `info` gesture displays domain object metadata in a
          * bubble on hover.
          *
+         * @memberof platform/commonUI/inspect
          * @constructor
          * @param $timeout Angular's `$timeout`
          * @param {InfoService} infoService a service which shows info bubbles
@@ -103,6 +104,7 @@ define(
                  * Detach any event handlers associated with this gesture.
                  * @memberof InfoGesture
                  * @method
+                 * @memberof platform/commonUI/inspect.InfoGesture#
                  */
                 destroy: function () {
                     // Dismiss any active bubble...
@@ -119,3 +121,4 @@ define(
     }
 
 );
+

@@ -28,6 +28,8 @@ define(
         /**
          * Provides a window on a telemetry data series, to support
          * insertion into a plot line.
+         * @constructor
+         * @memberof platform/features/plot
          */
         function PlotSeriesWindow(series, domain, range, start, end) {
             return {

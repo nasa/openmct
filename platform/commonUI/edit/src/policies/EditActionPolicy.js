@@ -30,6 +30,7 @@ define(
          * Policy controlling when the `edit` and/or `properties` actions
          * can appear as applicable actions of the `view-control` category
          * (shown as buttons in the top-right of browse mode.)
+         * @memberof platform/commonUI/edit
          * @constructor
          */
         function EditActionPolicy() {
@@ -54,6 +55,7 @@ define(
                  * @param {Action} action the action
                  * @param context the context
                  * @returns {boolean} true if not disallowed
+                 * @memberof platform/commonUI/edit.EditActionPolicy#
                  */
                 allow: function (action, context) {
                     var key = action.getMetadata().key,

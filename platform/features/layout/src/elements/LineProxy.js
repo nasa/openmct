@@ -29,6 +29,7 @@ define(
         /**
          * Selection/diplay proxy for line elements of a fixed position
          * view.
+         * @memberof platform/features/layout
          * @constructor
          * @param element the fixed position element, as stored in its
          *        configuration
@@ -46,6 +47,7 @@ define(
              * Get the top-left x coordinate, in grid space, of
              * this line's bounding box.
              * @returns {number} the x coordinate
+             * @memberof platform/features/layout.LineProxy#
              */
             proxy.x = function (v) {
                 var x = Math.min(element.x, element.x2),
@@ -61,6 +63,7 @@ define(
              * Get the top-left y coordinate, in grid space, of
              * this line's bounding box.
              * @returns {number} the y coordinate
+             * @memberof platform/features/layout.LineProxy#
              */
             proxy.y = function (v) {
                 var y = Math.min(element.y, element.y2),
@@ -76,6 +79,7 @@ define(
              * Get the width, in grid space, of
              * this line's bounding box.
              * @returns {number} the width
+             * @memberof platform/features/layout.LineProxy#
              */
             proxy.width = function () {
                 return Math.max(Math.abs(element.x - element.x2), 1);
@@ -85,6 +89,7 @@ define(
              * Get the height, in grid space, of
              * this line's bounding box.
              * @returns {number} the height
+             * @memberof platform/features/layout.LineProxy#
              */
             proxy.height = function () {
                 return Math.max(Math.abs(element.y - element.y2), 1);
@@ -95,6 +100,7 @@ define(
              * the top-left corner, of the first point in this line
              * segment.
              * @returns {number} the x position of the first point
+             * @memberof platform/features/layout.LineProxy#
              */
             proxy.x1 = function () {
                 return element.x - proxy.x();
@@ -105,6 +111,7 @@ define(
              * the top-left corner, of the first point in this line
              * segment.
              * @returns {number} the y position of the first point
+             * @memberof platform/features/layout.LineProxy#
              */
             proxy.y1 = function () {
                 return element.y - proxy.y();
@@ -115,6 +122,7 @@ define(
              * the top-left corner, of the second point in this line
              * segment.
              * @returns {number} the x position of the second point
+             * @memberof platform/features/layout.LineProxy#
              */
             proxy.x2 = function () {
                 return element.x2 - proxy.x();
@@ -125,6 +133,7 @@ define(
              * the top-left corner, of the second point in this line
              * segment.
              * @returns {number} the y position of the second point
+             * @memberof platform/features/layout.LineProxy#
              */
             proxy.y2 = function () {
                 return element.y2 - proxy.y();
@@ -134,6 +143,7 @@ define(
              * Get element handles for changing the position of end
              * points of this line.
              * @returns {LineHandle[]} line handles for both end points
+             * @memberof platform/features/layout.LineProxy#
              */
             proxy.handles = function () {
                 return handles;

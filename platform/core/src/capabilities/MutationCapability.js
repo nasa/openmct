@@ -71,6 +71,7 @@ define(
          *
          * @param {DomainObject} domainObject the domain object
          *        which will expose this capability
+         * @memberof platform/core
          * @constructor
          */
         function MutationCapability(topic, now, domainObject) {
@@ -118,6 +119,7 @@ define(
             return {
                 /**
                  * Alias of `mutate`, used to support useCapability.
+                 * @memberof platform/core.MutationCapability#
                  */
                 invoke: mutate,
                 /**
@@ -146,6 +148,7 @@ define(
                  *         used)
                  * @returns {Promise.<boolean>} a promise for the result
                  *         of the mutation; true if changes were made.
+                 * @memberof platform/core.MutationCapability#
                  */
                 mutate: mutate,
                 /**
@@ -155,6 +158,7 @@ define(
                  * invoke the function returned by this method.
                  * @param {Function} listener function to call on mutation
                  * @returns {Function} a function to stop listening
+                 * @memberof platform/core.MutationCapability#
                  */
                 listen: listen
             };
@@ -163,3 +167,4 @@ define(
         return MutationCapability;
     }
 );
+

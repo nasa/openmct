@@ -35,6 +35,7 @@ define(
          * of actions exposed via extension (specifically, the "actions"
          * category of extension.)
          *
+         * @memberof platform/core
          * @constructor
          */
         function ActionProvider(actions) {
@@ -145,6 +146,7 @@ define(
                  *
                  * @method
                  * @memberof ActionProvider
+                 * @memberof platform/core.ActionProvider#
                  */
                 getActions: getActions
             };

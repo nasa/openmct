@@ -31,6 +31,7 @@ define(
          * that have been loaded, and keeps them in sync after writes. This allows
          * retrievals to occur more quickly after the first load.
          *
+         * @memberof platform/persistence/cache
          * @constructor
          * @param {string[]} CACHE_SPACES persistence space names which
          *        should be cached
@@ -113,6 +114,7 @@ define(
                  * decorated service.
                  * @memberof CachingPersistenceDecorator#
                  * @returns {Promise.<string[]>} spaces supported
+                 * @memberof platform/persistence/cache.CachingPersistenceDecorator#
                  */
                 listSpaces: function () {
                     return persistenceService.listSpaces();
@@ -122,6 +124,7 @@ define(
                  * @memberof CachingPersistenceDecorator#
                  * @param {string} space the space in which to list objects
                  * @returns {Promise.<string[]>} keys for objects in this space
+                 * @memberof platform/persistence/cache.CachingPersistenceDecorator#
                  */
                 listObjects: function (space) {
                     return persistenceService.listObjects(space);
@@ -136,6 +139,7 @@ define(
                  * @param {object} value a JSONifiable object to store
                  * @returns {Promise.<boolean>} an indicator of the success or
                  *          failure of this request
+                 * @memberof platform/persistence/cache.CachingPersistenceDecorator#
                  */
                 createObject: function (space, key, value) {
                     addToCache(space, key, value);
@@ -150,6 +154,7 @@ define(
                  * @returns {Promise.<object>} a promise for the object; may
                  *          resolve to undefined (if the object does not exist
                  *          in this space)
+                 * @memberof platform/persistence/cache.CachingPersistenceDecorator#
                  */
                 readObject: function (space, key) {
                     return (cache[space] && cache[space][key]) ?
@@ -167,6 +172,7 @@ define(
                  * @param {object} value a JSONifiable object to store
                  * @returns {Promise.<boolean>} an indicator of the success or
                  *          failure of this request
+                 * @memberof platform/persistence/cache.CachingPersistenceDecorator#
                  */
                 updateObject: function (space, key, value) {
                     return persistenceService.updateObject(space, key, value)
@@ -185,6 +191,7 @@ define(
                  * @param {object} value a JSONifiable object to delete
                  * @returns {Promise.<boolean>} an indicator of the success or
                  *          failure of this request
+                 * @memberof platform/persistence/cache.CachingPersistenceDecorator#
                  */
                 deleteObject: function (space, key, value) {
                     if (cache[space]) {

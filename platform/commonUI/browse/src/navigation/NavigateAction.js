@@ -31,6 +31,7 @@ define(
 
         /**
          * The navigate action navigates to a specific domain object.
+         * @memberof platform/commonUI/browse
          * @constructor
          */
         function NavigateAction(navigationService, $q, context) {
@@ -46,6 +47,7 @@ define(
                  * Navigate to the object described in the context.
                  * @returns {Promise} a promise that is resolved once the
                  *          navigation has been updated
+                 * @memberof platform/commonUI/browse.NavigateAction#
                  */
                 perform: perform
             };

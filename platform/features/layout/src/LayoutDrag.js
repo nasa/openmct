@@ -50,6 +50,8 @@ define(
          * @param {number[]} posFactor the position factor
          * @param {number[]} dimFactor the dimensions factor
          * @param {number[]} the size of each grid element, in pixels
+         * @constructor
+         * @memberof platform/features/layout
          */
         function LayoutDrag(rawPosition, posFactor, dimFactor, gridSize) {
             // Convert a delta from pixel coordinates to grid coordinates,
@@ -103,6 +105,7 @@ define(
                  * according to the factors supplied in the constructor.
                  * @param {number[]} pixelDelta the offset from the
                  *        original position, in pixels
+                 * @memberof platform/features/layout.LayoutDrag#
                  */
                 getAdjustedPosition: getAdjustedPosition
             };

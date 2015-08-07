@@ -32,6 +32,8 @@ define(
         /**
          * Controller for the "Imagery" view of a domain object which
          * provides image telemetry.
+         * @constructor
+         * @memberof platform/features/imagery
          */
         function ImageryController($scope, telemetryHandler) {
             var date = "",
@@ -83,6 +85,7 @@ define(
                  * Get the time portion (hours, minutes, seconds) of the
                  * timestamp associated with the incoming image telemetry.
                  * @returns {string} the time
+                 * @memberof platform/features/imagery.ImageryController#
                  */
                 getTime: function () {
                     return time;
@@ -91,6 +94,7 @@ define(
                  * Get the date portion (month, year) of the
                  * timestamp associated with the incoming image telemetry.
                  * @returns {string} the date
+                 * @memberof platform/features/imagery.ImageryController#
                  */
                 getDate: function () {
                     return date;
@@ -100,6 +104,7 @@ define(
                  * to the timestamp associated with the incoming image
                  * telemetry.
                  * @returns {string} the time
+                 * @memberof platform/features/imagery.ImageryController#
                  */
                 getZone: function () {
                     return "UTC";
@@ -107,6 +112,7 @@ define(
                 /**
                  * Get the URL of the image telemetry to display.
                  * @returns {string} URL for telemetry image
+                 * @memberof platform/features/imagery.ImageryController#
                  */
                 getImageUrl: function () {
                     return imageUrl;
@@ -116,6 +122,7 @@ define(
                  * paused, false means not.)
                  * @param {boolean} [state] the state to set
                  * @returns {boolean} the current state
+                 * @memberof platform/features/imagery.ImageryController#
                  */
                 paused: function (state) {
                     if (arguments.length > 0 && state !== paused) {
@@ -131,3 +138,4 @@ define(
         return ImageryController;
     }
 );
+

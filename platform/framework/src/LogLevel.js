@@ -47,6 +47,7 @@ define(
          * as a default. Only log messages of levels equal to or greater
          * than the specified level will be passed to console.
          *
+         * @memberof platform/framework
          * @constructor
          * @param {string} level the logging level
          */
@@ -83,6 +84,7 @@ define(
                  *
                  * @param app the Angular app to configure
                  * @param $log Angular's $log (also configured)
+                 * @memberof platform/framework.LogLevel#
                  */
                 configure: function (app, $log) {
                     decorate($log);

@@ -37,6 +37,7 @@ define(
          * * The selection, for single selected elements within the
          *   view.
          *
+         * @memberof platform/commonUI/edit
          * @constructor
          */
         function EditToolbarSelection() {
@@ -106,22 +107,26 @@ define(
                 /**
                  * Check if an object is currently selected.
                  * @returns true if selected, otherwise false
+                 * @memberof platform/commonUI/edit.EditToolbarSelection#
                  */
                 selected: isSelected,
                 /**
                  * Select an object.
                  * @param obj the object to select
                  * @returns {boolean} true if selection changed
+                 * @memberof platform/commonUI/edit.EditToolbarSelection#
                  */
                 select: select,
                 /**
                  * Clear the current selection.
                  * @returns {boolean} true if selection changed
+                 * @memberof platform/commonUI/edit.EditToolbarSelection#
                  */
                 deselect: deselect,
                 /**
                  * Get the currently-selected object.
                  * @returns the currently selected object
+                 * @memberof platform/commonUI/edit.EditToolbarSelection#
                  */
                 get: get,
                 /**
@@ -129,6 +134,7 @@ define(
                  * the view itself.)
                  * @param [proxy] the view proxy (if setting)
                  * @returns the current view proxy
+                 * @memberof platform/commonUI/edit.EditToolbarSelection#
                  */
                 proxy: proxy,
                 /**
@@ -136,6 +142,7 @@ define(
                  * selection proxy. It is generally not advisable to
                  * mutate this array directly.
                  * @returns {Array} all selections
+                 * @memberof platform/commonUI/edit.EditToolbarSelection#
                  */
                 all: all
             };

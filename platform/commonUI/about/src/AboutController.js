@@ -29,6 +29,7 @@ define(
         /**
          * The AboutController provides information to populate the
          * About dialog.
+         * @memberof platform/commonUI/about
          * @constructor
          * @param {object[]} versions an array of version extensions;
          *        injected from `versions[]`
@@ -42,6 +43,7 @@ define(
                  * as a line-item in the version information listing.
                  * @memberof AboutController#
                  * @returns {object[]} version information
+                 * @memberof platform/commonUI/about.AboutController#
                  */
                 versions: function () {
                     return versions;
@@ -50,6 +52,7 @@ define(
                  * Open a new window (or tab, depending on browser
                  * configuration) containing open source licenses.
                  * @memberof AboutController#
+                 * @memberof platform/commonUI/about.AboutController#
                  */
                 openLicenses: function () {
                     // Open a new browser window at the licenses route

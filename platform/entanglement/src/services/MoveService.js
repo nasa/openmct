@@ -30,12 +30,15 @@ define(
          * MoveService provides an interface for moving objects from one
          * location to another.  It also provides a method for determining if
          * an object can be copied to a specific location.
+         * @constructor
+         * @memberof platform/entanglement
          */
         function MoveService(policyService, linkService) {
             return {
                 /**
                  * Returns `true` if `object` can be moved into
                  * `parentCandidate`'s composition.
+                 * @memberof platform/entanglement.MoveService#
                  */
                 validate: function (object, parentCandidate) {
                     var currentParent = object
@@ -65,6 +68,7 @@ define(
                  *
                  * @returns {Promise} A promise that is fulfilled when the
                  *    move operation has completed.
+                 * @memberof platform/entanglement.MoveService#
                  */
                 perform: function (object, parentObject) {
                     return linkService
@@ -81,3 +85,4 @@ define(
         return MoveService;
     }
 );
+

@@ -45,6 +45,7 @@ define(
          *        which the action will be performed (also, the
          *        action which exposes the capability.)
          *
+         * @memberof platform/core
          * @constructor
          */
         function ActionCapability($q, actionService, domainObject) {
@@ -92,6 +93,7 @@ define(
                  * @returns {Promise} the result of the action that was
                  *       performed, or undefined if no matching action
                  *       was found.
+                 * @memberof platform/core.ActionCapability#
                  */
                 perform: performAction,
                 /**
@@ -107,6 +109,7 @@ define(
                  *       be taken as the "key" field to match against
                  *       specific actions.
                  * @returns {Action[]} an array of matching actions
+                 * @memberof platform/core.ActionCapability#
                  */
                 getActions: getActions
             };

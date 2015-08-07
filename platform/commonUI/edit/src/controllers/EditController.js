@@ -33,6 +33,7 @@ define(
          * Controller which is responsible for populating the scope for
          * Edit mode; introduces an editable version of the currently
          * navigated domain object into the scope.
+         * @memberof platform/commonUI/edit
          * @constructor
          */
         function EditController($scope, $q, navigationService) {
@@ -55,6 +56,7 @@ define(
                 /**
                  * Get the domain object which is navigated-to.
                  * @returns {DomainObject} the domain object that is navigated-to
+                 * @memberof platform/commonUI/edit.EditController#
                  */
                 navigatedObject: function () {
                     return navigatedObject;
@@ -64,6 +66,7 @@ define(
                  * away from Edit mode while unsaved changes are present.
                  * @returns {string} the warning to show, or undefined if
                  *          there are no unsaved changes
+                 * @memberof platform/commonUI/edit.EditController#
                  */
                 getUnloadWarning: function () {
                     var editorCapability = navigatedObject &&

@@ -31,6 +31,7 @@ define(
          * A TelemetryRequester provides an easy interface to request
          * telemetry associated with a set of domain objects.
          *
+         * @memberof platform/telemetry
          * @constructor
          * @param $q Angular's $q
          */

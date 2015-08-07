@@ -39,6 +39,7 @@ define(
          * preparing them to be rendered. It creates a WebGL-plottable
          * Float32Array for each trace, and tracks the boundaries of the
          * data sets (since this is convenient to do during the same pass).
+         * @memberof platform/features/plot
          * @constructor
          * @param {TelemetryHandle} handle the handle to telemetry access
          * @param {string} domain the key to use when looking up domain values
@@ -277,6 +278,7 @@ define(
                  * data sets. This is given as a two-element array where the
                  * first element is domain, and second is range.
                  * @returns {number[]} the dimensions which bound this data set
+                 * @memberof platform/features/plot.PlotUpdater#
                  */
                 getDimensions: function () {
                     return dimensions;
@@ -287,6 +289,7 @@ define(
                  * first element is domain, and second is range.
                  * The domain value here is not adjusted by the domain offset.
                  * @returns {number[]} the origin of this data set's boundary
+                 * @memberof platform/features/plot.PlotUpdater#
                  */
                 getOrigin: function () {
                     // Pad range if necessary
@@ -298,6 +301,7 @@ define(
                  * preparer, in order to minimize loss-of-precision due to
                  * conversion to the 32-bit float format needed by WebGL.
                  * @returns {number} the domain offset
+                 * @memberof platform/features/plot.PlotUpdater#
                  */
                 getDomainOffset: function () {
                     return domainOffset;
@@ -318,16 +322,19 @@ define(
                  * cause aliasing artifacts (particularly for timestamps)
                  *
                  * @returns {Float32Array[]} the buffers for these traces
+                 * @memberof platform/features/plot.PlotUpdater#
                  */
                 getLineBuffers: function () {
                     return bufferArray;
                 },
                 /**
                  * Update with latest data.
+                 * @memberof platform/features/plot.PlotUpdater#
                  */
                 update: update,
                 /**
                  * Fill in historical data.
+                 * @memberof platform/features/plot.PlotUpdater#
                  */
                 addHistorical: setHistorical
             };
@@ -337,3 +344,4 @@ define(
 
     }
 );
+

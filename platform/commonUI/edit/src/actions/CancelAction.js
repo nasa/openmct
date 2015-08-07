@@ -29,6 +29,8 @@ define(
          * The "Cancel" action; the action triggered by clicking Cancel from
          * Edit Mode. Exits the editing user interface and invokes object
          * capabilities to persist the changes that have been made.
+         * @constructor
+         * @memberof platform/commonUI/edit
          */
         function CancelAction($location, urlService, context) {
             var domainObject = context.domainObject;
@@ -62,6 +64,7 @@ define(
                  *
                  * @returns {Promise} a promise that will be fulfilled when
                  *          cancellation has completed
+                 * @memberof platform/commonUI/edit.CancelAction#
                  */
                 perform: function () {
                     return doCancel(getEditorCapability())

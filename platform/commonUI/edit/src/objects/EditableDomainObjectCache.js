@@ -51,6 +51,7 @@ define(
          *        an argument, and returns an editable domain object as its
          *        result.
          * @param $q Angular's $q, for promise handling
+         * @memberof platform/commonUI/edit
          * @constructor
          * @memberof module:editor/object/editable-domain-object-cache
          */
@@ -66,6 +67,7 @@ define(
                  *
                  * @param {DomainObject} domainObject the regular domain object
                  * @returns {DomainObject} the domain object in an editable form
+                 * @memberof platform/commonUI/edit.EditableDomainObjectCache#
                  */
                 getEditableObject: function (domainObject) {
                     var type = domainObject.getCapability('type');
@@ -94,6 +96,7 @@ define(
                  * Check if a domain object is (effectively) the top-level
                  * object in this editable subgraph.
                  * @returns {boolean} true if it is the root
+                 * @memberof platform/commonUI/edit.EditableDomainObjectCache#
                  */
                 isRoot: function (domainObject) {
                     return domainObject === root;
@@ -104,6 +107,7 @@ define(
                  * included in the bulk save invoked when editing completes.
                  *
                  * @param {DomainObject} domainObject the domain object
+                 * @memberof platform/commonUI/edit.EditableDomainObjectCache#
                  */
                 markDirty: function (domainObject) {
                     dirty[domainObject.getId()] = domainObject;
@@ -114,12 +118,14 @@ define(
                  * save operation.)
                  *
                  * @param {DomainObject} domainObject the domain object
+                 * @memberof platform/commonUI/edit.EditableDomainObjectCache#
                  */
                 markClean: function (domainObject) {
                     delete dirty[domainObject.getId()];
                 },
                 /**
                  * Initiate a save on all objects that have been cached.
+                 * @memberof platform/commonUI/edit.EditableDomainObjectCache#
                  */
                 saveAll: function () {
                     // Get a list of all dirty objects
@@ -140,6 +146,7 @@ define(
                 /**
                  * Check if any objects have been marked dirty in this cache.
                  * @returns {boolean} true if objects are dirty
+                 * @memberof platform/commonUI/edit.EditableDomainObjectCache#
                  */
                 dirty: function () {
                     return Object.keys(dirty).length > 0;
@@ -150,3 +157,4 @@ define(
         return EditableDomainObjectCache;
     }
 );
+

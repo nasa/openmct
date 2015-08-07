@@ -30,6 +30,7 @@ define(
          * Handles configuration of RequireJS to expose libraries
          * from bundles with module names that can be used from other
          * bundles.
+         * @memberof platform/framework
          * @constructor
          * @param requirejs an instance of RequireJS
          */
@@ -99,6 +100,7 @@ define(
                  *
                  * @param {Bundle[]} the bundles to include in this
                  *                   configuration
+                 * @memberof platform/framework.RequireConfigurator#
                  */
                 configure: function (bundles) {
                     return requirejs.config(buildConfiguration(bundles));

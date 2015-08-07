@@ -48,6 +48,7 @@ define(
          * Note that arguments here are meant to match those expected
          * by `Array.prototype.map`
          *
+         * @memberof platform/features/layout
          * @constructor
          * @param element the fixed position element, as stored in its
          *        configuration
@@ -60,6 +61,7 @@ define(
             return {
                 /**
                  * The element as stored in the view configuration.
+                 * @memberof platform/features/layout.ElementProxy#
                  */
                 element: element,
                 /**
@@ -67,6 +69,7 @@ define(
                  * Units are in fixed position grid space.
                  * @param {number} [x] the new x position (if setting)
                  * @returns {number} the x position
+                 * @memberof platform/features/layout.ElementProxy#
                  */
                 x: new AccessorMutator(element, 'x', clamp),
                 /**
@@ -74,12 +77,14 @@ define(
                  * Units are in fixed position grid space.
                  * @param {number} [y] the new y position (if setting)
                  * @returns {number} the y position
+                 * @memberof platform/features/layout.ElementProxy#
                  */
                 y: new AccessorMutator(element, 'y', clamp),
                 /**
                  * Get and/or set the stroke color of this element.
                  * @param {string} [stroke] the new stroke color (if setting)
                  * @returns {string} the stroke color
+                 * @memberof platform/features/layout.ElementProxy#
                  */
                 stroke: new AccessorMutator(element, 'stroke'),
                 /**
@@ -87,6 +92,7 @@ define(
                  * Units are in fixed position grid space.
                  * @param {number} [w] the new width (if setting)
                  * @returns {number} the width
+                 * @memberof platform/features/layout.ElementProxy#
                  */
                 width: new AccessorMutator(element, 'width'),
                 /**
@@ -94,12 +100,14 @@ define(
                  * Units are in fixed position grid space.
                  * @param {number} [h] the new height (if setting)
                  * @returns {number} the height
+                 * @memberof platform/features/layout.ElementProxy#
                  */
                 height: new AccessorMutator(element, 'height'),
                 /**
                  * Change the display order of this element.
                  * @param {string} o where to move this element;
                  *        one of "top", "up", "down", or "bottom"
+                 * @memberof platform/features/layout.ElementProxy#
                  */
                 order: function (o) {
                     var delta = ORDERS[o] || 0,
@@ -120,6 +128,7 @@ define(
                 },
                 /**
                  * Remove this element from the fixed position view.
+                 * @memberof platform/features/layout.ElementProxy#
                  */
                 remove: function () {
                     if (elements[index] === element) {
@@ -129,6 +138,7 @@ define(
                 /**
                  * Get handles to control specific features of this element,
                  * e.g. corner size.
+                 * @memberof platform/features/layout.ElementProxy#
                  */
                 handles: function () {
                     return handles;

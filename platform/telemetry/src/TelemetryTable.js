@@ -32,6 +32,7 @@ define(
          * one large object, overwriting new values as necessary. Stands
          * in contrast to the TelemetryQueue, which will avoid overwriting
          * values.
+         * @memberof platform/telemetry
          * @constructor
          */
         function TelemetryTable() {
@@ -41,6 +42,7 @@ define(
                 /**
                  * Check if any value groups remain in this pool.
                  * @return {boolean} true if value groups remain
+                 * @memberof platform/telemetry.TelemetryTable#
                  */
                 isEmpty: function () {
                     return !table;
@@ -51,6 +53,7 @@ define(
                  * where keys and values correspond to the arguments
                  * given to previous put functions.
                  * @return {object} key-value pairs
+                 * @memberof platform/telemetry.TelemetryTable#
                  */
                 poll: function () {
                     var t = table;
@@ -61,6 +64,7 @@ define(
                  * Put a key-value pair into the pool.
                  * @param {string} key the key to store the value under
                  * @param {*} value the value to store
+                 * @memberof platform/telemetry.TelemetryTable#
                  */
                 put: function (key, value) {
                     table = table || {};

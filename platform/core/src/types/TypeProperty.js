@@ -36,6 +36,7 @@ define(
          * Instantiate a property associated with domain objects of a
          * given type. This provides an interface by which
          *
+         * @memberof platform/core
          * @constructor
          * @memberof module:core/type/type-property
          */
@@ -114,6 +115,7 @@ define(
                 /**
                  * Retrieve the value associated with this property
                  * from a given model.
+                 * @memberof platform/core.TypeProperty#
                  */
                 getValue: function (model) {
                     var property = propertyDefinition.property ||
@@ -133,6 +135,7 @@ define(
                 /**
                  * Set a value associated with this property in
                  * an object's model.
+                 * @memberof platform/core.TypeProperty#
                  */
                 setValue: function setValue(model, value) {
                     var property = propertyDefinition.property ||
@@ -153,6 +156,7 @@ define(
                 },
                 /**
                  * Get the raw definition for this property.
+                 * @memberof platform/core.TypeProperty#
                  */
                 getDefinition: function () {
                     return propertyDefinition;

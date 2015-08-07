@@ -29,6 +29,7 @@ define(
         /**
          * The StyleSheetLoader adds links to style sheets exposed from
          * various bundles as extensions of category `stylesheets`.
+         * @memberof platform/commonUI/general
          * @constructor
          * @param {object[]} stylesheets stylesheet extension definitions
          * @param $document Angular's jqLite-wrapped document element

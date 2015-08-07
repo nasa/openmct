@@ -37,6 +37,8 @@ define(
          * start time (plug-in support means this cannot be determined
          * prior to that, but we don't want to redo these calculations
          * every time policy is checked.)
+         * @constructor
+         * @memberof platform/containment
          */
         function ContainmentTable(typeService, capabilityService) {
             var types = typeService.listTypes(),
@@ -103,6 +105,7 @@ define(
                  * Check if domain objects of one type can contain domain
                  * objects of another type.
                  * @returns {boolean} true if allowable
+                 * @memberof platform/containment.ContainmentTable#
                  */
                 canContain: function (containerType, containedType) {
                     var set = table[containerType.getKey()] || {};

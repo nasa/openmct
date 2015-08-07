@@ -37,6 +37,7 @@ define(
          *
          * @param {DomainObject} object the object to be removed
          * @param {ActionContext} context the context in which this action is performed
+         * @memberof platform/commonUI/edit
          * @constructor
          * @memberof module:editor/actions/remove-action
          */
@@ -47,6 +48,7 @@ define(
              * Check whether an object ID matches the ID of the object being
              * removed (used to filter a parent's composition to handle the
              * removal.)
+             * @memberof platform/commonUI/edit.RemoveAction#
              */
             function isNotObject(otherObjectId) {
                 return otherObjectId !== object.getId();
@@ -55,6 +57,7 @@ define(
             /**
              * Mutate a parent object such that it no longer contains the object
              * which is being removed.
+             * @memberof platform/commonUI/edit.RemoveAction#
              */
             function doMutate(model) {
                 model.composition = model.composition.filter(isNotObject);
@@ -63,6 +66,7 @@ define(
             /**
              * Invoke persistence on a domain object. This will be called upon
              * the removed object's parent (as its composition will have changed.)
+             * @memberof platform/commonUI/edit.RemoveAction#
              */
             function doPersist(domainObject) {
                 var persistence = domainObject.getCapability('persistence');
@@ -74,6 +78,7 @@ define(
              * capability.
              * @param {ContextCapability} contextCapability the "context" capability
              *        of the domain object being removed.
+             * @memberof platform/commonUI/edit.RemoveAction#
              */
             function removeFromContext(contextCapability) {
                 var parent = contextCapability.getParent();
@@ -89,6 +94,7 @@ define(
                  * Perform this action.
                  * @return {module:core/promises.Promise} a promise which will be
                  *         fulfilled when the action has completed.
+                 * @memberof platform/commonUI/edit.RemoveAction#
                  */
                 perform: function () {
                     return $q.when(object.getCapability('context'))

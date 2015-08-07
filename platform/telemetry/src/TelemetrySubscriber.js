@@ -38,6 +38,7 @@ define(
          * (e.g. for telemetry panels) as well as latest-value
          * extraction.
          *
+         * @memberof platform/telemetry
          * @constructor
          * @param $q Angular's $q
          * @param $timeout Angular's $timeout
@@ -62,6 +63,7 @@ define(
                  *
                  * @method
                  * @memberof TelemetrySubscriber
+                 * @memberof platform/telemetry.TelemetrySubscriber#
                  */
                 subscribe: function (domainObject, callback, lossless) {
                     return new TelemetrySubscription(

@@ -34,6 +34,7 @@ define(
          * type directly available when working with that object, by way
          * of a `domainObject.getCapability('type')` invocation.
          *
+         * @memberof platform/core
          * @constructor
          * @param {TypeService} typeService the service which
          *        provides type information

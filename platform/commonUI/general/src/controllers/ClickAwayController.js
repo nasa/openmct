@@ -31,6 +31,7 @@ define(
          * menus) where clicking elsewhere in the document while the toggle
          * is in an active state is intended to dismiss the toggle.
          *
+         * @memberof platform/commonUI/general
          * @constructor
          * @param $scope the scope in which this controller is active
          * @param $document the document element, injected by Angular
@@ -72,6 +73,7 @@ define(
                 /**
                  * Get the current state of the toggle.
                  * @return {boolean} true if active
+                 * @memberof platform/commonUI/general.ClickAwayController#
                  */
                 isActive: function () {
                     return state;
@@ -79,6 +81,7 @@ define(
                 /**
                  * Set a new state for the toggle.
                  * @return {boolean} true to activate
+                 * @memberof platform/commonUI/general.ClickAwayController#
                  */
                 setState: function (newState) {
                     if (state !== newState) {
@@ -88,6 +91,7 @@ define(
                 /**
                  * Toggle the current state; activate if it is inactive,
                  * deactivate if it is active.
+                 * @memberof platform/commonUI/general.ClickAwayController#
                  */
                 toggle: function () {
                     changeState();

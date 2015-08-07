@@ -30,6 +30,7 @@ define(
          * The ScrollingListPopulator is responsible for filling in the
          * values which should appear within columns of a scrolling list
          * view, based on received telemetry data.
+         * @memberof platform/features/scrolling
          * @constructor
          * @param {Column[]} columns the columns to be populated
          */
@@ -50,6 +51,7 @@ define(
              *            data objects; expected to be in the same order
              *            as the domain objects provided at constructor
              * @param {number} count the number of rows to provide
+             * @memberof platform/features/scrolling.ScrollingListPopulator#
              */
             function getLatestDataValues(datas, count) {
                 var latest = [],
@@ -136,6 +138,7 @@ define(
                  * Get the text which should appear in headers for the
                  * provided columns.
                  * @returns {string[]} column headers
+                 * @memberof platform/features/scrolling.ScrollingListPopulator#
                  */
                 getHeaders: function () {
                     return columns.map(function (column) {
@@ -152,6 +155,7 @@ define(
                  * @returns {string[][]} an array of rows, each of which
                  *          is an array of values which should appear
                  *          in that row
+                 * @memberof platform/features/scrolling.ScrollingListPopulator#
                  */
                 getRows: function (datas, objects, count) {
                     var values = getLatestDataValues(datas, count);
@@ -181,3 +185,4 @@ define(
 
     }
 );
+

@@ -55,6 +55,7 @@ define(
          *
          * @param {Array<TypeDefinition>} options.definitions the raw type
          *        definitions for this type.
+         * @memberof platform/core
          * @constructor
          * @memberof module:core/type/type-provider
          */
@@ -154,6 +155,7 @@ define(
                  *          promise for an array of all type instances defined
                  *          by this service.
                  * @memberof module:core/type/type-provider.TypeProvider#
+                 * @memberof platform/core.TypeProvider#
                  */
                 listTypes: function () {
                     var self = this;
@@ -176,6 +178,7 @@ define(
                  * @returns {Promise<module:core/type/type-impl.TypeImpl>} a
                  *          promise for a type object identified by this key.
                  * @memberof module:core/type/type-provider.TypeProvider#
+                 * @memberof platform/core.TypeProvider#
                  */
                 getType: function (key) {
                     return new TypeImpl(lookupTypeDef(key));

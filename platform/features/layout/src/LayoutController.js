@@ -35,6 +35,7 @@ define(
          * Layout view. It arranges frames according to saved configuration
          * and provides methods for updating these based on mouse
          * movement.
+         * @memberof platform/features/layout
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
@@ -178,6 +179,7 @@ define(
                  * @param {string} id the object identifier
                  * @returns {Object.<string, string>} an object with
                  *          appropriate left, width, etc fields for positioning
+                 * @memberof platform/features/layout.LayoutController#
                  */
                 getFrameStyle: function (id) {
                     // Called in a loop, so just look up; the "positions"
@@ -203,6 +205,7 @@ define(
                  *        in the frame being manipulated
                  * @param {number[]} posFactor the position factor
                  * @param {number[]} dimFactor the dimensions factor
+                 * @memberof platform/features/layout.LayoutController#
                  */
                 startDrag: function (id, posFactor, dimFactor) {
                     activeDragId = id;
@@ -218,6 +221,7 @@ define(
                  * @param {number[]} delta the offset, in pixels,
                  *        of the current pointer position, relative
                  *        to its position when the drag started
+                 * @memberof platform/features/layout.LayoutController#
                  */
                 continueDrag: function (delta) {
                     if (activeDrag) {
@@ -229,6 +233,7 @@ define(
                 /**
                  * End the active drag gesture. This will update the
                  * view configuration.
+                 * @memberof platform/features/layout.LayoutController#
                  */
                 endDrag: function () {
                     // Write to configuration; this is watched and
@@ -254,3 +259,4 @@ define(
         return LayoutController;
     }
 );
+

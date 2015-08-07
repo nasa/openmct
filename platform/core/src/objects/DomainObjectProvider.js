@@ -38,6 +38,7 @@ define(
          *        which provides capabilities (dynamic behavior)
          *        for domain objects.
          * @param $q Angular's $q, for promise consolidation
+         * @memberof platform/core
          * @constructor
          */
         function DomainObjectProvider(modelService, capabilityService, $q) {
@@ -97,6 +98,7 @@ define(
                  *         are string identifiers for domain objects, and
                  *         values are the corresponding domain objects themselves.
                  * @memberof module:core/object/object-provider.ObjectProvider#
+                 * @memberof platform/core.DomainObjectProvider#
                  */
                 getObjects: getObjects
             };

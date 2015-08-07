@@ -38,6 +38,7 @@ define(
          * (e.g. for telemetry panels) as well as latest-value
          * extraction.
          *
+         * @memberof platform/telemetry
          * @constructor
          * @param $q Angular's $q
          * @param $timeout Angular's $timeout
@@ -227,6 +228,7 @@ define(
                  * with this object.
                  * @method
                  * @memberof TelemetrySubscription
+                 * @memberof platform/telemetry.TelemetrySubscription#
                  */
                 unsubscribe: function () {
                     if (unlistenToMutation) {
@@ -247,6 +249,7 @@ define(
                  * @returns the most recent domain value observed
                  * @method
                  * @memberof TelemetrySubscription
+                 * @memberof platform/telemetry.TelemetrySubscription#
                  */
                 getDomainValue: function (domainObject) {
                     var id = domainObject.getId();
@@ -265,6 +268,7 @@ define(
                  * @returns the most recent range value observed
                  * @method
                  * @memberof TelemetrySubscription
+                 * @memberof platform/telemetry.TelemetrySubscription#
                  */
                 getRangeValue: function (domainObject) {
                     var id = domainObject.getId();
@@ -275,6 +279,7 @@ define(
                  *
                  * @param {DomainObject} domainObject the object of interest
                  * @returns {TelemetryDatum} the most recent datum
+                 * @memberof platform/telemetry.TelemetrySubscription#
                  */
                 getDatum: function (domainObject) {
                     var id = domainObject.getId();
@@ -294,6 +299,7 @@ define(
                  * @returns {DomainObject[]} all subscribed-to domain objects
                  * @method
                  * @memberof TelemetrySubscription
+                 * @memberof platform/telemetry.TelemetrySubscription#
                  */
                 getTelemetryObjects: function () {
                     return telemetryObjects;
@@ -309,6 +315,7 @@ define(
                  * given index will correspond to the telemetry-providing
                  * domain object at the same index.
                  * @returns {Array} an array of metadata objects
+                 * @memberof platform/telemetry.TelemetrySubscription#
                  */
                 getMetadata: function () {
                     return metadatas;
@@ -318,6 +325,7 @@ define(
                  * associated with this subscription.
                  * @returns {Promise.<DomainObject[]>} a promise for
                  *          telemetry-providing objects
+                 * @memberof platform/telemetry.TelemetrySubscription#
                  */
                 promiseTelemetryObjects: function () {
                     // Unsubscribe promise is available after objects
@@ -331,3 +339,4 @@ define(
 
     }
 );
+

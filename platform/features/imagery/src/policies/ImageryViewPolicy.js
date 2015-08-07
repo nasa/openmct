@@ -29,6 +29,8 @@ define(
          * Policy preventing the Imagery view from being made available for
          * domain objects which do not have associated image telemetry.
          * @implements {Policy}
+         * @constructor
+         * @memberof platform/features/imagery
          */
         function ImageryViewPolicy() {
             function hasImageTelemetry(domainObject) {
@@ -57,3 +59,4 @@ define(
         return ImageryViewPolicy;
     }
 );
+

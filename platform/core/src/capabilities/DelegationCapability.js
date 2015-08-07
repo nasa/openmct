@@ -46,6 +46,7 @@ define(
          * capabilities to be delegated.
          *
          * @param domainObject
+         * @memberof platform/core
          * @constructor
          */
         function DelegationCapability($q, domainObject) {
@@ -96,6 +97,7 @@ define(
                  * @param {string} the name of the delegated capability
                  * @returns {DomainObject[]} the domain objects to which
                  *          responsibility for this capability is delegated.
+                 * @memberof platform/core.DelegationCapability#
                  */
                 invoke: getDelegates,
                 /**
@@ -105,6 +107,7 @@ define(
                  * @param {string} the name of the delegated capability
                  * @returns {DomainObject[]} the domain objects to which
                  *          responsibility for this capability is delegated.
+                 * @memberof platform/core.DelegationCapability#
                  */
                 getDelegates: getDelegates,
                 doesDelegateCapability: doesDelegate

@@ -32,6 +32,8 @@ define(
          * which capabilities. This supports composition policy (rules
          * for which objects can contain which other objects) which
          * sometimes is determined based on the presence of capabilities.
+         * @constructor
+         * @memberof platform/containment
          */
         function CapabilityTable(typeService, capabilityService) {
             var table = {};
@@ -64,6 +66,7 @@ define(
                 /**
                  * Check if a type is expected to expose a specific
                  * capability.
+                 * @memberof platform/containment.CapabilityTable#
                  */
                 hasCapability: function (typeKey, capabilityKey) {
                     return (table[capabilityKey] || {})[typeKey];

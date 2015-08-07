@@ -38,6 +38,8 @@ define(
          * @property {string[]} [depends=[]] the dependencies needed by this
          *           extension; these are strings as shall be passed to
          *           Angular's dependency resolution mechanism.
+         * @constructor
+         * @memberof platform/framework
          */
 
         /**
@@ -81,6 +83,7 @@ define(
                  * Get the machine-readable identifier for this extension.
                  *
                  * @returns {string}
+                 * @memberof platform/framework.Extension#
                  */
                 getKey: function () {
                     return definition.key || "undefined";
@@ -90,6 +93,7 @@ define(
                  *
                  * @memberof Extension#
                  * @returns {Bundle}
+                 * @memberof platform/framework.Extension#
                  */
                 getBundle: function () {
                     return bundle;
@@ -100,6 +104,7 @@ define(
                  *
                  * @memberof Extension#
                  * @returns {string}
+                 * @memberof platform/framework.Extension#
                  */
                 getCategory: function () {
                     return category;
@@ -111,6 +116,7 @@ define(
                  *
                  * @returns {boolean} true if an implementation separate
                  *          from this definition should also be loaded
+                 * @memberof platform/framework.Extension#
                  */
                 hasImplementation: function () {
                     return definition.implementation !== undefined;
@@ -122,6 +128,7 @@ define(
                  *
                  * @memberof Extension#
                  * @returns {string} path to implementation, or undefined
+                 * @memberof platform/framework.Extension#
                  */
                 getImplementationPath: function () {
                     return definition.implementation ?
@@ -134,6 +141,7 @@ define(
                  * extension) and the name (human-readable name for this
                  * extension.)
                  * @returns {string} log-friendly name for this extension
+                 * @memberof platform/framework.Extension#
                  */
                 getLogName: function () {
                     return logName;
@@ -149,6 +157,7 @@ define(
                  * @returns {ExtensionDefinition} the plain definition of
                  *          this extension, as read from the bundle
                  *          declaration.
+                 * @memberof platform/framework.Extension#
                  */
                 getDefinition: function () {
                     return extensionDefinition;

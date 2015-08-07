@@ -37,6 +37,8 @@ define(
          *        gestures
          * @param {Scope} scope the Angular scope for this representation
          * @param element the JQLite-wrapped mct-representation element
+         * @constructor
+         * @memberof platform/representation
          */
         function GestureRepresenter(gestureService, scope, element) {
             var gestureHandle;
@@ -69,10 +71,12 @@ define(
                  *        definition of the representation in use
                  * @param {DomainObject} domainObject the domain object
                  *        being represented
+                 * @memberof platform/representation.GestureRepresenter#
                  */
                 represent: represent,
                 /**
                  * Release any resources associated with this representer.
+                 * @memberof platform/representation.GestureRepresenter#
                  */
                 destroy: destroy
             };

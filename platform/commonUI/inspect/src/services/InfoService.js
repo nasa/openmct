@@ -31,6 +31,7 @@ define(
 
         /**
          * Displays informative content ("info bubbles") for the user.
+         * @memberof platform/commonUI/inspect
          * @constructor
          */
         function InfoService($compile, $document, $window, $rootScope) {
@@ -85,6 +86,7 @@ define(
                  *        pixel coordinates.
                  * @returns {Function} a function that may be invoked to
                  *          dismiss the info bubble
+                 * @memberof platform/commonUI/inspect.InfoService#
                  */
                 display: display
             };
@@ -93,3 +95,4 @@ define(
         return InfoService;
     }
 );
+

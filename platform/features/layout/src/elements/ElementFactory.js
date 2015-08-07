@@ -85,6 +85,7 @@ define(
          * The ElementFactory creates new instances of elements for the
          * fixed position view, prompting for user input where necessary.
          * @param {DialogService} dialogService service to request user input
+         * @memberof platform/features/layout
          * @constructor
          */
         function ElementFactory(dialogService) {
@@ -94,6 +95,7 @@ define(
                  * @param {string} type the type of element to create
                  * @returns {Promise|object} the created element, or a promise
                  *          for that element
+                 * @memberof platform/features/layout.ElementFactory#
                  */
                 createElement: function (type) {
                     var initialState = INITIAL_STATES[type] || {};

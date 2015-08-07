@@ -39,6 +39,7 @@ define(
         /**
          * Launches a custom context menu for the domain object it contains.
          *
+         * @memberof platform/representation
          * @constructor
          * @param $compile Angular's $compile service
          * @param $document the current document

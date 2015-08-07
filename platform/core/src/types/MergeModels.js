@@ -64,6 +64,8 @@ define(
          * @param b the second object to be merged
          * @param merger the merger, as described above
          * @returns {*} the result of merging `a` and `b`
+         * @constructor
+         * @memberof platform/core
          */
         function mergeModels(a, b, merger) {
             var mergeFunction;

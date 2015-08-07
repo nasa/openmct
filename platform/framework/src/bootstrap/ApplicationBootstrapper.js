@@ -38,6 +38,7 @@ define(
          * framework needs to wait until all extensions have been loaded
          * and registered.
          *
+         * @memberof platform/framework
          * @constructor
          */
         function ApplicationBootstrapper(angular, document, $log) {
@@ -49,6 +50,7 @@ define(
                  * @memberof ApplicationBootstrapper#
                  * @param {angular.Module} app the Angular application to
                  *        bootstrap
+                 * @memberof platform/framework.ApplicationBootstrapper#
                  */
                 bootstrap: function (app) {
                     $log.info("Bootstrapping application " + (app || {}).name);

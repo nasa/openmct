@@ -30,6 +30,7 @@ define(
          * This is used to support drag handles for line elements
          * in a fixed position view. Field names for opposite ends
          * are provided to avoid zero-length lines.
+         * @memberof platform/features/layout
          * @constructor
          * @param element the line element
          * @param {string} xProperty field which stores x position
@@ -43,6 +44,7 @@ define(
                  * Get/set the x position of the lower-right corner
                  * of the handle-controlled element, changing size
                  * as necessary.
+                 * @memberof platform/features/layout.LineHandle#
                  */
                 x: function (value) {
                     if (arguments.length > 0) {
@@ -60,6 +62,7 @@ define(
                  * Get/set the y position of the lower-right corner
                  * of the handle-controlled element, changing size
                  * as necessary.
+                 * @memberof platform/features/layout.LineHandle#
                  */
                 y: function (value) {
                     if (arguments.length > 0) {

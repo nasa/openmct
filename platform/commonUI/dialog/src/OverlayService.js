@@ -43,6 +43,7 @@ define(
          * particularly where a multiple-overlay effect is not specifically
          * desired).
          *
+         * @memberof platform/commonUI/dialog
          * @constructor
          */
         function OverlayService($document, $compile, $rootScope) {
@@ -89,6 +90,7 @@ define(
                  * @param {object} overlayModel the model to pass to the
                  *        included overlay template (this will be passed
                  *        in via ng-model)
+                 * @memberof platform/commonUI/dialog.OverlayService#
                  */
                 createOverlay: createOverlay
             };

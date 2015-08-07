@@ -29,6 +29,8 @@ define(
 
         /**
          * Add one domain object to another's composition.
+         * @constructor
+         * @memberof platform/commonUI/edit
          */
         function LinkAction(context) {
             var domainObject = (context || {}).domainObject,
@@ -58,6 +60,7 @@ define(
             return {
                 /**
                  * Perform this action.
+                 * @memberof platform/commonUI/edit.LinkAction#
                  */
                 perform: function () {
                     return selectedId && doLink();
