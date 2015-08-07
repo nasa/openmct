@@ -26,6 +26,13 @@ define(
     function (PersistenceFailureDialog, PersistenceFailureConstants) {
         "use strict";
 
+        /**
+         * Handle failures to persist domain object models.
+         * @param $q Angular's `$q`
+         * @param {DialogService} dialogService the dialog service
+         * @constructor
+         * @memberof platform/persistence/queue
+         */
         function PersistenceFailureHandler($q, dialogService) {
             // Refresh revision information for the domain object associated
             // with this persistence failure
@@ -121,8 +128,7 @@ define(
                  * to overwrite/cancel as appropriate.
                  * @param {Array} failures persistence failures, as prepared
                  *        by PersistenceQueueHandler
-                 * @constructor
-                 * @memberof platform/persistence/queue
+                 * @memberof platform/persistence/queue.PersistenceFailureHandler#
                  */
                 handle: handleFailures
             };
