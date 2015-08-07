@@ -21,12 +21,6 @@
  *****************************************************************************/
 /*global define*/
 
-/**
- * Defines type property conversions, used to convert values from
- * a domain object model to values displayable in a form, and
- * vice versa.
- * @module core/type/type-property-conversion
- */
 define(
     function () {
         'use strict';

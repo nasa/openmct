@@ -22,7 +22,7 @@
 /*global define*/
 
 
-/**
+/*
  * An editable domain object cache stores domain objects that have been
  * made editable, in a group that can be saved all-at-once. This supports
  * Edit mode, which is launched for a specific object but may contain
@@ -32,8 +32,6 @@
  * to ensure that changes made while in edit mode do not propagate up
  * to the objects used in browse mode (or to persistence) until the user
  * initiates a Save.
- *
- * @module editor/object/editable-domain-object-cache
  */
 define(
     ["./EditableModelCache"],
@@ -53,7 +51,6 @@ define(
          * @param $q Angular's $q, for promise handling
          * @memberof platform/commonUI/edit
          * @constructor
-         * @memberof module:editor/object/editable-domain-object-cache
          */
         function EditableDomainObjectCache(EditableDomainObject, $q) {
             var cache = new EditableModelCache(),

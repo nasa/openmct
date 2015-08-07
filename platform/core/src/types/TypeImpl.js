@@ -21,14 +21,6 @@
  *****************************************************************************/
 /*global define*/
 
-/**
- * Type implementation. Defines a type object which wraps a
- * type definition and exposes useful methods for inspecting
- * that type and understanding its relationship to other
- * types.
- *
- * @module core/type/type-impl
- */
 define(
     ['./TypeProperty'],
     function (TypeProperty) {
@@ -41,7 +33,6 @@ define(
          * @param {TypeDefinition} typeDef an object containing
          *        key-value pairs describing a type and its
          *        relationship to other types.
-         * @memberof module:core/type/type-impl
          * @constructor
          * @memberof platform/core
          */

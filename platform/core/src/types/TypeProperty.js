@@ -21,12 +21,6 @@
  *****************************************************************************/
 /*global define*/
 
-/**
- * Type property. Defines a mutable or displayable property
- * associated with objects of a given type.
- *
- * @module core/type/type-property
- */
 define(
     ['./TypePropertyConversion'],
     function (TypePropertyConversion) {
@@ -38,7 +32,6 @@ define(
          *
          * @memberof platform/core
          * @constructor
-         * @memberof module:core/type/type-property
          */
         function TypeProperty(propertyDefinition) {
             // Load an appropriate conversion

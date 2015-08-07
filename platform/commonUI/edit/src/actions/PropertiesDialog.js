@@ -21,12 +21,6 @@
  *****************************************************************************/
 /*global define*/
 
-/**
- * Defines the PropertiesDialog, used by the PropertiesAction to
- * populate the form shown in dialog based on the created type.
- *
- * @module common/actions/properties-dialog
- */
 define(
     function () {
         'use strict';
@@ -39,7 +33,6 @@ define(
          * @param {DomainObject} the object for which properties will be set
          * @memberof platform/commonUI/edit
          * @constructor
-         * @memberof module:common/actions/properties-dialog
          */
         function PropertiesDialog(type, model) {
             var properties = type.getProperties();

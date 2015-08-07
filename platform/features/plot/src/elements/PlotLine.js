@@ -27,6 +27,11 @@ define(
         "use strict";
 
 
+        /**
+         * Represents a single line or trace of a plot.
+         * @param {{PlotLineBuffer}} buffer the plot buffer
+         * @constructor
+         */
         function PlotLine(buffer) {
 
             // Insert a time-windowed data series into the buffer
@@ -70,8 +75,7 @@ define(
                  * Add a point to this plot line.
                  * @param {number} domainValue the domain value
                  * @param {number} rangeValue the range value
-                 * @constructor
-                 * @memberof platform/features/plot
+                 * @memberof platform/features/plot.PlotLine
                  */
                 addPoint: function (domainValue, rangeValue) {
                     var index;
@@ -100,6 +104,7 @@ define(
                  *        to use when looking up data from this series
                  * @param {string} [range] the key indicating which range
                  *        to use when looking up data from this series
+                 * @memberof platform/features/plot.PlotLine
                  */
                 addSeries: function (series, domain, range) {
                     // Should try to add via insertion if a

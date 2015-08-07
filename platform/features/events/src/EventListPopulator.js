@@ -31,10 +31,11 @@ define(
 		 * values which should appear within columns of a event list
 		 * view, based on received telemetry data.
 		 * @constructor
+		 * @memberof platform/features/events
 		 * @param {Column[]} columns the columns to be populated
 		 */
 		function EventListPopulator(columns) {
-			/**
+			/*
 			 * Look up the most recent values from a set of data objects.
 			 * Returns an array of objects in the order in which data
 			 * should be displayed; each element is an object with
@@ -116,6 +117,7 @@ define(
 				/**
 				 * Get the text which should appear in headers for the
 				 * provided columns.
+				 * @memberof platform/features/events.EventListPopulator
 				 * @returns {string[]} column headers
 				 */
 				getHeaders: function () {
@@ -130,6 +132,7 @@ define(
 				 *        provided the data sets; these should match
 				 *        index-to-index with the `datas` argument
 				 * @param {number} count the number of rows to populate
+				 * @memberof platform/features/events.EventListPopulator
 				 * @returns {string[][]} an array of rows, each of which
 				 *          is an array of values which should appear
 				 *          in that row

@@ -21,12 +21,6 @@
  *****************************************************************************/
 /*global define*/
 
-/**
- * Defines the CreateWizard, used by the CreateAction to
- * populate the form shown in dialog based on the created type.
- *
- * @module core/action/create-wizard
- */
 define(
     function () {
         'use strict';
@@ -39,7 +33,6 @@ define(
          *        the initial parent for the created object, in the dialog
          * @memberof platform/commonUI/browse
          * @constructor
-         * @memberof module:core/action/create-wizard
          */
         function CreateWizard(type, parent, policyService) {
             var model = type.getInitialModel(),
