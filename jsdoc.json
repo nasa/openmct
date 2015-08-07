@@ -5,5 +5,8 @@
         ],
         "includePattern": "platform/.+\\.js$",
         "excludePattern": ".+\\Spec\\.js$|lib/.+"
-    }
+    },
+    "plugins": [
+        "plugins/markdown"
+    ]
 }
