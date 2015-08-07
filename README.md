@@ -77,7 +77,7 @@ To run:
 
 * Install protractor following the instructions above.
 * `webdriver-manager start`
-* `node app.js -p 1984 -x platform/persistence/elastic -i example/persistence
+* `node app.js -p 1984 -x platform/persistence/elastic -i example/persistence`
 * `protractor protractor/conf.js`
 
 ## Build
