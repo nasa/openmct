@@ -19,11 +19,37 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global module,browser*/
-
-module.exports = function launch() {
-    'use strict';
-    browser.ignoreSynchronization = true;
-    browser.get('http://localhost:1984/warp');
-    browser.sleep(2000);  // 2 seconds
-};
+var itemCreate = require("./common/CreateItem");
+var itemEdit = require("./common/EditItem");
+var right_click = require("./common/RightMenu.js");
+    
+describe('Create Folder', function() {
+    var clickClass = new right_click();
+    var createClass = new itemCreate();
+    var editItemClass = new itemEdit();
+    var ITEM_NAME = "Folder";
+    var ITEM_TYPE = "folder";
+    var ITEM_MENU_GLYPH = 'F\nFolder';
+    var ITEM_GRID_SELECT = 'P\nF\nFolder\n0 Items';
+    var ITEM_SIDE_SELECT = ">\nF\nFolder"
+    
+    beforeEach(function() {
+            browser.ignoreSynchronization = true;
+            browser.get('http://localhost:1984/warp/');
+            browser.sleep(2000);  // 20 seconds
+    });
+    it('should Create new Folder', function(){
+        browser.sleep(10000);
+        for(var i=0; i < 1000; i++){
+            browser.wait(function() {
+               createClass.createButton().click(); 
+               return true;    
+            }).then(function (){
+                element.all(by.css('.items-holder.grid.abs.ng-scope')).click();  
+            })
+        }
+        browser.pause();
+                
+    });
+     
+});

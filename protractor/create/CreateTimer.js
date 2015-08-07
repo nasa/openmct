@@ -63,7 +63,11 @@ describe('Create Timer', function() {
         browser.sleep(1000)
         var timer = element(by.css('.value.ng-binding.active'))
         timer.getText().then(function (time) {
-            expect(time).toEqual("0D 00:00:01")
+            var timerChecker = false;
+            if(time == "0D 00:00:01" || time == "0D 00:00:02"){
+                timerChecker = true;
+            }
+            expect(timerChecker).toEqual(true)
         })
     });
 
