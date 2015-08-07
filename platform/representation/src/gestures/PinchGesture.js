@@ -81,9 +81,7 @@ define(
                     element.off('touchstart', pinchAction);
                     element.off('touchmove', pinchAction);
                     element.off('touchend', pinchAction);
-                    element.unbind('touchstart');
-                    element.unbind('touchmove');
-                    element.unbind('touchend');
+                    element.unbind();
                 }
             };
         }

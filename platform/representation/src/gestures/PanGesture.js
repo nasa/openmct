@@ -73,9 +73,7 @@ define(
                     element.off('touchstart', panAction);
                     element.off('touchmove', panAction);
                     element.off('touchend', panAction);
-                    element.unbind('touchstart');
-                    element.unbind('touchmove');
-                    element.unbind('touchend');
+                    element.unbind();
                 }
             };
         }
