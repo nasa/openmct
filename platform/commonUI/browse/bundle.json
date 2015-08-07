@@ -56,7 +56,7 @@
                 "key": "browse-object",
                 "templateUrl": "templates/browse-object.html",
                 "uses": [ "view" ],
-                "gestures": [ "pinch" ]
+                "gestures": [ "pinch", "pan" ]
             },
             {
                 "key": "create-button",

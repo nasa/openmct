@@ -40,7 +40,7 @@ define(
          * @param {DomainObject} domainObject the domain object which
          *        is represented; this will be passed on drop.
          */
-        function PinchGesture($log, agentService, element, domainObject) {
+        function PanGesture($log, agentService, element, domainObject) {
             // Gets name of current domainobject
             var currentObjectName = domainObject.getCapability('type').getName();
             
@@ -48,34 +48,26 @@ define(
                 return [event.clientX, event.clientY];
             }
             
-            function calculateDistance(coordOne, coordTwo) {
-                var squareX = Math.pow(coordOne[0] - coordTwo[0], 2),
-                    squareY = Math.pow(coordOne[1] - coordTwo[1], 2);
-                return Math.sqrt(squareX + squareY);
-            }
-            
-            function pinchAction(event) {
-                if (event.changedTouches.length === 2) {
-                    var touchPosOne = trackPosition(event.changedTouches[0]),
-                        touchPosTwo = trackPosition(event.changedTouches[1]),
-                        distance = calculateDistance(touchPosOne, touchPosTwo);
+            function panAction(event) {
+                if (event.changedTouches.length === 1) {
+                    var touchPos = trackPosition(event.changedTouches[0]);
                     
-                    $log.warn("DIST: " + distance);
+                    $log.warn("PAN POS: " + touchPos);
                     
-                    event.preventDefault();
+//                    event.preventDefault();
                 }
             }
             
             if (agentService.isMobile(navigator.userAgent) && currentObjectName !== "Folder") {
-                element.on('touchstart', pinchAction);
-                element.on('touchmove', pinchAction);
-                element.on('touchend', pinchAction);
+                element.on('touchstart', panAction);
+                element.on('touchmove', panAction);
+                element.on('touchend', panAction);
             }
             return {
 
             };
         }
 
-        return PinchGesture;
+        return PanGesture;
     }
 );
