@@ -39,7 +39,6 @@ define(
          * @param {ActionContext} context the context in which this action is performed
          * @memberof platform/commonUI/edit
          * @constructor
-         * @memberof module:editor/actions/remove-action
          */
         function RemoveAction($q, context) {
             var object = (context || {}).domainObject;

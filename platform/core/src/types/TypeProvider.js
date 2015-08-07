@@ -57,7 +57,6 @@ define(
          *        definitions for this type.
          * @memberof platform/core
          * @constructor
-         * @memberof module:core/type/type-provider
          */
         function TypeProvider(types) {
             var rawTypeDefinitions = types,
