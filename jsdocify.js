@@ -31,7 +31,20 @@
         rewriter._transform = function (chunk, encoding, done) {
             var data = String(chunk);
             if (!reachedConstructor) {
-                if (data.match(/^ *\* @constructor/)) {
+                // First, check for constructors missing @constructor
+                if (data.match(/^ *\*\//) && data.indexOf("*") > 3) {
+                    // Track position to detect inner methods
+                    starDepth = data.indexOf("*");
+                    reachedConstructor = true;
+                    // Add a @memberof <namespace> annotation
+                    this.push(spaces(starDepth) + "* @constructor\n");
+                    this.push([
+                        spaces(starDepth),
+                        "* @memberof ",
+                        bundleName(filename),
+                        "\n"
+                    ].join(""));
+                } else if (data.match(/^ *\* @constructor/)) {
                     // Track position to detect inner methods
                     starDepth = data.indexOf("*");
                     reachedConstructor = true;
