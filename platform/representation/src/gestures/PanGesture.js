@@ -54,7 +54,7 @@ define(
                     
                     $log.warn("PAN POS: " + touchPos);
                     
-//                    event.preventDefault();
+                    event.preventDefault();
                 }
             }
             
@@ -64,7 +64,19 @@ define(
                 element.on('touchend', panAction);
             }
             return {
-
+                /**
+                 * Detach any event handlers associated with this gesture.
+                 * @method
+                 * @memberof PanGesture
+                 */
+                destroy: function () {
+                    element.off('touchstart', panAction);
+                    element.off('touchmove', panAction);
+                    element.off('touchend', panAction);
+                    element.unbind('touchstart');
+                    element.unbind('touchmove');
+                    element.unbind('touchend');
+                }
             };
         }
 

@@ -60,7 +60,7 @@ define(
                         touchPosTwo = trackPosition(event.changedTouches[1]),
                         distance = calculateDistance(touchPosOne, touchPosTwo);
                     
-                    $log.warn("DIST: " + distance);
+                    $log.warn("PINCH DIST: " + distance);
                     
                     event.preventDefault();
                 }
@@ -72,7 +72,19 @@ define(
                 element.on('touchend', pinchAction);
             }
             return {
-
+/**
+                 * Detach any event handlers associated with this gesture.
+                 * @method
+                 * @memberof PinchGesture
+                 */
+                destroy: function () {
+                    element.off('touchstart', pinchAction);
+                    element.off('touchmove', pinchAction);
+                    element.off('touchend', pinchAction);
+                    element.unbind('touchstart');
+                    element.unbind('touchmove');
+                    element.unbind('touchend');
+                }
             };
         }
 
