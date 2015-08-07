@@ -21,6 +21,11 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * This bundle implements a persistence service which uses CouchDB to
+ * store documents.
+ * @namespace platform/persistence/cache
+ */
 define(
     ["./CouchDocument"],
     function (CouchDocument) {

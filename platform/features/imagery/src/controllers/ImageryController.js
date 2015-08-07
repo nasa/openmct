@@ -21,6 +21,10 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * This bundle implements views of image telemetry.
+ * @namespace platform/features/imagery
+ */
 define(
     ['moment'],
     function (moment) {

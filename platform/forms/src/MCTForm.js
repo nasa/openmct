@@ -22,7 +22,9 @@
 /*global define,Promise*/
 
 /**
- * Module defining MCTForm. Created by vwoeltje on 11/10/14.
+ * This bundle implements directives for displaying and handling forms for
+ * user input.
+ * @namespace platform/forms
  */
 define(
     ["./controllers/FormController"],

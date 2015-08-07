@@ -22,7 +22,8 @@
 /*global define,Promise*/
 
 /**
- * Module defining EditController. Created by vwoeltje on 11/14/14.
+ * This bundle implements Edit mode.
+ * @namespace platform/commonUI/edit
  */
 define(
     ["../objects/EditableDomainObject"],

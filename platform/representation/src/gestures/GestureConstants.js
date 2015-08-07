@@ -30,7 +30,6 @@ define({
      * The string identifier for the data type used for drag-and-drop
      * composition of domain objects. (e.g. in event.dataTransfer.setData
      * calls.)
-     * @constructor
      * @memberof platform/representation.GestureConstants
      */
     MCT_DRAG_TYPE: 'mct-domain-object-id',

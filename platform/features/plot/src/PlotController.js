@@ -22,7 +22,8 @@
 /*global define*/
 
 /**
- * Module defining PlotController. Created by vwoeltje on 11/12/14.
+ * This bundle adds a "Plot" view for numeric telemetry data.
+ * @namespace platform/features/plot
  */
 define(
     [

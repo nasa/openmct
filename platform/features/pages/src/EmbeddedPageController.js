@@ -21,6 +21,11 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * This bundle adds the Web Page object type, which can be used to embed
+ * other web pages with layouts.
+ * @namespace platform/features/pages
+ */
 define(
     [],
     function () {

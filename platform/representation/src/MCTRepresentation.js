@@ -22,7 +22,9 @@
 /*global define,Promise*/
 
 /**
- * Module defining MCTRepresentation. Created by vwoeltje on 11/7/14.
+ * This bundle implements the directives for representing domain objects
+ * as Angular-managed HTML.
+ * @namespace platform/representation
  */
 define(
     [],

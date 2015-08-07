@@ -22,7 +22,8 @@
 /*global define,Promise*/
 
 /**
- * Module defining ListController. Created by vwoeltje on 11/18/14.
+ * This bundle implements a "Scrolling List" view of telemetry data.
+ * @namespace platform/features/scrolling
  */
 define(
     ["./NameColumn", "./DomainColumn", "./RangeColumn", "./ScrollingListPopulator"],

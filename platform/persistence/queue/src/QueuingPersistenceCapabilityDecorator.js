@@ -22,7 +22,10 @@
 /*global define,Promise*/
 
 /**
- * Module defining CoreCapabilityProvider. Created by vwoeltje on 11/7/14.
+ * This bundle decorates the persistence service to handle persistence
+ * in batches, and to provide notification of persistence errors in batches
+ * as well.
+ * @namespace platform/persistence/queue
  */
 define(
     ['./QueuingPersistenceCapability'],

@@ -21,6 +21,11 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * This bundle implements object types and associated views for
+ * display-building.
+ * @namespace platform/features/layout
+ */
 define(
     ['./LayoutDrag'],
     function (LayoutDrag) {

@@ -21,10 +21,15 @@
  *****************************************************************************/
 /*global define*/
 
-/**
+/*
  * Module defining EventListController. 
  * Created by chacskaylo on 06/18/2015. 
  * Modified by shale on 06/23/2015.
+ */
+
+/**
+ * This bundle implements the "Events" view of string telemetry.
+ * @namespace platform/features/events
  */
 define(
     ["./DomainColumn", "./RangeColumn", "./EventListPopulator"],

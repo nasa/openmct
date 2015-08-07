@@ -22,7 +22,8 @@
 /*global define,Promise*/
 
 /**
- * Module defining BrowseController. Created by vwoeltje on 11/7/14.
+ * This bundle implements Browse mode.
+ * @namespace platform/commonUI/browse
  */
 define(
     [],

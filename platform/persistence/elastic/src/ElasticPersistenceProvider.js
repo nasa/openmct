@@ -21,6 +21,11 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * This bundle implements a persistence service which uses ElasticSearch to
+ * store documents.
+ * @namespace platform/persistence/elastic
+ */
 define(
     [],
     function () {

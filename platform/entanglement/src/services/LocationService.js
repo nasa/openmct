@@ -22,6 +22,11 @@
 
 /*global define */
 
+/**
+ * This bundle implements actions which control the location of objects
+ * (move, copy, link.)
+ * @namespace platform/entanglement
+ */
 define(
     function () {
         "use strict";

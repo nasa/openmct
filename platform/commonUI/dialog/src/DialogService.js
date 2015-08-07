@@ -22,7 +22,9 @@
 /*global define*/
 
 /**
- * Module defining DialogService. Created by vwoeltje on 11/10/14.
+ * This bundle implements the dialog service, which can be used to
+ * launch dialogs for user input & notifications.
+ * @namespace platform/commonUI/dialog
  */
 define(
     [],

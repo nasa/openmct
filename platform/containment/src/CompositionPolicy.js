@@ -21,6 +21,11 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * This bundle implements "containment" rules, which determine which objects
+ * can be contained within which other objects.
+ * @namespace platform/containment
+ */
 define(
     ['./ContainmentTable'],
     function (ContainmentTable) {

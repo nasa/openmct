@@ -22,7 +22,9 @@
 /*global define*/
 
 /**
- * Module defining TelemetryProvider. Created by vwoeltje on 11/12/14.
+ * This bundle provides infrastructure and utility services for handling
+ * telemetry data.
+ * @namespace platform/telemetry
  */
 define(
     [],

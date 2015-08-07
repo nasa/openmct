@@ -21,6 +21,11 @@
  *****************************************************************************/
 /*global define*/
 
+
+/**
+ * Implements Open MCT Web's About dialog.
+ * @namespace platform/commonUI/about
+ */
 define(
     [],
     function () {

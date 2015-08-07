@@ -21,6 +21,11 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * This bundle decorates the persistence service to maintain a local cache
+ * of persisted documents.
+ * @namespace platform/persistence/cache
+ */
 define(
     [],
     function () {

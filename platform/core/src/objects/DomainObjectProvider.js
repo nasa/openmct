@@ -22,7 +22,9 @@
 /*global define,Promise*/
 
 /**
- * Module defining DomainObjectProvider. Created by vwoeltje on 11/7/14.
+ * This bundle implements core components of Open MCT Web's service
+ * infrastructure and information model.
+ * @namespace platform/core
  */
 define(
     ["./DomainObject"],

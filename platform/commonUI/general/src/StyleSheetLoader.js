@@ -21,6 +21,11 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * This bundle provides various general-purpose UI elements, including
+ * platform styling.
+ * @namespace platform/commonUI/general
+ */
 define(
     [],
     function () {

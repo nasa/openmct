@@ -21,6 +21,12 @@
  *****************************************************************************/
 /*global define*/
 
+
+/**
+ * This bundle contains services for managing the flow of execution,
+ * such as support for running web workers on background threads.
+ * @namespace platform/execution
+ */
 define(
     [],
     function () {

@@ -21,6 +21,10 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * This bundle implements the policy service.
+ * @namespace platform/policy
+ */
 define(
     [],
     function () {
