@@ -44,13 +44,20 @@ define(
                     implPromise = loader.load(implPath),
                     definition = extension.getDefinition();
 
+                // Wrap a constructor function (to avoid modifying the original)
+                function constructorFor(impl) {
+                    function Constructor() {
+                        return impl.apply(this, arguments);
+                    }
+                    Constructor.prototype = impl.prototype;
+                    return Constructor;
+                }
+
                 // Attach values from the object definition to the
                 // loaded implementation.
                 function attachDefinition(impl) {
                     var result = (typeof impl === 'function') ?
-                            function () {
-                                return impl.apply({}, arguments);
-                            } :
+                            constructorFor(impl) :
                             Object.create(impl);
 
                     // Copy over static properties

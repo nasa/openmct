@@ -46,7 +46,6 @@ define(
                     var key = extension.key,
                         dependencies = extension.depends || [];
 
-
                     if (!key) {
                         $log.warn([
                             "Cannot register ",
