@@ -2,19 +2,30 @@ E2e Protractor Tests.
 
 1. Instructions:
 
-    1. ctrl.sh: contains start up, stop, and run scripts.
-            * May need to modify DIRECTORY variable to reflect location of MMAP. *
-        -start: This will start 3 processes: MMAP, webdriver, and elastic search, all 3 are needed. 
-        -run: run will run the protractor tests. (protractor conf.js)
-        -stop: stop will kill the 3 process started by the start command. 
-    
-    2. example:
-        cd protractor
-        ./ctrl.sh start
-        ./ctrl.sh run
-            *Note: multiple test can be run at this point.
-        ./ctrl.sh stop        
-    
+    1. 3 Control Scripts located in bin/.
+        run.js : node script used to start tests
+        start.js : node script used to setup test(starts node,localstorage and webdriver)
+        stop.js :  node script, kills the 3 process started in start.js.
+        
+    2. Use npm(Node Package Mangager) to Run Scripts.
+        *"npm link" will put the scripts on your system path. 
+        a. cd protractor;
+        b. npm install;
+        c. npm link; (optional)
+        d. script_name
+            -start
+            -run
+            -stop
+        
+        (optional: Scripts NOT on path)
+        a. To Run
+            -./bin/start.js 
+            -./bin/run.js 
+            -./bin/stop.js 
+    3. To remove the scripts from path run
+        -npm unlink
+        
+
 2. Directory Hierachy:
 
     -protractor: base directory

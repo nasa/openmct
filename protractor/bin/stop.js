@@ -29,6 +29,16 @@ ps.list(function(err, results) {
               console.log(stdout);
               });
           }
+          if((process.command.indexOf("protractor")) != -1) {
+              console.log();
+              console.log( 'Killing Protractor Driver: %s', process.command);
+              ps.kill(process.pid, function(err, stdout) {
+              if (err){
+                  throw new Error(err);
+              }
+              console.log(stdout);
+              });
+          }
       });
 });
 

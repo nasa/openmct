@@ -11,7 +11,7 @@ try {
 ///Users/jsanderf/git/elastic/wtd/protractor/bin
 var startdir = process.cwd();
 var command;
-
+mkdir(__dirname + '/../logs');
 
 command = __dirname + "/../node_modules/protractor/bin/webdriver-manager update";
 console.log("Installing Webdriver");
