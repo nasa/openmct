@@ -33,17 +33,17 @@ define(
          * @constructor
          */
         function LicenseController(licenses) {
-            return {
-                /**
-                 * Get license information.
-                 * @returns {Array} license extensions
-                 * @memberof platform/commonUI/about.LicenseController#
-                 */
-                licenses: function () {
-                    return licenses;
-                }
-            };
+            this.licenseDefinitions = licenses;
         }
+
+        /**
+         * Get license information.
+         * @returns {Array} license extensions
+         * @memberof platform/commonUI/about.LicenseController#
+         */
+        LicenseController.prototype.licenses = function () {
+            return this.licenseDefinitions;
+        };
 
         return LicenseController;
     }

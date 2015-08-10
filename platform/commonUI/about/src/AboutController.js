@@ -41,30 +41,28 @@ define(
          * @param $window Angular-injected window object
          */
         function AboutController(versions, $window) {
-            return {
-                /**
-                 * Get version info. This is given as an array of
-                 * objects, where each object is intended to appear
-                 * as a line-item in the version information listing.
-                 * @memberof AboutController#
-                 * @returns {object[]} version information
-                 * @memberof platform/commonUI/about.AboutController#
-                 */
-                versions: function () {
-                    return versions;
-                },
-                /**
-                 * Open a new window (or tab, depending on browser
-                 * configuration) containing open source licenses.
-                 * @memberof AboutController#
-                 * @memberof platform/commonUI/about.AboutController#
-                 */
-                openLicenses: function () {
-                    // Open a new browser window at the licenses route
-                    $window.open("#/licenses");
-                }
-            };
+            this.versionDefinitions = versions;
+            this.$window = $window;
         }
+
+        /**
+         * Get version info. This is given as an array of
+         * objects, where each object is intended to appear
+         * as a line-item in the version information listing.
+         * @returns {object[]} version information
+         */
+        AboutController.prototype.versions = function () {
+            return this.versionDefinitions;
+        };
+
+        /**
+         * Open a new window (or tab, depending on browser
+         * configuration) containing open source licenses.
+         */
+        AboutController.prototype.openLicenses = function () {
+            // Open a new browser window at the licenses route
+            this.$window.open("#/licenses");
+        };
 
         return AboutController;
     }
