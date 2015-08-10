@@ -22,7 +22,7 @@
 /*global define,Promise*/
 
 /**
- * Module defining DragGesture. Created by vwoeltje on 11/17/14.
+ * Module defining PanGesture. Created by shivamndave on 8/7/15.
  */
 define(
     ['./GestureConstants'],
@@ -35,6 +35,7 @@ define(
          *
          * @constructor
          * @param $log Angular's logging service
+         * @param agentService User Agent service that gets device info
          * @param element the jqLite-wrapped element which should become
          *        draggable
          * @param {DomainObject} domainObject the domain object which
@@ -44,25 +45,32 @@ define(
             // Gets name of current domainobject
             var currentObjectName = domainObject.getCapability('type').getName();
             
+            // Returns position of touch event
             function trackPosition(event) {
                 return [event.clientX, event.clientY];
             }
             
+            // On a touch the positon is 
+            // tracked and returned
             function panAction(event) {
                 if (event.changedTouches.length === 1) {
                     var touchPos = trackPosition(event.changedTouches[0]);
                     
                     $log.warn("PAN POS: " + touchPos);
                     
+                    // Stops other gestures/button clicks from being active
                     event.preventDefault();
                 }
             }
             
+            // If on a mobile device and the currently represented object is
+            // not a folder, than read touch start, move, and end events
             if (agentService.isMobile(navigator.userAgent) && currentObjectName !== "Folder") {
                 element.on('touchstart', panAction);
                 element.on('touchmove', panAction);
                 element.on('touchend', panAction);
             }
+            
             return {
                 /**
                  * Detach any event handlers associated with this gesture.

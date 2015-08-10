@@ -22,7 +22,7 @@
 /*global define,Promise*/
 
 /**
- * Module defining DragGesture. Created by vwoeltje on 11/17/14.
+ * Module defining PinchGesture. Created by shivamndave on 8/7/15.
  */
 define(
     ['./GestureConstants'],
@@ -35,6 +35,7 @@ define(
          *
          * @constructor
          * @param $log Angular's logging service
+         * @param agentService User Agent service that gets device info
          * @param element the jqLite-wrapped element which should become
          *        draggable
          * @param {DomainObject} domainObject the domain object which
@@ -44,10 +45,12 @@ define(
             // Gets name of current domainobject
             var currentObjectName = domainObject.getCapability('type').getName();
             
+            // Returns position of touch event
             function trackPosition(event) {
                 return [event.clientX, event.clientY];
             }
             
+            // Calculates distance between two points
             function calculateDistance(coordOne, coordTwo) {
                 var squareX = Math.pow(coordOne[0] - coordTwo[0], 2),
                     squareY = Math.pow(coordOne[1] - coordTwo[1], 2);
@@ -56,23 +59,29 @@ define(
             
             function pinchAction(event) {
                 if (event.changedTouches.length === 2) {
+                    // Gets touch positions for separate fingers
+                    // and then calculates the distance between them
                     var touchPosOne = trackPosition(event.changedTouches[0]),
                         touchPosTwo = trackPosition(event.changedTouches[1]),
                         distance = calculateDistance(touchPosOne, touchPosTwo);
                     
                     $log.warn("PINCH DIST: " + distance);
                     
+                    // Stops other gestures/button clicks from being active
                     event.preventDefault();
                 }
             }
             
+            // If on a mobile device and the currently represented object is
+            // not a folder, than read touch start, move, and end events
             if (agentService.isMobile(navigator.userAgent) && currentObjectName !== "Folder") {
                 element.on('touchstart', pinchAction);
                 element.on('touchmove', pinchAction);
                 element.on('touchend', pinchAction);
             }
+            
             return {
-/**
+                /**
                  * Detach any event handlers associated with this gesture.
                  * @method
                  * @memberof PinchGesture
