@@ -41,14 +41,16 @@ define(
             context = context || {};
 
             this.urlService = urlService;
-            this.$window = $window;
+            this.open = function () {
+                $window.open.apply($window, arguments)
+            };
 
             // Choose the object to be opened into a new tab
             this.domainObject = context.selectedObject || context.domainObject;
         }
 
         NewTabAction.prototype.perform = function () {
-            this.$window.open(
+            this.open(
                 this.urlService.urlForNewTab("browse", this.domainObject),
                 "_blank"
             );
