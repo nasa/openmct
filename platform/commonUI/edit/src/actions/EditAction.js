@@ -44,6 +44,7 @@ define(
          * route)
          * @memberof platform/commonUI/edit
          * @constructor
+         * @implements {Action}
          */
         function EditAction($location, navigationService, $log, context) {
             var domainObject = (context || {}).domainObject;
@@ -61,17 +62,18 @@ define(
                 return NULL_ACTION;
             }
 
-            return {
-                /**
-                 * Enter edit mode.
-                 * @memberof platform/commonUI/edit.EditAction#
-                 */
-                perform: function () {
-                    navigationService.setNavigation(domainObject);
-                    $location.path("/edit");
-                }
-            };
+            this.domainObject = domainObject;
+            this.$location = $location;
+            this.navigationService = navigationService;
         }
+
+        /**
+         * Enter edit mode.
+         */
+        EditAction.prototype.perform = function () {
+            this.navigationService.setNavigation(this.domainObject);
+            this.$location.path("/edit");
+        };
 
         /**
          * Check for applicability; verify that a domain object is present

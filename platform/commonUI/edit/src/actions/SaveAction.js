@@ -31,10 +31,26 @@ define(
          * Edit Mode. Exits the editing user interface and invokes object
          * capabilities to persist the changes that have been made.
          * @constructor
+         * @implements {Action}
          * @memberof platform/commonUI/edit
          */
         function SaveAction($location, urlService, context) {
-            var domainObject = context.domainObject;
+            this.domainObject = (context || {}).domainObject;
+            this.$location = $location;
+            this.urlService = urlService;
+        }
+
+        /**
+         * Save changes and conclude editing.
+         *
+         * @returns {Promise} a promise that will be fulfilled when
+         *          cancellation has completed
+         * @memberof platform/commonUI/edit.SaveAction#
+         */
+        SaveAction.prototype.perform = function () {
+            var domainObject = this.domainObject,
+                $location = this.$location,
+                urlService = this.urlService;
 
             // Invoke any save behavior introduced by the editor capability;
             // this is introduced by EditableDomainObject which is
@@ -53,19 +69,8 @@ define(
                 ));
             }
 
-            return {
-                /**
-                 * Save changes and conclude editing.
-                 *
-                 * @returns {Promise} a promise that will be fulfilled when
-                 *          cancellation has completed
-                 * @memberof platform/commonUI/edit.SaveAction#
-                 */
-                perform: function () {
-                    return doSave().then(returnToBrowse);
-                }
-            };
-        }
+            return doSave().then(returnToBrowse);
+        };
 
         /**
          * Check if this action is applicable in a given context.

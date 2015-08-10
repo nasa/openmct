@@ -31,9 +31,24 @@ define(
          * capabilities to persist the changes that have been made.
          * @constructor
          * @memberof platform/commonUI/edit
+         * @implements {Action}
          */
         function CancelAction($location, urlService, context) {
-            var domainObject = context.domainObject;
+            this.domainObject = context.domainObject;
+            this.$location = $location;
+            this.urlService = urlService;
+        }
+
+        /**
+         * Cancel editing.
+         *
+         * @returns {Promise} a promise that will be fulfilled when
+         *          cancellation has completed
+         */
+        CancelAction.prototype.perform = function () {
+            var domainObject = this.domainObject,
+                $location = this.$location,
+                urlService = this.urlService;
 
             // Look up the object's "editor.completion" capability;
             // this is introduced by EditableDomainObject which is
@@ -58,26 +73,15 @@ define(
                 )));
             }
 
-            return {
-                /**
-                 * Cancel editing.
-                 *
-                 * @returns {Promise} a promise that will be fulfilled when
-                 *          cancellation has completed
-                 * @memberof platform/commonUI/edit.CancelAction#
-                 */
-                perform: function () {
-                    return doCancel(getEditorCapability())
-                        .then(returnToBrowse);
-                }
-            };
-        }
+            return doCancel(getEditorCapability())
+                .then(returnToBrowse);
+        };
 
         /**
          * Check if this action is applicable in a given context.
          * This will ensure that a domain object is present in the context,
          * and that this domain object is in Edit mode.
-         * @returns true if applicable
+         * @returns {boolean} true if applicable
          */
         CancelAction.appliesTo = function (context) {
             var domainObject = (context || {}).domainObject;

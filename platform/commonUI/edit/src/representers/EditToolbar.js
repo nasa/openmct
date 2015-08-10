@@ -42,122 +42,19 @@ define(
          * @constructor
          */
         function EditToolbar(structure, commit) {
-            var toolbarStructure = Object.create(structure || {}),
-                toolbarState,
-                selection,
-                properties = [];
+            var self = this;
 
             // Generate a new key for an item's property
             function addKey(property) {
-                properties.push(property);
-                return properties.length - 1; // Return index of property
-            }
-
-            // Update value for this property in all elements of the
-            // selection which have this property.
-            function updateProperties(property, value) {
-                var changed = false;
-
-                // Update property in a selected element
-                function updateProperty(selected) {
-                    // Ignore selected elements which don't have this property
-                    if (selected[property] !== undefined) {
-                        // Check if this is a setter, or just assignable
-                        if (typeof selected[property] === 'function') {
-                            changed =
-                                changed || (selected[property]() !== value);
-                            selected[property](value);
-                        } else {
-                            changed =
-                                changed || (selected[property] !== value);
-                            selected[property] = value;
-                        }
-                    }
-                }
-
-                // Update property in all selected elements
-                selection.forEach(updateProperty);
-
-                // Return whether or not anything changed
-                return changed;
-            }
-
-            // Look up the current value associated with a property
-            // in selection i
-            function lookupState(property, selected) {
-                var value = selected[property];
-                return (typeof value === 'function') ? value() : value;
-            }
-
-            // Get initial value for a given property
-            function initializeState(property) {
-                var result;
-                // Look through all selections for this property;
-                // values should all match by the time we perform
-                // this lookup anyway.
-                selection.forEach(function (selected) {
-                    result = (selected[property] !== undefined) ?
-                            lookupState(property, selected) :
-                            result;
-                });
-                return result;
-            }
-
-            // Check if all elements of the selection which have this
-            // property have the same value for this property.
-            function isConsistent(property) {
-                var consistent = true,
-                    observed = false,
-                    state;
-
-                // Check if a given element of the selection is consistent
-                // with previously-observed elements for this property.
-                function checkConsistency(selected) {
-                    var next;
-                    // Ignore selections which don't have this property
-                    if (selected[property] !== undefined) {
-                        // Look up state of this element in the selection
-                        next = lookupState(property, selected);
-                        // Detect inconsistency
-                        if (observed) {
-                            consistent = consistent && (next === state);
-                        }
-                        // Track state for next iteration
-                        state = next;
-                        observed = true;
-                    }
-                }
-
-                // Iterate through selections
-                selection.forEach(checkConsistency);
-
-                return consistent;
-            }
-
-            // Used to filter out items which are applicable (or not)
-            // to the current selection.
-            function isApplicable(item) {
-                var property = (item || {}).property,
-                    method = (item || {}).method,
-                    exclusive = !!(item || {}).exclusive;
-
-                // Check if a selected item defines this property
-                function hasProperty(selected) {
-                    return (property && (selected[property] !== undefined)) ||
-                            (method && (typeof selected[method] === 'function'));
-                }
-
-                return selection.map(hasProperty).reduce(
-                    exclusive ? and : or,
-                    exclusive
-                ) && isConsistent(property);
+                self.properties.push(property);
+                return self.properties.length - 1; // Return index of property
             }
 
             // Invoke all functions in selections with the given name
             function invoke(method, value) {
                 if (method) {
                     // Make the change in the selection
-                    selection.forEach(function (selected) {
+                    self.selection.forEach(function (selected) {
                         if (typeof selected[method] === 'function') {
                             selected[method](value);
                         }
@@ -190,75 +87,169 @@ define(
                 return converted;
             }
 
+            this.toolbarState = [];
+            this.selection = undefined;
+            this.properties = [];
+            this.toolbarStructure = Object.create(structure || {});
+            this.toolbarStructure.sections =
+                ((structure || {}).sections || []).map(convertSection);
+        }
+
+        // Check if all elements of the selection which have this
+        // property have the same value for this property.
+        EditToolbar.prototype.isConsistent = function (property) {
+            var self = this,
+                consistent = true,
+                observed = false,
+                state;
+
+            // Check if a given element of the selection is consistent
+            // with previously-observed elements for this property.
+            function checkConsistency(selected) {
+                var next;
+                // Ignore selections which don't have this property
+                if (selected[property] !== undefined) {
+                    // Look up state of this element in the selection
+                    next = self.lookupState(property, selected);
+                    // Detect inconsistency
+                    if (observed) {
+                        consistent = consistent && (next === state);
+                    }
+                    // Track state for next iteration
+                    state = next;
+                    observed = true;
+                }
+            }
+
+            // Iterate through selections
+            self.selection.forEach(checkConsistency);
+
+            return consistent;
+        };
+
+        // Used to filter out items which are applicable (or not)
+        // to the current selection.
+        EditToolbar.prototype.isApplicable = function (item) {
+            var property = (item || {}).property,
+                method = (item || {}).method,
+                exclusive = !!(item || {}).exclusive;
+
+            // Check if a selected item defines this property
+            function hasProperty(selected) {
+                return (property && (selected[property] !== undefined)) ||
+                    (method && (typeof selected[method] === 'function'));
+            }
+
+            return this.selection.map(hasProperty).reduce(
+                    exclusive ? and : or,
+                    exclusive
+                ) && this.isConsistent(property);
+        };
+
+
+        // Look up the current value associated with a property
+        EditToolbar.prototype.lookupState = function (property, selected) {
+            var value = selected[property];
+            return (typeof value === 'function') ? value() : value;
+        };
+
+        /**
+         * Set the current selection. Visibility of sections
+         * and items in the toolbar will be updated to match this.
+         * @param {Array} s the new selection
+         */
+        EditToolbar.prototype.setSelection = function (s) {
+            var self = this;
+
             // Show/hide controls in this section per applicability
             function refreshSectionApplicability(section) {
                 var count = 0;
                 // Show/hide each item
                 (section.items || []).forEach(function (item) {
-                    item.hidden = !isApplicable(item);
+                    item.hidden = !self.isApplicable(item);
                     count += item.hidden ? 0 : 1;
                 });
                 // Hide this section if there are no applicable items
                 section.hidden = !count;
             }
 
-            // Show/hide controls if they are applicable
-            function refreshApplicability() {
-                toolbarStructure.sections.forEach(refreshSectionApplicability);
+            // Get initial value for a given property
+            function initializeState(property) {
+                var result;
+                // Look through all selections for this property;
+                // values should all match by the time we perform
+                // this lookup anyway.
+                self.selection.forEach(function (selected) {
+                    result = (selected[property] !== undefined) ?
+                        self.lookupState(property, selected) :
+                        result;
+                });
+                return result;
             }
 
-            // Refresh toolbar state to match selection
-            function refreshState() {
-                toolbarState = properties.map(initializeState);
-            }
+            this.selection = s;
+            this.toolbarStructure.sections.forEach(refreshSectionApplicability);
+            this.toolbarState = this.properties.map(initializeState);
+        };
 
-            toolbarStructure.sections =
-                ((structure || {}).sections || []).map(convertSection);
+        /**
+         * Get the structure of the toolbar, as appropriate to
+         * pass to `mct-toolbar`.
+         * @returns the toolbar structure
+         */
+        EditToolbar.prototype.getStructure = function () {
+            return this.toolbarStructure;
+        };
 
-            toolbarState = [];
+        /**
+         * Get the current state of the toolbar, as appropriate
+         * to two-way bind to the state handled by `mct-toolbar`.
+         * @returns {Array} state of the toolbar
+         */
+        EditToolbar.prototype.getState = function () {
+            return this.toolbarState;
+        };
 
-            return {
-                /**
-                 * Set the current selection. Visisbility of sections
-                 * and items in the toolbar will be updated to match this.
-                 * @param {Array} s the new selection
-                 * @memberof platform/commonUI/edit.EditToolbar#
-                 */
-                setSelection: function (s) {
-                    selection = s;
-                    refreshApplicability();
-                    refreshState();
-                },
-                /**
-                 * Get the structure of the toolbar, as appropriate to
-                 * pass to `mct-toolbar`.
-                 * @returns the toolbar structure
-                 * @memberof platform/commonUI/edit.EditToolbar#
-                 */
-                getStructure: function () {
-                    return toolbarStructure;
-                },
-                /**
-                 * Get the current state of the toolbar, as appropriate
-                 * to two-way bind to the state handled by `mct-toolbar`.
-                 * @returns {Array} state of the toolbar
-                 * @memberof platform/commonUI/edit.EditToolbar#
-                 */
-                getState: function () {
-                    return toolbarState;
-                },
-                /**
-                 * Update state within the current selection.
-                 * @param {number} index the index of the corresponding
-                 *        element in the state array
-                 * @param value the new value to convey to the selection
-                 * @memberof platform/commonUI/edit.EditToolbar#
-                 */
-                updateState: function (index, value) {
-                    return updateProperties(properties[index], value);
+        /**
+         * Update state within the current selection.
+         * @param {number} index the index of the corresponding
+         *        element in the state array
+         * @param value the new value to convey to the selection
+         */
+        EditToolbar.prototype.updateState = function (index, value) {
+            var self = this;
+
+            // Update value for this property in all elements of the
+            // selection which have this property.
+            function updateProperties(property, value) {
+                var changed = false;
+
+                // Update property in a selected element
+                function updateProperty(selected) {
+                    // Ignore selected elements which don't have this property
+                    if (selected[property] !== undefined) {
+                        // Check if this is a setter, or just assignable
+                        if (typeof selected[property] === 'function') {
+                            changed =
+                                changed || (selected[property]() !== value);
+                            selected[property](value);
+                        } else {
+                            changed =
+                                changed || (selected[property] !== value);
+                            selected[property] = value;
+                        }
+                    }
                 }
-            };
-        }
+
+                // Update property in all selected elements
+                self.selection.forEach(updateProperty);
+
+                // Return whether or not anything changed
+                return changed;
+            }
+
+            return updateProperties(this.properties[index], value);
+        };
 
         return EditToolbar;
     }

@@ -32,12 +32,13 @@ define(
          * @constructor
          */
         function EditPanesController($scope) {
-            var root;
+            var self = this;
 
             // Update root object based on represented object
             function updateRoot(domainObject) {
-                var context = domainObject &&
-                    domainObject.getCapability('context'),
+                var root = self.rootDomainObject,
+                    context = domainObject &&
+                        domainObject.getCapability('context'),
                     newRoot = context && context.getTrueRoot(),
                     oldId = root && root.getId(),
                     newId = newRoot && newRoot.getId();
@@ -45,25 +46,21 @@ define(
                 // Only update if this has actually changed,
                 // to avoid excessive refreshing.
                 if (oldId !== newId) {
-                    root = newRoot;
+                    self.rootDomainObject = newRoot;
                 }
             }
 
             // Update root when represented object changes
             $scope.$watch('domainObject', updateRoot);
-
-            return {
-                /**
-                 * Get the root-level domain object, as reported by the
-                 * represented domain object.
-                 * @returns {DomainObject} the root object
-                 * @memberof platform/commonUI/edit.EditPanesController#
-                 */
-                getRoot: function () {
-                    return root;
-                }
-            };
         }
+        /**
+         * Get the root-level domain object, as reported by the
+         * represented domain object.
+         * @returns {DomainObject} the root object
+         */
+        EditPanesController.prototype.getRoot = function () {
+            return this.rootDomainObject;
+        };
 
         return EditPanesController;
     }

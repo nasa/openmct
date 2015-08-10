@@ -42,14 +42,16 @@ define(
          * representations resulting from changes there.
          *
          * @memberof platform/commonUI/edit
+         * @implements {Representer}
          * @constructor
          */
         function EditRepresenter($q, $log, scope) {
-            var domainObject,
-                key;
+            var self = this;
 
             // Mutate and persist a new version of a domain object's model.
             function doPersist(model) {
+                var domainObject = self.domainObject;
+
                 // First, mutate; then, persist.
                 return $q.when(domainObject.useCapability("mutation", function () {
                     return model;
@@ -65,7 +67,8 @@ define(
                 // Look up from scope; these will have been populated by
                 // mct-representation.
                 var model = scope.model,
-                    configuration = scope.configuration;
+                    configuration = scope.configuration,
+                    domainObject = self.domainObject;
 
                 // Log the commit message
                 $log.debug([
@@ -79,51 +82,32 @@ define(
                 if (domainObject && domainObject.hasCapability("persistence")) {
                     // Configurations for specific views are stored by
                     // key in the "configuration" field of the model.
-                    if (key && configuration) {
+                    if (self.key && configuration) {
                         model.configuration = model.configuration || {};
-                        model.configuration[key] = configuration;
+                        model.configuration[self.key] = configuration;
                     }
                     doPersist(model);
                 }
             }
 
-            // Respond to the destruction of the current representation.
-            function destroy() {
-                // Nothing to clean up
-            }
-
-            // Handle a specific representation of a specific domain object
-            function represent(representation, representedObject) {
-                // Track the key, to know which view configuration to save to.
-                key = (representation || {}).key;
-                // Track the represented object
-                domainObject = representedObject;
-                // Ensure existing watches are released
-                destroy();
-            }
-
             // Place the "commit" method in the scope
             scope.commit = commit;
-
-            return {
-                /**
-                 * Set the current representation in use, and the domain
-                 * object being represented.
-                 *
-                 * @param {RepresentationDefinition} representation the
-                 *        definition of the representation in use
-                 * @param {DomainObject} domainObject the domain object
-                 *        being represented
-                 * @memberof platform/commonUI/edit.EditRepresenter#
-                 */
-                represent: represent,
-                /**
-                 * Release any resources associated with this representer.
-                 * @memberof platform/commonUI/edit.EditRepresenter#
-                 */
-                destroy: destroy
-            };
         }
+
+        // Handle a specific representation of a specific domain object
+        EditRepresenter.prototype.represent = function represent(representation, representedObject) {
+            // Track the key, to know which view configuration to save to.
+            this.key = (representation || {}).key;
+            // Track the represented object
+            this.domainObject = representedObject;
+            // Ensure existing watches are released
+            this.destroy();
+        };
+
+        // Respond to the destruction of the current representation.
+        EditRepresenter.prototype.destroy = function destroy() {
+            // Nothing to clean up
+        };
 
         return EditRepresenter;
     }

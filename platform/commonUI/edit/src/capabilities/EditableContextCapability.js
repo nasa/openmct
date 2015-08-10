@@ -37,6 +37,7 @@ define(
          * to a pattern used there and may contain unused arguments.
          * @constructor
          * @memberof platform/commonUI/edit
+         * @implements {ContextCapability}
          */
         return function EditableContextCapability(
             contextCapability,

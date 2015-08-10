@@ -70,6 +70,7 @@ define(
          * model to allow changes to be easily cancelled.
          * @constructor
          * @memberof platform/commonUI/edit
+         * @implements {DomainObject}
          */
         function EditableDomainObject(domainObject, $q) {
             // The cache will hold all domain objects reached from
@@ -94,10 +95,10 @@ define(
                             this,
                             delegateArguments
                         ),
-                        factory = capabilityFactories[name];
+                        Factory = capabilityFactories[name];
 
-                    return (factory && capability) ?
-                            factory(capability, editableObject, domainObject, cache) :
+                    return (Factory && capability) ?
+                            new Factory(capability, editableObject, domainObject, cache) :
                             capability;
                 };
 

@@ -44,7 +44,7 @@ define(
          * of objects retrieved via composition or context capabilities as
          * editable domain objects.
          *
-         * @param {Constructor<EditableDomainObject>} EditableDomainObject a
+         * @param {Constructor<DomainObject>} EditableDomainObject a
          *        constructor function which takes a regular domain object as
          *        an argument, and returns an editable domain object as its
          *        result.
@@ -53,103 +53,107 @@ define(
          * @constructor
          */
         function EditableDomainObjectCache(EditableDomainObject, $q) {
-            var cache = new EditableModelCache(),
-                dirty = {},
-                root;
-
-            return {
-                /**
-                 * Wrap this domain object in an editable form, or pull such
-                 * an object from the cache if one already exists.
-                 *
-                 * @param {DomainObject} domainObject the regular domain object
-                 * @returns {DomainObject} the domain object in an editable form
-                 * @memberof platform/commonUI/edit.EditableDomainObjectCache#
-                 */
-                getEditableObject: function (domainObject) {
-                    var type = domainObject.getCapability('type');
-
-                    // Track the top-level domain object; this will have
-                    // some special behavior for its context capability.
-                    root = root || domainObject;
-
-                    // Avoid double-wrapping (WTD-1017)
-                    if (domainObject.hasCapability('editor')) {
-                        return domainObject;
-                    }
-
-                    // Don't bother wrapping non-editable objects
-                    if (!type || !type.hasFeature('creation')) {
-                        return domainObject;
-                    }
-
-                    // Provide an editable form of the object
-                    return new EditableDomainObject(
-                        domainObject,
-                        cache.getCachedModel(domainObject)
-                    );
-                },
-                /**
-                 * Check if a domain object is (effectively) the top-level
-                 * object in this editable subgraph.
-                 * @returns {boolean} true if it is the root
-                 * @memberof platform/commonUI/edit.EditableDomainObjectCache#
-                 */
-                isRoot: function (domainObject) {
-                    return domainObject === root;
-                },
-                /**
-                 * Mark an editable domain object (presumably already cached)
-                 * as having received modifications during editing; it should be
-                 * included in the bulk save invoked when editing completes.
-                 *
-                 * @param {DomainObject} domainObject the domain object
-                 * @memberof platform/commonUI/edit.EditableDomainObjectCache#
-                 */
-                markDirty: function (domainObject) {
-                    dirty[domainObject.getId()] = domainObject;
-                },
-                /**
-                 * Mark an object (presumably already cached) as having had its
-                 * changes saved (and thus no longer needing to be subject to a
-                 * save operation.)
-                 *
-                 * @param {DomainObject} domainObject the domain object
-                 * @memberof platform/commonUI/edit.EditableDomainObjectCache#
-                 */
-                markClean: function (domainObject) {
-                    delete dirty[domainObject.getId()];
-                },
-                /**
-                 * Initiate a save on all objects that have been cached.
-                 * @memberof platform/commonUI/edit.EditableDomainObjectCache#
-                 */
-                saveAll: function () {
-                    // Get a list of all dirty objects
-                    var objects = Object.keys(dirty).map(function (k) {
-                        return dirty[k];
-                    });
-
-                    // Clear dirty set, since we're about to save.
-                    dirty = {};
-
-                    // Most save logic is handled by the "editor.completion"
-                    // capability, so that is delegated here.
-                    return $q.all(objects.map(function (object) {
-                        // Save; pass a nonrecursive flag to avoid looping
-                        return object.getCapability('editor').save(true);
-                    }));
-                },
-                /**
-                 * Check if any objects have been marked dirty in this cache.
-                 * @returns {boolean} true if objects are dirty
-                 * @memberof platform/commonUI/edit.EditableDomainObjectCache#
-                 */
-                dirty: function () {
-                    return Object.keys(dirty).length > 0;
-                }
-            };
+            this.cache = new EditableModelCache();
+            this.dirtyObjects = {};
+            this.root = undefined;
+            this.$q = $q;
+            this.EditableDomainObject = EditableDomainObject;
         }
+
+        /**
+         * Wrap this domain object in an editable form, or pull such
+         * an object from the cache if one already exists.
+         *
+         * @param {DomainObject} domainObject the regular domain object
+         * @returns {DomainObject} the domain object in an editable form
+         */
+        EditableDomainObjectCache.prototype.getEditableObject = function (domainObject) {
+            var type = domainObject.getCapability('type'),
+                EditableDomainObject = this.EditableDomainObject;
+
+            // Track the top-level domain object; this will have
+            // some special behavior for its context capability.
+            this.root = this.root || domainObject;
+
+            // Avoid double-wrapping (WTD-1017)
+            if (domainObject.hasCapability('editor')) {
+                return domainObject;
+            }
+
+            // Don't bother wrapping non-editable objects
+            if (!type || !type.hasFeature('creation')) {
+                return domainObject;
+            }
+
+            // Provide an editable form of the object
+            return new EditableDomainObject(
+                domainObject,
+                this.cache.getCachedModel(domainObject)
+            );
+        };
+
+        /**
+         * Check if a domain object is (effectively) the top-level
+         * object in this editable subgraph.
+         * @returns {boolean} true if it is the root
+         */
+        EditableDomainObjectCache.prototype.isRoot = function (domainObject) {
+            return domainObject === this.root;
+        };
+
+        /**
+         * Mark an editable domain object (presumably already cached)
+         * as having received modifications during editing; it should be
+         * included in the bulk save invoked when editing completes.
+         *
+         * @param {DomainObject} domainObject the domain object
+         * @memberof platform/commonUI/edit.EditableDomainObjectCache#
+         */
+        EditableDomainObjectCache.prototype.markDirty = function (domainObject) {
+            this.dirtyObjects[domainObject.getId()] = domainObject;
+        };
+
+        /**
+         * Mark an object (presumably already cached) as having had its
+         * changes saved (and thus no longer needing to be subject to a
+         * save operation.)
+         *
+         * @param {DomainObject} domainObject the domain object
+         */
+        EditableDomainObjectCache.prototype.markClean = function (domainObject) {
+            delete this.dirtyObjects[domainObject.getId()];
+        };
+
+        /**
+         * Initiate a save on all objects that have been cached.
+         * @return {Promise} A promise which will resolve when all objects are
+         *         persisted.
+         */
+        EditableDomainObjectCache.prototype.saveAll = function () {
+            // Get a list of all dirty objects
+            var dirty = this.dirtyObjects,
+                objects = Object.keys(dirty).map(function (k) {
+                    return dirty[k];
+                });
+
+            // Clear dirty set, since we're about to save.
+            this.dirtyObjects = {};
+
+            // Most save logic is handled by the "editor.completion"
+            // capability, so that is delegated here.
+            return this.$q.all(objects.map(function (object) {
+                // Save; pass a nonrecursive flag to avoid looping
+                return object.getCapability('editor').save(true);
+            }));
+        };
+
+        /**
+         * Check if any objects have been marked dirty in this cache.
+         * @returns {boolean} true if objects are dirty
+         */
+        EditableDomainObjectCache.prototype.dirty = function () {
+            return Object.keys(this.dirtyObjects).length > 0;
+        };
 
         return EditableDomainObjectCache;
     }

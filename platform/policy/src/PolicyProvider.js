@@ -31,6 +31,29 @@ define(
         "use strict";
 
         /**
+         * A policy is a participant in decision-making policies. Policies
+         * are divided into categories (identified symbolically by strings);
+         * within a given category, every given policy-driven decision will
+         * occur by consulting all available policies and requiring their
+         * collective consent (that is, every individual policy has the
+         * power to reject the decision entirely.)
+         *
+         * @interface Policy
+         * @template C, X
+         */
+
+        /**
+         * Check if this policy allows the described decision. The types
+         * of the arguments expected here vary depending on policy category.
+         *
+         * @method Policy#allow
+         * @template C, X
+         * @param {C} candidate the thing to allow or disallow
+         * @param {X} context the context in which the decision occurs
+         * @returns {boolean} false if disallowed; otherwise, true
+         */
+
+        /**
          * Provides an implementation of `policyService` which consults
          * various policy extensions to determine whether or not a specific
          * decision should be allowed.

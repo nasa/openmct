@@ -35,56 +35,55 @@ define(
          * @constructor
          */
         function PropertiesDialog(type, model) {
-            var properties = type.getProperties();
-
-            return {
-                /**
-                 * Get sections provided by this dialog.
-                 * @return {FormStructure} the structure of this form
-                 * @memberof platform/commonUI/edit.PropertiesDialog#
-                 */
-                getFormStructure: function () {
-                    return {
-                        name: "Edit " + model.name,
-                        sections: [{
-                            name: "Properties",
-                            rows: properties.map(function (property, index) {
-                                // Property definition is same as form row definition
-                                var row = Object.create(property.getDefinition());
-                                row.key = index;
-                                return row;
-                            })
-                        }]
-                    };
-                },
-                /**
-                 * Get the initial state of the form shown by this dialog
-                 * (based on the object model)
-                 * @returns {object} initial state of the form
-                 * @memberof platform/commonUI/edit.PropertiesDialog#
-                 */
-                getInitialFormValue: function () {
-                    // Start with initial values for properties
-                    // Note that index needs to correlate to row.key
-                    // from getFormStructure
-                    return properties.map(function (property) {
-                        return property.getValue(model);
-                    });
-                },
-                /**
-                 * Update a domain object model based on the value of a form.
-                 * @memberof platform/commonUI/edit.PropertiesDialog#
-                 */
-                updateModel: function (model, formValue) {
-                    // Update all properties
-                    properties.forEach(function (property, index) {
-                        property.setValue(model, formValue[index]);
-                    });
-                }
-            };
-
-
+            this.type = type;
+            this.model = model;
+            this.properties = type.getProperties();
         }
+
+        /**
+         * Get sections provided by this dialog.
+         * @return {FormStructure} the structure of this form
+         */
+        PropertiesDialog.prototype.getFormStructure = function () {
+            return {
+                name: "Edit " + this.model.name,
+                sections: [{
+                    name: "Properties",
+                    rows: this.properties.map(function (property, index) {
+                        // Property definition is same as form row definition
+                        var row = Object.create(property.getDefinition());
+                        row.key = index;
+                        return row;
+                    })
+                }]
+            };
+        };
+
+        /**
+         * Get the initial state of the form shown by this dialog
+         * (based on the object model)
+         * @returns {object} initial state of the form
+         */
+        PropertiesDialog.prototype.getInitialFormValue = function () {
+            var model = this.model;
+
+            // Start with initial values for properties
+            // Note that index needs to correlate to row.key
+            // from getFormStructure
+            return this.properties.map(function (property) {
+                return property.getValue(model);
+            });
+        };
+
+        /**
+         * Update a domain object model based on the value of a form.
+         */
+        PropertiesDialog.prototype.updateModel = function (model, formValue) {
+            // Update all properties
+            this.properties.forEach(function (property, index) {
+                property.setValue(model, formValue[index]);
+            });
+        };
 
         return PropertiesDialog;
     }

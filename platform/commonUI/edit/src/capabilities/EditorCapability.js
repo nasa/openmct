@@ -42,26 +42,45 @@ define(
          * @constructor
          * @memberof platform/commonUI/edit
          */
-        return function EditorCapability(
+        function EditorCapability(
             persistenceCapability,
             editableObject,
             domainObject,
             cache
         ) {
+            this.editableObject = editableObject;
+            this.domainObject = domainObject;
+            this.cache = cache;
+        }
 
-            // Simulate Promise.resolve (or $q.when); the former
-            // causes a delayed reaction from Angular (since it
-            // does not trigger a digest) and the latter is not
-            // readily accessible, since we're a few classes
-            // removed from the layer which gets dependency
-            // injection.
-            function resolvePromise(value) {
-                return (value && value.then) ? value : {
-                    then: function (callback) {
-                        return resolvePromise(callback(value));
-                    }
-                };
-            }
+        // Simulate Promise.resolve (or $q.when); the former
+        // causes a delayed reaction from Angular (since it
+        // does not trigger a digest) and the latter is not
+        // readily accessible, since we're a few classes
+        // removed from the layer which gets dependency
+        // injection.
+        function resolvePromise(value) {
+            return (value && value.then) ? value : {
+                then: function (callback) {
+                    return resolvePromise(callback(value));
+                }
+            };
+        }
+
+        /**
+         * Save any changes that have been made to this domain object
+         * (as well as to others that might have been retrieved and
+         * modified during the editing session)
+         * @param {boolean} nonrecursive if true, save only this
+         *        object (and not other objects with associated changes)
+         * @returns {Promise} a promise that will be fulfilled after
+         *          persistence has completed.
+         * @memberof platform/commonUI/edit.EditorCapability#
+         */
+        EditorCapability.prototype.save = function (nonrecursive) {
+            var domainObject = this.domainObject,
+                editableObject = this.editableObject,
+                cache = this.cache;
 
             // Update the underlying, "real" domain object's model
             // with changes made to the copy used for editing.
@@ -76,42 +95,32 @@ define(
                 return domainObject.getCapability('persistence').persist();
             }
 
-            return {
-                /**
-                 * Save any changes that have been made to this domain object
-                 * (as well as to others that might have been retrieved and
-                 * modified during the editing session)
-                 * @param {boolean} nonrecursive if true, save only this
-                 *        object (and not other objects with associated changes)
-                 * @returns {Promise} a promise that will be fulfilled after
-                 *          persistence has completed.
-                 * @memberof platform/commonUI/edit.EditorCapability#
-                 */
-                save: function (nonrecursive) {
-                    return nonrecursive ?
-                            resolvePromise(doMutate()).then(doPersist) :
-                            resolvePromise(cache.saveAll());
-                },
-                /**
-                 * Cancel editing; Discard any changes that have been made to
-                 * this domain object (as well as to others that might have
-                 * been retrieved and modified during the editing session)
-                 * @returns {Promise} a promise that will be fulfilled after
-                 *          cancellation has completed.
-                 * @memberof platform/commonUI/edit.EditorCapability#
-                 */
-                cancel: function () {
-                    return resolvePromise(undefined);
-                },
-                /**
-                 * Check if there are any unsaved changes.
-                 * @returns {boolean} true if there are unsaved changes
-                 * @memberof platform/commonUI/edit.EditorCapability#
-                 */
-                dirty: function () {
-                    return cache.dirty();
-                }
-            };
+            return nonrecursive ?
+                resolvePromise(doMutate()).then(doPersist) :
+                resolvePromise(cache.saveAll());
         };
+
+        /**
+         * Cancel editing; Discard any changes that have been made to
+         * this domain object (as well as to others that might have
+         * been retrieved and modified during the editing session)
+         * @returns {Promise} a promise that will be fulfilled after
+         *          cancellation has completed.
+         * @memberof platform/commonUI/edit.EditorCapability#
+         */
+        EditorCapability.prototype.cancel = function () {
+            return resolvePromise(undefined);
+        };
+
+        /**
+         * Check if there are any unsaved changes.
+         * @returns {boolean} true if there are unsaved changes
+         * @memberof platform/commonUI/edit.EditorCapability#
+         */
+        EditorCapability.prototype.dirty = function () {
+            return cache.dirty();
+        };
+
+        return EditorCapability;
     }
 );
