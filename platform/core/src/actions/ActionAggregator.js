@@ -26,6 +26,76 @@ define(
         "use strict";
 
         /**
+         * Actions are reusable processes/behaviors performed by users within
+         * the system, typically upon domain objects. Actions are commonly
+         * exposed to users as menu items or buttons.
+         *
+         * Actions are usually registered via the `actions` extension
+         * category, or (in advanced cases) via an `actionService`
+         * implementation.
+         *
+         * @interface Action
+         */
+
+        /**
+         * Perform the behavior associated with this action. The return type
+         * may vary depending on which action has been performed; in general,
+         * no return value should be expected.
+         *
+         * @method Action#perform
+         */
+
+        /**
+         * Get metadata associated with this action.
+         *
+         * @method Action#getMetadata
+         * @returns {ActionMetadata}
+         */
+
+        /**
+         * Metadata associated with an Action. Actions of specific types may
+         * extend this with additional properties.
+         *
+         * @typedef {Object} ActionMetadata
+         * @property {string} key machine-readable identifier for this action
+         * @property {string} name human-readable name for this action
+         * @property {string} description human-readable description
+         * @property {string} glyph character to display as icon
+         * @property {ActionContext} context the context in which the action
+         *           will be performed.
+         */
+
+        /**
+         * Provides actions that can be performed within specific contexts.
+         *
+         * @interface ActionService
+         */
+
+        /**
+         * Get actions which can be performed within a certain context.
+         *
+         * @method ActionService#getActions
+         * @param {ActionContext} context the context in which the action will
+         *        be performed
+         * @return {Action[]} relevant actions
+         */
+
+        /**
+         * A description of the context in which an action may occur.
+         *
+         * @typedef ActionContext
+         * @property {DomainObject} [domainObject] the domain object being
+         *           acted upon.
+         * @property {DomainObject} [selectedObject] the selection at the
+         *           time of action (e.g. the dragged object in a
+         *           drag-and-drop operation.)
+         * @property {string} [key] the machine-readable identifier of
+         *           the relevant action
+         * @property {string} [category] a string identifying the category
+         *           of action being performed
+         */
+
+        /**
          * The ActionAggregator makes several actionService
          * instances act as those they were one. When requesting
          * actions for a given context, results from all
@@ -33,7 +103,8 @@ define(
          *
          * @memberof platform/core
          * @constructor
-         * @param {ActionProvider[]} actionProviders an array
+         * @implements {ActionService}
+         * @param {ActionService[]} actionProviders an array
          *        of action services
          */
         function ActionAggregator(actionProviders) {

@@ -36,67 +36,52 @@ define(
          * @constructor
          */
         function NavigationService() {
-            var navigated,
-                callbacks = [];
+            this.navigated = undefined;
+            this.callbacks = [];
+        }
 
-            // Getter for current navigation
-            function getNavigation() {
-                return navigated;
-            }
+        /**
+         * Get the current navigation state.
+         * @returns {DomainObject} the object that is navigated-to
+         */
+        NavigationService.prototype.getNavigation = function () {
+            return this.navigated;
+        };
 
-            // Setter for navigation; invokes callbacks
-            function setNavigation(value) {
-                if (navigated !== value) {
-                    navigated = value;
-                    callbacks.forEach(function (callback) {
-                        callback(value);
-                    });
-                }
-            }
-
-            // Adds a callback
-            function addListener(callback) {
-                callbacks.push(callback);
-            }
-
-            // Filters out a callback
-            function removeListener(callback) {
-                callbacks = callbacks.filter(function (cb) {
-                    return cb !== callback;
+        /**
+         * Set the current navigation state. This will invoke listeners.
+         * @param {DomainObject} domainObject the domain object to navigate to
+         */
+        NavigationService.prototype.setNavigation = function (value) {
+            if (this.navigated !== value) {
+                this.navigated = value;
+                this.callbacks.forEach(function (callback) {
+                    callback(value);
                 });
             }
+        };
 
-            return {
-                /**
-                 * Get the current navigation state.
-                 * @memberof platform/commonUI/browse.NavigationService#
-                 */
-                getNavigation: getNavigation,
-                /**
-                 * Set the current navigation state. Thiswill invoke listeners.
-                 * @param {DomainObject} value the domain object to navigate
-                 *        to
-                 * @memberof platform/commonUI/browse.NavigationService#
-                 */
-                setNavigation: setNavigation,
-                /**
-                 * Listen for changes in navigation. The passed callback will
-                 * be invoked with the new domain object of navigation when
-                 * this changes.
-                 * @param {function} callback the callback to invoke when
-                 *        navigation state changes
-                 * @memberof platform/commonUI/browse.NavigationService#
-                 */
-                addListener: addListener,
-                /**
-                 * Stop listening for changes in navigation state.
-                 * @param {function} callback the callback which should
-                 *        no longer be invoked when navigation state
-                 *        changes
-                 * @memberof platform/commonUI/browse.NavigationService#
-                 */
-                removeListener: removeListener
-            };
+        /**
+         * Listen for changes in navigation. The passed callback will
+         * be invoked with the new domain object of navigation when
+         * this changes.
+         * @param {function} callback the callback to invoke when
+         *        navigation state changes
+         */
+        NavigationService.prototype.addListener = function (callback) {
+            this.callbacks.push(callback);
+        }
+
+        /**
+         * Stop listening for changes in navigation state.
+         * @param {function} callback the callback which should
+         *        no longer be invoked when navigation state
+         *        changes
+         */
+        NavigationService.prototype.removeListener = function (callback) {
+            this.callbacks = this.callbacks.filter(function (cb) {
+                return cb !== callback;
+            });
         }
 
         return NavigationService;

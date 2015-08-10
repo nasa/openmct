@@ -35,33 +35,24 @@ define(
          * into a new browser tab.
          * @memberof platform/commonUI/browse
          * @constructor
+         * @implements {Action}
          */
         function NewTabAction(urlService, $window, context) {
-            // Returns the selected domain object
-            // when using the context menu or the top right button
-            // based on the context and the existance of the object
-            // It is set to object an returned
-            function getSelectedObject() {
-                var object;
-                if (context.selectedObject) {
-                    object = context.selectedObject;
-                } else {
-                    object = context.domainObject;
-                }
-                return object;
-            }
-            
-            return {
-                // Performs the open in new tab function
-                // By calling the url service, the mode needed
-                // (browse) and the domainObject is passed in and
-                // the path is returned and opened in a new tab
-                perform: function () {
-                    $window.open(urlService.urlForNewTab("browse", getSelectedObject()),
-                                "_blank");
-                }
-            };
+            context = context || {};
+
+            this.urlService = urlService;
+            this.$window = $window;
+
+            // Choose the object to be opened into a new tab
+            this.domainObject = context.selectedObject || context.domainObject;
         }
+
+        NewTabAction.prototype.perform = function () {
+            this.$window.open(
+                this.urlService.urlForNewTab("browse", this.domainObject),
+                "_blank"
+            );
+        };
 
         return NewTabAction;
     }

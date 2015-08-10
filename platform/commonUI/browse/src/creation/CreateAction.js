@@ -35,7 +35,9 @@ define(
          * is performed when a user uses the Create menu.
          *
          * @memberof platform/commonUI/browse
+         * @implements {Action}
          * @constructor
+         *
          * @param {Type} type the type of domain object to create
          * @param {DomainObject} parent the domain object that should
          *        act as a container for the newly-created object
@@ -50,79 +52,83 @@ define(
          *        of the newly-created domain object
          */
         function CreateAction(type, parent, context, dialogService, creationService, policyService) {
+            this.metadata = {
+                key: 'create',
+                glyph: type.getGlyph(),
+                name: type.getName(),
+                type: type.getKey(),
+                description: type.getDescription(),
+                context: context
+            };
+
+            this.type = type;
+            this.parent = parent;
+            this.policyService = policyService;
+            this.dialogService = dialogService;
+            this.creationService = creationService;
+        }
+
+        /**
+         * Create a new object of the given type.
+         * This will prompt for user input first.
+         */
+        CreateAction.prototype.perform = function () {
             /*
              Overview of steps in object creation:
 
              1. Show dialog
-               a. Prepare dialog contents
-               b. Invoke dialogService
+             a. Prepare dialog contents
+             b. Invoke dialogService
              2. Create new object in persistence service
-               a. Generate UUID
-               b. Store model
+             a. Generate UUID
+             b. Store model
              3. Mutate destination container
-               a. Get mutation capability
-               b. Add new id to composition
+             a. Get mutation capability
+             b. Add new id to composition
              4. Persist destination container
-               a. ...use persistence capability.
+             a. ...use persistence capability.
              */
 
-            function perform() {
-                // The wizard will handle creating the form model based
-                // on the type...
-                var wizard = new CreateWizard(type, parent, policyService);
+            // The wizard will handle creating the form model based
+            // on the type...
+            var wizard =
+                new CreateWizard(this.type, this.parent, this.policyService),
+                self = this;
 
-                // Create and persist the new object, based on user
-                // input.
-                function persistResult(formValue) {
-                    var parent = wizard.getLocation(formValue),
-                        newModel = wizard.createModel(formValue);
-                    return creationService.createObject(newModel, parent);
-                }
-
-                function doNothing() {
-                    // Create cancelled, do nothing
-                    return false;
-                }
-
-                return dialogService.getUserInput(
-                    wizard.getFormStructure(),
-                    wizard.getInitialFormValue()
-                ).then(persistResult, doNothing);
+            // Create and persist the new object, based on user
+            // input.
+            function persistResult(formValue) {
+                var parent = wizard.getLocation(formValue),
+                    newModel = wizard.createModel(formValue);
+                return self.creationService.createObject(newModel, parent);
             }
 
-            return {
-                /**
-                 * Create a new object of the given type.
-                 * This will prompt for user input first.
-                 * @method
-                 * @memberof CreateAction
-                 * @memberof platform/commonUI/browse.CreateAction#
-                 */
-                perform: perform,
+            function doNothing() {
+                // Create cancelled, do nothing
+                return false;
+            }
 
-                /**
-                 * Get metadata about this action. This includes fields:
-                 * * `name`: Human-readable name
-                 * * `key`: Machine-readable identifier ("create")
-                 * * `glyph`: Glyph to use as an icon for this action
-                 * * `description`: Human-readable description
-                 * * `context`: The context in which this action will be performed.
-                 *
-                 * @return {object} metadata about the create action
-                 * @memberof platform/commonUI/browse.CreateAction#
-                 */
-                getMetadata: function () {
-                    return {
-                        key: 'create',
-                        glyph: type.getGlyph(),
-                        name: type.getName(),
-                        type: type.getKey(),
-                        description: type.getDescription(),
-                        context: context
-                    };
-                }
-            };
-        }
+            return this.dialogService.getUserInput(
+                wizard.getFormStructure(),
+                wizard.getInitialFormValue()
+            ).then(persistResult, doNothing);
+        };
+
+
+        /**
+         * Metadata associated with a Create action.
+         * @typedef {ActionMetadata} CreateActionMetadata
+         * @property {string} type the key for the type of domain object
+         *           to be created
+         */
+
+        /**
+         * Get metadata about this action.
+         * @returns {CreateActionMetadata} metadata about this action
+         */
+        CreateAction.prototype.getMetadata = function () {
+           return this.metadata;
+        };
 
         return CreateAction;
     }

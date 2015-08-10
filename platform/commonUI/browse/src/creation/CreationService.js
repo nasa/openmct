@@ -43,12 +43,35 @@ define(
          * @constructor
          */
         function CreationService(persistenceService, $q, $log) {
+            this.persistenceService = persistenceService;
+            this.$q = $q;
+            this.$log = $log;
+        }
+
+        /**
+         * Create a new domain object with the provided model, as
+         * a member of the provided parent domain object's composition.
+         * This parent will additionally determine which persistence
+         * space an object is created within (as it is possible to
+         * have multiple persistence spaces attached.)
+         *
+         * @param {object} model the model for the newly-created
+         *        domain object
+         * @param {DomainObject} parent the domain object which
+         *        should contain the newly-created domain object
+         *        in its composition
+         * @return {Promise} a promise that will resolve when the domain
+         *         object has been created
+         */
+        CreationService.prototype.createObject = function (model, parent) {
+            var persistence = parent.getCapability("persistence"),
+                self = this;
 
             // Persist the new domain object's model; it will be fully
             // constituted as a domain object when loaded back, as all
             // domain object models are.
             function doPersist(space, id, model) {
-                return persistenceService.createObject(
+                return self.persistenceService.createObject(
                     space,
                     id,
                     model
@@ -67,14 +90,14 @@ define(
                         }
                     } else {
                         // This is abnormal; composition should be an array
-                        $log.warn(NO_COMPOSITION_WARNING + parent.getId());
+                        self.$log.warn(NO_COMPOSITION_WARNING + parent.getId());
                         return false; // Cancel mutation
                     }
                 });
 
-                return $q.when(mutatationResult).then(function (result) {
+                return self.$q.when(mutatationResult).then(function (result) {
                     if (!result) {
-                        $log.error("Could not mutate " + parent.getId());
+                        self.$log.error("Could not mutate " + parent.getId());
                         return undefined;
                     }
 
@@ -94,49 +117,25 @@ define(
                 });
             }
 
-            // Create a new domain object with the provided model as a
-            // member of the specified parent's composition
-            function createObject(model, parent) {
-                var persistence = parent.getCapability("persistence");
+            // We need the parent's persistence capability to determine
+            // what space to create the new object's model in.
+            if (!persistence) {
+                self.$log.warn(NON_PERSISTENT_WARNING);
+                return self.$q.reject(new Error(NON_PERSISTENT_WARNING));
+            }
 
-                // We need the parent's persistence capability to determine
-                // what space to create the new object's model in.
-                if (!persistence) {
-                    $log.warn(NON_PERSISTENT_WARNING);
-                    return $q.reject(new Error(NON_PERSISTENT_WARNING));
-                }
-
-                // We create a new domain object in three sequential steps:
-                // 1. Get a new UUID for the object
-                // 2. Create a model with that ID in the persistence space
-                // 3. Add that ID to
-                return $q.when(
-                    uuid()
-                ).then(function (id) {
+            // We create a new domain object in three sequential steps:
+            // 1. Get a new UUID for the object
+            // 2. Create a model with that ID in the persistence space
+            // 3. Add that ID to
+            return self.$q.when(uuid()).then(function (id) {
                     return doPersist(persistence.getSpace(), id, model);
                 }).then(function (id) {
                     return addToComposition(id, parent, persistence);
                 });
-            }
+        };
 
-            return {
-                /**
-                 * Create a new domain object with the provided model, as
-                 * a member of the provided parent domain object's composition.
-                 * This parent will additionally determine which persistence
-                 * space an object is created within (as it is possible to
-                 * have multiple persistence spaces attached.)
-                 *
-                 * @param {object} model the model for the newly-created
-                 *        domain object
-                 * @param {DomainObject} parent the domain object which
-                 *        should contain the newly-created domain object
-                 *        in its composition
-                 * @memberof platform/commonUI/browse.CreationService#
-                 */
-                createObject: createObject
-            };
-        }
+
 
         return CreationService;
     }

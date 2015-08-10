@@ -33,24 +33,24 @@ define(
          * The navigate action navigates to a specific domain object.
          * @memberof platform/commonUI/browse
          * @constructor
+         * @implements {Action}
          */
         function NavigateAction(navigationService, $q, context) {
-            var domainObject = context.domainObject;
+            this.domainObject = context.domainObject;
+            this.$q = $q;
+            this.navigationService = navigationService;
+        }
 
-            function perform() {
-                // Set navigation, and wrap like a promise
-                return $q.when(navigationService.setNavigation(domainObject));
-            }
-
-            return {
-                /**
-                 * Navigate to the object described in the context.
-                 * @returns {Promise} a promise that is resolved once the
-                 *          navigation has been updated
-                 * @memberof platform/commonUI/browse.NavigateAction#
-                 */
-                perform: perform
-            };
+        /**
+         * Navigate to the object described in the context.
+         * @returns {Promise} a promise that is resolved once the
+         *          navigation has been updated
+         */
+        NavigateAction.prototype.perform = function () {
+            // Set navigation, and wrap like a promise
+            return this.$q.when(
+                this.navigationService.setNavigation(this.domainObject)
+            );
         }
 
         /**
