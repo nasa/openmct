@@ -34,18 +34,37 @@
     .search {
         
         .search-bar {
-            width: 100%;
+            $heightAdjust: 4px;
+            $textInputHeight: 19px;
             
-            .search-icon {
-                color: $colorItemTreeIcon;
-                float: left;
-                font-size: $iconWidth;
-                margin-right: 2px;
-            }
+            width: 100%;
+            margin-top: $heightAdjust;
             
             .search-input {
-                width: 120px;
+                width: 100%;
                 float: left;
+                
+                position: relative;
+                top: -$heightAdjust;
+            }
+            
+            .search-icon {
+                color: $colorItemFg;
+                font-size: 12px;//$iconWidth;
+                
+                // Make the icon within the left edge of the input area
+                margin-left: 3px;
+                float: left;
+                width: 0;
+                height: 0;
+                
+                // Line up icon with text input vertically
+                margin-top: -$textInputHeight;
+            }
+            
+            .search-input:focus~div.search-icon {
+                // Make icon invisible when the text input is focused
+                display: none;
             }
         }
         

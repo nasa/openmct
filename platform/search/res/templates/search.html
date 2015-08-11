@@ -25,14 +25,14 @@
     <!-- Search bar input -->
     <!-- ui symbols for search are 'd' and 'M' -->
     <div class="search-bar">
-        <div class="search-icon ui-symbol">
-            d
-        </div>
         <input class="search-input"
                type="text"
                ng-model="ngModel.input"
-               ng-keyup="controller.search()" />
-        
+               ng-keyup="controller.search()"
+               id="searchInput" />
+        <div class="ui-symbol search-icon">
+            M
+        </div>
         <!--mct-control key="textfield"
                      class="search-input"
                      ng-model="ngModel.input">
