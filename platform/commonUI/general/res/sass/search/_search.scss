@@ -41,11 +41,9 @@
             margin-top: $heightAdjust;
             
             .search-input {
-                width: 100%;
-                float: left;
-                
                 position: relative;
                 top: -$heightAdjust;
+                width: 100%;
             }
             
             .search-icon {
@@ -54,7 +52,6 @@
                 
                 // Make the icon within the left edge of the input area
                 margin-left: 3px;
-                float: left;
                 width: 0;
                 height: 0;
                 
