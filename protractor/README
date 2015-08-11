@@ -37,8 +37,17 @@ E2e Protractor Tests.
               -Contains tests that test the UI(drag drop, fullscreen, info bubble)    
           -conf.js: 
               -protractor config file. Explained below  
-      
+          -stressTest:
+                Tests that are used to test for memory leaks. You can use the new tab option on WARP and then open the
+                timeline in the new tab during the browser.sleep(). Once the test is do the browser will pause and you
+                can look a the timeline results in the new tab.
     
+                NOTE: Cannot open chrome dev tools on same tab as the test are run on. Protractor uses the dev tools to
+                exectute the tests.
+
+                    -StressTest will create and delete folders.
+                    -StressTestBubble.js: creates manny bubbles.
+                                      (Delay variable in InfoGesture.js was changed to 0)
 3. Conf.js
           Conf.js is used by protractor to setup and execute the tests.
               -allScriptsTimeout: gives more time for protractor to synchronize with the page.
@@ -50,14 +59,11 @@ E2e Protractor Tests.
             -specs[]: Is an array of files. Each File should have a "describe, it" test to be executed by protractor.
             -capabilities: Tells protractor what browser to use and any browser arguments.
             
-4. StressTest:
-            Tests that are used to test for memory leaks. You can use the new tab option on WARP and then open the 
-            timeline in the new tab during the browser.sleep(). Once the test is do the browser will pause and you can 
-            look a the timeline results in the new tab. 
-            NOTE: Cannot open chrome dev tools on same tab as the test are run on. Protractor uses the dev tools to 
-                exectute the tests.
-                    
-                    -StressTest will create and delete folders.  
-                    -StressTestBubble.js: creates manny bubbles.
-                                      (Delay variable in InfoGesture.js was changed to 0)
-          
+4. bundle.json
+        bundle.json is used by npm to determine dependencies and location of script files.
+        -Dependencies:
+            "protractor": Contains protractor and webdriver package.
+            "psnode": Window/Unix Command, used for list/kill process.(ps aux)
+            "shelljs": Window/Unix Common JS Commands. eg rm,ls,exec
+            "sleep": Window/Unix Commands used to sleep the script
+            "string": Window/Unix Commands for string manipulation.

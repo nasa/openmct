@@ -10,25 +10,32 @@ ps.list(function(err, results) {
  
   results.forEach(function( process ){
           //Killing Node
-          if((process.command.indexOf("node app.js")) != -1) {
+          if(S(process.command).contains("node app.js")) {
               console.log();
               console.log( 'Killing Node: %s', process.command);
               ps.kill(process.pid, function(err, stdout) {
-              if (err) {
-                 throw new Error(err);
-              }
-              console.log(stdout);
+                  if (err) {
+                      throw new Error(err);
+                  }
+                  console.log(stdout);
               });
-          }
-          sleep.usleep(10000);
-          if((process.command.indexOf("webdriver")) != -1) {
+          }else if(S(process.command).contains("webdriver")) {
               console.log();
               console.log( 'Killing WebDriver: %s', process.command);
               ps.kill(process.pid, function(err, stdout) {
-              if (err){
-                  throw new Error(err);
-              }
-              console.log(stdout);
+                  if (err){
+                      throw new Error(err);
+                  }
+                  console.log(stdout);
+              });
+          }else if(S(process.command).contains("protractor")) {
+              console.log();
+              console.log( 'Killing Chrome Drive: %s', process.command);
+              ps.kill(process.pid, function(err, stdout) {
+                  if (err){
+                      throw new Error(err);
+                  }
+                  console.log(stdout);
               });
           }
       });
