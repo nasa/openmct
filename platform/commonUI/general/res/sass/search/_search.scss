@@ -80,6 +80,7 @@
             // Spacing away from the search input
             top: 25px;
             overflow-y: auto;
+            padding-right: $rightPadding;
             
             .results {
 
