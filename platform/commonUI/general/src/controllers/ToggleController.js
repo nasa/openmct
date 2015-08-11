@@ -34,36 +34,32 @@ define(
          * @constructor
          */
         function ToggleController() {
-            var state = false;
-
-            return {
-                /**
-                 * Get the current state of the toggle.
-                 * @return {boolean} true if active
-                 * @memberof platform/commonUI/general.ToggleController#
-                 */
-                isActive: function () {
-                    return state;
-                },
-                /**
-                 * Set a new state for the toggle.
-                 * @return {boolean} true to activate
-                 * @memberof platform/commonUI/general.ToggleController#
-                 */
-                setState: function (newState) {
-                    state = newState;
-                },
-                /**
-                 * Toggle the current state; activate if it is inactive,
-                 * deactivate if it is active.
-                 * @memberof platform/commonUI/general.ToggleController#
-                 */
-                toggle: function () {
-                    state = !state;
-                }
-            };
-
+            this.state = false;
         }
+
+        /**
+         * Get the current state of the toggle.
+         * @return {boolean} true if active
+         */
+        ToggleController.prototype.isActive = function () {
+            return this.state;
+        };
+
+        /**
+         * Set a new state for the toggle.
+         * @return {boolean} true to activate
+         */
+        ToggleController.prototype.setState = function (newState) {
+            this.state = newState;
+        };
+
+        /**
+         * Toggle the current state; activate if it is inactive,
+         * deactivate if it is active.
+         */
+        ToggleController.prototype.toggle = function () {
+            this.state = !this.state;
+        };
 
         return ToggleController;
     }

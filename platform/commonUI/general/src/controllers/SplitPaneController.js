@@ -36,58 +36,53 @@ define(
          * @constructor
          */
         function SplitPaneController() {
-            var current = 200,
-                start = 200,
-                assigned = false;
-
-            return {
-                /**
-                 * Get the current position of the splitter, in pixels
-                 * from the left edge.
-                 * @returns {number} position of the splitter, in pixels
-                 * @memberof platform/commonUI/general.SplitPaneController#
-                 */
-                state: function (defaultState) {
-                    // Set the state to the desired default, if we don't have a
-                    // "real" current state yet.
-                    if (arguments.length > 0 && !assigned) {
-                        current = defaultState;
-                        assigned = true;
-                    }
-                    return current;
-                },
-                /**
-                 * Begin moving the splitter; this will note the splitter's
-                 * current position, which is necessary for correct
-                 * interpretation of deltas provided by mct-drag.
-                 * @memberof platform/commonUI/general.SplitPaneController#
-                 */
-                startMove: function () {
-                    start = current;
-                },
-                /**
-                 * Move the splitter a number of pixels to the right
-                 * (negative numbers move the splitter to the left.)
-                 * This movement is relative to the position of the
-                 * splitter when startMove was last invoked.
-                 * @param {number} delta number of pixels to move
-                 * @memberof platform/commonUI/general.SplitPaneController#
-                 */
-                move: function (delta, minimum, maximum) {
-                    // Ensure defaults for minimum/maximum
-                    maximum = isNaN(maximum) ? DEFAULT_MAXIMUM : maximum;
-                    minimum = isNaN(minimum) ? DEFAULT_MINIMUM : minimum;
-
-                    // Update current splitter state
-                    current = Math.min(
-                        maximum,
-                        Math.max(minimum, start + delta)
-                    );
-
-	                //console.log(current + "; minimum: " + minimum + "; max: " + maximum);
-                }
-            };
+            this.current = 200;
+            this.start = 200;
+            this.assigned = false;
         }
+
+        /**
+         * Get the current position of the splitter, in pixels
+         * from the left edge.
+         * @returns {number} position of the splitter, in pixels
+         */
+        SplitPaneController.prototype.state = function (defaultState) {
+            // Set the state to the desired default, if we don't have a
+            // "real" current state yet.
+            if (arguments.length > 0 && !this.assigned) {
+                this.current = defaultState;
+                this.assigned = true;
+            }
+            return this.current;
+        };
+
+        /**
+         * Begin moving the splitter; this will note the splitter's
+         * current position, which is necessary for correct
+         * interpretation of deltas provided by mct-drag.
+         */
+        SplitPaneController.prototype.startMove = function () {
+            this.start = this.current;
+        };
+
+        /**
+         * Move the splitter a number of pixels to the right
+         * (negative numbers move the splitter to the left.)
+         * This movement is relative to the position of the
+         * splitter when startMove was last invoked.
+         * @param {number} delta number of pixels to move
+         */
+        SplitPaneController.prototype.move = function (delta, minimum, maximum) {
+            // Ensure defaults for minimum/maximum
+            maximum = isNaN(maximum) ? DEFAULT_MAXIMUM : maximum;
+            minimum = isNaN(minimum) ? DEFAULT_MINIMUM : minimum;
+
+            // Update current splitter state
+            this.current = Math.min(
+                maximum,
+                Math.max(minimum, this.start + delta)
+            );
+        };
 
         return SplitPaneController;
     }

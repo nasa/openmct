@@ -43,20 +43,18 @@ define(
                 };
             }
 
-            indicators = indicators.map(present);
-
-            return {
-                /**
-                 * Get all indicators to display.
-                 * @returns {Indicator[]} all indicators
-                 *          to display in the bottom bar.
-                 * @memberof platform/commonUI/general.BottomBarController#
-                 */
-                getIndicators: function () {
-                    return indicators;
-                }
-            };
+            this.indicators = indicators.map(present);
         }
+
+        /**
+         * Get all indicators to display.
+         * @returns {Indicator[]} all indicators
+         *          to display in the bottom bar.
+         * @memberof platform/commonUI/general.BottomBarController#
+         */
+        BottomBarController.prototype.getIndicators = function () {
+            return this.indicators;
+        };
 
         return BottomBarController;
     }
