@@ -149,7 +149,7 @@ define(
                 }
                 
                 // If the user input is empty, we want to have no search results.
-                if (searchTerm !== '') {
+                if (searchTerm !== '' && searchTerm !== undefined) {
                     // Process the search term
                     searchTerm = processSearchTerm(searchTerm);
 

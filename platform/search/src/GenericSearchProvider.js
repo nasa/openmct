@@ -191,24 +191,31 @@ define(
                     searchResults = [],
                     defer = $q.defer();
                 
-                // Allow us to access this promise later to resolve it later
-                pendingQueries[timestamp] = defer;
+                // If the input is nonempty, do a search
+                if (input !== '' && input !== undefined) {
+                    
+                    // Allow us to access this promise later to resolve it later
+                    pendingQueries[timestamp] = defer;
                 
-                // Check to see if the user provided a maximum 
-                //   number of results to display
-                if (!maxResults) {
-                    // Else, we provide a default value
-                    maxResults = DEFAULT_MAX_RESULTS;
+                    // Check to see if the user provided a maximum 
+                    //   number of results to display
+                    if (!maxResults) {
+                        // Else, we provide a default value
+                        maxResults = DEFAULT_MAX_RESULTS;
+                    }
+                    // Similarly, check if timeout was provided
+                    if (!timeout) {
+                        timeout = DEFAULT_TIMEOUT;
+                    }
+
+                    // Send the query to the worker
+                    workerSearch(input, maxResults, timestamp, timeout);
+
+                    return defer.promise;
+                } else {
+                    // Otherwise return an empty result
+                    return {hits: [], total: 0};
                 }
-                // Similarly, check if timeout was provided
-                if (!timeout) {
-                    timeout = DEFAULT_TIMEOUT;
-                }
-                
-                // Send the query to the worker
-                workerSearch(input, maxResults, timestamp, timeout);
-                
-                return defer.promise;
             }
             
             // Index the tree's contents once at the beginning 
