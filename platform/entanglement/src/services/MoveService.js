@@ -32,55 +32,46 @@ define(
          * an object can be copied to a specific location.
          * @constructor
          * @memberof platform/entanglement
+         * @implements {platform/entanglement.AbstractComposeService}
          */
         function MoveService(policyService, linkService) {
-            return {
-                /**
-                 * Returns `true` if `object` can be moved into
-                 * `parentCandidate`'s composition.
-                 * @memberof platform/entanglement.MoveService#
-                 */
-                validate: function (object, parentCandidate) {
-                    var currentParent = object
-                        .getCapability('context')
-                        .getParent();
-
-                    if (!parentCandidate || !parentCandidate.getId) {
-                        return false;
-                    }
-                    if (parentCandidate.getId() === currentParent.getId()) {
-                        return false;
-                    }
-                    if (parentCandidate.getId() === object.getId()) {
-                        return false;
-                    }
-                    if (parentCandidate.getModel().composition.indexOf(object.getId()) !== -1) {
-                        return false;
-                    }
-                    return policyService.allow(
-                        "composition",
-                        parentCandidate.getCapability('type'),
-                        object.getCapability('type')
-                    );
-                },
-                /**
-                 * Move `object` into `parentObject`'s composition.
-                 *
-                 * @returns {Promise} A promise that is fulfilled when the
-                 *    move operation has completed.
-                 * @memberof platform/entanglement.MoveService#
-                 */
-                perform: function (object, parentObject) {
-                    return linkService
-                        .perform(object, parentObject)
-                        .then(function () {
-                            return object
-                                .getCapability('action')
-                                .perform('remove');
-                        });
-                }
-            };
+            this.policyService = policyService;
+            this.linkService = linkService;
         }
+
+        MoveService.prototype.validate = function (object, parentCandidate) {
+            var currentParent = object
+                .getCapability('context')
+                .getParent();
+
+            if (!parentCandidate || !parentCandidate.getId) {
+                return false;
+            }
+            if (parentCandidate.getId() === currentParent.getId()) {
+                return false;
+            }
+            if (parentCandidate.getId() === object.getId()) {
+                return false;
+            }
+            if (parentCandidate.getModel().composition.indexOf(object.getId()) !== -1) {
+                return false;
+            }
+            return this.policyService.allow(
+                "composition",
+                parentCandidate.getCapability('type'),
+                object.getCapability('type')
+            );
+        };
+
+        MoveService.prototype.perform = function (object, parentObject) {
+            return this.linkService
+                .perform(object, parentObject)
+                .then(function () {
+                    return object
+                        .getCapability('action')
+                        .perform('remove');
+                });
+        };
 
         return MoveService;
     }
