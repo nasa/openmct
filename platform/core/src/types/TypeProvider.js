@@ -160,28 +160,28 @@ define(
                 return Array.isArray(value) ? value : [value];
             }
 
-            function buildTypeDef(typeKey) {
-                var typeDefs = typeDefinitions[typeKey] || [],
-                    inherits = typeDefs.map(function (typeDef) {
-                        return asArray(typeDef.inherits || []);
-                    }).reduce(function (a, b) {
-                        return a.concat(b);
-                    }, []),
-                    def = collapse(
-                        [getUndefinedType()].concat(
-                            inherits.map(lookupTypeDef)
-                        ).concat(typeDefs)
-                    );
-
-                // Always provide a default name
-                def.model = def.model || {};
-                def.model.name = def.model.name ||
-                ("Unnamed " + (def.name || "Object"));
-
-                return def;
-            }
-
             function lookupTypeDef(typeKey) {
+                function buildTypeDef(typeKey) {
+                    var typeDefs = typeDefinitions[typeKey] || [],
+                        inherits = typeDefs.map(function (typeDef) {
+                            return asArray(typeDef.inherits || []);
+                        }).reduce(function (a, b) {
+                            return a.concat(b);
+                        }, []),
+                        def = collapse(
+                            [getUndefinedType()].concat(
+                                inherits.map(lookupTypeDef)
+                            ).concat(typeDefs)
+                        );
+
+                    // Always provide a default name
+                    def.model = def.model || {};
+                    def.model.name = def.model.name ||
+                    ("Unnamed " + (def.name || "Object"));
+
+                    return def;
+                }
+                
                 return (self.typeMap[typeKey] =
                     self.typeMap[typeKey] || buildTypeDef(typeKey));
             }

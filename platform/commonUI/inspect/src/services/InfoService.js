@@ -93,7 +93,7 @@ define(
 
             // Return a function to dismiss the bubble
             return function () { bubble.remove(); };
-        }
+        };
 
         return InfoService;
     }

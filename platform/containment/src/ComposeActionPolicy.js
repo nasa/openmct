@@ -60,7 +60,7 @@ define(
                 containerType,
                 selectedType
             );
-        }
+        };
 
         /**
          * Check whether or not a compose action should be allowed

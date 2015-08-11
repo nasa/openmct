@@ -70,7 +70,7 @@ define(
          */
         NavigationService.prototype.addListener = function (callback) {
             this.callbacks.push(callback);
-        }
+        };
 
         /**
          * Stop listening for changes in navigation state.
@@ -82,7 +82,7 @@ define(
             this.callbacks = this.callbacks.filter(function (cb) {
                 return cb !== callback;
             });
-        }
+        };
 
         return NavigationService;
     }

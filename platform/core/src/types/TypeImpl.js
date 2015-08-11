@@ -179,7 +179,7 @@ define(
             } else {
                 return false;
             }
-        }
+        };
 
         TypeImpl.prototype.hasFeature = function (feature) {
             return this.featureSet[feature] || false;

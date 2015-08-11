@@ -118,7 +118,7 @@ define(
          * @memberof platform/commonUI/edit.EditorCapability#
          */
         EditorCapability.prototype.dirty = function () {
-            return cache.dirty();
+            return this.cache.dirty();
         };
 
         return EditorCapability;

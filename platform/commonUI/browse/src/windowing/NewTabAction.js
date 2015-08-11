@@ -42,7 +42,7 @@ define(
 
             this.urlService = urlService;
             this.open = function () {
-                $window.open.apply($window, arguments)
+                $window.open.apply($window, arguments);
             };
 
             // Choose the object to be opened into a new tab

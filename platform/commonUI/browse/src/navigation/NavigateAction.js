@@ -51,14 +51,14 @@ define(
             return this.$q.when(
                 this.navigationService.setNavigation(this.domainObject)
             );
-        }
+        };
 
         /**
          * Navigate as an action is only applicable when a domain object
          * is described in the action context.
          * @param {ActionContext} context the context in which the action
          *        will be performed
-         * @returns true if applicable
+         * @returns {boolean} true if applicable
          */
         NavigateAction.appliesTo = function (context) {
             return context.domainObject !== undefined;
