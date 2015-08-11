@@ -71,7 +71,7 @@ define(
          * this type, as might be shown in a Create wizard or
          * an Edit Properties view.
          *
-         * @return {Array<TypeProperty[]} properties associated with
+         * @return {TypeProperty[]} properties associated with
          *         objects of this type
          * @method Type#getPropertiees
          */
