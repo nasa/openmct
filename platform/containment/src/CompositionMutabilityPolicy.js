@@ -30,23 +30,17 @@ define(
          * Disallow composition changes to objects which are not mutable.
          * @memberof platform/containment
          * @constructor
+         * @implements {Policy.<Type, Type>}
          */
         function CompositionMutabilityPolicy() {
-            return {
-                /**
-                 * Is the type identified by the candidate allowed to
-                 * contain the type described by the context?
-                 * @param {Type} candidate the type of domain object
-                 * @memberof platform/containment.CompositionMutabilityPolicy#
-                 */
-                allow: function (candidate) {
-                    // Equate creatability with mutability; that is, users
-                    // can only modify objects of types they can create, and
-                    // vice versa.
-                    return candidate.hasFeature('creation');
-                }
-            };
         }
+
+        CompositionMutabilityPolicy.prototype.allow = function (candidate) {
+            // Equate creatability with mutability; that is, users
+            // can only modify objects of types they can create, and
+            // vice versa.
+            return candidate.hasFeature('creation');
+        };
 
         return CompositionMutabilityPolicy;
     }

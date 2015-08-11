@@ -10,21 +10,16 @@ define(
          * have a composition property.
          * @constructor
          * @memberof platform/containment
+         * @implements {Policy.<Type, Type>}
          */
         function CompositionModelPolicy() {
-            return {
-                /**
-                 * Is the type identified by the candidate allowed to
-                 * contain the type described by the context?
-                 * @memberof platform/containment.CompositionModelPolicy#
-                 */
-                allow: function (candidate, context) {
-                    return Array.isArray(
-                        (candidate.getInitialModel() || {}).composition
-                    );
-                }
-            };
         }
+
+        CompositionModelPolicy.prototype.allow = function (candidate, context) {
+            return Array.isArray(
+                (candidate.getInitialModel() || {}).composition
+            );
+        };
 
         return CompositionModelPolicy;
     }

@@ -41,13 +41,9 @@ define(
          * @memberof platform/containment
          */
         function ContainmentTable(typeService, capabilityService) {
-            var types = typeService.listTypes(),
-                capabilityTable = new CapabilityTable(typeService, capabilityService),
-                table = {};
-
-            // Check if one type can contain another
-            function canContain(containerType, containedType) {
-            }
+            var self = this,
+                types = typeService.listTypes(),
+                capabilityTable = new CapabilityTable(typeService, capabilityService);
 
             // Add types which have all these capabilities to the set
             // of allowed types
@@ -84,38 +80,38 @@ define(
                 // Check for defined containment restrictions
                 if (contains === undefined) {
                     // If not, accept anything
-                    table[key] = ANY;
+                    self.table[key] = ANY;
                 } else {
                     // Start with an empty set...
-                    table[key] = {};
+                    self.table[key] = {};
                     // ...cast accepted types to array if necessary...
                     contains = Array.isArray(contains) ? contains : [contains];
                     // ...and add all containment rules to that set
                     contains.forEach(function (c) {
-                        addToSet(table[key], c);
+                        addToSet(self.table[key], c);
                     });
                 }
             }
 
             // Build the table
+            this.table = {};
             types.forEach(addToTable);
-
-            return {
-                /**
-                 * Check if domain objects of one type can contain domain
-                 * objects of another type.
-                 * @returns {boolean} true if allowable
-                 * @memberof platform/containment.ContainmentTable#
-                 */
-                canContain: function (containerType, containedType) {
-                    var set = table[containerType.getKey()] || {};
-                    // Recognize either the symbolic value for "can contain
-                    // anything", or lookup the specific type from the set.
-                    return (set === ANY) || set[containedType.getKey()];
-                }
-            };
-
         }
+
+        /**
+         * Check if domain objects of one type can contain domain
+         * objects of another type.
+         * @param {Type} containerType type of the containing domain object
+         * @param {Type} containedType type of the domain object
+         *        to be contained
+         * @returns {boolean} true if allowable
+         */
+        ContainmentTable.prototype.canContain = function (containerType, containedType) {
+            var set = this.table[containerType.getKey()] || {};
+            // Recognize either the symbolic value for "can contain
+            // anything", or lookup the specific type from the set.
+            return (set === ANY) || set[containedType.getKey()];
+        };
 
         return ContainmentTable;
     }
