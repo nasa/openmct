@@ -41,6 +41,9 @@ define(
                 mockElement,
                 mockDomainObject,
                 mockObject,
+                mockEvent,
+                mockTouchEvent,
+                mockChangedTouches,
                 gesture,
                 fireStartGesture,
                 fireMoveGesture,
@@ -59,15 +62,27 @@ define(
                     return c === 'type' && mockDomainObject;
                 });
                 mockAgentService.isMobile.andReturn(true);
+                
+                
+                
                 gesture = new PinchGesture(mockLog, mockAgentService,
                                          mockElement, mockObject);
-                fireStartGesture = mockElement.on.calls[0];
-                fireMoveGesture = mockElement.on.calls[1];
-                fireEndGesture = mockElement.on.calls[2];
+                
+                fireStartGesture = mockElement.on.calls[0].args[1];
+                fireMoveGesture = mockElement.on.calls[1].args[1];
+                fireEndGesture = mockElement.on.calls[2].args[1];
             });
             
             it("pinch", function () {
+                mockTouchEvent = jasmine.createSpyObj("event", ["preventDefault", "stopPropagation",
+                                                                "changedTouches"]);
+                mockChangedTouches = jasmine.createSpyObj("changedTouch", ["length"]);
+                mockChangedTouches.length.andReturn(2);
+                mockTouchEvent.changedTouches.andReturn(mockChangedTouches);
                 
+                fireStartGesture(mockTouchEvent);
+//                fireMoveGesture(mockTouchEvent);
+//                fireEndGesture(mockTouchEvent);
             });
         });
     }

@@ -31,7 +31,7 @@ define(
 
         var JQLITE_FUNCTIONS = [ "on", "off", "unbind" ],
             LOG_FUNCTIONS = [ "error", "warn", "info", "debug"],
-            DOMAIN_OBJECT_METHODS = [ "getId", "getModel",
+            DOMAIN_OBJECT_METHODS = [ "getName", "getModel",
                                      "getCapability", "hasCapability", "useCapability"],
             TEST_NAME = "Not Folder";
 
@@ -63,9 +63,13 @@ define(
                 
                 gesture = new PanGesture(mockLog, mockAgentService,
                                          mockElement, mockObject);
-                fireStartGesture = mockElement.on.calls[0];
-                fireMoveGesture = mockElement.on.calls[1];
-                fireEndGesture = mockElement.on.calls[2];
+                fireStartGesture = mockElement.on.calls[0].args[1];
+                fireMoveGesture = mockElement.on.calls[1].args[1];
+                fireEndGesture = mockElement.on.calls[2].args[1];
+            });
+            
+            it("pan", function () {
+                
             });
         });
     }
