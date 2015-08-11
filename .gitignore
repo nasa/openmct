@@ -20,9 +20,6 @@ closed-lib
 # Node dependencies
 node_modules
 
-# Build documentation
-docs
-
 # Protractor logs
 protractor/logs
 
