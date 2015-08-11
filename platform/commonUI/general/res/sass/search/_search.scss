@@ -63,6 +63,12 @@
                 
                 // Text focus display transition
                 transition: visibility .15s, opacity .15s;
+                
+                &.content {
+                    // Make icon invisible whenever there is text input 
+                    visibility: hidden;
+                    opacity: 0;
+                }
             }
             
             .search-input:focus~div.search-icon {

@@ -30,7 +30,8 @@
                ng-model="ngModel.input"
                ng-keyup="controller.search()"
                id="searchInput" />
-        <div class="ui-symbol search-icon">
+        <div class="ui-symbol search-icon"
+             ng-class="{content: controller.hasInput()}">
             M
         </div>
         <!--mct-control key="textfield"

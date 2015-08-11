@@ -110,6 +110,14 @@ define(function () {
                 } else {
                     $scope.results = fullResults.hits.slice(0, numResults);
                 }
+            },
+            
+            /**
+             * Determines if the search bar has any text inputted into it. 
+             *   Used as a helper for CSS styling. 
+             */
+            hasInput: function () {
+                return !($scope.ngModel.input === "" || $scope.ngModel.input === undefined);
             }
         };
     }
