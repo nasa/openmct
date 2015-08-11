@@ -40,7 +40,9 @@ define(function () {
             var inputText = $scope.ngModel.input;
             
             // We are starting to load.
-            loading = true;
+            if (inputText !== '' && inputText !== undefined) {
+                loading = true;
+            }
             
             // Update whether the file tree should be displayed 
             // Hide tree only when starting search 
