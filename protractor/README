@@ -8,15 +8,15 @@ E2e Protractor Tests.
         stop.js :  node script, kills the 3 process started in start.js.
         
     2. Use npm(Node Package Mangager) to Run Scripts.
-        *"npm link" will put the scripts on your system path. 
         a. cd protractor;
         b. npm install;
-        c. npm link; (optional)
-        d. script_name
-            -start
-            -run
-            -stop
-        
+        c. To Run:
+            -npm start : will start processes need by protractor
+            -npm stop  : will stop the processes need by protractor
+            -npm run-script run : will execute Protractor Script
+            -npm run-script all : will execute "start", "run", and "stop" script
+            -
+            
         (optional: Scripts NOT on path)
         a. To Run
             -./bin/start.js 

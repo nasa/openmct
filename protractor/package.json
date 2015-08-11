@@ -1,10 +1,12 @@
 {
   "name": "protractorCtr",
   "version": "1.0.0",
-  "bin": {
+  "scripts" : {
     "start": "bin/start.js",
     "run"  : "bin/run.js",
-    "stop" : "bin/stop.js"
+    "stop" : "bin/stop.js",
+    "all"  : "bin/start.js; bin/run.js; bin/stop.js;",
+    "clean": "bin/clean.js"
   },
   "dependencies": {
     "protractor": "^2.1.0",

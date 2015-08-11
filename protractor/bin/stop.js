@@ -3,6 +3,7 @@
 var shell = require("shelljs/global");
 var ps = require('psnode');
 var S = require('string');
+var sleep = require('sleep');
  
 // A simple pid lookup 
 ps.list(function(err, results) {
@@ -19,19 +20,10 @@ ps.list(function(err, results) {
               console.log(stdout);
               });
           }
+          sleep.usleep(10000);
           if((process.command.indexOf("webdriver")) != -1) {
               console.log();
               console.log( 'Killing WebDriver: %s', process.command);
-              ps.kill(process.pid, function(err, stdout) {
-              if (err){
-                  throw new Error(err);
-              }
-              console.log(stdout);
-              });
-          }
-          if((process.command.indexOf("protractor")) != -1) {
-              console.log();
-              console.log( 'Killing Protractor Driver: %s', process.command);
               ps.kill(process.pid, function(err, stdout) {
               if (err){
                   throw new Error(err);

@@ -57,7 +57,7 @@ describe('Create Clock', function() {
     });
     it('should check clock', function () {
 
-        function getTime() {
+        function getTime(flag) {
             function addZero(time){
                 if(time < 10){
                     return '0' + time;
@@ -65,7 +65,6 @@ describe('Create Clock', function() {
                 return time;
             }
            var currentdate = new Date();
-
 
            var month = currentdate.getMonth() + 1;
            month = addZero(month);
@@ -77,6 +76,9 @@ describe('Create Clock', function() {
            hour = addZero(hour);
 
            var second = currentdate.getSeconds();
+           if(flag == true) {
+               second = second + 1;
+           }
            second = addZero(second);
 
            var minute = currentdate.getMinutes();
@@ -85,17 +87,24 @@ describe('Create Clock', function() {
            return ("UTC " + currentdate.getFullYear()  + "/" + (month) + "/" +
                     day + " " + (hour) + ":" + minute + ":" + second + " PM");
        }
-
-       var current,clock;
-       rightClickClass.select(ITEM_MENU_GLYPH, true).click().then(function () {
-           browser.sleep(1000);
-           current = browser.executeScript(getTime);
-       }).then(function () {
-              clock = element(by.css('.l-time-display.l-digital.l-clock.s-clock.ng-scope'));
-              clock.getText().then(function (time) {
-                   expect(current).toEqual(time);
-              })
+       this.addMatchers({
+           toBeIn: function(expected){
+               var posibilities = Array.isArray(this.actual) ? this.actual : [this.actual];
+               return posibilities.indexOf(expected) > -1;
+           }
        })
-
+        var current,current1,clock;
+        rightClickClass.select(ITEM_MENU_GLYPH, true).click().then(function () {
+            browser.sleep(1000);
+            browser.executeScript(getTime, false).then(function(current){
+                    browser.executeScript(getTime, true).then(function(current1) {
+                        clock = element(by.css('.l-time-display.l-digital.l-clock.s-clock.ng-scope'));
+                        clock.getText().then(function (ele) {
+                            expect([current,current1]).toBeIn(ele);
+                        })    
+                    });
+            });
+            
+        })
     });
 });

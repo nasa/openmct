@@ -22,7 +22,7 @@
 var itemCreate = require("../common/CreateItem");
 var itemEdit = require("../common/EditItem");
 
-describe('Create Web Page', function() {
+describe('Create Activity Mode', function() {
     var createClass = new itemCreate();
     var editItemClass = new itemEdit();
     var ITEM_NAME = "Activity Mode";

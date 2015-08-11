@@ -22,7 +22,7 @@
 //TODO Add filter for duplications/
 var fullScreenFile = require("../common/Buttons");
 
-describe('Test Fullscreen', function() {
+describe('Enable Fullscreen', function() {
     var fullScreenClass = new fullScreenFile();
 
     beforeEach(require('../common/Launch'));

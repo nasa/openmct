@@ -32,7 +32,6 @@ exports.config = {
         'delete/DeleteActivity.js',
         'create/CreateActivityMode.js',
         'delete/DeleteActivityMode.js',
-        'create/CreateActivityMode.js',
         'create/CreateClock.js',
         'delete/DeleteClock.js',
         'create/CreateDisplay.js',
@@ -51,7 +50,8 @@ exports.config = {
         'create/CreateButton.js',
         "UI/DragDrop.js",
         "UI/NewWindow.js",
-        'UI/InfoBubble.js'
+        'UI/InfoBubble.js',
+        'UI/RightClick.js'
     ],
     capabilities: {
         'browserName': 'chrome', // or 'safari'

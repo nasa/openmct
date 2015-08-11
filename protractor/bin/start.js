@@ -30,11 +30,11 @@ console.log('   Started Node');
 console.log();
 console.log('Starting Webdriver');
 sleep.sleep(1);
-exec("protractor/node_modules/protractor/bin/webdriver-manager start > protractor/logs/webdriver.log 2>&1 &",{async:false});
+exec("protractor/node_modules/protractor/bin/webdriver-manager start --standalone> protractor/logs/webdriver.log 2>&1 &",{async:false});
 if(error() == null){
         console.log("   Webdriver Started");
 }else{
     console.log("   Error : ", error());
 }
-
+sleep.sleep(1);
 cd(startdir);
