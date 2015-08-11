@@ -76,6 +76,23 @@ define(
             }
         }
 
+        /**
+         * Convert a value from its format as read from a form, to a
+         * format appropriate to store in a model.
+         * @method platform/core.TypePropertyConversion#toModelValue
+         * @param {*} formValue value as read from a form
+         * @returns {*} value to store in a model
+         */
+
+        /**
+         * Convert a value from its format as stored in a model, to a
+         * format appropriate to display in a form.
+         * @method platform/core.TypePropertyConversion#toFormValue
+         * @param {*} modelValue value as stored in a model
+         * @returns {*} value to display within a form
+         */
+
+
         return TypePropertyConversion;
     }
 );

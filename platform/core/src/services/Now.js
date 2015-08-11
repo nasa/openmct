@@ -31,7 +31,6 @@ define(
          * `Date.now()` which can be injected to support testability.
          *
          * @returns {Function} a function which returns current system time
-         * @constructor
          * @memberof platform/core
          */
         function Now() {

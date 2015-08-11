@@ -36,6 +36,8 @@ define(
          *
          * @memberof platform/core
          * @constructor
+         * @augments {Type}
+         * @implements {Capability}
          * @param {TypeService} typeService the service which
          *        provides type information
          * @param {DomainObject} domainObject the domain object

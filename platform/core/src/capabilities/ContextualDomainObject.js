@@ -44,6 +44,7 @@ define(
          *
          * @memberof platform/core
          * @constructor
+         * @implements {DomainObject}
          */
         function ContextualDomainObject(domainObject, parentObject) {
             // Prototypally inherit from the domain object, and

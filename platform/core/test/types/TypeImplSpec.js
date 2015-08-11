@@ -23,7 +23,7 @@
 
 define(
     ['../../src/types/TypeImpl'],
-    function (typeImpl) {
+    function (TypeImpl) {
         "use strict";
 
         describe("Type definition wrapper", function () {
@@ -41,7 +41,7 @@ define(
                     properties: [ {} ],
                     model: {someKey: "some value"}
                 };
-                type = typeImpl(testTypeDef);
+                type = new TypeImpl(testTypeDef);
             });
 
             it("exposes key from definition", function () {

@@ -27,9 +27,30 @@
  * @namespace platform/core
  */
 define(
-    ["./DomainObject"],
-    function (DomainObject) {
+    ["./DomainObjectImpl"],
+    function (DomainObjectImpl) {
         "use strict";
+
+        /**
+         * Provides instances of domain objects, as retrieved by their
+         * identifiers.
+         *
+         * @interface ObjectService
+         */
+
+        /**
+         * Get a set of objects associated with a list of identifiers.
+         * The provided result may contain a subset or a superset of
+         * the total number of objects.
+         *
+         * @method ObjectService#getObjects
+         * @param {string[]} ids the identifiers for domain objects
+         *        of interest.
+         * @return {Promise<object<string, DomainObject>>} a promise
+         *         for an object containing key-value pairs, where keys
+         *         are string identifiers for domain objects, and
+         *         values are the corresponding domain objects themselves.
+         */
 
         /**
          * Construct a new provider for domain objects.
@@ -44,6 +65,16 @@ define(
          * @constructor
          */
         function DomainObjectProvider(modelService, capabilityService, $q) {
+            this.modelService = modelService;
+            this.capabilityService = capabilityService;
+            this.$q = $q;
+        }
+
+        DomainObjectProvider.prototype.getObjects = function getObjects(ids) {
+            var modelService = this.modelService,
+                capabilityService = this.capabilityService,
+                $q = this.$q;
+
             // Given a models object (containing key-value id-model pairs)
             // create a function that will look up from the capability
             // service based on id; for handy mapping below.
@@ -51,8 +82,8 @@ define(
                 return function (id) {
                     var model = models[id];
                     return model ?
-                            capabilityService.getCapabilities(model) :
-                            undefined;
+                        capabilityService.getCapabilities(model) :
+                        undefined;
                 };
             }
 
@@ -65,7 +96,7 @@ define(
                 ids.forEach(function (id, index) {
                     if (models[id]) {
                         // Create the domain object
-                        result[id] = new DomainObject(
+                        result[id] = new DomainObjectImpl(
                             id,
                             models[id],
                             capabilities[index]
@@ -75,36 +106,14 @@ define(
                 return result;
             }
 
-            // Get object instances; this is the useful API exposed by the
-            // domain object provider.
-            function getObjects(ids) {
-                return modelService.getModels(ids).then(function (models) {
-                    return $q.all(
-                        ids.map(capabilityResolver(models))
-                    ).then(function (capabilities) {
+            return modelService.getModels(ids).then(function (models) {
+                return $q.all(
+                    ids.map(capabilityResolver(models))
+                ).then(function (capabilities) {
                         return assembleResult(ids, models, capabilities);
                     });
-                });
-            }
-
-            return {
-                /**
-                 * Get a set of objects associated with a list of identifiers.
-                 * The provided result may contain a subset or a superset of
-                 * the total number of objects.
-                 *
-                 * @param {Array<string>} ids the identifiers for domain objects
-                 *        of interest.
-                 * @return {Promise<object<string, DomainObject>>} a promise
-                 *         for an object containing key-value pairs, where keys
-                 *         are string identifiers for domain objects, and
-                 *         values are the corresponding domain objects themselves.
-                 * @memberof module:core/object/object-provider.ObjectProvider#
-                 * @memberof platform/core.DomainObjectProvider#
-                 */
-                getObjects: getObjects
-            };
-        }
+            });
+        };
 
         return DomainObjectProvider;
     }

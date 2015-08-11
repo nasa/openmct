@@ -44,7 +44,6 @@ define(
          * arguments) are private; each call returns a new instance.
          *
          * @returns {Function}
-         * @constructor
          * @memberof platform/core
          */
         function Topic() {

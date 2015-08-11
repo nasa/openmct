@@ -42,7 +42,6 @@ define(
          * resolve to the returned value of `fn` whenever that is invoked.
          *
          * @returns {Function}
-         * @constructor
          * @memberof platform/core
          */
         function Throttle($timeout) {

@@ -30,65 +30,69 @@ define(
         "use strict";
 
         /**
+         * Allow domain object models to be looked up by their identifiers.
+         *
+         * @interface ModelService
+         */
+
+        /**
+         * Get domain object models.
+         *
+         * This may provide either a superset or a subset of the models
+         * requested. Absence of a model means it does not exist within
+         * this service instance.
+         *
+         * @method ModelService#getModels
+         * @param {string[]} ids identifiers for models desired.
+         * @returns {Promise.<Object>} a promise for an object mapping
+         *          string identifiers to domain object models.
+         */
+
+        /**
          * Allows multiple services which provide models for domain objects
          * to be treated as one.
          *
          * @memberof platform/core
          * @constructor
-         * @param {ModelProvider[]} providers the model providers to be
+         * @implements {ModelService}
+         * @param $q Angular's $q, for promises
+         * @param {ModelService[]} providers the model providers to be
          *        aggregated
          */
         function ModelAggregator($q, providers) {
-
-            // Pick a domain object model to use, favoring the one
-            // with the most recent timestamp
-            function pick(a, b) {
-                var aModified = (a || {}).modified || Number.NEGATIVE_INFINITY,
-                    bModified = (b || {}).modified || Number.NEGATIVE_INFINITY;
-                return (aModified > bModified) ? a : (b || a);
-            }
-
-            // Merge results from multiple providers into one
-            // large result object.
-            function mergeModels(provided, ids) {
-                var result = {};
-                ids.forEach(function (id) {
-                    provided.forEach(function (models) {
-                        if (models[id]) {
-                            result[id] = pick(result[id], models[id]);
-                        }
-                    });
-                });
-                return result;
-            }
-
-            return {
-                /**
-                 * Get models with the specified identifiers.
-                 *
-                 * This will invoke the `getModels()` method of all providers
-                 * given at constructor-time, and aggregate the result into
-                 * one object.
-                 *
-                 * Note that the returned object may contain a subset or a
-                 * superset of the models requested.
-                 *
-                 * @param {string[]} ids an array of domain object identifiers
-                 * @returns {Promise.<object>} a promise for  an object
-                 *          containing key-value pairs,
-                 *          where keys are object identifiers and values
-                 *          are object models.
-                 * @memberof platform/core.ModelAggregator#
-                 */
-                getModels: function (ids) {
-                    return $q.all(providers.map(function (provider) {
-                        return provider.getModels(ids);
-                    })).then(function (provided) {
-                        return mergeModels(provided, ids);
-                    });
-                }
-            };
+            this.providers = providers;
+            this.$q = $q;
         }
+
+        // Pick a domain object model to use, favoring the one
+        // with the most recent timestamp
+        function pick(a, b) {
+            var aModified = (a || {}).modified || Number.NEGATIVE_INFINITY,
+                bModified = (b || {}).modified || Number.NEGATIVE_INFINITY;
+            return (aModified > bModified) ? a : (b || a);
+        }
+
+        // Merge results from multiple providers into one
+        // large result object.
+        function mergeModels(provided, ids) {
+            var result = {};
+            ids.forEach(function (id) {
+                provided.forEach(function (models) {
+                    if (models[id]) {
+                        result[id] = pick(result[id], models[id]);
+                    }
+                });
+            });
+            return result;
+        }
+
+        ModelAggregator.prototype.getModels = function (ids) {
+            return this.$q.all(this.providers.map(function (provider) {
+                return provider.getModels(ids);
+            })).then(function (provided) {
+                return mergeModels(provided, ids);
+            });
+        };
 
         return ModelAggregator;
     }

@@ -36,11 +36,45 @@ define(
          * category of extension.)
          *
          * @memberof platform/core
+         * @imeplements {ActionService}
          * @constructor
          */
         function ActionProvider(actions) {
-            var actionsByKey = {},
-                actionsByCategory = {};
+            var self = this;
+
+            // Build up look-up tables
+            this.actions = actions;
+            this.actionsByKey = {};
+            this.actionsByCategory = {};
+            actions.forEach(function (Action) {
+                // Get an action's category or categories
+                var categories = Action.category || [];
+
+                // Convert to an array if necessary
+                categories = Array.isArray(categories) ?
+                        categories : [categories];
+
+                // Store action under all relevant categories
+                categories.forEach(function (category) {
+                    self.actionsByCategory[category] =
+                        self.actionsByCategory[category] || [];
+                    self.actionsByCategory[category].push(Action);
+                });
+
+                // Store action by ekey as well
+                if (Action.key) {
+                    self.actionsByKey[Action.key] =
+                        self.actionsByKey[Action.key] || [];
+                    self.actionsByKey[Action.key].push(Action);
+                }
+            });
+        }
+
+        ActionProvider.prototype.getActions = function (actionContext) {
+            var context = (actionContext || {}),
+                category = context.category,
+                key = context.key,
+                candidates;
 
             // Instantiate an action; invokes the constructor and
             // additionally fills in the action's getMetadata method
@@ -71,86 +105,31 @@ define(
             function createIfApplicable(actions, context) {
                 return (actions || []).filter(function (Action) {
                     return Action.appliesTo ?
-                            Action.appliesTo(context) : true;
+                        Action.appliesTo(context) : true;
                 }).map(function (Action) {
                     return instantiateAction(Action, context);
                 });
             }
 
-            // Get an array of actions that are valid in the supplied context.
-            function getActions(actionContext) {
-                var context = (actionContext || {}),
-                    category = context.category,
-                    key = context.key,
-                    candidates;
-
-                // Match actions to the provided context by comparing "key"
-                // and/or "category" parameters, if specified.
-                candidates = actions;
-                if (key) {
-                    candidates = actionsByKey[key];
-                    if (category) {
-                        candidates = candidates.filter(function (Action) {
-                            return Action.category === category;
-                        });
-                    }
-                } else if (category) {
-                    candidates = actionsByCategory[category];
+            // Match actions to the provided context by comparing "key"
+            // and/or "category" parameters, if specified.
+            candidates = this.actions;
+            if (key) {
+                candidates = this.actionsByKey[key];
+                if (category) {
+                    candidates = candidates.filter(function (Action) {
+                        return Action.category === category;
+                    });
                 }
-
-                // Instantiate those remaining actions, with additional
-                // filtering per any appliesTo methods defined on those
-                // actions.
-                return createIfApplicable(candidates, context);
+            } else if (category) {
+                candidates = this.actionsByCategory[category];
             }
 
-            // Build up look-up tables
-            actions.forEach(function (Action) {
-                // Get an action's category or categories
-                var categories = Action.category || [];
-
-                // Convert to an array if necessary
-                categories = Array.isArray(categories) ?
-                        categories : [categories];
-
-                // Store action under all relevant categories
-                categories.forEach(function (category) {
-                    actionsByCategory[category] =
-                        actionsByCategory[category] || [];
-                    actionsByCategory[category].push(Action);
-                });
-
-                // Store action by ekey as well
-                if (Action.key) {
-                    actionsByKey[Action.key] =
-                        actionsByKey[Action.key] || [];
-                    actionsByKey[Action.key].push(Action);
-                }
-            });
-
-            return {
-                /**
-                 * Get a list of actions which are valid in a given
-                 * context.
-                 *
-                 * @param {ActionContext} the context in which
-                 *        the action will occur; this is a
-                 *        JavaScript object containing key-value
-                 *        pairs. Typically, this will contain a
-                 *        field "domainObject" which refers to
-                 *        the domain object that will be acted
-                 *        upon, but may contain arbitrary information
-                 *        recognized by specific providers.
-                 * @return {Action[]} an array of actions which
-                 *        may be performed in the provided context.
-                 *
-                 * @method
-                 * @memberof ActionProvider
-                 * @memberof platform/core.ActionProvider#
-                 */
-                getActions: getActions
-            };
-        }
+            // Instantiate those remaining actions, with additional
+            // filtering per any appliesTo methods defined on those
+            // actions.
+            return createIfApplicable(candidates, context);
+        };
 
         return ActionProvider;
     }

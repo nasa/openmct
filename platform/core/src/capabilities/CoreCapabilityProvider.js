@@ -30,6 +30,19 @@ define(
         "use strict";
 
         /**
+         * A capability provides an interface with dealing with some
+         * dynamic behavior associated with a domain object.
+         * @interface Capability
+         */
+
+        /**
+         * Optional; if present, will be used by `DomainObject#useCapability`
+         * to simplify interaction with a specific capability. Parameters
+         * and return values vary depending on capability type.
+         * @method Capability#invoke
+         */
+
+        /**
          * Provides capabilities based on extension definitions,
          * matched to domain object models.
          *

@@ -36,22 +36,24 @@ define(
          * object.
          *
          * @memberof platform/core
+         * @implements {Capability}
          * @constructor
          */
         function ViewCapability(viewService, domainObject) {
-            return {
-                /**
-                 * Get all view definitions which are applicable to
-                 * this object.
-                 * @returns {View[]} an array of view definitions
-                 *          which are applicable to this object.
-                 * @memberof platform/core.ViewCapability#
-                 */
-                invoke: function () {
-                    return viewService.getViews(domainObject);
-                }
-            };
+            this.viewService = viewService;
+            this.domainObject = domainObject;
         }
+
+        /**
+         * Get all view definitions which are applicable to
+         * this object.
+         * @returns {View[]} an array of view definitions
+         *          which are applicable to this object.
+         * @memberof platform/core.ViewCapability#
+         */
+        ViewCapability.prototype.invoke = function () {
+            return this.viewService.getViews(this.domainObject);
+        };
 
         return ViewCapability;
     }
