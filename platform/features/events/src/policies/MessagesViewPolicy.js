@@ -33,43 +33,34 @@ define(
          * Policy controlling when the Messages view should be avaliable.
          * @memberof platform/features/events
          * @constructor
+         * @implements {Policy.<View, DomainObject>}
          */
-        function MessagesViewPolicy() {
-            
-            function hasStringTelemetry(domainObject) {
-                var telemetry = domainObject &&
-                        domainObject.getCapability('telemetry'),
-                    metadata = telemetry ? telemetry.getMetadata() : {},
-                    ranges = metadata.ranges || [];
+        function MessagesViewPolicy() {}
 
-                return ranges.some(function (range) {
-                    return range.format === 'string';
-                });
-            }
-            return {
-                /**
-                 * Check whether or not a given action is allowed by this
-                 * policy.
-                 * @param {Action} action the action
-                 * @param domainObject the domain object which will be viewed
-                 * @returns {boolean} true if not disallowed
-                 * @memberof platform/features/events.MessagesViewPolicy#
-                 */
-                allow: function (view, domainObject) {
-                    // This policy only applies for the Messages view
-                    if (view.key === 'messages') {
-                        // The Messages view is allowed only if the domain 
-                        // object has string telemetry
-                        if (!hasStringTelemetry(domainObject)) {
-                            return false;
-                        }
-                    }
-                    
-                    // Like all policies, allow by default.
-                    return true;
-                }
-            };
+        function hasStringTelemetry(domainObject) {
+            var telemetry = domainObject &&
+                    domainObject.getCapability('telemetry'),
+                metadata = telemetry ? telemetry.getMetadata() : {},
+                ranges = metadata.ranges || [];
+
+            return ranges.some(function (range) {
+                return range.format === 'string';
+            });
         }
+
+        MessagesViewPolicy.prototype.allow = function (view, domainObject) {
+            // This policy only applies for the Messages view
+            if (view.key === 'messages') {
+                // The Messages view is allowed only if the domain
+                // object has string telemetry
+                if (!hasStringTelemetry(domainObject)) {
+                    return false;
+                }
+            }
+
+            // Like all policies, allow by default.
+            return true;
+        };
 
         return MessagesViewPolicy;
     }

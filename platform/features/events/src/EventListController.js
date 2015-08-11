@@ -135,6 +135,30 @@ define(
         }
 
         return EventListController;
+
+        /**
+         * A description of how to display a certain column of data in an
+         * Events view.
+         * @interface platform/features/events.EventColumn
+         * @private
+         */
+        /**
+         * Get the title to display in this column's header.
+         * @returns {string} the title to display
+         * @method platform/features/events.EventColumn#getTitle
+         */
+        /**
+         * Get the text to display inside a row under this
+         * column.
+         * @param {DomainObject} domainObject the domain object associated
+         *        with this row
+         * @param {TelemetrySeries} series the telemetry data associated
+         *        with this row
+         * @param {number} index the index of the telemetry datum associated
+         *        with this row
+         * @returns {string} the text to display
+         * @method platform/features/events.EventColumn#getValue
+         */
     }
 );
 

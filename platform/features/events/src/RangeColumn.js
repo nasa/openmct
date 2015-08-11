@@ -35,6 +35,7 @@ define(
          *
          * @memberof platform/features/events
          * @constructor
+         * @implements {platform/features/events.EventsColumn}
          * @param rangeMetadata an object with the machine- and human-
          *        readable names for this range (in `key` and `name`
          *        fields, respectively.)
@@ -42,28 +43,19 @@ define(
          *        formatting service, for making values human-readable.
          */
         function RangeColumn(rangeMetadata, telemetryFormatter) {
-            return {
-                /**
-                 * Get the title to display in this column's header.
-                 * @returns {string} the title to display
-                 * @memberof platform/features/events.RangeColumn#
-                 */
-                getTitle: function () {
-                    return rangeMetadata.name;
-                },
-                /**
-                 * Get the text to display inside a row under this
-                 * column.
-                 * @returns {string} the text to display
-                 * @memberof platform/features/events.RangeColumn#
-                 */
-                getValue: function (domainObject, data, index) {
-                    return telemetryFormatter.formatRangeValue(
-                        data.getRangeValue(index, rangeMetadata.key)
-                    );
-                }
-            };
+            this.rangeMetadata = rangeMetadata;
+            this.telemetryFormatter = telemetryFormatter;
         }
+
+        RangeColumn.prototype.getTitle = function () {
+            return this.rangeMetadata.name;
+        };
+        RangeColumn.prototype.getValue = function (domainObject, data, index) {
+            var rangeKey = this.rangeMetadata.key;
+            return this.telemetryFormatter.formatRangeValue(
+                data.getRangeValue(index, rangeKey)
+            );
+        };
 
         return RangeColumn;
     }
