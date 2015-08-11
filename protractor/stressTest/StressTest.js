@@ -19,9 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-var itemCreate = require("./common/CreateItem");
-var itemEdit = require("./common/EditItem");
-var right_click = require("./common/RightMenu.js");
+var itemCreate = require("../common/CreateItem");
+var itemEdit = require("../common/EditItem");
+var right_click = require("../common/RightMenu.js");
     
 describe('Create Folder', function() {
     var clickClass = new right_click();

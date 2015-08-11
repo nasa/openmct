@@ -93,12 +93,11 @@ describe('Create Clock', function() {
                return posibilities.indexOf(expected) > -1;
            }
        })
-        var current,current1,clock;
         rightClickClass.select(ITEM_MENU_GLYPH, true).click().then(function () {
             browser.sleep(1000);
             browser.executeScript(getTime, false).then(function(current){
                     browser.executeScript(getTime, true).then(function(current1) {
-                        clock = element(by.css('.l-time-display.l-digital.l-clock.s-clock.ng-scope'));
+                        var clock = element(by.css('.l-time-display.l-digital.l-clock.s-clock.ng-scope'));
                         clock.getText().then(function (ele) {
                             expect([current,current1]).toBeIn(ele);
                         })    

@@ -3,9 +3,10 @@ E2e Protractor Tests.
 1. Instructions:
 
     1. 3 Control Scripts located in bin/.
-        run.js : node script used to start tests
-        start.js : node script used to setup test(starts node,localstorage and webdriver)
-        stop.js :  node script, kills the 3 process started in start.js.
+        run.js  : node script used to start tests
+        start.js: node script used to setup test(starts node,localstorage and webdriver)
+        stop.js : node script, kills the 3 process started in start.js.
+        clean.js: node script used to remove the node_module directory.(clean up directory).
         
     2. Use npm(Node Package Mangager) to Run Scripts.
         a. cd protractor;
@@ -15,17 +16,7 @@ E2e Protractor Tests.
             -npm stop  : will stop the processes need by protractor
             -npm run-script run : will execute Protractor Script
             -npm run-script all : will execute "start", "run", and "stop" script
-            -
             
-        (optional: Scripts NOT on path)
-        a. To Run
-            -./bin/start.js 
-            -./bin/run.js 
-            -./bin/stop.js 
-    3. To remove the scripts from path run
-        -npm unlink
-        
-
 2. Directory Hierachy:
 
     -protractor: base directory
@@ -34,6 +25,7 @@ E2e Protractor Tests.
               -CreateItem: common prototype functions related to creating an item 
               -drag: common functions to test drag and drop.
               -editItem: common functions used to test edit functionality.
+              -Launch: common script used to navigate the specified website.
               -RightMenu: common functions for right click menu(remove).
           -create
               -e2e tests that creates the specified object. 
