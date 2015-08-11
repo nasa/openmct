@@ -47,9 +47,16 @@ define(
          * @constructor
          */
         function OverlayService($document, $compile, $rootScope) {
-            this.$document = $document;
             this.$compile = $compile;
-            this.$rootScope = $rootScope;
+
+            // Don't include $document and $rootScope directly;
+            // avoids https://docs.angularjs.org/error/ng/cpws
+            this.findBody = function () {
+                return $document.find('body');
+            };
+            this.newScope = function () {
+                return $rootScope.$new();
+            };
         }
 
         /**
@@ -67,7 +74,7 @@ define(
          */
         OverlayService.prototype.createOverlay = function (key, overlayModel) {
             // Create a new scope for this overlay
-            var scope = this.$rootScope.$new(),
+            var scope = this.newScope(),
                 element;
 
             // Stop showing the overlay; additionally, release the scope
@@ -86,7 +93,7 @@ define(
 
             // Create the overlay element and add it to the document's body
             element = this.$compile(TEMPLATE)(scope);
-            this.$document.find('body').prepend(element);
+            this.findBody().prepend(element);
 
             return {
                 dismiss: dismiss

@@ -91,8 +91,22 @@ define(
                 }
             }
 
+            // Avoid attaching scope to this;
+            // http://errors.angularjs.org/1.2.26/ng/cpws
+            this.setSelection = function (s) {
+                scope.selection = s;
+            };
+            this.clearExposedToolbar = function () {
+                // Clear exposed toolbar state (if any)
+                if (attrs.toolbar) {
+                    delete scope.$parent[attrs.toolbar];
+                }
+            };
+            this.exposeToolbar = function () {
+                scope.$parent[self.attrs.toolbar] = self.toolbarObject;
+            };
+
             this.commit = commit;
-            this.scope = scope;
             this.attrs = attrs;
             this.updateSelection = updateSelection;
             this.toolbar = undefined;
@@ -127,24 +141,21 @@ define(
                     // Initialize toolbar object
                     self.toolbar = new EditToolbar(definition, self.commit);
                     // Ensure toolbar state is exposed
-                    self.scope.$parent[self.attrs.toolbar] = self.toolbarObject;
+                    self.exposeToolbar();
                 }
             }
 
             // Expose the toolbar object to the parent scope
             initialize(definition);
             // Create a selection scope
-            this.scope.selection = new EditToolbarSelection();
+            this.setSelection(new EditToolbarSelection());
             // Initialize toolbar to an empty selection
             this.updateSelection([]);
         };
 
         // Destroy; remove toolbar object from parent scope
         EditToolbarRepresenter.prototype.destroy = function () {
-            // Clear exposed toolbar state (if any)
-            if (this.attrs.toolbar) {
-                delete this.scope.$parent[this.attrs.toolbar];
-            }
+            this.clearExposedToolbar();
         };
 
         return EditToolbarRepresenter;
