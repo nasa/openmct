@@ -60,11 +60,16 @@
                 
                 // Line up icon with text input vertically
                 margin-top: -$textInputHeight;
+                
+                // Text focus display transition
+                transition: visibility .15s, opacity .15s;
             }
             
             .search-input:focus~div.search-icon {
                 // Make icon invisible when the text input is focused
-                display: none;
+                //display: none;
+                visibility: hidden;
+                opacity: 0;
             }
         }
         
