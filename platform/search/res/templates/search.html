@@ -23,17 +23,21 @@
      ng-controller="SearchController as controller">
     
     <!-- Search bar input -->
-    <!-- ui symbols for search are 'd' and 'M' -->
     <div class="search-bar">
         <input class="search-input"
                type="text"
                ng-model="ngModel.input"
                ng-keyup="controller.search()"
                id="searchInput" />
+        <!-- ui symbols for search are 'd' and 'M' -->
         <div class="ui-symbol search-icon"
              ng-class="{content: controller.hasInput()}">
             M
         </div>
+        <a class="ui-symbol clear-button"
+           ng-class="{content: controller.hasInput()}">
+            x
+        </a>
         <!--mct-control key="textfield"
                      class="search-input"
                      ng-model="ngModel.input">

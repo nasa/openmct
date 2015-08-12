@@ -44,11 +44,14 @@
                 position: relative;
                 top: -$heightAdjust;
                 width: 100%;
+                
+                // For clear button
+                padding-right: 16px;
             }
             
             .search-icon {
                 color: $colorItemFg;
-                font-size: 12px;//$iconWidth;
+                font-size: 12px;
                 
                 // Make the icon within the left edge of the input area
                 margin-left: 3px;
@@ -68,11 +71,23 @@
                 }
             }
             
-            .search-input:focus~div.search-icon {
+            .search-input:focus + div.search-icon {
                 // Make icon invisible when the text input is focused
-                //display: none;
                 visibility: hidden;
                 opacity: 0;
+            }
+            
+            .clear-button {
+                color: $colorItemFg;
+                font-size: 6px;
+                
+                float: right;
+                margin-right: 4px;
+                margin-top: 2px;
+                
+                &.content {
+                    // Make button visible only when there is text input 
+                }
             }
         }
         
