@@ -14,18 +14,31 @@ define(
 
             function link($scope, $element) {
                 // Now that we're here, let's handle some scope management that the controller would otherwise handle.
-                $scope.axes = {
-                    domain: {
-                        label: "Time",
-                        tickCount: DOMAIN_TICK_COUNT,
-                        ticks: []
-                    },
-                    range: {
-                        label: "Value",
-                        tickCount: RANGE_TICK_COUNT,
-                        ticks: []
-                    }
-                };
+
+                if (typeof $scope.rectangles === "undefined") {
+                    $scope.rectangles = [];
+                }
+                if (typeof $scope.displayableRange === "undefined") {
+                    $scope.displayableRange = function (x) { return x; };
+                }
+                if (typeof $scope.displayableDomain === "undefined") {
+                    $scope.displayableDomain = function (x) { return x; };
+                }
+                if (typeof $scope.axes === "undefined") {
+                    $scope.axes = {
+                        domain: {
+                            label: "Time",
+                            tickCount: DOMAIN_TICK_COUNT,
+                            ticks: []
+                        },
+                        range: {
+                            label: "Value",
+                            tickCount: RANGE_TICK_COUNT,
+                            ticks: []
+                        }
+                    };
+                }
+
 
                 var dragStart;
                 var marqueeBox = {};
@@ -241,10 +254,10 @@ define(
                 scope: {
                     viewport: "=",
                     series: "=",
-                    rectangles: "=",
-                    axes: "=",
-                    displayableRange: "=",
-                    displayableDomain: "="
+                    rectangles: "=?",
+                    axes: "=?",
+                    displayableRange: "=?",
+                    displayableDomain: "=?"
                 }
             };
         }
