@@ -107,7 +107,7 @@ define(
                     lines.forEach(function(line) {
                         drawAPI.drawLine(
                             line.buffer,
-                            line.color,
+                            line.color.asRGBAArray(),
                             line.pointCount
                         );
                     });
