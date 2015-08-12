@@ -24,7 +24,7 @@ console.log('Installing Dependencies');
 exec("npm install minimist express", {async:false});
 console.log('Starting Node');
 sleep.sleep(1);
-exec("node app.js -p 1984 -i example/localstorage > protractor/logs/nodeApp.log 2>&1 &", {async:false});
+exec("node app.js -p 1984 -x example/persistence -x platform/persistence/elastic -i example/localstorage > protractor/logs/nodeApp.log 2>&1 &", {async:false});
 console.log('   Started Node');
 
 console.log();
