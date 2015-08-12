@@ -175,6 +175,23 @@ define(
                 );
                 expect(testConfiguration.panels.d).not.toBeDefined();
             });
+
+            it("ensures a minimum frame size", function () {
+                var styleB, styleC;
+
+                // Start with a very small frame size
+                testModel.layoutGrid = [ 1, 1 ];
+
+                // White-boxy; we know which watch is which
+                mockScope.$watch.calls[0].args[1](testModel.layoutGrid);
+                mockScope.$watch.calls[1].args[1](testModel.composition);
+
+                styleB = controller.getFrameStyle("b");
+
+                // Resulting size should still be reasonably large pixel-size
+                expect(parseInt(styleB.width, 10)).toBeGreaterThan(63);
+                expect(parseInt(styleB.width, 10)).toBeGreaterThan(31);
+            });
         });
     }
 );
