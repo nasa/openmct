@@ -118,6 +118,14 @@ define(function () {
              */
             hasInput: function () {
                 return !($scope.ngModel.input === "" || $scope.ngModel.input === undefined);
+            },
+            
+            /**
+             * Clears the input text. 
+             */
+            clear: function () {
+                $scope.ngModel.input = '';
+                $scope.ngModel.search = false;
             }
         };
     }

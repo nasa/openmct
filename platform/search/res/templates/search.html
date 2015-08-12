@@ -24,23 +24,28 @@
     
     <!-- Search bar -->
     <div class="search-bar">
+        
         <!-- Input field -->
         <input class="search-input"
                type="text"
                ng-model="ngModel.input"
                ng-keyup="controller.search()"
                id="searchInput" />
+        
         <!-- Search icon -->
         <!-- ui symbols for search are 'd' and 'M' -->
         <div class="ui-symbol search-icon"
              ng-class="{content: controller.hasInput()}">
             M
         </div>
-        <!-- Clear button/icon 'x' -->
+        
+        <!-- Clear icon/button 'x' -->
         <a class="ui-symbol clear-icon"
-           ng-class="{content: controller.hasInput()}">
+           ng-class="{content: controller.hasInput()}"
+           ng-click="controller.clear()">
             x
         </a>
+        
     </div>
     
     <!-- This div exists to determine scroll bar location -->
@@ -72,4 +77,5 @@
         </div>
         
     </div>
+    
 </div>

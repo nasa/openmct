@@ -32,6 +32,7 @@
     margin-top: 10px;
     
     .search {
+        position: relative;
         
         .search-bar {
             $heightAdjust: 4px;
@@ -78,20 +79,26 @@
             }
             
             .clear-icon {
+                
+                position: absolute;
+                display: block;
+                
+                cursor: pointer;
+                
                 color: $colorItemFg;
                 font-size: 6px;
-                
-                float: right;
-                margin-right: 2px;
-                margin-top: -2px;
                 padding: 4px;
                 
-                &.content {
-                    // Make button visible only when there is text input 
-                }
+                right: 0px;
+                top: -1px;
+                margin-right: 2px;
                 
-                //temp
-                cursor: crosshair;
+                // Icon is visible only when there is text input 
+                visibility: hidden;
+                
+                &.content {
+                    visibility: visible;
+                }
             }
         }
         
