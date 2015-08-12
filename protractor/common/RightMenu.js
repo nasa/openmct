@@ -24,18 +24,25 @@ var RightMenu = (function () {
     
     function RightMenu() {
     }
+    function carrotMyItem(){
+        var MyItem =  ">\nF\nMy Items"
+        element.all(by.repeater('child in composition')).filter(function (ele){
+            return ele.getText().then(function(text) {
+                return text === MyItem;
+            });
+        }).all(by.css('.ui-symbol.view-control.ng-binding.ng-scope')).click();
+    }
     //RightMenu Click on Object
     RightMenu.prototype.delete = function (name, flag) {
         if(typeof flag === 'undefined'){
             flag = true;
         }
         if(flag === true){
-            var carrot = element.all(by.css('.ui-symbol.view-control.ng-binding.ng-scope')).get(0).click();
+           carrotMyItem();
         }
         browser.sleep(1000)
         var object = element.all(by.repeater('child in composition')).filter(function (ele){
             return ele.getText().then(function(text) {
-                //expect(text).toEqual("3");
                 return text === name;
             });
         });
@@ -43,7 +50,7 @@ var RightMenu = (function () {
         browser.actions().mouseMove(object.get(0)).perform();
         browser.actions().click(protractor.Button.RIGHT).perform();
         browser.sleep(1000)
-        var remove = element.all(by.css('.ng-binding')).filter(function (ele){
+        element.all(by.css('.ng-binding')).filter(function (ele){
             return ele.getText().then(function (text) {
                 return text == "Z\nRemove";
            })
@@ -58,11 +65,10 @@ var RightMenu = (function () {
         });
     };
     RightMenu.prototype.reset = function (name) {
-        var carrot = element.all(by.css('.ui-symbol.view-control.ng-binding.ng-scope')).click();
+        carrotMyItem();
         browser.sleep(1000)
         var object = element.all(by.repeater('child in composition')).filter(function (ele){
             return ele.getText().then(function(text) {
-                //expect(text).toEqual("3");
                 return text === name;
             });
         }).click();
@@ -75,19 +81,19 @@ var RightMenu = (function () {
                 return text == "r\nRestart at 0";
            })
         }).click();
+        browser.sleep(1000)
     };
+    //click '<', true==yes false==no
     RightMenu.prototype.select = function(name, flag){
         if(typeof flag == "undefined"){
             flag = true;
         }
-        //click '<', true==yes false==no
         if(flag == true){
-            var carrot = element.all(by.css('.ui-symbol.view-control.ng-binding.ng-scope')).click();
+           carrotMyItem();
         }
         browser.sleep(1000)
         return element.all(by.repeater('child in composition')).filter(function (ele){
             return ele.getText().then(function(text) {
-            //    expect(text).toEqual("3");
                 return text === name;
             });
         });
@@ -96,7 +102,6 @@ var RightMenu = (function () {
     RightMenu.prototype.dragDrop = function(name){
         var object = element.all(by.repeater('child in composition')).filter(function (ele){
             return ele.getText().then(function(text) {
-                //expect(text).toEqual("3");
                 return text === name;
             });
         });
