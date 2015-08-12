@@ -31,24 +31,19 @@ define(
          * They cannot contain folders.
          * @constructor
          * @memberof platform/features/layout
+         * @implements {Policy.<View, DomainObject>}
          */
         function LayoutCompositionPolicy() {
-            return {
-                /**
-                 * Is the type identified by the candidate allowed to
-                 * contain the type described by the context?
-                 * @memberof platform/features/layout.LayoutCompositionPolicy#
-                 */
-                allow: function (candidate, context) {
-                    var isFolderInLayout =
-                            candidate &&
-                            context &&
-                            candidate.instanceOf('layout') &&
-                            context.instanceOf('folder');
-                    return !isFolderInLayout;
-                }
-            };
         }
+
+        LayoutCompositionPolicy.prototype.allow = function (candidate, context) {
+            var isFolderInLayout =
+                candidate &&
+                context &&
+                candidate.instanceOf('layout') &&
+                context.instanceOf('folder');
+            return !isFolderInLayout;
+        };
 
         return LayoutCompositionPolicy;
     }

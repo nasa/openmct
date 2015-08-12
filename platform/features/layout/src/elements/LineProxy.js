@@ -35,6 +35,7 @@ define(
          *        configuration
          * @param index the element's index within its array
          * @param {Array} elements the full array of elements
+         * @augments {platform/features/layout.ElementProxy}
          */
         function LineProxy(element, index, elements) {
             var proxy = new ElementProxy(element, index, elements),

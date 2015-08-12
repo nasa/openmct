@@ -26,6 +26,11 @@ define(
         'use strict';
 
         /**
+         * @interface platform/features/layout.ElementHandle
+         * @private
+         */
+
+        /**
          * Handle for changing width/height properties of an element.
          * This is used to support drag handles for different
          * element types in a fixed position view.
@@ -33,43 +38,34 @@ define(
          * @constructor
          */
         function ResizeHandle(element, minWidth, minHeight) {
-            // Ensure reasonable defaults
-            minWidth = minWidth || 0;
-            minHeight = minHeight || 0;
+            this.element = element;
 
-            return {
-                /**
-                 * Get/set the x position of the lower-right corner
-                 * of the handle-controlled element, changing size
-                 * as necessary.
-                 * @memberof platform/features/layout.ResizeHandle#
-                 */
-                x: function (value) {
-                    if (arguments.length > 0) {
-                        element.width = Math.max(
-                            minWidth,
-                            value - element.x
-                        );
-                    }
-                    return element.x + element.width;
-                },
-                /**
-                 * Get/set the y position of the lower-right corner
-                 * of the handle-controlled element, changing size
-                 * as necessary.
-                 * @memberof platform/features/layout.ResizeHandle#
-                 */
-                y: function (value) {
-                    if (arguments.length > 0) {
-                        element.height = Math.max(
-                            minHeight,
-                            value - element.y
-                        );
-                    }
-                    return element.y + element.height;
-                }
-            };
+            // Ensure reasonable defaults
+            this.minWidth = minWidth || 0;
+            this.minHeight = minHeight || 0;
         }
+
+        ResizeHandle.prototype.x = function (value) {
+            var element = this.element;
+            if (arguments.length > 0) {
+                element.width = Math.max(
+                    this.minWidth,
+                    value - element.x
+                );
+            }
+            return element.x + element.width;
+        };
+
+        ResizeHandle.prototype.y = function (value) {
+            var element = this.element;
+            if (arguments.length > 0) {
+                element.height = Math.max(
+                    this.minHeight,
+                    value - element.y
+                );
+            }
+            return element.y + element.height;
+        };
 
         return ResizeHandle;
 

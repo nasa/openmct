@@ -39,20 +39,16 @@ define(
          * @param {Scope} $scope the controller's Angular scope
          */
         function FixedController($scope, $q, dialogService, telemetrySubscriber, telemetryFormatter) {
-            var gridSize = DEFAULT_GRID_SIZE,
-                dragging,
+            var self = this,
                 subscription,
-                elementProxies = [],
                 names = {}, // Cache names by ID
                 values = {}, // Cache values by ID
-                elementProxiesById = {},
-                handles = [],
-                moveHandle,
-                selection;
+                elementProxiesById = {};
 
             // Convert from element x/y/width/height to an
-            // apropriate ng-style argument, to position elements.
+            // appropriate ng-style argument, to position elements.
             function convertPosition(elementProxy) {
+                var gridSize = self.gridSize;
                 // Multiply position/dimensions by grid size
                 return {
                     left: (gridSize[0] * elementProxy.x()) + 'px',
@@ -64,7 +60,7 @@ define(
 
             // Update the style for a selected element
             function updateSelectionStyle() {
-                var element = selection && selection.get();
+                var element = self.selection && self.selection.get();
                 if (element) {
                     element.style = convertPosition(element);
                 }
@@ -74,7 +70,7 @@ define(
             function generateDragHandle(elementHandle) {
                 return new FixedDragHandle(
                     elementHandle,
-                    gridSize,
+                    self.gridSize,
                     updateSelectionStyle,
                     $scope.commit
                 );
@@ -83,17 +79,6 @@ define(
             // Generate drag handles for an element
             function generateDragHandles(element) {
                 return element.handles().map(generateDragHandle);
-            }
-
-            // Select an element
-            function select(element) {
-                if (selection) {
-                    // Update selection...
-                    selection.select(element);
-                    // ...as well as move, resize handles
-                    moveHandle = generateDragHandle(element);
-                    handles = generateDragHandles(element);
-                }
             }
 
             // Update the displayed value for this object
@@ -121,9 +106,9 @@ define(
             // Update element positions when grid size changes
             function updateElementPositions(layoutGrid) {
                 // Update grid size from model
-                gridSize = layoutGrid || DEFAULT_GRID_SIZE;
+                self.gridSize = layoutGrid || DEFAULT_GRID_SIZE;
 
-                elementProxies.forEach(function (elementProxy) {
+                self.elementProxies.forEach(function (elementProxy) {
                     elementProxy.style = convertPosition(elementProxy);
                 });
             }
@@ -154,7 +139,7 @@ define(
             function refreshElements() {
                 // Cache selection; we are instantiating new proxies
                 // so we may want to restore this.
-                var selected = selection && selection.get(),
+                var selected = self.selection && self.selection.get(),
                     elements = (($scope.configuration || {}).elements || []),
                     index = -1; // Start with a 'not-found' value
 
@@ -164,20 +149,20 @@ define(
                 }
 
                 // Create the new proxies...
-                elementProxies = elements.map(makeProxyElement);
+                self.elementProxies = elements.map(makeProxyElement);
 
                 // Clear old selection, and restore if appropriate
-                if (selection) {
-                    selection.deselect();
+                if (self.selection) {
+                    self.selection.deselect();
                     if (index > -1) {
-                        select(elementProxies[index]);
+                        self.select(self.elementProxies[index]);
                     }
                 }
 
                 // Finally, rebuild lists of elements by id to
                 // facilitate faster update when new telemetry comes in.
                 elementProxiesById = {};
-                elementProxies.forEach(function (elementProxy) {
+                self.elementProxies.forEach(function (elementProxy) {
                     var id = elementProxy.id;
                     if (elementProxy.element.type === 'fixed.telemetry') {
                         // Provide it a cached name/value to avoid flashing
@@ -232,7 +217,9 @@ define(
                 // Refresh displayed elements
                 refreshElements();
                 // Select the newly-added element
-                select(elementProxies[elementProxies.length - 1]);
+                self.select(
+                    self.elementProxies[self.elementProxies.length - 1]
+                );
                 // Mark change as persistable
                 if ($scope.commit) {
                     $scope.commit("Dropped an element.");
@@ -249,8 +236,8 @@ define(
                 // Store the position of this element.
                 addElement({
                     type: "fixed.telemetry",
-                    x: Math.floor(position.x / gridSize[0]),
-                    y: Math.floor(position.y / gridSize[1]),
+                    x: Math.floor(position.x / self.gridSize[0]),
+                    y: Math.floor(position.y / self.gridSize[1]),
                     id: id,
                     stroke: "transparent",
                     color: "#cccccc",
@@ -260,12 +247,17 @@ define(
                 });
             }
 
+            this.gridSize = DEFAULT_GRID_SIZE;
+            this.elementProxies = [];
+            this.generateDragHandle = generateDragHandle;
+            this.generateDragHandles = generateDragHandles;
+
             // Track current selection state
-            selection = $scope.selection;
+            this.selection = $scope.selection;
 
             // Expose the view's selection proxy
-            if (selection) {
-                selection.proxy(new FixedProxy(addElement, $q, dialogService));
+            if (this.selection) {
+                this.selection.proxy(new FixedProxy(addElement, $q, dialogService));
             }
 
             // Refresh list of elements whenever model changes
@@ -285,72 +277,79 @@ define(
 
             // Position panes where they are dropped
             $scope.$on("mctDrop", handleDrop);
-
-            return {
-                /**
-                 * Get the size of the grid, in pixels. The returned array
-                 * is in the form `[x, y]`.
-                 * @returns {number[]} the grid size
-                 * @memberof platform/features/layout.FixedController#
-                 */
-                getGridSize: function () {
-                    return gridSize;
-                },
-                /**
-                 * Get an array of elements in this panel; these are
-                 * decorated proxies for both selection and display.
-                 * @returns {Array} elements in this panel
-                 * @memberof platform/features/layout.FixedController#
-                 */
-                getElements: function () {
-                    return elementProxies;
-                },
-                /**
-                 * Check if the element is currently selected, or (if no
-                 * argument is supplied) get the currently selected element.
-                 * @returns {boolean} true if selected
-                 * @memberof platform/features/layout.FixedController#
-                 */
-                selected: function (element) {
-                    return selection && ((arguments.length > 0) ?
-                            selection.selected(element) : selection.get());
-                },
-                /**
-                 * Set the active user selection in this view.
-                 * @param element the element to select
-                 * @memberof platform/features/layout.FixedController#
-                 */
-                select: select,
-                /**
-                 * Clear the current user selection.
-                 * @memberof platform/features/layout.FixedController#
-                 */
-                clearSelection: function () {
-                    if (selection) {
-                        selection.deselect();
-                        handles = [];
-                        moveHandle = undefined;
-                    }
-                },
-                /**
-                 * Get drag handles.
-                 * @returns {Array} drag handles for the current selection
-                 * @memberof platform/features/layout.FixedController#
-                 */
-                handles: function () {
-                    return handles;
-                },
-                /**
-                 * Get the handle to handle dragging to reposition an element.
-                 * @returns {FixedDragHandle} the drag handle
-                 * @memberof platform/features/layout.FixedController#
-                 */
-                moveHandle: function () {
-                    return moveHandle;
-                }
-            };
-
         }
+
+        /**
+         * Get the size of the grid, in pixels. The returned array
+         * is in the form `[x, y]`.
+         * @returns {number[]} the grid size
+         * @memberof platform/features/layout.FixedController#
+         */
+        FixedController.prototype.getGridSize = function () {
+            return this.gridSize;
+        };
+
+        /**
+         * Get an array of elements in this panel; these are
+         * decorated proxies for both selection and display.
+         * @returns {Array} elements in this panel
+         */
+        FixedController.prototype.getElements = function () {
+            return this.elementProxies;
+        };
+
+        /**
+         * Check if the element is currently selected, or (if no
+         * argument is supplied) get the currently selected element.
+         * @returns {boolean} true if selected
+         */
+        FixedController.prototype.selected = function (element) {
+            var selection = this.selection;
+            return selection && ((arguments.length > 0) ?
+                    selection.selected(element) : selection.get());
+        };
+
+        /**
+         * Set the active user selection in this view.
+         * @param element the element to select
+         */
+        FixedController.prototype.select = function select(element) {
+            if (this.selection) {
+                // Update selection...
+                this.selection.select(element);
+                // ...as well as move, resize handles
+                this.mvHandle = this.generateDragHandle(element);
+                this.resizeHandles = this.generateDragHandles(element);
+            }
+        };
+
+        /**
+         * Clear the current user selection.
+         */
+        FixedController.prototype.clearSelection = function () {
+            if (this.selection) {
+                this.selection.deselect();
+                this.resizeHandles = [];
+                this.mvHandle = undefined;
+            }
+        };
+
+        /**
+         * Get drag handles.
+         * @returns {platform/features/layout.FixedDragHandle[]}
+         *          drag handles for the current selection
+         */
+        FixedController.prototype.handles = function () {
+            return this.resizeHandles;
+        };
+
+        /**
+         * Get the handle to handle dragging to reposition an element.
+         * @returns {platform/features/layout.FixedDragHandle} the drag handle
+         */
+        FixedController.prototype.moveHandle = function () {
+            return this.mvHandle;
+        };
 
         return FixedController;
     }

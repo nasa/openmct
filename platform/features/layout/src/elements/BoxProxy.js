@@ -48,7 +48,6 @@ define(
              * Get/set this element's fill color. (Omitting the
              * argument makes this act as a getter.)
              * @method
-             * @memberof BoxProxy
              * @param {string} fill the new fill color
              * @returns {string} the fill color
              * @memberof platform/features/layout.BoxProxy#

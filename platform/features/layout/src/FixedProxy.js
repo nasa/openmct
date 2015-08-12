@@ -37,32 +37,40 @@ define(
          *        when adding a new element will require user input
          */
         function FixedProxy(addElementCallback, $q, dialogService) {
-            var factory = new ElementFactory(dialogService);
-
-            return {
-                /**
-                 * Add a new visual element to this view.
-                 * @memberof platform/features/layout.FixedProxy#
-                 */
-                add: function (type) {
-                    // Place a configured element into the view configuration
-                    function addElement(element) {
-                        // Configure common properties of the element
-                        element.x = element.x || 0;
-                        element.y = element.y || 0;
-                        element.width = element.width || 1;
-                        element.height = element.height || 1;
-                        element.type = type;
-
-                        // Finally, add it to the view's configuration
-                        addElementCallback(element);
-                    }
-
-                    // Defer creation to the factory
-                    $q.when(factory.createElement(type)).then(addElement);
-                }
-            };
+            this.factory = new ElementFactory(dialogService);
+            this.$q = $q;
+            this.addElementCallback = addElementCallback;
         }
+
+        /**
+         * Add a new visual element to this view. Supported types are:
+         *
+         * * `fixed.image`
+         * * `fixed.box`
+         * * `fixed.text`
+         * * `fixed.line`
+         *
+         * @param {string} type the type of element to add
+         */
+        FixedProxy.prototype.add = function (type) {
+            var addElementCallback = this.addElementCallback;
+
+            // Place a configured element into the view configuration
+            function addElement(element) {
+                // Configure common properties of the element
+                element.x = element.x || 0;
+                element.y = element.y || 0;
+                element.width = element.width || 1;
+                element.height = element.height || 1;
+                element.type = type;
+
+                // Finally, add it to the view's configuration
+                addElementCallback(element);
+            }
+
+            // Defer creation to the factory
+            this.$q.when(this.factory.createElement(type)).then(addElement);
+        };
 
         return FixedProxy;
     }
