@@ -14,7 +14,7 @@
                 "provides": "searchService",
                 "type": "provider",
                 "implementation": "GenericSearchProvider.js",
-                "depends": [ "$q", "objectService", "workerService", "GENERIC_SEARCH_ROOTS" ]
+                "depends": [ "$q", "$timeout", "objectService", "workerService", "GENERIC_SEARCH_ROOTS" ]
             },
             {
                 "provides": "searchService",
