@@ -39,6 +39,7 @@ define(
          *
          * @constructor
          * @param $q Angular's $q, for promise consolidation.
+         * @param $timeout Angular's $timeout, for delayed funtion execution.
          * @param {ObjectService} objectService The service from which
          *        domain objects can be gotten.
          * @param {WorkerService} workerService The service which allows
@@ -46,7 +47,7 @@ define(
          * @param {GENERIC_SEARCH_ROOTS} ROOTS An array of the root 
          *        domain objects' IDs.
          */
-        function GenericSearchProvider($q, objectService, workerService, ROOTS) {
+        function GenericSearchProvider($q, $timeout, objectService, workerService, ROOTS) {
             var worker = workerService.run('genericSearchWorker'),
                 indexed = {},
                 pendingQueries = {};
@@ -132,16 +133,23 @@ define(
                         indexItem(node);
                         indexed[id] = true;
                         
-                        if (node.hasCapability && node.hasCapability('composition')) {
+                        if (node && node.hasCapability && node.hasCapability('composition')) {
                             // This node has children
-                            node.getCapability('composition').invoke().then(function (children) {
-                                // Index the children
-                                if (children.constructor === Array) {
-                                    indexItems(children);
-                                } else {
-                                    indexItems([children]);
-                                }
-                            });
+                            
+                            // Make sure that this is async, so doesn't block up page
+                            $timeout(function () {
+                                // Get the children... 
+                                node.useCapability('composition').then(function (children) {
+                                    $timeout(function () {
+                                        // ... then index the children
+                                        if (children.constructor === Array) {
+                                            indexItems(children);
+                                        } else {
+                                            indexItems([children]);
+                                        }
+                                    }, 100);
+                                });
+                            }, 100);
                         }
                     }
                     
