@@ -33,6 +33,47 @@ define(
          * @constructor
          */
         function PlotLine(buffer) {
+            this.buffer = buffer;
+        }
+
+        /**
+         * Add a point to this plot line.
+         * @param {number} domainValue the domain value
+         * @param {number} rangeValue the range value
+         */
+        PlotLine.prototype.addPoint = function (domainValue, rangeValue) {
+            var buffer = this.buffer,
+                index;
+
+            // Make sure we got real/useful values here...
+            if (domainValue !== undefined && rangeValue !== undefined) {
+                index = buffer.findInsertionIndex(domainValue);
+
+                // Already in the buffer? Skip insertion
+                if (index < 0) {
+                    return;
+                }
+
+                // Insert the point
+                if (!buffer.insertPoint(domainValue, rangeValue, index)) {
+                    // If insertion failed, trim from the beginning...
+                    buffer.trim(1);
+                    // ...and try again.
+                    buffer.insertPoint(domainValue, rangeValue, index);
+                }
+            }
+        };
+
+        /**
+         * Add a series of telemetry data to this plot line.
+         * @param {TelemetrySeries} series the data series
+         * @param {string} [domain] the key indicating which domain
+         *        to use when looking up data from this series
+         * @param {string} [range] the key indicating which range
+         *        to use when looking up data from this series
+         */
+        PlotLine.prototype.addSeries = function (series, domain, range) {
+            var buffer = this.buffer;
 
             // Insert a time-windowed data series into the buffer
             function insertSeriesWindow(seriesWindow) {
@@ -60,62 +101,19 @@ define(
                 }
             }
 
-            function createWindow(series, domain, range) {
-                return new PlotSeriesWindow(
-                    series,
-                    domain,
-                    range,
-                    0,
-                    series.getPointCount()
-                );
-            }
-
-            return {
-                /**
-                 * Add a point to this plot line.
-                 * @param {number} domainValue the domain value
-                 * @param {number} rangeValue the range value
-                 * @memberof platform/features/plot.PlotLine
-                 */
-                addPoint: function (domainValue, rangeValue) {
-                    var index;
-                    // Make sure we got real/useful values here...
-                    if (domainValue !== undefined && rangeValue !== undefined) {
-                        index = buffer.findInsertionIndex(domainValue);
-
-                        // Already in the buffer? Skip insertion
-                        if (index < 0) {
-                            return;
-                        }
-
-                        // Insert the point
-                        if (!buffer.insertPoint(domainValue, rangeValue, index)) {
-                            // If insertion failed, trim from the beginning...
-                            buffer.trim(1);
-                            // ...and try again.
-                            buffer.insertPoint(domainValue, rangeValue, index);
-                        }
-                    }
-                },
-                /**
-                 * Add a series of telemetry data to this plot line.
-                 * @param {TelemetrySeries} series the data series
-                 * @param {string} [domain] the key indicating which domain
-                 *        to use when looking up data from this series
-                 * @param {string} [range] the key indicating which range
-                 *        to use when looking up data from this series
-                 * @memberof platform/features/plot.PlotLine
-                 */
-                addSeries: function (series, domain, range) {
-                    // Should try to add via insertion if a
-                    // clear insertion point is available;
-                    // if not, should split and add each half.
-                    // Insertion operation also needs to factor out
-                    // redundant timestamps, for overlapping data
-                    insertSeriesWindow(createWindow(series, domain, range));
-                }
-            };
-        }
+            // Should try to add via insertion if a
+            // clear insertion point is available;
+            // if not, should split and add each half.
+            // Insertion operation also needs to factor out
+            // redundant timestamps, for overlapping data
+            insertSeriesWindow(new PlotSeriesWindow(
+                series,
+                domain,
+                range,
+                0,
+                series.getPointCount()
+            ));
+        };
 
         return PlotLine;
     }

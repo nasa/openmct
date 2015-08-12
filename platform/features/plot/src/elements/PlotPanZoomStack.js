@@ -44,123 +44,99 @@ define(
          */
         function PlotPanZoomStack(origin, dimensions) {
             // Use constructor parameters as the stack's initial state
-            var stack = [{ origin: origin, dimensions: dimensions }];
-
-            // Various functions which follow are simply wrappers for
-            // normal stack-like array methods, with the exception that
-            // they prevent undesired modification and enforce that this
-            // stack must remain non-empty.
-            // See JSDoc for specific methods below for more detail.
-            function getDepth() {
-                return stack.length;
-            }
-
-            function pushPanZoom(origin, dimensions) {
-                stack.push({ origin: origin, dimensions: dimensions });
-            }
-
-            function popPanZoom() {
-                if (stack.length > 1) {
-                    stack.pop();
-                }
-            }
-
-            function clearPanZoom() {
-                stack = [stack[0]];
-            }
-
-            function setBasePanZoom(origin, dimensions) {
-                stack[0] = { origin: origin, dimensions: dimensions };
-            }
-
-            function getPanZoom() {
-                return stack[stack.length - 1];
-            }
-
-            function getOrigin() {
-                return getPanZoom().origin;
-            }
-
-            function getDimensions() {
-                return getPanZoom().dimensions;
-            }
-
-            return {
-                /**
-                 * Get the current stack depth; that is, the number
-                 * of items on the stack. A depth of one means that no
-                 * panning or zooming relative to the base value has
-                 * been applied.
-                 * @returns {number} the depth of the stack
-                 * @memberof platform/features/plot.PlotPanZoomStack#
-                 */
-                getDepth: getDepth,
-
-                /**
-                 * Push a new pan-zoom state onto the stack; this will
-                 * become the active pan-zoom state.
-                 * @param {number[]} origin the new origin
-                 * @param {number[]} dimensions the new dimensions
-                 * @memberof platform/features/plot.PlotPanZoomStack#
-                 */
-                pushPanZoom: pushPanZoom,
-
-                /**
-                 * Pop a pan-zoom state from the stack. Whatever pan-zoom
-                 * state was previously present will become current.
-                 * If called when there is only one pan-zoom state on the
-                 * stack, this acts as a no-op (that is, the lowest
-                 * pan-zoom state on the stack cannot be popped, to ensure
-                 * that some pan-zoom state is always available.)
-                 * @memberof platform/features/plot.PlotPanZoomStack#
-                 */
-                popPanZoom: popPanZoom,
-
-                /**
-                 * Set the base pan-zoom state; that is, the state at the
-                 * bottom of the stack. This allows the "unzoomed" state of
-                 * a plot to be updated (e.g. as new data comes in) without
-                 * interfering with the user's chosen zoom level.
-                 * @param {number[]} origin the base origin
-                 * @param {number[]} dimensions the base dimensions
-                 * @memberof platform/features/plot.PlotPanZoomStack#
-                 */
-                setBasePanZoom: setBasePanZoom,
-
-                /**
-                 * Clear the pan-zoom stack down to its bottom element;
-                 * in effect, pop all elements but the last, e.g. to remove
-                 * any temporary user modifications to pan-zoom state.
-                 * @memberof platform/features/plot.PlotPanZoomStack#
-                 */
-                clearPanZoom: clearPanZoom,
-
-                /**
-                 * Get the current pan-zoom state (the state at the top
-                 * of the stack), expressed as an object with "origin" and
-                 * "dimensions" fields.
-                 * @returns {object} the current pan-zoom state
-                 * @memberof platform/features/plot.PlotPanZoomStack#
-                 */
-                getPanZoom: getPanZoom,
-
-                /**
-                 * Get the current origin, as represented on the top of the
-                 * stack.
-                 * @returns {number[]} the current plot origin
-                 * @memberof platform/features/plot.PlotPanZoomStack#
-                 */
-                getOrigin: getOrigin,
-
-                /**
-                 * Get the current dimensions, as represented on the top of
-                 * the stack.
-                 * @returns {number[]} the current plot dimensions
-                 * @memberof platform/features/plot.PlotPanZoomStack#
-                 */
-                getDimensions: getDimensions
-            };
+            this.stack = [{ origin: origin, dimensions: dimensions }];
         }
+
+        // Various functions which follow are simply wrappers for
+        // normal stack-like array methods, with the exception that
+        // they prevent undesired modification and enforce that this
+        // stack must remain non-empty.
+        // See JSDoc for specific methods below for more detail.
+
+        /**
+         * Get the current stack depth; that is, the number
+         * of items on the stack. A depth of one means that no
+         * panning or zooming relative to the base value has
+         * been applied.
+         * @returns {number} the depth of the stack
+         */
+        PlotPanZoomStack.prototype.getDepth = function getDepth() {
+            return this.stack.length;
+        };
+
+        /**
+         * Push a new pan-zoom state onto the stack; this will
+         * become the active pan-zoom state.
+         * @param {number[]} origin the new origin
+         * @param {number[]} dimensions the new dimensions
+         */
+        PlotPanZoomStack.prototype.pushPanZoom = function (origin, dimensions) {
+            this.stack.push({ origin: origin, dimensions: dimensions });
+        };
+
+        /**
+         * Pop a pan-zoom state from the stack. Whatever pan-zoom
+         * state was previously present will become current.
+         * If called when there is only one pan-zoom state on the
+         * stack, this acts as a no-op (that is, the lowest
+         * pan-zoom state on the stack cannot be popped, to ensure
+         * that some pan-zoom state is always available.)
+         */
+        PlotPanZoomStack.prototype.popPanZoom = function popPanZoom() {
+            if (stack.length > 1) {
+                this.stack.pop();
+            }
+        };
+
+        /**
+         * Set the base pan-zoom state; that is, the state at the
+         * bottom of the stack. This allows the "unzoomed" state of
+         * a plot to be updated (e.g. as new data comes in) without
+         * interfering with the user's chosen zoom level.
+         * @param {number[]} origin the base origin
+         * @param {number[]} dimensions the base dimensions
+         * @memberof platform/features/plot.PlotPanZoomStack#
+         */
+        PlotPanZoomStack.prototype.setBasePanZoom = function (origin, dimensions) {
+            this.stack[0] = { origin: origin, dimensions: dimensions };
+        };
+
+        /**
+         * Clear the pan-zoom stack down to its bottom element;
+         * in effect, pop all elements but the last, e.g. to remove
+         * any temporary user modifications to pan-zoom state.
+         */
+        PlotPanZoomStack.prototype.clearPanZoom = function clearPanZoom() {
+            this.stack = [this.stack[0]];
+        };
+
+        /**
+         * Get the current pan-zoom state (the state at the top
+         * of the stack), expressed as an object with "origin" and
+         * "dimensions" fields.
+         * @returns {object} the current pan-zoom state
+         */
+        PlotPanZoomStack.prototype.getPanZoom = function getPanZoom() {
+            return this.stack[this.stack.length - 1];
+        };
+
+        /**
+         * Get the current origin, as represented on the top of the
+         * stack.
+         * @returns {number[]} the current plot origin
+         */
+        PlotPanZoomStack.prototype.getOrigin = function getOrigin() {
+            return this.getPanZoom().origin;
+        };
+
+        /**
+         * Get the current dimensions, as represented on the top of
+         * the stack.
+         * @returns {number[]} the current plot dimensions
+         */
+        PlotPanZoomStack.prototype.getDimensions = function getDimensions() {
+            return this.getPanZoom().dimensions;
+        };
 
         return PlotPanZoomStack;
     }

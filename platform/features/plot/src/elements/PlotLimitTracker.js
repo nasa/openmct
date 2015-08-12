@@ -21,26 +21,32 @@
  *****************************************************************************/
 /*global define,Float32Array*/
 
-/**
- * Prepares data to be rendered in a GL Plot. Handles
- * the conversion from data API to displayable buffers.
- */
 define(
     [],
     function () {
         'use strict';
 
-        var MAX_POINTS = 86400,
-            INITIAL_SIZE = 675; // 1/128 of MAX_POINTS
-
         /**
+         * Tracks the limit state of telemetry objects being plotted.
          * @memberof platform/features/plot
          * @constructor
-         * @param {TelemetryHandle} handle the handle to telemetry access
+         * @param {platform/telemetry.TelemetryHandle} handle the handle
+         *        to telemetry access
          * @param {string} range the key to use when looking up range values
          */
         function PlotLimitTracker(handle, range) {
-            var legendClasses = {};
+            this.handle = handle;
+            this.range = range;
+            this.legendClasses = {};
+        }
+
+        /**
+         * Update limit states to reflect the latest data.
+         */
+        PlotLimitTracker.prototype.update = function () {
+            var legendClasses = {},
+                range = this.range,
+                handle = this.handle;
 
             function updateLimit(telemetryObject) {
                 var limit = telemetryObject.getCapability('limit'),
@@ -52,17 +58,21 @@ define(
                 }
             }
 
-            return {
-                update: function () {
-                    legendClasses = {};
-                    handle.getTelemetryObjects().forEach(updateLimit);
-                },
-                getLegendClass: function (domainObject) {
-                    var id = domainObject && domainObject.getId();
-                    return id && legendClasses[id];
-                }
-            };
-        }
+            handle.getTelemetryObjects().forEach(updateLimit);
+
+            this.legendClasses = legendClasses;
+        };
+
+        /**
+         * Get the CSS class associated with any limit violations for this
+         * telemetry object.
+         * @param {DomainObject} domainObject the telemetry object to check
+         * @returns {string} the CSS class name, if any
+         */
+        PlotLimitTracker.prototype.getLegendClass = function (domainObject) {
+            var id = domainObject && domainObject.getId();
+            return id && this.legendClasses[id];
+        };
 
         return PlotLimitTracker;
 

@@ -62,26 +62,22 @@ define(
 
             (metadatas || []).forEach(buildOptionsForMetadata);
 
-            // Plot axis will be used directly from the Angular
-            // template, so expose properties directly to facilitate
-            // two-way data binding (for drop-down menus)
-            return {
-                /**
-                 * The set of options applicable for this axis;
-                 * an array of objects, where each object contains a
-                 * "key" field and a "name" field (for machine- and
-                 * human-readable names respectively)
-                 * @memberof platform/features/plot.PlotAxis#
-                 */
-                options: options,
-                /**
-                 * The currently chosen option for this axis. An
-                 * initial value is provided; this will be updated
-                 * directly form the plot template.
-                 * @memberof platform/features/plot.PlotAxis#
-                 */
-                active: options[0] || defaultValue
-            };
+            /**
+             * The currently chosen option for this axis. An
+             * initial value is provided; this will be updated
+             * directly form the plot template.
+             * @memberof platform/features/plot.PlotAxis#
+             */
+            this.active = options[0] || defaultValue;
+
+            /**
+             * The set of options applicable for this axis;
+             * an array of objects, where each object contains a
+             * "key" field and a "name" field (for machine- and
+             * human-readable names respectively)
+             * @memberof platform/features/plot.PlotAxis#
+             */
+            this.options = options;
         }
 
         return PlotAxis;
