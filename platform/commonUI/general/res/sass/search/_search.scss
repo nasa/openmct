@@ -50,6 +50,9 @@
                 
                 // For clear button
                 padding-right: 16px;
+                
+                // Modifications for existence of menu icon:
+                padding-right: 16px + 12px;
             }
             
             .search-icon {
@@ -104,6 +107,78 @@
                     visibility: visible;
                     opacity: 1;
                 }
+                
+                // Modifications for existence of menu icon:
+                right: 16px;
+                padding-right: 2px;
+            }
+            
+            .menu-icon {
+                position: absolute;
+                display: block;
+                
+                cursor: pointer;
+                
+                color: $colorItemFg;
+                font-size: 6px;
+                padding: 6px;
+                padding-left: 4px;
+                
+                right: 0px;
+                top: -3px;
+            }
+             
+            .search-menu-holder {
+                //visibility: hidden;
+                
+                float: right;
+                margin-top: 12px;//$textInputHeight;
+                left: -15px;
+                
+                .search-menu {
+                    
+                    ul li {
+                        padding: 0;
+                        padding-left: 6px;
+                        padding-right: 6px;
+                        
+                        font-size: 0.9em;
+                    }
+                }
+            }
+            
+            /*
+            // Make bubble caret thing
+            .search-menu-holder:before {
+                position: absolute;
+                top: -7px;
+                left: 9px;
+                display: inline-block;
+                border-right: 7px solid transparent;
+                border-bottom: 7px solid #CCC;
+                border-left: 7px solid transparent;
+                border-bottom-color: rgba(0, 0, 0, 0.2);
+                content: '';
+            }
+            
+            .search-menu-holder:after {
+                position: absolute;
+                top: -6px;
+                left: 10px;
+                display: inline-block;
+                border-right: 6px solid transparent;
+                border-bottom: 6px solid white;
+                border-left: 6px solid transparent;
+                content: '';
+            }
+            */
+            
+            // Hovering reveals menu
+            .menu-icon:hover + div.search-menu-holder {
+                visibility: visible;
+            }
+            div.search-menu-holder:hover {
+                visibility: visible;
             }
         }
         

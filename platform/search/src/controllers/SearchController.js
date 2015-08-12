@@ -124,8 +124,17 @@ define(function () {
              * Clears the input text. 
              */
             clear: function () {
+                // Clear input field
                 $scope.ngModel.input = '';
-                $scope.ngModel.search = false;
+                // Call search to clear the results list too
+                search();
+            },
+            
+            /**
+             * Opens a menu for more search options.
+             */
+            menu: function () {
+                console.log('open menu');
             }
         };
     }
