@@ -78,7 +78,7 @@ define(
             // Wrap a returned value (see above); if it's a promise, wrap
             // the resolved value.
             function wrapResult(result) {
-                return result.then ? // promise-like
+                return (result && result.then) ? // promise-like
                         result.then(makeEditable) :
                         makeEditable(result);
             }
@@ -107,8 +107,10 @@ define(
 
             // Wrap a method of this capability
             function wrapMethod(fn) {
-                capability[fn] =
-                    (idempotent ? oneTimeFunction : wrapFunction)(fn);
+                if (typeof capability[fn] === 'function') {
+                    capability[fn] =
+                        (idempotent ? oneTimeFunction : wrapFunction)(fn);
+                }
             }
 
             // Wrap all methods; return only editable domain objects.
