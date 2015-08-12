@@ -27,16 +27,6 @@
                 "key": "menu",
                 "implementation": "gestures/ContextMenuGesture.js",
                 "depends": ["$timeout", "agentService"]
-            },
-            {
-                "key": "pinch",
-                "implementation": "gestures/PinchGesture.js",
-                "depends": ["$log", "agentService"]
-            },
-            {
-                "key": "pan",
-                "implementation": "gestures/PanGesture.js",
-                "depends": ["$log", "agentService"]
             }
         ],
         "components": [
