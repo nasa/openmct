@@ -79,7 +79,6 @@
             }
             
             .clear-icon {
-                
                 position: absolute;
                 display: block;
                 
@@ -87,17 +86,21 @@
                 
                 color: $colorItemFg;
                 font-size: 6px;
-                padding: 4px;
+                padding: 6px;
+                padding-left: 4px;
                 
                 right: 0px;
-                top: -1px;
-                margin-right: 2px;
+                top: -3px;
                 
                 // Icon is visible only when there is text input 
                 visibility: hidden;
+                opacity: 0;
+                
+                transition: visibility .15s, opacity .15s;
                 
                 &.content {
                     visibility: visible;
+                    opacity: 1;
                 }
             }
         }
