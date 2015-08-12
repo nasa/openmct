@@ -132,8 +132,8 @@
                 //visibility: hidden;
                 
                 float: right;
-                margin-top: 12px;//$textInputHeight;
-                left: -15px;
+                margin-top: $textInputHeight - 2px;
+                left: -25px;
                 
                 .search-menu {
                     
@@ -147,31 +147,18 @@
                 }
             }
             
-            /*
             // Make bubble caret thing
-            .search-menu-holder:before {
-                position: absolute;
-                top: -7px;
-                left: 9px;
-                display: inline-block;
-                border-right: 7px solid transparent;
-                border-bottom: 7px solid #CCC;
-                border-left: 7px solid transparent;
-                border-bottom-color: rgba(0, 0, 0, 0.2);
-                content: '';
-            }
-            
             .search-menu-holder:after {
                 position: absolute;
                 top: -6px;
                 left: 10px;
                 display: inline-block;
                 border-right: 6px solid transparent;
-                border-bottom: 6px solid white;
+                //border-bottom: 6px solid white;
+                border-bottom: 6px solid rgb(94, 94, 94); // Where does this color come from?
                 border-left: 6px solid transparent;
                 content: '';
             }
-            */
             
             // Hovering reveals menu
             .menu-icon:hover + div.search-menu-holder {
