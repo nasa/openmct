@@ -11,6 +11,26 @@ define(
         var TEMPLATE = "<canvas style='position: absolute; background: none; width: 100%; height: 100%;'></canvas>";
 
         /**
+         * Offsetter adjusts domain and range values by a fixed amount,
+         * generally increasing the precision of the 32 bit float representation
+         * required for plotting.
+         *
+         * @constructor
+         */
+        function Offsetter(domainOffset, rangeOffset) {
+            this.domainOffset = domainOffset;
+            this.rangeOffset = rangeOffset;
+        }
+
+        Offsetter.prototype.domain = function(dataDomain) {
+            return dataDomain - this.domainOffset;
+        };
+
+        Offsetter.prototype.range = function(dataRange) {
+            return dataRange - this.rangeOffset;
+        };
+
+        /**
          * MCTChart draws charts utilizing a drawAPI.
          *
          * @constructor
@@ -22,7 +42,8 @@ define(
                     isDestroyed = false,
                     activeInterval,
                     drawAPI,
-                    lines = [];
+                    lines = [],
+                    offset;
 
                 drawAPI = DrawLoader.getDrawAPI(canvas);
 
@@ -34,13 +55,33 @@ define(
                     if (isDestroyed) {
                         return;
                     }
+
                     requestAnimationFrame(redraw);
                     canvas.width = canvas.offsetWidth;
                     canvas.height = canvas.offsetHeight;
                     drawAPI.clear();
+                    createOffset();
+                    if (!offset) {
+                        return;
+                    }
                     updateViewport();
                     drawSeries();
                     drawRectangles();
+                }
+
+                function createOffset() {
+                    if (offset) {
+                        return;
+                    }
+                    if (!$scope.viewport ||
+                        !$scope.viewport.topLeft ||
+                        !$scope.viewport.bottomRight) {
+                        return;
+                    }
+                    offset = new Offsetter(
+                        $scope.viewport.topLeft.domain,
+                        $scope.viewport.topLeft.range
+                    );
                 }
 
                 function drawIfResized() {
@@ -59,6 +100,9 @@ define(
 
                 function drawSeries() {
                     // TODO: Don't regenerate lines on each frame.
+                    if (!$scope.series || !$scope.series.length) {
+                        return;
+                    }
                     lines = $scope.series.map(lineFromSeries);
                     lines.forEach(function(line) {
                         drawAPI.drawLine(
@@ -73,8 +117,14 @@ define(
                     if ($scope.rectangles) {
                         $scope.rectangles.forEach(function(rect) {
                             drawAPI.drawSquare(
-                                [rect.start.domain, rect.start.range],
-                                [rect.end.domain, rect.end.range],
+                                [
+                                    offset.domain(rect.start.domain),
+                                    offset.range(rect.start.range)
+                                ],
+                                [
+                                    offset.domain(rect.end.domain),
+                                    offset.range(rect.end.range)
+                                ],
                                 rect.color
                             );
                         });
@@ -83,13 +133,23 @@ define(
 
                 function updateViewport() {
                     var dimensions = [
-                        Math.abs($scope.viewport.topLeft.domain - $scope.viewport.bottomRight.domain),
-                        Math.abs($scope.viewport.topLeft.range - $scope.viewport.bottomRight.range)
+                        Math.abs(
+                            offset.domain($scope.viewport.topLeft.domain) -
+                            offset.domain($scope.viewport.bottomRight.domain)
+                        ),
+                        Math.abs(
+                            offset.range($scope.viewport.topLeft.range) -
+                            offset.range($scope.viewport.bottomRight.range)
+                        )
                     ];
 
                     var origin = [
-                        $scope.viewport.topLeft.domain,
-                        $scope.viewport.bottomRight.range
+                        offset.domain(
+                            $scope.viewport.topLeft.domain
+                        ),
+                        offset.range(
+                            $scope.viewport.bottomRight.range
+                        )
                     ];
 
                     drawAPI.setDimensions(
@@ -113,8 +173,8 @@ define(
                     // appears minimal.
                     var lineBuffer = new Float32Array(20000);
                     for (var i = 0; i < series.data.length; i++) {
-                        lineBuffer[2*i] = series.data[i].domain;
-                        lineBuffer[2*i+1] = series.data[i].range;
+                        lineBuffer[2*i] = offset.domain(series.data[i].domain);
+                        lineBuffer[2*i+1] = offset.range(series.data[i].range);
                     }
                     return {
                         color: series.color,
@@ -123,15 +183,11 @@ define(
                     };
                 }
 
-                function initializeLines() {
-                    lines = $scope.series.map(lineFromSeries);
-                }
-
                 function onSeriesDataAdd(event, seriesIndex, points) {
                     var line = lines[seriesIndex];
                     points.forEach(function (point) {
-                        line.buffer[2*line.pointCount] = point.domain;
-                        line.buffer[2*line.pointCount+1] = point.range;
+                        line.buffer[2*line.pointCount] = offset.domain(point.domain);
+                        line.buffer[2*line.pointCount+1] = offset.range(point.range);
                         line.pointCount += 1;
                     });
                 }
@@ -139,8 +195,6 @@ define(
                 // Check for resize, on a timer
                 activeInterval = $interval(drawIfResized, 1000);
 
-                // Initialize series
-                $scope.$watch('series', initializeLines);
                 $scope.$on('series:data:add', onSeriesDataAdd);
                 redraw();
 

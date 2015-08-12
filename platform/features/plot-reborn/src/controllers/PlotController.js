@@ -11,10 +11,10 @@ define(
         function PlotController($scope) {
             var plotHistory = [];
             var isLive = true;
-            var maxDomain = 0;
-            var domainOffset = +new Date();
+            var maxDomain = +new Date();
             var subscriptions = [];
             var setToDefaultViewport = function() {
+                // TODO: We shouldn't set the viewport until we have received data or something has given us a reasonable viewport.
                 $scope.viewport = {
                     topLeft: {
                         domain: maxDomain - DOMAIN_INTERVAL,
@@ -35,7 +35,7 @@ define(
             };
             $scope.displayableDomain = function(domainValue) {
                 // TODO: Call format function provided by domain object.
-                return new Date(domainValue + domainOffset).toUTCString();
+                return new Date(domainValue).toUTCString();
             };
 
             $scope.series = [];
@@ -43,10 +43,7 @@ define(
             $scope.rectangles = [];
 
             var updateSeriesFromTelemetry = function(series, seriesIndex, telemetry) {
-                if (typeof domainOffset === 'undefined') {
-                    domainOffset = telemetry.getDomainValue(telemetry.getPointCount() - 1);
-                }
-                var domainValue = telemetry.getDomainValue(telemetry.getPointCount() - 1) - domainOffset;
+                var domainValue = telemetry.getDomainValue(telemetry.getPointCount() - 1);
                 var rangeValue = telemetry.getRangeValue(telemetry.getPointCount() - 1);
                 // Track the biggest domain we've seen for sticky-ness.
                 maxDomain = Math.max(maxDomain, domainValue);
