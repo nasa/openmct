@@ -28,33 +28,31 @@ define(
         /**
          * Policy preventing the Imagery view from being made available for
          * domain objects which do not have associated image telemetry.
-         * @implements {Policy}
+         * @implements {Policy.<View, DomainObject>}
          * @constructor
-         * @memberof platform/features/imagery
          */
         function ImageryViewPolicy() {
-            function hasImageTelemetry(domainObject) {
-                var telemetry = domainObject &&
-                        domainObject.getCapability('telemetry'),
-                    metadata = telemetry ? telemetry.getMetadata() : {},
-                    ranges = metadata.ranges || [];
+        }
 
-                return ranges.some(function (range) {
-                    return range.format === 'imageUrl' ||
-                            range.format === 'image';
-                });
+        function hasImageTelemetry(domainObject) {
+            var telemetry = domainObject &&
+                    domainObject.getCapability('telemetry'),
+                metadata = telemetry ? telemetry.getMetadata() : {},
+                ranges = metadata.ranges || [];
+
+            return ranges.some(function (range) {
+                return range.format === 'imageUrl' ||
+                    range.format === 'image';
+            });
+        }
+
+        ImageryViewPolicy.prototype.allow = function (view, domainObject) {
+            if (view.key === 'imagery') {
+                return hasImageTelemetry(domainObject);
             }
 
-            return {
-                allow: function (view, domainObject) {
-                    if (view.key === 'imagery') {
-                        return hasImageTelemetry(domainObject);
-                    }
-
-                    return true;
-                }
-            };
-        }
+            return true;
+        };
 
         return ImageryViewPolicy;
     }

@@ -40,40 +40,29 @@ define(
          * @memberof platform/features/imagery
          */
         function ImageryController($scope, telemetryHandler) {
-            var date = "",
-                time = "",
-                imageUrl = "",
-                paused = false,
-                handle;
+            var self = this;
 
             function releaseSubscription() {
-                if (handle) {
-                    handle.unsubscribe();
-                    handle = undefined;
+                if (self.handle) {
+                    self.handle.unsubscribe();
+                    self.handle = undefined;
                 }
             }
 
-            function updateValues() {
-                var imageObject = handle && handle.getTelemetryObjects()[0],
-                    m;
-                if (imageObject && !paused) {
-                    m = moment.utc(handle.getDomainValue(imageObject));
-                    date = m.format(DATE_FORMAT);
-                    time = m.format(TIME_FORMAT);
-                    imageUrl = handle.getRangeValue(imageObject);
-                }
+            function updateValuesCallback() {
+                return self.updateValues();
             }
 
             // Create a new subscription; telemetrySubscriber gets
             // to do the meaningful work here.
             function subscribe(domainObject) {
                 releaseSubscription();
-                date = "";
-                time = "";
-                imageUrl = "";
-                handle = domainObject && telemetryHandler.handle(
+                self.date = "";
+                self.time = "";
+                self.imageUrl = "";
+                self.handle = domainObject && telemetryHandler.handle(
                     domainObject,
-                    updateValues,
+                    updateValuesCallback,
                     true // Lossless
                 );
             }
@@ -83,61 +72,71 @@ define(
 
             // Unsubscribe when the plot is destroyed
             $scope.$on("$destroy", releaseSubscription);
-
-            return {
-                /**
-                 * Get the time portion (hours, minutes, seconds) of the
-                 * timestamp associated with the incoming image telemetry.
-                 * @returns {string} the time
-                 * @memberof platform/features/imagery.ImageryController#
-                 */
-                getTime: function () {
-                    return time;
-                },
-                /**
-                 * Get the date portion (month, year) of the
-                 * timestamp associated with the incoming image telemetry.
-                 * @returns {string} the date
-                 * @memberof platform/features/imagery.ImageryController#
-                 */
-                getDate: function () {
-                    return date;
-                },
-                /**
-                 * Get the time zone for the displayed time/date corresponding
-                 * to the timestamp associated with the incoming image
-                 * telemetry.
-                 * @returns {string} the time
-                 * @memberof platform/features/imagery.ImageryController#
-                 */
-                getZone: function () {
-                    return "UTC";
-                },
-                /**
-                 * Get the URL of the image telemetry to display.
-                 * @returns {string} URL for telemetry image
-                 * @memberof platform/features/imagery.ImageryController#
-                 */
-                getImageUrl: function () {
-                    return imageUrl;
-                },
-                /**
-                 * Getter-setter for paused state of the view (true means
-                 * paused, false means not.)
-                 * @param {boolean} [state] the state to set
-                 * @returns {boolean} the current state
-                 * @memberof platform/features/imagery.ImageryController#
-                 */
-                paused: function (state) {
-                    if (arguments.length > 0 && state !== paused) {
-                        paused = state;
-                        // Switch to latest image
-                        updateValues();
-                    }
-                    return paused;
-                }
-            };
         }
+
+        // Update displayable values to reflect latest image telemetry
+        ImageryController.prototype.updateValues = function () {
+            var imageObject =
+                    this.handle && this.handle.getTelemetryObjects()[0],
+                m;
+            if (imageObject && !this.isPaused) {
+                m = moment.utc(this.handle.getDomainValue(imageObject));
+                this.date = m.format(DATE_FORMAT);
+                this.time = m.format(TIME_FORMAT);
+                this.imageUrl = this.handle.getRangeValue(imageObject);
+            }
+        };
+
+        /**
+         * Get the time portion (hours, minutes, seconds) of the
+         * timestamp associated with the incoming image telemetry.
+         * @returns {string} the time
+         */
+        ImageryController.prototype.getTime = function () {
+            return this.time;
+        };
+
+        /**
+         * Get the date portion (month, year) of the
+         * timestamp associated with the incoming image telemetry.
+         * @returns {string} the date
+         */
+        ImageryController.prototype.getDate = function () {
+            return this.date;
+        };
+
+        /**
+         * Get the time zone for the displayed time/date corresponding
+         * to the timestamp associated with the incoming image
+         * telemetry.
+         * @returns {string} the time
+         */
+        ImageryController.prototype.getZone = function () {
+            return "UTC";
+        };
+
+        /**
+         * Get the URL of the image telemetry to display.
+         * @returns {string} URL for telemetry image
+         */
+        ImageryController.prototype.getImageUrl = function () {
+            return this.imageUrl;
+        };
+
+        /**
+         * Getter-setter for paused state of the view (true means
+         * paused, false means not.)
+         * @param {boolean} [state] the state to set
+         * @returns {boolean} the current state
+         */
+        ImageryController.prototype.paused = function (state) {
+            if (arguments.length > 0 && state !== this.isPaused) {
+                this.isPaused = state;
+                // Switch to latest image
+                this.updateValues();
+            }
+            return this.isPaused;
+        };
 
         return ImageryController;
     }
