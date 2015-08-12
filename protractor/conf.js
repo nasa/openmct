@@ -61,7 +61,7 @@ exports.config = {
 
 // Allow specifying binary location as an environment variable,
 // for cases where Chrome is not installed in a usual location.
-if (process.env.PROTRACTOR_CHROME_BINARY) {
+if (process.env.CHROME_BIN) {
     exports.config.capabilities.chromeOptions.binary =
-        process.env.PROTRACTOR_CHROME_BINARY;
+        process.env.CHROME_BIN;
 }
