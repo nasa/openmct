@@ -21,10 +21,6 @@
  *****************************************************************************/
 /*global define,Float32Array*/
 
-/**
- * Prepares data to be rendered in a GL Plot. Handles
- * the conversion from data API to displayable buffers.
- */
 define(
     ['./PlotLine', './PlotLineBuffer'],
     function (PlotLine, PlotLineBuffer) {
@@ -44,301 +40,281 @@ define(
          * @param {TelemetryHandle} handle the handle to telemetry access
          * @param {string} domain the key to use when looking up domain values
          * @param {string} range the key to use when looking up range values
-         * @param {number} maxDuration maximum plot duration to display
+         * @param {number} fixedDuration maximum plot duration to display
          * @param {number} maxPoints maximum number of points to display
          */
         function PlotUpdater(handle, domain, range, fixedDuration, maxPoints) {
-            var ids = [],
-                lines = {},
-                dimensions = [0, 0],
-                origin = [0, 0],
-                domainExtrema,
-                rangeExtrema,
-                buffers = {},
-                bufferArray = [],
-                domainOffset;
+            this.handle = handle;
+            this.domain = domain;
+            this.range = range;
+            this.fixedDuration = fixedDuration;
+            this.maxPoints = maxPoints;
 
-            // Look up a domain object's id (for mapping, below)
-            function getId(domainObject) {
-                return domainObject.getId();
-            }
-
-            // Check if this set of ids matches the current set of ids
-            // (used to detect if line preparation can be skipped)
-            function idsMatch(nextIds) {
-                return ids.length === nextIds.length &&
-                    nextIds.every(function (id, index) {
-                        return ids[index] === id;
-                    });
-            }
-
-            // Prepare plot lines for this group of telemetry objects
-            function prepareLines(telemetryObjects) {
-                var nextIds = telemetryObjects.map(getId),
-                    next = {};
-
-                // Detect if we already have everything we need prepared
-                if (idsMatch(nextIds)) {
-                    // Nothing to prepare, move on
-                    return;
-                }
-
-                // Built up a set of ids. Note that we can only
-                // create plot lines after our domain offset has
-                // been determined.
-                if (domainOffset !== undefined) {
-                    // Update list of ids in use
-                    ids = nextIds;
-
-                    // Create buffers for these objects
-                    bufferArray = ids.map(function (id) {
-                        buffers[id] = buffers[id] || new PlotLineBuffer(
-                            domainOffset,
-                            INITIAL_SIZE,
-                            maxPoints
-                        );
-                        next[id] = lines[id] || new PlotLine(buffers[id]);
-                        return buffers[id];
-                    });
-                }
-
-                // If there are no more lines, clear the domain offset
-                if (Object.keys(next).length < 1) {
-                    domainOffset = undefined;
-                }
-
-                // Update to the current set of lines
-                lines = next;
-            }
-
-
-            // Initialize the domain offset, based on these observed values
-            function initializeDomainOffset(values) {
-                domainOffset =
-                    ((domainOffset === undefined) && (values.length > 0)) ?
-                            (values.reduce(function (a, b) {
-                                return (a || 0) + (b || 0);
-                            }, 0) / values.length) :
-                            domainOffset;
-            }
-
-            // Used in the reduce step of updateExtrema
-            function reduceExtrema(a, b) {
-                return [ Math.min(a[0], b[0]), Math.max(a[1], b[1]) ];
-            }
-
-            // Convert a domain/range extrema to plot dimensions
-            function dimensionsOf(extrema) {
-                return extrema[1] - extrema[0];
-            }
-
-            // Convert a domain/range extrema to a plot origin
-            function originOf(extrema) {
-                return extrema[0];
-            }
-
-            // Expand range slightly so points near edges are visible
-            function expandRange() {
-                var padding = PADDING_RATIO * dimensions[1],
-                    top;
-                padding = Math.max(padding, 1.0);
-                top = Math.ceil(origin[1] + dimensions[1] + padding / 2);
-                origin[1] = Math.floor(origin[1] - padding / 2);
-                dimensions[1] = top - origin[1];
-            }
-
-            // Update dimensions and origin based on extrema of plots
-            function updateBounds() {
-                if (bufferArray.length > 0) {
-                    domainExtrema = bufferArray.map(function (lineBuffer) {
-                        return lineBuffer.getDomainExtrema();
-                    }).reduce(reduceExtrema);
-
-                    rangeExtrema = bufferArray.map(function (lineBuffer) {
-                        return lineBuffer.getRangeExtrema();
-                    }).reduce(reduceExtrema);
-
-                    // Calculate best-fit dimensions
-                    dimensions =
-                        [dimensionsOf(domainExtrema), dimensionsOf(rangeExtrema)];
-                    origin = [originOf(domainExtrema), originOf(rangeExtrema)];
-
-                    // Enforce some minimum visible area
-                    expandRange();
-
-                    // ...then enforce a fixed duration if needed
-                    if (fixedDuration !== undefined) {
-                        origin[0] = origin[0] + dimensions[0] - fixedDuration;
-                        dimensions[0] = fixedDuration;
-                    }
-                }
-            }
-
-            // Enforce maximum duration on all plot lines; not that
-            // domain extrema must be up-to-date for this to behave correctly.
-            function enforceDuration() {
-                var cutoff;
-
-                function enforceDurationForBuffer(plotLineBuffer) {
-                    var index = plotLineBuffer.findInsertionIndex(cutoff);
-                    if (index > 0) {
-                        // Leave one point untrimmed, such that line will
-                        // continue off left edge of visible plot area.
-                        plotLineBuffer.trim(index - 1);
-                    }
-                }
-
-                if (fixedDuration !== undefined &&
-                        domainExtrema !== undefined &&
-                            (domainExtrema[1] - domainExtrema[0] > fixedDuration)) {
-                    cutoff = domainExtrema[1] - fixedDuration;
-                    bufferArray.forEach(enforceDurationForBuffer);
-                    updateBounds(); // Extrema may have changed now
-                }
-            }
-
-            // Add latest data for this domain object
-            function addPointFor(domainObject) {
-                var line = lines[domainObject.getId()];
-                if (line) {
-                    line.addPoint(
-                        handle.getDomainValue(domainObject, domain),
-                        handle.getRangeValue(domainObject, range)
-                    );
-                }
-            }
-
-            // Handle new telemetry data
-            function update() {
-                var objects = handle.getTelemetryObjects();
-
-                // Initialize domain offset if necessary
-                if (domainOffset === undefined) {
-                    initializeDomainOffset(objects.map(function (obj) {
-                        return handle.getDomainValue(obj, domain);
-                    }).filter(function (value) {
-                        return typeof value === 'number';
-                    }));
-                }
-
-                // Make sure lines are available
-                prepareLines(objects);
-
-                // Add new data
-                objects.forEach(addPointFor);
-
-                // Then, update extrema
-                updateBounds();
-            }
-
-            // Add historical data for this domain object
-            function setHistorical(domainObject, series) {
-                var count = series ? series.getPointCount() : 0,
-                    line;
-
-                // Nothing to do if it's an empty series
-                if (count < 1) {
-                    return;
-                }
-
-                // Initialize domain offset if necessary
-                if (domainOffset === undefined) {
-                    initializeDomainOffset([
-                        series.getDomainValue(0, domain),
-                        series.getDomainValue(count - 1, domain)
-                    ]);
-                }
-
-                // Make sure lines are available
-                prepareLines(handle.getTelemetryObjects());
-
-                // Look up the line for this domain object
-                line = lines[domainObject.getId()];
-
-                // ...and put the data into it.
-                if (line) {
-                    line.addSeries(series, domain, range);
-                }
-
-                // Update extrema
-                updateBounds();
-            }
+            this.ids = [];
+            this.lines = {};
+            this.buffers = {};
+            this.bufferArray = [];
 
             // Use a default MAX_POINTS if none is provided
-            maxPoints = maxPoints !== undefined ? maxPoints : MAX_POINTS;
+            this.maxPoints = maxPoints !== undefined ? maxPoints : MAX_POINTS;
+            this.dimensions = [0, 0];
+            this.origin = [0, 0];
 
             // Initially prepare state for these objects.
             // Note that this may be an empty array at this time,
             // so we also need to check during update cycles.
-            update();
-
-            return {
-                /**
-                 * Get the dimensions which bound all data in the provided
-                 * data sets. This is given as a two-element array where the
-                 * first element is domain, and second is range.
-                 * @returns {number[]} the dimensions which bound this data set
-                 * @memberof platform/features/plot.PlotUpdater#
-                 */
-                getDimensions: function () {
-                    return dimensions;
-                },
-                /**
-                 * Get the origin of this data set's boundary.
-                 * This is given as a two-element array where the
-                 * first element is domain, and second is range.
-                 * The domain value here is not adjusted by the domain offset.
-                 * @returns {number[]} the origin of this data set's boundary
-                 * @memberof platform/features/plot.PlotUpdater#
-                 */
-                getOrigin: function () {
-                    // Pad range if necessary
-                    return origin;
-                },
-                /**
-                 * Get the domain offset; this offset will have been subtracted
-                 * from all domain values in all buffers returned by this
-                 * preparer, in order to minimize loss-of-precision due to
-                 * conversion to the 32-bit float format needed by WebGL.
-                 * @returns {number} the domain offset
-                 * @memberof platform/features/plot.PlotUpdater#
-                 */
-                getDomainOffset: function () {
-                    return domainOffset;
-                },
-                /**
-                 * Get all renderable buffers for this data set. This will
-                 * be returned as an array which can be correlated back to
-                 * the provided telemetry data objects (from the constructor
-                 * call) by index.
-                 *
-                 * Internally, these are flattened; each buffer contains a
-                 * sequence of alternating domain and range values.
-                 *
-                 * All domain values in all buffers will have been adjusted
-                 * from their original values by subtraction of the domain
-                 * offset; this minimizes loss-of-precision resulting from
-                 * the conversion to 32-bit floats, which may otherwise
-                 * cause aliasing artifacts (particularly for timestamps)
-                 *
-                 * @returns {Float32Array[]} the buffers for these traces
-                 * @memberof platform/features/plot.PlotUpdater#
-                 */
-                getLineBuffers: function () {
-                    return bufferArray;
-                },
-                /**
-                 * Update with latest data.
-                 * @memberof platform/features/plot.PlotUpdater#
-                 */
-                update: update,
-                /**
-                 * Fill in historical data.
-                 * @memberof platform/features/plot.PlotUpdater#
-                 */
-                addHistorical: setHistorical
-            };
+            this.update();
         }
+
+        // Look up a domain object's id (for mapping, below)
+        function getId(domainObject) {
+            return domainObject.getId();
+        }
+
+        // Used in the reduce step of updateExtrema
+        function reduceExtrema(a, b) {
+            return [ Math.min(a[0], b[0]), Math.max(a[1], b[1]) ];
+        }
+
+        // Convert a domain/range extrema to plot dimensions
+        function dimensionsOf(extrema) {
+            return extrema[1] - extrema[0];
+        }
+
+        // Convert a domain/range extrema to a plot origin
+        function originOf(extrema) {
+            return extrema[0];
+        }
+
+        // Check if this set of ids matches the current set of ids
+        // (used to detect if line preparation can be skipped)
+        PlotUpdater.prototype.idsMatch = function (nextIds) {
+            var ids = this.ids;
+            return ids.length === nextIds.length &&
+                nextIds.every(function (id, index) {
+                    return ids[index] === id;
+                });
+        };
+
+        // Prepare plot lines for this group of telemetry objects
+        PlotUpdater.prototype.prepareLines = function (telemetryObjects) {
+            var nextIds = telemetryObjects.map(getId),
+                next = {},
+                self = this;
+
+            // Detect if we already have everything we need prepared
+            if (this.idsMatch(nextIds)) {
+                // Nothing to prepare, move on
+                return;
+            }
+
+            // Built up a set of ids. Note that we can only
+            // create plot lines after our domain offset has
+            // been determined.
+            if (this.domainOffset !== undefined) {
+                // Update list of ids in use
+                this.ids = nextIds;
+
+                // Create buffers for these objects
+                this.bufferArray = this.ids.map(function (id) {
+                    self.buffers[id] = self.buffers[id] || new PlotLineBuffer(
+                        self.domainOffset,
+                        INITIAL_SIZE,
+                        self.maxPoints
+                    );
+                    next[id] =
+                        self.lines[id] || new PlotLine(self.buffers[id]);
+                    return self.buffers[id];
+                });
+            }
+
+            // If there are no more lines, clear the domain offset
+            if (Object.keys(next).length < 1) {
+                this.domainOffset = undefined;
+            }
+
+            // Update to the current set of lines
+            this.lines = next;
+        };
+
+        // Initialize the domain offset, based on these observed values
+        PlotUpdater.prototype.initializeDomainOffset = function (values) {
+            this.domainOffset =
+                ((this.domainOffset === undefined) && (values.length > 0)) ?
+                    (values.reduce(function (a, b) {
+                        return (a || 0) + (b || 0);
+                    }, 0) / values.length) :
+                    this.domainOffset;
+        };
+
+        // Expand range slightly so points near edges are visible
+        PlotUpdater.prototype.expandRange = function () {
+            var padding = PADDING_RATIO * this.dimensions[1],
+                top;
+            padding = Math.max(padding, 1.0);
+            top = Math.ceil(this.origin[1] + this.dimensions[1] + padding / 2);
+            this.origin[1] = Math.floor(this.origin[1] - padding / 2);
+            this.dimensions[1] = top - this.origin[1];
+        };
+
+        // Update dimensions and origin based on extrema of plots
+        PlotUpdater.prototype.updateBounds = function () {
+            var bufferArray = this.bufferArray;
+            if (bufferArray.length > 0) {
+                this.domainExtrema = bufferArray.map(function (lineBuffer) {
+                    return lineBuffer.getDomainExtrema();
+                }).reduce(reduceExtrema);
+
+                this.rangeExtrema = bufferArray.map(function (lineBuffer) {
+                    return lineBuffer.getRangeExtrema();
+                }).reduce(reduceExtrema);
+
+                // Calculate best-fit dimensions
+                this.dimensions = [ this.domainExtrema, this.rangeExtrema ]
+                    .map(dimensionsOf);
+                this.origin = [ this.domainExtrema, this.rangeExtrema ]
+                    .map(originOf);
+
+                // Enforce some minimum visible area
+                this.expandRange();
+
+                // ...then enforce a fixed duration if needed
+                if (this.fixedDuration !== undefined) {
+                    this.origin[0] = this.origin[0] + this.dimensions[0] -
+                        this.fixedDuration;
+                    this.dimensions[0] = this.fixedDuration;
+                }
+            }
+        };
+
+        // Add latest data for this domain object
+        PlotUpdater.prototype.addPointFor = function (domainObject) {
+            var line = this.lines[domainObject.getId()];
+            if (line) {
+                line.addPoint(
+                    this.handle.getDomainValue(domainObject, this.domain),
+                    this.handle.getRangeValue(domainObject, this.range)
+                );
+            }
+        };
+
+        /**
+         * Update with latest data.
+         */
+        PlotUpdater.prototype.update = function update() {
+            var objects = this.handle.getTelemetryObjects(),
+                self = this;
+
+            // Initialize domain offset if necessary
+            if (this.domainOffset === undefined) {
+                this.initializeDomainOffset(objects.map(function (obj) {
+                    return self.handle.getDomainValue(obj, self.domain);
+                }).filter(function (value) {
+                    return typeof value === 'number';
+                }));
+            }
+
+            // Make sure lines are available
+            this.prepareLines(objects);
+
+            // Add new data
+            objects.forEach(function (domainObject, index) {
+                self.addPointFor(domainObject, index);
+            });
+
+            // Then, update extrema
+            this.updateBounds();
+        };
+
+        /**
+         * Get the dimensions which bound all data in the provided
+         * data sets. This is given as a two-element array where the
+         * first element is domain, and second is range.
+         * @returns {number[]} the dimensions which bound this data set
+         */
+        PlotUpdater.prototype.getDimensions = function () {
+            return this.dimensions;
+        };
+
+        /**
+         * Get the origin of this data set's boundary.
+         * This is given as a two-element array where the
+         * first element is domain, and second is range.
+         * The domain value here is not adjusted by the domain offset.
+         * @returns {number[]} the origin of this data set's boundary
+         */
+        PlotUpdater.prototype.getOrigin = function () {
+            return this.origin;
+        };
+
+        /**
+         * Get the domain offset; this offset will have been subtracted
+         * from all domain values in all buffers returned by this
+         * preparer, in order to minimize loss-of-precision due to
+         * conversion to the 32-bit float format needed by WebGL.
+         * @returns {number} the domain offset
+         * @memberof platform/features/plot.PlotUpdater#
+         */
+        PlotUpdater.prototype.getDomainOffset = function () {
+            return this.domainOffset;
+        };
+
+        /**
+         * Get all renderable buffers for this data set. This will
+         * be returned as an array which can be correlated back to
+         * the provided telemetry data objects (from the constructor
+         * call) by index.
+         *
+         * Internally, these are flattened; each buffer contains a
+         * sequence of alternating domain and range values.
+         *
+         * All domain values in all buffers will have been adjusted
+         * from their original values by subtraction of the domain
+         * offset; this minimizes loss-of-precision resulting from
+         * the conversion to 32-bit floats, which may otherwise
+         * cause aliasing artifacts (particularly for timestamps)
+         *
+         * @returns {Float32Array[]} the buffers for these traces
+         * @memberof platform/features/plot.PlotUpdater#
+         */
+        PlotUpdater.prototype.getLineBuffers = function () {
+            return this.bufferArray;
+        };
+
+        /**
+         * Fill in historical data.
+         */
+        PlotUpdater.prototype.addHistorical = function (domainObject, series) {
+            var count = series ? series.getPointCount() : 0,
+                line;
+
+            // Nothing to do if it's an empty series
+            if (count < 1) {
+                return;
+            }
+
+            // Initialize domain offset if necessary
+            if (this.domainOffset === undefined) {
+                this.initializeDomainOffset([
+                    series.getDomainValue(0, this.domain),
+                    series.getDomainValue(count - 1, this.domain)
+                ]);
+            }
+
+            // Make sure lines are available
+            this.prepareLines(this.handle.getTelemetryObjects());
+
+            // Look up the line for this domain object
+            line = this.lines[domainObject.getId()];
+
+            // ...and put the data into it.
+            if (line) {
+                line.addSeries(series, this.domain, this.range);
+            }
+
+            // Update extrema
+            this.updateBounds();
+        };
 
         return PlotUpdater;
 

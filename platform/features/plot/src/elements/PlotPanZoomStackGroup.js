@@ -38,15 +38,13 @@ define(
          *        group
          */
         function PlotPanZoomStackGroup(count) {
-            var stacks = [],
-                decoratedStacks = [],
-                i;
+            var self = this;
 
             // Push a pan-zoom state; the index argument identifies
             // which stack originated the request (all other stacks
             // will ignore the range part of the change.)
             function pushPanZoom(origin, dimensions, index) {
-                stacks.forEach(function (stack, i) {
+                self.stacks.forEach(function (stack, i) {
                     if (i === index) {
                         // Do a normal push for the specified stack
                         stack.pushPanZoom(origin, dimensions);
@@ -61,26 +59,6 @@ define(
                 });
             }
 
-            // Pop one pan-zoom state from all stacks
-            function popPanZoom() {
-                stacks.forEach(function (stack) {
-                    stack.popPanZoom();
-                });
-            }
-
-            // Set the base pan-zoom state for all stacks
-            function setBasePanZoom(origin, dimensions) {
-                stacks.forEach(function (stack) {
-                    stack.setBasePanZoom(origin, dimensions);
-                });
-            }
-
-            // Clear the pan-zoom state of all stacks
-            function clearPanZoom() {
-                stacks.forEach(function (stack) {
-                    stack.clearPanZoom();
-                });
-            }
 
             // Decorate a pan-zoom stack; returns an object with
             // the same interface, but whose stack-mutation methods
@@ -92,87 +70,100 @@ define(
                 result.pushPanZoom = function (origin, dimensions) {
                     pushPanZoom(origin, dimensions, index);
                 };
-                result.setBasePanZoom = setBasePanZoom;
-                result.popPanZoom = popPanZoom;
-                result.clearPanZoom = clearPanZoom;
+                result.setBasePanZoom = function () {
+                    self.setBasePanZoom.apply(self, arguments);
+                };
+                result.popPanZoom = function () {
+                    self.popPanZoom.apply(self, arguments);
+                };
+                result.clearPanZoom = function () {
+                    self.clearPanZoom.apply(self, arguments);
+                };
 
                 return result;
             }
 
             // Create the stacks in this group ...
-            while (stacks.length < count) {
-                stacks.push(new PlotPanZoomStack([], []));
+            this.stacks = [];
+            while (this.stacks.length < count) {
+                this.stacks.push(new PlotPanZoomStack([], []));
             }
             // ... and their decorated-to-synchronize versions.
-            decoratedStacks = stacks.map(decorateStack);
-
-            return {
-                /**
-                 * Pop a pan-zoom state from all stacks in the group.
-                 * If called when there is only one pan-zoom state on each
-                 * stack, this acts as a no-op (that is, the lowest
-                 * pan-zoom state on the stack cannot be popped, to ensure
-                 * that some pan-zoom state is always available.)
-                 * @memberof platform/features/plot.PlotPanZoomStackGroup#
-                 */
-                popPanZoom: popPanZoom,
-
-                /**
-                 * Set the base pan-zoom state for all stacks in this group.
-                 * This changes the state at the bottom of each stack.
-                 * This allows the "unzoomed" state of plots to be updated
-                 * (e.g. as new data comes in) without
-                 * interfering with the user's chosen pan/zoom states.
-                 * @param {number[]} origin the base origin
-                 * @param {number[]} dimensions the base dimensions
-                 * @memberof platform/features/plot.PlotPanZoomStackGroup#
-                 */
-                setBasePanZoom: setBasePanZoom,
-
-                /**
-                 * Clear all pan-zoom stacks in this group down to
-                 * their bottom element; in effect, pop all elements
-                 * but the last, e.g. to remove any temporary user
-                 * modifications to pan-zoom state.
-                 * @memberof platform/features/plot.PlotPanZoomStackGroup#
-                 */
-                clearPanZoom: clearPanZoom,
-                /**
-                 * Get the current stack depth; that is, the number
-                 * of items on each stack in the group.
-                 * A depth of one means that no
-                 * panning or zooming relative to the base value has
-                 * been applied.
-                 * @returns {number} the depth of the stacks in this group
-                 * @memberof platform/features/plot.PlotPanZoomStackGroup#
-                 */
-                getDepth: function () {
-                    // All stacks are kept in sync, so look up depth
-                    // from the first one.
-                    return stacks.length > 0 ?
-                            stacks[0].getDepth() : 0;
-                },
-                /**
-                 * Get a specific pan-zoom stack in this group.
-                 * Stacks are specified by index; this index must be less
-                 * than the count provided at construction time, and must
-                 * not be less than zero.
-                 * The stack returned by this function will be synchronized
-                 * to other stacks in this group; that is, mutating that
-                 * stack directly will result in other stacks in this group
-                 * undergoing similar updates to ensure that domain bounds
-                 * remain the same.
-                 * @param {number} index the index of the stack to get
-                 * @returns {PlotPanZoomStack} the pan-zoom stack in the
-                 *          group identified by that index
-                 * @memberof platform/features/plot.PlotPanZoomStackGroup#
-                 */
-                getPanZoomStack: function (index) {
-                    return decoratedStacks[index];
-                }
-            };
-
+            this.decoratedStacks = this.stacks.map(decorateStack);
         }
+
+        /**
+         * Pop a pan-zoom state from all stacks in the group.
+         * If called when there is only one pan-zoom state on each
+         * stack, this acts as a no-op (that is, the lowest
+         * pan-zoom state on the stack cannot be popped, to ensure
+         * that some pan-zoom state is always available.)
+         */
+        PlotPanZoomStackGroup.prototype.popPanZoom = function () {
+            this.stacks.forEach(function (stack) {
+                stack.popPanZoom();
+            });
+        };
+
+        /**
+         * Set the base pan-zoom state for all stacks in this group.
+         * This changes the state at the bottom of each stack.
+         * This allows the "unzoomed" state of plots to be updated
+         * (e.g. as new data comes in) without
+         * interfering with the user's chosen pan/zoom states.
+         * @param {number[]} origin the base origin
+         * @param {number[]} dimensions the base dimensions
+         */
+        PlotPanZoomStackGroup.prototype.setBasePanZoom = function (origin, dimensions) {
+            this.stacks.forEach(function (stack) {
+                stack.setBasePanZoom(origin, dimensions);
+            });
+        };
+
+        /**
+         * Clear all pan-zoom stacks in this group down to
+         * their bottom element; in effect, pop all elements
+         * but the last, e.g. to remove any temporary user
+         * modifications to pan-zoom state.
+         */
+        PlotPanZoomStackGroup.prototype.clearPanZoom = function () {
+            this.stacks.forEach(function (stack) {
+                stack.clearPanZoom();
+            });
+        };
+
+        /**
+         * Get the current stack depth; that is, the number
+         * of items on each stack in the group.
+         * A depth of one means that no
+         * panning or zooming relative to the base value has
+         * been applied.
+         * @returns {number} the depth of the stacks in this group
+         */
+        PlotPanZoomStackGroup.prototype.getDepth = function () {
+            // All stacks are kept in sync, so look up depth
+            // from the first one.
+            return this.stacks.length > 0 ?
+                this.stacks[0].getDepth() : 0;
+        };
+
+        /**
+         * Get a specific pan-zoom stack in this group.
+         * Stacks are specified by index; this index must be less
+         * than the count provided at construction time, and must
+         * not be less than zero.
+         * The stack returned by this function will be synchronized
+         * to other stacks in this group; that is, mutating that
+         * stack directly will result in other stacks in this group
+         * undergoing similar updates to ensure that domain bounds
+         * remain the same.
+         * @param {number} index the index of the stack to get
+         * @returns {PlotPanZoomStack} the pan-zoom stack in the
+         *          group identified by that index
+         */
+        PlotPanZoomStackGroup.prototype.getPanZoomStack = function (index) {
+            return this.decoratedStacks[index];
+        };
 
         return PlotPanZoomStackGroup;
     }

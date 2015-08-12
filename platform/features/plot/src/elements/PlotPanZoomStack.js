@@ -83,7 +83,7 @@ define(
          * that some pan-zoom state is always available.)
          */
         PlotPanZoomStack.prototype.popPanZoom = function popPanZoom() {
-            if (stack.length > 1) {
+            if (this.stack.length > 1) {
                 this.stack.pop();
             }
         };

@@ -39,60 +39,56 @@ define(
          *        domain and range values.
          */
         function PlotTickGenerator(panZoomStack, formatter) {
+            this.panZoomStack = panZoomStack;
+            this.formatter = formatter;
+        }
 
-            // Generate ticks; interpolate from start up to
-            // start + span in count steps, using the provided
-            // formatter to represent each value.
-            function generateTicks(start, span, count, format) {
-                var step = span / (count - 1),
-                    result = [],
-                    i;
+        // Generate ticks; interpolate from start up to
+        // start + span in count steps, using the provided
+        // formatter to represent each value.
+        PlotTickGenerator.prototype.generateTicks = function (start, span, count, format) {
+            var step = span / (count - 1),
+                result = [],
+                i;
 
-                for (i = 0; i < count; i += 1) {
-                    result.push({
-                        label: format(i * step + start)
-                    });
-                }
-
-                return result;
+            for (i = 0; i < count; i += 1) {
+                result.push({
+                    label: format(i * step + start)
+                });
             }
 
+            return result;
+        };
 
-            return {
-                /**
-                 * Generate tick marks for the domain axis.
-                 * @param {number} count the number of ticks
-                 * @returns {string[]} labels for those ticks
-                 * @memberof platform/features/plot.PlotTickGenerator#
-                 */
-                generateDomainTicks: function (count) {
-                    var panZoom = panZoomStack.getPanZoom();
-                    return generateTicks(
-                        panZoom.origin[0],
-                        panZoom.dimensions[0],
-                        count,
-                        formatter.formatDomainValue
-                    );
-                },
+        /**
+         * Generate tick marks for the domain axis.
+         * @param {number} count the number of ticks
+         * @returns {string[]} labels for those ticks
+         */
+        PlotTickGenerator.prototype.generateDomainTicks = function (count) {
+            var panZoom = this.panZoomStack.getPanZoom();
+            return this.generateTicks(
+                panZoom.origin[0],
+                panZoom.dimensions[0],
+                count,
+                this.formatter.formatDomainValue
+            );
+        };
 
-                /**
-                 * Generate tick marks for the range axis.
-                 * @param {number} count the number of ticks
-                 * @returns {string[]} labels for those ticks
-                 * @memberof platform/features/plot.PlotTickGenerator#
-                 */
-                generateRangeTicks: function (count) {
-                    var panZoom = panZoomStack.getPanZoom();
-                    return generateTicks(
-                        panZoom.origin[1],
-                        panZoom.dimensions[1],
-                        count,
-                        formatter.formatRangeValue
-                    );
-                }
-            };
-
-        }
+        /**
+         * Generate tick marks for the range axis.
+         * @param {number} count the number of ticks
+         * @returns {string[]} labels for those ticks
+         */
+        PlotTickGenerator.prototype.generateRangeTicks = function (count) {
+            var panZoom = this.panZoomStack.getPanZoom();
+            return this.generateTicks(
+                panZoom.origin[1],
+                panZoom.dimensions[1],
+                count,
+                this.formatter.formatRangeValue
+            );
+        };
 
         return PlotTickGenerator;
     }

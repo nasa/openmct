@@ -30,40 +30,52 @@ define(
          * insertion into a plot line.
          * @constructor
          * @memberof platform/features/plot
+         * @implements {TelemetrySeries}
          */
         function PlotSeriesWindow(series, domain, range, start, end) {
-            return {
-                getPointCount: function () {
-                    return end - start;
-                },
-                getDomainValue: function (index) {
-                    return series.getDomainValue(index + start, domain);
-                },
-                getRangeValue: function (index) {
-                    return series.getRangeValue(index + start, range);
-                },
-                split: function () {
-                    var mid = Math.floor((end + start) / 2);
-                    return ((end - start) > 1) ?
-                            [
-                                new PlotSeriesWindow(
-                                    series,
-                                    domain,
-                                    range,
-                                    start,
-                                    mid
-                                ),
-                                new PlotSeriesWindow(
-                                    series,
-                                    domain,
-                                    range,
-                                    mid,
-                                    end
-                                )
-                            ] : [];
-                }
-            };
+            this.series = series;
+            this.domain = domain;
+            this.range = range;
+            this.start = start;
+            this.end = end;
         }
+
+        PlotSeriesWindow.prototype.getPointCount = function () {
+            return this.end - this.start;
+        };
+
+        PlotSeriesWindow.prototype.getDomainValue = function (index) {
+            return this.series.getDomainValue(index + this.start, this.domain);
+        };
+
+        PlotSeriesWindow.prototype.getRangeValue = function (index) {
+            return this.series.getRangeValue(index + this.start, this.range);
+        };
+
+        /**
+         * Split this series into two series of equal (or nearly-equal) size.
+         * @returns {PlotSeriesWindow[]} two series
+         */
+        PlotSeriesWindow.prototype.split = function () {
+            var mid = Math.floor((this.end + this.start) / 2);
+            return ((this.end - this.start) > 1) ?
+                [
+                    new PlotSeriesWindow(
+                        this.series,
+                        this.domain,
+                        this.range,
+                        this.start,
+                        mid
+                    ),
+                    new PlotSeriesWindow(
+                        this.series,
+                        this.domain,
+                        this.range,
+                        mid,
+                        this.end
+                    )
+                ] : [];
+        };
 
         return PlotSeriesWindow;
     }

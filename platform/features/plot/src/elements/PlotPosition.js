@@ -48,8 +48,7 @@ define(
         function PlotPosition(x, y, width, height, panZoomStack) {
             var panZoom = panZoomStack.getPanZoom(),
                 origin = panZoom.origin,
-                dimensions = panZoom.dimensions,
-                position;
+                dimensions = panZoom.dimensions;
 
             function convert(v, i) {
                 return v * dimensions[i] + origin[i];
@@ -57,44 +56,41 @@ define(
 
             if (!dimensions || !origin) {
                 // We need both dimensions and origin to compute a position
-                position = [];
+                this.position = [];
             } else {
                 // Convert from pixel to domain-range space.
                 // Note that range is reversed from the y-axis in pixel space
                 //(positive range points up, positive pixel-y points down)
-                position = [ x / width, (height - y) / height ].map(convert);
+                this.position =
+                    [ x / width, (height - y) / height ].map(convert);
             }
-
-            return {
-                /**
-                 * Get the domain value corresponding to this pixel position.
-                 * @returns {number} the domain value
-                 * @memberof platform/features/plot.PlotPosition#
-                 */
-                getDomain: function () {
-                    return position[0];
-                },
-                /**
-                 * Get the range value corresponding to this pixel position.
-                 * @returns {number} the range value
-                 * @memberof platform/features/plot.PlotPosition#
-                 */
-                getRange: function () {
-                    return position[1];
-                },
-                /**
-                 * Get the domain and values corresponding to this
-                 * pixel position.
-                 * @returns {number[]} an array containing the domain and
-                 *          the range value, in that order
-                 * @memberof platform/features/plot.PlotPosition#
-                 */
-                getPosition: function () {
-                    return position;
-                }
-            };
-
         }
+
+        /**
+         * Get the domain value corresponding to this pixel position.
+         * @returns {number} the domain value
+         */
+        PlotPosition.prototype.getDomain = function () {
+            return this.position[0];
+        };
+
+        /**
+         * Get the range value corresponding to this pixel position.
+         * @returns {number} the range value
+         */
+        PlotPosition.prototype.getRange =function () {
+            return this.position[1];
+        };
+
+        /**
+         * Get the domain and values corresponding to this
+         * pixel position.
+         * @returns {number[]} an array containing the domain and
+         *          the range value, in that order
+         */
+        PlotPosition.prototype.getPosition = function () {
+            return this.position;
+        };
 
         return PlotPosition;
     }
