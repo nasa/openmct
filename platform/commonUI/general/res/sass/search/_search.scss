@@ -77,17 +77,21 @@
                 opacity: 0;
             }
             
-            .clear-button {
+            .clear-icon {
                 color: $colorItemFg;
                 font-size: 6px;
                 
                 float: right;
-                margin-right: 4px;
-                margin-top: 2px;
+                margin-right: 2px;
+                margin-top: -2px;
+                padding: 4px;
                 
                 &.content {
                     // Make button visible only when there is text input 
                 }
+                
+                //temp
+                cursor: crosshair;
             }
         }
         

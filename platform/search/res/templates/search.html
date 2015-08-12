@@ -22,40 +22,25 @@
 <div class="search"
      ng-controller="SearchController as controller">
     
-    <!-- Search bar input -->
+    <!-- Search bar -->
     <div class="search-bar">
+        <!-- Input field -->
         <input class="search-input"
                type="text"
                ng-model="ngModel.input"
                ng-keyup="controller.search()"
                id="searchInput" />
+        <!-- Search icon -->
         <!-- ui symbols for search are 'd' and 'M' -->
         <div class="ui-symbol search-icon"
              ng-class="{content: controller.hasInput()}">
             M
         </div>
-        <a class="ui-symbol clear-button"
+        <!-- Clear button/icon 'x' -->
+        <a class="ui-symbol clear-icon"
            ng-class="{content: controller.hasInput()}">
             x
         </a>
-        <!--mct-control key="textfield"
-                     class="search-input"
-                     ng-model="ngModel.input">
-        </mct-control>
-        <!--input type="text"
-                  ng-required="false"
-                  ng-model="ngModel.index"
-                  name="mctControl" /-->
-        <!--mct-form structure="{sections: [rows: {control: 'textfield'}]}" ng-model="ngModle.input">
-        </mct-form>
-        <!--mct-control key="row.control"
-                     ng-model="ngModel"
-                     ng-required="row.required"
-                     ng-pattern="getRegExp(row.pattern)"
-                     options="row.options"
-                     structure="row"
-                     field="row.key">
-        </mct-control-->
     </div>
     
     <!-- This div exists to determine scroll bar location -->
