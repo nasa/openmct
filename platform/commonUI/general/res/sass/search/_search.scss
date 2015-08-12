@@ -32,19 +32,21 @@
     margin-top: 10px;
     
     .search {
-        position: relative;
         
         .search-bar {
             $heightAdjust: 4px;
-            $textInputHeight: 19px;
+            $textInputHeight: 19px; // This is equal to the default value, 19px
             
             width: 100%;
             margin-top: $heightAdjust;
+            
+            position: relative;
             
             .search-input {
                 position: relative;
                 top: -$heightAdjust;
                 width: 100%;
+                height: $textInputHeight;
                 
                 // For clear button
                 padding-right: 16px;
