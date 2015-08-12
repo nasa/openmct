@@ -31,6 +31,7 @@ define(
 
         describe("The generic search provider ", function () {
             var mockQ,
+                mockTimeout,
                 mockDeferred,
                 mockObjectService,
                 mockObjectPromise,
@@ -56,6 +57,8 @@ define(
                 );
                 mockDeferred.promise = "mock promise";
                 mockQ.defer.andReturn(mockDeferred);
+                
+                mockTimeout = jasmine.createSpy("$timeout");
                 
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",
@@ -83,7 +86,7 @@ define(
                     mockDomainObjects[i] = (
                         jasmine.createSpyObj(
                             "domainObject",
-                            [ "getId", "getModel", "hasCapability", "getCapability" ]
+                            [ "getId", "getModel", "hasCapability", "getCapability", "useCapability" ]
                         )
                     );
                     mockDomainObjects[i].getId.andReturn(i);
@@ -102,14 +105,17 @@ define(
                 mockCapability.invoke.andReturn(mockCapabilityPromise);
                 mockDomainObjects[0].getCapability.andReturn(mockCapability);
                 
-                provider = new GenericSearchProvider(mockQ, mockObjectService, mockWorkerService, mockRoots);
+                provider = new GenericSearchProvider(mockQ, mockTimeout, mockObjectService, mockWorkerService, mockRoots);
             });
             
             it("indexes tree on initialization", function () {
-                mockObjectPromise.then.mostRecentCall.args[0](mockDomainObjects);
-                mockCapabilityPromise.then.mostRecentCall.args[0](mockDomainObjects[1]);
-                
                 expect(mockObjectService.getObjects).toHaveBeenCalled();
+                expect(mockObjectPromise.then).toHaveBeenCalled();
+                
+                mockObjectPromise.then.mostRecentCall.args[0](mockDomainObjects);
+                
+                //mockCapabilityPromise.then.mostRecentCall.args[0](mockDomainObjects[1]);
+                
                 expect(mockWorker.postMessage).toHaveBeenCalled();
             });
             
