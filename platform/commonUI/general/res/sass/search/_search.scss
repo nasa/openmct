@@ -126,11 +126,15 @@
                 
                 right: 0px;
                 top: -3px;
+                
+                transition: color .2s;
+                
+                &:hover {
+                    color: lighten($colorItemFg, 20%);
+                }
             }
              
             .search-menu-holder {
-                //visibility: hidden;
-                
                 float: right;
                 margin-top: $textInputHeight - 2px;
                 left: -25px;

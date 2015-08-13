@@ -23,7 +23,8 @@
      ng-controller="SearchController as controller">
     
     <!-- Search bar -->
-    <div class="search-bar">
+    <div class="search-bar"
+         ng-controller="ClickAwayController as toggle">
         
         <!-- Input field -->
         <input class="search-input"
@@ -46,12 +47,15 @@
         </a>
         
         <!-- Menu icon/button 'v' -->
-        <a class="ui-symbol menu-icon">
+        <a class="ui-symbol menu-icon"
+           ng-click="toggle.toggle()">
             v
         </a>
         
         <!-- Menu -->
-        <div class="menu-element search-menu-holder">
+        <div class="menu-element search-menu-holder"
+             ng-show="toggle.isActive()"
+             ng-click="toggle.setState(true)">
             
             <div class="menu dropdown search-menu">
                 
@@ -63,7 +67,7 @@
                             <input type="checkbox"
                                    class="checkbox"
                                    ng-model="ngModel.checkAll"
-                                   ng-change="controller.checkAll()" />
+                                   ng-change="controller.checkAll(); controller.updateOptions()" />
                             <em></em>
                         </label>
                         
