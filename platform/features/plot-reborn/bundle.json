@@ -53,12 +53,12 @@
             {
                 "key": "PlotController",
                 "implementation": "controllers/PlotController.js",
-                "depends": [ "$scope", "telemetryFormatter", "telemetryHandler" ]
+                "depends": [ "$scope", "colorService"]
             },
             {
                 "key": "StackedPlotController",
                 "implementation": "controllers/StackedPlotController.js",
-                "depends": [ "$scope", "telemetryFormatter", "telemetryHandler" ]
+                "depends": [ "$scope" ]
             }
         ],
         "types": [

@@ -1,20 +1,20 @@
 /*global define*/
 
 define(
-    ['../ColorPalette.js'],
-    function (ColorPalette) {
+    [],
+    function () {
         "use strict";
 
         // TODO: Store this in more accessible locations / retrieve from
         // domainObject metadata.
         var DOMAIN_INTERVAL = 1 * 60 * 1000; // One minute.
 
-        function PlotController($scope) {
+        function PlotController($scope, colorService) {
             var plotHistory = [];
             var isLive = true;
             var maxDomain = +new Date();
             var subscriptions = [];
-            var palette = new ColorPalette();
+            var palette = new colorService.ColorPalette();
             var setToDefaultViewport = function() {
                 // TODO: We shouldn't set the viewport until we have received data or something has given us a reasonable viewport.
                 $scope.viewport = {
@@ -65,7 +65,7 @@ define(
                 var series = {
                     name: model.name,
                     // TODO: Bring back PlotPalette.
-                    color: palette.getColor(),
+                    color: palette.getColor($scope.series.length),
                     data: []
                 };
 
