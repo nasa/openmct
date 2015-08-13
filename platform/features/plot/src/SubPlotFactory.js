@@ -35,27 +35,25 @@ define(
          * @constructor
          */
         function SubPlotFactory(telemetryFormatter) {
-            return {
-                /**
-                 * Instantiate a new sub-plot.
-                 * @param {DomainObject[]} telemetryObjects the domain objects
-                 *        which will be plotted in this sub-plot
-                 * @param {PlotPanZoomStack} panZoomStack the stack of pan-zoom
-                 *        states which is applicable to this sub-plot
-                 * @returns {SubPlot} the instantiated sub-plot
-                 * @method
-                 * @memberof SubPlotFactory
-                 * @memberof platform/features/plot.SubPlotFactory#
-                 */
-                createSubPlot: function (telemetryObjects, panZoomStack) {
-                    return new SubPlot(
-                        telemetryObjects,
-                        panZoomStack,
-                        telemetryFormatter
-                    );
-                }
-            };
+            this.telemetryFormatter = telemetryFormatter;
         }
+
+        /**
+         * Instantiate a new sub-plot.
+         * @param {DomainObject[]} telemetryObjects the domain objects
+         *        which will be plotted in this sub-plot
+         * @param {PlotPanZoomStack} panZoomStack the stack of pan-zoom
+         *        states which is applicable to this sub-plot
+         * @returns {SubPlot} the instantiated sub-plot
+         * @method
+         */
+        SubPlotFactory.prototype.createSubPlot = function (telemetryObjects, panZoomStack) {
+            return new SubPlot(
+                telemetryObjects,
+                panZoomStack,
+                this.telemetryFormatter
+            );
+        };
 
         return SubPlotFactory;
 

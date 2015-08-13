@@ -51,6 +51,7 @@ define(
          *
          * @memberof platform/features/plot
          * @constructor
+         * @implements {platform/features/plot.Chart}
          * @param {CanvasElement} canvas the canvas object to render upon
          * @throws {Error} an error is thrown if WebGL is unavailable.
          */
@@ -62,8 +63,7 @@ define(
                 aVertexPosition,
                 uColor,
                 uDimensions,
-                uOrigin,
-                buffer;
+                uOrigin;
 
             // Ensure a context was actually available before proceeding
             if (!gl) {
@@ -94,7 +94,7 @@ define(
             gl.enableVertexAttribArray(aVertexPosition);
 
             // Create a buffer to holds points which will be drawn
-            buffer = gl.createBuffer();
+            this.buffer = gl.createBuffer();
 
             // Use a line width of 2.0 for legibility
             gl.lineWidth(2.0);
@@ -103,79 +103,59 @@ define(
             gl.enable(gl.BLEND);
             gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-            // Utility function to handle drawing of a buffer;
-            // drawType will determine whether this is a box, line, etc.
-            function doDraw(drawType, buf, color, points) {
-                gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-                gl.bufferData(gl.ARRAY_BUFFER, buf, gl.DYNAMIC_DRAW);
-                gl.vertexAttribPointer(aVertexPosition, 2, gl.FLOAT, false, 0, 0);
-                gl.uniform4fv(uColor, color);
-                gl.drawArrays(drawType, 0, points);
-            }
-
-            return {
-                /**
-                 * Clear the chart.
-                 * @memberof platform/features/plot.GLChart#
-                 */
-                clear: function () {
-                    // Set the viewport size; note that we use the width/height
-                    // that our WebGL context reports, which may be lower
-                    // resolution than the canvas we requested.
-                    gl.viewport(
-                        0,
-                        0,
-                        gl.drawingBufferWidth,
-                        gl.drawingBufferHeight
-                    );
-                    gl.clear(gl.COLOR_BUFFER_BIT + gl.DEPTH_BUFFER_BIT);
-                },
-                /**
-                 * Set the logical boundaries of the chart.
-                 * @param {number[]} dimensions the horizontal and
-                 *        vertical dimensions of the chart
-                 * @param {number[]} origin the horizontal/vertical
-                 *        origin of the chart
-                 * @memberof platform/features/plot.GLChart#
-                 */
-                setDimensions: function (dimensions, origin) {
-                    if (dimensions && dimensions.length > 0 &&
-                            origin && origin.length > 0) {
-                        gl.uniform2fv(uDimensions, dimensions);
-                        gl.uniform2fv(uOrigin, origin);
-                    }
-                },
-                /**
-                 * Draw the supplied buffer as a line strip (a sequence
-                 * of line segments), in the chosen color.
-                 * @param {Float32Array} buf the line strip to draw,
-                 *        in alternating x/y positions
-                 * @param {number[]} color the color to use when drawing
-                 *        the line, as an RGBA color where each element
-                 *        is in the range of 0.0-1.0
-                 * @param {number} points the number of points to draw
-                 * @memberof platform/features/plot.GLChart#
-                 */
-                drawLine: function (buf, color, points) {
-                    doDraw(gl.LINE_STRIP, buf, color, points);
-                },
-                /**
-                 * Draw a rectangle extending from one corner to another,
-                 * in the chosen color.
-                 * @param {number[]} min the first corner of the rectangle
-                 * @param {number[]} max the opposite corner
-                 * @param {number[]} color the color to use when drawing
-                 *        the rectangle, as an RGBA color where each element
-                 *        is in the range of 0.0-1.0
-                 * @memberof platform/features/plot.GLChart#
-                 */
-                drawSquare: function (min, max, color) {
-                    doDraw(gl.TRIANGLE_FAN, new Float32Array(
-                        min.concat([min[0], max[1]]).concat(max).concat([max[0], min[1]])
-                    ), color, 4);
-                }
-            };
+            this.gl = gl;
+            this.aVertexPosition = aVertexPosition;
+            this.uColor = uColor;
+            this.uDimensions = uDimensions;
+            this.uOrigin = uOrigin;
         }
+
+        // Utility function to handle drawing of a buffer;
+        // drawType will determine whether this is a box, line, etc.
+        GLChart.prototype.doDraw = function (drawType, buf, color, points) {
+            var gl = this.gl;
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
+            gl.bufferData(gl.ARRAY_BUFFER, buf, gl.DYNAMIC_DRAW);
+            gl.vertexAttribPointer(this.aVertexPosition, 2, gl.FLOAT, false, 0, 0);
+            gl.uniform4fv(this.uColor, color);
+            gl.drawArrays(drawType, 0, points);
+        };
+
+        GLChart.prototype.clear = function () {
+            var gl = this.gl;
+
+            // Set the viewport size; note that we use the width/height
+            // that our WebGL context reports, which may be lower
+            // resolution than the canvas we requested.
+            gl.viewport(
+                0,
+                0,
+                gl.drawingBufferWidth,
+                gl.drawingBufferHeight
+            );
+            gl.clear(gl.COLOR_BUFFER_BIT + gl.DEPTH_BUFFER_BIT);
+        };
+
+
+        GLChart.prototype.setDimensions = function (dimensions, origin) {
+            var gl = this.gl;
+            if (dimensions && dimensions.length > 0 &&
+                origin && origin.length > 0) {
+                gl.uniform2fv(this.uDimensions, dimensions);
+                gl.uniform2fv(this.uOrigin, origin);
+            }
+        };
+
+        GLChart.prototype.drawLine = function (buf, color, points) {
+            this.doDraw(this.gl.LINE_STRIP, buf, color, points);
+        };
+
+        GLChart.prototype.drawSquare = function (min, max, color) {
+            this.doDraw(this.gl.TRIANGLE_FAN, new Float32Array(
+                min.concat([min[0], max[1]]).concat(max).concat([max[0], min[1]])
+            ), color, 4);
+        };
+
         return GLChart;
     }
 );

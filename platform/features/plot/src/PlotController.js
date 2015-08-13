@@ -61,15 +61,11 @@ define(
             throttle,
             PLOT_FIXED_DURATION
         ) {
-            var subPlotFactory = new SubPlotFactory(telemetryFormatter),
-                modeOptions = new PlotModeOptions([], subPlotFactory),
-                subplots = [],
+            var self = this,
+                subPlotFactory = new SubPlotFactory(telemetryFormatter),
                 cachedObjects = [],
-                limitTracker,
                 updater,
-                handle,
-                scheduleUpdate,
-                domainOffset;
+                handle;
 
             // Populate the scope with axis information (specifically, options
             // available for each axis.)
@@ -91,16 +87,11 @@ define(
             function setupModes(telemetryObjects) {
                 if (cachedObjects !== telemetryObjects) {
                     cachedObjects = telemetryObjects;
-                    modeOptions = new PlotModeOptions(
+                    self.modeOptions = new PlotModeOptions(
                         telemetryObjects || [],
                         subPlotFactory
                     );
                 }
-            }
-
-            // Update all sub-plots
-            function update() {
-                scheduleUpdate();
             }
 
             // Reinstantiate the plot updater (e.g. because we have a
@@ -112,7 +103,7 @@ define(
                     ($scope.axes[1].active || {}).key,
                     PLOT_FIXED_DURATION
                 );
-                limitTracker = new PlotLimitTracker(
+                self.limitTracker = new PlotLimitTracker(
                     handle,
                     ($scope.axes[1].active || {}).key
                 );
@@ -125,19 +116,19 @@ define(
                 }
                 if (updater) {
                     updater.update();
-                    modeOptions.getModeHandler().plotTelemetry(updater);
+                    self.modeOptions.getModeHandler().plotTelemetry(updater);
                 }
-                if (limitTracker) {
-                    limitTracker.update();
+                if (self.limitTracker) {
+                    self.limitTracker.update();
                 }
-                update();
+                self.update();
             }
 
             // Display new historical data as it becomes available
             function addHistoricalData(domainObject, series) {
                 updater.addHistorical(domainObject, series);
-                modeOptions.getModeHandler().plotTelemetry(updater);
-                update();
+                self.modeOptions.getModeHandler().plotTelemetry(updater);
+                self.update();
             }
 
             // Issue a new request for historical telemetry
@@ -174,115 +165,118 @@ define(
                 }
             }
 
+            this.modeOptions = new PlotModeOptions([], subPlotFactory);
+            this.updateValues = updateValues;
+
+            // Create a throttled update function
+            this.scheduleUpdate = throttle(function () {
+                self.modeOptions.getModeHandler().getSubPlots()
+                    .forEach(updateSubplot);
+            });
+
             // Subscribe to telemetry when a domain object becomes available
             $scope.$watch('domainObject', subscribe);
 
             // Unsubscribe when the plot is destroyed
             $scope.$on("$destroy", releaseSubscription);
 
-            // Create a throttled update function
-            scheduleUpdate = throttle(function () {
-                modeOptions.getModeHandler().getSubPlots()
-                    .forEach(updateSubplot);
-            });
-
-            return {
-                /**
-                 * Get the color (as a style-friendly string) to use
-                 * for plotting the trace at the specified index.
-                 * @param {number} index the index of the trace
-                 * @returns {string} the color, in #RRGGBB form
-                 * @memberof platform/features/plot.PlotController#
-                 */
-                getColor: function (index) {
-                    return PlotPalette.getStringColor(index);
-                },
-                /**
-                 * Check if the plot is zoomed or panned out
-                 * of its default state (to determine whether back/unzoom
-                 * controls should be shown)
-                 * @returns {boolean} true if not in default state
-                 * @memberof platform/features/plot.PlotController#
-                 */
-                isZoomed: function () {
-                    return modeOptions.getModeHandler().isZoomed();
-                },
-                /**
-                 * Undo the most recent pan/zoom change and restore
-                 * the prior state.
-                 * @memberof platform/features/plot.PlotController#
-                 */
-                stepBackPanZoom: function () {
-                    return modeOptions.getModeHandler().stepBackPanZoom();
-                },
-                /**
-                 * Undo all pan/zoom changes and restore the initial state.
-                 * @memberof platform/features/plot.PlotController#
-                 */
-                unzoom: function () {
-                    return modeOptions.getModeHandler().unzoom();
-                },
-                /**
-                 * Get the mode options (Stacked/Overlaid) that are applicable
-                 * for this plot.
-                 * @memberof platform/features/plot.PlotController#
-                 */
-                getModeOptions: function () {
-                    return modeOptions.getModeOptions();
-                },
-                /**
-                 * Get the current mode that is applicable to this plot. This
-                 * will include key, name, and glyph fields.
-                 * @memberof platform/features/plot.PlotController#
-                 */
-                getMode: function () {
-                    return modeOptions.getMode();
-                },
-                /**
-                 * Set the mode which should be active in this plot.
-                 * @param mode one of the mode options returned from
-                 *        getModeOptions()
-                 * @memberof platform/features/plot.PlotController#
-                 */
-                setMode: function (mode) {
-                    modeOptions.setMode(mode);
-                    updateValues();
-                },
-                /**
-                 * Get all individual plots contained within this Plot view.
-                 * (Multiple may be contained when in Stacked mode).
-                 * @returns {SubPlot[]} all subplots in this Plot view
-                 * @memberof platform/features/plot.PlotController#
-                 */
-                getSubPlots: function () {
-                    return modeOptions.getModeHandler().getSubPlots();
-                },
-                /**
-                 * Get the CSS class to apply to the legend for this domain
-                 * object; this will reflect limit state.
-                 * @returns {string} the CSS class
-                 * @memberof platform/features/plot.PlotController#
-                 */
-                getLegendClass: function (telemetryObject) {
-                    return limitTracker &&
-                        limitTracker.getLegendClass(telemetryObject);
-                },
-                /**
-                 * Explicitly update all plots.
-                 * @memberof platform/features/plot.PlotController#
-                 */
-                update: update,
-                /**
-                 * Check if a request is pending (to show the wait spinner)
-                 * @memberof platform/features/plot.PlotController#
-                 */
-                isRequestPending: function () {
-                    // Placeholder; this should reflect request state
-                    // when requesting historical telemetry
-                    return false;
-                }
-            };
         }
+
+        /**
+         * Get the color (as a style-friendly string) to use
+         * for plotting the trace at the specified index.
+         * @param {number} index the index of the trace
+         * @returns {string} the color, in #RRGGBB form
+         */
+        PlotController.prototype.getColor = function (index) {
+            return PlotPalette.getStringColor(index);
+        };
+
+        /**
+         * Check if the plot is zoomed or panned out
+         * of its default state (to determine whether back/unzoom
+         * controls should be shown)
+         * @returns {boolean} true if not in default state
+         */
+        PlotController.prototype.isZoomed = function () {
+            return this.modeOptions.getModeHandler().isZoomed();
+        };
+
+        /**
+         * Undo the most recent pan/zoom change and restore
+         * the prior state.
+         */
+        PlotController.prototype.stepBackPanZoom = function () {
+            return this.modeOptions.getModeHandler().stepBackPanZoom();
+        };
+
+        /**
+         * Undo all pan/zoom changes and restore the initial state.
+         */
+        PlotController.prototype.unzoom = function () {
+            return this.modeOptions.getModeHandler().unzoom();
+        };
+
+        /**
+         * Get the mode options (Stacked/Overlaid) that are applicable
+         * for this plot.
+         */
+        PlotController.prototype.getModeOptions = function () {
+            return this.modeOptions.getModeOptions();
+        };
+
+        /**
+         * Get the current mode that is applicable to this plot. This
+         * will include key, name, and glyph fields.
+         */
+        PlotController.prototype.getMode = function () {
+            return this.modeOptions.getMode();
+        };
+
+        /**
+         * Set the mode which should be active in this plot.
+         * @param mode one of the mode options returned from
+         *        getModeOptions()
+         */
+        PlotController.prototype.setMode = function (mode) {
+            this.modeOptions.setMode(mode);
+            this.updateValues();
+        };
+
+        /**
+         * Get all individual plots contained within this Plot view.
+         * (Multiple may be contained when in Stacked mode).
+         * @returns {SubPlot[]} all subplots in this Plot view
+         */
+        PlotController.prototype.getSubPlots = function () {
+            return this.modeOptions.getModeHandler().getSubPlots();
+        };
+
+        /**
+         * Get the CSS class to apply to the legend for this domain
+         * object; this will reflect limit state.
+         * @returns {string} the CSS class
+         */
+        PlotController.prototype.getLegendClass = function (telemetryObject) {
+            return this.limitTracker &&
+                this.limitTracker.getLegendClass(telemetryObject);
+        };
+
+        /**
+         * Explicitly update all plots.
+         */
+        PlotController.prototype.update = function () {
+            this.scheduleUpdate();
+        };
+
+        /**
+         * Check if a request is pending (to show the wait spinner)
+         */
+        PlotController.prototype.isRequestPending = function () {
+            // Placeholder; this should reflect request state
+            // when requesting historical telemetry
+            return false;
+        };
 
         return PlotController;
     }

@@ -39,6 +39,12 @@ define(
                 mockSeries,
                 controller;
 
+            function bind(method, thisObj) {
+                return function () {
+                    return method.apply(thisObj, arguments);
+                };
+            }
+
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
@@ -196,13 +202,13 @@ define(
             });
 
             it("allows plots to be updated", function () {
-                expect(controller.update).not.toThrow();
+                expect(bind(controller.update, controller)).not.toThrow();
             });
 
             it("allows changing pan-zoom state", function () {
-                expect(controller.isZoomed).not.toThrow();
-                expect(controller.stepBackPanZoom).not.toThrow();
-                expect(controller.unzoom).not.toThrow();
+                expect(bind(controller.isZoomed, controller)).not.toThrow();
+                expect(bind(controller.stepBackPanZoom, controller)).not.toThrow();
+                expect(bind(controller.unzoom, controller)).not.toThrow();
             });
 
             it("indicates if a request is pending", function () {
