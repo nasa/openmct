@@ -56,9 +56,23 @@
         <div class="menu-element search-menu-holder">
             <div class="menu dropdown search-menu">
                 <ul>
-                    <li>Contents 1</li>
-                    <li>Contents 2</li>
-                    <li>Contents 3</li>
+                    <li class="search-menu-item"
+                        ng-repeat="type in types">
+                        
+                        <label class="checkbox custom search-menu-checkbox">
+                            <input type="checkbox"
+                                   class="checkbox"
+                                   checked="true"/>
+                            <em></em>
+                        </label>
+                        
+                        <span class="ui-symbol search-menu-icon">
+                            {{ type.glyph }}
+                        </span>
+                        
+                        {{ type.name }}
+                        
+                    </li>
                 </ul>
             </div>
         </div>

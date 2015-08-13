@@ -13,7 +13,7 @@
             {
                 "key": "SearchController",
                 "implementation": "controllers/SearchController.js",
-                "depends": [ "$scope", "searchService" ]
+                "depends": [ "$scope", "searchService", "types[]" ]
             },
             {
                 "key": "SearchItemController",

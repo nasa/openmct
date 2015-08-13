@@ -30,11 +30,13 @@ define(function () {
     var INITIAL_LOAD_NUMBER = 20,
         LOAD_INCREMENT = 20;
     
-    function SearchController($scope, searchService) {
+    function SearchController($scope, searchService, types) {
         // Starting amount of results to load. Will get increased. 
         var numResults = INITIAL_LOAD_NUMBER,
             loading = false,
             fullResults = {hits: []};
+        
+        console.log('types', types);
         
         function search(maxResults) {
             var inputText = $scope.ngModel.input;
@@ -70,6 +72,31 @@ define(function () {
                 loading = false;
             });
         }
+        
+        function filter(types) {
+            var newResults = [],
+                i = 0;
+            
+            while (newResults.length < numResults && newResults.length < fullResults.hits.length) {
+                // If this is of an acceptable type, add it to the list
+                if (types.indexOf(fullResults.hits[i].getModel().type) !== -1) {
+                    newResults.push(fullResults.hits[i]);
+                }
+                i += 1;
+            }
+            
+            $scope.results = newResults;
+        }
+        
+        $scope.types = [];
+        // On initialization, fill the scope's types with type keys
+        types.forEach(function (type) {
+            // We only want some types: the ones that have keys and 
+            // descriptions are probably human user usable types
+            if (type.key && type.description) {
+                $scope.types.push(type);
+            }
+        });
         
         return {
             /**

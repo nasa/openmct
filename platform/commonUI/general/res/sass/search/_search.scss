@@ -136,13 +136,27 @@
                 left: -25px;
                 
                 .search-menu {
+                    border-top: 0;
                     
-                    ul li {
-                        padding: 0;
-                        padding-left: 6px;
-                        padding-right: 6px;
+                    .search-menu-item {
+                        // Padding only on sides
+                        padding: 0px 4px;
+                        font-size: 0.8em;
                         
-                        font-size: 0.9em;
+                        .search-menu-checkbox {
+                            // Vertically center
+                            margin-top: 4px;
+                            
+                            // Get rid of weird checkbox positioning 
+                            //   from label.checkbox.custom
+                            padding-left: 0;
+                            margin-right: 0;
+                        }
+                        
+                        .search-menu-icon {
+                            color: white;
+                            padding-left: 2px;
+                        }
                     }
                 }
             }
