@@ -84,6 +84,13 @@
                 "model": {"composition": []},
                 "properties": []
             }
+        ],
+        "services": [
+            {
+                "key": "colorService",
+                "implementation": "services/ColorService.js",
+                "description": "Provides objects for working with colors."
+            }
         ]
     }
 }

@@ -108,9 +108,8 @@ define(
         };
 
         /**
-         * A color palette which returns colors from a predefined palette.
-         * When all colors in the palette have been allocated, it starts reusing
-         * colors.
+         * A color palette stores a set of colors and allows for different
+         * methods of color allocation.
          *
          * @constructor
          */
@@ -122,15 +121,34 @@ define(
         }
 
         /**
-         *
-         * @return {Color} the next color in the palette.
+         * @returns {Color} the next unused color in the palette.  If all colors
+         * have been allocated, it will wrap around.
          */
-        ColorPalette.prototype.getColor = function () {
+        ColorPalette.prototype.getNextColor = function () {
             var color = this.colors[this.nextColor % this.colors.length];
             this.nextColor++;
             return color;
         };
 
-        return ColorPalette;
+        /**
+         * @param {number} index the index of the color to return.  An index
+         * value larger than the size of the index will wrap around.
+         * @returns {Color}
+        */
+        ColorPalette.prototype.getColor = function (index) {
+            return this.colors[index % this.colors.length];
+        };
+
+
+        function ColorService() {}
+
+        ColorService.prototype.ColorPalette = ColorPalette;
+        ColorService.prototype.Color = Color;
+
+        function getColorService() {
+            return new ColorService();
+        }
+
+        return getColorService;
     }
 );
