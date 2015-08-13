@@ -83,19 +83,15 @@ define(
             GROUPS.push(group);
         }
 
-
-
         function ColorController() {
             if (GROUPS.length === 0) {
                 initializeGroups();
             }
-
-            return {
-                groups: function () {
-                    return GROUPS;
-                }
-            };
         }
+
+        ColorController.prototype.groups = function () {
+            return GROUPS;
+        };
 
         return ColorController;
     }
