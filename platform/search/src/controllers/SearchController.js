@@ -184,7 +184,8 @@ define(function () {
              * Re-filters the search restuls. Called when ngModel.checked changes. 
              */
             updateOptions: function () {
-                var type;
+                var type,
+                    i;
                 
                 // Update all-checked status
                 $scope.ngModel.checkAll = true;
@@ -203,8 +204,6 @@ define(function () {
                 // Update the current filters string
                 $scope.filtersString = '';
                 if ($scope.ngModel.checkAll !== true) {
-                    var i;
-                    
                     for (i = 0; i < types.length; i += 1) {
                         // If the type key corresponds to a checked option...
                         if ($scope.ngModel.checked[types[i].key]) {
