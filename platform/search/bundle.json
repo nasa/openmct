@@ -1,0 +1,34 @@
+{
+    "name": "Search",
+    "description": "Allows the user to search through the file tree.",
+    "extensions": {
+        "constants": [
+            {
+                "key": "GENERIC_SEARCH_ROOTS",
+                "value": [ "ROOT" ],
+                "priority": "fallback"
+            }
+        ],
+        "components": [
+            {
+                "provides": "searchService",
+                "type": "provider",
+                "implementation": "GenericSearchProvider.js",
+                "depends": [ "$q", "$timeout", "objectService", "workerService", "GENERIC_SEARCH_ROOTS" ]
+            },
+            {
+                "provides": "searchService",
+                "type": "aggregator",
+                "implementation": "SearchAggregator.js",
+                "depends": [ "$q" ]
+            }
+        ],
+        "workers": [
+            {
+                "key": "genericSearchWorker",
+                "scriptUrl": "GenericSearchWorker.js",
+                "depends": [ "objectService" ]
+            }
+        ]
+    }
+}
