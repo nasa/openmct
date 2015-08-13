@@ -222,23 +222,20 @@
             height: auto;
             
             .clear-filters-icon {
-                position: absolute;
-                right: 0px;
-                
-                padding-top: 2px;
-                padding-bottom: 2px;
-                padding-right: $rightPadding + 4px;
-                padding-left: 4px;
+                padding: 4px;
+                margin-left: -4px;
                 
                 cursor: pointer;
                 
                 color: $colorItemFg;
                 font-size: 6px;
             }
-        }
-        
-        .active-filter-display.on + .search-scroll {
-            top: 40px;
+            
+            .filter-options {
+                position: relative;
+                margin-left: 10px;
+                top: -8px;
+            }
         }
         
         .search-scroll {

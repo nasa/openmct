@@ -403,19 +403,17 @@ ul.tree {
     height: auto; }
     /* line 224, ../sass/search/_search.scss */
     .search-holder .search .active-filter-display .clear-filters-icon {
-      position: absolute;
-      right: 0px;
-      padding-top: 2px;
-      padding-bottom: 2px;
-      padding-right: 9px;
-      padding-left: 4px;
+      padding: 4px;
+      margin-left: -4px;
       cursor: pointer;
       color: #737373;
       font-size: 6px; }
-  /* line 240, ../sass/search/_search.scss */
-  .search-holder .search .active-filter-display.on + .search-scroll {
-    top: 40px; }
-  /* line 244, ../sass/search/_search.scss */
+    /* line 234, ../sass/search/_search.scss */
+    .search-holder .search .active-filter-display .filter-options {
+      position: relative;
+      margin-left: 10px;
+      top: -8px; }
+  /* line 241, ../sass/search/_search.scss */
   .search-holder .search .search-scroll {
     top: 25px;
     overflow-y: auto;
@@ -423,7 +421,7 @@ ul.tree {
     top: auto;
     bottom: auto;
     height: 90%; }
-    /* line 258, ../sass/search/_search.scss */
+    /* line 255, ../sass/search/_search.scss */
     .search-holder .search .search-scroll .results .search-result-item {
       -moz-transition: background-color 0.25s;
       -o-transition: background-color 0.25s;
@@ -433,10 +431,10 @@ ul.tree {
       border-radius: 2px;
       padding-top: 4px;
       padding-bottom: 2px; }
-      /* line 272, ../sass/search/_search.scss */
+      /* line 269, ../sass/search/_search.scss */
       .search-holder .search .search-scroll .results .search-result-item .label {
         margin-left: 6px; }
-        /* line 276, ../sass/search/_search.scss */
+        /* line 273, ../sass/search/_search.scss */
         .search-holder .search .search-scroll .results .search-result-item .label .title-label {
           display: inline-block;
           position: absolute;
@@ -448,47 +446,47 @@ ul.tree {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap; }
-      /* line 298, ../sass/search/_search.scss */
+      /* line 295, ../sass/search/_search.scss */
       .search-holder .search .search-scroll .results .search-result-item.selected {
         background: #005177;
         color: #fff; }
-        /* line 302, ../sass/search/_search.scss */
+        /* line 299, ../sass/search/_search.scss */
         .search-holder .search .search-scroll .results .search-result-item.selected .view-control {
           color: #0099cc; }
-        /* line 305, ../sass/search/_search.scss */
+        /* line 302, ../sass/search/_search.scss */
         .search-holder .search .search-scroll .results .search-result-item.selected .label .type-icon {
           color: #fff; }
-      /* line 312, ../sass/search/_search.scss */
+      /* line 309, ../sass/search/_search.scss */
       .search-holder .search .search-scroll .results .search-result-item:not(.selected):hover {
         background: #404040;
         color: #cccccc; }
-        /* line 315, ../sass/search/_search.scss */
+        /* line 312, ../sass/search/_search.scss */
         .search-holder .search .search-scroll .results .search-result-item:not(.selected):hover .context-trigger {
           display: block; }
-        /* line 318, ../sass/search/_search.scss */
+        /* line 315, ../sass/search/_search.scss */
         .search-holder .search .search-scroll .results .search-result-item:not(.selected):hover .icon {
           color: #33ccff; }
-    /* line 326, ../sass/search/_search.scss */
+    /* line 323, ../sass/search/_search.scss */
     .search-holder .search .search-scroll .load-icon {
       position: relative; }
-      /* line 328, ../sass/search/_search.scss */
+      /* line 325, ../sass/search/_search.scss */
       .search-holder .search .search-scroll .load-icon.loading {
         pointer-events: none;
         margin-left: 6px; }
-        /* line 332, ../sass/search/_search.scss */
+        /* line 329, ../sass/search/_search.scss */
         .search-holder .search .search-scroll .load-icon.loading .title-label {
           font-style: italic;
           font-size: .9em;
           opacity: 0.5;
           margin-left: 26px;
           line-height: 24px; }
-        /* line 342, ../sass/search/_search.scss */
+        /* line 339, ../sass/search/_search.scss */
         .search-holder .search .search-scroll .load-icon.loading .wait-spinner {
           margin-left: 6px; }
-      /* line 347, ../sass/search/_search.scss */
+      /* line 344, ../sass/search/_search.scss */
       .search-holder .search .search-scroll .load-icon:not(.loading) {
         cursor: pointer; }
-    /* line 352, ../sass/search/_search.scss */
+    /* line 349, ../sass/search/_search.scss */
     .search-holder .search .search-scroll .load-more-button {
       margin-top: 5px;
       margin-bottom: 5px;

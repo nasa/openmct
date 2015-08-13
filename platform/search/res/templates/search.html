@@ -107,13 +107,16 @@
     
     <!-- Active filter display -->
     <div class="active-filter-display"
-         ng-if="filtersString !== ''"
-         ng-class="{on: filterString !== ''}">
-        Filtered by: {{ filtersString }}
+         ng-if="filtersString !== '' && ngModel.search">
+        
         <a class="ui-symbol clear-filters-icon"
            ng-click="ngModel.checkAll = true; controller.checkAll(); controller.updateOptions()">
             x
         </a>
+        
+        <div class="filter-options">
+            Filtered by: {{ filtersString }}
+        </div>
     </div>
     
     <!-- This div exists to determine scroll bar location -->
