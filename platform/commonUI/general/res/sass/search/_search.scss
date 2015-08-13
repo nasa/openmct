@@ -32,6 +32,7 @@
     margin-top: 10px;
     
     .search {
+        //display: block;
         
         .search-bar {
             $heightAdjust: 4px;
@@ -155,6 +156,7 @@
                         padding-right: 6px;
                         
                         font-size: 0.8em;
+                        color: lighten($colorBodyBg, 70%);
                         
                         .search-menu-checkbox {
                             // Vertically center
@@ -167,15 +169,23 @@
                             
                             // Spacing with labels
                             padding-right: 3px;
+                            
+                            // Change checkbox colors
+                            em:before {
+                                // check
+                                color: white;
+                                // box
+                                background-color: grey;
+                            }
                         }
                         
                         .search-menu-glyph {
-                            color: white;
+                            color: lighten($colorMenuIc, 5%);//lighten($colorItemFg, 35%);//$colorMenuIc;
                         }
                         
                         &.special {
                             font-weight: bold;
-                            background-color: lighten($colorBodyBg, 30%);
+                            background-color: lighten($colorBodyBg, 20%);
                             
                             .search-menu-label {
                                 font-size: 1.1em;
@@ -225,6 +235,10 @@
                 color: $colorItemFg;
                 font-size: 6px;
             }
+        }
+        
+        .active-filter-display.on + .search-scroll {
+            top: 40px;
         }
         
         .search-scroll {

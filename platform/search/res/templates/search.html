@@ -107,7 +107,8 @@
     
     <!-- Active filter display -->
     <div class="active-filter-display"
-         ng-if="filtersString !== ''">
+         ng-if="filtersString !== ''"
+         ng-class="{on: filterString !== ''}">
         Filtered by: {{ filtersString }}
         <a class="ui-symbol clear-filters-icon"
            ng-click="ngModel.checkAll = true; controller.checkAll(); controller.updateOptions()">
