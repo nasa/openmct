@@ -67,8 +67,7 @@
                 // Line up icon with text input vertically
                 margin-top: -$textInputHeight;
                 
-                // Text focus display transition
-                transition: visibility .15s, opacity .15s;
+                transition: visibility .15s, opacity .15s, color .2s;
                 
                 &.content {
                     // Make icon invisible whenever there is text input 
@@ -77,10 +76,15 @@
                 }
             }
             
+            // Make icon invisible when the text input is focused
             .search-input:focus + div.search-icon {
-                // Make icon invisible when the text input is focused
                 visibility: hidden;
                 opacity: 0;
+            }
+            
+            // Make icon lighten when hovering over search bar
+            .search-input:hover + div.search-icon {
+                color: lighten($colorItemFg, 20%);
             }
             
             .clear-icon {
@@ -174,7 +178,7 @@
                             
                         &.special {
                             font-weight: bold;
-                            background-color: lighten($colorBodyBg, 30%);
+                            background-color: lighten($colorBodyBg, 25%);
                             
                             .search-menu-label {
                                 font-size: 1.1em;
