@@ -67,7 +67,7 @@ as described above.
 An example of this is expressed in `platform/framework`, which follows
 bundle conventions.
 
-### Regression Testing
+### Functional Testing
 
 The tests described above are all at the unit-level; an additional
 test suite using [Protractor](https://angular.github.io/protractor/)
@@ -76,9 +76,9 @@ us under development, in the `protractor` folder.
 To run:
 
 * Install protractor following the instructions above.
-* `webdriver-manager start`
-* `node app.js -p 1984 -x platform/persistence/elastic -i example/persistence`
-* `protractor protractor/conf.js`
+* `cd protractor`
+* `npm install`
+* `npm run all`
 
 ## Build
 

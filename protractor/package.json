@@ -1,0 +1,20 @@
+{
+  "name": "ProtractorLauncher",
+  "version": "1.0.0",
+  "scripts" : {
+    "start"       : "bin/start.js",
+    "protractor"  : "bin/run.js",
+    "stop"        : "bin/stop.js",
+    "all"         : "bin/start.js; bin/run.js; bin/stop.js;",
+    "clean"       : "bin/clean.js"
+  },
+  "dependencies": {
+    "protractor": "^2.1.0",
+    "psnode": "0.0.1",
+    "shelljs": "^0.5.2",
+    "sleep": "^3.0.0",
+    "string": "^3.3.1"
+  },
+  "description": "E2e Protractor Tests.",
+  "license": "ISC"
+}

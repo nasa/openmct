@@ -21,6 +21,7 @@
     "platform/persistence/queue",
     "platform/policy",
     "platform/entanglement",
+    "platform/search",
 
     "example/imagery",
     "example/persistence",

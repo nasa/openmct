@@ -24,7 +24,7 @@ var createClassFile = require("../common/CreateItem")
 var itemEdit = require("../common/EditItem");
 var rightMenu = require("../common/RightMenu.js");
 
-describe('Test New Window', function() {
+describe('New Window', function() {
     var fullScreenClass = new fullScreenFile();
     var createClass = new createClassFile();
     var editItemClass = new itemEdit();
