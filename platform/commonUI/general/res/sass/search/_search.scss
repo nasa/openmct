@@ -38,6 +38,7 @@
             $textInputHeight: 19px; // This is equal to the default value, 19px
             
             width: 100%;
+            height: $textInputHeight;
             margin-top: $heightAdjust;
             
             position: relative;
@@ -172,13 +173,9 @@
                             color: white;
                         }
                         
-                        &:hover {
-                            // Do nothing
-                        }
-                            
                         &.special {
                             font-weight: bold;
-                            background-color: lighten($colorBodyBg, 25%);
+                            background-color: lighten($colorBodyBg, 30%);
                             
                             .search-menu-label {
                                 font-size: 1.1em;
@@ -207,6 +204,26 @@
             }
             div.search-menu-holder:hover {
                 visibility: visible;
+            }
+        }
+        
+        .active-filter-display {
+            font-size: .6em;
+            height: auto;
+            
+            .clear-filters-icon {
+                position: absolute;
+                right: 0px;
+                
+                padding-top: 2px;
+                padding-bottom: 2px;
+                padding-right: $rightPadding + 4px;
+                padding-left: 4px;
+                
+                cursor: pointer;
+                
+                color: $colorItemFg;
+                font-size: 6px;
             }
         }
         

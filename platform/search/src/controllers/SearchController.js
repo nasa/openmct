@@ -41,6 +41,7 @@ define(function () {
         // $scope.ngModel.input, $scope.ngModel.search, $scope.ngModel.checked
         $scope.types = [];
         $scope.ngModel.checked = {};
+        $scope.filtersString = "";
         
         function filter(hits) {
             var newResults = [],
@@ -185,12 +186,22 @@ define(function () {
             updateOptions: function () {
                 var type;
                 
-                // Update all-checked status
+                // Update all-checked status and the filters string
                 $scope.ngModel.checkAll = true;
+                $scope.filtersString = '';
                 for (type in $scope.ngModel.checked) {
                     if (!$scope.ngModel.checked[type]) {
                         $scope.ngModel.checkAll = false;
+                    } else {
+                        if ($scope.filtersString === '') {
+                            $scope.filtersString += type;
+                        } else {
+                            $scope.filtersString += ', ' + type;
+                        }
                     }
+                }
+                if ($scope.ngModel.checkAll === true) {
+                    $scope.filtersString = '';
                 }
                 
                 // Re-filter results

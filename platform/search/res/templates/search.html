@@ -61,7 +61,8 @@
                 
                 <ul>
                     <!-- First element is special - it's a reset option -->
-                    <li class="search-menu-item special">
+                    <li class="search-menu-item special"
+                        title="Select all filters.">
                         
                         <label class="checkbox custom search-menu-checkbox">
                             <input type="checkbox"
@@ -99,11 +100,19 @@
                         
                     </li>
                 </ul>
-                
             </div>
-            
         </div>
         
+    </div>
+    
+    <!-- Active filter display -->
+    <div class="active-filter-display"
+         ng-if="filtersString !== ''">
+        Filtered by: {{ filtersString }}
+        <a class="ui-symbol clear-filters-icon"
+           ng-click="ngModel.checkAll = true; controller.checkAll(); controller.updateOptions()">
+            x
+        </a>
     </div>
     
     <!-- This div exists to determine scroll bar location -->
