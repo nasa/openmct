@@ -95,13 +95,13 @@ define(function () {
         
         // On initialization, fill the scope's types with type keys
         types.forEach(function (type) {
-            // We only want some types: the ones that have keys and 
-            //   descriptions are probably human user usable types
-            if (type.key && type.description) {
+            // We only want some types, the ones that are probably human readable
+            if (type.key && type.name) {
                 $scope.types.push(type);
                 $scope.ngModel.checked[type.key] = true;
             }
         });
+        $scope.ngModel.checkAll = true;
         
         // Re-filter the results when the checked type options change
         $scope.$watch("$scope.ngModel.checked", function () {
@@ -128,9 +128,21 @@ define(function () {
             },
             
             /**
-             * Checks to see if there are more search results to display.
+             * Checks to see if there are more search results to display. If the answer
+             *   is unclear, this function will err on there being more results. 
              */
             areMore: function () {
+                var i;
+                
+                // Check to see if any of the not displayed results are of an allowed type
+                for (i = numResults; i < fullResults.hits.length; i += 1) {
+                    if ($scope.ngModel.checked[fullResults.hits[i].object.getModel().type.key]) {
+                        return true;
+                    }
+                }
+                
+                // If none of the ones at hand are correct, there still may be more if we 
+                //   re-search with a larger maxResults 
                 return numResults < fullResults.total;
             },
             
@@ -145,7 +157,7 @@ define(function () {
                     // Resend the query if we are out of items to display, but there are more to get
                     search(numResults);
                 } else {
-                    $scope.results = fullResults.hits.slice(0, numResults);
+                    $scope.results = filter(fullResults.hits);//fullResults.hits.slice(0, numResults);
                 }
             },
             
@@ -168,10 +180,31 @@ define(function () {
             },
             
             /**
-             * Opens a menu for more search options.
+             * Re-filters the search restuls. Called when ngModel.checked changes. 
              */
-            menu: function () {
-                console.log('open menu');
+            updateOptions: function () {
+                var type;
+                
+                // Update all-checked status
+                $scope.ngModel.checkAll = true;
+                for (type in $scope.ngModel.checked) {
+                    if (!$scope.ngModel.checked[type]) {
+                        $scope.ngModel.checkAll = false;
+                    }
+                }
+                
+                // Re-filter results
+                $scope.results = filter(fullResults.hits);
+            },
+            
+            /**
+             * Resets options. 
+             */
+            checkAll: function () {
+                var type;
+                for (type in $scope.ngModel.checked) {
+                    $scope.ngModel.checked[type] = $scope.ngModel.checkAll;
+                }
             }
         };
     }

@@ -155,15 +155,26 @@
                             //   from label.checkbox.custom
                             padding-left: 0;
                             margin-right: 0;
+                            
+                            // Spacing with labels
+                            padding-right: 3px;
                         }
                         
                         .search-menu-glyph {
                             color: white;
-                            padding-left: 3px;
                         }
                         
                         &:hover {
                             // Do nothing
+                        }
+                            
+                        &.special {
+                            font-weight: bold;
+                            background-color: lighten($colorBodyBg, 30%);
+                            
+                            .search-menu-label {
+                                font-size: 1.1em;
+                            }
                         }
                     }
                 }

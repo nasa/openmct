@@ -46,23 +46,42 @@
         </a>
         
         <!-- Menu icon/button 'v' -->
-        <!-- Look at context menu for opening and dismissing -->
-        <a class="ui-symbol menu-icon"
-           ng-click="controller.menu()">
+        <a class="ui-symbol menu-icon">
             v
         </a>
         
-        <!-- Later make the menu into different files -->
+        <!-- Menu -->
         <div class="menu-element search-menu-holder">
+            
             <div class="menu dropdown search-menu">
+                
                 <ul>
+                    <!-- First element is special - it's a reset option -->
+                    <li class="search-menu-item special">
+                        
+                        <label class="checkbox custom search-menu-checkbox">
+                            <input type="checkbox"
+                                   class="checkbox"
+                                   ng-model="ngModel.checkAll"
+                                   ng-change="controller.checkAll()" />
+                            <em></em>
+                        </label>
+                        
+                        <span class="search-menu-label">
+                            ALL
+                        </span>
+                        
+                    </li>
+                    
+                    <!-- The filter options, by type -->
                     <li class="search-menu-item"
                         ng-repeat="type in types">
                         
                         <label class="checkbox custom search-menu-checkbox">
                             <input type="checkbox"
                                    class="checkbox"
-                                   ng-model="ngModel.checked[type.key]" />
+                                   ng-model="ngModel.checked[type.key]"
+                                   ng-change="controller.updateOptions()" />
                             <em></em>
                         </label>
                         
@@ -70,11 +89,15 @@
                             {{ type.glyph }}
                         </span>
                         
-                        {{ type.name }}
+                        <span class="search-menu-label">
+                            {{ type.name }}
+                        </span>
                         
                     </li>
                 </ul>
+                
             </div>
+            
         </div>
         
     </div>
