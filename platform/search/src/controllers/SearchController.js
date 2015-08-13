@@ -186,9 +186,8 @@ define(function () {
             updateOptions: function () {
                 var type;
                 
-                // Update all-checked status and the filters string
+                // Update all-checked status
                 $scope.ngModel.checkAll = true;
-                $scope.filtersString = '';
                 for (type in $scope.ngModel.checked) {
                     if (!$scope.ngModel.checked[type]) {
                         $scope.ngModel.checkAll = false;
@@ -200,8 +199,23 @@ define(function () {
                         }
                     }
                 }
-                if ($scope.ngModel.checkAll === true) {
-                    $scope.filtersString = '';
+                
+                // Update the current filters string
+                $scope.filtersString = '';
+                if ($scope.ngModel.checkAll !== true) {
+                    var i;
+                    
+                    for (i = 0; i < types.length; i += 1) {
+                        // If the type key corresponds to a checked option...
+                        if ($scope.ngModel.checked[types[i].key]) {
+                            // ... add it to the string list of current filter options
+                            if ($scope.filtersString === '') {
+                                $scope.filtersString += types[i].name;
+                            } else {
+                                $scope.filtersString += ', ' + types[i].name;
+                            }
+                        }
+                    }
                 }
                 
                 // Re-filter results
