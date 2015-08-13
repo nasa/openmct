@@ -39,8 +39,6 @@ define(
          * @constructor
          */
         function ScrollingListController($scope, formatter) {
-            var populator;
-
 
             // Get a set of populated, ready-to-display rows for the
             // latest data values.
@@ -128,6 +126,31 @@ define(
             $scope.$on("telemetryUpdate", updateRows);
             $scope.$watch("telemetry.getMetadata()", setupColumns);
         }
+
+        /**
+         * A description of how to display a certain column of data in a
+         * Scrolling List view.
+         * @interface platform/features/scrolling.ScrollingColumn
+         * @private
+         */
+        /**
+         * Get the title to display in this column's header.
+         * @returns {string} the title to display
+         * @method platform/features/scrolling.ScrollingColumn#getTitle
+         */
+        /**
+         * Get the text to display inside a row under this
+         * column.
+         * @param {DomainObject} domainObject the domain object associated
+         *        with this row
+         * @param {TelemetrySeries} series the telemetry data associated
+         *        with this row
+         * @param {number} index the index of the telemetry datum associated
+         *        with this row
+         * @returns {string} the text to display
+         * @method platform/features/scrolling.ScrollingColumn#getValue
+         */
+
 
         return ScrollingListController;
     }

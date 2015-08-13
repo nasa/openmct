@@ -34,6 +34,7 @@ define(
          * (typically, measurements.) Used by the ScrollingListController.
          *
          * @memberof platform/features/scrolling
+         * @implements {platform/features/scrolling.ScrollingColumn}
          * @constructor
          * @param rangeMetadata an object with the machine- and human-
          *        readable names for this range (in `key` and `name`
@@ -42,34 +43,25 @@ define(
          *        formatting service, for making values human-readable.
          */
         function RangeColumn(rangeMetadata, telemetryFormatter) {
-            return {
-                /**
-                 * Get the title to display in this column's header.
-                 * @returns {string} the title to display
-                 * @memberof platform/features/scrolling.RangeColumn#
-                 */
-                getTitle: function () {
-                    return rangeMetadata.name;
-                },
-                /**
-                 * Get the text to display inside a row under this
-                 * column.
-                 * @returns {string} the text to display
-                 * @memberof platform/features/scrolling.RangeColumn#
-                 */
-                getValue: function (domainObject, datum) {
-                    var range = rangeMetadata.key,
-                        limit = domainObject.getCapability('limit'),
-                        value = datum[range],
-                        alarm = limit.evaluate(datum, range);
-
-                    return {
-                        cssClass: alarm && alarm.cssClass,
-                        text: telemetryFormatter.formatRangeValue(value)
-                    };
-                }
-            };
+            this.rangeMetadata = rangeMetadata;
+            this.telemetryFormatter = telemetryFormatter;
         }
+
+        RangeColumn.prototype.getTitle = function () {
+            return this.rangeMetadata.name;
+        };
+
+        RangeColumn.prototype.getValue = function (domainObject, datum) {
+            var range = this.rangeMetadata.key,
+                limit = domainObject.getCapability('limit'),
+                value = datum[range],
+                alarm = limit.evaluate(datum, range);
+
+            return {
+                cssClass: alarm && alarm.cssClass,
+                text: this.telemetryFormatter.formatRangeValue(value)
+            };
+        };
 
         return RangeColumn;
     }
