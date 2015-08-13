@@ -247,6 +247,12 @@
             overflow-y: auto;
             padding-right: $rightPadding;
             
+            top: auto;
+            bottom: auto;
+            height: 90%;
+            // It overflows the bottom when active-display-filter 
+            //   if height is set to 100%
+            
             .results {
 
                 .search-result-item {
