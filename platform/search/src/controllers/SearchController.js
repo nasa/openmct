@@ -36,7 +36,26 @@ define(function () {
             loading = false,
             fullResults = {hits: []};
         
-        console.log('types', types);
+        // Scope variables are
+        // $scope.results, $scope.types
+        // $scope.ngModel.input, $scope.ngModel.search, $scope.ngModel.checked
+        $scope.types = [];
+        $scope.ngModel.checked = {};
+        
+        function filter(hits) {
+            var newResults = [],
+                i = 0;
+            
+            while (newResults.length < numResults && i < hits.length) {
+                // If this is of an acceptable type, add it to the list
+                if ($scope.ngModel.checked[hits[i].object.getModel().type] === true) {
+                    newResults.push(fullResults.hits[i]);
+                }
+                i += 1;
+            }
+            
+            return newResults;
+        }
         
         function search(maxResults) {
             var inputText = $scope.ngModel.input;
@@ -60,7 +79,8 @@ define(function () {
             // Send the query
             searchService.query(inputText, maxResults).then(function (result) {
                 fullResults = result;
-                $scope.results = result.hits.slice(0, numResults);
+                //$scope.results = result.hits.slice(0, numResults);
+                $scope.results = filter(result.hits);
                 
                 // Update whether the file tree should be displayed 
                 // Reveal tree only when finishing search
@@ -73,29 +93,19 @@ define(function () {
             });
         }
         
-        function filter(types) {
-            var newResults = [],
-                i = 0;
-            
-            while (newResults.length < numResults && newResults.length < fullResults.hits.length) {
-                // If this is of an acceptable type, add it to the list
-                if (types.indexOf(fullResults.hits[i].getModel().type) !== -1) {
-                    newResults.push(fullResults.hits[i]);
-                }
-                i += 1;
-            }
-            
-            $scope.results = newResults;
-        }
-        
-        $scope.types = [];
         // On initialization, fill the scope's types with type keys
         types.forEach(function (type) {
             // We only want some types: the ones that have keys and 
-            // descriptions are probably human user usable types
+            //   descriptions are probably human user usable types
             if (type.key && type.description) {
                 $scope.types.push(type);
+                $scope.ngModel.checked[type.key] = true;
             }
+        });
+        
+        // Re-filter the results when the checked type options change
+        $scope.$watch("$scope.ngModel.checked", function () {
+            $scope.results = filter(fullResults.hits);
         });
         
         return {

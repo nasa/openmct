@@ -140,12 +140,16 @@
                     
                     .search-menu-item {
                         // Padding only on sides
-                        padding: 0px 4px;
+                        padding-top: 0;
+                        padding-bottom: 0;
+                        padding-left: 4px;
+                        padding-right: 6px;
+                        
                         font-size: 0.8em;
                         
                         .search-menu-checkbox {
                             // Vertically center
-                            margin-top: 4px;
+                            margin-top: 0.3em;
                             
                             // Get rid of weird checkbox positioning 
                             //   from label.checkbox.custom
@@ -153,9 +157,13 @@
                             margin-right: 0;
                         }
                         
-                        .search-menu-icon {
+                        .search-menu-glyph {
                             color: white;
-                            padding-left: 2px;
+                            padding-left: 3px;
+                        }
+                        
+                        &:hover {
+                            // Do nothing
                         }
                     }
                 }
