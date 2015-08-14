@@ -147,11 +147,6 @@ define(function () {
         });
         $scope.ngModel.checkAll = true;
         
-        // Re-filter the results when the checked type options change
-        $scope.$watch("$scope.ngModel.checked", function () {
-            $scope.results = filter(fullResults.hits);
-        });
-        
         return {
             /**
              * Search the filetree.
