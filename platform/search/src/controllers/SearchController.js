@@ -33,15 +33,15 @@ define(function () {
     function SearchController($scope, searchService, types) {
         // Starting amount of results to load. Will get increased. 
         var numResults = INITIAL_LOAD_NUMBER,
-            loading = false,
             fullResults = {hits: []};
         
-        // Scope variables are
-        // $scope.results, $scope.types
-        // $scope.ngModel.input, $scope.ngModel.search, $scope.ngModel.checked
+        // Scope variables are: 
+        // results, types, loading, filtersString, 
+        //  ngModel.input, ngModel.search, ngModel.checked
         $scope.types = [];
         $scope.ngModel.checked = {};
         $scope.filtersString = "";
+        $scope.loading = false;
         
         function filter(hits) {
             var newResults = [],
@@ -63,7 +63,7 @@ define(function () {
             
             // We are starting to load.
             if (inputText !== '' && inputText !== undefined) {
-                loading = true;
+                $scope.loading = true;
             }
             
             // Update whether the file tree should be displayed 
@@ -90,7 +90,7 @@ define(function () {
                 }
                 
                 // Now we are done loading.
-                loading = false;
+                $scope.loading = false;
             });
         }
         
@@ -159,14 +159,6 @@ define(function () {
             search: search,
             
             /**
-             * Checks to see if we are still waiting for the results to be 
-             *   fully updated. 
-             */
-            isLoading: function () {
-                return loading;
-            },
-            
-            /**
              * Checks to see if there are more search results to display. If the answer
              *   is unclear, this function will err on there being more results. 
              */
@@ -198,24 +190,6 @@ define(function () {
                 } else {
                     $scope.results = filter(fullResults.hits);//fullResults.hits.slice(0, numResults);
                 }
-            },
-            
-            /**
-             * Determines if the search bar has any text inputted into it. 
-             *   Used as a helper for CSS styling. 
-             */
-            hasInput: function () {
-                return !($scope.ngModel.input === "" || $scope.ngModel.input === undefined);
-            },
-            
-            /**
-             * Clears the input text. 
-             */
-            clear: function () {
-                // Clear input field
-                $scope.ngModel.input = '';
-                // Call search to clear the results list too
-                search();
             },
             
             /**

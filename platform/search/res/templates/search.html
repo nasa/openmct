@@ -35,14 +35,14 @@
         <!-- Search icon -->
         <!-- ui symbols for search are 'd' and 'M' -->
         <div class="ui-symbol search-icon"
-             ng-class="{content: controller.hasInput()}">
+             ng-class="{content: !(ngModel.input === '' || ngModel.input === undefined)}">
             M
         </div>
         
         <!-- Clear icon/button 'x' -->
         <a class="ui-symbol clear-icon"
-           ng-class="{content: controller.hasInput()}"
-           ng-click="controller.clear()">
+           ng-class="{content: !(ngModel.input === '' || ngModel.input === undefined)}"
+           ng-click="ngModel.input = ''; controller.search()">
             x
         </a>
         
@@ -135,8 +135,8 @@
 
         <!-- Loading icon -->
         <div class="load-icon"
-             ng-class="{loading: controller.isLoading()}"
-             ng-if="controller.isLoading()">
+             ng-class="{loading: loading}"
+             ng-if="loading">
             <span class="icon wait-spinner"></span>
             <span class="title-label">Loading...</span>
         </div>
