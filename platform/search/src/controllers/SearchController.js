@@ -40,9 +40,11 @@ define(function () {
         //  ngModel.input, ngModel.search, ngModel.checked
         $scope.types = [];
         $scope.ngModel.checked = {};
-        $scope.filtersString = "";
+        $scope.filtersString = '';
         $scope.loading = false;
         
+        // Filters searchResult objects by type. Allows types that are 
+        //   checked. (ngModel.checked['typekey'] === true)
         function filter(hits) {
             var newResults = [],
                 i = 0;
@@ -58,6 +60,7 @@ define(function () {
             return newResults;
         }
         
+        // For documentation, see search below
         function search(maxResults) {
             var inputText = $scope.ngModel.input;
             
@@ -94,6 +97,7 @@ define(function () {
             });
         }
         
+        // For documentation, see updateOptions below
         function updateOptions() {
             var type,
                 i;
@@ -149,8 +153,8 @@ define(function () {
         
         return {
             /**
-             * Search the filetree.
-             * Assumes that any search text will be in ngModel.input
+             * Search the filetree. Assumes that any search text will 
+             *   be in ngModel.input
              *
              * @param maxResults (optional) The maximum number of results 
              *   that this function should return. If not provided, search
@@ -159,8 +163,8 @@ define(function () {
             search: search,
             
             /**
-             * Checks to see if there are more search results to display. If the answer
-             *   is unclear, this function will err on there being more results. 
+             * Checks to see if there are more search results to display. If the answer is
+             *   unclear, this function will err toward saying that there are more results. 
              */
             areMore: function () {
                 var i;
@@ -179,7 +183,7 @@ define(function () {
             
             /**
              * Increases the number of search results to display, and then 
-             *   load them. 
+             *   loads them, adding to the displayed results. 
              */
             loadMore: function () {
                 numResults += LOAD_INCREMENT;
@@ -188,17 +192,21 @@ define(function () {
                     // Resend the query if we are out of items to display, but there are more to get
                     search(numResults);
                 } else {
-                    $scope.results = filter(fullResults.hits);//fullResults.hits.slice(0, numResults);
+                    // Otherwise just take from what we already have
+                    $scope.results = filter(fullResults.hits);
                 }
             },
             
             /**
-             * Re-filters the search restuls. Called when ngModel.checked changes. 
+             * Updates the status of the checked options, including 'check-all'. 
+             *   Updates the filtersString with which options are checked, if 
+             *   check-all is not true. Re-filters the search restuls.
              */
             updateOptions: updateOptions,
             
             /**
-             * Resets options. 
+             * Checks or un-checks all of the filter options depending on the 
+             *   value of ngModel.checkAll, then calls updateOptions.
              */
             checkAll: function () {
                 var type;
