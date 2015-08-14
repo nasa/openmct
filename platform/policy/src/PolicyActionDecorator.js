@@ -33,28 +33,24 @@ define(
          * @param {ActionService} actionService the service to decorate
          * @constructor
          * @memberof platform/policy
+         * @implements {ActionService}
          */
         function PolicyActionDecorator(policyService, actionService) {
-            return {
-                /**
-                 * Get actions which are applicable in this context.
-                 * These will be filtered to remove any actions which
-                 * are deemed inapplicable by policy.
-                 * @param context the context in which the action will occur
-                 * @returns {Action[]} applicable actions
-                 * @memberof platform/policy.PolicyActionDecorator#
-                 */
-                getActions: function (context) {
-                    // Check if an action is allowed by policy.
-                    function allow(action) {
-                        return policyService.allow('action', action, context);
-                    }
-
-                    // Look up actions, filter out the disallowed ones.
-                    return actionService.getActions(context).filter(allow);
-                }
-            };
+            this.policyService = policyService;
+            this.actionService = actionService;
         }
+
+        PolicyActionDecorator.prototype.getActions = function (context) {
+            var policyService = this.policyService;
+            
+            // Check if an action is allowed by policy.
+            function allow(action) {
+                return policyService.allow('action', action, context);
+            }
+
+            // Look up actions, filter out the disallowed ones.
+            return this.actionService.getActions(context).filter(allow);
+        };
 
         return PolicyActionDecorator;
     }

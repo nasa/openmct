@@ -33,29 +33,25 @@ define(
          * @param {ViewService} viewService the service to decorate
          * @constructor
          * @memberof platform/policy
+         * @implements {ViewService}
          */
-        function PolicyActionDecorator(policyService, viewService) {
-            return {
-                /**
-                 * Get views which are applicable to this domain object.
-                 * These will be filtered to remove any views which
-                 * are deemed inapplicable by policy.
-                 * @param {DomainObject} the domain object to view
-                 * @returns {View[]} applicable views
-                 * @memberof platform/policy.PolicyViewDecorator#
-                 */
-                getViews: function (domainObject) {
-                    // Check if an action is allowed by policy.
-                    function allow(view) {
-                        return policyService.allow('view', view, domainObject);
-                    }
-
-                    // Look up actions, filter out the disallowed ones.
-                    return viewService.getViews(domainObject).filter(allow);
-                }
-            };
+        function PolicyViewDecorator(policyService, viewService) {
+            this.policyService = policyService;
+            this.viewService = viewService;
         }
 
-        return PolicyActionDecorator;
+        PolicyViewDecorator.prototype.getViews = function (domainObject) {
+            var policyService = this.policyService;
+
+            // Check if an action is allowed by policy.
+            function allow(view) {
+                return policyService.allow('view', view, domainObject);
+            }
+
+            // Look up actions, filter out the disallowed ones.
+            return this.viewService.getViews(domainObject).filter(allow);
+        };
+
+        return PolicyViewDecorator;
     }
 );
