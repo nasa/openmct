@@ -40,12 +40,12 @@
             $heightAdjust: 4px;
             $textInputHeight: 19px; // This is equal to the default value, 19px
             
+            order: 1;
+            
+            position: relative;
             width: 100%;
             height: $textInputHeight;
             margin-top: $heightAdjust;
-            
-            position: relative;
-            order: 1;
             
             .search-input {
                 position: relative;
@@ -221,12 +221,17 @@
         }
         
         .active-filter-display {
-            font-size: .6em;
-            
-            // Align bottom correctly
-            margin-bottom: -3px;
-            
             order: 2;
+            
+            font-size: .6em;
+            background-color: lighten($colorBodyBg, 10%);
+            border-radius: 2px;
+            border: 1px solid lighten($colorBodyBg, 5%);
+            
+            padding-left: 4px;
+            padding-right: 4px;
+            overflow: hidden;
+            margin-top: 2px;
             
             .clear-filters-icon {
                 padding: 4px;
@@ -243,21 +248,26 @@
             
             .filter-options {
                 position: relative;
-                margin-left: 10px;
                 top: -8px;
+                margin-bottom: -6px;
+                
+                // Hanging indent
+                margin-left: 14px;
+                text-indent: -4px;
             }
         }
         
         .search-scroll {
-            // Spacing away from the search input
-            //top: 25px;
-            overflow-y: auto;
-            padding-right: $rightPadding;
+            order: 3;
             
+            padding-right: $rightPadding;
+            margin-top: 4px;
+            
+            // Adjustable scrolling size
+            overflow-y: auto;
             top: auto;
             height: auto;
             max-height: 100%;
-            order: 3;
             position: relative;
             
             .results {
