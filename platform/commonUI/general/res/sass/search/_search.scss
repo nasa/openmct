@@ -173,7 +173,7 @@
                             margin-right: 0;
                             
                             // Spacing with labels
-                            padding-right: 3px;
+                            padding-right: 2px;
                             
                             // Change checkbox colors
                             em:before {
@@ -181,6 +181,11 @@
                                 color: white;
                                 // box
                                 background-color: grey;
+                                
+                                // Change size 
+                                height: 12px;
+                                width: 12px;
+                                font-size: .7em;
                             }
                         }
                         
