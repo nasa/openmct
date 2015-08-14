@@ -33,13 +33,16 @@ define(
             var mockScope,
                 mockSearchService,
                 mockPromise,
+                mockSearchResult,
+                mockDomainObject,
+                mockTypes,
                 controller;
 
             function bigArray(size) {
                 var array = [],
                     i;
                 for (i = 0; i < size; i += 1) {
-                    array.push(i);
+                    array.push(mockSearchResult);
                 }
                 return array;
             }
@@ -48,10 +51,12 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "" ]
+                    [ "$watch" ]
                 );
                 mockScope.ngModel = {};
                 mockScope.ngModel.input = "test input";
+                mockScope.ngModel.checked = {};
+                mockScope.ngModel.checked['mock.type'] = true;
                 
                 mockSearchService = jasmine.createSpyObj(
                     "searchService",
@@ -63,7 +68,20 @@ define(
                 );
                 mockSearchService.query.andReturn(mockPromise);
                 
-                controller = new SearchController(mockScope, mockSearchService);
+                mockTypes = [{key: 'mock.type', name: 'Mock Type', glyph: '?'}];
+                
+                mockSearchResult = jasmine.createSpyObj(
+                    "searchResult",
+                    [ "" ]
+                );
+                mockDomainObject = jasmine.createSpyObj(
+                    "domainObject",
+                    [ "getModel" ]
+                );
+                mockSearchResult.object = mockDomainObject;
+                mockDomainObject.getModel.andReturn({name: 'Mock Object', type: 'mock.type'});
+                
+                controller = new SearchController(mockScope, mockSearchService, mockTypes);
                 controller.search();
             });
             
@@ -100,7 +118,7 @@ define(
             it("can load more results", function () {
                 var oldSize;
                 
-                expect(mockPromise.then).toHaveBeenCalledWith(jasmine.any(Function));
+                expect(mockPromise.then).toHaveBeenCalled();
                 mockPromise.then.mostRecentCall.args[0]({hits: bigArray(100), total: 1000});
                 oldSize = mockScope.results.length;
                 
