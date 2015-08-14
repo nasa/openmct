@@ -36,6 +36,7 @@ define(
          *
          * @memberof platform/telemetry
          * @constructor
+         * @deprecated use platform/telemetry.TelemetryHandler instead
          */
         function TelemetryController($scope, $q, $timeout, $log) {
 

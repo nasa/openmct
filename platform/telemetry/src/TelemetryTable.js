@@ -34,44 +34,25 @@ define(
          * values.
          * @memberof platform/telemetry
          * @constructor
+         * @implements {platform/telemetry.TelemetryPool}
          */
         function TelemetryTable() {
-            var table;
-
-            return {
-                /**
-                 * Check if any value groups remain in this pool.
-                 * @return {boolean} true if value groups remain
-                 * @memberof platform/telemetry.TelemetryTable#
-                 */
-                isEmpty: function () {
-                    return !table;
-                },
-                /**
-                 * Retrieve the next value group from this pool.
-                 * This gives an object containing key-value pairs,
-                 * where keys and values correspond to the arguments
-                 * given to previous put functions.
-                 * @return {object} key-value pairs
-                 * @memberof platform/telemetry.TelemetryTable#
-                 */
-                poll: function () {
-                    var t = table;
-                    table = undefined;
-                    return t;
-                },
-                /**
-                 * Put a key-value pair into the pool.
-                 * @param {string} key the key to store the value under
-                 * @param {*} value the value to store
-                 * @memberof platform/telemetry.TelemetryTable#
-                 */
-                put: function (key, value) {
-                    table = table || {};
-                    table[key] = value;
-                }
-            };
         }
+
+        TelemetryTable.prototype.isEmpty = function () {
+            return !this.table;
+        };
+
+        TelemetryTable.prototype.poll = function () {
+            var t = this.table;
+            this.table = undefined;
+            return t;
+        };
+
+        TelemetryTable.prototype.put = function (key, value) {
+            this.table = this.table || {};
+            this.table[key] = value;
+        };
 
         return TelemetryTable;
     }

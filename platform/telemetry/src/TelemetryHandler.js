@@ -36,18 +36,30 @@ define(
          * @param $q Angular's $q
          */
         function TelemetryHandler($q, telemetrySubscriber) {
-            return {
-                handle: function (domainObject, callback, lossless) {
-                    var subscription = telemetrySubscriber.subscribe(
-                        domainObject,
-                        callback,
-                        lossless
-                    );
-
-                    return new TelemetryHandle($q, subscription);
-                }
-            };
+            this.$q = $q;
+            this.telemetrySubscriber = telemetrySubscriber;
         }
+
+        /**
+         * Start receiving telemetry associated with this domain object
+         * (either directly, or via delegation.)
+         * @param {DomainObject} domainObject the domain object
+         * @param {Function} callback callback to invoke when new data is
+         *        available
+         * @param {boolean} lossless true if the callback should be invoked
+         *        one separate time for each new latest value
+         * @returns {TelemetryHandle} a handle to telemetry data
+         *          associated with this object
+         */
+        TelemetryHandler.prototype.handle = function (domainObject, callback, lossless) {
+            var subscription = this.telemetrySubscriber.subscribe(
+                domainObject,
+                callback,
+                lossless
+            );
+
+            return new TelemetryHandle(this.$q, subscription);
+        };
 
         return TelemetryHandler;
 

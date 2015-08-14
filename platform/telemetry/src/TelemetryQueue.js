@@ -34,6 +34,7 @@ define(
          * objects.)
          * @memberof platform/telemetry
          * @constructor
+         * @implements {platform/telemetry.TelemetryPool}
          */
         function TelemetryQueue() {
             // General approach here:
@@ -60,9 +61,37 @@ define(
             //   0 1 2 3 4
             // a * * * * *
             // b * * *
-            // c * * *            
-            var queue = [],
-                counts = {};
+            // c * * *
+
+            this.queue = [];
+            this.counts = {};
+        }
+
+
+        TelemetryQueue.prototype.isEmpty = function () {
+            return this.queue.length < 1;
+        };
+
+        TelemetryQueue.prototype.poll = function () {
+            var counts = this.counts;
+
+            // Decrement counts for a specific key
+            function decrementCount(key) {
+                if (counts[key] < 2) {
+                    delete counts[key];
+                } else {
+                    counts[key] -= 1;
+                }
+            }
+
+            // Decrement counts for the object that will be popped
+            Object.keys(counts).forEach(decrementCount);
+            return this.queue.shift();
+        };
+
+        TelemetryQueue.prototype.put = function (key, value) {
+            var queue = this.queue,
+                counts = this.counts;
 
             // Look up an object in the queue that does not have a value
             // assigned to this key (or, add a new one)
@@ -71,7 +100,7 @@ define(
 
                 // Track the largest free position for this key
                 counts[key] = index + 1;
-                
+
                 // If it's before the end of the queue, add it there
                 if (index < queue.length) {
                     return queue[index];
@@ -84,54 +113,9 @@ define(
                 queue.push(object);
                 return object;
             }
-            
-            // Decrement counts for a specific key
-            function decrementCount(key) {
-                if (counts[key] < 2) {
-                    delete counts[key];
-                } else {
-                    counts[key] -= 1;
-                }
-            }
-            
-            // Decrement all counts
-            function decrementCounts() {
-                Object.keys(counts).forEach(decrementCount);
-            }
 
-            return {
-                /**
-                 * Check if any value groups remain in this pool.
-                 * @return {boolean} true if value groups remain
-                 * @memberof platform/telemetry.TelemetryQueue#
-                 */
-                isEmpty: function () {
-                    return queue.length < 1;
-                },
-                /**
-                 * Retrieve the next value group from this pool.
-                 * This gives an object containing key-value pairs,
-                 * where keys and values correspond to the arguments
-                 * given to previous put functions.
-                 * @return {object} key-value pairs
-                 * @memberof platform/telemetry.TelemetryQueue#
-                 */
-                poll: function () {
-                    // Decrement counts for the object that will be popped
-                    decrementCounts();
-                    return queue.shift();
-                },
-                /**
-                 * Put a key-value pair into the pool.
-                 * @param {string} key the key to store the value under
-                 * @param {*} value the value to store
-                 * @memberof platform/telemetry.TelemetryQueue#
-                 */
-                put: function (key, value) {
-                    getFreeObject(key)[key] = value;
-                }
-            };
-        }
+            getFreeObject(key)[key] = value;
+        };
 
         return TelemetryQueue;
     }

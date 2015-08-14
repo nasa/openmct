@@ -33,36 +33,39 @@ define(
          * @memberof platform/telemetry
          */
         function TelemetryDelegator($q) {
-            return {
-                /**
-                 * Promise telemetry-providing objects associated with
-                 * this domain object (either the domain object itself,
-                 * or the objects it delegates)
-                 * @returns {Promise.<DomainObject[]>} domain objects with
-                 *          a telemetry capability
-                 * @memberof platform/telemetry.TelemetryDelegator#
-                 */
-                promiseTelemetryObjects: function (domainObject) {
-                    // If object has been cleared, there are no relevant
-                    // telemetry-providing domain objects.
-                    if (!domainObject) {
-                        return $q.when([]);
-                    }
-
-                    // Otherwise, try delegation first, and attach the
-                    // object itself if it has a telemetry capability.
-                    return $q.when(domainObject.useCapability(
-                        "delegation",
-                        "telemetry"
-                    )).then(function (result) {
-                        var head = domainObject.hasCapability("telemetry") ?
-                                [ domainObject ] : [],
-                            tail = result || [];
-                        return head.concat(tail);
-                    });
-                }
-            };
+            this.$q = $q;
         }
+
+        /**
+         * Promise telemetry-providing objects associated with
+         * this domain object (either the domain object itself,
+         * or the objects it delegates)
+         * @param {DomainObject} the domain object which may have
+         *        or delegate telemetry
+         * @returns {Promise.<DomainObject[]>} domain objects with
+         *          a telemetry capability
+         */
+        TelemetryDelegator.prototype.promiseTelemetryObjects = function (domainObject) {
+            var $q = this.$q;
+            
+            // If object has been cleared, there are no relevant
+            // telemetry-providing domain objects.
+            if (!domainObject) {
+                return $q.when([]);
+            }
+
+            // Otherwise, try delegation first, and attach the
+            // object itself if it has a telemetry capability.
+            return $q.when(domainObject.useCapability(
+                "delegation",
+                "telemetry"
+            )).then(function (result) {
+                var head = domainObject.hasCapability("telemetry") ?
+                        [ domainObject ] : [],
+                    tail = result || [];
+                return head.concat(tail);
+            });
+        };
 
         return TelemetryDelegator;
     }
