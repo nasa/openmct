@@ -208,26 +208,26 @@ Other problems:
 
 The following attributes of the current API are undesirable:
 
-[ ] It is difficult to tell "where things are" in the code base.
-[ ] It is difficult to see how objects are passed around at run-time.
-[ ] Multiple interfaces for related concepts (e.g. telemetry) is confusing.
-[ ] API documentation is missing or not well-formatted for use.
-[ ] High-level separation of concerns is not made clear.
-[ ] Interface depth of telemetry API is excessive (esp. `TelemetrySeries`)
-[ ] Capabilities as a concept lack clarity.
-[ ] Too many interfaces and concepts to learn.
+- [ ] It is difficult to tell "where things are" in the code base.
+- [ ] It is difficult to see how objects are passed around at run-time.
+- [ ] Multiple interfaces for related concepts (e.g. telemetry) is confusing.
+- [ ] API documentation is missing or not well-formatted for use.
+- [ ] High-level separation of concerns is not made clear.
+- [ ] Interface depth of telemetry API is excessive (esp. `TelemetrySeries`)
+- [ ] Capabilities as a concept lack clarity.
+- [ ] Too many interfaces and concepts to learn.
 
 ## Positive Features
 
 It is desirable to retain the following features in an API redesign:
 
-[ ] Creating new features and implementing them additively is well-supported.
-[ ] Easy to add/remove features which involve multiple concerns.
+- [ ] Creating new features and implementing them additively is well-supported.
+- [ ] Easy to add/remove features which involve multiple concerns.
 
 ## Requirements
 
 The following are considered "must-haves" of any complete API
 redesign:
 
-[ ] Don't require usage of Angular API.
-[ ] Don't require support for Angular API.
+- [ ] Don't require usage of Angular API.
+- [ ] Don't require support for Angular API.
