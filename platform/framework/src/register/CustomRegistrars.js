@@ -37,130 +37,190 @@ define(
          * @constructor
          */
         function CustomRegistrars(app, $log) {
+            this.app = app;
+            this.$log = $log;
+        }
 
-            // Used to create custom registration functions which map to
-            // named methods on Angular modules, which follow the normal
-            // app.method(key, [ deps..., function ]) pattern.
-            function CustomRegistrar(angularFunction) {
-                return function (extension, index) {
-                    var key = extension.key,
-                        dependencies = extension.depends || [];
-
-                    if (!key) {
-                        $log.warn([
-                            "Cannot register ",
-                            angularFunction,
-                            " ",
-                            index,
-                            ", no key specified. ",
-                            JSON.stringify(extension)
-                        ].join(""));
-                    } else {
-                        $log.info([
-                            "Registering ",
-                            angularFunction,
-                            ": ",
-                            key
-                        ].join(""));
-                        app[angularFunction](
-                            key,
-                            dependencies.concat([extension])
-                        );
-                    }
-                };
-            }
-
-            function registerConstant(extension) {
-                var key = extension.key,
-                    value = extension.value;
-
-                if (typeof key === "string" && value !== undefined) {
-                    $log.info([
-                        "Registering constant: ",
-                        key,
-                        " with value ",
-                        value
-                    ].join(""));
-                    app.constant(key, value);
-                } else {
-                    $log.warn([
-                        "Cannot register constant ",
-                        key,
-                        " with value ",
-                        value
-                    ].join(""));
-                }
-
-            }
-
-            // Custom registration function for extensions of category "runs"
-            function registerRun(extension) {
-                if (typeof extension === 'function') {
-                    // Prepend dependencies, and schedule to run
-                    app.run((extension.depends || []).concat([extension]));
-                } else {
-                    // If it's not a function, no implementation was given
-                    $log.warn([
-                        "Cannot register run extension from ",
-                        (extension.bundle || {}).path,
-                        "; no implementation."
-                    ].join(""));
-                }
-            }
-
-            // Custom registration function for extensions of category "route"
-            function registerRoute(extension) {
-                var route = Object.create(extension);
-
-                // Adjust path for bundle
-                if (route.templateUrl) {
-                    route.templateUrl = [
-                        route.bundle.path,
-                        route.bundle.resources,
-                        route.templateUrl
-                    ].join(Constants.SEPARATOR);
-                }
-
-                // Log the registration
-                $log.info("Registering route: " + (route.key || route.when));
-
-                // Register the route with Angular
-                app.config(['$routeProvider', function ($routeProvider) {
-                    if (route.when) {
-                        $routeProvider.when(route.when, route);
-                    } else {
-                        $routeProvider.otherwise(route);
-                    }
-                }]);
-            }
-
-            // Handle service compositing
-            function registerComponents(components) {
-                return new ServiceCompositor(app, $log)
-                        .registerCompositeServices(components);
-            }
-
-            // Utility; create a function which converts another function
-            // (which acts on single objects) to one which acts upon arrays.
-            function mapUpon(func) {
-                return function (array) {
-                    return array.map(func);
-                };
-            }
-
-            // More like key-value pairs than methods; key is the
-            // name of the extension category to be handled, and the value
-            // is the function which handles it.
-            return {
-                constants: mapUpon(registerConstant),
-                routes: mapUpon(registerRoute),
-                directives: mapUpon(new CustomRegistrar("directive")),
-                controllers: mapUpon(new CustomRegistrar("controller")),
-                services: mapUpon(new CustomRegistrar("service")),
-                runs: mapUpon(registerRun),
-                components: registerComponents
+        // Utility; bind a function to a "this" pointer
+        function bind(fn, thisArg) {
+            return function () {
+                return fn.apply(thisArg, arguments);
             };
         }
+
+        // Used to create custom registration functions which map to
+        // named methods on Angular modules, which follow the normal
+        // app.method(key, [ deps..., function ]) pattern.
+        function customRegistrar(angularFunction) {
+            return function (extension, index) {
+                var app = this.app,
+                    $log = this.$log,
+                    key = extension.key,
+                    dependencies = extension.depends || [];
+
+                if (!key) {
+                    $log.warn([
+                        "Cannot register ",
+                        angularFunction,
+                        " ",
+                        index,
+                        ", no key specified. ",
+                        JSON.stringify(extension)
+                    ].join(""));
+                } else {
+                    $log.info([
+                        "Registering ",
+                        angularFunction,
+                        ": ",
+                        key
+                    ].join(""));
+                    app[angularFunction](
+                        key,
+                        dependencies.concat([extension])
+                    );
+                }
+            };
+        }
+
+        function registerConstant(extension) {
+            var app = this.app,
+                $log = this.$log,
+                key = extension.key,
+                value = extension.value;
+
+            if (typeof key === "string" && value !== undefined) {
+                $log.info([
+                    "Registering constant: ",
+                    key,
+                    " with value ",
+                    value
+                ].join(""));
+                app.constant(key, value);
+            } else {
+                $log.warn([
+                    "Cannot register constant ",
+                    key,
+                    " with value ",
+                    value
+                ].join(""));
+            }
+
+        }
+
+        // Custom registration function for extensions of category "runs"
+        function registerRun(extension) {
+            var app = this.app,
+                $log = this.$log;
+
+            if (typeof extension === 'function') {
+                // Prepend dependencies, and schedule to run
+                app.run((extension.depends || []).concat([extension]));
+            } else {
+                // If it's not a function, no implementation was given
+                $log.warn([
+                    "Cannot register run extension from ",
+                    (extension.bundle || {}).path,
+                    "; no implementation."
+                ].join(""));
+            }
+        }
+
+        // Custom registration function for extensions of category "route"
+        function registerRoute(extension) {
+            var app = this.app,
+                $log = this.$log,
+                route = Object.create(extension);
+
+            // Adjust path for bundle
+            if (route.templateUrl) {
+                route.templateUrl = [
+                    route.bundle.path,
+                    route.bundle.resources,
+                    route.templateUrl
+                ].join(Constants.SEPARATOR);
+            }
+
+            // Log the registration
+            $log.info("Registering route: " + (route.key || route.when));
+
+            // Register the route with Angular
+            app.config(['$routeProvider', function ($routeProvider) {
+                if (route.when) {
+                    $routeProvider.when(route.when, route);
+                } else {
+                    $routeProvider.otherwise(route);
+                }
+            }]);
+        }
+
+        // Handle service compositing
+        function registerComponents(components) {
+            var app = this.app,
+                $log = this.$log;
+            return new ServiceCompositor(app, $log)
+                .registerCompositeServices(components);
+        }
+
+        // Utility; create a function which converts another function
+        // (which acts on single objects) to one which acts upon arrays.
+        function mapUpon(func) {
+            return function (array) {
+                return array.map(bind(func, this));
+            };
+        }
+
+        // More like key-value pairs than methods; key is the
+        // name of the extension category to be handled, and the value
+        // is the function which handles it.
+
+        /**
+         * Register constant values.
+         * @param {Array} extensions the resolved extensions
+         */
+        CustomRegistrars.prototype.constants =
+            mapUpon(registerConstant);
+
+        /**
+         * Register Angular routes.
+         * @param {Array} extensions the resolved extensions
+         */
+        CustomRegistrars.prototype.routes =
+            mapUpon(registerRoute);
+
+        /**
+         * Register Angular directives.
+         * @param {Array} extensions the resolved extensions
+         */
+        CustomRegistrars.prototype.directives =
+            mapUpon(customRegistrar("directive"));
+
+        /**
+         * Register Angular controllers.
+         * @param {Array} extensions the resolved extensions
+         */
+        CustomRegistrars.prototype.controllers =
+            mapUpon(customRegistrar("controller"));
+
+        /**
+         * Register Angular services.
+         * @param {Array} extensions the resolved extensions
+         */
+        CustomRegistrars.prototype.services =
+            mapUpon(customRegistrar("service"));
+
+        /**
+         * Register functions which will run after bootstrapping.
+         * @param {Array} extensions the resolved extensions
+         */
+        CustomRegistrars.prototype.runs =
+            mapUpon(registerRun);
+
+        /**
+         * Register components of composite services.
+         * @param {Array} extensions the resolved extensions
+         */
+        CustomRegistrars.prototype.components =
+            registerComponents;
 
         return CustomRegistrars;
     }

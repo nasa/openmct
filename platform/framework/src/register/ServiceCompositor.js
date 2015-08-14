@@ -37,8 +37,30 @@ define(
          * @constructor
          */
         function ServiceCompositor(app, $log) {
-            var latest = {},
-                providerLists = {}; // Track latest services registered
+            this.latest = {};
+            this.providerLists = {}; // Track latest services registered
+            this.app = app;
+            this.$log = $log;
+        }
+
+        /**
+         * Register composite services with Angular. This will build
+         * up a dependency hierarchy between providers, aggregators,
+         * and/or decorators, such that a dependency upon the service
+         * type they expose shall be satisfied by their fully-wired
+         * whole.
+         *
+         * Note that this method assumes that a complete set of
+         * components shall be provided. Multiple calls to this
+         * method may not behave as expected.
+         *
+         * @param {Array} components extensions of category component
+         */
+        ServiceCompositor.prototype.registerCompositeServices = function (components) {
+            var latest = this.latest,
+                providerLists = this.providerLists,
+                app = this.app,
+                $log = this.$log;
 
             // Log a warning; defaults to "no service provided by"
             function warn(extension, category, message) {
@@ -200,33 +222,13 @@ define(
                 registerLatest();
             }
 
-            // Initial point of entry; just separate components by type
-            function registerCompositeServices(components) {
-                registerComposites(
-                    components.filter(hasType("provider")),
-                    components.filter(hasType("aggregator")),
-                    components.filter(hasType("decorator"))
-                );
-            }
-
-            return {
-                /**
-                 * Register composite services with Angular. This will build
-                 * up a dependency hierarchy between providers, aggregators,
-                 * and/or decorators, such that a dependency upon the service
-                 * type they expose shall be satisfied by their fully-wired
-                 * whole.
-                 *
-                 * Note that this method assumes that a complete set of
-                 * components shall be provided. Multiple calls to this
-                 * method may not behave as expected.
-                 *
-                 * @param {Array} components extensions of category component
-                 * @memberof platform/framework.ServiceCompositor#
-                 */
-                registerCompositeServices: registerCompositeServices
-            };
-        }
+            // Initial point of entry; split into three component types.
+            registerComposites(
+                components.filter(hasType("provider")),
+                components.filter(hasType("aggregator")),
+                components.filter(hasType("decorator"))
+            );
+        };
 
         return ServiceCompositor;
     }

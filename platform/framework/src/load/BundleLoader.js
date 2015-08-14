@@ -41,10 +41,26 @@ define(
          *
          * @memberof platform/framework
          * @constructor
-         * @param {object} $http Angular's HTTP requester
-         * @param {object} $log Angular's logging service
+         * @param $http Angular's HTTP requester
+         * @param $log Angular's logging service
          */
         function BundleLoader($http, $log) {
+            this.$http = $http;
+            this.$log = $log;
+
+        }
+
+        /**
+         * Load a group of bundles, to be used to constitute the
+         * application by later framework initialization phases.
+         *
+         * @param {string|string[]} an array of bundle names to load, or
+         *        the name of a JSON file containing that array
+         * @returns {Promise.<Bundle[]>} a promise for the loaded bundles
+         */
+        BundleLoader.prototype.loadBundles = function (bundles) {
+            var $http = this.$http,
+                $log = this.$log;
 
             // Utility function; load contents of JSON file using $http
             function getJSON(file) {
@@ -92,7 +108,7 @@ define(
                 var bundlePromises = bundleArray.map(loadBundle);
 
                 return Promise.all(bundlePromises)
-                        .then(filterBundles);
+                    .then(filterBundles);
             }
 
             // Load all bundles named in the referenced file. The file is
@@ -101,31 +117,10 @@ define(
                 return getJSON(listFile).then(loadBundlesFromArray);
             }
 
-            // Load all indicated bundles. If the argument is an array,
-            // this is taken to be a list of all bundles to load; if it
-            // is a string, then it is treated as the name of a JSON
-            // file containing the list of bundles to load.
-            function loadBundles(bundles) {
-                return Array.isArray(bundles) ? loadBundlesFromArray(bundles) :
-                        (typeof bundles === 'string') ? loadBundlesFromFile(bundles) :
-                                Promise.reject(new Error(INVALID_ARGUMENT_MESSAGE));
-            }
-
-
-            return {
-                /**
-                 * Load a group of bundles, to be used to constitute the
-                 * application by later framework initialization phases.
-                 *
-                 * @memberof BundleLoader#
-                 * @param {string|string[]} an array of bundle names to load, or
-                 *        the name of a JSON file containing that array
-                 * @returns {Promise.<Bundle[]>}
-                 * @memberof platform/framework.BundleLoader#
-                 */
-                loadBundles: loadBundles
-            };
-        }
+            return Array.isArray(bundles) ? loadBundlesFromArray(bundles) :
+                (typeof bundles === 'string') ? loadBundlesFromFile(bundles) :
+                    Promise.reject(new Error(INVALID_ARGUMENT_MESSAGE));
+        };
 
         return BundleLoader;
     }

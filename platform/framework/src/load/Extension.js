@@ -78,93 +78,92 @@ define(
             // Attach bundle metadata
             extensionDefinition.bundle = bundle.getDefinition();
 
-            return {
-                /**
-                 * Get the machine-readable identifier for this extension.
-                 *
-                 * @returns {string}
-                 * @memberof platform/framework.Extension#
-                 */
-                getKey: function () {
-                    return definition.key || "undefined";
-                },
-                /**
-                 * Get the bundle which declared this extension.
-                 *
-                 * @memberof Extension#
-                 * @returns {Bundle}
-                 * @memberof platform/framework.Extension#
-                 */
-                getBundle: function () {
-                    return bundle;
-                },
-                /**
-                 * Get the category into which this extension falls.
-                 * (e.g. "directives")
-                 *
-                 * @memberof Extension#
-                 * @returns {string}
-                 * @memberof platform/framework.Extension#
-                 */
-                getCategory: function () {
-                    return category;
-                },
-                /**
-                 * Check whether or not this extension should have an
-                 * associated implementation module which may need to
-                 * be loaded.
-                 *
-                 * @returns {boolean} true if an implementation separate
-                 *          from this definition should also be loaded
-                 * @memberof platform/framework.Extension#
-                 */
-                hasImplementation: function () {
-                    return definition.implementation !== undefined;
-                },
-                /**
-                 * Get the path to the AMD module which implements this
-                 * extension. Will return undefined if there is no
-                 * implementation associated with this extension.
-                 *
-                 * @memberof Extension#
-                 * @returns {string} path to implementation, or undefined
-                 * @memberof platform/framework.Extension#
-                 */
-                getImplementationPath: function () {
-                    return definition.implementation ?
-                            bundle.getSourcePath(definition.implementation) :
-                            undefined;
-                },
-                /**
-                 * Get a log-friendly name for this extension; this will
-                 * include both the key (machine-readable name for this
-                 * extension) and the name (human-readable name for this
-                 * extension.)
-                 * @returns {string} log-friendly name for this extension
-                 * @memberof platform/framework.Extension#
-                 */
-                getLogName: function () {
-                    return logName;
-                },
-                /**
-                 * Get the plain definition of the extension.
-                 *
-                 * Note that this definition will have an additional "bundle"
-                 * field which points back to the bundle which defined the
-                 * extension, as a convenience.
-                 *
-                 * @memberof Extension#
-                 * @returns {ExtensionDefinition} the plain definition of
-                 *          this extension, as read from the bundle
-                 *          declaration.
-                 * @memberof platform/framework.Extension#
-                 */
-                getDefinition: function () {
-                    return extensionDefinition;
-                }
-
-            };
+            this.logName = logName;
+            this.bundle = bundle;
+            this.category = category;
+            this.definition = definition;
+            this.extensionDefinition = extensionDefinition;
         }
+
+        /**
+         * Get the machine-readable identifier for this extension.
+         *
+         * @returns {string} the identifier for this extension
+         */
+        Extension.prototype.getKey = function () {
+            return this.definition.key || "undefined";
+        };
+
+        /**
+         * Get the bundle which declared this extension.
+         *
+         * @returns {Bundle} the declaring bundle
+         */
+        Extension.prototype.getBundle = function () {
+            return this.bundle;
+        };
+
+        /**
+         * Get the category into which this extension falls.
+         * (e.g. "directives")
+         *
+         * @returns {string} the extension category
+         */
+        Extension.prototype.getCategory = function () {
+            return this.category;
+        };
+
+        /**
+         * Check whether or not this extension should have an
+         * associated implementation module which may need to
+         * be loaded.
+         *
+         * @returns {boolean} true if an implementation separate
+         *          from this definition should also be loaded
+         */
+        Extension.prototype.hasImplementation = function () {
+            return this.definition.implementation !== undefined;
+        };
+
+        /**
+         * Get the path to the AMD module which implements this
+         * extension. Will return undefined if there is no
+         * implementation associated with this extension.
+         *
+         * @returns {string} path to implementation, or undefined
+         */
+        Extension.prototype.getImplementationPath = function () {
+            return this.definition.implementation ?
+                this.bundle.getSourcePath(this.definition.implementation) :
+                undefined;
+        };
+
+        /**
+         * Get a log-friendly name for this extension; this will
+         * include both the key (machine-readable name for this
+         * extension) and the name (human-readable name for this
+         * extension.)
+         *
+         * @returns {string} log-friendly name for this extension
+         */
+        Extension.prototype.getLogName = function () {
+            return this.logName;
+        };
+
+        /**
+         * Get the plain definition of the extension.
+         *
+         * Note that this definition will have an additional "bundle"
+         * field which points back to the bundle which defined the
+         * extension, as a convenience.
+         *
+         * @returns {ExtensionDefinition} the plain definition of
+         *          this extension, as read from the bundle
+         *          declaration.
+         */
+        Extension.prototype.getDefinition = function () {
+            return this.extensionDefinition;
+        };
 
         return Extension;
 

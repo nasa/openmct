@@ -47,14 +47,41 @@ define(
             // Track which extension categories have already been registered.
             // Exceptions will be thrown if the same extension category is
             // registered twice.
-            var registeredCategories = {};
+            this.registeredCategories = {};
+            this.customRegistrars = customRegistrars || {};
+            this.app = app;
+            this.sorter = sorter;
+            this.$log = $log;
+        }
+
+        /**
+         * Register a group of resolved extensions with the Angular
+         * module managed by this registrar.
+         *
+         * For convenient chaining (particularly from the framework
+         * initializer's perspective), this returns the Angular
+         * module with which extensions were registered.
+         *
+         * @param {Object.<string, object[]>} extensionGroup an object
+         *        containing key-value pairs, where keys are extension
+         *        categories and values are arrays of resolved
+         *        extensions
+         * @returns {angular.Module} the application module with
+         *        which extensions were registered
+         */
+        ExtensionRegistrar.prototype.registerExtensions = function (extensionGroup) {
+            var registeredCategories = this.registeredCategories,
+                customRegistrars = this.customRegistrars,
+                app = this.app,
+                sorter = this.sorter,
+                $log = this.$log;
 
             // Used to build unique identifiers for individual extensions,
             // so that these can be registered separately with Angular
             function identify(category, extension, index) {
                 var name = extension.key ?
-                        ("extension-" + extension.key + "#" + index) :
-                        ("extension#" + index);
+                    ("extension-" + extension.key + "#" + index) :
+                    ("extension#" + index);
                 return category + "[" + name + "]";
             }
 
@@ -76,8 +103,8 @@ define(
             function makeServiceArgument(category, extension) {
                 var dependencies = extension.depends || [],
                     factory = (typeof extension === 'function') ?
-                            new PartialConstructor(extension) :
-                            staticFunction(extension);
+                        new PartialConstructor(extension) :
+                        staticFunction(extension);
 
                 return dependencies.concat([factory]);
             }
@@ -129,9 +156,9 @@ define(
             // an extension category (e.g. is suffixed by [])
             function isExtensionDependency(dependency) {
                 var index = dependency.indexOf(
-                        Constants.EXTENSION_SUFFIX,
-                        dependency.length - Constants.EXTENSION_SUFFIX.length
-                    );
+                    Constants.EXTENSION_SUFFIX,
+                    dependency.length - Constants.EXTENSION_SUFFIX.length
+                );
                 return index !== -1;
             }
 
@@ -153,8 +180,8 @@ define(
                     (extension.depends || []).filter(
                         isExtensionDependency
                     ).forEach(function (dependency) {
-                        needed[dependency] = true;
-                    });
+                            needed[dependency] = true;
+                        });
                 });
 
                 // Remove categories which have been provided
@@ -174,53 +201,29 @@ define(
                 findEmptyExtensionDependencies(
                     extensionGroup
                 ).forEach(function (name) {
-                    $log.info("Registering empty extension category " + name);
-                    app.factory(name, [staticFunction([])]);
-                });
+                        $log.info("Registering empty extension category " + name);
+                        app.factory(name, [staticFunction([])]);
+                    });
             }
 
-            function registerExtensionGroup(extensionGroup) {
-                // Announce we're entering a new phase
-                $log.info("Registering extensions...");
+            // Announce we're entering a new phase
+            $log.info("Registering extensions...");
 
-                // Register all declared extensions by category
-                Object.keys(extensionGroup).forEach(function (category) {
-                    registerExtensionsForCategory(
-                        category,
-                        sorter.sort(extensionGroup[category])
-                    );
-                });
+            // Register all declared extensions by category
+            Object.keys(extensionGroup).forEach(function (category) {
+                registerExtensionsForCategory(
+                    category,
+                    sorter.sort(extensionGroup[category])
+                );
+            });
 
-                // Also handle categories which are needed but not declared
-                registerEmptyDependencies(extensionGroup);
+            // Also handle categories which are needed but not declared
+            registerEmptyDependencies(extensionGroup);
 
-                // Return the application to which these extensions
-                // have been registered
-                return app;
-            }
-
-            customRegistrars = customRegistrars || {};
-
-            return {
-                /**
-                 * Register a group of resolved extensions with the Angular
-                 * module managed by this registrar.
-                 *
-                 * For convenient chaining (particularly from the framework
-                 * initializer's perspective), this returns the Angular
-                 * module with which extensions were registered.
-                 *
-                 * @param {Object.<string, object[]>} extensionGroup an object
-                 *        containing key-value pairs, where keys are extension
-                 *        categories and values are arrays of resolved
-                 *        extensions
-                 * @returns {angular.Module} the application module with
-                 *        which extensions were registered
-                 * @memberof platform/framework.ExtensionRegistrar#
-                 */
-                registerExtensions: registerExtensionGroup
-            };
-        }
+            // Return the application to which these extensions
+            // have been registered
+            return app;
+        };
 
         return ExtensionRegistrar;
     }

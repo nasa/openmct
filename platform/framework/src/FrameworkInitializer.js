@@ -40,23 +40,35 @@ define(
          *
          * @memberof platform/framework
          * @constructor
-         * @param {BundleLoader} loader
-         * @param {BundleResolver} resolver
-         * @param {ExtensionRegistrar} registrar
-         * @param {ApplicationBootstrapper} bootstrapper
+         * @param {platform/framework.BundleLoader} loader
+         * @param {platform/framework.BundleResolver} resolver
+         * @param {platform/framework.ExtensionRegistrar} registrar
+         * @param {platform/framework.ApplicationBootstrapper} bootstrapper
          */
         function FrameworkInitializer(loader, resolver, registrar, bootstrapper) {
+            this.loader = loader;
+            this.resolver = resolver;
+            this.registrar = registrar;
+            this.bootstrapper = bootstrapper;
+        }
 
-            return {
-                runApplication: function (bundleList) {
-                    return loader.loadBundles(bundleList)
-                        .then(resolver.resolveBundles)
-                        .then(registrar.registerExtensions)
-                        .then(bootstrapper.bootstrap);
-                }
-
+        function bind(method, thisArg) {
+            return function () {
+                return method.apply(thisArg, arguments);
             };
         }
+
+        /**
+         * Run the application defined by this set of bundles.
+         * @param bundleList
+         * @returns {*}
+         */
+        FrameworkInitializer.prototype.runApplication = function (bundleList) {
+            return this.loader.loadBundles(bundleList)
+                .then(bind(this.resolver.resolveBundles, this.resolver))
+                .then(bind(this.registrar.registerExtensions, this.registrar))
+                .then(bind(this.bootstrapper.bootstrap, this.bootstrapper));
+        };
 
         return FrameworkInitializer;
     }
