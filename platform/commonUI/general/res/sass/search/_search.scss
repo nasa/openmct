@@ -110,16 +110,20 @@
                 visibility: hidden;
                 opacity: 0;
                 
-                transition: visibility .15s, opacity .15s;
+                transition: visibility .15s, opacity .15s, color .2s;
                 
                 &.content {
                     visibility: visible;
                     opacity: 1;
                 }
                 
+                &:hover {
+                    color: lighten($colorItemFg, 20%);
+                }
+                
                 // Modifications for existence of menu icon:
-                right: 16px;
-                padding-right: 2px;
+                right: 3px + 6px + 6px;
+                padding-right: 4px;
             }
             
             .menu-icon {
@@ -131,7 +135,7 @@
                 color: $colorItemFg;
                 font-size: 6px;
                 padding: 6px;
-                padding-left: 4px;
+                padding-left: 3px;
                 
                 right: 0px;
                 top: -3px;
