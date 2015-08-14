@@ -177,7 +177,7 @@ Summary of the expected benefits:
   allow MCT-Web developers to focus on MCT-specific features, instead
   of the maintenance of custom infrastructure.
 
-## Actual Experience with Angular
+### Actual Experience with Angular
 
 Most of the expected benefits of Angular have been invalidated
 by experience:
