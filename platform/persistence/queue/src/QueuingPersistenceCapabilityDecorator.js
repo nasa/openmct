@@ -40,11 +40,21 @@ define(
          *
          * @memberof platform/persistence/queue
          * @constructor
+         * @implements {CapabilityService}
+         * @param {platform/persistence/queue.PersistenceQueue} persistenceQueue
+         * @param {CapabilityService} the decorated capability service
          */
         function QueuingPersistenceCapabilityDecorator(
             persistenceQueue,
             capabilityService
         ) {
+            this.persistenceQueue = persistenceQueue;
+            this.capabilityService = capabilityService;
+        }
+
+        QueuingPersistenceCapabilityDecorator.prototype.getCapabilities = function (model) {
+            var capabilityService = this.capabilityService,
+                persistenceQueue = this.persistenceQueue;
 
             function decoratePersistence(capabilities) {
                 var originalPersistence = capabilities.persistence;
@@ -53,8 +63,8 @@ define(
                         // Get/instantiate the original
                         var original =
                             (typeof originalPersistence === 'function') ?
-                                    originalPersistence(domainObject) :
-                                    originalPersistence;
+                                originalPersistence(domainObject) :
+                                originalPersistence;
 
                         // Provide a decorated version
                         return new QueuingPersistenceCapability(
@@ -67,35 +77,10 @@ define(
                 return capabilities;
             }
 
-            function getCapabilities(model) {
-                return decoratePersistence(
-                    capabilityService.getCapabilities(model)
-                );
-            }
-
-            return {
-                /**
-                 * Get all capabilities associated with a given domain
-                 * object.
-                 *
-                 * This returns a promise for an object containing key-value
-                 * pairs, where keys are capability names and values are
-                 * either:
-                 *
-                 * * Capability instances
-                 * * Capability constructors (which take a domain object
-                 *   as their argument.)
-                 *
-                 *
-                 * @param {*} model the object model
-                 * @returns {Object.<string,function|Capability>} all
-                 *     capabilities known to be valid for this model, as
-                 *     key-value pairs
-                 * @memberof platform/persistence/queue.QueuingPersistenceCapabilityDecorator#
-                 */
-                getCapabilities: getCapabilities
-            };
-        }
+            return decoratePersistence(
+                capabilityService.getCapabilities(model)
+            );
+        };
 
         return QueuingPersistenceCapabilityDecorator;
     }

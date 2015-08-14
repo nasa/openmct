@@ -44,18 +44,32 @@ define(
          * @constructor
          * @memberof platform/persistence/queue
          */
-        function PersistenceQueueImpl($q, $timeout, handler, DELAY) {
-            var self,
-                persistences = {},
-                objects = {},
-                lastObservedSize = 0,
-                pendingTimeout,
-                flushPromise,
-                activeDefer = $q.defer();
+        function PersistenceQueueImpl($q, $timeout, handler, delay) {
+
+            this.persistences = {};
+            this.objects = {};
+            this.lastObservedSize = 0;
+            this.activeDefer = $q.defer();
+
+            // If no delay is provided, use a default
+            this.delay = delay || 0;
+            this.handler = handler;
+            this.$timeout = $timeout;
+            this.$q = $q;
+        }
+
+        // Schedule a flushing of the queue (that is, plan to flush
+        // all objects in the queue)
+        PersistenceQueueImpl.prototype.scheduleFlush = function () {
+            var self = this,
+                $timeout = this.$timeout,
+                $q = this.$q,
+                handler = this.handler;
 
             // Check if the queue's size has stopped increasing)
             function quiescent() {
-                return Object.keys(persistences).length === lastObservedSize;
+                return Object.keys(self.persistences).length
+                        === self.lastObservedSize;
             }
 
             // Persist all queued objects
@@ -64,74 +78,71 @@ define(
                 // this will be replaced with a promise for the next round
                 // of persistence calls, so we want to make sure we clear
                 // the correct one when this flush completes.
-                var flushingDefer = activeDefer;
+                var flushingDefer = self.activeDefer;
 
                 // Clear the active promise for a queue flush
                 function clearFlushPromise(value) {
-                    flushPromise = undefined;
+                    self.flushPromise = undefined;
                     flushingDefer.resolve(value);
                     return value;
                 }
 
                 // Persist all queued objects
-                flushPromise = handler.persist(persistences, objects, self)
-                    .then(clearFlushPromise, clearFlushPromise);
+                self.flushPromise = handler.persist(
+                    self.persistences,
+                    self.objects,
+                    self
+                ).then(clearFlushPromise, clearFlushPromise);
 
                 // Reset queue, etc.
-                persistences = {};
-                objects = {};
-                lastObservedSize = 0;
-                pendingTimeout = undefined;
-                activeDefer = $q.defer();
+                self.persistences = {};
+                self.objects = {};
+                self.lastObservedSize = 0;
+                self.pendingTimeout = undefined;
+                self.activeDefer = $q.defer();
             }
 
-            // Schedule a flushing of the queue (that is, plan to flush
-            // all objects in the queue)
-            function scheduleFlush() {
-                function maybeFlush() {
-                    // Timeout fired, so clear it
-                    pendingTimeout = undefined;
-                    // Only flush when we've stopped receiving updates
-                    (quiescent() ? flush : scheduleFlush)();
-                    // Update lastObservedSize to detect quiescence
-                    lastObservedSize = Object.keys(persistences).length;
-                }
-
-                // If we are already flushing the queue...
-                if (flushPromise) {
-                    // Wait until that's over before considering a flush
-                    flushPromise.then(maybeFlush);
+            function maybeFlush() {
+                // Timeout fired, so clear it
+                self.pendingTimeout = undefined;
+                // Only flush when we've stopped receiving updates
+                if (quiescent()) {
+                    flush();
                 } else {
-                    // Otherwise, schedule a flush on a timeout (to give
-                    // a window for other updates to get aggregated)
-                    pendingTimeout = pendingTimeout ||
-                        $timeout(maybeFlush, DELAY, false);
+                    self.scheduleFlush();
                 }
-
-                return activeDefer.promise;
+                // Update lastObservedSize to detect quiescence
+                self.lastObservedSize = Object.keys(self.persistences).length;
             }
 
-            // If no delay is provided, use a default
-            DELAY = DELAY || 0;
+            // If we are already flushing the queue...
+            if (self.flushPromise) {
+                // Wait until that's over before considering a flush
+                self.flushPromise.then(maybeFlush);
+            } else {
+                // Otherwise, schedule a flush on a timeout (to give
+                // a window for other updates to get aggregated)
+                self.pendingTimeout = self.pendingTimeout ||
+                        $timeout(maybeFlush, self.delay, false);
+            }
 
-            self = {
-                /**
-                 * Queue persistence of a domain object.
-                 * @param {DomainObject} domainObject the domain object
-                 * @param {PersistenceCapability} persistence the object's
-                 *        undecorated persistence capability
-                 * @memberof platform/persistence/queue.PersistenceQueueImpl#
-                 */
-                put: function (domainObject, persistence) {
-                    var id = domainObject.getId();
-                    persistences[id] = persistence;
-                    objects[id] = domainObject;
-                    return scheduleFlush();
-                }
-            };
+            return self.activeDefer.promise;
+        };
 
-            return self;
-        }
+
+        /**
+         * Queue persistence of a domain object.
+         * @param {DomainObject} domainObject the domain object
+         * @param {PersistenceCapability} persistence the object's
+         *        undecorated persistence capability
+         * @returns {Promise} a promise which will resolve upon persistence
+         */
+        PersistenceQueueImpl.prototype.put = function (domainObject, persistence) {
+            var id = domainObject.getId();
+            this.persistences[id] = persistence;
+            this.objects[id] = domainObject;
+            return this.scheduleFlush();
+        };
 
         return PersistenceQueueImpl;
     }

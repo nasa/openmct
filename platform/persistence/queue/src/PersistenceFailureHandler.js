@@ -34,6 +34,24 @@ define(
          * @memberof platform/persistence/queue
          */
         function PersistenceFailureHandler($q, dialogService) {
+            this.$q = $q;
+            this.dialogService = dialogService;
+        }
+
+        /**
+         * Handle persistence failures by providing the user with a
+         * dialog summarizing these failures, and giving the option
+         * to overwrite/cancel as appropriate.
+         * @param {Array} failures persistence failures, as prepared
+         *        by PersistenceQueueHandler
+         * @memberof platform/persistence/queue.PersistenceFailureHandler#
+         */
+        PersistenceFailureHandler.prototype.handle = function handleFailures(failures) {
+            // Prepare dialog for display
+            var dialogModel = new PersistenceFailureDialog(failures),
+                revisionErrors = dialogModel.model.revised,
+                $q = this.$q;
+
             // Refresh revision information for the domain object associated
             // with this persistence failure
             function refresh(failure) {
@@ -100,39 +118,20 @@ define(
                 return $q.all(failures.map(discard));
             }
 
-            // Handle failures in persistence
-            function handleFailures(failures) {
-                // Prepare dialog for display
-                var dialogModel = new PersistenceFailureDialog(failures),
-                    revisionErrors = dialogModel.model.revised;
-
-                // Handle user input (did they choose to overwrite?)
-                function handleChoice(key) {
-                    // If so, try again
-                    if (key === PersistenceFailureConstants.OVERWRITE_KEY) {
-                        return retry(revisionErrors);
-                    } else {
-                        return discardAll(revisionErrors);
-                    }
+            // Handle user input (did they choose to overwrite?)
+            function handleChoice(key) {
+                // If so, try again
+                if (key === PersistenceFailureConstants.OVERWRITE_KEY) {
+                    return retry(revisionErrors);
+                } else {
+                    return discardAll(revisionErrors);
                 }
-
-                // Prompt for user input, the overwrite if they said so.
-                return dialogService.getUserChoice(dialogModel)
-                    .then(handleChoice, handleChoice);
             }
 
-            return {
-                /**
-                 * Handle persistence failures by providing the user with a
-                 * dialog summarizing these failures, and giving the option
-                 * to overwrite/cancel as appropriate.
-                 * @param {Array} failures persistence failures, as prepared
-                 *        by PersistenceQueueHandler
-                 * @memberof platform/persistence/queue.PersistenceFailureHandler#
-                 */
-                handle: handleFailures
-            };
-        }
+            // Prompt for user input, the overwrite if they said so.
+            return this.dialogService.getUserChoice(dialogModel)
+                .then(handleChoice, handleChoice);
+        };
 
         return PersistenceFailureHandler;
     }
