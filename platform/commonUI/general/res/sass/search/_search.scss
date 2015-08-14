@@ -161,6 +161,8 @@
                         font-size: 0.8em;
                         color: lighten($colorBodyBg, 70%);
                         
+                        cursor: pointer;
+                        
                         .search-menu-checkbox {
                             // Vertically center
                             margin-top: 0.3em;
@@ -238,7 +240,7 @@
                 
                 position: relative;
                 margin-left: -4px;
-                top: 0.2em;
+                top: 0.3em;
                 
                 cursor: pointer;
                 
@@ -248,8 +250,8 @@
             
             .filter-options {
                 position: relative;
-                top: -8px;
-                margin-bottom: -6px;
+                top: -0.7em;
+                margin-bottom: -5px;
                 
                 // Hanging indent
                 margin-left: 14px;
@@ -260,7 +262,7 @@
         .search-scroll {
             order: 3;
             
-            padding-right: $rightPadding;
+            //padding-right: $rightPadding;
             margin-top: 4px;
             
             // Adjustable scrolling size
