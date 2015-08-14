@@ -32,7 +32,9 @@
     margin-top: 10px;
     
     .search {
-        //display: block;
+        display: flex;//block;
+        flex-direction: column;
+        height: 100%;
         
         .search-bar {
             $heightAdjust: 4px;
@@ -43,6 +45,7 @@
             margin-top: $heightAdjust;
             
             position: relative;
+            order: 1;
             
             .search-input {
                 position: relative;
@@ -219,11 +222,18 @@
         
         .active-filter-display {
             font-size: .6em;
-            height: auto;
+            
+            // Align bottom correctly
+            margin-bottom: -3px;
+            
+            order: 2;
             
             .clear-filters-icon {
                 padding: 4px;
+                
+                position: relative;
                 margin-left: -4px;
+                top: 0.2em;
                 
                 cursor: pointer;
                 
@@ -240,15 +250,15 @@
         
         .search-scroll {
             // Spacing away from the search input
-            top: 25px;
+            //top: 25px;
             overflow-y: auto;
             padding-right: $rightPadding;
             
             top: auto;
-            bottom: auto;
-            height: 90%;
-            // It overflows the bottom when active-display-filter 
-            //   if height is set to 100%
+            height: auto;
+            max-height: 100%;
+            order: 3;
+            position: relative;
             
             .results {
 
