@@ -238,6 +238,25 @@ define(
             };
         }
 
+        /**
+         * A representer participates in the process of instantiating a
+         * representation of a domain object.
+         *
+         * @interface Representer
+         * @augments {Destroyable}
+         */
+        /**
+         * Set the current representation in use, and the domain
+         * object being represented.
+         *
+         * @method Representer#represent
+         * @param {RepresentationDefinition} representation the
+         *        definition of the representation in use
+         * @param {DomainObject} domainObject the domain object
+         *        being represented
+         */
+
+
         return MCTRepresentation;
     }
 );

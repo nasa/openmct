@@ -36,32 +36,30 @@ define(
          * @memberof platform/representation
          * @constructor
          * @param element the jqLite-wrapped element which should exhibit
-         *                the context mennu
+         *                the context menu
          * @param {DomainObject} domainObject the object on which actions
          *                       in the context menu will be performed
+         * @implements {Gesture}
          */
         function ContextMenuGesture(element, domainObject) {
-            var actionContext,
-                stop;
-            
+            function showMenu(event) {
+                domainObject.getCapability('action').perform({
+                    key: 'menu',
+                    domainObject: domainObject,
+                    event: event
+                });
+            }
+
             // When context menu event occurs, show object actions instead
-            element.on('contextmenu', function (event) {
-                actionContext = {key: 'menu', domainObject: domainObject, event: event};
-                stop = domainObject.getCapability('action').perform(actionContext);
-            });
-            
-            return {
-                /**
-                 * Detach any event handlers associated with this gesture.
-                 * @method
-                 * @memberof ContextMenuGesture
-                 * @memberof platform/representation.ContextMenuGesture#
-                 */
-                destroy: function () {
-                    element.off('contextmenu', stop);
-                }
-            };
+            element.on('contextmenu', showMenu);
+
+            this.showMenuCallback = showMenu;
+            this.element = element;
         }
+
+        ContextMenuGesture.prototype.destroy = function () {
+            this.element.off('contextmenu', this.showMenu);
+        };
 
         return ContextMenuGesture;
     }

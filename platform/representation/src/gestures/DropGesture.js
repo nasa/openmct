@@ -32,7 +32,7 @@ define(
         /**
          * A DropGesture adds and maintains event handlers upon an element
          * such that it may act as a drop target for drag-drop composition.
-
+         *
          * @memberof platform/representation
          * @constructor
          * @param $q Angular's $q, for promise handling
@@ -40,7 +40,6 @@ define(
          * @param {DomainObject} domainObject the domain object whose
          *        composition should be modified as a result of the drop.
          */
-
         function DropGesture(dndService, $q, element, domainObject) {
             var actionCapability = domainObject.getCapability('action'),
                 action; // Action for the drop, when it occurs
@@ -122,18 +121,15 @@ define(
                 element.on('drop', drop);
             }
 
-            return {
-                /**
-                 * Detach any event handlers associated with this gesture.
-                 * @memberof platform/representation.DropGesture#
-                 */
-                destroy: function () {
-                    element.off('dragover', dragOver);
-                    element.off('drop', drop);
-                }
-            };
-
+            this.element = element;
+            this.dragOverCallback = dragOver;
+            this.dropCallback = drop;
         }
+
+        DropGesture.prototype.destroy = function () {
+            this.element.off('dragover', this.dragOverCallback);
+            this.element.off('drop', this.dropCallback);
+        };
 
 
         return DropGesture;
