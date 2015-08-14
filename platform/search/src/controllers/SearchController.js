@@ -94,6 +94,49 @@ define(function () {
             });
         }
         
+        function updateOptions() {
+            var type,
+                i;
+
+            // Update all-checked status
+            $scope.ngModel.checkAll = true;
+            for (type in $scope.ngModel.checked) {
+                if (!$scope.ngModel.checked[type]) {
+                    $scope.ngModel.checkAll = false;
+                } else {
+                    if ($scope.filtersString === '') {
+                        $scope.filtersString += type;
+                    } else {
+                        $scope.filtersString += ', ' + type;
+                    }
+                }
+            }
+
+            // Update the current filters string
+            $scope.filtersString = '';
+            if ($scope.ngModel.checkAll !== true) {
+                for (i = 0; i < types.length; i += 1) {
+                    // If the type key corresponds to a checked option...
+                    if ($scope.ngModel.checked[types[i].key]) {
+                        // ... add it to the string list of current filter options
+                        if ($scope.filtersString === '') {
+                            $scope.filtersString += types[i].name;
+                        } else {
+                            $scope.filtersString += ', ' + types[i].name;
+                        }
+                    }
+                }
+                // If there's still nothing in the filters string, there are no 
+                //   filters selected
+                if ($scope.filtersString === '') {
+                    $scope.filtersString = 'NONE';
+                }
+            }
+
+            // Re-filter results
+            $scope.results = filter(fullResults.hits);
+        }
+        
         // On initialization, fill the scope's types with type keys
         types.forEach(function (type) {
             // We only want some types, the ones that are probably human readable
@@ -183,43 +226,7 @@ define(function () {
             /**
              * Re-filters the search restuls. Called when ngModel.checked changes. 
              */
-            updateOptions: function () {
-                var type,
-                    i;
-                
-                // Update all-checked status
-                $scope.ngModel.checkAll = true;
-                for (type in $scope.ngModel.checked) {
-                    if (!$scope.ngModel.checked[type]) {
-                        $scope.ngModel.checkAll = false;
-                    } else {
-                        if ($scope.filtersString === '') {
-                            $scope.filtersString += type;
-                        } else {
-                            $scope.filtersString += ', ' + type;
-                        }
-                    }
-                }
-                
-                // Update the current filters string
-                $scope.filtersString = '';
-                if ($scope.ngModel.checkAll !== true) {
-                    for (i = 0; i < types.length; i += 1) {
-                        // If the type key corresponds to a checked option...
-                        if ($scope.ngModel.checked[types[i].key]) {
-                            // ... add it to the string list of current filter options
-                            if ($scope.filtersString === '') {
-                                $scope.filtersString += types[i].name;
-                            } else {
-                                $scope.filtersString += ', ' + types[i].name;
-                            }
-                        }
-                    }
-                }
-                
-                // Re-filter results
-                $scope.results = filter(fullResults.hits);
-            },
+            updateOptions: updateOptions,
             
             /**
              * Resets options. 
@@ -229,6 +236,8 @@ define(function () {
                 for (type in $scope.ngModel.checked) {
                     $scope.ngModel.checked[type] = $scope.ngModel.checkAll;
                 }
+                
+                updateOptions();
             }
         };
     }

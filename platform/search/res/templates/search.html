@@ -62,13 +62,14 @@
                 <ul>
                     <!-- First element is special - it's a reset option -->
                     <li class="search-menu-item special"
-                        title="Select all filters.">
+                        title="Select all filters."
+                        ng-click="ngModel.checkAll = !ngModel.checkAll; controller.checkAll()">
                         
                         <label class="checkbox custom search-menu-checkbox">
                             <input type="checkbox"
                                    class="checkbox"
                                    ng-model="ngModel.checkAll"
-                                   ng-change="controller.checkAll(); controller.updateOptions()" />
+                                   ng-change="controller.checkAll()" />
                             <em></em>
                         </label>
                         
@@ -80,7 +81,8 @@
                     
                     <!-- The filter options, by type -->
                     <li class="search-menu-item"
-                        ng-repeat="type in types">
+                        ng-repeat="type in types"
+                        ng-click="ngModel.checked[type.key] = !ngModel.checked[type.key]; controller.updateOptions()">
                         
                         <label class="checkbox custom search-menu-checkbox">
                             <input type="checkbox"
@@ -110,7 +112,7 @@
          ng-if="filtersString !== '' && ngModel.search">
         
         <a class="ui-symbol clear-filters-icon"
-           ng-click="ngModel.checkAll = true; controller.checkAll(); controller.updateOptions()">
+           ng-click="ngModel.checkAll = true; controller.checkAll()">
             x
         </a>
         

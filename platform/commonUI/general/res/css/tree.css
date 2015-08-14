@@ -355,7 +355,7 @@ ul.tree {
       .search-holder .search .search-bar .search-menu-holder {
         float: right;
         margin-top: 17px;
-        left: -25px; }
+        left: -50px; }
         /* line 151, ../sass/search/_search.scss */
         .search-holder .search .search-bar .search-menu-holder .search-menu {
           border-top: 0; }
@@ -391,7 +391,7 @@ ul.tree {
       .search-holder .search .search-bar .search-menu-holder:after {
         position: absolute;
         top: -6px;
-        left: 10px;
+        left: 35px;
         display: inline-block;
         border-right: 6px solid transparent;
         border-bottom: 6px solid #5e5e5e;
