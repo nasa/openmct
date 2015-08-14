@@ -21,6 +21,10 @@
  *****************************************************************************/
 /*global define,Promise*/
 
+/*
+ * Copied from the ClickAwayController in platform/commonUI/general
+ */
+
 define(
     [],
     function () {

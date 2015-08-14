@@ -1,6 +1,7 @@
 [
     "controllers/SearchController",
     "controllers/SearchItemController",
+    "controllers/ClickAwayController",
     "services/SearchAggregator",
     "services/GenericSearchProvider",
     "services/GenericSearchWorker"
