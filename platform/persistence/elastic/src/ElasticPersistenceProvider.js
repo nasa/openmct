@@ -44,168 +44,123 @@ define(
          * instance.
          * @memberof platform/persistence/elastic
          * @constructor
+         * @implements {PersistenceService}
+         * @param $http Angular's $http service
+         * @param $interval Angular's $interval service
+         * @param {string} space the name of the persistence space being served
+         * @param {string} root the root of the path to ElasticSearch
+         * @param {stirng} path the path to domain objects within ElasticSearch
          */
-        function ElasticPersistenceProvider($http, $q, SPACE, ROOT, PATH) {
-            var spaces = [ SPACE ],
-                revs = {};
+        function ElasticPersistenceProvider($http, $q, space, root, path) {
+            this.spaces = [ space ];
+            this.revs = {};
+            this.$http = $http;
+            this.$q = $q;
+            this.root = root;
+            this.path = path;
+        }
 
-            // Convert a subpath to a full path, suitable to pass
-            // to $http.
-            function url(subpath) {
-                return ROOT + '/' + PATH + '/' + subpath;
-            }
+        function bind(fn, thisArg) {
+            return function () {
+                return fn.apply(thisArg, arguments);
+            };
+        }
 
-            // Issue a request using $http; get back the plain JS object
-            // from the expected JSON response
-            function request(subpath, method, value, params) {
-                return $http({
-                    method: method,
-                    url: url(subpath),
-                    params: params,
-                    data: value
-                }).then(function (response) {
-                    return response.data;
-                }, function (response) {
-                    return (response || {}).data;
+        // Issue a request using $http; get back the plain JS object
+        // from the expected JSON response
+        ElasticPersistenceProvider.prototype.request = function (subpath, method, value, params) {
+            return this.http({
+                method: method,
+                url: this.root + '/' + this.path + '/' + subpath,
+                params: params,
+                data: value
+            }).then(function (response) {
+                return response.data;
+            }, function (response) {
+                return (response || {}).data;
+            });
+        };
+
+        // Shorthand methods for GET/PUT methods
+        ElasticPersistenceProvider.prototype.get = function (subpath) {
+            return this.request(subpath, "GET");
+        };
+        ElasticPersistenceProvider.prototype.put = function (subpath, value, params) {
+            return this.request(subpath, "PUT", value, params);
+        };
+        ElasticPersistenceProvider.prototype.del = function (subpath) {
+            return this.request(subpath, "DELETE");
+        };
+
+
+        // Handle an update error
+        ElasticPersistenceProvider.prototype.handleError = function (response, key) {
+            var error = new Error("Persistence error."),
+                $q = this.$q;
+            if ((response || {}).status === CONFLICT) {
+                error.key = "revision";
+                // Load the updated model, then reject the promise
+                return this.get(key).then(function (response) {
+                    error.model = response[SRC];
+                    return $q.reject(error);
                 });
             }
+            // Reject the promise
+            return this.$q.reject(error);
+        };
 
-            // Shorthand methods for GET/PUT methods
-            function get(subpath) {
-                return request(subpath, "GET");
+        // Get a domain object model out of CouchDB's response
+        function getModel(response) {
+            if (response && response[SRC]) {
+                this.revs[response[ID]] = response[REV];
+                return response[SRC];
+            } else {
+                return undefined;
             }
-            function put(subpath, value, params) {
-                return request(subpath, "PUT", value, params);
-            }
-            function del(subpath) {
-                return request(subpath, "DELETE");
-            }
-
-            // Get a domain object model out of CouchDB's response
-            function getModel(response) {
-                if (response && response[SRC]) {
-                    revs[response[ID]] = response[REV];
-                    return response[SRC];
-                } else {
-                    return undefined;
-                }
-            }
-
-            // Handle an update error
-            function handleError(response, key) {
-                var error = new Error("Persistence error.");
-                if ((response || {}).status === CONFLICT) {
-                    error.key = "revision";
-                    // Load the updated model, then reject the promise
-                    return get(key).then(function (response) {
-                        error.model = response[SRC];
-                        return $q.reject(error);
-                    });
-                }
-                // Reject the promise
-                return $q.reject(error);
-            }
-
-            // Check the response to a create/update/delete request;
-            // track the rev if it's valid, otherwise return false to
-            // indicate that the request failed.
-            function checkResponse(response, key) {
-                var error;
-                if (response && !response.error) {
-                    revs[key] = response[REV];
-                    return response;
-                } else {
-                    return handleError(response, key);
-                }
-            }
-
-            return {
-                /**
-                 * List all persistence spaces which this provider
-                 * recognizes.
-                 *
-                 * @returns {Promise.<string[]>} a promise for a list of
-                 *          spaces supported by this provider
-                 * @memberof platform/persistence/elastic.ElasticPersistenceProvider#
-                 */
-                listSpaces: function () {
-                    return $q.when(spaces);
-                },
-                /**
-                 * List all objects (by their identifiers) that are stored
-                 * in the given persistence space, per this provider.
-                 * @param {string} space the space to check
-                 * @returns {Promise.<string[]>} a promise for the list of
-                 *          identifiers
-                 * @memberof platform/persistence/elastic.ElasticPersistenceProvider#
-                 */
-                listObjects: function (space) {
-                    return $q.when([]);
-                },
-                /**
-                 * Create a new object in the specified persistence space.
-                 * @param {string} space the space in which to store the object
-                 * @param {string} key the identifier for the persisted object
-                 * @param {object} value a JSONifiable object that should be
-                 *        stored and associated with the provided identifier
-                 * @returns {Promise.<boolean>} a promise for an indication
-                 *          of the success (true) or failure (false) of this
-                 *          operation
-                 * @memberof platform/persistence/elastic.ElasticPersistenceProvider#
-                 */
-                createObject: function (space, key, value) {
-                    return put(key, value).then(checkResponse);
-                },
-
-                /**
-                 * Read an existing object back from persistence.
-                 * @param {string} space the space in which to look for
-                 *        the object
-                 * @param {string} key the identifier for the persisted object
-                 * @returns {Promise.<object>} a promise for the stored
-                 *          object; this will resolve to undefined if no such
-                 *          object is found.
-                 * @memberof platform/persistence/elastic.ElasticPersistenceProvider#
-                 */
-                readObject: function (space, key) {
-                    return get(key).then(getModel);
-                },
-                /**
-                 * Update an existing object in the specified persistence space.
-                 * @param {string} space the space in which to store the object
-                 * @param {string} key the identifier for the persisted object
-                 * @param {object} value a JSONifiable object that should be
-                 *        stored and associated with the provided identifier
-                 * @returns {Promise.<boolean>} a promise for an indication
-                 *          of the success (true) or failure (false) of this
-                 *          operation
-                 * @memberof platform/persistence/elastic.ElasticPersistenceProvider#
-                 */
-                updateObject: function (space, key, value) {
-                    function checkUpdate(response) {
-                        return checkResponse(response, key);
-                    }
-                    return put(key, value, { version: revs[key] })
-                        .then(checkUpdate);
-                },
-                /**
-                 * Delete an object in the specified persistence space.
-                 * @param {string} space the space from which to delete this
-                 *        object
-                 * @param {string} key the identifier of the persisted object
-                 * @param {object} value a JSONifiable object that should be
-                 *        deleted
-                 * @returns {Promise.<boolean>} a promise for an indication
-                 *          of the success (true) or failure (false) of this
-                 *          operation
-                 * @memberof platform/persistence/elastic.ElasticPersistenceProvider#
-                 */
-                deleteObject: function (space, key, value) {
-                    return del(key).then(checkResponse);
-                }
-            };
-
         }
+
+        // Check the response to a create/update/delete request;
+        // track the rev if it's valid, otherwise return false to
+        // indicate that the request failed.
+        ElasticPersistenceProvider.prototype.checkResponse = function (response, key) {
+            if (response && !response.error) {
+                this.revs[key] = response[REV];
+                return response;
+            } else {
+                return this.handleError(response, key);
+            }
+        };
+
+        // Public API
+        ElasticPersistenceProvider.prototype.listSpaces = function () {
+            return this.$q.when(this.spaces);
+        };
+
+        ElasticPersistenceProvider.prototype.listObjects = function () {
+            // Not yet implemented
+            return this.$q.when([]);
+        };
+
+
+        ElasticPersistenceProvider.prototype.createObject = function (space, key, value) {
+            return this.put(key, value).then(bind(this.checkResponse, this));
+        };
+
+        ElasticPersistenceProvider.prototype.readObject = function (space, key) {
+            return this.get(key).then(bind(getModel, this));
+        };
+
+        ElasticPersistenceProvider.prototype.updateObject = function (space, key, value) {
+            function checkUpdate(response) {
+                return this.checkResponse(response, key);
+            }
+            return this.put(key, value, { version: this.revs[key] })
+                .then(bind(checkUpdate, this));
+        };
+
+        ElasticPersistenceProvider.prototype.deleteObject = function (space, key, value) {
+            return this.del(key).then(bind(this.checkResponse, this));
+        };
 
         return ElasticPersistenceProvider;
     }
