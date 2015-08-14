@@ -7,15 +7,17 @@ define(
 
         // TODO: Store this in more accessible locations / retrieve from
         // domainObject metadata.
-        var DOMAIN_INTERVAL = 1 * 60 * 1000; // One minute.
+        var DOMAIN_INTERVAL = 2 * 60 * 1000; // Two minutes.
 
         function PlotController($scope, colorService) {
-            var plotHistory = [];
-            var isLive = true;
-            var maxDomain = +new Date();
-            var subscriptions = [];
-            var palette = new colorService.ColorPalette();
-            var setToDefaultViewport = function() {
+            var plotHistory = [],
+                isLive = true,
+                maxDomain = +new Date(),
+                subscriptions = [],
+                palette = new colorService.ColorPalette();
+
+
+            function setToDefaultViewport() {
                 // TODO: We shouldn't set the viewport until we have received data or something has given us a reasonable viewport.
                 $scope.viewport = {
                     topLeft: {
@@ -27,15 +29,15 @@ define(
                         range: -1
                     }
                 };
-            };
+            }
 
             setToDefaultViewport();
 
-            $scope.displayableRange = function(rangeValue) {
+            $scope.displayableRange = function (rangeValue) {
                 // TODO: Call format function provided by domain object.
                 return rangeValue;
             };
-            $scope.displayableDomain = function(domainValue) {
+            $scope.displayableDomain = function (domainValue) {
                 // TODO: Call format function provided by domain object.
                 return new Date(domainValue).toUTCString();
             };
@@ -44,25 +46,33 @@ define(
 
             $scope.rectangles = [];
 
-            var updateSeriesFromTelemetry = function(series, seriesIndex, telemetry) {
-                var domainValue = telemetry.getDomainValue(telemetry.getPointCount() - 1);
-                var rangeValue = telemetry.getRangeValue(telemetry.getPointCount() - 1);
+            function updateSeriesFromTelemetry(series, seriesIndex, telemetry) {
+                var domainValue = telemetry.getDomainValue(
+                        telemetry.getPointCount() - 1
+                    ),
+                    rangeValue = telemetry.getRangeValue(
+                        telemetry.getPointCount() - 1
+                    ),
+                    newTelemetry;
                 // Track the biggest domain we've seen for sticky-ness.
                 maxDomain = Math.max(maxDomain, domainValue);
 
-                var newTelemetry = {
+                newTelemetry = {
                     domain: domainValue,
                     range: rangeValue
                 };
                 series.data.push(newTelemetry);
                 $scope.$broadcast('series:data:add', seriesIndex, [newTelemetry]);
-            };
+            }
 
-            var subscribeToDomainObject = function(domainObject) {
-                var telemetryCapability = domainObject.getCapability('telemetry');
-                var model = domainObject.getModel();
+            function subscribeToDomainObject(domainObject) {
+                var telemetryCapability = domainObject.getCapability('telemetry'),
+                    model = domainObject.getModel(),
+                    series,
+                    seriesIndex,
+                    updater;
 
-                var series = {
+                series = {
                     name: model.name,
                     // TODO: Bring back PlotPalette.
                     color: palette.getColor($scope.series.length),
@@ -70,17 +80,25 @@ define(
                 };
 
                 $scope.series.push(series);
-                var seriesIndex = $scope.series.indexOf(series);
+                seriesIndex = $scope.series.indexOf(series);
 
-                var updater = updateSeriesFromTelemetry.bind(
+                updater = updateSeriesFromTelemetry.bind(
                     null,
                     series,
                     seriesIndex
                 );
                 subscriptions.push(telemetryCapability.subscribe(updater));
-            };
+            }
 
-            var linkDomainObject = function(domainObject) {
+            function unlinkDomainObject() {
+                subscriptions.forEach(function(subscription) {
+                    subscription.unsubscribe();
+                });
+                subscriptions = [];
+            }
+
+
+            function linkDomainObject(domainObject) {
                 unlinkDomainObject();
                 if (domainObject.hasCapability('telemetry')) {
                     subscribeToDomainObject(domainObject);
@@ -98,23 +116,17 @@ define(
                 } else {
                     throw new Error('Domain object type not supported.');
                 }
-            };
+            }
 
-            var unlinkDomainObject = function() {
-                subscriptions.forEach(function(subscription) {
-                    subscription.unsubscribe();
-                });
-                subscriptions = [];
-            };
 
-            var onUserViewportChangeStart = function() {
+            function onUserViewportChangeStart() {
                 // TODO: this is a great time to track a history entry.
                 // Disable live mode so they have full control of viewport.
                 plotHistory.push($scope.viewport);
                 isLive = false;
-            };
+            }
 
-            var onUserViewportChangeEnd = function(event, viewport) {
+            function onUserViewportChangeEnd(event, viewport) {
                 // If the new viewport is "close enough" to the maxDomain then
                 // enable live mode.  Set empirically to 10% of the domain
                 // interval.
@@ -127,10 +139,10 @@ define(
                     isLive = false;
                 }
                 plotHistory.push(viewport);
-            };
+            }
 
-            var viewportForMaxDomain = function() {
-                var viewport = {
+             function viewportForMaxDomain() {
+                 return {
                     topLeft: {
                         range: $scope.viewport.topLeft.range,
                         domain: maxDomain - DOMAIN_INTERVAL
@@ -140,14 +152,13 @@ define(
                         domain: maxDomain
                     }
                 };
-                return viewport;
-            };
+            }
 
-            var followDataIfLive = function() {
+            function followDataIfLive() {
                 if (isLive) {
                     $scope.viewport = viewportForMaxDomain();
                 }
-            };
+            }
 
             $scope.$on('series:data:add', followDataIfLive);
             $scope.$on('user:viewport:change:end', onUserViewportChangeEnd);
@@ -155,7 +166,7 @@ define(
 
             $scope.$watch('domainObject', linkDomainObject);
 
-            var controller = {
+            return {
                 historyBack: function() {
                     // TODO: Step History Back.
                 },
@@ -166,8 +177,6 @@ define(
                     // TODO: Reset view to defaults.  Keep history stack alive?
                 }
             };
-
-            return controller;
         }
 
         return PlotController;

@@ -1,4 +1,4 @@
-/*global define */
+/*global define,$log */
 
 define(
     [
@@ -25,7 +25,8 @@ define(
                       the draw API to.
              */
             getDrawAPI: function (canvas) {
-                for (var i = 0; i < CHARTS.length; i++) {
+                var i;
+                for (i = 0; i < CHARTS.length; i++) {
                     try {
                         return new CHARTS[i](canvas);
                     } catch (e) {

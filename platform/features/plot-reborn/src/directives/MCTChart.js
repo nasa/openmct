@@ -51,24 +51,6 @@ define(
                     return;
                 }
 
-                function redraw() {
-                    if (isDestroyed) {
-                        return;
-                    }
-
-                    requestAnimationFrame(redraw);
-                    canvas.width = canvas.offsetWidth;
-                    canvas.height = canvas.offsetHeight;
-                    drawAPI.clear();
-                    createOffset();
-                    if (!offset) {
-                        return;
-                    }
-                    updateViewport();
-                    drawSeries();
-                    drawRectangles();
-                }
-
                 function createOffset() {
                     if (offset) {
                         return;
@@ -84,18 +66,30 @@ define(
                     );
                 }
 
-                function drawIfResized() {
-                    if (canvas.width !== canvas.offsetWidth ||
-                            canvas.height !== canvas.offsetHeight) {
-                        redraw();
+                function lineFromSeries(series) {
+                    // TODO: handle when lines get longer than 10,000 points.
+                    // Each line allocates 10,000 points.  This should be more
+                    // that we ever need, but we have to decide how to handle
+                    // this at the higher level.  I imagine the plot controller
+                    // should watch it's series and when they get huge, slice
+                    // them in half and delete the oldest half.
+                    //
+                    // As long as the controller replaces $scope.series with a
+                    // new series object, then this directive will
+                    // automatically generate new arrays for those lines.
+                    // In practice, the overhead of regenerating these lines
+                    // appears minimal.
+                    var lineBuffer = new Float32Array(20000),
+                        i = 0;
+                    for (i = 0; i < series.data.length; i++) {
+                        lineBuffer[2*i] = offset.domain(series.data[i].domain);
+                        lineBuffer[2*i+1] = offset.range(series.data[i].range);
                     }
-                }
-
-                function destroyChart() {
-                    isDestroyed = true;
-                    if (activeInterval) {
-                        $interval.cancel(activeInterval);
-                    }
+                    return {
+                        color: series.color,
+                        buffer: lineBuffer,
+                        pointCount: series.data.length
+                    };
                 }
 
                 function drawSeries() {
@@ -132,7 +126,10 @@ define(
                 }
 
                 function updateViewport() {
-                    var dimensions = [
+                    var dimensions,
+                        origin;
+
+                    dimensions = [
                         Math.abs(
                             offset.domain($scope.viewport.topLeft.domain) -
                             offset.domain($scope.viewport.bottomRight.domain)
@@ -143,7 +140,7 @@ define(
                         )
                     ];
 
-                    var origin = [
+                    origin = [
                         offset.domain(
                             $scope.viewport.topLeft.domain
                         ),
@@ -158,31 +155,6 @@ define(
                     );
                 }
 
-                function lineFromSeries(series) {
-                    // TODO: handle when lines get longer than 10,000 points.
-                    // Each line allocates 10,000 points.  This should be more
-                    // that we ever need, but we have to decide how to handle
-                    // this at the higher level.  I imagine the plot controller
-                    // should watch it's series and when they get huge, slice
-                    // them in half and delete the oldest half.
-                    //
-                    // As long as the controller replaces $scope.series with a
-                    // new series object, then this directive will
-                    // automatically generate new arrays for those lines.
-                    // In practice, the overhead of regenerating these lines
-                    // appears minimal.
-                    var lineBuffer = new Float32Array(20000);
-                    for (var i = 0; i < series.data.length; i++) {
-                        lineBuffer[2*i] = offset.domain(series.data[i].domain);
-                        lineBuffer[2*i+1] = offset.range(series.data[i].range);
-                    }
-                    return {
-                        color: series.color,
-                        buffer: lineBuffer,
-                        pointCount: series.data.length
-                    };
-                }
-
                 function onSeriesDataAdd(event, seriesIndex, points) {
                     var line = lines[seriesIndex];
                     points.forEach(function (point) {
@@ -190,6 +162,41 @@ define(
                         line.buffer[2*line.pointCount+1] = offset.range(point.range);
                         line.pointCount += 1;
                     });
+                }
+
+
+
+                function redraw() {
+                    if (isDestroyed) {
+                        return;
+                    }
+
+                    requestAnimationFrame(redraw);
+                    canvas.width = canvas.offsetWidth;
+                    canvas.height = canvas.offsetHeight;
+                    drawAPI.clear();
+                    createOffset();
+                    if (!offset) {
+                        return;
+                    }
+                    updateViewport();
+                    drawSeries();
+                    drawRectangles();
+                }
+
+
+                function drawIfResized() {
+                    if (canvas.width !== canvas.offsetWidth ||
+                            canvas.height !== canvas.offsetHeight) {
+                        redraw();
+                    }
+                }
+
+                function destroyChart() {
+                    isDestroyed = true;
+                    if (activeInterval) {
+                        $interval.cancel(activeInterval);
+                    }
                 }
 
                 // Check for resize, on a timer
