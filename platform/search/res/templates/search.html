@@ -54,7 +54,7 @@
         
         <!-- Menu -->
         <div class="menu-element search-menu-holder"
-             ng-show="toggle.isActive()"
+             ng-class="{off: !toggle.isActive()}"
              ng-click="toggle.setState(true)">
             
             <div class="menu dropdown search-menu">
@@ -109,7 +109,7 @@
     
     <!-- Active filter display -->
     <div class="active-filter-display"
-         ng-if="filtersString !== '' && ngModel.search">
+         ng-class="{off: filtersString === '' || filtersString === undefined || !ngModel.search}">
         
         <a class="ui-symbol clear-filters-icon"
            ng-click="ngModel.checkAll = true; controller.checkAll()">

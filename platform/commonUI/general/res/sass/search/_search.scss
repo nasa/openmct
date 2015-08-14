@@ -148,6 +148,15 @@
                 margin-top: $textInputHeight - 2px;
                 left: -50px;
                 
+                z-index: 9;
+                
+                transition: visibility .11s, opacity .11s;
+                
+                &.off {
+                    visibility: hidden;
+                    opacity: 0;
+                }
+                
                 .search-menu {
                     border-top: 0;
                     
@@ -162,6 +171,8 @@
                         color: lighten($colorBodyBg, 70%);
                         
                         cursor: pointer;
+                        
+                        transition: background-color .13s;
                         
                         .search-menu-checkbox {
                             // Vertically center
@@ -199,6 +210,10 @@
                             
                             .search-menu-label {
                                 font-size: 1.1em;
+                            }
+                            
+                            &:hover {
+                                background-color: lighten($colorBodyBg, 30%);
                             }
                         }
                     }
@@ -261,6 +276,18 @@
                 // Hanging indent
                 margin-left: 14px;
                 text-indent: -4px;
+            }
+            
+            // Transition looks weird when the results list has none 
+            //transition: visibility .2s, opacity .2s;
+            
+            &.off {
+                visibility: hidden;
+                opacity: 0;
+                height: 0;
+                margin: 0;
+                padding: 0;
+                border: 0;
             }
         }
         
