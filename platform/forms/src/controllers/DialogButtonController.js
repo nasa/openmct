@@ -36,9 +36,8 @@ define(
          *        for user input
          */
         function DialogButtonController($scope, dialogService) {
-            var buttonStructure,
-                buttonForm,
-                field;
+            var self = this,
+                buttonForm;
 
             // Store the result of user input to the model
             function storeResult(result) {
@@ -65,11 +64,11 @@ define(
                 row.key = $scope.field;
 
                 // Prepare the structure for the button itself
-                buttonStructure = {};
-                buttonStructure.glyph = structure.glyph;
-                buttonStructure.name = structure.name;
-                buttonStructure.description = structure.description;
-                buttonStructure.click = showDialog;
+                self.buttonStructure = {};
+                self.buttonStructure.glyph = structure.glyph;
+                self.buttonStructure.name = structure.name;
+                self.buttonStructure.description = structure.description;
+                self.buttonStructure.click = showDialog;
 
                 // Prepare the form; a single row
                 buttonForm = {
@@ -79,20 +78,17 @@ define(
             }
 
             $scope.$watch('structure', refreshStructure);
-
-            return {
-                /**
-                 * Get the structure for an `mct-control` of type
-                 * `button`; a dialog will be launched when this button
-                 * is clicked.
-                 * @returns dialog structure
-                 * @memberof platform/forms.DialogButtonController#
-                 */
-                getButtonStructure: function () {
-                    return buttonStructure;
-                }
-            };
         }
+
+        /**
+         * Get the structure for an `mct-control` of type
+         * `button`; a dialog will be launched when this button
+         * is clicked.
+         * @returns dialog structure
+         */
+        DialogButtonController.prototype.getButtonStructure = function () {
+            return this.buttonStructure;
+        };
 
         return DialogButtonController;
     }

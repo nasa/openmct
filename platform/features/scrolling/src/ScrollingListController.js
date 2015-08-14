@@ -39,6 +39,7 @@ define(
          * @constructor
          */
         function ScrollingListController($scope, formatter) {
+            var populator = new ScrollingListPopulator([]);
 
             // Get a set of populated, ready-to-display rows for the
             // latest data values.

@@ -89,6 +89,13 @@ define(
             }
         }
 
+        /**
+         * Get groups of colors to display in a color picker. These are
+         * given as #-prefixed color strings, in a two-dimensional array.
+         * Each element of the array is a group of related colors (e.g.
+         * grayscale colors, web colors, gradients...)
+         * @returns {string[][]} groups of colors
+         */
         ColorController.prototype.groups = function () {
             return GROUPS;
         };
