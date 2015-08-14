@@ -99,11 +99,11 @@ define(
             it("is loading until the service's promise fufills", function () {
                 // Send query
                 controller.search();
-                expect(controller.isLoading()).toBeTruthy();
+                expect(mockScope.loading).toBeTruthy();
                 
                 // Then resolve the promises
                 mockPromise.then.mostRecentCall.args[0]({hits: []});
-                expect(controller.isLoading()).toBeFalsy();
+                expect(mockScope.loading).toBeFalsy();
             });
 
             
