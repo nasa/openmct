@@ -252,7 +252,7 @@
             
             padding-left: 4px;
             padding-right: 4px;
-            overflow: hidden;
+            //overflow: hidden;
             margin-top: 2px;
             
             .clear-filters-icon {
@@ -260,7 +260,7 @@
                 
                 position: relative;
                 margin-left: -4px;
-                top: 0.3em;
+                top: 0.7em;
                 
                 cursor: pointer;
                 
@@ -270,8 +270,8 @@
             
             .filter-options {
                 position: relative;
-                top: -0.7em;
-                margin-bottom: -5px;
+                top: -0.5em;
+                //margin-bottom: -5px;
                 
                 // Hanging indent
                 margin-left: 14px;

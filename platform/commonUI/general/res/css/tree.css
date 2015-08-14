@@ -426,22 +426,20 @@ ul.tree {
       border: 1px solid #404040;
       padding-left: 4px;
       padding-right: 4px;
-      overflow: hidden;
       margin-top: 2px; }
       /* line 258, ../sass/search/_search.scss */
       .search-holder .search .active-filter-display .clear-filters-icon {
         padding: 4px;
         position: relative;
         margin-left: -4px;
-        top: 0.3em;
+        top: 0.7em;
         cursor: pointer;
         color: #737373;
         font-size: 6px; }
       /* line 271, ../sass/search/_search.scss */
       .search-holder .search .active-filter-display .filter-options {
         position: relative;
-        top: -0.7em;
-        margin-bottom: -5px;
+        top: -0.5em;
         margin-left: 14px;
         text-indent: -4px; }
       /* line 284, ../sass/search/_search.scss */
