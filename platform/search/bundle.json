@@ -13,7 +13,12 @@
             {
                 "key": "SearchController",
                 "implementation": "controllers/SearchController.js",
-                "depends": [ "$scope", "searchService", "types[]" ]
+                "depends": [ "$scope", "searchService" ]
+            },
+            {
+                "key": "SearchMenuController",
+                "implementation": "controllers/SearchMenuController.js",
+                "depends": [ "$scope", "types[]" ]
             },
             {
                 "key": "SearchItemController",
@@ -31,6 +36,10 @@
                 "key": "search",
                 "templateUrl": "templates/search.html",
                 "uses": [ "control" ]
+            },
+            {
+                "key": "search-menu",
+                "templateUrl": "templates/search-menu.html"
             }
         ],
         "representations": [

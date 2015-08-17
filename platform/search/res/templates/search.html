@@ -58,71 +58,26 @@
         </a>
         
         <!-- Menu -->
-        <div class="menu-element search-menu-holder"
-             ng-class="{off: !toggle.isActive()}"
-             ng-click="toggle.setState(true)">
-            
-            <div class="menu dropdown search-menu">
-                
-                <ul>
-                    <!-- First element is special - it's a reset option -->
-                    <li class="search-menu-item special"
-                        title="Select all filters."
-                        ng-click="ngModel.checkAll = !ngModel.checkAll; controller.checkAll()">
-                        
-                        <label class="checkbox custom search-menu-checkbox">
-                            <input type="checkbox"
-                                   class="checkbox"
-                                   ng-model="ngModel.checkAll"
-                                   ng-change="controller.checkAll()" />
-                            <em></em>
-                        </label>
-                        
-                        <span class="search-menu-label">
-                            ALL
-                        </span>
-                        
-                    </li>
-                    
-                    <!-- The filter options, by type -->
-                    <li class="search-menu-item"
-                        ng-repeat="type in types"
-                        ng-click="ngModel.checked[type.key] = !ngModel.checked[type.key]; controller.updateOptions()">
-                        
-                        <label class="checkbox custom search-menu-checkbox">
-                            <input type="checkbox"
-                                   class="checkbox"
-                                   ng-model="ngModel.checked[type.key]"
-                                   ng-change="controller.updateOptions()" />
-                            <em></em>
-                        </label>
-                        
-                        <span class="ui-symbol search-menu-glyph">
-                            {{ type.glyph }}
-                        </span>
-                        
-                        <span class="search-menu-label">
-                            {{ type.name }}
-                        </span>
-                        
-                    </li>
-                </ul>
-            </div>
-        </div>
-        
+        <mct-include key="'search-menu'"
+                     class="menu-element search-menu-holder"
+                     ng-class="{off: !toggle.isActive()}"
+                     ng-model="ngModel"
+                     ng-click="toggle.setState(true)">
+        </mct-include>
     </div>
     
     <!-- Active filter display -->
     <div class="active-filter-display"
-         ng-class="{off: filtersString === '' || filtersString === undefined || !ngModel.search}">
+         ng-class="{off: ngModel.filtersString === '' || ngModel.filtersString === undefined || !ngModel.search}"
+         ng-controller="SearchMenuController as menuController">
         
         <a class="ui-symbol clear-filters-icon"
-           ng-click="ngModel.checkAll = true; controller.checkAll()">
+           ng-click="ngModel.checkAll = true; menuController.checkAll()">
             x
         </a>
         
         <div class="filter-options">
-            Filtered by: {{ filtersString }}
+            Filtered by: {{ ngModel.filtersString }}
         </div>
     </div>
     

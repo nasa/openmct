@@ -37,25 +37,31 @@ define(function () {
             fullResults = {hits: []};
         
         // Scope variables are: 
-        //  results, an array of searchResult objects
-        //  types, an array of type objects
-        //  loading, whether search() is loading 
-        //  filtersString, a string list of what filters on the results are active
-        //  ngModel.input, the text of the search query
-        //  ngModel.search, a boolean of whether to display search or the tree
-        //  ngModel.checked, a dictionary of which type filter options are checked 
-        //  ngModel.checkAll, a boolean of whether all of the types in ngModel.checked are checked 
-        $scope.types = [];
-        $scope.ngModel.checked = {};
-        $scope.filtersString = '';
+        //  Variables used only in SearchController:
+        //   results, an array of searchResult objects
+        //   loading, whether search() is loading 
+        //   ngModel.input, the text of the search query
+        //   ngModel.search, a boolean of whether to display search or the tree
+        //  Variables used also in SearchMenuController:
+        //   ngModel.filter, the function filter defined below 
+        //   ngModel.types, an array of type objects
+        //   ngModel.checked, a dictionary of which type filter options are checked 
+        //   ngModel.checkAll, a boolean of whether all of the types in ngModel.checked are checked 
+        //   ngModel.filtersString, a string list of what filters on the results are active
+        $scope.results = [];
         $scope.loading = false;
         
         
         // Filters searchResult objects by type. Allows types that are 
         //   checked. (ngModel.checked['typekey'] === true)
+        // If hits is not provided, will use fullResults.hits
         function filter(hits) {
             var newResults = [],
                 i = 0;
+            
+            if (!hits) {
+                hits = fullResults.hits;
+            }
             
             // If checkAll is checked, search everything no matter what the other
             //  checkboxes' statuses are. Otherwise filter the search by types. 
@@ -71,8 +77,12 @@ define(function () {
                 }
             }
             
+            $scope.results = newResults;
             return newResults;
         }
+        
+        // Make function accessible from SearchMenuController
+        $scope.ngModel.filter = filter;
         
         // For documentation, see search below
         function search(maxResults) {
@@ -110,86 +120,6 @@ define(function () {
                 $scope.loading = false;
             });
         }
-        
-        // For documentation, see updateOptions below
-        function updateOptions() {
-            var type,
-                i;
-
-            // Update all-checked status
-            if ($scope.ngModel.checkAll) {
-                for (type in $scope.ngModel.checked) {
-                    if ($scope.ngModel.checked[type]) {
-                        $scope.ngModel.checkAll = false;
-                    } 
-                }
-            }
-            
-            // Update the current filters string
-            $scope.filtersString = '';
-            if ($scope.ngModel.checkAll !== true) {
-                for (i = 0; i < types.length; i += 1) {
-                    // If the type key corresponds to a checked option...
-                    if ($scope.ngModel.checked[types[i].key]) {
-                        // ... add it to the string list of current filter options
-                        if ($scope.filtersString === '') {
-                            $scope.filtersString += types[i].name;
-                        } else {
-                            $scope.filtersString += ', ' + types[i].name;
-                        }
-                    }
-                }
-                // If there's still nothing in the filters string, there are no 
-                //   filters selected
-                if ($scope.filtersString === '') {
-                    $scope.filtersString = 'NONE';
-                }
-            }
-
-            // Re-filter results
-            $scope.results = filter(fullResults.hits);
-        }
-        
-        // For documentation, see checkAll below
-        function checkAll() {
-            var type;
-
-            // If model's checkAll has just been checked, reset everything else
-            //  to default view, and behave as if there are no filters (default)
-            if ($scope.ngModel.checkAll) {
-                // Uncheck everything else 
-                for (type in $scope.ngModel.checked) {
-                    $scope.ngModel.checked[type] = false;
-                }
-
-                // Reset filter display
-                $scope.filtersString = '';
-
-                // Re-filter results
-                $scope.results = filter(fullResults.hits);
-            } else {
-                // If model's checkAll has just been UNchecked, set filters to none
-
-                for (type in $scope.ngModel.checked) {
-                    $scope.ngModel.checked[type] = false;
-                }
-                $scope.filtersString = 'NONE';
-
-                // Re-filter results
-                $scope.results = filter(fullResults.hits);
-            }
-        }
-        
-        
-        // On initialization, fill the scope's types with type keys
-        types.forEach(function (type) {
-            // We only want some types, the ones that are probably human readable
-            if (type.key && type.name) {
-                $scope.types.push(type);
-                $scope.ngModel.checked[type.key] = false;
-            }
-        });
-        $scope.ngModel.checkAll = true;
         
         return {
             /**
@@ -235,21 +165,7 @@ define(function () {
                     // Otherwise just take from what we already have
                     $scope.results = filter(fullResults.hits);
                 }
-            },
-            
-            /**
-             * Updates the status of the checked options. Updates the filtersString 
-             *   with which options are checked. Re-filters the search results after.
-             *   Not intended to be called by checkAll when it is toggled. 
-             */
-            updateOptions: updateOptions,
-            
-            /**
-             * Handles the search and filter options for when checkAll has been 
-             *   toggled. This is a special case, compared to the other search  
-             *   menu options, so is intended to be called instead of updateOptions. 
-             */
-            checkAll: checkAll
+            }
         };
     }
     return SearchController;
