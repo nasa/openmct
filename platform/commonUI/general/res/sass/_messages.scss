@@ -1,0 +1,12 @@
+/* Styles for messages */
+
+.message {
+	&.block {
+		@include border-radius($basicCr);
+		padding: $interiorMarginLg;
+	}
+	&.error {
+		background-color: rgba($colorAlert,0.3);
+		color: lighten($colorAlert, 20%);
+	}
+}
