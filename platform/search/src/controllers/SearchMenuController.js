@@ -60,7 +60,7 @@ define(function () {
                 for (type in $scope.ngModel.checked) {
                     if ($scope.ngModel.checked[type]) {
                         $scope.ngModel.checkAll = false;
-                    } 
+                    }
                 }
             }
             
