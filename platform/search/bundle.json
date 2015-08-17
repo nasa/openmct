@@ -30,7 +30,7 @@
             {
                 "key": "search",
                 "templateUrl": "templates/search.html",
-                "uses": [ "controls", "forms" ]
+                "uses": [ "control" ]
             }
         ],
         "representations": [

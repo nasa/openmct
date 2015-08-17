@@ -58,6 +58,11 @@
                 
                 // Modifications for existence of menu icon:
                 padding-right: 16px + 12px;
+                
+                // Make work for mct-control textfield
+                input {
+                    width: 100%;
+                }
             }
             
             .search-icon {
