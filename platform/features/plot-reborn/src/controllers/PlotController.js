@@ -153,6 +153,10 @@ define(
                     }
                 };
             }
+            
+            function onPinchAction(event) {
+                console.log("TEST");
+            }
 
             function followDataIfLive() {
                 if (isLive) {
@@ -163,6 +167,7 @@ define(
             $scope.$on('series:data:add', followDataIfLive);
             $scope.$on('user:viewport:change:end', onUserViewportChangeEnd);
             $scope.$on('user:viewport:change:start', onUserViewportChangeStart);
+            $scope.$on('mct:pinch:action', onPinchAction);
 
             $scope.$watch('domainObject', linkDomainObject);
 

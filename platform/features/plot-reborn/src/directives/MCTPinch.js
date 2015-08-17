@@ -28,7 +28,7 @@ define(
 
         function MCTPinch($log, agentService) {
             
-            function link(scope, element, attrs) {
+            function link($scope, element, attrs) {
                 var posPrev,
                     evePrev;
                 
@@ -44,13 +44,7 @@ define(
                             touchPositionPrev = posPrev || touchPosition,
                             eventPrev = evePrev || event;
                         
-                        scope.mctPinch({
-                            dimensions: touchPosition,
-                            prevDimensions: touchPositionPrev,
-                            event: event,
-                            eventPrev: eventPrev
-                        });
-                        
+                        $scope.$emit('mct:pinch:action', event);
                         // Set current position to be previous position 
                         // for next touch action
                         posPrev = touchPosition;
@@ -71,14 +65,11 @@ define(
                 }
                 
                 // Stop checking for resize when scope is destroyed
-//                scope.$on("$destroy", destroyEverythingNow);
+//                $scope.$on("$destroy", destroyEverythingNow);
             }
 
             return {
                 restrict: "A",
-                scope: {
-                    mctPinch: "&"
-                },
                 // Link with the provided function
                 link: link
             };

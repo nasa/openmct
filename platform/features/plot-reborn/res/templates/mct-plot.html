@@ -47,13 +47,15 @@
              <!--TODO: Show/hide using CSS? -->
         </div>
 
+<!--        APPLY MCTPinch here-->
         <mct-chart series="series"
                    viewport="viewport"
                    rectangles="rectangles"
                    ng-mousemove="plot.trackMousePosition($event)"
                    ng-mouseleave="plot.untrackMousePosition()"
                    ng-mousedown="plot.startMarquee()"
-                   ng-mouseup="plot.endMarquee()">
+                   ng-mouseup="plot.endMarquee()"
+                   mct-pinch>
         </mct-chart>
 
         <span class="t-wait-spinner loading" ng-show="plot.isRequestPending()">

@@ -47,6 +47,11 @@
                 "key": "mctOverlayPlot",
                 "implementation": "directives/MCTOverlayPlot.js",
                 "depends": []
+            },
+            {
+                "key": "mctPinch",
+                "implementation": "directives/MCTPinch.js",
+                "depends": [ "$log", "agentService" ]
             }
         ],
         "controllers": [

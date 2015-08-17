@@ -5,7 +5,7 @@ define(
         './DrawWebGL',
         './Draw2D'
     ],
-    function (DrawWebGL, Draw2D) {
+    function ($log, DrawWebGL, Draw2D) {
 
         var CHARTS = [
             DrawWebGL,
