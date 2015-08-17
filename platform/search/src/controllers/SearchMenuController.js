@@ -43,7 +43,8 @@ define(function () {
         // On initialization, fill the scope's types with type keys
         types.forEach(function (type) {
             // We only want some types, the ones that are probably human readable
-            if (type.key && type.name) {
+            // Manually remove 'root', but not 'unknown' 
+            if (type.key && type.name && type.key !== 'root') {
                 $scope.ngModel.types.push(type);
                 $scope.ngModel.checked[type.key] = false;
             }
