@@ -14,7 +14,7 @@
     "platform/features/imagery",
     "platform/features/layout",
     "platform/features/pages",
-    "platform/features/plot",
+    "platform/features/plot-reborn",
     "platform/features/scrolling",
     "platform/features/events",
     "platform/forms",

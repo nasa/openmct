@@ -1,0 +1,8 @@
+<span ng-controller="StackedPlotController as stackedPlot">
+    <div class="gl-plot"
+        ng-style="{ height: 100 / telemetryObjects.length + '%'}"
+        ng-repeat="telemetryObject in telemetryObjects">
+
+        <mct-overlay-plot domain-object="telemetryObject"></mct-overlay-plot>
+    </div>
+</span>

@@ -1,0 +1,96 @@
+{
+    "name": "Plot view for telemetry, reborn",
+    "extensions": {
+        "views": [
+            {
+                "name": "Plot",
+                "key": "plot-single",
+                "glyph": "6",
+                "templateUrl": "templates/plot.html",
+                "needs": ["telemetry"],
+                "uses": ["composition"],
+                "delegation": false
+            },
+            {
+                "name": "Overlay Plot",
+                "key": "plot",
+                "glyph": "6",
+                "templateUrl": "templates/plot.html",
+                "needs": ["telemetry", "composition"],
+                "uses": ["composition"],
+                "delegation": true
+            },
+            {
+                "name": "Stacked Plot",
+                "key": "stackedPlot",
+                "glyph": "6",
+                "templateUrl": "templates/stacked-plot.html",
+                "needs": ["composition", "delegation"],
+                "uses": ["composition"],
+                "gestures": [ "drop" ],
+                "delegation": true
+            }
+        ],
+        "directives": [
+            {
+                "key": "mctChart",
+                "implementation": "directives/MCTChart.js",
+                "depends": [ "$interval", "$log" ]
+            },
+            {
+                "key": "mctPlot",
+                "implementation": "directives/MCTPlot.js",
+                "depends": [],
+                "templateUrl": "templates/mct-plot.html"
+            },
+            {
+                "key": "mctOverlayPlot",
+                "implementation": "directives/MCTOverlayPlot.js",
+                "depends": []
+            }
+        ],
+        "controllers": [
+            {
+                "key": "PlotController",
+                "implementation": "controllers/PlotController.js",
+                "depends": [ "$scope", "colorService"]
+            },
+            {
+                "key": "StackedPlotController",
+                "implementation": "controllers/StackedPlotController.js",
+                "depends": [ "$scope" ]
+            }
+        ],
+        "types": [
+            {
+                "key": "telemetry.plot.overlay",
+                "name": "Overlay Plot",
+                "glyph": "t",
+                "description": "A plot containing one or more telemetry elements.",
+                "delegates": ["telemetry"],
+                "features": "creation",
+                "contains": [{"has": "telemetry"}],
+                "model": {"composition": []},
+                "properties": []
+            },
+            {
+                "key": "telemetry.plot.stacked",
+                "name": "Stacked Plot",
+                "glyph": "t",
+                "description": "A stacked plot of overlay plots.",
+                "delegates": ["delegation"],
+                "features": "creation",
+                "contains": ["telemetry.plot.overlay", {"has": "telemetry"}],
+                "model": {"composition": []},
+                "properties": []
+            }
+        ],
+        "services": [
+            {
+                "key": "colorService",
+                "implementation": "services/ColorService.js",
+                "description": "Provides objects for working with colors."
+            }
+        ]
+    }
+}
