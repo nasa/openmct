@@ -9,6 +9,7 @@ define(
             $scope.telemetryObjects = [];
 
             var linkDomainObject = function(domainObject) {
+                $scope.telemetryObjects = [];
                 if (domainObject.hasCapability('telemetry')) {
                     $scope.telemetryObjects = [domainObject];
                 } else if (domainObject.hasCapability('delegation')) {
