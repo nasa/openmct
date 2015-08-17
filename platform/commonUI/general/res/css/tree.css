@@ -360,7 +360,7 @@ ul.tree {
         margin-top: 17px;
         left: -50px;
         z-index: 9;
-        transition: visibility .08s, opacity .08s; }
+        transition: visibility .05s, opacity .05s; }
         /* line 159, ../sass/search/_search.scss */
         .search-holder .search .search-bar .search-menu-holder.off {
           visibility: hidden;
