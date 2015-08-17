@@ -100,9 +100,65 @@ Open MCT Web as their primary task over the Summer of 2015.
 This feedback comes from developers who have worked on plugins for
 Open MCT Web, but have not worked on the platform.
 
+### Plugin Developer 1
+
+Used Open MCT Web over the course of several months (on a
+less-than-half-time basis) to develop a
+spectrum visualization plugin.
+
 * Not a lot of time to work on this, made it hard to get up the learning
   curve.
   * Note that this is the norm, particularly for GDS development.
+* JavaScript carries its own learning curve.
+* The fact that it pulls in other tools whose APIs need to be learned
+  also makes the learning curve harder to get up.
+* Tracking down interconnected parts was a bit difficult.
+* Could really use examples.
+* Easy to get lost when not immersed in the style.
+
+### Plugin Developer 2
+
+Used Open MCT Web over the course of several weeks (on a half-time basis)
+to develop a tabular visualization plugin.
+
+* Pain points
+   * Unable to copy and paste from tutorial pdfs into code
+      * Wanted to verify my environment was setup properly so that I
+        could get the final product working in the end without having
+        to type everything out.  Perhaps there could be something in
+        github that has the final completed tutorial for new users to
+        checkout?  Or a step by step one kind of like the tutorials on
+        the angular js webpage?
+   * Typing too long without seeing results of what I was doing
+      * At some points in the tutorial I ended up typing for the sake
+        of typing without knowing what I was really typing for.
+      * If there were break points where we could run the incomplete
+        code and just see a variable dump or something even that would
+        be helpful to know that I am on the right track.
+   * Documentation on features are a bit hard to find.
+      * I'm not sure what I can do until I search through examples of
+        existing code and work my way backwards.
+      * Maybe you can link the features we are using in the tutorial to
+        their respective parts in the developer guide?  Not sure if that
+        can be done on PDFs, so maybe a webpage instead?
+* Positive Attributes
+   * Unable to copy and paste from tutorial pdfs into code
+      * I know I also listed this as a pain, but it was kind of helpful
+        being forced to read and type everything out.
+   * "Widgets" are self contained in their own directories.  I don't have
+      to be afraid of exploding things.
+   * All files/config that I care about for a "widget" can be found in
+     the bundles.json
+* Misc
+   * Coming from a not so strong webdev background and on top of that a
+     zero strong angular background I think starting off with a simple
+     "Hello World" webpage tutorial would have been nice.
+      * Start off with a bare bones bundle json with an empty controller
+        and static "Hello World" in the view
+      * Add the variable "Hello World" into the controller for the view
+        to display
+      * Add a model property to the bundle.json to take in "Hello World"
+        as a parameter and pass through to the controller/view
 
 ## Misc. Feedback (mostly verbal)
 
@@ -113,7 +169,10 @@ Open MCT Web, but have not worked on the platform.
   * Came out of design discussions for Limits.
 * Capabilities are confusing.
 
-## Victor's Notes
+## Long-term Developer Notes
+
+The following notes are from original platform developer, with long
+term experience using Open MCT Web.
 
 * Bundle mechanism allows for grouping related components across concerns,
   and adding and removing these easily. (e.g. model and view components of
