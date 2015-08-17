@@ -26,6 +26,7 @@ A good API:
 * Rewards doing things "the right way."
 * Saves development effort.
 * Is powerful enough to support a broad range of applications.
+* Lends itself to good documentation.
 
 These characteristics can sometimes be at odds with each other, or
 with other concerns. These should typically be viewed as participants
@@ -65,6 +66,10 @@ useful, powerful interfaces.
 This feedback comes from interns who worked closely with
 Open MCT Web as their primary task over the Summer of 2015.
 
+### Developer Intern 1
+
+Worked on bug fixes in the platform and a plugin for search.
+
 * Initially, it was confusing that many things in files that are in
   very different locations in the code base refer to each other.
   * Perhaps explain more the organization strategy behind the
@@ -94,6 +99,21 @@ Open MCT Web as their primary task over the Summer of 2015.
   dealing with telemetry are. e.g., what is the difference between just
   "Telemetry" and the "Telemetry Service"? There are many
   "Telemetry Thing"s which seem related, but in an unclear way.
+
+### Developer Intern 2
+
+Worked on platform bug fixes and mobile support.
+
+* No guide for the UI and front end for the HTML/CSS part of Open MCT Web.
+  Not sure if this is applicable or needed for developers, however would
+  be helpful to any front end development
+* Found it difficult to follow the plot controller & subplot
+  functions/features, such as zooming.
+* If the developer guide could have for references to which files or
+  functions are key for gestures, browse navigation, etc it would be
+  helpful for future developers as a place to start looking. I found
+  it occasionally difficult to find which files or functions I wanted
+  at first.
 
 ## Plugin Developer Feedback
 
@@ -269,12 +289,17 @@ The following attributes of the current API are undesirable:
 
 [ ] It is difficult to tell "where things are" in the code base.
 [ ] It is difficult to see how objects are passed around at run-time.
+[ ] It is difficult to trace flow of control generally.
 [ ] Multiple interfaces for related concepts (e.g. telemetry) is confusing.
 [ ] API documentation is missing or not well-formatted for use.
 [ ] High-level separation of concerns is not made clear.
 [ ] Interface depth of telemetry API is excessive (esp. `TelemetrySeries`)
 [ ] Capabilities as a concept lack clarity.
 [ ] Too many interfaces and concepts to learn.
+[ ] Exposing third-party APIs (e.g. Angular's) increases the learning curve.
+[ ] Want more examples, easier-to-use documentation.
+[ ] UI-relevant features (HTML, CSS) under-documented
+[ ] Good MVC for views of domain objects not enforced (e.g. plots)
 
 ## Positive Features
 
@@ -282,6 +307,8 @@ It is desirable to retain the following features in an API redesign:
 
 [ ] Creating new features and implementing them additively is well-supported.
 [ ] Easy to add/remove features which involve multiple concerns.
+[ ] Features can be self-contained.
+[ ] Declarative syntax makes it easy to tell what's in use.
 
 ## Requirements
 
