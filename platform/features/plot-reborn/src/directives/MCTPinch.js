@@ -37,6 +37,8 @@ define(
                     return [event.clientX, event.clientY];
                 }
                 
+                // On touch start the 'touch' is tracked and
+                // the event is emitted through scope
                 function pinchStart(event) {
                     if (event.changedTouches.length === 2 ||
                             event.touches.length === 2) {
@@ -59,6 +61,8 @@ define(
                     }
                 }
                 
+                // As the touch move occurs, the touches are tracked and
+                // the event is emitted through scope
                 function pinchChange(event) {
                     if (event.changedTouches.length === 2) {
                         var touchPosition = [trackPosition(event.changedTouches[0]),
@@ -80,6 +84,8 @@ define(
                     }
                 }
                 
+                // On the 'touchend' or 'touchcancel' the event
+                // is emitted through scope
                 function pinchEnd(event) {
                         $scope.$emit('mct:pinch:end');
                         
