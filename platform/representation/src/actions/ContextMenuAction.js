@@ -114,6 +114,7 @@ define(
             // Dismiss the menu when body is clicked elsewhere
             // ('mousedown' because 'click' breaks left-click context menus)
             body.on('mousedown', dismiss);
+            menu.on('click', dismiss);
 
             // Don't launch browser's context menu
             actionContext.event.preventDefault();
