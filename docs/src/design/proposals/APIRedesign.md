@@ -256,7 +256,7 @@ Summary of the expected benefits:
   allow MCT-Web developers to focus on MCT-specific features, instead
   of the maintenance of custom infrastructure.
 
-## Actual Experience with Angular
+### Actual Experience with Angular
 
 Most of the expected benefits of Angular have been invalidated
 by experience:
@@ -287,33 +287,33 @@ Other problems:
 
 The following attributes of the current API are undesirable:
 
-[ ] It is difficult to tell "where things are" in the code base.
-[ ] It is difficult to see how objects are passed around at run-time.
-[ ] It is difficult to trace flow of control generally.
-[ ] Multiple interfaces for related concepts (e.g. telemetry) is confusing.
-[ ] API documentation is missing or not well-formatted for use.
-[ ] High-level separation of concerns is not made clear.
-[ ] Interface depth of telemetry API is excessive (esp. `TelemetrySeries`)
-[ ] Capabilities as a concept lack clarity.
-[ ] Too many interfaces and concepts to learn.
-[ ] Exposing third-party APIs (e.g. Angular's) increases the learning curve.
-[ ] Want more examples, easier-to-use documentation.
-[ ] UI-relevant features (HTML, CSS) under-documented
-[ ] Good MVC for views of domain objects not enforced (e.g. plots)
+- [ ] It is difficult to tell "where things are" in the code base.
+- [ ] It is difficult to see how objects are passed around at run-time.
+- [ ] It is difficult to trace flow of control generally.
+- [ ] Multiple interfaces for related concepts (e.g. telemetry) is confusing.
+- [ ] API documentation is missing or not well-formatted for use.
+- [ ] High-level separation of concerns is not made clear.
+- [ ] Interface depth of telemetry API is excessive (esp. `TelemetrySeries`)
+- [ ] Capabilities as a concept lack clarity.
+- [ ] Too many interfaces and concepts to learn.
+- [ ] Exposing third-party APIs (e.g. Angular's) increases the learning curve.
+- [ ] Want more examples, easier-to-use documentation.
+- [ ] UI-relevant features (HTML, CSS) under-documented
+- [ ] Good MVC for views of domain objects not enforced (e.g. plots)
 
 ## Positive Features
 
 It is desirable to retain the following features in an API redesign:
 
-[ ] Creating new features and implementing them additively is well-supported.
-[ ] Easy to add/remove features which involve multiple concerns.
-[ ] Features can be self-contained.
-[ ] Declarative syntax makes it easy to tell what's in use.
+- [ ] Creating new features and implementing them additively is well-supported.
+- [ ] Easy to add/remove features which involve multiple concerns.
+- [ ] Features can be self-contained.
+- [ ] Declarative syntax makes it easy to tell what's in use.
 
 ## Requirements
 
 The following are considered "must-haves" of any complete API
 redesign:
 
-[ ] Don't require usage of Angular API.
-[ ] Don't require support for Angular API.
+- [ ] Don't require usage of Angular API.
+- [ ] Don't require support for Angular API.
