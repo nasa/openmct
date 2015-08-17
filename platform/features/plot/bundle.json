@@ -17,6 +17,16 @@
                 "key": "mctChart",
                 "implementation": "MCTChart.js",
                 "depends": [ "$interval", "$log" ]
+            },
+            {
+                "key": "mctPinch",
+                "implementation": "MCTPinch.js",
+                "depends": [ "$log", "agentService" ]
+            },
+            {
+                "key": "mctPan",
+                "implementation": "MCTPan.js",
+                "depends": [ "$log", "agentService" ]
             }
         ],
         "controllers": [

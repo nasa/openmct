@@ -24,7 +24,9 @@
 
     <div class="gl-plot"
          ng-style="{ height: 100 / plot.getSubPlots().length + '%'}"
-         ng-repeat="subplot in plot.getSubPlots()">
+         ng-repeat="subplot in plot.getSubPlots()"
+         mct-pinch="handlePinch(dimensions, prevDimensions, event, eventPrev, subplot)">
+<!--         mct-pan="handlePan(position)">-->
         <div class="gl-plot-legend">
             <!-- ng-class is temporarily hard-coded in next element -->
             <span
@@ -42,7 +44,7 @@
         <div
             class="gl-plot-coords"
             ng-if="subplot.isHovering() && subplot.getHoverCoordinates()"
-            >
+             >
             {{subplot.getHoverCoordinates()}}
         </div>
 

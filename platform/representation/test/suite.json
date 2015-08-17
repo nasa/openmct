@@ -3,8 +3,6 @@
     "gestures/ContextMenuGesture",
     "gestures/DragGesture",
     "gestures/DropGesture",
-    "gestures/PinchGesture",
-    "gestures/PanGesture",
     "gestures/GestureProvider",
     "gestures/GestureRepresenter",
     "services/DndService",
