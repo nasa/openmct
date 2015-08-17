@@ -31,7 +31,7 @@ define(
 
         var MENU_TEMPLATE = "<mct-representation key=\"'context-menu'\" " +
                 "mct-object=\"domainObject\" " +
-                "ng-class=\"menuClass\"" +
+                "ng-class=\"menuClass\" " +
                 "ng-style=\"menuStyle\">" +
                 "</mct-representation>",
             dismissExistingMenu;
@@ -75,7 +75,7 @@ define(
             // Remove the context menu
             function dismiss() {
                 menu.remove();
-                body.off("click", dismiss);
+                body.off("mousedown", dismiss);
                 dismissExistingMenu = undefined;
             }
 
