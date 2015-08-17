@@ -31,17 +31,25 @@ define(function () {
         LOAD_INCREMENT = 20;
     
     function SearchController($scope, searchService, types) {
-        // Starting amount of results to load. Will get increased. 
+        // numResults is the starting amount of results to load. Will get increased. 
+        // fullResults holds the most recent complete searchService response object
         var numResults = INITIAL_LOAD_NUMBER,
             fullResults = {hits: []};
         
         // Scope variables are: 
-        // results, types, loading, filtersString, 
-        //  ngModel.input, ngModel.search, ngModel.checked
+        //  results, an array of searchResult objects
+        //  types, an array of type objects
+        //  loading, whether search() is loading 
+        //  filtersString, a string list of what filters on the results are active
+        //  ngModel.input, the text of the search query
+        //  ngModel.search, a boolean of whether to display search or the tree
+        //  ngModel.checked, a dictionary of which type filter options are checked 
+        //  ngModel.checkAll, a boolean of whether all of the types in ngModel.checked are checked 
         $scope.types = [];
         $scope.ngModel.checked = {};
         $scope.filtersString = '';
         $scope.loading = false;
+        
         
         // Filters searchResult objects by type. Allows types that are 
         //   checked. (ngModel.checked['typekey'] === true)
