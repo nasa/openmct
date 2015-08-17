@@ -1,0 +1,69 @@
+E2e Protractor Tests.
+
+1. Instructions:
+
+    1. 3 Control Scripts located in bin/.
+        run.js  : node script used to start tests
+        start.js: node script used to setup test(starts node,localstorage and webdriver)
+        stop.js : node script, kills the 3 process started in start.js.
+        clean.js: node script used to remove the node_module directory.(clean up directory).
+        
+    2. Use npm(Node Package Mangager) to Run Scripts.
+        a. cd protractor;
+        b. npm install;
+        c. To Run:
+            -npm start : will start processes need by protractor
+            -npm stop  : will stop the processes need by protractor
+            -npm run-script run : will execute Protractor Script
+            -npm run-script all : will execute "start", "run", and "stop" script
+            
+2. Directory Hierachy:
+
+    -protractor: base directory
+          -common: contains prototype javascript functions that all other tests use. 
+              -Buttons: common prototype functions related to enter fullscreen
+              -CreateItem: common prototype functions related to creating an item 
+              -drag: common functions to test drag and drop.
+              -editItem: common functions used to test edit functionality.
+              -Launch: common script used to navigate the specified website.
+              -RightMenu: common functions for right click menu(remove).
+          -create
+              -e2e tests that creates the specified object. 
+          -delete
+              -e2e tests that removes the specified object
+          -logs
+              -ctrl.sh redirects console output of MMAP, webdriver and elastic search and pipes them to log files.
+          -UI
+              -Contains tests that test the UI(drag drop, fullscreen, info bubble)    
+          -conf.js: 
+              -protractor config file. Explained below  
+          -stressTest:
+                Tests that are used to test for memory leaks. You can use the new tab option on WARP and then open the
+                timeline in the new tab during the browser.sleep(). Once the test is do the browser will pause and you
+                can look a the timeline results in the new tab.
+    
+                NOTE: Cannot open chrome dev tools on same tab as the test are run on. Protractor uses the dev tools to
+                exectute the tests.
+
+                    -StressTest will create and delete folders.
+                    -StressTestBubble.js: creates manny bubbles.
+                                      (Delay variable in InfoGesture.js was changed to 0)
+3. Conf.js
+          Conf.js is used by protractor to setup and execute the tests.
+              -allScriptsTimeout: gives more time for protractor to synchronize with the page.
+              -jasmineNodeOpts: Protractor uses jasmine for the tests and jasmine has a default time out 30 seconds
+                                per "it" test. Changed to maximume allowed time 360000 ms
+             -seleniumAddress: Protractor uses a Selenium server as a "proxy" between the test scripts and the browser 
+                               driver. A stand a lone version comes with protractor and to run use "webdriver-manager"
+                               default address is: http://localhost:4444/wd/hub. 
+            -specs[]: Is an array of files. Each File should have a "describe, it" test to be executed by protractor.
+            -capabilities: Tells protractor what browser to use and any browser arguments.
+            
+4. bundle.json
+        bundle.json is used by npm to determine dependencies and location of script files.
+        -Dependencies:
+            "protractor": Contains protractor and webdriver package.
+            "psnode": Window/Unix Command, used for list/kill process.(ps aux)
+            "shelljs": Window/Unix Common JS Commands. eg rm,ls,exec
+            "sleep": Window/Unix Commands used to sleep the script
+            "string": Window/Unix Commands for string manipulation.

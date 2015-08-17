@@ -19,10 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-//TODO Add filter for duplications/
-var itemCreate = require("./common/CreateItem");
-var itemEdit = require("./common/EditItem");
-var right_click = require("./common/RightMenu.js");
+var itemCreate = require("../common/CreateItem");
+var itemEdit = require("../common/EditItem");
+var right_click = require("../common/RightMenu.js");
     
 describe('Create Folder', function() {
     var clickClass = new right_click();
@@ -41,31 +40,35 @@ describe('Create Folder', function() {
     });
     it('should Create new Folder', function(){
         browser.sleep(5000);
-        for(var i=0; i < 50; i++){
+        for(var i=0; i < 25; i++){
             browser.wait(function() {
                createClass.createButton().click(); 
                return true;    
             }).then(function (){
                 var folder =  createClass.selectNewItem(ITEM_TYPE);
                 expect(folder.getText()).toEqual([ ITEM_MENU_GLYPH ]);
-                browser.sleep(1000);
+                browser.sleep(500);
                 folder.click()  
             }).then(function() {
                 browser.wait(function () {
                     return element.all(by.model('ngModel[field]')).isDisplayed();
                 })
                 createClass.fillFolderForum(ITEM_NAME, ITEM_TYPE).click();
-                browser.sleep(1000);
+                browser.sleep(500);
             }).then(function (){
-                browser.sleep(1000);
-              //  if(i === 1){
-                    clickClass.delete(ITEM_SIDE_SELECT, true);
-                    element.all(by.css('.ui-symbol.view-control.ng-binding.ng-scope')).click();
-               // }else{
-                   browser.sleep(1000);
-                   
+                browser.sleep(500);
+                clickClass.delete(ITEM_SIDE_SELECT, true);
+                //element.all(by.css('.ui-symbol.view-control.ng-binding.ng-scope')).click();
+             
+             
+                var MyItem =  ">\nF\nMy Items"
+                element.all(by.repeater('child in composition')).filter(function (ele){
+                    return ele.getText().then(function(text) {
+                       //expect(text).toEqual(MyItem);
+                       return text === MyItem;
+                   });
+               }).all(by.css('.ui-symbol.view-control.ng-binding.ng-scope')).click();
                    // clickClass.delete(ITEM_SIDE_SELECT, false);
-              //  }
             });
         }
         browser.pause();
