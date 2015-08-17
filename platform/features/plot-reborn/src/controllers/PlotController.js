@@ -154,8 +154,16 @@ define(
                 };
             }
             
-            function onPinchAction(event) {
-                console.log("TEST");
+            function onPinchStart(event) {
+                console.log("Pinch Start");
+            }
+            
+            function onPinchChange(event) {
+                console.log("Pinch Change");
+            }
+            
+            function onPinchEnd(event) {
+                console.log("Pinch End");
             }
 
             function followDataIfLive() {
@@ -167,7 +175,9 @@ define(
             $scope.$on('series:data:add', followDataIfLive);
             $scope.$on('user:viewport:change:end', onUserViewportChangeEnd);
             $scope.$on('user:viewport:change:start', onUserViewportChangeStart);
-            $scope.$on('mct:pinch:action', onPinchAction);
+            $scope.$on('mct:pinch:start', onPinchStart);
+            $scope.$on('mct:pinch:change', onPinchChange);
+            $scope.$on('mct:pinch:end', onPinchEnd);
 
             $scope.$watch('domainObject', linkDomainObject);
 

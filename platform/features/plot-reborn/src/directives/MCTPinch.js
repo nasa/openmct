@@ -37,14 +37,15 @@ define(
                     return [event.clientX, event.clientY];
                 }
                 
-                function pinchAction(event) {
-                    if (event.changedTouches.length === 2) {
-                        var touchPosition = [trackPosition(event.changedTouches[0]),
-                                             trackPosition(event.changedTouches[1])],
+                function pinchStart(event) {
+                    if (event.changedTouches.length === 2 ||
+                            event.touches.length === 2) {
+                        var touchPosition = [trackPosition(event.touches[0]),
+                                             trackPosition(event.touches[1])],
                             touchPositionPrev = posPrev || touchPosition,
                             eventPrev = evePrev || event;
                         
-                        $scope.$emit('mct:pinch:action', event);
+                        $scope.$emit('mct:pinch:start');
                         // Set current position to be previous position 
                         // for next touch action
                         posPrev = touchPosition;
@@ -58,10 +59,39 @@ define(
                     }
                 }
                 
+                function pinchChange(event) {
+                    if (event.changedTouches.length === 2) {
+                        var touchPosition = [trackPosition(event.changedTouches[0]),
+                                             trackPosition(event.changedTouches[1])],
+                            touchPositionPrev = posPrev || touchPosition,
+                            eventPrev = evePrev || event;
+                        
+                        $scope.$emit('mct:pinch:change');
+                        // Set current position to be previous position 
+                        // for next touch action
+                        posPrev = touchPosition;
+                        
+                        // Set current event to be previous event 
+                        // for next touch action
+                        evePrev = event;
+                        
+                        // Stops other gestures/button clicks from being active
+                        event.preventDefault();
+                    }
+                }
+                
+                function pinchEnd(event) {
+                        $scope.$emit('mct:pinch:end');
+                        
+                        // Stops other gestures/button clicks from being active
+                        event.preventDefault();
+                }
+                
                 if (agentService.isMobile(navigator.userAgent)) {
-                    element.on('touchstart', pinchAction);
-                    element.on('touchmove', pinchAction);
-                    element.on('touchend', pinchAction);
+                    element.on('touchstart', pinchStart);
+                    element.on('touchmove', pinchChange);
+                    element.on('touchend', pinchEnd);
+                    element.on('touchcancel', pinchEnd);
                 }
                 
                 // Stop checking for resize when scope is destroyed
