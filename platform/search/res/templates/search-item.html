@@ -20,13 +20,11 @@
  at runtime from the About dialog for additional information.
 --> 
 
-<span ng-controller="SearchItemController as controller">
-    <div class="search-result-item"
-         ng-class="{selected: controller.isSelected()}">
-        <mct-representation key="'label'"
-                            mct-object="domainObject"
-                            ng-model="ngModel"
-                            ng-click="ngModel.selectedObject = domainObject">
-        </mct-representation>
-    </div>
-</span>
+<div class="search-result-item"
+     ng-class="{selected: ngModel.selectedObject.getId() === domainObject.getId()}">
+    <mct-representation key="'label'"
+                        mct-object="domainObject"
+                        ng-model="ngModel"
+                        ng-click="ngModel.selectedObject = domainObject">
+    </mct-representation>
+</div>

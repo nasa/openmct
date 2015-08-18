@@ -21,11 +21,6 @@
                 "depends": [ "$scope", "types[]" ]
             },
             {
-                "key": "SearchItemController",
-                "implementation": "controllers/SearchItemController.js",
-                "depends": [ "$scope" ]
-            },
-            {
                 "key": "ClickAwayController",
                 "implementation": "controllers/ClickAwayController.js",
                 "depends": [ "$scope", "$document" ]
