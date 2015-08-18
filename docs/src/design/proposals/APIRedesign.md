@@ -500,3 +500,22 @@ can be used/subclassed which handle common behavior(s).
 * Related to the above, even if we called these "widgets"
   it would still fail to enforce good MVC.
 
+## Wrap Angular Services
+
+Wrap Angular's services in a custom interfaces; e.g.
+replace `$http` with an `httpService` which exposes a useful
+subset of `$http`'s functionality.
+
+### Benefits
+
+* Removes a ubiquitous dependency on Angular.
+* Allows documentation for these features to be co-located
+  and consistent with other documentation.
+* Facilitates replacing these with non-Angular versions
+  in the future.
+
+### Detriments
+
+* Increases the number of interfaces in Open MCT Web. (Arguably,
+  not really, since the same interfaces would exist if exposed
+  by Angular.)
