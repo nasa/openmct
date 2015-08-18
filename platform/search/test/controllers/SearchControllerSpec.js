@@ -199,6 +199,10 @@ define(
                 mockPromise.then.mostRecentCall.args[0]({hits: [], total: 0});
                 expect(mockScope.ngModel.search).toEqual(false);
             });
+            
+            it("has a default results list to filter from", function () {
+                expect(mockScope.ngModel.filter()).toBeDefined();
+            });
         });
     }
 );

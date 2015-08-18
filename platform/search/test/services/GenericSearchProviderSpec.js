@@ -119,7 +119,11 @@ define(
                 
                 // Call through the children-getting part 
                 mockTimeout.mostRecentCall.args[0]();
+                // Array argument indicates multiple children
                 mockCapabilityPromise.then.mostRecentCall.args[0]([]);
+                mockTimeout.mostRecentCall.args[0]();
+                // Call again, but for single child
+                mockCapabilityPromise.then.mostRecentCall.args[0]({});
                 mockTimeout.mostRecentCall.args[0]();
                 
                 expect(mockWorker.postMessage).toHaveBeenCalled();
@@ -148,6 +152,19 @@ define(
                     maxNumber: 1,
                     timeout: 2
                 });
+            });
+            
+            it("gives an empty result for an empty query", function () {
+                var timestamp = Date.now(),
+                    queryOutput;
+                
+                queryOutput = provider.query('', timestamp, 1, 2);
+                expect(queryOutput.hits).toEqual([]);
+                expect(queryOutput.total).toEqual(0);
+                
+                queryOutput = provider.query();
+                expect(queryOutput.hits).toEqual([]);
+                expect(queryOutput.total).toEqual(0);
             });
             
             it("handles responses from the worker", function () {
