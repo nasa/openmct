@@ -26,7 +26,7 @@
                 "depends": [ "$scope", "$document" ]
             }
         ],
-        "templates": [
+        "representations": [
             {
                 "key": "search",
                 "templateUrl": "templates/search.html"
@@ -34,9 +34,7 @@
             {
                 "key": "search-menu",
                 "templateUrl": "templates/search-menu.html"
-            }
-        ],
-        "representations": [
+            },
             {
                 "key": "search-item",
                 "templateUrl": "templates/search-item.html"
