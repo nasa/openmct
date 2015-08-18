@@ -69,7 +69,7 @@ define(
         // Issue a request using $http; get back the plain JS object
         // from the expected JSON response
         ElasticPersistenceProvider.prototype.request = function (subpath, method, value, params) {
-            return this.http({
+            return this.$http({
                 method: method,
                 url: this.root + '/' + this.path + '/' + subpath,
                 params: params,
