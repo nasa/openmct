@@ -18,13 +18,13 @@
     "platform/features/scrolling",
     "platform/features/events",
     "platform/forms",
-    "platform/persistence/elastic",
     "platform/persistence/queue",
     "platform/policy",
     "platform/entanglement",
     "platform/search",
 
     "example/imagery",
+    "example/persistence",
     "example/eventGenerator",
     "example/generator"
 ]
