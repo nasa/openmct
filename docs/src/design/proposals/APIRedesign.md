@@ -519,3 +519,63 @@ subset of `$http`'s functionality.
 * Increases the number of interfaces in Open MCT Web. (Arguably,
   not really, since the same interfaces would exist if exposed
   by Angular.)
+
+## Bundle Declarations in JavaScript
+
+Replace `bundle.json` files (and bundle syntax generally) with
+an imperative form. There would instead be a `Bundle` interface
+which scripts can implement (perhaps assisted by a platform
+class.)
+
+The `bundles.json` file would then be replaced with a `bundles.js`
+or `Bundles.js` that would look something like:
+
+```js
+define(
+  [
+    'platform/core/PlatformBundle',
+    // ... etc ...
+    'platform/features/plot/PlotBundle'
+  ],
+  function () {
+    return arguments;
+  }
+);
+```
+
+Which could in turn be used by an initializer:
+
+```js
+define(
+  ['./bundles', 'mct'],
+  function (bundles, mct) {
+    mct.initialize(bundles);
+  }
+);
+```
+
+A `Bundle` would have a constructor that took some JSON object
+(a `BundleContext`, lets say) and would provide methods for
+application life-cycle events. Depending on other choices,
+a dependency injector could be passed in at some appropriate
+life-cycle call (e.g. initialize.)
+
+This would also allow for "composite bundles" which serve as
+proxies for multiple bundles. The `BundleContext` could contain
+(or later be amended to contain) filtering rules to ignore
+other bundles and so forth (this has been useful for administering
+Open MCT Web in subtly different configurations in the past.)
+
+### Benefits
+
+* Imperative; more explicit, less magic, more clear what is going on.
+* Having a hierarchy of "bundles" could make it easier to navigate
+  (relevant groupings can be nested in a manner which is not
+  currently well-supported.)
+* Lends itself naturally to a compilation step.
+
+### Detriments
+
+* Introduces another interface.
+* Loses some of the convenience of having a declarative
+  summary of components and their dependencies.
