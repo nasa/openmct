@@ -432,3 +432,71 @@ which can help with this, however.
   understand "what uses what."
 * Allows for ordering problems (e.g. you start using a
   service before everything has been registered.)
+
+## Arbitrary HTML Views
+
+Currently, writing new views requires writing Angular templates.
+This must change if we want to reduce our dependence on Angular.
+
+Instead, propose that:
+
+* What are currently called "views" we call something different.
+  (Want the term view to be more like "view" in the MVC sense.)
+  * For example, call them "applications."
+* Consolidate what are currently called "representations" and
+  "templates", and instead have them be "views".
+
+For parity with actions, a `View` would be a constructor which
+takes an `ActionContext` as a parameter (with similarly-defined
+properties) and exposes a method to retrieve the HTML elements
+associateed with it.
+
+The platform would then additionally expose an `AngularView`
+implementation to improve compatibility with existing
+representations, whose usage would something like:
+
+```js
+define(
+  ["AngularView"],
+  function (AngularView) {
+    var template = "<span ng-click='...'>Hello world</span>";
+    return new AngularView(template);
+  }
+);
+```
+
+The interface exposed by a view is TBD, but should provide at
+least the following:
+
+* A way to get the HTML elements that are exposed by & managed
+  by the view.
+* A `destroy` method to detach any listeners at the model level.
+
+Individual views are responsible for managing their resources,
+e.g. listening to domain objects for mutation. To keep DRY, the
+platform should include one or more view implementations that
+can be used/subclassed which handle common behavior(s).
+
+### Benefits
+
+* Using Angular API for views is no longer required.
+* Views become less-coupled to domain objects. Domain objects
+  may be present in the `ViewContext`, but this also might
+  just be a "view" of some totally different thing.
+* Helps clarify high-level concerns in the API (a View is now
+  really more like a View in the MVC sense; although, not
+  completely, so this gets double-booked as a detriment.)
+
+### Detriments
+
+* Becomes less clear how views relate to domain objects.
+* Adds another interface.
+* Leaves an open problem of how to distinguish views that
+  a user can choose (Plot, Scrolling List) from views that
+  are used more internally by the application (tree view.)
+* Views are still not Views in the MVC sense (in practice,
+  the will likely be view-controller pairs.) We could call
+  them widgets to disambiguate this.
+* Related to the above, even if we called these "widgets"
+  it would still fail to enforce good MVC.
+
