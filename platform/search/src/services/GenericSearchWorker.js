@@ -31,36 +31,6 @@
     // {id: domainObject's ID, model: domainObject's model}
     var indexedItems = [];
     
-    // Helper function for index()
-    // Checks whether an item with this ID is already indexed
-    function conainsItem(id) {
-        var i;
-        for (i = 0; i < indexedItems.length; i += 1) {
-            if (indexedItems[i].id === id) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    /** 
-     * Indexes an item to indexedItems.
-     * 
-     * @param data An object which contains:
-     *             * model: The model of the domain object
-     *             * id: The ID of the domain object
-     */
-    function index(data) {
-        var message;
-        
-        if (!conainsItem(data.id)) {
-            indexedItems.push({
-                id: data.id,
-                model: data.model
-            });
-        }
-    }
-    
     // Helper function for serach()
     function convertToTerms(input) {
         var terms = input;
@@ -177,7 +147,10 @@
     
     self.onmessage = function (event) {
         if (event.data.request === 'index') {
-            index(event.data);
+            indexedItems.push({
+                id: event.data.id,
+                model: event.data.model
+            });
         } else if (event.data.request === 'search') {
             self.postMessage(search(event.data));
         }
