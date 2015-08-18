@@ -317,3 +317,118 @@ redesign:
 
 - [ ] Don't require usage of Angular API.
 - [ ] Don't require support for Angular API.
+
+# Proposals
+
+## RequireJS as dependency injector
+
+Use Require.JS for dependency injection.
+
+Dependencies will then be responsible for being sufficiently
+mutable/extensible/customizable. This can be facilitated by
+adding platform classes which can facilitate the addition
+of reusable components.
+
+Things that we usefully acquire via dependency injection currently:
+
+* Services.
+* Extensions (by category).
+* Configuration constants.
+
+Services would be defined (by whatever component is responsible
+for declaring it) using `define` and the explicit name of the
+service. To allow for the power of composite services, the
+platform would provide a `CompositeService` class that supports
+this process by providing `register`, `decorate`, and `composite`
+methods to register providers, decorators, and aggregators
+respectively. (Note that nomenclature changes are also implied
+here, to map more clearly to the Composite Pattern and to
+avoid the use of the word "provider", which has ambiguity with
+Angular.)
+
+```js
+define(
+  "typeService",
+  ["CompositeService"],
+  function (CompositeService) {
+    var typeService = new CompositeService([
+      "listTypes",
+      "getType"
+    ]);
+
+    // typeService has `listTypes` and `getType` as methods;
+    // at this point they are stubbed (will return undefined
+    // or throw or similar) but this will change as
+    // decorators/compositors/providers are added.
+
+    // You could build in a compositor here, or
+    // someone could also define one later
+    typeService.composite(function (typeServices) {
+      // ... return a TypeService
+    });
+
+    // Similarly, you could register a default implementation
+    // here, or from some other script.
+    typeService.register(function (typeService) {
+      // ... return a TypeService
+    }, { priority: 'default' });
+
+    return typeService;
+  }
+);
+```
+
+Other code could then register additional `TypeService`
+implementations (or decorators, or even compositors) by
+requiring `typeService` and calling those methods; or, it
+could use `typeService` directly. Priority ordering could
+be utilized by adding a second "options" argument.
+
+For extension categories, you could simply use registries:
+
+```js
+define(
+  "typeRegistry",
+  ["ExtensionRegistry"],
+  function (ExtensionRegistry) {
+    return new ExtensionRegistry();
+  }
+);
+```
+
+Where `ExtensionRegistry` extends `Array`, and adds a
+`register` method which inserts into the array at some
+appropriate point (e.g. with an options parameter that
+respects priority order.)
+
+This makes unit testing somewhat more difficult when you
+want to mock injected dependencies; there are tools out
+there (e.g. [Squire](https://github.com/iammerrick/Squire.js/))
+which can help with this, however.
+
+### Benefits
+
+* Clarifies "how objects are passed around at run-time";
+  answer is always "via RequireJS."
+* Preserves flexibility/power provided by composite services.
+* Lends itself fairly naturally to API documentation via JSDoc
+  (as compared to declaring things in bundles, which does not.)
+* Reduces interface complexity for acquiring dependencies;
+  one interface for both explicit and "implicit" dependencies,
+  instead of separate approaches for static and substitutable
+  dependencies.
+* Removes need to understand Angular's DI mechanism.
+* Improves useability of documentation (`typeService` is an
+  instance of `CompositeService` and implements `TypeService`
+  so you can easily traverse links in the JSDoc.)
+
+### Detriments
+
+* Having services which both implement the service, and
+  have methods for registering the service, is a little
+  weird; would be cleaner if these were separate.
+  (Mixes concerns.)
+* Syntax becomes non-declarative, which may make it harder to
+  understand "what uses what."
+* Allows for ordering problems (e.g. you start using a
+  service before everything has been registered.)
