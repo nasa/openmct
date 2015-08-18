@@ -29,6 +29,10 @@ define(
     function (SearchController) {
         "use strict";
 
+        // These should be the same as the ones on the top of the search controller
+        var INITIAL_LOAD_NUMBER = 20,
+            LOAD_INCREMENT = 20;
+        
         describe("The search controller", function () {
             var mockScope,
                 mockSearchService,
@@ -57,6 +61,7 @@ define(
                 mockScope.ngModel.input = "test input";
                 mockScope.ngModel.checked = {};
                 mockScope.ngModel.checked['mock.type'] = true;
+                mockScope.ngModel.checkAll = true;
                 
                 mockSearchService = jasmine.createSpyObj(
                     "searchService",
@@ -115,16 +120,66 @@ define(
                 expect(mockScope.results.length).toBeLessThan(100);
             });
             
+            it("detects when there are more results", function () {
+                mockScope.ngModel.checkAll = false;
+                
+                expect(mockPromise.then).toHaveBeenCalledWith(jasmine.any(Function));
+                mockPromise.then.mostRecentCall.args[0]({
+                    hits: bigArray(INITIAL_LOAD_NUMBER + 5),
+                    total: INITIAL_LOAD_NUMBER + 5
+                });
+                // bigArray gives searchResults of type 'mock.type'
+                mockScope.ngModel.checked['mock.type'] = false;
+                mockScope.ngModel.checked['mock.type.2'] = true;
+                
+                expect(controller.areMore()).toBeFalsy();
+                
+                mockScope.ngModel.checked['mock.type'] = true;
+                
+                expect(controller.areMore()).toBeTruthy();
+            });
+            
             it("can load more results", function () {
                 var oldSize;
                 
                 expect(mockPromise.then).toHaveBeenCalled();
-                mockPromise.then.mostRecentCall.args[0]({hits: bigArray(100), total: 1000});
+                mockPromise.then.mostRecentCall.args[0]({
+                    hits: bigArray(INITIAL_LOAD_NUMBER + LOAD_INCREMENT + 1),
+                    total: INITIAL_LOAD_NUMBER + LOAD_INCREMENT + 1
+                });
+                // These hits and total lengths are the case where the controller 
+                //   DOES NOT have to re-search to load more results
                 oldSize = mockScope.results.length;
                 
                 expect(controller.areMore()).toBeTruthy();
                 
                 controller.loadMore();
+                expect(mockScope.results.length).toBeGreaterThan(oldSize);
+            });
+            
+            it("can re-search to load more results", function () {
+                var oldSize,
+                    oldCallCount;
+                
+                expect(mockPromise.then).toHaveBeenCalled();
+                mockPromise.then.mostRecentCall.args[0]({
+                    hits: bigArray(INITIAL_LOAD_NUMBER + LOAD_INCREMENT - 1),
+                    total: INITIAL_LOAD_NUMBER + LOAD_INCREMENT + 1
+                });
+                // These hits and total lengths are the case where the controller 
+                //   DOES have to re-search to load more results
+                oldSize = mockScope.results.length;
+                oldCallCount = mockPromise.then.callCount;
+                expect(controller.areMore()).toBeTruthy();
+                
+                controller.loadMore();
+                expect(mockPromise.then).toHaveBeenCalled();
+                // Make sure that a NEW call to search has been made 
+                expect(oldCallCount).toBeLessThan(mockPromise.then.callCount);
+                mockPromise.then.mostRecentCall.args[0]({
+                    hits: bigArray(INITIAL_LOAD_NUMBER + LOAD_INCREMENT + 1),
+                    total: INITIAL_LOAD_NUMBER + LOAD_INCREMENT + 1
+                });
                 expect(mockScope.results.length).toBeGreaterThan(oldSize);
             });
             
@@ -134,6 +189,12 @@ define(
                 
                 // Flag should be flase with empty input
                 mockScope.ngModel.input = "";
+                controller.search();
+                mockPromise.then.mostRecentCall.args[0]({hits: [], total: 0});
+                expect(mockScope.ngModel.search).toEqual(false);
+                
+                // Both the empty string and undefined should be 'empty input'
+                mockScope.ngModel.input = undefined;
                 controller.search();
                 mockPromise.then.mostRecentCall.args[0]({hits: [], total: 0});
                 expect(mockScope.ngModel.search).toEqual(false);

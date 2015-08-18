@@ -141,14 +141,14 @@ define(function () {
                 
                 // Check to see if any of the not displayed results are of an allowed type
                 for (i = numResults; i < fullResults.hits.length; i += 1) {
-                    if ($scope.ngModel.checked[fullResults.hits[i].object.getModel().type.key]) {
+                    if ($scope.ngModel.checkAll || $scope.ngModel.checked[fullResults.hits[i].object.getModel().type]) {
                         return true;
                     }
                 }
                 
                 // If none of the ones at hand are correct, there still may be more if we 
                 //   re-search with a larger maxResults 
-                return numResults < fullResults.total;
+                return fullResults.hits.length < fullResults.total;
             },
             
             /**
