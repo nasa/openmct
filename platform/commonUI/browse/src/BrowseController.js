@@ -191,6 +191,8 @@ define(
             
             $scope.checkRoot = checkRoot;
 
+            // TODO: shale sarah bleh
+            $scope.ngModel.leftPaneStatus = true;
         }
 
         return BrowseController;

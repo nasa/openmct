@@ -20,7 +20,14 @@
  at runtime from the About dialog for additional information.
 -->
 <span ng-controller="BrowseObjectController">
+    
     <div class="object-browse-bar bar abs">
+        
+        <div class="ui-symbol left-pane-tabs"
+             ng-click="ngModel.leftPaneStatus = !ngModel.leftPaneStatus">
+            <
+        </div>
+        
         <div class="items-select left abs">
             <mct-representation key="'object-header'" mct-object="domainObject">
             </mct-representation>
@@ -37,6 +44,7 @@
                                 ng-model="representation">
             </mct-representation>
         </div>
+        
     </div>
 
     <div class='object-holder abs vscroll'>
@@ -44,4 +52,5 @@
                             mct-object="representation.selected.key && domainObject">
         </mct-representation>
     </div>
+    
 </span>
