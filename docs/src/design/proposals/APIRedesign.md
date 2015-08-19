@@ -751,3 +751,36 @@ JSDoc.)
 ### Detriments
 
 * Increases documentation burden.
+
+## Register Extensions as Instances instead of Constructors
+
+Register extensions as object instances instead of constructors.
+This allows for API flexibility w.r.t. constructor signatures
+(and avoids the need for partial constructors) and additionally
+makes it easier to provide platform implementations of extensions
+that can be used, subclassed, etc.
+
+For instance, instead of taking an `ActionContext` in its
+constructor, an `Action` would be instantiated once and would
+accept appropriate arguments to its methods:
+
+```js
+function SomeAction {
+}
+SomeAction.prototype.canHandle = function (actionContext) {
+    // Check if we can handle this context
+};
+SomeAction.prototype.perform = function (actionContext) {
+    // Perform this action, in this context
+};
+```
+
+### Benefits
+
+* Reduces scope of interfaces to understand (don't need to know
+  what constructor signature to provide for compatibility.)
+
+### Detriments
+
+* Requires refactoring of various types; may result in some
+  awkward APIs or extra factory interfaces.
