@@ -4,6 +4,14 @@ define(
     function () {
         "use strict";
 
+        /**
+         * The location capability allows a domain object to know its current
+         * parent, and also know its original parent.  When a domain object's
+         * current parent is its original parent, the object is considered an
+         * original, otherwise it's a link.
+         *
+         * @constructor
+         */
         function LocationCapability(domainObject) {
             this.domainObject = domainObject;
             return this;
