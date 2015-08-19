@@ -477,12 +477,11 @@ ul.tree {
         cursor: pointer; }
     /* line 329, ../sass/search/_search.scss */
     .search .search-scroll .load-more-button {
-      margin-top: 5px;
-      margin-bottom: 5px;
+      margin-top: 5px 0;
+      font-size: 0.8em;
       position: relative;
-      left: 25%;
-      width: 50%;
-      white-space: nowrap;
-      height: 20px;
-      line-height: 11px;
-      font-size: 0.7em; }
+      left: 50%;
+      margin-left: -45px;
+      text-align: center;
+      width: 90px;
+      white-space: nowrap; }

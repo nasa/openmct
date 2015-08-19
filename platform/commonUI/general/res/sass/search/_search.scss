@@ -327,20 +327,14 @@
 		}
 
 		.load-more-button {
-			// Space away form the results list
-			margin-top: 5px;
-			margin-bottom: 5px;
-
-			// Center it
+			margin-top: $interiorMargin 0;
+			font-size: 0.8em;
 			position: relative;
-			left: 25%;
-			width: 50%;
+			left: 50%;
+			margin-left: -45px;
+			text-align: center;
+			width: 90px;
 			white-space: nowrap;
-
-			// Make smallish button
-			height: 20px;
-			line-height: 11px;
-			font-size: 0.7em;
 		}
 	}
 }
