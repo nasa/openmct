@@ -64,7 +64,7 @@ define(
                 }
             }
 
-            $scope.ngModel.pane = true;
+            $scope.ngModel.leftPane = true;
             
             $scope.$watch('domainObject', setViewForDomainObject);
             $scope.$watch('representation.selected.key', updateQueryParam);
