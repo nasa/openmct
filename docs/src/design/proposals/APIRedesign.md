@@ -573,9 +573,65 @@ Open MCT Web in subtly different configurations in the past.)
   (relevant groupings can be nested in a manner which is not
   currently well-supported.)
 * Lends itself naturally to a compilation step.
+* Nudges plugin authors to "do your initialization and registration
+  in a specific place" instead of mixing in registration of features
+  with their implementations.
 
 ### Detriments
 
 * Introduces another interface.
 * Loses some of the convenience of having a declarative
   summary of components and their dependencies.
+
+## Pass around a dependency injector
+
+Note that this is incompatible with the
+[RequireJS as dependency injector](#requirejs-as-dependency-injector)
+proposal.
+
+Via some means (such as in a registration lifecycle event as
+described above) pass a dependency injector to plugins to allow
+for dependencies to be registered.
+
+For example:
+
+```js
+MyBundle.prototype.registration = function (architecture) {
+  architecture.service('typeService').register(MyTypeService);
+  architecture.extension('actions').register(
+    [ 'foo' ],
+    function (foo) { return new MyAction(foo); }
+  );
+};
+```
+
+### Benefits
+
+* Ensures that registration occurs at an appropriate stage of
+  application execution, avoiding start-up problems.
+* Makes registration explicit (generally easier to understand)
+  rather than implicit.
+* Encapsulates dependency injection nicely.
+
+### Detriments
+
+* Increases number of interfaces to learn.
+* Syntax likely to be awkward, since in many cases we really
+  want to be registering constructors.
+
+## Remove partial constructors
+
+Remove partial constructors; these are confusing. It is hard to
+recognize which constructor arguments are from dependencies, and
+which will be provided at run-time. Instead, it is the responsibility
+of whoever is introducing a component to manage these things
+separately.
+
+### Benefits
+
+* More clarity.
+
+### Detriments
+
+* Possibly results in redundant effort to manage this difference
+  (other APIs may need to be adjusted accordingly.)
