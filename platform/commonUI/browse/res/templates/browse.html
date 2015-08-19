@@ -34,8 +34,7 @@
                         anchor='left'>
             
             <!--div class='split-pane-component treeview pane mobile-pane left-menu desktop-browse'-->
-            <div class='split-pane-component treeview pane left'
-                 ng-class='{show: treeModel.leftPaneStatus}'>
+            <div class='split-pane-component treeview pane left'>
                 
                 <div class='holder tree-holder abs mobile-tree-holder'>
                     <mct-representation key="'tree'"
@@ -55,8 +54,7 @@
                 <div class='holder abs'
                      id='content-area'>
                     <mct-representation mct-object="navigatedObject"
-                                        key="'browse-object'"
-                                        ng-model="treeModel">
+                                        key="'browse-object'">
                     </mct-representation>
                 </div>
                 <!--div class="left s-very-subtle key-properties ui-symbol mobile-menu-icon button-pos"
