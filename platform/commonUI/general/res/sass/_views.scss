@@ -1,0 +1,21 @@
+/* Styles for sub-dividing views generically */
+
+.l-view-section {
+	@include absPosDefault(0);
+	font-size: 0.8rem;
+	h2 {
+		color: #fff;
+		margin-bottom: $interiorMargin;
+	}
+	&.fixed {
+		font-size: 0.8em;
+	}
+	&.scrolling {
+		overflow: auto;
+	}
+	.controls,
+	label,
+	.inline-block {
+		display: inline-block;
+	}
+}

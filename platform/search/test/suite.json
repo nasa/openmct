@@ -1,0 +1,5 @@
+[
+    "SearchAggregator",
+    "GenericSearchProvider",
+    "GenericSearchWorker"
+]
