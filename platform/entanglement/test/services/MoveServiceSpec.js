@@ -162,12 +162,13 @@ define(
                         'locationCapability',
                         [
                             'isOriginal',
-                            'persistLocation'
+                            'setPrimaryLocation'
                         ]
                     );
 
                     locationPromise = new ControlledPromise();
-                    locationCapability.persistLocation.andReturn(locationPromise);
+                    locationCapability.setPrimaryLocation
+                        .andReturn(locationPromise);
 
                     object = domainObjectFactory({
                         name: 'object',
@@ -199,7 +200,7 @@ define(
                     });
 
                     it("updates location", function () {
-                        expect(locationCapability.persistLocation)
+                        expect(locationCapability.setPrimaryLocation)
                             .toHaveBeenCalled();
                     });
 
@@ -223,7 +224,7 @@ define(
                     });
 
                     it("does not update location", function () {
-                        expect(locationCapability.persistLocation)
+                        expect(locationCapability.setPrimaryLocation)
                             .not
                             .toHaveBeenCalled();
                     });

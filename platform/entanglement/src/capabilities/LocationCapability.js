@@ -18,15 +18,19 @@ define(
         }
 
         /**
-         * Persist the current location of the current domain object as it's
-         * primary location.  Returns a promise.
+         * Set the primary location (the parent id) of the current domain
+         * object.
+         *
+         * @param {String} location the primary location to persist.
+         * @returns {Promise} a promise that is resolved when the operation
+         * completes.
          */
-        LocationCapability.prototype.persistLocation = function () {
+        LocationCapability.prototype.setPrimaryLocation = function (location) {
             var capability = this;
             return this.domainObject.useCapability(
                 'mutation',
                 function (model) {
-                    model.location = capability.getLocation();
+                    model.location = location;
                 }
             ).then(function () {
                 return capability.domainObject

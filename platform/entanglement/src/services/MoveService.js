@@ -70,13 +70,21 @@ define(
                     return linkService
                         .perform(object, parentObject)
                         .then(function (objectInNewContext) {
-                            if (!object.hasCapability('location')) {
+                            var newLocationCapability = objectInNewContext
+                                    .getCapability('location'),
+                                oldLocationCapability = object
+                                    .getCapability('location');
+                            if (!newLocationCapability ||
+                                oldLocationCapability) {
+
                                 return;
                             }
-                            if (object.getCapability('location').isOriginal()) {
-                                return objectInNewContext
-                                    .getCapability('location')
-                                    .persistLocation();
+
+
+                            if (oldLocationCapability.isOriginal()) {
+                                return newLocationCapability.setPrimaryLocation(
+                                    newLocationCapability.getLocation()
+                                );
                             }
                         })
                         .then(function () {

@@ -70,7 +70,8 @@ define(
                 });
 
                 it("can persist location", function () {
-                    var persistResult = locationCapability.persistLocation(),
+                    var persistResult = locationCapability
+                            .setPrimaryLocation('root'),
                         whenComplete = jasmine.createSpy('whenComplete');
 
                     persistResult.then(whenComplete);
