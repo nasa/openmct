@@ -63,7 +63,6 @@ define(
                 // path to new, addressed, path based on
                 // domainObject
                 $location.path(urlService.urlForLocation("browse", domainObject));
-                
             }
 
             // Callback for updating the in-scope reference to the object
@@ -126,6 +125,36 @@ define(
                     navigateTo(domainObject);
                 }
             }
+            
+            // Uses the current navigation to get the 
+            // current ContextCapability, then the
+            // parent is gotten from that. If the parent
+            // is not the root, then user is navigated to
+            // parent
+            function navigateToParent() {
+                var parent = navigationService.getNavigation().getCapability('context').getParent(),
+                    grandparent;
+                if (parent.getId() !== ROOT_ID) {
+                    grandparent = parent.getCapability('context').getParent().getId();
+                    navigateTo(parent);
+                    if (grandparent && grandparent !== ROOT_ID) {
+                        $scope.atRoot = false;
+                    } else {
+                        $scope.atRoot = true;
+                    }
+                } else {
+                    $scope.atRoot = true;
+                }
+            }
+            
+            function checkRoot() {
+                var parent = navigationService.getNavigation().getCapability('context').getParent();
+                if (parent.getId() !== ROOT_ID) {
+                    $scope.atRoot = false;
+                } else {
+                    $scope.atRoot = true;
+                }
+            }
 
             // Load the root object, put it in the scope.
             // Also, load its immediate children, and (possibly)
@@ -140,7 +169,13 @@ define(
             $scope.treeModel = {
                 selectedObject: navigationService.getNavigation()
             };
-
+            
+            // SlideMenu boolean used to hide and show
+            // tree menu
+            $scope.treeSlide = function () {
+                $scope.treeClass = !$scope.treeClass;
+            };
+            
             // Listen for changes in navigation state.
             navigationService.addListener(setNavigation);
 
@@ -151,6 +186,10 @@ define(
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);
             });
+            
+            $scope.backArrow = navigateToParent;
+            
+            $scope.checkRoot = checkRoot;
 
         }
 
