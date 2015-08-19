@@ -706,17 +706,25 @@ mct-container {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 29, ../sass/tree/_layout.scss */
-.pane.right.inactive,
+/* line 27, ../sass/tree/_layout.scss */
 .pane.left.inactive {
   visibility: hidden;
   width: 0 !important;
   min-width: 0 !important; }
 
-/* line 39, ../sass/tree/_layout.scss */
+/* line 36, ../sass/tree/_layout.scss */
+.splitter-bar.left.inactive {
+  left: 0 !important;
+  visibility: hidden; }
+
+/* line 46, ../sass/tree/_layout.scss */
+.items.pane.leftInactive {
+  left: 0 !important; }
+
+/* line 52, ../sass/tree/_layout.scss */
 .object-browse-bar {
   position: relative; }
-  /* line 42, ../sass/tree/_layout.scss */
+  /* line 55, ../sass/tree/_layout.scss */
   .object-browse-bar .left-pane-tabs {
     position: relative;
     cursor: pointer;
@@ -729,7 +737,7 @@ mct-container {
     border-radius: 2px;
     background-color: lightgrey;
     border: 1px solid grey; }
-  /* line 58, ../sass/tree/_layout.scss */
+  /* line 71, ../sass/tree/_layout.scss */
   .object-browse-bar .items-select {
     margin-left: 10px; }
 

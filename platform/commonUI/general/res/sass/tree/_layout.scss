@@ -22,16 +22,29 @@
 
 // Added by shale on 08/19/2015. Styling for the collapsible tree view. 
 
-.pane.right,
+//.pane.right,
 .pane.left {
-    //color: pink;
-    
     &.inactive {
         // Don't want visibility hidden later, because create button 
         visibility: hidden;
-        //color: aqua;
         width: 0 !important;
         min-width: 0 !important;
+    }
+}
+
+.splitter-bar.left {
+    &.inactive {
+        left: 0 !important;
+        
+        visibility: hidden;
+        //width: 0;
+    }
+}
+
+// The main view needs to align left when the panes are moving around
+.items.pane {
+    &.leftInactive {
+        left: 0 !important;
     }
 }
 
