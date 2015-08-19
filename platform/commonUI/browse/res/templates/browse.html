@@ -31,7 +31,8 @@
         
         <mct-split-pane class='contents abs'
                         anchor='left'>
-            <div class='split-pane-component treeview pane left'>
+            <div class='split-pane-component treeview pane left'
+                 ng-class='{inactive: !paneModel.pane}'>
                 
                 <mct-representation key="'create-button'"
                                     mct-object="navigatedObject">
