@@ -25,7 +25,7 @@ var itemEdit = require("../common/EditItem");
 var rightMenu = require("../common/RightMenu");
 var Drag = require("../common/drag");
 
-describe('Test Info Bubble', function() {
+describe('Info Bubble', function() {
     var fullScreenClass = new fullScreenFile();
     var createClass = new createItem();
     var editItemClass = new itemEdit();

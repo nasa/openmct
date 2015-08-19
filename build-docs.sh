@@ -24,7 +24,7 @@
 
 # Script to build and deploy docs to github pages.
 
-OUTPUT_DIRECTORY="docs"
+OUTPUT_DIRECTORY="target/docs"
 REPOSITORY_URL="git@github.com:nasa/openmctweb.git"
 
 BUILD_SHA=`git rev-parse head`
@@ -39,7 +39,7 @@ if [ -d $OUTPUT_DIRECTORY ]; then
     rm -rf $OUTPUT_DIRECTORY || exit 1
 fi
 
-npm run-script jsdoc
+npm run docs
 cd $OUTPUT_DIRECTORY || exit 1
 
 echo "git init"
