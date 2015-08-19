@@ -702,3 +702,52 @@ typeRegistry.register(new Type({
 
 * Adds some modest boilerplate.
 * Provides more opportunity to "do it wrong."
+
+## Normalize naming conventions
+
+Adopt and obey the following naming conventions for AMD modules
+(and for injectable dependencies, which may end up being modules):
+
+* Use `UpperCamelCase` for classes.
+* Use `lowerCase` names for instances.
+    * Use `someNoun` for object instances which implement some
+      interface. The noun should match the implemented interface,
+      when applicable.
+    * `useSomeVerb` for functions.
+* Use `ALL_CAPS_WITH_UNDERSCORES` for other values, including
+  "struct-like" objects (that is, where the object conceptually
+  contains properties rather than methods.)
+
+### Benefits
+
+* Once familiar with the conventions, easier to understand what
+  individual modules are.
+
+### Detriments
+
+* A little bit inflexible.
+
+## Expose no third-party APIs
+
+As a general practice, expose no third-party APIs as part of the
+platform.
+
+For cases where you do want to access third-party APIs directly
+from other scripts, this behavior should be "opt-in" instead of
+mandatory. For instance, to allow addition of Angular templates,
+an Angular-support bundle could be included which provides an
+`AngularView` class, a `controllerRegistry`, et cetera. Importantly,
+such a bundle would need to be kept separate from the platform API,
+or appropriately marked as non-platform in the API docs (an
+`@experimental` tag would be nice here if we feel like extending
+JSDoc.)
+
+### Benefits
+
+* Simplifies learning curve (only one API to learn.)
+* Reduces Angular dependency.
+* Avoids the problems of ubiquitous dependencies generally.
+
+### Detriments
+
+* Increases documentation burden.
