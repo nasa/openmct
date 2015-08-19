@@ -30,8 +30,8 @@ define(function () {
     var INITIAL_LOAD_NUMBER = 20,
         LOAD_INCREMENT = 20;
     
-    function SearchController($scope, searchService, types) {
-        // numResults is the starting amount of results to load. Will get increased. 
+    function SearchController($scope, searchService) {
+        // numResults is the amount of results to display. Will get increased. 
         // fullResults holds the most recent complete searchService response object
         var numResults = INITIAL_LOAD_NUMBER,
             fullResults = {hits: []};
@@ -46,7 +46,7 @@ define(function () {
         //   ngModel.filter, the function filter defined below 
         //   ngModel.types, an array of type objects
         //   ngModel.checked, a dictionary of which type filter options are checked 
-        //   ngModel.checkAll, a boolean of whether all of the types in ngModel.checked are checked 
+        //   ngModel.checkAll, a boolean of whether to search all types
         //   ngModel.filtersString, a string list of what filters on the results are active
         $scope.results = [];
         $scope.loading = false;
@@ -70,7 +70,7 @@ define(function () {
             } else {
                 while (newResults.length < numResults && i < hits.length) {
                     // If this is of an acceptable type, add it to the list
-                    if ($scope.ngModel.checked[hits[i].object.getModel().type] === true) {
+                    if ($scope.ngModel.checked[hits[i].object.getModel().type]) {
                         newResults.push(fullResults.hits[i]);
                     }
                     i += 1;
@@ -88,14 +88,12 @@ define(function () {
         function search(maxResults) {
             var inputText = $scope.ngModel.input;
             
-            // We are starting to load.
             if (inputText !== '' && inputText !== undefined) {
+                // We are starting to load.
                 $scope.loading = true;
-            }
-            
-            // Update whether the file tree should be displayed 
-            // Hide tree only when starting search 
-            if (inputText !== '' && inputText !== undefined) {
+                
+                // Update whether the file tree should be displayed 
+                // Hide tree only when starting search 
                 $scope.ngModel.search = true;
             }
             
@@ -106,8 +104,9 @@ define(function () {
             
             // Send the query
             searchService.query(inputText, maxResults).then(function (result) {
+                // Store all the results before splicing off the front, so that 
+                //  we can load more to display later.
                 fullResults = result;
-                //$scope.results = result.hits.slice(0, numResults);
                 $scope.results = filter(result.hits);
                 
                 // Update whether the file tree should be displayed 

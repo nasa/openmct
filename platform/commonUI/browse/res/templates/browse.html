@@ -29,12 +29,11 @@
                 <mct-representation key="'create-button'" mct-object="navigatedObject">
                 </mct-representation>
                 <div class='holder search-holder abs'
-                     ng-class="{active: treeModel.search}"
-	                >
-                    <mct-include key="'search'"
+                     ng-class="{active: treeModel.search}">
+                    <mct-representation key="'search'"
                                  mct-object="domainObject"
                                  ng-model="treeModel">
-                    </mct-include>
+                    </mct-representation>
                 </div>
                 <div class='holder tree-holder abs'
                      ng-hide="treeModel.search">

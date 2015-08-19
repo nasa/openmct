@@ -40,7 +40,7 @@ define(function () {
         $scope.ngModel.checkAll = true;
         $scope.ngModel.filtersString = '';
         
-        // On initialization, fill the scope's types with type keys
+        // On initialization, fill the model's types with type keys
         types.forEach(function (type) {
             // We only want some types, the ones that are probably human readable
             // Manually remove 'root', but not 'unknown' 
@@ -67,7 +67,7 @@ define(function () {
             
             // Update the current filters string
             $scope.ngModel.filtersString = '';
-            if ($scope.ngModel.checkAll !== true) {
+            if (!$scope.ngModel.checkAll) {
                 for (i = 0; i < $scope.ngModel.types.length; i += 1) {
                     // If the type key corresponds to a checked option...
                     if ($scope.ngModel.checked[$scope.ngModel.types[i].key]) {
@@ -94,30 +94,21 @@ define(function () {
         function checkAll() {
             var type;
 
-            // If model's checkAll has just been checked, reset everything else
-            //  to default view, and behave as if there are no filters (default)
-            if ($scope.ngModel.checkAll) {
-                // Uncheck everything else 
-                for (type in $scope.ngModel.checked) {
-                    $scope.ngModel.checked[type] = false;
-                }
-
-                // Reset filter display
-                $scope.ngModel.filtersString = '';
-
-                // Re-filter results
-                $scope.ngModel.filter();
-            } else {
-                // If model's checkAll has just been UNchecked, set filters to none
-
-                for (type in $scope.ngModel.checked) {
-                    $scope.ngModel.checked[type] = false;
-                }
-                $scope.ngModel.filtersString = 'NONE';
-
-                // Re-filter results
-                $scope.ngModel.filter();
+            // Reset all the other options to original/default position
+            for (type in $scope.ngModel.checked) {
+                $scope.ngModel.checked[type] = false;
             }
+            
+            // Change the filters string depending on checkAll status
+            if ($scope.ngModel.checkAll) {
+                // This setting will make the filters display hidden
+                $scope.ngModel.filtersString = '';
+            } else {
+                $scope.ngModel.filtersString = 'NONE';
+            }
+            
+            // Re-filter results
+            $scope.ngModel.filter();
         }
         
         return {
