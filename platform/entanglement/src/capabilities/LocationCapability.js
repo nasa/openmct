@@ -59,11 +59,10 @@ define(
         /**
          * Returns true if the domainObject is a link, false if it's an
          * original.
+         *
+         * @returns {Boolean}
          */
         LocationCapability.prototype.isLink = function () {
-            if (this.domainObject.getId() === "mine") {
-                return false;
-            }
             var model = this.domainObject.getModel();
 
             return model.location !== this.getContextualLocation();
@@ -72,14 +71,11 @@ define(
         /**
          * Returns true if the domainObject is an original, false if it's a
          * link.
+         *
+         * @returns {Boolean}
          */
         LocationCapability.prototype.isOriginal = function () {
-            if (this.domainObject.getId() === "mine") {
-                return true;
-            }
-            var model = this.domainObject.getModel();
-
-            return model.location === this.getContextualLocation();
+            return !this.isLink();
         };
 
         function createLocationCapability(domainObject) {
