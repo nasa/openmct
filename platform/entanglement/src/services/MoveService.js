@@ -75,7 +75,7 @@ define(
                                 oldLocationCapability = object
                                     .getCapability('location');
                             if (!newLocationCapability ||
-                                oldLocationCapability) {
+                                !oldLocationCapability) {
 
                                 return;
                             }

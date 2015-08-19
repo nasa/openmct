@@ -162,7 +162,8 @@ define(
                         'locationCapability',
                         [
                             'isOriginal',
-                            'setPrimaryLocation'
+                            'setPrimaryLocation',
+                            'getContextualLocation'
                         ]
                     );
 
@@ -195,13 +196,15 @@ define(
 
                 describe("when moving an original", function () {
                     beforeEach(function () {
+                        locationCapability.getContextualLocation
+                            .andReturn('new-location');
                         locationCapability.isOriginal.andReturn(true);
                         linkService.perform.mostRecentCall.promise.resolve();
                     });
 
                     it("updates location", function () {
                         expect(locationCapability.setPrimaryLocation)
-                            .toHaveBeenCalled();
+                            .toHaveBeenCalledWith('new-location');
                     });
 
                     describe("after location update", function () {
