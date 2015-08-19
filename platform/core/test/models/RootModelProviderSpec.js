@@ -79,6 +79,12 @@ define(
                 expect(captured.b.someProperty).toEqual("Some Value B");
             });
 
+            it("provides models with a location", function () {
+                provider.getModels(["a", "b"]).then(capture);
+                expect(captured.a.location).toBe('ROOT');
+                expect(captured.b.location).toBe('ROOT');
+            });
+
 
             it("does not provide models which are not in extension declarations", function () {
                 provider.getModels(["c"]).then(capture);

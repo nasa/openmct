@@ -37,6 +37,12 @@
         "controllers": [
         ],
         "capabilities": [
+            {
+                "key": "location",
+                "name": "Location Capability",
+                "description": "Provides a capability for retrieving the location of an object based upon it's context.",
+                "implementation": "capabilities/LocationCapability"
+            }
         ],
         "services": [
             {
@@ -44,7 +50,7 @@
                 "name": "Move Service",
                 "description": "Provides a service for moving objects",
                 "implementation": "services/MoveService.js",
-                "depends": ["policyService", "linkService"]
+                "depends": ["policyService", "linkService", "$q"]
             },
             {
                 "key": "linkService",

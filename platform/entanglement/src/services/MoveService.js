@@ -25,13 +25,13 @@
 define(
     function () {
         "use strict";
-
         /**
          * MoveService provides an interface for moving objects from one
          * location to another.  It also provides a method for determining if
          * an object can be copied to a specific location.
          */
-        function MoveService(policyService, linkService) {
+        function MoveService(policyService, linkService, $q) {
+
             return {
                 /**
                  * Returns `true` if `object` can be moved into
@@ -69,6 +69,25 @@ define(
                 perform: function (object, parentObject) {
                     return linkService
                         .perform(object, parentObject)
+                        .then(function (objectInNewContext) {
+                            var newLocationCapability = objectInNewContext
+                                    .getCapability('location'),
+                                oldLocationCapability = object
+                                    .getCapability('location');
+                            if (!newLocationCapability ||
+                                !oldLocationCapability) {
+
+                                return;
+                            }
+
+
+                            if (oldLocationCapability.isOriginal()) {
+                                return newLocationCapability.setPrimaryLocation(
+                                    newLocationCapability
+                                        .getContextualLocation()
+                                );
+                            }
+                        })
                         .then(function () {
                             return object
                                 .getCapability('action')
