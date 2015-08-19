@@ -141,12 +141,10 @@ define(
                 selectedObject: navigationService.getNavigation()
             };
             
-            /*
             // Provide a model for the left pane
             $scope.paneModel = {
                 selectedObject: navigationService.getNavigation()
             };
-            */
             
             // Listen for changes in navigation state.
             navigationService.addListener(setNavigation);
