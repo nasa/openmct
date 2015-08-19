@@ -36,7 +36,7 @@
                      ng-model="ngModel.input"
                      ng-keyup="controller.search()">
         </mct-control-->
-        
+
         <!-- Search icon -->
         <!-- ui symbols for search are 'd' and 'M' -->
         <div class="ui-symbol search-icon"
@@ -48,7 +48,7 @@
         <a class="ui-symbol clear-icon"
            ng-class="{content: !(ngModel.input === '' || ngModel.input === undefined)}"
            ng-click="ngModel.input = ''; controller.search()">
-            x
+	        &#xe607;
         </a>
         
         <!-- Menu icon/button 'v' -->
@@ -73,12 +73,14 @@
         
         <a class="ui-symbol clear-filters-icon"
            ng-click="ngModel.checkAll = true; menuController.checkAll()">
-            x
+            &#xe607;
         </a>
+
+	    Filtered by: {{ ngModel.filtersString }}
         
-        <div class="filter-options">
+        <!--div class="filter-options">
             Filtered by: {{ ngModel.filtersString }}
-        </div>
+        </div-->
     </div>
     
     <!-- This div exists to determine scroll bar location -->

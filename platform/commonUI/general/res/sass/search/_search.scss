@@ -20,411 +20,327 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-.search-holder {
-    $iconWidth: 20px;
-    $leftMargin: 6px;
-    $rightPadding: 5px;
-    
-    padding-right: $rightPadding;
-    top: 23px;
-    
-    // Align with the top of the divider bar, below create button 
-    margin-top: 10px;
-    
-    .search {
-        display: flex;//block;
-        flex-direction: column;
-        height: 100%;
-        
-        .search-bar {
-            $heightAdjust: 4px;
-            $textInputHeight: 19px; // This is equal to the default value, 19px
-            
-            order: 1;
-            
-            position: relative;
-            width: 100%;
-            height: $textInputHeight;
-            margin-top: $heightAdjust;
-            
-            .search-input {
-                position: relative;
-                top: -$heightAdjust;
-                width: 100%;
-                height: $textInputHeight;
-                
-                // For clear button
-                padding-right: 16px;
-                
-                // Modifications for existence of menu icon:
-                padding-right: 16px + 12px;
-                
-                // Make work for mct-control textfield
-                input {
-                    width: 100%;
-                }
-            }
-            
-            .search-icon {
-                color: $colorItemFg;
-                font-size: 12px;
-                
-                // Make the icon within the left edge of the input area
-                margin-left: 3px;
-                width: 0;
-                height: 0;
-                
-                // Line up icon with text input vertically
-                margin-top: -$textInputHeight;
-                
-                transition: visibility .15s, opacity .15s, color .2s;
-                
-                &.content {
-                    // Make icon invisible whenever there is text input 
-                    visibility: hidden;
-                    opacity: 0;
-                }
-            }
-            
-            // Make icon invisible when the text input is focused
-            .search-input:focus + div.search-icon {
-                visibility: hidden;
-                opacity: 0;
-            }
-            
-            // Make icon lighten when hovering over search bar
-            .search-input:hover + div.search-icon {
-                color: lighten($colorItemFg, 20%);
-            }
-            
-            .clear-icon {
-                position: absolute;
-                display: block;
-                
-                cursor: pointer;
-                
-                color: $colorItemFg;
-                font-size: 6px;
-                padding: 6px;
-                padding-left: 4px;
-                
-                right: 0px;
-                top: -3px;
-                
-                // Icon is visible only when there is text input 
-                visibility: hidden;
-                opacity: 0;
-                
-                transition: visibility .15s, opacity .15s, color .2s;
-                
-                &.content {
-                    visibility: visible;
-                    opacity: 1;
-                }
-                
-                &:hover {
-                    color: lighten($colorItemFg, 20%);
-                }
-                
-                // Modifications for existence of menu icon:
-                right: 3px + 6px + 6px;
-                padding-right: 4px;
-            }
-            
-            .menu-icon {
-                position: absolute;
-                display: block;
-                
-                cursor: pointer;
-                
-                color: $colorItemFg;
-                font-size: 6px;
-                padding: 6px;
-                padding-left: 3px;
-                
-                right: 0px;
-                top: -3px;
-                
-                transition: color .2s;
-                
-                &:hover {
-                    color: lighten($colorItemFg, 20%);
-                }
-            }
-             
-            .search-menu-holder {
-                float: right;
-                margin-top: $textInputHeight - 2px;
-                left: -50px;
-                
-                z-index: 9;
-                
-                transition: visibility .05s, opacity .05s;
-                
-                &.off {
-                    visibility: hidden;
-                    opacity: 0;
-                }
-                
-                .search-menu {
-                    border-top: 0;
-                    
-                    .search-menu-item {
-                        // Padding only on sides
-                        padding-top: 0;
-                        padding-bottom: 0;
-                        padding-left: 4px;
-                        padding-right: 6px;
-                        
-                        font-size: 0.8em;
-                        color: lighten($colorBodyBg, 70%);
-                        
-                        cursor: pointer;
-                        
-                        transition: background-color .13s;
-                        
-                        .search-menu-checkbox {
-                            // Vertically center
-                            margin-top: 0.3em;
-                            
-                            // Get rid of weird checkbox positioning 
-                            //   from label.checkbox.custom
-                            padding-left: 0;
-                            margin-right: 0;
-                            
-                            // Spacing with labels
-                            padding-right: 2px;
-                            
-                            // Change checkbox colors
-                            em:before {
-                                // check
-                                color: white;
-                                // box
-                                background-color: grey;
-                                
-                                // Change size 
-                                height: 12px;
-                                width: 12px;
-                                font-size: .7em;
-                            }
-                        }
-                        
-                        .search-menu-glyph {
-                            color: lighten($colorMenuIc, 5%);//lighten($colorItemFg, 35%);//$colorMenuIc;
-                        }
-                        
-                        &.special {
-                            font-weight: bold;
-                            background-color: lighten($colorBodyBg, 20%);
-                            
-                            .search-menu-label {
-                                font-size: 1.1em;
-                            }
-                            
-                            &:hover {
-                                background-color: lighten($colorBodyBg, 30%);
-                            }
-                        }
-                    }
-                }
-            }
-            
-            // Make bubble caret thing
-            .search-menu-holder:after {
-                position: absolute;
-                top: -6px;
-                left: 35px;
-                display: inline-block;
-                border-right: 6px solid transparent;
-                //border-bottom: 6px solid white;
-                border-bottom: 6px solid rgb(94, 94, 94); // Where does this color come from?
-                border-left: 6px solid transparent;
-                content: '';
-            }
-            
-            // Hovering reveals menu
-            .menu-icon:hover + div.search-menu-holder {
-                visibility: visible;
-            }
-            div.search-menu-holder:hover {
-                visibility: visible;
-            }
-        }
-        
-        .active-filter-display {
-            order: 2;
-            
-            font-size: .6em;
-            background-color: lighten($colorBodyBg, 10%);
-            border-radius: 2px;
-            border: 1px solid lighten($colorBodyBg, 5%);
-            
-            padding-left: 4px;
-            padding-right: 4px;
-            //overflow: hidden;
-            margin-top: 2px;
-            
-            .clear-filters-icon {
-                padding: 4px;
-                
-                position: relative;
-                margin-left: -4px;
-                top: 0.7em;
-                
-                cursor: pointer;
-                
-                color: $colorItemFg;
-                font-size: 6px;
-            }
-            
-            .filter-options {
-                position: relative;
-                top: -0.5em;
-                //margin-bottom: -5px;
-                
-                // Hanging indent
-                margin-left: 14px;
-                text-indent: -4px;
-            }
-            
-            // Transition looks weird when the results list has none 
-            //transition: visibility .2s, opacity .2s;
-            
-            &.off {
-                visibility: hidden;
-                opacity: 0;
-                height: 0;
-                margin: 0;
-                padding: 0;
-                border: 0;
-            }
-        }
-        
-        .search-scroll {
-            order: 3;
-            
-            //padding-right: $rightPadding;
-            margin-top: 4px;
-            
-            // Adjustable scrolling size
-            overflow-y: auto;
-            top: auto;
-            height: auto;
-            max-height: 100%;
-            position: relative;
-            
-            .results {
+.abs.search-holder {
+	//@include test(#990000);
+	height: $treeSearchInputBarH;
+	bottom: 0;
+	&.active {
+		height: auto;
+		bottom: 0;
+	}
+	//top: 23px;
 
-                .search-result-item {
-                    // Include transitions (for the highlights)
-                    @include single-transition(background-color, 0.25s);
+	// Align with the top of the divider bar, below create button
+	//margin-top: 10px; // CH comment out
+	z-index:5;
+}
 
-                    // Space the results from each other
-                    margin-bottom: 2px;
+.search {
+	$iconWidth: 20px;
+	$leftMargin: 6px;
+	$rightPadding: 5px;
 
-                    // Make the highlights the right color and shape.
-                    // Attempting to match the style in the tree, but  
-                    //   while having these be compact. 
-                    border-radius: 2px;
-                    padding-top: 4px;
-                    padding-bottom: 2px;
+	//padding-right: $rightPadding;
+	//@include test();
+	display: flex; //block;
+	flex-direction: column;
+	height: 100%;
 
-                    .label {
-                        // Give some padding away from the left side
-                        margin-left: $leftMargin;
+	.search-bar {
+		//$heightAdjust: 4px;
+		$textInputHeight: 19px; // This is equal to the default value, 19px
+		$iconEdgeM: 4px;
+		$iconD: $treeSearchInputBarH - ($iconEdgeM*2);
+		font-size: 0.8em;
 
-                        .title-label {
-                            display: inline-block;
-                            position: absolute;
+		//order: 1;
 
-                            // Give some padding away from the left side
-                            left: $leftMargin + 3px + $iconWidth;
-                            // and the right side
-                            right: $rightPadding;
+		position: relative;
+		width: 100%;
+		//height: $textInputHeight;
+		//margin-top: $heightAdjust;
+		.search-input,
+		.search-icon {
+		}
+		
+		.search-input {
+			height: $treeSearchInputBarH;
+			line-height: $treeSearchInputBarH;
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+		
+		.search-icon,
+		.clear-icon,
+		.menu-icon {
+			//@include test(#008800);
+			@include box-sizing(border-box);
+			color: $colorItemFg;
+			height: $iconD; width: $iconD;
+			line-height: $iconD;
+			position: absolute;
+			text-align: center;
+			top: $iconEdgeM;
+		}
 
-                            // Size and position the text
-                            font-size: .8em;
-                            line-height: 17px;
+		.clear-icon,
+		.menu-icon {
+			cursor: pointer;
+			transition: color .25s;
+		}
 
-                            // Hide overflow text
-                            width: auto;
-                            overflow: hidden;
-                            text-overflow: ellipsis;
-                            white-space: nowrap;
-                        }
-                    }
 
-                    // Change styling when it's selected
-                    &.selected {
-                        $c: #fff;
-                        background: $colorKeySelectedBg;
-                        color: $c;
-                        .view-control {
-                            color: $colorItemTreeIcon;
-                        }
-                        .label .type-icon {
-                            color: #fff;
-                        }
-                    }
+		.search-input {
+			position: relative;
+			width: 100%;
+			padding-left: $iconD + $interiorMargin !important;
+			padding-right: ($iconD * 2) + ($interiorMargin * 2) !important;
 
-                    // Change styling when it's being hovered over
-                    &:not(.selected) {
-                        &:hover {
-                            background: lighten($colorBodyBg, 5%);
-                            color: lighten($colorBodyFg, 20%);
-                            .context-trigger {
-                                display: block;
-                            }
-                            .icon {
-                                color: $colorItemTreeIconHover;
-                            }
-                        }
-                    }
-                }
-            }
+			// Make work for mct-control textfield
+			input {
+				width: 100%;
+			}
+		}
 
-            .load-icon {
-                position: relative;
-                &.loading {
-                    pointer-events: none;
-                    margin-left: $leftMargin;
+		.search-icon {
+			color: $colorItemFg;
+			left: $interiorMarginSm;
+			transition: visibility .15s, opacity .15s, color .2s;
+			pointer-events: none;
 
-                    .title-label {
-                        // Text styling
-                        font-style: italic;
-                        font-size: .9em;
-                        opacity: 0.5;
+			&.content {
+				// Make icon invisible whenever there is text input
+				//visibility: hidden;
+				//opacity: 0;
+			}
+		}
 
-                        // Text positioning 
-                        margin-left: $iconWidth + $leftMargin;
-                        line-height: 24px;
-                    }
-                    .wait-spinner {
-                        margin-left: $leftMargin;
-                    }
-                }
+		// Make icon invisible when the text input is focused
+		.search-input:focus + div.search-icon {
+			//visibility: hidden;
+			//opacity: 0;
+		}
 
-                &:not(.loading) {
-                    cursor: pointer;
-                }
-            }
+		// Make icon lighten when hovering over search bar
+		.search-input:hover + div.search-icon {
+			color: lighten($colorItemFg, 20%);
+		}
 
-            .load-more-button {
-                // Space away form the results list
-                margin-top: 5px;
-                margin-bottom: 5px;
+		.clear-icon {
+			right: $iconD + $interiorMargin;
 
-                // Center it
-                position: relative;
-                left: 25%;
-                width: 50%;
-                white-space: nowrap;
+			// Icon is visible only when there is text input
+			visibility: hidden;
+			opacity: 0;
 
-                // Make smallish button 
-                height: 20px;
-                line-height: 11px;
-                font-size: 0.7em;
-            }
-        }
-    }
+			transition: visibility .15s, opacity .15s, color .2s;
+
+			&.content {
+				visibility: visible;
+				opacity: 1;
+			}
+
+			&:hover {
+				color: lighten($colorItemFg, 20%);
+			}
+		}
+
+		.menu-icon {
+			font-size: 0.8em;
+			padding-right: $iconEdgeM;
+			right: $iconEdgeM;
+			text-align: right;
+
+			&:hover {
+				color: lighten($colorItemFg, 20%);
+			}
+		}
+
+		.search-menu-holder {
+			float: right;
+			//margin-top: $textInputHeight - 2px;
+			//left: -50px;
+			left: -20px;
+
+			z-index: 1;
+
+			transition: visibility .05s, opacity .05s;
+
+			&.off {
+				visibility: hidden;
+				opacity: 0;
+			}
+		}
+
+		// Hovering reveals menu
+		.menu-icon:hover + div.search-menu-holder {
+			visibility: visible;
+		}
+		div.search-menu-holder:hover {
+			visibility: visible;
+		}
+	}
+
+	.active-filter-display {
+		//order: 2;
+		$s: 0.65em;
+		$p: $interiorMargin;
+		@include border-radius($basicCr);
+		@include box-sizing(border-box);
+		line-height: 130%;
+		padding: $p 0;
+		padding-left: $s * 2.25;
+		font-size: $s;
+		//background-color: rgba(#000, 0.3);
+		//border-radius: $basicCr;
+		margin-top: $interiorMarginSm;
+
+
+		.clear-filters-icon {
+			opacity: 0.4;
+			font-size: 0.8em;
+			position: absolute;
+			left: 1px;
+			cursor: pointer;
+		}
+
+		// Transition looks weird when the results list has none
+		//transition: visibility .2s, opacity .2s;
+
+		&.off {
+			visibility: hidden;
+			opacity: 0;
+			height: 0;
+			margin: 0;
+			padding: 0;
+			border: 0;
+		}
+	}
+
+	.search-scroll {
+		order: 3;
+
+		//padding-right: $rightPadding;
+		margin-top: 4px;
+
+		// Adjustable scrolling size
+		overflow-y: auto;
+		top: auto;
+		height: auto;
+		max-height: 100%;
+		position: relative;
+
+		.results {
+
+			.search-result-item {
+				// Include transitions (for the highlights)
+				@include single-transition(background-color, 0.25s);
+
+				// Space the results from each other
+				margin-bottom: 2px;
+
+				// Make the highlights the right color and shape.
+				// Attempting to match the style in the tree, but
+				//   while having these be compact.
+				border-radius: 2px;
+				padding-top: 4px;
+				padding-bottom: 2px;
+
+				.label {
+					// Give some padding away from the left side
+					margin-left: $leftMargin;
+
+					.title-label {
+						display: inline-block;
+						position: absolute;
+
+						// Give some padding away from the left side
+						left: $leftMargin + 3px + $iconWidth;
+						// and the right side
+						right: $rightPadding;
+
+						// Size and position the text
+						font-size: .8em;
+						line-height: 17px;
+
+						// Hide overflow text
+						width: auto;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+					}
+				}
+
+				// Change styling when it's selected
+				&.selected {
+					$c: #fff;
+					background: $colorKeySelectedBg;
+					color: $c;
+					.view-control {
+						color: $colorItemTreeIcon;
+					}
+					.label .type-icon {
+						color: #fff;
+					}
+				}
+
+				// Change styling when it's being hovered over
+				&:not(.selected) {
+					&:hover {
+						background: lighten($colorBodyBg, 5%);
+						color: lighten($colorBodyFg, 20%);
+						.context-trigger {
+							display: block;
+						}
+						.icon {
+							color: $colorItemTreeIconHover;
+						}
+					}
+				}
+			}
+		}
+
+		.load-icon {
+			position: relative;
+			&.loading {
+				pointer-events: none;
+				margin-left: $leftMargin;
+
+				.title-label {
+					// Text styling
+					font-style: italic;
+					font-size: .9em;
+					opacity: 0.5;
+
+					// Text positioning
+					margin-left: $iconWidth + $leftMargin;
+					line-height: 24px;
+				}
+				.wait-spinner {
+					margin-left: $leftMargin;
+				}
+			}
+
+			&:not(.loading) {
+				cursor: pointer;
+			}
+		}
+
+		.load-more-button {
+			// Space away form the results list
+			margin-top: 5px;
+			margin-bottom: 5px;
+
+			// Center it
+			position: relative;
+			left: 25%;
+			width: 50%;
+			white-space: nowrap;
+
+			// Make smallish button
+			height: 20px;
+			line-height: 11px;
+			font-size: 0.7em;
+		}
+	}
 }
