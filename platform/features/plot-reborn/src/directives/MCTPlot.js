@@ -202,13 +202,13 @@ define(
                 }
 
                 function toggleInteractionMode(event) {
-                    if (event.keyCode === '18') { // control key.
+                    if (event.keyCode === 18) { // control key.
                         watchForDrag();
                     }
                 }
 
                 function resetInteractionMode(event) {
-                    if (event.keyCode === '18') {
+                    if (event.keyCode === 18) {
                         watchForMarquee();
                     }
                 }
