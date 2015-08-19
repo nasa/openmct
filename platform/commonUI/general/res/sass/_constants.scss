@@ -29,7 +29,7 @@ $interiorMargin: 5px;
 $interiorMarginLg: $interiorMargin * 2;
 $interiorMarginSm: 3px;
 $basicCr: 2px;
-$controlCr: 2px;
+$controlCr: 3px;
 $smallCr: 2px;
 $badgeW: 35px;
 
@@ -84,6 +84,7 @@ $tabularColorBodyBg: darken($colorBodyBg, 10%);
 $tabularColorBodyFg: lighten($tabularColorBodyBg, 40%);
 $tabularColorHeaderBg: lighten($colorBodyBg, 10%);
 $tabularColorHeaderFg: lighten($tabularColorHeaderBg, 40%);
+$tabularColorHeaderBorder: $colorBodyBg;
 
 /************************** RATIOS */
 $ltGamma: 20%;
@@ -99,6 +100,7 @@ $ueAppLogoW: 105px;
 $ueEditToolBarH: 25px;
 $ueBrowseLeftPaneW: 25%;
 $ueEditLeftPaneW: 75%;
+$treeSearchInputBarH: 25px;
 // Overlay
 $ovrTopBarH: 60px;
 $ovrFooterH: 40px;
@@ -115,9 +117,9 @@ $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
 $colorItemTreeVCHover: $colorAlt1;
 // Tabular
-$tabularHeaderH: 18px;
+$tabularHeaderH: 22px; //18px
 $tabularTdPadLR: $itemPadLR;
-$tabularTdPadTB: 2px;
+$tabularTdPadTB: 3px;
 // Imagery
 $imageMainControlBarH: 22px;
 $imageThumbsD: 120px;
@@ -141,7 +143,6 @@ $reqSymbolM: $interiorMargin * 2;
 $reqSymbolFontSize: 0.7em;
 
 /************************** CONTROLS */
-$controlCr: $basicCr;
 $controlDisabledOpacity: 0.3;
 $formLabelW: 20%;
 $formInputH: 22px;

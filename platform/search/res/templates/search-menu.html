@@ -22,15 +22,15 @@
 
 <div ng-controller="SearchMenuController as controller">
 
-    <div class="menu dropdown search-menu">
+    <div class="menu checkbox-menu">
 
         <ul>
             <!-- First element is special - it's a reset option -->
             <li class="search-menu-item special"
-                title="Select all filters."
+                title="Select all filters"
                 ng-click="ngModel.checkAll = !ngModel.checkAll; controller.checkAll()">
 
-                <label class="checkbox custom search-menu-checkbox">
+                <label class="checkbox custom no-text">
                     <input type="checkbox"
                            class="checkbox"
                            ng-model="ngModel.checkAll"
@@ -38,10 +38,10 @@
                     <em></em>
                 </label>
 
-                <span class="search-menu-label">
-                    ALL
+                <span class="ui-symbol icon type-icon">
+                    *
                 </span>
-
+				All
             </li>
 
             <!-- The filter options, by type -->
@@ -49,7 +49,7 @@
                 ng-repeat="type in ngModel.types"
                 ng-click="ngModel.checked[type.key] = !ngModel.checked[type.key]; controller.updateOptions()">
 
-                <label class="checkbox custom search-menu-checkbox">
+                <label class="checkbox custom no-text">
                     <input type="checkbox"
                            class="checkbox"
                            ng-model="ngModel.checked[type.key]"
@@ -57,14 +57,10 @@
                     <em></em>
                 </label>
 
-                <span class="ui-symbol search-menu-glyph">
+                <span class="ui-symbol icon type-icon">
                     {{ type.glyph }}
                 </span>
-
-                <span class="search-menu-label">
-                    {{ type.name }}
-                </span>
-
+				{{ type.name }}
             </li>
         </ul>
     </div>
