@@ -56,12 +56,25 @@ define(
         };
 
         LinkService.prototype.perform = function (object, parentObject) {
+            function findChild(children) {
+                var i;
+                for (i = 0; i < children.length; i += 1) {
+                    if (children[i].getId() === object.getId()) {
+                        return children[i];
+                    }
+                }
+            }
+
             return parentObject.useCapability('mutation', function (model) {
                 if (model.composition.indexOf(object.getId()) === -1) {
                     model.composition.push(object.getId());
                 }
             }).then(function () {
                 return parentObject.getCapability('persistence').persist();
+            }).then(function getObjectWithNewContext() {
+                return parentObject
+                    .useCapability('composition')
+                    .then(findChild);
             });
         };
 

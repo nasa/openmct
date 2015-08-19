@@ -69,6 +69,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*********************************************** FORM ELEMENTS */
 /*
 @mixin invokeMenu($baseColor: $colorBodyFg) {
 	$c: $baseColor;
@@ -115,9 +116,9 @@
     background-image: -moz-linear-gradient(#5e5e5e, #525252);
     background-image: -webkit-linear-gradient(#5e5e5e, #525252);
     background-image: linear-gradient(#5e5e5e, #525252);
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
@@ -255,9 +256,9 @@
       background-image: -moz-linear-gradient(#0ac2ff, #00b4f0);
       background-image: -webkit-linear-gradient(#0ac2ff, #00b4f0);
       background-image: linear-gradient(#0ac2ff, #00b4f0);
-      -moz-border-radius: 2px;
-      -webkit-border-radius: 2px;
-      border-radius: 2px;
+      -moz-border-radius: 3px;
+      -webkit-border-radius: 3px;
+      border-radius: 3px;
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box;

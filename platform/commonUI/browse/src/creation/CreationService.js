@@ -67,6 +67,12 @@ define(
             var persistence = parent.getCapability("persistence"),
                 self = this;
 
+            // Store the location of an object relative to it's parent.
+            function addLocationToModel(modelId, model, parent) {
+                model.location = parent.getId();
+                return model;
+            }
+
             // Persist the new domain object's model; it will be fully
             // constituted as a domain object when loaded back, as all
             // domain object models are.
@@ -129,10 +135,11 @@ define(
             // 2. Create a model with that ID in the persistence space
             // 3. Add that ID to
             return self.$q.when(uuid()).then(function (id) {
-                    return doPersist(persistence.getSpace(), id, model);
-                }).then(function (id) {
-                    return addToComposition(id, parent, persistence);
-                });
+                model = addLocationToModel(id, model, parent);
+                return doPersist(persistence.getSpace(), id, model);
+            }).then(function (id) {
+                return addToComposition(id, parent, persistence);
+            });
         };
 
 

@@ -50,6 +50,14 @@ define(
             // Pull out identifiers to used as ROOT's
             var ids = roots.map(function (root) { return root.id; });
 
+            // Assign an initial location to root models
+            roots.forEach(function (root) {
+                if (!root.model) {
+                    root.model = {};
+                }
+                root.model.location = 'ROOT';
+            });
+
             this.baseProvider = new StaticModelProvider(roots, $q, $log);
             this.rootModel = {
                 name: "The root object",

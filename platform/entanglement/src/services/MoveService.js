@@ -25,7 +25,6 @@
 define(
     function () {
         "use strict";
-
         /**
          * MoveService provides an interface for moving objects from one
          * location to another.  It also provides a method for determining if
@@ -64,8 +63,28 @@ define(
         };
 
         MoveService.prototype.perform = function (object, parentObject) {
+            function relocate(objectInNewContext) {
+                var newLocationCapability = objectInNewContext
+                        .getCapability('location'),
+                    oldLocationCapability = object
+                        .getCapability('location');
+
+                if (!newLocationCapability ||
+                        !oldLocationCapability) {
+                    return;
+                }
+
+                if (oldLocationCapability.isOriginal()) {
+                    return newLocationCapability.setPrimaryLocation(
+                        newLocationCapability
+                            .getContextualLocation()
+                    );
+                }
+            }
+
             return this.linkService
                 .perform(object, parentObject)
+                .then(relocate)
                 .then(function () {
                     return object
                         .getCapability('action')
