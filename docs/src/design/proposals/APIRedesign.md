@@ -486,6 +486,9 @@ can be used/subclassed which handle common behavior(s).
 * Helps clarify high-level concerns in the API (a View is now
   really more like a View in the MVC sense; although, not
   completely, so this gets double-booked as a detriment.)
+* Having a `ViewContext` that gets passed in allows views to
+  be more "contextually aware," which is something that has
+  been flagged previously as a UX desire.
 
 ### Detriments
 
@@ -585,7 +588,7 @@ Open MCT Web in subtly different configurations in the past.)
 
 ## Pass around a dependency injector
 
-Note that this is incompatible with the
+:warning: Note that this is incompatible with the
 [RequireJS as dependency injector](#requirejs-as-dependency-injector)
 proposal.
 
@@ -635,3 +638,67 @@ separately.
 
 * Possibly results in redundant effort to manage this difference
   (other APIs may need to be adjusted accordingly.)
+
+## Rename Views to Applications
+
+Rename (internally to the application, not necessarily in UI or
+in user guide) what are currently called `views` to `applications`.
+
+### Benefits
+
+* Easier to understand. What is currently called a "view" is,
+  in the MVC sense, a view-controller pair, usually with its own
+  internal model for view state. Calling these "applications"
+  would avoid this ambiguity/inconsistency.
+* Also provides an appropriate mindset for building these;
+  particularly, sets the expectation that you'll want to decompose
+  this "application" into smaller pieces. This nudges developers
+  in appropriate directions (in contrast to `views`, which
+  typically get implemented as templates with over-complicated
+  "controllers".)
+
+### Detriments
+
+* Developer terminology falls out of sync with what is used in
+  the user guide.
+
+## Provide Classes for Extensions
+
+As a general pattern, when introducing extension categories, provide
+classes with a standard implementation of these interfaces that
+plugin developers can `new` and register.
+
+For example, instead of declaring a type as:
+
+```json
+{
+  "types": [{
+    "key": "sometype",
+    "glyph": "X",
+    "etc": "..."
+  }]
+}
+```
+
+You would register one as:
+
+```js
+// Assume we have gotten a reference to a type registry somehow
+typeRegistry.register(new Type({
+    "key": "sometype",
+    "glyph": "X",
+    "etc": "..."
+}));
+```
+
+### Benefits
+
+* Easier to understand (less "magic").
+* Lends itself naturally to substitution of different implementations
+  of the same interface.
+* Allows for run-time decisions about exactly what gets registered.
+
+### Detriments
+
+* Adds some modest boilerplate.
+* Provides more opportunity to "do it wrong."
