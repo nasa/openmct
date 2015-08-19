@@ -52,8 +52,8 @@ define(
                     locationCapability = new LocationCapability(domainObject);
                 });
 
-                it("returns location", function () {
-                    expect(locationCapability.getLocation())
+                it("returns contextual location", function () {
+                    expect(locationCapability.getContextualLocation())
                         .toBe('root');
                 });
 

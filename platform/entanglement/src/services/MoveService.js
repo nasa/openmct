@@ -83,7 +83,8 @@ define(
 
                             if (oldLocationCapability.isOriginal()) {
                                 return newLocationCapability.setPrimaryLocation(
-                                    newLocationCapability.getLocation()
+                                    newLocationCapability
+                                        .getContextualLocation()
                                 );
                             }
                         })

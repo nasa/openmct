@@ -40,16 +40,17 @@ define(
         };
 
         /**
-         * Return the current location of the current domain object.  Only
+         * Returns the contextual location of the current domain object.  Only
          * valid for domain objects that have a context capability.
+         *
+         * @returns {String} the contextual location of the object; the id of
+         * its parent.
          */
-        LocationCapability.prototype.getLocation = function () {
-            var context = this.domainObject.getCapability("context"),
-                pathObjects,
-                pathIds;
+        LocationCapability.prototype.getContextualLocation = function () {
+            var context = this.domainObject.getCapability("context");
 
             if (!context) {
-                return '';
+                return;
             }
 
             return context.getParent().getId();
@@ -65,7 +66,7 @@ define(
             }
             var model = this.domainObject.getModel();
 
-            return model.location !== this.getLocation();
+            return model.location !== this.getContextualLocation();
         };
 
         /**
@@ -78,7 +79,7 @@ define(
             }
             var model = this.domainObject.getModel();
 
-            return model.location === this.getLocation();
+            return model.location === this.getContextualLocation();
         };
 
         function createLocationCapability(domainObject) {
