@@ -48,19 +48,15 @@
 			width: 100%;
 			tr {
 				td {
-					//max-width: 150px;
 					padding: 2px 0;
 					vertical-align: top;
-					//white-space: nowrap;
-					//overflow: hidden;
-					//text-overflow: ellipsis;
 					&.label {
 						padding-right: $interiorMargin * 2;
 						white-space: nowrap;
 					}
 					&.value {
-						white-space: nowrap;
-						//width: 90%;
+						//word-wrap: break-word; // Doesn't work in <td>?
+						word-break: break-all;
 					}
 					&.align-wrap {
 						white-space: normal;
@@ -118,7 +114,9 @@
 		z-index: 2;
 	}
 	&.arw-up .arw.arw-down,
-	&.arw-down .arw.arw-up { display: none; }
+	&.arw-down .arw.arw-up {
+		display: none;
+	}
 }
 
 //************************************************* LOOK AND FEEL
@@ -131,6 +129,7 @@
 		@include triangle('down', $bubbleArwSize, 1.5, $colorThumbsBubbleBg);
 	}
 }
+
 .s-infobubble {
 	$emFg: darken($colorInfoBubbleFg, 20%);
 	@include border-radius($basicCr);
@@ -142,18 +141,31 @@
 		color: $emFg;
 		font-weight: bold;
 	}
-	tr {
-		td {
-			border-top: 1px solid darken($colorInfoBubbleBg, 10%);
-			font-size: 0.9em;
-		}
-		&:first-child td {
-			border-top: none;
+	table {
+		tr {
+			td {
+				border: none;
+				border-top: 1px solid darken($colorInfoBubbleBg, 10%) !important;
+				font-size: 0.9em;
+			}
+
+			&:first-child td {
+				border-top: none !important;
+			}
 		}
 	}
+	&:first-child td {
+		border-top: none;
+	}
+
+	.label {
+		color: lighten($emFg, 30%);
+	}
+
 	.value {
 		color: $emFg;
 	}
+
 }
 
 .s-thumbsbubble {
