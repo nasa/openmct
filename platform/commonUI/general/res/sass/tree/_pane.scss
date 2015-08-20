@@ -90,51 +90,51 @@ $transitionTime: 0.35s;
     }
 }
 
-// The main view needs to align left when the panes are moving around
-.items.pane {
+// The main view needs to align left when the left pane is moving around
+.split-pane-component.secondary-split.pane.right {
     transition: left $transitionTime;
     transition-timing-function: ease-out;
     
     &.leftInactive {
         left: 0 !important;
     }
-    
-    // Move buttons close to the splitter bar 
-    .object-browse-bar {
+}
+
+// Move left tab buttons close to the left splitter bar 
+.object-browse-bar {
+    position: relative;
+
+    .left-pane-tabs {
         position: relative;
+        cursor: pointer;
 
-        .left-pane-tabs {
-            position: relative;
-            cursor: pointer;
+        left: -10px;
+        width: 11px;
+        height: 16px;
+        line-height: 16px;
+        font-size: 10px;
+        top: 3px;
 
-            left: -10px;
-            width: 11px;
-            height: 16px;
-            line-height: 16px;
-            font-size: 10px;
-            top: 3px;
+        //border-radius: 2px;
+        border-top-right-radius: 2px;
+        border-bottom-right-radius: 2px;
+        background-color: darken($colorBodyFg, 25%);
 
-            //border-radius: 2px;
-            border-top-right-radius: 2px;
-            border-bottom-right-radius: 2px;
-            background-color: darken($colorBodyFg, 25%);
+        // Change button icon depending on state
+        &.inactivePane {
+            left: -15px;
 
-            // Change button icon depending on state
-            &.inactivePane {
-                left: -15px;
-
-                &:after {
-                    content: '>';//'F';
-                }
-            }
-            &.activePane:after {
-                content: '<';
+            &:after {
+                content: '>';//'F';
             }
         }
-
-        .items-select {
-            margin-left: 10px;
+        &.activePane:after {
+            content: '<';
         }
+    }
+
+    .items-select {
+        margin-left: 10px;
     }
 }
 
