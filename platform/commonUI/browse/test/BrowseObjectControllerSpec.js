@@ -31,6 +31,7 @@ define(
             var mockScope,
                 mockLocation,
                 mockRoute,
+                mockWindow,
                 mockUnlisten,
                 controller;
 
@@ -50,6 +51,7 @@ define(
                 );
                 mockScope.ngModel = {};
                 mockRoute = { current: { params: {} } };
+                mockWindow = {};
                 mockLocation = jasmine.createSpyObj(
                     "$location",
                     [ "path", "search" ]
@@ -61,7 +63,8 @@ define(
                 controller = new BrowseObjectController(
                     mockScope,
                     mockLocation,
-                    mockRoute
+                    mockRoute,
+                    mockWindow
                 );
             });
 
