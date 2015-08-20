@@ -24,7 +24,7 @@
 
 $transitionTime: 0.35s;
 
-// Set the left pane (which contains the tree) to have no width to close 
+// Set the left pane (which contains the tree) to have no width to close
 // (not display:none because we still need to have access to the create button)
 .pane.left {
     &.inactive {

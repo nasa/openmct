@@ -5126,31 +5126,31 @@ input[type="text"] {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 30, ../sass/tree/_layout.scss */
+/* line 30, ../sass/tree/_pane.scss */
 .pane.left.inactive {
   width: 0 !important;
   min-width: 0 !important; }
 
-/* line 39, ../sass/tree/_layout.scss */
+/* line 39, ../sass/tree/_pane.scss */
 .splitter-bar.left {
   opacity: 1;
   transition: opacity 0.35s, visibility 0.35s;
   top: 0; }
-  /* line 46, ../sass/tree/_layout.scss */
+  /* line 46, ../sass/tree/_pane.scss */
   .splitter-bar.left.inactive {
     visibility: hidden;
     opacity: 0;
     transition: opacity 0s, visibility 0s; }
-    /* line 52, ../sass/tree/_layout.scss */
+    /* line 52, ../sass/tree/_pane.scss */
     .splitter-bar.left.inactive:before {
       border-width: 0; }
 
-/* line 59, ../sass/tree/_layout.scss */
+/* line 59, ../sass/tree/_pane.scss */
 .create-btn.major {
   top: 0;
   left: 0;
   transition: all 0.35s; }
-  /* line 64, ../sass/tree/_layout.scss */
+  /* line 64, ../sass/tree/_pane.scss */
   .create-btn.major.inactivePane {
     top: 0;
     left: 0;
@@ -5163,22 +5163,22 @@ input[type="text"] {
     line-height: 14px;
     left: -11px;
     top: 20px; }
-    /* line 82, ../sass/tree/_layout.scss */
+    /* line 82, ../sass/tree/_pane.scss */
     .create-btn.major.inactivePane span {
       display: none; }
 
-/* line 89, ../sass/tree/_layout.scss */
+/* line 89, ../sass/tree/_pane.scss */
 .items.pane {
   transition: left 0.35s;
   transition-timing-function: ease-out; }
-  /* line 93, ../sass/tree/_layout.scss */
+  /* line 93, ../sass/tree/_pane.scss */
   .items.pane.leftInactive {
     left: 0 !important; }
 
-/* line 99, ../sass/tree/_layout.scss */
+/* line 99, ../sass/tree/_pane.scss */
 .object-browse-bar {
   position: relative; }
-  /* line 102, ../sass/tree/_layout.scss */
+  /* line 102, ../sass/tree/_pane.scss */
   .object-browse-bar .left-pane-tabs {
     position: relative;
     cursor: pointer;
@@ -5193,9 +5193,9 @@ input[type="text"] {
     background-color: lightgrey;
     border: 1px solid grey;
     border-left-width: 0; }
-    /* line 121, ../sass/tree/_layout.scss */
+    /* line 121, ../sass/tree/_pane.scss */
     .object-browse-bar .left-pane-tabs.inactivePane {
       left: -16px; }
-  /* line 126, ../sass/tree/_layout.scss */
+  /* line 126, ../sass/tree/_pane.scss */
   .object-browse-bar .items-select {
     margin-left: 10px; }
