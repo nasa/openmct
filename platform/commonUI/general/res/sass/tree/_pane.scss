@@ -137,3 +137,9 @@ $transitionTime: 0.35s;
         }
     }
 }
+
+.splitter-bar.right {
+    // Make the splitter bar vertically span to the top
+    top: 0;
+}
+

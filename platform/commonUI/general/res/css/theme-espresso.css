@@ -5204,3 +5204,7 @@ input[type="text"] {
     /* line 135, ../sass/tree/_pane.scss */
     .items.pane .object-browse-bar .items-select {
       margin-left: 10px; }
+
+/* line 141, ../sass/tree/_pane.scss */
+.splitter-bar.right {
+  top: 0; }
