@@ -219,6 +219,10 @@
                 "key": "switcher",
                 "templateUrl": "templates/controls/switcher.html",
                 "uses": [ "view" ]
+            },
+            {
+              "key": "object-inspector",
+              "templateUrl": "templates/object-inspector.html"
             }
         ],
         "controls": [

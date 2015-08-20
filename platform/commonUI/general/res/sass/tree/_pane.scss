@@ -98,48 +98,69 @@ $transitionTime: 0.35s;
     &.leftInactive {
         left: 0 !important;
     }
-}
+    
+    .split-pane-component.items.pane {
+        right: auto;
+        
+        // Move left tab buttons close to the left splitter bar 
+        .object-browse-bar {
+            position: relative;
 
-// Move left tab buttons close to the left splitter bar 
-.object-browse-bar {
-    position: relative;
+            .left-pane-tabs {
+                position: relative;
+                cursor: pointer;
 
-    .left-pane-tabs {
-        position: relative;
-        cursor: pointer;
+                left: -10px;
+                width: 11px;
+                height: 16px;
+                line-height: 16px;
+                font-size: 10px;
+                top: 3px;
 
-        left: -10px;
-        width: 11px;
-        height: 16px;
-        line-height: 16px;
-        font-size: 10px;
-        top: 3px;
+                //border-radius: 2px;
+                border-top-right-radius: 2px;
+                border-bottom-right-radius: 2px;
+                background-color: darken($colorBodyFg, 25%);
 
-        //border-radius: 2px;
-        border-top-right-radius: 2px;
-        border-bottom-right-radius: 2px;
-        background-color: darken($colorBodyFg, 25%);
+                // Change button icon depending on state
+                &.inactivePane {
+                    left: -15px;
 
-        // Change button icon depending on state
-        &.inactivePane {
-            left: -15px;
+                    &:after {
+                        content: '>';//'F';
+                    }
+                }
+                &.activePane:after {
+                    content: '<';
+                }
+            }
 
-            &:after {
-                content: '>';//'F';
+            .items-select {
+                margin-left: 10px;
             }
         }
-        &.activePane:after {
-            content: '<';
+    }
+    
+    .splitter-bar.right {
+        // Make the splitter bar vertically span to the top
+        top: 0;
+    }
+    
+    //background-color: skyblue;
+    
+    .split-pane-component.object-inspector.pane.right {
+        //background-color: orange;
+        
+        .holder.inspector-holder {
+            min-width: 100px;
+            //background-color: purple;
+            
+            ul {
+                //color: pink;
+                li {
+                    //color: green;
+                }
+            }
         }
     }
-
-    .items-select {
-        margin-left: 10px;
-    }
 }
-
-.splitter-bar.right {
-    // Make the splitter bar vertically span to the top
-    top: 0;
-}
-
