@@ -5130,27 +5130,30 @@ input[type="text"] {
 .pane.left.inactive {
   width: 0 !important;
   min-width: 0 !important; }
+  /* line 35, ../sass/tree/_pane.scss */
+  .pane.left.inactive .tree-holder {
+    padding-right: 0; }
 
-/* line 39, ../sass/tree/_pane.scss */
+/* line 44, ../sass/tree/_pane.scss */
 .splitter-bar.left {
   opacity: 1;
   transition: opacity 0.35s, visibility 0.35s;
   top: 0; }
-  /* line 46, ../sass/tree/_pane.scss */
+  /* line 51, ../sass/tree/_pane.scss */
   .splitter-bar.left.inactive {
     visibility: hidden;
     opacity: 0;
     transition: opacity 0s, visibility 0s; }
-    /* line 52, ../sass/tree/_pane.scss */
+    /* line 57, ../sass/tree/_pane.scss */
     .splitter-bar.left.inactive:before {
       border-width: 0; }
 
-/* line 59, ../sass/tree/_pane.scss */
+/* line 64, ../sass/tree/_pane.scss */
 .create-btn.major {
   top: 0;
   left: 0;
   transition: all 0.35s; }
-  /* line 64, ../sass/tree/_pane.scss */
+  /* line 69, ../sass/tree/_pane.scss */
   .create-btn.major.inactivePane {
     top: 0;
     left: 0;
@@ -5163,22 +5166,22 @@ input[type="text"] {
     line-height: 14px;
     left: -11px;
     top: 20px; }
-    /* line 82, ../sass/tree/_pane.scss */
+    /* line 87, ../sass/tree/_pane.scss */
     .create-btn.major.inactivePane span {
       display: none; }
 
-/* line 89, ../sass/tree/_pane.scss */
+/* line 94, ../sass/tree/_pane.scss */
 .items.pane {
   transition: left 0.35s;
   transition-timing-function: ease-out; }
-  /* line 93, ../sass/tree/_pane.scss */
+  /* line 98, ../sass/tree/_pane.scss */
   .items.pane.leftInactive {
     left: 0 !important; }
 
-/* line 99, ../sass/tree/_pane.scss */
+/* line 104, ../sass/tree/_pane.scss */
 .object-browse-bar {
   position: relative; }
-  /* line 102, ../sass/tree/_pane.scss */
+  /* line 107, ../sass/tree/_pane.scss */
   .object-browse-bar .left-pane-tabs {
     position: relative;
     cursor: pointer;
@@ -5190,12 +5193,16 @@ input[type="text"] {
     top: 3px;
     border-top-right-radius: 2px;
     border-bottom-right-radius: 2px;
-    background-color: lightgrey;
-    border: 1px solid grey;
-    border-left-width: 0; }
-    /* line 121, ../sass/tree/_pane.scss */
+    background-color: #595959; }
+    /* line 124, ../sass/tree/_pane.scss */
     .object-browse-bar .left-pane-tabs.inactivePane {
-      left: -16px; }
-  /* line 126, ../sass/tree/_pane.scss */
+      left: -15px; }
+      /* line 127, ../sass/tree/_pane.scss */
+      .object-browse-bar .left-pane-tabs.inactivePane:after {
+        content: '>'; }
+    /* line 131, ../sass/tree/_pane.scss */
+    .object-browse-bar .left-pane-tabs.activePane:after {
+      content: '<'; }
+  /* line 136, ../sass/tree/_pane.scss */
   .object-browse-bar .items-select {
     margin-left: 10px; }

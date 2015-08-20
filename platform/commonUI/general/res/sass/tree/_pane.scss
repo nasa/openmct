@@ -30,6 +30,11 @@ $transitionTime: 0.35s;
     &.inactive {
         width: 0 !important;
         min-width: 0 !important;
+        
+        // Undo the tree-holder's right padding when tree closed
+        .tree-holder {
+            padding-right: 0;
+        }
     }
 }
 
@@ -113,13 +118,18 @@ $transitionTime: 0.35s;
         //border-radius: 2px;
         border-top-right-radius: 2px;
         border-bottom-right-radius: 2px;
-        background-color: lightgrey;
-        border: 1px solid grey;
-        border-left-width: 0;
+        background-color: darken($colorBodyFg, 25%);
         
-        // Move button closer 
+        // Change button icon depending on state
         &.inactivePane {
-            left: -16px;
+            left: -15px;
+            
+            &:after {
+                content: '>';//'F';
+            }
+        }
+        &.activePane:after {
+            content: '<';
         }
     }
     
