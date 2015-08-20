@@ -29,32 +29,43 @@ define(
         function MCTPinch($log, agentService) {
             
             function link($scope, element, attrs) {
-                var posPrev,
-                    evePrev;
                 
                 // Returns position of touch event
                 function trackPosition(event) {
-                    return [event.clientX, event.clientY];
+                    return {
+                        clientX: event.clientX,
+                        clientY: event.clientY
+                    };
                 }
+                
+                function calculateMidpoint(coordOne, coordTwo) {
+                    return {
+                        clientX: (coordOne.clientX + coordTwo.clientX) / 2,
+                        clientY: (coordOne.clientY + coordTwo.clientY) / 2
+                    };
+                }
+                
+                function calculateDistance(coordOne, coordTwo) {
+                    return Math.sqrt(Math.pow(coordOne.clientX - coordTwo.clientX, 2) +
+                        Math.pow(coordOne.clientY - coordTwo.clientY, 2));
+                }
+                
+                
                 
                 // On touch start the 'touch' is tracked and
                 // the event is emitted through scope
                 function pinchStart(event) {
                     if (event.changedTouches.length === 2 ||
                             event.touches.length === 2) {
-                        var touchPosition = [trackPosition(event.touches[0]),
-                                             trackPosition(event.touches[1])],
-                            touchPositionPrev = posPrev || touchPosition,
-                            eventPrev = evePrev || event;
+                        var touchPositions = [trackPosition(event.touches[0]),
+                                             trackPosition(event.touches[1])];
                         
-                        $scope.$emit('mct:pinch:start');
-                        // Set current position to be previous position 
-                        // for next touch action
-                        posPrev = touchPosition;
-                        
-                        // Set current event to be previous event 
-                        // for next touch action
-                        evePrev = event;
+                        $scope.$emit('mct:pinch:start', {
+                            touches: touchPositions,
+                            bounds: event.target.getBoundingClientRect(),
+                            midpoint: calculateMidpoint(touchPositions[0], touchPositions[1]),
+                            distance: calculateDistance(touchPositions[0], touchPositions[1])
+                        });
                         
                         // Stops other gestures/button clicks from being active
                         event.preventDefault();
@@ -66,18 +77,14 @@ define(
                 function pinchChange(event) {
                     if (event.changedTouches.length === 2) {
                         var touchPosition = [trackPosition(event.changedTouches[0]),
-                                             trackPosition(event.changedTouches[1])],
-                            touchPositionPrev = posPrev || touchPosition,
-                            eventPrev = evePrev || event;
+                                             trackPosition(event.changedTouches[1])];
                         
-                        $scope.$emit('mct:pinch:change');
-                        // Set current position to be previous position 
-                        // for next touch action
-                        posPrev = touchPosition;
-                        
-                        // Set current event to be previous event 
-                        // for next touch action
-                        evePrev = event;
+                        $scope.$emit('mct:pinch:change', {
+                            touches: touchPosition,
+                            bounds: event.target.getBoundingClientRect(),
+                            midpoint: calculateMidpoint(touchPosition[0], touchPosition[1]),
+                            distance: calculateDistance(touchPosition[0], touchPosition[1])
+                        });
                         
                         // Stops other gestures/button clicks from being active
                         event.preventDefault();
@@ -87,10 +94,10 @@ define(
                 // On the 'touchend' or 'touchcancel' the event
                 // is emitted through scope
                 function pinchEnd(event) {
-                        $scope.$emit('mct:pinch:end');
-                        
-                        // Stops other gestures/button clicks from being active
-                        event.preventDefault();
+                    $scope.$emit('mct:pinch:end');
+
+                    // Stops other gestures/button clicks from being active
+                    event.preventDefault();
                 }
                 
                 if (agentService.isMobile(navigator.userAgent)) {

@@ -39,16 +39,18 @@ define(
                     };
                 }
 
-
                 var dragStart,
                     marqueeBox = {},
                     marqueeRect, // Set when exists.
                     chartElementBounds,
+                    firstTouches,
+                    firstTouchDistance,
+                    firstTouchPan,
                     $canvas = $element.find('canvas');
 
                 function updateAxesForCurrentViewport() {
                     // Update axes definitions for current viewport.
-                    ['domain', 'range'].forEach(function(axisName) {
+                    ['domain', 'range'].forEach(function (axisName) {
                         var axis = $scope.axes[axisName],
                             firstTick = $scope.viewport.topLeft[axisName],
                             lastTick = $scope.viewport.bottomRight[axisName],
@@ -60,7 +62,7 @@ define(
                         // Yes, ticksize is negative for domain and positive for range.
                         // It's because ticks are generated/displayed top to bottom and left to right.
                         axis.ticks = [];
-                        for (tickNumber = 0; tickNumber < axis.tickCount; tickNumber++) {
+                        for (tickNumber = 0; tickNumber < axis.tickCount; tickNumber = tickNumber + 1) {
                             tickIncrement = (axisSize * (tickNumber / denominator));
                             tickValue = firstTick - tickIncrement;
                             axis.ticks.push(
@@ -147,6 +149,32 @@ define(
                     dragStart = undefined;
                     $scope.$emit('user:viewport:change:end', $scope.viewport);
                 }
+                
+                function trackTouchPosition(touchPosition, bounds) {
+                    var positionOverElement,
+                        positionAsPlotPoint,
+                        position;
+                    
+                    chartElementBounds = bounds;
+                    
+                    positionOverElement = {
+                        x: touchPosition.clientX - bounds.left,
+                        y: touchPosition.clientY - bounds.top
+                    };
+                    
+                    positionAsPlotPoint = utils.elementPositionAsPlotPosition(
+                        positionOverElement,
+                        bounds,
+                        $scope.viewport
+                    );
+
+                    position = {
+                        positionOverElement: positionOverElement,
+                        positionAsPlotPoint: positionAsPlotPoint
+                    };
+                    
+                    return position;
+                }
 
                 function trackMousePosition($event) {
                     // Calculate coordinates of mouse related to canvas and as
@@ -158,6 +186,7 @@ define(
 
                     chartElementBounds = bounds;
 
+                    
                     positionOverElement = {
                         x: $event.clientX - bounds.left,
                         y: $event.clientY - bounds.top
@@ -202,13 +231,13 @@ define(
                 }
 
                 function toggleInteractionMode(event) {
-                    if (event.keyCode === '18') { // control key.
+                    if (event.keyCode === 16) { // shift key.
                         watchForDrag();
                     }
                 }
 
                 function resetInteractionMode(event) {
-                    if (event.keyCode === '18') {
+                    if (event.keyCode === 16) {
                         watchForMarquee();
                     }
                 }
@@ -241,11 +270,61 @@ define(
                     // TODO: Discuss whether marqueeBox start should be fixed to data or fixed to canvas element, especially when "isLive is true".
                     updateAxesForCurrentViewport();
                 }
+                
+                function calculateDistanceChange(startDist, currDist) {
+                    return startDist / currDist;
+                }
+                
+                function updateZoom(midpoint, bounds, touches, distance) {
+                    // calculate offset between points.  Apply that offset to viewport.
+                    var midpointPosition = trackTouchPosition(midpoint, bounds),
+                        newPosition = midpointPosition.positionAsPlotPoint,
+                        dDomain = firstTouchPan.domain - newPosition.domain,
+                        dRange = firstTouchPan.range - newPosition.range;
+                    
+                    
+                    $scope.viewport = {
+                        topLeft: {
+                            domain: $scope.viewport.topLeft.domain + dDomain,
+                            range: $scope.viewport.topLeft.range + dRange
+                        },
+                        bottomRight: {
+                            domain: $scope.viewport.bottomRight.domain + dDomain,
+                            range: $scope.viewport.bottomRight.range + dRange
+                        }
+                    };
+                }
+                
+                function startZoom(midpoint, bounds, touches, distance) {
+                    $scope.$emit('user:viewport:change:start');
+                    firstTouches = touches;
+                    firstTouchDistance = distance;
+                    firstTouchPan = trackTouchPosition(midpoint, bounds).positionAsPlotPoint;
+                }
+                
+                function endZoom() {
+                    $scope.$emit('user:viewport:change:end', $scope.viewport);
+                }
+                
+                function onPinchStart(event, touch) {
+                    startZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
+                }
+
+                function onPinchChange(event, touch) {
+                    updateZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
+                }
+
+                function onPinchEnd(event) {
+                    endZoom();
+                }
 
                 $scope.$watchCollection('viewport', onViewportChange);
-
+                
+                $scope.$on('mct:pinch:start', onPinchStart);
+                $scope.$on('mct:pinch:change', onPinchChange);
+                $scope.$on('mct:pinch:end', onPinchEnd);
+                
                 $scope.$on('$destroy', stopWatching);
-
             }
 
             return {

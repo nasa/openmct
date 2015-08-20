@@ -187,20 +187,16 @@
 }
 
 .mobile-back-hide {
-    @include phoneandtablet {
         pointer-events: none;
         @include trans-prop-nice(opacity, .4s);
         opacity: 0;
-    }
 }
 
 // Hides objects on phone and tablet
 .mobile-back-unhide {
-    @include phoneandtablet {
         pointer-events: all;
         @include trans-prop-nice(opacity, .4s);
         opacity: 1;
-    }
 }
 
 // Hides objects only on the phone
