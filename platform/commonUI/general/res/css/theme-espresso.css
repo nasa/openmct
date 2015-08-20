@@ -92,7 +92,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../.rvm/gems/ruby-2.2.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -113,38 +113,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../.rvm/gems/ruby-2.2.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../.rvm/gems/ruby-2.2.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../.rvm/gems/ruby-2.2.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../.rvm/gems/ruby-2.2.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../.rvm/gems/ruby-2.2.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../.rvm/gems/ruby-2.2.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../.rvm/gems/ruby-2.2.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../.rvm/gems/ruby-2.2.1/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -172,11 +172,11 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*********************************************** FORM ELEMENTS */
 /*
 @mixin invokeMenu($baseColor: $colorBodyFg) {
-    $c: $baseColor;
-    color: $c;
-    &:hover {
-        color: lighten($c, $ltGamma);
-    }
+	$c: $baseColor;
+	color: $c;
+	&:hover {
+		color: lighten($c, $ltGamma);
+	}
 }
 */
 /*****************************************************************************
@@ -1049,27 +1049,27 @@ mct-container {
 
 /*.s-limit-upr,
 .s-limit-lwr {
-    $a: 0.5;
-    $l: 30%;
-    white-space: nowrap;
-    &:before {
-        display: inline-block;
-        font-family: symbolsfont;
-        font-size: 0.85em;
-        font-style: normal !important;
-        margin-right: $interiorMarginSm;
-        vertical-align: middle;
-    }
+	$a: 0.5;
+	$l: 30%;
+	white-space: nowrap;
+	&:before {
+		display: inline-block;
+		font-family: symbolsfont;
+		font-size: 0.85em;
+		font-style: normal !important;
+		margin-right: $interiorMarginSm;
+		vertical-align: middle;
+	}
 }
 
 .s-limit-upr {
-    &.s-limit-yellow { @include limit($colorLimitYellow, "\0000ed"); }
-    &.s-limit-red { @include limit($colorLimitRed, "\0000eb"); }
+	&.s-limit-yellow { @include limit($colorLimitYellow, "\0000ed"); }
+	&.s-limit-red { @include limit($colorLimitRed, "\0000eb"); }
 }
 
 .s-limit-lwr {
-    &.s-limit-yellow { @include limit($colorLimitYellow, "\0000ec"); }
-    &.s-limit-red { @include limit($colorLimitRed, "\0000ee"); }
+	&.s-limit-yellow { @include limit($colorLimitYellow, "\0000ec"); }
+	&.s-limit-red { @include limit($colorLimitRed, "\0000ee"); }
 }*/
 /* line 35, ../sass/_limits.scss */
 [class*="s-limit"] {
@@ -1237,29 +1237,32 @@ table {
       table .tr .th:first-child {
         border-left: none; }
       /* line 85, ../sass/lists/_tabular.scss */
-      .tabular tr th.sort .icon-sorting:before, .tabular tr .th.sort .icon-sorting:before, .tabular .tr th.sort .icon-sorting:before, .tabular .tr .th.sort .icon-sorting:before,
-      table tr th.sort .icon-sorting:before,
-      table tr .th.sort .icon-sorting:before,
-      table .tr th.sort .icon-sorting:before,
-      table .tr .th.sort .icon-sorting:before {
-        display: inline-block;
+      .tabular tr th.sort.sort:after, .tabular tr .th.sort.sort:after, .tabular .tr th.sort.sort:after, .tabular .tr .th.sort.sort:after,
+      table tr th.sort.sort:after,
+      table tr .th.sort.sort:after,
+      table .tr th.sort.sort:after,
+      table .tr .th.sort.sort:after {
+        color: #49dedb;
         font-family: symbolsfont;
-        margin-left: 5px; }
-      /* line 90, ../sass/lists/_tabular.scss */
-      .tabular tr th.sort.asc .icon-sorting:before, .tabular tr .th.sort.asc .icon-sorting:before, .tabular .tr th.sort.asc .icon-sorting:before, .tabular .tr .th.sort.asc .icon-sorting:before,
-      table tr th.sort.asc .icon-sorting:before,
-      table tr .th.sort.asc .icon-sorting:before,
-      table .tr th.sort.asc .icon-sorting:before,
-      table .tr .th.sort.asc .icon-sorting:before {
-        content: '0'; }
+        font-size: 8px;
+        content: "\ed";
+        display: inline-block;
+        margin-left: 3px; }
       /* line 93, ../sass/lists/_tabular.scss */
-      .tabular tr th.sort.desc .icon-sorting:before, .tabular tr .th.sort.desc .icon-sorting:before, .tabular .tr th.sort.desc .icon-sorting:before, .tabular .tr .th.sort.desc .icon-sorting:before,
-      table tr th.sort.desc .icon-sorting:before,
-      table tr .th.sort.desc .icon-sorting:before,
-      table .tr th.sort.desc .icon-sorting:before,
-      table .tr .th.sort.desc .icon-sorting:before {
-        content: '1'; }
-    /* line 98, ../sass/lists/_tabular.scss */
+      .tabular tr th.sort.sort.desc:after, .tabular tr .th.sort.sort.desc:after, .tabular .tr th.sort.sort.desc:after, .tabular .tr .th.sort.sort.desc:after,
+      table tr th.sort.sort.desc:after,
+      table tr .th.sort.sort.desc:after,
+      table .tr th.sort.sort.desc:after,
+      table .tr .th.sort.sort.desc:after {
+        content: "\ec"; }
+      /* line 97, ../sass/lists/_tabular.scss */
+      .tabular tr th.sortable, .tabular tr .th.sortable, .tabular .tr th.sortable, .tabular .tr .th.sortable,
+      table tr th.sortable,
+      table tr .th.sortable,
+      table .tr th.sortable,
+      table .tr .th.sortable {
+        cursor: pointer; }
+    /* line 101, ../sass/lists/_tabular.scss */
     .tabular tr td, .tabular tr .td, .tabular .tr td, .tabular .tr .td,
     table tr td,
     table tr .td,
@@ -1271,21 +1274,21 @@ table {
       padding: 3px 5px;
       word-wrap: break-word;
       vertical-align: top; }
-      /* line 105, ../sass/lists/_tabular.scss */
+      /* line 108, ../sass/lists/_tabular.scss */
       .tabular tr td.numeric, .tabular tr .td.numeric, .tabular .tr td.numeric, .tabular .tr .td.numeric,
       table tr td.numeric,
       table tr .td.numeric,
       table .tr td.numeric,
       table .tr .td.numeric {
         text-align: right; }
-      /* line 108, ../sass/lists/_tabular.scss */
+      /* line 111, ../sass/lists/_tabular.scss */
       .tabular tr td.s-cell-type-value, .tabular tr .td.s-cell-type-value, .tabular .tr td.s-cell-type-value, .tabular .tr .td.s-cell-type-value,
       table tr td.s-cell-type-value,
       table tr .td.s-cell-type-value,
       table .tr td.s-cell-type-value,
       table .tr .td.s-cell-type-value {
         text-align: right; }
-        /* line 110, ../sass/lists/_tabular.scss */
+        /* line 113, ../sass/lists/_tabular.scss */
         .tabular tr td.s-cell-type-value .l-cell-contents, .tabular tr .td.s-cell-type-value .l-cell-contents, .tabular .tr td.s-cell-type-value .l-cell-contents, .tabular .tr .td.s-cell-type-value .l-cell-contents,
         table tr td.s-cell-type-value .l-cell-contents,
         table tr .td.s-cell-type-value .l-cell-contents,
@@ -1296,23 +1299,23 @@ table {
           border-radius: 2px;
           padding-left: 5px;
           padding-right: 5px; }
-  /* line 126, ../sass/lists/_tabular.scss */
+  /* line 129, ../sass/lists/_tabular.scss */
   .tabular.filterable tbody, .tabular.filterable .tbody,
   table.filterable tbody,
   table.filterable .tbody {
     top: 44px; }
-  /* line 129, ../sass/lists/_tabular.scss */
+  /* line 132, ../sass/lists/_tabular.scss */
   .tabular.filterable input[type="text"],
   table.filterable input[type="text"] {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%; }
-  /* line 135, ../sass/lists/_tabular.scss */
+  /* line 138, ../sass/lists/_tabular.scss */
   .tabular.fixed-header,
   table.fixed-header {
     height: 100%; }
-    /* line 137, ../sass/lists/_tabular.scss */
+    /* line 140, ../sass/lists/_tabular.scss */
     .tabular.fixed-header thead, .tabular.fixed-header .thead,
     .tabular.fixed-header tbody tr, .tabular.fixed-header .tbody .tr,
     table.fixed-header thead,
@@ -1321,12 +1324,12 @@ table {
     table.fixed-header .tbody .tr {
       display: table;
       table-layout: fixed; }
-    /* line 142, ../sass/lists/_tabular.scss */
+    /* line 145, ../sass/lists/_tabular.scss */
     .tabular.fixed-header thead, .tabular.fixed-header .thead,
     table.fixed-header thead,
     table.fixed-header .thead {
       width: calc(100% - 10px); }
-      /* line 144, ../sass/lists/_tabular.scss */
+      /* line 147, ../sass/lists/_tabular.scss */
       .tabular.fixed-header thead:before, .tabular.fixed-header .thead:before,
       table.fixed-header thead:before,
       table.fixed-header .thead:before {
@@ -1337,7 +1340,7 @@ table {
         width: 100%;
         height: 22px;
         background: rgba(255, 255, 255, 0.15); }
-    /* line 154, ../sass/lists/_tabular.scss */
+    /* line 157, ../sass/lists/_tabular.scss */
     .tabular.fixed-header tbody, .tabular.fixed-header .tbody,
     table.fixed-header tbody,
     table.fixed-header .tbody {
@@ -1352,7 +1355,7 @@ table {
       top: 22px;
       display: block;
       overflow-y: scroll; }
-  /* line 162, ../sass/lists/_tabular.scss */
+  /* line 165, ../sass/lists/_tabular.scss */
   .tabular.t-event-messages td, .tabular.t-event-messages .td,
   table.t-event-messages td,
   table.t-event-messages .td {
@@ -1772,11 +1775,11 @@ table {
   /* line 132, ../sass/controls/_buttons.scss */
   .icon-btn.pause-play,
   .s-icon-btn.pause-play {
-    /*        &.paused {
-                .icon {
-                    @include pulse(500ms);
-                }
-            }*/ }
+    /*		&.paused {
+    			.icon {
+    				@include pulse(500ms);
+    			}
+    		}*/ }
     /* line 138, ../sass/controls/_buttons.scss */
     .icon-btn.pause-play .icon:before,
     .s-icon-btn.pause-play .icon:before {
@@ -1899,32 +1902,32 @@ a.l-btn span {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*.control {
-    // UNUSED?
-    &.view-control {
-        .icon {
-            display: inline-block;
-            margin: -1px 5px 1px 2px;
-            vertical-align: middle;
-            &.triangle-down {
-                margin: 2px 2px -2px 0px;
-            }
-        }
+	// UNUSED?
+	&.view-control {
+		.icon {
+			display: inline-block;
+			margin: -1px 5px 1px 2px;
+			vertical-align: middle;
+			&.triangle-down {
+				margin: 2px 2px -2px 0px;
+			}
+		}
 
-        .label {
-            display: inline-block;
-            font-size: 11px;
-            vertical-align: middle;
-        }
+		.label {
+			display: inline-block;
+			font-size: 11px;
+			vertical-align: middle;
+		}
 
-        .toggle {
-            @include border-radius(3px);
-            display: inline-block;
-            padding: 1px 6px 4px 4px;
-            &:hover {
-                background: rgba(white, 0.1);
-            }
-        }
-    }
+		.toggle {
+			@include border-radius(3px);
+			display: inline-block;
+			padding: 1px 6px 4px 4px;
+			&:hover {
+				background: rgba(white, 0.1);
+			}
+		}
+	}
 }*/
 /* line 51, ../sass/controls/_controls.scss */
 .accordion {
@@ -2161,23 +2164,23 @@ label.checkbox.custom {
   border-top: 1px solid #575757;
   color: #999;
   display: inline-block;
-  /*    height: $h;
-      line-height: $h;
-      &.dropdown {
-          padding-left: $p;
-          padding-right: $p;
-      }*/
-  /*    &.context-available {
-          // An element like the invoke-menu triangle;
-          // Indicates that this element has a dropdown menu available;
-          // Currently unused
-          $c: $colorKey;
-          color: $c;
-          padding: 0 5px;
-          &:hover {
-              color: lighten($c, 10%);
-          }
-      }*/ }
+  /*	height: $h;
+  	line-height: $h;
+  	&.dropdown {
+  		padding-left: $p;
+  		padding-right: $p;
+  	}*/
+  /*	&.context-available {
+  		// An element like the invoke-menu triangle;
+  		// Indicates that this element has a dropdown menu available;
+  		// Currently unused
+  		$c: $colorKey;
+  		color: $c;
+  		padding: 0 5px;
+  		&:hover {
+  			color: lighten($c, 10%);
+  		}
+  	}*/ }
   /* line 162, ../sass/_mixins.scss */
   .btn-menu:not(.disabled):hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzYzNjM2MyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU3NTc1NyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
