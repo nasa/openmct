@@ -68,10 +68,6 @@ define(
             
             $scope.$watch('domainObject', setViewForDomainObject);
             $scope.$watch('representation.selected.key', updateQueryParam);
-            
-            $scope.log = function (c) {
-                console.log(c);
-            };
         }
 
         return BrowseObjectController;
