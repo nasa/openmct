@@ -22,28 +22,30 @@
 
 // Added by shale on 08/19/2015. Styling for the collapsible tree view. 
 
-$transitionTime: 0.25s;
+$transitionTime: 0.35s;
 
-//.pane.right,
+// Set the left pane (which contains the tree) to have no width to close 
+// (not display:none because we still need to have access to the create button)
 .pane.left {
-    transition: width $transitionTime;
-    
     &.inactive {
         width: 0 !important;
         min-width: 0 !important;
     }
 }
 
+// Hide the splitter bar when the left pane is closed
+// Fade the splitter bar in when opening menu, but immediately fade
+//   out when closing menu 
 .splitter-bar.left {
     opacity: 1;
-    transition: left $transitionTime, opacity $transitionTime, visibility $transitionTime;
+    
+    transition: opacity $transitionTime, visibility $transitionTime;
     
     &.inactive {
-        left: 0 !important;
-        //display: none;
         visibility: hidden;
         opacity: 0;
-        width: 0;
+        
+        transition: opacity 0s, visibility 0s;
         
         &:before {
             border-width: 0;
@@ -84,6 +86,7 @@ $transitionTime: 0.25s;
 // The main view needs to align left when the panes are moving around
 .items.pane {
     transition: left $transitionTime;
+    transition-timing-function: ease-out;
     
     &.leftInactive {
         left: 0 !important;
