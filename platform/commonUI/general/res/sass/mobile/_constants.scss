@@ -21,11 +21,12 @@
  *****************************************************************************/
 
 /************************** MOBILE REPRESENTATION ITEMS DIMENSIONS */
-$mobile-listIcon: 30px;
+$mobileListIconSize: 30px;
+$mobileTitleDescH: 35px;
 $mobile-listRight: 10px;
 
-$phone-itemHeight: $ueBrowseGridItemLg/4;
-$tablet-itemHeight: $ueBrowseGridItemLg/3;
+$phoneItemH: floor($ueBrowseGridItemLg/4);
+$tabletItemH: floor($ueBrowseGridItemLg/3);
 
 /************************** MOBILE TREE MENU DIMENSIONS */
 $mobile-treeHeight: 38px;
