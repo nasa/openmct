@@ -152,7 +152,7 @@
 ul.tree {
   margin: 0;
   padding: 0; }
-  /* line 309, ../sass/_mixins.scss */
+  /* line 314, ../sass/_mixins.scss */
   ul.tree li {
     list-style-type: none;
     margin: 0;
@@ -200,25 +200,23 @@ ul.tree {
         left: 15px; }
         /* line 60, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item .label .type-icon {
-          overflow: false;
-          position: absolute;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          left: 0;
-          width: auto;
-          height: auto;
           text-shadow: rgba(0, 0, 0, 0.6) 0 1px 2px;
+          font-size: 16px;
           color: #0099cc;
           left: 5px;
+          position: absolute;
+          top: 4px !important;
+          bottom: auto;
+          height: 16px;
+          line-height: 100%;
           right: auto;
-          width: 1em; }
-          /* line 68, ../sass/tree/_tree.scss */
+          width: 16px; }
+          /* line 73, ../sass/tree/_tree.scss */
           ul.tree li span.tree-item .label .type-icon .icon.l-icon-link, ul.tree li span.tree-item .label .type-icon .icon.l-icon-alert {
             text-shadow: black 0 1px 2px;
             position: absolute;
             z-index: 2; }
-          /* line 74, ../sass/tree/_tree.scss */
+          /* line 79, ../sass/tree/_tree.scss */
           ul.tree li span.tree-item .label .type-icon .icon.l-icon-alert {
             color: #ff3c00;
             font-size: 8px;
@@ -227,7 +225,7 @@ ul.tree {
             width: 8px;
             top: 1px;
             right: -2px; }
-          /* line 80, ../sass/tree/_tree.scss */
+          /* line 85, ../sass/tree/_tree.scss */
           ul.tree li span.tree-item .label .type-icon .icon.l-icon-link {
             color: #49dedb;
             font-size: 8px;
@@ -235,8 +233,8 @@ ul.tree {
             height: 8px;
             width: 8px;
             left: -3px;
-            bottom: 5px; }
-        /* line 89, ../sass/tree/_tree.scss */
+            bottom: 0px; }
+        /* line 93, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item .label .title-label {
           overflow: hidden;
           position: absolute;
@@ -251,53 +249,53 @@ ul.tree {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap; }
-      /* line 100, ../sass/tree/_tree.scss */
+      /* line 104, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item.loading {
         pointer-events: none; }
-        /* line 102, ../sass/tree/_tree.scss */
+        /* line 106, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item.loading .label {
           opacity: 0.5; }
-          /* line 104, ../sass/tree/_tree.scss */
+          /* line 108, ../sass/tree/_tree.scss */
           ul.tree li span.tree-item.loading .label .title-label {
             font-style: italic; }
-        /* line 108, ../sass/tree/_tree.scss */
+        /* line 112, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item.loading .wait-spinner {
           margin-left: 14px; }
-      /* line 113, ../sass/tree/_tree.scss */
+      /* line 117, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item.selected {
         background: #005177;
         color: #fff; }
-        /* line 117, ../sass/tree/_tree.scss */
+        /* line 121, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item.selected .view-control {
           color: #0099cc; }
-        /* line 120, ../sass/tree/_tree.scss */
+        /* line 124, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item.selected .label .type-icon {
           color: #fff; }
       @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-        /* line 128, ../sass/tree/_tree.scss */
+        /* line 132, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item:not(.selected):hover {
           background: #404040;
           color: #cccccc; }
-          /* line 131, ../sass/tree/_tree.scss */
+          /* line 135, ../sass/tree/_tree.scss */
           ul.tree li span.tree-item:not(.selected):hover .context-trigger {
             display: block; }
-          /* line 134, ../sass/tree/_tree.scss */
+          /* line 138, ../sass/tree/_tree.scss */
           ul.tree li span.tree-item:not(.selected):hover .icon {
             color: #33ccff; } }
-      /* line 141, ../sass/tree/_tree.scss */
+      /* line 145, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item:not(.loading) {
         cursor: pointer; }
-      /* line 145, ../sass/tree/_tree.scss */
+      /* line 149, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item .context-trigger {
         top: -1px;
         position: absolute;
         right: 3px; }
-        /* line 151, ../sass/tree/_tree.scss */
+        /* line 155, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item .context-trigger .invoke-menu {
           font-size: 0.75em;
           height: 0.9rem;
           line-height: 0.9rem; }
-  /* line 160, ../sass/tree/_tree.scss */
+  /* line 164, ../sass/tree/_tree.scss */
   ul.tree ul.tree {
     margin-left: 15px; }
 
@@ -327,7 +325,7 @@ ul.tree {
   ul.tree {
     margin: 0;
     padding: 0; }
-    /* line 309, ../sass/_mixins.scss */
+    /* line 314, ../sass/_mixins.scss */
     ul.tree li {
       list-style-type: none;
       margin: 0;

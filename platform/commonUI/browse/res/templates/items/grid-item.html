@@ -20,26 +20,21 @@
  at runtime from the About dialog for additional information.
 -->
 <!-- For selected, add class 'selected' to outer div -->
-<div class='item grid-item'>
-    <div class="contents abs mobile-grid-nav" ng-click='action.perform("navigate")'>
+<div class='item grid-item' ng-click='action.perform("navigate")'>
+    <div class='contents abs'>
         <div class='top-bar bar abs'>
-            <div class='left abs'>
-                <mct-include key="_checkbox"></mct-include>
-            </div>
-            <div class='right abs mobile-right'>
-                <div class='ui-symbol icon alert hidden' onclick="alert('Not yet functional. When this is visible, it means that this object needs to be updated. Clicking will allow that action via a dialog.');">!</div>
-                <div class='ui-symbol icon profile' title="Shared">P</div>
-            </div>
+            <div class='ui-symbol profile' title='Shared'>&#x4f;</div>
+            <!--mct-representation class="desktop-hide" key="'info-button'" mct-object="domainObject"></mct-representation-->
         </div>
         <div class='item-main abs'>
             <div class='ui-symbol icon lg item-type'>
                 {{type.getGlyph()}}
                 <span
-                    class="ui-symbol icon l-icon-link" title="This object is a link"
+                    class="ui-symbol l-icon-link" title="This object is a link"
                     ng-show="location.isLink()"
                     ></span>
             </div>
-            <div class='ui-symbol icon abs item-open'>}</div>
+            <div class='ui-symbol abs item-open'>}</div>
         </div>
         <div class='bottom-bar bar abs'>
             <div class='title'>{{model.name}}</div>
@@ -47,10 +42,10 @@
                 <span ng-show="model.composition !== undefined">
                     {{model.composition.length}} Items
                 </span>
+                <span ng-show="model.composition == undefined">
+                    {{model.name}}
+                </span>
             </div>
         </div>
-    </div>
-    <div class="contents abs mobile-info desktop-hide">
-        <mct-representation class="contents abs btn s-very-subtle desktop-hide" key="'info-button'" mct-object="domainObject"></mct-representation>
     </div>
 </div>

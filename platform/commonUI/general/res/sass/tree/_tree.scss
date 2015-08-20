@@ -58,11 +58,16 @@ ul.tree {
 				left: $runningItemW;
 
 				.type-icon {
-					@include absPosDefault(0, false);
+					//@include absPosDefault(0, false);
+					$d: 16px; // 16px is crisp size
 					@include txtShdwSubtle(0.6);
+					font-size: $d;
 					color: $colorItemTreeIcon;
 					left: $interiorMargin;
-                    right: auto; width: 1em;
+					position: absolute;
+					@include verticalCenterBlock($menuLineHPx, $d);
+					line-height: 100%;
+                    right: auto; width: $d;
 
 					.icon {
 						&.l-icon-link,
@@ -81,8 +86,7 @@ ul.tree {
 							$d: 8px;
 							@include ancillaryIcon($d, $colorIconLink);
 							left: -3px;
-							bottom: 5px;
-
+							bottom: 0px;
 						}
 					}
 				}

@@ -194,7 +194,6 @@
 label.checkbox.custom {
 	$bg: lighten($colorBodyBg, $ltGamma);
 	$d: $formRowCtrlsH;
-	//	@include vertical-align();
 	cursor: pointer;
 	display: inline-block;
 	line-height: $d;
