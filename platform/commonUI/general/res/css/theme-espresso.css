@@ -728,16 +728,18 @@ mct-container {
   .object-browse-bar .left-pane-tabs {
     position: relative;
     cursor: pointer;
-    left: -12px;
-    width: 14px;
-    height: 20px;
-    line-height: 20px;
-    font-size: 12px;
-    top: 1px;
-    border-radius: 2px;
+    left: -10px;
+    width: 11px;
+    height: 16px;
+    line-height: 16px;
+    font-size: 10px;
+    top: 3px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
     background-color: lightgrey;
-    border: 1px solid grey; }
-  /* line 71, ../sass/tree/_layout.scss */
+    border: 1px solid grey;
+    border-left-width: 0; }
+  /* line 74, ../sass/tree/_layout.scss */
   .object-browse-bar .items-select {
     margin-left: 10px; }
 
