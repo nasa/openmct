@@ -784,3 +784,36 @@ SomeAction.prototype.perform = function (actionContext) {
 
 * Requires refactoring of various types; may result in some
   awkward APIs or extra factory interfaces.
+
+## Remove capability delegation
+
+The `delegation` capability has only been useful for the
+`telemetry` capability, but using both together creates
+some complexity to manage. In practice, these means that
+telemetry views need to go through `telemetryHandler` to
+get their telemetry, which in turn has an awkward API.
+
+This could be resolved by:
+
+* Removing `delegation` as a capability altogether.
+* Reworking `telemetry` capability API to account for
+  the possibility of multiple telemetry-providing
+  domain objects. (Perhaps just stick `domainObject`
+  in as a field in each property of `TelemetryMetadata`?)
+* Move the behavior currently found in `telemetryHandler`
+  into the `telemetry` capability itself (either the
+  generic version, or a version specific to telemetry
+  panels - probably want some distinct functionality
+  for each.)
+
+### Benefits
+
+* Reduces number of interfaces.
+* Accounting for the possibility of multiple telemetry objects
+  in the `telemetry` capability API means that views using
+  this will be more immediately aware of this as a possibility.
+
+### Detriments
+
+* Increases complexity of `telemetry` capability's interface
+  (although this could probably be minimized.)
