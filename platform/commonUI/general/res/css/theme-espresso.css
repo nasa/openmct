@@ -706,25 +706,61 @@ mct-container {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 27, ../sass/tree/_layout.scss */
-.pane.left.inactive {
-  visibility: hidden;
-  width: 0 !important;
-  min-width: 0 !important; }
+/* line 28, ../sass/tree/_layout.scss */
+.pane.left {
+  transition: width 0.25s; }
+  /* line 31, ../sass/tree/_layout.scss */
+  .pane.left.inactive {
+    width: 0 !important;
+    min-width: 0 !important; }
 
-/* line 36, ../sass/tree/_layout.scss */
-.splitter-bar.left.inactive {
-  left: 0 !important;
-  visibility: hidden; }
+/* line 37, ../sass/tree/_layout.scss */
+.splitter-bar.left {
+  opacity: 1;
+  transition: left 0.25s, opacity 0.25s, visibility 0.25s; }
+  /* line 41, ../sass/tree/_layout.scss */
+  .splitter-bar.left.inactive {
+    left: 0 !important;
+    visibility: hidden;
+    opacity: 0;
+    width: 0; }
+    /* line 48, ../sass/tree/_layout.scss */
+    .splitter-bar.left.inactive:before {
+      border-width: 0; }
 
-/* line 46, ../sass/tree/_layout.scss */
-.items.pane.leftInactive {
-  left: 0 !important; }
+/* line 55, ../sass/tree/_layout.scss */
+.create-btn.major {
+  top: 0;
+  left: 0;
+  transition: all 0.25s; }
+  /* line 60, ../sass/tree/_layout.scss */
+  .create-btn.major.inactivePane {
+    top: 0;
+    left: 0;
+    position: relative;
+    padding: 0;
+    text-align: center;
+    font-size: 12px;
+    width: 13px;
+    height: 16px;
+    line-height: 14px;
+    left: -11px;
+    top: 20px; }
+    /* line 78, ../sass/tree/_layout.scss */
+    .create-btn.major.inactivePane span {
+      display: none; }
 
-/* line 52, ../sass/tree/_layout.scss */
+/* line 85, ../sass/tree/_layout.scss */
+.items.pane {
+  transition: left 0.25s; }
+  /* line 88, ../sass/tree/_layout.scss */
+  .items.pane.leftInactive {
+    left: 0 !important; }
+
+/* line 94, ../sass/tree/_layout.scss */
 .object-browse-bar {
   position: relative; }
-  /* line 55, ../sass/tree/_layout.scss */
+  /* line 97, ../sass/tree/_layout.scss */
   .object-browse-bar .left-pane-tabs {
     position: relative;
     cursor: pointer;
@@ -739,7 +775,10 @@ mct-container {
     background-color: lightgrey;
     border: 1px solid grey;
     border-left-width: 0; }
-  /* line 74, ../sass/tree/_layout.scss */
+    /* line 116, ../sass/tree/_layout.scss */
+    .object-browse-bar .left-pane-tabs.inactivePane {
+      left: -16px; }
+  /* line 121, ../sass/tree/_layout.scss */
   .object-browse-bar .items-select {
     margin-left: 10px; }
 
