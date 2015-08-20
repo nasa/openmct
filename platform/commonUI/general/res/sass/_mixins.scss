@@ -260,6 +260,38 @@
 	@include text-shadow(rgba(black, $sVal) 0 3px 7px);
 }
 
+/*********************************************** FORM ELEMENTS */
+@mixin input-base($bg: $colorBodyBg, $fg: $colorBodyFg) {
+	@include appearance(none);
+	@include border-radius($controlCr);
+	@include box-sizing(border-box);
+	@include box-shadow(inset rgba(black, 0.65) 0 1px 4px);
+	//	background: lighten($bg, 20%);
+	background: rgba(#fff, 0.1);
+	border: none;
+	//border-bottom: 1px solid rgba(#fff, 0.1);
+	color: lighten($fg, 20%);
+	outline: none;
+	&.error {
+		background: rgba(red, 0.5);
+	}
+}
+
+@mixin nice-input($bg: $colorBodyBg, $fg: $colorBodyFg) {
+	@include input-base($bg, $fg);
+	padding: 0 $interiorMarginSm;
+}
+
+@mixin nice-textarea($bg: $colorBodyBg, $fg: $colorBodyFg) {
+	@include input-base($bg, $fg);
+	padding: $interiorMargin;
+}
+
+@mixin subdued-input($bg: $colorBodyBg, $fg: $colorBodyFg) {
+	@include nice-input($bg, $fg);
+	background: lighten($bg, 3%);
+	border-bottom: 1px solid lighten($bg, 10%);
+}
 
 /*
 @mixin invokeMenu($baseColor: $colorBodyFg) {

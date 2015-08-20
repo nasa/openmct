@@ -96,6 +96,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*********************************************** FORM ELEMENTS */
 /*
 @mixin invokeMenu($baseColor: $colorBodyFg) {
 	$c: $baseColor;
@@ -230,27 +231,21 @@
       line-height: 14px;
       margin-right: 5px; }
     /* line 89, ../sass/forms/_elems.scss */
-    .form .form-row .controls input[type="text"] {
-      height: 22px;
-      line-height: 22px;
-      margin-top: -4px;
-      vertical-align: baseline; }
-    /* line 96, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-med input[type="text"] {
       width: 200px; }
-    /* line 100, ../sass/forms/_elems.scss */
+    /* line 93, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-small input[type="text"] {
       width: 50px; }
-    /* line 104, ../sass/forms/_elems.scss */
+    /* line 97, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-numeric input[type="text"] {
       text-align: right; }
-    /* line 108, ../sass/forms/_elems.scss */
+    /* line 101, ../sass/forms/_elems.scss */
     .form .form-row .controls .select {
       margin-right: 5px; }
-  /* line 113, ../sass/forms/_elems.scss */
+  /* line 106, ../sass/forms/_elems.scss */
   .form .form-row .field-hints {
     color: #666666; }
-  /* line 117, ../sass/forms/_elems.scss */
+  /* line 110, ../sass/forms/_elems.scss */
   .form .form-row .selector-list {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -263,7 +258,7 @@
     position: relative;
     height: 150px;
     overflow: auto; }
-    /* line 128, ../sass/forms/_elems.scss */
+    /* line 121, ../sass/forms/_elems.scss */
     .form .form-row .selector-list .wrapper {
       overflow-y: auto;
       position: absolute;
@@ -272,24 +267,24 @@
       bottom: 5px;
       left: 5px; }
 
-/* line 142, ../sass/forms/_elems.scss */
+/* line 135, ../sass/forms/_elems.scss */
 label.form-control.checkbox input {
   margin-right: 5px;
   vertical-align: top; }
 
-/* line 148, ../sass/forms/_elems.scss */
+/* line 141, ../sass/forms/_elems.scss */
 .hint,
 .s-hint {
   font-size: 0.9em; }
 
-/* line 153, ../sass/forms/_elems.scss */
+/* line 146, ../sass/forms/_elems.scss */
 .l-result {
   display: inline-block;
   min-width: 32px;
   min-height: 32px;
   position: relative;
   vertical-align: top; }
-  /* line 160, ../sass/forms/_elems.scss */
+  /* line 153, ../sass/forms/_elems.scss */
   .l-result div.s-hint {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -324,18 +319,17 @@ label.form-control.checkbox input {
 .edit-main textarea {
   -moz-appearance: none;
   -webkit-appearance: none;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -moz-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
-  box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
+  -moz-box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
+  box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
   background: rgba(255, 255, 255, 0.1);
   border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   color: #cccccc;
   outline: none;
   padding: 5px;
@@ -371,18 +365,17 @@ label.form-control.checkbox input {
 input[type="text"] {
   -moz-appearance: none;
   -webkit-appearance: none;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -moz-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
-  box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
+  -moz-box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
+  box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
   background: rgba(255, 255, 255, 0.1);
   border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   color: #cccccc;
   outline: none;
   padding: 0 3px; }
@@ -422,9 +415,9 @@ input[type="text"] {
   background-image: -moz-linear-gradient(#525252, #454545);
   background-image: -webkit-linear-gradient(#525252, #454545);
   background-image: linear-gradient(#525252, #454545);
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
@@ -511,18 +504,17 @@ input[type="text"] {
 .channel-selector .treeview {
   -moz-appearance: none;
   -webkit-appearance: none;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -moz-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
-  box-shadow: inset rgba(0, 0, 0, 0.5) 0 1px 5px;
+  -moz-box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
+  box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
   background: rgba(255, 255, 255, 0.1);
   border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   color: #cccccc;
   outline: none;
   padding: 0 3px;

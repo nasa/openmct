@@ -31,7 +31,7 @@ define(
 
         var MENU_TEMPLATE = "<mct-representation key=\"'context-menu'\" " +
                 "mct-object=\"domainObject\" " +
-                "ng-class=\"menuClass\"" +
+                "ng-class=\"menuClass\" " +
                 "ng-style=\"menuStyle\">" +
                 "</mct-representation>",
             dismissExistingMenu;
@@ -62,7 +62,7 @@ define(
                 // Remove the context menu
                 function dismiss() {
                     menu.remove();
-                    body.off("click", dismiss);
+                    body.off("mousedown", dismiss);
                     dismissExistingMenu = undefined;
                 }
 
@@ -92,7 +92,7 @@ define(
 
                 // Add the menu to the body
                 body.append(menu);
-                
+
                 // Stop propagation so that clicks on the menu do not close the menu
                 // Stop propagation so that touches on the menu do not close the menu
                 if (!agentService.isMobile(navigator.userAgent)) {
@@ -118,7 +118,7 @@ define(
                 // Don't launch browser's context menu
                 actionContext.event.preventDefault();
             }
-            
+
             return {
                 perform: perform
             };

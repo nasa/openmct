@@ -25,9 +25,10 @@
 define(
     [
         '../../src/services/LinkService',
-        '../DomainObjectFactory'
+        '../DomainObjectFactory',
+        '../ControlledPromise'
     ],
-    function (LinkService, domainObjectFactory) {
+    function (LinkService, domainObjectFactory, ControlledPromise) {
         "use strict";
 
         describe("LinkService", function () {
@@ -50,7 +51,6 @@ define(
                     validate;
 
                 beforeEach(function () {
-
                     object = domainObjectFactory({
                         name: 'object'
                     });
@@ -118,20 +118,29 @@ define(
             describe("perform", function () {
 
                 var object,
+                    linkedObject,
                     parentModel,
                     parentObject,
                     mutationPromise,
+                    compositionPromise,
+                    persistencePromise,
+                    compositionCapability,
                     persistenceCapability;
 
                 beforeEach(function () {
-                    mutationPromise = jasmine.createSpyObj(
-                        'promise',
-                        ['then']
-                    );
+                    mutationPromise = new ControlledPromise();
+                    compositionPromise = new ControlledPromise();
+                    persistencePromise = new ControlledPromise();
                     persistenceCapability = jasmine.createSpyObj(
                         'persistenceCapability',
                         ['persist']
                     );
+                    persistenceCapability.persist.andReturn(persistencePromise);
+                    compositionCapability = jasmine.createSpyObj(
+                        'compositionCapability',
+                        ['invoke']
+                    );
+                    compositionCapability.invoke.andReturn(compositionPromise);
                     parentModel = {
                         composition: []
                     };
@@ -145,7 +154,8 @@ define(
                                     return mutationPromise;
                                 }
                             },
-                            persistence: persistenceCapability
+                            persistence: persistenceCapability,
+                            composition: compositionCapability
                         }
                     });
 
@@ -154,7 +164,11 @@ define(
                         id: 'xyz'
                     });
 
-                    parentObject.getCapability.andReturn(persistenceCapability);
+                    linkedObject = domainObjectFactory({
+                        name: 'object-link',
+                        id: 'xyz'
+                    });
+
                 });
 
 
@@ -171,11 +185,22 @@ define(
                 it("persists parent", function () {
                     linkService.perform(object, parentObject);
                     expect(mutationPromise.then).toHaveBeenCalled();
-                    mutationPromise.then.calls[0].args[0]();
+                    mutationPromise.resolve();
                     expect(parentObject.getCapability)
                         .toHaveBeenCalledWith('persistence');
-
                     expect(persistenceCapability.persist).toHaveBeenCalled();
+                });
+
+                it("returns object representing new link", function () {
+                    var returnPromise, whenComplete;
+                    returnPromise = linkService.perform(object, parentObject);
+                    whenComplete = jasmine.createSpy('whenComplete');
+                    returnPromise.then(whenComplete);
+
+                    mutationPromise.resolve();
+                    persistencePromise.resolve();
+                    compositionPromise.resolve([linkedObject]);
+                    expect(whenComplete).toHaveBeenCalledWith(linkedObject);
                 });
             });
         });
