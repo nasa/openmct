@@ -172,11 +172,11 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /*********************************************** FORM ELEMENTS */
 /*
 @mixin invokeMenu($baseColor: $colorBodyFg) {
-    $c: $baseColor;
-    color: $c;
-    &:hover {
-        color: lighten($c, $ltGamma);
-    }
+	$c: $baseColor;
+	color: $c;
+	&:hover {
+		color: lighten($c, $ltGamma);
+	}
 }
 */
 /*****************************************************************************
@@ -1049,27 +1049,27 @@ mct-container {
 
 /*.s-limit-upr,
 .s-limit-lwr {
-    $a: 0.5;
-    $l: 30%;
-    white-space: nowrap;
-    &:before {
-        display: inline-block;
-        font-family: symbolsfont;
-        font-size: 0.85em;
-        font-style: normal !important;
-        margin-right: $interiorMarginSm;
-        vertical-align: middle;
-    }
+	$a: 0.5;
+	$l: 30%;
+	white-space: nowrap;
+	&:before {
+		display: inline-block;
+		font-family: symbolsfont;
+		font-size: 0.85em;
+		font-style: normal !important;
+		margin-right: $interiorMarginSm;
+		vertical-align: middle;
+	}
 }
 
 .s-limit-upr {
-    &.s-limit-yellow { @include limit($colorLimitYellow, "\0000ed"); }
-    &.s-limit-red { @include limit($colorLimitRed, "\0000eb"); }
+	&.s-limit-yellow { @include limit($colorLimitYellow, "\0000ed"); }
+	&.s-limit-red { @include limit($colorLimitRed, "\0000eb"); }
 }
 
 .s-limit-lwr {
-    &.s-limit-yellow { @include limit($colorLimitYellow, "\0000ec"); }
-    &.s-limit-red { @include limit($colorLimitRed, "\0000ee"); }
+	&.s-limit-yellow { @include limit($colorLimitYellow, "\0000ec"); }
+	&.s-limit-red { @include limit($colorLimitRed, "\0000ee"); }
 }*/
 /* line 35, ../sass/_limits.scss */
 [class*="s-limit"] {
@@ -1772,11 +1772,11 @@ table {
   /* line 132, ../sass/controls/_buttons.scss */
   .icon-btn.pause-play,
   .s-icon-btn.pause-play {
-    /*        &.paused {
-                .icon {
-                    @include pulse(500ms);
-                }
-            }*/ }
+    /*		&.paused {
+    			.icon {
+    				@include pulse(500ms);
+    			}
+    		}*/ }
     /* line 138, ../sass/controls/_buttons.scss */
     .icon-btn.pause-play .icon:before,
     .s-icon-btn.pause-play .icon:before {
@@ -1899,32 +1899,32 @@ a.l-btn span {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*.control {
-    // UNUSED?
-    &.view-control {
-        .icon {
-            display: inline-block;
-            margin: -1px 5px 1px 2px;
-            vertical-align: middle;
-            &.triangle-down {
-                margin: 2px 2px -2px 0px;
-            }
-        }
+	// UNUSED?
+	&.view-control {
+		.icon {
+			display: inline-block;
+			margin: -1px 5px 1px 2px;
+			vertical-align: middle;
+			&.triangle-down {
+				margin: 2px 2px -2px 0px;
+			}
+		}
 
-        .label {
-            display: inline-block;
-            font-size: 11px;
-            vertical-align: middle;
-        }
+		.label {
+			display: inline-block;
+			font-size: 11px;
+			vertical-align: middle;
+		}
 
-        .toggle {
-            @include border-radius(3px);
-            display: inline-block;
-            padding: 1px 6px 4px 4px;
-            &:hover {
-                background: rgba(white, 0.1);
-            }
-        }
-    }
+		.toggle {
+			@include border-radius(3px);
+			display: inline-block;
+			padding: 1px 6px 4px 4px;
+			&:hover {
+				background: rgba(white, 0.1);
+			}
+		}
+	}
 }*/
 /* line 51, ../sass/controls/_controls.scss */
 .accordion {
@@ -2161,23 +2161,23 @@ label.checkbox.custom {
   border-top: 1px solid #575757;
   color: #999;
   display: inline-block;
-  /*    height: $h;
-      line-height: $h;
-      &.dropdown {
-          padding-left: $p;
-          padding-right: $p;
-      }*/
-  /*    &.context-available {
-          // An element like the invoke-menu triangle;
-          // Indicates that this element has a dropdown menu available;
-          // Currently unused
-          $c: $colorKey;
-          color: $c;
-          padding: 0 5px;
-          &:hover {
-              color: lighten($c, 10%);
-          }
-      }*/ }
+  /*	height: $h;
+  	line-height: $h;
+  	&.dropdown {
+  		padding-left: $p;
+  		padding-right: $p;
+  	}*/
+  /*	&.context-available {
+  		// An element like the invoke-menu triangle;
+  		// Indicates that this element has a dropdown menu available;
+  		// Currently unused
+  		$c: $colorKey;
+  		color: $c;
+  		padding: 0 5px;
+  		&:hover {
+  			color: lighten($c, 10%);
+  		}
+  	}*/ }
   /* line 162, ../sass/_mixins.scss */
   .btn-menu:not(.disabled):hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzYzNjM2MyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU3NTc1NyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
@@ -5133,28 +5133,13 @@ input[type="text"] {
   /* line 35, ../sass/tree/_pane.scss */
   .pane.left.inactive .tree-holder {
     padding-right: 0; }
-
-/* line 44, ../sass/tree/_pane.scss */
-.splitter-bar.left {
-  opacity: 1;
-  transition: opacity 0.35s, visibility 0.35s;
-  top: 0; }
-  /* line 51, ../sass/tree/_pane.scss */
-  .splitter-bar.left.inactive {
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0s, visibility 0s; }
-    /* line 57, ../sass/tree/_pane.scss */
-    .splitter-bar.left.inactive:before {
-      border-width: 0; }
-
-/* line 64, ../sass/tree/_pane.scss */
-.create-btn.major {
+/* line 41, ../sass/tree/_pane.scss */
+.pane.left .create-btn.major {
   top: 0;
   left: 0;
   transition: all 0.35s; }
-  /* line 69, ../sass/tree/_pane.scss */
-  .create-btn.major.inactivePane {
+  /* line 46, ../sass/tree/_pane.scss */
+  .pane.left .create-btn.major.inactivePane {
     top: 0;
     left: 0;
     position: relative;
@@ -5166,9 +5151,23 @@ input[type="text"] {
     line-height: 14px;
     left: -11px;
     top: 20px; }
-    /* line 87, ../sass/tree/_pane.scss */
-    .create-btn.major.inactivePane span {
+    /* line 64, ../sass/tree/_pane.scss */
+    .pane.left .create-btn.major.inactivePane span {
       display: none; }
+
+/* line 74, ../sass/tree/_pane.scss */
+.splitter-bar.left {
+  opacity: 1;
+  transition: opacity 0.35s, visibility 0.35s;
+  top: 0; }
+  /* line 81, ../sass/tree/_pane.scss */
+  .splitter-bar.left.inactive {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0s, visibility 0s; }
+    /* line 87, ../sass/tree/_pane.scss */
+    .splitter-bar.left.inactive:before {
+      border-width: 0; }
 
 /* line 94, ../sass/tree/_pane.scss */
 .items.pane {
@@ -5177,32 +5176,31 @@ input[type="text"] {
   /* line 98, ../sass/tree/_pane.scss */
   .items.pane.leftInactive {
     left: 0 !important; }
-
-/* line 104, ../sass/tree/_pane.scss */
-.object-browse-bar {
-  position: relative; }
-  /* line 107, ../sass/tree/_pane.scss */
-  .object-browse-bar .left-pane-tabs {
-    position: relative;
-    cursor: pointer;
-    left: -10px;
-    width: 11px;
-    height: 16px;
-    line-height: 16px;
-    font-size: 10px;
-    top: 3px;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-    background-color: #595959; }
-    /* line 124, ../sass/tree/_pane.scss */
-    .object-browse-bar .left-pane-tabs.inactivePane {
-      left: -15px; }
-      /* line 127, ../sass/tree/_pane.scss */
-      .object-browse-bar .left-pane-tabs.inactivePane:after {
-        content: '>'; }
-    /* line 131, ../sass/tree/_pane.scss */
-    .object-browse-bar .left-pane-tabs.activePane:after {
-      content: '<'; }
-  /* line 136, ../sass/tree/_pane.scss */
-  .object-browse-bar .items-select {
-    margin-left: 10px; }
+  /* line 103, ../sass/tree/_pane.scss */
+  .items.pane .object-browse-bar {
+    position: relative; }
+    /* line 106, ../sass/tree/_pane.scss */
+    .items.pane .object-browse-bar .left-pane-tabs {
+      position: relative;
+      cursor: pointer;
+      left: -10px;
+      width: 11px;
+      height: 16px;
+      line-height: 16px;
+      font-size: 10px;
+      top: 3px;
+      border-top-right-radius: 2px;
+      border-bottom-right-radius: 2px;
+      background-color: #595959; }
+      /* line 123, ../sass/tree/_pane.scss */
+      .items.pane .object-browse-bar .left-pane-tabs.inactivePane {
+        left: -15px; }
+        /* line 126, ../sass/tree/_pane.scss */
+        .items.pane .object-browse-bar .left-pane-tabs.inactivePane:after {
+          content: '>'; }
+      /* line 130, ../sass/tree/_pane.scss */
+      .items.pane .object-browse-bar .left-pane-tabs.activePane:after {
+        content: '<'; }
+    /* line 135, ../sass/tree/_pane.scss */
+    .items.pane .object-browse-bar .items-select {
+      margin-left: 10px; }

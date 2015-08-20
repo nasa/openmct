@@ -36,6 +36,36 @@ $transitionTime: 0.35s;
             padding-right: 0;
         }
     }
+    
+    // When the pane is closed, move and resize the create button
+    .create-btn.major {
+        top: 0;
+        left: 0;
+        transition: all $transitionTime;
+
+        &.inactivePane {
+            top: 0;
+            left: 0;
+
+            position: relative;
+            padding: 0;
+
+            text-align: center;
+            font-size: 12px;
+
+            width: 13px;
+            height: 16px;
+            line-height: 14px;
+
+            left: -11px;
+            top: 20px;
+
+            // Remove 'Create' text from the button when in small mode
+            span {
+                display: none;
+            }
+        }
+    }
 }
 
 // Hide the splitter bar when the left pane is closed
@@ -60,36 +90,6 @@ $transitionTime: 0.35s;
     }
 }
 
-// When the pane is closed, move and resize the create button
-.create-btn.major {
-    top: 0;
-    left: 0;
-    transition: all $transitionTime;
-    
-    &.inactivePane {
-        top: 0;
-        left: 0;
-        
-        position: relative;
-        padding: 0;
-        
-        text-align: center;
-        font-size: 12px;
-        
-        width: 13px;
-        height: 16px;
-        line-height: 14px;
-        
-        left: -11px;
-        top: 20px;
-        
-        // Remove 'Create' text from the button when in small mode
-        span {
-            display: none;
-        }
-    }
-}
-
 // The main view needs to align left when the panes are moving around
 .items.pane {
     transition: left $transitionTime;
@@ -98,42 +98,42 @@ $transitionTime: 0.35s;
     &.leftInactive {
         left: 0 !important;
     }
-}
-
-// Move buttons close to the splitter bar 
-.object-browse-bar {
-    position: relative;
     
-    .left-pane-tabs {
+    // Move buttons close to the splitter bar 
+    .object-browse-bar {
         position: relative;
-        cursor: pointer;
-        
-        left: -10px;
-        width: 11px;
-        height: 16px;
-        line-height: 16px;
-        font-size: 10px;
-        top: 3px;
 
-        //border-radius: 2px;
-        border-top-right-radius: 2px;
-        border-bottom-right-radius: 2px;
-        background-color: darken($colorBodyFg, 25%);
-        
-        // Change button icon depending on state
-        &.inactivePane {
-            left: -15px;
-            
-            &:after {
-                content: '>';//'F';
+        .left-pane-tabs {
+            position: relative;
+            cursor: pointer;
+
+            left: -10px;
+            width: 11px;
+            height: 16px;
+            line-height: 16px;
+            font-size: 10px;
+            top: 3px;
+
+            //border-radius: 2px;
+            border-top-right-radius: 2px;
+            border-bottom-right-radius: 2px;
+            background-color: darken($colorBodyFg, 25%);
+
+            // Change button icon depending on state
+            &.inactivePane {
+                left: -15px;
+
+                &:after {
+                    content: '>';//'F';
+                }
+            }
+            &.activePane:after {
+                content: '<';
             }
         }
-        &.activePane:after {
-            content: '<';
+
+        .items-select {
+            margin-left: 10px;
         }
-    }
-    
-    .items-select {
-        margin-left: 10px;
     }
 }
