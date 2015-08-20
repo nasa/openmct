@@ -38,8 +38,10 @@ $transitionTime: 0.35s;
 //   out when closing menu 
 .splitter-bar.left {
     opacity: 1;
-    
     transition: opacity $transitionTime, visibility $transitionTime;
+    
+    // Make the splitter bar vertically span to the top
+    top: 0;
     
     &.inactive {
         visibility: hidden;

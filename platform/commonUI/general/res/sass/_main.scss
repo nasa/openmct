@@ -31,7 +31,6 @@
 @import "global";
 @import "fonts";
 @import "user-environ/layout";
-@import "tree/layout";
 @import "fixed-position";
 @import "about";
 @import "text";
@@ -65,7 +64,6 @@
 @import "user-environ/tool-bar";
 @import "helpers/bubbles";
 @import "helpers/splitter";
-@import "tree/splitter";
 @import "helpers/wait-spinner";
 @import "properties";
 @import "autoflow";
@@ -74,3 +72,4 @@
 @import "initialization";
 @import "hide-non-functional";
 @import "views";
+@import "tree/layout";

@@ -686,100 +686,6 @@ mct-container {
   overflow-y: auto; }
 
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
- * as represented by the Administrator of the National Aeronautics and Space
- * Administration. All rights reserved.
- *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- * Open MCT Web includes source code licensed under additional open source
- * licenses. See the Open Source Licenses file (LICENSES.md) included with
- * this source code distribution or the Licensing information page available
- * at runtime from the About dialog for additional information.
- *****************************************************************************/
-/* line 30, ../sass/tree/_layout.scss */
-.pane.left.inactive {
-  width: 0 !important;
-  min-width: 0 !important; }
-
-/* line 39, ../sass/tree/_layout.scss */
-.splitter-bar.left {
-  opacity: 1;
-  transition: opacity 0.35s, visibility 0.35s; }
-  /* line 44, ../sass/tree/_layout.scss */
-  .splitter-bar.left.inactive {
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0s, visibility 0s; }
-    /* line 50, ../sass/tree/_layout.scss */
-    .splitter-bar.left.inactive:before {
-      border-width: 0; }
-
-/* line 57, ../sass/tree/_layout.scss */
-.create-btn.major {
-  top: 0;
-  left: 0;
-  transition: all 0.35s; }
-  /* line 62, ../sass/tree/_layout.scss */
-  .create-btn.major.inactivePane {
-    top: 0;
-    left: 0;
-    position: relative;
-    padding: 0;
-    text-align: center;
-    font-size: 12px;
-    width: 13px;
-    height: 16px;
-    line-height: 14px;
-    left: -11px;
-    top: 20px; }
-    /* line 80, ../sass/tree/_layout.scss */
-    .create-btn.major.inactivePane span {
-      display: none; }
-
-/* line 87, ../sass/tree/_layout.scss */
-.items.pane {
-  transition: left 0.35s;
-  transition-timing-function: ease-out; }
-  /* line 91, ../sass/tree/_layout.scss */
-  .items.pane.leftInactive {
-    left: 0 !important; }
-
-/* line 97, ../sass/tree/_layout.scss */
-.object-browse-bar {
-  position: relative; }
-  /* line 100, ../sass/tree/_layout.scss */
-  .object-browse-bar .left-pane-tabs {
-    position: relative;
-    cursor: pointer;
-    left: -10px;
-    width: 11px;
-    height: 16px;
-    line-height: 16px;
-    font-size: 10px;
-    top: 3px;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-    background-color: lightgrey;
-    border: 1px solid grey;
-    border-left-width: 0; }
-    /* line 119, ../sass/tree/_layout.scss */
-    .object-browse-bar .left-pane-tabs.inactivePane {
-      left: -16px; }
-  /* line 124, ../sass/tree/_layout.scss */
-  .object-browse-bar .items-select {
-    margin-left: 10px; }
-
-/*****************************************************************************
 * Open MCT Web, Copyright (c) 2014-2015, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
@@ -4804,31 +4710,6 @@ input[type="text"] {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 26, ../sass/tree/_splitter.scss */
-.browse-area .splitter {
-  top: 0; }
-
-/*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
- * as represented by the Administrator of the National Aeronautics and Space
- * Administration. All rights reserved.
- *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- * Open MCT Web includes source code licensed under additional open source
- * licenses. See the Open Source Licenses file (LICENSES.md) included with
- * this source code distribution or the Licensing information page available
- * at runtime from the About dialog for additional information.
- *****************************************************************************/
 @-webkit-keyframes rotation {
   from {
     -webkit-transform: rotate(0deg); }
@@ -5223,3 +5104,98 @@ input[type="text"] {
   .l-view-section label,
   .l-view-section .inline-block {
     display: inline-block; }
+
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 30, ../sass/tree/_layout.scss */
+.pane.left.inactive {
+  width: 0 !important;
+  min-width: 0 !important; }
+
+/* line 39, ../sass/tree/_layout.scss */
+.splitter-bar.left {
+  opacity: 1;
+  transition: opacity 0.35s, visibility 0.35s;
+  top: 0; }
+  /* line 46, ../sass/tree/_layout.scss */
+  .splitter-bar.left.inactive {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0s, visibility 0s; }
+    /* line 52, ../sass/tree/_layout.scss */
+    .splitter-bar.left.inactive:before {
+      border-width: 0; }
+
+/* line 59, ../sass/tree/_layout.scss */
+.create-btn.major {
+  top: 0;
+  left: 0;
+  transition: all 0.35s; }
+  /* line 64, ../sass/tree/_layout.scss */
+  .create-btn.major.inactivePane {
+    top: 0;
+    left: 0;
+    position: relative;
+    padding: 0;
+    text-align: center;
+    font-size: 12px;
+    width: 13px;
+    height: 16px;
+    line-height: 14px;
+    left: -11px;
+    top: 20px; }
+    /* line 82, ../sass/tree/_layout.scss */
+    .create-btn.major.inactivePane span {
+      display: none; }
+
+/* line 89, ../sass/tree/_layout.scss */
+.items.pane {
+  transition: left 0.35s;
+  transition-timing-function: ease-out; }
+  /* line 93, ../sass/tree/_layout.scss */
+  .items.pane.leftInactive {
+    left: 0 !important; }
+
+/* line 99, ../sass/tree/_layout.scss */
+.object-browse-bar {
+  position: relative; }
+  /* line 102, ../sass/tree/_layout.scss */
+  .object-browse-bar .left-pane-tabs {
+    position: relative;
+    cursor: pointer;
+    left: -10px;
+    width: 11px;
+    height: 16px;
+    line-height: 16px;
+    font-size: 10px;
+    top: 3px;
+    border-top-right-radius: 2px;
+    border-bottom-right-radius: 2px;
+    background-color: lightgrey;
+    border: 1px solid grey;
+    border-left-width: 0; }
+    /* line 121, ../sass/tree/_layout.scss */
+    .object-browse-bar .left-pane-tabs.inactivePane {
+      left: -16px; }
+  /* line 126, ../sass/tree/_layout.scss */
+  .object-browse-bar .items-select {
+    margin-left: 10px; }
