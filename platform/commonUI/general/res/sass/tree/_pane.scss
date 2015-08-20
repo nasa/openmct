@@ -146,19 +146,40 @@ $transitionTime: 0.35s;
         top: 0;
     }
     
-    //background-color: skyblue;
-    
     .split-pane-component.object-inspector.pane.right {
-        //background-color: orange;
+        min-width: 150px;
         
         .holder.inspector-holder {
-            min-width: 100px;
-            //background-color: purple;
+            
+            .info-icon {
+                color: $colorKey;
+            }
             
             ul {
-                //color: pink;
+                font-size: 0.9em;
+                
                 li {
-                    //color: green;
+                    overflow-x: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    
+                    // Style the titles
+                    em {
+                        font-weight: bold;
+                        
+                        &:after {
+                            content: '\A';
+                            white-space: pre;
+                        }
+                    }
+                    
+                    // Add spacing between items
+                    padding: 2px 0px;
+                    margin: 2px 0px;
+                    border-top: solid 1px grey;
+                    &:first-child {
+                        border-top-width: 0px;
+                    }
                 }
             }
         }

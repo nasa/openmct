@@ -20,11 +20,21 @@
  at runtime from the About dialog for additional information.
 -->
 
+<span class="ui-symbol info-icon">
+    G
+</span>
+
 <ul>
     <li>
-        Name: {{ ngModel.selectedObject.getModel().name }}
+        <em>Name </em>
+        {{ ngModel.selectedObject.getModel().name }}
     </li>
     <li>
-        Last modified: {{ ngModel.selectedObject.getModel().modified }}
+        <em>Last modified </em>
+        {{ ngModel.selectedObject.getModel().modified }}
+    </li>
+    <li>
+        <em>ID </em>
+        {{ ngModel.selectedObject.getId() }}
     </li>
 </ul>

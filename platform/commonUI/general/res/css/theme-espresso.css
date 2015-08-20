@@ -5210,6 +5210,30 @@ input[type="text"] {
   /* line 144, ../sass/tree/_pane.scss */
   .split-pane-component.secondary-split.pane.right .splitter-bar.right {
     top: 0; }
-  /* line 154, ../sass/tree/_pane.scss */
-  .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder {
-    min-width: 100px; }
+  /* line 149, ../sass/tree/_pane.scss */
+  .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right {
+    min-width: 150px; }
+    /* line 154, ../sass/tree/_pane.scss */
+    .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder .info-icon {
+      color: #0099cc; }
+    /* line 158, ../sass/tree/_pane.scss */
+    .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul {
+      font-size: 0.9em; }
+      /* line 161, ../sass/tree/_pane.scss */
+      .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li {
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 2px 0px;
+        margin: 2px 0px;
+        border-top: solid 1px grey; }
+        /* line 167, ../sass/tree/_pane.scss */
+        .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li em {
+          font-weight: bold; }
+          /* line 170, ../sass/tree/_pane.scss */
+          .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li em:after {
+            content: '\A';
+            white-space: pre; }
+        /* line 180, ../sass/tree/_pane.scss */
+        .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li:first-child {
+          border-top-width: 0px; }
