@@ -66,6 +66,17 @@ define(
                         }
                     }).then(function () {
                         return parentObject.getCapability('persistence').persist();
+                    }).then(function getObjectWithNewContext() {
+                        return parentObject
+                            .useCapability('composition')
+                            .then(function (children) {
+                                var i;
+                                for (i = 0; i < children.length; i += 1) {
+                                    if (children[i].getId() === object.getId()) {
+                                        return children[i];
+                                    }
+                                }
+                            });
                     });
                 }
             };

@@ -23,7 +23,10 @@
 /*global define,jasmine */
 
 define(
-    function () {
+    [
+        '../ControlledPromise'
+    ],
+    function (ControlledPromise) {
         "use strict";
 
         /**
@@ -47,7 +50,7 @@ define(
          * var whenLinked = jasmine.createSpy('whenLinked');
          * linkService.perform(object, parentObject).then(whenLinked);
          * expect(whenLinked).not.toHaveBeenCalled();
-         * linkService.perform.mostRecentCall.resolve('someArg');
+         * linkService.perform.mostRecentCall.promise.resolve('someArg');
          * expect(whenLinked).toHaveBeenCalledWith('someArg');
          * ```
          */
@@ -62,33 +65,19 @@ define(
                 ]
             );
 
-            mockLinkService.perform.andCallFake(function () {
-                var performPromise,
-                    callExtensions,
-                    spy;
+            mockLinkService.perform.andCallFake(function (object, newParent) {
+                var performPromise = new ControlledPromise();
 
-                performPromise = jasmine.createSpyObj(
-                    'performPromise',
-                    ['then']
-                );
+                this.perform.mostRecentCall.promise = performPromise;
+                this.perform.calls[this.perform.calls.length - 1].promise =
+                    performPromise;
 
-                callExtensions = {
-                    promise: performPromise,
-                    resolve: function (resolveWith) {
-                        performPromise.then.calls.forEach(function (call) {
-                            call.args[0](resolveWith);
-                        });
+                return performPromise.then(function (overrideObject) {
+                    if (overrideObject) {
+                        return overrideObject;
                     }
-                };
-
-                spy = this.perform;
-
-                Object.keys(callExtensions).forEach(function (key) {
-                    spy.mostRecentCall[key] = callExtensions[key];
-                    spy.calls[spy.calls.length - 1][key] = callExtensions[key];
+                    return object;
                 });
-
-                return performPromise;
             });
 
             return mockLinkService;
