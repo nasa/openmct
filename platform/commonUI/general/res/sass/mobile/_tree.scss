@@ -24,21 +24,20 @@
 ul.tree {
     // Only applies to phones and tablets
     @include phoneandtablet {
-        @include menuUlReset();
+        //@include menuUlReset();
         li {
+            //border-top: 1px solid $colorInteriorBorder; // TEMP
             span.tree-item {
                 // Adds some space to the top of each tree item
-                height: $mobile-treeHeight;
-                line-height: $mobile-treeHeight;
-                padding-top: $interiorMarginSm;
-                padding-bottom: $interiorMarginSm;
+                height: $mobileTreeItemH;
+                line-height: $mobileTreeItemH;
                 margin-bottom: 0px;
                 .view-control {
+                    //@include test(red);
                     position: absolute;
-                    right: $mobile-treeRight;
-                    font-size: 1.8em;
+                    font-size: 1.1em;
                     right: 0px;
-                    width: 35px;
+                    width: $mobileTreeRightArrowW;
                     text-align: center;
                 }                   
 
@@ -46,13 +45,13 @@ ul.tree {
                     // Designates the starting left margin
                     // (indentation) of 'My Items'
                     // Also adds right space for selection button
-                    left: $mobile-startingTreeLeft;
-                    right: 45px;
+                    left: 0;
+                    right: $mobileTreeRightArrowW + $interiorMargin; // Allows tree item name to stop prior to the arrow
                     font-size: 1.2em;
-                    // Allows tree item name to stop prior
-                    // to the arrow
+                    .type-icon {
+                        @include verticalCenterBlock($mobileTreeItemH, $treeTypeIconH);
+                    }
                     .title-label {
-                        right: $mobile-treeRight * 1.3;
                     }
                 }             
             }
@@ -61,7 +60,7 @@ ul.tree {
         // Sets the margin on the left, which causes the
         // running indentation after each folder is made
         ul.tree {
-            margin-left: $mobile-runningTreeLeft;
+            margin-left: $mobileTreeItemIndent;
         }
     }
 }

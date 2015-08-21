@@ -27,9 +27,27 @@
 .mobile-pane {
     @include phoneandtablet {
         position: absolute;
-        left: 0; top: 0;
-        right: 0;
-        white-space: nowrap;
+        top: 0 !important; right: 0; bottom: 0; left: 0;
+        //white-space: nowrap; // CH CO
+    }
+}
+
+.user-environ .browse-area,
+.user-environ .edit-area,
+.user-environ .editor {
+    @include phoneandtablet {
+        //@include test(red);
+        top: 0; left: 0; right: 0; bottom: $ueFooterH;
+    }
+}
+
+.holder.l-mobile {
+    @include phoneandtablet {
+        //@include test();
+        top: $bodyMargin !important;
+        right: $bodyMargin !important;
+        bottom: $bodyMargin !important;
+        left: $bodyMargin !important;
     }
 }
 
@@ -39,8 +57,8 @@
     @include desktop {
         min-width: 150px;
         max-width: 800px;
-        width: $desktopMenuSize;   
-    }   
+        width: $desktopMenuSize;
+    }
 }
 
 // When the tree is hidden, these are the
@@ -56,7 +74,7 @@
         @include user-select(none);
     }
     // Sets the left tree menu when the tree
-    // is hidden. 
+    // is hidden.
     .mobile-pane.left-menu {
         @include phoneandtablet {
             @include trans-prop-nice(opacity, .4s);
@@ -64,19 +82,19 @@
             right: 100% !important;
             width: auto !important;
             overflow-y: hidden;
-            overflow-x: hidden;       
+            overflow-x: hidden;
         }
     }
 
     // Sets the right represenation when
-    // the tree is hidden. 
-    .mobile-pane.right-repr {       
-        @include phoneandtablet {         
+    // the tree is hidden.
+    .mobile-pane.right-repr {
+        @include phoneandtablet {
             @include slMenuTransitions;
             left: auto !important;
             width: 100% !important;
         }
-    }    
+    }
 }
 
 .mobile-tree-holder {
@@ -86,7 +104,7 @@
 // When the tree is shown, these are
 // the classes used for the left menu
 // and the right menu (for each device &
-// orientation combination, separate 
+// orientation combination, separate
 // parameters are used)
 .browse-showtree {
     // NOTE: DISABLED SELECTION
@@ -98,10 +116,11 @@
         @include user-select(none);
     }
     // Sets the left tree menu when the tree
-    // is shown.     
+    // is shown.
     .mobile-pane.left-menu {
         @include phoneandtablet {
             @include trans-prop-nice(opacity, .4s);
+            @include background-image(linear-gradient(90deg, rgba(black, 0) 98%, rgba(black, 0.3) 100%));
             opacity: 1;
             display: block !important;
             width: auto !important;
@@ -121,8 +140,7 @@
             right: $tabletRepSizeLandscape !important;
         }
     }
-    // Sets the right represenation when
-    // the tree is shown.     
+    // Sets the right representation when the tree is shown.
     .mobile-pane.right-repr {
         @include phoneandtablet {
             @include slMenuTransitions;
@@ -137,19 +155,19 @@
             width: $phoneRepSizeLandscape !important;
         }
         @include tabletPortrait {
+            //@include test(green);
             width: $tabletRepSizePortrait !important;
         }
         @include tabletLandscape {
+            //@include test(orange);
             width: $tabletRepSizeLandscape !important;
         }
     }
 }
 
-// Button position is set as absolute with transitions
-.button-pos {
-    @include phoneandtablet {
-        position: absolute;
-    }
+.mobile-menu-icon {
+    position: absolute;
+    top: $bodyMargin; left: $bodyMargin;
 }
 
 // Object header must be moved

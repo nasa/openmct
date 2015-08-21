@@ -29,10 +29,10 @@ $phoneItemH: floor($ueBrowseGridItemLg/4);
 $tabletItemH: floor($ueBrowseGridItemLg/3);
 
 /************************** MOBILE TREE MENU DIMENSIONS */
-$mobile-treeHeight: 38px;
+$mobileTreeItemH: 35px;
 $mobile-startingTreeLeft: 3px;
-$mobile-runningTreeLeft: 7px;
-$mobile-treeRight: 13px;
+$mobileTreeItemIndent: 20px;
+$mobileTreeRightArrowW: 30px;
 
 /************************** WINDOW DIMENSIONS FOR RWD */
 $phoMaxW: 514px;
@@ -82,7 +82,7 @@ $desktopLandscape: "screen and #{$desktopLandscapeCheck}";
 
 /************************** DEVICE PARAMETERS FOR MENUS/REPRESENTATIONS */
 $phoneRepSizePortrait: 19px;
-$phoneRepSizeLandscape: 66%;
+$phoneRepSizeLandscape: 60%;
 $tabletRepSizePortrait: 500px;
-$tabletRepSizeLandscape: 78%;
+$tabletRepSizeLandscape: 70%;
 $desktopMenuSize: 25%;

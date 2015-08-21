@@ -216,23 +216,23 @@
       bottom: 10px;
       left: 10px; }
     /* line 63, ../sass/items/_item.scss */
-    .items-holder .item.grid-item .bar.top-bar.abs {
+    .items-holder .item.grid-item .bar.top-bar {
       bottom: auto;
       height: 20px;
       line-height: 20px;
       text-align: right;
       z-index: 5; }
       /* line 69, ../sass/items/_item.scss */
-      .items-holder .item.grid-item .bar.top-bar.abs .left, .items-holder .item.grid-item .bar.top-bar.abs .right {
+      .items-holder .item.grid-item .bar.top-bar .left, .items-holder .item.grid-item .bar.top-bar .right {
         width: auto; }
         /* line 71, ../sass/items/_item.scss */
-        .items-holder .item.grid-item .bar.top-bar.abs .left .icon, .items-holder .item.grid-item .bar.top-bar.abs .right .icon {
+        .items-holder .item.grid-item .bar.top-bar .left .icon, .items-holder .item.grid-item .bar.top-bar .right .icon {
           margin-left: 3px; }
           /* line 73, ../sass/items/_item.scss */
-          .items-holder .item.grid-item .bar.top-bar.abs .left .icon.l-icon-link, .items-holder .item.grid-item .bar.top-bar.abs .right .icon.l-icon-link {
+          .items-holder .item.grid-item .bar.top-bar .left .icon.l-icon-link, .items-holder .item.grid-item .bar.top-bar .right .icon.l-icon-link {
             color: #49dedb; }
     /* line 79, ../sass/items/_item.scss */
-    .items-holder .item.grid-item .bar.bottom-bar.abs {
+    .items-holder .item.grid-item .bar.bottom-bar {
       top: auto;
       height: 30px; }
     /* line 84, ../sass/items/_item.scss */
@@ -415,12 +415,12 @@
       line-height: 50px !important; }
     /* line 82, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .bar.bottom-bar {
-      top: 7px !important;
+      top: 7px;
       bottom: auto;
       height: 35px; }
     /* line 87, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .item-main .item-type {
-      top: 10px !important;
+      top: 10px;
       bottom: auto;
       height: 30px; }
     /* line 90, ../sass/mobile/_item.scss */
@@ -435,12 +435,12 @@
       line-height: 66px !important; }
     /* line 104, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .bar.bottom-bar {
-      top: 15px !important;
+      top: 15px;
       bottom: auto;
       height: 35px; }
     /* line 109, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .item-main .item-type {
-      top: 18px !important;
+      top: 18px;
       bottom: auto;
       height: 30px; }
     /* line 112, ../sass/mobile/_item.scss */

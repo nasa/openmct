@@ -328,7 +328,7 @@
 }
 
 @mixin verticalCenterBlock($holderH, $itemH) {
-    top: floor(($holderH - $itemH) / 2) !important;
+    top: floor(($holderH - $itemH) / 2);
     bottom: auto;
     height: $itemH;
 }

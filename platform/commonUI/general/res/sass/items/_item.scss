@@ -60,7 +60,7 @@
 		        top: $m; right: $m; bottom: $m; left: $m;
 	        }
             .bar {
-                &.top-bar.abs {
+                &.top-bar {
                     bottom: auto;
                     height: $ueBrowseGridItemTopBarH;
                     line-height: $ueBrowseGridItemTopBarH;
@@ -76,7 +76,7 @@
 		                }
 	                }
                 }
-                &.bottom-bar.abs {
+                &.bottom-bar {
                     top: auto;
                     height: $ueBrowseGridItemBottomBarH;
                 }

@@ -27,6 +27,7 @@ ul.tree {
 		position: relative;
 		span.tree-item {
 			$runningItemW: 0;
+			@include box-sizing(border-box);
 			@include border-radius($basicCr);
 			@include single-transition(background-color, 0.25s);
 			display: block;
@@ -59,7 +60,7 @@ ul.tree {
 
 				.type-icon {
 					//@include absPosDefault(0, false);
-					$d: 16px; // 16px is crisp size
+					$d: $treeTypeIconH; // 16px is crisp size
 					@include txtShdwSubtle(0.6);
 					font-size: $d;
 					color: $colorItemTreeIcon;
