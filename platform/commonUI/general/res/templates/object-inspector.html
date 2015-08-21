@@ -19,22 +19,35 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
+<span ng-controller="ObjectInspectorController as controller">
+    <span class="ui-symbol info-icon">
+        G
+    </span>
 
-<span class="ui-symbol info-icon">
-    G
+    <ul>
+        <li>
+            <em>Name </em>
+            {{ ngModel.selectedObject.getModel().name }}
+        </li>
+        <li ng-if='ngModel.selectedObject.getModel().modified !== undefined'>
+            <em>Last modified </em>
+            {{ ngModel.selectedObject.getModel().modified }}
+        </li>
+        <li>
+            <em>ID </em>
+            {{ ngModel.selectedObject.getId() }}
+        </li>
+        <li>
+            <em>Location </em>
+            {{ controller.getPath() }}
+            <span class="inspector-location"
+                  ng-repeat="parent in parents">
+                <mct-representation key="'label'"
+                                    mct-object="parent"
+                                    ng-model="ngModel"
+                                    ng-click="ngModel.selectedObject = parent">
+                </mct-representation>
+            </span>
+        </li>
+    </ul>
 </span>
-
-<ul>
-    <li>
-        <em>Name </em>
-        {{ ngModel.selectedObject.getModel().name }}
-    </li>
-    <li>
-        <em>Last modified </em>
-        {{ ngModel.selectedObject.getModel().modified }}
-    </li>
-    <li>
-        <em>ID </em>
-        {{ ngModel.selectedObject.getId() }}
-    </li>
-</ul>

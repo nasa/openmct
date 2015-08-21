@@ -104,6 +104,11 @@
                 "key": "SelectorController",
                 "implementation": "controllers/SelectorController.js",
                 "depends": [ "objectService", "$scope" ]
+            },
+            {
+                "key": "ObjectInspectorController",
+                "implementation": "controllers/ObjectInspectorController.js",
+                "depends": [ "$scope", "objectService" ]
             }
         ],
         "directives": [
