@@ -34,7 +34,6 @@
 @import "fixed-position";
 @import "about";
 @import "text";
-@import "badges";
 @import "icons";
 @import "limits";
 @import "data-status";
@@ -49,7 +48,6 @@
 @import "edit/editor";
 @import "features/imagery";
 @import "features/time-display";
-@import "forms/mixins";
 @import "forms/elems";
 @import "forms/validation";
 @import "forms/text-input";
@@ -70,5 +68,7 @@
 @import "properties";
 @import "autoflow";
 @import "iframe";
+@import "messages";
 @import "initialization";
 @import "hide-non-functional";
+@import "views";

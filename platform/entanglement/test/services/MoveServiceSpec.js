@@ -25,9 +25,15 @@ define(
     [
         '../../src/services/MoveService',
         '../services/MockLinkService',
-        '../DomainObjectFactory'
+        '../DomainObjectFactory',
+        '../ControlledPromise'
     ],
-    function (MoveService, MockLinkService, domainObjectFactory) {
+    function (
+        MoveService,
+        MockLinkService,
+        domainObjectFactory,
+        ControlledPromise
+    ) {
         "use strict";
 
         describe("MoveService", function () {
@@ -140,8 +146,11 @@ define(
             describe("perform", function () {
 
                 var object,
-                    parentObject,
-                    actionCapability;
+                    newParent,
+                    actionCapability,
+                    locationCapability,
+                    locationPromise,
+                    moveResult;
 
                 beforeEach(function () {
                     actionCapability = jasmine.createSpyObj(
@@ -149,24 +158,34 @@ define(
                         ['perform']
                     );
 
+                    locationCapability = jasmine.createSpyObj(
+                        'locationCapability',
+                        [
+                            'isOriginal',
+                            'setPrimaryLocation',
+                            'getContextualLocation'
+                        ]
+                    );
+
+                    locationPromise = new ControlledPromise();
+                    locationCapability.setPrimaryLocation
+                        .andReturn(locationPromise);
+
                     object = domainObjectFactory({
                         name: 'object',
                         capabilities: {
-                            action: actionCapability
+                            action: actionCapability,
+                            location: locationCapability
                         }
                     });
 
-                    parentObject = domainObjectFactory({
-                        name: 'parentObject'
-                    });
-
-                    moveService.perform(object, parentObject);
+                    moveResult = moveService.perform(object, newParent);
                 });
 
-                it("links object to parentObject", function () {
+                it("links object to newParent", function () {
                     expect(linkService.perform).toHaveBeenCalledWith(
                         object,
-                        parentObject
+                        newParent
                     );
                 });
 
@@ -175,12 +194,48 @@ define(
                         .toHaveBeenCalledWith(jasmine.any(Function));
                 });
 
-                it("removes object when link is completed", function () {
-                    linkService.perform.mostRecentCall.resolve();
-                    expect(object.getCapability)
-                        .toHaveBeenCalledWith('action');
-                    expect(actionCapability.perform)
-                        .toHaveBeenCalledWith('remove');
+                describe("when moving an original", function () {
+                    beforeEach(function () {
+                        locationCapability.getContextualLocation
+                            .andReturn('new-location');
+                        locationCapability.isOriginal.andReturn(true);
+                        linkService.perform.mostRecentCall.promise.resolve();
+                    });
+
+                    it("updates location", function () {
+                        expect(locationCapability.setPrimaryLocation)
+                            .toHaveBeenCalledWith('new-location');
+                    });
+
+                    describe("after location update", function () {
+                        beforeEach(function () {
+                            locationPromise.resolve();
+                        });
+
+                        it("removes object from parent", function () {
+                            expect(actionCapability.perform)
+                                .toHaveBeenCalledWith('remove');
+                        });
+                    });
+
+                });
+
+                describe("when moving a link", function () {
+                    beforeEach(function () {
+                        locationCapability.isOriginal.andReturn(false);
+                        linkService.perform.mostRecentCall.promise.resolve();
+                    });
+
+                    it("does not update location", function () {
+                        expect(locationCapability.setPrimaryLocation)
+                            .not
+                            .toHaveBeenCalled();
+                    });
+
+                    it("removes object from parent", function () {
+                        expect(actionCapability.perform)
+                            .toHaveBeenCalledWith('remove');
+                    });
                 });
 
             });
