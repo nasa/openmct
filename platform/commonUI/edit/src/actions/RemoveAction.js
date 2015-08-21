@@ -40,8 +40,9 @@ define(
          * @constructor
          * @memberof module:editor/actions/remove-action
          */
-        function RemoveAction($q, context) {
-            var object = (context || {}).domainObject;
+        function RemoveAction($q, navigationService, context) {
+            var object = (context || {}).domainObject,
+                ROOT_ID = "ROOT";
 
             /**
              * Check whether an object ID matches the ID of the object being
@@ -68,15 +69,39 @@ define(
                 var persistence = domainObject.getCapability('persistence');
                 return persistence && persistence.persist();
             }
-
+            
+            // Checks current object and ascendants of current
+            // object with object being removed, if the current
+            // object or any in the current object's path is being removed,
+            // navigate back to parent of removed object. 
+            function checkObjectNavigation(object, parentObject) {
+                // Traverse object starts at current location
+                var traverseObject = navigationService.getNavigation();
+                
+                // Stop at ROOT of folder path
+                while(traverseObject.getId() !== ROOT_ID) {
+                    // If traverse object is object being removed
+                    // navigate to parent of removed object
+                    if (traverseObject.getId() === object.getId()) {
+                        navigationService.setNavigation(parentObject);
+                        return;
+                    }
+                    // Traverses to parent
+                    traverseObject = traverseObject.getCapability('context').getParent();
+                }
+            }
+            
             /**
              * Remove the object from its parent, as identified by its context
              * capability.
-             * @param {ContextCapability} contextCapability the "context" capability
-             *        of the domain object being removed.
+             * @param {object} domain object being removed contextCapability
+                      gotten from the "context" capability of this object
              */
-            function removeFromContext(contextCapability) {
-                var parent = contextCapability.getParent();
+            function removeFromContext(object) {
+                var contextCapability = object.getCapability('context'),
+                    parent = contextCapability.getParent();
+                // Navigates through/ascendant if deleting current object
+                checkObjectNavigation(object, parent)
                 $q.when(
                     parent.useCapability('mutation', doMutate)
                 ).then(function () {
@@ -91,7 +116,7 @@ define(
                  *         fulfilled when the action has completed.
                  */
                 perform: function () {
-                    return $q.when(object.getCapability('context'))
+                    return $q.when(object)
                         .then(removeFromContext);
                 }
             };
