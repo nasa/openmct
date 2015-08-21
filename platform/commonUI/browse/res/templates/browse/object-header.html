@@ -20,12 +20,11 @@
  at runtime from the About dialog for additional information.
 -->
 <div class='object-header object-header-mobile'>
-    <span class="label s-label">
-        <mct-representation class="desktop-hide" key="'back-arrow'"></mct-representation>
-        <span class='type-icon ui-symbol'>{{type.getGlyph()}}</span>
-        <span ng-if="parameters.mode" class='action'>{{parameters.mode}}</span>
-        <!--span class='type-name mobile-important-hide'>{{type.getName()}}</span-->
-        <span class='title-label'>{{model.name}}</span>
+    <span class='type-icon ui-symbol'>{{type.getGlyph()}}</span>
+    <span ng-if="parameters.mode" class='action'>{{parameters.mode}}</span>
+    <!--span class='type-name mobile-important-hide'>{{type.getName()}}</span-->
+    <span class='title-label'>
+        {{model.name}}
         <mct-representation key="'menu-arrow'" mct-object='domainObject'></mct-representation>
     </span>
 </div>

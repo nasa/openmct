@@ -367,6 +367,10 @@
     background-color: rgba($c, $a);
 }
 
+@mixin tmpBorder($c: #ffcc00, $a: 0.75) {
+    border: 1px dotted rgba($c, $a);
+}
+
 @mixin testObj($w: 2000px, $h: 1000px, $c: black, $a: 0.1) {
     &:after {
         @include box-sizing(border-box);

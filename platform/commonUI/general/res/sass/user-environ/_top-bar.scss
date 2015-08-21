@@ -20,10 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .top-bar {
-//	$h: $ueTopBarH - 5px;
-//	background: rgba(#ff0000, 0.2);
-//	line-height: $ueTopBarBtnH;
-
     &.browse,
     &.edit {
 	    border-bottom: 1px solid $colorInteriorBorder;
@@ -36,7 +32,6 @@
 	
 	.title {
 		color: #fff;
-//		font-weight: bold;
 	}
 	
 	.buttons-main {

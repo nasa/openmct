@@ -386,16 +386,10 @@ p {
   margin-bottom: 10px; }
 
 /* line 74, ../sass/_global.scss */
-span {
-  /* 618 DEBUG
-  box-sizing: border-box;
-  */ }
-
-/* line 80, ../sass/_global.scss */
 mct-container {
   display: block; }
 
-/* line 84, ../sass/_global.scss */
+/* line 78, ../sass/_global.scss */
 .abs, .btn-menu span.l-click-area {
   position: absolute;
   top: 0;
@@ -405,51 +399,51 @@ mct-container {
   height: auto;
   width: auto; }
 
-/* line 94, ../sass/_global.scss */
+/* line 88, ../sass/_global.scss */
 .code, .codehilite {
   font-family: "Lucida Console", monospace;
   font-size: 0.7em;
   line-height: 150%;
   white-space: pre; }
 
-/* line 101, ../sass/_global.scss */
+/* line 95, ../sass/_global.scss */
 .codehilite {
   background-color: rgba(255, 255, 255, 0.1);
   padding: 1em; }
 
-/* line 107, ../sass/_global.scss */
+/* line 101, ../sass/_global.scss */
 .align-right {
   text-align: right; }
 
-/* line 111, ../sass/_global.scss */
+/* line 105, ../sass/_global.scss */
 .centered {
   text-align: center; }
 
-/* line 115, ../sass/_global.scss */
+/* line 109, ../sass/_global.scss */
 .no-margin {
   margin: 0; }
 
-/* line 119, ../sass/_global.scss */
+/* line 113, ../sass/_global.scss */
 .colorKey {
   color: #0099cc; }
 
-/* line 123, ../sass/_global.scss */
+/* line 117, ../sass/_global.scss */
 .ds {
   -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px; }
 
-/* line 127, ../sass/_global.scss */
+/* line 121, ../sass/_global.scss */
 .hide,
 .hidden {
   display: none !important; }
 
-/* line 133, ../sass/_global.scss */
+/* line 127, ../sass/_global.scss */
 .paused:not(.s-btn):not(.icon-btn) {
   border-color: #c56f01 !important;
   color: #c56f01 !important; }
 
-/* line 139, ../sass/_global.scss */
+/* line 133, ../sass/_global.scss */
 .sep {
   color: rgba(255, 255, 255, 0.2); }
 
@@ -702,34 +696,34 @@ mct-container {
   .pane.items .object-browse-bar .btn-menu span.right.l-click-area,
   .btn-menu .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
-  /* line 245, ../sass/user-environ/_layout.scss */
+  /* line 251, ../sass/user-environ/_layout.scss */
   .pane.items .object-holder {
     top: 34px; }
-  /* line 249, ../sass/user-environ/_layout.scss */
+  /* line 255, ../sass/user-environ/_layout.scss */
   .pane .object-holder {
     overflow: auto; }
 
-/* line 257, ../sass/user-environ/_layout.scss */
+/* line 263, ../sass/user-environ/_layout.scss */
 .split-layout.horizontal > .pane {
   margin-top: 5px; }
-  /* line 260, ../sass/user-environ/_layout.scss */
+  /* line 266, ../sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane:first-child {
     margin-top: 0; }
-/* line 267, ../sass/user-environ/_layout.scss */
+/* line 273, ../sass/user-environ/_layout.scss */
 .split-layout.vertical > .pane {
   margin-left: 5px; }
-  /* line 270, ../sass/user-environ/_layout.scss */
+  /* line 276, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane > .holder {
     left: 0;
     right: 0; }
-  /* line 274, ../sass/user-environ/_layout.scss */
+  /* line 280, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane:first-child {
     margin-left: 0; }
-    /* line 276, ../sass/user-environ/_layout.scss */
+    /* line 282, ../sass/user-environ/_layout.scss */
     .split-layout.vertical > .pane:first-child .holder {
       right: 3px; }
 
-/* line 285, ../sass/user-environ/_layout.scss */
+/* line 291, ../sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
 
@@ -899,12 +893,10 @@ mct-container {
 @media screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px) {
   /* line 144, ../sass/mobile/_layout.scss */
   .browse-showtree .mobile-pane.right-repr {
-    background-color: rgba(0, 128, 0, 0.2);
     width: 500px !important; } }
 @media screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
   /* line 144, ../sass/mobile/_layout.scss */
   .browse-showtree .mobile-pane.right-repr {
-    background-color: rgba(255, 165, 0, 0.2);
     width: 70% !important; } }
 
 /* line 168, ../sass/mobile/_layout.scss */
@@ -2560,35 +2552,49 @@ label.checkbox.custom {
 /******************************************************** OBJECT-HEADER */
 /* line 364, ../sass/controls/_controls.scss */
 .object-header {
-  display: inline-block;
-  font-size: 1em; }
-  /* line 368, ../sass/controls/_controls.scss */
-  .object-header .label .title-label {
-    color: white; }
-  /* line 371, ../sass/controls/_controls.scss */
-  .object-header .label .type-icon {
-    font-size: 120%;
-    margin-right: 5px;
+  font-size: 1em;
+  line-height: 120%; }
+  /* line 373, ../sass/controls/_controls.scss */
+  .object-header .title-label,
+  .object-header .type-icon,
+  .object-header .context-available {
+    border: 1px dotted rgba(102, 102, 255, 0.75);
     vertical-align: middle; }
-  /* line 376, ../sass/controls/_controls.scss */
-  .object-header .label .context-available {
+  /* line 379, ../sass/controls/_controls.scss */
+  .object-header > .type-icon {
+    font-size: 120%; }
+  /* line 383, ../sass/controls/_controls.scss */
+  .object-header .title-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: white;
+    padding-right: 0.75em;
+    position: relative; }
+  /* line 390, ../sass/controls/_controls.scss */
+  .object-header .context-available {
+    -moz-transition-property: opacity;
+    -o-transition-property: opacity;
+    -webkit-transition-property: opacity;
+    transition-property: opacity;
+    -moz-transition-duration: 0.25s;
+    -o-transition-duration: 0.25s;
+    -webkit-transition-duration: 0.25s;
+    transition-duration: 0.25s;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
     opacity: 0;
-    font-size: 0.8em; }
-  /* line 381, ../sass/controls/_controls.scss */
-  .object-header .label:hover .context-available {
+    font-size: 0.7em;
+    position: absolute;
+    right: 0; }
+  /* line 398, ../sass/controls/_controls.scss */
+  .object-header:hover .context-available {
     opacity: 1; }
 
-/* line 390, ../sass/controls/_controls.scss */
-.top-bar .object-header,
-.object-browse-bar .object-header {
-  font-size: 1.1em; }
-  /* line 392, ../sass/controls/_controls.scss */
-  .top-bar .object-header span,
-  .object-browse-bar .object-header span {
-    display: inline-block; }
-
 /******************************************************** SLIDERS */
-/* line 404, ../sass/controls/_controls.scss */
+/* line 420, ../sass/controls/_controls.scss */
 .slider .slot {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -2609,7 +2615,7 @@ label.checkbox.custom {
   right: 0;
   bottom: auto;
   left: 0; }
-/* line 415, ../sass/controls/_controls.scss */
+/* line 431, ../sass/controls/_controls.scss */
 .slider .knob {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzUyNTI1MiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzQ1NDU0NSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background-size: 100%;
@@ -2692,12 +2698,12 @@ label.checkbox.custom {
     -webkit-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
     border-color: #0099cc; }
-  /* line 426, ../sass/controls/_controls.scss */
+  /* line 442, ../sass/controls/_controls.scss */
   .slider .knob:before {
     top: 1px;
     bottom: 3px;
     left: 5px; }
-/* line 433, ../sass/controls/_controls.scss */
+/* line 449, ../sass/controls/_controls.scss */
 .slider .range {
   background: rgba(0, 153, 204, 0.6);
   cursor: ew-resize;
@@ -2708,12 +2714,12 @@ label.checkbox.custom {
   left: auto;
   height: auto;
   width: auto; }
-  /* line 443, ../sass/controls/_controls.scss */
+  /* line 459, ../sass/controls/_controls.scss */
   .slider .range:hover {
     background: rgba(0, 153, 204, 0.7); }
 
 /******************************************************** BROWSER ELEMENTS */
-/* line 451, ../sass/controls/_controls.scss */
+/* line 467, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -2730,7 +2736,7 @@ label.checkbox.custom {
   height: 10px;
   width: 10px; }
 
-/* line 457, ../sass/controls/_controls.scss */
+/* line 473, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar-thumb {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzY2NjY2NiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background-size: 100%;
@@ -2748,7 +2754,7 @@ label.checkbox.custom {
   -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
   box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
   border-top: 1px solid gray; }
-  /* line 464, ../sass/controls/_controls.scss */
+  /* line 480, ../sass/controls/_controls.scss */
   ::-webkit-scrollbar-thumb:hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzgwODA4MCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzczNzM3MyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -2757,7 +2763,7 @@ label.checkbox.custom {
     background-image: -webkit-linear-gradient(#808080, #737373 20px);
     background-image: linear-gradient(#808080, #737373 20px); }
 
-/* line 469, ../sass/controls/_controls.scss */
+/* line 485, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar-corner {
   background: rgba(0, 0, 0, 0.4); }
 
@@ -3487,6 +3493,31 @@ label.checkbox.custom {
   opacity: 0;
   font-size: 0.65em;
   vertical-align: top; }
+
+/* line 2, ../sass/_flex.scss */
+.l-flex.l-flex-justify {
+  justify-content: space-between; }
+/* line 5, ../sass/_flex.scss */
+.l-flex .l-flex-row, .l-flex.l-flex-row {
+  display: flex;
+  flex-flow: row nowrap; }
+/* line 16, ../sass/_flex.scss */
+.l-flex .l-flex-max {
+  flex: 1 0 !important; }
+/* line 20, ../sass/_flex.scss */
+.l-flex .flex-ignore {
+  display: flex;
+  flex-flow: row nowrap;
+  flex: 0 1 auto; }
+
+/* line 28, ../sass/_flex.scss */
+.object-browse-bar.bar > div.abs {
+  background-color: rgba(0, 128, 0, 0.2); }
+
+/* line 33, ../sass/_flex.scss */
+.l-flex-row .title-label {
+  background-color: rgba(0, 0, 255, 0.2);
+  flex: 1 0 !important; }
 
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
@@ -4544,7 +4575,7 @@ input[type="text"] {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 27, ../sass/user-environ/_top-bar.scss */
+/* line 23, ../sass/user-environ/_top-bar.scss */
 .top-bar.browse, .top-bar.edit {
   border-bottom: 1px solid #4d4d4d;
   top: 10px;
@@ -4552,22 +4583,22 @@ input[type="text"] {
   bottom: auto;
   left: 10px;
   height: 30px; }
-/* line 37, ../sass/user-environ/_top-bar.scss */
+/* line 33, ../sass/user-environ/_top-bar.scss */
 .top-bar .title {
   color: #fff; }
-/* line 42, ../sass/user-environ/_top-bar.scss */
+/* line 37, ../sass/user-environ/_top-bar.scss */
 .top-bar .buttons-main {
   font-size: 0.8em;
   left: auto;
   text-align: right; }
-  /* line 47, ../sass/user-environ/_top-bar.scss */
+  /* line 42, ../sass/user-environ/_top-bar.scss */
   .top-bar .buttons-main .btn {
     margin-left: 5px; }
 
-/* line 55, ../sass/user-environ/_top-bar.scss */
+/* line 50, ../sass/user-environ/_top-bar.scss */
 .edit-mode .top-bar .buttons-main {
   white-space: nowrap; }
-  /* line 59, ../sass/user-environ/_top-bar.scss */
+  /* line 54, ../sass/user-environ/_top-bar.scss */
   .edit-mode .top-bar .buttons-main.abs, .edit-mode .top-bar .btn-menu span.buttons-main.l-click-area, .btn-menu .edit-mode .top-bar span.buttons-main.l-click-area {
     bottom: auto;
     left: auto; }

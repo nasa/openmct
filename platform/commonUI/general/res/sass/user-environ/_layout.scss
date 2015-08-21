@@ -241,6 +241,12 @@
 	        .right.abs {
 		        top: auto;
 	        }
+            //.left.abs {
+            //    @include tmpBorder(green);
+            //}
+            //.right.abs {
+            //    @include tmpBorder(red);
+            //}
         }
         .object-holder {
             top: $ueTopBarH + $interiorMarginLg;
