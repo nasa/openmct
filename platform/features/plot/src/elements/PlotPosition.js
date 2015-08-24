@@ -78,7 +78,7 @@ define(
          * Get the range value corresponding to this pixel position.
          * @returns {number} the range value
          */
-        PlotPosition.prototype.getRange =function () {
+        PlotPosition.prototype.getRange = function () {
             return this.position[1];
         };
 
