@@ -84,14 +84,16 @@ define(
             
             // Gets the metadata for the selected object
             function getMetadata() {
-                var sel = $scope.ngModel.selectedObject;
-                $scope.metadata = sel && sel.hasCapability('metadata') && sel.useCapability('metadata');
+                $scope.metadata = $scope.ngModel.selectedObject &&
+                    $scope.ngModel.selectedObject.hasCapability('metadata') &&
+                    $scope.ngModel.selectedObject.useCapability('metadata');
             }
             
             // Set scope variables when the selected object changes 
             $scope.$watch('ngModel.selectedObject', function () {
-                var sel = $scope.ngModel.selectedObject;
-                $scope.isLink = sel && sel.hasCapability('location') && sel.getCapability('location').isLink();
+                $scope.isLink = $scope.ngModel.selectedObject &&
+                    $scope.ngModel.selectedObject.hasCapability('location') &&
+                    $scope.ngModel.selectedObject.getCapability('location').isLink();
                 
                 if ($scope.isLink) {
                     getPrimaryPath();
