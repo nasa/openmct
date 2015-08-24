@@ -123,14 +123,15 @@ $transitionTime: 0.35s; // For the left menu open/close
                 
                 background-color: darken($colorBodyFg, 25%);
                 
-                width: 11px !important;
+                width: 13px !important;
                 height: 16px;
                 line-height: 16px;
                 font-size: 10px;
+                text-align: center;
                 
                 // Open and closes treeview
                 &.left {
-                    left: -10px;
+                    left: -12px;
                     top: 3px;
 
                     border-top-right-radius: 2px;
@@ -140,7 +141,7 @@ $transitionTime: 0.35s; // For the left menu open/close
                     &.inactivePane {
                         left: -15px;
                         &:after {
-                            content: '>';//'F';
+                            content: 'F';//'>';
                         }
                     }
                     &.activePane:after {
@@ -151,8 +152,8 @@ $transitionTime: 0.35s; // For the left menu open/close
                 // Open and closes object inspector 
                 &.right {
                     float: right;
-                    right: -8px;
-                    top: -13px;// 14px;
+                    right: -9px;
+                    top: -13px;
 
                     border-top-left-radius: 2px;
                     border-bottom-left-radius: 2px;
@@ -161,7 +162,7 @@ $transitionTime: 0.35s; // For the left menu open/close
                     &.inactivePane {
                         right: -12px;
                         &:after {
-                            content: '<';
+                            content: 'G';//'<';
                         }
                     }
                     &.activePane:after {
