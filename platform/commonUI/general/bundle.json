@@ -108,7 +108,7 @@
             {
                 "key": "ObjectInspectorController",
                 "implementation": "controllers/ObjectInspectorController.js",
-                "depends": [ "$scope", "objectService" ]
+                "depends": [ "$scope" ]
             }
         ],
         "directives": [

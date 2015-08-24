@@ -35,7 +35,7 @@ define(
          *
          * @constructor
          */
-        function ObjectInspectorController($scope, objectService) {
+        function ObjectInspectorController($scope) {
             $scope.parents = [];
             
             // Gets an array of the parents/anscestors of the selected object
