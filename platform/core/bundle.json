@@ -142,7 +142,10 @@
             {
                 "key": "unknown",
                 "name": "Unknown Type",
-                "glyph": "?"
+                "glyph": "\u003f"
+            },
+            {
+                "glyph": "\u003f"
             }
         ],
         "capabilities": [
