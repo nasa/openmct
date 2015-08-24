@@ -213,6 +213,7 @@ $transitionTime: 0.35s; // For the left menu open/close
                 // Style the titles
                 em {
                     font-weight: bold;
+                    line-height: 1.25em;
 
                     &:after {
                         content: '\A';
