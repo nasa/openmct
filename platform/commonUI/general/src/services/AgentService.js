@@ -35,7 +35,7 @@ define(
          * info using a comparison between the userAgent and key
          * device names
          */
-        function AgentService($window) {
+        function AgentService() {
             
             // Gets the UA name if it is one of the following.
             // If it is not (a desktop for example) nothing is
@@ -69,9 +69,9 @@ define(
             // Returns the orientation of the device based on the
             // device's window dimensions
             function getOrientation() {
-                if ($window.outerWidth > $window.outerHeight) {
+                if (window.innerWidth > window.innerHeight) {
                     return "landscape";
-                } else if ($window.outerWidth < $window.outerHeight) {
+                } else if (window.innerWidth < window.innerHeight) {
                     return "portrait";
                 }
             }

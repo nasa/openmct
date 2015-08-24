@@ -187,6 +187,12 @@ define(
                 navigationService.removeListener(setNavigation);
             });
             
+            // If the user has selected an object (and is portrait
+            // on a phone), then hide the tree menu
+            $scope.$on("select-obj", function () {
+                $scope.treeSlide();
+            });
+            
             $scope.backArrow = navigateToParent;
             
             $scope.checkRoot = checkRoot;

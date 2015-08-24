@@ -11,8 +11,7 @@
             },
             {
                 "key": "agentService",
-                "implementation": "/services/AgentService.js",
-                "depends": [ "$window" ]
+                "implementation": "/services/AgentService.js"
             }
         ],
         "runs": [

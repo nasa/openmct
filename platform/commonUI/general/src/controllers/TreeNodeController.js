@@ -87,6 +87,17 @@ define(
                 }
             }
             
+            // Sets the selected object in the tree, to be the
+            // currently represented object. If the user is on phone
+            // and in portrait mode, than, hide the tree menu
+            function setObject(ngModel, domainObject) {
+                ngModel.selectedObject = domainObject;
+                if (agentService.getOrientation() === "portrait" &&
+                        agentService.isPhone(navigator.userAgent)) {
+                    $scope.$emit('select-obj');
+                }
+            }
+            
             function checkMobile() {
                 return agentService.isMobile(navigator.userAgent);
             }
@@ -156,6 +167,8 @@ define(
                 trackExpansion: trackExpansion,
                 
                 checkMobile: checkMobile,
+                
+                setObject: setObject,
                 
                 /**
                  * Check if this not has ever been expanded.
