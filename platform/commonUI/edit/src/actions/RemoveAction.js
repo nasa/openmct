@@ -41,7 +41,8 @@ define(
          * @memberof module:editor/actions/remove-action
          */
         function RemoveAction($q, navigationService, context) {
-            var object = (context || {}).domainObject;
+            var object = (context || {}).domainObject,
+                ROOT_ID = "ROOT";
 
             /**
              * Check whether an object ID matches the ID of the object being
@@ -68,12 +69,25 @@ define(
                 var persistence = domainObject.getCapability('persistence');
                 return persistence && persistence.persist();
             }
-
-            // Checks current object with object being removed
-            function checkCurrentObjectNavigation(object, parent) {
-                var currentObj = navigationService.getNavigation();
-                if (currentObj.getId() === object.getId()) {
-                    navigationService.setNavigation(parent);
+            
+            // Checks current object and ascendants of current
+            // object with object being removed, if the current
+            // object or any in the current object's path is being removed,
+            // navigate back to parent of removed object. 
+            function checkObjectNavigation(object, parentObject) {
+                // Traverse object starts at current location
+                var traverseObject = navigationService.getNavigation();
+                
+                // Stop at ROOT of folder path
+                while(traverseObject.getId() !== ROOT_ID) {
+                    // If traverse object is object being removed
+                    // navigate to parent of removed object
+                    if (traverseObject.getId() === object.getId()) {
+                        navigationService.setNavigation(parentObject);
+                        return;
+                    }
+                    // Traverses to parent
+                    traverseObject = traverseObject.getCapability('context').getParent();
                 }
             }
             
@@ -86,8 +100,8 @@ define(
             function removeFromContext(object) {
                 var contextCapability = object.getCapability('context'),
                     parent = contextCapability.getParent();
-                // Navigates to parent if deleting current object
-                checkCurrentObjectNavigation(object, parent);
+                // Navigates through/ascendant if deleting current object
+                checkObjectNavigation(object, parent)
                 $q.when(
                     parent.useCapability('mutation', doMutate)
                 ).then(function () {

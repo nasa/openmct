@@ -31,6 +31,7 @@ define(
                 mockNavigationService,
                 mockDomainObject,
                 mockParent,
+                mockGrandparent,
                 mockContext,
                 mockMutation,
                 mockPersistence,
@@ -56,7 +57,7 @@ define(
                     [ "getId", "getCapability" ]
                 );
                 mockQ = { when: mockPromise };
-                mockParent = {
+                mockGrandparent = {
                     getModel: function () {
                         return model;
                     },
@@ -68,6 +69,20 @@ define(
                     },
                     getId: function () {
                         return "test";
+                    }
+                };
+                mockParent = {
+                    getModel: function () {
+                        return model;
+                    },
+                    getCapability: function (k) {
+                        return capabilities[k];
+                    },
+                    useCapability: function (k, v) {
+                        return capabilities[k].invoke(v);
+                    },
+                    getParent: function () {
+                        return mockGrandparent;
                     }
                 };
                 mockContext = jasmine.createSpyObj("context", [ "getParent" ]);
@@ -97,7 +112,7 @@ define(
                     type: mockType
                 };
                 model = {
-                    composition: [ "a", "test", "b", "c" ]
+                    composition: [ "a", "b", "test", "c" ]
                 };
 
                 actionContext = { domainObject: mockDomainObject };
