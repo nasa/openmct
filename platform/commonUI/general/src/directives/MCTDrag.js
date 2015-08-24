@@ -44,6 +44,7 @@ define(
          * and vertical pixel offset of the current mouse position
          * relative to the mouse position where dragging began.
          *
+         * @memberof platform/commonUI/general
          * @constructor
          *
          */
@@ -157,3 +158,4 @@ define(
         return MCTDrag;
     }
 );
+

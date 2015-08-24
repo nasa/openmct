@@ -34,11 +34,31 @@ define(
          * initialization. During this phase, any scripts implementing
          * extensions provided by bundles are loaded.
          *
+         * @memberof platform/framework
          * @constructor
          */
         function BundleResolver(extensionResolver, requireConfigurator, $log) {
+            this.extensionResolver = extensionResolver;
+            this.requireConfigurator = requireConfigurator;
+            this.$log = $log;
+        }
 
-            /**
+        /**
+         * Resolve all extensions exposed by these bundles.
+         *
+         * @param {Bundle[]} bundles the bundles to resolve
+         * @returns {Promise.<Object.<string, object[]>>} an promise
+         *          for an object containing
+         *          key-value pairs, where keys are extension
+         *          categories and values are arrays of resolved
+         *          extensions belonging to those categories
+         */
+        BundleResolver.prototype.resolveBundles = function (bundles) {
+            var extensionResolver = this.extensionResolver,
+                requireConfigurator = this.requireConfigurator,
+                $log = this.$log;
+
+            /*
              * Merge resolved bundles (where each is expressed as an
              * object containing key-value pairs, where keys are extension
              * categories and values are arrays of resolved extensions)
@@ -47,6 +67,7 @@ define(
              *
              * @param {Object.<string, object[]>|Array} resolvedBundles
              * @returns {Object.<string, object[]>}
+             * @memberof platform/framework.BundleResolver#
              */
             function mergeResolvedBundles(resolvedBundles) {
                 var result = {};
@@ -97,27 +118,13 @@ define(
                     .then(giveResult);
             }
 
-            return {
-                /**
-                 * Resolve all extensions exposed by these bundles.
-                 *
-                 * @param {Bundle[]} bundles the bundles to resolve
-                 * @returns {Promise.<Object.<string, object[]>>} an promise
-                 *          for an object containing
-                 *          key-value pairs, where keys are extension
-                 *          categories and values are arrays of resolved
-                 *          extensions belonging to those categories
-                 */
-                resolveBundles: function (bundles) {
-                    // First, make sure Require is suitably configured
-                    requireConfigurator.configure(bundles);
+            // First, make sure Require is suitably configured
+            requireConfigurator.configure(bundles);
 
-                    // Then, resolve all extension implementations.
-                    return Promise.all(bundles.map(resolveBundle))
-                        .then(mergeResolvedBundles);
-                }
-            };
-        }
+            // Then, resolve all extension implementations.
+            return Promise.all(bundles.map(resolveBundle))
+                .then(mergeResolvedBundles);
+        };
 
         return BundleResolver;
     }

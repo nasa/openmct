@@ -34,6 +34,7 @@ define(
          * A column which will report telemetry range values
          * (typically, measurements.) Used by the RTEventListController.
          *
+         * @memberof platform/features/rtevents
          * @constructor
          * @param rangeMetadata an object with the machine- and human-
          *        readable names for this range (in `key` and `name`
@@ -46,6 +47,7 @@ define(
                 /**
                  * Get the title to display in this column's header.
                  * @returns {string} the title to display
+                 * @memberof platform/features/rtevents.RangeColumn#
                  */
                 getTitle: function () {
                     return "Message";
@@ -54,6 +56,7 @@ define(
                  * Get the text to display inside a row under this
                  * column.
                  * @returns {string} the text to display
+                 * @memberof platform/features/rtevents.RangeColumn#
                  */
                 getValue: function (domainObject, handle) {
                     return {
@@ -66,3 +69,4 @@ define(
         return RangeColumn;
     }
 );
+

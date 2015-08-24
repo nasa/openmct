@@ -21,12 +21,6 @@
  *****************************************************************************/
 /*global define*/
 
-/**
- * Defines type property conversions, used to convert values from
- * a domain object model to values displayable in a form, and
- * vice versa.
- * @module core/type/type-property-conversion
- */
 define(
     function () {
         'use strict';
@@ -62,6 +56,8 @@ define(
         /**
          * Look up an appropriate conversion between form values and model
          * values, e.g. to numeric values.
+         * @constructor
+         * @memberof platform/core
          */
         function TypePropertyConversion(name) {
             if (name &&
@@ -79,6 +75,23 @@ define(
                 return conversions[name];
             }
         }
+
+        /**
+         * Convert a value from its format as read from a form, to a
+         * format appropriate to store in a model.
+         * @method platform/core.TypePropertyConversion#toModelValue
+         * @param {*} formValue value as read from a form
+         * @returns {*} value to store in a model
+         */
+
+        /**
+         * Convert a value from its format as stored in a model, to a
+         * format appropriate to display in a form.
+         * @method platform/core.TypePropertyConversion#toFormValue
+         * @param {*} modelValue value as stored in a model
+         * @returns {*} value to display within a form
+         */
+
 
         return TypePropertyConversion;
     }

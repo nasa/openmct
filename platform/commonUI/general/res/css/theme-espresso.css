@@ -1237,29 +1237,32 @@ table {
       table .tr .th:first-child {
         border-left: none; }
       /* line 85, ../sass/lists/_tabular.scss */
-      .tabular tr th.sort .icon-sorting:before, .tabular tr .th.sort .icon-sorting:before, .tabular .tr th.sort .icon-sorting:before, .tabular .tr .th.sort .icon-sorting:before,
-      table tr th.sort .icon-sorting:before,
-      table tr .th.sort .icon-sorting:before,
-      table .tr th.sort .icon-sorting:before,
-      table .tr .th.sort .icon-sorting:before {
-        display: inline-block;
+      .tabular tr th.sort.sort:after, .tabular tr .th.sort.sort:after, .tabular .tr th.sort.sort:after, .tabular .tr .th.sort.sort:after,
+      table tr th.sort.sort:after,
+      table tr .th.sort.sort:after,
+      table .tr th.sort.sort:after,
+      table .tr .th.sort.sort:after {
+        color: #49dedb;
         font-family: symbolsfont;
-        margin-left: 5px; }
-      /* line 90, ../sass/lists/_tabular.scss */
-      .tabular tr th.sort.asc .icon-sorting:before, .tabular tr .th.sort.asc .icon-sorting:before, .tabular .tr th.sort.asc .icon-sorting:before, .tabular .tr .th.sort.asc .icon-sorting:before,
-      table tr th.sort.asc .icon-sorting:before,
-      table tr .th.sort.asc .icon-sorting:before,
-      table .tr th.sort.asc .icon-sorting:before,
-      table .tr .th.sort.asc .icon-sorting:before {
-        content: '0'; }
+        font-size: 8px;
+        content: "\ed";
+        display: inline-block;
+        margin-left: 3px; }
       /* line 93, ../sass/lists/_tabular.scss */
-      .tabular tr th.sort.desc .icon-sorting:before, .tabular tr .th.sort.desc .icon-sorting:before, .tabular .tr th.sort.desc .icon-sorting:before, .tabular .tr .th.sort.desc .icon-sorting:before,
-      table tr th.sort.desc .icon-sorting:before,
-      table tr .th.sort.desc .icon-sorting:before,
-      table .tr th.sort.desc .icon-sorting:before,
-      table .tr .th.sort.desc .icon-sorting:before {
-        content: '1'; }
-    /* line 98, ../sass/lists/_tabular.scss */
+      .tabular tr th.sort.sort.desc:after, .tabular tr .th.sort.sort.desc:after, .tabular .tr th.sort.sort.desc:after, .tabular .tr .th.sort.sort.desc:after,
+      table tr th.sort.sort.desc:after,
+      table tr .th.sort.sort.desc:after,
+      table .tr th.sort.sort.desc:after,
+      table .tr .th.sort.sort.desc:after {
+        content: "\ec"; }
+      /* line 97, ../sass/lists/_tabular.scss */
+      .tabular tr th.sortable, .tabular tr .th.sortable, .tabular .tr th.sortable, .tabular .tr .th.sortable,
+      table tr th.sortable,
+      table tr .th.sortable,
+      table .tr th.sortable,
+      table .tr .th.sortable {
+        cursor: pointer; }
+    /* line 101, ../sass/lists/_tabular.scss */
     .tabular tr td, .tabular tr .td, .tabular .tr td, .tabular .tr .td,
     table tr td,
     table tr .td,
@@ -1271,21 +1274,21 @@ table {
       padding: 3px 5px;
       word-wrap: break-word;
       vertical-align: top; }
-      /* line 105, ../sass/lists/_tabular.scss */
+      /* line 108, ../sass/lists/_tabular.scss */
       .tabular tr td.numeric, .tabular tr .td.numeric, .tabular .tr td.numeric, .tabular .tr .td.numeric,
       table tr td.numeric,
       table tr .td.numeric,
       table .tr td.numeric,
       table .tr .td.numeric {
         text-align: right; }
-      /* line 108, ../sass/lists/_tabular.scss */
+      /* line 111, ../sass/lists/_tabular.scss */
       .tabular tr td.s-cell-type-value, .tabular tr .td.s-cell-type-value, .tabular .tr td.s-cell-type-value, .tabular .tr .td.s-cell-type-value,
       table tr td.s-cell-type-value,
       table tr .td.s-cell-type-value,
       table .tr td.s-cell-type-value,
       table .tr .td.s-cell-type-value {
         text-align: right; }
-        /* line 110, ../sass/lists/_tabular.scss */
+        /* line 113, ../sass/lists/_tabular.scss */
         .tabular tr td.s-cell-type-value .l-cell-contents, .tabular tr .td.s-cell-type-value .l-cell-contents, .tabular .tr td.s-cell-type-value .l-cell-contents, .tabular .tr .td.s-cell-type-value .l-cell-contents,
         table tr td.s-cell-type-value .l-cell-contents,
         table tr .td.s-cell-type-value .l-cell-contents,
@@ -1296,23 +1299,23 @@ table {
           border-radius: 2px;
           padding-left: 5px;
           padding-right: 5px; }
-  /* line 126, ../sass/lists/_tabular.scss */
+  /* line 129, ../sass/lists/_tabular.scss */
   .tabular.filterable tbody, .tabular.filterable .tbody,
   table.filterable tbody,
   table.filterable .tbody {
     top: 44px; }
-  /* line 129, ../sass/lists/_tabular.scss */
+  /* line 132, ../sass/lists/_tabular.scss */
   .tabular.filterable input[type="text"],
   table.filterable input[type="text"] {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%; }
-  /* line 135, ../sass/lists/_tabular.scss */
+  /* line 138, ../sass/lists/_tabular.scss */
   .tabular.fixed-header,
   table.fixed-header {
     height: 100%; }
-    /* line 137, ../sass/lists/_tabular.scss */
+    /* line 140, ../sass/lists/_tabular.scss */
     .tabular.fixed-header thead, .tabular.fixed-header .thead,
     .tabular.fixed-header tbody tr, .tabular.fixed-header .tbody .tr,
     table.fixed-header thead,
@@ -1321,12 +1324,12 @@ table {
     table.fixed-header .tbody .tr {
       display: table;
       table-layout: fixed; }
-    /* line 142, ../sass/lists/_tabular.scss */
+    /* line 145, ../sass/lists/_tabular.scss */
     .tabular.fixed-header thead, .tabular.fixed-header .thead,
     table.fixed-header thead,
     table.fixed-header .thead {
       width: calc(100% - 10px); }
-      /* line 144, ../sass/lists/_tabular.scss */
+      /* line 147, ../sass/lists/_tabular.scss */
       .tabular.fixed-header thead:before, .tabular.fixed-header .thead:before,
       table.fixed-header thead:before,
       table.fixed-header .thead:before {
@@ -1337,7 +1340,7 @@ table {
         width: 100%;
         height: 22px;
         background: rgba(255, 255, 255, 0.15); }
-    /* line 154, ../sass/lists/_tabular.scss */
+    /* line 157, ../sass/lists/_tabular.scss */
     .tabular.fixed-header tbody, .tabular.fixed-header .tbody,
     table.fixed-header tbody,
     table.fixed-header .tbody {
@@ -1352,7 +1355,7 @@ table {
       top: 22px;
       display: block;
       overflow-y: scroll; }
-  /* line 162, ../sass/lists/_tabular.scss */
+  /* line 165, ../sass/lists/_tabular.scss */
   .tabular.t-event-messages td, .tabular.t-event-messages .td,
   table.t-event-messages td,
   table.t-event-messages .td {
@@ -4429,26 +4432,26 @@ input[type="text"] {
       .l-infobubble-wrapper .l-infobubble table tr td {
         padding: 2px 0;
         vertical-align: top; }
-        /* line 57, ../sass/helpers/_bubbles.scss */
+        /* line 53, ../sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper .l-infobubble table tr td.label {
           padding-right: 10px;
           white-space: nowrap; }
-        /* line 61, ../sass/helpers/_bubbles.scss */
+        /* line 57, ../sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper .l-infobubble table tr td.value {
-          white-space: nowrap; }
-        /* line 65, ../sass/helpers/_bubbles.scss */
+          word-break: break-all; }
+        /* line 61, ../sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper .l-infobubble table tr td.align-wrap {
           white-space: normal; }
-    /* line 71, ../sass/helpers/_bubbles.scss */
+    /* line 67, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper .l-infobubble .title {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       margin-bottom: 5px; }
-  /* line 78, ../sass/helpers/_bubbles.scss */
+  /* line 74, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-left {
     margin-left: 20px; }
-    /* line 80, ../sass/helpers/_bubbles.scss */
+    /* line 76, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-left .l-infobubble::before {
       right: 100%;
       width: 0;
@@ -4456,10 +4459,10 @@ input[type="text"] {
       border-top: 6.66667px solid transparent;
       border-bottom: 6.66667px solid transparent;
       border-right: 10px solid #ddd; }
-  /* line 86, ../sass/helpers/_bubbles.scss */
+  /* line 82, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-right {
     margin-right: 20px; }
-    /* line 88, ../sass/helpers/_bubbles.scss */
+    /* line 84, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-right .l-infobubble::before {
       left: 100%;
       width: 0;
@@ -4467,16 +4470,16 @@ input[type="text"] {
       border-top: 6.66667px solid transparent;
       border-bottom: 6.66667px solid transparent;
       border-left: 10px solid #ddd; }
-  /* line 95, ../sass/helpers/_bubbles.scss */
+  /* line 91, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-top .l-infobubble::before {
     top: 20px; }
-  /* line 101, ../sass/helpers/_bubbles.scss */
+  /* line 97, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-btm .l-infobubble::before {
     bottom: 20px; }
-  /* line 106, ../sass/helpers/_bubbles.scss */
+  /* line 102, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-down {
     margin-bottom: 10px; }
-    /* line 108, ../sass/helpers/_bubbles.scss */
+    /* line 104, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-down .l-infobubble::before {
       left: 50%;
       top: 100%;
@@ -4484,21 +4487,21 @@ input[type="text"] {
       border-left: 5px solid transparent;
       border-right: 5px solid transparent;
       border-top: 7.5px solid #ddd; }
-  /* line 117, ../sass/helpers/_bubbles.scss */
+  /* line 113, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper .arw {
     z-index: 2; }
-  /* line 120, ../sass/helpers/_bubbles.scss */
+  /* line 116, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-up .arw.arw-down, .l-infobubble-wrapper.arw-down .arw.arw-up {
     display: none; }
 
-/* line 127, ../sass/helpers/_bubbles.scss */
+/* line 125, ../sass/helpers/_bubbles.scss */
 .l-thumbsbubble-wrapper .arw-up {
   width: 0;
   height: 0;
   border-left: 6.66667px solid transparent;
   border-right: 6.66667px solid transparent;
   border-bottom: 10px solid #4d4d4d; }
-/* line 130, ../sass/helpers/_bubbles.scss */
+/* line 128, ../sass/helpers/_bubbles.scss */
 .l-thumbsbubble-wrapper .arw-down {
   width: 0;
   height: 0;
@@ -4506,7 +4509,7 @@ input[type="text"] {
   border-right: 6.66667px solid transparent;
   border-top: 10px solid #4d4d4d; }
 
-/* line 134, ../sass/helpers/_bubbles.scss */
+/* line 133, ../sass/helpers/_bubbles.scss */
 .s-infobubble {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -4517,22 +4520,29 @@ input[type="text"] {
   background: #ddd;
   color: #666;
   font-size: 0.8rem; }
-  /* line 141, ../sass/helpers/_bubbles.scss */
+  /* line 140, ../sass/helpers/_bubbles.scss */
   .s-infobubble .title {
     color: #333333;
     font-weight: bold; }
   /* line 146, ../sass/helpers/_bubbles.scss */
-  .s-infobubble tr td {
-    border-top: 1px solid #c4c4c4;
+  .s-infobubble table tr td {
+    border: none;
+    border-top: 1px solid #c4c4c4 !important;
     font-size: 0.9em; }
-  /* line 150, ../sass/helpers/_bubbles.scss */
-  .s-infobubble tr:first-child td {
+  /* line 152, ../sass/helpers/_bubbles.scss */
+  .s-infobubble table tr:first-child td {
+    border-top: none !important; }
+  /* line 157, ../sass/helpers/_bubbles.scss */
+  .s-infobubble:first-child td {
     border-top: none; }
-  /* line 154, ../sass/helpers/_bubbles.scss */
+  /* line 161, ../sass/helpers/_bubbles.scss */
+  .s-infobubble .label {
+    color: gray; }
+  /* line 165, ../sass/helpers/_bubbles.scss */
   .s-infobubble .value {
     color: #333333; }
 
-/* line 159, ../sass/helpers/_bubbles.scss */
+/* line 171, ../sass/helpers/_bubbles.scss */
 .s-thumbsbubble {
   background: #4d4d4d;
   color: #b3b3b3; }

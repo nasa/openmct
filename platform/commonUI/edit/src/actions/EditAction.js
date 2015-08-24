@@ -42,7 +42,9 @@ define(
          * mode (typically triggered by the Edit button.) This will
          * show the user interface for editing (by way of a change in
          * route)
+         * @memberof platform/commonUI/edit
          * @constructor
+         * @implements {Action}
          */
         function EditAction($location, navigationService, $log, context) {
             var domainObject = (context || {}).domainObject;
@@ -60,16 +62,18 @@ define(
                 return NULL_ACTION;
             }
 
-            return {
-                /**
-                 * Enter edit mode.
-                 */
-                perform: function () {
-                    navigationService.setNavigation(domainObject);
-                    $location.path("/edit");
-                }
-            };
+            this.domainObject = domainObject;
+            this.$location = $location;
+            this.navigationService = navigationService;
         }
+
+        /**
+         * Enter edit mode.
+         */
+        EditAction.prototype.perform = function () {
+            this.navigationService.setNavigation(this.domainObject);
+            this.$location.path("/edit");
+        };
 
         /**
          * Check for applicability; verify that a domain object is present

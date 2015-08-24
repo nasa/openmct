@@ -1,7 +1,5 @@
 [
-    "actions/CopyAction",
-    "actions/LinkAction",
-    "actions/MoveAction",
+    "actions/AbstractComposeAction",
     "services/CopyService",
     "services/LinkService",
     "services/MoveService",

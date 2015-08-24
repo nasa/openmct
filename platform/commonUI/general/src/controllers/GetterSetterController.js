@@ -54,6 +54,7 @@ define(
          * parameter it received.) Getter-setter functions are never the
          * target of a scope assignment and so avoid this problem.
          *
+         * @memberof platform/commonUI/general
          * @constructor
          * @param {Scope} $scope the controller's scope
          */

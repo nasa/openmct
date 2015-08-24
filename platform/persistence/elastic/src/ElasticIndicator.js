@@ -46,70 +46,55 @@ define(
             };
 
         /**
-         * Indicator for the current CouchDB connection. Polls CouchDB
-         * at a regular interval (defined by bundle constants) to ensure
-         * that the database is available.
+         * Indicator for the current ElasticSearch connection. Polls
+         * ElasticSearch at a regular interval (defined by bundle constants)
+         * to ensure that the database is available.
+         * @constructor
+         * @memberof platform/persistence/elastic
+         * @implements {Indicator}
+         * @param $http Angular's $http service
+         * @param $interval Angular's $interval service
+         * @param {string} path the URL to poll for elasticsearch availability
+         * @param {number} interval the interval, in milliseconds, to poll at
          */
-        function ElasticIndicator($http, $interval, PATH, INTERVAL) {
+        function ElasticIndicator($http, $interval, path, interval) {
             // Track the current connection state
-            var state = PENDING;
+            var self = this;
 
-            // Callback if the HTTP request to Couch fails
-            function handleError(err) {
-                state = DISCONNECTED;
+            this.state = PENDING;
+
+            // Callback if the HTTP request to ElasticSearch fails
+            function handleError() {
+                self.state = DISCONNECTED;
             }
 
             // Callback if the HTTP request succeeds.
-            function handleResponse(response) {
-                state = CONNECTED;
+            function handleResponse() {
+                self.state = CONNECTED;
             }
 
-            // Try to connect to CouchDB, and update the indicator.
+            // Try to connect to ElasticSearch, and update the indicator.
             function updateIndicator() {
-                $http.get(PATH).then(handleResponse, handleError);
+                $http.get(path).then(handleResponse, handleError);
             }
 
             // Update the indicator initially, and start polling.
             updateIndicator();
-            $interval(updateIndicator, INTERVAL, false);
-
-            return {
-                /**
-                 * Get the glyph (single character used as an icon)
-                 * to display in this indicator. This will return "D",
-                 * which should appear as a database icon.
-                 * @returns {string} the character of the database icon
-                 */
-                getGlyph: function () {
-                    return "D";
-                },
-                /**
-                 * Get the name of the CSS class to apply to the glyph.
-                 * This is used to color the glyph to match its
-                 * state (one of ok, caution or err)
-                 * @returns {string} the CSS class to apply to this glyph
-                 */
-                getGlyphClass: function () {
-                    return state.glyphClass;
-                },
-                /**
-                 * Get the text that should appear in the indicator.
-                 * @returns {string} brief summary of connection status
-                 */
-                getText: function () {
-                    return state.text;
-                },
-                /**
-                 * Get a longer-form description of the current connection
-                 * space, suitable for display in a tooltip
-                 * @returns {string} longer summary of connection status
-                 */
-                getDescription: function () {
-                    return state.description;
-                }
-            };
-
+            $interval(updateIndicator, interval, false);
         }
+
+        ElasticIndicator.prototype.getGlyph = function () {
+            return "D";
+        };
+        ElasticIndicator.prototype.getGlyphClass = function () {
+            return this.state.glyphClass;
+        };
+        ElasticIndicator.prototype.getText = function () {
+            return this.state.text;
+        };
+        ElasticIndicator.prototype.getDescription = function () {
+            return this.state.description;
+        };
 
         return ElasticIndicator;
     }

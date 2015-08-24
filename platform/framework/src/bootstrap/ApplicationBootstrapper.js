@@ -38,26 +38,30 @@ define(
          * framework needs to wait until all extensions have been loaded
          * and registered.
          *
+         * @memberof platform/framework
          * @constructor
          */
         function ApplicationBootstrapper(angular, document, $log) {
-            return {
-                /**
-                 * Bootstrap the application. 
-                 *
-                 * @method
-                 * @memberof ApplicationBootstrapper#
-                 * @param {angular.Module} app the Angular application to
-                 *        bootstrap
-                 */
-                bootstrap: function (app) {
-                    $log.info("Bootstrapping application " + (app || {}).name);
-                    angular.element(document).ready(function () {
-                        angular.bootstrap(document, [app.name]);
-                    });
-                }
-            };
+            this.angular = angular;
+            this.document = document;
+            this.$log = $log;
         }
+
+        /**
+         * Bootstrap the application.
+         *
+         * @param {angular.Module} app the Angular application to
+         *        bootstrap
+         */
+        ApplicationBootstrapper.prototype.bootstrap = function (app) {
+            var angular = this.angular,
+                document = this.document,
+                $log = this.$log;
+            $log.info("Bootstrapping application " + (app || {}).name);
+            angular.element(document).ready(function () {
+                angular.bootstrap(document, [app.name]);
+            });
+        };
 
         return ApplicationBootstrapper;
     }

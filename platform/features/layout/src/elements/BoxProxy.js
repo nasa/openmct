@@ -34,6 +34,7 @@ define(
          * Note that arguments here are meant to match those expected
          * by `Array.prototype.map`
          *
+         * @memberof platform/features/layout
          * @constructor
          * @param element the fixed position element, as stored in its
          *        configuration
@@ -47,9 +48,9 @@ define(
              * Get/set this element's fill color. (Omitting the
              * argument makes this act as a getter.)
              * @method
-             * @memberof BoxProxy
              * @param {string} fill the new fill color
              * @returns {string} the fill color
+             * @memberof platform/features/layout.BoxProxy#
              */
             proxy.fill = new AccessorMutator(element, 'fill');
 

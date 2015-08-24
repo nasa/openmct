@@ -22,6 +22,11 @@
 
 /*global define */
 
+/**
+ * This bundle implements actions which control the location of objects
+ * (move, copy, link.)
+ * @namespace platform/entanglement
+ */
 define(
     function () {
         "use strict";
@@ -29,6 +34,8 @@ define(
         /**
          * The LocationService allows for easily prompting the user for a
          * location in the root tree.
+         * @constructor
+         * @memberof platform/entanglement
          */
         function LocationService(dialogService) {
             return {
@@ -43,6 +50,7 @@ define(
                  * @param {domainObject} initialLocation - tree location to
                  *     display at start
                  * @returns {Promise} promise for a domain object.
+                 * @memberof platform/entanglement.LocationService#
                  */
                 getLocationFromUser: function (title, label, validate, initialLocation) {
                     var formStructure,
@@ -81,3 +89,4 @@ define(
         return LocationService;
     }
 );
+

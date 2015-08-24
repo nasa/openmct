@@ -35,41 +35,38 @@ define(
          * The TelemetryFormatter is responsible for formatting (as text
          * for display) values along either the domain (usually time) or
          * the range (usually value) of a data series.
+         * @memberof platform/telemetry
          * @constructor
          */
         function TelemetryFormatter() {
-            function formatDomainValue(v, key) {
-                return isNaN(v) ? "" : moment.utc(v).format(DATE_FORMAT);
-            }
-
-            function formatRangeValue(v, key) {
-                return isNaN(v) ? v : v.toFixed(3);
-            }
-
-            return {
-                /**
-                 * Format a domain value.
-                 * @param {number} v the domain value; a timestamp
-                 *        in milliseconds since start of 1970
-                 * @param {string} [key] the key which identifies the
-                 *        domain; if unspecified or unknown, this will
-                 *        be treated as a standard timestamp.
-                 * @returns {string} a textual representation of the
-                 *        data and time, suitable for display.
-                 */
-                formatDomainValue: formatDomainValue,
-                /**
-                 * Format a range value.
-                 * @param {number} v the range value; a numeric value
-                 * @param {string} [key] the key which identifies the
-                 *        range; if unspecified or unknown, this will
-                 *        be treated as a numeric value.
-                 * @returns {string} a textual representation of the
-                 *        value, suitable for display.
-                 */
-                formatRangeValue: formatRangeValue
-            };
         }
+
+        /**
+         * Format a domain value.
+         * @param {number} v the domain value; a timestamp
+         *        in milliseconds since start of 1970
+         * @param {string} [key] the key which identifies the
+         *        domain; if unspecified or unknown, this will
+         *        be treated as a standard timestamp.
+         * @returns {string} a textual representation of the
+         *        data and time, suitable for display.
+         */
+        TelemetryFormatter.prototype.formatDomainValue = function (v, key) {
+            return isNaN(v) ? "" : moment.utc(v).format(DATE_FORMAT);
+        };
+
+        /**
+         * Format a range value.
+         * @param {number} v the range value; a numeric value
+         * @param {string} [key] the key which identifies the
+         *        range; if unspecified or unknown, this will
+         *        be treated as a numeric value.
+         * @returns {string} a textual representation of the
+         *        value, suitable for display.
+         */
+        TelemetryFormatter.prototype.formatRangeValue = function (v, key) {
+            return isNaN(v) ? String(v) : v.toFixed(VALUE_FORMAT_DIGITS);
+        };
 
         return TelemetryFormatter;
     }

@@ -29,6 +29,7 @@ define(
         /**
          * Controller for the `browse-object` representation of a domain
          * object (the right-hand side of Browse mode.)
+         * @memberof platform/commonUI/browse
          * @constructor
          */
         function BrowseObjectController($scope, $location, $route, $window) {
@@ -84,3 +85,4 @@ define(
         return BrowseObjectController;
     }
 );
+

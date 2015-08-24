@@ -35,22 +35,51 @@ define(
          *
          * @param {ImplementationLoader} loader used to load implementations
          * @param {*} $log Angular's logging service
+         * @memberof platform/framework
          * @constructor
          */
         function ExtensionResolver(loader, $log) {
+            this.loader = loader;
+            this.$log = $log;
+        }
+
+        /**
+         * Resolve the provided extension; this will give a promise
+         * for the extension's implementation, if one has been
+         * specified, or for the plain definition of the extension
+         * otherwise. The plain definition will also be given
+         * if the implementation fails to load for some reason.
+         *
+         * All key-value pairs from the extension definition
+         * will additionally be attached to any loaded implementation.
+         *
+         * @param {Extension} extension the extension to resolve
+         * @returns {Promise} a promise for the resolved extension
+         */
+        ExtensionResolver.prototype.resolve = function (extension) {
+            var loader = this.loader,
+                $log = this.$log;
+
             function loadImplementation(extension) {
                 var implPath = extension.getImplementationPath(),
                     implPromise = loader.load(implPath),
                     definition = extension.getDefinition();
 
+                // Wrap a constructor function (to avoid modifying the original)
+                function constructorFor(impl) {
+                    function Constructor() {
+                        return impl.apply(this, arguments);
+                    }
+                    Constructor.prototype = impl.prototype;
+                    return Constructor;
+                }
+
                 // Attach values from the object definition to the
                 // loaded implementation.
                 function attachDefinition(impl) {
                     var result = (typeof impl === 'function') ?
-                            function () {
-                                return impl.apply({}, arguments);
-                            } :
-                            Object.create(impl);
+                        constructorFor(impl) :
+                        Object.create(impl);
 
                     // Copy over static properties
                     Object.keys(impl).forEach(function (k) {
@@ -76,11 +105,11 @@ define(
                 function handleError(err) {
                     // Build up a log message from parts
                     var message = [
-                            "Could not load implementation for extension ",
-                            extension.getLogName(),
-                            " due to ",
-                            err.message
-                        ].join("");
+                        "Could not load implementation for extension ",
+                        extension.getLogName(),
+                        " due to ",
+                        err.message
+                    ].join("");
 
                     // Log that the extension was not loaded
                     $log.warn(message);
@@ -99,32 +128,16 @@ define(
                 return implPromise.then(attachDefinition, handleError);
             }
 
-            return {
-                /**
-                 * Resolve the provided extension; this will give a promise
-                 * for the extension's implementation, if one has been
-                 * specified, or for the plain definition of the extension
-                 * otherwise. The plain definition will also be given
-                 * if the implementation fails to load for some reason.
-                 *
-                 * All key-value pairs from the extension definition
-                 * will additionally be attached to any loaded implementation.
-                 *
-                 * @param {Extension} extension
-                 */
-                resolve: function (extension) {
-                    // Log that loading has begun
-                    $log.info([
-                        "Resolving extension ",
-                        extension.getLogName()
-                    ].join(""));
+            // Log that loading has begun
+            $log.info([
+                "Resolving extension ",
+                extension.getLogName()
+            ].join(""));
 
-                    return extension.hasImplementation() ?
-                            loadImplementation(extension) :
-                            Promise.resolve(extension.getDefinition());
-                }
-            };
-        }
+            return extension.hasImplementation() ?
+                loadImplementation(extension) :
+                Promise.resolve(extension.getDefinition());
+        };
 
         return ExtensionResolver;
     }

@@ -33,7 +33,9 @@ define(
          * A column which will report telemetry domain values
          * (typically, timestamps.) Used by the ScrollingListController.
          *
+         * @memberof platform/features/events
          * @constructor
+         * @implements {platform/features/events.EventsColumn}
          * @param domainMetadata an object with the machine- and human-
          *        readable names for this domain (in `key` and `name`
          *        fields, respectively.)
@@ -41,26 +43,20 @@ define(
          *        formatting service, for making values human-readable.
          */
         function DomainColumn(domainMetadata, telemetryFormatter) {
-            return {
-                /**
-                 * Get the title to display in this column's header.
-                 * @returns {string} the title to display
-                 */
-                getTitle: function () {
-                    return domainMetadata.name;
-                },
-                /**
-                 * Get the text to display inside a row under this
-                 * column.
-                 * @returns {string} the text to display
-                 */
-                getValue: function (domainObject, data, index) {
-                    return telemetryFormatter.formatDomainValue(
-                        data.getDomainValue(index, domainMetadata.key)
-                    );
-                }
-            };
+            this.domainMetadata = domainMetadata;
+            this.telemetryFormatter = telemetryFormatter;
         }
+
+        DomainColumn.prototype.getTitle = function () {
+            return this.domainMetadata.name;
+        };
+
+        DomainColumn.prototype.getValue = function (domainObject, data, index) {
+            var domainKey = this.domainMetadata.key;
+            return this.telemetryFormatter.formatDomainValue(
+                data.getDomainValue(index, domainKey)
+            );
+        };
 
         return DomainColumn;
     }
