@@ -4573,23 +4573,24 @@ input[type="text"] {
   right: 10px;
   bottom: auto;
   left: 10px;
-  height: 30px; }
-/* line 33, ../sass/user-environ/_top-bar.scss */
+  height: 30px;
+  line-height: 24px; }
+/* line 31, ../sass/user-environ/_top-bar.scss */
 .top-bar .title {
   color: #fff; }
-/* line 37, ../sass/user-environ/_top-bar.scss */
+/* line 35, ../sass/user-environ/_top-bar.scss */
 .top-bar .buttons-main {
   font-size: 0.8em;
   left: auto;
   text-align: right; }
-  /* line 42, ../sass/user-environ/_top-bar.scss */
+  /* line 40, ../sass/user-environ/_top-bar.scss */
   .top-bar .buttons-main .btn {
     margin-left: 5px; }
 
-/* line 50, ../sass/user-environ/_top-bar.scss */
+/* line 48, ../sass/user-environ/_top-bar.scss */
 .edit-mode .top-bar .buttons-main {
   white-space: nowrap; }
-  /* line 54, ../sass/user-environ/_top-bar.scss */
+  /* line 52, ../sass/user-environ/_top-bar.scss */
   .edit-mode .top-bar .buttons-main.abs, .edit-mode .top-bar .btn-menu span.buttons-main.l-click-area, .btn-menu .edit-mode .top-bar span.buttons-main.l-click-area {
     bottom: auto;
     left: auto; }
