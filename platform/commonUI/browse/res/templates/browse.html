@@ -38,13 +38,14 @@
             </div>
 
             <mct-splitter class="mobile-hide"></mct-splitter>
-                    <div class='split-pane-component items pane mobile-pane right-repr'>
-                        <div class='holder abs l-mobile' id='content-area'>
-                            <mct-representation mct-object="navigatedObject" key="'browse-object'">
-                            </mct-representation>
-                        </div>
-                    <div class="left key-properties ui-symbol icon mobile-menu-icon" ng-click="treeSlide()">m</div>
-                    </div>
+
+            <div class='split-pane-component items pane mobile-pane right-repr'>
+                <div class='holder abs l-mobile' id='content-area'>
+                    <mct-representation mct-object="navigatedObject" key="'browse-object'">
+                    </mct-representation>
+                </div>
+                <div class="key-properties ui-symbol icon mobile-menu-icon desktop-hide" ng-click="treeSlide()">m</div>
+            </div>
         </mct-split-pane>
     </div>
     <mct-include key="'bottombar'"></mct-include>

@@ -21,6 +21,7 @@
  *****************************************************************************/
 .object-browse-bar {
     @include absPosDefault();
+    @include box-sizing(border-box);
     height: $ueTopBarH;
     line-height: $ueTopBarH;
     white-space: nowrap;

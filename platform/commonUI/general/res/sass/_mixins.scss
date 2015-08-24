@@ -368,6 +368,7 @@
 }
 
 @mixin tmpBorder($c: #ffcc00, $a: 0.75) {
+    @inlude box-sizing(border-box);
     border: 1px dotted rgba($c, $a);
 }
 
