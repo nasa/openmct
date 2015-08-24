@@ -91,6 +91,7 @@ define(
          * etc. can be set on that element to control the splitter's
          * allowable positions.
          *
+         * @memberof platform/commonUI/general
          * @constructor
          */
         function MCTSplitPane($parse, $log) {
@@ -213,3 +214,4 @@ define(
 
     }
 );
+

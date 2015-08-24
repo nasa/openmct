@@ -32,9 +32,11 @@ define(
          * which capabilities. This supports composition policy (rules
          * for which objects can contain which other objects) which
          * sometimes is determined based on the presence of capabilities.
+         * @constructor
+         * @memberof platform/containment
          */
         function CapabilityTable(typeService, capabilityService) {
-            var table = {};
+            var self = this;
 
             // Build an initial model for a type
             function buildModel(type) {
@@ -52,24 +54,25 @@ define(
             function addToTable(type) {
                 var typeKey = type.getKey();
                 Object.keys(getCapabilities(type)).forEach(function (key) {
-                    table[key] = table[key] || {};
-                    table[key][typeKey] = true;
+                    self.table[key] = self.table[key] || {};
+                    self.table[key][typeKey] = true;
                 });
             }
 
             // Build the table
+            this.table = {};
             (typeService.listTypes() || []).forEach(addToTable);
-
-            return {
-                /**
-                 * Check if a type is expected to expose a specific
-                 * capability.
-                 */
-                hasCapability: function (typeKey, capabilityKey) {
-                    return (table[capabilityKey] || {})[typeKey];
-                }
-            };
         }
+
+        /**
+         * Check if a type is expected to expose a specific capability.
+         * @param {string} typeKey the type identifier
+         * @param {string} capabilityKey the capability identifier
+         * @returns {boolean} true if expected to be exposed
+         */
+        CapabilityTable.prototype.hasCapability = function (typeKey, capabilityKey) {
+            return (this.table[capabilityKey] || {})[typeKey];
+        };
 
         return CapabilityTable;
     }

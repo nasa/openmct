@@ -25,7 +25,7 @@
  * DomainObjectSpec. Created by vwoeltje on 11/6/14.
  */
 define(
-    ["../../src/objects/DomainObject"],
+    ["../../src/objects/DomainObjectImpl"],
     function (DomainObject) {
         "use strict";
 

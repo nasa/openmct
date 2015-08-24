@@ -34,6 +34,7 @@ define(
          * set of Create actions based on the currently-selected
          * domain object.
          *
+         * @memberof platform/commonUI/browse
          * @constructor
          */
         function CreateMenuController($scope) {

@@ -38,6 +38,7 @@ define(
                 mockMutationCapability,
                 mockPersistenceCapability,
                 mockCompositionCapability,
+                mockContextCapability,
                 mockCapabilities,
                 creationService;
 
@@ -87,10 +88,15 @@ define(
                     "composition",
                     ["invoke"]
                 );
+                mockContextCapability = jasmine.createSpyObj(
+                    "context",
+                    ["getPath"]
+                );
                 mockCapabilities = {
                     mutation: mockMutationCapability,
                     persistence: mockPersistenceCapability,
-                    composition: mockCompositionCapability
+                    composition: mockCompositionCapability,
+                    context: mockContextCapability
                 };
 
                 mockPersistenceService.createObject.andReturn(
@@ -103,6 +109,7 @@ define(
                 mockParentObject.useCapability.andCallFake(function (key, value) {
                     return mockCapabilities[key].invoke(value);
                 });
+                mockParentObject.getId.andReturn('parentId');
 
                 mockPersistenceCapability.persist.andReturn(
                     mockPromise(true)
@@ -194,6 +201,15 @@ define(
                 expect(mockLog.error).toHaveBeenCalled();
             });
 
+            it("stores location on new domainObjects", function () {
+                var model = { name: "my model" },
+                    objectPromise = creationService.createObject(
+                        model,
+                        mockParentObject
+                    );
+
+                expect(model.location).toBe('parentId');
+            });
 
         });
     }

@@ -48,12 +48,12 @@ define(
          * node expansion when this tree node's _subtree_ will contain
          * the navigated object (recursively, this becomes an
          * expand-to-show-navigated-object behavior.)
+         * @memberof platform/commonUI/general
          * @constructor
          */
-        function TreeNodeController($scope, $timeout, $rootScope) {
-            var selectedObject = ($scope.ngModel || {}).selectedObject,
-                isSelected = false,
-                hasBeenExpanded = false;
+        function TreeNodeController($scope, $timeout) {
+            var self = this,
+                selectedObject = ($scope.ngModel || {}).selectedObject;
 
             // Look up the id for a domain object. A convenience
             // for mapping; additionally does some undefined-checking.
@@ -76,17 +76,6 @@ define(
                                 checkPath(nodePath, navPath, index + 1));
             }
 
-            // Track that a node has been expanded, either by the
-            // user or automatically to show a selection.
-            function trackExpansion() {
-                if (!hasBeenExpanded) {
-                    // Run on a timeout; if a lot of expansion needs to
-                    // occur (e.g. if the selection is several nodes deep) we
-                    // want this to be spread across multiple digest cycles.
-                    $timeout(function () { hasBeenExpanded = true; }, 0);
-                }
-            }
-
             // Consider the currently-navigated object and update
             // parameters which support display.
             function checkSelection() {
@@ -101,7 +90,7 @@ define(
 
                 // Deselect; we will reselect below, iff we are
                 // exactly at the end of the path.
-                isSelected = false;
+                self.isSelectedFlag = false;
 
                 // Expand if necessary (if the navigated object will
                 // be in this node's subtree)
@@ -120,12 +109,12 @@ define(
                         // at the end of the path, highlight;
                         // otherwise, expand.
                         if (nodePath.length === navPath.length) {
-                            isSelected = true;
+                            self.isSelectedFlag = true;
                         } else { // node path is shorter: Expand!
                             if ($scope.toggle) {
                                 $scope.toggle.setState(true);
                             }
-                            trackExpansion();
+                            self.trackExpansion();
                         }
 
                     }
@@ -138,48 +127,51 @@ define(
                 selectedObject = object;
                 checkSelection();
             }
-            
+
+            this.isSelectedFlag = false;
+            this.hasBeenExpandedFlag = false;
+            this.$timeout = $timeout;
+
             // Listen for changes which will effect display parameters
             $scope.$watch("ngModel.selectedObject", setSelection);
             $scope.$watch("domainObject", checkSelection);
-
-            return {
-                /**
-                 * This method should be called when a node is expanded
-                 * to record that this has occurred, to support one-time
-                 * lazy loading of the node's subtree.
-                 */
-                trackExpansion: trackExpansion,
-                /**
-                 * Check if this not has ever been expanded.
-                 * @returns true if it has been expanded
-                 */
-                hasBeenExpanded: function () {
-                    return hasBeenExpanded;
-                },
-                /**
-                 * Check whether or not the domain object represented by
-                 * this tree node should be highlighted.
-                 * An object will be highlighted if it matches
-                 * ngModel.selectedObject
-                 * @returns true if this should be highlighted
-                 */
-                isSelected: function () {
-                    return isSelected;
-                    
-                    // Modification for compatibility with search.
-                    // If this object is the same as the model's selected object
-                    // Same being them having the same ID (this allows different
-                    // instances of the same thing to be recognized as the same)
-                    //return getId($scope.ngModel.selectedObject) === getId($scope.domainObject);
-                    
-                    // Not using modified version now because it breaks tests. 
-                    
-                    // TODO: Check to make sure this change doesn't break 
-                    //       anything/find a better way to do this
-                }
-            };
         }
+
+        /**
+         * This method should be called when a node is expanded
+         * to record that this has occurred, to support one-time
+         * lazy loading of the node's subtree.
+         */
+        TreeNodeController.prototype.trackExpansion = function () {
+            var self = this;
+            if (!self.hasBeenExpanded()) {
+                // Run on a timeout; if a lot of expansion needs to
+                // occur (e.g. if the selection is several nodes deep) we
+                // want this to be spread across multiple digest cycles.
+                self.$timeout(function () {
+                    self.hasBeenExpandedFlag = true;
+                }, 0);
+            }
+        };
+
+        /**
+         * Check if this not has ever been expanded.
+         * @returns true if it has been expanded
+         */
+        TreeNodeController.prototype.hasBeenExpanded = function () {
+            return this.hasBeenExpandedFlag;
+        };
+
+        /**
+         * Check whether or not the domain object represented by
+         * this tree node should be highlighted.
+         * An object will be highlighted if it matches
+         * ngModel.selectedObject
+         * @returns true if this should be highlighted
+         */
+        TreeNodeController.prototype.isSelected = function () {
+            return this.isSelectedFlag;
+        };
 
         return TreeNodeController;
     }

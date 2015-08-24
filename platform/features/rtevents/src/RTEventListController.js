@@ -35,6 +35,7 @@ define(
         /**
          * The RTEventListController is responsible for populating
          * the contents of the messages view.
+         * @memberof platform/features/rtevents
          * @constructor
          */
         function RTEventListController($scope, telemetryHandler, telemetryFormatter) {
@@ -136,3 +137,4 @@ define(
         return RTEventListController;
     }
 );
+

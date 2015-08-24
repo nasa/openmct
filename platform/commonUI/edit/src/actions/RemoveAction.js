@@ -37,22 +37,34 @@ define(
          *
          * @param {DomainObject} object the object to be removed
          * @param {ActionContext} context the context in which this action is performed
+         * @memberof platform/commonUI/edit
          * @constructor
-         * @memberof module:editor/actions/remove-action
+         * @implements {Action}
          */
         function RemoveAction($q, context) {
-            var object = (context || {}).domainObject;
+            this.domainObject = (context || {}).domainObject;
+            this.$q = $q;
+        }
 
-            /**
+        /**
+         * Perform this action.
+         * @return {Promise} a promise which will be
+         *         fulfilled when the action has completed.
+         */
+        RemoveAction.prototype.perform = function () {
+            var $q = this.$q,
+                domainObject = this.domainObject;
+
+            /*
              * Check whether an object ID matches the ID of the object being
              * removed (used to filter a parent's composition to handle the
              * removal.)
              */
             function isNotObject(otherObjectId) {
-                return otherObjectId !== object.getId();
+                return otherObjectId !== domainObject.getId();
             }
 
-            /**
+            /*
              * Mutate a parent object such that it no longer contains the object
              * which is being removed.
              */
@@ -60,7 +72,7 @@ define(
                 model.composition = model.composition.filter(isNotObject);
             }
 
-            /**
+            /*
              * Invoke persistence on a domain object. This will be called upon
              * the removed object's parent (as its composition will have changed.)
              */
@@ -69,33 +81,22 @@ define(
                 return persistence && persistence.persist();
             }
 
-            /**
+            /*
              * Remove the object from its parent, as identified by its context
              * capability.
-             * @param {ContextCapability} contextCapability the "context" capability
-             *        of the domain object being removed.
              */
             function removeFromContext(contextCapability) {
                 var parent = contextCapability.getParent();
-                $q.when(
-                    parent.useCapability('mutation', doMutate)
-                ).then(function () {
-                    return doPersist(parent);
-                });
+                return $q.when(
+                        parent.useCapability('mutation', doMutate)
+                    ).then(function () {
+                        return doPersist(parent);
+                    });
             }
 
-            return {
-                /**
-                 * Perform this action.
-                 * @return {module:core/promises.Promise} a promise which will be
-                 *         fulfilled when the action has completed.
-                 */
-                perform: function () {
-                    return $q.when(object.getCapability('context'))
-                        .then(removeFromContext);
-                }
-            };
-        }
+            return $q.when(this.domainObject.getCapability('context'))
+                .then(removeFromContext);
+        };
 
         // Object needs to have a parent for Remove to be applicable
         RemoveAction.appliesTo = function (context) {

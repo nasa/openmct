@@ -22,71 +22,29 @@
 
 /*global define */
 define(
-    function () {
+    ['./AbstractComposeAction'],
+    function (AbstractComposeAction) {
         "use strict";
-
 
         /**
          * The CopyAction is available from context menus and allows a user to
          * deep copy an object to another location of their choosing.
          *
-         * @implements Action
+         * @implements {Action}
+         * @constructor
+         * @memberof platform/entanglement
          */
         function CopyAction(locationService, copyService, context) {
-
-            var object,
-                newParent,
-                currentParent;
-
-            if (context.selectedObject) {
-                newParent = context.domainObject;
-                object = context.selectedObject;
-            } else {
-                object = context.domainObject;
-            }
-
-            currentParent = object
-                .getCapability('context')
-                .getParent();
-
-            return {
-                perform: function () {
-
-                    if (newParent) {
-                        return copyService
-                            .perform(object, newParent);
-                    }
-
-                    var dialogTitle,
-                        label,
-                        validateLocation;
-
-                    dialogTitle = [
-                        "Duplicate ",
-                        object.getModel().name,
-                        " to a location"
-                    ].join("");
-
-                    label = "Duplicate To";
-
-                    validateLocation = function (newParent) {
-                        return copyService
-                            .validate(object, newParent);
-                    };
-
-                    return locationService.getLocationFromUser(
-                        dialogTitle,
-                        label,
-                        validateLocation,
-                        currentParent
-                    ).then(function (newParent) {
-                        return copyService
-                            .perform(object, newParent);
-                    });
-                }
-            };
+            return new AbstractComposeAction(
+                locationService,
+                copyService,
+                context,
+                "Duplicate",
+                "to a location"
+            );
         }
 
         return CopyAction;
     }
 );
+

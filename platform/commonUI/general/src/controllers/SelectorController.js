@@ -30,6 +30,7 @@ define(
 
         /**
          * Controller for the domain object selector control.
+         * @memberof platform/commonUI/general
          * @constructor
          * @param {ObjectService} objectService service from which to
          *        read domain objects
@@ -38,28 +39,17 @@ define(
         function SelectorController(objectService, $scope) {
             var treeModel = {},
                 listModel = {},
-                selectedObjects = [],
-                rootObject,
-                previousSelected;
+                previousSelected,
+                self = this;
 
             // For watch; look at the user's selection in the tree
             function getTreeSelection() {
                 return treeModel.selectedObject;
             }
 
-            // Get the value of the field being edited
-            function getField() {
-                return $scope.ngModel[$scope.field] || [];
-            }
-
-            // Get the value of the field being edited
-            function setField(value) {
-                $scope.ngModel[$scope.field] = value;
-            }
-
             // Store root object for subsequent exposure to template
             function storeRoot(objects) {
-                rootObject = objects[ROOT_ID];
+                self.rootObject = objects[ROOT_ID];
             }
 
             // Check that a selection is of the valid type
@@ -82,7 +72,8 @@ define(
                 function updateSelectedObjects(objects) {
                     // Look up from the
                     function getObject(id) { return objects[id]; }
-                    selectedObjects = ids.filter(getObject).map(getObject);
+                    self.selectedObjects =
+                        ids.filter(getObject).map(getObject);
                 }
 
                 // Look up objects by id, then populate right-hand list
@@ -93,62 +84,83 @@ define(
             $scope.$watch(getTreeSelection, validateTreeSelection);
 
             // Make sure right-hand list matches underlying model
-            $scope.$watchCollection(getField, updateList);
+            $scope.$watchCollection(function () {
+                return self.getField();
+            }, updateList);
 
             // Look up root object, then store it
             objectService.getObjects([ROOT_ID]).then(storeRoot);
 
-            return {
-                /**
-                 * Get the root object to show in the left-hand tree.
-                 * @returns {DomainObject} the root object
-                 */
-                root: function () {
-                    return rootObject;
-                },
-                /**
-                 * Add a domain object to the list of selected objects.
-                 * @param {DomainObject} the domain object to select
-                 */
-                select: function (domainObject) {
-                    var id = domainObject && domainObject.getId(),
-                        list = getField() || [];
-                    // Only select if we have a valid id,
-                    // and it isn't already selected
-                    if (id && list.indexOf(id) === -1) {
-                        setField(list.concat([id]));
-                    }
-                },
-                /**
-                 * Remove a domain object from the list of selected objects.
-                 * @param {DomainObject} the domain object to select
-                 */
-                deselect: function (domainObject) {
-                    var id = domainObject && domainObject.getId(),
-                        list = getField() || [];
-                    // Only change if this was a valid id,
-                    // for an object which was already selected
-                    if (id && list.indexOf(id) !== -1) {
-                        // Filter it out of the current field
-                        setField(list.filter(function (otherId) {
-                            return otherId !== id;
-                        }));
-                        // Clear the current list selection
-                        delete listModel.selectedObject;
-                    }
-                },
-                /**
-                 * Get the currently-selected domain objects.
-                 * @returns {DomainObject[]} the current selection
-                 */
-                selected: function () {
-                    return selectedObjects;
-                },
-                // Expose tree/list model for use in template directly
-                treeModel: treeModel,
-                listModel: listModel
-            };
+            this.$scope = $scope;
+            this.selectedObjects = [];
+
+            // Expose tree/list model for use in template directly
+            this.treeModel = treeModel;
+            this.listModel = listModel;
         }
+
+
+
+
+        // Set the value of the field being edited
+        SelectorController.prototype.setField = function (value) {
+            this.$scope.ngModel[this.$scope.field] = value;
+        };
+
+        // Get the value of the field being edited
+        SelectorController.prototype.getField = function () {
+            return this.$scope.ngModel[this.$scope.field] || [];
+        };
+
+
+        /**
+         * Get the root object to show in the left-hand tree.
+         * @returns {DomainObject} the root object
+         */
+        SelectorController.prototype.root = function () {
+            return this.rootObject;
+        };
+
+        /**
+         * Add a domain object to the list of selected objects.
+         * @param {DomainObject} the domain object to select
+         */
+        SelectorController.prototype.select = function (domainObject) {
+            var id = domainObject && domainObject.getId(),
+                list = this.getField() || [];
+            // Only select if we have a valid id,
+            // and it isn't already selected
+            if (id && list.indexOf(id) === -1) {
+                this.setField(list.concat([id]));
+            }
+        };
+
+        /**
+         * Remove a domain object from the list of selected objects.
+         * @param {DomainObject} the domain object to select
+         */
+        SelectorController.prototype.deselect = function (domainObject) {
+            var id = domainObject && domainObject.getId(),
+                list = this.getField() || [];
+            // Only change if this was a valid id,
+            // for an object which was already selected
+            if (id && list.indexOf(id) !== -1) {
+                // Filter it out of the current field
+                this.setField(list.filter(function (otherId) {
+                    return otherId !== id;
+                }));
+                // Clear the current list selection
+                delete this.listModel.selectedObject;
+            }
+        };
+
+        /**
+         * Get the currently-selected domain objects.
+         * @returns {DomainObject[]} the current selection
+         */
+        SelectorController.prototype.selected = function () {
+            return this.selectedObjects;
+        };
 
 
         return SelectorController;

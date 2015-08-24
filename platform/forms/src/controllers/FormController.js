@@ -31,6 +31,7 @@ define(
 
         /**
          * Controller for mct-form and mct-toolbar directives.
+         * @memberof platform/forms
          * @constructor
          */
         function FormController($scope) {

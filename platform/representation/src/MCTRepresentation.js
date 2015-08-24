@@ -22,7 +22,9 @@
 /*global define,Promise*/
 
 /**
- * Module defining MCTRepresentation. Created by vwoeltje on 11/7/14.
+ * This bundle implements the directives for representing domain objects
+ * as Angular-managed HTML.
+ * @namespace platform/representation
  */
 define(
     [],
@@ -47,6 +49,7 @@ define(
          * * `parameters`, used to communicate display parameters to
          *   the included template (e.g. title.)
          *
+         * @memberof platform/representation
          * @constructor
          * @param {RepresentationDefinition[]} representations an array of
          *        representation extensions
@@ -235,6 +238,26 @@ define(
             };
         }
 
+        /**
+         * A representer participates in the process of instantiating a
+         * representation of a domain object.
+         *
+         * @interface Representer
+         * @augments {Destroyable}
+         */
+        /**
+         * Set the current representation in use, and the domain
+         * object being represented.
+         *
+         * @method Representer#represent
+         * @param {RepresentationDefinition} representation the
+         *        definition of the representation in use
+         * @param {DomainObject} domainObject the domain object
+         *        being represented
+         */
+
+
         return MCTRepresentation;
     }
 );
+

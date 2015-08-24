@@ -32,6 +32,11 @@ requirejs.config({
     }
 });
 
+/**
+ * Implements the framework layer, which handles the loading of bundles
+ * and the wiring-together of the extensions they expose.
+ * @namespace platform/framework
+ */
 define(
     [
         'require',

@@ -38,6 +38,8 @@ define(
          *           contains resource files used by this bundle
          * @property {Object.<string,ExtensionDefinition[]>} [extensions={}]
          *           all extensions exposed by this bundle
+         * @constructor
+         * @memberof platform/framework
          */
 
 
@@ -54,13 +56,7 @@ define(
         function Bundle(path, bundleDefinition) {
             // Start with defaults
             var definition = Object.create(Constants.DEFAULT_BUNDLE),
-                logName = path,
-                self;
-
-            // Utility function for resolving paths in this bundle
-            function resolvePath(elements) {
-                return [path].concat(elements || []).join(Constants.SEPARATOR);
-            }
+                logName = path;
 
             // Override defaults with specifics from bundle definition
             Object.keys(bundleDefinition).forEach(function (k) {
@@ -79,125 +75,137 @@ define(
                 logName += ")";
             }
 
-            self = {
-                /**
-                 * Get the path to this bundle.
-                 * @memberof Bundle#
-                 * @returns {string}
-                 */
-                getPath: function () {
-                    return path;
-                },
-                /**
-                 * Get the path to this bundle's source folder. If an
-                 * argument is provided, the path will be to the source
-                 * file within the bundle's source file.
-                 *
-                 * @memberof Bundle#
-                 * @param {string} [sourceFile] optionally, give a path to
-                 *        a specific source file in the bundle.
-                 * @returns {string}
-                 */
-                getSourcePath: function (sourceFile) {
-                    var subpath = sourceFile ?
-                            [ definition.sources, sourceFile ] :
-                            [ definition.sources ];
-
-                    return resolvePath(subpath);
-                },
-                /**
-                 * Get the path to this bundle's resource folder. If an
-                 * argument is provided, the path will be to the resource
-                 * file within the bundle's resource file.
-                 *
-                 * @memberof Bundle#
-                 * @param {string} [resourceFile] optionally, give a path to
-                 *        a specific resource file in the bundle.
-                 * @returns {string}
-                 */
-                getResourcePath: function (resourceFile) {
-                    var subpath = resourceFile ?
-                            [ definition.resources, resourceFile ] :
-                            [ definition.resources ];
-
-                    return resolvePath(subpath);
-                },
-                /**
-                 * Get the path to this bundle's library folder. If an
-                 * argument is provided, the path will be to the library
-                 * file within the bundle's resource file.
-                 *
-                 * @memberof Bundle#
-                 * @param {string} [libraryFile] optionally, give a path to
-                 *        a specific library file in the bundle.
-                 * @returns {string}
-                 */
-                getLibraryPath: function (libraryFile) {
-                    var subpath = libraryFile ?
-                            [ definition.libraries, libraryFile ] :
-                            [ definition.libraries ];
-
-                    return resolvePath(subpath);
-                },
-                /**
-                 * Get library configuration for this bundle. This is read
-                 * from the bundle's definition; if the bundle is well-formed,
-                 * it will resemble a require.config object.
-                 * @memberof Bundle#
-                 * @returns {object}
-                 */
-                getConfiguration: function () {
-                    return definition.configuration || {};
-                },
-                /**
-                 * Get a log-friendly name for this bundle; this will
-                 * include both the key (machine-readable name for this
-                 * bundle) and the name (human-readable name for this
-                 * bundle.)
-                 * @returns {string} log-friendly name for this bundle
-                 */
-                getLogName: function () {
-                    return logName;
-                },
-                /**
-                 * Get all extensions exposed by this bundle of a given
-                 * category.
-                 *
-                 * @param category
-                 * @memberof Bundle#
-                 * @returns {Array}
-                 */
-                getExtensions: function (category) {
-                    var extensions = definition.extensions[category] || [];
-
-                    return extensions.map(function objectify(extDefinition) {
-                        return new Extension(self, category, extDefinition);
-                    });
-                },
-                /**
-                 * Get a list of all categories of extension exposed by
-                 * this bundle.
-                 *
-                 * @memberof Bundle#
-                 * @returns {Array}
-                 */
-                getExtensionCategories: function () {
-                    return Object.keys(definition.extensions);
-                },
-                /**
-                 * Get the plain definition of this bundle, as read from
-                 * its JSON declaration.
-                 *
-                 * @memberof Bundle#
-                 * @returns {BundleDefinition} the raw definition of this bundle
-                 */
-                getDefinition: function () {
-                    return definition;
-                }
-            };
-
-            return self;
+            this.path = path;
+            this.definition = definition;
+            this.logName = logName;
         }
+
+
+        // Utility function for resolving paths in this bundle
+        Bundle.prototype.resolvePath = function (elements) {
+            var path = this.path;
+            return [path].concat(elements || []).join(Constants.SEPARATOR);
+        };
+
+
+        /**
+         * Get the path to this bundle.
+         * @returns {string} path to this bundle;
+         */
+        Bundle.prototype.getPath = function () {
+            return this.path;
+        };
+
+        /**
+         * Get the path to this bundle's source folder. If an
+         * argument is provided, the path will be to the source
+         * file within the bundle's source file.
+         *
+         * @param {string} [sourceFile] optionally, give a path to
+         *        a specific source file in the bundle.
+         * @returns {string} path to the source folder (or to the
+         *          source file within it)
+         */
+        Bundle.prototype.getSourcePath = function (sourceFile) {
+            var subpath = sourceFile ?
+                [ this.definition.sources, sourceFile ] :
+                [ this.definition.sources ];
+
+            return this.resolvePath(subpath);
+        };
+
+        /**
+         * Get the path to this bundle's resource folder. If an
+         * argument is provided, the path will be to the resource
+         * file within the bundle's resource file.
+         *
+         * @param {string} [resourceFile] optionally, give a path to
+         *        a specific resource file in the bundle.
+         * @returns {string} path to the resource folder (or to the
+         *          resource file within it)
+         */
+        Bundle.prototype.getResourcePath = function (resourceFile) {
+            var subpath = resourceFile ?
+                [ this.definition.resources, resourceFile ] :
+                [ this.definition.resources ];
+
+            return this.resolvePath(subpath);
+        };
+
+        /**
+         * Get the path to this bundle's library folder. If an
+         * argument is provided, the path will be to the library
+         * file within the bundle's resource file.
+         *
+         * @param {string} [libraryFile] optionally, give a path to
+         *        a specific library file in the bundle.
+         * @returns {string} path to the resource folder (or to the
+         *          resource file within it)
+         */
+        Bundle.prototype.getLibraryPath = function (libraryFile) {
+            var subpath = libraryFile ?
+                [ this.definition.libraries, libraryFile ] :
+                [ this.definition.libraries ];
+
+            return this.resolvePath(subpath);
+        };
+
+        /**
+         * Get library configuration for this bundle. This is read
+         * from the bundle's definition; if the bundle is well-formed,
+         * it will resemble a require.config object.
+         * @returns {object} library configuration
+         */
+        Bundle.prototype.getConfiguration = function () {
+            return this.definition.configuration || {};
+        };
+
+        /**
+         * Get a log-friendly name for this bundle; this will
+         * include both the key (machine-readable name for this
+         * bundle) and the name (human-readable name for this
+         * bundle.)
+         * @returns {string} log-friendly name for this bundle
+         */
+        Bundle.prototype.getLogName = function () {
+            return this.logName;
+        };
+
+        /**
+         * Get all extensions exposed by this bundle of a given
+         * category.
+         *
+         * @param {string} category name of the extension category
+         * @returns {Array} extension definitions of that cataegory
+         */
+        Bundle.prototype.getExtensions = function (category) {
+            var extensions = this.definition.extensions[category] || [],
+                self = this;
+
+            return extensions.map(function objectify(extDefinition) {
+                return new Extension(self, category, extDefinition);
+            });
+        };
+
+        /**
+         * Get a list of all extension categories exposed by this bundle.
+         *
+         * @returns {string[]} the extension categories
+         */
+        Bundle.prototype.getExtensionCategories = function () {
+            return Object.keys(this.definition.extensions);
+        };
+
+        /**
+         * Get the plain definition of this bundle, as read from
+         * its JSON declaration.
+         *
+         * @returns {platform/framework.BundleDefinition} the raw
+         *          definition of this bundle
+         */
+        Bundle.prototype.getDefinition = function () {
+            return this.definition;
+        };
 
         return Bundle;
     }

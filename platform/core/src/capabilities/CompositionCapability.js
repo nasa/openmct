@@ -37,67 +37,60 @@ define(
          * require consulting the object service (e.g. to trigger a database
          * query to retrieve the nested object models.)
          *
+         * @memberof platform/core
          * @constructor
+         * @implements {Capability}
          */
         function CompositionCapability($injector, domainObject) {
-            var objectService,
-                lastPromise,
-                lastModified;
-
             // Get a reference to the object service from $injector
-            function injectObjectService() {
-                objectService = $injector.get("objectService");
-                return objectService;
-            }
-
-            // Get a reference to the object service (either cached or
-            // from the injector)
-            function getObjectService() {
-                return objectService || injectObjectService();
-            }
-
-            // Promise this domain object's composition (an array of domain
-            // object instances corresponding to ids in its model.)
-            function promiseComposition() {
-                var model = domainObject.getModel(),
-                    ids;
-
-                // Then filter out non-existent objects,
-                // and wrap others (such that they expose a
-                // "context" capability)
-                function contextualize(objects) {
-                    return ids.filter(function (id) {
-                        return objects[id];
-                    }).map(function (id) {
-                        return new ContextualDomainObject(
-                            objects[id],
-                            domainObject
-                        );
-                    });
-                }
-
-                // Make a new request if we haven't made one, or if the
-                // object has been modified.
-                if (!lastPromise || lastModified !== model.modified) {
-                    ids = model.composition || [];
-                    lastModified = model.modified;
-                    // Load from the underlying object service
-                    lastPromise = getObjectService().getObjects(ids)
-                        .then(contextualize);
-                }
-
-                return lastPromise;
-            }
-
-            return {
-                /**
-                 * Request the composition of this object.
-                 * @returns {Promise.<DomainObject[]>} a list of all domain
-                 *     objects which compose this domain object.
-                 */
-                invoke: promiseComposition
+            this.injectObjectService = function () {
+                this.objectService = $injector.get("objectService");
             };
+
+            this.domainObject = domainObject;
         }
+
+        /**
+         * Request the composition of this object.
+         * @returns {Promise.<DomainObject[]>} a list of all domain
+         *     objects which compose this domain object.
+         */
+        CompositionCapability.prototype.invoke = function () {
+            var domainObject = this.domainObject,
+                model = domainObject.getModel(),
+                ids;
+
+            // Then filter out non-existent objects,
+            // and wrap others (such that they expose a
+            // "context" capability)
+            function contextualize(objects) {
+                return ids.filter(function (id) {
+                    return objects[id];
+                }).map(function (id) {
+                    return new ContextualDomainObject(
+                        objects[id],
+                        domainObject
+                    );
+                });
+            }
+
+            // Lazily acquire object service (avoids cyclical dependency)
+            if (!this.objectService) {
+                this.injectObjectService();
+            }
+
+            // Make a new request if we haven't made one, or if the
+            // object has been modified.
+            if (!this.lastPromise || this.lastModified !== model.modified) {
+                ids = model.composition || [];
+                this.lastModified = model.modified;
+                // Load from the underlying object service
+                this.lastPromise = this.objectService.getObjects(ids)
+                    .then(contextualize);
+            }
+
+            return this.lastPromise;
+        };
 
         /**
          * Test to determine whether or not this capability should be exposed

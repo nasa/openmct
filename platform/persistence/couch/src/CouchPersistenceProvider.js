@@ -21,6 +21,11 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * This bundle implements a persistence service which uses CouchDB to
+ * store documents.
+ * @namespace platform/persistence/cache
+ */
 define(
     ["./CouchDocument"],
     function (CouchDocument) {
@@ -35,148 +40,109 @@ define(
          * The CouchPersistenceProvider reads and writes JSON documents
          * (more specifically, domain object models) to/from a CouchDB
          * instance.
+         * @memberof platform/persistence/couch
          * @constructor
+         * @implements {PersistenceService}
+         * @param $http Angular's $http service
+         * @param $interval Angular's $interval service
+         * @param {string} space the name of the persistence space being served
+         * @param {string} path the path to the CouchDB instance
          */
-        function CouchPersistenceProvider($http, $q, SPACE, PATH) {
-            var spaces = [ SPACE ],
-                revs = {};
-
-            // Convert a subpath to a full path, suitable to pass
-            // to $http.
-            function url(subpath) {
-                return PATH + '/' + subpath;
-            }
-
-            // Issue a request using $http; get back the plain JS object
-            // from the expected JSON response
-            function request(subpath, method, value) {
-                return $http({
-                    method: method,
-                    url: url(subpath),
-                    data: value
-                }).then(function (response) {
-                    return response.data;
-                }, function () {
-                    return undefined;
-                });
-            }
-
-            // Shorthand methods for GET/PUT methods
-            function get(subpath) {
-                return request(subpath, "GET");
-            }
-            function put(subpath, value) {
-                return request(subpath, "PUT", value);
-            }
-
-            // Pull out a list of document IDs from CouchDB's
-            // _all_docs response
-            function getIdsFromAllDocs(allDocs) {
-                return allDocs.rows.map(function (r) { return r.id; });
-            }
-
-            // Get a domain object model out of CouchDB's response
-            function getModel(response) {
-                if (response && response.model) {
-                    revs[response[ID]] = response[REV];
-                    return response.model;
-                } else {
-                    return undefined;
-                }
-            }
-
-            // Check the response to a create/update/delete request;
-            // track the rev if it's valid, otherwise return false to
-            // indicate that the request failed.
-            function checkResponse(response) {
-                if (response && response.ok) {
-                    revs[response.id] = response.rev;
-                    return response.ok;
-                } else {
-                    return false;
-                }
-            }
-
-            return {
-                /**
-                 * List all persistence spaces which this provider
-                 * recognizes.
-                 *
-                 * @returns {Promise.<string[]>} a promise for a list of
-                 *          spaces supported by this provider
-                 */
-                listSpaces: function () {
-                    return $q.when(spaces);
-                },
-                /**
-                 * List all objects (by their identifiers) that are stored
-                 * in the given persistence space, per this provider.
-                 * @param {string} space the space to check
-                 * @returns {Promise.<string[]>} a promise for the list of
-                 *          identifiers
-                 */
-                listObjects: function (space) {
-                    return get("_all_docs").then(getIdsFromAllDocs);
-                },
-                /**
-                 * Create a new object in the specified persistence space.
-                 * @param {string} space the space in which to store the object
-                 * @param {string} key the identifier for the persisted object
-                 * @param {object} value a JSONifiable object that should be
-                 *        stored and associated with the provided identifier
-                 * @returns {Promise.<boolean>} a promise for an indication
-                 *          of the success (true) or failure (false) of this
-                 *          operation
-                 */
-                createObject: function (space, key, value) {
-                    return put(key, new CouchDocument(key, value))
-                        .then(checkResponse);
-                },
-
-                /**
-                 * Read an existing object back from persistence.
-                 * @param {string} space the space in which to look for
-                 *        the object
-                 * @param {string} key the identifier for the persisted object
-                 * @returns {Promise.<object>} a promise for the stored
-                 *          object; this will resolve to undefined if no such
-                 *          object is found.
-                 */
-                readObject: function (space, key) {
-                    return get(key).then(getModel);
-                },
-                /**
-                 * Update an existing object in the specified persistence space.
-                 * @param {string} space the space in which to store the object
-                 * @param {string} key the identifier for the persisted object
-                 * @param {object} value a JSONifiable object that should be
-                 *        stored and associated with the provided identifier
-                 * @returns {Promise.<boolean>} a promise for an indication
-                 *          of the success (true) or failure (false) of this
-                 *          operation
-                 */
-                updateObject: function (space, key, value) {
-                    return put(key, new CouchDocument(key, value, revs[key]))
-                        .then(checkResponse);
-                },
-                /**
-                 * Delete an object in the specified persistence space.
-                 * @param {string} space the space from which to delete this
-                 *        object
-                 * @param {string} key the identifier of the persisted object
-                 * @param {object} value a JSONifiable object that should be
-                 *        deleted
-                 * @returns {Promise.<boolean>} a promise for an indication
-                 *          of the success (true) or failure (false) of this
-                 *          operation
-                 */
-                deleteObject: function (space, key, value) {
-                    return put(key, new CouchDocument(key, value, revs[key], true))
-                        .then(checkResponse);
-                }
-            };
-
+        function CouchPersistenceProvider($http, $q, space, path) {
+            this.spaces = [ space ];
+            this.revs = {};
+            this.$q = $q;
+            this.$http = $http;
+            this.path = path;
         }
+
+        function bind(fn, thisArg) {
+            return function () {
+                return fn.apply(thisArg, arguments);
+            };
+        }
+
+        // Pull out a list of document IDs from CouchDB's
+        // _all_docs response
+        function getIdsFromAllDocs(allDocs) {
+            return allDocs.rows.map(function (r) { return r.id; });
+        }
+
+        // Check the response to a create/update/delete request;
+        // track the rev if it's valid, otherwise return false to
+        // indicate that the request failed.
+        function checkResponse(response) {
+            if (response && response.ok) {
+                this.revs[response.id] = response.rev;
+                return response.ok;
+            } else {
+                return false;
+            }
+        }
+
+        // Get a domain object model out of CouchDB's response
+        function getModel(response) {
+            if (response && response.model) {
+                this.revs[response[ID]] = response[REV];
+                return response.model;
+            } else {
+                return undefined;
+            }
+        }
+
+        // Issue a request using $http; get back the plain JS object
+        // from the expected JSON response
+        CouchPersistenceProvider.prototype.request = function (subpath, method, value) {
+            return this.$http({
+                method: method,
+                url: this.path + '/' + subpath,
+                data: value
+            }).then(function (response) {
+                return response.data;
+            }, function () {
+                return undefined;
+            });
+        };
+
+        // Shorthand methods for GET/PUT methods
+        CouchPersistenceProvider.prototype.get = function (subpath) {
+            return this.request(subpath, "GET");
+        };
+
+        CouchPersistenceProvider.prototype.put = function (subpath, value) {
+            return this.request(subpath, "PUT", value);
+        };
+
+
+        CouchPersistenceProvider.prototype.listSpaces = function () {
+            return this.$q.when(this.spaces);
+        };
+
+        CouchPersistenceProvider.prototype.listObjects = function (space) {
+            return this.get("_all_docs").then(bind(getIdsFromAllDocs, this));
+        };
+
+        CouchPersistenceProvider.prototype.createObject = function (space, key, value) {
+            return this.put(key, new CouchDocument(key, value))
+                .then(bind(checkResponse, this));
+        };
+
+
+        CouchPersistenceProvider.prototype.readObject = function (space, key) {
+            return this.get(key).then(bind(getModel, this));
+        };
+
+        CouchPersistenceProvider.prototype.updateObject = function (space, key, value) {
+            var rev = this.revs[key];
+            return this.put(key, new CouchDocument(key, value, rev))
+                .then(bind(checkResponse, this));
+        };
+
+        CouchPersistenceProvider.prototype.deleteObject = function (space, key, value) {
+            var rev = this.revs[key];
+            return this.put(key, new CouchDocument(key, value, rev, true))
+                .then(bind(checkResponse, this));
+        };
 
         return CouchPersistenceProvider;
     }

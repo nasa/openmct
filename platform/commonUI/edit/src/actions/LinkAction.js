@@ -29,41 +29,42 @@ define(
 
         /**
          * Add one domain object to another's composition.
+         * @constructor
+         * @memberof platform/commonUI/edit
+         * @implements {Action}
          */
         function LinkAction(context) {
-            var domainObject = (context || {}).domainObject,
-                selectedObject = (context || {}).selectedObject,
-                selectedId = selectedObject && selectedObject.getId();
+            this.domainObject = (context || {}).domainObject;
+            this.selectedObject = (context || {}).selectedObject;
+            this.selectedId = this.selectedObject && this.selectedObject.getId();
+        }
+
+        LinkAction.prototype.perform = function () {
+            var self = this;
 
             // Add this domain object's identifier
             function addId(model) {
                 if (Array.isArray(model.composition) &&
-                        model.composition.indexOf(selectedId) < 0) {
-                    model.composition.push(selectedId);
+                    model.composition.indexOf(self.selectedId) < 0) {
+                    model.composition.push(self.selectedId);
                 }
             }
 
             // Persist changes to the domain object
             function doPersist() {
-                var persistence = domainObject.getCapability('persistence');
+                var persistence =
+                    self.domainObject.getCapability('persistence');
                 return persistence.persist();
             }
 
             // Link these objects
             function doLink() {
-                return domainObject.useCapability("mutation", addId)
+                return self.domainObject.useCapability("mutation", addId)
                     .then(doPersist);
             }
 
-            return {
-                /**
-                 * Perform this action.
-                 */
-                perform: function () {
-                    return selectedId && doLink();
-                }
-            };
-        }
+            return this.selectedId && doLink();
+        };
 
         return LinkAction;
     }

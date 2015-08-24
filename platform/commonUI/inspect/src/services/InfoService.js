@@ -31,65 +31,71 @@ define(
 
         /**
          * Displays informative content ("info bubbles") for the user.
+         * @memberof platform/commonUI/inspect
          * @constructor
          */
         function InfoService($compile, $document, $window, $rootScope) {
+            this.$compile = $compile;
+            this.$document = $document;
+            this.$window = $window;
+            this.$rootScope = $rootScope;
+        }
 
-            function display(templateKey, title, content, position) {
-                var body = $document.find('body'),
-                    scope = $rootScope.$new(),
-                    winDim = [$window.innerWidth, $window.innerHeight],
-	                bubbleSpaceLR = InfoConstants.BUBBLE_MARGIN_LR + InfoConstants.BUBBLE_MAX_WIDTH,
-                    goLeft = position[0] > (winDim[0] - bubbleSpaceLR),
-                    goUp = position[1] > (winDim[1] / 2),
-                    bubble;
+        /**
+         * Display an info bubble at the specified location.
+         * @param {string} templateKey template to place in bubble
+         * @param {string} title title for the bubble
+         * @param {*} content content to pass to the template, via
+         *        `ng-model`
+         * @param {number[]} x,y position of the info bubble, in
+         *        pixel coordinates.
+         * @returns {Function} a function that may be invoked to
+         *          dismiss the info bubble
+         */
+        InfoService.prototype.display = function (templateKey, title, content, position) {
+            var $compile = this.$compile,
+                $document = this.$document,
+                $window = this.$window,
+                $rootScope = this.$rootScope,
+                body = $document.find('body'),
+                scope = $rootScope.$new(),
+                winDim = [$window.innerWidth, $window.innerHeight],
+                bubbleSpaceLR = InfoConstants.BUBBLE_MARGIN_LR + InfoConstants.BUBBLE_MAX_WIDTH,
+                goLeft = position[0] > (winDim[0] - bubbleSpaceLR),
+                goUp = position[1] > (winDim[1] / 2),
+                bubble;
 
-                // Pass model & container parameters into the scope
-                scope.bubbleModel = content;
-                scope.bubbleTemplate = templateKey;
-                scope.bubbleLayout = (goUp ? 'arw-btm' : 'arw-top') + ' ' +
-                        (goLeft ? 'arw-right' : 'arw-left');
-                scope.bubbleTitle = title;
+            // Pass model & container parameters into the scope
+            scope.bubbleModel = content;
+            scope.bubbleTemplate = templateKey;
+            scope.bubbleLayout = (goUp ? 'arw-btm' : 'arw-top') + ' ' +
+            (goLeft ? 'arw-right' : 'arw-left');
+            scope.bubbleTitle = title;
 
-                // Create the context menu
-                bubble = $compile(BUBBLE_TEMPLATE)(scope);
+            // Create the context menu
+            bubble = $compile(BUBBLE_TEMPLATE)(scope);
 
-                // Position the bubble
-                bubble.css('position', 'absolute');
-                if (goLeft) {
-                    bubble.css('right', (winDim[0] - position[0] + OFFSET[0]) + 'px');
-                } else {
-                    bubble.css('left', position[0] + OFFSET[0] + 'px');
-                }
-                if (goUp) {
-                    bubble.css('bottom', (winDim[1] - position[1] + OFFSET[1]) + 'px');
-                } else {
-                    bubble.css('top', position[1] + OFFSET[1] + 'px');
-                }
-
-                // Add the menu to the body
-                body.append(bubble);
-
-                // Return a function to dismiss the bubble
-                return function () { bubble.remove(); };
+            // Position the bubble
+            bubble.css('position', 'absolute');
+            if (goLeft) {
+                bubble.css('right', (winDim[0] - position[0] + OFFSET[0]) + 'px');
+            } else {
+                bubble.css('left', position[0] + OFFSET[0] + 'px');
+            }
+            if (goUp) {
+                bubble.css('bottom', (winDim[1] - position[1] + OFFSET[1]) + 'px');
+            } else {
+                bubble.css('top', position[1] + OFFSET[1] + 'px');
             }
 
-            return {
-                /**
-                 * Display an info bubble at the specified location.
-                 * @param {string} templateKey template to place in bubble
-                 * @param {string} title title for the bubble
-                 * @param {*} content content to pass to the template, via
-                 *        `ng-model`
-                 * @param {number[]} x,y position of the info bubble, in
-                 *        pixel coordinates.
-                 * @returns {Function} a function that may be invoked to
-                 *          dismiss the info bubble
-                 */
-                display: display
-            };
-        }
+            // Add the menu to the body
+            body.append(bubble);
+
+            // Return a function to dismiss the bubble
+            return function () { bubble.remove(); };
+        };
 
         return InfoService;
     }
 );
+

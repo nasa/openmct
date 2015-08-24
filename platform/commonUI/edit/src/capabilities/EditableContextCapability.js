@@ -35,6 +35,9 @@ define(
          * Meant specifically for use by EditableDomainObject and the
          * associated cache; the constructor signature is particular
          * to a pattern used there and may contain unused arguments.
+         * @constructor
+         * @memberof platform/commonUI/edit
+         * @implements {ContextCapability}
          */
         return function EditableContextCapability(
             contextCapability,
