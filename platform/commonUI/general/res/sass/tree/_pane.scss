@@ -95,22 +95,24 @@ $transitionTime: 0.35s; // For the left menu open/close
 
 // The main view needs to align left when the left pane is moving around
 .split-pane-component.secondary-split.pane.right {
-    transition: left $transitionTime, right $transitionTime;
-    transition-timing-function: ease-out;
     
+    // Sliding transition for open/close of left pane
+    transition: left $transitionTime;
+    transition-timing-function: ease-out;
     &.leftInactive {
         left: 0 !important;
     }
     
-    &.rightInactive {
-        right: 0 !important;
-        .items.pane {
-            width: 100%;
-        }
-    }
-    
     .split-pane-component.items.pane {
-        // Move left tab buttons close to the left splitter bar 
+        
+        // Sliding transition for open/close of right pane
+        transition: right $transitionTime;
+        transition-timing-function: ease-out;
+        &.rightInactive {
+            right: 0 !important;
+        }
+        
+        // Tab buttons close to the splitter bars
         .object-browse-bar {
             position: relative;
             
@@ -157,7 +159,7 @@ $transitionTime: 0.35s; // For the left menu open/close
                     
                     // Change button icon depending on state
                     &.inactivePane {
-                        //left: -15px;
+                        right: -12px;
                         &:after {
                             content: '<';
                         }
@@ -183,11 +185,12 @@ $transitionTime: 0.35s; // For the left menu open/close
     .split-pane-component.object-inspector.pane.right {
         min-width: 150px;
         
+        //transition: visibility $transitionTime, opacity $transitionTime;
         &.inactive {
             min-width: 0 !important;
             width: 0 !important;
-            
             visibility: hidden;
+            opacity: 0;
         }
         
         .holder.inspector-holder {
