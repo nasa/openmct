@@ -109,7 +109,7 @@ define(
             return this.$q.reject(error);
         };
 
-        // Get a domain object model out of CouchDB's response
+        // Get a domain object model out of ElasticSearch's response
         function getModel(response) {
             if (response && response[SRC]) {
                 this.revs[response[ID]] = response[REV];

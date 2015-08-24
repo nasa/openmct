@@ -46,15 +46,15 @@ define(
             };
 
         /**
-         * Indicator for the current CouchDB connection. Polls CouchDB
-         * at a regular interval (defined by bundle constants) to ensure
-         * that the database is available.
+         * Indicator for the current ElasticSearch connection. Polls
+         * ElasticSearch at a regular interval (defined by bundle constants)
+         * to ensure that the database is available.
          * @constructor
          * @memberof platform/persistence/elastic
          * @implements {Indicator}
          * @param $http Angular's $http service
          * @param $interval Angular's $interval service
-         * @param {string} path the URL to poll to check for couch availability
+         * @param {string} path the URL to poll for elasticsearch availability
          * @param {number} interval the interval, in milliseconds, to poll at
          */
         function ElasticIndicator($http, $interval, path, interval) {
@@ -63,7 +63,7 @@ define(
 
             this.state = PENDING;
 
-            // Callback if the HTTP request to Couch fails
+            // Callback if the HTTP request to ElasticSearch fails
             function handleError() {
                 self.state = DISCONNECTED;
             }
@@ -73,7 +73,7 @@ define(
                 self.state = CONNECTED;
             }
 
-            // Try to connect to CouchDB, and update the indicator.
+            // Try to connect to ElasticSearch, and update the indicator.
             function updateIndicator() {
                 $http.get(path).then(handleResponse, handleError);
             }
