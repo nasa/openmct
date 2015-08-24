@@ -210,6 +210,9 @@ $transitionTime: 0.35s; // For the left menu open/close
                                     font-size: 6px;
                                     margin-left: -22px;
                                     margin-right: 4px;
+                                    
+                                    @include txtShdwSubtle(1);
+                                    z-index: 2;
                                 }
                             }
                         }

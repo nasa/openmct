@@ -5259,14 +5259,16 @@ input[type="text"] {
                 color: #49dedb;
                 font-size: 6px;
                 margin-left: -22px;
-                margin-right: 4px; }
-          /* line 218, ../sass/tree/_pane.scss */
+                margin-right: 4px;
+                text-shadow: black 0 1px 2px;
+                z-index: 2; }
+          /* line 221, ../sass/tree/_pane.scss */
           .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location:after {
             content: '>';
             font-family: symbolsfont;
             font-size: 8px;
             margin-left: -6px; }
-          /* line 224, ../sass/tree/_pane.scss */
+          /* line 227, ../sass/tree/_pane.scss */
           .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location:last-child:after {
             content: '';
             display: inline-block; }
