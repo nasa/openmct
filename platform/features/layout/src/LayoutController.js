@@ -21,6 +21,11 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * This bundle implements object types and associated views for
+ * display-building.
+ * @namespace platform/features/layout
+ */
 define(
     ['./LayoutDrag'],
     function (LayoutDrag) {
@@ -35,15 +40,12 @@ define(
          * Layout view. It arranges frames according to saved configuration
          * and provides methods for updating these based on mouse
          * movement.
+         * @memberof platform/features/layout
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
         function LayoutController($scope) {
-            var gridSize = DEFAULT_GRID_SIZE,
-                activeDrag,
-                activeDragId,
-                rawPositions = {},
-                positions = {};
+            var self = this;
 
             // Utility function to copy raw positions from configuration,
             // without writing directly to configuration (to avoid triggering
@@ -56,47 +58,6 @@ define(
                 return copy;
             }
 
-            // Convert from { positions: ..., dimensions: ... } to an
-            // apropriate ng-style argument, to position frames.
-            function convertPosition(raw) {
-                // Multiply position/dimensions by grid size
-                return {
-                    left: (gridSize[0] * raw.position[0]) + 'px',
-                    top: (gridSize[1] * raw.position[1]) + 'px',
-                    width: (gridSize[0] * raw.dimensions[0]) + 'px',
-                    height: (gridSize[1] * raw.dimensions[1]) + 'px'
-                };
-            }
-
-            // Generate default positions for a new panel
-            function defaultDimensions() {
-                return MINIMUM_FRAME_SIZE.map(function (min, i) {
-                    return Math.max(
-                        Math.ceil(min / gridSize[i]),
-                        DEFAULT_DIMENSIONS[i]
-                    );
-                });
-            }
-
-            // Generate a default position (in its raw format) for a frame.
-            // Use an index to ensure that default positions are unique.
-            function defaultPosition(index) {
-                return {
-                    position: [index, index],
-                    dimensions: defaultDimensions()
-                };
-            }
-
-            // Store a computed position for a contained frame by its
-            // domain object id. Called in a forEach loop, so arguments
-            // are as expected there.
-            function populatePosition(id, index) {
-                rawPositions[id] =
-                    rawPositions[id] || defaultPosition(index || 0);
-                positions[id] =
-                    convertPosition(rawPositions[id]);
-            }
-
             // Compute panel positions based on the layout's object model
             function lookupPanels(ids) {
                 var configuration = $scope.configuration || {};
@@ -106,27 +67,32 @@ define(
                 ids = ids || [];
 
                 // Pull panel positions from configuration
-                rawPositions = shallowCopy(configuration.panels || {}, ids);
+                self.rawPositions =
+                    shallowCopy(configuration.panels || {}, ids);
 
                 // Clear prior computed positions
-                positions = {};
+                self.positions = {};
 
                 // Update width/height that we are tracking
-                gridSize = ($scope.model || {}).layoutGrid || DEFAULT_GRID_SIZE;
+                self.gridSize =
+                    ($scope.model || {}).layoutGrid || DEFAULT_GRID_SIZE;
 
                 // Compute positions and add defaults where needed
-                ids.forEach(populatePosition);
+                ids.forEach(function (id, index) {
+                    self.populatePosition(id, index);
+                });
             }
 
             // Update grid size when it changed
             function updateGridSize(layoutGrid) {
-                var oldSize = gridSize;
+                var oldSize = self.gridSize;
 
-                gridSize = layoutGrid || DEFAULT_GRID_SIZE;
+                self.gridSize = layoutGrid || DEFAULT_GRID_SIZE;
 
                 // Only update panel positions if this actually changed things
-                if (gridSize[0] !== oldSize[0] || gridSize[1] !== oldSize[1]) {
-                    lookupPanels(Object.keys(positions));
+                if (self.gridSize[0] !== oldSize[0] ||
+                        self.gridSize[1] !== oldSize[1]) {
+                    lookupPanels(Object.keys(self.positions));
                 }
             }
 
@@ -144,8 +110,8 @@ define(
                 // Store the position of this panel.
                 $scope.configuration.panels[id] = {
                     position: [
-                        Math.floor(position.x / gridSize[0]),
-                        Math.floor(position.y / gridSize[1])
+                        Math.floor(position.x / self.gridSize[0]),
+                        Math.floor(position.y / self.gridSize[1])
                     ],
                     dimensions: DEFAULT_DIMENSIONS
                 };
@@ -154,12 +120,38 @@ define(
                     $scope.commit("Dropped a frame.");
                 }
                 // Populate template-facing position for this id
-                populatePosition(id);
+                self.populatePosition(id);
                 // Layout may contain embedded views which will
                 // listen for drops, so call preventDefault() so
                 // that they can recognize that this event is handled.
                 e.preventDefault();
             }
+
+            // End drag; we don't want to put $scope into this
+            // because it triggers "cpws" (copy window or scope)
+            // errors in Angular.
+            this.endDragInScope = function () {
+                // Write to configuration; this is watched and
+                // saved by the EditRepresenter.
+                $scope.configuration =
+                    $scope.configuration || {};
+                // Make sure there is a "panels" field in the
+                // view configuration.
+                $scope.configuration.panels =
+                    $scope.configuration.panels || {};
+                // Store the position of this panel.
+                $scope.configuration.panels[self.activeDragId] =
+                    self.rawPositions[self.activeDragId];
+                // Mark this object as dirty to encourage persistence
+                if ($scope.commit) {
+                    $scope.commit("Moved frame.");
+                }
+            };
+
+            this.positions = {};
+            this.rawPositions = {};
+            this.gridSize = DEFAULT_GRID_SIZE;
+            this.$scope = $scope;
 
             // Watch for changes to the grid size in the model
             $scope.$watch("model.layoutGrid", updateGridSize);
@@ -169,88 +161,117 @@ define(
 
             // Position panes where they are dropped
             $scope.$on("mctDrop", handleDrop);
-
-            return {
-                /**
-                 * Get a style object for a frame with the specified domain
-                 * object identifier, suitable for use in an `ng-style`
-                 * directive to position a frame as configured for this layout.
-                 * @param {string} id the object identifier
-                 * @returns {Object.<string, string>} an object with
-                 *          appropriate left, width, etc fields for positioning
-                 */
-                getFrameStyle: function (id) {
-                    // Called in a loop, so just look up; the "positions"
-                    // object is kept up to date by a watch.
-                    return positions[id];
-                },
-                /**
-                 * Start a drag gesture to move/resize a frame.
-                 *
-                 * The provided position and dimensions factors will determine
-                 * whether this is a move or a resize, and what type it
-                 * will be. For instance, a position factor of [1, 1]
-                 * will move a frame along with the mouse as the drag
-                 * proceeds, while a dimension factor of [0, 0] will leave
-                 * dimensions unchanged. Combining these in different
-                 * ways results in different handles; a position factor of
-                 * [1, 0] and a dimensions factor of [-1, 0] will implement
-                 * a left-edge resize, as the horizontal position will move
-                 * with the mouse while the horizontal dimensions shrink in
-                 * kind (and vertical properties remain unmodified.)
-                 *
-                 * @param {string} id the identifier of the domain object
-                 *        in the frame being manipulated
-                 * @param {number[]} posFactor the position factor
-                 * @param {number[]} dimFactor the dimensions factor
-                 */
-                startDrag: function (id, posFactor, dimFactor) {
-                    activeDragId = id;
-                    activeDrag = new LayoutDrag(
-                        rawPositions[id],
-                        posFactor,
-                        dimFactor,
-                        gridSize
-                    );
-                },
-                /**
-                 * Continue an active drag gesture.
-                 * @param {number[]} delta the offset, in pixels,
-                 *        of the current pointer position, relative
-                 *        to its position when the drag started
-                 */
-                continueDrag: function (delta) {
-                    if (activeDrag) {
-                        rawPositions[activeDragId] =
-                            activeDrag.getAdjustedPosition(delta);
-                        populatePosition(activeDragId);
-                    }
-                },
-                /**
-                 * End the active drag gesture. This will update the
-                 * view configuration.
-                 */
-                endDrag: function () {
-                    // Write to configuration; this is watched and
-                    // saved by the EditRepresenter.
-                    $scope.configuration =
-                        $scope.configuration || {};
-                    // Make sure there is a "panels" field in the
-                    // view configuration.
-                    $scope.configuration.panels =
-                        $scope.configuration.panels || {};
-                    // Store the position of this panel.
-                    $scope.configuration.panels[activeDragId] =
-                        rawPositions[activeDragId];
-                    // Mark this object as dirty to encourage persistence
-                    if ($scope.commit) {
-                        $scope.commit("Moved frame.");
-                    }
-                }
-            };
-
         }
+
+        // Convert from { positions: ..., dimensions: ... } to an
+        // apropriate ng-style argument, to position frames.
+        LayoutController.prototype.convertPosition = function (raw) {
+            var gridSize = this.gridSize;
+            // Multiply position/dimensions by grid size
+            return {
+                left: (gridSize[0] * raw.position[0]) + 'px',
+                top: (gridSize[1] * raw.position[1]) + 'px',
+                width: (gridSize[0] * raw.dimensions[0]) + 'px',
+                height: (gridSize[1] * raw.dimensions[1]) + 'px'
+            };
+        };
+
+        // Generate default positions for a new panel
+        LayoutController.prototype.defaultDimensions = function () {
+            var gridSize = this.gridSize;
+            return MINIMUM_FRAME_SIZE.map(function (min, i) {
+                return Math.max(
+                    Math.ceil(min / gridSize[i]),
+                    DEFAULT_DIMENSIONS[i]
+                );
+            });
+        };
+
+        // Generate a default position (in its raw format) for a frame.
+        // Use an index to ensure that default positions are unique.
+        LayoutController.prototype.defaultPosition = function (index) {
+            return {
+                position: [index, index],
+                dimensions: this.defaultDimensions()
+            };
+        };
+
+        // Store a computed position for a contained frame by its
+        // domain object id. Called in a forEach loop, so arguments
+        // are as expected there.
+        LayoutController.prototype.populatePosition = function (id, index) {
+            this.rawPositions[id] =
+                this.rawPositions[id] || this.defaultPosition(index || 0);
+            this.positions[id] =
+                this.convertPosition(this.rawPositions[id]);
+        };
+
+        /**
+         * Get a style object for a frame with the specified domain
+         * object identifier, suitable for use in an `ng-style`
+         * directive to position a frame as configured for this layout.
+         * @param {string} id the object identifier
+         * @returns {Object.<string, string>} an object with
+         *          appropriate left, width, etc fields for positioning
+         */
+        LayoutController.prototype.getFrameStyle = function (id) {
+            // Called in a loop, so just look up; the "positions"
+            // object is kept up to date by a watch.
+            return this.positions[id];
+        };
+
+        /**
+         * Start a drag gesture to move/resize a frame.
+         *
+         * The provided position and dimensions factors will determine
+         * whether this is a move or a resize, and what type it
+         * will be. For instance, a position factor of [1, 1]
+         * will move a frame along with the mouse as the drag
+         * proceeds, while a dimension factor of [0, 0] will leave
+         * dimensions unchanged. Combining these in different
+         * ways results in different handles; a position factor of
+         * [1, 0] and a dimensions factor of [-1, 0] will implement
+         * a left-edge resize, as the horizontal position will move
+         * with the mouse while the horizontal dimensions shrink in
+         * kind (and vertical properties remain unmodified.)
+         *
+         * @param {string} id the identifier of the domain object
+         *        in the frame being manipulated
+         * @param {number[]} posFactor the position factor
+         * @param {number[]} dimFactor the dimensions factor
+         */
+        LayoutController.prototype.startDrag = function (id, posFactor, dimFactor) {
+            this.activeDragId = id;
+            this.activeDrag = new LayoutDrag(
+                this.rawPositions[id],
+                posFactor,
+                dimFactor,
+                this.gridSize
+            );
+        };
+        /**
+         * Continue an active drag gesture.
+         * @param {number[]} delta the offset, in pixels,
+         *        of the current pointer position, relative
+         *        to its position when the drag started
+         */
+        LayoutController.prototype.continueDrag = function (delta) {
+            if (this.activeDrag) {
+                this.rawPositions[this.activeDragId] =
+                    this.activeDrag.getAdjustedPosition(delta);
+                this.populatePosition(this.activeDragId);
+            }
+        };
+
+        /**
+         * End the active drag gesture. This will update the
+         * view configuration.
+         */
+        LayoutController.prototype.endDrag = function () {
+            this.endDragInScope();
+        };
 
         return LayoutController;
     }
 );
+

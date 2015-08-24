@@ -32,58 +32,58 @@ define(
         'use strict';
 
         /**
-         * Construct an action which will allow an object's metadata to be
-         * edited.
+         * Implements the "Edit Properties" action, which prompts the user
+         * to modify a domain object's properties.
          *
          * @param {DialogService} dialogService a service which will show the dialog
          * @param {DomainObject} object the object to be edited
          * @param {ActionContext} context the context in which this action is performed
+         * @memberof platform/commonUI/edit
+         * @implements {Action}
          * @constructor
          */
         function PropertiesAction(dialogService, context) {
-            var object = context.domainObject;
+            this.domainObject = (context || {}).domainObject;
+            this.dialogService = dialogService;
+        }
+
+        PropertiesAction.prototype.perform = function () {
+            var type = this.domainObject.getCapability('type'),
+                domainObject = this.domainObject,
+                dialogService = this.dialogService;
 
             // Persist modifications to this domain object
             function doPersist() {
-                var persistence = object.getCapability('persistence');
+                var persistence = domainObject.getCapability('persistence');
                 return persistence && persistence.persist();
             }
 
             // Update the domain object model based on user input
             function updateModel(userInput, dialog) {
-                return object.useCapability('mutation', function (model) {
+                return domainObject.useCapability('mutation', function (model) {
                     dialog.updateModel(model, userInput);
                 });
             }
 
             function showDialog(type) {
                 // Create a dialog object to generate the form structure, etc.
-                var dialog = new PropertiesDialog(type, object.getModel());
+                var dialog =
+                    new PropertiesDialog(type, domainObject.getModel());
 
                 // Show the dialog
                 return dialogService.getUserInput(
                     dialog.getFormStructure(),
                     dialog.getInitialFormValue()
                 ).then(function (userInput) {
-                    // Update the model, if user input was provided
-                    return userInput && updateModel(userInput, dialog);
-                }).then(function (result) {
-                    return result && doPersist();
-                });
+                        // Update the model, if user input was provided
+                        return userInput && updateModel(userInput, dialog);
+                    }).then(function (result) {
+                        return result && doPersist();
+                    });
             }
 
-            return {
-                /**
-                 * Perform this action.
-                 * @return {Promise} a promise which will be
-                 *         fulfilled when the action has completed.
-                 */
-                perform: function () {
-                    var type = object.getCapability('type');
-                    return type && showDialog(type);
-                }
-            };
-        }
+            return type && showDialog(type);
+        };
 
         /**
          * Filter this action for applicability against a given context.
@@ -105,4 +105,5 @@ define(
     }
 
 );
+
 

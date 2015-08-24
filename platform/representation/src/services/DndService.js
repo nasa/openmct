@@ -32,6 +32,7 @@ define(
          * * Storing arbitrary JavaScript objects (not just strings.)
          * * Allowing inspection of dragged objects during `dragover` events,
          *   etc. (which cannot be done in Chrome for security reasons)
+         * @memberof platform/representation
          * @constructor
          * @param $log Angular's $log service
          */
@@ -43,6 +44,7 @@ define(
                  * Set drag data associated with a given type.
                  * @param {string} key the type's identiifer
                  * @param {*} value the data being dragged
+                 * @memberof platform/representation.DndService#
                  */
                 setData: function (key, value) {
                     $log.debug("Setting drag data for " + key);
@@ -51,6 +53,7 @@ define(
                 /**
                  * Get drag data associated with a given type.
                  * @returns {*} the data being dragged
+                 * @memberof platform/representation.DndService#
                  */
                 getData: function (key) {
                     return data[key];
@@ -58,6 +61,7 @@ define(
                 /**
                  * Remove data associated with active drags.
                  * @param {string} key the type to remove
+                 * @memberof platform/representation.DndService#
                  */
                 removeData: function (key) {
                     $log.debug("Clearing drag data for " + key);

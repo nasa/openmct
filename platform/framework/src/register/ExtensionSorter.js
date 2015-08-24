@@ -34,9 +34,21 @@ define(
          * specify symbolic properties as strings (instead of numbers),
          * which will be looked up from the table `Constants.PRIORITY_LEVELS`.
          * @param $log Angular's logging service
+         * @memberof platform/framework
          * @constructor
          */
         function ExtensionSorter($log) {
+            this.$log = $log;
+        }
+
+        /**
+         * Sort extensions according to priority.
+         *
+         * @param {object[]} extensions array of resolved extensions
+         * @returns {object[]} the same extensions, in priority order
+         */
+        ExtensionSorter.prototype.sort = function (extensions) {
+            var $log = this.$log;
 
             // Handle unknown or malformed priorities specified by extensions
             function unrecognizedPriority(extension) {
@@ -67,7 +79,7 @@ define(
                 // Should be a number; otherwise, issue a warning and
                 // fall back to default priority level.
                 return (typeof priority === 'number') ?
-                        priority : unrecognizedPriority(extension);
+                    priority : unrecognizedPriority(extension);
             }
 
             // Attach a numeric priority to an extension; this is done in
@@ -97,21 +109,11 @@ define(
                 return (b.priority - a.priority) || (a.index - b.index);
             }
 
-            return {
-                /**
-                 * Sort extensions according to priority.
-                 *
-                 * @param {object[]} extensions array of resolved extensions
-                 * @returns {object[]} the same extensions, in priority order
-                 */
-                sort: function (extensions) {
-                    return (extensions || [])
-                        .map(prioritize)
-                        .sort(compare)
-                        .map(deprioritize);
-                }
-            };
-        }
+            return (extensions || [])
+                .map(prioritize)
+                .sort(compare)
+                .map(deprioritize);
+        };
 
         return ExtensionSorter;
     }

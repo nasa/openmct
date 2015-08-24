@@ -39,6 +39,7 @@ define(
 
         /**
          * Implements `mct-splitter` directive.
+         * @memberof platform/commonUI/general
          * @constructor
          */
         function MCTSplitter() {
@@ -88,3 +89,4 @@ define(
 
     }
 );
+

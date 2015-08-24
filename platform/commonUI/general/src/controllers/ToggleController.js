@@ -30,36 +30,36 @@ define(
          * A ToggleController is used to activate/deactivate things.
          * A common usage is for "twistie"
          *
+         * @memberof platform/commonUI/general
          * @constructor
          */
         function ToggleController() {
-            var state = false;
-
-            return {
-                /**
-                 * Get the current state of the toggle.
-                 * @return {boolean} true if active
-                 */
-                isActive: function () {
-                    return state;
-                },
-                /**
-                 * Set a new state for the toggle.
-                 * @return {boolean} true to activate
-                 */
-                setState: function (newState) {
-                    state = newState;
-                },
-                /**
-                 * Toggle the current state; activate if it is inactive,
-                 * deactivate if it is active.
-                 */
-                toggle: function () {
-                    state = !state;
-                }
-            };
-
+            this.state = false;
         }
+
+        /**
+         * Get the current state of the toggle.
+         * @return {boolean} true if active
+         */
+        ToggleController.prototype.isActive = function () {
+            return this.state;
+        };
+
+        /**
+         * Set a new state for the toggle.
+         * @return {boolean} true to activate
+         */
+        ToggleController.prototype.setState = function (newState) {
+            this.state = newState;
+        };
+
+        /**
+         * Toggle the current state; activate if it is inactive,
+         * deactivate if it is active.
+         */
+        ToggleController.prototype.toggle = function () {
+            this.state = !this.state;
+        };
 
         return ToggleController;
     }

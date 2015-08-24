@@ -27,6 +27,32 @@ define(
         "use strict";
 
         /**
+         * A pool of telemetry values.
+         * @interface platform/telemetry.TelemetryPool
+         * @private
+         */
+        /**
+         * Check if any value groups remain in this pool.
+         * @return {boolean} true if value groups remain
+         * @method platform/telemetry.TelemetryPool#isEmpty
+         */
+        /**
+         * Retrieve the next value group from this pool.
+         * This gives an object containing key-value pairs,
+         * where keys and values correspond to the arguments
+         * given to previous put functions.
+         * @return {object} key-value pairs
+         * @method platform/telemetry.TelemetryPool#poll
+         */
+        /**
+         * Put a key-value pair into the pool.
+         * @param {string} key the key to store the value under
+         * @param {*} value the value to store
+         * @method platform/telemetry.TelemetryPool#put
+         */
+
+
+        /**
          * A TelemetrySubscription tracks latest values for streaming
          * telemetry data and handles notifying interested observers.
          * It implements the interesting behavior behind the
@@ -38,6 +64,7 @@ define(
          * (e.g. for telemetry panels) as well as latest-value
          * extraction.
          *
+         * @memberof platform/telemetry
          * @constructor
          * @param $q Angular's $q
          * @param $timeout Angular's $timeout
@@ -51,14 +78,9 @@ define(
          *        the callback once, with access to the latest data
          */
         function TelemetrySubscription($q, $timeout, domainObject, callback, lossless) {
-            var delegator = new TelemetryDelegator($q),
-                unsubscribePromise,
-                telemetryObjectPromise,
-                latestValues = {},
-                telemetryObjects = [],
+            var self = this,
+                delegator = new TelemetryDelegator($q),
                 pool = lossless ? new TelemetryQueue() : new TelemetryTable(),
-                metadatas,
-                unlistenToMutation,
                 updatePending;
 
             // Look up domain objects which have telemetry capabilities.
@@ -71,7 +93,7 @@ define(
             function updateValuesFromPool() {
                 var values = pool.poll();
                 Object.keys(values).forEach(function (k) {
-                    latestValues[k] = values[k];
+                    self.latestValues[k] = values[k];
                 });
             }
 
@@ -164,8 +186,8 @@ define(
             // initial subscription chain; this allows `getTelemetryObjects()`
             // to return a non-Promise to simplify usage elsewhere.
             function cacheObjectReferences(objects) {
-                telemetryObjects = objects;
-                metadatas = objects.map(lookupMetadata);
+                self.telemetryObjects = objects;
+                self.metadatas = objects.map(lookupMetadata);
                 // Fire callback, as this will be the first time that
                 // telemetry objects are available, or these objects
                 // will have changed.
@@ -175,14 +197,6 @@ define(
                 return objects;
             }
 
-            function unsubscribeAll() {
-                return unsubscribePromise.then(function (unsubscribes) {
-                    return $q.all(unsubscribes.map(function (unsubscribe) {
-                        return unsubscribe();
-                    }));
-                });
-            }
-
             function initialize() {
                 // Get a reference to relevant objects (those with telemetry
                 // capabilities) and subscribe to their telemetry updates.
@@ -190,23 +204,23 @@ define(
                 // will be unsubscribe functions. (This must be a promise
                 // because delegation is supported, and retrieving delegate
                 // telemetry-capable objects may be an asynchronous operation.)
-                telemetryObjectPromise = promiseRelevantObjects(domainObject);
-                unsubscribePromise = telemetryObjectPromise
+                self.telemetryObjectPromise = promiseRelevantObjects(domainObject);
+                self.unsubscribePromise = self.telemetryObjectPromise
                         .then(cacheObjectReferences)
                         .then(subscribeAll);
             }
 
             function idsMatch(ids) {
-                return ids.length === telemetryObjects.length &&
+                return ids.length === self.telemetryObjects.length &&
                     ids.every(function (id, index) {
-                        return telemetryObjects[index].getId() === id;
+                        return self.telemetryObjects[index].getId() === id;
                     });
             }
 
             function modelChange(model) {
                 if (!idsMatch((model || {}).composition || [])) {
                     // Reinitialize if composition has changed
-                    unsubscribeAll().then(initialize);
+                    self.unsubscribeAll().then(initialize);
                 }
             }
 
@@ -218,116 +232,128 @@ define(
                 }
             }
 
-            initialize();
-            unlistenToMutation = addMutationListener();
+            this.$q = $q;
+            this.latestValues = {};
+            this.telemetryObjects = [];
+            this.metadatas = [];
 
-            return {
-                /**
-                 * Terminate all underlying subscriptions associated
-                 * with this object.
-                 * @method
-                 * @memberof TelemetrySubscription
-                 */
-                unsubscribe: function () {
-                    if (unlistenToMutation) {
-                        unlistenToMutation();
-                    }
-                    return unsubscribeAll();
-                },
-                /**
-                 * Get the most recent domain value that has been observed
-                 * for the specified domain object. This will typically be
-                 * a timestamp.
-                 *
-                 * The domain object passed here should be one that is
-                 * subscribed-to here; that is, it should be one of the
-                 * domain objects returned by `getTelemetryObjects()`.
-                 *
-                 * @param {DomainObject} domainObject the object of interest
-                 * @returns the most recent domain value observed
-                 * @method
-                 * @memberof TelemetrySubscription
-                 */
-                getDomainValue: function (domainObject) {
-                    var id = domainObject.getId();
-                    return (latestValues[id] || {}).domain;
-                },
-                /**
-                 * Get the most recent range value that has been observed
-                 * for the specified domain object. This will typically
-                 * be a numeric measurement.
-                 *
-                 * The domain object passed here should be one that is
-                 * subscribed-to here; that is, it should be one of the
-                 * domain objects returned by `getTelemetryObjects()`.
-                 *
-                 * @param {DomainObject} domainObject the object of interest
-                 * @returns the most recent range value observed
-                 * @method
-                 * @memberof TelemetrySubscription
-                 */
-                getRangeValue: function (domainObject) {
-                    var id = domainObject.getId();
-                    return (latestValues[id] || {}).range;
-                },
-                /**
-                 * Get the latest telemetry datum for this domain object.
-                 *
-                 * @param {DomainObject} domainObject the object of interest
-                 * @returns {TelemetryDatum} the most recent datum
-                 */
-                getDatum: function (domainObject) {
-                    var id = domainObject.getId();
-                    return (latestValues[id] || {}).datum;
-                },
-                /**
-                 * Get all telemetry-providing domain objects which are
-                 * being observed as part of this subscription.
-                 *
-                 * Capability delegation will be taken into account (so, if
-                 * a Telemetry Panel was passed in the constructor, this will
-                 * return its contents.) Capability delegation is resolved
-                 * asynchronously so the return value here may change over
-                 * time; while this resolution is pending, this method will
-                 * return an empty array.
-                 *
-                 * @returns {DomainObject[]} all subscribed-to domain objects
-                 * @method
-                 * @memberof TelemetrySubscription
-                 */
-                getTelemetryObjects: function () {
-                    return telemetryObjects;
-                },
-                /**
-                 * Get all telemetry metadata associated with
-                 * telemetry-providing domain objects managed by
-                 * this controller.
-                 *
-                 * This will ordered in the
-                 * same manner as `getTelemetryObjects()` or
-                 * `getResponse()`; that is, the metadata at a
-                 * given index will correspond to the telemetry-providing
-                 * domain object at the same index.
-                 * @returns {Array} an array of metadata objects
-                 */
-                getMetadata: function () {
-                    return metadatas;
-                },
-                /**
-                 * Get a promise for all telemetry-providing objects
-                 * associated with this subscription.
-                 * @returns {Promise.<DomainObject[]>} a promise for
-                 *          telemetry-providing objects
-                 */
-                promiseTelemetryObjects: function () {
-                    // Unsubscribe promise is available after objects
-                    // are loaded.
-                    return telemetryObjectPromise;
-                }
-            };
+            initialize();
+            this.unlistenToMutation = addMutationListener();
         }
+
+        TelemetrySubscription.prototype.unsubscribeAll = function () {
+            var $q = this.$q;
+            return this.unsubscribePromise.then(function (unsubscribes) {
+                return $q.all(unsubscribes.map(function (unsubscribe) {
+                    return unsubscribe();
+                }));
+            });
+        };
+
+        /**
+         * Terminate all underlying subscriptions associated
+         * with this object.
+         */
+        TelemetrySubscription.prototype.unsubscribe = function () {
+            if (this.unlistenToMutation) {
+                this.unlistenToMutation();
+            }
+            return this.unsubscribeAll();
+        };
+
+        /**
+         * Get the most recent domain value that has been observed
+         * for the specified domain object. This will typically be
+         * a timestamp.
+         *
+         * The domain object passed here should be one that is
+         * subscribed-to here; that is, it should be one of the
+         * domain objects returned by `getTelemetryObjects()`.
+         *
+         * @param {DomainObject} domainObject the object of interest
+         * @returns the most recent domain value observed
+         */
+        TelemetrySubscription.prototype.getDomainValue = function (domainObject) {
+            var id = domainObject.getId();
+            return (this.latestValues[id] || {}).domain;
+        };
+
+        /**
+         * Get the most recent range value that has been observed
+         * for the specified domain object. This will typically
+         * be a numeric measurement.
+         *
+         * The domain object passed here should be one that is
+         * subscribed-to here; that is, it should be one of the
+         * domain objects returned by `getTelemetryObjects()`.
+         *
+         * @param {DomainObject} domainObject the object of interest
+         * @returns the most recent range value observed
+         */
+        TelemetrySubscription.prototype.getRangeValue = function (domainObject) {
+            var id = domainObject.getId();
+            return (this.latestValues[id] || {}).range;
+        };
+
+        /**
+         * Get the latest telemetry datum for this domain object.
+         *
+         * @param {DomainObject} domainObject the object of interest
+         * @returns {TelemetryDatum} the most recent datum
+         */
+        TelemetrySubscription.prototype.getDatum = function (domainObject) {
+            var id = domainObject.getId();
+            return (this.latestValues[id] || {}).datum;
+        };
+
+        /**
+         * Get all telemetry-providing domain objects which are
+         * being observed as part of this subscription.
+         *
+         * Capability delegation will be taken into account (so, if
+         * a Telemetry Panel was passed in the constructor, this will
+         * return its contents.) Capability delegation is resolved
+         * asynchronously so the return value here may change over
+         * time; while this resolution is pending, this method will
+         * return an empty array.
+         *
+         * @returns {DomainObject[]} all subscribed-to domain objects
+         */
+        TelemetrySubscription.prototype.getTelemetryObjects = function () {
+            return this.telemetryObjects;
+        };
+
+        /**
+         * Get all telemetry metadata associated with
+         * telemetry-providing domain objects managed by
+         * this controller.
+         *
+         * This will ordered in the
+         * same manner as `getTelemetryObjects()` or
+         * `getResponse()`; that is, the metadata at a
+         * given index will correspond to the telemetry-providing
+         * domain object at the same index.
+         * @returns {TelemetryMetadata[]} an array of metadata objects
+         */
+        TelemetrySubscription.prototype.getMetadata = function () {
+            return this.metadatas;
+        };
+
+        /**
+         * Get a promise for all telemetry-providing objects
+         * associated with this subscription.
+         * @returns {Promise.<DomainObject[]>} a promise for
+         *          telemetry-providing objects
+         * @memberof platform/telemetry.TelemetrySubscription#
+         */
+        TelemetrySubscription.prototype.promiseTelemetryObjects = function () {
+            // Unsubscribe promise is available after objects
+            // are loaded.
+            return this.telemetryObjectPromise;
+        };
 
         return TelemetrySubscription;
 
     }
 );
+

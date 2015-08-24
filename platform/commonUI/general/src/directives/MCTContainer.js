@@ -39,6 +39,7 @@ define(
          * plain string attribute, instead of as an Angular
          * expression.
          *
+         * @memberof platform/commonUI/general
          * @constructor
          */
         function MCTContainer(containers) {

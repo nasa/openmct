@@ -43,6 +43,7 @@ define(
          * instantiate instances of these extensions by passing only
          * those per-instance arguments.
          *
+         * @memberof platform/framework
          * @constructor
          */
         function PartialConstructor(Constructor) {

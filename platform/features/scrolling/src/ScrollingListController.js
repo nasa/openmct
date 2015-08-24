@@ -22,7 +22,8 @@
 /*global define,Promise*/
 
 /**
- * Module defining ListController. Created by vwoeltje on 11/18/14.
+ * This bundle implements a "Scrolling List" view of telemetry data.
+ * @namespace platform/features/scrolling
  */
 define(
     ["./NameColumn", "./DomainColumn", "./RangeColumn", "./ScrollingListPopulator"],
@@ -34,11 +35,11 @@ define(
         /**
          * The ScrollingListController is responsible for populating
          * the contents of the scrolling list view.
+         * @memberof platform/features/scrolling
          * @constructor
          */
         function ScrollingListController($scope, formatter) {
-            var populator;
-
+            var populator = new ScrollingListPopulator([]);
 
             // Get a set of populated, ready-to-display rows for the
             // latest data values.
@@ -127,6 +128,32 @@ define(
             $scope.$watch("telemetry.getMetadata()", setupColumns);
         }
 
+        /**
+         * A description of how to display a certain column of data in a
+         * Scrolling List view.
+         * @interface platform/features/scrolling.ScrollingColumn
+         * @private
+         */
+        /**
+         * Get the title to display in this column's header.
+         * @returns {string} the title to display
+         * @method platform/features/scrolling.ScrollingColumn#getTitle
+         */
+        /**
+         * Get the text to display inside a row under this
+         * column.
+         * @param {DomainObject} domainObject the domain object associated
+         *        with this row
+         * @param {TelemetrySeries} series the telemetry data associated
+         *        with this row
+         * @param {number} index the index of the telemetry datum associated
+         *        with this row
+         * @returns {string} the text to display
+         * @method platform/features/scrolling.ScrollingColumn#getValue
+         */
+
+
         return ScrollingListController;
     }
 );
+

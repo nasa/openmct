@@ -82,17 +82,20 @@ table {
 				border-left: none;
 			}
 			&.sort {
-				.icon-sorting:before {
-					display: inline-block;
+				&.sort:after {
+					color: $colorIconLink;
 					font-family: symbolsfont;
-					margin-left: 5px;
+					font-size: 8px;
+					content: "\ed";
+					display: inline-block;
+					margin-left: $interiorMarginSm;
 				}
-				&.asc .icon-sorting:before {
-					content: '0';
+				&.sort.desc:after {
+					content: "\ec";
 				}
-				&.desc .icon-sorting:before {
-					content: '1';
-				}
+			}
+			&.sortable {
+				cursor: pointer;
 			}
 		}
 		td, .td {
