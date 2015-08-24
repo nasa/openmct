@@ -35,11 +35,13 @@ define(
          *
          * @constructor
          */
-        function ObjectInspectorController($scope) {
-            $scope.parents = [];
+        function ObjectInspectorController($scope, objectService) {
+            $scope.primaryParents = [];
+            $scope.contextutalParents = [];
+            //$scope.isLink = false;
             
-            // Gets an array of the parents/anscestors of the selected object
-            function getPath() {
+            // Gets an array of the contextual parents/anscestors of the selected object
+            function getContextualPath() {
                 var currentObj = $scope.ngModel.selectedObject,
                     currentParent,
                     parents = [];
@@ -53,20 +55,53 @@ define(
                     currentObj = currentParent;
                 }
                 
-                $scope.parents = parents;
+                $scope.contextutalParents = parents;
+            }
+            
+            // Gets an array of the parents/anscestors of the selected object's 
+            //   primary location (locational of original non-link)
+            function getPrimaryPath(current) {
+                var location;
+                
+                // If this the the initial call of this recursive function
+                if (!current) {
+                    current = $scope.ngModel.selectedObject;
+                    $scope.primaryParents = [current];
+                }
+                
+                location = current.getModel().location;
+                
+                if (location && location !== 'root') {
+                    objectService.getObjects([location]).then(function (obj) {
+                        var next = obj[location];
+                        
+                        $scope.primaryParents.unshift(next);
+                        getPrimaryPath(next);
+                    });
+                }
+                
             }
             
             // Gets the metadata for the selected object
             function getMetadata() {
-                $scope.metadata = $scope.ngModel.selectedObject && 
-                    $scope.ngModel.selectedObject.hasCapability('metadata') &&
-                    $scope.ngModel.selectedObject.useCapability('metadata');
+                var sel = $scope.ngModel.selectedObject;
+                $scope.metadata = sel && sel.hasCapability('metadata') && sel.useCapability('metadata');
             }
             
             // Set scope variables when the selected object changes 
             $scope.$watch('ngModel.selectedObject', function () {
+                var sel = $scope.ngModel.selectedObject;
+                $scope.isLink = sel && sel.hasCapability('location') && sel.getCapability('location').isLink();
+                
+                if ($scope.isLink) {
+                    getPrimaryPath();
+                    getContextualPath();
+                } else {
+                    $scope.primaryParents = [];
+                    getContextualPath();
+                }
+                
                 getMetadata();
-                getPath();
             });
         }
 
