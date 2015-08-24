@@ -36,47 +36,38 @@ define(
          * @constructor
          */
         function ObjectInspectorController($scope, objectService) {
-            $scope.pathString = '';
             $scope.parents = [];
             
+            // Gets an array of the parents/anscestors of the selected object
             function getPath() {
                 var currentObj = $scope.ngModel.selectedObject,
                     currentParent,
-                    parents = [],
-                    pathString = '';
+                    parents = [];
                 
                 while (currentObj && currentObj.getModel().type !== 'root' && currentObj.hasCapability('context')) {
                     // Record this object 
-                    pathString = currentObj.getModel().name + ', ' + pathString;
                     parents.unshift(currentObj);
                     
                     // Get the next one up the tree 
                     currentParent = currentObj.getCapability('context').getParent();
                     currentObj = currentParent;
                 }
-                pathString = pathString.substring(0, pathString.length - 2);
                 
                 $scope.parents = parents;
-                $scope.pathString = pathString;
-                
-                return [pathString, parents];
             }
             
-            return {
-                // Sets scope variables, but does not return anything
-                getPath: function () {
-                    getPath();
-                },
-                
-                getPathString: function () {
-                    return getPath()[0];
-                },
-                
-                getParents: function () {
-                    return getPath()[1];
-                }
-            };
-
+            // Gets the metadata for the selected object
+            function getMetadata() {
+                $scope.metadata = $scope.ngModel.selectedObject && 
+                    $scope.ngModel.selectedObject.hasCapability('metadata') &&
+                    $scope.ngModel.selectedObject.useCapability('metadata');
+            }
+            
+            // Set scope variables when the selected object changes 
+            $scope.$watch('ngModel.selectedObject', function () {
+                getMetadata();
+                getPath();
+            });
         }
 
         return ObjectInspectorController;

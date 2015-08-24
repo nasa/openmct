@@ -23,23 +23,14 @@
     <span class="ui-symbol info-icon">
         G
     </span>
-
+    
     <ul>
-        <li>
-            <em>Name </em>
-            {{ ngModel.selectedObject.getModel().name }}
-        </li>
-        <li ng-if='ngModel.selectedObject.getModel().modified !== undefined'>
-            <em>Last modified </em>
-            {{ ngModel.selectedObject.getModel().modified }}
-        </li>
-        <li>
-            <em>ID </em>
-            {{ ngModel.selectedObject.getId() }}
+        <li ng-repeat="data in metadata">
+            <em>{{ data.name }}</em>
+            {{ data.value }}
         </li>
         <li>
             <em>Location </em>
-            {{ controller.getPath() }}
             <span class="inspector-location"
                   ng-repeat="parent in parents">
                 <mct-representation key="'label'"
