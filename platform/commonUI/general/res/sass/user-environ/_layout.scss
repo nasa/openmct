@@ -70,19 +70,27 @@
     &.abs {
 	    text-wrap: none;
 	    white-space: nowrap;
+        &.left,
+        .left {
+            width: 45%;
+            right: auto;
+        }
+        &.right,
+        .right {
+            width: 45%;
+            left: auto;
+            text-align: right;
+            .icon.major {
+                margin-left: $interiorMargin * 3;
+            }
+        }
     }
-    &.left,
-    .left {
-        width: 45% !important;
-        right: auto !important;
-    }
-    &.right,
-    .right {
-        width: 45% !important;
-        left: auto !important;
-        text-align: right;
-        .icon.major {
-            margin-left: $interiorMargin * 3;
+    &.l-flex {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: stretch;
+        .left {
+            flex: 1 1 auto;
         }
     }
 }

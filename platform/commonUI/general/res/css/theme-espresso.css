@@ -542,23 +542,34 @@ mct-container {
 .bar.abs, .btn-menu span.bar.l-click-area {
   text-wrap: none;
   white-space: nowrap; }
-/* line 74, ../sass/user-environ/_layout.scss */
-.bar.left,
-.bar .left {
-  width: 45% !important;
-  right: auto !important; }
-/* line 79, ../sass/user-environ/_layout.scss */
-.bar.right,
-.bar .right {
-  width: 45% !important;
-  left: auto !important;
-  text-align: right; }
-  /* line 84, ../sass/user-environ/_layout.scss */
-  .bar.right .icon.major,
-  .bar .right .icon.major {
-    margin-left: 15px; }
+  /* line 73, ../sass/user-environ/_layout.scss */
+  .bar.abs.left, .btn-menu span.bar.left.l-click-area,
+  .bar.abs .left,
+  .btn-menu span.bar.l-click-area .left {
+    width: 45%;
+    right: auto; }
+  /* line 78, ../sass/user-environ/_layout.scss */
+  .bar.abs.right, .btn-menu span.bar.right.l-click-area,
+  .bar.abs .right,
+  .btn-menu span.bar.l-click-area .right {
+    width: 45%;
+    left: auto;
+    text-align: right; }
+    /* line 83, ../sass/user-environ/_layout.scss */
+    .bar.abs.right .icon.major, .btn-menu span.bar.right.l-click-area .icon.major,
+    .bar.abs .right .icon.major,
+    .btn-menu span.bar.l-click-area .right .icon.major {
+      margin-left: 15px; }
+/* line 88, ../sass/user-environ/_layout.scss */
+.bar.l-flex {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: stretch; }
+  /* line 92, ../sass/user-environ/_layout.scss */
+  .bar.l-flex .left {
+    flex: 1 1 auto; }
 
-/* line 91, ../sass/user-environ/_layout.scss */
+/* line 99, ../sass/user-environ/_layout.scss */
 .user-environ .browse-area,
 .user-environ .edit-area,
 .user-environ .editor {
@@ -566,23 +577,23 @@ mct-container {
   right: 10px;
   bottom: 35px;
   left: 10px; }
-/* line 102, ../sass/user-environ/_layout.scss */
+/* line 110, ../sass/user-environ/_layout.scss */
 .user-environ .browse-area > .contents,
 .user-environ .edit-area > .contents {
   left: 0;
   right: 0; }
-/* line 108, ../sass/user-environ/_layout.scss */
+/* line 116, ../sass/user-environ/_layout.scss */
 .user-environ .edit-area {
   top: 45px; }
-  /* line 111, ../sass/user-environ/_layout.scss */
+  /* line 119, ../sass/user-environ/_layout.scss */
   .user-environ .edit-area .tool-bar {
     bottom: auto;
     height: 30px;
     line-height: 25px; }
-  /* line 116, ../sass/user-environ/_layout.scss */
+  /* line 124, ../sass/user-environ/_layout.scss */
   .user-environ .edit-area .work-area {
     top: 40px; }
-/* line 121, ../sass/user-environ/_layout.scss */
+/* line 129, ../sass/user-environ/_layout.scss */
 .user-environ .bottom-bar {
   overflow: hidden;
   position: absolute;
@@ -594,20 +605,20 @@ mct-container {
   height: auto;
   top: auto;
   height: 25px; }
-  /* line 126, ../sass/user-environ/_layout.scss */
+  /* line 134, ../sass/user-environ/_layout.scss */
   .user-environ .bottom-bar .status-holder {
     z-index: 1; }
-  /* line 130, ../sass/user-environ/_layout.scss */
+  /* line 138, ../sass/user-environ/_layout.scss */
   .user-environ .bottom-bar .app-logo {
     left: auto;
     width: 105px;
     z-index: 2; }
 
-/* line 138, ../sass/user-environ/_layout.scss */
+/* line 146, ../sass/user-environ/_layout.scss */
 .cols {
   overflow: hidden;
   *zoom: 1; }
-  /* line 140, ../sass/user-environ/_layout.scss */
+  /* line 148, ../sass/user-environ/_layout.scss */
   .cols .col {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -618,112 +629,112 @@ mct-container {
     margin-left: 1.5%;
     padding-left: 5px;
     position: relative; }
-    /* line 148, ../sass/user-environ/_layout.scss */
+    /* line 156, ../sass/user-environ/_layout.scss */
     .cols .col:first-child {
       margin-left: 0;
       padding-left: 0; }
-  /* line 155, ../sass/user-environ/_layout.scss */
+  /* line 163, ../sass/user-environ/_layout.scss */
   .cols.cols-2 .col-1 {
     min-width: 250px;
     width: 48.5%; }
-  /* line 161, ../sass/user-environ/_layout.scss */
+  /* line 169, ../sass/user-environ/_layout.scss */
   .cols.cols-2-ff .col-100px {
     width: 100px; }
-  /* line 168, ../sass/user-environ/_layout.scss */
+  /* line 176, ../sass/user-environ/_layout.scss */
   .cols.cols-6 .col-1 {
     min-width: 83.33333px;
     width: 15.16667%; }
-  /* line 174, ../sass/user-environ/_layout.scss */
+  /* line 182, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-1 {
     min-width: 31.25px;
     width: 4.75%; }
-  /* line 177, ../sass/user-environ/_layout.scss */
+  /* line 185, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-2 {
     min-width: 62.5px;
     width: 11%; }
-  /* line 180, ../sass/user-environ/_layout.scss */
+  /* line 188, ../sass/user-environ/_layout.scss */
   .cols.cols-16 .col-7 {
     min-width: 218.75px;
     width: 42.25%; }
-  /* line 186, ../sass/user-environ/_layout.scss */
+  /* line 194, ../sass/user-environ/_layout.scss */
   .cols.cols-32 .col-2 {
     min-width: 31.25px;
     width: 4.75%; }
-  /* line 189, ../sass/user-environ/_layout.scss */
+  /* line 197, ../sass/user-environ/_layout.scss */
   .cols.cols-32 .col-15 {
     min-width: 234.375px;
     width: 45.375%; }
-  /* line 193, ../sass/user-environ/_layout.scss */
+  /* line 201, ../sass/user-environ/_layout.scss */
   .cols .l-row {
     overflow: hidden;
     *zoom: 1;
     padding: 5px 0; }
 
-/* line 201, ../sass/user-environ/_layout.scss */
+/* line 209, ../sass/user-environ/_layout.scss */
 .browse-mode .split-layout .split-pane-component.pane.left {
   min-width: 150px;
   max-width: 50%; }
 
-/* line 210, ../sass/user-environ/_layout.scss */
+/* line 218, ../sass/user-environ/_layout.scss */
 .edit-mode .split-layout .split-pane-component.pane.right {
   min-width: 150px;
   max-width: 50%; }
-  /* line 213, ../sass/user-environ/_layout.scss */
+  /* line 221, ../sass/user-environ/_layout.scss */
   .edit-mode .split-layout .split-pane-component.pane.right .split-pane-component.pane.bottom {
     min-height: 50px;
     max-height: 80%; }
 
-/* line 221, ../sass/user-environ/_layout.scss */
+/* line 229, ../sass/user-environ/_layout.scss */
 .pane {
   position: absolute; }
-  /* line 224, ../sass/user-environ/_layout.scss */
+  /* line 232, ../sass/user-environ/_layout.scss */
   .pane.treeview.left .create-btn-holder {
     bottom: auto;
     top: 0;
     height: 24px; }
-    /* line 227, ../sass/user-environ/_layout.scss */
+    /* line 235, ../sass/user-environ/_layout.scss */
     .pane.treeview.left .create-btn-holder .wrapper.menu-element {
       position: absolute;
       bottom: 5px; }
-  /* line 232, ../sass/user-environ/_layout.scss */
+  /* line 240, ../sass/user-environ/_layout.scss */
   .pane.treeview.left .tree-holder {
     overflow: auto;
     top: 34px;
     padding-right: 5px; }
-  /* line 240, ../sass/user-environ/_layout.scss */
+  /* line 248, ../sass/user-environ/_layout.scss */
   .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .btn-menu span.left.l-click-area, .btn-menu .pane.items .object-browse-bar span.left.l-click-area,
   .pane.items .object-browse-bar .right.abs,
   .pane.items .object-browse-bar .btn-menu span.right.l-click-area,
   .btn-menu .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
-  /* line 251, ../sass/user-environ/_layout.scss */
+  /* line 259, ../sass/user-environ/_layout.scss */
   .pane.items .object-holder {
     top: 34px; }
-  /* line 255, ../sass/user-environ/_layout.scss */
+  /* line 263, ../sass/user-environ/_layout.scss */
   .pane .object-holder {
     overflow: auto; }
 
-/* line 263, ../sass/user-environ/_layout.scss */
+/* line 271, ../sass/user-environ/_layout.scss */
 .split-layout.horizontal > .pane {
   margin-top: 5px; }
-  /* line 266, ../sass/user-environ/_layout.scss */
+  /* line 274, ../sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane:first-child {
     margin-top: 0; }
-/* line 273, ../sass/user-environ/_layout.scss */
+/* line 281, ../sass/user-environ/_layout.scss */
 .split-layout.vertical > .pane {
   margin-left: 5px; }
-  /* line 276, ../sass/user-environ/_layout.scss */
+  /* line 284, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane > .holder {
     left: 0;
     right: 0; }
-  /* line 280, ../sass/user-environ/_layout.scss */
+  /* line 288, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane:first-child {
     margin-left: 0; }
-    /* line 282, ../sass/user-environ/_layout.scss */
+    /* line 290, ../sass/user-environ/_layout.scss */
     .split-layout.vertical > .pane:first-child .holder {
       right: 3px; }
 
-/* line 291, ../sass/user-environ/_layout.scss */
+/* line 299, ../sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
 
@@ -2552,26 +2563,33 @@ label.checkbox.custom {
 /******************************************************** OBJECT-HEADER */
 /* line 364, ../sass/controls/_controls.scss */
 .object-header {
-  font-size: 1em;
-  line-height: 120%; }
+  font-size: 1em; }
   /* line 373, ../sass/controls/_controls.scss */
   .object-header .title-label,
   .object-header .type-icon,
   .object-header .context-available {
-    border: 1px dotted rgba(102, 102, 255, 0.75);
     vertical-align: middle; }
   /* line 379, ../sass/controls/_controls.scss */
   .object-header > .type-icon {
-    font-size: 120%; }
-  /* line 383, ../sass/controls/_controls.scss */
+    font-size: 120%;
+    float: left;
+    margin-right: 5px; }
+  /* line 386, ../sass/controls/_controls.scss */
+  .object-header .l-elem-wrapper {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start; }
+  /* line 392, ../sass/controls/_controls.scss */
+  .object-header .action {
+    margin-right: 5px; }
+  /* line 396, ../sass/controls/_controls.scss */
   .object-header .title-label {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     color: white;
-    padding-right: 0.75em;
-    position: relative; }
-  /* line 390, ../sass/controls/_controls.scss */
+    padding-right: 0.35em; }
+  /* line 403, ../sass/controls/_controls.scss */
   .object-header .context-available {
     -moz-transition-property: opacity;
     -o-transition-property: opacity;
@@ -2586,15 +2604,13 @@ label.checkbox.custom {
     -webkit-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
     opacity: 0;
-    font-size: 0.7em;
-    position: absolute;
-    right: 0; }
-  /* line 398, ../sass/controls/_controls.scss */
+    font-size: 0.7em; }
+  /* line 411, ../sass/controls/_controls.scss */
   .object-header:hover .context-available {
     opacity: 1; }
 
 /******************************************************** SLIDERS */
-/* line 420, ../sass/controls/_controls.scss */
+/* line 423, ../sass/controls/_controls.scss */
 .slider .slot {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -2615,7 +2631,7 @@ label.checkbox.custom {
   right: 0;
   bottom: auto;
   left: 0; }
-/* line 431, ../sass/controls/_controls.scss */
+/* line 434, ../sass/controls/_controls.scss */
 .slider .knob {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzUyNTI1MiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzQ1NDU0NSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background-size: 100%;
@@ -2698,12 +2714,12 @@ label.checkbox.custom {
     -webkit-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
     border-color: #0099cc; }
-  /* line 442, ../sass/controls/_controls.scss */
+  /* line 445, ../sass/controls/_controls.scss */
   .slider .knob:before {
     top: 1px;
     bottom: 3px;
     left: 5px; }
-/* line 449, ../sass/controls/_controls.scss */
+/* line 452, ../sass/controls/_controls.scss */
 .slider .range {
   background: rgba(0, 153, 204, 0.6);
   cursor: ew-resize;
@@ -2714,12 +2730,12 @@ label.checkbox.custom {
   left: auto;
   height: auto;
   width: auto; }
-  /* line 459, ../sass/controls/_controls.scss */
+  /* line 462, ../sass/controls/_controls.scss */
   .slider .range:hover {
     background: rgba(0, 153, 204, 0.7); }
 
 /******************************************************** BROWSER ELEMENTS */
-/* line 467, ../sass/controls/_controls.scss */
+/* line 470, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -2736,7 +2752,7 @@ label.checkbox.custom {
   height: 10px;
   width: 10px; }
 
-/* line 473, ../sass/controls/_controls.scss */
+/* line 476, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar-thumb {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzY2NjY2NiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background-size: 100%;
@@ -2754,7 +2770,7 @@ label.checkbox.custom {
   -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
   box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
   border-top: 1px solid gray; }
-  /* line 480, ../sass/controls/_controls.scss */
+  /* line 483, ../sass/controls/_controls.scss */
   ::-webkit-scrollbar-thumb:hover {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzgwODA4MCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzczNzM3MyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -2763,7 +2779,7 @@ label.checkbox.custom {
     background-image: -webkit-linear-gradient(#808080, #737373 20px);
     background-image: linear-gradient(#808080, #737373 20px); }
 
-/* line 485, ../sass/controls/_controls.scss */
+/* line 488, ../sass/controls/_controls.scss */
 ::-webkit-scrollbar-corner {
   background: rgba(0, 0, 0, 0.4); }
 
@@ -3493,31 +3509,6 @@ label.checkbox.custom {
   opacity: 0;
   font-size: 0.65em;
   vertical-align: top; }
-
-/* line 2, ../sass/_flex.scss */
-.l-flex.l-flex-justify {
-  justify-content: space-between; }
-/* line 5, ../sass/_flex.scss */
-.l-flex .l-flex-row, .l-flex.l-flex-row {
-  display: flex;
-  flex-flow: row nowrap; }
-/* line 16, ../sass/_flex.scss */
-.l-flex .l-flex-max {
-  flex: 1 0 !important; }
-/* line 20, ../sass/_flex.scss */
-.l-flex .flex-ignore {
-  display: flex;
-  flex-flow: row nowrap;
-  flex: 0 1 auto; }
-
-/* line 28, ../sass/_flex.scss */
-.object-browse-bar.bar > div.abs {
-  background-color: rgba(0, 128, 0, 0.2); }
-
-/* line 33, ../sass/_flex.scss */
-.l-flex-row .title-label {
-  background-color: rgba(0, 0, 255, 0.2);
-  flex: 1 0 !important; }
 
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
@@ -4706,11 +4697,25 @@ input[type="text"] {
  *****************************************************************************/
 /* line 22, ../sass/user-environ/_object-browse.scss */
 .object-browse-bar {
+  overflow: hidden;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  width: auto;
+  height: auto;
   height: 24px;
-  line-height: 24px; }
-  /* line 26, ../sass/user-environ/_object-browse.scss */
-  .object-browse-bar .items-select .btn-menu {
-    margin-right: 15px; }
+  line-height: 24px;
+  white-space: nowrap; }
+  /* line 28, ../sass/user-environ/_object-browse.scss */
+  .object-browse-bar .left {
+    padding-right: 5px; }
+    /* line 30, ../sass/user-environ/_object-browse.scss */
+    .object-browse-bar .left .l-back {
+      display: inline-block;
+      float: left;
+      margin-right: 10px; }
 
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government

@@ -364,7 +364,7 @@ label.checkbox.custom {
 .object-header {
 	//@include test();
 	font-size: 1em;
-	line-height: 120%;
+	//line-height: 120%;
 	.label {
 		//display: flex;
 		//flex-direction: row;
@@ -373,40 +373,43 @@ label.checkbox.custom {
 	.title-label,
 	.type-icon,
 	.context-available {
-		@include tmpBorder(#6666ff);
+		//@include tmpBorder(#6666ff);
 		vertical-align: middle;
 	}
 	> .type-icon {
 		font-size: 120%;
+		float: left;
+		margin-right: $interiorMargin;
+	}
+
+
+	.l-elem-wrapper {
+		display: flex;
+		flex-flow: row nowrap;
+		justify-content: flex-start;
+	}
+
+	.action {
+		margin-right: $interiorMargin;
 	}
 
 	.title-label {
 		@include ellipsize();
 		color: lighten($colorBodyFg, 40%);
-		padding-right: 0.75em; // For context arrow. Done with em's so pad is relative to the scale of the text.
-		position: relative;
+		padding-right: 0.35em; // For context arrow. Done with em's so pad is relative to the scale of the text.
+		//position: relative;
 	}
 
 	.context-available {
 		@include trans-prop-nice(opacity, 0.25s);
 		opacity: 0;
 		font-size: 0.7em;
-		position: absolute;
-		right: 0;
+		//position: absolute;
+		//right: 0;
 	}
 	&:hover {
 		.context-available {
 			opacity: 1;
-		}
-	}
-}
-
-.top-bar,
-.object-browse-bar {
-	.object-header {
-		//font-size: 1.1em;
-		span {
-			//display: inline-block;
 		}
 	}
 }
