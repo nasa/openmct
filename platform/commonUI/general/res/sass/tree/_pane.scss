@@ -68,10 +68,8 @@ $transitionTime: 0.35s; // For the left menu open/close
     }
 }
 
-// Hide the splitter bar when the left pane is closed
-// Fade the splitter bar in when opening menu, but immediately fade
-//   out when closing menu 
-.splitter-bar.left {
+// Hide a splitter bar when the corresponding pane is inactive
+.splitter-bar.splitter {
     opacity: 1;
     transition: opacity $transitionTime, visibility $transitionTime;
     
@@ -82,152 +80,190 @@ $transitionTime: 0.35s; // For the left menu open/close
         visibility: hidden;
         opacity: 0;
         
-        transition: opacity 0s, visibility 0s;
-        
         &:before {
             border-width: 0;
         }
     }
 }
+// Fade the splitter bar in when opening treeview, but immediately fade
+//   out when closing treeview
+.splitter-bar.left.splitter {
+    &.inactive {
+        transition: opacity 0s, visibility 0s;
+    }
+}
 
 // The main view needs to align left when the left pane is moving around
 .split-pane-component.secondary-split.pane.right {
-    transition: left $transitionTime;
+    transition: left $transitionTime, right $transitionTime;
     transition-timing-function: ease-out;
     
     &.leftInactive {
         left: 0 !important;
     }
     
+    &.rightInactive {
+        right: 0 !important;
+        .items.pane {
+            width: 100%;
+        }
+    }
+    
     .split-pane-component.items.pane {
-        right: auto;
-        
         // Move left tab buttons close to the left splitter bar 
         .object-browse-bar {
             position: relative;
             
-            .left-pane-tabs {
+            .pane-tabs {
                 position: relative;
                 cursor: pointer;
-
-                left: -10px;
-                width: 11px;
+                font-family: symbolsfont;
+                
+                background-color: darken($colorBodyFg, 25%);
+                
+                width: 11px !important;
                 height: 16px;
                 line-height: 16px;
                 font-size: 10px;
-                top: 3px;
+                
+                // Open and closes treeview
+                &.left {
+                    left: -10px;
+                    top: 3px;
 
-                //border-radius: 2px;
-                border-top-right-radius: 2px;
-                border-bottom-right-radius: 2px;
-                background-color: darken($colorBodyFg, 25%);
+                    border-top-right-radius: 2px;
+                    border-bottom-right-radius: 2px;
 
-                // Change button icon depending on state
-                &.inactivePane {
-                    left: -15px;
-
-                    &:after {
-                        content: '>';//'F';
+                    // Change button icon depending on state
+                    &.inactivePane {
+                        left: -15px;
+                        &:after {
+                            content: '>';//'F';
+                        }
+                    }
+                    &.activePane:after {
+                        content: '<';
                     }
                 }
-                &.activePane:after {
-                    content: '<';
+                
+                // Open and closes object inspector 
+                &.right {
+                    float: right;
+                    right: -8px;
+                    top: -13px;// 14px;
+
+                    border-top-left-radius: 2px;
+                    border-bottom-left-radius: 2px;
+                    
+                    // Change button icon depending on state
+                    &.inactivePane {
+                        //left: -15px;
+                        &:after {
+                            content: '<';
+                        }
+                    }
+                    &.activePane:after {
+                        content: '>';
+                    }
                 }
             }
             
+            // Move domain object title to the right some to make room 
+            //   for treeview collapser button
             .items-select {
                 margin-left: 10px;
             }
+            // Similarly move the top button bar for the object inspector
+            .btn-bar.right {
+                margin-right: 10px;
+            }
         }
-    }
-    
-    .splitter-bar.right {
-        // Make the splitter bar vertically span to the top
-        top: 0;
     }
     
     .split-pane-component.object-inspector.pane.right {
         min-width: 150px;
         
-        .holder.inspector-holder {
+        &.inactive {
+            min-width: 0 !important;
+            width: 0 !important;
             
+            visibility: hidden;
+        }
+        
+        .holder.inspector-holder {
             .info-icon {
                 color: $colorKey;
             }
             
-            ul {
+            ul li {
                 font-size: 0.9em;
-                
-                li {
-                    // Add spacing between items
-                    padding: 2px 0px;
-                    margin: 2px 0px;
-                    border-top: solid 1px grey;
-                    &:first-child {
-                        border-top-width: 0px;
+
+                // Add spacing between items
+                padding: 2px 0px;
+                margin: 2px 0px;
+                border-top: solid 1px grey;
+                &:first-child {
+                    border-top-width: 0px;
+                }
+
+                // Style the titles
+                em {
+                    font-weight: bold;
+
+                    &:after {
+                        content: '\A';
+                        white-space: pre;
                     }
-                    
-                    // Style the titles
-                    em {
-                        font-weight: bold;
-                        
-                        &:after {
-                            content: '\A';
-                            white-space: pre;
-                        }
-                    }
-                    
-                    // Style object labels 
-                    .inspector-location {
+                }
+
+                // Style object labels 
+                .inspector-location {
+                    display: inline-block;
+
+                    .label {
+                        cursor: pointer;
                         display: inline-block;
-                        
-                        .label {
-                            cursor: pointer;
-                            display: inline-block;
-                            white-space: nowrap;
-                            
-                            // Colors
-                            transition: background-color 0.2s;
-                            //background-color: lighten($colorBodyBg, 10%);
-                            &:hover {
-                                //background-color: lighten($colorBodyBg, 15%);
-                                background-color: lighten($colorBodyBg, 5%);
-                            }
-                            
-                            // Sizing and spacing 
-                            border-radius: 4px;
-                            padding: 3px;
-                            padding-bottom: 0;
-                            margin: 2px;
-                            line-height: 15px;
-                            
-                            .icon.type-icon {
-                                font-size: 14px;
-                                
-                                .l-icon-link {
-                                    color: $colorIconLink;
-                                    
-                                    font-size: 6px;
-                                    margin-left: -22px;
-                                    margin-right: 4px;
-                                    
-                                    @include txtShdwSubtle(1);
-                                    z-index: 2;
-                                }
+                        white-space: nowrap;
+
+                        // Colors
+                        transition: background-color 0.2s;
+                        &:hover {
+                            background-color: lighten($colorBodyBg, 5%);
+                        }
+
+                        // Sizing and spacing 
+                        border-radius: 4px;
+                        padding: 3px;
+                        padding-bottom: 0;
+                        margin: 2px;
+                        line-height: 15px;
+
+                        .icon.type-icon {
+                            font-size: 14px;
+
+                            .l-icon-link {
+                                color: $colorIconLink;
+
+                                font-size: 6px;
+                                margin-left: -22px;
+                                margin-right: 4px;
+
+                                @include txtShdwSubtle(1);
+                                z-index: 2;
                             }
                         }
-                        
-                        // Add arrows to indicate tree heirarchy 
-                        &:after {
-                            content: '>';
-                            font-family: symbolsfont;
-                            font-size: 8px;
-                            margin-left: -6px;
-                        }
-                        &:last-child:after {
-                            content: '';
-                            display: inline-block;
-                        }
+                    }
+
+                    // Add arrows to indicate tree heirarchy 
+                    &:after {
+                        content: '>';
+                        font-family: symbolsfont;
+                        font-size: 8px;
+                        margin-left: -6px;
+                    }
+                    &:last-child:after {
+                        content: '';
+                        display: inline-block;
                     }
                 }
             }

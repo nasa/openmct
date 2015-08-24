@@ -23,10 +23,9 @@
     
     <div class="object-browse-bar bar abs">
         
-        <div class="ui-symbol left-pane-tabs"
+        <div class="pane-tabs left"
              ng-class="{inactivePane: !ngModel.leftPane, activePane: ngModel.leftPane}"
              ng-click="ngModel.leftPane = !ngModel.leftPane">
-            
         </div>
         
         <div class="items-select left abs">
@@ -44,6 +43,11 @@
                                 mct-object="domainObject"
                                 ng-model="representation">
             </mct-representation>
+        </div>
+        
+        <div class="pane-tabs right"
+             ng-class="{inactivePane: !ngModel.rightPane, activePane: ngModel.rightPane}"
+             ng-click="ngModel.rightPane = !ngModel.rightPane">
         </div>
         
     </div>

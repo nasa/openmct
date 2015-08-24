@@ -5155,120 +5155,145 @@ input[type="text"] {
     .pane.left .create-btn.major.inactivePane span {
       display: none; }
 
-/* line 74, ../sass/tree/_pane.scss */
-.splitter-bar.left {
+/* line 72, ../sass/tree/_pane.scss */
+.splitter-bar.splitter {
   opacity: 1;
   transition: opacity 0.35s, visibility 0.35s;
   top: 0; }
-  /* line 81, ../sass/tree/_pane.scss */
-  .splitter-bar.left.inactive {
+  /* line 79, ../sass/tree/_pane.scss */
+  .splitter-bar.splitter.inactive {
     visibility: hidden;
-    opacity: 0;
-    transition: opacity 0s, visibility 0s; }
-    /* line 87, ../sass/tree/_pane.scss */
-    .splitter-bar.left.inactive:before {
+    opacity: 0; }
+    /* line 83, ../sass/tree/_pane.scss */
+    .splitter-bar.splitter.inactive:before {
       border-width: 0; }
 
-/* line 94, ../sass/tree/_pane.scss */
+/* line 91, ../sass/tree/_pane.scss */
+.splitter-bar.left.splitter.inactive {
+  transition: opacity 0s, visibility 0s; }
+
+/* line 97, ../sass/tree/_pane.scss */
 .split-pane-component.secondary-split.pane.right {
-  transition: left 0.35s;
+  transition: left 0.35s, right 0.35s;
   transition-timing-function: ease-out; }
-  /* line 98, ../sass/tree/_pane.scss */
+  /* line 101, ../sass/tree/_pane.scss */
   .split-pane-component.secondary-split.pane.right.leftInactive {
     left: 0 !important; }
-  /* line 102, ../sass/tree/_pane.scss */
-  .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane {
-    right: auto; }
-    /* line 106, ../sass/tree/_pane.scss */
-    .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar {
-      position: relative; }
-      /* line 109, ../sass/tree/_pane.scss */
-      .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .left-pane-tabs {
-        position: relative;
-        cursor: pointer;
+  /* line 105, ../sass/tree/_pane.scss */
+  .split-pane-component.secondary-split.pane.right.rightInactive {
+    right: 0 !important; }
+    /* line 107, ../sass/tree/_pane.scss */
+    .split-pane-component.secondary-split.pane.right.rightInactive .items.pane {
+      width: 100%; }
+  /* line 114, ../sass/tree/_pane.scss */
+  .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar {
+    position: relative; }
+    /* line 117, ../sass/tree/_pane.scss */
+    .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .pane-tabs {
+      position: relative;
+      cursor: pointer;
+      font-family: symbolsfont;
+      background-color: #595959;
+      width: 11px !important;
+      height: 16px;
+      line-height: 16px;
+      font-size: 10px; }
+      /* line 130, ../sass/tree/_pane.scss */
+      .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .pane-tabs.left {
         left: -10px;
-        width: 11px;
-        height: 16px;
-        line-height: 16px;
-        font-size: 10px;
         top: 3px;
         border-top-right-radius: 2px;
-        border-bottom-right-radius: 2px;
-        background-color: #595959; }
-        /* line 126, ../sass/tree/_pane.scss */
-        .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .left-pane-tabs.inactivePane {
+        border-bottom-right-radius: 2px; }
+        /* line 138, ../sass/tree/_pane.scss */
+        .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .pane-tabs.left.inactivePane {
           left: -15px; }
-          /* line 129, ../sass/tree/_pane.scss */
-          .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .left-pane-tabs.inactivePane:after {
+          /* line 140, ../sass/tree/_pane.scss */
+          .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .pane-tabs.left.inactivePane:after {
             content: '>'; }
-        /* line 133, ../sass/tree/_pane.scss */
-        .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .left-pane-tabs.activePane:after {
+        /* line 144, ../sass/tree/_pane.scss */
+        .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .pane-tabs.left.activePane:after {
           content: '<'; }
-      /* line 138, ../sass/tree/_pane.scss */
-      .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .items-select {
-        margin-left: 10px; }
-  /* line 144, ../sass/tree/_pane.scss */
-  .split-pane-component.secondary-split.pane.right .splitter-bar.right {
-    top: 0; }
-  /* line 149, ../sass/tree/_pane.scss */
+      /* line 150, ../sass/tree/_pane.scss */
+      .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .pane-tabs.right {
+        float: right;
+        right: -8px;
+        top: -13px;
+        border-top-left-radius: 2px;
+        border-bottom-left-radius: 2px; }
+        /* line 161, ../sass/tree/_pane.scss */
+        .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .pane-tabs.right.inactivePane:after {
+          content: '<'; }
+        /* line 165, ../sass/tree/_pane.scss */
+        .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .pane-tabs.right.activePane:after {
+          content: '>'; }
+    /* line 173, ../sass/tree/_pane.scss */
+    .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .items-select {
+      margin-left: 10px; }
+    /* line 177, ../sass/tree/_pane.scss */
+    .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .btn-bar.right {
+      margin-right: 10px; }
+  /* line 183, ../sass/tree/_pane.scss */
   .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right {
     min-width: 150px; }
-    /* line 154, ../sass/tree/_pane.scss */
+    /* line 186, ../sass/tree/_pane.scss */
+    .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right.inactive {
+      min-width: 0 !important;
+      width: 0 !important;
+      visibility: hidden; }
+    /* line 194, ../sass/tree/_pane.scss */
     .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder .info-icon {
       color: #0099cc; }
-    /* line 158, ../sass/tree/_pane.scss */
-    .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul {
-      font-size: 0.9em; }
-      /* line 161, ../sass/tree/_pane.scss */
-      .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li {
-        padding: 2px 0px;
-        margin: 2px 0px;
-        border-top: solid 1px grey; }
-        /* line 166, ../sass/tree/_pane.scss */
-        .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li:first-child {
-          border-top-width: 0px; }
-        /* line 171, ../sass/tree/_pane.scss */
-        .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li em {
-          font-weight: bold; }
-          /* line 174, ../sass/tree/_pane.scss */
-          .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li em:after {
-            content: '\A';
-            white-space: pre; }
-        /* line 181, ../sass/tree/_pane.scss */
-        .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location {
+    /* line 198, ../sass/tree/_pane.scss */
+    .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li {
+      font-size: 0.9em;
+      padding: 2px 0px;
+      margin: 2px 0px;
+      border-top: solid 1px grey; }
+      /* line 205, ../sass/tree/_pane.scss */
+      .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li:first-child {
+        border-top-width: 0px; }
+      /* line 210, ../sass/tree/_pane.scss */
+      .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li em {
+        font-weight: bold; }
+        /* line 213, ../sass/tree/_pane.scss */
+        .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li em:after {
+          content: '\A';
+          white-space: pre; }
+      /* line 220, ../sass/tree/_pane.scss */
+      .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location {
+        display: inline-block; }
+        /* line 223, ../sass/tree/_pane.scss */
+        .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location .label {
+          cursor: pointer;
+          display: inline-block;
+          white-space: nowrap;
+          transition: background-color 0.2s;
+          border-radius: 4px;
+          padding: 3px;
+          padding-bottom: 0;
+          margin: 2px;
+          line-height: 15px; }
+          /* line 230, ../sass/tree/_pane.scss */
+          .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location .label:hover {
+            background-color: #404040; }
+          /* line 241, ../sass/tree/_pane.scss */
+          .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location .label .icon.type-icon {
+            font-size: 14px; }
+            /* line 244, ../sass/tree/_pane.scss */
+            .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location .label .icon.type-icon .l-icon-link {
+              color: #49dedb;
+              font-size: 6px;
+              margin-left: -22px;
+              margin-right: 4px;
+              text-shadow: black 0 1px 2px;
+              z-index: 2; }
+        /* line 258, ../sass/tree/_pane.scss */
+        .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location:after {
+          content: '>';
+          font-family: symbolsfont;
+          font-size: 8px;
+          margin-left: -6px; }
+        /* line 264, ../sass/tree/_pane.scss */
+        .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location:last-child:after {
+          content: '';
           display: inline-block; }
-          /* line 184, ../sass/tree/_pane.scss */
-          .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location .label {
-            cursor: pointer;
-            display: inline-block;
-            white-space: nowrap;
-            transition: background-color 0.2s;
-            border-radius: 4px;
-            padding: 3px;
-            padding-bottom: 0;
-            margin: 2px;
-            line-height: 15px; }
-            /* line 192, ../sass/tree/_pane.scss */
-            .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location .label:hover {
-              background-color: #404040; }
-            /* line 204, ../sass/tree/_pane.scss */
-            .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location .label .icon.type-icon {
-              font-size: 14px; }
-              /* line 207, ../sass/tree/_pane.scss */
-              .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location .label .icon.type-icon .l-icon-link {
-                color: #49dedb;
-                font-size: 6px;
-                margin-left: -22px;
-                margin-right: 4px;
-                text-shadow: black 0 1px 2px;
-                z-index: 2; }
-          /* line 221, ../sass/tree/_pane.scss */
-          .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location:after {
-            content: '>';
-            font-family: symbolsfont;
-            font-size: 8px;
-            margin-left: -6px; }
-          /* line 227, ../sass/tree/_pane.scss */
-          .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location:last-child:after {
-            content: '';
-            display: inline-block; }

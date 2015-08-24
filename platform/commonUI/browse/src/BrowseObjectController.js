@@ -74,6 +74,9 @@ define(
                 $scope.ngModel.leftPane = true;
             }
             
+            // The object inspector by default always starts closed
+            $scope.ngModel.rightPane = false;
+            
             $scope.$watch('domainObject', setViewForDomainObject);
             $scope.$watch('representation.selected.key', updateQueryParam);
         }

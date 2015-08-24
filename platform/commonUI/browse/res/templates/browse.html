@@ -52,7 +52,7 @@
             </mct-splitter>
             
             <div class='split-pane-component secondary-split pane right'
-                 ng-class='{leftInactive: !paneModel.leftPane}'>
+                 ng-class='{leftInactive: !paneModel.leftPane, rightInactive: !paneModel.rightPane}'>
                 <mct-split-pane class='contents abs'
                                 anchor='right'>
                     
@@ -67,10 +67,11 @@
                     </div>
                     
                     <mct-splitter class="splitter-bar right"
-                                  ng-class="{inactive: !paneModel.leftPane}">
+                                  ng-class="{inactive: !paneModel.rightPane}">
                     </mct-splitter>
                     
-                    <div class='split-pane-component object-inspector pane right'>
+                    <div class='split-pane-component object-inspector pane right'
+                         ng-class='{inactive: !paneModel.rightPane}'>
                         <div class='holder inspector-holder abs'>
                             <mct-representation key="'object-inspector'"
                                                 mct-object="domainObject"
