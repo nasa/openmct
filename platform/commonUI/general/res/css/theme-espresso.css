@@ -5243,7 +5243,6 @@ input[type="text"] {
             display: inline-block;
             white-space: nowrap;
             transition: background-color 0.2s;
-            background-color: #4d4d4d;
             border-radius: 4px;
             padding: 3px;
             padding-bottom: 0;
@@ -5251,22 +5250,23 @@ input[type="text"] {
             line-height: 15px; }
             /* line 192, ../sass/tree/_pane.scss */
             .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location .label:hover {
-              background-color: #595959; }
-            /* line 203, ../sass/tree/_pane.scss */
+              background-color: #404040; }
+            /* line 204, ../sass/tree/_pane.scss */
             .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location .label .icon.type-icon {
               font-size: 14px; }
-              /* line 206, ../sass/tree/_pane.scss */
+              /* line 207, ../sass/tree/_pane.scss */
               .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location .label .icon.type-icon .l-icon-link {
                 color: #49dedb;
                 font-size: 6px;
                 margin-left: -22px;
                 margin-right: 4px; }
-          /* line 217, ../sass/tree/_pane.scss */
+          /* line 218, ../sass/tree/_pane.scss */
           .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location:after {
             content: '>';
             font-family: symbolsfont;
-            font-size: 10px;
-            margin-left: -4px; }
-          /* line 223, ../sass/tree/_pane.scss */
+            font-size: 8px;
+            margin-left: -6px; }
+          /* line 224, ../sass/tree/_pane.scss */
           .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location:last-child:after {
-            content: ''; }
+            content: '';
+            display: inline-block; }

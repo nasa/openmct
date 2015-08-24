@@ -105,7 +105,7 @@ $transitionTime: 0.35s; // For the left menu open/close
         // Move left tab buttons close to the left splitter bar 
         .object-browse-bar {
             position: relative;
-
+            
             .left-pane-tabs {
                 position: relative;
                 cursor: pointer;
@@ -134,7 +134,7 @@ $transitionTime: 0.35s; // For the left menu open/close
                     content: '<';
                 }
             }
-
+            
             .items-select {
                 margin-left: 10px;
             }
@@ -188,9 +188,10 @@ $transitionTime: 0.35s; // For the left menu open/close
                             
                             // Colors
                             transition: background-color 0.2s;
-                            background-color: lighten($colorBodyBg, 10%);
+                            //background-color: lighten($colorBodyBg, 10%);
                             &:hover {
-                                background-color: lighten($colorBodyBg, 15%);
+                                //background-color: lighten($colorBodyBg, 15%);
+                                background-color: lighten($colorBodyBg, 5%);
                             }
                             
                             // Sizing and spacing 
@@ -217,11 +218,12 @@ $transitionTime: 0.35s; // For the left menu open/close
                         &:after {
                             content: '>';
                             font-family: symbolsfont;
-                            font-size: 10px;
-                            margin-left: -4px;
+                            font-size: 8px;
+                            margin-left: -6px;
                         }
                         &:last-child:after {
                             content: '';
+                            display: inline-block;
                         }
                     }
                 }
