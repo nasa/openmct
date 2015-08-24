@@ -78,7 +78,8 @@
                 }
                 &.bottom-bar {
                     top: auto;
-                    height: $ueBrowseGridItemBottomBarH;
+                    //height: $ueBrowseGridItemBottomBarH;
+                    line-height: 110%;
                 }
             }
             .item-main {

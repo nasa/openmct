@@ -594,7 +594,7 @@ mct-container {
   .user-environ .edit-area .work-area {
     top: 40px; }
 /* line 129, ../sass/user-environ/_layout.scss */
-.user-environ .bottom-bar {
+.user-environ .ue-bottom-bar {
   overflow: hidden;
   position: absolute;
   top: 0;
@@ -606,10 +606,10 @@ mct-container {
   top: auto;
   height: 25px; }
   /* line 134, ../sass/user-environ/_layout.scss */
-  .user-environ .bottom-bar .status-holder {
+  .user-environ .ue-bottom-bar .status-holder {
     z-index: 1; }
   /* line 138, ../sass/user-environ/_layout.scss */
-  .user-environ .bottom-bar .app-logo {
+  .user-environ .ue-bottom-bar .app-logo {
     left: auto;
     width: 105px;
     z-index: 2; }

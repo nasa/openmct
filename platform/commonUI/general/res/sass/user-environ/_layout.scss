@@ -126,7 +126,7 @@
 		}
 	}
 
-	.bottom-bar {
+	.ue-bottom-bar {
         //@include absPosDefault($bodyMargin);
 		@include absPosDefault(0);// New status bar design
 		top: auto;
