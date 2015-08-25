@@ -445,37 +445,47 @@ ul.tree {
         /* line 282, ../sass/search/_search.scss */
         .search .search-scroll .results .search-result-item.selected .label .type-icon {
           color: #fff; }
-      /* line 289, ../sass/search/_search.scss */
+      /* line 287, ../sass/search/_search.scss */
+      .search .search-scroll .results .search-result-item .label .type-icon .l-icon-link {
+        text-shadow: black 0 1px 2px;
+        z-index: 2;
+        color: #49dedb;
+        font-size: 8px;
+        line-height: 8px;
+        height: 8px;
+        width: 8px;
+        margin-left: -25px; }
+      /* line 296, ../sass/search/_search.scss */
       .search .search-scroll .results .search-result-item:not(.selected):hover {
         background: #404040;
         color: #cccccc; }
-        /* line 292, ../sass/search/_search.scss */
+        /* line 299, ../sass/search/_search.scss */
         .search .search-scroll .results .search-result-item:not(.selected):hover .context-trigger {
           display: block; }
-        /* line 295, ../sass/search/_search.scss */
+        /* line 302, ../sass/search/_search.scss */
         .search .search-scroll .results .search-result-item:not(.selected):hover .icon {
           color: #33ccff; }
-    /* line 303, ../sass/search/_search.scss */
+    /* line 310, ../sass/search/_search.scss */
     .search .search-scroll .load-icon {
       position: relative; }
-      /* line 305, ../sass/search/_search.scss */
+      /* line 312, ../sass/search/_search.scss */
       .search .search-scroll .load-icon.loading {
         pointer-events: none;
         margin-left: 6px; }
-        /* line 309, ../sass/search/_search.scss */
+        /* line 316, ../sass/search/_search.scss */
         .search .search-scroll .load-icon.loading .title-label {
           font-style: italic;
           font-size: .9em;
           opacity: 0.5;
           margin-left: 26px;
           line-height: 24px; }
-        /* line 319, ../sass/search/_search.scss */
+        /* line 326, ../sass/search/_search.scss */
         .search .search-scroll .load-icon.loading .wait-spinner {
           margin-left: 6px; }
-      /* line 324, ../sass/search/_search.scss */
+      /* line 331, ../sass/search/_search.scss */
       .search .search-scroll .load-icon:not(.loading) {
         cursor: pointer; }
-    /* line 329, ../sass/search/_search.scss */
+    /* line 336, ../sass/search/_search.scss */
     .search .search-scroll .load-more-button {
       margin-top: 5px 0;
       font-size: 0.8em;

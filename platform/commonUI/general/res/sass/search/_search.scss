@@ -283,6 +283,13 @@
 						color: #fff;
 					}
 				}
+                
+                .label .type-icon .l-icon-link {
+                    @include txtShdwSubtle(1);
+                    z-index: 2;
+                    @include ancillaryIcon(8px, $colorIconLink);
+                    margin-left: -25px;
+                }
 
 				// Change styling when it's being hovered over
 				&:not(.selected) {

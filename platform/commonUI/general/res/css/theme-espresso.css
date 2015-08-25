@@ -2572,7 +2572,7 @@ label.checkbox.custom {
         box-sizing: border-box;
         border-top: 1px solid #737373;
         color: #d9d9d9;
-        line-height: 1.4rem;
+        line-height: 1.5rem;
         padding: 3px 10px 3px 30px;
         position: relative;
         white-space: nowrap; }
@@ -2643,7 +2643,7 @@ label.checkbox.custom {
     .menu-element .checkbox-menu ul li .checkbox {
       position: absolute;
       left: 5px;
-      top: 0.46667rem; }
+      top: 0.53333rem; }
       /* line 106, ../sass/controls/_menus.scss */
       .menu-element .checkbox-menu ul li .checkbox em {
         height: 0.7rem;
