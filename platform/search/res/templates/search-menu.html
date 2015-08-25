@@ -1,0 +1,67 @@
+<!--
+ Open MCT Web, Copyright (c) 2014-2015, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT Web includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+--> 
+
+<div ng-controller="SearchMenuController as controller">
+
+    <div class="menu checkbox-menu">
+
+        <ul>
+            <!-- First element is special - it's a reset option -->
+            <li class="search-menu-item special"
+                title="Select all filters"
+                ng-click="ngModel.checkAll = !ngModel.checkAll; controller.checkAll()">
+
+                <label class="checkbox custom no-text">
+                    <input type="checkbox"
+                           class="checkbox"
+                           ng-model="ngModel.checkAll"
+                           ng-change="controller.checkAll()" />
+                    <em></em>
+                </label>
+
+                <span class="ui-symbol icon type-icon">
+                    *
+                </span>
+				All
+            </li>
+
+            <!-- The filter options, by type -->
+            <li class="search-menu-item"
+                ng-repeat="type in ngModel.types"
+                ng-click="ngModel.checked[type.key] = !ngModel.checked[type.key]; controller.updateOptions()">
+
+                <label class="checkbox custom no-text">
+                    <input type="checkbox"
+                           class="checkbox"
+                           ng-model="ngModel.checked[type.key]"
+                           ng-change="controller.updateOptions()" />
+                    <em></em>
+                </label>
+
+                <span class="ui-symbol icon type-icon">
+                    {{ type.glyph }}
+                </span>
+				{{ type.name }}
+            </li>
+        </ul>
+    </div>
+</div>
