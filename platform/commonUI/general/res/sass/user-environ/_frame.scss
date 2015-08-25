@@ -48,16 +48,20 @@
 		left: $myM;
 	}
 	&.frame-template {
-		// Hide the view switcher by default when it's in an element that's in a frame context
-		// Frame template is used because we need to target the lowest nested frame
 		.view-switcher {
-			opacity: 0;
+			line-height: 16px;
 			z-index: 10;
 		}
-		&:hover .view-switcher {
-			// Show the view switcher on frame hover
-			//display: inline-block !important;
-			opacity: 1;
+		// Hide the view switcher by default when it's in an element that's in a frame context
+		// Frame template is used because we need to target the lowest nested frame
+		@include desktop {
+			.view-switcher {
+				opacity: 0;
+			}
+			&:hover .view-switcher {
+				// Show the view switcher on frame hover
+				opacity: 1;
+			}
 		}
 	}
 	.view-switcher {
