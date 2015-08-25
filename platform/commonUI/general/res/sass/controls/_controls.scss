@@ -467,24 +467,26 @@ label.checkbox.custom {
 
 /******************************************************** BROWSER ELEMENTS */
 
-::-webkit-scrollbar {
-	@include sliderTrack();
-	height: $scrollbarTrackSize;
-	width: $scrollbarTrackSize;
-}
-
-::-webkit-scrollbar-thumb {
-	$bg: lighten($colorBodyBg, 10%);
-	@include background-image(linear-gradient(lighten($bg, 10%), lighten($bg, 5%) 20px));
-	@include border-radius(1px);
-	@include box-sizing(border-box);
-	@include boxShdwSubtle();
-	border-top: 1px solid lighten($bg, 20%);
-	&:hover {
-		@include background-image(linear-gradient(lighten($bg, 20%), lighten($bg, 15%) 20px));
+@include desktop {
+	::-webkit-scrollbar {
+		@include sliderTrack();
+		height: $scrollbarTrackSize;
+		width: $scrollbarTrackSize;
 	}
-}
 
-::-webkit-scrollbar-corner {
-	background: rgba(#000, 0.4);
+	::-webkit-scrollbar-thumb {
+		$bg: lighten($colorBodyBg, 10%);
+		@include background-image(linear-gradient(lighten($bg, 10%), lighten($bg, 5%) 20px));
+		@include border-radius(1px);
+		@include box-sizing(border-box);
+		@include boxShdwSubtle();
+		border-top: 1px solid lighten($bg, 20%);
+		&:hover {
+			@include background-image(linear-gradient(lighten($bg, 20%), lighten($bg, 15%) 20px));
+		}
+	}
+
+	::-webkit-scrollbar-corner {
+		background: rgba(#000, 0.4);
+	}
 }
