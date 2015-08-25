@@ -195,6 +195,8 @@ $transitionTime: 0.35s; // For the left menu open/close
         }
         
         .holder.inspector-holder {
+            overflow-y: auto;
+            
             .info-icon {
                 color: $colorKey;
             }

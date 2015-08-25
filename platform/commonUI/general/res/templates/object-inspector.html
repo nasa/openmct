@@ -30,7 +30,9 @@
             {{ data.value }}
         </li>
         <li ng-if="contextutalParents.length > 0">
-            <em>Contextual Location </em>
+            <em title="The location of this linked object.">
+                Contextual Location
+            </em>
             <span class="inspector-location"
                   ng-repeat="parent in contextutalParents">
                 <mct-representation key="'label'"
@@ -41,7 +43,9 @@
             </span>
         </li>
         <li ng-if="primaryParents.length > 0">
-            <em>Primary Location </em>
+            <em title="The location of the object that this was linked from.">
+                Primary Location
+            </em>
             <span class="inspector-location"
                   ng-repeat="parent in primaryParents">
                 <mct-representation key="'label'"
