@@ -46,13 +46,18 @@ define(
                     currentParent,
                     parents = [];
                 
-                while (currentObj && currentObj.getModel().type !== 'root' && currentObj.hasCapability('context')) {
+                currentParent = currentObj &&
+                    currentObj.hasCapability('context') &&
+                    currentObj.getCapability('context').getParent();
+                
+                while (currentParent && currentParent.getModel().type !== 'root' &&
+                        currentParent.hasCapability('context')) {
                     // Record this object 
-                    parents.unshift(currentObj);
+                    parents.unshift(currentParent);
                     
                     // Get the next one up the tree 
-                    currentParent = currentObj.getCapability('context').getParent();
                     currentObj = currentParent;
+                    currentParent = currentObj.getCapability('context').getParent();
                 }
                 
                 $scope.contextutalParents = parents;
@@ -66,7 +71,7 @@ define(
                 // If this the the initial call of this recursive function
                 if (!current) {
                     current = $scope.ngModel.selectedObject;
-                    $scope.primaryParents = [current];
+                    $scope.primaryParents = [];
                 }
                 
                 location = current.getModel().location;
