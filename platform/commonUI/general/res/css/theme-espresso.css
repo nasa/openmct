@@ -566,8 +566,7 @@ mct-container {
   flex-flow: row nowrap; }
   /* line 91, ../sass/user-environ/_layout.scss */
   .bar.l-flex .left {
-    background-color: rgba(0, 128, 0, 0.2);
-    flex: 1 1 auto; }
+    flex: 1 1 0; }
 
 /* line 99, ../sass/user-environ/_layout.scss */
 .user-environ .browse-area,
@@ -868,12 +867,15 @@ mct-container {
     top: 12px;
     left: 10px; }
 
-  /* line 113, ../sass/mobile/_layout.scss */
-  .object-browse-bar .context-available {
-    opacity: 1 !important; }
-  /* line 116, ../sass/mobile/_layout.scss */
-  .object-browse-bar .view-switcher {
-    margin-right: 0 !important; }
+  /* line 110, ../sass/mobile/_layout.scss */
+  .object-browse-bar {
+    left: 30px !important; }
+    /* line 113, ../sass/mobile/_layout.scss */
+    .object-browse-bar .context-available {
+      opacity: 1 !important; }
+    /* line 116, ../sass/mobile/_layout.scss */
+    .object-browse-bar .view-switcher {
+      margin-right: 0 !important; }
 
   /* line 121, ../sass/mobile/_layout.scss */
   .tree-holder {
