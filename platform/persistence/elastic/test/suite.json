@@ -1,5 +1,5 @@
 [
     "ElasticIndicator",
     "ElasticPersistenceProvider",
-    "ElasticsearchSearchProvider"
+    "ElasticSearchProvider"
 ]

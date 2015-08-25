@@ -22,8 +22,7 @@
 /*global define*/
 
 /**
- * Module defining ElasticsearchSearchProvider. Created by shale on 07/16/2015.
- * This is not currently included in the bundle definition. 
+ * Module defining ElasticSearchProvider. Created by shale on 07/16/2015.
  */
 define(
     [],
@@ -44,13 +43,13 @@ define(
          * @param $http Angular's $http service, for working with urls.
          * @param {ObjectService} objectService the service from which
          *        domain objects can be gotten.
-         * @param root the constant `ELASTIC_ROOT` which allows us to
+         * @param ROOT the constant `ELASTIC_ROOT` which allows us to
          *        interact with ElasticSearch.
          */
-        function ElasticsearchSearchProvider($http, objectService, root) {
+        function ElasticSearchProvider($http, objectService, ROOT) {
             this.$http = $http;
             this.objectService = objectService;
-            this.root = root;
+            this.root = ROOT;
         }
 
         /**
@@ -78,13 +77,12 @@ define(
          *   stop calculations and return partial results. Elasticsearch
          *   does not guarentee that this timeout will be strictly followed.
          */
-        ElasticsearchSearchProvider.prototype.query = function query(searchTerm, timestamp, maxResults, timeout) {
+        ElasticSearchProvider.prototype.query = function query(searchTerm, timestamp, maxResults, timeout) {
             var $http = this.$http,
                 objectService = this.objectService,
                 root = this.root,
                 esQuery;
-
-            // Add the fuzziness operator to the search term
+            
             function addFuzziness(searchTerm, editDistance) {
                 if (!editDistance) {
                     editDistance = '';
@@ -210,6 +208,6 @@ define(
         };
 
 
-        return ElasticsearchSearchProvider;
+        return ElasticSearchProvider;
     }
 );
