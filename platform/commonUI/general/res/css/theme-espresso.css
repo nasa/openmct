@@ -5168,12 +5168,15 @@ input[type="text"] {
   /* line 35, ../sass/tree/_pane.scss */
   .pane.left.inactive .tree-holder {
     padding-right: 0; }
-/* line 41, ../sass/tree/_pane.scss */
+  /* line 40, ../sass/tree/_pane.scss */
+  .pane.left.inactive .search-holder {
+    display: none; }
+/* line 46, ../sass/tree/_pane.scss */
 .pane.left .create-btn.major {
   top: 0;
   left: 0;
   transition: all 0.35s; }
-  /* line 46, ../sass/tree/_pane.scss */
+  /* line 51, ../sass/tree/_pane.scss */
   .pane.left .create-btn.major.inactivePane {
     top: 0;
     left: 0;
@@ -5186,35 +5189,35 @@ input[type="text"] {
     line-height: 14px;
     left: -11px;
     top: 20px; }
-    /* line 64, ../sass/tree/_pane.scss */
+    /* line 69, ../sass/tree/_pane.scss */
     .pane.left .create-btn.major.inactivePane span {
       display: none; }
 
-/* line 74, ../sass/tree/_pane.scss */
+/* line 79, ../sass/tree/_pane.scss */
 .splitter-bar.left {
   opacity: 1;
   transition: opacity 0.35s, visibility 0.35s;
   top: 0; }
-  /* line 81, ../sass/tree/_pane.scss */
+  /* line 86, ../sass/tree/_pane.scss */
   .splitter-bar.left.inactive {
     visibility: hidden;
     opacity: 0;
     transition: opacity 0s, visibility 0s; }
-    /* line 87, ../sass/tree/_pane.scss */
+    /* line 92, ../sass/tree/_pane.scss */
     .splitter-bar.left.inactive:before {
       border-width: 0; }
 
-/* line 94, ../sass/tree/_pane.scss */
+/* line 99, ../sass/tree/_pane.scss */
 .items.pane {
   transition: left 0.35s;
   transition-timing-function: ease-out; }
-  /* line 98, ../sass/tree/_pane.scss */
+  /* line 103, ../sass/tree/_pane.scss */
   .items.pane.leftInactive {
     left: 0 !important; }
-  /* line 103, ../sass/tree/_pane.scss */
+  /* line 108, ../sass/tree/_pane.scss */
   .items.pane .object-browse-bar {
     position: relative; }
-    /* line 106, ../sass/tree/_pane.scss */
+    /* line 111, ../sass/tree/_pane.scss */
     .items.pane .object-browse-bar .left-pane-tabs {
       position: relative;
       cursor: pointer;
@@ -5227,15 +5230,15 @@ input[type="text"] {
       border-top-right-radius: 2px;
       border-bottom-right-radius: 2px;
       background-color: #595959; }
-      /* line 123, ../sass/tree/_pane.scss */
+      /* line 128, ../sass/tree/_pane.scss */
       .items.pane .object-browse-bar .left-pane-tabs.inactivePane {
         left: -15px; }
-        /* line 126, ../sass/tree/_pane.scss */
+        /* line 131, ../sass/tree/_pane.scss */
         .items.pane .object-browse-bar .left-pane-tabs.inactivePane:after {
           content: '>'; }
-      /* line 130, ../sass/tree/_pane.scss */
+      /* line 135, ../sass/tree/_pane.scss */
       .items.pane .object-browse-bar .left-pane-tabs.activePane:after {
         content: '<'; }
-    /* line 135, ../sass/tree/_pane.scss */
+    /* line 140, ../sass/tree/_pane.scss */
     .items.pane .object-browse-bar .items-select {
       margin-left: 10px; }
