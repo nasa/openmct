@@ -182,7 +182,7 @@ define(
         // and in portrait mode, than, hide the tree menu
         TreeNodeController.prototype.setObject = function (ngModel, domainObject) {
             ngModel.selectedObject = domainObject;
-            if (this.agentService.getOrientation() === "portrait" &&
+            if (this.agentService.getOrientation(window.innerWidth, window.innerHeight) === "portrait" &&
                     this.agentService.isPhone(navigator.userAgent)) {
                 this.$scope.$emit('select-obj');
             }

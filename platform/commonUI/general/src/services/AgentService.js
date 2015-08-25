@@ -67,11 +67,12 @@ define(
             }
 
             // Returns the orientation of the device based on the
-            // device's window dimensions
-            function getOrientation() {
-                if (window.innerWidth > window.innerHeight) {
+            // device's window dimensions, pass in the innerWidth
+            // and innerheight of the current window
+            function getOrientation(innerWidth, innerHeight) {
+                if (innerWidth > innerHeight) {
                     return "landscape";
-                } else if (window.innerWidth < window.innerHeight) {
+                } else if (innerWidth < innerHeight) {
                     return "portrait";
                 }
             }

@@ -38,8 +38,8 @@ define(
                 // Creates a mockLocation, used to 
                 // do the view search
                 mockWindow = jasmine.createSpyObj(
-                    "$window",
-                    [ "outerWidth", "outerHeight" ]
+                    "window",
+                    [ "innerWidth", "innerHeight" ]
                 );
                 
                 mockNavigator = jasmine.createSpyObj(
@@ -47,7 +47,7 @@ define(
                     [ "userAgent" ]
                 );
                 
-                agentService = new AgentService(mockWindow);
+                agentService = new AgentService();
             });
             
             it("get current device user agent", function () {
@@ -61,13 +61,8 @@ define(
             });
             
             it("get orientation of the current device", function () {
-                mockWindow.outerWidth = 768;
-                mockWindow.outerHeight = 1024;
-                agentService.getOrientation();
-                
-                mockWindow.outerWidth = 1024;
-                mockWindow.outerHeight = 768;
-                agentService.getOrientation();
+                agentService.getOrientation(1024, 768);
+                agentService.getOrientation(768, 1024);
             });
         });
     }
