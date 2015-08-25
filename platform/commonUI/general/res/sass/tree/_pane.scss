@@ -196,6 +196,7 @@ $transitionTime: 0.35s; // For the left menu open/close
         
         .holder.inspector-holder {
             overflow-y: auto;
+            overflow-x: hidden;
             
             .info-icon {
                 color: $colorKey;
@@ -243,6 +244,11 @@ $transitionTime: 0.35s; // For the left menu open/close
                         padding: 3px;
                         margin: 2px;
 
+                        // Horizontal overflow 
+                        max-width: 100%;
+                        text-overflow: ellipsis;
+                        overflow-x: hidden;
+                        
                         .icon.type-icon {
                             font-size: 14px;
 
