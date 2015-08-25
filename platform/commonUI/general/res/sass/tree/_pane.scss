@@ -35,6 +35,11 @@ $transitionTime: 0.35s; // For the left menu open/close
         .tree-holder {
             padding-right: 0;
         }
+        
+        // Hide the search bar when the pane is closed
+        .search-holder {
+            display: none;
+        }
     }
     
     // When the pane is closed, move and resize the create button
