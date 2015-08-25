@@ -9,24 +9,55 @@
                 "priority": "fallback"
             }
         ],
+        "controllers": [
+            {
+                "key": "SearchController",
+                "implementation": "controllers/SearchController.js",
+                "depends": [ "$scope", "searchService" ]
+            },
+            {
+                "key": "SearchMenuController",
+                "implementation": "controllers/SearchMenuController.js",
+                "depends": [ "$scope", "types[]" ]
+            },
+            {
+                "key": "ClickAwayController",
+                "implementation": "controllers/ClickAwayController.js",
+                "depends": [ "$scope", "$document" ]
+            }
+        ],
+        "representations": [
+            {
+                "key": "search",
+                "templateUrl": "templates/search.html"
+            },
+            {
+                "key": "search-menu",
+                "templateUrl": "templates/search-menu.html"
+            },
+            {
+                "key": "search-item",
+                "templateUrl": "templates/search-item.html"
+            }
+        ],
         "components": [
             {
                 "provides": "searchService",
                 "type": "provider",
-                "implementation": "GenericSearchProvider.js",
+                "implementation": "services/GenericSearchProvider.js",
                 "depends": [ "$q", "$timeout", "objectService", "workerService", "GENERIC_SEARCH_ROOTS" ]
             },
             {
                 "provides": "searchService",
                 "type": "aggregator",
-                "implementation": "SearchAggregator.js",
+                "implementation": "services/SearchAggregator.js",
                 "depends": [ "$q" ]
             }
         ],
         "workers": [
             {
                 "key": "genericSearchWorker",
-                "scriptUrl": "GenericSearchWorker.js"
+                "scriptUrl": "services/GenericSearchWorker.js"
             }
         ]
     }

@@ -24,15 +24,25 @@
     <mct-include key="'topbar-browse'"></mct-include>
     <div class="holder browse-area s-browse-area abs browse-wrapper" ng-class="treeClass ? 'browse-showtree' : 'browse-hidetree'">
         <mct-split-pane class='contents abs' anchor='left'>
-            <div class='split-pane-component treeview pane mobile-pane left-menu desktop-browse'>
-                <div class='holder tree-holder abs mobile-tree-holder'>
+            <div
+                class='split-pane-component treeview pane mobile-pane left-menu desktop-browse'
+                >
+                <mct-representation key="'create-button'" mct-object="navigatedObject">
+                </mct-representation>
+                <div class='holder search-holder abs'
+                     ng-class="{active: treeModel.search}">
+                    <mct-representation key="'search'"
+                                 mct-object="domainObject"
+                                 ng-model="treeModel">
+                    </mct-representation>
+                </div>
+                <div class='holder tree-holder abs mobile-tree-holder'
+                     ng-hide="treeModel.search">
                     <mct-representation key="'tree'"
                                         mct-object="domainObject"
                                         ng-model="treeModel">
                     </mct-representation>
                 </div>
-                    <mct-representation key="'create-button'" mct-object="navigatedObject">
-                    </mct-representation>
             </div>
 
             <mct-splitter class="mobile-hide"></mct-splitter>
