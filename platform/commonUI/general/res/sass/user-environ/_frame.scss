@@ -20,22 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .frame {
-	$ohH: 20px;
+	$ohH: 16px;
 	$bc: $colorInteriorBorder;
 	&.child-frame.panel {
 		background: $colorBodyBg;
 		border: 1px solid $bc;
 		&:hover {
 			border-color: lighten($bc, 10%);
-			//z-index: 2;
-		}
-		.contents {
-//			overflow: hidden;
 		}
 	}
 	>.object-header.abs {
+		//@include test(red);
 		font-size: 0.75em;
 		height: $ohH;
+		line-height: $ohH;
 	}
 	>.object-holder.abs {
 		top: $ohH + $interiorMarginSm;
@@ -49,7 +47,7 @@
 	}
 	&.frame-template {
 		.view-switcher {
-			line-height: 16px;
+			line-height: $ohH;
 			z-index: 10;
 		}
 		// Hide the view switcher by default when it's in an element that's in a frame context

@@ -735,6 +735,25 @@ mct-container {
       right: 3px; }
 
 /* line 299, ../sass/user-environ/_layout.scss */
+.object-browse-bar .btn,
+.object-browse-bar .t-btn,
+.object-browse-bar .view-switcher,
+.top-bar .buttons-main .btn,
+.top-bar .buttons-main .t-btn,
+.top-bar .view-switcher,
+.tool-bar .btn,
+.tool-bar .t-btn {
+  display: inline-block;
+  font-size: 11.25px;
+  line-height: 200%;
+  vertical-align: top; }
+
+/* line 316, ../sass/user-environ/_layout.scss */
+.object-browse-bar .view-switcher,
+.top-bar .view-switcher {
+  margin-right: 20px; }
+
+/* line 321, ../sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
 
@@ -2382,8 +2401,7 @@ a.l-btn span {
 	}
 }
 */
-/* line 177, ../sass/controls/_controls.scss */
-.object-browse-bar .btn,
+/*.object-browse-bar .btn,
 .object-browse-bar .t-btn,
 .object-browse-bar .view-switcher,
 .top-bar .buttons-main .btn,
@@ -2391,11 +2409,12 @@ a.l-btn span {
 .top-bar .view-switcher,
 .tool-bar .btn,
 .tool-bar .t-btn {
-  display: inline-block;
-  font-size: 11.25px;
-  line-height: 200%;
-  vertical-align: top; }
-
+	$h: $btnToolbarH;
+	display: inline-block;
+	font-size: $h * $btnFontSizeToH;
+	line-height: 200%;
+	vertical-align: top;
+}*/
 /* line 192, ../sass/controls/_controls.scss */
 label.checkbox.custom {
   cursor: pointer;
@@ -4510,31 +4529,32 @@ input[type="text"] {
   /* line 28, ../sass/user-environ/_frame.scss */
   .frame.child-frame.panel:hover {
     border-color: #666666; }
-/* line 36, ../sass/user-environ/_frame.scss */
+/* line 32, ../sass/user-environ/_frame.scss */
 .frame > .object-header.abs, .btn-menu .frame > span.object-header.l-click-area {
   font-size: 0.75em;
-  height: 20px; }
-/* line 40, ../sass/user-environ/_frame.scss */
+  height: 16px;
+  line-height: 16px; }
+/* line 38, ../sass/user-environ/_frame.scss */
 .frame > .object-holder.abs, .btn-menu .frame > span.object-holder.l-click-area {
-  top: 23px; }
-/* line 43, ../sass/user-environ/_frame.scss */
+  top: 19px; }
+/* line 41, ../sass/user-environ/_frame.scss */
 .frame .contents {
   top: 5px;
   right: 5px;
   bottom: 5px;
   left: 5px; }
-/* line 51, ../sass/user-environ/_frame.scss */
+/* line 49, ../sass/user-environ/_frame.scss */
 .frame.frame-template .view-switcher {
   line-height: 16px;
   z-index: 10; }
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 58, ../sass/user-environ/_frame.scss */
+  /* line 56, ../sass/user-environ/_frame.scss */
   .frame.frame-template .view-switcher {
     opacity: 0; }
-  /* line 61, ../sass/user-environ/_frame.scss */
+  /* line 59, ../sass/user-environ/_frame.scss */
   .frame.frame-template:hover .view-switcher {
     opacity: 1; } }
-/* line 69, ../sass/user-environ/_frame.scss */
+/* line 67, ../sass/user-environ/_frame.scss */
 .frame .view-switcher .name {
   display: none; }
 
@@ -4576,9 +4596,6 @@ input[type="text"] {
   font-size: 0.8em;
   left: auto;
   text-align: right; }
-  /* line 40, ../sass/user-environ/_top-bar.scss */
-  .top-bar .buttons-main .btn {
-    margin-left: 5px; }
 
 /* line 48, ../sass/user-environ/_top-bar.scss */
 .edit-mode .top-bar .buttons-main {
