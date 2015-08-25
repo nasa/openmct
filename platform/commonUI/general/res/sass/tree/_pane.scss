@@ -241,9 +241,7 @@ $transitionTime: 0.35s; // For the left menu open/close
                         // Sizing and spacing 
                         border-radius: 4px;
                         padding: 3px;
-                        padding-bottom: 0;
                         margin: 2px;
-                        line-height: 15px;
 
                         .icon.type-icon {
                             font-size: 14px;
@@ -253,7 +251,7 @@ $transitionTime: 0.35s; // For the left menu open/close
 
                                 font-size: 6px;
                                 margin-left: -22px;
-                                margin-right: 4px;
+                                margin-right: 9px;
 
                                 @include txtShdwSubtle(1);
                                 z-index: 2;
