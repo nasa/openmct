@@ -131,6 +131,7 @@
                 color: lighten($colorBodyFg, 20%);
             }
             .details {
+                @include ellipsize();
                 font-size: 0.8em;
             }
 	        &.selected {
