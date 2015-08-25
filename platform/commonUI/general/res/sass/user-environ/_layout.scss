@@ -88,8 +88,8 @@
     &.l-flex {
         display: flex;
         flex-flow: row nowrap;
-        align-items: stretch;
         .left {
+            @include test(green);
             flex: 1 1 auto;
         }
     }
@@ -208,7 +208,8 @@
     .split-layout {
         .split-pane-component.pane.left {
             min-width: 150px;
-            max-width: 50%;
+            max-width: 800px;
+            width: $ueBrowseLeftPaneW;
         }
     }
 }
@@ -216,8 +217,8 @@
 .edit-mode {
     .split-layout {
         .split-pane-component.pane.right {
-            min-width: 150px;
-            max-width: 50%;
+            //min-width: 150px;
+            //max-width: 50%;
             .split-pane-component.pane.bottom {
                 min-height: 50px;
                 max-height: 80%;

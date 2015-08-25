@@ -563,10 +563,10 @@ mct-container {
 /* line 88, ../sass/user-environ/_layout.scss */
 .bar.l-flex {
   display: flex;
-  flex-flow: row nowrap;
-  align-items: stretch; }
-  /* line 92, ../sass/user-environ/_layout.scss */
+  flex-flow: row nowrap; }
+  /* line 91, ../sass/user-environ/_layout.scss */
   .bar.l-flex .left {
+    background-color: rgba(0, 128, 0, 0.2);
     flex: 1 1 auto; }
 
 /* line 99, ../sass/user-environ/_layout.scss */
@@ -673,68 +673,65 @@ mct-container {
 /* line 209, ../sass/user-environ/_layout.scss */
 .browse-mode .split-layout .split-pane-component.pane.left {
   min-width: 150px;
-  max-width: 50%; }
+  max-width: 800px;
+  width: 25%; }
 
-/* line 218, ../sass/user-environ/_layout.scss */
-.edit-mode .split-layout .split-pane-component.pane.right {
-  min-width: 150px;
-  max-width: 50%; }
-  /* line 221, ../sass/user-environ/_layout.scss */
-  .edit-mode .split-layout .split-pane-component.pane.right .split-pane-component.pane.bottom {
-    min-height: 50px;
-    max-height: 80%; }
+/* line 222, ../sass/user-environ/_layout.scss */
+.edit-mode .split-layout .split-pane-component.pane.right .split-pane-component.pane.bottom {
+  min-height: 50px;
+  max-height: 80%; }
 
-/* line 229, ../sass/user-environ/_layout.scss */
+/* line 230, ../sass/user-environ/_layout.scss */
 .pane {
   position: absolute; }
-  /* line 232, ../sass/user-environ/_layout.scss */
+  /* line 233, ../sass/user-environ/_layout.scss */
   .pane.treeview.left .create-btn-holder {
     bottom: auto;
     top: 0;
     height: 24px; }
-    /* line 235, ../sass/user-environ/_layout.scss */
+    /* line 236, ../sass/user-environ/_layout.scss */
     .pane.treeview.left .create-btn-holder .wrapper.menu-element {
       position: absolute;
       bottom: 5px; }
-  /* line 240, ../sass/user-environ/_layout.scss */
+  /* line 241, ../sass/user-environ/_layout.scss */
   .pane.treeview.left .tree-holder {
     overflow: auto;
     top: 34px;
     padding-right: 5px; }
-  /* line 248, ../sass/user-environ/_layout.scss */
+  /* line 249, ../sass/user-environ/_layout.scss */
   .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .btn-menu span.left.l-click-area, .btn-menu .pane.items .object-browse-bar span.left.l-click-area,
   .pane.items .object-browse-bar .right.abs,
   .pane.items .object-browse-bar .btn-menu span.right.l-click-area,
   .btn-menu .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
-  /* line 259, ../sass/user-environ/_layout.scss */
+  /* line 260, ../sass/user-environ/_layout.scss */
   .pane.items .object-holder {
     top: 34px; }
-  /* line 263, ../sass/user-environ/_layout.scss */
+  /* line 264, ../sass/user-environ/_layout.scss */
   .pane .object-holder {
     overflow: auto; }
 
-/* line 271, ../sass/user-environ/_layout.scss */
+/* line 272, ../sass/user-environ/_layout.scss */
 .split-layout.horizontal > .pane {
   margin-top: 5px; }
-  /* line 274, ../sass/user-environ/_layout.scss */
+  /* line 275, ../sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane:first-child {
     margin-top: 0; }
-/* line 281, ../sass/user-environ/_layout.scss */
+/* line 282, ../sass/user-environ/_layout.scss */
 .split-layout.vertical > .pane {
   margin-left: 5px; }
-  /* line 284, ../sass/user-environ/_layout.scss */
+  /* line 285, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane > .holder {
     left: 0;
     right: 0; }
-  /* line 288, ../sass/user-environ/_layout.scss */
+  /* line 289, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane:first-child {
     margin-left: 0; }
-    /* line 290, ../sass/user-environ/_layout.scss */
+    /* line 291, ../sass/user-environ/_layout.scss */
     .split-layout.vertical > .pane:first-child .holder {
       right: 3px; }
 
-/* line 299, ../sass/user-environ/_layout.scss */
+/* line 300, ../sass/user-environ/_layout.scss */
 .object-browse-bar .btn,
 .object-browse-bar .t-btn,
 .object-browse-bar .view-switcher,
@@ -748,12 +745,12 @@ mct-container {
   line-height: 200%;
   vertical-align: top; }
 
-/* line 316, ../sass/user-environ/_layout.scss */
+/* line 317, ../sass/user-environ/_layout.scss */
 .object-browse-bar .view-switcher,
 .top-bar .view-switcher {
   margin-right: 20px; }
 
-/* line 321, ../sass/user-environ/_layout.scss */
+/* line 322, ../sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
 
@@ -786,183 +783,115 @@ mct-container {
     top: 0 !important;
     right: 0;
     bottom: 0;
-    left: 0; } }
+    left: 0; }
 
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 35, ../sass/mobile/_layout.scss */
+  /* line 32, ../sass/mobile/_layout.scss */
+  .mobile-pane.right-repr {
+    -moz-transition-duration: 0.35s;
+    -o-transition-duration: 0.35s;
+    -webkit-transition-duration: 0.35s;
+    transition-duration: 0.35s;
+    transition-timing-function: ease;
+    backface-visibility: hidden;
+    margin-left: 0 !important; }
+
+  /* line 38, ../sass/mobile/_layout.scss */
   .user-environ .browse-area,
   .user-environ .edit-area,
   .user-environ .editor {
     top: 0;
     left: 0;
     right: 0;
-    bottom: 25px; } }
+    bottom: 25px; }
 
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
   /* line 44, ../sass/mobile/_layout.scss */
   .holder.l-mobile {
     top: 10px !important;
     right: 10px !important;
     bottom: 10px !important;
-    left: 10px !important; } }
+    left: 10px !important; }
 
-@media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 56, ../sass/mobile/_layout.scss */
-  .desktop-browse {
-    min-width: 150px;
-    max-width: 800px;
-    width: 25%; } }
-
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 67, ../sass/mobile/_layout.scss */
+  /* line 54, ../sass/mobile/_layout.scss */
   .browse-hidetree {
     -moz-user-select: -moz-none;
     -ms-user-select: none;
     -webkit-user-select: none;
-    user-select: none; } }
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 78, ../sass/mobile/_layout.scss */
-  .browse-hidetree .mobile-pane.left-menu {
-    -moz-transition-property: opacity;
-    -o-transition-property: opacity;
-    -webkit-transition-property: opacity;
-    transition-property: opacity;
-    -moz-transition-duration: 0.4s;
-    -o-transition-duration: 0.4s;
-    -webkit-transition-duration: 0.4s;
-    transition-duration: 0.4s;
-    -moz-transition-timing-function: ease-in-out;
-    -o-transition-timing-function: ease-in-out;
-    -webkit-transition-timing-function: ease-in-out;
-    transition-timing-function: ease-in-out;
-    opacity: 0;
-    right: 100% !important;
-    width: auto !important;
-    overflow-y: hidden;
-    overflow-x: hidden; } }
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 91, ../sass/mobile/_layout.scss */
-  .browse-hidetree .mobile-pane.right-repr {
-    -moz-transition-duration: 0.35s;
-    -o-transition-duration: 0.35s;
-    -webkit-transition-duration: 0.35s;
-    transition-duration: 0.35s;
-    transition-timing-function: ease;
-    backface-visibility: hidden;
-    left: auto !important;
-    width: 100% !important; } }
+    user-select: none; }
+    /* line 58, ../sass/mobile/_layout.scss */
+    .browse-hidetree .mobile-pane.left {
+      opacity: 0;
+      right: 100% !important;
+      width: auto !important;
+      overflow-y: hidden;
+      overflow-x: hidden; }
+    /* line 67, ../sass/mobile/_layout.scss */
+    .browse-hidetree .mobile-pane.right-repr {
+      left: 0 !important; }
 
-/* line 100, ../sass/mobile/_layout.scss */
-.mobile-tree-holder {
-  top: 30px; }
-
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 109, ../sass/mobile/_layout.scss */
+  /* line 74, ../sass/mobile/_layout.scss */
   .browse-showtree {
     -moz-user-select: -moz-none;
     -ms-user-select: none;
     -webkit-user-select: none;
-    user-select: none; } }
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 120, ../sass/mobile/_layout.scss */
-  .browse-showtree .mobile-pane.left-menu {
-    -moz-transition-property: opacity;
-    -o-transition-property: opacity;
-    -webkit-transition-property: opacity;
-    transition-property: opacity;
-    -moz-transition-duration: 0.4s;
-    -o-transition-duration: 0.4s;
-    -webkit-transition-duration: 0.4s;
-    transition-duration: 0.4s;
-    -moz-transition-timing-function: ease-in-out;
-    -o-transition-timing-function: ease-in-out;
-    -webkit-transition-timing-function: ease-in-out;
-    transition-timing-function: ease-in-out;
-    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuMCIgeTE9IjAuNSIgeDI9IjEuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSI5OCUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMC4wIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuMyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-    background-size: 100%;
-    background-image: -moz-linear-gradient(0deg, rgba(0, 0, 0, 0) 98%, rgba(0, 0, 0, 0.3) 100%);
-    background-image: -webkit-linear-gradient(0deg, rgba(0, 0, 0, 0) 98%, rgba(0, 0, 0, 0.3) 100%);
-    background-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 98%, rgba(0, 0, 0, 0.3) 100%);
-    opacity: 1;
-    display: block !important;
-    width: auto !important; } }
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) {
-  /* line 120, ../sass/mobile/_layout.scss */
-  .browse-showtree .mobile-pane.left-menu {
-    right: 10% !important; } }
-@media screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 120, ../sass/mobile/_layout.scss */
-  .browse-showtree .mobile-pane.left-menu {
-    right: 60% !important; } }
-@media screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px) {
-  /* line 120, ../sass/mobile/_layout.scss */
-  .browse-showtree .mobile-pane.left-menu {
-    right: 500px !important; } }
-@media screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 120, ../sass/mobile/_layout.scss */
-  .browse-showtree .mobile-pane.left-menu {
-    right: 70% !important; } }
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 144, ../sass/mobile/_layout.scss */
-  .browse-showtree .mobile-pane.right-repr {
-    -moz-transition-duration: 0.35s;
-    -o-transition-duration: 0.35s;
-    -webkit-transition-duration: 0.35s;
-    transition-duration: 0.35s;
-    transition-timing-function: ease;
-    backface-visibility: hidden;
-    left: auto !important; } }
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) {
-  /* line 144, ../sass/mobile/_layout.scss */
-  .browse-showtree .mobile-pane.right-repr {
-    left: 0 !important;
-    transform: translateX(90%); } }
-@media screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 144, ../sass/mobile/_layout.scss */
-  .browse-showtree .mobile-pane.right-repr {
-    width: 60% !important; } }
-@media screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px) {
-  /* line 144, ../sass/mobile/_layout.scss */
-  .browse-showtree .mobile-pane.right-repr {
-    width: 500px !important; } }
-@media screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 144, ../sass/mobile/_layout.scss */
-  .browse-showtree .mobile-pane.right-repr {
-    width: 70% !important; } }
+    user-select: none; }
+    /* line 83, ../sass/mobile/_layout.scss */
+    .browse-showtree .mobile-pane.left {
+      -moz-transition-property: opacity;
+      -o-transition-property: opacity;
+      -webkit-transition-property: opacity;
+      transition-property: opacity;
+      -moz-transition-duration: 0.4s;
+      -o-transition-duration: 0.4s;
+      -webkit-transition-duration: 0.4s;
+      transition-duration: 0.4s;
+      -moz-transition-timing-function: ease-in-out;
+      -o-transition-timing-function: ease-in-out;
+      -webkit-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out;
+      background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuMCIgeTE9IjAuNSIgeDI9IjEuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSI5OCUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMC4wIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuMyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+      background-size: 100%;
+      background-image: -moz-linear-gradient(0deg, rgba(0, 0, 0, 0) 98%, rgba(0, 0, 0, 0.3) 100%);
+      background-image: -webkit-linear-gradient(0deg, rgba(0, 0, 0, 0) 98%, rgba(0, 0, 0, 0.3) 100%);
+      background-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 98%, rgba(0, 0, 0, 0.3) 100%);
+      opacity: 1;
+      display: block !important;
+      right: auto !important;
+      width: 40% !important; }
+    /* line 93, ../sass/mobile/_layout.scss */
+    .browse-showtree .mobile-pane.right-repr {
+      left: 40% !important; }
 
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 171, ../sass/mobile/_layout.scss */
+  /* line 103, ../sass/mobile/_layout.scss */
   .mobile-menu-icon {
     font-size: 110%;
     position: absolute;
     top: 12px;
     left: 10px; }
 
-  /* line 178, ../sass/mobile/_layout.scss */
-  .object-browse-bar {
-    display: block !important;
-    left: 35px !important; }
-    /* line 183, ../sass/mobile/_layout.scss */
-    .object-browse-bar .context-available {
-      opacity: 1 !important; }
+  /* line 113, ../sass/mobile/_layout.scss */
+  .object-browse-bar .context-available {
+    opacity: 1 !important; }
+  /* line 116, ../sass/mobile/_layout.scss */
+  .object-browse-bar .view-switcher {
+    margin-right: 0 !important; }
 
-  /* line 188, ../sass/mobile/_layout.scss */
+  /* line 121, ../sass/mobile/_layout.scss */
   .tree-holder {
     overflow-x: hidden !important; }
 
-  /* line 192, ../sass/mobile/_layout.scss */
+  /* line 125, ../sass/mobile/_layout.scss */
   .mobile-disable-select {
     -moz-user-select: -moz-none;
     -ms-user-select: none;
     -webkit-user-select: none;
     user-select: none; }
 
-  /* line 197, ../sass/mobile/_layout.scss */
+  /* line 130, ../sass/mobile/_layout.scss */
   .mobile-hide,
   .mobile-hide-important {
     display: none !important; }
 
-  /* line 202, ../sass/mobile/_layout.scss */
+  /* line 135, ../sass/mobile/_layout.scss */
   .mobile-back-hide {
     pointer-events: none;
     -moz-transition-property: opacity;
@@ -979,7 +908,7 @@ mct-container {
     transition-timing-function: ease-in-out;
     opacity: 0; }
 
-  /* line 207, ../sass/mobile/_layout.scss */
+  /* line 140, ../sass/mobile/_layout.scss */
   .mobile-back-unhide {
     pointer-events: all;
     -moz-transition-property: opacity;
@@ -995,54 +924,18 @@ mct-container {
     -webkit-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
     opacity: 1; } }
+@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) {
+  /* line 149, ../sass/mobile/_layout.scss */
+  .browse-showtree .mobile-pane.left {
+    width: 90% !important; }
+  /* line 152, ../sass/mobile/_layout.scss */
+  .browse-showtree .mobile-pane.right-repr {
+    left: 0 !important;
+    transform: translateX(90%); } }
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 214, ../sass/mobile/_layout.scss */
+  /* line 160, ../sass/mobile/_layout.scss */
   .desktop-hide {
     display: none; } }
-
-/*
-
-.mobile-back-hide {
-    @include phoneandtablet {
-        pointer-events: none;
-        @include trans-prop-nice(opacity, .4s);
-        opacity: 0;
-    }
-}
-
-
-// Hides objects on phone and tablet
-.mobile-back-unhide {
-    @include phoneandtablet {
-        pointer-events: all;
-        @include trans-prop-nice(opacity, .4s);
-        opacity: 1;
-    }
-}
-
-
-// Hides objects only on the phone
-.phone-hide {
-    @include phone {
-        display: none;
-    }
-}
-
-.tree-holder {
-    @include phoneandtablet {
-        .tree-holder {
-            overflow-x: hidden !important;
-        }
-    }
-}
-.mobile-disable-select {
-    @include phoneandtablet {
-        .mobile-disable-select {
-            @include user-select(none);
-        }
-    }
-}
-*/
 /*****************************************************************************
 * Open MCT Web, Copyright (c) 2014-2015, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
@@ -2401,7 +2294,8 @@ a.l-btn span {
 	}
 }
 */
-/*.object-browse-bar .btn,
+/* line 177, ../sass/controls/_controls.scss */
+.object-browse-bar .btn,
 .object-browse-bar .t-btn,
 .object-browse-bar .view-switcher,
 .top-bar .buttons-main .btn,
@@ -2409,12 +2303,11 @@ a.l-btn span {
 .top-bar .view-switcher,
 .tool-bar .btn,
 .tool-bar .t-btn {
-	$h: $btnToolbarH;
-	display: inline-block;
-	font-size: $h * $btnFontSizeToH;
-	line-height: 200%;
-	vertical-align: top;
-}*/
+  display: inline-block;
+  font-size: 11.25px;
+  line-height: 200%;
+  vertical-align: top; }
+
 /* line 192, ../sass/controls/_controls.scss */
 label.checkbox.custom {
   cursor: pointer;

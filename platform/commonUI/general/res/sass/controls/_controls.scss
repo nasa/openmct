@@ -174,7 +174,7 @@
 }
 */
 
-/*.object-browse-bar .btn,
+.object-browse-bar .btn,
 .object-browse-bar .t-btn,
 .object-browse-bar .view-switcher,
 .top-bar .buttons-main .btn,
@@ -187,7 +187,7 @@
 	font-size: $h * $btnFontSizeToH;
 	line-height: 200%;
 	vertical-align: top;
-}*/
+}
 
 label.checkbox.custom {
 	$bg: lighten($colorBodyBg, $ltGamma);
