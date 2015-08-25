@@ -167,7 +167,7 @@ $transitionTime: 0.35s; // For the left menu open/close
                     &.inactivePane {
                         right: -12px;
                         &:after {
-                            content: 'G';//'<';
+                            content: 'G';//'\e608';//'<';
                         }
                     }
                     &.activePane:after {
@@ -232,7 +232,8 @@ $transitionTime: 0.35s; // For the left menu open/close
                 // Style object labels 
                 .inspector-location {
                     display: inline-block;
-
+                    max-width: 100%;
+                    
                     .label {
                         cursor: pointer;
                         display: inline-block;
@@ -275,7 +276,11 @@ $transitionTime: 0.35s; // For the left menu open/close
                         content: '>';
                         font-family: symbolsfont;
                         font-size: 8px;
-                        margin-left: -6px;
+                        
+                        //margin-left: -6px;
+                        position: relative;
+                        top: -8px;
+                        left: -4px;
                     }
                     &:last-child:after {
                         content: '';

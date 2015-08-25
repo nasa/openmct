@@ -5310,8 +5310,9 @@ input[type="text"] {
             white-space: pre; }
         /* line 233, ../sass/tree/_pane.scss */
         .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location {
-          display: inline-block; }
-          /* line 236, ../sass/tree/_pane.scss */
+          display: inline-block;
+          max-width: 100%; }
+          /* line 237, ../sass/tree/_pane.scss */
           .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location .label {
             cursor: pointer;
             display: inline-block;
@@ -5323,13 +5324,13 @@ input[type="text"] {
             max-width: 100%;
             text-overflow: ellipsis;
             overflow-x: hidden; }
-            /* line 243, ../sass/tree/_pane.scss */
+            /* line 244, ../sass/tree/_pane.scss */
             .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location .label:hover {
               background-color: #404040; }
-            /* line 257, ../sass/tree/_pane.scss */
+            /* line 258, ../sass/tree/_pane.scss */
             .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location .label .icon.type-icon {
               font-size: 14px; }
-              /* line 260, ../sass/tree/_pane.scss */
+              /* line 261, ../sass/tree/_pane.scss */
               .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location .label .icon.type-icon .l-icon-link {
                 color: #49dedb;
                 font-size: 6px;
@@ -5337,13 +5338,15 @@ input[type="text"] {
                 margin-right: 9px;
                 text-shadow: black 0 1px 2px;
                 z-index: 2; }
-          /* line 274, ../sass/tree/_pane.scss */
+          /* line 275, ../sass/tree/_pane.scss */
           .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location:after {
             content: '>';
             font-family: symbolsfont;
             font-size: 8px;
-            margin-left: -6px; }
-          /* line 280, ../sass/tree/_pane.scss */
+            position: relative;
+            top: -8px;
+            left: -4px; }
+          /* line 285, ../sass/tree/_pane.scss */
           .split-pane-component.secondary-split.pane.right .split-pane-component.object-inspector.pane.right .holder.inspector-holder ul li .inspector-location:last-child:after {
             content: '';
             display: inline-block; }
