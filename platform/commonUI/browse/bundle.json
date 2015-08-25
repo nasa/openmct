@@ -69,8 +69,8 @@
             {
                 "key": "grid-item",
                 "templateUrl": "templates/items/grid-item.html",
-                "uses": [ "type", "action" ],
-                "gestures": [ "info","menu" ]
+                "uses": [ "type", "action", "location" ],
+                "gestures": [ "info", "menu" ]
             },
             {
                 "key": "object-header",
@@ -93,12 +93,12 @@
             {
                 "key": "navigationService",
                 "implementation": "navigation/NavigationService.js"
-            },        
+            },
             {
                 "key": "creationService",
                 "implementation": "creation/CreationService.js",
                 "depends": [ "persistenceService", "$q", "$log" ]
-            }        
+            }
         ],
         "actions": [
             {

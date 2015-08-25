@@ -27,17 +27,21 @@ define(
         "use strict";
 
         // No operation
-        function noop() {}
+        var NOOP_REPRESENTER = {
+            represent: function () {},
+            destroy: function () {}
+        };
 
         /**
          * The EditToolbarRepresenter populates the toolbar in Edit mode
          * based on a view's definition.
          * @param {Scope} scope the Angular scope of the representation
+         * @memberof platform/commonUI/edit
          * @constructor
+         * @implements {Representer}
          */
         function EditToolbarRepresenter(scope, element, attrs) {
-            var toolbar,
-                toolbarObject = {};
+            var self = this;
 
             // Mark changes as ready to persist
             function commit(message) {
@@ -49,31 +53,33 @@ define(
             // Handle changes to the current selection
             function updateSelection(selection) {
                 // Only update if there is a toolbar to update
-                if (toolbar) {
+                if (self.toolbar) {
                     // Make sure selection is array-like
                     selection = Array.isArray(selection) ?
                             selection :
                             (selection ? [selection] : []);
 
                     // Update the toolbar's selection
-                    toolbar.setSelection(selection);
+                    self.toolbar.setSelection(selection);
 
                     // ...and expose its structure/state
-                    toolbarObject.structure = toolbar.getStructure();
-                    toolbarObject.state = toolbar.getState();
+                    self.toolbarObject.structure =
+                        self.toolbar.getStructure();
+                    self.toolbarObject.state =
+                        self.toolbar.getState();
                 }
             }
 
             // Get state (to watch it)
             function getState() {
-                return toolbarObject.state;
+                return self.toolbarObject.state;
             }
 
             // Update selection models to match changed toolbar state
             function updateState(state) {
                 // Update underlying state based on toolbar changes
                 var changed = (state || []).map(function (value, index) {
-                    return toolbar.updateState(index, value);
+                    return self.toolbar.updateState(index, value);
                 }).reduce(function (a, b) {
                     return a || b;
                 }, false);
@@ -85,65 +91,72 @@ define(
                 }
             }
 
-            // Initialize toolbar (expose object to parent scope)
-            function initialize(definition) {
-                // If we have been asked to expose toolbar state...
-                if (attrs.toolbar) {
-                    // Initialize toolbar object
-                    toolbar = new EditToolbar(definition, commit);
-                    // Ensure toolbar state is exposed
-                    scope.$parent[attrs.toolbar] = toolbarObject;
-                }
-            }
-
-            // Represent a domain object using this definition
-            function represent(representation) {
-                // Get the newest toolbar definition from the view
-                var definition = (representation || {}).toolbar || {};
-                // Expose the toolbar object to the parent scope
-                initialize(definition);
-                // Create a selection scope
-                scope.selection = new EditToolbarSelection();
-                // Initialize toolbar to an empty selection
-                updateSelection([]);
-            }
-
-            // Destroy; remove toolbar object from parent scope
-            function destroy() {
+            // Avoid attaching scope to this;
+            // http://errors.angularjs.org/1.2.26/ng/cpws
+            this.setSelection = function (s) {
+                scope.selection = s;
+            };
+            this.clearExposedToolbar = function () {
                 // Clear exposed toolbar state (if any)
                 if (attrs.toolbar) {
                     delete scope.$parent[attrs.toolbar];
                 }
-            }
+            };
+            this.exposeToolbar = function () {
+                scope.$parent[self.attrs.toolbar] = self.toolbarObject;
+            };
+
+            this.commit = commit;
+            this.attrs = attrs;
+            this.updateSelection = updateSelection;
+            this.toolbar = undefined;
+            this.toolbarObject = {};
 
             // If this representation exposes a toolbar, set up watches
             // to synchronize with it.
-            if (attrs.toolbar) {
+            if (attrs && attrs.toolbar) {
                 // Detect and handle changes to state from the toolbar
                 scope.$watchCollection(getState, updateState);
                 // Watch for changes in the current selection state
                 scope.$watchCollection("selection.all()", updateSelection);
                 // Expose toolbar state under that name
-                scope.$parent[attrs.toolbar] = toolbarObject;
+                scope.$parent[attrs.toolbar] = this.toolbarObject;
+            } else {
+                // No toolbar declared, so do nothing.
+                return NOOP_REPRESENTER;
             }
 
-            return {
-                /**
-                 * Set the current representation in use, and the domain
-                 * object being represented.
-                 *
-                 * @param {RepresentationDefinition} representation the
-                 *        definition of the representation in use
-                 * @param {DomainObject} domainObject the domain object
-                 *        being represented
-                 */
-                represent: (attrs || {}).toolbar ? represent : noop,
-                /**
-                 * Release any resources associated with this representer.
-                 */
-                destroy: (attrs || {}).toolbar ? destroy : noop
-            };
         }
+
+        // Represent a domain object using this definition
+        EditToolbarRepresenter.prototype.represent = function (representation) {
+            // Get the newest toolbar definition from the view
+            var definition = (representation || {}).toolbar || {},
+                self = this;
+
+            // Initialize toolbar (expose object to parent scope)
+            function initialize(definition) {
+                // If we have been asked to expose toolbar state...
+                if (self.attrs.toolbar) {
+                    // Initialize toolbar object
+                    self.toolbar = new EditToolbar(definition, self.commit);
+                    // Ensure toolbar state is exposed
+                    self.exposeToolbar();
+                }
+            }
+
+            // Expose the toolbar object to the parent scope
+            initialize(definition);
+            // Create a selection scope
+            this.setSelection(new EditToolbarSelection());
+            // Initialize toolbar to an empty selection
+            this.updateSelection([]);
+        };
+
+        // Destroy; remove toolbar object from parent scope
+        EditToolbarRepresenter.prototype.destroy = function () {
+            this.clearExposedToolbar();
+        };
 
         return EditToolbarRepresenter;
     }

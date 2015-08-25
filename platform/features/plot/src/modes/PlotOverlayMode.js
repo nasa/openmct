@@ -29,78 +29,61 @@ define(
         /**
          * Handles plotting in Overlaid mode. In overlaid mode, there
          * is one sub-plot which contains all plotted objects.
+         * @memberof platform/features/plot
          * @constructor
+         * @implements {platform/features/plot.PlotModeHandler}
          * @param {DomainObject[]} the domain objects to be plotted
          */
         function PlotOverlayMode(telemetryObjects, subPlotFactory) {
-            var domainOffset,
-                panZoomStack = new PlotPanZoomStack([], []),
-                subplot = subPlotFactory.createSubPlot(
-                    telemetryObjects,
-                    panZoomStack
-                ),
-                subplots = [ subplot ];
+            this.panZoomStack = new PlotPanZoomStack([], []);
+            this.subplot = subPlotFactory.createSubPlot(
+                telemetryObjects,
+                this.panZoomStack
+            );
+            this.subplots = [ this.subplot ];
+        }
 
-            function plotTelemetry(prepared) {
-                 // Fit to the boundaries of the data, but don't
-                // override any user-initiated pan-zoom changes.
-                panZoomStack.setBasePanZoom(
-                    prepared.getOrigin(),
-                    prepared.getDimensions()
-                );
+        PlotOverlayMode.prototype.plotTelemetry = function (updater) {
+            // Fit to the boundaries of the data, but don't
+            // override any user-initiated pan-zoom changes.
+            this.panZoomStack.setBasePanZoom(
+                updater.getOrigin(),
+                updater.getDimensions()
+            );
 
-                // Track the domain offset, used to bias domain values
-                // to minimize loss of precision when converted to 32-bit
-                // floating point values for display.
-                subplot.setDomainOffset(prepared.getDomainOffset());
+            // Track the domain offset, used to bias domain values
+            // to minimize loss of precision when converted to 32-bit
+            // floating point values for display.
+            this.subplot.setDomainOffset(updater.getDomainOffset());
 
-                // Draw the buffers. Select color by index.
-                subplot.getDrawingObject().lines = prepared.getLineBuffers().map(function (buf, i) {
+            // Draw the buffers. Select color by index.
+            this.subplot.getDrawingObject().lines =
+                updater.getLineBuffers().map(function (buf, i) {
                     return {
                         buffer: buf.getBuffer(),
                         color: PlotPalette.getFloatColor(i),
                         points: buf.getLength()
                     };
                 });
-            }
+        };
 
-            return {
-                /**
-                 * Plot telemetry to the sub-plot(s) managed by this mode.
-                 * @param {PlotPreparer} prepared the prepared data to plot
-                 */
-                plotTelemetry: plotTelemetry,
-                /**
-                 * Get all sub-plots to be displayed in this mode; used
-                 * to populate the plot template.
-                 * @return {SubPlot[]} all sub-plots to display in this mode
-                 */
-                getSubPlots: function () {
-                    return subplots;
-                },
-                /**
-                 * Check if we are not in our base pan-zoom state (that is,
-                 * there are some temporary user modifications to the
-                 * current pan-zoom state.)
-                 * @returns {boolean} true if not in the base pan-zoom state
-                 */
-                isZoomed: function () {
-                    return panZoomStack.getDepth() > 1;
-                },
-                /**
-                 * Undo the most recent pan/zoom change and restore
-                 * the prior state.
-                 */
-                stepBackPanZoom: function () {
-                    panZoomStack.popPanZoom();
-                    subplot.update();
-                },
-                unzoom: function () {
-                    panZoomStack.clearPanZoom();
-                    subplot.update();
-                }
-            };
-        }
+        PlotOverlayMode.prototype.getSubPlots = function () {
+            return this.subplots;
+        };
+
+        PlotOverlayMode.prototype.isZoomed = function () {
+            return this.panZoomStack.getDepth() > 1;
+        };
+
+        PlotOverlayMode.prototype.stepBackPanZoom = function () {
+            this.panZoomStack.popPanZoom();
+            this.subplot.update();
+        };
+
+        PlotOverlayMode.prototype.unzoom = function () {
+            this.panZoomStack.clearPanZoom();
+            this.subplot.update();
+        };
 
         return PlotOverlayMode;
     }

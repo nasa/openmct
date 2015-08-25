@@ -30,98 +30,115 @@ define(
          * The `info` gesture displays domain object metadata in a
          * bubble on hover.
          *
+         * @memberof platform/commonUI/inspect
          * @constructor
+         * @implements {Gesture}
          * @param $timeout Angular's `$timeout`
          * @param {InfoService} infoService a service which shows info bubbles
-         * @param {number} DELAY delay, in milliseconds, before bubble appears
+         * @param {number} delay delay, in milliseconds, before bubble appears
          * @param element jqLite-wrapped DOM element
          * @param {DomainObject} domainObject the domain object for which to
          *        show information
          */
-        function InfoGesture($timeout, agentService, infoService, DELAY, element, domainObject) {
-            var dismissBubble,
-                pendingBubble,
-                mousePosition,
-                scopeOff;
+        function InfoGesture($timeout, agentService, infoService, delay, element, domainObject) {
+            var self = this;
 
-            function trackPosition(event) {
-                // Record mouse position, so bubble can be shown at latest
-                // mouse position (not just where the mouse entered)
-                mousePosition = [ event.clientX, event.clientY ];
-            }
+            // Callback functions to preserve the "this" pointer (in the
+            // absence of Function.prototype.bind)
+            this.showBubbleCallback = function (event) {
+                self.showBubble(event);
+            };
+            this.hideBubbleCallback = function (event) {
+                self.hideBubble(event);
+            };
+            this.trackPositionCallback = function (event) {
+                self.trackPosition(event);
+            };
 
-            function hideBubble() {
-                // If a bubble is showing, dismiss it
-                if (dismissBubble) {
-                    dismissBubble();
-                    element.off('mouseleave', hideBubble);
-                    dismissBubble = undefined;
-                }
-                // If a bubble will be shown on a timeout, cancel that
-                if (pendingBubble) {
-                    $timeout.cancel(pendingBubble);
-                    element.off('mousemove', trackPosition);
-                    element.off('mouseleave', hideBubble);
-                    pendingBubble = undefined;
-                }
-                // Also clear mouse position so we don't have a ton of tiny
-                // arrays allocated while user mouses over things
-                mousePosition = undefined;
-            }
+            // Also make sure we dismiss bubble if representation is destroyed
+            // before the mouse actually leaves it
+            this.scopeOff = element.scope().$on('$destroy', this.hideBubbleCallback);
 
-            function showBubble(event) {
-                trackPosition(event);
-                
-                // Also need to track position during hover
-                element.on('mousemove', trackPosition);
-
-                // Show the bubble, after a suitable delay (if mouse has
-                // left before this time is up, this will be canceled.)
-                pendingBubble = $timeout(function () {
-                    dismissBubble = infoService.display(
-                        "info-table",
-                        domainObject.getModel().name,
-                        domainObject.useCapability('metadata'),
-                        mousePosition
-                    );
-                    element.off('mousemove', trackPosition);
-
-                    pendingBubble = undefined;
-                }, DELAY);
-
-                element.on('mouseleave', hideBubble);
-            }
+            this.element = element;
+            this.$timeout = $timeout;
+            this.infoService = infoService;
+            this.delay = delay;
+            this.domainObject = domainObject;
             
             // Checks if you are on a mobile device, if the device is
             // not mobile (agentService.isMobile() = false), then
             // the pendingBubble and therefore hovering is allowed
             if (!agentService.isMobile(navigator.userAgent)) {
                 // Show bubble (on a timeout) on mouse over
-                element.on('mouseenter', showBubble);
+                element.on('mouseenter', this.showBubbleCallback);
             }
-
-            // Also make sure we dismiss bubble if representation is destroyed
-            // before the mouse actually leaves it
-            scopeOff = element.scope().$on('$destroy', hideBubble);
-
-            return {
-                /**
-                 * Detach any event handlers associated with this gesture.
-                 * @memberof InfoGesture
-                 * @method
-                 */
-                destroy: function () {
-                    // Dismiss any active bubble...
-                    hideBubble();
-                    // ...and detach listeners
-                    element.off('mouseenter', showBubble);
-                    scopeOff();
-                }
-            };
         }
+
+        InfoGesture.prototype.trackPosition = function (event) {
+            // Record mouse position, so bubble can be shown at latest
+            // mouse position (not just where the mouse entered)
+            this.mousePosition = [ event.clientX, event.clientY ];
+        };
+
+        InfoGesture.prototype.hideBubble = function () {
+            // If a bubble is showing, dismiss it
+            if (this.dismissBubble) {
+                this.dismissBubble();
+                this.element.off('mouseleave', this.hideBubbleCallback);
+                this.dismissBubble = undefined;
+            }
+            // If a bubble will be shown on a timeout, cancel that
+            if (this.pendingBubble) {
+                this.$timeout.cancel(this.pendingBubble);
+                this.element.off('mousemove', this.trackPositionCallback);
+                this.element.off('mouseleave', this.hideBubbleCallback);
+                this.pendingBubble = undefined;
+            }
+            // Also clear mouse position so we don't have a ton of tiny
+            // arrays allocated while user mouses over things
+            this.mousePosition = undefined;
+        };
+            
+        InfoGesture.prototype.showBubble = function (event) {
+            var self = this;
+
+            this.trackPosition(event);
+
+            // Also need to track position during hover
+            this.element.on('mousemove', this.trackPositionCallback);
+
+            // Show the bubble, after a suitable delay (if mouse has
+            // left before this time is up, this will be canceled.)
+            this.pendingBubble = this.$timeout(function () {
+                self.dismissBubble = self.infoService.display(
+                    "info-table",
+                    self.domainObject.getModel().name,
+                    self.domainObject.useCapability('metadata'),
+                    self.mousePosition
+                );
+                self.element.off('mousemove', self.trackPositionCallback);
+                self.pendingBubble = undefined;
+            }, this.delay);
+
+            this.element.on('mouseleave', this.hideBubbleCallback);
+        };
+            
+
+        /**
+         * Detach any event handlers associated with this gesture.
+         * @method
+         */
+        InfoGesture.prototype.destroy = function () {
+            // Dismiss any active bubble...
+            this.hideBubble();
+            // ...and detach listeners
+            this.element.off('mouseenter', this.showBubbleCallback);
+            this.scopeOff();
+        };
 
         return InfoGesture;
 
     }
 
 );
+

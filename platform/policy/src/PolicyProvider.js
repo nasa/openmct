@@ -21,16 +21,69 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * This bundle implements the policy service.
+ * @namespace platform/policy
+ */
 define(
     [],
     function () {
         "use strict";
 
         /**
+         * A policy is a participant in decision-making policies. Policies
+         * are divided into categories (identified symbolically by strings);
+         * within a given category, every given policy-driven decision will
+         * occur by consulting all available policies and requiring their
+         * collective consent (that is, every individual policy has the
+         * power to reject the decision entirely.)
+         *
+         * @interface Policy
+         * @template C, X
+         */
+
+        /**
+         * Check if this policy allows the described decision. The types
+         * of the arguments expected here vary depending on policy category.
+         *
+         * @method Policy#allow
+         * @template C, X
+         * @param {C} candidate the thing to allow or disallow
+         * @param {X} context the context in which the decision occurs
+         * @returns {boolean} false if disallowed; otherwise, true
+         */
+
+
+        /**
+         * The `policyService` handles decisions about what things
+         * are and are not allowed in certain contexts.
+         * @interface PolicyService
+         */
+
+        /**
+         * Check whether or not a certain decision is allowed by
+         * policy.
+         * @param {string} category a machine-readable identifier
+         *        for the kind of decision being made
+         * @param candidate the object about which the decision is
+         *        being made
+         * @param context the context in which the decision occurs
+         * @param {Function} [callback] callback to invoke with a
+         *        string message describing the reason a decision
+         *        was disallowed (if its disallowed)
+         * @returns {boolean} true if the decision is allowed,
+         *          otherwise false.
+         * @method PolicyService#allow
+         */
+
+        /**
          * Provides an implementation of `policyService` which consults
          * various policy extensions to determine whether or not a specific
          * decision should be allowed.
+         * @memberof platform/policy
          * @constructor
+         * @implements {PolicyService}
+         * @param {Policy[]} policies the policies to enforce
          */
         function PolicyProvider(policies) {
             var policyMap = {};
@@ -59,47 +112,32 @@ define(
 
             // Populate the map for subsequent lookup
             policies.forEach(addToMap);
-
-            return {
-                /**
-                 * Check whether or not a certain decision is allowed by
-                 * policy.
-                 * @param {string} category a machine-readable identifier
-                 *        for the kind of decision being made
-                 * @param candidate the object about which the decision is
-                 *        being made
-                 * @param context the context in which the decision occurs
-                 * @param {Function} [callback] callback to invoke with a
-                 *        string message describing the reason a decision
-                 *        was disallowed (if its disallowed)
-                 * @returns {boolean} true if the decision is allowed,
-                 *          otherwise false.
-                 */
-                allow: function (category, candidate, context, callback) {
-                    var policyList = policyMap[category] || [],
-                        i;
-
-                    // Iterate through policies. We do this instead of map or
-                    // forEach so that we can return immediately if a policy
-                    // chooses to disallow this decision.
-                    for (i = 0; i < policyList.length; i += 1) {
-                        // Consult the policy...
-                        if (!policyList[i].allow(candidate, context)) {
-                            // ...it disallowed, so pass its message to
-                            // the callback (if any)
-                            if (callback) {
-                                callback(policyList[i].message);
-                            }
-                            // And return the failed result.
-                            return false;
-                        }
-                    }
-
-                    // No policy disallowed this decision.
-                    return true;
-                }
-            };
+            this.policyMap = policyMap;
         }
+
+        PolicyProvider.prototype.allow = function (category, candidate, context, callback) {
+            var policyList = this.policyMap[category] || [],
+                i;
+
+            // Iterate through policies. We do this instead of map or
+            // forEach so that we can return immediately if a policy
+            // chooses to disallow this decision.
+            for (i = 0; i < policyList.length; i += 1) {
+                // Consult the policy...
+                if (!policyList[i].allow(candidate, context)) {
+                    // ...it disallowed, so pass its message to
+                    // the callback (if any)
+                    if (callback) {
+                        callback(policyList[i].message);
+                    }
+                    // And return the failed result.
+                    return false;
+                }
+            }
+
+            // No policy disallowed this decision.
+            return true;
+        };
 
         return PolicyProvider;
     }

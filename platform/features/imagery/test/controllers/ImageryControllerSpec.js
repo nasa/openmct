@@ -146,6 +146,19 @@ define(
                 expect(controller.getImageUrl()).toEqual(testUrl);
             });
 
+            it("initially shows an empty string for date/time", function () {
+                // Call the subscription listener while domain/range
+                // values are still undefined
+                mockHandle.getDomainValue.andReturn(undefined);
+                mockHandle.getRangeValue.andReturn(undefined);
+                mockTelemetryHandler.handle.mostRecentCall.args[1]();
+
+                // Should have empty strings for date/time/zone
+                expect(controller.getTime()).toEqual("");
+                expect(controller.getDate()).toEqual("");
+                expect(controller.getZone()).toEqual("");
+                expect(controller.getImageUrl()).toBeUndefined();
+            });
         });
     }
 );

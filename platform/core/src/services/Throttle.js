@@ -42,6 +42,7 @@ define(
          * resolve to the returned value of `fn` whenever that is invoked.
          *
          * @returns {Function}
+         * @memberof platform/core
          */
         function Throttle($timeout) {
             /**
@@ -52,6 +53,7 @@ define(
              * @param {boolean} apply true if a `$apply` call should be
              *        invoked after this function executes; defaults to
              *        `false`.
+             * @memberof platform/core.Throttle#
              */
             return function (fn, delay, apply) {
                 var activeTimeout;
@@ -82,3 +84,4 @@ define(
         return Throttle;
     }
 );
+

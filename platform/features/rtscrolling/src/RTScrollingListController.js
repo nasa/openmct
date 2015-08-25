@@ -34,6 +34,7 @@ define(
         /**
          * The RTScrollingListController is responsible for populating
          * the contents of the scrolling list view.
+         * @memberof platform/features/rtscrolling
          * @constructor
          */
         function RTScrollingListController($scope, telemetryHandler, telemetryFormatter) {
@@ -135,3 +136,4 @@ define(
         return RTScrollingListController;
     }
 );
+

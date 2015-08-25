@@ -37,109 +37,95 @@ define(
          * * The selection, for single selected elements within the
          *   view.
          *
+         * @memberof platform/commonUI/edit
          * @constructor
          */
         function EditToolbarSelection() {
-            var selection = [ {} ],
-                selecting = false,
-                selected;
+            this.selection = [{}];
+            this.selecting = false;
+            this.selectedObj = undefined;
+        }
 
-            // Remove the currently-selected object
-            function deselect() {
-                // Nothing to do if we don't have a selected object
-                if (selecting) {
-                    // Clear state tracking
-                    selecting = false;
-                    selected = undefined;
+        /**
+         * Check if an object is currently selected.
+         * @param {*} obj the object to check for selection
+         * @returns {boolean} true if selected, otherwise false
+         */
+        EditToolbarSelection.prototype.selected = function (obj) {
+            return (obj === this.selectedObj) || (obj === this.selection[0]);
+        };
 
-                    // Remove the selection
-                    selection.pop();
-
-                    return true;
-                }
+        /**
+         * Select an object.
+         * @param obj the object to select
+         * @returns {boolean} true if selection changed
+         */
+        EditToolbarSelection.prototype.select = function (obj) {
+            // Proxy is always selected
+            if (obj === this.selection[0]) {
                 return false;
             }
 
-            // Select an object
-            function select(obj) {
-                // Proxy is always selected
-                if (obj === selection[0]) {
-                    return false;
-                }
+            // Clear any existing selection
+            this.deselect();
 
-                // Clear any existing selection
-                deselect();
+            // Note the current selection state
+            this.selectedObj = obj;
+            this.selecting = true;
 
-                // Note the current selection state
-                selected = obj;
-                selecting = true;
+            // Add the selection
+            this.selection.push(obj);
+        };
 
-                // Add the selection
-                selection.push(obj);
+        /**
+         * Clear the current selection.
+         * @returns {boolean} true if selection changed
+         */
+        EditToolbarSelection.prototype.deselect = function () {
+            // Nothing to do if we don't have a selected object
+            if (this.selecting) {
+                // Clear state tracking
+                this.selecting = false;
+                this.selectedObj = undefined;
+
+                // Remove the selection
+                this.selection.pop();
+
+                return true;
             }
+            return false;
+        };
 
+        /**
+         * Get the currently-selected object.
+         * @returns the currently selected object
+         */
+        EditToolbarSelection.prototype.get = function () {
+            return this.selectedObj;
+        };
 
-            // Check if an object is selected
-            function isSelected(obj) {
-                return (obj === selected) || (obj === selection[0]);
+        /**
+         * Get/set the view proxy (for toolbar actions taken upon
+         * the view itself.)
+         * @param [proxy] the view proxy (if setting)
+         * @returns the current view proxy
+         */
+        EditToolbarSelection.prototype.proxy = function (p) {
+            if (arguments.length > 0) {
+                this.selection[0] = p;
             }
+            return this.selection[0];
+        };
 
-            // Getter for current selection
-            function get() {
-                return selected;
-            }
-
-            // Getter/setter for view proxy
-            function proxy(p) {
-                if (arguments.length > 0) {
-                    selection[0] = p;
-                }
-                return selection[0];
-            }
-
-            // Getter for the full array of selected objects (incl. view proxy)
-            function all() {
-                return selection;
-            }
-
-            return {
-                /**
-                 * Check if an object is currently selected.
-                 * @returns true if selected, otherwise false
-                 */
-                selected: isSelected,
-                /**
-                 * Select an object.
-                 * @param obj the object to select
-                 * @returns {boolean} true if selection changed
-                 */
-                select: select,
-                /**
-                 * Clear the current selection.
-                 * @returns {boolean} true if selection changed
-                 */
-                deselect: deselect,
-                /**
-                 * Get the currently-selected object.
-                 * @returns the currently selected object
-                 */
-                get: get,
-                /**
-                 * Get/set the view proxy (for toolbar actions taken upon
-                 * the view itself.)
-                 * @param [proxy] the view proxy (if setting)
-                 * @returns the current view proxy
-                 */
-                proxy: proxy,
-                /**
-                 * Get an array containing all selections, including the
-                 * selection proxy. It is generally not advisable to
-                 * mutate this array directly.
-                 * @returns {Array} all selections
-                 */
-                all: all
-            };
-        }
+        /**
+         * Get an array containing all selections, including the
+         * selection proxy. It is generally not advisable to
+         * mutate this array directly.
+         * @returns {Array} all selections
+         */
+        EditToolbarSelection.prototype.all = function () {
+            return this.selection;
+        };
 
         return EditToolbarSelection;
     }

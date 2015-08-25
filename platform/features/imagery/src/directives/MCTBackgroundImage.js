@@ -34,6 +34,8 @@ define(
          *
          * If `src` is falsy, no image will be displayed (immediately.)
          *
+         * @constructor
+         * @memberof platform/features/imagery
          */
         function MCTBackgroundImage($document) {
             function link(scope, element, attrs) {
@@ -87,3 +89,4 @@ define(
         return MCTBackgroundImage;
     }
 );
+

@@ -33,6 +33,8 @@ define(
          * `controls`; this allows plug-ins to introduce new form
          * control types while still making use of the form
          * generator to ensure an overall consistent form style.
+         * @constructor
+         * @memberof platform/forms
          */
         function MCTControl(controls) {
             var controlMap = {};

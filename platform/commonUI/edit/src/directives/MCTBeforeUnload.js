@@ -31,6 +31,7 @@ define(
          * to this attribute will be evaluated during page navigation events
          * and, if it returns a truthy value, will be used to populate a
          * prompt to the user to confirm this navigation.
+         * @memberof platform/commonUI/edit
          * @constructor
          * @param $window the window
          */

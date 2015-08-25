@@ -46,6 +46,7 @@ define(
          *   of name, except this will be made available in the
          *   parent scope.
          *
+         * @memberof platform/forms
          * @constructor
          */
         function MCTForm() {

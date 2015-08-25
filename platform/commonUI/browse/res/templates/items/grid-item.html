@@ -32,7 +32,13 @@
             </div>
         </div>
         <div class='item-main abs'>
-            <div class='ui-symbol icon lg abs item-type'>{{type.getGlyph()}}</div>
+            <div class='ui-symbol icon lg item-type'>
+                {{type.getGlyph()}}
+                <span
+                    class="ui-symbol icon l-icon-link" title="This object is a link"
+                    ng-show="location.isLink()"
+                    ></span>
+            </div>
             <div class='ui-symbol icon abs item-open'>}</div>
         </div>
         <div class='bottom-bar bar abs'>

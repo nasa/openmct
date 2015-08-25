@@ -50,6 +50,11 @@ input, textarea {
 	font-family: Helvetica, Arial, sans-serif;
 }
 
+input[type="text"] {
+	vertical-align: baseline;
+	padding: 3px 5px !important;
+}
+
 h1, h2, h3 {
 	margin: 0;
 }

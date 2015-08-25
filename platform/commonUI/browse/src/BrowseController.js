@@ -22,7 +22,8 @@
 /*global define,Promise*/
 
 /**
- * Module defining BrowseController. Created by vwoeltje on 11/7/14.
+ * This bundle implements Browse mode.
+ * @namespace platform/commonUI/browse
  */
 define(
     [],
@@ -39,6 +40,7 @@ define(
          * which Angular templates first have access to the domain object
          * hierarchy.
          *
+         * @memberof platform/commonUI/browse
          * @constructor
          */
         function BrowseController($scope, $route, $location, objectService, navigationService, urlService) {
@@ -202,3 +204,4 @@ define(
         return BrowseController;
     }
 );
+

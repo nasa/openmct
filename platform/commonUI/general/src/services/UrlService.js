@@ -32,61 +32,55 @@ define(
         /**
          * The url service handles calls for url paths
          * using domain objects.
+         * @constructor
+         * @memberof platform/commonUI/general
          */
         function UrlService($location) {
-            // Returns the url for the mode wanted
-            // and the domainObject passed in. A path
-            // is returned. The view is defaulted to
-            // the current location's (current object's)
-            // view set.
-            function urlForLocation(mode, domainObject) {
-                var context = domainObject &&
-                        domainObject.getCapability('context'),
-                    objectPath = context ? context.getPath() : [],
-                    ids = objectPath.map(function (domainObject) {
-                        return domainObject.getId();
-                    }),
-                    // Parses the path together. Starts with the 
-                    // default index.html file, then the mode passed
-                    // into the service, followed by ids in the url
-                    // joined by '/', and lastly the view path from
-                    // the current location
-                    path = mode + "/" + ids.slice(1).join("/");
-                return path;
-            }
-            
-            // Uses the Url for the current location
-            // from the urlForLocation function and
-            // includes the view and the index path
-            function urlForNewTab(mode, domainObject) {
-                var viewPath = "?view=" + $location.search().view,
-                    newTabPath =
-                        "index.html#" + urlForLocation(mode, domainObject) + viewPath;
-                return newTabPath;
-            }
-             
-            return {
-               /**
-                 * Returns the Url path for a specific domain object
-                 * without the index.html path and the view path
-                 * @param {value} value of the browse or edit mode 
-                 *        for the path
-                 * @param {DomainObject} value of the domain object 
-                 *        to get the path of
-                 */
-                urlForNewTab: urlForNewTab,
-               /**
-                 * Returns the Url path for a specific domain object
-                 * including the index.html path and the view path
-                 * allowing a new tab to hold the correct characteristics
-                 * @param {value} value of the browse or edit mode 
-                 *        for the path
-                 * @param {DomainObject} value of the domain object 
-                 *        to get the path of
-                 */
-                urlForLocation: urlForLocation
-            };
+            this.$location = $location;
         }
+
+        /**
+         * Returns the Url path for a specific domain object
+         * without the index.html path and the view path
+         * @param {string} mode value of browse or edit mode
+         *        for the path
+         * @param {DomainObject} value of the domain object
+         *        to get the path of
+         * @returns {string} URL for the domain object
+         */
+        UrlService.prototype.urlForLocation = function (mode, domainObject) {
+            var context = domainObject &&
+                    domainObject.getCapability('context'),
+                objectPath = context ? context.getPath() : [],
+                ids = objectPath.map(function (domainObject) {
+                    return domainObject.getId();
+                });
+
+            // Parses the path together. Starts with the
+            // default index.html file, then the mode passed
+            // into the service, followed by ids in the url
+            // joined by '/', and lastly the view path from
+            // the current location
+            return mode + "/" + ids.slice(1).join("/");
+        };
+
+        /**
+         * Returns the Url path for a specific domain object
+         * including the index.html path and the view path
+         * allowing a new tab to hold the correct characteristics
+         * @param {string} mode value of browse or edit mode
+         *        for the path
+         * @param {DomainObject} value of the domain object
+         *        to get the path of
+         * @returns {string} URL for the domain object
+         */
+        UrlService.prototype.urlForNewTab = function (mode, domainObject) {
+            var viewPath = "?view=" + this.$location.search().view,
+                newTabPath =
+                    "index.html#" + this.urlForLocation(mode, domainObject) +
+                            viewPath;
+            return newTabPath;
+        };
 
         return UrlService;
     }

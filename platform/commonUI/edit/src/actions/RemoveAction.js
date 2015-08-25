@@ -37,23 +37,37 @@ define(
          *
          * @param {DomainObject} object the object to be removed
          * @param {ActionContext} context the context in which this action is performed
+         * @memberof platform/commonUI/edit
          * @constructor
-         * @memberof module:editor/actions/remove-action
+         * @implements {Action}
          */
         function RemoveAction($q, navigationService, context) {
-            var object = (context || {}).domainObject,
+            this.domainObject = (context || {}).domainObject;
+            this.$q = $q;
+            this.navigationService = navigationService;
+        }
+
+        /**
+         * Perform this action.
+         * @return {Promise} a promise which will be
+         *         fulfilled when the action has completed.
+         */
+        RemoveAction.prototype.perform = function () {
+            var $q = this.$q,
+                navigationService = this.navigationService,
+                domainObject = this.domainObject,
                 ROOT_ID = "ROOT";
 
-            /**
+            /*
              * Check whether an object ID matches the ID of the object being
              * removed (used to filter a parent's composition to handle the
              * removal.)
              */
             function isNotObject(otherObjectId) {
-                return otherObjectId !== object.getId();
+                return otherObjectId !== domainObject.getId();
             }
 
-            /**
+            /*
              * Mutate a parent object such that it no longer contains the object
              * which is being removed.
              */
@@ -61,7 +75,7 @@ define(
                 model.composition = model.composition.filter(isNotObject);
             }
 
-            /**
+            /*
              * Invoke persistence on a domain object. This will be called upon
              * the removed object's parent (as its composition will have changed.)
              */
@@ -76,10 +90,10 @@ define(
             // navigate back to parent of removed object. 
             function checkObjectNavigation(object, parentObject) {
                 // Traverse object starts at current location
-                var traverseObject = navigationService.getNavigation();
+                var traverseObject = (navigationService).getNavigation();
                 
                 // Stop at ROOT of folder path
-                while(traverseObject.getId() !== ROOT_ID) {
+                while (traverseObject.getId() !== ROOT_ID) {
                     // If traverse object is object being removed
                     // navigate to parent of removed object
                     if (traverseObject.getId() === object.getId()) {
@@ -90,37 +104,25 @@ define(
                     traverseObject = traverseObject.getCapability('context').getParent();
                 }
             }
-            
-            /**
+
+            /*
              * Remove the object from its parent, as identified by its context
              * capability.
-             * @param {object} domain object being removed contextCapability
-                      gotten from the "context" capability of this object
              */
             function removeFromContext(object) {
                 var contextCapability = object.getCapability('context'),
                     parent = contextCapability.getParent();
-                // Navigates through/ascendant if deleting current object
-                checkObjectNavigation(object, parent)
-                $q.when(
+                checkObjectNavigation(object, parent);
+                return $q.when(
                     parent.useCapability('mutation', doMutate)
                 ).then(function () {
                     return doPersist(parent);
                 });
             }
 
-            return {
-                /**
-                 * Perform this action.
-                 * @return {module:core/promises.Promise} a promise which will be
-                 *         fulfilled when the action has completed.
-                 */
-                perform: function () {
-                    return $q.when(object)
-                        .then(removeFromContext);
-                }
-            };
-        }
+            return $q.when(domainObject)
+                .then(removeFromContext);
+        };
 
         // Object needs to have a parent for Remove to be applicable
         RemoveAction.appliesTo = function (context) {

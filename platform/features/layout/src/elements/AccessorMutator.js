@@ -38,6 +38,7 @@ define(
          * in certain ranges; specifically, to keep x/y positions
          * non-negative in a fixed position view.
          *
+         * @memberof platform/features/layout
          * @constructor
          * @param {Object} object the object to get/set values upon
          * @param {string} key the property to get/set

@@ -33,6 +33,7 @@ define(
 
         /**
          * Controller which supplies action instances for Save/Cancel.
+         * @memberof platform/commonUI/edit
          * @constructor
          */
         function EditActionController($scope) {

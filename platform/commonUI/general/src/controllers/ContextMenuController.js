@@ -33,6 +33,7 @@ define(
          * Controller for the context menu. Maintains an up-to-date
          * list of applicable actions (those from category "contextual")
          *
+         * @memberof platform/commonUI/general
          * @constructor
          */
         function ContextMenuController($scope) {

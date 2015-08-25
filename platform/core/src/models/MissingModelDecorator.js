@@ -29,31 +29,35 @@ define(
         /**
          * Adds placeholder domain object models for any models which
          * fail to load from the underlying model service.
+         * @constructor
+         * @memberof platform/core
+         * @param {ModelService} modelService this service to decorate
          * @implements {ModelService}
          */
         function MissingModelDecorator(modelService) {
-            function missingModel(id) {
-                return {
-                    type: "unknown",
-                    name: "Missing: " + id
-                };
-            }
+            this.modelService = modelService;
+        }
 
+        function missingModel(id) {
             return {
-                getModels: function (ids) {
-                    function addMissingModels(models) {
-                        var result = {};
-                        ids.forEach(function (id) {
-                            result[id] = models[id] || missingModel(id);
-                        });
-                        return result;
-                    }
-
-                    return modelService.getModels(ids).then(addMissingModels);
-                }
+                type: "unknown",
+                name: "Missing: " + id
             };
         }
+
+        MissingModelDecorator.prototype.getModels = function (ids) {
+            function addMissingModels(models) {
+                var result = {};
+                ids.forEach(function (id) {
+                    result[id] = models[id] || missingModel(id);
+                });
+                return result;
+            }
+
+            return this.modelService.getModels(ids).then(addMissingModels);
+        };
 
         return MissingModelDecorator;
     }
 );
+
