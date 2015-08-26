@@ -38,11 +38,10 @@ define(
         function ObjectInspectorController($scope, objectService) {
             $scope.primaryParents = [];
             $scope.contextutalParents = [];
-            //$scope.isLink = false;
             
             // Gets an array of the contextual parents/anscestors of the selected object
             function getContextualPath() {
-                var currentObj = $scope.ngModel.selectedObject,
+                var currentObj = $scope.ngModel && $scope.ngModel.selectedObject,
                     currentParent,
                     parents = [];
                 
@@ -84,23 +83,23 @@ define(
                         getPrimaryPath(next);
                     });
                 }
-                
             }
             
             // Gets the metadata for the selected object
             function getMetadata() {
-                $scope.metadata = $scope.ngModel.selectedObject &&
+                $scope.metadata = $scope.ngModel && $scope.ngModel.selectedObject &&
                     $scope.ngModel.selectedObject.hasCapability('metadata') &&
                     $scope.ngModel.selectedObject.useCapability('metadata');
             }
             
             // Set scope variables when the selected object changes 
             $scope.$watch('ngModel.selectedObject', function () {
-                $scope.isLink = $scope.ngModel.selectedObject &&
+                var isLink = $scope && $scope.ngModel &&
+                    $scope.ngModel.selectedObject &&
                     $scope.ngModel.selectedObject.hasCapability('location') &&
                     $scope.ngModel.selectedObject.getCapability('location').isLink();
                 
-                if ($scope.isLink) {
+                if (isLink) {
                     getPrimaryPath();
                     getContextualPath();
                 } else {
