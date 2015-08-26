@@ -285,6 +285,9 @@
 				}
                 
                 .label .type-icon .l-icon-link {
+                    // Hide links for now. See GitHub issue #84.
+                    display: none;
+                    
                     @include txtShdwSubtle(1);
                     z-index: 2;
                     @include ancillaryIcon(8px, $colorIconLink);
