@@ -194,7 +194,7 @@
   *zoom: 1;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-top: 5px;
-  padding: 5px 5px;
+  padding: 5px 0;
   position: relative; }
   /* line 48, ../sass/forms/_elems.scss */
   .form .form-row.first {

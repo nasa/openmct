@@ -43,7 +43,7 @@
 		@include clearfix;
 		border-top: 1px solid $colorFormLines;
 		margin-top: $m;
-		padding: $formTBPad $formLRPad;
+		padding: $formTBPad 0;
 		position: relative;
 		&.first {
 			border-top: none;
