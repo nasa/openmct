@@ -29,7 +29,8 @@ define(
         // Pixel width to allocate for the splitter itself
         var SPLITTER_TEMPLATE = "<div class='abs'" +
                 "mct-drag-down=\"splitter.startMove()\" " +
-                "mct-drag=\"splitter.move(delta)\"></div>",
+                "mct-drag=\"splitter.move(delta)\" " +
+                "mct-drag-up=\"splitter.endMove()\"></div>",
             OFFSETS_BY_EDGE = {
                 left: "offsetLeft",
                 right: "offsetRight",
@@ -44,7 +45,8 @@ define(
          */
         function MCTSplitter() {
             function link(scope, element, attrs, mctSplitPane) {
-                var initialPosition;
+                var initialPosition,
+                    slideElement;
 
                 element.addClass("splitter");
 
@@ -55,8 +57,24 @@ define(
                 scope.splitter = {
                     // Begin moving this splitter
                     startMove: function () {
-                        var splitter = element[0];
+                        var splitter = element[0],
+                            children = element.parent().children(),
+                            i, j;
+                        
+                        // Set initial position
                         initialPosition = mctSplitPane.position();
+                        
+                        // Remove sliding class from sibling element so no delay in pane movement
+                        for (i = 0; i < children.length; i += 1) {
+                            for (j = 0; j < children[i].classList.length; j += 1) {
+                                if (children[i].classList[j] === 'slide') {
+                                    // Store the element that had the sliding class so 
+                                    //  we can replace it later
+                                    slideElement = children[i];
+                                    children[i].classList.remove('slide');
+                                }
+                            }
+                        }
                     },
                     // Handle user changes to splitter position
                     move: function (delta) {
@@ -64,9 +82,13 @@ define(
                             index = anchor.orientation === "vertical" ? 0 : 1,
                             pixelDelta = delta[index] *
                                 (anchor.reversed ? -1 : 1);
-
+                        
                         // Update the position of this splitter
                         mctSplitPane.position(initialPosition + pixelDelta);
+                    },
+                    // Replace sliding class
+                    endMove: function () {
+                        slideElement.classList.add('slide');
                     }
                 };
             }
