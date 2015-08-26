@@ -101,7 +101,23 @@ define(
                 expect(mockScope.representation.selected)
                     .toEqual(testViews[1]);
             });
-
+            
+            it("sets ngModel properties on initialization", function () {
+                // Left pane open status depends on how the window was opened
+                // Case 1: undefined opener
+                expect(mockWindow.opener).not.toBeDefined();
+                expect(mockScope.ngModel.leftPane).toBeTruthy();
+                
+                // Case 2: defined opener
+                mockWindow.opener = {};
+                controller = new BrowseObjectController(
+                    mockScope,
+                    mockLocation,
+                    mockRoute,
+                    mockWindow
+                );
+                expect(mockScope.ngModel.leftPane).toBeFalsy();
+            });
         });
     }
 );
