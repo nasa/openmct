@@ -24,7 +24,7 @@
     <mct-include key="'topbar-browse'"></mct-include>
     <div class="holder browse-area s-browse-area abs browse-wrapper" ng-class="treeClass ? 'browse-showtree' : 'browse-hidetree'">
         <mct-split-pane class='contents abs' anchor='left'>
-            <div class='split-pane-component treeview pane mobile-pane left desktop-browse'>
+            <div class='split-pane-component treeview pane left'>
                 <div class="holder abs l-mobile">
                     <div class='tree-holder abs mobile-tree-holder'>
                         <mct-representation key="'tree'"
@@ -39,7 +39,7 @@
 
             <mct-splitter class="mobile-hide"></mct-splitter>
 
-            <div class='split-pane-component items pane mobile-pane right-repr'>
+            <div class='split-pane-component items pane right-repr'>
                 <div class='holder abs l-mobile' id='content-area'>
                     <mct-representation mct-object="navigatedObject" key="'browse-object'">
                     </mct-representation>
