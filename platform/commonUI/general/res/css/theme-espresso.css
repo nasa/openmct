@@ -5263,7 +5263,7 @@ input[type="text"] {
         right: -12px; }
         /* line 172, ../sass/tree/_pane.scss */
         .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .pane-tabs.right.inactivePane:after {
-          content: 'G'; }
+          content: '\e608'; }
       /* line 176, ../sass/tree/_pane.scss */
       .split-pane-component.secondary-split.pane.right .split-pane-component.items.pane .object-browse-bar .pane-tabs.right.activePane:after {
         content: '>'; }

@@ -170,7 +170,7 @@ $transitionTime: 0.35s; // For the pane open/close
                     &.inactivePane {
                         right: -12px;
                         &:after {
-                            content: 'G';//'\e608';//'<';
+                            content: '\e608';//'G';//'<';
                         }
                     }
                     &.activePane:after {
