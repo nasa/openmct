@@ -45,7 +45,7 @@
 	}
 }
 
-.bar .icon {
+.bar .ui-symbol {
 	display: inline-block;
 }
 
@@ -65,9 +65,9 @@
 	position: absolute;
 }
 
-.tree-item .type-icon {
-	font-size: 16px; // 16px is crisp size
-}
+//.tree-item .type-icon {
+//	font-size: 16px; // 16px is crisp size
+//}
 
 .l-icon-link:before {
 	content: "\f4";

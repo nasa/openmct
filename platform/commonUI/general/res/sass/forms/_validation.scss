@@ -25,18 +25,18 @@
         padding-right: $reqSymbolW + $reqSymbolM; // Keep room for validation element
         &::after {
             //            @include test(yellow, 0.3);
-            display: block;
+/*            display: block;
             position: absolute;
             top: 0;
             right: $reqSymbolM;
             bottom: 0;
             left: auto;
             height: auto;
-            width: $reqSymbolW;
+            width: $reqSymbolW;*/
             font-family: symbolsfont;
             font-size: $reqSymbolFontSize;
-            text-align: right;
-            vertical-align: middle;
+            //text-align: right;
+            //vertical-align: middle;
         }
     }
     &.invalid,

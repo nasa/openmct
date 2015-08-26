@@ -27,6 +27,7 @@ ul.tree {
 		position: relative;
 		span.tree-item {
 			$runningItemW: 0;
+			@include box-sizing(border-box);
 			@include border-radius($basicCr);
 			@include single-transition(background-color, 0.25s);
 			display: block;
@@ -55,14 +56,20 @@ ul.tree {
 //				@include test(orange);
 				@include absPosDefault();
 				//left: $runningItemW + $interiorMargin; // Adding pad to left to make room for link icon
+				line-height: $menuLineH;
 				left: $runningItemW;
 
 				.type-icon {
-					@include absPosDefault(0, false);
+					//@include absPosDefault(0, false);
+					$d: $treeTypeIconH; // 16px is crisp size
 					@include txtShdwSubtle(0.6);
+					font-size: $d;
 					color: $colorItemTreeIcon;
 					left: $interiorMargin;
-                    right: auto; width: 1em;
+					position: absolute;
+					@include verticalCenterBlock($menuLineHPx, $d);
+					line-height: 100%;
+                    right: auto; width: $d;
 
 					.icon {
 						&.l-icon-link,
@@ -81,8 +88,7 @@ ul.tree {
 							$d: 8px;
 							@include ancillaryIcon($d, $colorIconLink);
 							left: -3px;
-							bottom: 5px;
-
+							bottom: 0px;
 						}
 					}
 				}
@@ -126,7 +132,7 @@ ul.tree {
                 // NOTE: [Mobile] Removed Hover on Mobile
                 @include desktop {
                     &:hover {
-                        background: lighten($colorBodyBg, 5%);
+                        background: rgba(#fff, 0.1); //lighten($colorBodyBg, 5%);
                         color: lighten($colorBodyFg, 20%);
                         .context-trigger {
                             display: block;

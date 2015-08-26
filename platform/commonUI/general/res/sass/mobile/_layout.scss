@@ -20,203 +20,155 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// Wrapper of the entire 2 panes, only enacted on
-// phone and tablet. Also for the panes
-
-.browse-wrapper,
-.mobile-pane {
-    @include phoneandtablet {
-        position: absolute;
-        left: 0; top: 0;
-        right: 0;
-        white-space: nowrap;
+@include phoneandtablet {
+    // Wrapper of the entire 2 panes, only enacted on
+    // phone and tablet. Also for the panes
+    .browse-wrapper,
+    .pane {
+        top: 0 !important; right: 0; bottom: 0; left: 0;
     }
-}
 
-// Default views of the panels
-// if in desktop browser
-.desktop-browse {
-    @include desktop {
-        min-width: 150px;
-        max-width: 800px;
-        width: $desktopMenuSize;   
-    }   
-}
+    .pane.left.treeview {
+        background-color: $colorMobilePaneLeft;
+    }
 
-// When the tree is hidden, these are the
-// classes used for the left menu and the
-// right representation.
-.browse-hidetree {
-    // NOTE: DISABLED SELECTION
-    // Selection disabled in both panes
-    // causing cut/copy/paste menu to
-    // not appear. Should me moved in
-    // future to properly work
-    @include phoneandtablet {
+    .pane.right-repr {
+        //@include test();
+        @include slMenuTransitions;
+        margin-left: 0 !important;
+        #content-area {
+            @include slMenuTransitions;
+            opacity: 1;
+        }
+    }
+
+    .user-environ .browse-area,
+    .user-environ .edit-area,
+    .user-environ .editor {
+        top: 0; left: 0; right: 0; bottom: $ueFooterH;
+    }
+
+    .holder.l-mobile {
+        top: $bodyMargin !important;
+        right: $bodyMargin !important;
+        bottom: $bodyMargin !important;
+        left: $bodyMargin !important;
+    }
+
+    // When the tree is hidden, these are the
+    // classes used for the left menu and the
+    // right representation.
+    .browse-hidetree {
         @include user-select(none);
-    }
-    // Sets the left tree menu when the tree
-    // is hidden. 
-    .mobile-pane.left-menu {
-        @include phoneandtablet {
-            @include trans-prop-nice(opacity, .4s);
+        // Sets the left tree menu when the tree
+        // is hidden.
+        .pane.left.treeview {
             opacity: 0;
             right: 100% !important;
             width: auto !important;
             overflow-y: hidden;
-            overflow-x: hidden;       
+            overflow-x: hidden;
+        }
+        // Sets the right represenation when
+        // the tree is hidden.
+        .pane.right-repr {
+            left: 0 !important;
         }
     }
-
-    // Sets the right represenation when
-    // the tree is hidden. 
-    .mobile-pane.right-repr {       
-        @include phoneandtablet {         
-            @include slMenuTransitions;
-            left: auto !important;
-            width: 100% !important;
-        }
-    }    
-}
-
-.mobile-tree-holder {
-    top: 50px;
-}
-
-// When the tree is shown, these are
-// the classes used for the left menu
-// and the right menu (for each device &
-// orientation combination, separate 
-// parameters are used)
-.browse-showtree {
-    // NOTE: DISABLED SELECTION
-    // Selection disabled in both panes
-    // causing cut/copy/paste menu to
-    // not appear. Should me moved in
-    // future to properly work
-    @include phoneandtablet {
+    
+    .browse-showtree {
+        // NOTE: DISABLED SELECTION
+        // Selection disabled in both panes
+        // causing cut/copy/paste menu to
+        // not appear. Should me moved in
+        // future to properly work
         @include user-select(none);
-    }
-    // Sets the left tree menu when the tree
-    // is shown.     
-    .mobile-pane.left-menu {
-        @include phoneandtablet {
+
+        // Sets the left tree menu when the tree is shown.
+        .pane.left.treeview {
             @include trans-prop-nice(opacity, .4s);
+            @include background-image(linear-gradient(90deg, rgba(black, 0) 98%, rgba(black, 0.3) 100%));
             opacity: 1;
             display: block !important;
-            width: auto !important;
+            //width: auto !important; // CH CO
+            right: auto !important;
+            width: $proporMenuWithView !important;
         }
-        // On both phones and tablets, the amount of
-        // space allowed for the right pane is specified
-        @include phonePortrait {
-            right: $phoneRepSizePortrait !important;
-        }
-        @include phoneLandscape {
-            right: $phoneRepSizeLandscape !important;
-        }
-        @include tabletPortrait {
-            right: $tabletRepSizePortrait !important;
-        }
-        @include tabletLandscape {
-            right: $tabletRepSizeLandscape !important;
-        }
-    }
-    // Sets the right represenation when
-    // the tree is shown.     
-    .mobile-pane.right-repr {
-        @include phoneandtablet {
-            @include slMenuTransitions;
-            left: auto !important;
-        }
-        // On both phones and tablets, the width of
-        // the right pane is specified
-        @include phonePortrait {
-            width: $phoneRepSizePortrait !important;
-        }
-        @include phoneLandscape {
-            width: $phoneRepSizeLandscape !important;
-        }
-        @include tabletPortrait {
-            width: $tabletRepSizePortrait !important;
-        }
-        @include tabletLandscape {
-            width: $tabletRepSizeLandscape !important;
-        }
-    }
-}
+        // Sets the right representation when the tree is shown.
+        .pane.right-repr {
+            left: $proporMenuWithView !important;
+            //width: auto !important;
 
-// Button position is set as absolute with transitions
-.button-pos {
-    @include phoneandtablet {
+            //left: 0 !important;
+            //transform: translateX($proporMenuWithView);
+        }
+    }
+
+    .mobile-menu-icon {
+        font-size: 110%;
         position: absolute;
+        top: $bodyMargin + 2;
+        left: $bodyMargin;
     }
-}
 
-// Object header must be moved
-// over to make space for the 
-// hamburger icon
-.object-header {
-    @include phoneandtablet {
-        position: relative;
-        left: 44px;        
-        .label {
-            .context-available {
-                opacity: 1 !important;
+    .object-browse-bar {
+        //@include test();
+        left: 30px !important;
+        .context-available {
+            opacity: 1 !important;
+        }
+        .view-switcher {
+            margin-right: 0 !important;
+            .name {
+                // Hide the name in mobile
+                display: none;
             }
         }
     }
-}
 
-.desktop-hide {
-    @include desktop {
-        display: none;
+    .tree-holder {
+        overflow-x: hidden !important;
     }
-}
 
-// Hides objects on phone and tablet
-.mobile-hide {
-    @include phoneandtablet {
-        display: none;
+    .mobile-disable-select {
+        @include user-select(none);
     }
-}
 
-.mobile-important-hide {
-    @include phoneandtablet {
+    // Hides objects on phone and tablet
+    .mobile-hide,
+    .mobile-hide-important {
         display: none !important;
     }
-}
 
-.mobile-back-hide {
-    @include phoneandtablet {
+    .mobile-back-hide {
         pointer-events: none;
         @include trans-prop-nice(opacity, .4s);
         opacity: 0;
     }
-}
-
-// Hides objects on phone and tablet
-.mobile-back-unhide {
-    @include phoneandtablet {
+    .mobile-back-unhide {
         pointer-events: all;
         @include trans-prop-nice(opacity, .4s);
         opacity: 1;
     }
 }
 
-// Hides objects only on the phone
-.phone-hide {
-    @include phone {
-        display: none;
+@include phonePortrait {
+    .browse-showtree {
+        .pane.left.treeview {
+            width: $proporMenuOnly !important;
+        }
+        .pane.right-repr {
+            left: 0 !important;
+            transform: translateX($proporMenuOnly);
+            #content-area {
+                opacity: 0;
+            }
+        }
     }
 }
 
-.tree-holder {
-    @include phoneandtablet {
-        overflow-x: hidden !important;
-    }
-}
-.mobile-disable-select {
-    @include phoneandtablet {
-        @include user-select(none);
+@include desktop {
+    .desktop-hide {
+        display: none;
     }
 }

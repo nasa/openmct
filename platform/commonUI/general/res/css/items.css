@@ -69,6 +69,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/************************** STYLE */
 /************************** MOBILE REPRESENTATION ITEMS DIMENSIONS */
 /************************** MOBILE TREE MENU DIMENSIONS */
 /************************** WINDOW DIMENSIONS FOR RWD */
@@ -185,7 +186,7 @@
     margin-bottom: 3px;
     margin-right: 3px;
     position: relative; }
-    /* line 163, ../sass/_mixins.scss */
+    /* line 167, ../sass/_mixins.scss */
     .items-holder .item.grid-item:not(.disabled):hover {
       background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzcwNzA3MCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzYzNjM2MyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
@@ -194,15 +195,15 @@
       background-image: -webkit-linear-gradient(#707070, #636363);
       background-image: linear-gradient(#707070, #636363);
       color: #bdbdbd; }
-      /* line 166, ../sass/_mixins.scss */
+      /* line 170, ../sass/_mixins.scss */
       .items-holder .item.grid-item:not(.disabled):hover.btn-menu .invoke-menu {
         color: #949494; }
-    /* line 171, ../sass/_mixins.scss */
+    /* line 175, ../sass/_mixins.scss */
     .items-holder .item.grid-item.btn-menu .invoke-menu {
       color: #828282; }
     /* line 46, ../sass/items/_item.scss */
     .items-holder .item.grid-item:hover .item-main .item-type {
-      color: #0099cc !important; }
+      color: deepskyblue !important; }
       /* line 48, ../sass/items/_item.scss */
       .items-holder .item.grid-item:hover .item-main .item-type .l-icon-link {
         color: #49dedb; }
@@ -211,35 +212,35 @@
       opacity: 1; }
     /* line 57, ../sass/items/_item.scss */
     .items-holder .item.grid-item .contents {
-      top: 5px;
-      right: 5px;
-      bottom: 5px;
-      left: 5px; }
-    /* line 61, ../sass/items/_item.scss */
-    .items-holder .item.grid-item .bar.top-bar.abs {
+      top: 10px;
+      right: 10px;
+      bottom: 10px;
+      left: 10px; }
+    /* line 63, ../sass/items/_item.scss */
+    .items-holder .item.grid-item .bar.top-bar {
       bottom: auto;
       height: 20px;
       line-height: 20px;
+      text-align: right;
       z-index: 5; }
-      /* line 66, ../sass/items/_item.scss */
-      .items-holder .item.grid-item .bar.top-bar.abs .left, .items-holder .item.grid-item .bar.top-bar.abs .right {
+      /* line 69, ../sass/items/_item.scss */
+      .items-holder .item.grid-item .bar.top-bar .left, .items-holder .item.grid-item .bar.top-bar .right {
         width: auto; }
-        /* line 68, ../sass/items/_item.scss */
-        .items-holder .item.grid-item .bar.top-bar.abs .left .icon, .items-holder .item.grid-item .bar.top-bar.abs .right .icon {
+        /* line 71, ../sass/items/_item.scss */
+        .items-holder .item.grid-item .bar.top-bar .left .icon, .items-holder .item.grid-item .bar.top-bar .right .icon {
           margin-left: 3px; }
-          /* line 70, ../sass/items/_item.scss */
-          .items-holder .item.grid-item .bar.top-bar.abs .left .icon.l-icon-link, .items-holder .item.grid-item .bar.top-bar.abs .right .icon.l-icon-link {
+          /* line 73, ../sass/items/_item.scss */
+          .items-holder .item.grid-item .bar.top-bar .left .icon.l-icon-link, .items-holder .item.grid-item .bar.top-bar .right .icon.l-icon-link {
             color: #49dedb; }
-    /* line 76, ../sass/items/_item.scss */
-    .items-holder .item.grid-item .bar.bottom-bar.abs {
+    /* line 79, ../sass/items/_item.scss */
+    .items-holder .item.grid-item .bar.bottom-bar {
       top: auto;
-      height: 30px;
-      padding: 5px; }
-    /* line 82, ../sass/items/_item.scss */
+      line-height: 110%; }
+    /* line 85, ../sass/items/_item.scss */
     .items-holder .item.grid-item .item-main {
       line-height: 160px;
       z-index: 1; }
-      /* line 88, ../sass/items/_item.scss */
+      /* line 91, ../sass/items/_item.scss */
       .items-holder .item.grid-item .item-main .item-type {
         overflow: false;
         position: absolute;
@@ -249,24 +250,23 @@
         left: 40px;
         width: auto;
         height: auto;
-        color: #737373;
         text-align: center;
         font-size: 96.9px;
         line-height: 102px;
         bottom: auto;
         height: 102px;
         top: 30px; }
-        /* line 100, ../sass/items/_item.scss */
+        /* line 103, ../sass/items/_item.scss */
         .items-holder .item.grid-item .item-main .item-type .l-icon-link {
-          color: #1a8e8b;
-          height: 36px;
-          line-height: 36px;
+          color: #49dedb;
+          height: auto;
+          line-height: 100%;
           position: absolute;
-          font-size: 32px;
+          font-size: 0.3em;
           left: 0px;
           bottom: 10px;
           z-index: 2; }
-      /* line 112, ../sass/items/_item.scss */
+      /* line 116, ../sass/items/_item.scss */
       .items-holder .item.grid-item .item-main .item-open {
         -moz-transition-property: "opacity";
         -o-transition-property: "opacity";
@@ -286,17 +286,20 @@
         width: 50px;
         pointer-events: none;
         text-align: right; }
-    /* line 124, ../sass/items/_item.scss */
+    /* line 128, ../sass/items/_item.scss */
     .items-holder .item.grid-item .title {
       text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px;
-      color: #cccccc;
       overflow: hidden;
+      text-overflow: ellipsis;
       white-space: nowrap;
-      text-overflow: ellipsis; }
-    /* line 132, ../sass/items/_item.scss */
+      color: #cccccc; }
+    /* line 133, ../sass/items/_item.scss */
     .items-holder .item.grid-item .details {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       font-size: 0.8em; }
-    /* line 135, ../sass/items/_item.scss */
+    /* line 137, ../sass/items/_item.scss */
     .items-holder .item.grid-item.selected {
       background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzBhYzJmZiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwYjRmMCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
@@ -318,7 +321,7 @@
       color: #999;
       display: inline-block;
       color: #80dfff; }
-      /* line 163, ../sass/_mixins.scss */
+      /* line 167, ../sass/_mixins.scss */
       .items-holder .item.grid-item.selected:not(.disabled):hover {
         background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzJlY2JmZiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzE0YzRmZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
         background-size: 100%;
@@ -327,22 +330,22 @@
         background-image: -webkit-linear-gradient(#2ecbff, #14c4ff);
         background-image: linear-gradient(#2ecbff, #14c4ff);
         color: #bdbdbd; }
-        /* line 166, ../sass/_mixins.scss */
+        /* line 170, ../sass/_mixins.scss */
         .items-holder .item.grid-item.selected:not(.disabled):hover.btn-menu .invoke-menu {
           color: #75ddff; }
-      /* line 171, ../sass/_mixins.scss */
+      /* line 175, ../sass/_mixins.scss */
       .items-holder .item.grid-item.selected.btn-menu .invoke-menu {
         color: #52d4ff; }
-      /* line 140, ../sass/items/_item.scss */
+      /* line 142, ../sass/items/_item.scss */
       .items-holder .item.grid-item.selected .item-type, .items-holder .item.grid-item.selected .top-bar .icon:not(.alert) {
         color: #80dfff; }
-      /* line 141, ../sass/items/_item.scss */
+      /* line 143, ../sass/items/_item.scss */
       .items-holder .item.grid-item.selected .item-main .item-open {
         color: #80dfff; }
-      /* line 142, ../sass/items/_item.scss */
+      /* line 144, ../sass/items/_item.scss */
       .items-holder .item.grid-item.selected .title {
         color: white; }
-      /* line 144, ../sass/items/_item.scss */
+      /* line 146, ../sass/items/_item.scss */
       .items-holder .item.grid-item.selected:hover .item-main .item-type {
         color: white !important; }
 
@@ -368,82 +371,82 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 34, ../sass/mobile/_item.scss */
-  .items-holder .item.grid-item .mobile-grid-nav {
-    top: 0px;
-    bottom: 0px;
-    right: 55px; }
-  /* line 39, ../sass/mobile/_item.scss */
-  .items-holder .item.grid-item .mobile-info {
-    text-align: center;
-    width: 50px;
-    right: 0px;
-    left: auto;
-    font-size: 1.3em; }
-  /* line 47, ../sass/mobile/_item.scss */
-  .items-holder .item.grid-item .bar.bottom-bar.abs {
-    top: 0px;
-    height: auto; }
-  /* line 54, ../sass/mobile/_item.scss */
-  .items-holder .item.grid-item .item-main .item-type {
-    font-size: 30px;
-    top: 0px;
-    left: 0px;
-    text-align: left;
-    height: auto; }
-  /* line 61, ../sass/mobile/_item.scss */
-  .items-holder .item.grid-item .item-main .item-open {
-    display: none; }
-  /* line 65, ../sass/mobile/_item.scss */
-  .items-holder .item.grid-item .title, .items-holder .item.grid-item .details {
-    margin-left: 30px; } }
+  /* line 29, ../sass/mobile/_item.scss */
+  .items-holder .item.grid-item {
+    width: 100%; }
+    /* line 33, ../sass/mobile/_item.scss */
+    .items-holder .item.grid-item > .contents {
+      top: 0px;
+      right: 10px;
+      bottom: 0px;
+      left: 10px; }
+    /* line 37, ../sass/mobile/_item.scss */
+    .items-holder .item.grid-item .bar.top-bar {
+      bottom: 0 !important;
+      left: auto !important;
+      right: 20px !important;
+      width: 40px !important;
+      height: auto !important;
+      text-align: right; }
+    /* line 44, ../sass/mobile/_item.scss */
+    .items-holder .item.grid-item .bar.bottom-bar {
+      left: 40px;
+      right: 60px; }
+    /* line 52, ../sass/mobile/_item.scss */
+    .items-holder .item.grid-item .item-main .item-type {
+      font-size: 30px;
+      right: auto;
+      bottom: auto;
+      left: 0;
+      line-height: 100%;
+      text-align: left;
+      width: 30px; }
+      /* line 61, ../sass/mobile/_item.scss */
+      .items-holder .item.grid-item .item-main .item-type .l-icon-link {
+        bottom: 0; }
+    /* line 65, ../sass/mobile/_item.scss */
+    .items-holder .item.grid-item .item-main .item-open {
+      display: block;
+      opacity: 1;
+      font-size: 1em;
+      width: auto; } }
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px) {
   /* line 29, ../sass/mobile/_item.scss */
   .items-holder .item.grid-item {
-    width: 100%;
     height: 50px; }
-    /* line 74, ../sass/mobile/_item.scss */
-    .items-holder .item.grid-item .mobile-right {
-      top: 100%; }
-    /* line 77, ../sass/mobile/_item.scss */
-    .items-holder .item.grid-item .mobile-info {
-      line-height: 25px; }
-    /* line 81, ../sass/mobile/_item.scss */
+    /* line 78, ../sass/mobile/_item.scss */
+    .items-holder .item.grid-item .bar.top-bar {
+      line-height: 50px !important; }
+    /* line 82, ../sass/mobile/_item.scss */
+    .items-holder .item.grid-item .bar.bottom-bar {
+      top: 7px;
+      bottom: auto;
+      height: 35px; }
+    /* line 87, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .item-main .item-type {
-      line-height: 40px; }
-    /* line 85, ../sass/mobile/_item.scss */
-    .items-holder .item.grid-item .title {
-      margin-right: 10px;
-      line-height: 25px; }
-    /* line 89, ../sass/mobile/_item.scss */
-    .items-holder .item.grid-item .details {
-      margin-right: 10px;
-      line-height: 0px; } }
+      top: 10px;
+      bottom: auto;
+      height: 30px; }
+    /* line 90, ../sass/mobile/_item.scss */
+    .items-holder .item.grid-item .item-main .item-open {
+      line-height: 50px; } }
 @media screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
   /* line 29, ../sass/mobile/_item.scss */
   .items-holder .item.grid-item {
-    width: 100%;
-    height: 66.66667px; }
-    /* line 99, ../sass/mobile/_item.scss */
-    .items-holder .item.grid-item .mobile-right {
-      top: 100%; }
-    /* line 103, ../sass/mobile/_item.scss */
-    .items-holder .item.grid-item .mobile-info {
-      line-height: 38px; }
-    /* line 107, ../sass/mobile/_item.scss */
+    height: 66px; }
+    /* line 100, ../sass/mobile/_item.scss */
+    .items-holder .item.grid-item .bar.top-bar {
+      line-height: 66px !important; }
+    /* line 104, ../sass/mobile/_item.scss */
+    .items-holder .item.grid-item .bar.bottom-bar {
+      top: 15px;
+      bottom: auto;
+      height: 35px; }
+    /* line 109, ../sass/mobile/_item.scss */
     .items-holder .item.grid-item .item-main .item-type {
-      font-size: 30px;
-      line-height: 50px; }
+      top: 18px;
+      bottom: auto;
+      height: 30px; }
     /* line 112, ../sass/mobile/_item.scss */
-    .items-holder .item.grid-item .title {
-      margin-right: 10px;
-      line-height: 38px; }
-    /* line 116, ../sass/mobile/_item.scss */
-    .items-holder .item.grid-item .details {
-      margin-right: 10px;
-      line-height: 0px; } }
-@media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 29, ../sass/mobile/_item.scss */
-  .items-holder .item.grid-item {
-    width: 200px;
-    height: 200px; } }
+    .items-holder .item.grid-item .item-main .item-open {
+      line-height: 66px; } }

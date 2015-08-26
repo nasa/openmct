@@ -20,11 +20,19 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .object-browse-bar {
+    //@include test(blue);
+    @include absPosDefault(0, visible);
+    @include box-sizing(border-box);
     height: $ueTopBarH;
     line-height: $ueTopBarH;
-    .items-select {
-        .btn-menu {
-            margin-right: $interiorMargin * 3;
+    white-space: nowrap;
+
+    .left {
+        padding-right: $interiorMargin;
+        .l-back {
+            display: inline-block;
+            float: left;
+            margin-right: $interiorMarginLg;
         }
     }
 }

@@ -117,12 +117,6 @@
                         "pattern": "\\S+",
                         "required": true,
                         "cssclass": "l-med"
-                    },
-                    {
-                        "control": "checkbox",
-                        "name": "Display title by default",
-                        "key": "displayTitle",
-                        "property": [ "display", "title" ]
                     }
                 ]
             },
@@ -142,7 +136,11 @@
             {
                 "key": "unknown",
                 "name": "Unknown Type",
-                "glyph": "?"
+                "glyph": "\u003f"
+            },
+            {
+                "name": "Unknown Type",
+                "glyph": "\u003f"
             }
         ],
         "capabilities": [
