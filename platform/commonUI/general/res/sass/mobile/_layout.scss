@@ -119,6 +119,10 @@
         }
         .view-switcher {
             margin-right: 0 !important;
+            .name {
+                // Hide the name in mobile
+                display: none;
+            }
         }
     }
 
