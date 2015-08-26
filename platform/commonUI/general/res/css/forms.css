@@ -69,6 +69,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/************************** STYLE */
 /************************** MOBILE REPRESENTATION ITEMS DIMENSIONS */
 /************************** MOBILE TREE MENU DIMENSIONS */
 /************************** WINDOW DIMENSIONS FOR RWD */
@@ -192,14 +193,14 @@
   box-sizing: border-box;
   overflow: hidden;
   *zoom: 1;
-  border-top: 1px solid #4d4d4d;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-top: 5px;
   padding: 5px;
   position: relative; }
-  /* line 46, ../sass/forms/_elems.scss */
+  /* line 47, ../sass/forms/_elems.scss */
   .form .form-row.first {
     border-top: none; }
-  /* line 50, ../sass/forms/_elems.scss */
+  /* line 51, ../sass/forms/_elems.scss */
   .form .form-row .label,
   .form .form-row .controls {
     -moz-box-sizing: border-box;
@@ -207,45 +208,45 @@
     box-sizing: border-box;
     overflow: hidden;
     *zoom: 1;
-    box-sizing: border-box;
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     line-height: 22px;
     min-height: 22px; }
-  /* line 61, ../sass/forms/_elems.scss */
+  /* line 60, ../sass/forms/_elems.scss */
   .form .form-row > .label {
     float: left;
+    min-width: 120px;
     position: relative;
     white-space: nowrap;
     width: 20%; }
-  /* line 69, ../sass/forms/_elems.scss */
+  /* line 70, ../sass/forms/_elems.scss */
   .form .form-row .value {
     color: #cccccc; }
-  /* line 73, ../sass/forms/_elems.scss */
+  /* line 74, ../sass/forms/_elems.scss */
   .form .form-row .controls {
     float: left;
     position: relative;
     width: 79.9%; }
-    /* line 80, ../sass/forms/_elems.scss */
+    /* line 81, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-composite-control.l-checkbox {
       display: inline-block;
       line-height: 14px;
       margin-right: 5px; }
-    /* line 89, ../sass/forms/_elems.scss */
+    /* line 90, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-med input[type="text"] {
       width: 200px; }
-    /* line 93, ../sass/forms/_elems.scss */
+    /* line 94, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-small input[type="text"] {
       width: 50px; }
-    /* line 97, ../sass/forms/_elems.scss */
+    /* line 98, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-numeric input[type="text"] {
       text-align: right; }
-    /* line 101, ../sass/forms/_elems.scss */
+    /* line 102, ../sass/forms/_elems.scss */
     .form .form-row .controls .select {
       margin-right: 5px; }
-  /* line 106, ../sass/forms/_elems.scss */
+  /* line 107, ../sass/forms/_elems.scss */
   .form .form-row .field-hints {
     color: #666666; }
-  /* line 110, ../sass/forms/_elems.scss */
+  /* line 111, ../sass/forms/_elems.scss */
   .form .form-row .selector-list {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -258,7 +259,7 @@
     position: relative;
     height: 150px;
     overflow: auto; }
-    /* line 121, ../sass/forms/_elems.scss */
+    /* line 122, ../sass/forms/_elems.scss */
     .form .form-row .selector-list .wrapper {
       overflow-y: auto;
       position: absolute;
@@ -267,24 +268,24 @@
       bottom: 5px;
       left: 5px; }
 
-/* line 135, ../sass/forms/_elems.scss */
+/* line 136, ../sass/forms/_elems.scss */
 label.form-control.checkbox input {
   margin-right: 5px;
   vertical-align: top; }
 
-/* line 141, ../sass/forms/_elems.scss */
+/* line 142, ../sass/forms/_elems.scss */
 .hint,
 .s-hint {
   font-size: 0.9em; }
 
-/* line 146, ../sass/forms/_elems.scss */
+/* line 147, ../sass/forms/_elems.scss */
 .l-result {
   display: inline-block;
   min-width: 32px;
   min-height: 32px;
   position: relative;
   vertical-align: top; }
-  /* line 153, ../sass/forms/_elems.scss */
+  /* line 154, ../sass/forms/_elems.scss */
   .l-result div.s-hint {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;

@@ -56,6 +56,7 @@ ul.tree {
 //				@include test(orange);
 				@include absPosDefault();
 				//left: $runningItemW + $interiorMargin; // Adding pad to left to make room for link icon
+				line-height: $menuLineH;
 				left: $runningItemW;
 
 				.type-icon {

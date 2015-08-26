@@ -69,6 +69,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/************************** STYLE */
 /************************** MOBILE REPRESENTATION ITEMS DIMENSIONS */
 /************************** MOBILE TREE MENU DIMENSIONS */
 /************************** WINDOW DIMENSIONS FOR RWD */
@@ -200,8 +201,9 @@ ul.tree {
         left: 0px;
         width: auto;
         height: auto;
+        line-height: 1.5rem;
         left: 15px; }
-        /* line 61, ../sass/tree/_tree.scss */
+        /* line 62, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item .label .type-icon {
           text-shadow: rgba(0, 0, 0, 0.6) 0 1px 2px;
           font-size: 16px;
@@ -214,12 +216,12 @@ ul.tree {
           line-height: 100%;
           right: auto;
           width: 16px; }
-          /* line 74, ../sass/tree/_tree.scss */
+          /* line 75, ../sass/tree/_tree.scss */
           ul.tree li span.tree-item .label .type-icon .icon.l-icon-link, ul.tree li span.tree-item .label .type-icon .icon.l-icon-alert {
             text-shadow: black 0 1px 2px;
             position: absolute;
             z-index: 2; }
-          /* line 80, ../sass/tree/_tree.scss */
+          /* line 81, ../sass/tree/_tree.scss */
           ul.tree li span.tree-item .label .type-icon .icon.l-icon-alert {
             color: #ff3c00;
             font-size: 8px;
@@ -228,7 +230,7 @@ ul.tree {
             width: 8px;
             top: 1px;
             right: -2px; }
-          /* line 86, ../sass/tree/_tree.scss */
+          /* line 87, ../sass/tree/_tree.scss */
           ul.tree li span.tree-item .label .type-icon .icon.l-icon-link {
             color: #49dedb;
             font-size: 8px;
@@ -237,7 +239,7 @@ ul.tree {
             width: 8px;
             left: -3px;
             bottom: 0px; }
-        /* line 94, ../sass/tree/_tree.scss */
+        /* line 95, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item .label .title-label {
           overflow: hidden;
           position: absolute;
@@ -252,53 +254,53 @@ ul.tree {
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap; }
-      /* line 105, ../sass/tree/_tree.scss */
+      /* line 106, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item.loading {
         pointer-events: none; }
-        /* line 107, ../sass/tree/_tree.scss */
+        /* line 108, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item.loading .label {
           opacity: 0.5; }
-          /* line 109, ../sass/tree/_tree.scss */
+          /* line 110, ../sass/tree/_tree.scss */
           ul.tree li span.tree-item.loading .label .title-label {
             font-style: italic; }
-        /* line 113, ../sass/tree/_tree.scss */
+        /* line 114, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item.loading .wait-spinner {
           margin-left: 14px; }
-      /* line 118, ../sass/tree/_tree.scss */
+      /* line 119, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item.selected {
         background: #005177;
         color: #fff; }
-        /* line 122, ../sass/tree/_tree.scss */
+        /* line 123, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item.selected .view-control {
           color: #0099cc; }
-        /* line 125, ../sass/tree/_tree.scss */
+        /* line 126, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item.selected .label .type-icon {
           color: #fff; }
       @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-        /* line 133, ../sass/tree/_tree.scss */
+        /* line 134, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item:not(.selected):hover {
           background: #404040;
           color: #cccccc; }
-          /* line 136, ../sass/tree/_tree.scss */
+          /* line 137, ../sass/tree/_tree.scss */
           ul.tree li span.tree-item:not(.selected):hover .context-trigger {
             display: block; }
-          /* line 139, ../sass/tree/_tree.scss */
+          /* line 140, ../sass/tree/_tree.scss */
           ul.tree li span.tree-item:not(.selected):hover .icon {
             color: #33ccff; } }
-      /* line 146, ../sass/tree/_tree.scss */
+      /* line 147, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item:not(.loading) {
         cursor: pointer; }
-      /* line 150, ../sass/tree/_tree.scss */
+      /* line 151, ../sass/tree/_tree.scss */
       ul.tree li span.tree-item .context-trigger {
         top: -1px;
         position: absolute;
         right: 3px; }
-        /* line 156, ../sass/tree/_tree.scss */
+        /* line 157, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item .context-trigger .invoke-menu {
           font-size: 0.75em;
           height: 0.9rem;
           line-height: 0.9rem; }
-  /* line 165, ../sass/tree/_tree.scss */
+  /* line 166, ../sass/tree/_tree.scss */
   ul.tree ul.tree {
     margin-left: 15px; }
 
@@ -329,23 +331,23 @@ ul.tree {
     height: 35px;
     line-height: 35px;
     margin-bottom: 0px; }
-    /* line 33, ../sass/mobile/_tree.scss */
+    /* line 32, ../sass/mobile/_tree.scss */
     ul.tree li span.tree-item .view-control {
       position: absolute;
       font-size: 1.1em;
       right: 0px;
       width: 30px;
       text-align: center; }
-    /* line 42, ../sass/mobile/_tree.scss */
+    /* line 41, ../sass/mobile/_tree.scss */
     ul.tree li span.tree-item .label {
       left: 0;
       right: 35px;
-      font-size: 1.1em; }
-      /* line 50, ../sass/mobile/_tree.scss */
+      line-height: 35px; }
+      /* line 46, ../sass/mobile/_tree.scss */
       ul.tree li span.tree-item .label .type-icon {
         top: 9px;
         bottom: auto;
         height: 16px; }
-  /* line 61, ../sass/mobile/_tree.scss */
+  /* line 57, ../sass/mobile/_tree.scss */
   ul.tree ul.tree {
     margin-left: 20px; } }

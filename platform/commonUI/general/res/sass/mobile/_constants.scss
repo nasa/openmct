@@ -20,11 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/************************** STYLE */
+$colorMobilePaneLeft: #222;
+
 /************************** MOBILE REPRESENTATION ITEMS DIMENSIONS */
 $mobileListIconSize: 30px;
 $mobileTitleDescH: 35px;
-$mobile-listRight: 10px;
-
+$mobileOverlayMargin: 10px;
 $phoneItemH: floor($ueBrowseGridItemLg/4);
 $tabletItemH: floor($ueBrowseGridItemLg/3);
 

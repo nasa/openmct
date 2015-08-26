@@ -198,7 +198,7 @@ label.checkbox.custom {
 	margin-right: $interiorMargin * 4;
 	padding-left: $d + $interiorMargin;
 	position: relative;
-	vertical-align: top;
+	vertical-align: middle; // was top
 	em {
 		color: $colorBodyFg;
 		display: inline-block;
