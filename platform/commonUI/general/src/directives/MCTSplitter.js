@@ -66,12 +66,15 @@ define(
                         
                         // Remove sliding class from sibling element so no delay in pane movement
                         for (i = 0; i < children.length; i += 1) {
-                            for (j = 0; j < children[i].classList.length; j += 1) {
-                                if (children[i].classList[j] === 'slide') {
-                                    // Store the element that had the sliding class so 
-                                    //  we can replace it later
-                                    slideElement = children[i];
-                                    children[i].classList.remove('slide');
+                            // undefined check
+                            if (children[i].classList) {
+                                for (j = 0; j < children[i].classList.length; j += 1) {
+                                    if (children[i].classList[j] === 'slide') {
+                                        // Store the element that had the sliding class so 
+                                        //  we can replace it later
+                                        slideElement = children[i];
+                                        children[i].classList.remove('slide');
+                                    }
                                 }
                             }
                         }
@@ -88,7 +91,9 @@ define(
                     },
                     // Replace sliding class
                     endMove: function () {
-                        slideElement.classList.add('slide');
+                        if (slideElement && slideElement.classList) {
+                            slideElement.classList.add('slide');
+                        }
                     }
                 };
             }
