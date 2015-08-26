@@ -22,7 +22,7 @@
 
 // Added by shale on 08/19/2015. Styling for the collapsible tree view. 
 
-$transitionTime: 0.35s; // For the left menu open/close
+$transitionTime: 0.35s; // For the pane open/close
 
 
 // Set the left pane (which contains the tree) to have no width to close
@@ -193,8 +193,10 @@ $transitionTime: 0.35s; // For the left menu open/close
     
     .split-pane-component.object-inspector.pane.right {
         min-width: 150px;
+        opacity: 1;
         
-        //transition: visibility $transitionTime, opacity $transitionTime;
+        transition: opacity $transitionTime/2;
+        transition-delay: $transitionTime/2;
         &.inactive {
             min-width: 0 !important;
             width: 0 !important;
