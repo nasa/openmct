@@ -25,8 +25,8 @@
  *  SearchSpec. Created by shale on 07/31/2015.
  */
 define(
-    ["../src/ElasticsearchSearchProvider"],
-    function (ElasticsearchSearchProvider) {
+    ["../src/ElasticSearchProvider"],
+    function (ElasticSearchProvider) {
         "use strict";
 
         // JSLint doesn't like underscore-prefixed properties,
@@ -68,7 +68,7 @@ define(
                     [ "getId", "getModel" ]
                 );
                 
-                provider = new ElasticsearchSearchProvider(mockHttp, mockObjectService, "");
+                provider = new ElasticSearchProvider(mockHttp, mockObjectService, "");
                 provider.query(' test  "query" ', 0, undefined, 1000);
             });
             

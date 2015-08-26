@@ -1,6 +1,6 @@
 {
-    "name": "Couch Persistence",
-    "description": "Adapter to read and write objects using a CouchDB instance.",
+    "name": "ElasticSearch Persistence",
+    "description": "Adapter to read and write objects using an ElasticSearch instance.",
     "extensions": {
         "components": [
             {
@@ -8,6 +8,12 @@
                 "type": "provider",
                 "implementation": "ElasticPersistenceProvider.js",
                 "depends": [ "$http", "$q", "PERSISTENCE_SPACE", "ELASTIC_ROOT", "ELASTIC_PATH" ]
+            },
+            {
+                "provides": "searchService",
+                "type": "provider",
+                "implementation": "ElasticSearchProvider.js",
+                "depends": [ "$http", "objectService", "ELASTIC_ROOT" ]
             }
         ],
         "constants": [

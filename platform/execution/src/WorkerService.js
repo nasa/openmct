@@ -21,6 +21,12 @@
  *****************************************************************************/
 /*global define*/
 
+
+/**
+ * This bundle contains services for managing the flow of execution,
+ * such as support for running web workers on background threads.
+ * @namespace platform/execution
+ */
 define(
     [],
     function () {
@@ -28,11 +34,11 @@ define(
 
         /**
          * Handles the execution of WebWorkers.
+         * @memberof platform/execution
          * @constructor
          */
         function WorkerService($window, workers) {
-            var workerUrls = {},
-                Worker = $window.Worker;
+            var workerUrls = {};
 
             function addWorker(worker) {
                 var key = worker.key;
@@ -46,23 +52,25 @@ define(
             }
 
             (workers || []).forEach(addWorker);
-
-            return {
-                /**
-                 * Start running a new web worker. This will run a worker
-                 * that has been registered under the `workers` category
-                 * of extension.
-                 *
-                 * @param {string} key symbolic identifier for the worker
-                 * @returns {Worker} the running Worker
-                 */
-                run: function (key) {
-                    var scriptUrl = workerUrls[key];
-                    return scriptUrl && Worker && new Worker(scriptUrl);
-                }
-            };
+            this.workerUrls = workerUrls;
+            this.Worker = $window.Worker;
         }
+
+        /**
+         * Start running a new web worker. This will run a worker
+         * that has been registered under the `workers` category
+         * of extension.
+         *
+         * @param {string} key symbolic identifier for the worker
+         * @returns {Worker} the running Worker
+         */
+        WorkerService.prototype.run = function (key) {
+            var scriptUrl = this.workerUrls[key],
+                Worker = this.Worker;
+            return scriptUrl && Worker && new Worker(scriptUrl);
+        };
 
         return WorkerService;
     }
 );
+

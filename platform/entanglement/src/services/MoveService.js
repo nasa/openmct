@@ -29,74 +29,70 @@ define(
          * MoveService provides an interface for moving objects from one
          * location to another.  It also provides a method for determining if
          * an object can be copied to a specific location.
+         * @constructor
+         * @memberof platform/entanglement
+         * @implements {platform/entanglement.AbstractComposeService}
          */
-        function MoveService(policyService, linkService, $q) {
-
-            return {
-                /**
-                 * Returns `true` if `object` can be moved into
-                 * `parentCandidate`'s composition.
-                 */
-                validate: function (object, parentCandidate) {
-                    var currentParent = object
-                        .getCapability('context')
-                        .getParent();
-
-                    if (!parentCandidate || !parentCandidate.getId) {
-                        return false;
-                    }
-                    if (parentCandidate.getId() === currentParent.getId()) {
-                        return false;
-                    }
-                    if (parentCandidate.getId() === object.getId()) {
-                        return false;
-                    }
-                    if (parentCandidate.getModel().composition.indexOf(object.getId()) !== -1) {
-                        return false;
-                    }
-                    return policyService.allow(
-                        "composition",
-                        parentCandidate.getCapability('type'),
-                        object.getCapability('type')
-                    );
-                },
-                /**
-                 * Move `object` into `parentObject`'s composition.
-                 *
-                 * @returns {Promise} A promise that is fulfilled when the
-                 *    move operation has completed.
-                 */
-                perform: function (object, parentObject) {
-                    return linkService
-                        .perform(object, parentObject)
-                        .then(function (objectInNewContext) {
-                            var newLocationCapability = objectInNewContext
-                                    .getCapability('location'),
-                                oldLocationCapability = object
-                                    .getCapability('location');
-                            if (!newLocationCapability ||
-                                !oldLocationCapability) {
-
-                                return;
-                            }
-
-
-                            if (oldLocationCapability.isOriginal()) {
-                                return newLocationCapability.setPrimaryLocation(
-                                    newLocationCapability
-                                        .getContextualLocation()
-                                );
-                            }
-                        })
-                        .then(function () {
-                            return object
-                                .getCapability('action')
-                                .perform('remove');
-                        });
-                }
-            };
+        function MoveService(policyService, linkService) {
+            this.policyService = policyService;
+            this.linkService = linkService;
         }
+
+        MoveService.prototype.validate = function (object, parentCandidate) {
+            var currentParent = object
+                .getCapability('context')
+                .getParent();
+
+            if (!parentCandidate || !parentCandidate.getId) {
+                return false;
+            }
+            if (parentCandidate.getId() === currentParent.getId()) {
+                return false;
+            }
+            if (parentCandidate.getId() === object.getId()) {
+                return false;
+            }
+            if (parentCandidate.getModel().composition.indexOf(object.getId()) !== -1) {
+                return false;
+            }
+            return this.policyService.allow(
+                "composition",
+                parentCandidate.getCapability('type'),
+                object.getCapability('type')
+            );
+        };
+
+        MoveService.prototype.perform = function (object, parentObject) {
+            function relocate(objectInNewContext) {
+                var newLocationCapability = objectInNewContext
+                        .getCapability('location'),
+                    oldLocationCapability = object
+                        .getCapability('location');
+
+                if (!newLocationCapability ||
+                        !oldLocationCapability) {
+                    return;
+                }
+
+                if (oldLocationCapability.isOriginal()) {
+                    return newLocationCapability.setPrimaryLocation(
+                        newLocationCapability
+                            .getContextualLocation()
+                    );
+                }
+            }
+
+            return this.linkService
+                .perform(object, parentObject)
+                .then(relocate)
+                .then(function () {
+                    return object
+                        .getCapability('action')
+                        .perform('remove');
+                });
+        };
 
         return MoveService;
     }
 );
+

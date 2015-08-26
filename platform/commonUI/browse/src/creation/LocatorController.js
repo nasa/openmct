@@ -30,6 +30,7 @@ define(
          * Controller for the "locator" control, which provides the
          * user with the ability to select a domain object as the
          * destination for a newly-created object in the Create menu.
+         * @memberof platform/commonUI/browse
          * @constructor
          */
         function LocatorController($scope) {
@@ -79,3 +80,4 @@ define(
         return LocatorController;
     }
 );
+

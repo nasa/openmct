@@ -85,30 +85,31 @@ define(
          * The ElementFactory creates new instances of elements for the
          * fixed position view, prompting for user input where necessary.
          * @param {DialogService} dialogService service to request user input
+         * @memberof platform/features/layout
          * @constructor
          */
         function ElementFactory(dialogService) {
-            return {
-                /**
-                 * Create a new element for the fixed position view.
-                 * @param {string} type the type of element to create
-                 * @returns {Promise|object} the created element, or a promise
-                 *          for that element
-                 */
-                createElement: function (type) {
-                    var initialState = INITIAL_STATES[type] || {};
-
-                    // Clone that state
-                    initialState = JSON.parse(JSON.stringify(initialState));
-
-                    // Show a dialog to configure initial state, if appropriate
-                    return DIALOGS[type] ? dialogService.getUserInput(
-                        DIALOGS[type],
-                        initialState
-                    ) : initialState;
-                }
-            };
+            this.dialogService = dialogService;
         }
+
+        /**
+         * Create a new element for the fixed position view.
+         * @param {string} type the type of element to create
+         * @returns {Promise|object} the created element, or a promise
+         *          for that element
+         */
+        ElementFactory.prototype.createElement = function (type) {
+            var initialState = INITIAL_STATES[type] || {};
+
+            // Clone that state
+            initialState = JSON.parse(JSON.stringify(initialState));
+
+            // Show a dialog to configure initial state, if appropriate
+            return DIALOGS[type] ? this.dialogService.getUserInput(
+                DIALOGS[type],
+                initialState
+            ) : initialState;
+        };
 
         return ElementFactory;
     }

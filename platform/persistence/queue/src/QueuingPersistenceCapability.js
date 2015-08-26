@@ -34,6 +34,8 @@ define(
          *        capability
          * @param {DomainObject} domainObject the domain object which exposes
          *        the capability
+         * @constructor
+         * @memberof platform/persistence/queue
          */
         function QueuingPersistenceCapability(queue, persistence, domainObject) {
             var queuingPersistence = Object.create(persistence);

@@ -25,7 +25,7 @@
  *  SearchSpec. Created by shale on 07/31/2015.
  */
 define(
-    ["../src/GenericSearchProvider"],
+    ["../../src/services/GenericSearchProvider"],
     function (GenericSearchProvider) {
         "use strict";
 
@@ -81,6 +81,11 @@ define(
                 );
                 mockWorkerService.run.andReturn(mockWorker);
                 
+                mockCapabilityPromise = jasmine.createSpyObj(
+                    "promise",
+                    [ "then", "catch" ]
+                );
+                
                 mockDomainObjects = {};
                 for (i = 0; i < 4; i += 1) {
                     mockDomainObjects[i] = (
@@ -91,16 +96,13 @@ define(
                     );
                     mockDomainObjects[i].getId.andReturn(i);
                     mockDomainObjects[i].getCapability.andReturn(mockCapability);
+                    mockDomainObjects[i].useCapability.andReturn(mockCapabilityPromise);
                 }
                 // Give the first object children
                 mockDomainObjects[0].hasCapability.andReturn(true);
                 mockCapability = jasmine.createSpyObj(
                     "capability",
                     [ "invoke", "listen" ]
-                );
-                mockCapabilityPromise = jasmine.createSpyObj(
-                    "promise",
-                    [ "then", "catch" ]
                 );
                 mockCapability.invoke.andReturn(mockCapabilityPromise);
                 mockDomainObjects[0].getCapability.andReturn(mockCapability);
@@ -112,11 +114,32 @@ define(
                 expect(mockObjectService.getObjects).toHaveBeenCalled();
                 expect(mockObjectPromise.then).toHaveBeenCalled();
                 
+                // Call through the root-getting part 
                 mockObjectPromise.then.mostRecentCall.args[0](mockDomainObjects);
                 
-                //mockCapabilityPromise.then.mostRecentCall.args[0](mockDomainObjects[1]);
+                // Call through the children-getting part 
+                mockTimeout.mostRecentCall.args[0]();
+                // Array argument indicates multiple children
+                mockCapabilityPromise.then.mostRecentCall.args[0]([]);
+                mockTimeout.mostRecentCall.args[0]();
+                // Call again, but for single child
+                mockCapabilityPromise.then.mostRecentCall.args[0]({});
+                mockTimeout.mostRecentCall.args[0]();
                 
                 expect(mockWorker.postMessage).toHaveBeenCalled();
+            });
+            
+            it("when indexing, listens for composition changes", function () {
+                var mockListener = {composition: {}};
+                
+                // Call indexItems
+                mockObjectPromise.then.mostRecentCall.args[0](mockDomainObjects);
+                
+                // Call through listening for changes
+                expect(mockCapability.listen).toHaveBeenCalled();
+                mockCapability.listen.mostRecentCall.args[0](mockListener);
+                expect(mockObjectService.getObjects).toHaveBeenCalled();
+                mockObjectPromise.then.mostRecentCall.args[0](mockDomainObjects);
             });
             
             it("sends search queries to the worker", function () {
@@ -129,6 +152,19 @@ define(
                     maxNumber: 1,
                     timeout: 2
                 });
+            });
+            
+            it("gives an empty result for an empty query", function () {
+                var timestamp = Date.now(),
+                    queryOutput;
+                
+                queryOutput = provider.query('', timestamp, 1, 2);
+                expect(queryOutput.hits).toEqual([]);
+                expect(queryOutput.total).toEqual(0);
+                
+                queryOutput = provider.query();
+                expect(queryOutput.hits).toEqual([]);
+                expect(queryOutput.total).toEqual(0);
             });
             
             it("handles responses from the worker", function () {

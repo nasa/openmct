@@ -33,7 +33,9 @@ define(
          * Add event handlers to a representation such that it may be
          * dragged as the source for drag-drop composition.
          *
+         * @memberof platform/representation
          * @constructor
+         * @implements {Gesture}
          * @param $log Angular's logging service
          * @param element the jqLite-wrapped element which should become
          *        draggable
@@ -103,20 +105,18 @@ define(
             element.on('dragstart', startDrag);
             element.on('dragend', endDrag);
 
-            return {
-                /**
-                 * Detach any event handlers associated with this gesture.
-                 * @memberof DragGesture
-                 * @method
-                 */
-                destroy: function () {
-                    // Detach listener
-                    element.removeAttr('draggable');
-                    element.off('dragstart', startDrag);
-                }
-            };
+            this.element = element;
+            this.startDragCallback = startDrag;
+            this.endDragCallback = endDrag;
         }
 
+
+        DragGesture.prototype.destroy = function () {
+            // Detach listener
+            this.element.removeAttr('draggable');
+            this.element.off('dragstart', this.startDragCallback);
+            this.element.off('dragend', this.endDragCallback);
+        };
 
         return DragGesture;
     }

@@ -57,7 +57,6 @@ define(
                 navigationService = this.navigationService,
                 domainObject = this.domainObject,
                 ROOT_ID = "ROOT";
-
             /*
              * Check whether an object ID matches the ID of the object being
              * removed (used to filter a parent's composition to handle the

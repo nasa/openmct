@@ -20,6 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*global define*/
+
+/**
+ * This bundle provides support for object inspection (specifically, metadata
+ * show in bubbles on hover.)
+ * @namespace platform/commonUI/inspect
+ */
+
 define({
     BUBBLE_TEMPLATE: "<mct-container key=\"bubble\" " +
                 "bubble-title=\"{{bubbleTitle}}\" " +

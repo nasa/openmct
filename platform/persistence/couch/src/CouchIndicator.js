@@ -55,69 +55,63 @@ define(
          * Indicator for the current CouchDB connection. Polls CouchDB
          * at a regular interval (defined by bundle constants) to ensure
          * that the database is available.
+         * @constructor
+         * @memberof platform/persistence/couch
+         * @implements {Indicator}
+         * @param $http Angular's $http service
+         * @param $interval Angular's $interval service
+         * @param {string} path the URL to poll to check for couch availability
+         * @param {number} interval the interval, in milliseconds, to poll at
          */
-        function CouchIndicator($http, $interval, PATH, INTERVAL) {
+        function CouchIndicator($http, $interval, path, interval) {
+            var self = this;
+
             // Track the current connection state
-            var state = PENDING;
+            this.state = PENDING;
+
+            this.$http = $http;
+            this.$interval = $interval;
+            this.path = path;
+            this.interval = interval;
+
 
             // Callback if the HTTP request to Couch fails
             function handleError(err) {
-                state = DISCONNECTED;
+                self.state = DISCONNECTED;
             }
 
             // Callback if the HTTP request succeeds. CouchDB may
             // report an error, so check for that.
             function handleResponse(response) {
                 var data = response.data;
-                state = data.error ? SEMICONNECTED : CONNECTED;
+                self.state = data.error ? SEMICONNECTED : CONNECTED;
             }
 
             // Try to connect to CouchDB, and update the indicator.
             function updateIndicator() {
-                $http.get(PATH).then(handleResponse, handleError);
+                $http.get(path).then(handleResponse, handleError);
             }
 
             // Update the indicator initially, and start polling.
             updateIndicator();
-            $interval(updateIndicator, INTERVAL);
-
-            return {
-                /**
-                 * Get the glyph (single character used as an icon)
-                 * to display in this indicator. This will return "D",
-                 * which should appear as a database icon.
-                 * @returns {string} the character of the database icon
-                 */
-                getGlyph: function () {
-                    return "D";
-                },
-                /**
-                 * Get the name of the CSS class to apply to the glyph.
-                 * This is used to color the glyph to match its
-                 * state (one of ok, caution or err)
-                 * @returns {string} the CSS class to apply to this glyph
-                 */
-                getGlyphClass: function () {
-                    return state.glyphClass;
-                },
-                /**
-                 * Get the text that should appear in the indicator.
-                 * @returns {string} brief summary of connection status
-                 */
-                getText: function () {
-                    return state.text;
-                },
-                /**
-                 * Get a longer-form description of the current connection
-                 * space, suitable for display in a tooltip
-                 * @returns {string} longer summary of connection status
-                 */
-                getDescription: function () {
-                    return state.description;
-                }
-            };
-
+            $interval(updateIndicator, interval);
         }
+
+        CouchIndicator.prototype.getGlyph = function () {
+            return "D";
+        };
+
+        CouchIndicator.prototype.getGlyphClass = function () {
+            return this.state.glyphClass;
+        };
+
+        CouchIndicator.prototype.getText = function () {
+            return this.state.text;
+        };
+
+        CouchIndicator.prototype.getDescription = function () {
+            return this.state.description;
+        };
 
         return CouchIndicator;
     }

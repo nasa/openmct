@@ -38,90 +38,81 @@ define(
          * which are not intended to appear in the tree, but are instead
          * intended only for special, limited usage.
          *
+         * @memberof platform/core
          * @constructor
+         * @implements {Capability}
          */
         function RelationshipCapability($injector, domainObject) {
-            var objectService,
-                lastPromise = {},
-                lastModified;
-
             // Get a reference to the object service from $injector
-            function injectObjectService() {
-                objectService = $injector.get("objectService");
-                return objectService;
-            }
-
-            // Get a reference to the object service (either cached or
-            // from the injector)
-            function getObjectService() {
-                return objectService || injectObjectService();
-            }
-
-            // Promise this domain object's composition (an array of domain
-            // object instances corresponding to ids in its model.)
-            function promiseRelationships(key) {
-                var model = domainObject.getModel(),
-                    ids;
-
-                // Package objects as an array
-                function packageObject(objects) {
-                    return ids.map(function (id) {
-                        return objects[id];
-                    }).filter(function (obj) {
-                        return obj;
-                    });
-                }
-
-                // Clear cached promises if modification has occurred
-                if (lastModified !== model.modified) {
-                    lastPromise = {};
-                    lastModified = model.modified;
-                }
-
-                // Make a new request if needed
-                if (!lastPromise[key]) {
-                    ids = (model.relationships || {})[key] || [];
-                    lastModified = model.modified;
-                    // Load from the underlying object service
-                    lastPromise[key] = getObjectService().getObjects(ids)
-                        .then(packageObject);
-                }
-
-                return lastPromise[key];
-            }
-
-            // List types of relationships which this object has
-            function listRelationships() {
-                var relationships =
-                    (domainObject.getModel() || {}).relationships || {};
-
-                // Check if this key really does expose an array of ids
-                // (to filter out malformed relationships)
-                function isArray(key) {
-                    return Array.isArray(relationships[key]);
-                }
-
-                return Object.keys(relationships).filter(isArray).sort();
-            }
-
-            return {
-                /**
-                 * List all types of relationships exposed by this
-                 * object.
-                 * @returns {string[]} a list of all relationship types
-                 */
-                listRelationships: listRelationships,
-                /**
-                 * Request related objects, with a given relationship type.
-                 * This will typically require asynchronous lookup, so this
-                 * returns a promise.
-                 * @param {string} key the type of relationship
-                 * @returns {Promise.<DomainObject[]>} a promise for related
-                 *          domain objects
-                 */
-                getRelatedObjects: promiseRelationships
+            this.injectObjectService = function () {
+                this.objectService = $injector.get("objectService");
             };
+
+            this.lastPromise = {};
+            this.domainObject = domainObject;
         }
+
+        /**
+         * List all types of relationships exposed by this
+         * object.
+         * @returns {string[]} a list of all relationship types
+         */
+        RelationshipCapability.prototype.listRelationships = function listRelationships() {
+            var relationships =
+                (this.domainObject.getModel() || {}).relationships || {};
+
+            // Check if this key really does expose an array of ids
+            // (to filter out malformed relationships)
+            function isArray(key) {
+                return Array.isArray(relationships[key]);
+            }
+
+            return Object.keys(relationships).filter(isArray).sort();
+        };
+
+        /**
+         * Request related objects, with a given relationship type.
+         * This will typically require asynchronous lookup, so this
+         * returns a promise.
+         * @param {string} key the type of relationship
+         * @returns {Promise.<DomainObject[]>} a promise for related
+         *          domain objects
+         */
+        RelationshipCapability.prototype.getRelatedObjects = function (key) {
+            var model = this.domainObject.getModel(),
+                ids;
+
+            // Package objects as an array
+            function packageObject(objects) {
+                return ids.map(function (id) {
+                    return objects[id];
+                }).filter(function (obj) {
+                    return obj;
+                });
+            }
+
+            // Clear cached promises if modification has occurred
+            if (this.lastModified !== model.modified) {
+                this.lastPromise = {};
+                this.lastModified = model.modified;
+            }
+
+            // Make a new request if needed
+            if (!this.lastPromise[key]) {
+                ids = (model.relationships || {})[key] || [];
+                this.lastModified = model.modified;
+                // Lazily initialize object service now that we need it
+                if (!this.objectService) {
+                    this.injectObjectService();
+                }
+                // Load from the underlying object service
+                this.lastPromise[key] = this.objectService.getObjects(ids)
+                    .then(packageObject);
+            }
+
+            return this.lastPromise[key];
+        };
+
 
         /**
          * Test to determine whether or not this capability should be exposed

@@ -30,58 +30,55 @@ define(
          * LinkService provides an interface for linking objects to additional
          * locations.  It also provides a method for determining if an object
          * can be copied to a specific location.
+         * @constructor
+         * @memberof platform/entanglement
+         * @implements {platform/entanglement.AbstractComposeService}
          */
         function LinkService(policyService) {
-            return {
-                /**
-                 * Returns `true` if `object` can be linked into
-                 * `parentCandidate`'s composition.
-                 */
-                validate: function (object, parentCandidate) {
-                    if (!parentCandidate || !parentCandidate.getId) {
-                        return false;
-                    }
-                    if (parentCandidate.getId() === object.getId()) {
-                        return false;
-                    }
-                    if (parentCandidate.getModel().composition.indexOf(object.getId()) !== -1) {
-                        return false;
-                    }
-                    return policyService.allow(
-                        "composition",
-                        parentCandidate.getCapability('type'),
-                        object.getCapability('type')
-                    );
-                },
-                /**
-                 * Link `object` into `parentObject`'s composition.
-                 *
-                 * @returns {Promise} A promise that is fulfilled when the
-                 *    linking operation has completed.
-                 */
-                perform: function (object, parentObject) {
-                    return parentObject.useCapability('mutation', function (model) {
-                        if (model.composition.indexOf(object.getId()) === -1) {
-                            model.composition.push(object.getId());
-                        }
-                    }).then(function () {
-                        return parentObject.getCapability('persistence').persist();
-                    }).then(function getObjectWithNewContext() {
-                        return parentObject
-                            .useCapability('composition')
-                            .then(function (children) {
-                                var i;
-                                for (i = 0; i < children.length; i += 1) {
-                                    if (children[i].getId() === object.getId()) {
-                                        return children[i];
-                                    }
-                                }
-                            });
-                    });
-                }
-            };
+            this.policyService = policyService;
         }
+
+        LinkService.prototype.validate = function (object, parentCandidate) {
+            if (!parentCandidate || !parentCandidate.getId) {
+                return false;
+            }
+            if (parentCandidate.getId() === object.getId()) {
+                return false;
+            }
+            if (parentCandidate.getModel().composition.indexOf(object.getId()) !== -1) {
+                return false;
+            }
+            return this.policyService.allow(
+                "composition",
+                parentCandidate.getCapability('type'),
+                object.getCapability('type')
+            );
+        };
+
+        LinkService.prototype.perform = function (object, parentObject) {
+            function findChild(children) {
+                var i;
+                for (i = 0; i < children.length; i += 1) {
+                    if (children[i].getId() === object.getId()) {
+                        return children[i];
+                    }
+                }
+            }
+
+            return parentObject.useCapability('mutation', function (model) {
+                if (model.composition.indexOf(object.getId()) === -1) {
+                    model.composition.push(object.getId());
+                }
+            }).then(function () {
+                return parentObject.getCapability('persistence').persist();
+            }).then(function getObjectWithNewContext() {
+                return parentObject
+                    .useCapability('composition')
+                    .then(findChild);
+            });
+        };
 
         return LinkService;
     }
 );
+

@@ -42,6 +42,7 @@ define(
          * * `ungrouped`: All actions which did not have a defined
          *   group.
          *
+         * @memberof platform/commonUI/general
          * @constructor
          */
         function ActionGroupController($scope) {

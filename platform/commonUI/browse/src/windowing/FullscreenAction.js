@@ -35,35 +35,31 @@ define(
         /**
          * The fullscreen action toggles between fullscreen display
          * and regular in-window display.
+         * @memberof platform/commonUI/browse
          * @constructor
+         * @implements {Action}
          */
         function FullscreenAction(context) {
-            return {
-                /**
-                 * Toggle full screen state
-                 */
-                perform: function () {
-                    screenfull.toggle();
-                },
-                /**
-                 * Get metadata about this action, including the
-                 * applicable glyph to display.
-                 */
-                getMetadata: function () {
-                    // We override getMetadata, because the glyph and
-                    // description need to be determined at run-time
-                    // based on whether or not we are currently
-                    // full screen.
-                    var metadata = Object.create(FullscreenAction);
-                    metadata.glyph = screenfull.isFullscreen ? "_" : "z";
-                    metadata.description = screenfull.isFullscreen ?
-                            EXIT_FULLSCREEN : ENTER_FULLSCREEN;
-                    metadata.group = "windowing";
-                    metadata.context = context;
-                    return metadata;
-                }
-            };
+            this.context = context;
         }
+
+        FullscreenAction.prototype.perform = function () {
+            screenfull.toggle();
+        };
+
+        FullscreenAction.prototype.getMetadata = function () {
+            // We override getMetadata, because the glyph and
+            // description need to be determined at run-time
+            // based on whether or not we are currently
+            // full screen.
+            var metadata = Object.create(FullscreenAction);
+            metadata.glyph = screenfull.isFullscreen ? "_" : "z";
+            metadata.description = screenfull.isFullscreen ?
+                EXIT_FULLSCREEN : ENTER_FULLSCREEN;
+            metadata.group = "windowing";
+            metadata.context = this.context;
+            return metadata;
+        };
 
         return FullscreenAction;
     }

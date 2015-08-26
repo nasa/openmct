@@ -30,6 +30,22 @@ define(
         "use strict";
 
         /**
+         * Provides definitions for views that are available for specific
+         * domain objects.
+         *
+         * @interface ViewService
+         */
+
+        /**
+         * Get all views which are applicable to this domain object.
+         *
+         * @method ViewService#getViews
+         * @param {DomainObject} domainObject the domain object to view
+         * @returns {View[]} all views which can be used to visualize
+         *          this domain object.
+         */
+
+        /**
          * A view provider allows view definitions (defined as extensions)
          * to be read, and takes responsibility for filtering these down
          * to a set that is applicable to specific domain objects. This
@@ -55,8 +71,11 @@ define(
          * The role of a view provider and of a view capability is to
          * describe what views are available, not how to instantiate them.
          *
+         * @memberof platform/core
          * @constructor
          * @param {View[]} an array of view definitions
+         * @param $log Angular's logging service
+         * @implements {ViewService}
          */
         function ViewProvider(views, $log) {
 
@@ -77,6 +96,13 @@ define(
 
                 return key;
             }
+
+            // Filter out any key-less views
+            this.views = views.filter(validate);
+        }
+
+        ViewProvider.prototype.getViews = function (domainObject) {
+            var type = domainObject.useCapability("type");
 
             // Check if an object has all capabilities designated as `needs`
             // for a view. Exposing a capability via delegation is taken to
@@ -121,34 +147,16 @@ define(
                 return matches;
             }
 
-            function getViews(domainObject) {
-                var type = domainObject.useCapability("type");
-
-                // First, filter views by type (matched to domain object type.)
-                // Second, filter by matching capabilities.
-                return views.filter(function (view) {
-                    return viewMatchesType(view, type) && capabilitiesMatch(
+            // First, filter views by type (matched to domain object type.)
+            // Second, filter by matching capabilities.
+            return this.views.filter(function (view) {
+                return viewMatchesType(view, type) && capabilitiesMatch(
                         domainObject,
                         view.needs || [],
                         view.delegation || false
                     );
-                });
-            }
-
-            // Filter out any key-less views
-            views = views.filter(validate);
-
-            return {
-                /**
-                 * Get all views which are applicable to this domain object.
-                 *
-                 * @param {DomainObject} domainObject the domain object to view
-                 * @returns {View[]} all views which can be used to visualize
-                 *          this domain object.
-                 */
-                getViews: getViews
-            };
-        }
+            });
+        };
 
         return ViewProvider;
     }

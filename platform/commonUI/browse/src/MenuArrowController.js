@@ -33,18 +33,28 @@ define(
          * A left-click on the menu arrow should display a 
          * context menu. This controller launches the context 
          * menu. 
+         * @memberof platform/commonUI/browse
          * @constructor
          */
         function MenuArrowController($scope) {
-            function showMenu(event) {
-                var actionContext = {key: 'menu', domainObject: $scope.domainObject, event: event};
-                $scope.domainObject.getCapability('action').perform(actionContext);
-            }
-            
-            return {
-                showMenu: showMenu
-            };
+            this.$scope = $scope;
         }
+
+        /**
+         * Show a context menu for the domain object in this scope.
+         *
+         * @param event the browser event which caused this (used to
+         *        position the menu)
+         */
+        MenuArrowController.prototype.showMenu = function (event) {
+            var actionContext = {
+                key: 'menu',
+                domainObject: this.$scope.domainObject,
+                event: event
+            };
+
+            this.$scope.domainObject.getCapability('action').perform(actionContext);
+        };
 
         return MenuArrowController;
     }

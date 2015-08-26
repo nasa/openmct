@@ -34,6 +34,8 @@ define(
          * @param $q Angular's $q, for promises
          * @param {TelemetrySubscription} subscription a subscription
          *        to supplied telemetry
+         * @constructor
+         * @memberof platform/telemetry
          */
         function TelemetryHandle($q, subscription) {
             var seriesMap = {},
@@ -67,6 +69,7 @@ define(
              *        data associated with it
              * @return {TelemetrySeries} the most recent telemetry series
              *         (or undefined if there is not one)
+             * @memberof platform/telemetry.TelemetryHandle#
              */
             self.getSeries = function (domainObject) {
                 var id = domainObject.getId();
@@ -81,6 +84,7 @@ define(
              * @param {Function} [callback] a callback that will be
              *        invoked as new data becomes available, with the
              *        domain object for which new data is available.
+             * @memberof platform/telemetry.TelemetryHandle#
              */
             self.request = function (request, callback) {
                 // Issue (and handle) the new request from this object

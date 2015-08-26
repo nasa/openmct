@@ -21,6 +21,11 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * This bundle provides various general-purpose UI elements, including
+ * platform styling.
+ * @namespace platform/commonUI/general
+ */
 define(
     [],
     function () {
@@ -29,6 +34,7 @@ define(
         /**
          * The StyleSheetLoader adds links to style sheets exposed from
          * various bundles as extensions of category `stylesheets`.
+         * @memberof platform/commonUI/general
          * @constructor
          * @param {object[]} stylesheets stylesheet extension definitions
          * @param $document Angular's jqLite-wrapped document element

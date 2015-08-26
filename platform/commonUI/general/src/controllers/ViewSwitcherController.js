@@ -32,6 +32,7 @@ define(
         /**
          * Controller for the view switcher; populates and maintains a list
          * of applicable views for a represented domain object.
+         * @memberof platform/commonUI/general
          * @constructor
          */
         function ViewSwitcherController($scope, $timeout) {
@@ -71,3 +72,4 @@ define(
         return ViewSwitcherController;
     }
 );
+

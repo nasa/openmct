@@ -50,6 +50,8 @@ define(
          *        persistence when the queue is flushed
          * @param {number} [DELAY] optional; delay in milliseconds between
          *        attempts to flush the queue
+         * @constructor
+         * @memberof platform/persistence/queue
          */
         function PersistenceQueue(
             $q,
