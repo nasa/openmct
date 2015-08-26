@@ -20,20 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .section-header {
-	@include border-radius(3px);
-	background: $colorFormLines;
+	@include border-radius($basicCr);
+	background: rgba(#fff, 0.1);
+	$c: lighten($colorBodyFg, 20%);
+	//border-bottom: 1px solid rgba(#fff, 0.3);
+	color: $c;
 	font-size: 0.8em;
-	margin-top: $interiorMargin;
-	padding: $interiorMargin;
-	&:first-child {
-		margin-top: 0;
-	}
+	padding: $formTBPad $formLRPad;
+	text-transform: uppercase;
 }
 
 .form {
 //	@include test(orange);
 	.form-section {
 		position: relative;
+		margin-bottom: $interiorMarginLg * 2;
 	}
 
 	.form-row {
@@ -42,7 +43,7 @@
 		@include clearfix;
 		border-top: 1px solid $colorFormLines;
 		margin-top: $m;
-		padding: $m;
+		padding: $formTBPad $formLRPad;
 		position: relative;
 		&.first {
 			border-top: none;

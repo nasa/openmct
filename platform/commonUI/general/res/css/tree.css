@@ -279,7 +279,7 @@ ul.tree {
       @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
         /* line 134, ../sass/tree/_tree.scss */
         ul.tree li span.tree-item:not(.selected):hover {
-          background: #404040;
+          background: rgba(255, 255, 255, 0.1);
           color: #cccccc; }
           /* line 137, ../sass/tree/_tree.scss */
           ul.tree li span.tree-item:not(.selected):hover .context-trigger {

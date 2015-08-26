@@ -1,6 +1,10 @@
 @include phoneandtablet {
     .overlay {
         $m: 0;
+        .clk-icon.close {
+            top: $mobileOverlayMargin; right: $mobileOverlayMargin;
+        }
+
         > .holder {
             @include border-radius($m);
             top: $m;
@@ -12,6 +16,12 @@
                 right: $mobileOverlayMargin;
                 bottom: $mobileOverlayMargin;
                 left: $mobileOverlayMargin;
+
+                .top-bar {
+                    > .title {
+                        margin-right: 1.2em;
+                    }
+                }
 
                 .form.editor {
                     border: none;

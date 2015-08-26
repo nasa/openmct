@@ -48,6 +48,7 @@ $colorPausedFg: #fff;
 $colorCreateBtn: $colorKey;
 $colorGridLines: rgba(#fff, 0.05);
 $colorFormLines: rgba(#fff, 0.1);
+$colorFormSectionHeader: rgba(#000, 0.2);
 // Menu colors
 $colorMenuBg: lighten($colorBodyBg, 23%);
 $colorMenuFg: lighten($colorMenuBg, 70%);
@@ -104,6 +105,7 @@ $ueEditLeftPaneW: 75%;
 // Overlay
 $ovrTopBarH: 60px;
 $ovrFooterH: 40px;
+$overlayMargin: 25px;
 // Items
 $ueBrowseGridItemLg: 200px;
 $ueBrowseGridItemTopBarH: 20px;
@@ -145,9 +147,11 @@ $reqSymbolFontSize: 0.7em;
 
 /************************** CONTROLS */
 $controlDisabledOpacity: 0.3;
-$formLabelW: 20%;
+$formLabelW: 30%;
 $formInputH: 22px;
 $formRowCtrlsH: 14px;
+$formTBPad: $interiorMargin;
+$formLRPad: $interiorMargin;
 $menuLineH: 1.5rem;
 $menuLineHPx: 24px;
 $scrollbarTrackSize: 10px;

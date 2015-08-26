@@ -172,21 +172,20 @@
  *****************************************************************************/
 /* line 22, ../sass/forms/_elems.scss */
 .section-header {
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
   background: rgba(255, 255, 255, 0.1);
+  color: #cccccc;
   font-size: 0.8em;
-  margin-top: 5px;
-  padding: 5px; }
-  /* line 28, ../sass/forms/_elems.scss */
-  .section-header:first-child {
-    margin-top: 0; }
+  padding: 5px 5px;
+  text-transform: uppercase; }
 
 /* line 35, ../sass/forms/_elems.scss */
 .form .form-section {
-  position: relative; }
-/* line 39, ../sass/forms/_elems.scss */
+  position: relative;
+  margin-bottom: 20px; }
+/* line 40, ../sass/forms/_elems.scss */
 .form .form-row {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -195,12 +194,12 @@
   *zoom: 1;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-top: 5px;
-  padding: 5px;
+  padding: 5px 5px;
   position: relative; }
-  /* line 47, ../sass/forms/_elems.scss */
+  /* line 48, ../sass/forms/_elems.scss */
   .form .form-row.first {
     border-top: none; }
-  /* line 51, ../sass/forms/_elems.scss */
+  /* line 52, ../sass/forms/_elems.scss */
   .form .form-row .label,
   .form .form-row .controls {
     -moz-box-sizing: border-box;
@@ -211,42 +210,42 @@
     font-size: 0.8rem;
     line-height: 22px;
     min-height: 22px; }
-  /* line 60, ../sass/forms/_elems.scss */
+  /* line 61, ../sass/forms/_elems.scss */
   .form .form-row > .label {
     float: left;
     min-width: 120px;
     position: relative;
     white-space: nowrap;
-    width: 20%; }
-  /* line 70, ../sass/forms/_elems.scss */
+    width: 30%; }
+  /* line 71, ../sass/forms/_elems.scss */
   .form .form-row .value {
     color: #cccccc; }
-  /* line 74, ../sass/forms/_elems.scss */
+  /* line 75, ../sass/forms/_elems.scss */
   .form .form-row .controls {
     float: left;
     position: relative;
-    width: 79.9%; }
-    /* line 81, ../sass/forms/_elems.scss */
+    width: 69.9%; }
+    /* line 82, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-composite-control.l-checkbox {
       display: inline-block;
       line-height: 14px;
       margin-right: 5px; }
-    /* line 90, ../sass/forms/_elems.scss */
+    /* line 91, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-med input[type="text"] {
       width: 200px; }
-    /* line 94, ../sass/forms/_elems.scss */
+    /* line 95, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-small input[type="text"] {
       width: 50px; }
-    /* line 98, ../sass/forms/_elems.scss */
+    /* line 99, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-numeric input[type="text"] {
       text-align: right; }
-    /* line 102, ../sass/forms/_elems.scss */
+    /* line 103, ../sass/forms/_elems.scss */
     .form .form-row .controls .select {
       margin-right: 5px; }
-  /* line 107, ../sass/forms/_elems.scss */
+  /* line 108, ../sass/forms/_elems.scss */
   .form .form-row .field-hints {
     color: #666666; }
-  /* line 111, ../sass/forms/_elems.scss */
+  /* line 112, ../sass/forms/_elems.scss */
   .form .form-row .selector-list {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -259,7 +258,7 @@
     position: relative;
     height: 150px;
     overflow: auto; }
-    /* line 122, ../sass/forms/_elems.scss */
+    /* line 123, ../sass/forms/_elems.scss */
     .form .form-row .selector-list .wrapper {
       overflow-y: auto;
       position: absolute;
@@ -268,24 +267,24 @@
       bottom: 5px;
       left: 5px; }
 
-/* line 136, ../sass/forms/_elems.scss */
+/* line 137, ../sass/forms/_elems.scss */
 label.form-control.checkbox input {
   margin-right: 5px;
   vertical-align: top; }
 
-/* line 142, ../sass/forms/_elems.scss */
+/* line 143, ../sass/forms/_elems.scss */
 .hint,
 .s-hint {
   font-size: 0.9em; }
 
-/* line 147, ../sass/forms/_elems.scss */
+/* line 148, ../sass/forms/_elems.scss */
 .l-result {
   display: inline-block;
   min-width: 32px;
   min-height: 32px;
   position: relative;
   vertical-align: top; }
-  /* line 154, ../sass/forms/_elems.scss */
+  /* line 155, ../sass/forms/_elems.scss */
   .l-result div.s-hint {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;

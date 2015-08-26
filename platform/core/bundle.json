@@ -117,12 +117,6 @@
                         "pattern": "\\S+",
                         "required": true,
                         "cssclass": "l-med"
-                    },
-                    {
-                        "control": "checkbox",
-                        "name": "Display title by default",
-                        "key": "displayTitle",
-                        "property": [ "display", "title" ]
                     }
                 ]
             },

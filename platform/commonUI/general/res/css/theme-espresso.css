@@ -3486,21 +3486,20 @@ label.checkbox.custom {
  *****************************************************************************/
 /* line 22, ../sass/forms/_elems.scss */
 .section-header {
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
   background: rgba(255, 255, 255, 0.1);
+  color: #cccccc;
   font-size: 0.8em;
-  margin-top: 5px;
-  padding: 5px; }
-  /* line 28, ../sass/forms/_elems.scss */
-  .section-header:first-child {
-    margin-top: 0; }
+  padding: 5px 5px;
+  text-transform: uppercase; }
 
 /* line 35, ../sass/forms/_elems.scss */
 .form .form-section {
-  position: relative; }
-/* line 39, ../sass/forms/_elems.scss */
+  position: relative;
+  margin-bottom: 20px; }
+/* line 40, ../sass/forms/_elems.scss */
 .form .form-row {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -3509,12 +3508,12 @@ label.checkbox.custom {
   *zoom: 1;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-top: 5px;
-  padding: 5px;
+  padding: 5px 5px;
   position: relative; }
-  /* line 47, ../sass/forms/_elems.scss */
+  /* line 48, ../sass/forms/_elems.scss */
   .form .form-row.first {
     border-top: none; }
-  /* line 51, ../sass/forms/_elems.scss */
+  /* line 52, ../sass/forms/_elems.scss */
   .form .form-row .label,
   .form .form-row .controls {
     -moz-box-sizing: border-box;
@@ -3525,42 +3524,42 @@ label.checkbox.custom {
     font-size: 0.8rem;
     line-height: 22px;
     min-height: 22px; }
-  /* line 60, ../sass/forms/_elems.scss */
+  /* line 61, ../sass/forms/_elems.scss */
   .form .form-row > .label {
     float: left;
     min-width: 120px;
     position: relative;
     white-space: nowrap;
-    width: 20%; }
-  /* line 70, ../sass/forms/_elems.scss */
+    width: 30%; }
+  /* line 71, ../sass/forms/_elems.scss */
   .form .form-row .value {
     color: #cccccc; }
-  /* line 74, ../sass/forms/_elems.scss */
+  /* line 75, ../sass/forms/_elems.scss */
   .form .form-row .controls {
     float: left;
     position: relative;
-    width: 79.9%; }
-    /* line 81, ../sass/forms/_elems.scss */
+    width: 69.9%; }
+    /* line 82, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-composite-control.l-checkbox {
       display: inline-block;
       line-height: 14px;
       margin-right: 5px; }
-    /* line 90, ../sass/forms/_elems.scss */
+    /* line 91, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-med input[type="text"] {
       width: 200px; }
-    /* line 94, ../sass/forms/_elems.scss */
+    /* line 95, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-small input[type="text"] {
       width: 50px; }
-    /* line 98, ../sass/forms/_elems.scss */
+    /* line 99, ../sass/forms/_elems.scss */
     .form .form-row .controls .l-numeric input[type="text"] {
       text-align: right; }
-    /* line 102, ../sass/forms/_elems.scss */
+    /* line 103, ../sass/forms/_elems.scss */
     .form .form-row .controls .select {
       margin-right: 5px; }
-  /* line 107, ../sass/forms/_elems.scss */
+  /* line 108, ../sass/forms/_elems.scss */
   .form .form-row .field-hints {
     color: #666666; }
-  /* line 111, ../sass/forms/_elems.scss */
+  /* line 112, ../sass/forms/_elems.scss */
   .form .form-row .selector-list {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -3573,7 +3572,7 @@ label.checkbox.custom {
     position: relative;
     height: 150px;
     overflow: auto; }
-    /* line 122, ../sass/forms/_elems.scss */
+    /* line 123, ../sass/forms/_elems.scss */
     .form .form-row .selector-list .wrapper {
       overflow-y: auto;
       position: absolute;
@@ -3582,24 +3581,24 @@ label.checkbox.custom {
       bottom: 5px;
       left: 5px; }
 
-/* line 136, ../sass/forms/_elems.scss */
+/* line 137, ../sass/forms/_elems.scss */
 label.form-control.checkbox input {
   margin-right: 5px;
   vertical-align: top; }
 
-/* line 142, ../sass/forms/_elems.scss */
+/* line 143, ../sass/forms/_elems.scss */
 .hint,
 .s-hint {
   font-size: 0.9em; }
 
-/* line 147, ../sass/forms/_elems.scss */
+/* line 148, ../sass/forms/_elems.scss */
 .l-result {
   display: inline-block;
   min-width: 32px;
   min-height: 32px;
   position: relative;
   vertical-align: top; }
-  /* line 154, ../sass/forms/_elems.scss */
+  /* line 155, ../sass/forms/_elems.scss */
   .l-result div.s-hint {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -4346,19 +4345,14 @@ input[type="text"] {
   background: rgba(0, 0, 0, 0.7);
   z-index: 100; }
 /* line 27, ../sass/overlay/_overlay.scss */
-.overlay .btn.close {
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  padding: 3px 6px;
+.overlay .clk-icon.close {
   position: absolute;
-  border: none;
-  top: 3px;
-  right: 3px;
+  top: 10px;
+  right: 10px;
   bottom: auto;
   left: auto;
   z-index: 100; }
-/* line 38, ../sass/overlay/_overlay.scss */
+/* line 32, ../sass/overlay/_overlay.scss */
 .overlay > .holder {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzUyNTI1MiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzQ1NDU0NSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background-size: 100%;
@@ -4391,29 +4385,29 @@ input[type="text"] {
   /* line 175, ../sass/_mixins.scss */
   .overlay > .holder.btn-menu .invoke-menu {
     color: #757575; }
-  /* line 45, ../sass/overlay/_overlay.scss */
+  /* line 39, ../sass/overlay/_overlay.scss */
   .overlay > .holder > .contents {
     top: 25px;
     right: 25px;
     bottom: 25px;
     left: 25px; }
-/* line 50, ../sass/overlay/_overlay.scss */
+/* line 44, ../sass/overlay/_overlay.scss */
 .overlay .title {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 1.3em;
+  font-size: 1.2em;
   margin-bottom: 5px; }
-/* line 56, ../sass/overlay/_overlay.scss */
+/* line 50, ../sass/overlay/_overlay.scss */
 .overlay .top-bar {
   height: 60px; }
-/* line 60, ../sass/overlay/_overlay.scss */
+/* line 54, ../sass/overlay/_overlay.scss */
 .overlay .editor {
   top: 70px;
   bottom: 50px;
   left: 0;
   right: 0; }
-/* line 66, ../sass/overlay/_overlay.scss */
+/* line 60, ../sass/overlay/_overlay.scss */
 .overlay .bottom-bar {
   top: auto;
   right: 0;
@@ -4422,10 +4416,10 @@ input[type="text"] {
   overflow: visible;
   height: 40px;
   text-align: right; }
-  /* line 72, ../sass/overlay/_overlay.scss */
+  /* line 66, ../sass/overlay/_overlay.scss */
   .overlay .bottom-bar .btn {
     margin-left: 10px; }
-/* line 76, ../sass/overlay/_overlay.scss */
+/* line 70, ../sass/overlay/_overlay.scss */
 .overlay .contents.l-dialog {
   top: 5px;
   right: 5px;
@@ -4435,6 +4429,10 @@ input[type="text"] {
 
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
   /* line 4, ../sass/mobile/overlay/_overlay.scss */
+  .overlay .clk-icon.close {
+    top: 10px;
+    right: 10px; }
+  /* line 8, ../sass/mobile/overlay/_overlay.scss */
   .overlay > .holder {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
@@ -4443,23 +4441,26 @@ input[type="text"] {
     right: 0;
     bottom: 0;
     left: 0; }
-    /* line 10, ../sass/mobile/overlay/_overlay.scss */
+    /* line 14, ../sass/mobile/overlay/_overlay.scss */
     .overlay > .holder > .contents {
       top: 10px;
       right: 10px;
       bottom: 10px;
       left: 10px; }
-      /* line 16, ../sass/mobile/overlay/_overlay.scss */
+      /* line 21, ../sass/mobile/overlay/_overlay.scss */
+      .overlay > .holder > .contents .top-bar > .title {
+        margin-right: 1.2em; }
+      /* line 26, ../sass/mobile/overlay/_overlay.scss */
       .overlay > .holder > .contents .form.editor {
         border: none; }
-        /* line 19, ../sass/mobile/overlay/_overlay.scss */
+        /* line 29, ../sass/mobile/overlay/_overlay.scss */
         .overlay > .holder > .contents .form.editor .contents {
           top: 0;
           right: 0;
           bottom: 0;
           left: 0; } }
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 33, ../sass/mobile/overlay/_overlay.scss */
+  /* line 43, ../sass/mobile/overlay/_overlay.scss */
   .overlay > .holder > .contents .form.editor .contents .form-row > .label,
   .overlay > .holder > .contents .form.editor .contents .form-row > .controls {
     display: block;

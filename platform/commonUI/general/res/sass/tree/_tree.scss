@@ -132,7 +132,7 @@ ul.tree {
                 // NOTE: [Mobile] Removed Hover on Mobile
                 @include desktop {
                     &:hover {
-                        background: lighten($colorBodyBg, 5%);
+                        background: rgba(#fff, 0.1); //lighten($colorBodyBg, 5%);
                         color: lighten($colorBodyFg, 20%);
                         .context-trigger {
                             display: block;
