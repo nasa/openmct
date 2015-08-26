@@ -20,15 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// Mobile hamburger icon is
-// sized according to the device
-.mobile-menu-icon {
-    display: inline-block;
-    @include phoneandtablet {
-        font-size: 21px;
-        //padding-top: $imageThumbPad;
-    }
-    @include desktop {
-        display: none;
+// Override the Create menu for mobile
+@include phoneandtablet {
+    .menu-element {
+        .super-menu {
+            $d: 250px;
+            width: $d;
+            height: $d;
+
+            .pane {
+                &.left {
+                    border-right: none;
+                    padding-right: 0;
+                    width: 100%;
+                }
+                &.right {
+                    display: none;
+                }
+            }
+        }
     }
 }
