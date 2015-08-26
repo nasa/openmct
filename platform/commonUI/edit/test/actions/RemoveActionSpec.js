@@ -31,7 +31,11 @@ define(
                 mockNavigationService,
                 mockDomainObject,
                 mockParent,
+                mockChildObject,
+                mockGrandchildObject,
                 mockContext,
+                mockChildContext,
+                mockGrandchildContext,
                 mockMutation,
                 mockPersistence,
                 mockType,
@@ -55,6 +59,14 @@ define(
                     "domainObject",
                     [ "getId", "getCapability" ]
                 );
+                mockChildObject = jasmine.createSpyObj(
+                    "domainObject",
+                    [ "getId", "getCapability" ]
+                );
+                mockGrandchildObject = jasmine.createSpyObj(
+                    "domainObject",
+                    [ "getId", "getCapability" ]
+                );
                 mockQ = { when: mockPromise };
                 mockParent = {
                     getModel: function () {
@@ -65,12 +77,11 @@ define(
                     },
                     useCapability: function (k, v) {
                         return capabilities[k].invoke(v);
-                    },
-                    getId: function () {
-                        return "test";
                     }
                 };
                 mockContext = jasmine.createSpyObj("context", [ "getParent" ]);
+                mockChildContext = jasmine.createSpyObj("context", [ "getParent" ]);
+                mockGrandchildContext = jasmine.createSpyObj("context", [ "getParent" ]);
                 mockMutation = jasmine.createSpyObj("mutation", [ "invoke" ]);
                 mockPersistence = jasmine.createSpyObj("persistence", [ "persist" ]);
                 mockType = jasmine.createSpyObj("type", [ "hasFeature" ]);
@@ -97,7 +108,7 @@ define(
                     type: mockType
                 };
                 model = {
-                    composition: [ "a", "test", "b", "c" ]
+                    composition: [ "a", "test", "b" ]
                 };
 
                 actionContext = { domainObject: mockDomainObject };
@@ -137,10 +148,65 @@ define(
 
                 // Should have removed "test" - that was our
                 // mock domain object's id.
-                expect(result.composition).toEqual(["a", "b", "c"]);
+                expect(result.composition).toEqual(["a", "b"]);
 
                 // Finally, should have persisted
                 expect(mockPersistence.persist).toHaveBeenCalled();
+            });
+            
+            it("removes parent of object currently navigated to", function () {
+                var mutator, result;
+                
+                // Navigates to child object
+                mockNavigationService.getNavigation.andReturn(mockChildObject);
+                
+                // Test is id of object being removed
+                // Child object has different id
+                mockDomainObject.getId.andReturn("test");
+                mockChildObject.getId.andReturn("not test");
+                
+                // Sets context for the child and domainObject
+                mockDomainObject.getCapability.andReturn(mockContext);
+                mockChildObject.getCapability.andReturn(mockChildContext);
+                
+                // Parents of child and domainObject are set
+                mockContext.getParent.andReturn(mockParent);
+                mockChildContext.getParent.andReturn(mockDomainObject);
+                
+                mockType.hasFeature.andReturn(true);
+                
+                action.perform();
+                
+                // Expects navigation to parent of domainObject (removed object)
+                expect(mockNavigationService.setNavigation).toHaveBeenCalledWith(mockParent);
+            });
+            
+            it("checks if removing object not in ascendent path (reaches ROOT)", function () {
+                // Navigates to grandchild of ROOT
+                mockNavigationService.getNavigation.andReturn(mockGrandchildObject);
+                
+                // domainObject (grandparent) is set as ROOT, child and grandchild
+                // are set objects not being removed
+                mockDomainObject.getId.andReturn("ROOT");
+                mockChildObject.getId.andReturn("not test");
+                mockGrandchildObject.getId.andReturn("not test");
+                
+                // Sets context for the grandchild, child, and domainObject
+                mockDomainObject.getCapability.andReturn(mockContext);
+                mockChildObject.getCapability.andReturn(mockChildContext);
+                mockGrandchildObject.getCapability.andReturn(mockGrandchildContext);
+                
+                // Parents of grandchild, child, and domainObject are set
+                mockContext.getParent.andReturn(mockParent);
+                mockChildContext.getParent.andReturn(mockDomainObject);
+                mockGrandchildContext.getParent.andReturn(mockChildObject);
+                
+                mockType.hasFeature.andReturn(true);
+                
+                action.perform();
+                
+                // Expects no navigation to occur
+                expect(mockNavigationService.setNavigation).not.toHaveBeenCalled();
             });
 
         });

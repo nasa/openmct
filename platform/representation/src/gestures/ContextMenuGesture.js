@@ -33,24 +33,30 @@ define(
          * Add listeners to a representation such that it calls the
          * context menu action for the domain object it contains.
          *
+         * @memberof platform/representation
          * @constructor
          * @param element the jqLite-wrapped element which should exhibit
-         *                the context mennu
+         *                the context menu
          * @param {DomainObject} domainObject the object on which actions
          *                       in the context menu will be performed
+         * @implements {Gesture}
          */
         function ContextMenuGesture($timeout, agentService, element, domainObject) {
-            var actionContext,
-                stop,
-                isPressing,
+            var isPressing,
                 longTouchTime = 500;
-            
-            // When context menu event occurs, show object actions instead
-            if (!agentService.isMobile(navigator.userAgent)) {
-                element.on('contextmenu', function (event) {
-                    actionContext = {key: 'menu', domainObject: domainObject, event: event};
-                    stop = domainObject.getCapability('action').perform(actionContext);
+    
+            function showMenu(event) {
+                domainObject.getCapability('action').perform({
+                    key: 'menu',
+                    domainObject: domainObject,
+                    event: event
                 });
+            }
+    
+    // When context menu event occurs, show object actions instead
+            if (!agentService.isMobile(navigator.userAgent)) {
+                // When context menu event occurs, show object actions instead
+                element.on('contextmenu', showMenu);
             } else if (agentService.isMobile(navigator.userAgent)) {
                 // If on mobile device, then start timeout for the single touch event
                 // during the timeout 'isPressing' is true.
@@ -61,8 +67,7 @@ define(
                         // true, display context menu for object
                         $timeout(function () {
                             if (isPressing) {
-                                actionContext = {key: 'menu', domainObject: domainObject, event: event};
-                                stop = domainObject.getCapability('action').perform(actionContext);
+                                showMenu(event);
                             }
                         }, longTouchTime);
                     }
@@ -73,17 +78,13 @@ define(
                 });
             }
 
-            return {
-                /**
-                 * Detach any event handlers associated with this gesture.
-                 * @method
-                 * @memberof ContextMenuGesture
-                 */
-                destroy: function () {
-                    element.off('contextmenu', stop);
-                }
-            };
+            this.showMenuCallback = showMenu;
+            this.element = element;
         }
+
+        ContextMenuGesture.prototype.destroy = function () {
+            this.element.off('contextmenu', this.showMenu);
+        };
 
         return ContextMenuGesture;
     }

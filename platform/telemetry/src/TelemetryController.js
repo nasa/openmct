@@ -34,7 +34,9 @@ define(
          * which need to issue requests for telemetry data and use the
          * results
          *
+         * @memberof platform/telemetry
          * @constructor
+         * @deprecated use platform/telemetry.TelemetryHandler instead
          */
         function TelemetryController($scope, $q, $timeout, $log) {
 
@@ -314,6 +316,7 @@ define(
                  * given index will correspond to the telemetry-providing
                  * domain object at the same index.
                  * @returns {Array} an array of metadata objects
+                 * @memberof platform/telemetry.TelemetryController#
                  */
                 getMetadata: function () {
                     return self.metadatas;
@@ -328,6 +331,7 @@ define(
                  * given index will correspond to the telemetry-providing
                  * domain object at the same index.
                  * @returns {DomainObject[]} an array of metadata objects
+                 * @memberof platform/telemetry.TelemetryController#
                  */
                 getTelemetryObjects: function () {
                     return self.telemetryObjects;
@@ -345,6 +349,7 @@ define(
                  * response at a given index will correspond to the
                  * telemetry-providing domain object at the same index.
                  * @returns {Array} an array of responses
+                 * @memberof platform/telemetry.TelemetryController#
                  */
                 getResponse: function getResponse(arg) {
                     var id = arg && (typeof arg === 'string' ?
@@ -364,6 +369,7 @@ define(
                  * show user feedback, such as a wait spinner.
                  *
                  * @returns {boolean} true if the request is still outstanding
+                 * @memberof platform/telemetry.TelemetryController#
                  */
                 isRequestPending: function () {
                     return self.pending > 0;
@@ -372,6 +378,7 @@ define(
                  * Issue a new data request. This will change the
                  * request parameters that are passed along to all
                  * telemetry capabilities managed by this controller.
+                 * @memberof platform/telemetry.TelemetryController#
                  */
                 requestData: function (request) {
                     self.request = request || {};
@@ -382,6 +389,7 @@ define(
                  * perform its polling activity.
                  * @param {number} durationMillis the interval at
                  *        which to poll, in milliseconds
+                 * @memberof platform/telemetry.TelemetryController#
                  */
                 setRefreshInterval: function (durationMillis) {
                     self.interval = durationMillis;

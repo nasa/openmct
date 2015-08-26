@@ -42,7 +42,9 @@ define(
          * @param {DomainObject} parentObject the domain object from which
          *        the wrapped object was retrieved
          *
+         * @memberof platform/core
          * @constructor
+         * @implements {DomainObject}
          */
         function ContextualDomainObject(domainObject, parentObject) {
             // Prototypally inherit from the domain object, and

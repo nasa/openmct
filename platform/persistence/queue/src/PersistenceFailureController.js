@@ -29,24 +29,28 @@ define(
         /**
          * Controller to support the template to be shown in the
          * dialog shown for persistence failures.
+         * @constructor
+         * @memberof platform/persistence/queue
          */
         function PersistenceFailureController() {
-            return {
-                /**
-                 * Format a timestamp for display in the dialog.
-                 */
-                formatTimestamp: function (timestamp) {
-                    return moment.utc(timestamp)
-                        .format(Constants.TIMESTAMP_FORMAT);
-                },
-                /**
-                 * Format a user name for display in the dialog.
-                 */
-                formatUsername: function (username) {
-                    return username || Constants.UNKNOWN_USER;
-                }
-            };
         }
+
+        /**
+         * Format a timestamp for display in the dialog.
+         * @memberof platform/persistence/queue.PersistenceFailureController#
+         */
+        PersistenceFailureController.prototype.formatTimestamp = function (timestamp) {
+            return moment.utc(timestamp)
+                .format(Constants.TIMESTAMP_FORMAT);
+        };
+
+        /**
+         * Format a user name for display in the dialog.
+         * @memberof platform/persistence/queue.PersistenceFailureController#
+         */
+        PersistenceFailureController.prototype.formatUsername = function (username) {
+            return username || Constants.UNKNOWN_USER;
+        };
 
         return PersistenceFailureController;
     }

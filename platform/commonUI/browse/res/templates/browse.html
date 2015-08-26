@@ -25,14 +25,20 @@
     <div class="holder browse-area s-browse-area abs browse-wrapper" ng-class="treeClass ? 'browse-showtree' : 'browse-hidetree'">
         <mct-split-pane class='contents abs' anchor='left'>
             <div class='split-pane-component treeview pane left'>
-                <div class="holder abs l-mobile">
-                    <div class='tree-holder abs mobile-tree-holder'>
-                        <mct-representation key="'tree'"
-                                            mct-object="domainObject"
-                                            ng-model="treeModel">
-                        </mct-representation>
-                    </div>
-                    <mct-representation key="'create-button'" mct-object="navigatedObject">
+                <mct-representation key="'create-button'" mct-object="navigatedObject">
+                </mct-representation>
+                <div class='holder search-holder abs l-mobile'
+                     ng-class="{active: treeModel.search}">
+                    <mct-representation key="'search'"
+                                 mct-object="domainObject"
+                                 ng-model="treeModel">
+                    </mct-representation>
+                </div>
+                <div class='tree-holder abs mobile-tree-holder'
+                     ng-hide="treeModel.search">
+                    <mct-representation key="'tree'"
+                                        mct-object="domainObject"
+                                        ng-model="treeModel">
                     </mct-representation>
                 </div>
             </div>

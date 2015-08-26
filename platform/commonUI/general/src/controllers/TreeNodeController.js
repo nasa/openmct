@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
+/*global define,Promise,window*/
 
 /**
  * Module defining TreeNodeController. Created by vwoeltje on 11/10/14.
@@ -48,10 +48,12 @@ define(
          * node expansion when this tree node's _subtree_ will contain
          * the navigated object (recursively, this becomes an
          * expand-to-show-navigated-object behavior.)
+         * @memberof platform/commonUI/general
          * @constructor
          */
         function TreeNodeController($scope, $timeout, agentService) {
-            var selectedObject = ($scope.ngModel || {}).selectedObject,
+            var self = this,
+                selectedObject = ($scope.ngModel || {}).selectedObject,
                 isSelected = false,
                 hasBeenExpanded = false;
 
@@ -75,21 +77,6 @@ define(
                         ((navPath[index] === nodePath[index]) &&
                                 checkPath(nodePath, navPath, index + 1));
             }
-
-            // Track that a node has been expanded, either by the
-            // user or automatically to show a selection.
-            function trackExpansion() {
-                if (!hasBeenExpanded) {
-                    // Run on a timeout; if a lot of expansion needs to
-                    // occur (e.g. if the selection is several nodes deep) we
-                    // want this to be spread across multiple digest cycles.
-                    $timeout(function () { hasBeenExpanded = true; }, 0);
-                }
-            }
-            
-            function checkMobile() {
-                return agentService.isMobile(navigator.userAgent);
-            }
             
             // Consider the currently-navigated object and update
             // parameters which support display.
@@ -105,7 +92,7 @@ define(
 
                 // Deselect; we will reselect below, iff we are
                 // exactly at the end of the path.
-                isSelected = false;
+                self.isSelectedFlag = false;
 
                 // Expand if necessary (if the navigated object will
                 // be in this node's subtree)
@@ -124,12 +111,12 @@ define(
                         // at the end of the path, highlight;
                         // otherwise, expand.
                         if (nodePath.length === navPath.length) {
-                            isSelected = true;
+                            self.isSelectedFlag = true;
                         } else { // node path is shorter: Expand!
                             if ($scope.toggle) {
                                 $scope.toggle.setState(true);
                             }
-                            trackExpansion();
+                            self.trackExpansion();
                         }
 
                     }
@@ -142,40 +129,68 @@ define(
                 selectedObject = object;
                 checkSelection();
             }
-            
+
+            this.isSelectedFlag = false;
+            this.hasBeenExpandedFlag = false;
+            this.$timeout = $timeout;
+            this.agentService = agentService;
+            this.$scope = $scope;
+
             // Listen for changes which will effect display parameters
             $scope.$watch("ngModel.selectedObject", setSelection);
             $scope.$watch("domainObject", checkSelection);
-
-            return {
-                /**
-                 * This method should be called when a node is expanded
-                 * to record that this has occurred, to support one-time
-                 * lazy loading of the node's subtree.
-                 */
-                trackExpansion: trackExpansion,
-                
-                checkMobile: checkMobile,
-                
-                /**
-                 * Check if this not has ever been expanded.
-                 * @returns true if it has been expanded
-                 */
-                hasBeenExpanded: function () {
-                    return hasBeenExpanded;
-                },
-                /**
-                 * Check whether or not the domain object represented by
-                 * this tree node should be highlighted.
-                 * An object will be highlighted if it matches
-                 * ngModel.selectedObject
-                 * @returns true if this should be highlighted
-                 */
-                isSelected: function () {
-                    return isSelected;
-                }
-            };
         }
+
+        /**
+         * This method should be called when a node is expanded
+         * to record that this has occurred, to support one-time
+         * lazy loading of the node's subtree.
+         */
+        TreeNodeController.prototype.trackExpansion = function () {
+            var self = this;
+            if (!self.hasBeenExpanded()) {
+                // Run on a timeout; if a lot of expansion needs to
+                // occur (e.g. if the selection is several nodes deep) we
+                // want this to be spread across multiple digest cycles.
+                self.$timeout(function () {
+                    self.hasBeenExpandedFlag = true;
+                }, 0);
+            }
+        };
+
+        /**
+         * Check if this not has ever been expanded.
+         * @returns true if it has been expanded
+         */
+        TreeNodeController.prototype.hasBeenExpanded = function () {
+            return this.hasBeenExpandedFlag;
+        };
+
+        /**
+         * Check whether or not the domain object represented by
+         * this tree node should be highlighted.
+         * An object will be highlighted if it matches
+         * ngModel.selectedObject
+         * @returns true if this should be highlighted
+         */
+        TreeNodeController.prototype.isSelected = function () {
+            return this.isSelectedFlag;
+        };
+        
+        // Sets the selected object in the tree, to be the
+        // currently represented object. If the user is on phone
+        // and in portrait mode, than, hide the tree menu
+        TreeNodeController.prototype.setObject = function (ngModel, domainObject) {
+            ngModel.selectedObject = domainObject;
+            if (this.agentService.getOrientation(window.innerWidth, window.innerHeight) === "portrait" &&
+                    this.agentService.isPhone(navigator.userAgent)) {
+                this.$scope.$emit('select-obj');
+            }
+        };
+            
+        TreeNodeController.prototype.checkMobile = function () {
+            return this.agentService.isMobile(navigator.userAgent);
+        };
 
         return TreeNodeController;
     }

@@ -100,6 +100,7 @@
  *****************************************************************************/
 /* CONSTANTS */
 /*****************************************************************************
+/*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
@@ -694,44 +695,46 @@ mct-container {
       position: absolute;
       bottom: 5px; }
   /* line 241, ../sass/user-environ/_layout.scss */
+  .pane.treeview.left .search-holder {
+    top: 34px; }
+  /* line 244, ../sass/user-environ/_layout.scss */
   .pane.treeview.left .tree-holder {
     overflow: auto;
-    top: 34px;
-    padding-right: 5px; }
-  /* line 249, ../sass/user-environ/_layout.scss */
+    top: 64px; }
+  /* line 251, ../sass/user-environ/_layout.scss */
   .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .btn-menu span.left.l-click-area, .btn-menu .pane.items .object-browse-bar span.left.l-click-area,
   .pane.items .object-browse-bar .right.abs,
   .pane.items .object-browse-bar .btn-menu span.right.l-click-area,
   .btn-menu .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
-  /* line 260, ../sass/user-environ/_layout.scss */
+  /* line 262, ../sass/user-environ/_layout.scss */
   .pane.items .object-holder {
     top: 34px; }
-  /* line 264, ../sass/user-environ/_layout.scss */
+  /* line 266, ../sass/user-environ/_layout.scss */
   .pane .object-holder {
     overflow: auto; }
 
-/* line 272, ../sass/user-environ/_layout.scss */
+/* line 274, ../sass/user-environ/_layout.scss */
 .split-layout.horizontal > .pane {
   margin-top: 5px; }
-  /* line 275, ../sass/user-environ/_layout.scss */
+  /* line 277, ../sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane:first-child {
     margin-top: 0; }
-/* line 282, ../sass/user-environ/_layout.scss */
+/* line 284, ../sass/user-environ/_layout.scss */
 .split-layout.vertical > .pane {
   margin-left: 5px; }
-  /* line 285, ../sass/user-environ/_layout.scss */
+  /* line 287, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane > .holder {
     left: 0;
     right: 0; }
-  /* line 289, ../sass/user-environ/_layout.scss */
+  /* line 291, ../sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane:first-child {
     margin-left: 0; }
-    /* line 291, ../sass/user-environ/_layout.scss */
+    /* line 293, ../sass/user-environ/_layout.scss */
     .split-layout.vertical > .pane:first-child .holder {
       right: 3px; }
 
-/* line 300, ../sass/user-environ/_layout.scss */
+/* line 302, ../sass/user-environ/_layout.scss */
 .object-browse-bar .btn,
 .object-browse-bar .t-btn,
 .object-browse-bar .view-switcher,
@@ -745,12 +748,12 @@ mct-container {
   line-height: 200%;
   vertical-align: top; }
 
-/* line 317, ../sass/user-environ/_layout.scss */
+/* line 319, ../sass/user-environ/_layout.scss */
 .object-browse-bar .view-switcher,
 .top-bar .view-switcher {
   margin-right: 20px; }
 
-/* line 322, ../sass/user-environ/_layout.scss */
+/* line 324, ../sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
 
@@ -1505,29 +1508,32 @@ table {
       table .tr .th:first-child {
         border-left: none; }
       /* line 85, ../sass/lists/_tabular.scss */
-      .tabular tr th.sort .icon-sorting:before, .tabular tr .th.sort .icon-sorting:before, .tabular .tr th.sort .icon-sorting:before, .tabular .tr .th.sort .icon-sorting:before,
-      table tr th.sort .icon-sorting:before,
-      table tr .th.sort .icon-sorting:before,
-      table .tr th.sort .icon-sorting:before,
-      table .tr .th.sort .icon-sorting:before {
-        display: inline-block;
+      .tabular tr th.sort.sort:after, .tabular tr .th.sort.sort:after, .tabular .tr th.sort.sort:after, .tabular .tr .th.sort.sort:after,
+      table tr th.sort.sort:after,
+      table tr .th.sort.sort:after,
+      table .tr th.sort.sort:after,
+      table .tr .th.sort.sort:after {
+        color: #49dedb;
         font-family: symbolsfont;
-        margin-left: 5px; }
-      /* line 90, ../sass/lists/_tabular.scss */
-      .tabular tr th.sort.asc .icon-sorting:before, .tabular tr .th.sort.asc .icon-sorting:before, .tabular .tr th.sort.asc .icon-sorting:before, .tabular .tr .th.sort.asc .icon-sorting:before,
-      table tr th.sort.asc .icon-sorting:before,
-      table tr .th.sort.asc .icon-sorting:before,
-      table .tr th.sort.asc .icon-sorting:before,
-      table .tr .th.sort.asc .icon-sorting:before {
-        content: '0'; }
+        font-size: 8px;
+        content: "\ed";
+        display: inline-block;
+        margin-left: 3px; }
       /* line 93, ../sass/lists/_tabular.scss */
-      .tabular tr th.sort.desc .icon-sorting:before, .tabular tr .th.sort.desc .icon-sorting:before, .tabular .tr th.sort.desc .icon-sorting:before, .tabular .tr .th.sort.desc .icon-sorting:before,
-      table tr th.sort.desc .icon-sorting:before,
-      table tr .th.sort.desc .icon-sorting:before,
-      table .tr th.sort.desc .icon-sorting:before,
-      table .tr .th.sort.desc .icon-sorting:before {
-        content: '1'; }
-    /* line 98, ../sass/lists/_tabular.scss */
+      .tabular tr th.sort.sort.desc:after, .tabular tr .th.sort.sort.desc:after, .tabular .tr th.sort.sort.desc:after, .tabular .tr .th.sort.sort.desc:after,
+      table tr th.sort.sort.desc:after,
+      table tr .th.sort.sort.desc:after,
+      table .tr th.sort.sort.desc:after,
+      table .tr .th.sort.sort.desc:after {
+        content: "\ec"; }
+      /* line 97, ../sass/lists/_tabular.scss */
+      .tabular tr th.sortable, .tabular tr .th.sortable, .tabular .tr th.sortable, .tabular .tr .th.sortable,
+      table tr th.sortable,
+      table tr .th.sortable,
+      table .tr th.sortable,
+      table .tr .th.sortable {
+        cursor: pointer; }
+    /* line 101, ../sass/lists/_tabular.scss */
     .tabular tr td, .tabular tr .td, .tabular .tr td, .tabular .tr .td,
     table tr td,
     table tr .td,
@@ -1539,21 +1545,21 @@ table {
       padding: 3px 5px;
       word-wrap: break-word;
       vertical-align: top; }
-      /* line 105, ../sass/lists/_tabular.scss */
+      /* line 108, ../sass/lists/_tabular.scss */
       .tabular tr td.numeric, .tabular tr .td.numeric, .tabular .tr td.numeric, .tabular .tr .td.numeric,
       table tr td.numeric,
       table tr .td.numeric,
       table .tr td.numeric,
       table .tr .td.numeric {
         text-align: right; }
-      /* line 108, ../sass/lists/_tabular.scss */
+      /* line 111, ../sass/lists/_tabular.scss */
       .tabular tr td.s-cell-type-value, .tabular tr .td.s-cell-type-value, .tabular .tr td.s-cell-type-value, .tabular .tr .td.s-cell-type-value,
       table tr td.s-cell-type-value,
       table tr .td.s-cell-type-value,
       table .tr td.s-cell-type-value,
       table .tr .td.s-cell-type-value {
         text-align: right; }
-        /* line 110, ../sass/lists/_tabular.scss */
+        /* line 113, ../sass/lists/_tabular.scss */
         .tabular tr td.s-cell-type-value .l-cell-contents, .tabular tr .td.s-cell-type-value .l-cell-contents, .tabular .tr td.s-cell-type-value .l-cell-contents, .tabular .tr .td.s-cell-type-value .l-cell-contents,
         table tr td.s-cell-type-value .l-cell-contents,
         table tr .td.s-cell-type-value .l-cell-contents,
@@ -1564,23 +1570,23 @@ table {
           border-radius: 2px;
           padding-left: 5px;
           padding-right: 5px; }
-  /* line 126, ../sass/lists/_tabular.scss */
+  /* line 129, ../sass/lists/_tabular.scss */
   .tabular.filterable tbody, .tabular.filterable .tbody,
   table.filterable tbody,
   table.filterable .tbody {
     top: 44px; }
-  /* line 129, ../sass/lists/_tabular.scss */
+  /* line 132, ../sass/lists/_tabular.scss */
   .tabular.filterable input[type="text"],
   table.filterable input[type="text"] {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%; }
-  /* line 135, ../sass/lists/_tabular.scss */
+  /* line 138, ../sass/lists/_tabular.scss */
   .tabular.fixed-header,
   table.fixed-header {
     height: 100%; }
-    /* line 137, ../sass/lists/_tabular.scss */
+    /* line 140, ../sass/lists/_tabular.scss */
     .tabular.fixed-header thead, .tabular.fixed-header .thead,
     .tabular.fixed-header tbody tr, .tabular.fixed-header .tbody .tr,
     table.fixed-header thead,
@@ -1589,12 +1595,12 @@ table {
     table.fixed-header .tbody .tr {
       display: table;
       table-layout: fixed; }
-    /* line 142, ../sass/lists/_tabular.scss */
+    /* line 145, ../sass/lists/_tabular.scss */
     .tabular.fixed-header thead, .tabular.fixed-header .thead,
     table.fixed-header thead,
     table.fixed-header .thead {
       width: calc(100% - 10px); }
-      /* line 144, ../sass/lists/_tabular.scss */
+      /* line 147, ../sass/lists/_tabular.scss */
       .tabular.fixed-header thead:before, .tabular.fixed-header .thead:before,
       table.fixed-header thead:before,
       table.fixed-header .thead:before {
@@ -1605,7 +1611,7 @@ table {
         width: 100%;
         height: 22px;
         background: rgba(255, 255, 255, 0.15); }
-    /* line 154, ../sass/lists/_tabular.scss */
+    /* line 157, ../sass/lists/_tabular.scss */
     .tabular.fixed-header tbody, .tabular.fixed-header .tbody,
     table.fixed-header tbody,
     table.fixed-header .tbody {
@@ -1620,7 +1626,7 @@ table {
       top: 22px;
       display: block;
       overflow-y: scroll; }
-  /* line 162, ../sass/lists/_tabular.scss */
+  /* line 165, ../sass/lists/_tabular.scss */
   .tabular.t-event-messages td, .tabular.t-event-messages .td,
   table.t-event-messages td,
   table.t-event-messages .td {
@@ -2847,22 +2853,23 @@ label.checkbox.custom {
         color: #d9d9d9;
         line-height: 1.5rem;
         padding: 3px 10px 3px 30px;
+        position: relative;
         white-space: nowrap; }
-        /* line 46, ../sass/controls/_menus.scss */
+        /* line 47, ../sass/controls/_menus.scss */
         .menu-element .menu ul li:first-child {
           border: none; }
-        /* line 49, ../sass/controls/_menus.scss */
+        /* line 50, ../sass/controls/_menus.scss */
         .menu-element .menu ul li:hover {
           background: #737373;
           color: #fff; }
-          /* line 55, ../sass/controls/_menus.scss */
+          /* line 56, ../sass/controls/_menus.scss */
           .menu-element .menu ul li:hover .icon {
             color: #33ccff; }
-        /* line 63, ../sass/controls/_menus.scss */
+        /* line 64, ../sass/controls/_menus.scss */
         .menu-element .menu ul li .type-icon {
           left: 10px; }
-  /* line 70, ../sass/controls/_menus.scss */
-  .menu-element .context-menu,
+  /* line 71, ../sass/controls/_menus.scss */
+  .menu-element .context-menu, .menu-element .checkbox-menu,
   .menu-element .super-menu {
     pointer-events: auto;
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzhjOGM4YyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzgwODA4MCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
@@ -2885,35 +2892,56 @@ label.checkbox.custom {
     color: #999;
     display: inline-block; }
     /* line 175, ../sass/_mixins.scss */
-    .menu-element .context-menu.btn-menu .invoke-menu,
+    .menu-element .context-menu.btn-menu .invoke-menu, .menu-element .btn-menu.checkbox-menu .invoke-menu,
     .menu-element .super-menu.btn-menu .invoke-menu {
       color: #b0b0b0; }
-    /* line 78, ../sass/controls/_menus.scss */
-    .menu-element .context-menu ul li,
+    /* line 79, ../sass/controls/_menus.scss */
+    .menu-element .context-menu ul li, .menu-element .checkbox-menu ul li,
     .menu-element .super-menu ul li {
       padding-left: 25px; }
-      /* line 80, ../sass/controls/_menus.scss */
-      .menu-element .context-menu ul li a,
+      /* line 81, ../sass/controls/_menus.scss */
+      .menu-element .context-menu ul li a, .menu-element .checkbox-menu ul li a,
       .menu-element .super-menu ul li a {
         color: white; }
-      /* line 81, ../sass/controls/_menus.scss */
-      .menu-element .context-menu ul li .icon,
+      /* line 84, ../sass/controls/_menus.scss */
+      .menu-element .context-menu ul li .icon, .menu-element .checkbox-menu ul li .icon,
       .menu-element .super-menu ul li .icon {
         color: #24c8ff; }
-      /* line 84, ../sass/controls/_menus.scss */
-      .menu-element .context-menu ul li .type-icon,
+      /* line 87, ../sass/controls/_menus.scss */
+      .menu-element .context-menu ul li .type-icon, .menu-element .checkbox-menu ul li .type-icon,
       .menu-element .super-menu ul li .type-icon {
         left: 5px; }
-      /* line 87, ../sass/controls/_menus.scss */
-      .menu-element .context-menu ul li:hover .icon,
+      /* line 90, ../sass/controls/_menus.scss */
+      .menu-element .context-menu ul li:hover .icon, .menu-element .checkbox-menu ul li:hover .icon,
       .menu-element .super-menu ul li:hover .icon {
         color: #3dcfff; }
-  /* line 94, ../sass/controls/_menus.scss */
+  /* line 99, ../sass/controls/_menus.scss */
+  .menu-element .checkbox-menu ul li {
+    padding-left: 50px; }
+    /* line 101, ../sass/controls/_menus.scss */
+    .menu-element .checkbox-menu ul li .checkbox {
+      position: absolute;
+      left: 5px;
+      top: 0.53333rem; }
+      /* line 106, ../sass/controls/_menus.scss */
+      .menu-element .checkbox-menu ul li .checkbox em {
+        height: 0.7rem;
+        width: 0.7rem; }
+        /* line 109, ../sass/controls/_menus.scss */
+        .menu-element .checkbox-menu ul li .checkbox em:before {
+          font-size: 7px !important;
+          height: 0.7rem;
+          width: 0.7rem;
+          line-height: 0.7rem; }
+    /* line 117, ../sass/controls/_menus.scss */
+    .menu-element .checkbox-menu ul li .type-icon {
+      left: 25px; }
+  /* line 123, ../sass/controls/_menus.scss */
   .menu-element .super-menu {
     display: block;
     width: 500px;
     height: 480px; }
-    /* line 104, ../sass/controls/_menus.scss */
+    /* line 133, ../sass/controls/_menus.scss */
     .menu-element .super-menu .contents {
       overflow: hidden;
       position: absolute;
@@ -2923,12 +2951,12 @@ label.checkbox.custom {
       left: 5px;
       width: auto;
       height: auto; }
-    /* line 107, ../sass/controls/_menus.scss */
+    /* line 136, ../sass/controls/_menus.scss */
     .menu-element .super-menu .pane {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box; }
-      /* line 109, ../sass/controls/_menus.scss */
+      /* line 138, ../sass/controls/_menus.scss */
       .menu-element .super-menu .pane.left {
         border-right: 1px solid rgba(255, 255, 255, 0.2);
         left: 0;
@@ -2937,23 +2965,23 @@ label.checkbox.custom {
         width: 50%;
         overflow-x: hidden;
         overflow-y: auto; }
-        /* line 119, ../sass/controls/_menus.scss */
+        /* line 148, ../sass/controls/_menus.scss */
         .menu-element .super-menu .pane.left ul li {
           -moz-border-radius: 3px;
           -webkit-border-radius: 3px;
           border-radius: 3px;
           padding-left: 30px;
           border-top: none; }
-      /* line 126, ../sass/controls/_menus.scss */
+      /* line 155, ../sass/controls/_menus.scss */
       .menu-element .super-menu .pane.right {
         left: auto;
         right: 0;
         padding: 25px;
         width: 50%; }
-        /* line 132, ../sass/controls/_menus.scss */
+        /* line 161, ../sass/controls/_menus.scss */
         .menu-element .super-menu .pane.right .icon {
           color: #fff; }
-    /* line 139, ../sass/controls/_menus.scss */
+    /* line 168, ../sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.icon {
       position: relative;
       font-size: 8em;
@@ -2962,40 +2990,40 @@ label.checkbox.custom {
       line-height: 150px;
       margin-bottom: 25px;
       text-align: center; }
-    /* line 149, ../sass/controls/_menus.scss */
+    /* line 178, ../sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.title {
       color: #fff;
       font-size: 1.2em;
       margin-bottom: 0.5em; }
-    /* line 154, ../sass/controls/_menus.scss */
+    /* line 183, ../sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.description {
       color: #fff;
       font-size: 0.8em;
       line-height: 1.5em; }
-  /* line 163, ../sass/controls/_menus.scss */
-  .menu-element .context-menu {
+  /* line 192, ../sass/controls/_menus.scss */
+  .menu-element .context-menu, .menu-element .checkbox-menu {
     font-size: 0.80rem; }
 
-/* line 168, ../sass/controls/_menus.scss */
+/* line 197, ../sass/controls/_menus.scss */
 .context-menu-holder {
   pointer-events: none;
   position: absolute;
   height: 200px;
   width: 170px;
   z-index: 70; }
-  /* line 174, ../sass/controls/_menus.scss */
+  /* line 203, ../sass/controls/_menus.scss */
   .context-menu-holder .context-menu-wrapper {
     position: absolute;
     height: 100%;
     width: 100%; }
-  /* line 181, ../sass/controls/_menus.scss */
-  .context-menu-holder.go-left .context-menu {
+  /* line 210, ../sass/controls/_menus.scss */
+  .context-menu-holder.go-left .context-menu, .context-menu-holder.go-left .menu-element .checkbox-menu, .menu-element .context-menu-holder.go-left .checkbox-menu {
     right: 0; }
-  /* line 182, ../sass/controls/_menus.scss */
-  .context-menu-holder.go-up .context-menu {
+  /* line 213, ../sass/controls/_menus.scss */
+  .context-menu-holder.go-up .context-menu, .context-menu-holder.go-up .menu-element .checkbox-menu, .menu-element .context-menu-holder.go-up .checkbox-menu {
     bottom: 0; }
 
-/* line 185, ../sass/controls/_menus.scss */
+/* line 218, ../sass/controls/_menus.scss */
 .btn-bar.right .menu,
 .menus-to-left .menu {
   left: auto;
@@ -4793,30 +4821,30 @@ input[type="text"] {
       .l-infobubble-wrapper .l-infobubble table tr td {
         padding: 2px 0;
         vertical-align: top; }
-        /* line 57, ../sass/helpers/_bubbles.scss */
+        /* line 53, ../sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper .l-infobubble table tr td.label {
           padding-right: 10px;
           white-space: nowrap; }
-        /* line 61, ../sass/helpers/_bubbles.scss */
+        /* line 57, ../sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper .l-infobubble table tr td.value {
-          white-space: nowrap; }
-        /* line 65, ../sass/helpers/_bubbles.scss */
+          word-break: break-all; }
+        /* line 61, ../sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper .l-infobubble table tr td.align-wrap {
           white-space: normal; }
-    /* line 71, ../sass/helpers/_bubbles.scss */
+    /* line 67, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper .l-infobubble .title {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       margin-bottom: 5px; }
-  /* line 78, ../sass/helpers/_bubbles.scss */
+  /* line 74, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-left {
     margin-left: 20px; }
-    /* line 80, ../sass/helpers/_bubbles.scss */
+    /* line 76, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-left .l-infobubble::before {
       right: 100%; }
       @media screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-        /* line 80, ../sass/helpers/_bubbles.scss */
+        /* line 76, ../sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper.arw-left .l-infobubble::before {
           width: 0;
           height: 0;
@@ -4824,30 +4852,30 @@ input[type="text"] {
           border-bottom: 6.66667px solid transparent;
           border-right: 10px solid #ddd; } }
   @media screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-    /* line 92, ../sass/helpers/_bubbles.scss */
+    /* line 88, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-right {
       margin-right: 20px; } }
-  /* line 99, ../sass/helpers/_bubbles.scss */
+  /* line 95, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-right .l-infobubble::before {
     left: 100%; }
     @media screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 99, ../sass/helpers/_bubbles.scss */
+      /* line 95, ../sass/helpers/_bubbles.scss */
       .l-infobubble-wrapper.arw-right .l-infobubble::before {
         width: 0;
         height: 0;
         border-top: 6.66667px solid transparent;
         border-bottom: 6.66667px solid transparent;
         border-left: 10px solid #ddd; } }
-  /* line 112, ../sass/helpers/_bubbles.scss */
+  /* line 108, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-top .l-infobubble::before {
     top: 20px; }
-  /* line 118, ../sass/helpers/_bubbles.scss */
+  /* line 114, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-btm .l-infobubble::before {
     bottom: 20px; }
-  /* line 123, ../sass/helpers/_bubbles.scss */
+  /* line 119, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-down {
     margin-bottom: 10px; }
-    /* line 125, ../sass/helpers/_bubbles.scss */
+    /* line 121, ../sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-down .l-infobubble::before {
       left: 50%;
       top: 100%;
@@ -4855,21 +4883,21 @@ input[type="text"] {
       border-left: 5px solid transparent;
       border-right: 5px solid transparent;
       border-top: 7.5px solid #ddd; }
-  /* line 134, ../sass/helpers/_bubbles.scss */
+  /* line 130, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper .arw {
     z-index: 2; }
-  /* line 137, ../sass/helpers/_bubbles.scss */
+  /* line 133, ../sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-up .arw.arw-down, .l-infobubble-wrapper.arw-down .arw.arw-up {
     display: none; }
 
-/* line 144, ../sass/helpers/_bubbles.scss */
+/* line 142, ../sass/helpers/_bubbles.scss */
 .l-thumbsbubble-wrapper .arw-up {
   width: 0;
   height: 0;
   border-left: 6.66667px solid transparent;
   border-right: 6.66667px solid transparent;
   border-bottom: 10px solid #4d4d4d; }
-/* line 147, ../sass/helpers/_bubbles.scss */
+/* line 145, ../sass/helpers/_bubbles.scss */
 .l-thumbsbubble-wrapper .arw-down {
   width: 0;
   height: 0;
@@ -4877,7 +4905,7 @@ input[type="text"] {
   border-right: 6.66667px solid transparent;
   border-top: 10px solid #4d4d4d; }
 
-/* line 151, ../sass/helpers/_bubbles.scss */
+/* line 150, ../sass/helpers/_bubbles.scss */
 .s-infobubble {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -4888,22 +4916,29 @@ input[type="text"] {
   background: #ddd;
   color: #666;
   font-size: 0.8rem; }
-  /* line 158, ../sass/helpers/_bubbles.scss */
+  /* line 157, ../sass/helpers/_bubbles.scss */
   .s-infobubble .title {
     color: #333333;
     font-weight: bold; }
   /* line 163, ../sass/helpers/_bubbles.scss */
-  .s-infobubble tr td {
-    border-top: 1px solid #c4c4c4;
+  .s-infobubble table tr td {
+    border: none;
+    border-top: 1px solid #c4c4c4 !important;
     font-size: 0.9em; }
-  /* line 167, ../sass/helpers/_bubbles.scss */
-  .s-infobubble tr:first-child td {
+  /* line 169, ../sass/helpers/_bubbles.scss */
+  .s-infobubble table tr:first-child td {
+    border-top: none !important; }
+  /* line 174, ../sass/helpers/_bubbles.scss */
+  .s-infobubble:first-child td {
     border-top: none; }
-  /* line 171, ../sass/helpers/_bubbles.scss */
+  /* line 178, ../sass/helpers/_bubbles.scss */
+  .s-infobubble .label {
+    color: gray; }
+  /* line 182, ../sass/helpers/_bubbles.scss */
   .s-infobubble .value {
     color: #333333; }
 
-/* line 176, ../sass/helpers/_bubbles.scss */
+/* line 188, ../sass/helpers/_bubbles.scss */
 .s-thumbsbubble {
   background: #4d4d4d;
   color: #b3b3b3; }

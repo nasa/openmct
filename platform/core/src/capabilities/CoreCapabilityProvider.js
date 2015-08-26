@@ -30,6 +30,19 @@ define(
         "use strict";
 
         /**
+         * A capability provides an interface with dealing with some
+         * dynamic behavior associated with a domain object.
+         * @interface Capability
+         */
+
+        /**
+         * Optional; if present, will be used by `DomainObject#useCapability`
+         * to simplify interaction with a specific capability. Parameters
+         * and return values vary depending on capability type.
+         * @method Capability#invoke
+         */
+
+        /**
          * Provides capabilities based on extension definitions,
          * matched to domain object models.
          *
@@ -37,6 +50,7 @@ define(
          *        of constructor functions for capabilities, as
          *        exposed by extensions defined at the bundle level.
          *
+         * @memberof platform/core
          * @constructor
          */
         function CoreCapabilityProvider(capabilities, $log) {
@@ -84,6 +98,7 @@ define(
                  * @returns {Object.<string,function|Capability>} all
                  *     capabilities known to be valid for this model, as
                  *     key-value pairs
+                 * @memberof platform/core.CoreCapabilityProvider#
                  */
                 getCapabilities: getCapabilities
             };
@@ -92,3 +107,4 @@ define(
         return CoreCapabilityProvider;
     }
 );
+

@@ -61,6 +61,7 @@ define(
          *   * `color`: The color of the box, as a four-element RGBA
          *     array, where each element is in the range of 0.0-1.0
          *
+         * @memberof platform/features/plot
          * @constructor
          */
         function MCTChart($interval, $log) {
@@ -205,6 +206,46 @@ define(
             };
         }
 
+        /**
+         * @interface platform/features/plot.Chart
+         * @private
+         */
+
+        /**
+         * Clear the chart.
+         * @method platform/features/plot.Chart#clear
+         */
+        /**
+         * Set the logical boundaries of the chart.
+         * @param {number[]} dimensions the horizontal and
+         *        vertical dimensions of the chart
+         * @param {number[]} origin the horizontal/vertical
+         *        origin of the chart
+         * @memberof platform/features/plot.Chart#setDimensions
+         */
+        /**
+         * Draw the supplied buffer as a line strip (a sequence
+         * of line segments), in the chosen color.
+         * @param {Float32Array} buf the line strip to draw,
+         *        in alternating x/y positions
+         * @param {number[]} color the color to use when drawing
+         *        the line, as an RGBA color where each element
+         *        is in the range of 0.0-1.0
+         * @param {number} points the number of points to draw
+         * @memberof platform/features/plot.Chart#drawLine
+         */
+        /**
+         * Draw a rectangle extending from one corner to another,
+         * in the chosen color.
+         * @param {number[]} min the first corner of the rectangle
+         * @param {number[]} max the opposite corner
+         * @param {number[]} color the color to use when drawing
+         *        the rectangle, as an RGBA color where each element
+         *        is in the range of 0.0-1.0
+         * @memberof platform/features/plot.Chart#drawSquare
+         */
+
         return MCTChart;
     }
 );
+

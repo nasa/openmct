@@ -37,7 +37,7 @@
 	            class='ui-symbol view-control'
                 mct-object="domainObject"
                 ng-model="ngModel"
-				ng-click="treeNode.checkMobile() ? ngModel.selectedObject = domainObject :
+				ng-click="treeNode.checkMobile() ? treeNode.setObject(ngModel, domainObject) :
                           toggle.toggle(); treeNode.trackExpansion()"
 				ng-if="model.composition !== undefined || treeNode.checkMobile()"
 				>

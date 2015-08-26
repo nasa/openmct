@@ -128,7 +128,7 @@ define(
             });
 
             it("includes capabilities from undefined type in all types", function () {
-                captured.type = TypeProvider.instantiate(
+                captured.type = new TypeProvider(
                     testTypeDefinitions.concat([
                         { capabilities: ['a', 'b', 'c'] },
                         { capabilities: ['x', 'y', 'z'] }

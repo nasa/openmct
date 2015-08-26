@@ -28,38 +28,40 @@ define(
         /**
          * Policy preventing the Plot view from being made available for
          * domain objects which have non-numeric telemetry.
-         * @implements {Policy}
+         * @implements {Policy.<View, DomainObject>}
+         * @constructor
+         * @memberof platform/features/plot
          */
         function PlotViewPolicy() {
-            function hasImageTelemetry(domainObject) {
-                var telemetry = domainObject &&
-                        domainObject.getCapability('telemetry'),
-                    metadata = telemetry ? telemetry.getMetadata() : {},
-                    ranges = metadata.ranges || [];
+        }
 
-                // Generally, we want to allow Plot for telemetry-providing
-                // objects (most telemetry is plottable.) We only want to
-                // suppress this for telemetry which only has explicitly
-                // non-numeric values.
-                return ranges.length === 0 || ranges.some(function (range) {
+        function hasNumericTelemetry(domainObject) {
+            var telemetry = domainObject &&
+                    domainObject.getCapability('telemetry'),
+                metadata = telemetry ? telemetry.getMetadata() : {},
+                ranges = metadata.ranges || [];
+
+            // Generally, we want to allow Plot for telemetry-providing
+            // objects (most telemetry is plottable.) We only want to
+            // suppress this for telemetry which only has explicitly
+            // non-numeric values.
+            return ranges.length === 0 || ranges.some(function (range) {
                     // Assume format is numeric if it is undefined
                     // (numeric telemetry is the common case)
                     return range.format === undefined ||
-                            range.format === 'number';
+                        range.format === 'number';
                 });
+        }
+
+        PlotViewPolicy.prototype.allow = function (view, domainObject) {
+            if (view.key === 'plot') {
+                return hasNumericTelemetry(domainObject);
             }
 
-            return {
-                allow: function (view, domainObject) {
-                    if (view.key === 'plot') {
-                        return hasImageTelemetry(domainObject);
-                    }
-
-                    return true;
-                }
-            };
-        }
+            return true;
+        };
 
         return PlotViewPolicy;
     }
 );
+
