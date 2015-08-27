@@ -24,6 +24,11 @@
         &#xe608;
     </span>
     
+    <div class="number-selected"
+         ng-if="ngModel.inspectionObjects.length > 1">
+        {{ngModel.inspectionObjects.length}} items selected
+    </div>
+    
     <ul>
         <li ng-repeat="data in metadata">
             <em>{{ data.name }}</em>

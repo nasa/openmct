@@ -212,6 +212,15 @@ $transitionTime: 0.35s; // For the pane open/close
                 color: $colorKey;
             }
             
+            .number-selected {
+                font-size: .8em;
+                padding: 6px;
+                background-color: lighten($colorBodyBg, 15%);
+                color: lighten($colorBodyBg, 45%);
+                border-radius: 4px;
+                margin-top: 4px;
+            }
+            
             ul li {
                 font-size: 0.9em;
 
