@@ -141,16 +141,31 @@ define(
                 
                 // Checks if the current object has a context
                 if (context) {
+                    
+                    // Sets the parent and the parent context
+                    // which is checked
                     parent = context.getParent();
                     parentContext = parent.getCapability('context');
+                    
                     if ((parent.getId() !== ROOT_ID) && parentContext) {
+                        // Gets the grandparent id
                         grandparentId = parentContext.getParent().getId();
+                        
+                        // Navigates to the parent
                         navigateTo(parent);
+                        
+                        // Checks after navigation if the user is located at the 
+                        // root (grandparent of original selected object, after
+                        // navigation, user is at parent of original object and
+                        // child of grandparent)
                         if (grandparentId && grandparentId !== ROOT_ID) {
                             $scope.atRoot = false;
-                        } else {
-                            $scope.atRoot = true;
+                            return;
                         }
+                        
+                        // Set at root if no grandparent exists and
+                        // if grandparent is ROOT, after navigation
+                        $scope.atRoot = true;
                     }
                 }
             }
@@ -167,17 +182,22 @@ define(
                     parentContext = parent.getCapability('context');
                     if ((parent.getId() !== ROOT_ID) && parentContext) {
                         grandparent = parentContext.getParent();
-                        if (!grandparent) {
-                            $scope.atRoot = true;
-                        } else {
+                        
+                        // Checks if the grandparent exists
+                        // if it does not exist (for example in search),
+                        // than do not show the back button
+                        if (grandparent) {
                             $scope.atRoot = false;
+                            return;
                         }
-                    } else {
-                        $scope.atRoot = true;
                     }
-                } else {
-                    $scope.atRoot = true;
                 }
+                
+                // In any other situation where the context or parent
+                // context does not exist or the user is at ROOT, than
+                // hide the back arrow
+                $scope.atRoot = true;
+               
             }
 
             // Load the root object, put it in the scope.
