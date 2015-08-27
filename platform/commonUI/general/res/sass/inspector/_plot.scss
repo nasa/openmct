@@ -28,5 +28,12 @@
     
     &.inspected {
         background-color: $colorKeySelectedBg;
+    
+        &.s-limit-upr-yellow:before,
+        &.s-limit-upr-red:before, 
+        &.s-limit-lwr-yellow:before, 
+        &.s-limit-lwr-red:before {
+            color: lighten($colorKeySelectedBg, 20%);
+        }
     }
 }

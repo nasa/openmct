@@ -5373,9 +5373,12 @@ input[type="text"] {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 26, ../sass/inspector/_inspector.scss */
+/* line 26, ../sass/inspector/_plot.scss */
 .plot-legend-item {
   cursor: pointer; }
-  /* line 29, ../sass/inspector/_inspector.scss */
+  /* line 29, ../sass/inspector/_plot.scss */
   .plot-legend-item.inspected {
     background-color: #005177; }
+    /* line 32, ../sass/inspector/_plot.scss */
+    .plot-legend-item.inspected.s-limit-upr-yellow:before, .plot-legend-item.inspected.s-limit-upr-red:before, .plot-legend-item.inspected.s-limit-lwr-yellow:before, .plot-legend-item.inspected.s-limit-lwr-red:before {
+      color: #0096dd; }
