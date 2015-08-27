@@ -29,16 +29,13 @@
             <!-- ng-class is temporarily hard-coded in next element -->
             <span class='plot-legend-item'
                   ng-repeat="telemetryObject in subplot.getTelemetryObjects()"
-                  ng-click="ngModel.inspectionObjects[0] = telemetryObject"
+                  ng-click="plot.setInspection($event, telemetryObject)"
                   ng-class="[plot.getLegendClass(telemetryObject), plot.getInspectedClass(telemetryObject)]">
                 <span class='plot-color-swatch'
                       ng-style="{ 'background-color': plot.getColor($index) }">
                 </span>
                 <span class='title-label'>{{telemetryObject.getModel().name}}</span>
             </span>
-            
-                <!--{{ log(domainObject.getModel()); log(selectedObject.getModel()) }}-->
-                {{ log(ngModel.inspectionObjects[0].getModel()); log(ngModel.selectedObject.getModel()) }}
         </div>
 
         <div

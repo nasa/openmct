@@ -170,11 +170,25 @@ define(
             function getInspectedClass(telemetryObject) {
                 if ($scope.ngModel &&
                         $scope.ngModel.inspectionObjects &&
-                        $scope.ngModel.inspectionObjects[0] === telemetryObject) {
+                        $scope.ngModel.inspectionObjects.indexOf(telemetryObject) !== -1) {
                     return "inspected";
                 }
             }
             this.getInspectedClass = getInspectedClass;
+            
+            // 
+            function setInspectionObjects(event, telemetryObject) {
+                if (event.shiftKey) {
+                    // This was a shift-click, so we want multiple selection
+                    $scope.ngModel.inspectionObjects.push(telemetryObject);
+                    console.log('push');
+                } else {
+                    // Otherwise replace the old set of inspection objects with this
+                    $scope.ngModel.inspectionObjects = [telemetryObject];
+                    console.log('replace');
+                }
+            }
+            this.setInspection = setInspectionObjects;
             
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
             this.updateValues = updateValues;
