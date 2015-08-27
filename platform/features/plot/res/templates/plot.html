@@ -27,11 +27,10 @@
          ng-repeat="subplot in plot.getSubPlots()">
         <div class="gl-plot-legend">
             <!-- ng-class is temporarily hard-coded in next element -->
-            <span
-                class='plot-legend-item'
-                ng-repeat="telemetryObject in subplot.getTelemetryObjects()"
-                ng-class="plot.getLegendClass(telemetryObject)"
-                >
+            <span class='plot-legend-item'
+                  ng-repeat="telemetryObject in subplot.getTelemetryObjects()"
+                  ng-class="plot.getLegendClass(telemetryObject)"
+                  ng-click="ngModel.selectedObject = telemetryObject">
                 <span class='plot-color-swatch'
                       ng-style="{ 'background-color': plot.getColor($index) }">
                 </span>
