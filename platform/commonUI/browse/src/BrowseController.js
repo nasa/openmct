@@ -150,9 +150,15 @@ define(
             }
             
             function checkRoot() {
-                var parent = navigationService.getNavigation().getCapability('context').getParent();
-                if (parent.getId() !== ROOT_ID) {
-                    $scope.atRoot = false;
+                var context = navigationService.getNavigation().getCapability('context'),
+                    parent;
+                if (context) {
+                    parent = context.getParent();
+                    if (parent.getId() !== ROOT_ID) {
+                        $scope.atRoot = false;
+                    } else {
+                        $scope.atRoot = true;
+                    }
                 } else {
                     $scope.atRoot = true;
                 }
