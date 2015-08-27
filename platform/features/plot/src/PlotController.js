@@ -180,12 +180,14 @@ define(
             function setInspectionObjects(event, telemetryObject) {
                 if (event.shiftKey) {
                     // This was a shift-click, so we want multiple selection
-                    $scope.ngModel.inspectionObjects.push(telemetryObject);
-                    console.log('push');
+                    if ($scope.ngModel.inspectionObjects.length > 0) {
+                        $scope.ngModel.inspectionObjects.push(telemetryObject);
+                    } else {
+                        $scope.ngModel.inspectionObjects = [telemetryObject];
+                    }
                 } else {
                     // Otherwise replace the old set of inspection objects with this
                     $scope.ngModel.inspectionObjects = [telemetryObject];
-                    console.log('replace');
                 }
             }
             this.setInspection = setInspectionObjects;
