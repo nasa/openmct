@@ -30,7 +30,7 @@
 				mct-object="domainObject"
 				ng-model="ngModel"
 				ng-click="!treeNode.checkMobile() || model.composition == undefined ||
-                          model.composition.length == 0 ? ngModel.selectedObject = domainObject : toggle.toggle();
+                          model.composition.length == 0 ? treeNode.setObject(ngModel, domainObject) : toggle.toggle();
                           treeNode.trackExpansion()"
 				>
             </mct-representation>
