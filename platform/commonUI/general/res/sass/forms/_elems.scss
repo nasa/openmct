@@ -49,8 +49,8 @@
 			border-top: none;
 		}
 
-		.label,
-		.controls {
+		>.label,
+		>.controls {
 			@include box-sizing(border-box);
 			@include clearfix;
 			font-size: 0.8rem;

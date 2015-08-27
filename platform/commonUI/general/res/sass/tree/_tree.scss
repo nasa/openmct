@@ -38,7 +38,7 @@ ul.tree {
 	@include border-radius($basicCr);
 	@include single-transition(background-color, 0.25s);
 	display: block;
-	font-size: 0.8em;
+	font-size: 0.8rem;
 	height: $menuLineH;
 	line-height: $menuLineH;
 	margin-bottom: $interiorMarginSm;

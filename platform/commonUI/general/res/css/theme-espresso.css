@@ -3545,8 +3545,8 @@ label.checkbox.custom {
   .form .form-row.first {
     border-top: none; }
   /* line 52, ../sass/forms/_elems.scss */
-  .form .form-row .label,
-  .form .form-row .controls {
+  .form .form-row > .label,
+  .form .form-row > .controls {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
