@@ -55,8 +55,7 @@ define(
         RemoveAction.prototype.perform = function () {
             var $q = this.$q,
                 navigationService = this.navigationService,
-                domainObject = this.domainObject,
-                ROOT_ID = "ROOT";
+                domainObject = this.domainObject;
             /*
              * Check whether an object ID matches the ID of the object being
              * removed (used to filter a parent's composition to handle the
