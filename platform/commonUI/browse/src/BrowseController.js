@@ -134,28 +134,44 @@ define(
             // is not the root, then user is navigated to
             // parent
             function navigateToParent() {
-                var parent = navigationService.getNavigation().getCapability('context').getParent(),
-                    grandparent;
-                if (parent.getId() !== ROOT_ID) {
-                    grandparent = parent.getCapability('context').getParent().getId();
-                    navigateTo(parent);
-                    if (grandparent && grandparent !== ROOT_ID) {
-                        $scope.atRoot = false;
-                    } else {
-                        $scope.atRoot = true;
+                var context = navigationService.getNavigation().getCapability('context'),
+                    parentContext,
+                    parent,
+                    grandparentId;
+                
+                // Checks if the current object has a context
+                if (context) {
+                    parent = context.getParent();
+                    parentContext = parent.getCapability('context');
+                    if ((parent.getId() !== ROOT_ID) && parentContext) {
+                        grandparentId = parentContext.getParent().getId();
+                        navigateTo(parent);
+                        if (grandparentId && grandparentId !== ROOT_ID) {
+                            $scope.atRoot = false;
+                        } else {
+                            $scope.atRoot = true;
+                        }
                     }
-                } else {
-                    $scope.atRoot = true;
                 }
             }
             
             function checkRoot() {
                 var context = navigationService.getNavigation().getCapability('context'),
-                    parent;
+                    parentContext,
+                    parent,
+                    grandparent;
+                
+                // Checks if the current object has a context
                 if (context) {
                     parent = context.getParent();
-                    if (parent.getId() !== ROOT_ID) {
-                        $scope.atRoot = false;
+                    parentContext = parent.getCapability('context');
+                    if ((parent.getId() !== ROOT_ID) && parentContext) {
+                        grandparent = parentContext.getParent();
+                        if (!grandparent) {
+                            $scope.atRoot = true;
+                        } else {
+                            $scope.atRoot = false;
+                        }
                     } else {
                         $scope.atRoot = true;
                     }
