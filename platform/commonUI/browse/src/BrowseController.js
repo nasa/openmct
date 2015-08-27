@@ -139,12 +139,8 @@ define(
             });
 
             // Provide a model for the tree to modify
+            // Also use this model for the left and right pane controlling
             $scope.treeModel = {
-                selectedObject: navigationService.getNavigation()
-            };
-            
-            // Provide a model for the left pane
-            $scope.paneModel = {
                 selectedObject: navigationService.getNavigation()
             };
             

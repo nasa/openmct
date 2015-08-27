@@ -32,11 +32,11 @@
         <mct-split-pane class='contents abs'
                         anchor='left'>
             <div class='split-pane-component treeview pane left'
-                 ng-class='{inactive: !paneModel.leftPane}'>
+                 ng-class='{inactive: !treeModel.leftPane}'>
                 
                 <mct-representation key="'create-button'"
                                     mct-object="navigatedObject"
-                                    ng-model="paneModel">
+                                    ng-model="treeModel">
                 </mct-representation>
                 
                 <div class='holder search-holder abs'
@@ -57,31 +57,31 @@
             </div>
             
             <mct-splitter class="splitter-bar left"
-                          ng-class="{inactive: !paneModel.leftPane}">
+                          ng-class="{inactive: !treeModel.leftPane}">
             </mct-splitter>
             
             <div class='split-pane-component secondary-split pane right slide'
-                 ng-class='{leftInactive: !paneModel.leftPane}'>
+                 ng-class='{leftInactive: !treeModel.leftPane}'>
                 <mct-split-pane class='contents abs'
                                 anchor='right'>
                     
                     <div class='split-pane-component items pane slide'
-                         ng-class='{rightInactive: !paneModel.rightPane}'>
+                         ng-class='{rightInactive: !treeModel.rightPane}'>
                         <div class='holder abs'
                              id='content-area'>
                             <mct-representation key="'browse-object'"
                                                 mct-object="navigatedObject"
-                                                ng-model="paneModel">
+                                                ng-model="treeModel">
                             </mct-representation>
                         </div>
                     </div>
                     
                     <mct-splitter class="splitter-bar right"
-                                  ng-class="{inactive: !paneModel.rightPane}">
+                                  ng-class="{inactive: !treeModel.rightPane}">
                     </mct-splitter>
                     
                     <div class='split-pane-component object-inspector pane right'
-                         ng-class='{inactive: !paneModel.rightPane}'>
+                         ng-class='{inactive: !treeModel.rightPane}'>
                         <div class='holder inspector-holder abs'>
                             <mct-representation key="'object-inspector'"
                                                 mct-object="domainObject"
