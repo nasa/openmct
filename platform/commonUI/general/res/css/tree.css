@@ -162,147 +162,174 @@ ul.tree {
   ul.tree li {
     display: block;
     position: relative; }
-    /* line 28, ../sass/tree/_tree.scss */
-    ul.tree li span.tree-item {
-      -moz-box-sizing: border-box;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
-      -moz-border-radius: 2px;
-      -webkit-border-radius: 2px;
-      border-radius: 2px;
-      -moz-transition: background-color 0.25s;
-      -o-transition: background-color 0.25s;
-      -webkit-transition: background-color 0.25s;
-      transition: background-color 0.25s;
-      display: block;
-      font-size: 0.8em;
-      height: 1.5rem;
-      line-height: 1.5rem;
-      margin-bottom: 3px;
-      position: relative; }
-      /* line 40, ../sass/tree/_tree.scss */
-      ul.tree li span.tree-item .view-control {
-        display: inline-block;
-        margin-left: 5px;
-        font-size: 0.75em;
-        width: 10px; }
-        @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-          /* line 48, ../sass/tree/_tree.scss */
-          ul.tree li span.tree-item .view-control:hover {
-            color: #ffc700; } }
-      /* line 54, ../sass/tree/_tree.scss */
-      ul.tree li span.tree-item .label {
-        display: block;
-        overflow: hidden;
-        position: absolute;
-        top: 0px;
-        right: 0px;
-        bottom: 0px;
-        left: 0px;
-        width: auto;
-        height: auto;
-        line-height: 1.5rem;
-        left: 15px; }
-        /* line 62, ../sass/tree/_tree.scss */
-        ul.tree li span.tree-item .label .type-icon {
-          text-shadow: rgba(0, 0, 0, 0.6) 0 1px 2px;
-          font-size: 16px;
-          color: #0099cc;
-          left: 5px;
-          position: absolute;
-          top: 4px;
-          bottom: auto;
-          height: 16px;
-          line-height: 100%;
-          right: auto;
-          width: 16px; }
-          /* line 75, ../sass/tree/_tree.scss */
-          ul.tree li span.tree-item .label .type-icon .icon.l-icon-link, ul.tree li span.tree-item .label .type-icon .icon.l-icon-alert {
-            text-shadow: black 0 1px 2px;
-            position: absolute;
-            z-index: 2; }
-          /* line 81, ../sass/tree/_tree.scss */
-          ul.tree li span.tree-item .label .type-icon .icon.l-icon-alert {
-            color: #ff3c00;
-            font-size: 8px;
-            line-height: 8px;
-            height: 8px;
-            width: 8px;
-            top: 1px;
-            right: -2px; }
-          /* line 87, ../sass/tree/_tree.scss */
-          ul.tree li span.tree-item .label .type-icon .icon.l-icon-link {
-            color: #49dedb;
-            font-size: 8px;
-            line-height: 8px;
-            height: 8px;
-            width: 8px;
-            left: -3px;
-            bottom: 0px; }
-        /* line 95, ../sass/tree/_tree.scss */
-        ul.tree li span.tree-item .label .title-label {
-          overflow: hidden;
-          position: absolute;
-          top: 0px;
-          right: 0px;
-          bottom: 0px;
-          left: 0px;
-          width: auto;
-          height: auto;
-          display: block;
-          left: 30px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap; }
-      /* line 106, ../sass/tree/_tree.scss */
-      ul.tree li span.tree-item.loading {
-        pointer-events: none; }
-        /* line 108, ../sass/tree/_tree.scss */
-        ul.tree li span.tree-item.loading .label {
-          opacity: 0.5; }
-          /* line 110, ../sass/tree/_tree.scss */
-          ul.tree li span.tree-item.loading .label .title-label {
-            font-style: italic; }
-        /* line 114, ../sass/tree/_tree.scss */
-        ul.tree li span.tree-item.loading .wait-spinner {
-          margin-left: 14px; }
-      /* line 119, ../sass/tree/_tree.scss */
-      ul.tree li span.tree-item.selected {
-        background: #005177;
-        color: #fff; }
-        /* line 123, ../sass/tree/_tree.scss */
-        ul.tree li span.tree-item.selected .view-control {
-          color: #0099cc; }
-        /* line 126, ../sass/tree/_tree.scss */
-        ul.tree li span.tree-item.selected .label .type-icon {
-          color: #fff; }
-      @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-        /* line 134, ../sass/tree/_tree.scss */
-        ul.tree li span.tree-item:not(.selected):hover {
-          background: rgba(255, 255, 255, 0.1);
-          color: #cccccc; }
-          /* line 137, ../sass/tree/_tree.scss */
-          ul.tree li span.tree-item:not(.selected):hover .context-trigger {
-            display: block; }
-          /* line 140, ../sass/tree/_tree.scss */
-          ul.tree li span.tree-item:not(.selected):hover .icon {
-            color: #33ccff; } }
-      /* line 147, ../sass/tree/_tree.scss */
-      ul.tree li span.tree-item:not(.loading) {
-        cursor: pointer; }
-      /* line 151, ../sass/tree/_tree.scss */
-      ul.tree li span.tree-item .context-trigger {
-        top: -1px;
-        position: absolute;
-        right: 3px; }
-        /* line 157, ../sass/tree/_tree.scss */
-        ul.tree li span.tree-item .context-trigger .invoke-menu {
-          font-size: 0.75em;
-          height: 0.9rem;
-          line-height: 0.9rem; }
-  /* line 166, ../sass/tree/_tree.scss */
+  /* line 29, ../sass/tree/_tree.scss */
   ul.tree ul.tree {
     margin-left: 15px; }
+
+/* line 34, ../sass/tree/_tree.scss */
+.tree-item,
+.search-result-item {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  -moz-transition: background-color 0.25s;
+  -o-transition: background-color 0.25s;
+  -webkit-transition: background-color 0.25s;
+  transition: background-color 0.25s;
+  display: block;
+  font-size: 0.8em;
+  height: 1.5rem;
+  line-height: 1.5rem;
+  margin-bottom: 3px;
+  position: relative; }
+  /* line 47, ../sass/tree/_tree.scss */
+  .tree-item .view-control,
+  .search-result-item .view-control {
+    display: inline-block;
+    margin-left: 5px;
+    font-size: 0.75em;
+    width: 10px; }
+    @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+      /* line 55, ../sass/tree/_tree.scss */
+      .tree-item .view-control:hover,
+      .search-result-item .view-control:hover {
+        color: #ffc700; } }
+  /* line 61, ../sass/tree/_tree.scss */
+  .tree-item .label,
+  .search-result-item .label {
+    display: block;
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    width: auto;
+    height: auto;
+    line-height: 1.5rem; }
+    /* line 69, ../sass/tree/_tree.scss */
+    .tree-item .label .type-icon,
+    .search-result-item .label .type-icon {
+      text-shadow: rgba(0, 0, 0, 0.6) 0 1px 2px;
+      font-size: 16px;
+      color: #0099cc;
+      left: 5px;
+      position: absolute;
+      top: 4px;
+      bottom: auto;
+      height: 16px;
+      line-height: 100%;
+      right: auto;
+      width: 16px; }
+      /* line 82, ../sass/tree/_tree.scss */
+      .tree-item .label .type-icon .icon.l-icon-link, .tree-item .label .type-icon .icon.l-icon-alert,
+      .search-result-item .label .type-icon .icon.l-icon-link,
+      .search-result-item .label .type-icon .icon.l-icon-alert {
+        text-shadow: black 0 1px 2px;
+        position: absolute;
+        z-index: 2; }
+      /* line 88, ../sass/tree/_tree.scss */
+      .tree-item .label .type-icon .icon.l-icon-alert,
+      .search-result-item .label .type-icon .icon.l-icon-alert {
+        color: #ff3c00;
+        font-size: 8px;
+        line-height: 8px;
+        height: 8px;
+        width: 8px;
+        top: 1px;
+        right: -2px; }
+      /* line 94, ../sass/tree/_tree.scss */
+      .tree-item .label .type-icon .icon.l-icon-link,
+      .search-result-item .label .type-icon .icon.l-icon-link {
+        color: #49dedb;
+        font-size: 8px;
+        line-height: 8px;
+        height: 8px;
+        width: 8px;
+        left: -3px;
+        bottom: 0px; }
+    /* line 102, ../sass/tree/_tree.scss */
+    .tree-item .label .title-label,
+    .search-result-item .label .title-label {
+      overflow: hidden;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      width: auto;
+      height: auto;
+      display: block;
+      left: 30px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap; }
+  /* line 113, ../sass/tree/_tree.scss */
+  .tree-item.loading,
+  .search-result-item.loading {
+    pointer-events: none; }
+    /* line 115, ../sass/tree/_tree.scss */
+    .tree-item.loading .label,
+    .search-result-item.loading .label {
+      opacity: 0.5; }
+      /* line 117, ../sass/tree/_tree.scss */
+      .tree-item.loading .label .title-label,
+      .search-result-item.loading .label .title-label {
+        font-style: italic; }
+    /* line 121, ../sass/tree/_tree.scss */
+    .tree-item.loading .wait-spinner,
+    .search-result-item.loading .wait-spinner {
+      margin-left: 14px; }
+  /* line 126, ../sass/tree/_tree.scss */
+  .tree-item.selected,
+  .search-result-item.selected {
+    background: #005177;
+    color: #fff; }
+    /* line 130, ../sass/tree/_tree.scss */
+    .tree-item.selected .view-control,
+    .search-result-item.selected .view-control {
+      color: #0099cc; }
+    /* line 133, ../sass/tree/_tree.scss */
+    .tree-item.selected .label .type-icon,
+    .search-result-item.selected .label .type-icon {
+      color: #fff; }
+  @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+    /* line 141, ../sass/tree/_tree.scss */
+    .tree-item:not(.selected):hover,
+    .search-result-item:not(.selected):hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #cccccc; }
+      /* line 144, ../sass/tree/_tree.scss */
+      .tree-item:not(.selected):hover .context-trigger,
+      .search-result-item:not(.selected):hover .context-trigger {
+        display: block; }
+      /* line 147, ../sass/tree/_tree.scss */
+      .tree-item:not(.selected):hover .icon,
+      .search-result-item:not(.selected):hover .icon {
+        color: #33ccff; } }
+  /* line 154, ../sass/tree/_tree.scss */
+  .tree-item:not(.loading),
+  .search-result-item:not(.loading) {
+    cursor: pointer; }
+  /* line 158, ../sass/tree/_tree.scss */
+  .tree-item .context-trigger,
+  .search-result-item .context-trigger {
+    top: -1px;
+    position: absolute;
+    right: 3px; }
+    /* line 164, ../sass/tree/_tree.scss */
+    .tree-item .context-trigger .invoke-menu,
+    .search-result-item .context-trigger .invoke-menu {
+      font-size: 0.75em;
+      height: 0.9rem;
+      line-height: 0.9rem; }
+
+/* line 173, ../sass/tree/_tree.scss */
+.tree-item .label {
+  left: 15px; }
 
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
@@ -326,28 +353,33 @@ ul.tree {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 28, ../sass/mobile/_tree.scss */
-  ul.tree li span.tree-item {
+  /* line 27, ../sass/mobile/_tree.scss */
+  ul.tree ul.tree {
+    margin-left: 20px; }
+
+  /* line 31, ../sass/mobile/_tree.scss */
+  .tree-item,
+  .search-result-item {
     height: 35px;
     line-height: 35px;
     margin-bottom: 0px; }
-    /* line 32, ../sass/mobile/_tree.scss */
-    ul.tree li span.tree-item .view-control {
+    /* line 36, ../sass/mobile/_tree.scss */
+    .tree-item .view-control,
+    .search-result-item .view-control {
       position: absolute;
       font-size: 1.1em;
       right: 0px;
       width: 30px;
       text-align: center; }
-    /* line 41, ../sass/mobile/_tree.scss */
-    ul.tree li span.tree-item .label {
+    /* line 45, ../sass/mobile/_tree.scss */
+    .tree-item .label,
+    .search-result-item .label {
       left: 0;
       right: 35px;
       line-height: 35px; }
-      /* line 46, ../sass/mobile/_tree.scss */
-      ul.tree li span.tree-item .label .type-icon {
+      /* line 50, ../sass/mobile/_tree.scss */
+      .tree-item .label .type-icon,
+      .search-result-item .label .type-icon {
         top: 9px;
         bottom: auto;
-        height: 16px; }
-  /* line 57, ../sass/mobile/_tree.scss */
-  ul.tree ul.tree {
-    margin-left: 20px; } }
+        height: 16px; } }

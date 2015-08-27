@@ -22,40 +22,36 @@
 
 @include phoneandtablet {
     ul.tree {
-        //@include menuUlReset();
-        li {
-            //border-top: 1px solid $colorInteriorBorder; // TEMP
-            span.tree-item {
-                height: $mobileTreeItemH;
-                line-height: $mobileTreeItemH;
-                margin-bottom: 0px;
-                .view-control {
-                    //@include test(red);
-                    position: absolute;
-                    font-size: 1.1em;
-                    right: 0px;
-                    width: $mobileTreeRightArrowW;
-                    text-align: center;
-                }
-
-                .label {
-                    left: 0;
-                    right: $mobileTreeRightArrowW + $interiorMargin; // Allows tree item name to stop prior to the arrow
-                    line-height: $mobileTreeItemH;
-                    //font-size: 1.1em; // CH CO
-                    .type-icon {
-                        @include verticalCenterBlock($mobileTreeItemH, $treeTypeIconH);
-                    }
-                    .title-label {
-                    }
-                }
-            }
-        }
-
         // Sets the margin on the left, which causes the
         // running indentation after each folder is made
         ul.tree {
             margin-left: $mobileTreeItemIndent;
         }
     }
+	.tree-item,
+	.search-result-item {
+		height: $mobileTreeItemH;
+		line-height: $mobileTreeItemH;
+		margin-bottom: 0px;
+		.view-control {
+			//@include test(red);
+			position: absolute;
+			font-size: 1.1em;
+			right: 0px;
+			width: $mobileTreeRightArrowW;
+			text-align: center;
+		}
+
+		.label {
+			left: 0;
+			right: $mobileTreeRightArrowW + $interiorMargin; // Allows tree item name to stop prior to the arrow
+			line-height: $mobileTreeItemH;
+			//font-size: 1.1em; // CH CO
+			.type-icon {
+				@include verticalCenterBlock($mobileTreeItemH, $treeTypeIconH);
+			}
+			.title-label {
+			}
+		}
+	}
 }

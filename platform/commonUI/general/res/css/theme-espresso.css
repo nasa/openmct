@@ -4510,82 +4510,27 @@ input[type="text"] {
     height: auto;
     max-height: 100%;
     position: relative; }
-    /* line 235, ../sass/search/_search.scss */
-    .search .search-scroll .results .search-result-item {
-      -moz-transition: background-color 0.25s;
-      -o-transition: background-color 0.25s;
-      -webkit-transition: background-color 0.25s;
-      transition: background-color 0.25s;
-      margin-bottom: 2px;
-      border-radius: 2px;
-      padding-top: 4px;
-      padding-bottom: 2px; }
-      /* line 249, ../sass/search/_search.scss */
-      .search .search-scroll .results .search-result-item .label {
-        margin-left: 6px; }
-        /* line 253, ../sass/search/_search.scss */
-        .search .search-scroll .results .search-result-item .label .title-label {
-          display: inline-block;
-          position: absolute;
-          left: 29px;
-          right: 5px;
-          font-size: .8em;
-          line-height: 17px;
-          width: auto;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap; }
-      /* line 275, ../sass/search/_search.scss */
-      .search .search-scroll .results .search-result-item.selected {
-        background: #005177;
-        color: #fff; }
-        /* line 279, ../sass/search/_search.scss */
-        .search .search-scroll .results .search-result-item.selected .view-control {
-          color: #0099cc; }
-        /* line 282, ../sass/search/_search.scss */
-        .search .search-scroll .results .search-result-item.selected .label .type-icon {
-          color: #fff; }
-      /* line 287, ../sass/search/_search.scss */
-      .search .search-scroll .results .search-result-item .label .type-icon .l-icon-link {
-        text-shadow: black 0 1px 2px;
-        z-index: 2;
-        color: #49dedb;
-        font-size: 8px;
-        line-height: 8px;
-        height: 8px;
-        width: 8px;
-        margin-left: -25px; }
-      /* line 296, ../sass/search/_search.scss */
-      .search .search-scroll .results .search-result-item:not(.selected):hover {
-        background: #404040;
-        color: #cccccc; }
-        /* line 299, ../sass/search/_search.scss */
-        .search .search-scroll .results .search-result-item:not(.selected):hover .context-trigger {
-          display: block; }
-        /* line 302, ../sass/search/_search.scss */
-        .search .search-scroll .results .search-result-item:not(.selected):hover .icon {
-          color: #33ccff; }
-    /* line 310, ../sass/search/_search.scss */
+    /* line 233, ../sass/search/_search.scss */
     .search .search-scroll .load-icon {
       position: relative; }
-      /* line 312, ../sass/search/_search.scss */
+      /* line 235, ../sass/search/_search.scss */
       .search .search-scroll .load-icon.loading {
         pointer-events: none;
         margin-left: 6px; }
-        /* line 316, ../sass/search/_search.scss */
+        /* line 239, ../sass/search/_search.scss */
         .search .search-scroll .load-icon.loading .title-label {
           font-style: italic;
           font-size: .9em;
           opacity: 0.5;
           margin-left: 26px;
           line-height: 24px; }
-        /* line 326, ../sass/search/_search.scss */
+        /* line 249, ../sass/search/_search.scss */
         .search .search-scroll .load-icon.loading .wait-spinner {
           margin-left: 6px; }
-      /* line 331, ../sass/search/_search.scss */
+      /* line 254, ../sass/search/_search.scss */
       .search .search-scroll .load-icon:not(.loading) {
         cursor: pointer; }
-    /* line 336, ../sass/search/_search.scss */
+    /* line 259, ../sass/search/_search.scss */
     .search .search-scroll .load-more-button {
       margin-top: 5px 0;
       font-size: 0.8em;
