@@ -92,7 +92,7 @@ define(
                 var traverseObject = (navigationService).getNavigation();
                 
                 // Stop at ROOT of folder path
-                while (traverseObject.getId() !== ROOT_ID) {
+                while (traverseObject) {
                     // If traverse object is object being removed
                     // navigate to parent of removed object
                     if (traverseObject.getId() === object.getId()) {
