@@ -28,7 +28,8 @@
              ng-click="ngModel.leftPane = !ngModel.leftPane">
         </div>
         
-        <div class="items-select left abs">
+        <div class="items-select left abs"
+             ng-click="ngModel.inspectionObjects = [domainObject]">
             <mct-representation key="'object-header'" mct-object="domainObject">
             </mct-representation>
         </div>
