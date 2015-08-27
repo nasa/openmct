@@ -55,14 +55,17 @@ define(
     
     // When context menu event occurs, show object actions instead
             if (!agentService.isMobile(navigator.userAgent)) {
+                
                 // When context menu event occurs, show object actions instead
                 element.on('contextmenu', showMenu);
             } else if (agentService.isMobile(navigator.userAgent)) {
+                
                 // If on mobile device, then start timeout for the single touch event
                 // during the timeout 'isPressing' is true.
                 element.on('touchstart', function (event) {
                     if (event.touches.length < 2) {
                         isPressing = true;
+                        
                         // After the timeout, if 'isPressing' is
                         // true, display context menu for object
                         $timeout(function () {
@@ -72,6 +75,7 @@ define(
                         }, longTouchTime);
                     }
                 });
+                
                 // Whenever the touch event ends, 'isPressing' is false.
                 element.on('touchend', function (event) {
                     isPressing = false;
