@@ -817,3 +817,34 @@ This could be resolved by:
 
 * Increases complexity of `telemetry` capability's interface
   (although this could probably be minimized.)
+
+## Nomenclature Change
+
+Instead of presenting Open MCT Web as a "framework" or
+"platform", present it as an "extensible application."
+
+This is mostly a change for the developer guide. A
+"framework" and a "platform" layer would still be useful
+architecturally, but the plugin developer's mental model
+for this would then be inclined toward looking at defined
+extension points. The underlying extension mechanism could
+still be exposed to retain the overall expressive power of
+the application.
+
+This may subtly influence other design decisions in order
+to match the "extensible application" identity. On a certain
+level, this contradicts the proposal to
+[rename views to applications](#rename-views-to-applications).
+
+### Benefits
+
+* May avoid incurring some of the "framework aversion" that
+  is common among JavaScript developers.
+* More accurately describes the application.
+
+### Detriments
+
+* May also be a deterrent to developers who prefer the more
+  "green field" feel of developing applications on a useful
+  platform.
+
