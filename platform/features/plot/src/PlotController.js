@@ -164,7 +164,18 @@ define(
                     handle = undefined;
                 }
             }
-
+            
+            // Determines if the legend item is being inspected. If so, the class 
+            // is 'inspected'
+            function getInspectedClass(telemetryObject) {
+                if ($scope.ngModel &&
+                        $scope.ngModel.inspectionObjects &&
+                        $scope.ngModel.inspectionObjects[0] === telemetryObject) {
+                    return "inspected";
+                }
+            }
+            this.getInspectedClass = getInspectedClass;
+            
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
             this.updateValues = updateValues;
 
@@ -179,7 +190,6 @@ define(
 
             // Unsubscribe when the plot is destroyed
             $scope.$on("$destroy", releaseSubscription);
-
         }
 
         /**

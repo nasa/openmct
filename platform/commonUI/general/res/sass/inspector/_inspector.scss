@@ -25,4 +25,8 @@
 // Make plot legend items clickable 
 .plot-legend-item {
     cursor: pointer;
+    
+    &.inspected {
+        background-color: $colorKeySelectedBg;
+    }
 }

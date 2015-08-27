@@ -29,8 +29,8 @@
             <!-- ng-class is temporarily hard-coded in next element -->
             <span class='plot-legend-item'
                   ng-repeat="telemetryObject in subplot.getTelemetryObjects()"
-                  ng-class="plot.getLegendClass(telemetryObject)"
-                  ng-click="ngModel.inspectionObjects[0] = telemetryObject">
+                  ng-click="ngModel.inspectionObjects[0] = telemetryObject"
+                  ng-class="[plot.getLegendClass(telemetryObject), plot.getInspectedClass(telemetryObject)]">
                 <span class='plot-color-swatch'
                       ng-style="{ 'background-color': plot.getColor($index) }">
                 </span>
