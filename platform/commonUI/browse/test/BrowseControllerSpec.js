@@ -304,6 +304,19 @@ define(
                 );
                 
                 mockScope.checkRoot();
+                
+                mockDomainObject.getCapability.andReturn(undefined);
+                mockNavigationService.getNavigation.andReturn(mockDomainObject);
+                
+                controller = new BrowseController(
+                    mockScope,
+                    mockRoute,
+                    mockLocation,
+                    mockObjectService,
+                    mockNavigationService
+                );
+                
+                mockScope.checkRoot();
             });
             
             // Mocks the back arrow call that
