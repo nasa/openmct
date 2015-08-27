@@ -82,35 +82,44 @@ define(
                 return persistence && persistence.persist();
             }
             
-            // Checks current object and ascendants of current
-            // object with object being removed, if the current
-            // object or any in the current object's path is being removed,
-            // navigate back to parent of removed object. 
+            /*
+             * Checks current object and ascendants of current
+             * object with object being removed, if the current
+             * object or any in the current object's path is being removed,
+             * navigate back to parent of removed object.
+             */
             function checkObjectNavigation(object, parentObject) {
                 // Traverse object starts at current location
                 var traverseObject = (navigationService).getNavigation();
                 
-                // Stop at ROOT of folder path
+                // Stop when object is not defined (above ROOT)
                 while (traverseObject) {
-                    // If traverse object is object being removed
-                    // navigate to parent of removed object
+                    
+                    // If object currently traversed to is object being removed
+                    // navigate to parent of current object and then exit loop
                     if (traverseObject.getId() === object.getId()) {
                         navigationService.setNavigation(parentObject);
                         return;
                     }
-                    // Traverses to parent
+                    // Traverses to parent of current object, moving
+                    // up the ascendant path
                     traverseObject = traverseObject.getCapability('context').getParent();
                 }
             }
 
             /*
              * Remove the object from its parent, as identified by its context
-             * capability.
+             * capability. Based on object's location and selected object's location
+             * user may be navigated to existing parent object
              */
             function removeFromContext(object) {
                 var contextCapability = object.getCapability('context'),
                     parent = contextCapability.getParent();
+                
+                // If currently within path of removed object(s),
+                // navigates to existing object up tree
                 checkObjectNavigation(object, parent);
+                
                 return $q.when(
                     parent.useCapability('mutation', doMutate)
                 ).then(function () {
