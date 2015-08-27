@@ -145,7 +145,7 @@ define(
             };
             // Create an array of objects which will allow for multiple selection
             // for the object inspector. 
-            $scope.inspectionObjects = [$scope.selectedObject];
+            $scope.inspectionObjects = [$scope.domainObject];
             
             // Listen for changes in navigation state.
             navigationService.addListener(setNavigation);

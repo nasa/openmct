@@ -35,7 +35,10 @@ define(
         function BrowseObjectController($scope, $location, $route, $window) {
             function setViewForDomainObject(domainObject) {
                 var locationViewKey = $location.search().view;
-
+                
+                // Reset the inspection objects when we switch the view 
+                $scope.ngModel.inspectionObjects = [$scope.domainObject];
+                
                 function selectViewIfMatching(view) {
                     if (view.key === locationViewKey) {
                         $scope.representation = $scope.representation || {};
