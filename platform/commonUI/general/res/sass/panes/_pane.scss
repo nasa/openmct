@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// Added by shale on 08/19/2015. Styling for the collapsible tree view. 
+// Added by shale on 08/19/2015. Styling for the collapsible left and right panes. 
 
 $transitionTime: 0.35s; // For the pane open/close
 
@@ -202,106 +202,6 @@ $transitionTime: 0.35s; // For the pane open/close
             width: 0 !important;
             visibility: hidden;
             opacity: 0;
-        }
-        
-        .holder.inspector-holder {
-            overflow-y: auto;
-            overflow-x: hidden;
-            
-            .info-icon {
-                color: $colorKey;
-            }
-            
-            .number-selected {
-                font-size: .8em;
-                padding: 6px;
-                background-color: lighten($colorBodyBg, 15%);
-                color: lighten($colorBodyBg, 45%);
-                border-radius: 4px;
-                margin-top: 4px;
-            }
-            
-            ul li {
-                font-size: 0.9em;
-
-                // Add spacing between items
-                padding: 2px 0px;
-                margin: 2px 0px;
-                border-top: solid 1px grey;
-                &:first-child {
-                    border-top-width: 0px;
-                }
-
-                // Style the titles
-                em {
-                    font-weight: bold;
-                    line-height: 1.25em;
-
-                    &:after {
-                        content: '\A';
-                        white-space: pre;
-                    }
-                }
-
-                // Style object labels 
-                .inspector-location {
-                    display: inline-block;
-                    max-width: 100%;
-                    
-                    .label {
-                        cursor: pointer;
-                        display: inline-block;
-                        white-space: nowrap;
-
-                        // Colors
-                        transition: background-color 0.2s;
-                        &:hover {
-                            background-color: lighten($colorBodyBg, 5%);
-                        }
-
-                        // Sizing and spacing 
-                        border-radius: 4px;
-                        padding: 3px;
-                        margin: 2px;
-
-                        // Horizontal overflow 
-                        max-width: 100%;
-                        text-overflow: ellipsis;
-                        overflow-x: hidden;
-                        
-                        .icon.type-icon {
-                            font-size: 14px;
-
-                            .l-icon-link {
-                                color: $colorIconLink;
-
-                                font-size: 6px;
-                                margin-left: -22px;
-                                margin-right: 9px;
-
-                                @include txtShdwSubtle(1);
-                                z-index: 2;
-                            }
-                        }
-                    }
-
-                    // Add arrows to indicate tree heirarchy 
-                    &:after {
-                        content: '>';
-                        font-family: symbolsfont;
-                        font-size: 8px;
-                        
-                        //margin-left: -6px;
-                        position: relative;
-                        top: -8px;
-                        left: -4px;
-                    }
-                    &:last-child:after {
-                        content: '';
-                        display: inline-block;
-                    }
-                }
-            }
         }
     }
 }

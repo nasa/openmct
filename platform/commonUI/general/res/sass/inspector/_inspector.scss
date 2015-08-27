@@ -1,0 +1,123 @@
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+// Added by shale on 08/27/2015. Styling for the object inspector. 
+
+.holder.inspector-holder {
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .info-icon {
+        color: $colorKey;
+    }
+
+    .number-selected {
+        font-size: .8em;
+        padding: 6px;
+        background-color: lighten($colorBodyBg, 15%);
+        color: lighten($colorBodyBg, 45%);
+        border-radius: 4px;
+        margin-top: 4px;
+    }
+
+    ul li {
+        font-size: 0.9em;
+
+        // Add spacing between items
+        padding: 2px 0px;
+        margin: 2px 0px;
+        border-top: solid 1px grey;
+        &:first-child {
+            border-top-width: 0px;
+        }
+
+        // Style the titles
+        em {
+            font-weight: bold;
+            line-height: 1.25em;
+
+            &:after {
+                content: '\A';
+                white-space: pre;
+            }
+        }
+
+        // Style object labels 
+        .inspector-location {
+            display: inline-block;
+            max-width: 100%;
+
+            .label {
+                cursor: pointer;
+                display: inline-block;
+                white-space: nowrap;
+
+                // Colors
+                transition: background-color 0.2s;
+                &:hover {
+                    background-color: lighten($colorBodyBg, 5%);
+                }
+
+                // Sizing and spacing 
+                border-radius: 4px;
+                padding: 3px;
+                margin: 2px;
+
+                // Horizontal overflow 
+                max-width: 100%;
+                text-overflow: ellipsis;
+                overflow-x: hidden;
+
+                .icon.type-icon {
+                    font-size: 14px;
+
+                    .l-icon-link {
+                        color: $colorIconLink;
+
+                        font-size: 6px;
+                        margin-left: -22px;
+                        margin-right: 9px;
+
+                        @include txtShdwSubtle(1);
+                        z-index: 2;
+                    }
+                }
+            }
+
+            // Add arrows to indicate tree heirarchy 
+            &:after {
+                content: '>';
+                font-family: symbolsfont;
+                font-size: 8px;
+
+                //margin-left: -6px;
+                position: relative;
+                top: -8px;
+                left: -4px;
+            }
+            &:last-child:after {
+                content: '';
+                display: inline-block;
+            }
+        }
+    }
+}
