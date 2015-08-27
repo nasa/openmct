@@ -41,9 +41,15 @@ define(
             
             // Gets an array of the contextual parents/anscestors of the selected object
             function getContextualPath() {
-                var currentObj = $scope.ngModel && $scope.ngModel.selectedObject,
+                var currentObj,
                     currentParent,
                     parents = [];
+                
+                if ($scope.ngModel && $scope.ngModel.inspectionObjects) {
+                    currentObj = $scope.ngModel.inspectionObjects[0];
+                } else {
+                    currentObj = $scope.ngModel && $scope.ngModel.selectedObject;
+                }
                 
                 currentParent = currentObj &&
                     currentObj.hasCapability('context') &&
@@ -69,7 +75,12 @@ define(
                 
                 // If this the the initial call of this recursive function
                 if (!current) {
-                    current = $scope.ngModel.selectedObject;
+                    if ($scope.ngModel && $scope.ngModel.inspectionObjects) {
+                        current = $scope.ngModel.inspectionObjects[0];
+                    } else {
+                        current = $scope.ngModel && $scope.ngModel.selectedObject;
+                    }
+                    
                     $scope.primaryParents = [];
                 }
                 
@@ -87,9 +98,16 @@ define(
             
             // Gets the metadata for the selected object
             function getMetadata() {
-                $scope.metadata = $scope.ngModel && $scope.ngModel.selectedObject &&
-                    $scope.ngModel.selectedObject.hasCapability('metadata') &&
-                    $scope.ngModel.selectedObject.useCapability('metadata');
+                // We want to get info from the inspectionObjects, but otherwise just use
+                // the selectedObject. 
+                if ($scope.ngModel && $scope.ngModel.inspectionObjects &&
+                        $scope.ngModel.inspectionObjects[0].hasCapability('metadata')) {
+                    $scope.metadata = $scope.ngModel.inspectionObjects[0].useCapability('metadata');
+                } else {
+                    $scope.metadata = $scope.ngModel && $scope.ngModel.selectedObject &&
+                        $scope.ngModel.selectedObject.hasCapability('metadata') &&
+                        $scope.ngModel.selectedObject.useCapability('metadata');
+                }
             }
             
             // Set scope variables when the selected object changes 
@@ -98,6 +116,23 @@ define(
                     $scope.ngModel.selectedObject &&
                     $scope.ngModel.selectedObject.hasCapability('location') &&
                     $scope.ngModel.selectedObject.getCapability('location').isLink();
+                
+                if (isLink) {
+                    getPrimaryPath();
+                    getContextualPath();
+                } else {
+                    $scope.primaryParents = [];
+                    getContextualPath();
+                }
+                
+                getMetadata();
+            });
+            
+            $scope.$watch('ngModel.inspectionObjects[0]', function () {
+                var isLink = $scope && $scope.ngModel &&
+                    $scope.ngModel.inspectionObjects &&
+                    $scope.ngModel.inspectionObjects[0].hasCapability('location') &&
+                    $scope.ngModel.inspectionObjects[0].getCapability('location').isLink();
                 
                 if (isLink) {
                     getPrimaryPath();

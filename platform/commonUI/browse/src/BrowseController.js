@@ -143,6 +143,9 @@ define(
             $scope.treeModel = {
                 selectedObject: navigationService.getNavigation()
             };
+            // Create an array of objects which will allow for multiple selection
+            // for the object inspector. 
+            $scope.inspectionObjects = [$scope.selectedObject];
             
             // Listen for changes in navigation state.
             navigationService.addListener(setNavigation);
