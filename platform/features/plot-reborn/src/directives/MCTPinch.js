@@ -54,7 +54,7 @@ define(
                 
                 // On touch start the 'touch' is tracked and
                 // the event is emitted through scope
-                function pinchStart(event) {
+                function touchStart(event) {
                     if (event.changedTouches.length === 2 ||
                             event.touches.length === 2) {
                         var touchPositions = [trackPosition(event.touches[0]),
@@ -69,21 +69,42 @@ define(
                         
                         // Stops other gestures/button clicks from being active
                         event.preventDefault();
+                    } else if (event.changedTouches.length === 1 ||
+                            event.touches.length === 1) {
+                        var touchPosition = trackPosition(event.touches[0]);
+                        
+                        $scope.$emit('mct:pan:start', {
+                            touch: touchPosition,
+                            bounds: event.target.getBoundingClientRect()
+                        });
+                        
+                        // Stops other gestures/button clicks from being active
+                        event.preventDefault();
                     }
                 }
                 
                 // As the touch move occurs, the touches are tracked and
                 // the event is emitted through scope
-                function pinchChange(event) {
+                function touchChange(event) {
                     if (event.changedTouches.length === 2) {
-                        var touchPosition = [trackPosition(event.changedTouches[0]),
+                        var touchPositions = [trackPosition(event.changedTouches[0]),
                                              trackPosition(event.changedTouches[1])];
                         
                         $scope.$emit('mct:pinch:change', {
-                            touches: touchPosition,
+                            touches: touchPositions,
                             bounds: event.target.getBoundingClientRect(),
-                            midpoint: calculateMidpoint(touchPosition[0], touchPosition[1]),
-                            distance: calculateDistance(touchPosition[0], touchPosition[1])
+                            midpoint: calculateMidpoint(touchPositions[0], touchPositions[1]),
+                            distance: calculateDistance(touchPositions[0], touchPositions[1])
+                        });
+                        
+                        // Stops other gestures/button clicks from being active
+                        event.preventDefault();
+                    } else if (event.changedTouches.length === 1) {
+                        var touchPosition = trackPosition(event.changedTouches[0]);
+                        
+                        $scope.$emit('mct:pan:change', {
+                            touch: touchPosition,
+                            bounds: event.target.getBoundingClientRect()
                         });
                         
                         // Stops other gestures/button clicks from being active
@@ -93,18 +114,18 @@ define(
                 
                 // On the 'touchend' or 'touchcancel' the event
                 // is emitted through scope
-                function pinchEnd(event) {
-                    $scope.$emit('mct:pinch:end');
+                function touchEnd(event) {
+                    $scope.$emit('mct:ptouch:end');
 
                     // Stops other gestures/button clicks from being active
                     event.preventDefault();
                 }
                 
                 if (agentService.isMobile(navigator.userAgent)) {
-                    element.on('touchstart', pinchStart);
-                    element.on('touchmove', pinchChange);
-                    element.on('touchend', pinchEnd);
-                    element.on('touchcancel', pinchEnd);
+                    element.on('touchstart', touchStart);
+                    element.on('touchmove', touchChange);
+                    element.on('touchend', touchEnd);
+                    element.on('touchcancel', touchEnd);
                 }
                 
                 // Stop checking for resize when scope is destroyed
