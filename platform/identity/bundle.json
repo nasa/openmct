@@ -2,9 +2,16 @@
     "extensions": {
         "components": [
             {
+                "implementation": "IdentityAggregator.js",
                 "type": "aggregator",
                 "provides": "identityService",
                 "depends": [ "$q" ]
+            }
+        ],
+        "indicators": [
+            {
+                "implementation": "IdentityIndicator.js",
+                "depends": [ "identityService" ]
             }
         ]
     }
