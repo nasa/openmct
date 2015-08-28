@@ -139,9 +139,9 @@
             }
         });
         
-        // Truncate results if there are more than maxResults
-        if (message.total > data.maxResults) {
-            message.results = results.slice(0, data.maxResults);
+        // Truncate results if there are more than maxNumber
+        if (message.total > data.maxNumber) {
+            message.results = results.slice(0, data.maxNumber);
         } else {
             message.results = results;
         }
