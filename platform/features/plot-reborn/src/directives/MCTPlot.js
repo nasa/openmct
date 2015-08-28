@@ -44,6 +44,7 @@ define(
                     marqueeRect, // Set when exists.
                     chartElementBounds,
                     firstTouches,
+                    firstTouch,
                     firstTouchDistance,
                     firstTouchPan,
                     $canvas = $element.find('canvas');
@@ -313,16 +314,28 @@ define(
                 function onPinchChange(event, touch) {
                     updateZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
                 }
+                
+                function onPanStart(event, touch) {
+                    startPan(touch.touch, touch.bounds);
+                }
 
-                function onPinchEnd(event) {
-                    endZoom();
+                function onPanChange(event, touch) {
+                    updatePan(touch.touch, touch.bounds);
+                }
+
+                function onTouchEnd(event) {
+                    endTouch();
                 }
 
                 $scope.$watchCollection('viewport', onViewportChange);
                 
+                $scope.$on('mct:pan:start', onPanStart);
+                $scope.$on('mct:pan:change', onPanChange);
+                
                 $scope.$on('mct:pinch:start', onPinchStart);
                 $scope.$on('mct:pinch:change', onPinchChange);
-                $scope.$on('mct:pinch:end', onPinchEnd);
+                
+                $scope.$on('mct:ptouch:end', onTouchEnd);
                 
                 $scope.$on('$destroy', stopWatching);
             }
