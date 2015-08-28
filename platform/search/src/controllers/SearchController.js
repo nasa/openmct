@@ -30,7 +30,7 @@ define(function () {
     var INITIAL_LOAD_NUMBER = 20,
         LOAD_INCREMENT = 20;
     
-    function SearchController($scope, searchService) {
+    function SearchController($scope, searchService, throttle) {
         // numResults is the amount of results to display. Will get increased. 
         // fullResults holds the most recent complete searchService response object
         var numResults = INITIAL_LOAD_NUMBER,
@@ -88,15 +88,6 @@ define(function () {
         function search(maxResults) {
             var inputText = $scope.ngModel.input;
             
-            if (inputText !== '' && inputText !== undefined) {
-                // We are starting to load.
-                $scope.loading = true;
-                
-                // Update whether the file tree should be displayed 
-                // Hide tree only when starting search 
-                $scope.ngModel.search = true;
-            }
-            
             if (!maxResults) {
                 // Reset 'load more'
                 numResults = INITIAL_LOAD_NUMBER;
@@ -129,7 +120,21 @@ define(function () {
              *   that this function should return. If not provided, search
              *   service default will be used. 
              */
-            search: search,
+            search: function (maxResults) {
+                // Show that we are loading before starting the throttled function 
+                // so that the user knows the input was detected. 
+                if ($scope.ngModel.input !== '' && $scope.ngModel.input !== undefined) {
+                    // We are starting to load.
+                    $scope.loading = true;
+
+                    // Update whether the file tree should be displayed 
+                    // Hide tree only when starting search 
+                    $scope.ngModel.search = true;
+                }
+                
+                // Call a throttled search
+                return throttle(search)(maxResults);
+            },
             
             /**
              * Checks to see if there are more search results to display. If the answer is
