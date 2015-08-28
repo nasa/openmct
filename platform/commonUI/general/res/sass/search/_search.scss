@@ -39,26 +39,20 @@
 	$iconWidth: 20px;
 	$leftMargin: 6px;
 	$rightPadding: 5px;
-
-	//padding-right: $rightPadding;
-	//@include test();
-	display: flex; //block;
-	flex-direction: column;
+	@include webkitVal(display, flex);
+	//display: flex;
+	@include webkitProp(flex-direction, column);
+	//flex-direction: column;
 	height: 100%;
 
 	.search-bar {
-		//$heightAdjust: 4px;
 		$textInputHeight: 19px; // This is equal to the default value, 19px
 		$iconEdgeM: 4px;
 		$iconD: $treeSearchInputBarH - ($iconEdgeM*2);
 		font-size: 0.8em;
-
-		//order: 1;
-
+		max-width: 250px;
 		position: relative;
 		width: 100%;
-		//height: $textInputHeight;
-		//margin-top: $heightAdjust;
 		.search-input,
 		.search-icon {
 		}

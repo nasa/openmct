@@ -365,12 +365,13 @@ label.checkbox.custom {
 	//@include test();
 	font-size: 1em;
 
-	> .title-label,
-	> .type-icon,
-	> .context-available {
-		//@include tmpBorder(#6666ff);
-		//vertical-align: middle;
-	}
+	//> .title-label,
+	//> .type-icon,
+	//> .context-available {
+	//	//@include tmpBorder(#6666ff);
+	//	//vertical-align: middle;
+	//}
+
 	> .type-icon {
 		font-size: 120%;
 		float: left;
@@ -378,9 +379,14 @@ label.checkbox.custom {
 	}
 
 	.l-elem-wrapper {
-		display: flex;
-		flex-flow: row nowrap;
-		justify-content: flex-start;
+		//@include test(#66f, 0.2);
+		@include webkitProp(justify-content, flex-start);
+		mct-representation {
+			// Holds the context-available item
+			// Must have min-width to make flex work properly
+			// in Safari
+			min-width: 0.7em;
+		}
 	}
 
 	.action {
@@ -388,14 +394,18 @@ label.checkbox.custom {
 	}
 
 	.title-label {
+		//@include test(green, 0.9);
 		@include ellipsize();
 		color: lighten($colorBodyFg, 40%);
+		@include webkitProp(flex, '0 1 auto');
 		padding-right: 0.35em; // For context arrow. Done with em's so pad is relative to the scale of the text.
 		//position: relative;
 	}
 
 	.context-available {
 		font-size: 0.7em;
+		@include webkitProp(flex, '0 0 1');
+		//margin-right: $interiorMargin;
 	}
 
 	@include desktop {

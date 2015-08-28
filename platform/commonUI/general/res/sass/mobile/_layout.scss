@@ -159,7 +159,7 @@
         }
         .pane.right-repr {
             left: 0 !important;
-            transform: translateX($proporMenuOnly);
+	        @include webkitProp(transform, translateX($proporMenuOnly));
             #content-area {
                 opacity: 0;
             }

@@ -318,6 +318,16 @@
     }
 }
 
+@mixin webkitProp($name, $val) {
+	#{$name}: #{$val};
+	-webkit-#{$name}: #{$val};
+}
+
+@mixin webkitVal($name, $val) {
+	#{$name}: #{$val};
+	#{$name}: -webkit-#{$val};
+}
+
 @mixin verticalCenter {
     /* This doesn't work on an element inside an element with absolute positioning that has height: auto */
     //position: relative;
