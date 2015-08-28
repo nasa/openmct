@@ -38,13 +38,14 @@ define(
          * no information about the user is available.
          *
          * @method IdentityService#getUser
-         * @returns {Promise.<UserMetadata>} metadata about the current user
+         * @returns {Promise.<IdentityMetadata>} a promise for metadata about
+         *         the current user
          */
 
         /**
          * Metadata about a user.
          *
-         * @typedef UserMetadata
+         * @typedef IdentityMetadata
          * @property {string} name the user's human-readable name
          * @property {string} key the user's machine-readable name
          */
