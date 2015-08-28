@@ -1,0 +1,11 @@
+{
+    "extensions": {
+        "components": [
+            {
+                "type": "aggregator",
+                "provides": "identityService",
+                "depends": [ "$q" ]
+            }
+        ]
+    }
+}
