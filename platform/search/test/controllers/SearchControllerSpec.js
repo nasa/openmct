@@ -36,6 +36,7 @@ define(
         describe("The search controller", function () {
             var mockScope,
                 mockSearchService,
+                mockThrottle,
                 mockPromise,
                 mockSearchResult,
                 mockDomainObject,
@@ -73,6 +74,11 @@ define(
                 );
                 mockSearchService.query.andReturn(mockPromise);
                 
+                mockThrottle = jasmine.createSpy('throttle');
+                mockThrottle.andCallFake(function (fn) {
+                    return fn;
+                });
+                
                 mockTypes = [{key: 'mock.type', name: 'Mock Type', glyph: '?'}];
                 
                 mockSearchResult = jasmine.createSpyObj(
@@ -86,7 +92,7 @@ define(
                 mockSearchResult.object = mockDomainObject;
                 mockDomainObject.getModel.andReturn({name: 'Mock Object', type: 'mock.type'});
                 
-                controller = new SearchController(mockScope, mockSearchService, mockTypes);
+                controller = new SearchController(mockScope, mockSearchService, mockThrottle);
                 controller.search();
             });
             
