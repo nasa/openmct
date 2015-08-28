@@ -35,7 +35,7 @@
 
             <!-- PANE TREE-->
             <div class='split-pane-component treeview pane left'
-                 ng-class='{inactive: !paneModel.leftPane}'>
+                 ng-class='{inactive: !paneModel.leftPane, active: paneModel.leftPane}'>
 
 	            <div class="holder abs l-mobile">
 	                <mct-representation key="'create-button'"
@@ -72,7 +72,7 @@
 
             <!-- PANE RIGHT-->
             <div class='split-pane-component items secondary-split pane right slide'
-                 ng-class='{leftInactive: !paneModel.leftPane}'>
+                 ng-class='{leftInactive: !paneModel.leftPane, leftActive: paneModel.leftPane}'>
 
                 <!--<mct-split-pane class='contents abs'-->
                                 <!--anchor='right'>-->

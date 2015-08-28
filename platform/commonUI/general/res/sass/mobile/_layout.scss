@@ -55,54 +55,94 @@
         left: $bodyMargin !important;
     }
 
-    // When the tree is hidden, these are the
-    // classes used for the left menu and the
-    // right representation.
-    .browse-hidetree {
+    .pane.left {
         @include user-select(none);
-        // Sets the left tree menu when the tree
-        // is hidden.
-        .pane.left.treeview {
+        &.inactive {
             opacity: 0;
             right: 100% !important;
             width: auto !important;
             overflow-y: hidden;
             overflow-x: hidden;
         }
-        // Sets the right represenation when
-        // the tree is hidden.
-        .pane.right-repr {
-            left: 0 !important;
+
+        &.active {
+          @include trans-prop-nice(opacity, .4s);
+          @include background-image(linear-gradient(90deg, rgba(black, 0) 98%, rgba(black, 0.3) 100%));
+          opacity: 1;
+          display: block !important;
+          //width: auto !important; // CH CO
+          right: auto !important;
+          width: $proporMenuWithView !important;
+        }
+
+        // When the pane is closed, hide the create button
+        .create-btn.major {
+            &.inactivePane {
+              display: none;
+            }
         }
     }
-    
-    .browse-showtree {
-        // NOTE: DISABLED SELECTION
-        // Selection disabled in both panes
-        // causing cut/copy/paste menu to
-        // not appear. Should me moved in
-        // future to properly work
-        @include user-select(none);
 
-        // Sets the left tree menu when the tree is shown.
-        .pane.left.treeview {
-            @include trans-prop-nice(opacity, .4s);
-            @include background-image(linear-gradient(90deg, rgba(black, 0) 98%, rgba(black, 0.3) 100%));
-            opacity: 1;
-            display: block !important;
-            //width: auto !important; // CH CO
-            right: auto !important;
-            width: $proporMenuWithView !important;
-        }
-        // Sets the right representation when the tree is shown.
-        .pane.right-repr {
-            left: $proporMenuWithView !important;
-            //width: auto !important;
+  .split-pane-component.secondary-split.pane.right {
 
-            //left: 0 !important;
-            //transform: translateX($proporMenuWithView);
-        }
-    }
+      // Sliding transition for open/close of left pane
+      &.leftActive {
+          left: $proporMenuWithView !important;
+          //width: auto !important;
+
+          //left: 0 !important;
+          //transform: translateX($proporMenuWithView);
+      }
+  }
+
+    //// When the tree is hidden, these are the
+    //// classes used for the left menu and the
+    //// right representation.
+    //.browse-hidetree {
+    //    @include user-select(none);
+    //    // Sets the left tree menu when the tree
+    //    // is hidden.
+    //    .pane.left.treeview {
+    //        opacity: 0;
+    //        right: 100% !important;
+    //        width: auto !important;
+    //        overflow-y: hidden;
+    //        overflow-x: hidden;
+    //    }
+    //    // Sets the right represenation when
+    //    // the tree is hidden.
+    //    .pane.right-repr {
+    //        left: 0 !important;
+    //    }
+    //}
+
+    //.browse-showtree {
+    //    // NOTE: DISABLED SELECTION
+    //    // Selection disabled in both panes
+    //    // causing cut/copy/paste menu to
+    //    // not appear. Should me moved in
+    //    // future to properly work
+    //    @include user-select(none);
+    //
+    //    // Sets the left tree menu when the tree is shown.
+    //    .pane.left.treeview {
+    //        @include trans-prop-nice(opacity, .4s);
+    //        @include background-image(linear-gradient(90deg, rgba(black, 0) 98%, rgba(black, 0.3) 100%));
+    //        opacity: 1;
+    //        display: block !important;
+    //        //width: auto !important; // CH CO
+    //        right: auto !important;
+    //        width: $proporMenuWithView !important;
+    //    }
+    //    // Sets the right representation when the tree is shown.
+    //    .pane.right-repr {
+    //        left: $proporMenuWithView !important;
+    //        //width: auto !important;
+    //
+    //        //left: 0 !important;
+    //        //transform: translateX($proporMenuWithView);
+    //    }
+    //}
 
     .mobile-menu-icon {
         font-size: 110%;
@@ -153,18 +193,35 @@
 }
 
 @include phonePortrait {
-    .browse-showtree {
-        .pane.left.treeview {
-            width: $proporMenuOnly !important;
-        }
-        .pane.right-repr {
-            left: 0 !important;
-	        @include webkitProp(transform, translateX($proporMenuOnly));
-            #content-area {
-                opacity: 0;
-            }
-        }
+  .pane.left {
+    &.active {
+      width: $proporMenuOnly !important;
     }
+  }
+
+  .split-pane-component.secondary-split.pane.right {
+      // Sliding transition for open/close of left pane
+      &.leftActive {
+        left: 0 !important;
+               @include webkitProp(transform, translateX($proporMenuOnly));
+                #content-area {
+                    opacity: 0;
+                }
+      }
+  }
+
+    //.browse-showtree {
+    //    .pane.left.treeview {
+    //        width: $proporMenuOnly !important;
+    //    }
+    //    .pane.right-repr {
+    //        left: 0 !important;
+	 //       @include webkitProp(transform, translateX($proporMenuOnly));
+    //        #content-area {
+    //            opacity: 0;
+    //        }
+    //    }
+    //}
 }
 
 @include desktop {
