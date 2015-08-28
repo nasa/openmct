@@ -855,20 +855,20 @@ mct-container {
     bottom: 10px !important;
     left: 10px !important; }
 
-  /* line 58, ../sass/mobile/_layout.scss */
+  /* line 59, ../sass/mobile/_layout.scss */
   .pane.left {
     -moz-user-select: -moz-none;
     -ms-user-select: none;
     -webkit-user-select: none;
     user-select: none; }
-    /* line 60, ../sass/mobile/_layout.scss */
+    /* line 63, ../sass/mobile/_layout.scss */
     .pane.left.inactive {
       opacity: 0;
       right: 100% !important;
       width: auto !important;
       overflow-y: hidden;
       overflow-x: hidden; }
-    /* line 68, ../sass/mobile/_layout.scss */
+    /* line 72, ../sass/mobile/_layout.scss */
     .pane.left.active {
       -moz-transition-property: opacity;
       -o-transition-property: opacity;
@@ -891,51 +891,51 @@ mct-container {
       display: block !important;
       right: auto !important;
       width: 40% !important; }
-    /* line 80, ../sass/mobile/_layout.scss */
+    /* line 84, ../sass/mobile/_layout.scss */
     .pane.left .create-btn.major.inactivePane {
       display: none; }
 
-  /* line 89, ../sass/mobile/_layout.scss */
+  /* line 95, ../sass/mobile/_layout.scss */
   .split-pane-component.secondary-split.pane.right.leftActive {
     left: 40% !important; }
 
-  /* line 147, ../sass/mobile/_layout.scss */
+  /* line 150, ../sass/mobile/_layout.scss */
   .mobile-menu-icon {
     font-size: 110%;
     position: absolute;
     top: 12px;
     left: 10px; }
 
-  /* line 154, ../sass/mobile/_layout.scss */
+  /* line 157, ../sass/mobile/_layout.scss */
   .object-browse-bar {
     left: 30px !important; }
-    /* line 157, ../sass/mobile/_layout.scss */
+    /* line 160, ../sass/mobile/_layout.scss */
     .object-browse-bar .context-available {
       opacity: 1 !important; }
-    /* line 160, ../sass/mobile/_layout.scss */
+    /* line 163, ../sass/mobile/_layout.scss */
     .object-browse-bar .view-switcher {
       margin-right: 0 !important; }
-      /* line 162, ../sass/mobile/_layout.scss */
+      /* line 165, ../sass/mobile/_layout.scss */
       .object-browse-bar .view-switcher .name {
         display: none; }
 
-  /* line 169, ../sass/mobile/_layout.scss */
+  /* line 172, ../sass/mobile/_layout.scss */
   .tree-holder {
     overflow-x: hidden !important; }
 
-  /* line 173, ../sass/mobile/_layout.scss */
+  /* line 176, ../sass/mobile/_layout.scss */
   .mobile-disable-select {
     -moz-user-select: -moz-none;
     -ms-user-select: none;
     -webkit-user-select: none;
     user-select: none; }
 
-  /* line 178, ../sass/mobile/_layout.scss */
+  /* line 181, ../sass/mobile/_layout.scss */
   .mobile-hide,
   .mobile-hide-important {
     display: none !important; }
 
-  /* line 183, ../sass/mobile/_layout.scss */
+  /* line 186, ../sass/mobile/_layout.scss */
   .mobile-back-hide {
     pointer-events: none;
     -moz-transition-property: opacity;
@@ -952,7 +952,7 @@ mct-container {
     transition-timing-function: ease-in-out;
     opacity: 0; }
 
-  /* line 188, ../sass/mobile/_layout.scss */
+  /* line 191, ../sass/mobile/_layout.scss */
   .mobile-back-unhide {
     pointer-events: all;
     -moz-transition-property: opacity;
@@ -969,20 +969,20 @@ mct-container {
     transition-timing-function: ease-in-out;
     opacity: 1; } }
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) {
-  /* line 197, ../sass/mobile/_layout.scss */
+  /* line 203, ../sass/mobile/_layout.scss */
   .pane.left.active {
     width: 90% !important; }
 
-  /* line 204, ../sass/mobile/_layout.scss */
+  /* line 211, ../sass/mobile/_layout.scss */
   .split-pane-component.secondary-split.pane.right.leftActive {
     left: 0 !important;
     transform: translateX(90%);
     -webkit-transform: translateX(90%); }
-    /* line 207, ../sass/mobile/_layout.scss */
+    /* line 214, ../sass/mobile/_layout.scss */
     .split-pane-component.secondary-split.pane.right.leftActive #content-area {
       opacity: 0; } }
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 228, ../sass/mobile/_layout.scss */
+  /* line 236, ../sass/mobile/_layout.scss */
   .desktop-hide {
     display: none; } }
 /*****************************************************************************
