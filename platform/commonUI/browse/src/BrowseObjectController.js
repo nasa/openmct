@@ -32,7 +32,7 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function BrowseObjectController($scope, $location, $route) {
+        function BrowseObjectController($scope, $location, $route, $window) {
             function setViewForDomainObject(domainObject) {
                 var locationViewKey = $location.search().view;
 
@@ -65,6 +65,19 @@ define(
                 }
             }
 
+            // If there is a defined opener, assume that the window was opened 
+            //   by choosing 'Open in a new tab'
+            if ($window.opener) {
+                // The desired default for this is to have a closed left pane
+                $scope.ngModel.leftPane = false;
+            } else {
+                // Otherwise, start the application with an open left pane
+                $scope.ngModel.leftPane = true;
+            }
+            
+            // The object inspector by default always starts closed
+            $scope.ngModel.rightPane = false;
+            
             $scope.$watch('domainObject', setViewForDomainObject);
             $scope.$watch('representation.selected.key', updateQueryParam);
         }

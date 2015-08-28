@@ -57,6 +57,7 @@ define(
                     "$scope",
                     [ "$on", "$watch", "treeSlide", "backArrow" ]
                 );
+                mockScope.ngModel = {};
                 mockRoute = { current: { params: {} } };
                 mockLocation = jasmine.createSpyObj(
                     "$location",
