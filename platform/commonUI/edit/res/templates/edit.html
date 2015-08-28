@@ -24,7 +24,9 @@
      ng-controller="EditController as editMode"
      mct-before-unload="editMode.getUnloadWarning()">
 
-    <mct-representation key="'edit-object'" mct-object="editMode.navigatedObject()">
+    <mct-representation key="'edit-object'"
+                        mct-object="editMode.navigatedObject()"
+                        ng-model="editModel">
     </mct-representation>
 
     <mct-include key="'bottombar'"></mct-include>

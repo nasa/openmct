@@ -21,49 +21,68 @@
 -->
 <mct-representation key="'topbar-edit'"
                     mct-object="domainObject"
-                    ng-model="representation">
+                    ng-model="representation"
+                    ng-click="ngModel.inspectionObjects = [domainObject]">
 </mct-representation>
 <div class="holder edit-area abs">
-    <mct-split-pane class='contents abs' anchor='right'>
-        <div class='split-pane-component pane left edit-main'>
-            <mct-toolbar name="mctToolbar"
-                         structure="toolbar.structure"
-                         ng-model="toolbar.state">
-            </mct-toolbar>
-            <div class='holder abs object-holder work-area'>
-                <mct-representation key="representation.selected.key"
-                                    toolbar="toolbar"
-                                    mct-object="representation.selected.key && domainObject">
-                </mct-representation>
-            </div>
-        </div>
-        <mct-splitter></mct-splitter>
-        <div
-            class='split-pane-component pane right edit-objects menus-to-left'
-            ng-controller='EditPanesController as editPanes'
-            >
-            <mct-split-pane class='contents abs' anchor='bottom'>
-                <div
-                    class="abs pane top accordion"
-                    ng-controller="ToggleController as toggle"
-                    >
-                    <mct-container key="accordion" label="Library">
-                        <mct-representation key="'tree'"
-                                            mct-object="editPanes.getRoot()">
+    <mct-split-pane class='contents abs'
+                    anchor='right'>
+        <div class='split-pane-component secondary-split pane left'>
+            <mct-split-pane class='contents abs' anchor='right'>
+                <div class='split-pane-component pane left edit-main'>
+                    <mct-toolbar name="mctToolbar"
+                                 structure="toolbar.structure"
+                                 ng-model="toolbar.state">
+                    </mct-toolbar>
+                    <div class='holder abs object-holder work-area'>
+                        <mct-representation key="representation.selected.key"
+                                            toolbar="toolbar"
+                                            mct-object="representation.selected.key && domainObject"
+                                            ng-model="ngModel">
                         </mct-representation>
-                    </mct-container>
+                    </div>
                 </div>
                 <mct-splitter></mct-splitter>
                 <div
-                    class="abs pane bottom accordion"
-                    ng-controller="ToggleController as toggle"
+                    class='split-pane-component pane right edit-objects menus-to-left'
+                    ng-controller='EditPanesController as editPanes'
                     >
-                    <mct-container key="accordion" label="Elements">
-                        <mct-representation key="'edit-elements'" mct-object="domainObject">
-                        </mct-representation>
-                    </mct-container>
+                    <mct-split-pane class='contents abs' anchor='bottom'>
+                        <div
+                            class="abs pane top accordion"
+                            ng-controller="ToggleController as toggle"
+                            >
+                            <mct-container key="accordion" label="Library">
+                                <mct-representation key="'tree'"
+                                                    mct-object="editPanes.getRoot()">
+                                </mct-representation>
+                            </mct-container>
+                        </div>
+                        <mct-splitter></mct-splitter>
+                        <div
+                            class="abs pane bottom accordion"
+                            ng-controller="ToggleController as toggle"
+                            >
+                            <mct-container key="accordion" label="Elements">
+                                <mct-representation key="'edit-elements'" mct-object="domainObject">
+                                </mct-representation>
+                            </mct-container>
+                        </div>
+                    </mct-split-pane>
                 </div>
             </mct-split-pane>
+        </div>
+        
+        <mct-splitter></mct-splitter>
+        
+        <div class='split-pane-component object-inspector pane right'
+             ng-class='{inactive: !paneModel.rightPane}'>
+            <div class='holder inspector-holder abs'>
+                <mct-representation key="'object-inspector'"
+                                    mct-object="editPanes.getRoot()"
+                                    ng-model="ngModel">
+                </mct-representation>
+            </div>
         </div>
     </mct-split-pane>
 </div>

@@ -52,6 +52,12 @@ define(
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);
             });
+            
+            // Provide a model for edit mode
+            $scope.editModel = {
+                selectedObject: navigationService.getNavigation()
+            };
+            $scope.editModel.inspectionObjects = [$scope.editModel.selectedObject];
         }
 
         /**
