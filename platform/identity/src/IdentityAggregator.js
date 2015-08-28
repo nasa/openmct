@@ -21,6 +21,11 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * Defines interfaces and common infrastructure for establishing
+ * a user's identity.
+ * @namespace platform/identity
+ */
 define(
     function () {
         "use strict";
@@ -55,6 +60,7 @@ define(
          * defined identity provided by any provider, according to
          * priority order.
          *
+         * @constructor
          * @implements {IdentityService}
          * @memberof platform/identity
          */
