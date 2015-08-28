@@ -172,10 +172,10 @@ define(
                     event = {
                         data: {
                             request: "search",
-                            results: {
-                                1: 1,
-                                2: 2
-                            },
+                            results: [
+                                {id: 1, score: 1},
+                                {id: 2, score: 2}
+                            ],
                             total: 2,
                             timedOut: false,
                             timestamp: timestamp

@@ -35,7 +35,17 @@ define(
                 numObjects = 5;
             
             beforeEach(function () {
-                var i;
+                // See first it()
+            });
+            
+            it("searches can reach all objects", function () {
+                var flag = false,
+                    workerOutput,
+                    resultsLength = 0,
+                    i;
+                
+                // This for loop is being done only once in the first it() becuase 
+                //  duplicate checking is done outside fo the worker
                 for (i = 0; i < numObjects; i += 1) {
                     worker.postMessage(
                         {
@@ -49,12 +59,6 @@ define(
                         }
                     );
                 }
-            });
-            
-            it("searches can reach all objects", function () {
-                var flag = false,
-                    workerOutput,
-                    resultsLength = 0;
                 
                 // Search something that should return all objects
                 runs(function () {
@@ -70,12 +74,8 @@ define(
                 });
                 
                 worker.onmessage = function (event) {
-                    var id;
-                    
                     workerOutput = event.data;
-                    for (id in workerOutput.results) {
-                        resultsLength += 1;
-                    }
+                    resultsLength = event.data.results.length;
                     flag = true;
                 };
                 
@@ -108,12 +108,8 @@ define(
                 });
                 
                 worker.onmessage = function (event) {
-                    var id;
-                    
                     workerOutput = event.data;
-                    for (id in workerOutput.results) {
-                        resultsLength += 1;
-                    }
+                    resultsLength = event.data.results.length;
                     flag = true;
                 };
                 
@@ -124,7 +120,6 @@ define(
                 runs(function () {
                     expect(workerOutput).toBeDefined();
                     expect(resultsLength).toEqual(1);
-                    expect(workerOutput.results[2]).toBeDefined();
                 });
             });
         });
