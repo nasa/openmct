@@ -24,7 +24,8 @@
 
     <div class='frame child-frame panel abs'
          ng-repeat="childObject in composition"
-         ng-style="controller.getFrameStyle(childObject.getId())">
+         ng-style="controller.getFrameStyle(childObject.getId())"
+         ng-mousedown="ngModel.inspectionObjects = [childObject]">
 
         <div class="frame child-frame holder contents abs">
             <mct-representation key="'frame'"
