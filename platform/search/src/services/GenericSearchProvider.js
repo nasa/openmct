@@ -79,27 +79,28 @@ define(
             // Handles responses from the web worker. Namely, the results of 
             // a search request. 
             function handleResponse(event) {
-                var ids = [],
-                    id;
+                var ids = [];
                 
                 // If we have the results from a search 
                 if (event.data.request === 'search') {
-                    // Convert the ids given from the web worker into domain objects
-                    for (id in event.data.results) {
-                        ids.push(id);
-                    }
+                    
+                    // Get the ids into an array
+                    event.data.results.forEach(function (result) {
+                        ids.push(result.id);
+                    });
+                    
+                    // Get domainObjects with the ids
                     objectService.getObjects(ids).then(function (objects) {
-                        var searchResults = [],
-                            id;
+                        var searchResults = [];
                         
-                        // Create searchResult objects
-                        for (id in objects) {
+                        // Create searchResult objects with the gotten domainObjects
+                        event.data.results.forEach(function (result) {
                             searchResults.push({
-                                object: objects[id],
-                                id: id,
-                                score: event.data.results[id]
+                                object: objects[result.id],
+                                id: result.id,
+                                score: result.score
                             });
-                        }
+                        });
                         
                         // Resove the promise corresponding to this 
                         pendingQueries[event.data.timestamp].resolve({

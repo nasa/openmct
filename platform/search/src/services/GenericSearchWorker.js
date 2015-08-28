@@ -93,14 +93,14 @@
      *           * timestamp: The time identifier from when the query was made
      */
     function search(data) {
-        // This results dictionary will have domain object ID keys which 
-        // point to the value the domain object's score. 
-        var results = {},
+        // This results array will have domain object IDs and scores together
+        // [{score: number, id: string}]
+        var results = [],
             input = data.input.toLocaleLowerCase(),
             terms = convertToTerms(input),
             message = {
                 request: 'search',
-                results: {},
+                results: [],
                 total: 0,
                 timestamp: data.timestamp,
                 timedOut: false
@@ -111,6 +111,7 @@
         
         // If the user input is empty, we want to have no search results.
         if (input !== '') {
+            // Start getting search results
             for (i = 0; i < indexedItems.length; i += 1) {
                 // If this is taking too long, then stop
                 if (Date.now() > data.timestamp + data.timeout) {
@@ -121,23 +122,26 @@
                 // Score and add items
                 score = scoreItem(indexedItems[i], input, terms);
                 if (score > 0) {
-                    results[indexedItems[i].id] = score;
+                    results.push({id: indexedItems[i].id, score: score});
                     message.total += 1;
                 }
             }
         }
         
+        // Sort the results by score 
+        results.sort(function (a, b) {
+            if (a.score > b.score) {
+                return -1;
+            } else if (b.score > a.score) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        
         // Truncate results if there are more than maxResults
         if (message.total > data.maxResults) {
-            i = 0;
-            for (id in results) {
-                message.results[id] = results[id];
-                i += 1;
-                if (i >= data.maxResults) {
-                    break;
-                }
-            }
-            // TODO: This seems inefficient.
+            message.results = results.slice(0, data.maxResults);
         } else {
             message.results = results;
         }
