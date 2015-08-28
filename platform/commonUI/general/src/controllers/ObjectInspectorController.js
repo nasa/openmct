@@ -39,15 +39,16 @@ define(
             $scope.primaryParents = [];
             $scope.contextutalParents = [];
             
-            // Gets an array of the contextual parents/anscestors of the selected object
+            // Gets an array of the contextual parents/anscestors of the (first) inspected object
             function getContextualPath() {
                 var currentObj,
                     currentParent,
                     parents = [];
                 
-                if ($scope.ngModel && $scope.ngModel.inspectionObjects) {
+                if ($scope.ngModel && $scope.ngModel.inspectionObjects && $scope.ngModel.inspectionObjects[0]) {
                     currentObj = $scope.ngModel.inspectionObjects[0];
                 } else {
+                    // Fallback for if the inspection objects are not defined is the selected object
                     currentObj = $scope.ngModel && $scope.ngModel.selectedObject;
                 }
                 
@@ -55,6 +56,7 @@ define(
                     currentObj.hasCapability('context') &&
                     currentObj.getCapability('context').getParent();
                 
+                // Loop while this has a parent that is not the root object 
                 while (currentParent && currentParent.getModel().type !== 'root' &&
                         currentParent.hasCapability('context')) {
                     // Record this object 
@@ -68,19 +70,22 @@ define(
                 $scope.contextutalParents = parents;
             }
             
-            // Gets an array of the parents/anscestors of the selected object's 
+            // Gets an array of the parents/anscestors of the (first) inspected object's 
             //   primary location (locational of original non-link)
             function getPrimaryPath(current) {
                 var location;
                 
                 // If this the the initial call of this recursive function
                 if (!current) {
-                    if ($scope.ngModel && $scope.ngModel.inspectionObjects) {
+                    // Set the object we are looking at
+                    if ($scope.ngModel && $scope.ngModel.inspectionObjects && $scope.ngModel.inspectionObjects[0]) {
                         current = $scope.ngModel.inspectionObjects[0];
                     } else {
+                        // Fallback for if the inspection objects are not defined is the selected object
                         current = $scope.ngModel && $scope.ngModel.selectedObject;
                     }
                     
+                    // And reset the parents array 
                     $scope.primaryParents = [];
                 }
                 
@@ -98,41 +103,36 @@ define(
             
             // Gets the metadata for the selected object
             function getMetadata() {
-                // We want to get info from the inspectionObjects, but otherwise just use
-                // the selectedObject. 
-                if ($scope.ngModel && $scope.ngModel.inspectionObjects &&
+                if ($scope.ngModel &&
+                        $scope.ngModel.inspectionObjects &&
+                        $scope.ngModel.inspectionObjects[0] &&
                         $scope.ngModel.inspectionObjects[0].hasCapability('metadata')) {
+                    // Get metadata from the inspected object
                     $scope.metadata = $scope.ngModel.inspectionObjects[0].useCapability('metadata');
                 } else {
+                    // Fallback for if the inspection objects are not defined is the selected object
                     $scope.metadata = $scope.ngModel && $scope.ngModel.selectedObject &&
                         $scope.ngModel.selectedObject.hasCapability('metadata') &&
                         $scope.ngModel.selectedObject.useCapability('metadata');
                 }
             }
             
-            // Set scope variables when the selected object changes 
-            $scope.$watch('ngModel.selectedObject', function () {
-                var isLink = $scope && $scope.ngModel &&
-                    $scope.ngModel.selectedObject &&
-                    $scope.ngModel.selectedObject.hasCapability('location') &&
-                    $scope.ngModel.selectedObject.getCapability('location').isLink();
+            $scope.$watch('ngModel.inspectionObjects', function () {
+                var isLink;
                 
-                if (isLink) {
-                    getPrimaryPath();
-                    getContextualPath();
+                if ($scope && $scope.ngModel &&
+                        $scope.ngModel.inspectionObjects &&
+                        $scope.ngModel.inspectionObjects[0]) {
+                    isLink = $scope.ngModel.inspectionObjects[0].hasCapability('location') &&
+                        $scope.ngModel.inspectionObjects[0].getCapability('location').isLink();
                 } else {
-                    $scope.primaryParents = [];
-                    getContextualPath();
+                    // Fallback for if the inspection objects are not defined is the selected object
+                    isLink = $scope && $scope.ngModel &&
+                        $scope.ngModel.selectedObject &&
+                        $scope.ngModel.selectedObject.hasCapability('location') &&
+                        $scope.ngModel.selectedObject.getCapability('location').isLink();
                 }
                 
-                getMetadata();
-            });
-            
-            $scope.$watch('ngModel.inspectionObjects[0]', function () {
-                var isLink = $scope && $scope.ngModel &&
-                    $scope.ngModel.inspectionObjects &&
-                    $scope.ngModel.inspectionObjects[0].hasCapability('location') &&
-                    $scope.ngModel.inspectionObjects[0].getCapability('location').isLink();
                 
                 if (isLink) {
                     getPrimaryPath();

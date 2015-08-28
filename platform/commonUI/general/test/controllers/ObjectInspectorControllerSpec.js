@@ -36,7 +36,8 @@ define(
                 mockDomainObject,
                 mockContextCapability,
                 mockLocationCapability,
-                controller;
+                controller,
+                treePosCounter = 0;
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
@@ -45,6 +46,7 @@ define(
                 );
                 mockScope.ngModel = {};
                 mockScope.ngModel.selectedObject = 'mock selected object';
+                mockScope.ngModel.inspectionObjects = [];
                 
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",
@@ -57,10 +59,18 @@ define(
                 mockObjectService.getObjects.andReturn(mockPromise);
                 
                 mockDomainObject = jasmine.createSpyObj(
-                    "selectedObject",
+                    "domainObject",
                     [ "hasCapability", "getCapability", "useCapability", "getModel" ]
                 );
-                mockDomainObject.getModel.andReturn({location: 'somewhere'});
+                mockDomainObject.getModel.andCallFake(function () {
+                    // Simulate having a tree by making it take iterations to reach root
+                    if (treePosCounter > 5) {
+                        return {location: 'somewhere', type: 'root'};
+                    } else {
+                        treePosCounter += 1;
+                        return {location: 'somewhere', type: 'something'};
+                    }
+                });
                 mockDomainObject.hasCapability.andReturn(true);
                 
                 mockContextCapability = jasmine.createSpyObj(
@@ -78,15 +88,16 @@ define(
                         return mockContextCapability;
                     }
                 });
+                mockContextCapability.getParent.andReturn(mockDomainObject);
                 
                 controller = new ObjectInspectorController(mockScope, mockObjectService);
                 
-                // Change the selected object to trigger the watch call
-                mockScope.ngModel.selectedObject = mockDomainObject;
+                // Change the inspected object to trigger the watch call
+                mockScope.ngModel.inspectionObjects[0] = mockDomainObject;
             });
 
-            it("watches for changes to the selected object", function () {
-                expect(mockScope.$watch).toHaveBeenCalledWith('ngModel.selectedObject', jasmine.any(Function));
+            it("watches for changes to the inspection objects", function () {
+                expect(mockScope.$watch).toHaveBeenCalledWith('ngModel.inspectionObjects', jasmine.any(Function));
             });
 
             it("looks for contextual parent objects", function () {
@@ -94,7 +105,7 @@ define(
                 expect(mockContextCapability.getParent).toHaveBeenCalled();
             });
 
-            it("if link, looks for primary parent objects", function () {
+            it("looks for primary parent objects if it is a link", function () {
                 mockLocationCapability.isLink.andReturn(true);
                 
                 mockScope.$watch.mostRecentCall.args[1]();
@@ -106,6 +117,19 @@ define(
             it("gets metadata", function () {
                 mockScope.$watch.mostRecentCall.args[1]();
                 expect(mockDomainObject.useCapability).toHaveBeenCalledWith('metadata');
+            });
+            
+            it("falls back on the selected object if there are no inspection objects", function () {
+                mockDomainObject.useCapability.reset();
+                
+                mockScope.ngModel.selectedObject = mockDomainObject;
+                mockScope.ngModel.inspectionObjects = undefined;
+                
+                expect(mockScope.$watch).toHaveBeenCalledWith('ngModel.inspectionObjects', jasmine.any(Function));
+                mockLocationCapability.isLink.andReturn(true);
+                mockScope.$watch.mostRecentCall.args[1]();
+                
+                expect(mockDomainObject.useCapability).toHaveBeenCalled();
             });
         });
     }
