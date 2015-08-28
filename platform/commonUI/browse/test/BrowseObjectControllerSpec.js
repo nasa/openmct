@@ -32,6 +32,7 @@ define(
                 mockLocation,
                 mockRoute,
                 mockWindow,
+                mockAgentService,
                 mockUnlisten,
                 controller;
 
@@ -56,6 +57,7 @@ define(
                     "$location",
                     [ "path", "search" ]
                 );
+                mockAgentService = jasmine.createSpyObj("agentService", ["isMobile"]);
                 mockUnlisten = jasmine.createSpy("unlisten");
 
                 mockScope.$on.andReturn(mockUnlisten);
@@ -64,7 +66,8 @@ define(
                     mockScope,
                     mockLocation,
                     mockRoute,
-                    mockWindow
+                    mockWindow,
+                    mockAgentService
                 );
             });
 
