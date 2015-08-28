@@ -21,15 +21,15 @@
 -->
 <span ng-controller="BrowseObjectController">
     
-    <div class="object-browse-bar bar abs">
+    <div class="object-browse-bar bar abs"
+         ng-click="ngModel.inspectionObjects = [domainObject]">
         
         <div class="pane-tabs left"
              ng-class="{inactivePane: !ngModel.leftPane, activePane: ngModel.leftPane}"
              ng-click="ngModel.leftPane = !ngModel.leftPane">
         </div>
         
-        <div class="items-select left abs"
-             ng-click="ngModel.inspectionObjects = [domainObject]">
+        <div class="items-select left abs">
             <mct-representation key="'object-header'" mct-object="domainObject">
             </mct-representation>
         </div>
