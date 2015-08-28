@@ -239,7 +239,7 @@ define(
             // If the user has selected an object (and is portrait
             // on a phone), then hide the tree menu
             $scope.$on("select-obj", function () {
-                $scope.treeSlide();
+                //$scope.treeSlide();
             });
 
             $scope.backArrow = navigateToParent;
