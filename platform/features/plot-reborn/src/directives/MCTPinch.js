@@ -120,16 +120,22 @@ define(
                     // Stops other gestures/button clicks from being active
                     event.preventDefault();
                 }
-                
+
+                // On Mobile, checks for touch start, move, and end
                 if (agentService.isMobile(navigator.userAgent)) {
                     element.on('touchstart', touchStart);
                     element.on('touchmove', touchChange);
                     element.on('touchend', touchEnd);
                     element.on('touchcancel', touchEnd);
                 }
-                
-                // Stop checking for resize when scope is destroyed
-//                $scope.$on("$destroy", destroyEverythingNow);
+
+                // Stop checking for touch when scope is destroyed
+                $scope.$on("$destroy", function () {
+                    element.off('touchstart', touchStart);
+                    element.off('touchmove', touchChange);
+                    element.off('touchend', touchEnd);
+                    element.off('touchcancel', touchEnd);
+                });
             }
 
             return {
