@@ -54,7 +54,8 @@
                             >
                             <mct-container key="accordion" label="Library">
                                 <mct-representation key="'tree'"
-                                                    mct-object="editPanes.getRoot()">
+                                                    mct-object="editPanes.getRoot()"
+                                                    ng-model="ngModel">
                                 </mct-representation>
                             </mct-container>
                         </div>
@@ -64,7 +65,9 @@
                             ng-controller="ToggleController as toggle"
                             >
                             <mct-container key="accordion" label="Elements">
-                                <mct-representation key="'edit-elements'" mct-object="domainObject">
+                                <mct-representation key="'edit-elements'"
+                                                    mct-object="domainObject"
+                                                    ng-model="ngModel">
                                 </mct-representation>
                             </mct-container>
                         </div>
