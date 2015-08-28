@@ -26,10 +26,9 @@ define(
     function () {
         "use strict";
 
-        function MCTPinch($log, agentService) {
+        function MCTPinch(agentService) {
             
-            function link($scope, element, attrs) {
-                
+            function link($scope, element) {
                 // Returns position of touch event
                 function trackPosition(event) {
                     return {
@@ -55,23 +54,25 @@ define(
                 // On touch start the 'touch' is tracked and
                 // the event is emitted through scope
                 function touchStart(event) {
+                    var touchPosition;
+
                     if (event.changedTouches.length === 2 ||
                             event.touches.length === 2) {
-                        var touchPositions = [trackPosition(event.touches[0]),
+                        touchPosition = [trackPosition(event.touches[0]),
                                              trackPosition(event.touches[1])];
                         
                         $scope.$emit('mct:pinch:start', {
-                            touches: touchPositions,
+                            touches: touchPosition,
                             bounds: event.target.getBoundingClientRect(),
-                            midpoint: calculateMidpoint(touchPositions[0], touchPositions[1]),
-                            distance: calculateDistance(touchPositions[0], touchPositions[1])
+                            midpoint: calculateMidpoint(touchPosition[0], touchPosition[1]),
+                            distance: calculateDistance(touchPosition[0], touchPosition[1])
                         });
                         
                         // Stops other gestures/button clicks from being active
                         event.preventDefault();
                     } else if (event.changedTouches.length === 1 ||
                             event.touches.length === 1) {
-                        var touchPosition = trackPosition(event.touches[0]);
+                        touchPosition = trackPosition(event.touches[0]);
                         
                         $scope.$emit('mct:pan:start', {
                             touch: touchPosition,
@@ -86,27 +87,29 @@ define(
                 // As the touch move occurs, the touches are tracked and
                 // the event is emitted through scope
                 function touchChange(event) {
+                    var touchPosition;
+
                     if (event.changedTouches.length === 2) {
-                        var touchPositions = [trackPosition(event.changedTouches[0]),
+                        touchPosition = [trackPosition(event.changedTouches[0]),
                                              trackPosition(event.changedTouches[1])];
                         
                         $scope.$emit('mct:pinch:change', {
-                            touches: touchPositions,
+                            touches: touchPosition,
                             bounds: event.target.getBoundingClientRect(),
-                            midpoint: calculateMidpoint(touchPositions[0], touchPositions[1]),
-                            distance: calculateDistance(touchPositions[0], touchPositions[1])
+                            midpoint: calculateMidpoint(touchPosition[0], touchPosition[1]),
+                            distance: calculateDistance(touchPosition[0], touchPosition[1])
                         });
                         
                         // Stops other gestures/button clicks from being active
                         event.preventDefault();
                     } else if (event.changedTouches.length === 1) {
-                        var touchPosition = trackPosition(event.changedTouches[0]);
-                        
+                        touchPosition = trackPosition(event.changedTouches[0]);
+
                         $scope.$emit('mct:pan:change', {
                             touch: touchPosition,
                             bounds: event.target.getBoundingClientRect()
                         });
-                        
+
                         // Stops other gestures/button clicks from being active
                         event.preventDefault();
                     }

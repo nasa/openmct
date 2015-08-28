@@ -51,7 +51,7 @@
             {
                 "key": "mctPinch",
                 "implementation": "directives/MCTPinch.js",
-                "depends": [ "$log", "agentService" ]
+                "depends": [ "agentService" ]
             }
         ],
         "controllers": [
