@@ -55,7 +55,7 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$on", "$watch", "treeSlide", "backArrow" ]
+                    [ "$on", "$watch", "backArrow" ]
                 );
                 mockScope.ngModel = {};
                 mockRoute = { current: { params: {} } };
@@ -164,7 +164,7 @@ define(
             // Mocks the tree slide call that
             // lets the html code know if the
             // tree menu is open.
-            it("calls the treeSlide function", function () {
+            it("switches the the paneModel active state", function () {
                 expect(mockScope.$on).toHaveBeenCalledWith(
                     "select-obj",
                     jasmine.any(Function)
