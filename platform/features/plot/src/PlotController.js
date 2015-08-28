@@ -166,13 +166,14 @@ define(
             }
             
             // Determines if the legend item is being inspected. If so, the class 
-            // is 'inspected'
+            // is 'inspected' -- unless that is the only legend item for the plot
             function getInspectedClass(telemetryObject) {
                 if ($scope.ngModel &&
                         $scope.ngModel.inspectionObjects &&
-                        $scope.ngModel.inspectionObjects.indexOf(telemetryObject) !== -1) {
+                        $scope.ngModel.inspectionObjects.indexOf(telemetryObject) !== -1 &&
+                        self.modeOptions.getModeHandler().getSubPlots()[0].telemetryObjects.length > 1) {
                     return "inspected";
-                }
+                } 
             }
             this.getInspectedClass = getInspectedClass;
             
