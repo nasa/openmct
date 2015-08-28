@@ -32,7 +32,7 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function BrowseObjectController($scope, $location, $route, $window) {
+        function BrowseObjectController($scope, $location, $route, $window, agentService) {
             function setViewForDomainObject(domainObject) {
                 var locationViewKey = $location.search().view;
 

@@ -21,7 +21,7 @@
             {
                 "key": "BrowseObjectController",
                 "implementation": "BrowseObjectController.js",
-                "depends": [ "$scope", "$location", "$route", "$window" ]
+                "depends": [ "$scope", "$location", "$route", "$window", "agentService" ]
             },
             {
                 "key": "CreateMenuController",
