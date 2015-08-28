@@ -272,38 +272,63 @@ define(
                     updateAxesForCurrentViewport();
                 }
                 
-                function calculateDistanceChange(startDist, currDist) {
-                    return startDist / currDist;
-                }
-                
                 function updateZoom(midpoint, bounds, touches, distance) {
                     // calculate offset between points.  Apply that offset to viewport.
                     var midpointPosition = trackTouchPosition(midpoint, bounds),
-                        newPosition = midpointPosition.positionAsPlotPoint,
-                        dDomain = firstTouchPan.domain - newPosition.domain,
-                        dRange = firstTouchPan.range - newPosition.range;
+                        newMidpointPosition = midpointPosition.positionAsPlotPoint,
+                        newTouchPosition = [trackTouchPosition(touches[0], bounds).positionAsPlotPoint,
+                                            trackTouchPosition(touches[1], bounds).positionAsPlotPoint];
                     
+                    //console.log("0 Domain :");
+                    //console.log("0 Range :");
+                    //console.log("1 Domain :");
+                    //console.log("1 Range :");
                     
                     $scope.viewport = {
                         topLeft: {
-                            domain: $scope.viewport.topLeft.domain + dDomain,
-                            range: $scope.viewport.topLeft.range + dRange
+                            domain: (($scope.viewport.topLeft.domain)),
+                            range: (($scope.viewport.topLeft.range))
                         },
                         bottomRight: {
-                            domain: $scope.viewport.bottomRight.domain + dDomain,
-                            range: $scope.viewport.bottomRight.range + dRange
+                            domain: (($scope.viewport.bottomRight.domain)),
+                            range: (($scope.viewport.bottomRight.range))
                         }
                     };
                 }
                 
                 function startZoom(midpoint, bounds, touches, distance) {
                     $scope.$emit('user:viewport:change:start');
-                    firstTouches = touches;
+                    firstTouches = [trackTouchPosition(touches[0], bounds).positionAsPlotPoint,
+                                    trackTouchPosition(touches[1], bounds).positionAsPlotPoint];
                     firstTouchDistance = distance;
                     firstTouchPan = trackTouchPosition(midpoint, bounds).positionAsPlotPoint;
                 }
                 
-                function endZoom() {
+                function updatePan(touch, bounds) {
+                    // calculate offset between points.  Apply that offset to viewport.
+                    var panPosition = trackTouchPosition(touch, bounds),
+                        newPanPosition = panPosition.positionAsPlotPoint,
+                        dDomain = firstTouch.domain - newPanPosition.domain,
+                        dRange = firstTouch.range - newPanPosition.range;
+                    
+                    $scope.viewport = {
+                        topLeft: {
+                            domain: (($scope.viewport.topLeft.domain) + dDomain),
+                            range: (($scope.viewport.topLeft.range) + dRange)
+                        },
+                        bottomRight: {
+                            domain: (($scope.viewport.bottomRight.domain) + dDomain),
+                            range: (($scope.viewport.bottomRight.range) + dRange)
+                        }
+                    };
+                }
+                
+                function startPan(touch, bounds) {
+                    $scope.$emit('user:viewport:change:start');
+                    firstTouch = trackTouchPosition(touch, bounds).positionAsPlotPoint;
+                }
+                
+                function endTouch() {
                     $scope.$emit('user:viewport:change:end', $scope.viewport);
                 }
                 
