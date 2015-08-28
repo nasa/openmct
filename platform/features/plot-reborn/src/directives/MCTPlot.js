@@ -272,17 +272,17 @@ define(
                     updateAxesForCurrentViewport();
                 }
                 
-                function updateZoom(midpoint, bounds, touches, distance) {
+                function updateZoom(midpoint, bounds, touches) {
                     // calculate offset between points.  Apply that offset to viewport.
                     var midpointPosition = trackTouchPosition(midpoint, bounds),
                         newMidpointPosition = midpointPosition.positionAsPlotPoint,
                         newTouchPosition = [trackTouchPosition(touches[0], bounds).positionAsPlotPoint,
                                             trackTouchPosition(touches[1], bounds).positionAsPlotPoint];
                     
-                    //console.log("0 Domain :");
-                    //console.log("0 Range :");
-                    //console.log("1 Domain :");
-                    //console.log("1 Range :");
+                    console.log("0 Domain :" + newTouchPosition[0].domain);
+                    console.log("0 Range :" + newTouchPosition[0].range);
+                    console.log("1 Domain :" + newTouchPosition[1].domain);
+                    console.log("1 Range :" + newTouchPosition[1].range);
                     
                     $scope.viewport = {
                         topLeft: {
@@ -337,15 +337,15 @@ define(
                 }
 
                 function onPinchChange(event, touch) {
-                    updateZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
+                    updateZoom(touch.midpoint, touch.bounds, touch.touches);
                 }
                 
                 function onPanStart(event, touch) {
-                    startPan(touch.touch, touch.bounds);
+                    //startPan(touch.touch, touch.bounds);
                 }
 
                 function onPanChange(event, touch) {
-                    updatePan(touch.touch, touch.bounds);
+                    //updatePan(touch.touch, touch.bounds);
                 }
 
                 function onTouchEnd(event) {
