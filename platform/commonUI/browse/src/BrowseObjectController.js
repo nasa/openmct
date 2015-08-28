@@ -65,16 +65,17 @@ define(
                 }
             }
 
-            // If there is a defined opener, assume that the window was opened 
-            //   by choosing 'Open in a new tab'
-            if ($window.opener) {
-                // The desired default for this is to have a closed left pane
-                $scope.ngModel.leftPane = false;
-            } else {
-                // Otherwise, start the application with an open left pane
-                $scope.ngModel.leftPane = true;
-            }
-            
+            //// If there is a defined opener, assume that the window was opened
+            ////   by choosing 'Open in a new tab'
+            //if ($window.opener) {
+            //    // The desired default for this is to have a closed left pane
+            //    $scope.ngModel.leftPane = false;
+            //} else {
+            //    // Otherwise, start the application with an open left pane
+            //    $scope.ngModel.leftPane = true;
+            //}
+
+            $scope.ngModel.leftPane = ($window.opener || agentService.isMobile(navigator.userAgent)) ? false : true;
             // The object inspector by default always starts closed
             $scope.ngModel.rightPane = false;
             
