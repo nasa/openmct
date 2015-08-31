@@ -93,7 +93,7 @@ define(
                 var traverseObject = (navigationService).getNavigation();
                 
                 // Stop when object is not defined (above ROOT)
-                while (traverseObject) {
+                while (traverseObject && traverseObject.getCapability('context')) {
                     
                     // If object currently traversed to is object being removed
                     // navigate to parent of current object and then exit loop

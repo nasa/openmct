@@ -84,6 +84,13 @@
                 margin-left: $interiorMargin * 3;
             }
         }
+        .l-flex,
+        &.l-flex {
+            .left,
+            .right {
+                width: auto;
+            }
+        }
     }
 }
 
