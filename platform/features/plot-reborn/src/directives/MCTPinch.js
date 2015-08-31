@@ -48,9 +48,7 @@ define(
                     return Math.sqrt(Math.pow(coordOne.clientX - coordTwo.clientX, 2) +
                         Math.pow(coordOne.clientY - coordTwo.clientY, 2));
                 }
-                
-                
-                
+
                 // On touch start the 'touch' is tracked and
                 // the event is emitted through scope
                 function touchStart(event) {
