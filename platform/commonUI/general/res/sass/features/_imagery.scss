@@ -1,8 +1,6 @@
 .l-image-main-wrapper,
 .l-image-main,
 .l-image-main-controlbar,
-.l-image-main-controlbar .left,
-.l-image-main-controlbar .right,
 .l-image-thumbs-wrapper {
 	@include absPosDefault(0, false);
 }
@@ -61,12 +59,9 @@
 	.left {
 		//@include test(red);
 		text-align: left;
-		width: 75% !important;
 	}
 	.right {
 		//@include test(green);
-		min-width: 40px;
-		width: 25% !important;
 		z-index: 2;
 	}
 	.l-date,
