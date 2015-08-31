@@ -22,11 +22,10 @@
 @import "compass";
 @import "compass/reset";
 @import "compass/css3";
-@import "compass/css3/animation";
-@import "compass/css3/user-interface";
 @import "compass/utilities";
 
 @import "mixins";
+@import "forms/mixins";
 @import "mobile/mixins";
 
 @import "effects";
@@ -41,41 +40,58 @@
 @import "limits";
 @import "data-status";
 @import "lists/tabular";
+
+/********************************* CONTROLS */
 @import "controls/breadcrumb";
 @import "controls/buttons";
 @import "controls/color-palette";
 @import "controls/controls";
 @import "controls/lists";
 @import "controls/menus";
-@import "mobile/controls/menus";
 @import "controls/time-controller";
+@import "mobile/controls/menus";
 @import "edit/editor";
-@import "features/imagery";
-@import "features/time-display";
+
+/********************************* FORMS */
 @import "forms/elems";
-@import "forms/validation";
+@import "forms/textarea";
 @import "forms/text-input";
 @import "forms/selects";
 @import "forms/channel-selector";
 @import "forms/datetime";
+@import "forms/validation";
 @import "forms/filter";
+
 @import "plots/plots-main";
 @import "search/search";
 @import "mobile/search/search";
 @import "overlay/overlay";
 @import "mobile/overlay/overlay";
+
+/********************************* USER ENVIRON */
+@import "tree/tree";
+@import "mobile/tree";
 @import "user-environ/frame";
 @import "user-environ/top-bar";
 @import "user-environ/bottom-bar";
-//@import "user-environ/object-browse";
 @import "user-environ/tool-bar";
+
+/********************************* HELPERS */
 @import "helpers/bubbles";
 @import "helpers/splitter";
 @import "helpers/wait-spinner";
-@import "properties";
-@import "autoflow";
-@import "iframe";
 @import "messages";
-@import "initialization";
+@import "properties";
+
+/********************************* VIEWS */
+@import "iframe";
 @import "hide-non-functional";
 @import "views";
+@import "items/item";
+@import "mobile/item";
+
+
+/********************************* TO BE MOVED */
+@import "autoflow";
+@import "features/imagery";
+@import "features/time-display";

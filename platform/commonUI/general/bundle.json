@@ -28,14 +28,6 @@
             {
                 "stylesheetUrl": "css/theme-espresso.css",
                 "priority": 1000
-            },
-            {
-                "stylesheetUrl": "css/items.css",
-                "priority": 901
-            },
-            {
-                "stylesheetUrl": "css/tree.css",
-                "priority": 900
             }
         ],
         "templates": [

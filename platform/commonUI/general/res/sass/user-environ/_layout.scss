@@ -216,15 +216,16 @@
 .edit-mode {
     .split-layout {
         .split-pane-component.pane.right {
-            //min-width: 150px;
-            //max-width: 50%;
-            .split-pane-component.pane.bottom {
+            width: 15%;
+            .pane.bottom {
                 min-height: 50px;
-                max-height: 80%;
+                height: 30%;
             }
         }
     }
 }
+
+
 
 .pane {
     position: absolute;
