@@ -338,7 +338,7 @@ define(
                         distanceRatio = firstTouchDistance / distance,
                         newViewport = calculateViewport(newMidpointPosition, newTouchPosition, distanceRatio);
 
-                    console.log(newViewport);
+                    //console.log(newViewport);
 
                     //$scope.$emit('user:viewport:change:end', newViewport);
                     $scope.viewport = newViewport;
