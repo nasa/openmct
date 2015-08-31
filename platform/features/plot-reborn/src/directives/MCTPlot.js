@@ -46,7 +46,7 @@ define(
                     firstTouches,
                     firstTouch,
                     firstTouchDistance,
-                    firstTouchPan,
+                    lastTouchDistance,
                     $canvas = $element.find('canvas');
 
                 function updateAxesForCurrentViewport() {
@@ -348,7 +348,7 @@ define(
                     firstTouches = [trackTouchPosition(touches[0], bounds).positionAsPlotPoint,
                                     trackTouchPosition(touches[1], bounds).positionAsPlotPoint];
                     firstTouchDistance = distance;
-                    firstTouchPan = trackTouchPosition(midpoint, bounds).positionAsPlotPoint;
+                    firstTouch = trackTouchPosition(midpoint, bounds).positionAsPlotPoint;
                 }
                 
                 function updatePan(touch, bounds) {
