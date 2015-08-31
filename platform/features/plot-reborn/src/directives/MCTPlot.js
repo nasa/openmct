@@ -277,25 +277,41 @@ define(
                         Math.pow(coordOne.clientY - coordTwo.clientY, 2));
                 }
 
-                function calculateViewport(touchPostion, ratio) {
-                    var tl, br;
+                function setDR(midpoint) {
+                    return {
+                        tl: {
+                            domain: Math.abs(midpoint.domain - ($scope.viewport.topLeft.domain)),
+                            range: Math.abs(midpoint.range - ($scope.viewport.topLeft.range))
+                        },
+
+                        br: {
+                            domain: Math.abs(($scope.viewport.bottomRight.domain) - midpoint.domain),
+                            range: Math.abs(($scope.viewport.bottomRight.range) - midpoint.range)
+                        }
+                    };
+                }
+
+                function calculateViewport(midpoint, touchPosition, ratio) {
+                    var tl,
+                        br,
+                        drSet = setDR(midpoint);
                     if (ratio < 1) {
                         tl = {
-                            domain: 0.01,
-                            range: 0.01
+                            domain: 0.01 * drSet.tl.domain,
+                            range: 0.01 * drSet.tl.range
                         };
                         br = {
-                            domain: 0.01,
-                            range: 0.01
+                            domain: 0.01 * drSet.br.domain,
+                            range: 0.01 * drSet.br.range
                         };
                     } else if (ratio > 1) {
                         tl = {
-                            domain: - 0.01,
-                            range: - 0.01
+                            domain: - 0.01 * drSet.tl.domain,
+                            range: - 0.01 * drSet.tl.range
                         };
                         br = {
-                            domain: - 0.01,
-                            range: - 0.01
+                            domain: - 0.01 * drSet.br.domain,
+                            range: - 0.01 * drSet.br.range
                         };
                     }
 
@@ -320,7 +336,7 @@ define(
                         newTouchPosition = [trackTouchPosition(touches[0], bounds).positionAsPlotPoint,
                                             trackTouchPosition(touches[1], bounds).positionAsPlotPoint],
                         distanceRatio = firstTouchDistance / distance,
-                        newViewport = calculateViewport(newTouchPosition, distanceRatio);
+                        newViewport = calculateViewport(newMidpointPosition, newTouchPosition, distanceRatio);
 
                     console.log(newViewport);
 
