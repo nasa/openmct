@@ -271,33 +271,64 @@ define(
                     // TODO: Discuss whether marqueeBox start should be fixed to data or fixed to canvas element, especially when "isLive is true".
                     updateAxesForCurrentViewport();
                 }
-                
-                function updateZoom(midpoint, bounds, touches) {
+
+                function calculateDistance(coordOne, coordTwo) {
+                    return Math.sqrt(Math.pow(coordOne.clientX - coordTwo.clientX, 2) +
+                        Math.pow(coordOne.clientY - coordTwo.clientY, 2));
+                }
+
+                function calculateViewport(touchPostion, ratio) {
+                    var tl, br;
+                    if (ratio < 1) {
+                        tl = {
+                            domain: 0.01,
+                            range: 0.01
+                        };
+                        br = {
+                            domain: 0.01,
+                            range: 0.01
+                        };
+                    } else if (ratio > 1) {
+                        tl = {
+                            domain: - 0.01,
+                            range: - 0.01
+                        };
+                        br = {
+                            domain: - 0.01,
+                            range: - 0.01
+                        };
+                    }
+
+                    return {
+                        topLeft: {
+                            domain: (($scope.viewport.topLeft.domain) + tl.domain),
+                            range: (($scope.viewport.topLeft.range) - tl.range)
+                        },
+                        bottomRight: {
+                            domain: (($scope.viewport.bottomRight.domain) - br.domain),
+                            range: (($scope.viewport.bottomRight.range) + br.range)
+                        }
+                    };
+                }
+
+
+
+                function updateZoom(midpoint, bounds, touches, distance) {
                     // calculate offset between points.  Apply that offset to viewport.
                     var midpointPosition = trackTouchPosition(midpoint, bounds),
                         newMidpointPosition = midpointPosition.positionAsPlotPoint,
                         newTouchPosition = [trackTouchPosition(touches[0], bounds).positionAsPlotPoint,
-                                            trackTouchPosition(touches[1], bounds).positionAsPlotPoint];
-                    
-                    console.log("0 Domain :" + newTouchPosition[0].domain);
-                    console.log("0 Range :" + newTouchPosition[0].range);
-                    console.log("1 Domain :" + newTouchPosition[1].domain);
-                    console.log("1 Range :" + newTouchPosition[1].range);
-                    
-                    $scope.viewport = {
-                        topLeft: {
-                            domain: (($scope.viewport.topLeft.domain)),
-                            range: (($scope.viewport.topLeft.range))
-                        },
-                        bottomRight: {
-                            domain: (($scope.viewport.bottomRight.domain)),
-                            range: (($scope.viewport.bottomRight.range))
-                        }
-                    };
+                                            trackTouchPosition(touches[1], bounds).positionAsPlotPoint],
+                        distanceRatio = firstTouchDistance / distance,
+                        newViewport = calculateViewport(newTouchPosition, distanceRatio);
+
+                    console.log(newViewport);
+
+                    //$scope.$emit('user:viewport:change:end', newViewport);
+                    $scope.viewport = newViewport;
                 }
                 
                 function startZoom(midpoint, bounds, touches, distance) {
-                    $scope.$emit('user:viewport:change:start');
                     firstTouches = [trackTouchPosition(touches[0], bounds).positionAsPlotPoint,
                                     trackTouchPosition(touches[1], bounds).positionAsPlotPoint];
                     firstTouchDistance = distance;
@@ -327,17 +358,18 @@ define(
                     $scope.$emit('user:viewport:change:start');
                     firstTouch = trackTouchPosition(touch, bounds).positionAsPlotPoint;
                 }
-                
+
                 function endTouch() {
                     $scope.$emit('user:viewport:change:end', $scope.viewport);
                 }
-                
+
                 function onPinchStart(event, touch) {
+                    $scope.$emit('user:viewport:change:start');
                     startZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
                 }
 
                 function onPinchChange(event, touch) {
-                    updateZoom(touch.midpoint, touch.bounds, touch.touches);
+                    updateZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
                 }
                 
                 function onPanStart(event, touch) {
