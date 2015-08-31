@@ -27,13 +27,11 @@
     <mct-include key="'topbar-browse'"></mct-include>
 
     <div class="holder browse-area s-browse-area abs browse-wrapper">
-         <!--ng-class="treeClass ? 'browse-showtree' : 'browse-hidetree'">-->
 
         <mct-split-pane
                 class='contents abs'
                 anchor='left'>
 
-            <!-- PANE TREE-->
             <div class='split-pane-component treeview pane left'
                  ng-class='{inactive: !paneModel.leftPane, active: paneModel.leftPane}'>
 
@@ -61,24 +59,16 @@
 	                </div>
 	            </div>
             </div>
-            <!-- PANE TREE-->
 
 
-            <!-- SPLITTER LEFT-->
             <mct-splitter class="splitter-bar left mobile-hide"
                       ng-class="{inactive: !paneModel.leftPane}">
             </mct-splitter>
-            <!-- SPLITTER LEFT-->
 
             <!-- PANE RIGHT-->
             <div class='split-pane-component items secondary-split pane right slide'
                  ng-class='{leftInactive: !paneModel.leftPane, leftActive: paneModel.leftPane}'>
 
-                <!--<mct-split-pane class='contents abs'-->
-                                <!--anchor='right'>-->
-
-                <!--<div class='split-pane-component items pane slide'-->
-                    <!--ng-class='{rightInactive: !paneModel.rightPane}'>-->
                 <div class='holder abs l-mobile'
                      id='content-area'>
                     <mct-representation mct-object="navigatedObject"
@@ -87,29 +77,9 @@
                     </mct-representation>
                 </div>
 
-
-                <!--</div>-->
-
-                <!--<mct-splitter class="splitter-bar right"-->
-                              <!--ng-class="{inactive: !paneModel.rightPane}">-->
-                <!--</mct-splitter>-->
-
-                <!--<div class='split-pane-component object-inspector pane right'-->
-                     <!--ng-class='{inactive: !paneModel.rightPane}'>-->
-                    <!--<div class='holder inspector-holder abs'>-->
-                        <!--<mct-representation key="'object-inspector'"-->
-                                            <!--mct-object="domainObject"-->
-                                            <!--ng-model="treeModel">-->
-                        <!--</mct-representation>-->
-                    <!--</div>-->
-                <!--</div>-->
-
                 <div class="key-properties ui-symbol icon mobile-menu-icon desktop-hide"
                 ng-click="paneModel.leftPane = !paneModel.leftPane">m</div>
-
-        <!--</mct-split-pane>-->
             </div>
-            <!-- PANE RIGHT-->
 
         </mct-split-pane>
         
