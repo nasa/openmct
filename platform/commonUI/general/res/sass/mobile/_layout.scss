@@ -28,19 +28,19 @@
         top: 0 !important; right: 0; bottom: 0; left: 0;
     }
 
-    .pane.left.treeview {
-        background-color: $colorMobilePaneLeft;
-    }
+    //.pane.left.treeview {
+    //    background-color: $colorMobilePaneLeft;
+    //}
 
-    .pane.right-repr {
-        //@include test();
-        @include slMenuTransitions;
-        margin-left: 0 !important;
-        #content-area {
-            @include slMenuTransitions;
-            opacity: 1;
-        }
-    }
+    //.pane.right-repr {
+    //    //@include test();
+    //    @include slMenuTransitions;
+    //    margin-left: 0 !important;
+    //    #content-area {
+    //        @include slMenuTransitions;
+    //        opacity: 1;
+    //    }
+    //}
 
     .user-environ .browse-area,
     .user-environ .edit-area,
@@ -58,6 +58,7 @@
     // The left pane class
     .pane.left {
         @include user-select(none);
+        background-color: $colorMobilePaneLeft;
 
         // When the left pane is inactive and closed
         &.inactive {
@@ -90,6 +91,18 @@
   // The entire right pane class
   // (can include inspector and representation)
   .split-pane-component.secondary-split.pane.right {
+
+      //@include test();
+      @include slMenuTransitions;
+      margin-left: 0 !important;
+      #content-area {
+          @include slMenuTransitions;
+          opacity: 1;
+      }
+
+      &.leftInactive {
+          left: 0 !important;
+      }
 
       // When the left pane is open or 'active'
       &.leftActive {
