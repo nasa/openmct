@@ -382,10 +382,18 @@ define(
                 function onPinchStart(event, touch) {
                     $scope.$emit('user:viewport:change:start');
                     startZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
+
                 }
 
                 function onPinchChange(event, touch) {
-                    updateZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
+                    console.log(Math.round(touch.distance));
+                    if(Math.round(firstTouchDistance) === Math.round(touch.distance) ||
+                        Math.round(lastTouchDistance) === Math.round(touch.distance)) {
+                        updatePan(touch.midpoint, touch.bounds);
+                    } else {
+                        updateZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
+                    }
+                    lastTouchDistance = touch.distance;
                 }
                 
                 function onPanStart(event, touch) {
