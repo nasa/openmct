@@ -297,21 +297,21 @@ define(
                         drSet = setDR(midpoint);
                     if (ratio < 1) {
                         tl = {
-                            domain: 0.01 * drSet.tl.domain,
-                            range: 0.01 * drSet.tl.range
+                            domain: 0.03 * drSet.tl.domain,
+                            range: 0.03 * drSet.tl.range
                         };
                         br = {
-                            domain: 0.01 * drSet.br.domain,
-                            range: 0.01 * drSet.br.range
+                            domain: 0.03 * drSet.br.domain,
+                            range: 0.03 * drSet.br.range
                         };
                     } else if (ratio > 1) {
                         tl = {
-                            domain: - 0.01 * drSet.tl.domain,
-                            range: - 0.01 * drSet.tl.range
+                            domain: - 0.03 * drSet.tl.domain,
+                            range: - 0.03 * drSet.tl.range
                         };
                         br = {
-                            domain: - 0.01 * drSet.br.domain,
-                            range: - 0.01 * drSet.br.range
+                            domain: - 0.03 * drSet.br.domain,
+                            range: - 0.03 * drSet.br.range
                         };
                     }
 
