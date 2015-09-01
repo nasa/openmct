@@ -8,7 +8,8 @@ define(
         "use strict";
 
         var RANGE_TICK_COUNT = 7,
-            DOMAIN_TICK_COUNT = 5;
+            DOMAIN_TICK_COUNT = 5,
+            ZOOM_AMT = 0.02;
 
         function MCTPlot() {
 
@@ -297,21 +298,21 @@ define(
                         drSet = setDR(midpoint);
                     if (ratio < 1) {
                         tl = {
-                            domain: 0.03 * drSet.tl.domain,
-                            range: 0.03 * drSet.tl.range
+                            domain: ZOOM_AMT * drSet.tl.domain,
+                            range: ZOOM_AMT * drSet.tl.range
                         };
                         br = {
-                            domain: 0.03 * drSet.br.domain,
-                            range: 0.03 * drSet.br.range
+                            domain: ZOOM_AMT * drSet.br.domain,
+                            range: ZOOM_AMT * drSet.br.range
                         };
                     } else if (ratio > 1) {
                         tl = {
-                            domain: - 0.03 * drSet.tl.domain,
-                            range: - 0.03 * drSet.tl.range
+                            domain: - ZOOM_AMT * drSet.tl.domain,
+                            range: - ZOOM_AMT * drSet.tl.range
                         };
                         br = {
-                            domain: - 0.03 * drSet.br.domain,
-                            range: - 0.03 * drSet.br.range
+                            domain: - ZOOM_AMT * drSet.br.domain,
+                            range: - ZOOM_AMT * drSet.br.range
                         };
                     }
 
