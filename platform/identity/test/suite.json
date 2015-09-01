@@ -1,5 +1,6 @@
 [
     "IdentityAggregator",
     "IdentityCreationDecorator",
-    "IdentityIndicator"
+    "IdentityIndicator",
+    "IdentityProvider"
 ]

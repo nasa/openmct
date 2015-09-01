@@ -8,9 +8,16 @@
                 "depends": [ "$q" ]
             },
             {
+                "implementation": "IdentityProvider.js",
+                "type": "provider",
+                "provides": "identityService",
+                "depends": [ "$q" ],
+                "priority": "fallback"
+            },
+            {
                 "type": "decorator",
                 "provides": "creationService",
-                "implementation": "services/IdentityCreationDecorator.js",
+                "implementation": "IdentityCreationDecorator.js",
                 "depends": [ "identityService" ]
             }
         ],
@@ -18,6 +25,16 @@
             {
                 "implementation": "IdentityIndicator.js",
                 "depends": [ "identityService" ]
+            }
+        ],
+        "types": [
+            {
+                "properties": [
+                    {
+                        "key": "creator",
+                        "name": "Creator"
+                    }
+                ]
             }
         ]
     }
