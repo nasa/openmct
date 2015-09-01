@@ -72,7 +72,12 @@ define(
          */
         PersistenceCapability.prototype.persist = function () {
             var domainObject = this.domainObject,
-                modified = domainObject.getModel().modified;
+                model = domainObject.getModel(),
+                modified = model.modified,
+                persistenceService = this.persistenceService,
+                persistenceFn = model.persisted !== undefined ?
+                    this.persistenceService.updateObject :
+                    this.persistenceService.createObject;
 
             // Update persistence timestamp...
             domainObject.useCapability("mutation", function (model) {
@@ -80,11 +85,11 @@ define(
             }, modified);
 
             // ...and persist
-            return this.persistenceService.updateObject(
+            return persistenceFn.apply(persistenceService, [
                 this.getSpace(),
                 domainObject.getId(),
                 domainObject.getModel()
-            );
+            ]);
         };
 
         /**

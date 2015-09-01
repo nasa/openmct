@@ -93,11 +93,6 @@
             {
                 "key": "navigationService",
                 "implementation": "navigation/NavigationService.js"
-            },
-            {
-                "key": "creationService",
-                "implementation": "creation/CreationService.js",
-                "depends": [ "persistenceService", "$q", "$log" ]
             }
         ],
         "actions": [
@@ -115,7 +110,7 @@
                 "depends": [ "urlService", "$window" ],
                 "group": "windowing",
                 "glyph": "y",
-			  	"priority": "preferred"
+                "priority": "preferred"
             },
             {
                 "key": "fullscreen",
@@ -123,7 +118,7 @@
                 "category": "view-control",
                 "group": "windowing",
                 "glyph": "z",
-			  	"priority": "default"
+                "priority": "default"
             }
         ],
         "views": [
@@ -146,6 +141,13 @@
                 "type": "provider",
                 "implementation": "creation/CreateActionProvider.js",
                 "depends": [ "typeService", "dialogService", "creationService", "policyService" ]
+            },
+            {
+                "key": "CreationService",
+                "provides": "creationService",
+                "type": "provider",
+                "implementation": "creation/CreationService.js",
+                "depends": [ "persistenceService", "$q", "$log" ]
             }
         ],
         "runs": [
