@@ -56,6 +56,7 @@ define(
 
                     if (event.changedTouches.length === 2 ||
                             event.touches.length === 2) {
+                        //console.log("PINCH START");
                         touchPosition = [trackPosition(event.touches[0]),
                                              trackPosition(event.touches[1])];
                         
@@ -70,6 +71,7 @@ define(
                         event.preventDefault();
                     } else if (event.changedTouches.length === 1 ||
                             event.touches.length === 1) {
+                        //console.log("*PAN START");
                         touchPosition = trackPosition(event.touches[0]);
                         
                         $scope.$emit('mct:pan:start', {
@@ -81,15 +83,17 @@ define(
                         event.preventDefault();
                     }
                 }
-                
+
                 // As the touch move occurs, the touches are tracked and
                 // the event is emitted through scope
                 function touchChange(event) {
                     var touchPosition;
 
-                    if (event.changedTouches.length === 2) {
-                        touchPosition = [trackPosition(event.changedTouches[0]),
-                                             trackPosition(event.changedTouches[1])];
+                    if (event.changedTouches.length === 2 ||
+                        event.touches.length === 2) {
+                        //console.log("PINCH CHANGE");
+                        touchPosition = [trackPosition(event.changedTouches[0] || event.touches[0]),
+                            trackPosition(event.changedTouches[1] || event.touches[1])];
                         
                         $scope.$emit('mct:pinch:change', {
                             touches: touchPosition,
@@ -100,7 +104,9 @@ define(
                         
                         // Stops other gestures/button clicks from being active
                         event.preventDefault();
-                    } else if (event.changedTouches.length === 1) {
+                    } else if (event.changedTouches.length === 1 ||
+                        event.touches.length === 1) {
+                        console.log("*PAN CHANGE");
                         touchPosition = trackPosition(event.changedTouches[0]);
 
                         $scope.$emit('mct:pan:change', {
