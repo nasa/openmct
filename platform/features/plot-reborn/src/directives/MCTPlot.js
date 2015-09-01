@@ -328,9 +328,8 @@ define(
                     };
                 }
 
-
-
                 function updateZoom(midpoint, bounds, touches, distance) {
+                    //console.log("ZOOM");
                     // calculate offset between points.  Apply that offset to viewport.
                     var midpointPosition = trackTouchPosition(midpoint, bounds),
                         newMidpointPosition = midpointPosition.positionAsPlotPoint,
@@ -339,9 +338,6 @@ define(
                         distanceRatio = firstTouchDistance / distance,
                         newViewport = calculateViewport(newMidpointPosition, newTouchPosition, distanceRatio);
 
-                    //console.log(newViewport);
-
-                    //$scope.$emit('user:viewport:change:end', newViewport);
                     $scope.viewport = newViewport;
                 }
                 
@@ -353,6 +349,7 @@ define(
                 }
                 
                 function updatePan(touch, bounds) {
+                    //console.log("PAN");
                     // calculate offset between points.  Apply that offset to viewport.
                     var panPosition = trackTouchPosition(touch, bounds),
                         newPanPosition = panPosition.positionAsPlotPoint,
@@ -386,12 +383,21 @@ define(
 
                 }
 
+                function comparePinchDrag(distance, firstDistance, lastDistance) {
+                    var amt = 2;
+                    return (((firstDistance += amt) >= distance) && ((firstDistance -= amt) <= distance))
+                        || (((lastDistance += amt) >= distance) && ((lastDistance -= amt) <= distance));
+                }
+
                 function onPinchChange(event, touch) {
-                    console.log(Math.round(touch.distance));
-                    if(Math.round(firstTouchDistance) === Math.round(touch.distance) ||
-                        Math.round(lastTouchDistance) === Math.round(touch.distance)) {
+                    //console.log(Math.round(touch.distance));
+
+                    if(comparePinchDrag(Math.round(touch.distance), Math.round(firstTouchDistance),
+                            Math.round(lastTouchDistance))) {
+                        console.log("PAN");
                         updatePan(touch.midpoint, touch.bounds);
                     } else {
+                        console.log("ZOOM");
                         updateZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
                     }
                     lastTouchDistance = touch.distance;
