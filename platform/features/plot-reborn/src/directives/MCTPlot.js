@@ -329,7 +329,6 @@ define(
                 }
 
                 function updateZoom(midpoint, bounds, touches, distance) {
-                    //console.log("ZOOM");
                     // calculate offset between points.  Apply that offset to viewport.
                     var midpointPosition = trackTouchPosition(midpoint, bounds),
                         newMidpointPosition = midpointPosition.positionAsPlotPoint,
@@ -349,7 +348,6 @@ define(
                 }
                 
                 function updatePan(touch, bounds) {
-                    //console.log("PAN");
                     // calculate offset between points.  Apply that offset to viewport.
                     var panPosition = trackTouchPosition(touch, bounds),
                         newPanPosition = panPosition.positionAsPlotPoint,
@@ -394,21 +392,21 @@ define(
 
                     if(comparePinchDrag(Math.round(touch.distance), Math.round(firstTouchDistance),
                             Math.round(lastTouchDistance))) {
-                        console.log("PAN");
+                        //console.log("# PINCH PAN");
                         updatePan(touch.midpoint, touch.bounds);
                     } else {
-                        console.log("ZOOM");
+                        //console.log("# PINCH ZOOM");
                         updateZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
                     }
                     lastTouchDistance = touch.distance;
                 }
                 
                 function onPanStart(event, touch) {
-                    //startPan(touch.touch, touch.bounds);
+                    startPan(touch.touch, touch.bounds);
                 }
 
                 function onPanChange(event, touch) {
-                    //updatePan(touch.touch, touch.bounds);
+                    updatePan(touch.touch, touch.bounds);
                 }
 
                 function onTouchEnd(event) {
