@@ -848,3 +848,56 @@ level, this contradicts the proposal to
   "green field" feel of developing applications on a useful
   platform.
 
+## Capabilities as Mixins
+
+Change the behavior of capabilities such that they act as
+mixins, adding additional methods to domain objects.
+Checking if a domain object has a `persistence` capability
+would instead be reduced to checking if it has a `persist`
+method.
+
+Mixins would be applied in priority order and filtered for
+applicability by policy.
+
+### Benefits
+
+* Replaces "capabilities" (which, as a concept, can be hard
+  to grasp) with a more familiar "mixins" concept, which has
+  been used more generally across many languages.
+* Reduces interface depth.
+
+### Detriments
+
+* Requires checking for the interface exposed by a domain
+  object. Alternately, could use `instanceof`, but would
+  need to take care to ensure that the prototype chain of
+  the domain object is sufficient to do this (which may
+  enforce awkward or non-obvious constraints on the way these
+  mixins are implemented.)
+* May complicate documentation; understanding the interface
+  of a given domain object requires visiting documentation
+  for various mixins.
+
+## Remove Applies-To Methods
+
+Remove all `appliesTo` static methods and replace them with
+appropriate policy categories.
+
+### Benefits
+
+* Reduces sizes of interfaces. Handles filtering down sets
+  of extensions in a single consistent way.
+
+### Detriments
+
+* Mixes formal applicability with policy; presently, `appliesTo`
+  is useful for cases where a given extension cannot, even in
+  principle, be applied in a given context (e.g. a domain object
+  model is missing the properties which describe the behavior),
+  whereas policy is useful for cases where applicability is
+  being refined for business or usability reasons. Colocating
+  the former with the extension itself has some benefits
+  (exhibits better cohesion.)
+  * This could be mitigated in the proposed approach by locating
+    `appliesTo`-like policies in the same bundle as the relevant
+    extension.
