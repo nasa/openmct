@@ -13,7 +13,7 @@ define(
             var plotHistory = [],
                 isLive = true,
                 maxDomain = +new Date(),
-                subscriptions = [],
+                unsubscribes = [],
                 palette = new colorService.ColorPalette();
 
 
@@ -87,14 +87,15 @@ define(
                     series,
                     seriesIndex
                 );
-                subscriptions.push(telemetryCapability.subscribe(updater));
+                unsubscribes.push(telemetryCapability.subscribe(updater));
             }
 
             function unlinkDomainObject() {
-                subscriptions.forEach(function(subscription) {
-                    subscription.unsubscribe();
+                $scope.series = [];
+                unsubscribes.forEach(function(unsubscribe) {
+                    unsubscribe();
                 });
-                subscriptions = [];
+                unsubscribes = [];
             }
 
 
