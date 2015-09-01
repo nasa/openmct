@@ -383,12 +383,12 @@ define(
 
                 function comparePinchDrag(distance, firstDistance, lastDistance) {
                     var amt = 2;
-                    return (((firstDistance += amt) >= distance) && ((firstDistance -= amt) <= distance))
-                        || (((lastDistance += amt) >= distance) && ((lastDistance -= amt) <= distance));
+                    return (((firstDistance + amt) >= distance) && ((firstDistance - amt) <= distance))
+                        || (((lastDistance + amt) >= distance) && ((lastDistance - amt) <= distance));
                 }
 
                 function onPinchChange(event, touch) {
-                    //console.log(Math.round(touch.distance));
+                    console.log(Math.round(touch.distance));
 
                     if(comparePinchDrag(Math.round(touch.distance), Math.round(firstTouchDistance),
                             Math.round(lastTouchDistance))) {
