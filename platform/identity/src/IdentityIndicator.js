@@ -46,7 +46,7 @@ define(
         }
 
         IdentityIndicator.prototype.getGlyph = function () {
-            return this.text && "\u0050";
+            return this.text && "P";
         };
         IdentityIndicator.prototype.getGlyphClass = function () {
             return undefined;
