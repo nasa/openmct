@@ -33,6 +33,11 @@
             }
         ],
         "components": [
+            {
+                "type": "decorator",
+                "provides": "creationService",
+                "implementation": "services/LocatingCreationDecorator.js"
+            }
         ],
         "controllers": [
         ],
