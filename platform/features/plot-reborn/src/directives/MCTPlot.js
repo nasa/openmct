@@ -335,7 +335,7 @@ define(
                         newMidpointPosition = midpointPosition.positionAsPlotPoint,
                         newTouchPosition = [trackTouchPosition(touches[0], bounds).positionAsPlotPoint,
                                             trackTouchPosition(touches[1], bounds).positionAsPlotPoint],
-                        distanceRatio = firstTouchDistance / distance,
+                        distanceRatio = lastTouchDistance / distance || firstTouchDistance / distance,
                         newViewport = calculateViewport(newMidpointPosition, newTouchPosition, distanceRatio);
 
                     $scope.viewport = newViewport;
