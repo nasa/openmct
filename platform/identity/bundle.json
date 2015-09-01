@@ -6,6 +6,12 @@
                 "type": "aggregator",
                 "provides": "identityService",
                 "depends": [ "$q" ]
+            },
+            {
+                "type": "decorator",
+                "provides": "creationService",
+                "implementation": "services/IdentityCreationDecorator.js",
+                "depends": [ "identityService" ]
             }
         ],
         "indicators": [
