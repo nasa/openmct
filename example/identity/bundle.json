@@ -1,0 +1,12 @@
+{
+    "extensions": {
+        "components": [
+            {
+                "implementation": "ExampleIdentityService.js",
+                "provides": "identityService",
+                "type": "provider",
+                "depends": [ "dialogService" ]
+            }
+        ]
+    }
+}
