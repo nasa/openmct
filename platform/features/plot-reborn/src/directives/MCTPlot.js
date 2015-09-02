@@ -388,7 +388,7 @@ define(
                     firstTouchDistance = distance;
                     firstTouch = trackTouchPosition(midpoint, bounds).positionAsPlotPoint;
                 }
-                
+
                 function onPinchStart(event, touch) {
                     startZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
                 }
