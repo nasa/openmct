@@ -176,6 +176,17 @@
                 </executions>
             </plugin>
 
+            <!-- To start this WAR in an embedded Tomcat Servlet Container -->
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <httpPort>8080</httpPort>
+                    <path>/mct</path>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
