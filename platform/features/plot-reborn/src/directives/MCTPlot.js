@@ -290,26 +290,18 @@ define(
                 function calculateViewport(midpoint, ratio) {
                     var tl,
                         br,
-                        dimensions = setDimensions(midpoint);
-                    if (ratio < 1) {
-                        tl = {
-                            domain: ZOOM_AMT * dimensions.tl.domain,
-                            range: ZOOM_AMT * dimensions.tl.range
-                        };
-                        br = {
-                            domain: ZOOM_AMT * dimensions.br.domain,
-                            range: ZOOM_AMT * dimensions.br.range
-                        };
-                    } else if (ratio > 1) {
-                        tl = {
-                            domain: - ZOOM_AMT * dimensions.tl.domain,
-                            range: - ZOOM_AMT * dimensions.tl.range
-                        };
-                        br = {
-                            domain: - ZOOM_AMT * dimensions.br.domain,
-                            range: - ZOOM_AMT * dimensions.br.range
-                        };
-                    }
+                        dimensions = setDimensions(midpoint),
+                        checkRatio = (ratio - 1) || 0,
+                        type = (-1 * (checkRatio / Math.abs(checkRatio))) || 1;
+
+                    tl = {
+                        domain: type * ZOOM_AMT * dimensions.tl.domain,
+                        range: type * ZOOM_AMT * dimensions.tl.range
+                    };
+                    br = {
+                        domain: type * ZOOM_AMT * dimensions.br.domain,
+                        range: type * ZOOM_AMT * dimensions.br.range
+                    };
 
                     return {
                         topLeft: {
