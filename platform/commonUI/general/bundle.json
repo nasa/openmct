@@ -60,7 +60,7 @@
             {
                 "key": "TimeConductorController",
                 "implementation": "controllers/TimeConductorController.js",
-                "depends": [ "$scope" ]
+                "depends": [ "$scope", "now" ]
             },
             {
                 "key": "TreeNodeController",

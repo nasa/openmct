@@ -22,29 +22,41 @@
 /*global define,Promise*/
 
 define(
-    [],
-    function () {
+    ['moment'],
+    function (moment) {
         "use strict";
 
+        var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
+
         /**
-         * A ToggleController is used to activate/deactivate things.
-         * A common usage is for "twistie"
-         *
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function TimeConductorController($scope) {
+        function TimeConductorController($scope, now) {
             var tickCount = 2;
 
             $scope.state = false;
+            $scope.ticks = [];
 
-            $scope.ticks = [0, 1];
+            function formatTimestamp(ts) {
+                return moment.utc(ts).format(DATE_FORMAT);
+            }
+
+            // From 0.0-1.0 to "0%"-"1%"
+            function toPercent(p) {
+                return (100 * p) + "%";
+            }
 
             function updateTicks() {
-                var i;
+                var i, p, ts, start, end, span;
+                end = $scope.ngModel.outer[1];
+                start = $scope.ngModel.outer[0];
+                span = end - start;
                 $scope.ticks = [];
                 for (i = 0; i < tickCount; i += 1) {
-                    $scope.ticks.push(i / (tickCount - 1));
+                    p = i / (tickCount - 1);
+                    ts = p * span + start;
+                    $scope.ticks.push(formatTimestamp(ts));
                 }
             }
 
@@ -54,7 +66,41 @@ define(
                 updateTicks();
             }
 
+            function updateFromParameters(ngModel) {
+                var t = now(), span;
+
+                ngModel = ngModel || {
+                    outer: [ t - 24 * 3600 * 1000, t ],
+                    inner: [ t - 24 * 3600 * 1000, t ]
+                };
+
+                // First, dates for the date pickers for outer bounds
+                $scope.startOuterDate = new Date(ngModel.outer[0]);
+                $scope.endOuterDate = new Date(ngModel.outer[1]);
+
+                // Then readable dates for the knobs
+                $scope.startInnerText = formatTimestamp(ngModel.inner[0]);
+                $scope.endInnerText = formatTimestamp(ngModel.inner[1]);
+
+                // And positions for the knobs
+                span = ngModel.outer[1] - ngModel.outer[0];
+                $scope.startInnerPct =
+                    toPercent((ngModel.inner[0] - ngModel.outer[0]) / span);
+                $scope.endInnerPct =
+                    toPercent((ngModel.outer[1] - ngModel.inner[1]) / span);
+
+                // Stick it back is scope (in case we just set defaults)
+                $scope.ngModel = ngModel;
+
+                updateTicks();
+            }
+
+            // Initialize scope to defaults
+            updateFromParameters();
+
+            $scope.$watchCollection("ngModel", updateFromParameters);
             $scope.$watch("spanWidth", updateSpanWidth);
+
         }
 
         return TimeConductorController;
