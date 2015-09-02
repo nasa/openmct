@@ -304,12 +304,12 @@ define(
                     firstTouch = trackTouchPosition(touch, bounds).positionAsPlotPoint;
                 }
 
-                //Receives the emit of single touch pan start
+                // Receives the emit of single touch pan start
                 function onPanStart(event, touch) {
                     startPan(touch.touch, touch.bounds);
                 }
 
-                //Receives the emit of single touch pan change
+                // Receives the emit of single touch pan change
                 function onPanChange(event, touch) {
                     updatePan(touch.touch, touch.bounds);
                 }
@@ -381,16 +381,17 @@ define(
                 }
 
                 // Starts the zoom by emitting that viewport will be changed
-                // also sets the first touch variable (midpoint) if panning will happen
-                // and sets the distance between the first touches occurring
-                function startZoom(midpoint, bounds, touches, distance) {
+                // also sets the first touch variable (midpoint) if panning will
+                // happen and sets the distance between the first touches occurring
+                function startZoom(midpoint, bounds, distance) {
                     $scope.$emit('user:viewport:change:start');
                     firstTouchDistance = distance;
                     firstTouch = trackTouchPosition(midpoint, bounds).positionAsPlotPoint;
                 }
 
+                // Receives the emit of the start of pinch touch
                 function onPinchStart(event, touch) {
-                    startZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
+                    startZoom(touch.midpoint, touch.bounds, touch.distance);
                 }
 
                 function comparePinchDrag(distance, prevDistance) {
@@ -398,17 +399,29 @@ define(
                         ((prevDistance - PINCH_DRAG_AMT) <= distance);
                 }
 
+                // Receives the emit of the change of pinch touch,
+                // differentiates between a pan and zoom
                 function onPinchChange(event, touch) {
+
+                    // Will pan if change in distance is within PINCH_DRAG_AMT
+                    // range relative to the previous distance
                     if(comparePinchDrag(Math.round(touch.distance),
                             Math.round(prevTouchDistance || firstTouchDistance))) {
                         updatePan(touch.midpoint, touch.bounds);
-                    } else {
+                    }
+                    // Will pinch in any other situation that the distance between
+                    // pinching touches is increasing or decreasing by more than
+                    // PINCH_DRAG_AMT
+                    else {
                         updateZoom(touch.midpoint, touch.bounds, touch.distance);
                     }
+
+                    // Sets previous touch distance to current touch.distance
                     prevTouchDistance = touch.distance;
                 }
 
-                //
+                // Receives emit for touch event ending and emits that the
+                // viewport has stopped changing.
                 function onTouchEnd() {
                     $scope.$emit('user:viewport:change:end', $scope.viewport);
                 }
