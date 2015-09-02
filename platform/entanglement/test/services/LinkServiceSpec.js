@@ -207,7 +207,7 @@ define(
                 it("persists parent", function () {
                     linkService.perform(object, parentObject);
                     expect(addPromise.then).toHaveBeenCalled();
-                    addPromise.resolve();
+                    addPromise.resolve(linkedObject);
                     expect(parentObject.getCapability)
                         .toHaveBeenCalledWith('persistence');
                     expect(persistenceCapability.persist).toHaveBeenCalled();
@@ -219,7 +219,7 @@ define(
                     whenComplete = jasmine.createSpy('whenComplete');
                     returnPromise.then(whenComplete);
 
-                    addPromise.resolve();
+                    addPromise.resolve(linkedObject);
                     persistencePromise.resolve();
                     compositionPromise.resolve([linkedObject]);
                     expect(whenComplete).toHaveBeenCalledWith(linkedObject);

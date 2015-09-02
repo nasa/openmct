@@ -59,15 +59,6 @@ define(
             // Note that this was checked-for explicitly during validate step
             var composition = parentObject.getCapability('composition');
 
-            function findChild(children) {
-                var i;
-                for (i = 0; i < children.length; i += 1) {
-                    if (children[i].getId() === object.getId()) {
-                        return children[i];
-                    }
-                }
-            }
-
             return composition.add(object).then(function (result) {
                 return parentObject.getCapability('persistence')
                     .persist()

@@ -161,7 +161,7 @@ define(
                     mockDomainObject.getId.andReturn(id);
                     mockCompositionCapability.invoke
                         .andReturn(mockPromise([mockDomainObject]));
-                    return mockPromise(true);
+                    return mockPromise(mockDomainObject);
                 });
 
                 // Should find it in the composition

@@ -52,10 +52,10 @@ define(
         // Take the most recently modified model, for cases where
         // multiple persistence spaces return models.
         function takeMostRecent(modelA, modelB) {
-            return (!modelA || modelA.modified === undefined) ? modelB :
-                    (!modelB || modelB.modified === undefined) ? modelA :
-                            modelA.modified > modelB.modified ? modelA :
-                                    modelB;
+            return (!modelB || modelB.modified === undefined) ? modelA :
+                    (!modelA || modelA.modified === undefined) ? modelB :
+                            modelB.modified > modelA.modified ? modelB :
+                                    modelA;
         }
 
         PersistedModelProvider.prototype.getModels = function (ids) {
