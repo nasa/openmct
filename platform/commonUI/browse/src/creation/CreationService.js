@@ -86,18 +86,9 @@ define(
             // composition, so that it will subsequently appear
             // as a child contained by that parent.
             function addToComposition(id, parent, parentPersistence) {
-                var mutatationResult = parent.useCapability("mutation", function (model) {
-                    if (Array.isArray(model.composition)) {
-                        // Don't add if the id is already there
-                        if (model.composition.indexOf(id) === -1) {
-                            model.composition.push(id);
-                        }
-                    } else {
-                        // This is abnormal; composition should be an array
-                        self.$log.warn(NO_COMPOSITION_WARNING + parent.getId());
-                        return false; // Cancel mutation
-                    }
-                });
+                var compositionCapability = parent.getCapability('composition'),
+                    mutationResult = compositionCapability &&
+                        compositionCapability.add(id);
 
                 return self.$q.when(mutatationResult).then(function (result) {
                     if (!result) {
