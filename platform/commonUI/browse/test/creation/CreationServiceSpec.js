@@ -86,7 +86,7 @@ define(
                 );
                 mockCompositionCapability = jasmine.createSpyObj(
                     "composition",
-                    ["invoke"]
+                    ["invoke", "add"]
                 );
                 mockContextCapability = jasmine.createSpyObj(
                     "context",
@@ -120,6 +120,7 @@ define(
                 mockCompositionCapability.invoke.andReturn(
                     mockPromise([mockNewObject])
                 );
+                mockCompositionCapability.add.andReturn(mockPromise(true));
 
                 creationService = new CreationService(
                     mockPersistenceService,
@@ -143,32 +144,33 @@ define(
                     parentModel = { composition: ["notAnyUUID"] };
                 creationService.createObject(model, mockParentObject);
 
-                // Invoke the mutation callback
-                expect(mockMutationCapability.invoke).toHaveBeenCalled();
-                mockMutationCapability.invoke.mostRecentCall.args[0](parentModel);
-
-                // Should have a longer composition now, with the new UUID
-                expect(parentModel.composition.length).toEqual(2);
+                // Verify that a new ID was added
+                expect(mockCompositionCapability.add)
+                    .toHaveBeenCalledWith(jasmine.any(String));
             });
 
-            it("warns if parent has no composition", function () {
-                var model = { someKey: "some value" },
-                    parentModel = { };
-                creationService.createObject(model, mockParentObject);
+            it("provides the newly-created object", function () {
+                var mockDomainObject = jasmine.createSpyObj(
+                        'newDomainObject',
+                        ['getId', 'getModel', 'getCapability']
+                    ),
+                    mockCallback = jasmine.createSpy('callback');
 
-                // Verify precondition; no prior warnings
-                expect(mockLog.warn).not.toHaveBeenCalled();
+                // Act as if the object had been created
+                mockCompositionCapability.add.andCallFake(function (id) {
+                    mockDomainObject.getId.andReturn(id);
+                    mockCompositionCapability.invoke
+                        .andReturn(mockPromise([mockDomainObject]));
+                    return mockPromise(true);
+                });
 
-                // Invoke the mutation callback
-                expect(mockMutationCapability.invoke).toHaveBeenCalled();
-                mockMutationCapability.invoke.mostRecentCall.args[0](parentModel);
+                // Should find it in the composition
+                creationService.createObject({}, mockParentObject)
+                    .then(mockCallback);
 
-                // Should have a longer composition now, with the new UUID
-                expect(mockLog.warn).toHaveBeenCalled();
-                // Composition should still be undefined
-                expect(parentModel.composition).toBeUndefined();
+                expect(mockCallback).toHaveBeenCalledWith(mockDomainObject);
+
             });
-
 
             it("warns if parent has no persistence capability", function () {
                 // Callbacks
@@ -185,7 +187,6 @@ define(
                 expect(mockLog.warn).toHaveBeenCalled();
                 expect(success).not.toHaveBeenCalled();
                 expect(failure).toHaveBeenCalled();
-
             });
 
             it("logs an error when mutaton fails", function () {
@@ -194,7 +195,7 @@ define(
                 var model = { someKey: "some value" },
                     parentModel = { composition: ["notAnyUUID"] };
 
-                mockMutationCapability.invoke.andReturn(mockPromise(false));
+                mockCompositionCapability.add.andReturn(mockPromise(false));
 
                 creationService.createObject(model, mockParentObject);
 

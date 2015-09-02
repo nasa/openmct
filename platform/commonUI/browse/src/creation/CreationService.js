@@ -87,12 +87,12 @@ define(
             // as a child contained by that parent.
             function addToComposition(id, parent, parentPersistence) {
                 var compositionCapability = parent.getCapability('composition'),
-                    mutationResult = compositionCapability &&
+                    addResult = compositionCapability &&
                         compositionCapability.add(id);
 
-                return self.$q.when(mutatationResult).then(function (result) {
+                return self.$q.when(addResult).then(function (result) {
                     if (!result) {
-                        self.$log.error("Could not mutate " + parent.getId());
+                        self.$log.error("Could not modify " + parent.getId());
                         return undefined;
                     }
 

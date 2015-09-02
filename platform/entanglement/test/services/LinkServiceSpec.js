@@ -55,11 +55,18 @@ define(
                         name: 'object'
                     });
                     parentCandidate = domainObjectFactory({
-                        name: 'parentCandidate'
+                        name: 'parentCandidate',
+                        capabilities: {
+                            composition: jasmine.createSpyObj(
+                                'composition',
+                                ['invoke', 'add']
+                            )
+                        }
                     });
                     validate = function () {
                         return linkService.validate(object, parentCandidate);
                     };
+                    mockPolicyService.allow.andReturn(true);
                 });
 
                 it("does not allow invalid parentCandidate", function () {
@@ -78,6 +85,23 @@ define(
                     object.id = 'abc';
                     parentCandidate.id = 'xyz';
                     parentCandidate.model.composition = ['abc'];
+                    expect(validate()).toBe(false);
+                });
+
+                it("does not allow parents that contains object", function () {
+                    object.id = 'abc';
+                    parentCandidate.id = 'xyz';
+                    parentCandidate.model.composition = ['abc'];
+                    expect(validate()).toBe(false);
+                });
+
+                it("does not allow parents without composition", function () {
+                    parentCandidate = domainObjectFactory({
+                        name: 'parentCandidate'
+                    });
+                    object.id = 'abc';
+                    parentCandidate.id = 'xyz';
+                    parentCandidate.model.composition = undefined;
                     expect(validate()).toBe(false);
                 });
 
@@ -121,16 +145,16 @@ define(
                     linkedObject,
                     parentModel,
                     parentObject,
-                    mutationPromise,
                     compositionPromise,
                     persistencePromise,
+                    addPromise,
                     compositionCapability,
                     persistenceCapability;
 
                 beforeEach(function () {
-                    mutationPromise = new ControlledPromise();
                     compositionPromise = new ControlledPromise();
                     persistencePromise = new ControlledPromise();
+                    addPromise = new ControlledPromise();
                     persistenceCapability = jasmine.createSpyObj(
                         'persistenceCapability',
                         ['persist']
@@ -138,9 +162,10 @@ define(
                     persistenceCapability.persist.andReturn(persistencePromise);
                     compositionCapability = jasmine.createSpyObj(
                         'compositionCapability',
-                        ['invoke']
+                        ['invoke', 'add']
                     );
                     compositionCapability.invoke.andReturn(compositionPromise);
+                    compositionCapability.add.andReturn(addPromise);
                     parentModel = {
                         composition: []
                     };
@@ -151,7 +176,7 @@ define(
                             mutation: {
                                 invoke: function (mutator) {
                                     mutator(parentModel);
-                                    return mutationPromise;
+                                    return new ControlledPromise();
                                 }
                             },
                             persistence: persistenceCapability,
@@ -172,20 +197,17 @@ define(
                 });
 
 
-                it("modifies parent model composition", function () {
-                    expect(parentModel.composition.length).toBe(0);
+                it("adds to the parent's composition", function () {
+                    expect(compositionCapability.add).not.toHaveBeenCalled();
                     linkService.perform(object, parentObject);
-                    expect(parentObject.useCapability).toHaveBeenCalledWith(
-                        'mutation',
-                        jasmine.any(Function)
-                    );
-                    expect(parentModel.composition).toContain('xyz');
+                    expect(compositionCapability.add)
+                        .toHaveBeenCalledWith(object);
                 });
 
                 it("persists parent", function () {
                     linkService.perform(object, parentObject);
-                    expect(mutationPromise.then).toHaveBeenCalled();
-                    mutationPromise.resolve();
+                    expect(addPromise.then).toHaveBeenCalled();
+                    addPromise.resolve();
                     expect(parentObject.getCapability)
                         .toHaveBeenCalledWith('persistence');
                     expect(persistenceCapability.persist).toHaveBeenCalled();
@@ -197,7 +219,7 @@ define(
                     whenComplete = jasmine.createSpy('whenComplete');
                     returnPromise.then(whenComplete);
 
-                    mutationPromise.resolve();
+                    addPromise.resolve();
                     persistencePromise.resolve();
                     compositionPromise.resolve([linkedObject]);
                     expect(whenComplete).toHaveBeenCalledWith(linkedObject);
