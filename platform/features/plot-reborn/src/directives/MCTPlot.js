@@ -151,7 +151,8 @@ define(
                     dragStart = undefined;
                     $scope.$emit('user:viewport:change:end', $scope.viewport);
                 }
-                
+
+                //
                 function trackTouchPosition(touchPosition, bounds) {
                     var positionOverElement,
                         positionAsPlotPoint,
@@ -273,12 +274,17 @@ define(
                     updateAxesForCurrentViewport();
                 }
 
-                //
+                // Updates viewport based on touch location and current event bounds
                 function updatePan(touch, bounds) {
+
+                    // Sets the panPosition plot point (relative to chart)
+                    // and calculates domain/range by subtracting first touch's
+                    // plot point and current touch's plot point
                     var panPosition = trackTouchPosition(touch, bounds).positionAsPlotPoint,
                         dDomain = firstTouch.domain - panPosition.domain,
                         dRange = firstTouch.range - panPosition.range;
 
+                    // Viewport is set to calculated delta domain/range
                     $scope.viewport = {
                         topLeft: {
                             domain: (($scope.viewport.topLeft.domain) + dDomain),
@@ -291,20 +297,26 @@ define(
                     };
                 }
 
+                // Starts the pan by emitting that viewport will be changed
+                // also sets the first touch variable
                 function startPan(touch, bounds) {
                     $scope.$emit('user:viewport:change:start');
                     firstTouch = trackTouchPosition(touch, bounds).positionAsPlotPoint;
                 }
 
-                //
+                //Receives the emit of single touch pan start
                 function onPanStart(event, touch) {
                     startPan(touch.touch, touch.bounds);
                 }
 
+                //Receives the emit of single touch pan change
                 function onPanChange(event, touch) {
                     updatePan(touch.touch, touch.bounds);
                 }
 
+                // Sets the dimensions of the midpoint's domain and range distance to the
+                // top left and bottom right corners of the viewport. Used to zoom relative to
+                // midpoint pinch gestures 2 touches.
                 function setDimensions(midpoint) {
                     return {
                         tl: {
@@ -318,13 +330,21 @@ define(
                     };
                 }
 
+                // Calculates the viewport for a zoom gesture
                 function calculateViewport(midpoint, ratio) {
+
+                    // Uses the distance ratio passed in and the
+                    // zoom amount (variable set at top) to find the
+                    // amount of zoom per change in pinch gesture and
+                    // whether it is zooming in or out
                     var zoomTL, zoomBR,
                         dimensions = setDimensions(midpoint),
                         checkRatio = (ratio - 1) || 0,
                         type = (-1 * (checkRatio / Math.abs(checkRatio))) || 1,
                         zoomAmt = type * ZOOM_AMT;
 
+                    // Sets the domain/range difference to applied to the
+                    // top left and bottom right plot points
                     zoomTL = {
                         domain: zoomAmt * dimensions.tl.domain,
                         range: zoomAmt * dimensions.tl.range
@@ -334,6 +354,8 @@ define(
                         range: zoomAmt * dimensions.br.range
                     };
 
+                    // Applies and returns the changed for zoom top left and bottom right
+                    // plot points
                     return {
                         topLeft: {
                             domain: (($scope.viewport.topLeft.domain) + zoomTL.domain),
@@ -346,21 +368,28 @@ define(
                     };
                 }
 
+                // Updates the viewport based on the amount of zooming (pinching) user is doing
                 function updateZoom(midpoint, bounds, distance) {
+
+                    // Gets the current midpoint and distance ratio to be used to
+                    // calculate new viewport
                     var midpointPosition = trackTouchPosition(midpoint, bounds).positionAsPlotPoint,
                         distanceRatio = ((prevTouchDistance || firstTouchDistance) / distance);
 
+                    // Sets the new viewport
                     $scope.viewport = calculateViewport(midpointPosition, distanceRatio);
                 }
 
+                // Starts the zoom by emitting that viewport will be changed
+                // also sets the first touch variable (midpoint) if panning will happen
+                // and sets the distance between the first touches occurring
                 function startZoom(midpoint, bounds, touches, distance) {
+                    $scope.$emit('user:viewport:change:start');
                     firstTouchDistance = distance;
                     firstTouch = trackTouchPosition(midpoint, bounds).positionAsPlotPoint;
                 }
-
-                //
+                
                 function onPinchStart(event, touch) {
-                    $scope.$emit('user:viewport:change:start');
                     startZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
                 }
 
