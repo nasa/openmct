@@ -426,12 +426,15 @@ define(
                     $scope.$emit('user:viewport:change:end', $scope.viewport);
                 }
 
+                // Receives the pinch to allow pinching/panning emitted by MCTPinch
                 $scope.$on('mct:pinch:start', onPinchStart);
                 $scope.$on('mct:pinch:change', onPinchChange);
 
+                // Receives the pan to allow panning emitted by MCTPinch
                 $scope.$on('mct:pan:start', onPanStart);
                 $scope.$on('mct:pan:change', onPanChange);
 
+                // Receives the end of the pan/pinch emitted by MCTPinch
                 $scope.$on('mct:ptouch:end', onTouchEnd);
 
                 $scope.$on('$destroy', stopWatching);
