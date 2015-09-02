@@ -58,6 +58,11 @@
         ],
         "controllers": [
             {
+                "key": "TimeConductorController",
+                "implementation": "controllers/TimeConductorController.js",
+                "depends": [ "$scope" ]
+            },
+            {
                 "key": "TreeNodeController",
                 "implementation": "controllers/TreeNodeController.js",
                 "depends": [ "$scope", "$timeout" ]

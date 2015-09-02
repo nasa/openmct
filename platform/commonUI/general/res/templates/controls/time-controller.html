@@ -22,48 +22,40 @@ properly on the range left and right bounds.
 
 -->
 
-<div ng-init="
-notes = 'Temporarily using an array to populate ticks so I can see what I\'m doing';
-ticks = [
-'00:00',
-'00:30',
-'01:00',
-'01:30',
-'02:00'
-];
-"></div>
+<div class="l-time-controller" ng-controller="TimeConductorController">
+    <div class="l-time-range-inputs-holder">
+        Start: <input type="date" ng-model="startOuterDate"/>
+        End: <input type="date" ng-model="endInnerDate"/>
+    </div>
 
-<div class="l-time-controller">
-	<div class="l-time-range-inputs-holder">
-		Start: <input type="date" />
-		End: <input type="date" />
-	</div>
+    <div class="l-time-range-slider-holder">
+        <div class="l-time-range-slider">
+            <div class="slider"
+                 mct-resize="spanWidth = bounds.width">
+                <div class="slot range-holder">
+                    <div class="range"
+                         ng-style="{ left: startInnerPct, right: endInnerPct}">
+                    </div>
+                </div>
+                <div class="knob knob-l" ng-style="{ left: startInnerPct }">
+                    <div class="range-value">{{startInnerText}}</div>
+                </div>
+                <div class="knob knob-r" ng-style="{ right: endInnerPct }">
+                    <div class="range-value">{{startOuterText}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<div class="l-time-range-slider-holder">
-		<div class="l-time-range-slider">
-			<div class="slider">
-				<div class="slot range-holder">
-					<div class="range" style="left: 0%; right: 30%;"></div>
-				</div>
-				<div class="knob knob-l" style="left: 0%;">
-					<div class="range-value">05/22 14:46</div>
-				</div>
-				<div class="knob knob-r" style="right: 30%;">
-					<div class="range-value">07/22 01:21</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="l-time-range-ticks-holder">
-		<div class="l-time-range-ticks">
-			<div
-				ng-repeat="tick in ticks"
-				ng-style="{ left: $index * 25 + '%' }"
-				class="tick tick-x"
-				>
-				<span class="l-time-range-tick-label">{{tick}}</span>
-			</div>
-		</div>
-	</div>
+    <div class="l-time-range-ticks-holder">
+        <div class="l-time-range-ticks">
+            <div
+                ng-repeat="tick in ticks"
+                ng-style="{ left: $index * (100 / (ticks.length - 1)) + '%' }"
+                class="tick tick-x"
+                >
+                <span class="l-time-range-tick-label">{{tick}}</span>
+            </div>
+        </div>
+    </div>
 </div>
