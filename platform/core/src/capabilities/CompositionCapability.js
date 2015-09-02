@@ -59,11 +59,27 @@ define(
          * @param {DomainObject|string} domainObject the domain object to add,
          *        or simply its identifier
          * @param {number} [index] the index at which to add the object
-         * @returns {Promise.<boolean>} the mutation result
+         * @returns {Promise.<DomainObject>} a promise for the added object
+         *          in its new context
          */
         CompositionCapability.prototype.add = function (domainObject, index) {
-            var id = typeof domainObject === 'string' ?
-                    domainObject : domainObject.getId();
+            var self = this,
+                id = typeof domainObject === 'string' ?
+                        domainObject : domainObject.getId();
+
+            // Find the object with the above id, used to contextualize
+            function findObject(objects) {
+                var i;
+                for (i = 0; i < objects.length; i += 1) {
+                    if (objects[i].getId() === id) {
+                        return objects[i];
+                    }
+                }
+            }
+
+            function contextualize(mutationResult) {
+                return mutationResult && self.invoke().then(findObject);
+            }
 
             function addIdToModel(model) {
                 var composition = model.composition,
@@ -90,7 +106,8 @@ define(
                 model.composition.splice(index, 0, id);
             }
 
-            return this.domainObject.useCapability('mutation', addIdToModel);
+            return this.domainObject.useCapability('mutation', addIdToModel)
+                    .then(contextualize);
         };
 
         /**

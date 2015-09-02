@@ -68,10 +68,10 @@ define(
                 }
             }
 
-            return composition.add(object).then(function () {
-                return parentObject.getCapability('persistence').persist();
-            }).then(function getObjectWithNewContext() {
-                return composition.invoke().then(findChild);
+            return composition.add(object).then(function (result) {
+                return parentObject.getCapability('persistence')
+                    .persist()
+                    .then(function () { return result; });
             });
         };
 

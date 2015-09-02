@@ -97,17 +97,7 @@ define(
                     }
 
                     return parentPersistence.persist().then(function () {
-                        // Locate and return new Object in context of parent.
-                        return parent
-                            .useCapability('composition')
-                            .then(function (children) {
-                                var i;
-                                for (i = 0; i < children.length; i += 1) {
-                                    if (children[i].getId() === id) {
-                                        return children[i];
-                                    }
-                                }
-                            });
+                        return result;
                     });
                 });
             }
