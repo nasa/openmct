@@ -65,7 +65,10 @@ define(
         CompositionCapability.prototype.add = function (domainObject, index) {
             var self = this,
                 id = typeof domainObject === 'string' ?
-                        domainObject : domainObject.getId();
+                        domainObject : domainObject.getId(),
+                model = self.domainObject.getModel(),
+                composition = model.composition,
+                oldIndex = composition.indexOf(id);
 
             // Find the object with the above id, used to contextualize
             function findObject(objects) {
@@ -82,16 +85,6 @@ define(
             }
 
             function addIdToModel(model) {
-                var composition = model.composition,
-                    oldIndex = composition.indexOf(id);
-
-                // If no index has been specified already and the id is already
-                // present, nothing to do. If the id is already at that index,
-                // also nothing to do, so cancel mutation.
-                if ((isNaN(index) && oldIndex !== -1) || (index === oldIndex)) {
-                    return false;
-                }
-
                 // Pick a specific index if needed.
                 index = isNaN(index) ? composition.length : index;
                 // Also, don't put past the end of the array
@@ -104,6 +97,13 @@ define(
 
                 // ...and add it back at the appropriate index.
                 model.composition.splice(index, 0, id);
+            }
+
+            // If no index has been specified already and the id is already
+            // present, nothing to do. If the id is already at that index,
+            // also nothing to do, so cancel mutation.
+            if ((isNaN(index) && oldIndex !== -1) || (index === oldIndex)) {
+                return contextualize(true);
             }
 
             return this.domainObject.useCapability('mutation', addIdToModel)
