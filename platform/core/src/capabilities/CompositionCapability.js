@@ -63,8 +63,7 @@ define(
          */
         CompositionCapability.prototype.add = function (domainObject, index) {
             var id = typeof domainObject === 'string' ?
-                    domainObject : domainObject.getId(),
-                $q = this.$q;
+                    domainObject : domainObject.getId();
 
             function addIdToModel(model) {
                 var composition = model.composition,
@@ -73,7 +72,7 @@ define(
                 // If no index has been specified already and the id is already
                 // present, nothing to do. If the id is already at that index,
                 // also nothing to do, so cancel mutation.
-                if ((isNaN(index) && oldIndex !== -1) || (index === oldIndex) {
+                if ((isNaN(index) && oldIndex !== -1) || (index === oldIndex)) {
                     return false;
                 }
 

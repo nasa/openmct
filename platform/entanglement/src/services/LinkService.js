@@ -52,10 +52,13 @@ define(
                 "composition",
                 parentCandidate.getCapability('type'),
                 object.getCapability('type')
-            );
+            ) && parentCandidate.hasCapability('composition');
         };
 
         LinkService.prototype.perform = function (object, parentObject) {
+            // Note that this was checked-for explicitly during validate step
+            var composition = parentObject.getCapability('composition');
+
             function findChild(children) {
                 var i;
                 for (i = 0; i < children.length; i += 1) {
@@ -65,16 +68,10 @@ define(
                 }
             }
 
-            return parentObject.useCapability('mutation', function (model) {
-                if (model.composition.indexOf(object.getId()) === -1) {
-                    model.composition.push(object.getId());
-                }
-            }).then(function () {
+            return composition.add(object).then(function () {
                 return parentObject.getCapability('persistence').persist();
             }).then(function getObjectWithNewContext() {
-                return parentObject
-                    .useCapability('composition')
-                    .then(findChild);
+                return composition.invoke().then(findChild);
             });
         };
 
