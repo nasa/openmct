@@ -51,7 +51,7 @@ define(
                 }
 
                 // Calculates the midpoint between two given
-                // coordinates
+                // coordinates and returns it as coordinate object
                 function calculateMidpoint(coordOne, coordTwo) {
                     return {
                         clientX: (coordOne.clientX + coordTwo.clientX) / 2,
@@ -211,17 +211,29 @@ define(
                 }
 
                 // Stop checking for touch when scope is destroyed
+                // (when user navigates away from graph).
                 $scope.$on("$destroy", function () {
+
+                    // All elements' event listeners are
+                    // removed
                     element.off('touchstart', touchStart);
                     element.off('touchmove', touchChange);
                     element.off('touchend', touchEnd);
                     element.off('touchcancel', touchEnd);
+
+                    // If for some reason, midtouch the
+                    // user is navigated away, set pan/pinch
+                    // statuses to false
+                    isPan = false;
+                    isPinch = false;
                 });
             }
 
             return {
+                // MCTPinch is treated as an attribute
                 restrict: "A",
-                // Link with the provided function
+
+                // Link with the provided function above
                 link: link
             };
         }
