@@ -322,14 +322,12 @@ define(
                     };
                 }
 
-                function updateZoom(midpoint, bounds, touches, distance) {
+                function updateZoom(midpoint, bounds, distance) {
                     // calculate offset between points.  Apply that offset to viewport.
                     var midpointPosition = trackTouchPosition(midpoint, bounds),
                         newMidpointPosition = midpointPosition.positionAsPlotPoint,
-                        newTouchPosition = [trackTouchPosition(touches[0], bounds).positionAsPlotPoint,
-                                            trackTouchPosition(touches[1], bounds).positionAsPlotPoint],
-                        distanceRatio = lastTouchDistance / distance || firstTouchDistance / distance,
-                        newViewport = calculateViewport(newMidpointPosition, newTouchPosition, distanceRatio);
+                        distanceRatio = (lastTouchDistance / distance) || (firstTouchDistance / distance),
+                        newViewport = calculateViewport(newMidpointPosition, distanceRatio);
 
                     $scope.viewport = newViewport;
                 }
@@ -382,15 +380,14 @@ define(
                 }
 
                 function onPinchChange(event, touch) {
-                    console.log(Math.round(touch.distance));
-
-                    if(comparePinchDrag(Math.round(touch.distance), Math.round(firstTouchDistance),
+                    if(comparePinchDrag(Math.round(touch.distance),
+                            Math.round(firstTouchDistance),
                             Math.round(lastTouchDistance))) {
                         //console.log("# PINCH PAN");
                         updatePan(touch.midpoint, touch.bounds);
                     } else {
                         //console.log("# PINCH ZOOM");
-                        updateZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
+                        updateZoom(touch.midpoint, touch.bounds, touch.distance);
                     }
                     lastTouchDistance = touch.distance;
                 }
@@ -403,7 +400,7 @@ define(
                     updatePan(touch.touch, touch.bounds);
                 }
 
-                function onTouchEnd(event) {
+                function onTouchEnd() {
                     endTouch();
                 }
 
