@@ -36,14 +36,17 @@ define(
                         clientY: event.clientY
                     };
                 }
-                
+
+                // Calculates the midpoint between two given
+                // coordinates
                 function calculateMidpoint(coordOne, coordTwo) {
                     return {
                         clientX: (coordOne.clientX + coordTwo.clientX) / 2,
                         clientY: (coordOne.clientY + coordTwo.clientY) / 2
                     };
                 }
-                
+
+                // Calculates the distance between two coordinates
                 function calculateDistance(coordOne, coordTwo) {
                     return Math.sqrt(Math.pow(coordOne.clientX - coordTwo.clientX, 2) +
                         Math.pow(coordOne.clientY - coordTwo.clientY, 2));
@@ -58,7 +61,7 @@ define(
                             event.touches.length === 2) {
                         //console.log("PINCH START");
                         touchPosition = [trackPosition(event.touches[0]),
-                                             trackPosition(event.touches[1])];
+                            trackPosition(event.touches[1])];
                         
                         $scope.$emit('mct:pinch:start', {
                             touches: touchPosition,
