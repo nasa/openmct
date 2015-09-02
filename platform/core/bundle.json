@@ -63,7 +63,12 @@
                 "provides": "modelService",
                 "type": "provider",
                 "implementation": "models/PersistedModelProvider.js",
-                "depends": [ "persistenceService", "$q", "PERSISTENCE_SPACE" ]
+                "depends": [
+                    "persistenceService",
+                    "$q",
+                    "PERSISTENCE_SPACE",
+                    "ADDITIONAL_PERSISTENCE_SPACES"
+                ]
             },
             {
                 "provides": "modelService",
@@ -214,6 +219,17 @@
                     "type": "folder",
                     "composition": []
                 }
+            }
+        ],
+        "constants": [
+            {
+                "key": "PERSISTENCE_SPACE",
+                "value": "mct"
+            },
+            {
+                "key": "ADDITIONAL_PERSISTENCE_SPACES",
+                "value": [],
+                "description": "An array of additional persistence spaces to load models from."
             }
         ]
     }

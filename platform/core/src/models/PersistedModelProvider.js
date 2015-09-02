@@ -39,23 +39,37 @@ define(
          * @param {PersistenceService} persistenceService the service in which
          *        domain object models are persisted.
          * @param $q Angular's $q service, for working with promises
-         * @param {string} SPACE the name of the persistence space from which
-         *        models should be retrieved.
+         * @param {string} space the name of the persistence space(s)
+         *        from which models should be retrieved.
+         * @param {string} spaces additional persistence spaces to use
          */
-        function PersistedModelProvider(persistenceService, $q, space) {
+        function PersistedModelProvider(persistenceService, $q, space, spaces) {
             this.persistenceService = persistenceService;
             this.$q = $q;
-            this.space = space;
+            this.spaces = [space].concat(spaces || []);
+        }
+
+        // Take the most recently modified model, for cases where
+        // multiple persistence spaces return models.
+        function takeMostRecent(modelA, modelB) {
+            return (!modelA || modelA.modified === undefined) ? modelB :
+                    (!modelB || modelB.modified === undefined) ? modelA :
+                            modelA.modified > modelB.modified ? modelA :
+                                    modelB;
         }
 
         PersistedModelProvider.prototype.getModels = function (ids) {
             var persistenceService = this.persistenceService,
                 $q = this.$q,
-                space = this.space;
+                spaces = this.spaces;
 
-            // Load a single object model from persistence
+            // Load a single object model from any persistence spaces
             function loadModel(id) {
-                return persistenceService.readObject(space, id);
+                return $q.all(spaces.map(function (space) {
+                    return persistenceService.readObject(space, id);
+                })).then(function (models) {
+                    return models.reduce(takeMostRecent);
+                });
             }
 
             // Package the result as id->model
