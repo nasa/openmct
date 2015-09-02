@@ -45,10 +45,9 @@ define(
                     marqueeBox = {},
                     marqueeRect, // Set when exists.
                     chartElementBounds,
-                    firstTouches,
                     firstTouch,
                     firstTouchDistance,
-                    lastTouchDistance,
+                    prevTouchDistance,
                     $canvas = $element.find('canvas');
 
                 function updateAxesForCurrentViewport() {
@@ -274,6 +273,38 @@ define(
                     updateAxesForCurrentViewport();
                 }
 
+                //
+                function updatePan(touch, bounds) {
+                    var panPosition = trackTouchPosition(touch, bounds).positionAsPlotPoint,
+                        dDomain = firstTouch.domain - panPosition.domain,
+                        dRange = firstTouch.range - panPosition.range;
+
+                    $scope.viewport = {
+                        topLeft: {
+                            domain: (($scope.viewport.topLeft.domain) + dDomain),
+                            range: (($scope.viewport.topLeft.range) + dRange)
+                        },
+                        bottomRight: {
+                            domain: (($scope.viewport.bottomRight.domain) + dDomain),
+                            range: (($scope.viewport.bottomRight.range) + dRange)
+                        }
+                    };
+                }
+
+                function startPan(touch, bounds) {
+                    $scope.$emit('user:viewport:change:start');
+                    firstTouch = trackTouchPosition(touch, bounds).positionAsPlotPoint;
+                }
+
+                //
+                function onPanStart(event, touch) {
+                    startPan(touch.touch, touch.bounds);
+                }
+
+                function onPanChange(event, touch) {
+                    updatePan(touch.touch, touch.bounds);
+                }
+
                 function setDimensions(midpoint) {
                     return {
                         tl: {
@@ -288,127 +319,82 @@ define(
                 }
 
                 function calculateViewport(midpoint, ratio) {
-                    var tl,
-                        br,
+                    var zoomTL, zoomBR,
                         dimensions = setDimensions(midpoint),
                         checkRatio = (ratio - 1) || 0,
-                        type = (-1 * (checkRatio / Math.abs(checkRatio))) || 1;
+                        type = (-1 * (checkRatio / Math.abs(checkRatio))) || 1,
+                        zoomAmt = type * ZOOM_AMT;
 
-                    tl = {
-                        domain: type * ZOOM_AMT * dimensions.tl.domain,
-                        range: type * ZOOM_AMT * dimensions.tl.range
+                    zoomTL = {
+                        domain: zoomAmt * dimensions.tl.domain,
+                        range: zoomAmt * dimensions.tl.range
                     };
-                    br = {
-                        domain: type * ZOOM_AMT * dimensions.br.domain,
-                        range: type * ZOOM_AMT * dimensions.br.range
+                    zoomBR = {
+                        domain: zoomAmt * dimensions.br.domain,
+                        range: zoomAmt * dimensions.br.range
                     };
 
                     return {
                         topLeft: {
-                            domain: (($scope.viewport.topLeft.domain) + tl.domain),
-                            range: (($scope.viewport.topLeft.range) - tl.range)
+                            domain: (($scope.viewport.topLeft.domain) + zoomTL.domain),
+                            range: (($scope.viewport.topLeft.range) - zoomTL.range)
                         },
                         bottomRight: {
-                            domain: (($scope.viewport.bottomRight.domain) - br.domain),
-                            range: (($scope.viewport.bottomRight.range) + br.range)
+                            domain: (($scope.viewport.bottomRight.domain) - zoomBR.domain),
+                            range: (($scope.viewport.bottomRight.range) + zoomBR.range)
                         }
                     };
                 }
 
                 function updateZoom(midpoint, bounds, distance) {
-                    // calculate offset between points.  Apply that offset to viewport.
-                    var midpointPosition = trackTouchPosition(midpoint, bounds),
-                        newMidpointPosition = midpointPosition.positionAsPlotPoint,
-                        distanceRatio = (lastTouchDistance / distance) || (firstTouchDistance / distance),
-                        newViewport = calculateViewport(newMidpointPosition, distanceRatio);
+                    var midpointPosition = trackTouchPosition(midpoint, bounds).positionAsPlotPoint,
+                        distanceRatio = ((prevTouchDistance || firstTouchDistance) / distance);
 
-                    $scope.viewport = newViewport;
+                    $scope.viewport = calculateViewport(midpointPosition, distanceRatio);
                 }
-                
+
                 function startZoom(midpoint, bounds, touches, distance) {
-                    firstTouches = [trackTouchPosition(touches[0], bounds).positionAsPlotPoint,
-                                    trackTouchPosition(touches[1], bounds).positionAsPlotPoint];
                     firstTouchDistance = distance;
                     firstTouch = trackTouchPosition(midpoint, bounds).positionAsPlotPoint;
                 }
-                
-                function updatePan(touch, bounds) {
-                    // calculate offset between points.  Apply that offset to viewport.
-                    var panPosition = trackTouchPosition(touch, bounds),
-                        newPanPosition = panPosition.positionAsPlotPoint,
-                        dDomain = firstTouch.domain - newPanPosition.domain,
-                        dRange = firstTouch.range - newPanPosition.range;
-                    
-                    $scope.viewport = {
-                        topLeft: {
-                            domain: (($scope.viewport.topLeft.domain) + dDomain),
-                            range: (($scope.viewport.topLeft.range) + dRange)
-                        },
-                        bottomRight: {
-                            domain: (($scope.viewport.bottomRight.domain) + dDomain),
-                            range: (($scope.viewport.bottomRight.range) + dRange)
-                        }
-                    };
-                }
-                
-                function startPan(touch, bounds) {
-                    $scope.$emit('user:viewport:change:start');
-                    firstTouch = trackTouchPosition(touch, bounds).positionAsPlotPoint;
-                }
 
-                function endTouch() {
-                    $scope.$emit('user:viewport:change:end', $scope.viewport);
-                }
-
+                //
                 function onPinchStart(event, touch) {
                     $scope.$emit('user:viewport:change:start');
                     startZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
                 }
 
-
-                function comparePinchDrag(distance, firstDistance, lastDistance) {
-                    return (((firstDistance + PINCH_DRAG_AMT) >= distance) &&
-                        ((firstDistance - PINCH_DRAG_AMT) <= distance)) ||
-                        (((lastDistance + PINCH_DRAG_AMT) >= distance) &&
-                        ((lastDistance - PINCH_DRAG_AMT) <= distance));
+                function comparePinchDrag(distance, prevDistance) {
+                    return ((prevDistance + PINCH_DRAG_AMT) >= distance) &&
+                        ((prevDistance - PINCH_DRAG_AMT) <= distance);
                 }
 
                 function onPinchChange(event, touch) {
                     if(comparePinchDrag(Math.round(touch.distance),
-                            Math.round(firstTouchDistance),
-                            Math.round(lastTouchDistance))) {
-                        //console.log("# PINCH PAN");
+                            Math.round(prevTouchDistance || firstTouchDistance))) {
                         updatePan(touch.midpoint, touch.bounds);
                     } else {
-                        //console.log("# PINCH ZOOM");
                         updateZoom(touch.midpoint, touch.bounds, touch.distance);
                     }
-                    lastTouchDistance = touch.distance;
-                }
-                
-                function onPanStart(event, touch) {
-                    startPan(touch.touch, touch.bounds);
+                    prevTouchDistance = touch.distance;
                 }
 
-                function onPanChange(event, touch) {
-                    updatePan(touch.touch, touch.bounds);
-                }
-
+                //
                 function onTouchEnd() {
-                    endTouch();
+                    $scope.$emit('user:viewport:change:end', $scope.viewport);
                 }
 
-                $scope.$watchCollection('viewport', onViewportChange);
-                
-                $scope.$on('mct:pan:start', onPanStart);
-                $scope.$on('mct:pan:change', onPanChange);
-                
                 $scope.$on('mct:pinch:start', onPinchStart);
                 $scope.$on('mct:pinch:change', onPinchChange);
-                
+
+                $scope.$on('mct:pan:start', onPanStart);
+                $scope.$on('mct:pan:change', onPanChange);
+
                 $scope.$on('mct:ptouch:end', onTouchEnd);
-                
+
                 $scope.$on('$destroy', stopWatching);
+
+                $scope.$watchCollection('viewport', onViewportChange);
             }
 
             return {
