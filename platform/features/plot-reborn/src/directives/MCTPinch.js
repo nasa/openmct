@@ -27,8 +27,21 @@ define(
         "use strict";
 
         function MCTPinch(agentService) {
-            
+
+            /*
+             * Links the attributes with the
+             * provided link function and nested
+             * touch event functions
+             */
             function link($scope, element) {
+
+                // isPan and isPinch variables are set after the start
+                // of a gestures and is checked over the change of that
+                // gesture. These are used to differentiate gestures and
+                // force only one type of gesture to be done at a time
+                var isPan = false,
+                    isPinch = false;
+
                 // Returns position of touch event
                 function trackPosition(event) {
                     return {
@@ -47,9 +60,24 @@ define(
                 }
 
                 // Calculates the distance between two coordinates
+                // and returns as number/integer value
                 function calculateDistance(coordOne, coordTwo) {
                     return Math.sqrt(Math.pow(coordOne.clientX - coordTwo.clientX, 2) +
                         Math.pow(coordOne.clientY - coordTwo.clientY, 2));
+                }
+
+                // Checks if the user is going to pan by checking the number
+                // of touches on the screen (one touch means pan)
+                function checkPan(event) {
+                    return (event.changedTouches.length === 1) ||
+                        (event.touches.length === 1);
+                }
+
+                // Checks if the user is going to pinch by checking the number
+                // of touches on the screen (two touches means pinch)
+                function checkPinch(event) {
+                    return (event.changedTouches.length === 2) ||
+                        (event.touches.length === 2);
                 }
 
                 // On touch start the 'touch' is tracked and
@@ -57,12 +85,22 @@ define(
                 function touchStart(event) {
                     var touchPosition;
 
-                    if (event.changedTouches.length === 2 ||
-                            event.touches.length === 2) {
-                        //console.log("PINCH START");
+                    // If two touches or change touches are occurring
+                    // than user is doing a pinch gesture
+                    if (checkPinch(event)) {
+
+                        // User has started pinch, sets isPinch and resets isPan
+                        isPan = false;
+                        isPinch = true;
+
+                        // Position of both touches are tracked and saved in variable
                         touchPosition = [trackPosition(event.touches[0]),
                             trackPosition(event.touches[1])];
-                        
+
+                        // Emits the start of the pinch and passes the
+                        // touch coordinates (touches), the bounds of the
+                        // event, the midpoint of both touch coorddinates,
+                        // and the distance between the two touch coordinates
                         $scope.$emit('mct:pinch:start', {
                             touches: touchPosition,
                             bounds: event.target.getBoundingClientRect(),
@@ -72,11 +110,23 @@ define(
                         
                         // Stops other gestures/button clicks from being active
                         event.preventDefault();
-                    } else if (event.changedTouches.length === 1 ||
-                            event.touches.length === 1) {
-                        //console.log("*PAN START");
+
+                    }
+                    // If one touch or change touch is occurring
+                    // user is doing a single finger pan gesture
+                    else if (checkPan(event)) {
+
+                        // User has started pan, sets isPan and resets isPinch
+                        isPinch = false;
+                        isPan = true;
+
+                        // Position of single touch is tracked and
+                        // saved in variable
                         touchPosition = trackPosition(event.touches[0]);
-                        
+
+                        // Emits the start of the pan and passes the
+                        // touch coordinates (touch), and the bounds
+                        // of the event
                         $scope.$emit('mct:pan:start', {
                             touch: touchPosition,
                             bounds: event.target.getBoundingClientRect()
@@ -92,12 +142,20 @@ define(
                 function touchChange(event) {
                     var touchPosition;
 
-                    if (event.changedTouches.length === 2 ||
-                        event.touches.length === 2) {
-                        //console.log("PINCH CHANGE");
+                    // If two touches or change touches are occurring
+                    // and the user has started a pinch than user is
+                    // doing a pinch gesture
+                    if (checkPinch(event) && isPinch) {
+
+                        // Position of both touches are tracked and saved in variable. If change
+                        // in touch of either coordinate is undefined, uses touch instead
                         touchPosition = [trackPosition(event.changedTouches[0] || event.touches[0]),
                             trackPosition(event.changedTouches[1] || event.touches[1])];
-                        
+
+                        // Emits the change in pinch and passes the
+                        // touch coordinates (touches), the bounds of the
+                        // event, the midpoint of both touch coorddinates,
+                        // and the distance between the two touch coordinates
                         $scope.$emit('mct:pinch:change', {
                             touches: touchPosition,
                             bounds: event.target.getBoundingClientRect(),
@@ -107,11 +165,17 @@ define(
                         
                         // Stops other gestures/button clicks from being active
                         event.preventDefault();
-                    } else if (event.changedTouches.length === 1 ||
-                        event.touches.length === 1) {
-                        //console.log("*PAN CHANGE");
-                        touchPosition = trackPosition(event.changedTouches[0]);
+                    }
+                    // If one touch or change touch is occurring
+                    // user is doing a single finger pan gesture
+                    else if (checkPan(event) && isPan) {
 
+                        // Position of single changed touch or touch is tracked and saved in variable
+                        touchPosition = trackPosition(event.changedTouches[0] || event.touches[0]);
+
+                        // Emits the change of the pan and passes the
+                        // touch coordinates (touch), and the bounds
+                        // of the event
                         $scope.$emit('mct:pan:change', {
                             touch: touchPosition,
                             bounds: event.target.getBoundingClientRect()
@@ -121,17 +185,24 @@ define(
                         event.preventDefault();
                     }
                 }
-                
+
                 // On the 'touchend' or 'touchcancel' the event
                 // is emitted through scope
                 function touchEnd(event) {
+
+                    // Emits that this is the end of the touch
                     $scope.$emit('mct:ptouch:end');
+
+                    // set pan/pinch statuses to false
+                    // when the user stops touching the screen
+                    isPan = false;
+                    isPinch = false;
 
                     // Stops other gestures/button clicks from being active
                     event.preventDefault();
                 }
 
-                // On Mobile, checks for touch start, move, and end
+                // On Mobile, checks for touch start, move, and end/cancel
                 if (agentService.isMobile(navigator.userAgent)) {
                     element.on('touchstart', touchStart);
                     element.on('touchmove', touchChange);
