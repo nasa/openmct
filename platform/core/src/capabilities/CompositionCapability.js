@@ -51,6 +51,49 @@ define(
         }
 
         /**
+         * Add a domain object to the composition of the field.
+         * This mutates but does not persist the modified object.
+         *
+         * If no index is given, this is added to the end of the composition.
+         *
+         * @param {DomainObject|string} domainObject the domain object to add,
+         *        or simply its identifier
+         * @param {number} [index] the index at which to add the object
+         * @returns {Promise.<boolean>} the mutation result
+         */
+        CompositionCapability.prototype.add = function (domainObject, index) {
+            var id = typeof domainObject === 'string' ?
+                    domainObject : domainObject.getId();
+
+            function addIdToModel(model) {
+                var composition = model.composition,
+                    oldIndex = composition.indexOf(id);
+
+                // If no index has been specified already and the id is already
+                // present, nothing to do. If the id is already at that index,
+                // also nothing to do.
+                if ((isNaN(index) && oldIndex !== -1) || (index === oldIndex) {
+                    return;
+                }
+
+                // Pick a specific index if needed.
+                index = isNaN(index) ? composition.length : index;
+                // Also, don't put past the end of the array
+                index = Math.min(composition.length, index);
+
+                // Remove the existing instance of the id
+                if (oldIndex !== -1) {
+                    model.composition.splice(oldIndex, 1);
+                }
+
+                // ...and add it back at the appropriate index.
+                model.composition.splice(index, 0, id);
+            }
+
+            return this.domainObject.useCapability('mutation', addIdToModel);
+        };
+
+        /**
          * Request the composition of this object.
          * @returns {Promise.<DomainObject[]>} a list of all domain
          *     objects which compose this domain object.
