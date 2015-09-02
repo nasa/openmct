@@ -273,18 +273,12 @@ define(
                     updateAxesForCurrentViewport();
                 }
 
-                function calculateDistance(coordOne, coordTwo) {
-                    return Math.sqrt(Math.pow(coordOne.clientX - coordTwo.clientX, 2) +
-                        Math.pow(coordOne.clientY - coordTwo.clientY, 2));
-                }
-
-                function setDR(midpoint) {
+                function setDimensions(midpoint) {
                     return {
                         tl: {
                             domain: Math.abs(midpoint.domain - ($scope.viewport.topLeft.domain)),
                             range: Math.abs(midpoint.range - ($scope.viewport.topLeft.range))
                         },
-
                         br: {
                             domain: Math.abs(($scope.viewport.bottomRight.domain) - midpoint.domain),
                             range: Math.abs(($scope.viewport.bottomRight.range) - midpoint.range)
@@ -292,27 +286,27 @@ define(
                     };
                 }
 
-                function calculateViewport(midpoint, touchPosition, ratio) {
+                function calculateViewport(midpoint, ratio) {
                     var tl,
                         br,
-                        drSet = setDR(midpoint);
+                        dimensions = setDimensions(midpoint);
                     if (ratio < 1) {
                         tl = {
-                            domain: ZOOM_AMT * drSet.tl.domain,
-                            range: ZOOM_AMT * drSet.tl.range
+                            domain: ZOOM_AMT * dimensions.tl.domain,
+                            range: ZOOM_AMT * dimensions.tl.range
                         };
                         br = {
-                            domain: ZOOM_AMT * drSet.br.domain,
-                            range: ZOOM_AMT * drSet.br.range
+                            domain: ZOOM_AMT * dimensions.br.domain,
+                            range: ZOOM_AMT * dimensions.br.range
                         };
                     } else if (ratio > 1) {
                         tl = {
-                            domain: - ZOOM_AMT * drSet.tl.domain,
-                            range: - ZOOM_AMT * drSet.tl.range
+                            domain: - ZOOM_AMT * dimensions.tl.domain,
+                            range: - ZOOM_AMT * dimensions.tl.range
                         };
                         br = {
-                            domain: - ZOOM_AMT * drSet.br.domain,
-                            range: - ZOOM_AMT * drSet.br.range
+                            domain: - ZOOM_AMT * dimensions.br.domain,
+                            range: - ZOOM_AMT * dimensions.br.range
                         };
                     }
 
