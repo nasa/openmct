@@ -9,7 +9,8 @@ define(
 
         var RANGE_TICK_COUNT = 7,
             DOMAIN_TICK_COUNT = 5,
-            ZOOM_AMT = 0.02;
+            ZOOM_AMT = 0.02,
+            PINCH_DRAG_AMT = 2;
 
         function MCTPlot() {
 
@@ -370,13 +371,14 @@ define(
                 function onPinchStart(event, touch) {
                     $scope.$emit('user:viewport:change:start');
                     startZoom(touch.midpoint, touch.bounds, touch.touches, touch.distance);
-
                 }
 
+
                 function comparePinchDrag(distance, firstDistance, lastDistance) {
-                    var amt = 2;
-                    return (((firstDistance + amt) >= distance) && ((firstDistance - amt) <= distance))
-                        || (((lastDistance + amt) >= distance) && ((lastDistance - amt) <= distance));
+                    return (((firstDistance + PINCH_DRAG_AMT) >= distance) &&
+                        ((firstDistance - PINCH_DRAG_AMT) <= distance)) ||
+                        (((lastDistance + PINCH_DRAG_AMT) >= distance) &&
+                        ((lastDistance - PINCH_DRAG_AMT) <= distance));
                 }
 
                 function onPinchChange(event, touch) {
