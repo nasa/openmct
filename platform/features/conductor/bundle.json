@@ -1,0 +1,10 @@
+{
+    "extensions": {
+        "representers": [
+            {
+                "implementation": "ConductorRepresenter.js",
+                "depends": [ "$compile", "views[]" ]
+            }
+        ]
+    }
+}
