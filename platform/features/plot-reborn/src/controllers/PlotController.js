@@ -128,27 +128,46 @@ define(
                 $scope.axes.domain.label = "Time (Manipulated)";
             }
 
+            // Returns the value of the left domain value
+            // used when the right value has been adjusted and
+            // a pan or zoom has occurred
             function getLeftInterval(intervalTL, intervalBR) {
                 return intervalTL.domain + (maxDomain - intervalBR.domain);
             }
 
+            // Checks if the user is on mobile or desktop,
+            // based on that returns the boolean value
+            // if the chart should be snapped to the right
+            // side of the screen
             function getSnapCheck(viewport, onMobile) {
+                // Default amount within which to snap
+                // for desktop version
                 var snapPercent = 10;
 
                 if(onMobile) {
+                    // Smaller amount within which to snap
+                    // for mobile version
                     snapPercent = 75;
                 }
 
-                console.log(snapPercent);x
                 return (Math.abs(maxDomain - viewport.bottomRight.domain) < (DOMAIN_INTERVAL/snapPercent));
             }
 
+            // Spans the chart to the right domain value to update the
+            // chart live and keep up with the maxDomain
             function snapToRight() {
+
+                // Sets the chart to being live and changes the
+                // range name to show that the chart is updating
                 isLive = true;
                 $scope.axes.domain.label = "Time (Updating Live)";
 
+                // Changes right domain value to maxDomain (value
+                // of latest chart domain value)
                 $scope.viewport.bottomRight.domain = maxDomain;
 
+                // Adjusts the left domain value to keep up with the
+                // right domain change by adding it to the current left domain
                 $scope.viewport.topLeft.domain = getLeftInterval($scope.viewport.topLeft,
                     $scope.viewport.bottomRight);
             }
@@ -161,12 +180,14 @@ define(
                 // interval.
                 // TODO: Better UX pattern for this.
 
-                // Added agent service call to not snap to right on mobile
+                // Checks if the chart needs to snap to the right based on the
+                // current device and where the right domain is located
                 if (getSnapCheck(viewport, agentService.isMobile(navigator.userAgent))) {
                     snapToRight();
-                }
-                else {
+                } else {
 
+                    // The viewport has been changed, but is not actively
+                    // keeping up with the plot, therefore isLive = false
                     isLive = false;
                     $scope.axes.domain.label = "Time (Manipulated)";
                 }
