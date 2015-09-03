@@ -417,7 +417,7 @@ define(
                         updateZoom(touch.midpoint, touch.bounds, touch.distance);
                     }
 
-                    // Sets previous touch distance to current touch.distance
+                    // Sets previous touch distance to current touch.distance (for next touch event)
                     prevTouchDistance = touch.distance;
                 }
 
