@@ -106,7 +106,7 @@ define(
             function startMiddleDrag() {
                 initialDragValue = [
                     $scope.ngModel.inner[0],
-                    $scope.ngModel.inner[0]
+                    $scope.ngModel.inner[1]
                 ];
             }
 
@@ -142,24 +142,27 @@ define(
             function middleDrag(pixels) {
                 var delta = toMillis(pixels),
                     index = delta < 0 ? 0 : 1,
-                    opposite = (index === 0) ? 1 : 0,
-                    span = initialDragValue[opposite] - initialDragValue[index];
+                    opposite = Math.abs(1 - index);
 
+                // Adjust the position of the edge in the direction of drag
                 $scope.ngModel.inner[index] = clamp(
                     initialDragValue[index] + delta,
                     $scope.ngModel.outer[0],
                     $scope.ngModel.outer[1]
                 );
-                $scope.ngModel.inner[opposite] =
-                    $scope.ngModel.inner[index] + span;
+                // Adjust opposite knob to maintain span
+                $scope.ngModel.inner[opposite] = $scope.ngModel.inner[index] +
+                    initialDragValue[opposite] - initialDragValue[index];
+
+                updateFromParameters($scope.ngModel);
             }
 
             $scope.startLeftDrag = startLeftDrag;
             $scope.startRightDrag = startRightDrag;
-            //$scope.startMiddleDrag = startMiddleDrag;
+            $scope.startMiddleDrag = startMiddleDrag;
             $scope.leftDrag = leftDrag;
             $scope.rightDrag = rightDrag;
-            //$scope.middleDrag = middleDrag;
+            $scope.middleDrag = middleDrag;
 
             $scope.state = false;
             $scope.ticks = [];
