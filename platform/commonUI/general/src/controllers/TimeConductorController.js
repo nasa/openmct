@@ -33,10 +33,10 @@ define(
          * @constructor
          */
         function TimeConductorController($scope, now) {
-            var tickCount = 2;
+            var tickCount = 2,
+                initialDragValue;
 
-            $scope.state = false;
-            $scope.ticks = [];
+
 
             function formatTimestamp(ts) {
                 return moment.utc(ts).format(DATE_FORMAT);
@@ -94,6 +94,75 @@ define(
 
                 updateTicks();
             }
+
+            function startLeftDrag() {
+                initialDragValue = $scope.ngModel.inner[0];
+            }
+
+            function startRightDrag() {
+                initialDragValue = $scope.ngModel.inner[1];
+            }
+
+            function startMiddleDrag() {
+                initialDragValue = [
+                    $scope.ngModel.inner[0],
+                    $scope.ngModel.inner[0]
+                ];
+            }
+
+            function toMillis(pixels) {
+                var span = $scope.ngModel.outer[1] - $scope.ngModel.outer[0];
+                return (pixels / $scope.spanWidth) * span;
+            }
+
+            function clamp(value, low, high) {
+                return Math.max(low, Math.min(high, value));
+            }
+
+            function leftDrag(pixels) {
+                var delta = toMillis(pixels);
+                $scope.ngModel.inner[0] = clamp(
+                    initialDragValue + delta,
+                    $scope.ngModel.outer[0],
+                    $scope.ngModel.inner[1]
+                );
+                updateFromParameters($scope.ngModel);
+            }
+
+            function rightDrag(pixels) {
+                var delta = toMillis(pixels);
+                $scope.ngModel.inner[1] = clamp(
+                    initialDragValue + delta,
+                    $scope.ngModel.inner[0],
+                    $scope.ngModel.outer[1]
+                );
+                updateFromParameters($scope.ngModel);
+            }
+
+            function middleDrag(pixels) {
+                var delta = toMillis(pixels),
+                    index = delta < 0 ? 0 : 1,
+                    opposite = (index === 0) ? 1 : 0,
+                    span = initialDragValue[opposite] - initialDragValue[index];
+
+                $scope.ngModel.inner[index] = clamp(
+                    initialDragValue[index] + delta,
+                    $scope.ngModel.outer[0],
+                    $scope.ngModel.outer[1]
+                );
+                $scope.ngModel.inner[opposite] =
+                    $scope.ngModel.inner[index] + span;
+            }
+
+            $scope.startLeftDrag = startLeftDrag;
+            $scope.startRightDrag = startRightDrag;
+            //$scope.startMiddleDrag = startMiddleDrag;
+            $scope.leftDrag = leftDrag;
+            $scope.rightDrag = rightDrag;
+            //$scope.middleDrag = middleDrag;
+
+            $scope.state = false;
+            $scope.ticks = [];
 
             // Initialize scope to defaults
             updateFromParameters();

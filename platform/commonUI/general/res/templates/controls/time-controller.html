@@ -34,13 +34,21 @@ properly on the range left and right bounds.
                  mct-resize="spanWidth = bounds.width">
                 <div class="slot range-holder">
                     <div class="range"
+                         mct-drag-down="startMiddleDrag()"
+                         mct-drag="middleDrag(delta[0])"
                          ng-style="{ left: startInnerPct, right: endInnerPct}">
                     </div>
                 </div>
-                <div class="knob knob-l" ng-style="{ left: startInnerPct }">
+                <div class="knob knob-l"
+                     mct-drag-down="startLeftDrag()"
+                     mct-drag="leftDrag(delta[0])"
+                     ng-style="{ left: startInnerPct }">
                     <div class="range-value">{{startInnerText}}</div>
                 </div>
-                <div class="knob knob-r" ng-style="{ right: endInnerPct }">
+                <div class="knob knob-r"
+                     mct-drag-down="startRightDrag()"
+                     mct-drag="rightDrag(delta[0])"
+                     ng-style="{ right: endInnerPct }">
                     <div class="range-value">{{endInnerText}}</div>
                 </div>
             </div>
