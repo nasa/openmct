@@ -34,7 +34,8 @@ define(
                 'height: ' + CONDUCTOR_HEIGHT + '">',
                 "<mct-include key=\"'time-controller'\"></mct-include>",
                 '</div>'
-            ].join('');
+            ].join(''),
+            GLOBAL_SHOWING = false;
 
         /**
          * The ConductorRepresenter attaches the universal time conductor
@@ -64,11 +65,9 @@ define(
 
         // Handle a specific representation of a specific domain object
         ConductorRepresenter.prototype.represent = function represent(representation, representedObject) {
-            if (this.showing) {
-                this.destroy();
-            }
+            this.destroy();
 
-            if (this.views.indexOf(representation) !== -1) {
+            if (this.views.indexOf(representation) !== -1 && !GLOBAL_SHOWING) {
                 // Create a new scope for the conductor
                 this.conductorScope(this.getScope().$new());
                 this.conductorElement =
@@ -77,11 +76,18 @@ define(
                 this.element.addClass('abs');
                 this.element.css('bottom', CONDUCTOR_HEIGHT);
                 this.showing = true;
+                GLOBAL_SHOWING = true;
             }
         };
 
         // Respond to the destruction of the current representation.
         ConductorRepresenter.prototype.destroy = function destroy() {
+            // We may not have decided to show in the first place,
+            // so circumvent any unnecessary cleanup
+            if (!this.showing) {
+                return;
+            }
+
             // Restore the original size of the mct-representation
             if (!this.hadAbs) {
                 this.element.removeClass('abs');
@@ -101,6 +107,7 @@ define(
             }
 
             this.showing = false;
+            GLOBAL_SHOWING = false;
         };
 
         return ConductorRepresenter;
