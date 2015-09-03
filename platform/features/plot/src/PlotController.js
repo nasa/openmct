@@ -171,23 +171,12 @@ define(
                     handle = undefined;
                 }
             }
-                
-            function doPinch(dimensions, dimensionsPrev, event, eventPrev, currSubplot) {
-                currSubplot.pinchZoomTest(dimensions, dimensionsPrev, event, eventPrev);
-            }
-                
-            function doPan(position) {
-                console.log("PANP: " + position);
-            }
 
             // Subscribe to telemetry when a domain object becomes available
             $scope.$watch('domainObject', subscribe);
 
             // Unsubscribe when the plot is destroyed
             $scope.$on("$destroy", releaseSubscription);
-                
-            $scope.handlePinch = doPinch;
-            $scope.handlePan = doPan;
                 
             // Create a throttled update function
             scheduleUpdate = throttle(function () {
