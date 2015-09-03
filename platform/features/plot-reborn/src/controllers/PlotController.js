@@ -9,7 +9,7 @@ define(
         // domainObject metadata.
         var DOMAIN_INTERVAL = 2 * 60 * 1000; // Two minutes.
 
-        function PlotController($scope, colorService) {
+        function PlotController($scope, colorService, agentService) {
             var plotHistory = [],
                 isLive = true,
                 maxDomain = +new Date(),

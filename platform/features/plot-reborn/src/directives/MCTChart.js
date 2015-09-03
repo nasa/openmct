@@ -35,7 +35,7 @@ define(
          *
          * @constructor
          */
-        function MCTChart($interval) {
+        function MCTChart($interval, $log, agentService) {
 
             function linkChart($scope, $element) {
                 var canvas = $element.find("canvas")[0],
@@ -199,8 +199,13 @@ define(
                     }
                 }
 
-                // Check for resize, on a timer
-                activeInterval = $interval(drawIfResized, 1000);
+                // Check for resize, on a timer, the timer is 15
+                // on mobile (to allow quick refresh of drawing).
+                if(agentService.isMobile(navigator.userAgent)) {
+                    activeInterval = $interval(drawIfResized, 15, false);
+                } else {
+                    activeInterval = $interval(drawIfResized, 1000, false);
+                }
 
                 $scope.$on('series:data:add', onSeriesDataAdd);
                 redraw();
