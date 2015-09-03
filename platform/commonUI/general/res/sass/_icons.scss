@@ -29,10 +29,8 @@
 }
 
 .ui-symbol {
-	$c: $colorKey;
 	&.icon {
-		color: $c;
-		@include txtShdwSubtle();
+		color: $colorKey;
 		&.alert {
 			color: $colorAlert;
 			&:hover {

@@ -19,12 +19,28 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* CONSTANTS */
-//$colorBodyBg: #fff;
-//$colorBodyFg: #666;
 
-/*
-@mixin btnSubtle($bg: $colorBodyBg, $fg: $colorBodyFg) {
-	background: red;
-	display: inline-block;
-}*/
+@import "compass";
+@import "compass/reset";
+@import "compass/css3";
+@import "compass/utilities";
+
+@import "../../../../general/res/sass/_mixins";
+@import "../../../../general/res/sass/mobile/mixins";
+@import "mixins";
+
+@import "../../../../general/res/sass/constants";
+@import "../../../../general/res/sass/mobile/constants";
+@import "constants";
+
+@import "../../../../general/res/sass/main";
+@import "controls";
+
+
+
+
+
+
+
+
+

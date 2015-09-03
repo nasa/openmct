@@ -59,19 +59,15 @@ $pad: $interiorMargin * $baseRatio;
 
 /*********************************** STYLE STYLES */
 .s-btn {
-	$base: lighten($colorBodyBg, 20%);
-	@include border-radius($controlCr);
 	@include box-sizing(border-box);
-	@include text-shadow(rgba(black, 0.3) 0 1px 1px);
 	@include user-select(none);
-	//@include containerSubtle($colorBodyBg, $colorBodyFg, true);
 	cursor: pointer;
 	text-decoration: none;
 	height: $btnStdH;
 	line-height: $btnStdH;
 	padding: 0 $pad;
+	font-size: 0.7rem;
 
-		font-size: 0.7rem;
 	.icon {
 		font-size: 0.8rem;
 		color: $colorKey;
@@ -89,7 +85,7 @@ $pad: $interiorMargin * $baseRatio;
 	}
 
 	&:not(.major) {
-		@include btnSubtle($colorBodyBg, $colorBodyFg, $colorKey);
+		@include btnSubtle($colorBtnBg, $colorBtnFg, $colorBtnIcon);
 	}
 
 	&.major {

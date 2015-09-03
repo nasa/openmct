@@ -24,10 +24,6 @@
             {
                 "stylesheetUrl": "css/normalize.min.css",
                 "priority": "mandatory"
-            },
-            {
-                "stylesheetUrl": "css/theme-espresso.css",
-                "priority": 1000
             }
         ],
         "templates": [

@@ -149,9 +149,9 @@
     $ltnRatio: 7%;
     $gradRatio: 5%;
     $hovRatio: 7%;
-    $bgBase: lighten($bg, $ltnRatio);
-    $fgBase: lighten($fg, $ltnRatio);
-    $gradC1: lighten($bgBase, $gradRatio);
+    $bgBase: $bg; //pullForward($bg, $ltnRatio);
+    $fgBase: $fg; // pullForward($fg, $ltnRatio);
+    $gradC1: lighten($bgBase, $gradRatio); // Container should be lighter higher up
     $gradC2: $bgBase;
     $cInvokeBase: #fff;
 
@@ -165,8 +165,8 @@
     display: inline-block;
     @if $hover == true {
         &:not(.disabled):hover {
-            @include background-image(linear-gradient(lighten($gradC1, $hovRatio), lighten($gradC2, $hovRatio)));
-            color: lighten($fgBase, $hovRatio);
+            @include background-image(linear-gradient(pullForward($gradC1, $hovRatio), pullForward($gradC2, $hovRatio)));
+            color: pullForward($fgBase, $hovRatio);
         }
     }
 }
@@ -212,7 +212,9 @@
 
 @mixin btnSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $ic: $colorKey) {
 	// $ic: Icon color
+    @include border-radius($controlCr);
     @include containerSubtle($bg, $fg, true);
+    @include text-shadow(rgba(black, 0.3) 0 1px 1px);
 	.icon {
 		color: $ic;
 	}
@@ -261,6 +263,16 @@
 
 @mixin txtShdwLarge($sVal: 0.7) {
     @include text-shadow(rgba(black, $sVal) 0 3px 7px);
+}
+
+@function pullForward($c: $colorBodyBg, $p: 20%) {
+    // For dark interfaces, lighter things come forward
+    @return lighten($c, $p);
+}
+
+@function pushBack($c: $colorBodyBg, $p: 20%) {
+    // For dark interfaces, darker things move back
+    @return darken($c, $p);
 }
 
 /*********************************************** FORM ELEMENTS */

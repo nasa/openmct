@@ -25,12 +25,12 @@
 @import "compass/css3";
 @import "compass/utilities";
 
-@import "constants";
-@import "mobile/constants";
-
+@import "../../../../general/res/sass/_mixins";
+@import "../../../../general/res/sass/mobile/mixins";
 @import "mixins";
-@import "forms/mixins";
-@import "mobile/mixins";
 
-@import "themes/theme-espresso";
-@import "main";
+@import "../../../../general/res/sass/constants";
+@import "../../../../general/res/sass/mobile/constants";
+@import "constants";
+
+@import "../../../../general/res/sass/main";

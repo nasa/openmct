@@ -1,0 +1,68 @@
+/************************** COLORS AND SHADING */
+$colorBodyBg: #fff;
+$colorBodyFg: #666;
+$colorFooterBg: #000;
+$colorKey: #0099cc;
+$colorKeySelectedBg: #005177;
+$colorKeyFg: #fff;
+
+$contrastRatio: 25%;
+$colorBtnBg: pullForward($colorBodyBg, $contrastRatio);
+$colorBtnFg: $colorBodyBg;
+$colorBtnIcon: $colorBtnFg;
+$colorInvokeMenu: #fff;
+
+$colorAlt1: #ffc700;
+$colorAlert: #ff3c00;
+$colorIconLink: #49dedb;
+$colorPausedBg: #c56f01;
+$colorPausedFg: #fff;
+$colorCreateBtn: $colorKey;
+$colorGridLines: rgba(#fff, 0.05);
+$colorFormLines: rgba(#fff, 0.1);
+$colorFormSectionHeader: rgba(#000, 0.2);
+$colorInvokeMenu: #fff;
+// Menu colors
+$colorMenuBg: lighten($colorBodyBg, 23%);
+$colorMenuFg: lighten($colorMenuBg, 70%);
+$colorMenuIc: lighten($colorKey, 17%);
+$colorInteriorBorder: lighten($colorBodyBg, 10%);
+$colorObjFrameBg: darken($colorBodyBg, 5%);
+// Form colors
+$colorCheck: $colorKey;
+$colorFormRequired: #ffc700;
+$colorFormValid: #33cc33;
+$colorFormError: #cc0000;
+$colorFormInvalid: #ff9900;
+// Limits and staleness colors
+$colorLimitYellow: #9d7500;
+$colorLimitRed: #aa0000;
+$colorTelemFresh: #fff;
+$colorTelemStale: #888;
+$styleTelemStale: italic;
+// Bubble colors
+$colorInfoBubbleFg: #666;
+$colorInfoBubbleBg: #ddd;
+$colorThumbsBubbleFg: lighten($colorBodyFg, 10%);
+$colorThumbsBubbleBg: lighten($colorBodyBg, 10%);
+// Overlay
+$colorOvrBlocker: rgba(black, 0.7);
+$colorOvrBg: $colorBodyBg;
+$colorOvrFg: $colorBodyFg;
+// Items
+$colorItemBase: lighten($colorBodyBg, 5%);
+$colorItemFg: lighten($colorItemBase, 20%);
+$colorItemSelected: $colorKey;
+// Tabular
+$tabularColorBorder: rgba(white, 0.1);
+$tabularColorBodyBg: darken($colorBodyBg, 10%);
+$tabularColorBodyFg: lighten($tabularColorBodyBg, 40%);
+$tabularColorHeaderBg: lighten($colorBodyBg, 10%);
+$tabularColorHeaderFg: lighten($tabularColorHeaderBg, 40%);
+$tabularColorHeaderBorder: $colorBodyBg;
+// Tree
+$colorItemTreeIcon: $colorKey;
+$colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
+$colorItemTreeVCHover: $colorAlt1;
+// Scrollbar
+$scrollbarTrackColorBg: rgba(#000, 0.4);
