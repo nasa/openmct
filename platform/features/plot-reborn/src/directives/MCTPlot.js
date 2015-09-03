@@ -10,7 +10,7 @@ define(
         var RANGE_TICK_COUNT = 7,
             DOMAIN_TICK_COUNT = 5,
             ZOOM_AMT = 0.02,
-            PINCH_DRAG_AMT = 2;
+            PINCH_DRAG_AMT = 3;
 
         function MCTPlot() {
 
