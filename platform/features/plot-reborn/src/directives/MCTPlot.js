@@ -29,7 +29,7 @@ define(
                 if (typeof $scope.axes === "undefined") {
                     $scope.axes = {
                         domain: {
-                            label: "Time",
+                            label: "Time (Updating Live)",
                             tickCount: DOMAIN_TICK_COUNT,
                             ticks: []
                         },

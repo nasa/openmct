@@ -123,29 +123,62 @@ define(
                 // TODO: this is a great time to track a history entry.
                 // Disable live mode so they have full control of viewport.
                 plotHistory.push($scope.viewport);
+
                 isLive = false;
+                $scope.axes.domain.label = "Time (Manipulated)";
             }
 
+            function getLeftInterval(intervalTL, intervalBR) {
+                return intervalTL.domain + (maxDomain - intervalBR.domain);
+            }
+
+            function getSnapCheck(viewport, onMobile) {
+                var snapPercent = 10;
+
+                if(onMobile) {
+                    snapPercent = 75;
+                }
+
+                console.log(snapPercent);x
+                return (Math.abs(maxDomain - viewport.bottomRight.domain) < (DOMAIN_INTERVAL/snapPercent));
+            }
+
+            function snapToRight() {
+                isLive = true;
+                $scope.axes.domain.label = "Time (Updating Live)";
+
+                $scope.viewport.bottomRight.domain = maxDomain;
+
+                $scope.viewport.topLeft.domain = getLeftInterval($scope.viewport.topLeft,
+                    $scope.viewport.bottomRight);
+            }
+
+            // In the past what has happened is that the interval between the left and right domain
+            // is set to 2 minutes all the time. And the range is -1 and 1 on update
             function onUserViewportChangeEnd(event, viewport) {
                 // If the new viewport is "close enough" to the maxDomain then
                 // enable live mode.  Set empirically to 10% of the domain
                 // interval.
                 // TODO: Better UX pattern for this.
 
-                if (Math.abs(maxDomain - viewport.bottomRight.domain) < (DOMAIN_INTERVAL/10)) {
-                    isLive = true;
-                    $scope.viewport.bottomRight.domain = maxDomain;
-                } else {
+                // Added agent service call to not snap to right on mobile
+                if (getSnapCheck(viewport, agentService.isMobile(navigator.userAgent))) {
+                    snapToRight();
+                }
+                else {
+
                     isLive = false;
+                    $scope.axes.domain.label = "Time (Manipulated)";
                 }
                 plotHistory.push(viewport);
             }
 
-             function viewportForMaxDomain() {
+            function viewportForMaxDomain() {
                  return {
                     topLeft: {
                         range: $scope.viewport.topLeft.range,
-                        domain: maxDomain - DOMAIN_INTERVAL
+                        domain: getLeftInterval($scope.viewport.topLeft,
+                            $scope.viewport.bottomRight)
                     },
                     bottomRight: {
                         range: $scope.viewport.bottomRight.range,
