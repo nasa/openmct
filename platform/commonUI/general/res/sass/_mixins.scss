@@ -153,27 +153,21 @@
     $fgBase: lighten($fg, $ltnRatio);
     $gradC1: lighten($bgBase, $gradRatio);
     $gradC2: $bgBase;
-    $cInvokeBase: lighten($gradC1, $ltnRatio*2);
+    $cInvokeBase: #fff;
 
     @include background-image(linear-gradient($gradC1, $gradC2));
     @include border-radius($controlCr);
     @include box-sizing(border-box);
     @include boxShdwSubtle();
     border: none;
-    border-top: 1px solid lighten($gradC1, 2%);
+    //border-top: 1px solid lighten($gradC1, 2%);
     color: $fg;
     display: inline-block;
     @if $hover == true {
         &:not(.disabled):hover {
             @include background-image(linear-gradient(lighten($gradC1, $hovRatio), lighten($gradC2, $hovRatio)));
             color: lighten($fgBase, $hovRatio);
-            &.btn-menu .invoke-menu {
-                color: lighten($cInvokeBase, $hovRatio);
-            }
         }
-    }
-    &.btn-menu .invoke-menu {
-        color: $cInvokeBase;
     }
 }
 
@@ -216,17 +210,21 @@
     }
 }
 
-@mixin btnSubtle($bg: $colorBodyBg, $fg: $colorBodyFg) {
+@mixin btnSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $ic: $colorKey) {
+	// $ic: Icon color
     @include containerSubtle($bg, $fg, true);
-}
-
-@mixin btnNoticeable($bg: $colorBodyBg, $fg: $colorBodyFg) {
-    // No longer should be used; use btnSubtle instead
-    //@include containerSubtle($bg, $fg, true);
-    //@include background-image(linear-gradient(lighten($bg, 20%), $bg));
-    /*	&:not(.disabled):hover {
-            @include background-image(linear-gradient(lighten($bg, 30%), lighten($bg, 10%)));
-        }*/
+	.icon {
+		color: $ic;
+	}
+	&:not(.disabled) {
+		&:not(.paused) {
+			&:hover {
+				.icon {
+					color: lighten($ic, $ltGamma);
+				}
+			}
+		}
+	}
 }
 
 @mixin boxIncised($sVal: 0.6) {

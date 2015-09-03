@@ -19,7 +19,52 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/******************************************************** MENUS */
+/******************************************************** MENU BUTTONS */
+.s-menu {
+	// Formerly .btn-menu
+	@extend .s-btn;
+	span.l-click-area {
+		// In markup, this element should not enclose anything.
+		@extend .abs;
+	}
+
+	.icon {
+		font-size: 120%;
+	}
+
+	.title-label {
+		margin-left: $interiorMarginSm;
+	}
+
+	&:after {
+		// Adds the downward facing arrow element
+		color: rgba($colorInvokeMenu, 0.2);
+		content: '\76';
+		display: inline-block;
+		font-family: 'symbolsfont';
+		margin-left: $interiorMarginSm;
+		@include text-shadow(none);
+		vertical-align: top;
+	}
+	&.create-btn {
+		.title-label {
+			font-size: 1rem;
+		}
+		&:after {
+			color: rgba($colorInvokeMenu, 0.5);
+		}
+	}
+
+	.menu {
+		left: 0;
+		text-align: left;
+		.ui-symbol.icon {
+			width: 12px;
+		}
+	}
+}
+
+/******************************************************** MENUS THEMSELVES */
 .menu-element {
 	$bg: lighten($colorBodyBg, 5%);
 	$bgHover: lighten($bg, 20%);

@@ -47,6 +47,8 @@
 	}
 	&.frame-template {
 		.view-switcher {
+			font-size: 80%;
+			height: $ohH;
 			line-height: $ohH;
 			z-index: 10;
 		}
@@ -64,7 +66,7 @@
 	}
 	.view-switcher {
 		// Hide the name when the view switcher is in a frame context
-		.name {
+		.title-label {
 			display: none;
 		}
 	}

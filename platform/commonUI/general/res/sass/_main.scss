@@ -19,27 +19,19 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@import "compass";
-@import "compass/reset";
-@import "compass/css3";
-@import "compass/utilities";
-
-@import "mixins";
-@import "forms/mixins";
-@import "mobile/mixins";
-
 @import "effects";
 @import "global";
 @import "fonts";
-@import "user-environ/layout";
-@import "mobile/layout";
-@import "fixed-position";
 @import "about";
 @import "text";
 @import "icons";
 @import "limits";
 @import "data-status";
-@import "lists/tabular";
+@import "helpers/bubbles";
+@import "helpers/splitter";
+@import "helpers/wait-spinner";
+@import "messages";
+@import "properties";
 
 /********************************* CONTROLS */
 @import "controls/breadcrumb";
@@ -50,7 +42,6 @@
 @import "controls/menus";
 @import "controls/time-controller";
 @import "mobile/controls/menus";
-@import "edit/editor";
 
 /********************************* FORMS */
 @import "forms/elems";
@@ -62,13 +53,14 @@
 @import "forms/validation";
 @import "forms/filter";
 
-@import "plots/plots-main";
+/********************************* USER ENVIRON */
+@import "user-environ/layout";
+@import "mobile/layout";
+@import "edit/editor";
 @import "search/search";
 @import "mobile/search/search";
 @import "overlay/overlay";
 @import "mobile/overlay/overlay";
-
-/********************************* USER ENVIRON */
 @import "tree/tree";
 @import "mobile/tree";
 @import "user-environ/frame";
@@ -76,14 +68,10 @@
 @import "user-environ/bottom-bar";
 @import "user-environ/tool-bar";
 
-/********************************* HELPERS */
-@import "helpers/bubbles";
-@import "helpers/splitter";
-@import "helpers/wait-spinner";
-@import "messages";
-@import "properties";
-
 /********************************* VIEWS */
+@import "fixed-position";
+@import "lists/tabular";
+@import "plots/plots-main";
 @import "iframe";
 @import "hide-non-functional";
 @import "views";

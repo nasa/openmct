@@ -10,7 +10,7 @@
             ng-show="false && showLocalControls"
              >
             <a
-               class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
+               class="s-btn"
                ng-click="plot.stepBackPanZoom()"
                ng-show="1"
                title="Restore previous pan/zoom">
@@ -18,7 +18,7 @@
             </a>
 
             <a
-               class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
+               class="s-btn"
                ng-click="plot.unzoom()"
                ng-show="1"
                title="Reset pan/zoom">
@@ -36,7 +36,7 @@
         <div class="l-image-main-controlbar l-flex bar">
             <div class="left">
                 <a
-                    class="t-btn l-btn s-btn s-icon-btn s-very-subtle show-thumbs sm"
+                    class="s-btn show-thumbs sm hidden"
                     ng-click="showThumbsBubble = (showThumbsBubble)? false:true"
                     ><span class="ui-symbol icon"></span></a>
                 <span class="l-timezone">{{imagery.getZone()}}</span>
@@ -45,7 +45,7 @@
             </div>
             <div class="right">
                 <a
-                    class="t-btn l-btn s-btn s-icon-btn s-very-subtle pause-play sm"
+                    class="s-btn pause-play"
                     ng-click="imagery.paused(!imagery.paused())"
                     ng-class="{ paused: imagery.paused() }"
                     ><span class="ui-symbol icon"></span></a>
@@ -53,10 +53,10 @@
                    ng-if="imagery.getImageUrl()"
                    target="_blank"
                    title="Open image in new tab."
-                   class="t-btn l-btn s-btn s-icon-btn s-very-subtle sm">
+                   class="s-btn">
                     <span class="ui-symbol icon">y</span></a>
                 <a href=""
-                    class="l-btn s-btn s-icon-btn l-mag s-mag ui-symbol vsm"
+                    class="s-btn l-mag s-mag ui-symbol vsm"
                     ng-click="clipped = false"
                     ng-show="clipped === true"
                     title="Not all of image is visible; click to reset."

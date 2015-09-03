@@ -20,10 +20,11 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="menu-element wrapper" ng-controller="ClickAwayController as createController">
-    <div class="btn btn-menu create-btn major" ng-click="createController.toggle()">
-	    Create
+    <div class="s-menu major create-btn" ng-click="createController.toggle()">
+		<span class="ui-symbol icon type-icon">&#x2b;</span>
+		<span class="title-label">Create</span>
     </div>
-    <div class="menu dropdown super-menu" ng-show="createController.isActive()">
+    <div class="menu super-menu" ng-show="createController.isActive()">
         <mct-representation mct-object="domainObject" key="'create-menu'">
         </mct-representation>
     </div>

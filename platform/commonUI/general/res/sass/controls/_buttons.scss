@@ -23,8 +23,7 @@ $baseRatio: 1.5;
 $pad: $interiorMargin * $baseRatio;
 
 /******* LAYOUT AND SIZING */
-.btn,
-.l-btn {
+/*.l-btn {
 	@include user-select(none);
 	//line-height: 1.5em; // Was 1.25em
 	line-height: 150%;
@@ -35,14 +34,13 @@ $pad: $interiorMargin * $baseRatio;
 		$h: $ueTopBarH; // - $interiorMargin;
 		height: $h;
 		line-height: $h - 2;
-		//padding: 0 $pad * 6 0 $pad;
 		padding: 0 $pad * 3;
 	}
 	&.create-btn {
+		font-size: 1em;
 		&:before {
 			content:"+";
 			font-family: symbolsfont;
-			font-size: 0.8em;
 		}
 		.menu {
 			margin-left: $pad * -1;
@@ -57,105 +55,109 @@ $pad: $interiorMargin * $baseRatio;
 	&.vsm {
 		padding: 0 ($pad / $baseRatio) / 2;
 	}
-}
+}*/
 
 /*********************************** STYLE STYLES */
-.btn,
 .s-btn {
-	$base: lighten($colorBodyBg, 20%); // Moved to s-btn
+	$base: lighten($colorBodyBg, 20%);
 	@include border-radius($controlCr);
 	@include box-sizing(border-box);
 	@include text-shadow(rgba(black, 0.3) 0 1px 1px);
+	@include user-select(none);
+	//@include containerSubtle($colorBodyBg, $colorBodyFg, true);
 	cursor: pointer;
-	//line-height: 1.2em;
 	text-decoration: none;
-	&.major {
-		$bg: $colorKey;
-		@include btnSubtle($bg);
-		$fg: lighten($bg, 50%);
-		color: $fg;
-		&:hover {
-			@include btnSubtle(lighten($bg, 5%), $fg);
-			//color: $fg;
-		}
-		.invoke-menu {
-			color: $fg;
-		}
-	}
-	&.subtle {
-		@include btnSubtle($base, lighten($base, 40%));
-	}
-	&.very-subtle,
-	&.s-very-subtle {
-		@include containerSubtle($colorBodyBg, $colorBodyFg, true);
-		&.paused {
-			@include containerSubtle($colorPausedBg, $colorPausedFg, true);
-			.icon:before {
-				content:"\0000EF";
-			}
-		}
-	}
-}
+	height: $btnStdH;
+	line-height: $btnStdH;
+	padding: 0 $pad;
 
-.icon-btn,
-.s-icon-btn {
-	@extend .s-btn;
-	font-size: 1em;
+		font-size: 0.7rem;
 	.icon {
+		font-size: 0.8rem;
 		color: $colorKey;
 	}
+
+	.title-label {
+		vertical-align: top;
+	}
+
+	&.sm {
+		padding: 0 $pad / $baseRatio;
+	}
+	&.vsm {
+		padding: 0 ($pad / $baseRatio) / 2;
+	}
+
+	&:not(.major) {
+		@include btnSubtle($colorBodyBg, $colorBodyFg, $colorKey);
+	}
+
+	&.major {
+		$bg: $colorKey;
+		$fg: lighten($bg, 70%);
+		@include btnSubtle($bg, $fg, $fg);
+	}
+
 	&.paused {
-		.icon {
-			color: $colorPausedFg;
-		}
-	}
-
-	&:not(.disabled) {
-		&:not(.paused) {
-			&:hover {
-				.icon {
-					color: lighten($colorKey, $ltGamma);
-				}
-			}
-		}
-	}
-
-	&.labeled {
-		padding: 0 $pad/2;
-		.icon {
-			//font-size: 1.5em;
-		}
-		.title-label {
-			margin-left: $interiorMargin;
+		@include btnSubtle($colorPausedBg, $colorPausedFg, $colorPausedFg);
+		.icon:before {
+			content: "\0000EF";
 		}
 	}
 
 	&.pause-play {
-/*		&.paused {
-			.icon {
-				@include pulse(500ms);
+		/*
+			&.paused {
+				.icon {
+					@include pulse(500ms);
+				}
 			}
-		}*/
+		*/
 		.icon:before {
-			content:"\0000F1";
+			content: "\0000F1";
 		}
 	}
 
 	&.show-thumbs {
 		.icon:before {
-			content:"\000039";
+			content: "\000039";
 		}
 	}
 }
 
+.l-btn-set {
+	// Buttons that have a very tight conceptual grouping - no internal space between them.
+	// Structure: .btn-set > mct-representation class=first|last > .s-btn
+	//@include test(red);
+	font-size: 0; // Remove space between s-btn elements due to white space in markup
+
+	.s-btn {
+		@include border-radius(0);
+		margin-left: 1px;
+	}
+
+	.first {
+		.s-btn {
+			@include border-left-radius($controlCr);
+			margin-left: 0;
+		}
+	}
+
+	.last {
+		.s-btn {
+			@include border-right-radius($controlCr);
+		}
+	}
+}
 /*********************************** LAYOUT STYLES */
-span.btn,
-span.btn span,
-span.l-btn,
-span.l-btn span,
-a.btn,
-a.btn span,
-a.l-btn,
-a.l-btn span {
+/*
+
+span.s-btn,
+span.s-btn span,
+a.s-btn,
+a.s-btn span,
+a.s-btn,
+a.s-btn span {
 	display: inline-block;
 }
+*/
