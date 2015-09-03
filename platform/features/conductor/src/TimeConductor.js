@@ -22,32 +22,42 @@
 /*global define*/
 
 define(
-    [],
     function () {
         'use strict';
 
-        function ConductorTelemetryCapability(timeConductor, telemetryCapability, domainObject) {
-            this.wrappedCapability = telemetryCapability;
+        function TimeConductor(start, end) {
+            this.inner = [ start, end ];
+            this.outer = [ start, end ];
         }
 
-        ConductorTelemetryCapability.prototype.getMetadata = function () {
-            return this.wrappedCapability.getMetadata();
+        TimeConductor.prototype.queryStart = function (value) {
+            if (arguments.length > 0) {
+                this.outer[0] = value;
+            }
+            return this.outer[0];
         };
 
-        ConductorTelemetryCapability.prototype.requestData = function (request) {
-            request = request || {};
-            request.start = this.timeConductor.queryStart();
-            request.end = this.timeConductor.queryEnd();
-            return this.wrappedCapability.requestData(request);
+        TimeConductor.prototype.queryEnd = function (value) {
+            if (arguments.length > 0) {
+                this.outer[1] = value;
+            }
+            return this.outer[1];
         };
 
-        ConductorTelemetryCapability.prototype.subscribe = function (callback, request) {
-            request = request || {};
-            request.start = this.timeConductor.queryStart();
-            request.end = this.timeConductor.queryEnd();
-            return this.wrappedCapability.subscribe(callback, request);
+        TimeConductor.prototype.displayStart = function (value) {
+            if (arguments.length > 0) {
+                this.inner[0] = value;
+            }
+            return this.inner[0];
         };
 
-        return ConductorTelemetryCapability;
+        TimeConductor.prototype.displayEnd = function (value) {
+            if (arguments.length > 0) {
+                this.inner[1] = value;
+            }
+            return this.inner[1];
+        };
+
+        return TimeConductor;
     }
 );

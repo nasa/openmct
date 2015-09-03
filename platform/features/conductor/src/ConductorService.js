@@ -22,32 +22,25 @@
 /*global define*/
 
 define(
-    [],
-    function () {
+    ['./TimeConductor'],
+    function (TimeConductor) {
         'use strict';
 
-        function ConductorTelemetryCapability(timeConductor, telemetryCapability, domainObject) {
-            this.wrappedCapability = telemetryCapability;
+        var ONE_DAY_IN_MS = 1000 * 60 * 60 * 24,
+            SIX_HOURS_IN_MS = ONE_DAY_IN_MS / 4;
+
+        function ConductorService(now) {
+            var initialEnd =
+                Math.ceil(now() /  SIX_HOURS_IN_MS) * SIX_HOURS_IN_MS;
+
+            this.conductor =
+                new TimeConductor(initialEnd - ONE_DAY_IN_MS, initialEnd);
         }
 
-        ConductorTelemetryCapability.prototype.getMetadata = function () {
-            return this.wrappedCapability.getMetadata();
+        ConductorService.prototype.getConductor = function () {
+            return this.conductor;
         };
 
-        ConductorTelemetryCapability.prototype.requestData = function (request) {
-            request = request || {};
-            request.start = this.timeConductor.queryStart();
-            request.end = this.timeConductor.queryEnd();
-            return this.wrappedCapability.requestData(request);
-        };
-
-        ConductorTelemetryCapability.prototype.subscribe = function (callback, request) {
-            request = request || {};
-            request.start = this.timeConductor.queryStart();
-            request.end = this.timeConductor.queryEnd();
-            return this.wrappedCapability.subscribe(callback, request);
-        };
-
-        return ConductorTelemetryCapability;
+        return ConductorService;
     }
 );
