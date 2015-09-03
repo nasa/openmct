@@ -32,7 +32,8 @@ define(
                 '"position: absolute; bottom: 0; width: 100%; ',
                 'overflow: hidden; ',
                 'height: ' + CONDUCTOR_HEIGHT + '">',
-                "<mct-include key=\"'time-controller'\"></mct-include>",
+                "<mct-include key=\"'time-controller'\" ng-model='conductor'>",
+                "</mct-include>",
                 '</div>'
             ].join(''),
             GLOBAL_SHOWING = false;
@@ -45,7 +46,7 @@ define(
          * @implements {Representer}
          * @constructor
          */
-        function ConductorRepresenter($compile, views, scope, element) {
+        function ConductorRepresenter(conductorService, $compile, views, scope, element) {
             var conductorScope;
 
             // Angular doesn't like objects to retain references to scope
@@ -54,6 +55,7 @@ define(
                 return (conductorScope = arguments.length > 0 ? s : conductorScope);
             };
 
+            this.conductorService = conductorService;
             this.element = element;
             this.showing = false;
             this.views = views;
@@ -63,6 +65,29 @@ define(
             this.hadAbs = element.hasClass('abs');
         }
 
+        // Update the time conductor from the scope
+        ConductorRepresenter.prototype.wireScope = function () {
+            var scope = this.conductorScope(),
+                conductor = this.conductorService.getConductor();
+
+            function updateConductor() {
+                conductor.queryStart(scope.conductor.outer[0]);
+                conductor.queryEnd(scope.conductor.outer[1]);
+                conductor.displayStart(scope.conductor.inner[0]);
+                conductor.displayEnd(scope.conductor.inner[1]);
+            }
+
+            scope.conductor = {
+                outer: [ conductor.queryStart(), conductor.queryEnd() ],
+                inner: [ conductor.displayStart(), conductor.displayEnd() ]
+            };
+
+            scope.$watch('conductor.outer[0]', updateConductor);
+            scope.$watch('conductor.outer[1]', updateConductor);
+            scope.$watch('conductor.inner[0]', updateConductor);
+            scope.$watch('conductor.inner[1]', updateConductor);
+        };
+
         // Handle a specific representation of a specific domain object
         ConductorRepresenter.prototype.represent = function represent(representation, representedObject) {
             this.destroy();
@@ -70,6 +95,7 @@ define(
             if (this.views.indexOf(representation) !== -1 && !GLOBAL_SHOWING) {
                 // Create a new scope for the conductor
                 this.conductorScope(this.getScope().$new());
+                this.wireScope();
                 this.conductorElement =
                     this.$compile(TEMPLATE)(this.conductorScope());
                 this.element.after(this.conductorElement[0]);
