@@ -63,8 +63,20 @@
         //font-size: 1em;
         height: $ovrFooterH;
         text-align: right;
-        .btn {
-            margin-left: 10px;
+        .s-btn {
+	        $l: 15%;
+	        @include containerSubtle(lighten($colorBodyBg, $l), lighten($colorBodyFg, $l), true);
+	        font-size: 95%;
+	        height: $ovrFooterH;
+	        line-height: $ovrFooterH;
+            margin-left: $interiorMargin;
+	        padding: 0 $interiorMargin * 3;
+	        &.major {
+		        @extend .s-btn.major;
+		        &:hover {
+			        @extend .s-btn.major:hover;
+		        }
+	        }
         }
     }
     .contents.l-dialog {

@@ -49,6 +49,7 @@ $colorCreateBtn: $colorKey;
 $colorGridLines: rgba(#fff, 0.05);
 $colorFormLines: rgba(#fff, 0.1);
 $colorFormSectionHeader: rgba(#000, 0.2);
+$colorInvokeMenu: #fff;
 // Menu colors
 $colorMenuBg: lighten($colorBodyBg, 23%);
 $colorMenuFg: lighten($colorMenuBg, 70%);
@@ -105,7 +106,7 @@ $ueEditLeftPaneW: 75%;
 $treeSearchInputBarH: 25px;
 // Overlay
 $ovrTopBarH: 60px;
-$ovrFooterH: 40px;
+$ovrFooterH: 30px;
 $overlayMargin: 25px;
 // Items
 $ueBrowseGridItemLg: 200px;
@@ -125,7 +126,7 @@ $tabularHeaderH: 22px; //18px
 $tabularTdPadLR: $itemPadLR;
 $tabularTdPadTB: 3px;
 // Imagery
-$imageMainControlBarH: 22px;
+$imageMainControlBarH: 25px;
 $imageThumbsD: 120px;
 $imageThumbsWrapperH: $imageThumbsD * 1.4;
 $imageThumbPad: 1px;

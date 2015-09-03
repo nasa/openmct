@@ -299,19 +299,15 @@
 	}
 }
 
-.object-browse-bar .btn,
-.object-browse-bar .t-btn,
-.object-browse-bar .view-switcher,
-.top-bar .buttons-main .btn,
-.top-bar .buttons-main .t-btn,
-.top-bar .view-switcher,
-.tool-bar .btn,
-.tool-bar .t-btn {
-    $h: $btnToolbarH;
-    display: inline-block;
-    font-size: $h * $btnFontSizeToH;
-    line-height: 200%;
-    vertical-align: top;
+.object-browse-bar .s-btn,
+.top-bar .buttons-main .s-btn,
+.top-bar .s-menu,
+.tool-bar .s-btn,
+.tool-bar .s-menu {
+	$h: $btnToolbarH;
+	height: $h;
+	line-height: $h;
+	vertical-align: top;
 }
 
 .object-browse-bar,

@@ -100,22 +100,6 @@
 	}
 }
 
-.btn-bar {
-	//	position: relative;
-/*	.btn,
-	.btn-set,
-	.t-btn {
-		display: inline-block;
-		//		margin-left: $interiorMargin;
-	}
-	.btn,
-	.t-btn {
-		&:first-child {
-			//			margin-left: 0;
-		}
-	}*/
-}
-
 .l-composite-control {
 	vertical-align: middle;
 	&.l-checkbox {
@@ -151,42 +135,6 @@
 
 .s-local-controls {
 	font-size: 0.7rem;
-}
-
-/*
-.btn-set {
-	// Buttons that have a very tight conceptual grouping - no internal space between them.
-	display: inline-block;
-	position: relative;
-	.btn,
-	.t-btn {
-		@include border-radius(0);
-		border-left: 1px solid lighten($colorBodyBg, 20%);
-		margin-left: 0;
-		&:first-child {
-			border-left: none;
-			@include border-left-radius($controlCr);
-		}
-		&:last-child {
-			@include border-right-radius($controlCr);
-		}
-	}
-}
-*/
-
-.object-browse-bar .btn,
-.object-browse-bar .t-btn,
-.object-browse-bar .view-switcher,
-.top-bar .buttons-main .btn,
-.top-bar .buttons-main .t-btn,
-.top-bar .view-switcher,
-.tool-bar .btn,
-.tool-bar .t-btn {
-	$h: $btnToolbarH;
-	display: inline-block;
-	font-size: $h * $btnFontSizeToH;
-	line-height: 200%;
-	vertical-align: top;
 }
 
 label.checkbox.custom {
@@ -256,7 +204,7 @@ label.checkbox.custom {
 	}
 }
 
-.btn-menu label.checkbox.custom {
+.s-menu label.checkbox.custom {
 	margin-left: 5px;
 }
 
@@ -264,84 +212,6 @@ label.checkbox.custom {
 	&.checked label {
 		@include box-shadow(none);
 		border-bottom: none;
-	}
-}
-
-.btn-menu {
-	$h: 20px;
-	$p: $interiorMarginSm * 2;
-	$c: $colorBodyFg;
-	@include btnSubtle($colorBodyBg);
-	/*	height: $h;
-		line-height: $h;
-		&.dropdown {
-			padding-left: $p;
-			padding-right: $p;
-		}*/
-
-	&:not(.disabled):hover {
-		color: lighten($c, 20%);
-	}
-
-	/*	&.context-available {
-			// An element like the invoke-menu triangle;
-			// Indicates that this element has a dropdown menu available;
-			// Currently unused
-			$c: $colorKey;
-			color: $c;
-			padding: 0 5px;
-			&:hover {
-				color: lighten($c, 10%);
-			}
-		}*/
-
-	span.l-click-area {
-		// In markup, this element should not enclose anything.
-		@extend .abs;
-	}
-
-	.type-icon {
-		//margin-right: $interiorMargin;
-	}
-
-	.name {
-		margin-left: $interiorMargin;
-	}
-	.menu {
-		//		margin-left: (-1 * $p);
-		position: absolute;
-		left: 0;
-		text-align: left;
-		.ui-symbol.icon {
-			width: 12px;
-		}
-	}
-}
-
-.top-bar .btn-menu {
-	$h: $btnStdH; //$ueTopBarBtnH; // 35px
-	$p: 10px;
-	$badgeM: $interiorMargin;
-	$badgeD: $h - ($badgeM * 2);
-	//height: $h;
-	//line-height: $h;
-	//padding-right: 10px;
-	&.browse-btn {
-		margin-right: $interiorMargin;
-		padding-left: $badgeD + $badgeM * 2;
-		.badge {
-			@include border-radius($controlCr * 1.5);
-			display: block;
-			font-size: 1em;
-			line-height: $badgeD;
-			position: absolute;
-			top: $badgeM;
-			left: $badgeM;
-			bottom: $badgeM;
-			right: auto;
-			width: $badgeD;
-			height: auto;
-		}
 	}
 }
 
@@ -355,9 +225,6 @@ label.checkbox.custom {
 
 .view-switcher {
 	@include trans-prop-nice-fade($controlFadeMs);
-	.type-icon {
-		//vertical-align: top;
-	}
 }
 
 /******************************************************** OBJECT-HEADER */

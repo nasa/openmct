@@ -29,7 +29,7 @@
 	font-size: 0.75rem;
 
 	&:hover {
-		.l-autoflow-header .l-btn.change-column-width {
+		.l-autoflow-header .s-btn.change-column-width {
 			@include trans-prop-nice-fade(50ms);
 			opacity: 1;
 		}
@@ -45,7 +45,7 @@
 		span {
 			vertical-align: middle;
 		}
-		.l-btn.change-column-width {
+		.s-btn.change-column-width {
 			@include trans-prop-nice-fade(500ms);
 			opacity: 0;
 		}
