@@ -55,6 +55,10 @@ define(
          * space an object is created within (as it is possible to
          * have multiple persistence spaces attached.)
          *
+         * Note that the model passed in for object creation may be
+         * modified to attach additional initial properties associated
+         * with domain object creation.
+         *
          * @param {object} model the model for the newly-created
          *        domain object
          * @param {DomainObject} parent the domain object which
@@ -66,12 +70,6 @@ define(
         CreationService.prototype.createObject = function (model, parent) {
             var persistence = parent.getCapability("persistence"),
                 self = this;
-
-            // Store the location of an object relative to it's parent.
-            function addLocationToModel(modelId, model, parent) {
-                model.location = parent.getId();
-                return model;
-            }
 
             // Persist the new domain object's model; it will be fully
             // constituted as a domain object when loaded back, as all
@@ -135,7 +133,6 @@ define(
             // 2. Create a model with that ID in the persistence space
             // 3. Add that ID to
             return self.$q.when(uuid()).then(function (id) {
-                model = addLocationToModel(id, model, parent);
                 return doPersist(persistence.getSpace(), id, model);
             }).then(function (id) {
                 return addToComposition(id, parent, persistence);

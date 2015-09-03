@@ -4,5 +4,6 @@
     "services/LinkService",
     "services/MoveService",
     "services/LocationService",
+    "services/LocatingCreationDecorator",
     "capabilities/LocationCapability"
 ]
