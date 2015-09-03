@@ -152,7 +152,8 @@ define(
                     $scope.$emit('user:viewport:change:end', $scope.viewport);
                 }
 
-                //
+                // Similar to trackMousePosition, where the touch position is converted
+                // into a plot point position and over element position using utils
                 function trackTouchPosition(touchPosition, bounds) {
                     var positionOverElement,
                         positionAsPlotPoint,
