@@ -28,7 +28,10 @@ define(
 
         var CONDUCTOR_HEIGHT = "100px",
             TEMPLATE = [
-                '<div style="position: absolute; bottom: 0; width: 100%; height: ' + CONDUCTOR_HEIGHT + '">',
+                '<div style=',
+                '"position: absolute; bottom: 0; width: 100%; ',
+                'overflow: hidden; ',
+                'height: ' + CONDUCTOR_HEIGHT + '">',
                 "<mct-include key=\"'time-controller'\"></mct-include>",
                 '</div>'
             ].join('');
