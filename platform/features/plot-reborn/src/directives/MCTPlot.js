@@ -370,6 +370,8 @@ define(
                 }
 
                 // Updates the viewport based on the amount of zooming (pinching) user is doing
+                // Pinch inwards (zoom out): distanceRatio > 1
+                // Pinch outwards (zoom in): distanceRatio < 1
                 function updateZoom(midpoint, bounds, distance) {
 
                     // Gets the current midpoint and distance ratio to be used to
