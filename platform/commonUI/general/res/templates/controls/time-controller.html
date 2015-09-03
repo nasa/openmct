@@ -24,8 +24,12 @@ properly on the range left and right bounds.
 
 <div class="l-time-controller" ng-controller="TimeConductorController">
     <div class="l-time-range-inputs-holder">
-        Start: <input type="date" ng-model="startOuterDate"/>
-        End: <input type="date" ng-model="endOuterDate"/>
+        Start: <input type="textfield"
+                      placeholder="YYYY-MM-DD HH:mm:ss"
+                      ng-model="startOuterDate"/>
+        End: <input type="textfield"
+                      placeholder="YYYY-MM-DD HH:mm:ss"
+                      ng-model="endOuterDate"/>
     </div>
 
     <div class="l-time-range-slider-holder">

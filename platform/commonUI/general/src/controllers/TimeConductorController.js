@@ -36,10 +36,13 @@ define(
             var tickCount = 2,
                 initialDragValue;
 
-
-
             function formatTimestamp(ts) {
                 return moment.utc(ts).format(DATE_FORMAT);
+            }
+
+            function parseTimestamp(text, fallback) {
+                var m = moment.utc(text, DATE_FORMAT);
+                return m.isValid() ? m.valueOf() : fallback;
             }
 
             // From 0.0-1.0 to "0%"-"1%"
@@ -66,17 +69,16 @@ define(
                 updateTicks();
             }
 
-            function updateFromParameters(ngModel) {
+            function updateViewFromModel(ngModel) {
                 var t = now(), span;
 
-                ngModel = ngModel || {
-                    outer: [ t - 24 * 3600 * 1000, t ],
-                    inner: [ t - 24 * 3600 * 1000, t ]
-                };
+                ngModel = ngModel || {};
+                ngModel.outer = ngModel.outer || [ t - 24 * 3600 * 1000, t ];
+                ngModel.inner = ngModel.inner || [ t - 24 * 3600 * 1000, t ];
 
                 // First, dates for the date pickers for outer bounds
-                $scope.startOuterDate = new Date(ngModel.outer[0]);
-                $scope.endOuterDate = new Date(ngModel.outer[1]);
+                $scope.startOuterDate = formatTimestamp(ngModel.outer[0]);
+                $scope.endOuterDate = formatTimestamp(ngModel.outer[1]);
 
                 // Then readable dates for the knobs
                 $scope.startInnerText = formatTimestamp(ngModel.inner[0]);
@@ -126,7 +128,7 @@ define(
                     $scope.ngModel.outer[0],
                     $scope.ngModel.inner[1]
                 );
-                updateFromParameters($scope.ngModel);
+                updateViewFromModel($scope.ngModel);
             }
 
             function rightDrag(pixels) {
@@ -136,7 +138,7 @@ define(
                     $scope.ngModel.inner[0],
                     $scope.ngModel.outer[1]
                 );
-                updateFromParameters($scope.ngModel);
+                updateViewFromModel($scope.ngModel);
             }
 
             function middleDrag(pixels) {
@@ -154,7 +156,17 @@ define(
                 $scope.ngModel.inner[opposite] = $scope.ngModel.inner[index] +
                     initialDragValue[opposite] - initialDragValue[index];
 
-                updateFromParameters($scope.ngModel);
+                updateViewFromModel($scope.ngModel);
+            }
+
+            function updateOuterStart(text) {
+                var ngModel = $scope.ngModel;
+                ngModel.outer[0] = parseTimestamp(text, ngModel.outer[0]);
+            }
+
+            function updateOuterEnd(text) {
+                var ngModel = $scope.ngModel;
+                ngModel.outer[1] = parseTimestamp(text, ngModel.outer[1]);
             }
 
             $scope.startLeftDrag = startLeftDrag;
@@ -168,11 +180,12 @@ define(
             $scope.ticks = [];
 
             // Initialize scope to defaults
-            updateFromParameters();
+            updateViewFromModel($scope.ngModel);
 
-            $scope.$watchCollection("ngModel", updateFromParameters);
+            $scope.$watchCollection("ngModel", updateViewFromModel);
             $scope.$watch("spanWidth", updateSpanWidth);
-
+            $scope.$watch("startOuterDate", updateOuterStart);
+            $scope.$watch("endOuterDate", updateOuterEnd);
         }
 
         return TimeConductorController;
