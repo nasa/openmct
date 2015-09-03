@@ -46,7 +46,7 @@ define(
          * @implements {Representer}
          * @constructor
          */
-        function ConductorRepresenter(conductorService, $compile, views, scope, element) {
+        function ConductorRepresenter($interval, conductorService, $compile, views, scope, element) {
             var conductorScope;
 
             // Angular doesn't like objects to retain references to scope
@@ -60,6 +60,7 @@ define(
             this.showing = false;
             this.views = views;
             this.$compile = $compile;
+            this.$interval = $interval;
 
             this.originalHeight = element.css('height');
             this.hadAbs = element.hasClass('abs');
@@ -68,13 +69,25 @@ define(
         // Update the time conductor from the scope
         ConductorRepresenter.prototype.wireScope = function () {
             var scope = this.conductorScope(),
-                conductor = this.conductorService.getConductor();
+                conductor = this.conductorService.getConductor(),
+                self = this;
 
-            function updateConductor() {
+            function updateConductorOuter() {
                 conductor.queryStart(scope.conductor.outer[0]);
                 conductor.queryEnd(scope.conductor.outer[1]);
+                self.getScope().$broadcast('telemetry:query:bounds', {
+                    start: conductor.queryStart(),
+                    end: conductor.queryEnd()
+                });
+            }
+
+            function updateConductorInner() {
                 conductor.displayStart(scope.conductor.inner[0]);
                 conductor.displayEnd(scope.conductor.inner[1]);
+                self.getScope().$broadcast('telemetry:display:bounds', {
+                    start: conductor.displayStart(),
+                    end: conductor.displayEnd()
+                });
             }
 
             scope.conductor = {
@@ -82,10 +95,10 @@ define(
                 inner: [ conductor.displayStart(), conductor.displayEnd() ]
             };
 
-            scope.$watch('conductor.outer[0]', updateConductor);
-            scope.$watch('conductor.outer[1]', updateConductor);
-            scope.$watch('conductor.inner[0]', updateConductor);
-            scope.$watch('conductor.inner[1]', updateConductor);
+            scope.$watch('conductor.outer[0]', updateConductorOuter);
+            scope.$watch('conductor.outer[1]', updateConductorOuter);
+            scope.$watch('conductor.inner[0]', updateConductorInner);
+            scope.$watch('conductor.inner[1]', updateConductorInner);
         };
 
         // Handle a specific representation of a specific domain object
