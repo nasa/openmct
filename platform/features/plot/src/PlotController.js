@@ -95,6 +95,17 @@ define(
                 }
             }
 
+            // Change the displayable bounds
+            function setBasePanZoom(unused, bounds) {
+                var start = bounds.start,
+                    end = bounds.end;
+                if (updater) {
+                    updater.setDomainBounds(start, end);
+                    self.update();
+                }
+                lastBounds = bounds;
+            }
+
             // Reinstantiate the plot updater (e.g. because we have a
             // new subscription.) This will clear the plot.
             function recreateUpdater() {
@@ -108,6 +119,10 @@ define(
                     handle,
                     ($scope.axes[1].active || {}).key
                 );
+                // Keep any externally-provided bounds
+                if (lastBounds) {
+                    setBasePanZoom({}, lastBounds);
+                }
             }
 
             // Handle new telemetry data in this plot
@@ -137,17 +152,6 @@ define(
                 if (handle && updater) {
                     handle.request({}, addHistoricalData);
                 }
-            }
-
-            // Change the displayable bounds
-            function setBasePanZoom(unused, bounds) {
-                var start = bounds.start,
-                    end = bounds.end;
-                if (updater) {
-                    updater.setDomainBounds(start, end);
-                    self.update();
-                }
-                lastBounds = bounds;
             }
 
             // Create a new subscription; telemetrySubscriber gets
@@ -182,10 +186,6 @@ define(
                 if (handle) {
                     recreateUpdater();
                     requestTelemetry();
-                    // Keep any externally-provided bounds
-                    if (lastBounds) {
-                        setBasePanZoom({}, lastBounds);
-                    }
                 }
             }
 
@@ -210,6 +210,8 @@ define(
             // Unsubscribe when the plot is destroyed
             $scope.$on("$destroy", releaseSubscription);
 
+            // Notify any external observers that a new telemetry view is here
+            $scope.$emit("telemetry:view");
         }
 
         /**

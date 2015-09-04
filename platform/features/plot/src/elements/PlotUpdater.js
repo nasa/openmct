@@ -307,7 +307,8 @@ define(
 
             // Suppress follow behavior if we have windowed in on the past
             this.hasSpecificDomainBounds = true;
-            this.following = end >= this.domainExtrema[1];
+            this.following =
+                !this.domainExtrema || (end >= this.domainExtrema[1]);
         };
 
         /**

@@ -92,6 +92,8 @@ define(
             conductorScope.$watch('conductor.outer[1]', updateConductorOuter);
             conductorScope.$watch('conductor.inner[0]', updateConductorInner);
             conductorScope.$watch('conductor.inner[1]', updateConductorInner);
+
+            repScope.$on('telemetry:view', updateConductorInner);
         }
 
         // Handle a specific representation of a specific domain object
