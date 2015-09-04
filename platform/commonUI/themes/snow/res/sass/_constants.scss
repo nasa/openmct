@@ -3,14 +3,16 @@ $colorBodyBg: #fff;
 $colorBodyFg: #666;
 $colorFooterBg: #000;
 $colorKey: #0099cc;
-$colorKeySelectedBg: #005177;
+$colorKeySelectedBg: $colorKey;
 $colorKeyFg: #fff;
+$contrastRatioPercent: 30%;
 
-$contrastRatio: 25%;
-$colorBtnBg: pullForward($colorBodyBg, $contrastRatio);
-$colorBtnFg: $colorBodyBg;
+// Buttons
+$colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent);
+$colorBtnFg: $colorBodyBg; //pullForward($colorBodyFg, $contrastRatioPercent);
 $colorBtnIcon: $colorBtnFg;
-$colorInvokeMenu: #fff;
+$colorInvokeMenu: #000;
+$contrastInvokeMenuPercent: 50%;
 
 $colorAlt1: #ffc700;
 $colorAlert: #ff3c00;
@@ -47,7 +49,7 @@ $colorThumbsBubbleFg: lighten($colorBodyFg, 10%);
 $colorThumbsBubbleBg: lighten($colorBodyBg, 10%);
 // Overlay
 $colorOvrBlocker: rgba(black, 0.7);
-$colorOvrBg: $colorBodyBg;
+$colorOvrBg: pullForward($colorBodyBg, 10%);
 $colorOvrFg: $colorBodyFg;
 // Items
 $colorItemBase: lighten($colorBodyBg, 5%);
@@ -62,7 +64,18 @@ $tabularColorHeaderFg: lighten($tabularColorHeaderBg, 40%);
 $tabularColorHeaderBorder: $colorBodyBg;
 // Tree
 $colorItemTreeIcon: $colorKey;
-$colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
-$colorItemTreeVCHover: $colorAlt1;
+$colorItemTreeIconHover: $colorItemTreeIcon; //pushBack($colorItemTreeIcon, 20%);
+$colorItemTreeVCHover: $colorKey;
+$colorItemTreeFg: $colorBodyFg;
+$colorItemTreeSelectedBg: pushBack($colorKey, 15%);
+$colorItemTreeSelectedFg: $colorBodyBg;
+$colorItemTreeVC: $colorBodyFg;
+$colorItemTreeSelectedVC: $colorBodyBg;
+$shdwItemTreeIcon: none;
 // Scrollbar
 $scrollbarTrackColorBg: rgba(#000, 0.4);
+// Splitter
+$splitterShdw: none;
+$colorSplitterInterior: $colorBodyBg;
+$colorSplitterHover: $colorKey;
+$colorGrippyInteriorHover: $colorBodyBg;

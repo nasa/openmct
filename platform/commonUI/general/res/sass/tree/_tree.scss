@@ -22,6 +22,7 @@
 
 ul.tree {
 	@include menuUlReset();
+	@include user-select(none);
 	li {
 		display: block;
 		position: relative;
@@ -45,6 +46,7 @@ ul.tree {
 	position: relative;
 
 	.view-control {
+		color: $colorItemTreeVC;
 		display: inline-block;
 		margin-left: $interiorMargin;
 		font-size: 0.75em;
@@ -53,7 +55,7 @@ ul.tree {
 		// NOTE: [Mobile] Removed Hover on Mobile
 		@include desktop {
 			&:hover {
-				color: $colorItemTreeVCHover;
+				color: $colorItemTreeVCHover !important;
 			}
 		}
 	}
@@ -69,7 +71,7 @@ ul.tree {
 		.type-icon {
 			//@include absPosDefault(0, false);
 			$d: $treeTypeIconH; // 16px is crisp size
-			@include txtShdwSubtle(0.6);
+			@include txtShdwSubtle($shdwItemTreeIcon);
 			font-size: $d;
 			color: $colorItemTreeIcon;
 			left: $interiorMargin;
@@ -124,14 +126,13 @@ ul.tree {
 	}
 
 	&.selected {
-		$c: #fff;
-		background: $colorKeySelectedBg;
-		color: $c;
+		background: $colorItemTreeSelectedBg;
+		color: $colorItemTreeSelectedFg;
 		.view-control {
-			color: $colorItemTreeIcon;
+			color: $colorItemTreeSelectedVC;
 		}
 		.label .type-icon {
-			color: #fff; //$colorItemTreeIconHover;
+			color: $colorItemTreeSelectedFg; //$colorItemTreeIconHover;
 		}
 	}
 
@@ -139,11 +140,11 @@ ul.tree {
 		// NOTE: [Mobile] Removed Hover on Mobile
 		@include desktop {
 			&:hover {
-				background: rgba(#fff, 0.1); //lighten($colorBodyBg, 5%);
-				color: lighten($colorBodyFg, 20%);
-				.context-trigger {
-					display: block;
-				}
+				background: rgba($colorBodyFg, 0.1); //lighten($colorBodyBg, 5%);
+				color: pullForward($colorBodyFg, 20%);
+				//.context-trigger {
+				//	display: block;
+				//}
 				.icon {
 					color: $colorItemTreeIconHover;
 				}

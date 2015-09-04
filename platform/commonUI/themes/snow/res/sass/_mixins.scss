@@ -1,7 +1,7 @@
-@mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $hover: false, $contrastRatio: 20%) {
+@mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $hover: false, $contrastRatioPercent: 20%) {
     $hovRatio: 5%;
-    $bgBase: $bg; //pullForward($bg, $contrastRatio);
-    $fgBase: $fg; //pushBack($bg, $contrastRatio);
+    $bgBase: $bg; //pullForward($bg, $contrastRatioPercent);
+    $fgBase: $fg; //pushBack($bg, $contrastRatioPercent);
 
     background-color: $bgBase;
     @include border-radius($controlCr);
@@ -18,7 +18,7 @@
     }
 }
 
-@mixin btnSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $ic: $colorBtnIcon, $contrastRatio: 20%) {
+@mixin btnSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $ic: $colorBtnIcon, $contrastRatioPercent: 20%) {
     // $ic: Icon color
     @include border-radius($controlCr);
     @include containerSubtle($bg, $fg, true, 30%);

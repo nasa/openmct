@@ -37,8 +37,8 @@
 	}
 
 	&:after {
-		// Adds the downward facing arrow element
-		color: rgba($colorInvokeMenu, 0.2);
+		// Adds the downward facing 'context available / invoke menu' arrow element
+		color: rgba($colorInvokeMenu, percentToDecimal($contrastInvokeMenuPercent));
 		content: '\76';
 		display: inline-block;
 		font-family: 'symbolsfont';
@@ -50,9 +50,9 @@
 		.title-label {
 			font-size: 1rem;
 		}
-		&:after {
-			color: rgba($colorInvokeMenu, 0.5);
-		}
+		//&:after {
+		//	color: rgba($colorInvokeMenu, 0.5);
+		//}
 	}
 
 	.menu {

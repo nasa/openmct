@@ -205,8 +205,8 @@
         }
     }
     &:not(.disabled):hover:before {
-        @include trans-prop-nice("border-color", 50ms);
-        border-color: $colorKey;
+        @include trans-prop-nice("border-color", 25ms);
+        border-color: $colorGrippyInteriorHover;
     }
 }
 
@@ -237,12 +237,22 @@
     border: 1px solid $c;
 }
 
+@mixin boxShdw($sVal: rgba(black, 0.4) 0 0 3px) {
+	@if $sVal != 'none' {
+		@include box-shadow($sVal);
+	}
+}
+
 @mixin boxShdwSubtle($sVal: 0.2) {
-    @include box-shadow(rgba(black, $sVal) 0 1px 2px);
+	@if $sVal != 'none' {
+		@include box-shadow(rgba(black, $sVal) 0 1px 2px);
+	}
 }
 
 @mixin boxShdwLarge($sVal: 0.7) {
-    @include box-shadow(rgba(black, $sVal) 0 3px 10px);
+	@if $sVal != 'none' {
+		@include box-shadow(rgba(black, $sVal) 0 3px 10px);
+	}
 }
 
 @mixin outerGlow($color: #fff, $sVal: 0.3) {
@@ -258,21 +268,31 @@
 }
 
 @mixin txtShdwSubtle($sVal: 0.1) {
-    @include text-shadow(rgba(black, $sVal) 0 1px 2px);
+	@if $sVal != 'none' {
+	    @include text-shadow(rgba(black, $sVal) 0 1px 2px);
+	}
 }
 
 @mixin txtShdwLarge($sVal: 0.7) {
     @include text-shadow(rgba(black, $sVal) 0 3px 7px);
 }
 
-@function pullForward($c: $colorBodyBg, $p: 20%) {
+@function pullForward($c, $p: 20%) {
     // For dark interfaces, lighter things come forward
     @return lighten($c, $p);
 }
 
-@function pushBack($c: $colorBodyBg, $p: 20%) {
+@function pushBack($c, $p: 20%) {
     // For dark interfaces, darker things move back
     @return darken($c, $p);
+}
+
+@function percentToDecimal($p) {
+	@return $p / 100%;
+}
+
+@function decimalToPercent($d) {
+	@return percentage($d);
 }
 
 /*********************************************** FORM ELEMENTS */
@@ -281,10 +301,8 @@
     @include border-radius($controlCr);
     @include box-sizing(border-box);
     @include box-shadow(inset rgba(black, 0.65) 0 1px 4px);
-    //	background: lighten($bg, 20%);
     background: rgba(#fff, 0.1);
     border: none;
-    //border-bottom: 1px solid rgba(#fff, 0.1);
     color: lighten($fg, 20%);
     outline: none;
     &.error {
@@ -307,16 +325,6 @@
     background: lighten($bg, 3%);
     border-bottom: 1px solid lighten($bg, 10%);
 }
-
-/*
-@mixin invokeMenu($baseColor: $colorBodyFg) {
-	$c: $baseColor;
-	color: $c;
-	&:hover {
-		color: lighten($c, $ltGamma);
-	}
-}
-*/
 
 @mixin menuUlReset() {
     margin: 0;
