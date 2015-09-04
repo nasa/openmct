@@ -52,46 +52,52 @@ define(
                 mctPinch = new MCTPinch(mockAgentService);
                 mctPinch.link(mockScope, mockElement);
 
+                // Sets the amount of touches and changedTouches done
+                // to 1, therefore a pan
                 mockTouches = [mockTouchEvent];
                 mockChangedTouches = [mockTouchEvent];
 
+                // Sets mockEvent touch information and bounds
                 mockEvent.touches = mockTouches;
                 mockEvent.changedTouches = mockChangedTouches;
                 mockEvent.target = mockTarget;
             });
 
-            it("Fires single finger pan touch events: start, change, end", function() {
-                // Touch Start
+            it("fires single finger pan touch events: start, change, end", function() {
+                // Fires touch start
                 mockElement.on.calls[0].args[1](mockEvent);
-                // Touch Move
+                // Fires touch move
                 mockElement.on.calls[1].args[1](mockEvent);
-                // Touch End
+                // Fires touch end
                 mockElement.on.calls[2].args[1](mockEvent);
-                // Touch Cancel
+                // Fires touch cancel
                 mockElement.on.calls[3].args[1](mockEvent);
             });
 
-            it("Fires two finger pinch touch events: start, change, end", function() {
+            it("fires two finger pinch touch events: start, change, end", function() {
+
+                // Sets the amount of touches and changedTouches done
+                // to 2, therefore a pinch
                 mockTouches = [mockTouchEvent, mockTouchEvent];
                 mockChangedTouches = [mockTouchEvent, mockTouchEvent];
 
+                // Re-sets mockEvent touch information and bounds
                 mockEvent.touches = mockTouches;
                 mockEvent.changedTouches = mockChangedTouches;
                 mockEvent.target = mockTarget;
 
-                // Touch Start
+                // Fires touch start
                 mockElement.on.calls[0].args[1](mockEvent);
-                // Touch Move
+                // Fires touch move
                 mockElement.on.calls[1].args[1](mockEvent);
-                // Touch End
+                // Fires touch end
                 mockElement.on.calls[2].args[1](mockEvent);
-                // Touch Cancel
+                // Fires touch cancel
                 mockElement.on.calls[3].args[1](mockEvent);
             });
 
-            it("Tests for destruction of the $scope", function() {
-
-                // Checks the destroy command
+            // Checks the destroy command
+            it("tests for destruction of the $scope", function() {
                 mockScope.$on.calls[0].args[1]();
             });
         });
