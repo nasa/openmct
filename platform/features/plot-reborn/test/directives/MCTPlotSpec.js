@@ -49,27 +49,27 @@ define(
             });
 
             it("Start Pinch", function() {
-                console.log(mockScope.$on.calls[0]);
+                //console.log(mockScope.$on.calls[0]);
                 //mockScope.$on.calls[0].args[1]();
             });
 
             it("Change Pinch", function() {
-                console.log(mockScope.$on.calls[1]);
+                //console.log(mockScope.$on.calls[1]);
                 //mockScope.$on.calls[1].args[1]();
             });
 
             it("Start Pan", function() {
-                console.log(mockScope.$on.calls[2]);
+                //console.log(mockScope.$on.calls[2]);
                 //mockScope.$on.calls[2].args[1]();
             });
 
             it("Change Pan", function() {
-                console.log(mockScope.$on.calls[3]);
+                //console.log(mockScope.$on.calls[3]);
                 //mockScope.$on.calls[3].args[1]();
             });
 
             it("Touch End", function() {
-                console.log(mockScope.$on.calls[4]);
+                //console.log(mockScope.$on.calls[4]);
                 //mockScope.$on.calls[4].args[1]();
             });
 
