@@ -29,7 +29,48 @@ define(
     function (ConductorRepresenter) {
         "use strict";
 
+        var SCOPE_METHODS = [
+                '$on',
+                '$watch',
+                '$broadcast',
+                '$emit',
+                '$new',
+                '$destroy'
+            ],
+            ELEMENT_METHODS = [
+                'hasClass',
+                'addClass',
+                'css'
+            ];
+
         describe("ConductorRepresenter", function () {
+            var mockConductorService,
+                mockCompile,
+                testViews,
+                mockScope,
+                mockElement,
+                mockConductor,
+                mockCompiledTemplate,
+                mockNewScope,
+                mockNewElement,
+                representer;
+
+            beforeEach(function () {
+                mockConductorService = jasmine.createSpyObj(
+                    'conductorService',
+                    ['getConductor']
+                );
+                mockCompile = jasmine.createSpy('$compile');
+                testViews = [ { someKey: "some value" } ];
+                mockScope = jasmine.createSpyObj('scope', SCOPE_METHODS);
+                mockElement = jasmine.createSpyObj('element', ELEMENT_METHODS);
+                mockConductor = jasmine.createSpyObj(
+                    'conductor',
+                    [ 'queryStart', 'queryEnd', 'displayStart', 'displayEnd' ]
+                );
+                mockCompiledTemplate = jasmine.createSpy('template');
+                mockNewScope = jasmine.createSpyObj('newScope', SCOPE_METHODS);
+            });
 
         });
     }
