@@ -29,31 +29,34 @@ define(
     function () {
         "use strict";
 
-        var firstObservedTime = Date.now();
+        var firstObservedTime = Math.floor(Date.now() / 1000);
 
         /**
          *
          * @constructor
          */
         function SinewaveTelemetrySeries(request) {
-            var firstTime = (request || {}).start || firstObservedTime,
-                latestObservedTime = Date.now(),
-                count = Math.floor((latestObservedTime - firstTime) / 1000),
+            var latestObservedTime = Math.floor(Date.now() / 1000),
+                count = latestObservedTime - firstObservedTime,
                 period = request.period || 30,
-                generatorData = {};
+                generatorData = {},
+                offset = (request.start !== undefined) ?
+                        Math.floor(request.start / 1000) - firstObservedTime :
+                        0;
 
             generatorData.getPointCount = function () {
-                return count;
+                return count - offset;
             };
 
             generatorData.getDomainValue = function (i, domain) {
-                return i * 1000 +
-                        (domain !== 'delta' ? firstTime : 0);
+                return (i + offset) * 1000 +
+                        (domain !== 'delta' ?
+                            (firstObservedTime * 1000) : 0);
             };
 
             generatorData.getRangeValue = function (i, range) {
                 range = range || "sin";
-                return Math[range](i * Math.PI * 2 / period);
+                return Math[range]((i + offset) * Math.PI * 2 / period);
             };
 
             return generatorData;
