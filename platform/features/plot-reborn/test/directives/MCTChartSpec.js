@@ -22,15 +22,38 @@
 /*global define,Promise,describe,it,expect,xit,beforeEach,waitsFor,jasmine*/
 
 define(
-    ["../src/directives/MCTChart"],
+    ["../../src/directives/MCTChart"],
     function (MCTChart) {
         "use strict";
 
         describe("The MCT Chart directive", function () {
-            var mockScope;
+            var mockInterval,
+                mockLog,
+                mockAgentService,
+                mockScope,
+                mockElement,
+                mockCanvas,
+                mctChart;
 
 
             beforeEach(function () {
+                mockInterval =
+                    jasmine.createSpyObj("$interval", [ "cancel" ]);
+                mockLog = jasmine.createSpyObj("$log", [ "warn" ]);
+                mockAgentService = jasmine.createSpyObj("agentService", ["isMobile"]);
+                mockCanvas = jasmine.createSpyObj("canvas", [ "getContext", "addEventListener" ]);
+                mockScope =
+                    jasmine.createSpyObj("$scope", [ "$on", "$watch", "series", "viewport", "rectangles" ]);
+                mockElement =
+                    jasmine.createSpyObj("$element", [ "find" ]);
+
+                mctChart = new MCTChart(mockInterval, mockAgentService);
+            });
+
+            it("Calls", function() {
+                mockElement.find.andReturn([mockCanvas]);
+
+                //mctChart.link(mockScope, mockElement);
             });
         });
     }

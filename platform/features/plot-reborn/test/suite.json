@@ -1,4 +1,5 @@
 [
-    "controllers/PlotController"
+    "controllers/PlotController",
+    "directives/MCTChart"
 ]
 
