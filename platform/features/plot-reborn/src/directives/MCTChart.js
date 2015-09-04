@@ -35,7 +35,7 @@ define(
          *
          * @constructor
          */
-        function MCTChart($interval, $log, agentService) {
+        function MCTChart($interval, agentService) {
 
             function linkChart($scope, $element) {
                 var canvas = $element.find("canvas")[0],

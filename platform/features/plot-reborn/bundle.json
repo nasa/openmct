@@ -35,7 +35,7 @@
             {
                 "key": "mctChart",
                 "implementation": "directives/MCTChart.js",
-                "depends": [ "$interval", "$log", "agentService" ]
+                "depends": [ "$interval", "agentService" ]
             },
             {
                 "key": "mctPlot",
