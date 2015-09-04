@@ -901,3 +901,52 @@ appropriate policy categories.
   * This could be mitigated in the proposed approach by locating
     `appliesTo`-like policies in the same bundle as the relevant
     extension.
+
+## Revise Telemetry API
+
+Revise telemetry API such that:
+
+* `TelemetrySeries` is replaced with arrays of JavaScript objects
+  with properties.
+* It is no longer necessary to use `telemetryHandler` (plays well
+  with proposal to
+  [remove capability delegation](#remove-capability delegation))
+* Change `request` call to take a callback, instead of returning
+  a promise. This allows that callback to be invoked several
+  times (e.g. for progressive loading, or to reflect changes from
+  the time conductor.)
+
+Should also consider:
+
+* Merge `subscribe` functionality into `request`; that is, handle
+  real-time data as just another thing that triggers the `request`
+  callback.
+
+As a consequence of this, `request` would need to return an object
+representing the active request. This would need to be able to
+answer the following questions and provide the following behavior:
+
+* Has the request been fully filled? (For cases like progressive
+  loading?)
+* What data has changed since the previous callback? (To support
+  performance optimizations in plotting; e.g. append real-time
+  data.)
+* Stop receiving updates for this request.
+* Potentially, provide utility methods for dealing with incoming
+  data from the request.
+
+Corollary to this, some revision of `TelemetryMetadata` properties
+may be necessary to fully and usably describe the contents of
+a telemetry series.
+
+### Benefits
+
+* Reduces interface depth.
+* Reduces interface size (number of methods.)
+* Supports a broader range of behaviors (e.g. progressive loading)
+  within the same interface.
+
+### Detriments
+
+* Merging with `subscribe` may lose the clarity/simplicity of the
+  current API.
