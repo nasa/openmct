@@ -26,7 +26,8 @@ define(
     function () {
         'use strict';
 
-        function ConductorTelemetryCapability(timeConductor, telemetryCapability, domainObject) {
+        function ConductorTelemetryCapability(timeConductor, telemetryCapability) {
+            this.timeConductor = timeConductor;
             this.wrappedCapability = telemetryCapability;
         }
 
@@ -42,9 +43,6 @@ define(
         };
 
         ConductorTelemetryCapability.prototype.subscribe = function (callback, request) {
-            request = request || {};
-            request.start = this.timeConductor.queryStart();
-            request.end = this.timeConductor.queryEnd();
             return this.wrappedCapability.subscribe(callback, request);
         };
 

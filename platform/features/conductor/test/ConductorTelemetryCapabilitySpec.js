@@ -30,6 +30,71 @@ define(
         "use strict";
 
         describe("ConductorTelemetryCapability", function () {
+            var mockConductor,
+                mockTelemetryCapability,
+                mockUnsubscribe,
+                testMetadata,
+                testStartTime,
+                testEndTime,
+                conductorTelemetryCapability;
+
+            beforeEach(function () {
+                mockConductor = jasmine.createSpyObj(
+                    'timeConductor',
+                    [
+                        'queryStart',
+                        'queryEnd',
+                        'displayStart',
+                        'displayEnd'
+                    ]
+                );
+                mockTelemetryCapability = jasmine.createSpyObj(
+                    'telemetry',
+                    [ 'getMetadata', 'requestData', 'subscribe' ]
+                );
+                mockUnsubscribe = jasmine.createSpy('unsubscribe');
+
+                testStartTime = 42;
+                testEndTime = 12321;
+                testMetadata = { someKey: 'some value' };
+                mockTelemetryCapability.getMetadata.andReturn(testMetadata);
+                mockTelemetryCapability.subscribe.andReturn(mockUnsubscribe);
+                mockConductor.queryStart.andReturn(testStartTime);
+                mockConductor.queryEnd.andReturn(testEndTime);
+
+                conductorTelemetryCapability = new ConductorTelemetryCapability(
+                    mockConductor,
+                    mockTelemetryCapability
+                );
+            });
+
+            it("simply delegates getMetadata calls", function () {
+                expect(conductorTelemetryCapability.getMetadata())
+                    .toBe(testMetadata);
+            });
+
+            it("adds start/end times to requests", function () {
+                conductorTelemetryCapability
+                    .requestData({ someKey: "some value" });
+                expect(mockTelemetryCapability.requestData).toHaveBeenCalledWith({
+                    someKey: "some value",
+                    start: testStartTime,
+                    end: testEndTime
+                });
+            });
+
+            it("simply delegates subscribe calls", function () {
+                var mockCallback = jasmine.createSpy('callback'),
+                    testRequest = { someKey: "some value" };
+                expect(conductorTelemetryCapability.subscribe(
+                    mockCallback,
+                    testRequest
+                )).toBe(mockUnsubscribe);
+                expect(mockTelemetryCapability.subscribe).toHaveBeenCalledWith(
+                    mockCallback,
+                    { someKey: "some value" }
+                );
+            });
 
         });
     }

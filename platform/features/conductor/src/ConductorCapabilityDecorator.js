@@ -40,8 +40,7 @@ define(
                 capabilities.telemetry = function (domainObject) {
                     return new ConductorCapabilityDecorator(
                         conductorService.getConductor(),
-                        new TelemetryCapability(domainObject),
-                        domainObject
+                        new TelemetryCapability(domainObject)
                     );
                 };
             }
