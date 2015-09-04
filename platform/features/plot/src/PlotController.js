@@ -138,6 +138,16 @@ define(
                 }
             }
 
+            // Change the displayable bounds
+            function setBasePanZoom(event, bounds) {
+                var start = bounds.start,
+                    end = bounds.end;
+                if (updater) {
+                    updater.setDomainBounds(start, end);
+                    self.update();
+                }
+            }
+
             // Create a new subscription; telemetrySubscriber gets
             // to do the meaningful work here.
             function subscribe(domainObject) {
@@ -172,10 +182,13 @@ define(
             this.scheduleUpdate = throttle(function () {
                 self.modeOptions.getModeHandler().getSubPlots()
                     .forEach(updateSubplot);
-            });
+            }, 50);
 
             // Subscribe to telemetry when a domain object becomes available
             $scope.$watch('domainObject', subscribe);
+
+            // Respond to external bounds changes
+            $scope.$on("telemetry:display:bounds", setBasePanZoom);
 
             // Unsubscribe when the plot is destroyed
             $scope.$on("$destroy", releaseSubscription);
