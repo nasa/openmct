@@ -60,7 +60,7 @@ define(
                 mockEvent.target = mockTarget;
             });
 
-            it("Start touch", function() {
+            it("Fires single finger pan touch events: start, change, end", function() {
                 // Touch Start
                 mockElement.on.calls[0].args[1](mockEvent);
                 // Touch Move
@@ -69,7 +69,9 @@ define(
                 mockElement.on.calls[2].args[1](mockEvent);
                 // Touch Cancel
                 mockElement.on.calls[3].args[1](mockEvent);
+            });
 
+            it("Fires two finger pinch touch events: start, change, end", function() {
                 mockTouches = [mockTouchEvent, mockTouchEvent];
                 mockChangedTouches = [mockTouchEvent, mockTouchEvent];
 
@@ -85,8 +87,11 @@ define(
                 mockElement.on.calls[2].args[1](mockEvent);
                 // Touch Cancel
                 mockElement.on.calls[3].args[1](mockEvent);
+            });
 
-                // Check destroy
+            it("Tests for destruction of the $scope", function() {
+
+                // Checks the destroy command
                 mockScope.$on.calls[0].args[1]();
             });
         });
