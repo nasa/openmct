@@ -30,7 +30,72 @@ define(
         "use strict";
 
         describe("ConductorCapabilityDecorator", function () {
+            var mockCapabilityService,
+                mockConductorService,
+                testModel,
+                testCapabilities,
+                decorator;
 
+            function instantiate(Constructor) {
+                return new Constructor();
+            }
+
+            beforeEach(function () {
+                testCapabilities = {
+                    telemetry: jasmine.createSpy('Telemetry'),
+                    other: jasmine.createSpy('Other')
+                };
+
+                mockCapabilityService = jasmine.createSpyObj(
+                    'capabilityService',
+                    [ 'getCapabilities' ]
+                );
+                mockConductorService = jasmine.createSpyObj(
+                    'conductorService',
+                    [ 'getConductor' ]
+                );
+                testModel = { someKey: "some value" };
+
+                mockCapabilityService.getCapabilities.andCallFake(function () {
+                    // Wrap with object.create so we can still
+                    // reliably expect properties of testCapabilities itself
+                    return Object.create(testCapabilities);
+                });
+
+                decorator = new ConductorCapabilityDecorator(
+                    mockConductorService,
+                    mockCapabilityService
+                );
+            });
+
+            it("delegates to the decorated capability service", function () {
+                expect(mockCapabilityService.getCapabilities).not.toHaveBeenCalled();
+                decorator.getCapabilities(testModel);
+                expect(mockCapabilityService.getCapabilities).toHaveBeenCalled();
+            });
+
+            it("wraps the 'telemetry' capability of objects", function () {
+                var capabilities = decorator.getCapabilities(testModel);
+                expect(capabilities.telemetry)
+                    .not.toBe(testCapabilities.telemetry);
+
+                // Should wrap - verify by invocation
+                expect(testCapabilities.telemetry).not.toHaveBeenCalled();
+                instantiate(capabilities.telemetry);
+                expect(testCapabilities.telemetry).toHaveBeenCalled();
+            });
+
+            it("does not wrap other capabilities", function () {
+                var capabilities = decorator.getCapabilities(testModel);
+                expect(capabilities.other)
+                    .toBe(testCapabilities.other);
+            });
+
+            it("gets a time conductor from the conductorService", function () {
+                expect(mockConductorService.getConductor).not.toHaveBeenCalled();
+                instantiate(decorator.getCapabilities(testModel).telemetry);
+                expect(mockConductorService.getConductor).toHaveBeenCalled();
+            });
         });
     }
 );

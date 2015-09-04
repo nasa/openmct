@@ -31,7 +31,7 @@ define(
             this.capabilityService = capabilityService;
         }
 
-        ConductorCapabilityDecorator.getCapabilities = function (model) {
+        ConductorCapabilityDecorator.prototype.getCapabilities = function (model) {
             var capabilities = this.capabilityService.getCapabilities(model),
                 TelemetryCapability = capabilities.telemetry,
                 conductorService = this.conductorService;
