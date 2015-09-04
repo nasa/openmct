@@ -1,5 +1,6 @@
 [
     "controllers/PlotController",
-    "directives/MCTChart"
+    "directives/MCTChart",
+    "directives/MCTPlot"
 ]
 

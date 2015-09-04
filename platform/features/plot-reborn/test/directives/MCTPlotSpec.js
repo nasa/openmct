@@ -22,15 +22,33 @@
 /*global define,Promise,describe,it,expect,xit,beforeEach,waitsFor,jasmine*/
 
 define(
-    ["../src/directives/MCTPlot"],
+    ["../../src/directives/MCTPlot"],
     function (MCTPlot) {
         "use strict";
 
         describe("The MCT Pinch directive", function () {
-            var mockScope;
+            var mockScope,
+                mockElement,
+                mockCanvas,
+                mctPlot;
 
 
             beforeEach(function () {
+                mockScope = jasmine.createSpyObj("$scope", [
+                    "axes", "viewport", "rectangles", "mouseCoordinates",
+                    "$broadcast", "displayableRange", "displayableDomain",
+                    "$emit", "$on", "$watchCollection" ]);
+                mockElement = jasmine.createSpyObj("$element", [ "find" ]);
+                mockCanvas = jasmine.createSpyObj("canvas", [ "on", "off", "removeClass", "addClass" ]);
+
+                mockElement.find.andReturn(mockCanvas);
+
+                mctPlot = new MCTPlot();
+            });
+
+            it("link called", function() {
+
+                mctPlot.link(mockScope, mockElement);
             });
         });
     }
