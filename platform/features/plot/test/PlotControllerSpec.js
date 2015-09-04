@@ -49,7 +49,7 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$watch", "$on" ]
+                    [ "$watch", "$on", "$emit" ]
                 );
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
