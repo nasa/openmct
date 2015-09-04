@@ -35,9 +35,10 @@ define(
          *
          * @constructor
          */
-        function SinewaveTelemetry(request) {
-            var latestObservedTime = Date.now(),
-                count = Math.floor((latestObservedTime - firstObservedTime) / 1000),
+        function SinewaveTelemetrySeries(request) {
+            var firstTime = (request || {}).start || firstObservedTime,
+                latestObservedTime = Date.now(),
+                count = Math.floor((latestObservedTime - firstTime) / 1000),
                 period = request.period || 30,
                 generatorData = {};
 
@@ -47,7 +48,7 @@ define(
 
             generatorData.getDomainValue = function (i, domain) {
                 return i * 1000 +
-                        (domain !== 'delta' ? firstObservedTime : 0);
+                        (domain !== 'delta' ? firstTime : 0);
             };
 
             generatorData.getRangeValue = function (i, range) {
@@ -58,6 +59,6 @@ define(
             return generatorData;
         }
 
-        return SinewaveTelemetry;
+        return SinewaveTelemetrySeries;
     }
 );
