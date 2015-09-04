@@ -30,6 +30,15 @@ define(
             var mockScope,
                 mockElement,
                 mockCanvas,
+                mockTouch,
+                mockTouchEvent,
+                mockTouchPair,
+                mockBounds,
+                mockBoundsEvent,
+                mockTarget,
+                mockUtils,
+                mockMidpoint,
+                mockDistance,
                 mctPlot;
 
 
@@ -40,6 +49,18 @@ define(
                     "$emit", "$on", "$watchCollection" ]);
                 mockElement = jasmine.createSpyObj("$element", [ "find" ]);
                 mockCanvas = jasmine.createSpyObj("canvas", [ "on", "off", "removeClass", "addClass" ]);
+                mockBoundsEvent = jasmine.createSpyObj("event", [ "touches", "changedTouches", "preventDefault", "target" ]);
+                mockTarget = jasmine.createSpyObj("event.target", ["getBoundingClientRect"]);
+                mockMidpoint = jasmine.createSpyObj("touch.midpoint", ["clientX", "clientY"]);
+                mockTouchEvent = jasmine.createSpyObj("event",
+                    [ "clientX", "clientY" ]);
+                mockDistance = jasmine.createSpy("touch.distance");
+                mockUtils = jasmine.createSpyObj("utils", [ "elementPositionAsPlotPosition" ]);
+
+                mockTouchPair = [mockTouchEvent, mockTouchEvent];
+
+                mockBoundsEvent.target = mockTarget;
+                mockBounds = mockTarget.getBoundingClientRect();
 
                 mockElement.find.andReturn(mockCanvas);
 
@@ -50,20 +71,42 @@ define(
 
             it("Start Pinch", function() {
                 //console.log(mockScope.$on.calls[0]);
-                //mockScope.$on.calls[0].args[1]();
+                mockTouch = {
+                    touches: mockTouchPair,
+                    bounds: mockBounds,
+                    midpoint: mockMidpoint,
+                    distance: mockDistance
+
+                };
+                //mockScope.$on.calls[0].args[1]("event", mockTouch);
             });
 
             it("Change Pinch", function() {
+                mockTouch = {
+                    touches: mockTouchPair,
+                    bounds: mockBounds,
+                    midpoint: mockMidpoint,
+                    distance: mockDistance
+
+                };
                 //console.log(mockScope.$on.calls[1]);
                 //mockScope.$on.calls[1].args[1]();
             });
 
             it("Start Pan", function() {
+                mockTouch = {
+                    touch: [mockTouchEvent],
+                    bounds: mockBounds
+                };
                 //console.log(mockScope.$on.calls[2]);
                 //mockScope.$on.calls[2].args[1]();
             });
 
             it("Change Pan", function() {
+                mockTouch = {
+                    touch: [mockTouchEvent],
+                    bounds: mockBounds
+                };
                 //console.log(mockScope.$on.calls[3]);
                 //mockScope.$on.calls[3].args[1]();
             });
