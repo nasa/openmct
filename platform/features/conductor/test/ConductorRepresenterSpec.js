@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,describe,it,expect,beforeEach,waitsFor,afterEach,jasmine*/
 
 /**
  *  EventSpec. Created by vwoeltje on 11/6/14. Modified by shale on 06/23/2015.
@@ -40,7 +40,10 @@ define(
             ELEMENT_METHODS = [
                 'hasClass',
                 'addClass',
-                'css'
+                'removeClass',
+                'css',
+                'after',
+                'remove'
             ];
 
         describe("ConductorRepresenter", function () {
@@ -54,6 +57,14 @@ define(
                 mockNewScope,
                 mockNewElement,
                 representer;
+
+            function fireWatch(scope, watch, value) {
+                scope.$watch.calls.forEach(function (call) {
+                    if (call.args[0] === watch) {
+                        call.args[1](value);
+                    }
+                });
+            }
 
             beforeEach(function () {
                 mockConductorService = jasmine.createSpyObj(
@@ -70,6 +81,85 @@ define(
                 );
                 mockCompiledTemplate = jasmine.createSpy('template');
                 mockNewScope = jasmine.createSpyObj('newScope', SCOPE_METHODS);
+                mockNewElement = jasmine.createSpyObj('newElement', ELEMENT_METHODS);
+                mockNewElement[0] = mockNewElement;
+
+                mockConductorService.getConductor.andReturn(mockConductor);
+                mockCompile.andReturn(mockCompiledTemplate);
+                mockCompiledTemplate.andReturn(mockNewElement);
+                mockScope.$new.andReturn(mockNewScope);
+
+                representer = new ConductorRepresenter(
+                    mockConductorService,
+                    mockCompile,
+                    testViews,
+                    mockScope,
+                    mockElement
+                );
+            });
+
+            afterEach(function () {
+                representer.destroy();
+            });
+
+            it("adds a conductor to views", function () {
+                representer.represent(testViews[0], {});
+                expect(mockElement.after).toHaveBeenCalledWith(mockNewElement);
+            });
+
+            it("adds nothing to non-view representations", function () {
+                representer.represent({ someKey: "something else" }, {});
+                expect(mockElement.after).not.toHaveBeenCalled();
+            });
+
+            it("removes the conductor when destroyed", function () {
+                representer.represent(testViews[0], {});
+                expect(mockNewElement.remove).not.toHaveBeenCalled();
+                representer.destroy();
+                expect(mockNewElement.remove).toHaveBeenCalled();
+            });
+
+            it("destroys any new scope created", function () {
+                representer.represent(testViews[0], {});
+                representer.destroy();
+                expect(mockNewScope.$destroy.calls.length)
+                    .toEqual(mockScope.$new.calls.length);
+            });
+
+            it("exposes conductor state in scope", function () {
+                mockConductor.queryStart.andReturn(42);
+                mockConductor.queryEnd.andReturn(12321);
+                mockConductor.displayStart.andReturn(1977);
+                mockConductor.displayEnd.andReturn(1984);
+                representer.represent(testViews[0], {});
+
+                expect(mockNewScope.conductor).toEqual({
+                    inner: [ 1977, 1984 ],
+                    outer: [ 42, 12321 ]
+                });
+            });
+
+            it("updates conductor state from scope", function () {
+                var testState = {
+                    inner: [ 42, 1984 ],
+                    outer: [ -1977, 12321 ]
+                };
+
+                representer.represent(testViews[0], {});
+
+                mockNewScope.conductor = testState;
+
+                fireWatch(mockNewScope, 'conductor.inner[0]', testState.inner[0]);
+                expect(mockConductor.displayStart).toHaveBeenCalledWith(42);
+
+                fireWatch(mockNewScope, 'conductor.inner[1]', testState.inner[1]);
+                expect(mockConductor.displayEnd).toHaveBeenCalledWith(1984);
+
+                fireWatch(mockNewScope, 'conductor.outer[0]', -1977);
+                expect(mockConductor.queryStart).toHaveBeenCalledWith(-1977);
+
+                fireWatch(mockNewScope, 'conductor.outer[1]', 12321);
+                expect(mockConductor.queryEnd).toHaveBeenCalledWith(12321);
             });
 
         });

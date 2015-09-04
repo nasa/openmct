@@ -105,7 +105,7 @@ define(
 
                 // Create a new scope for the conductor
                 this.conductorScope(this.getScope().$new());
-                this.wireScope(
+                wireScope(
                     this.conductorService.getConductor(),
                     this.conductorScope(),
                     this.getScope()
