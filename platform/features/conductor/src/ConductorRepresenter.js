@@ -46,75 +46,75 @@ define(
          * @implements {Representer}
          * @constructor
          */
-        function ConductorRepresenter($interval, conductorService, $compile, views, scope, element) {
+        function ConductorRepresenter(conductorService, $compile, views, scope, element) {
             var conductorScope;
 
-            // Angular doesn't like objects to retain references to scope
-            this.getScope = function () { return scope; };
+            // Angular doesn't like objects to retain references to scopes
+            this.getScope = function () {
+                return scope;
+            };
             this.conductorScope = function (s) {
                 return (conductorScope = arguments.length > 0 ? s : conductorScope);
             };
 
             this.conductorService = conductorService;
             this.element = element;
-            this.showing = false;
             this.views = views;
             this.$compile = $compile;
-            this.$interval = $interval;
-
-            this.originalHeight = element.css('height');
-            this.hadAbs = element.hasClass('abs');
         }
 
         // Update the time conductor from the scope
-        ConductorRepresenter.prototype.wireScope = function () {
-            var scope = this.conductorScope(),
-                conductor = this.conductorService.getConductor(),
-                self = this;
-
+        function wireScope(conductor, conductorScope, repScope) {
             function updateConductorOuter() {
-                conductor.queryStart(scope.conductor.outer[0]);
-                conductor.queryEnd(scope.conductor.outer[1]);
-                self.getScope().$broadcast('telemetry:query:bounds', {
+                conductor.queryStart(conductorScope.conductor.outer[0]);
+                conductor.queryEnd(conductorScope.conductor.outer[1]);
+                repScope.$broadcast('telemetry:query:bounds', {
                     start: conductor.queryStart(),
                     end: conductor.queryEnd()
                 });
             }
 
             function updateConductorInner() {
-                conductor.displayStart(scope.conductor.inner[0]);
-                conductor.displayEnd(scope.conductor.inner[1]);
-                self.getScope().$broadcast('telemetry:display:bounds', {
+                conductor.displayStart(conductorScope.conductor.inner[0]);
+                conductor.displayEnd(conductorScope.conductor.inner[1]);
+                repScope.$broadcast('telemetry:display:bounds', {
                     start: conductor.displayStart(),
                     end: conductor.displayEnd()
                 });
             }
 
-            scope.conductor = {
+            conductorScope.conductor = {
                 outer: [ conductor.queryStart(), conductor.queryEnd() ],
                 inner: [ conductor.displayStart(), conductor.displayEnd() ]
             };
 
-            scope.$watch('conductor.outer[0]', updateConductorOuter);
-            scope.$watch('conductor.outer[1]', updateConductorOuter);
-            scope.$watch('conductor.inner[0]', updateConductorInner);
-            scope.$watch('conductor.inner[1]', updateConductorInner);
-        };
+            conductorScope.$watch('conductor.outer[0]', updateConductorOuter);
+            conductorScope.$watch('conductor.outer[1]', updateConductorOuter);
+            conductorScope.$watch('conductor.inner[0]', updateConductorInner);
+            conductorScope.$watch('conductor.inner[1]', updateConductorInner);
+        }
 
         // Handle a specific representation of a specific domain object
         ConductorRepresenter.prototype.represent = function represent(representation, representedObject) {
             this.destroy();
 
             if (this.views.indexOf(representation) !== -1 && !GLOBAL_SHOWING) {
+                // Track original states
+                this.originalHeight = this.element.css('height');
+                this.hadAbs = this.element.hasClass('abs');
+
                 // Create a new scope for the conductor
                 this.conductorScope(this.getScope().$new());
-                this.wireScope();
+                this.wireScope(
+                    this.conductorService.getConductor(),
+                    this.conductorScope(),
+                    this.getScope()
+                );
                 this.conductorElement =
                     this.$compile(TEMPLATE)(this.conductorScope());
                 this.element.after(this.conductorElement[0]);
                 this.element.addClass('abs');
                 this.element.css('bottom', CONDUCTOR_HEIGHT);
-                this.showing = true;
                 GLOBAL_SHOWING = true;
             }
         };
@@ -123,7 +123,7 @@ define(
         ConductorRepresenter.prototype.destroy = function destroy() {
             // We may not have decided to show in the first place,
             // so circumvent any unnecessary cleanup
-            if (!this.showing) {
+            if (!this.conductorElement) {
                 return;
             }
 
@@ -145,7 +145,6 @@ define(
                 this.conductorScope(undefined);
             }
 
-            this.showing = false;
             GLOBAL_SHOWING = false;
         };
 
