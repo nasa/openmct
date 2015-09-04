@@ -182,7 +182,7 @@ define(
             this.scheduleUpdate = throttle(function () {
                 self.modeOptions.getModeHandler().getSubPlots()
                     .forEach(updateSubplot);
-            }, 50);
+            });
 
             // Subscribe to telemetry when a domain object becomes available
             $scope.$watch('domainObject', subscribe);
