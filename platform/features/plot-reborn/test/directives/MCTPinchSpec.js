@@ -86,7 +86,8 @@ define(
                 // Touch Cancel
                 mockElement.on.calls[3].args[1](mockEvent);
 
-                //console.log(mockScope.on.calls);
+                // Check destroy
+                mockScope.$on.calls[0].args[1]();
             });
         });
     }
