@@ -29,19 +29,21 @@ define(
         /**
          * Provides extension-introduced licenses information to the
          * licenses route.
+         * @memberof platform/commonUI/about
          * @constructor
          */
         function LicenseController(licenses) {
-            return {
-                /**
-                 * Get license information.
-                 * @returns {Array} license extensions
-                 */
-                licenses: function () {
-                    return licenses;
-                }
-            };
+            this.licenseDefinitions = licenses;
         }
+
+        /**
+         * Get license information.
+         * @returns {Array} license extensions
+         * @memberof platform/commonUI/about.LicenseController#
+         */
+        LicenseController.prototype.licenses = function () {
+            return this.licenseDefinitions;
+        };
 
         return LicenseController;
     }

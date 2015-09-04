@@ -29,7 +29,7 @@ $interiorMargin: 5px;
 $interiorMarginLg: $interiorMargin * 2;
 $interiorMarginSm: 3px;
 $basicCr: 2px;
-$controlCr: 2px;
+$controlCr: 3px;
 $smallCr: 2px;
 $badgeW: 35px;
 
@@ -47,6 +47,8 @@ $colorPausedBg: #c56f01;
 $colorPausedFg: #fff;
 $colorCreateBtn: $colorKey;
 $colorGridLines: rgba(#fff, 0.05);
+$colorFormLines: rgba(#fff, 0.1);
+$colorFormSectionHeader: rgba(#000, 0.2);
 // Menu colors
 $colorMenuBg: lighten($colorBodyBg, 23%);
 $colorMenuFg: lighten($colorMenuBg, 70%);
@@ -84,6 +86,7 @@ $tabularColorBodyBg: darken($colorBodyBg, 10%);
 $tabularColorBodyFg: lighten($tabularColorBodyBg, 40%);
 $tabularColorHeaderBg: lighten($colorBodyBg, 10%);
 $tabularColorHeaderFg: lighten($tabularColorHeaderBg, 40%);
+$tabularColorHeaderBorder: $colorBodyBg;
 
 /************************** RATIOS */
 $ltGamma: 20%;
@@ -99,9 +102,11 @@ $ueAppLogoW: 105px;
 $ueEditToolBarH: 25px;
 $ueBrowseLeftPaneW: 25%;
 $ueEditLeftPaneW: 75%;
+$treeSearchInputBarH: 25px;
 // Overlay
 $ovrTopBarH: 60px;
 $ovrFooterH: 40px;
+$overlayMargin: 25px;
 // Items
 $ueBrowseGridItemLg: 200px;
 $ueBrowseGridItemTopBarH: 20px;
@@ -109,15 +114,16 @@ $ueBrowseGridItemBottomBarH: 30px;
 $itemPadLR: 5px;
 // Tree
 $treeVCW: 10px;
+$treeTypeIconH: 16px;
 $treeTypeIconW: 20px;
 $treeContextTriggerW: 20px;
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
 $colorItemTreeVCHover: $colorAlt1;
 // Tabular
-$tabularHeaderH: 18px;
+$tabularHeaderH: 22px; //18px
 $tabularTdPadLR: $itemPadLR;
-$tabularTdPadTB: 2px;
+$tabularTdPadTB: 3px;
 // Imagery
 $imageMainControlBarH: 22px;
 $imageThumbsD: 120px;
@@ -141,12 +147,14 @@ $reqSymbolM: $interiorMargin * 2;
 $reqSymbolFontSize: 0.7em;
 
 /************************** CONTROLS */
-$controlCr: $basicCr;
 $controlDisabledOpacity: 0.3;
-$formLabelW: 20%;
+$formLabelW: 30%;
 $formInputH: 22px;
 $formRowCtrlsH: 14px;
-$menuLineH: 1.4rem;
+$formTBPad: $interiorMargin;
+$formLRPad: $interiorMargin;
+$menuLineH: 1.5rem;
+$menuLineHPx: 24px;
 $scrollbarTrackSize: 10px;
 $scrollbarTrackColorBg: rgba(#000, 0.4);
 $btnStdH: 25px;

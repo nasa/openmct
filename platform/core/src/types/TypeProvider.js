@@ -26,6 +26,27 @@ define(
     function (TypeImpl, mergeModels) {
         'use strict';
 
+        /**
+         * Provides domain object types that are available/recognized within
+         * the system.
+         *
+         * @interface TypeService
+         */
+        /**
+         * Get a specific type by name.
+         *
+         * @method TypeService#getType
+         * @param {string} key the key (machine-readable identifier)
+         *        for the type of interest
+         * @returns {Type} the type identified by this key
+         */
+        /**
+         * List all known types.
+         *
+         * @method TypeService#listTypes
+         * @returns {Type[]} all known types
+         */
+
         var TO_CONCAT = ['inherits', 'capabilities', 'properties', 'features'],
             TO_MERGE = ['model'];
 
@@ -49,14 +70,47 @@ define(
             }) : array;
         }
 
+        // Reduce an array of type definitions to a single type definiton,
+        // which has merged all properties in order.
+        function collapse(typeDefs) {
+            var collapsed = typeDefs.reduce(function (a, b) {
+                var result = {};
+                copyKeys(result, a);
+                copyKeys(result, b);
+
+                // Special case: Do a merge, e.g. on "model"
+                TO_MERGE.forEach(function (k) {
+                    if (a[k] && b[k]) {
+                        result[k] = mergeModels(a[k], b[k]);
+                    }
+                });
+
+                // Special case: Concatenate certain arrays
+                TO_CONCAT.forEach(function (k) {
+                    if (a[k] || b[k]) {
+                        result[k] = (a[k] || []).concat(b[k] || []);
+                    }
+                });
+                return result;
+            }, {});
+
+            // Remove any duplicates from the collapsed array
+            TO_CONCAT.forEach(function (k) {
+                if (collapsed[k]) {
+                    collapsed[k] = removeDuplicates(collapsed[k]);
+                }
+            });
+            return collapsed;
+        }
+
         /**
          * A type provider provides information about types of domain objects
          * within the running Open MCT Web instance.
          *
-         * @param {Array<TypeDefinition>} options.definitions the raw type
+         * @param {Array<TypeDefinition>} types the raw type
          *        definitions for this type.
+         * @memberof platform/core
          * @constructor
-         * @memberof module:core/type/type-provider
          */
         function TypeProvider(types) {
             var rawTypeDefinitions = types,
@@ -69,46 +123,34 @@ define(
                         }
                     });
                     return result;
-                }(rawTypeDefinitions)),
-                typeMap = {},
-                undefinedType;
+                }(rawTypeDefinitions));
 
-            // Reduce an array of type definitions to a single type definiton,
-            // which has merged all properties in order.
-            function collapse(typeDefs) {
-                var collapsed = typeDefs.reduce(function (a, b) {
-                    var result = {};
-                    copyKeys(result, a);
-                    copyKeys(result, b);
 
-                    // Special case: Do a merge, e.g. on "model"
-                    TO_MERGE.forEach(function (k) {
-                        if (a[k] && b[k]) {
-                            result[k] = mergeModels(a[k], b[k]);
-                        }
-                    });
+            this.typeMap = {};
+            this.typeDefinitions = typeDefinitions;
+            this.rawTypeDefinitions = types;
+        }
 
-                    // Special case: Concatenate certain arrays
-                    TO_CONCAT.forEach(function (k) {
-                        if (a[k] || b[k]) {
-                            result[k] = (a[k] || []).concat(b[k] || []);
-                        }
-                    });
-                    return result;
-                }, {});
+        TypeProvider.prototype.listTypes = function () {
+            var self = this;
+            return removeDuplicates(
+                this.rawTypeDefinitions.filter(function (def) {
+                    return def.key;
+                }).map(function (def) {
+                    return def.key;
+                }).map(function (key) {
+                    return self.getType(key);
+                })
+            );
+        };
 
-                // Remove any duplicates from the collapsed array
-                TO_CONCAT.forEach(function (k) {
-                    if (collapsed[k]) {
-                        collapsed[k] = removeDuplicates(collapsed[k]);
-                    }
-                });
-                return collapsed;
-            }
+        TypeProvider.prototype.getType = function (key) {
+            var typeDefinitions = this.typeDefinitions,
+                self = this;
 
             function getUndefinedType() {
-                return (undefinedType = undefinedType || collapse(
-                    rawTypeDefinitions.filter(function (typeDef) {
+                return (self.undefinedType = self.undefinedType || collapse(
+                    self.rawTypeDefinitions.filter(function (typeDef) {
                         return !typeDef.key;
                     })
                 ));
@@ -134,61 +176,20 @@ define(
 
                     // Always provide a default name
                     def.model = def.model || {};
-                    def.model.name = def.model.name || (
-                        "Unnamed " + (def.name || "Object")
-                    );
+                    def.model.name = def.model.name ||
+                    ("Unnamed " + (def.name || "Object"));
 
                     return def;
-
                 }
-
-                return (typeMap[typeKey] = typeMap[typeKey] || buildTypeDef(typeKey));
+                
+                return (self.typeMap[typeKey] =
+                    self.typeMap[typeKey] || buildTypeDef(typeKey));
             }
 
-
-            return {
-                /**
-                 * Get a list of all types defined by this service.
-                 *
-                 * @returns {Promise<Array<module:core/type/type-impl.TypeImpl>>} a
-                 *          promise for an array of all type instances defined
-                 *          by this service.
-                 * @memberof module:core/type/type-provider.TypeProvider#
-                 */
-                listTypes: function () {
-                    var self = this;
-                    return removeDuplicates(
-                        rawTypeDefinitions.filter(function (def) {
-                            return def.key;
-                        }).map(function (def) {
-                            return def.key;
-                        }).map(function (key) {
-                            return self.getType(key);
-                        })
-                    );
-                },
-
-                /**
-                 * Get a specific type by name.
-                 *
-                 * @param {string} [key] the key (machine-readable identifier)
-                 *        for the type of interest
-                 * @returns {Promise<module:core/type/type-impl.TypeImpl>} a
-                 *          promise for a type object identified by this key.
-                 * @memberof module:core/type/type-provider.TypeProvider#
-                 */
-                getType: function (key) {
-                    return new TypeImpl(lookupTypeDef(key));
-                }
-            };
-        }
-
-        // Services framework is designed to expect factories
-        TypeProvider.instantiate = TypeProvider;
+            return new TypeImpl(lookupTypeDef(key));
+        };
 
         return TypeProvider;
-
-
     }
 
 );

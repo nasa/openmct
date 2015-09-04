@@ -42,7 +42,9 @@ define(
                     "property" + name,
                     [ "getDefinition", "getValue", "setValue" ]
                 );
-                mockProperty.getDefinition.andReturn({});
+                mockProperty.getDefinition.andReturn({
+                    control: "textfield"
+                });
                 mockProperty.getValue.andReturn(name);
                 return mockProperty;
             }

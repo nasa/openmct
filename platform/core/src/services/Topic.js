@@ -44,6 +44,7 @@ define(
          * arguments) are private; each call returns a new instance.
          *
          * @returns {Function}
+         * @memberof platform/core
          */
         function Topic() {
             var topics = {};
@@ -71,6 +72,7 @@ define(
             /**
              * Use and (if necessary) create a new topic.
              * @param {string} [key] name of the topic to use
+             * @memberof platform/core.Topic#
              */
             return function (key) {
                 if (arguments.length < 1) {
@@ -85,3 +87,4 @@ define(
         return Topic;
     }
 );
+

@@ -25,10 +25,23 @@ define(
          * `value` properties describing that domain object (suitable for
          * display.)
          *
+         * @param {DomainObject} domainObject the domain object whose
+         *        metadata is to be exposed
+         * @implements {Capability}
          * @constructor
+         * @memberof platform/core
          */
         function MetadataCapability(domainObject) {
-            var model = domainObject.getModel();
+            this.domainObject = domainObject;
+        }
+
+        /**
+         * Get metadata about this object.
+         * @returns {MetadataProperty[]} metadata about this object
+         */
+        MetadataCapability.prototype.invoke = function () {
+            var domainObject = this.domainObject,
+                model = domainObject.getModel();
 
             function hasDisplayableValue(metadataProperty) {
                 var t = typeof metadataProperty.value;
@@ -73,20 +86,11 @@ define(
                 ];
             }
 
-            function getMetadata() {
-                return getProperties().concat(getCommonMetadata())
-                    .filter(hasDisplayableValue);
-            }
-
-            return {
-                /**
-                 * Get metadata about this object.
-                 * @returns {MetadataProperty[]} metadata about this object
-                 */
-                invoke: getMetadata
-            };
-        }
+            return getProperties().concat(getCommonMetadata())
+                .filter(hasDisplayableValue);
+        };
 
         return MetadataCapability;
     }
 );
+

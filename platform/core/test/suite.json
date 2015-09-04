@@ -15,6 +15,7 @@
     "capabilities/RelationshipCapability",
 
     "models/ModelAggregator",
+    "models/MissingModelDecorator",
     "models/PersistedModelProvider",
     "models/RootModelProvider",
     "models/StaticModelProvider",

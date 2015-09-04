@@ -68,7 +68,7 @@ define(
             // and then on any body touch the bubble is dismissed
             function showBubble(event) {
                 trackPosition(event);
-                
+                event.stopPropagation();
                 // Show the bubble, but on any touchstart on the
                 // body (anywhere) call hidebubble
                 dismissBubble = infoService.display(

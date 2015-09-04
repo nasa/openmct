@@ -1,11 +1,51 @@
-.overlay {
-    @include phoneandtablet {
+@include phoneandtablet {
+    .overlay {
         $m: 0;
-        // Removes curved edges on the dialog box
-        // and makes it take up fullscreen
-        >.holder {
-          @include border-radius($m);
-          top: $m; right: $m; bottom: $m; left: $m;
+        .clk-icon.close {
+            top: $mobileOverlayMargin; right: $mobileOverlayMargin;
+        }
+
+        > .holder {
+            @include border-radius($m);
+            top: $m;
+            right: $m;
+            bottom: $m;
+            left: $m;
+            > .contents {
+                top: $mobileOverlayMargin;
+                right: $mobileOverlayMargin;
+                bottom: $mobileOverlayMargin;
+                left: $mobileOverlayMargin;
+
+                .top-bar {
+                    > .title {
+                        margin-right: 1.2em;
+                    }
+                }
+
+                .form.editor {
+                    border: none;
+
+                    .contents {
+                        top: 0;
+                        right: 0;
+                        bottom: 0;
+                        left: 0;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include phone {
+    .overlay > .holder > .contents .form.editor .contents .form-row {
+        > .label,
+        > .controls {
+            //@include test(blue);
+            display: block;
+            float: none;
+            width: 100%;
         }
     }
 }

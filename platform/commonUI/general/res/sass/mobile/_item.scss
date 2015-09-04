@@ -27,103 +27,92 @@
 .items-holder {
     .item {
         &.grid-item {
-            $dWid: $ueBrowseGridItemLg;
-            $dHei: $ueBrowseGridItemLg;
+            $titleH: 30px;
             @include phoneandtablet {
-                $dWid: 100%;
-                .mobile-grid-nav {
-                    top: 0px;
-                    bottom: 0px;
-                    right: 55px;
-                }
-                .mobile-info {
-                    text-align: center;
-                    width: 50px;
-                    right: 0px;
-                    left: auto;
-                    font-size: 1.3em;
+                width: 100%;
+                >.contents {
+                    top: 0px; right: $interiorMarginLg; bottom: 0px; left: $interiorMarginLg;
                 }
                 .bar {
-                    &.bottom-bar.abs {
-                        top: 0px;
-                        height: auto;
+                    &.top-bar {
+                        // Becomes the right side of the item
+                        //@include test(blue);
+                        bottom: 0 !important; left: auto !important; right: 20px !important;
+                        width: 40px !important; height: auto !important;
+                        text-align: right;
+                    }
+                    &.bottom-bar {
+                        // Becomes the left side of the item
+                        left: $mobileListIconSize + $interiorMarginLg;
+                        right: 60px;
                     }
                     
                 }
                 .item-main {
                     .item-type {
-                        font-size: $mobile-listIcon;
-                        top: 0px;
-                        left: 0px;
+                        //@include test(blue);
+                        font-size: $mobileListIconSize;
+                        right: auto;
+                        bottom: auto;
+                        left: 0;
+                        line-height: 100%;
                         text-align: left;
-                        height: auto
+                        width: $mobileListIconSize;
+                        .l-icon-link {
+                            bottom: 0;
+                        }
                     }
                     .item-open {
-                       display: none;
+                        display: block;
+                        opacity: 1;
+                        font-size: 1em;
+                        width: auto;
                     }
-                }
-                .title, .details {
-                    margin-left: $mobile-listIcon;
                 }
             }
 
             @include phone {
-                $dHei: $phone-itemHeight;
-                width: $dWid;
+                $dHei: $phoneItemH;
                 height: $dHei;
-                .mobile-right {
-                    top: 100%;
-                }
-                .mobile-info {
-                    line-height: $phone-itemHeight * .5;
+                .bar {
+                    &.top-bar {
+                        // Becomes the right side of the item
+                        line-height: $dHei !important;
+                    }
+                    &.bottom-bar {
+                        @include verticalCenterBlock($dHei, $mobileTitleDescH);
+                    }
                 }
                 .item-main {
                     .item-type {
-                        line-height: $phone-itemHeight * .8;
+                        @include verticalCenterBlock($dHei, $mobileListIconSize);
+                    }
+                    .item-open {
+                        line-height: $dHei;
                     }
                 }
-                .title {
-                    margin-right: $mobile-listRight;
-                    line-height: $phone-itemHeight * .5;
-                }
-                .details {
-                    margin-right: $mobile-listRight;
-                    line-height: 0px;
-                }                
             }
             
             @include tablet {
-                $dHei: $tablet-itemHeight;
-                width: $dWid;
+                $dHei: $tabletItemH;
                 height: $dHei;
-                .mobile-right {
-                    top: 100%;
-                }
-                
-                .mobile-info {
-                    line-height: $tablet-itemHeight * .57;
+                .bar {
+                    &.top-bar {
+                        // Becomes the right side of the item
+                        line-height: $dHei !important;
+                    }
+                    &.bottom-bar {
+                        @include verticalCenterBlock($dHei, $mobileTitleDescH);
+                    }
                 }
                 .item-main {
                     .item-type {
-                        font-size: $mobile-listIcon;
-                        line-height: $tablet-itemHeight * .75;
+                        @include verticalCenterBlock($dHei, $mobileListIconSize);
+                    }
+                    .item-open {
+                        line-height: $dHei;
                     }
                 }
-                .title {
-                    margin-right: $mobile-listRight;
-                    line-height: $tablet-itemHeight * .57;
-                }
-                .details {
-                    margin-right: $mobile-listRight;
-                    line-height: 0px;
-                }
-            }
-            
-            @include desktop {
-                $dWid: $ueBrowseGridItemLg;
-                $dHei: $ueBrowseGridItemLg;
-                width: $dWid;
-                height: $dHei; 
             }
         }
     }

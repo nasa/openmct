@@ -31,6 +31,7 @@ define(
 
         /**
          * Policy controlling when the real time Messages view should be avaliable.
+         * @memberof platform/features/rtevents
          * @constructor
          */
         function RTMessagesViewPolicy() {
@@ -52,6 +53,7 @@ define(
                  * @param {Action} action the action
                  * @param domainObject the domain object which will be viewed
                  * @returns {boolean} true if not disallowed
+                 * @memberof platform/features/rtevents.RTMessagesViewPolicy#
                  */
                 allow: function (view, domainObject) {
                     // This policy only applies for the RT Messages view

@@ -41,6 +41,8 @@ define(
         /**
          * Populates a `dialogModel` to pass to `dialogService.getUserChoise`
          * in order to choose between Overwrite and Cancel.
+         * @constructor
+         * @memberof platform/persistence/queue
          */
         function PersistenceFailureDialog(failures) {
             var revisionErrors = [],

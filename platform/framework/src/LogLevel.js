@@ -47,12 +47,35 @@ define(
          * as a default. Only log messages of levels equal to or greater
          * than the specified level will be passed to console.
          *
+         * @memberof platform/framework
          * @constructor
          * @param {string} level the logging level
          */
         function LogLevel(level) {
             // Find the numeric level associated with the string
-            var index = LOG_LEVELS.indexOf(level);
+            this.index = LOG_LEVELS.indexOf(level);
+
+            // Default to 'warn' level if unspecified
+            if (this.index < 0) {
+                this.index = 1;
+            }
+        }
+
+        /**
+         * Configure logging to suppress log output if it is
+         * not of an appropriate level. Both the Angular app
+         * being initialized and a reference to `$log` should be
+         * passed; the former is used to configure application
+         * logging, while the latter is needed to apply the
+         * same configuration during framework initialization
+         * (since the framework also logs.)
+         *
+         * @param app the Angular app to configure
+         * @param $log Angular's $log (also configured)
+         * @memberof platform/framework.LogLevel#
+         */
+        LogLevel.prototype.configure = function (app, $log) {
+            var index = this.index;
 
             // Replace logging methods with no-ops, if they are
             // not of an appropriate level.
@@ -66,35 +89,14 @@ define(
                 });
             }
 
-            // Default to 'warn' level if unspecified
-            if (index < 0) {
-                index = 1;
-            }
-
-            return {
-                /**
-                 * Configure logging to suppress log output if it is
-                 * not of an appropriate level. Both the Angular app
-                 * being initialized and a reference to `$log` should be
-                 * passed; the former is used to configure application
-                 * logging, while the latter is needed to apply the
-                 * same configuration during framework initialization
-                 * (since the framework also logs.)
-                 *
-                 * @param app the Angular app to configure
-                 * @param $log Angular's $log (also configured)
-                 */
-                configure: function (app, $log) {
-                    decorate($log);
-                    app.config(function ($provide) {
-                        $provide.decorator('$log', function ($delegate) {
-                            decorate($delegate);
-                            return $delegate;
-                        });
-                    });
-                }
-            };
-        }
+            decorate($log);
+            app.config(function ($provide) {
+                $provide.decorator('$log', function ($delegate) {
+                    decorate($delegate);
+                    return $delegate;
+                });
+            });
+        };
 
         return LogLevel;
     }

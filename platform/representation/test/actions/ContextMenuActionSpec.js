@@ -81,7 +81,7 @@ define(
                 mockCompiledTemplate.andReturn(mockMenu);
                 mockDocument.find.andReturn(mockBody);
                 mockRootScope.$new.andReturn(mockScope);
-                
+
                 mockActionContext = {key: 'menu', domainObject: mockDomainObject, event: mockEvent};
                 
                 action = new ContextMenuAction(
@@ -131,9 +131,9 @@ define(
             it("removes a menu when body is clicked", function () {
                 // Show the menu
                 action.perform();
-                
+
                 // Verify precondition
-                expect(mockBody.off).not.toHaveBeenCalled();
+                expect(mockBody.remove).not.toHaveBeenCalled();
 
                 // Find and fire body's mousedown listener
                 mockBody.on.calls.forEach(function (call) {
@@ -146,7 +146,28 @@ define(
                 expect(mockMenu.remove).toHaveBeenCalled();
 
                 // Listener should have been detached from body
-                expect(mockBody.off).toHaveBeenCalled();
+                expect(mockBody.off).toHaveBeenCalledWith(
+                    'mousedown',
+                    jasmine.any(Function)
+                );
+            });
+
+            it("removes a menu when it is clicked", function () {
+                // Show the menu
+                action.perform();
+
+                // Verify precondition
+                expect(mockMenu.remove).not.toHaveBeenCalled();
+
+                // Find and fire body's mousedown listener
+                mockMenu.on.calls.forEach(function (call) {
+                    if (call.args[0] === 'click') {
+                        call.args[1]();
+                    }
+                });
+
+                // Menu should have been removed
+                expect(mockMenu.remove).toHaveBeenCalled();
             });
             
             it("keeps a menu when menu is clicked", function () {

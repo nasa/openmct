@@ -11,8 +11,7 @@
             },
             {
                 "key": "agentService",
-                "implementation": "/services/AgentService.js",
-                "depends": [ "$window" ]
+                "implementation": "/services/AgentService.js"
             }
         ],
         "runs": [
@@ -201,7 +200,7 @@
             {
                 "key": "label",
                 "templateUrl": "templates/label.html",
-                "uses": [ "type" ],
+                "uses": [ "type", "location" ],
                 "gestures": [ "drag", "menu", "info" ]
             },
             {

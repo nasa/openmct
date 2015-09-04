@@ -34,6 +34,7 @@ define(
          * input fields but outputs a single timestamp (in
          * milliseconds since start of 1970) to the ngModel.
          *
+         * @memberof platform/forms
          * @constructor
          */
         function DateTimeController($scope) {
@@ -106,3 +107,4 @@ define(
 
     }
 );
+

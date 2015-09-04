@@ -30,6 +30,8 @@ define(
             var mockScope,
                 mockTimeout,
                 mockAgentService,
+                mockNgModel,
+                mockDomainObject,
                 controller;
 
             function TestObject(id, context) {
@@ -42,9 +44,18 @@ define(
             }
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj("$scope", ["$watch", "$on"]);
+                mockScope = jasmine.createSpyObj("$scope", ["$watch", "$on", "$emit"]);
                 mockTimeout = jasmine.createSpy("$timeout");
-                mockAgentService = jasmine.createSpyObj("agentService", ["isMobile"]);
+                mockAgentService = jasmine.createSpyObj("agentService", ["isMobile", "isPhone", "getOrientation"]);
+                mockNgModel = jasmine.createSpyObj("ngModel", ["selectedObject"]);
+                mockDomainObject = jasmine.createSpyObj(
+                    "domainObject",
+                    [ "getId", "getCapability", "getModel", "useCapability" ]
+                );
+                
+                mockAgentService.getOrientation.andReturn("portrait");
+                mockAgentService.isPhone.andReturn(true);
+                
                 controller = new TreeNodeController(mockScope, mockTimeout, mockAgentService);
             });
 
@@ -190,6 +201,11 @@ define(
                 if (controller) {
                     controller.checkMobile();
                 }
+            });
+            
+            it("allows a set object to emit select-obj", function () {
+                controller.setObject(mockNgModel, mockDomainObject);
+                expect(mockScope.$emit).toHaveBeenCalledWith('select-obj');
             });
         });
     }

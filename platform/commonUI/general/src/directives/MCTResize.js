@@ -49,6 +49,7 @@ define(
          *   This is an Angular expression, and it will be re-evaluated after
          *   each interval.
          *
+         * @memberof platform/commonUI/general
          * @constructor
          *
          */

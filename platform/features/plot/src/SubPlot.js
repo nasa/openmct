@@ -36,6 +36,7 @@ define(
          * A SubPlot is an individual plot within a Plot View (which
          * may contain multiple plots, specifically when in Stacked
          * plot mode.)
+         * @memberof platform/features/plot
          * @constructor
          * @param {DomainObject[]} telemetryObjects the domain objects
          *        which will be plotted in this sub-plot
@@ -49,141 +50,278 @@ define(
             // We are used from a template often, so maintain
             // state in local variables to allow for fast look-up,
             // as is normal for controllers.
-            var draw = {},
-                rangeTicks = [],
-                domainTicks = [],
-                formatter = telemetryFormatter,
-                domainOffset,
-                mousePosition,
-                marqueeStart,
-                panStart,
-                panStartBounds,
-                subPlotBounds,
-                hoverCoordinates,
-                isHovering = false;
+            this.telemetryObjects = telemetryObjects;
+            this.domainTicks = [];
+            this.rangeTicks = [];
+            this.formatter = telemetryFormatter;
+            this.draw = {};
+            this.hovering = false;
+            this.panZoomStack = panZoomStack;
+
+            // Start with the right initial drawing bounds,
+            // tick marks
+            this.updateDrawingBounds();
+            this.updateTicks();
+        }
+
+        // Utility function for filtering out empty strings.
+        function isNonEmpty(v) {
+            return typeof v === 'string' && v !== "";
+        }
+
+        // Converts from pixel coordinates to domain-range,
+        // to interpret mouse gestures.
+        SubPlot.prototype.mousePositionToDomainRange = function (mousePosition) {
+            return new PlotPosition(
+                mousePosition.x,
+                mousePosition.y,
+                mousePosition.width,
+                mousePosition.height,
+                this.panZoomStack
+            ).getPosition();
+        };
+
+        // Utility function to get the mouse position (in x,y
+        // pixel coordinates in the canvas area) from a mouse
+        // event object.
+        SubPlot.prototype.toMousePosition = function ($event) {
+            var bounds = this.subPlotBounds;
+
+            return {
+                x: $event.clientX - bounds.left,
+                y: $event.clientY - bounds.top,
+                width: bounds.width,
+                height: bounds.height
+            };
+        };
+
+        // Convert a domain-range position to a displayable
+        // position. This will subtract the domain offset, which
+        // is used to bias domain values to minimize loss-of-precision
+        // associated with conversion to a 32-bit floating point
+        // format (which is needed in the chart area itself, by WebGL.)
+        SubPlot.prototype.toDisplayable = function (position) {
+            return [ position[0] - this.domainOffset, position[1] ];
+        };
+
+        // Update the current hover coordinates
+        SubPlot.prototype.updateHoverCoordinates = function () {
+            var formatter = this.formatter;
 
             // Utility, for map/forEach loops. Index 0 is domain,
             // index 1 is range.
             function formatValue(v, i) {
                 return (i ?
-                        formatter.formatRangeValue :
-                        formatter.formatDomainValue)(v);
+                    formatter.formatRangeValue :
+                    formatter.formatDomainValue)(v);
             }
 
-            // Utility function for filtering out empty strings.
-            function isNonEmpty(v) {
-                return typeof v === 'string' && v !== "";
+            this.hoverCoordinates = this.mousePosition &&
+                this.mousePositionToDomainRange(this.mousePosition)
+                    .map(formatValue)
+                    .filter(isNonEmpty)
+                    .join(", ");
+        };
+
+        // Update the drawable marquee area to reflect current
+        // mouse position (or don't show it at all, if no marquee
+        // zoom is in progress)
+        SubPlot.prototype.updateMarqueeBox = function () {
+            // Express this as a box in the draw object, which
+            // is passed to an mct-chart in the template for rendering.
+            this.draw.boxes = this.marqueeStart ?
+                [{
+                    start: this.toDisplayable(
+                        this.mousePositionToDomainRange(this.marqueeStart)
+                    ),
+                    end: this.toDisplayable(
+                        this.mousePositionToDomainRange(this.mousePosition)
+                    ),
+                    color: [1, 1, 1, 0.5 ]
+                }] : undefined;
+        };
+
+        // Update the bounds (origin and dimensions) of the drawing area.
+        SubPlot.prototype.updateDrawingBounds = function () {
+            var panZoom = this.panZoomStack.getPanZoom();
+
+            // Communicate pan-zoom state from stack to the draw object
+            // which is passed to mct-chart in the template.
+            this.draw.dimensions = panZoom.dimensions;
+            this.draw.origin = [
+                panZoom.origin[0] - this.domainOffset,
+                panZoom.origin[1]
+            ];
+        };
+
+        // Update tick marks in scope.
+        SubPlot.prototype.updateTicks = function () {
+            var tickGenerator =
+                new PlotTickGenerator(this.panZoomStack, this.formatter);
+
+            this.domainTicks =
+                tickGenerator.generateDomainTicks(DOMAIN_TICKS);
+            this.rangeTicks =
+                tickGenerator.generateRangeTicks(RANGE_TICKS);
+        };
+
+        SubPlot.prototype.updatePan = function () {
+            var start, current, delta, nextOrigin;
+
+            // Clear the previous panning pan-zoom state
+            this.panZoomStack.popPanZoom();
+
+            // Calculate what the new resulting pan-zoom should be
+            start = this.mousePositionToDomainRange(
+                this.panStart,
+                this.panZoomStack
+            );
+            current = this.mousePositionToDomainRange(
+                this.mousePosition,
+                this.panZoomStack
+            );
+
+            delta = [ current[0] - start[0], current[1] - start[1] ];
+            nextOrigin = [
+                this.panStartBounds.origin[0] - delta[0],
+                this.panStartBounds.origin[1] - delta[1]
+            ];
+
+            // ...and push a new one at the current mouse position
+            this.panZoomStack
+                .pushPanZoom(nextOrigin, this.panStartBounds.dimensions);
+        };
+
+        /**
+         * Get the set of domain objects which are being
+         * represented in this sub-plot.
+         * @returns {DomainObject[]} the domain objects which
+         *          will have data plotted in this sub-plot
+         */
+        SubPlot.prototype.getTelemetryObjects = function () {
+            return this.telemetryObjects;
+        };
+
+        /**
+         * Get ticks mark information appropriate for using in the
+         * template for this sub-plot's domain axis, as prepared
+         * by the PlotTickGenerator.
+         * @returns {Array} tick marks for the domain axis
+         */
+        SubPlot.prototype.getDomainTicks = function () {
+            return this.domainTicks;
+        };
+
+        /**
+         * Get ticks mark information appropriate for using in the
+         * template for this sub-plot's range axis, as prepared
+         * by the PlotTickGenerator.
+         * @returns {Array} tick marks for the range axis
+         */
+        SubPlot.prototype.getRangeTicks = function () {
+            return this.rangeTicks;
+        };
+
+        /**
+         * Get the drawing object associated with this sub-plot;
+         * this object will be passed to the mct-chart in which
+         * this sub-plot's lines will be plotted, as its "draw"
+         * attribute, and should have the same internal format
+         * expected by that directive.
+         * @return {object} the drawing object
+         */
+        SubPlot.prototype.getDrawingObject = function () {
+            return this.draw;
+        };
+
+        /**
+         * Get the coordinates (as displayable text) for the
+         * current mouse position.
+         * @returns {string[]} the displayable domain and range
+         *          coordinates over which the mouse is hovered
+         */
+        SubPlot.prototype.getHoverCoordinates = function () {
+            return this.hoverCoordinates;
+        };
+
+        /**
+         * Handle mouse movement over the chart area.
+         * @param $event the mouse event
+         * @memberof platform/features/plot.SubPlot#
+         */
+        SubPlot.prototype.hover = function ($event) {
+            this.hovering = true;
+            this.subPlotBounds = $event.target.getBoundingClientRect();
+            this.mousePosition = this.toMousePosition($event);
+            this.updateHoverCoordinates();
+            if (this.marqueeStart) {
+                this.updateMarqueeBox();
             }
-
-            // Converts from pixel coordinates to domain-range,
-            // to interpret mouse gestures.
-            function mousePositionToDomainRange(mousePosition) {
-                return new PlotPosition(
-                    mousePosition.x,
-                    mousePosition.y,
-                    mousePosition.width,
-                    mousePosition.height,
-                    panZoomStack
-                ).getPosition();
+            if (this.panStart) {
+                this.updatePan();
+                this.updateDrawingBounds();
+                this.updateTicks();
             }
+        };
 
-            // Utility function to get the mouse position (in x,y
-            // pixel coordinates in the canvas area) from a mouse
-            // event object.
-            function toMousePosition($event) {
-                var bounds = subPlotBounds;
-
-                return {
-                    x: $event.clientX - bounds.left,
-                    y: $event.clientY - bounds.top,
-                    width: bounds.width,
-                    height: bounds.height
-                };
+        /**
+         * Continue a previously-start pan or zoom gesture.
+         * @param $event the mouse event
+         * @memberof platform/features/plot.SubPlot#
+         */
+        SubPlot.prototype.continueDrag = function ($event) {
+            this.mousePosition = this.toMousePosition($event);
+            if (this.marqueeStart) {
+                this.updateMarqueeBox();
             }
-
-            // Convert a domain-range position to a displayable
-            // position. This will subtract the domain offset, which
-            // is used to bias domain values to minimize loss-of-precision
-            // associated with conversion to a 32-bit floating point
-            // format (which is needed in the chart area itself, by WebGL.)
-            function toDisplayable(position) {
-                return [ position[0] - domainOffset, position[1] ];
+            if (this.panStart) {
+                this.updatePan();
+                this.updateDrawingBounds();
+                this.updateTicks();
             }
+        };
 
-
-            // Update the currnet hover coordinates
-            function updateHoverCoordinates() {
-                hoverCoordinates = mousePosition &&
-                        mousePositionToDomainRange(mousePosition)
-                            .map(formatValue)
-                            .filter(isNonEmpty)
-                            .join(", ");
+        /**
+         * Initiate a marquee zoom action.
+         * @param $event the mouse event
+         */
+        SubPlot.prototype.startDrag = function ($event) {
+            this.subPlotBounds = $event.target.getBoundingClientRect();
+            this.mousePosition = this.toMousePosition($event);
+            // Treat any modifier key as a pan
+            if ($event.altKey || $event.shiftKey || $event.ctrlKey) {
+                // Start panning
+                this.panStart = this.mousePosition;
+                this.panStartBounds = this.panZoomStack.getPanZoom();
+                // We're starting a pan, so add this back as a
+                // state on the stack; it will get replaced
+                // during the pan.
+                this.panZoomStack.pushPanZoom(
+                    this.panStartBounds.origin,
+                    this.panStartBounds.dimensions
+                );
+                $event.preventDefault();
+            } else {
+                // Start marquee zooming
+                this.marqueeStart = this.mousePosition;
+                this.updateMarqueeBox();
             }
+        };
 
-            // Update the drawable marquee area to reflect current
-            // mouse position (or don't show it at all, if no marquee
-            // zoom is in progress)
-            function updateMarqueeBox() {
-                // Express this as a box in the draw object, which
-                // is passed to an mct-chart in the template for rendering.
-                draw.boxes = marqueeStart ?
-                        [{
-                            start: toDisplayable(mousePositionToDomainRange(marqueeStart)),
-                            end: toDisplayable(mousePositionToDomainRange(mousePosition)),
-                            color: [1, 1, 1, 0.5 ]
-                        }] : undefined;
-            }
-
-            // Update the bounds (origin and dimensions) of the drawing area.
-            function updateDrawingBounds() {
-                var panZoom = panZoomStack.getPanZoom();
-
-                // Communicate pan-zoom state from stack to the draw object
-                // which is passed to mct-chart in the template.
-                draw.dimensions = panZoom.dimensions;
-                draw.origin = [
-                    panZoom.origin[0] - domainOffset,
-                    panZoom.origin[1]
-                ];
-            }
-
-            // Update tick marks in scope.
-            function updateTicks() {
-                var tickGenerator = new PlotTickGenerator(panZoomStack, formatter);
-
-                domainTicks =
-                    tickGenerator.generateDomainTicks(DOMAIN_TICKS);
-                rangeTicks =
-                    tickGenerator.generateRangeTicks(RANGE_TICKS);
-            }
-
-            function updatePan() {
-                var start, current, delta, nextOrigin;
-
-                // Clear the previous panning pan-zoom state
-                panZoomStack.popPanZoom();
-
-                // Calculate what the new resulting pan-zoom should be
-                start = mousePositionToDomainRange(panStart);
-                current = mousePositionToDomainRange(mousePosition);
-                delta = [ current[0] - start[0], current[1] - start[1] ];
-                nextOrigin = [
-                    panStartBounds.origin[0] - delta[0],
-                    panStartBounds.origin[1] - delta[1]
-                ];
-
-                // ...and push a new one at the current mouse position
-                panZoomStack.pushPanZoom(nextOrigin, panStartBounds.dimensions);
-            }
-
+        /**
+         * Complete a marquee zoom action.
+         * @param $event the mouse event
+         */
+        SubPlot.prototype.endDrag = function ($event) {
+            var self = this;
 
             // Perform a marquee zoom.
             function marqueeZoom(start, end) {
                 // Determine what boundary is described by the marquee,
                 // in domain-range values. Use the minima for origin, so that
                 // it doesn't matter what direction the user marqueed in.
-                var a = mousePositionToDomainRange(start),
-                    b = mousePositionToDomainRange(end),
+                var a = self.mousePositionToDomainRange(start),
+                    b = self.mousePositionToDomainRange(end),
                     origin = [
                         Math.min(a[0], b[0]),
                         Math.min(a[1], b[1])
@@ -196,186 +334,71 @@ define(
                 // Proceed with zoom if zoom dimensions are non zeros
                 if (!(dimensions[0] === 0 && dimensions[1] === 0)) {
                     // Push the new state onto the pan-zoom stack
-                    panZoomStack.pushPanZoom(origin, dimensions);
+                    self.panZoomStack.pushPanZoom(origin, dimensions);
 
                     // Make sure tick marks reflect new bounds
-                    updateTicks();
+                    self.updateTicks();
                 }
             }
 
-            // Start with the right initial drawing bounds,
-            // tick marks
-            updateDrawingBounds();
-            updateTicks();
+            this.mousePosition = this.toMousePosition($event);
+            this.subPlotBounds = undefined;
+            if (this.marqueeStart) {
+                marqueeZoom(this.marqueeStart, this.mousePosition);
+                this.marqueeStart = undefined;
+                this.updateMarqueeBox();
+                this.updateDrawingBounds();
+                this.updateTicks();
+            }
+            if (this.panStart) {
+                // End panning
+                this.panStart = undefined;
+                this.panStartBounds = undefined;
+            }
+        };
 
-            return {
-                /**
-                 * Get the set of domain objects which are being
-                 * represented in this sub-plot.
-                 * @returns {DomainObject[]} the domain objects which
-                 *          will have data plotted in this sub-plot
-                 */
-                getTelemetryObjects: function () {
-                    return telemetryObjects;
-                },
-                /**
-                 * Get ticks mark information appropriate for using in the
-                 * template for this sub-plot's domain axis, as prepared
-                 * by the PlotTickGenerator.
-                 * @returns {Array} tick marks for the domain axis
-                 */
-                getDomainTicks: function () {
-                    return domainTicks;
-                },
-                /**
-                 * Get ticks mark information appropriate for using in the
-                 * template for this sub-plot's range axis, as prepared
-                 * by the PlotTickGenerator.
-                 * @returns {Array} tick marks for the range axis
-                 */
-                getRangeTicks: function () {
-                    return rangeTicks;
-                },
-                /**
-                 * Get the drawing object associated with this sub-plot;
-                 * this object will be passed to the mct-chart in which
-                 * this sub-plot's lines will be plotted, as its "draw"
-                 * attribute, and should have the same internal format
-                 * expected by that directive.
-                 * @return {object} the drawing object
-                 */
-                getDrawingObject: function () {
-                    return draw;
-                },
-                /**
-                 * Get the coordinates (as displayable text) for the
-                 * current mouse position.
-                 * @returns {string[]} the displayable domain and range
-                 *          coordinates over which the mouse is hovered
-                 */
-                getHoverCoordinates: function () {
-                    return hoverCoordinates;
-                },
-                /**
-                 * Handle mouse movement over the chart area.
-                 * @param $event the mouse event
-                 */
-                hover: function ($event) {
-                    isHovering = true;
-                    subPlotBounds = $event.target.getBoundingClientRect();
-                    mousePosition = toMousePosition($event);
-                    updateHoverCoordinates();
-                    if (marqueeStart) {
-                        updateMarqueeBox();
-                    }
-                    if (panStart) {
-                        updatePan();
-                        updateDrawingBounds();
-                        updateTicks();
-                    }
-                },
-                /**
-                 * Continue a previously-start pan or zoom gesture.
-                 * @param $event the mouse event
-                 */
-                continueDrag: function ($event) {
-                    mousePosition = toMousePosition($event);
-                    if (marqueeStart) {
-                        updateMarqueeBox();
-                    }
-                    if (panStart) {
-                        updatePan();
-                        updateDrawingBounds();
-                        updateTicks();
-                    }
-                },
-                /**
-                 * Initiate a marquee zoom action.
-                 * @param $event the mouse event
-                 */
-                startDrag: function ($event) {
-                    subPlotBounds = $event.target.getBoundingClientRect();
-                    mousePosition = toMousePosition($event);
-                    // Treat any modifier key as a pan
-                    if ($event.altKey || $event.shiftKey || $event.ctrlKey) {
-                        // Start panning
-                        panStart = mousePosition;
-                        panStartBounds = panZoomStack.getPanZoom();
-                        // We're starting a pan, so add this back as a
-                        // state on the stack; it will get replaced
-                        // during the pan.
-                        panZoomStack.pushPanZoom(
-                            panStartBounds.origin,
-                            panStartBounds.dimensions
-                        );
-                        $event.preventDefault();
-                    } else {
-                        // Start marquee zooming
-                        marqueeStart = mousePosition;
-                        updateMarqueeBox();
-                    }
-                },
-                /**
-                 * Complete a marquee zoom action.
-                 * @param $event the mouse event
-                 */
-                endDrag: function ($event) {
-                    mousePosition = toMousePosition($event);
-                    subPlotBounds = undefined;
-                    if (marqueeStart) {
-                        marqueeZoom(marqueeStart, mousePosition);
-                        marqueeStart = undefined;
-                        updateMarqueeBox();
-                        updateDrawingBounds();
-                        updateTicks();
-                    }
-                    if (panStart) {
-                        // End panning
-                        panStart = undefined;
-                        panStartBounds = undefined;
-                    }
-                },
-                /**
-                 * Update the drawing bounds, marquee box, and
-                 * tick marks for this subplot.
-                 */
-                update: function () {
-                    updateDrawingBounds();
-                    updateMarqueeBox();
-                    updateTicks();
-                },
-                /**
-                 * Set the domain offset associated with this sub-plot.
-                 * A domain offset is subtracted from all domain
-                 * before lines are drawn to avoid artifacts associated
-                 * with the use of 32-bit floats when domain values
-                 * are often timestamps (due to insufficient precision.)
-                 * A SubPlot will be drawing boxes (for marquee zoom) in
-                 * the same offset coordinate space, so it needs to know
-                 * the value of this to position that marquee box
-                 * correctly.
-                 * @param {number} value the domain offset
-                 */
-                setDomainOffset: function (value) {
-                    domainOffset = value;
-                },
-                /**
-                 * When used with no argument, check whether or not the user
-                 * is currently hovering over this subplot. When used with
-                 * an argument, set that state.
-                 * @param {boolean} [state] the new hovering state
-                 * @returns {boolean} the hovering state
-                 */
-                isHovering: function (state) {
-                    if (state !== undefined) {
-                        isHovering = state;
-                    }
-                    return isHovering;
-                }
-            };
-        }
+        /**
+         * Update the drawing bounds, marquee box, and
+         * tick marks for this subplot.
+         */
+        SubPlot.prototype.update = function () {
+            this.updateDrawingBounds();
+            this.updateMarqueeBox();
+            this.updateTicks();
+        };
+
+        /**
+         * Set the domain offset associated with this sub-plot.
+         * A domain offset is subtracted from all domain
+         * before lines are drawn to avoid artifacts associated
+         * with the use of 32-bit floats when domain values
+         * are often timestamps (due to insufficient precision.)
+         * A SubPlot will be drawing boxes (for marquee zoom) in
+         * the same offset coordinate space, so it needs to know
+         * the value of this to position that marquee box
+         * correctly.
+         * @param {number} value the domain offset
+         */
+        SubPlot.prototype.setDomainOffset = function (value) {
+            this.domainOffset = value;
+        };
+
+        /**
+         * When used with no argument, check whether or not the user
+         * is currently hovering over this subplot. When used with
+         * an argument, set that state.
+         * @param {boolean} [state] the new hovering state
+         * @returns {boolean} the hovering state
+         */
+        SubPlot.prototype.isHovering = function (state) {
+            if (state !== undefined) {
+                this.hovering = state;
+            }
+            return this.hovering;
+        };
 
         return SubPlot;
 
     }
 );
+

@@ -20,18 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/************************** MOBILE REPRESENTATION ITEMS DIMENSIONS */
-$mobile-listIcon: 30px;
-$mobile-listRight: 10px;
+/************************** STYLE */
+$colorMobilePaneLeft: #222;
 
-$phone-itemHeight: $ueBrowseGridItemLg/4;
-$tablet-itemHeight: $ueBrowseGridItemLg/3;
+/************************** MOBILE REPRESENTATION ITEMS DIMENSIONS */
+$mobileListIconSize: 30px;
+$mobileTitleDescH: 35px;
+$mobileOverlayMargin: 10px;
+$phoneItemH: floor($ueBrowseGridItemLg/4);
+$tabletItemH: floor($ueBrowseGridItemLg/3);
 
 /************************** MOBILE TREE MENU DIMENSIONS */
-$mobile-treeHeight: 38px;
-$mobile-startingTreeLeft: 3px;
-$mobile-runningTreeLeft: 7px;
-$mobile-treeRight: 13px;
+$mobileTreeItemH: 35px;
+$mobileTreeItemIndent: 20px;
+$mobileTreeRightArrowW: 30px;
 
 /************************** WINDOW DIMENSIONS FOR RWD */
 $phoMaxW: 514px;
@@ -80,8 +82,5 @@ $desktopPortrait: "screen and #{$desktopPortraitCheck}";
 $desktopLandscape: "screen and #{$desktopLandscapeCheck}";
 
 /************************** DEVICE PARAMETERS FOR MENUS/REPRESENTATIONS */
-$phoneRepSizePortrait: 19px;
-$phoneRepSizeLandscape: 66%;
-$tabletRepSizePortrait: 500px;
-$tabletRepSizeLandscape: 78%;
-$desktopMenuSize: 25%;
+$proporMenuOnly: 90%;
+$proporMenuWithView: 40%;

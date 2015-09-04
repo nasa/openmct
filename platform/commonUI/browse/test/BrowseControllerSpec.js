@@ -164,7 +164,12 @@ define(
             // lets the html code know if the
             // tree menu is open.
             it("calls the treeSlide function", function () {
-                mockScope.treeSlide();
+                expect(mockScope.$on).toHaveBeenCalledWith(
+                    "select-obj",
+                    jasmine.any(Function)
+                );
+                
+                mockScope.$on.calls[1].args[1]();
             });
 
             it("releases its navigation listener when its scope is destroyed", function () {
@@ -172,7 +177,8 @@ define(
                     "$destroy",
                     jasmine.any(Function)
                 );
-                mockScope.$on.mostRecentCall.args[1]();
+                
+                mockScope.$on.calls[0].args[1]();
                 // Should remove the listener it added earlier
                 expect(mockNavigationService.removeListener).toHaveBeenCalledWith(
                     mockNavigationService.addListener.mostRecentCall.args[0]
@@ -288,6 +294,19 @@ define(
                 
                 mockRoute.current.params.ids = "mine/junk";
                 mockParent.getId.andReturn("mine");
+                
+                controller = new BrowseController(
+                    mockScope,
+                    mockRoute,
+                    mockLocation,
+                    mockObjectService,
+                    mockNavigationService
+                );
+                
+                mockScope.checkRoot();
+                
+                mockDomainObject.getCapability.andReturn(undefined);
+                mockNavigationService.getNavigation.andReturn(mockDomainObject);
                 
                 controller = new BrowseController(
                     mockScope,

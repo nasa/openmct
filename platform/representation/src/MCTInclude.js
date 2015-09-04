@@ -49,6 +49,7 @@ define(
          *   an output) and `parameters` is meant to be useful for
          *   display parameterization (more like an input.)
          *
+         * @memberof platform/representation
          * @constructor
          * @param {TemplateDefinition[]} templates an array of
          *        template extensions
@@ -92,3 +93,4 @@ define(
         return MCTInclude;
     }
 );
+

@@ -21,6 +21,11 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * This bundle adds the Web Page object type, which can be used to embed
+ * other web pages with layouts.
+ * @namespace platform/features/pages
+ */
 define(
     [],
     function () {
@@ -29,17 +34,22 @@ define(
         /**
          * Controller for embedded web pages; serves simply as a
          * wrapper for `$sce` to mark pages as trusted.
+         * @constructor
+         * @memberof platform/features/pages
          */
         function EmbeddedPageController($sce) {
-            return {
-                /**
-                 * Alias of `$sce.trustAsResourceUrl`.
-                 */
-                trust: function (url) {
-                    return $sce.trustAsResourceUrl(url);
-                }
-            };
+            this.$sce = $sce;
         }
+
+        /**
+         * Alias of `$sce.trustAsResourceUrl`.
+         * @param {string} url the URL to trust
+         * @returns {string} the trusted URL
+         */
+        EmbeddedPageController.prototype.trust = function (url) {
+            return this.$sce.trustAsResourceUrl(url);
+        };
+
 
         return EmbeddedPageController;
     }

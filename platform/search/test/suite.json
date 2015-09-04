@@ -1,5 +1,8 @@
 [
-    "SearchAggregator",
-    "GenericSearchProvider",
-    "GenericSearchWorker"
+    "controllers/SearchController",
+    "controllers/SearchMenuController",
+    "controllers/ClickAwayController",
+    "services/SearchAggregator",
+    "services/GenericSearchProvider",
+    "services/GenericSearchWorker"
 ]

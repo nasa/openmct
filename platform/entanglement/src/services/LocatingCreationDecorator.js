@@ -19,12 +19,31 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.object-browse-bar {
-    height: $ueTopBarH;
-    line-height: $ueTopBarH;
-    .items-select {
-        .btn-menu {
-            margin-right: $interiorMargin * 3;
+
+/*global define */
+
+define(
+    function () {
+        "use strict";
+
+        /**
+         * Adds a `location` property to newly-created domain objects.
+         * @constructor
+         * @augments {platform/commonUI/browse.CreationService}
+         * @memberof platform/entanglement
+         */
+        function LocatingCreationDecorator(creationService) {
+            this.creationService = creationService;
         }
+
+        LocatingCreationDecorator.prototype.createObject = function (model, parent) {
+            if (parent && parent.getId) {
+                model.location = parent.getId();
+            }
+            return this.creationService.createObject(model, parent);
+        };
+
+        return LocatingCreationDecorator;
     }
-}
+);
+

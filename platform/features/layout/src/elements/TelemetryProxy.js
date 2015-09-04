@@ -35,11 +35,13 @@ define(
          * Note that arguments here are meant to match those expected
          * by `Array.prototype.map`
          *
+         * @memberof platform/features/layout
          * @constructor
          * @param element the fixed position element, as stored in its
          *        configuration
          * @param index the element's index within its array
          * @param {Array} elements the full array of elements
+         * @augments {platform/features/layout.ElementProxy}
          */
         function TelemetryProxy(element, index, elements) {
             var proxy = new TextProxy(element, index, elements);

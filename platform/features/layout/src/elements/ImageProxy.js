@@ -32,11 +32,13 @@ define(
          * Note that arguments here are meant to match those expected
          * by `Array.prototype.map`
          *
+         * @memberof platform/features/layout
          * @constructor
          * @param element the fixed position element, as stored in its
          *        configuration
          * @param index the element's index within its array
          * @param {Array} elements the full array of elements
+         * @augments {platform/features/layout.ElementProxy}
          */
         function ImageProxy(element, index, elements) {
             var proxy = new ElementProxy(element, index, elements);
@@ -45,6 +47,7 @@ define(
              * Get and/or set the displayed text of this element.
              * @param {string} [text] the new text (if setting)
              * @returns {string} the text
+             * @memberof platform/features/layout.ImageProxy#
              */
             proxy.url = new AccessorMutator(element, 'url');
 

@@ -112,7 +112,9 @@ define(
             });
 
             it("saves objects that have been marked dirty", function () {
-                var objects = ['a', 'b', 'c'].map(TestObject).map(cache.getEditableObject);
+                var objects = ['a', 'b', 'c'].map(TestObject).map(function (domainObject) {
+                    return cache.getEditableObject(domainObject);
+                });
 
                 cache.markDirty(objects[0]);
                 cache.markDirty(objects[2]);
@@ -123,7 +125,9 @@ define(
             });
 
             it("does not save objects that have been marked clean", function () {
-                var objects = ['a', 'b', 'c'].map(TestObject).map(cache.getEditableObject);
+                var objects = ['a', 'b', 'c'].map(TestObject).map(function (domainObject) {
+                    return cache.getEditableObject(domainObject);
+                });
 
                 cache.markDirty(objects[0]);
                 cache.markDirty(objects[2]);

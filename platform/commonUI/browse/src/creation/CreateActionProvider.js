@@ -33,7 +33,10 @@ define(
          * The CreateActionProvider is an ActionProvider which introduces
          * a Create action for each creatable domain object type.
          *
+         * @memberof platform/commonUI/browse
          * @constructor
+         * @implements {ActionService}
+         *
          * @param {TypeService} typeService the type service, used to discover
          *        available types
          * @param {DialogService} dialogService the dialog service, used by
@@ -44,43 +47,40 @@ define(
          *        object creation.
          */
         function CreateActionProvider(typeService, dialogService, creationService, policyService) {
-            return {
-                /**
-                 * Get all Create actions which are applicable in the provided
-                 * context.
-                 * @memberof CreateActionProvider
-                 * @method
-                 * @returns {CreateAction[]}
-                 */
-                getActions: function (actionContext) {
-                    var context = actionContext || {},
-                        key = context.key,
-                        destination = context.domainObject;
-
-                    // We only provide Create actions, and we need a
-                    // domain object to serve as the container for the
-                    // newly-created object (although the user may later
-                    // make a different selection)
-                    if (key !== 'create' || !destination) {
-                        return [];
-                    }
-
-                    // Introduce one create action per type
-                    return typeService.listTypes().filter(function (type) {
-                        return type.hasFeature("creation");
-                    }).map(function (type) {
-                        return new CreateAction(
-                            type,
-                            destination,
-                            context,
-                            dialogService,
-                            creationService,
-                            policyService
-                        );
-                    });
-                }
-            };
+            this.typeService = typeService;
+            this.dialogService = dialogService;
+            this.creationService = creationService;
+            this.policyService = policyService;
         }
+
+        CreateActionProvider.prototype.getActions = function (actionContext) {
+            var context = actionContext || {},
+                key = context.key,
+                destination = context.domainObject,
+                self = this;
+
+            // We only provide Create actions, and we need a
+            // domain object to serve as the container for the
+            // newly-created object (although the user may later
+            // make a different selection)
+            if (key !== 'create' || !destination) {
+                return [];
+            }
+
+            // Introduce one create action per type
+            return this.typeService.listTypes().filter(function (type) {
+                return type.hasFeature("creation");
+            }).map(function (type) {
+                return new CreateAction(
+                    type,
+                    destination,
+                    context,
+                    self.dialogService,
+                    self.creationService,
+                    self.policyService
+                );
+            });
+        };
 
         return CreateActionProvider;
     }

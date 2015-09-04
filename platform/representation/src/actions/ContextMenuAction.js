@@ -31,7 +31,7 @@ define(
 
         var MENU_TEMPLATE = "<mct-representation key=\"'context-menu'\" " +
                 "mct-object=\"domainObject\" " +
-                "ng-class=\"menuClass\"" +
+                "ng-class=\"menuClass\" " +
                 "ng-style=\"menuStyle\">" +
                 "</mct-representation>",
             dismissExistingMenu;
@@ -39,6 +39,7 @@ define(
         /**
          * Launches a custom context menu for the domain object it contains.
          *
+         * @memberof platform/representation
          * @constructor
          * @param $compile Angular's $compile service
          * @param $document the current document
@@ -46,83 +47,91 @@ define(
          * @param $rootScope Angular's root scope
          * @param actionContexr the context in which the action
          *                      should be performed
+         * @implements {Action}
          */
         function ContextMenuAction($compile, $document, $window, $rootScope, agentService, actionContext) {
-            
-            function perform() {
-                var winDim = [$window.innerWidth, $window.innerHeight],
-                    eventCoors = [actionContext.event.pageX, actionContext.event.pageY],
-                    menuDim = GestureConstants.MCT_MENU_DIMENSIONS,
-                    body = $document.find('body'),
-                    scope = $rootScope.$new(),
-                    goLeft = eventCoors[0] + menuDim[0] > winDim[0],
-                    goUp = eventCoors[1] + menuDim[1] > winDim[1],
-                    menu;
+            this.$compile = $compile;
+            this.agentService = agentService;
+            this.actionContext = actionContext;
+            this.getDocument = function () { return $document; };
+            this.getWindow = function () { return $window; };
+            this.getRootScope = function () { return $rootScope; };
+        }
 
-                // Remove the context menu
-                function dismiss() {
-                    menu.remove();
-                    body.off("click", dismiss);
-                    dismissExistingMenu = undefined;
-                }
+        ContextMenuAction.prototype.perform = function () {
+            var $compile = this.$compile,
+                $document = this.getDocument(),
+                $window = this.getWindow(),
+                $rootScope = this.getRootScope(),
+                actionContext = this.actionContext,
+                winDim = [$window.innerWidth, $window.innerHeight],
+                eventCoors = [actionContext.event.pageX, actionContext.event.pageY],
+                menuDim = GestureConstants.MCT_MENU_DIMENSIONS,
+                body = $document.find('body'),
+                scope = $rootScope.$new(),
+                goLeft = eventCoors[0] + menuDim[0] > winDim[0],
+                goUp = eventCoors[1] + menuDim[1] > winDim[1],
+                menu;
 
-                // Dismiss any menu which was already showing
-                if (dismissExistingMenu) {
-                    dismissExistingMenu();
-                }
+            // Remove the context menu
+            function dismiss() {
+                menu.remove();
+                body.off("mousedown", dismiss);
+                dismissExistingMenu = undefined;
+            }
 
-                // ...and record the presence of this menu.
-                dismissExistingMenu = dismiss;
+            // Dismiss any menu which was already showing
+            if (dismissExistingMenu) {
+                dismissExistingMenu();
+            }
 
-                // Set up the scope, including menu positioning
-                scope.domainObject = actionContext.domainObject;
-                scope.menuStyle = {};
-                scope.menuStyle[goLeft ? "right" : "left"] =
-                    (goLeft ? (winDim[0] - eventCoors[0]) : eventCoors[0]) + 'px';
-                scope.menuStyle[goUp ? "bottom" : "top"] =
-                    (goUp ? (winDim[1] - eventCoors[1]) : eventCoors[1]) + 'px';
-                scope.menuClass = {
-                    "go-left": goLeft,
-                    "go-up": goUp,
-                    "context-menu-holder": true
-                };
+            // ...and record the presence of this menu.
+            dismissExistingMenu = dismiss;
 
-                // Create the context menu
-                menu = $compile(MENU_TEMPLATE)(scope);
+            // Set up the scope, including menu positioning
+            scope.domainObject = actionContext.domainObject;
+            scope.menuStyle = {};
+            scope.menuStyle[goLeft ? "right" : "left"] =
+                (goLeft ? (winDim[0] - eventCoors[0]) : eventCoors[0]) + 'px';
+            scope.menuStyle[goUp ? "bottom" : "top"] =
+                (goUp ? (winDim[1] - eventCoors[1]) : eventCoors[1]) + 'px';
+            scope.menuClass = {
+                "go-left": goLeft,
+                "go-up": goUp,
+                "context-menu-holder": true
+            };
+            // Create the context menu
+            menu = $compile(MENU_TEMPLATE)(scope);
 
-                // Add the menu to the body
-                body.append(menu);
-                
-                // Stop propagation so that clicks on the menu do not close the menu
-                // Stop propagation so that touches on the menu do not close the menu
-                if (!agentService.isMobile(navigator.userAgent)) {
-                    menu.on('mousedown', function (event) {
-                        event.stopPropagation();
-                    });
-                } else if (agentService.isMobile(navigator.userAgent)) {
-                    menu.on('touchstart', function (event) {
-                        event.stopPropagation();
-                    });
-                }
-                
-                // Dismiss the menu when body is clicked/touched elsewhere
-                // ('mousedown' because 'click' breaks left-click context menus)
-                // ('touchstart' because 'touch' breaks context menus up)
-                if (!agentService.isMobile(navigator.userAgent)) {
-                    body.on('mousedown', dismiss);
-                } else if (agentService.isMobile(navigator.userAgent)) {
-                    body.on('touchstart', dismiss);
-                }
-                
+            // Add the menu to the body
+            body.append(menu);
 
-                // Don't launch browser's context menu
-                actionContext.event.preventDefault();
+            // Stop propagation so that clicks or touches on the menu do not close the menu
+            if (!(this.agentService.isMobile(navigator.userAgent))) {
+                menu.on('mousedown', function (event) {
+                    event.stopPropagation();
+                });
+            } else if ((this.agentService.isMobile(navigator.userAgent))) {
+                menu.on('touchstart', function (event) {
+                    event.stopPropagation();
+                });
+            }
+
+            // Dismiss the menu when body is clicked/touched elsewhere
+            // ('mousedown' because 'click' breaks left-click context menus)
+            // ('touchstart' because 'touch' breaks context menus up)
+            if (!(this.agentService.isMobile(navigator.userAgent))) {
+                body.on('mousedown', dismiss);
+                // NOTE: Apply to mobile?
+                menu.on('click', dismiss);
+            } else if (this.agentService.isMobile(navigator.userAgent)) {
+                body.on('touchstart', dismiss);
             }
             
-            return {
-                perform: perform
-            };
-        }
+
+            // Don't launch browser's context menu
+            actionContext.event.preventDefault();
+        };
 
         return ContextMenuAction;
     }

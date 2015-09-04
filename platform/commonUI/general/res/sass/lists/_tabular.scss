@@ -24,13 +24,14 @@
 	height: 100%;
 }
 
-.tabular {
+.tabular,
+table {
 	@include box-sizing(border-box);
 	border-spacing: 0;
 	border-collapse: collapse;
 	color: #fff;
 	display: table;
-	font-size: 0.75em;
+	font-size: 0.75rem;
 	position: relative;
 	//height: 100%; MOVED
 	width: 100%;
@@ -41,19 +42,7 @@
 		//table-layout: fixed; MOVED
 	}
 	thead, .thead {
-		//width: calc(100% - 10px); MOVED
-		tr, .tr {
-			height: $tabularHeaderH;
-		}
-		&:before {
-			content: "";
-			display: block;
-			z-index: 0;
-			position: absolute;
-			width: 100%;
-			height: $tabularHeaderH;
-			background: rgba(#fff, 0.15);
-		}
+		border-bottom: 1px solid $tabularColorHeaderBorder;
 	}
 	tbody, .tbody {
 		//@include absPosDefault(0); MOVED
@@ -72,38 +61,49 @@
 		&:first-child .td {
 			border-top: none;
 		}
+		&.group-header {
+			td, .td {
+				$d: 5%;
+				background-color: darken($tabularColorHeaderBg, $d);
+				color: darken($tabularColorHeaderFg, $d);
+			}
+		}
 		th, .th, td, .td {
 			display: table-cell;
 		}
 		th, .th {
-			border: none;
-			border-left: 1px solid $tabularColorBorder;
+			background-color: $tabularColorHeaderBg;
+			border-left: 1px solid $tabularColorHeaderBorder;
 			color: $tabularColorHeaderFg;
-			padding: 0 $tabularTdPadLR;
+			padding: $tabularTdPadLR $tabularTdPadLR;
 			white-space: nowrap;
 			vertical-align: middle; // This is crucial to hiding f**king 4px height injected by browser by default
 			&:first-child {
 				border-left: none;
 			}
 			&.sort {
-				.icon-sorting:before {
-					display: inline-block;
+				&.sort:after {
+					color: $colorIconLink;
 					font-family: symbolsfont;
-					margin-left: 5px;
+					font-size: 8px;
+					content: "\ed";
+					display: inline-block;
+					margin-left: $interiorMarginSm;
 				}
-				&.asc .icon-sorting:before {
-					content: '0';
+				&.sort.desc:after {
+					content: "\ec";
 				}
-				&.desc .icon-sorting:before {
-					content: '1';
-				}
+			}
+			&.sortable {
+				cursor: pointer;
 			}
 		}
 		td, .td {
-			border-top: 1px solid $tabularColorBorder;
-			min-width: 110px;
+			border-bottom: 1px solid $tabularColorBorder;
+			min-width: 20px;
 			color: $colorTelemFresh;
 			padding: $tabularTdPadTB $tabularTdPadLR;
+			word-wrap: break-word;
 			vertical-align: top;
 			&.numeric {
 				text-align: right;
@@ -119,8 +119,19 @@
 		}
 	}
 	&.filterable {
+		thead, .thead {
+			tr.s-filters, .tr.s-filters {
+				th, .th {
+					//border-left: none;
+				}
+			}
+		}
 		tbody, .tbody {
 			top: $tabularHeaderH * 2;
+		}
+		input[type="text"] {
+			@include box-sizing(border-box);
+			width: 100%; //50px;
 		}
 	}
 
@@ -133,6 +144,15 @@
 		}
 		thead, .thead {
 			width: calc(100% - 10px);
+			&:before {
+				content: "";
+				display: block;
+				z-index: 0;
+				position: absolute;
+				width: 100%;
+				height: $tabularHeaderH;
+				background: rgba(#fff, 0.15);
+			}
 		}
 		tbody, .tbody {
 			@include absPosDefault(0);

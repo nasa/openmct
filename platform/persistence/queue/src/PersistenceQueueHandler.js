@@ -34,8 +34,29 @@ define(
          * @param $q Angular's $q, for promises
          * @param {PersistenceFailureHandler} handler to invoke in the event
          *        that a persistence attempt fails.
+         * @constructor
+         * @memberof platform/persistence/queue
          */
         function PersistenceQueueHandler($q, failureHandler) {
+            this.$q = $q;
+            this.failureHandler = failureHandler;
+        }
+
+        /**
+         * Invoke the persist method on the provided persistence
+         * capabilities.
+         * @param {Object.<string,PersistenceCapability>} persistences
+         *        capabilities to invoke, in id->capability pairs.
+         * @param {Object.<string,DomainObject>} domainObjects
+         *        associated domain objects, in id->object pairs.
+         * @param {PersistenceQueue} queue the persistence queue,
+         *        to requeue as necessary
+         * @memberof platform/persistence/queue.PersistenceQueueHandler#
+         */
+        PersistenceQueueHandler.prototype.persist = function (persistences, domainObjects, queue) {
+            var ids = Object.keys(persistences),
+                $q = this.$q,
+                failureHandler = this.failureHandler;
 
             // Handle a group of persistence invocations
             function persistGroup(ids, persistences, domainObjects, queue) {
@@ -79,32 +100,16 @@ define(
                 // Handle any failures from the full operation
                 function handleFailure(value) {
                     return failures.length > 0 ?
-                            failureHandler.handle(failures) :
-                            value;
+                        failureHandler.handle(failures) :
+                        value;
                 }
 
                 // Try to persist everything, then handle any failures
                 return $q.all(ids.map(tryPersist)).then(handleFailure);
             }
 
-
-            return {
-                /**
-                 * Invoke the persist method on the provided persistence
-                 * capabilities.
-                 * @param {Object.<string,PersistenceCapability>} persistences
-                 *        capabilities to invoke, in id->capability pairs.
-                 * @param {Object.<string,DomainObject>} domainObjects
-                 *        associated domain objects, in id->object pairs.
-                 * @param {PersistenceQueue} queue the persistence queue,
-                 *        to requeue as necessary
-                 */
-                persist: function (persistences, domainObjects, queue) {
-                    var ids = Object.keys(persistences);
-                    return persistGroup(ids, persistences, domainObjects, queue);
-                }
-            };
-        }
+            return persistGroup(ids, persistences, domainObjects, queue);
+        };
 
         return PersistenceQueueHandler;
     }

@@ -18,6 +18,7 @@
     "platform/features/scrolling",
     "platform/features/events",
     "platform/forms",
+    "platform/identity",
     "platform/persistence/queue",
     "platform/policy",
     "platform/entanglement",

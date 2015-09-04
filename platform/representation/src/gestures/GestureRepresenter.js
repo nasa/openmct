@@ -37,46 +37,33 @@ define(
          *        gestures
          * @param {Scope} scope the Angular scope for this representation
          * @param element the JQLite-wrapped mct-representation element
+         * @constructor
+         * @implements {Representer}
+         * @memberof platform/representation
          */
         function GestureRepresenter(gestureService, scope, element) {
-            var gestureHandle;
-
-            function destroy() {
-                // Release any resources associated with these gestures
-                if (gestureHandle) {
-                    gestureHandle.destroy();
-                }
-            }
-
-            function represent(representation, domainObject) {
-                // Clear out any existing gestures
-                destroy();
-
-                // Attach gestures - by way of the service.
-                gestureHandle = gestureService.attachGestures(
-                    element,
-                    domainObject,
-                    (representation || {}).gestures || []
-                );
-            }
-
-            return {
-                /**
-                 * Set the current representation in use, and the domain
-                 * object being represented.
-                 *
-                 * @param {RepresentationDefinition} representation the
-                 *        definition of the representation in use
-                 * @param {DomainObject} domainObject the domain object
-                 *        being represented
-                 */
-                represent: represent,
-                /**
-                 * Release any resources associated with this representer.
-                 */
-                destroy: destroy
-            };
+            this.gestureService = gestureService;
+            this.element = element;
         }
+
+        GestureRepresenter.prototype.represent = function represent(representation, domainObject) {
+            // Clear out any existing gestures
+            this.destroy();
+
+            // Attach gestures - by way of the service.
+            this.gestureHandle = this.gestureService.attachGestures(
+                this.element,
+                domainObject,
+                (representation || {}).gestures || []
+            );
+        };
+
+        GestureRepresenter.prototype.destroy = function () {
+            // Release any resources associated with these gestures
+            if (this.gestureHandle) {
+                this.gestureHandle.destroy();
+            }
+        };
 
         return GestureRepresenter;
     }

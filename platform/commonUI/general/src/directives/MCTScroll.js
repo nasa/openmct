@@ -37,6 +37,7 @@ define(
          * This is exposed as two directives in `bundle.json`; the difference
          * is handled purely by parameterization.
          *
+         * @memberof platform/commonUI/general
          * @constructor
          * @param $parse Angular's $parse
          * @param {string} property property to manage within the HTML element

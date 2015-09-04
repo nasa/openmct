@@ -25,19 +25,20 @@
 	        class="tree-item menus-to-left"
 	        ng-class="{selected: treeNode.isSelected()}"
 	        >
-            <mct-representation                                
+            <mct-representation
                 key="'label'"
 				mct-object="domainObject"
 				ng-model="ngModel"
-				ng-click="!treeNode.checkMobile() ? ngModel.selectedObject = domainObject :
-                          toggle.toggle(); treeNode.trackExpansion()"
+				ng-click="!treeNode.checkMobile() || model.composition == undefined ||
+                          model.composition.length == 0 ? treeNode.setObject(ngModel, domainObject) : toggle.toggle();
+                          treeNode.trackExpansion()"
 				>
             </mct-representation>
             <span
 	            class='ui-symbol view-control'
                 mct-object="domainObject"
                 ng-model="ngModel"
-				ng-click="treeNode.checkMobile() ? ngModel.selectedObject = domainObject :
+				ng-click="treeNode.checkMobile() ? treeNode.setObject(ngModel, domainObject) :
                           toggle.toggle(); treeNode.trackExpansion()"
 				ng-if="model.composition !== undefined || treeNode.checkMobile()"
 				>
@@ -45,10 +46,10 @@
             </span>
         </span>
         <span
-			class="tree-item-subtree"
-			ng-show="toggle.isActive()"
-			ng-if="model.composition !== undefined"
-			>
+            class="tree-item-subtree"
+            ng-show="toggle.isActive()"
+            ng-if="model.composition !== undefined"
+            >
 
             <mct-representation key="'subtree'"
                                 ng-model="ngModel"
