@@ -26,6 +26,19 @@ define(
     function () {
         'use strict';
 
+        /**
+         * Wrapper for the `telemetry` capability which adds start/end
+         * times to all requests based on the current state of a time
+         * conductor.
+         *
+         * @constructor
+         * @memberof platform/features/conductor
+         * @augments {platform/telemetry.TelemetryCapability}
+         * @param {platform/features/conductor.TimeConductor} timeConductor
+         *        the time conductor which controls these queries
+         * @param {platform/telemetry.TelemetryCapability} telemetryCapability
+         *        the wrapped capability
+         */
         function ConductorTelemetryCapability(timeConductor, telemetryCapability) {
             this.timeConductor = timeConductor;
             this.wrappedCapability = telemetryCapability;

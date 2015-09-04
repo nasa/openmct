@@ -42,9 +42,15 @@ define(
          * The ConductorRepresenter attaches the universal time conductor
          * to views.
          *
-         * @memberof platform/commonUI/edit
          * @implements {Representer}
          * @constructor
+         * @memberof platform/features/conductor
+         * @param {platform/features/conductor.ConductorService} conductorService
+         *        service which provides the active time conductor
+         * @param $compile Angular's $compile
+         * @param {ViewDefinition[]} views all defined views
+         * @param {Scope} the scope of the representation
+         * @param element the jqLite-wrapped representation element
          */
         function ConductorRepresenter(conductorService, $compile, views, scope, element) {
             var conductorScope;

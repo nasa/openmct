@@ -29,6 +29,16 @@ define(
         var ONE_DAY_IN_MS = 1000 * 60 * 60 * 24,
             SIX_HOURS_IN_MS = ONE_DAY_IN_MS / 4;
 
+        /**
+         * Provides a single global instance of the time conductor, which
+         * controls both query ranges and displayed ranges for telemetry
+         * data.
+         *
+         * @constructor
+         * @memberof platform/features/conductor
+         * @param {Function} now a function which returns the current time
+         *        as a UNIX timestamp, in milliseconds
+         */
         function ConductorService(now) {
             var initialEnd =
                 Math.ceil(now() /  SIX_HOURS_IN_MS) * SIX_HOURS_IN_MS;
@@ -37,6 +47,11 @@ define(
                 new TimeConductor(initialEnd - ONE_DAY_IN_MS, initialEnd);
         }
 
+        /**
+         * Get the global instance of the time conductor.
+         * @returns {platform/features/conductor.TimeConductor} the
+         *         time conductor
+         */
         ConductorService.prototype.getConductor = function () {
             return this.conductor;
         };

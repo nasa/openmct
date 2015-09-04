@@ -21,15 +21,44 @@
  *****************************************************************************/
 /*global define*/
 
+/**
+ * The time conductor bundle adds a global control to the bottom of the
+ * outermost viewing area. This controls both the range for time-based
+ * queries and for time-based displays.
+ *
+ * @namespace platform/features/conductor
+ */
 define(
     function () {
         'use strict';
 
+        /**
+         * Wrapper for the `telemetry` capability which adds start/end
+         * times to all requests based on the current state of a time
+         * conductor.
+         *
+         * Note that both start and end times are in units which may
+         * vary depending on the domains of telemetry being used. Most
+         * commonly, these are UNIX timestamps in milliseconds.
+         *
+         * @memberof platform/features/conductor
+         * @constructor
+         * @augments {platform/telemetry.TelemetryCapability}
+         * @param {platform/features/conductor.TimeConductor} timeConductor
+         *        the time conductor which controls these queries
+         * @param {platform/telemetry.TelemetryCapability} telemetryCapability
+         *        the wrapped capability
+         */
         function TimeConductor(start, end) {
             this.inner = [ start, end ];
             this.outer = [ start, end ];
         }
 
+        /**
+         * Get or set (if called with an argument) the start time for queries.
+         * @param {number} [value] the start time to set
+         * @returns {number} the start time
+         */
         TimeConductor.prototype.queryStart = function (value) {
             if (arguments.length > 0) {
                 this.outer[0] = value;
@@ -37,6 +66,11 @@ define(
             return this.outer[0];
         };
 
+        /**
+         * Get or set (if called with an argument) the end time for queries.
+         * @param {number} [value] the end time to set
+         * @returns {number} the end time
+         */
         TimeConductor.prototype.queryEnd = function (value) {
             if (arguments.length > 0) {
                 this.outer[1] = value;
@@ -44,6 +78,12 @@ define(
             return this.outer[1];
         };
 
+
+        /**
+         * Get or set (if called with an argument) the start time for displays.
+         * @param {number} [value] the start time to set
+         * @returns {number} the start time
+         */
         TimeConductor.prototype.displayStart = function (value) {
             if (arguments.length > 0) {
                 this.inner[0] = value;
@@ -51,6 +91,11 @@ define(
             return this.inner[0];
         };
 
+        /**
+         * Get or set (if called with an argument) the end time for displays.
+         * @param {number} [value] the end time to set
+         * @returns {number} the end time
+         */
         TimeConductor.prototype.displayEnd = function (value) {
             if (arguments.length > 0) {
                 this.inner[1] = value;

@@ -26,6 +26,17 @@ define(
     function (ConductorTelemetryCapability) {
         'use strict';
 
+        /**
+         * Decorates the `capabilityService` such that any exposed `telemetry`
+         * capabilities have their requests mediated by the time conductor.
+         *
+         * @constructor
+         * @memberof platform/features/conductor
+         * @implements {CapabilityService}
+         * @param {platform/features/conductor.ConductorService} conductorServe
+         *        the service which exposes the global time conductor
+         * @param {CapabilityService} capabilityService the decorated service
+         */
         function ConductorCapabilityDecorator(conductorService, capabilityService) {
             this.conductorService = conductorService;
             this.capabilityService = capabilityService;
