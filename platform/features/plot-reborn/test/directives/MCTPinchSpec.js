@@ -45,7 +45,7 @@ define(
                 mockEvent = jasmine.createSpyObj("event", [ "touches", "changedTouches", "preventDefault", "target" ]);
                 mockTouchEvent = jasmine.createSpyObj("event",
                     [ "clientX", "clientY" ]);
-                mockTarget = jasmine.createSpyObj("event.target", ["getBoundingClientRect"])
+                mockTarget = jasmine.createSpyObj("event.target", ["getBoundingClientRect"]);
 
                 mockAgentService.isMobile.andReturn(true);
 
