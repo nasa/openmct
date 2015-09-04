@@ -38,7 +38,7 @@ define(
 
             if (TelemetryCapability) {
                 capabilities.telemetry = function (domainObject) {
-                    return new ConductorCapabilityDecorator(
+                    return new ConductorTelemetryCapability(
                         conductorService.getConductor(),
                         new TelemetryCapability(domainObject)
                     );

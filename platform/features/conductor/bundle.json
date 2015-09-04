@@ -8,6 +8,8 @@
         ],
         "components": [
             {
+                "type": "decorator",
+                "provides": "capabilityService",
                 "implementation": "ConductorCapabilityDecorator.js",
                 "depends": [ "conductorService" ]
             }
