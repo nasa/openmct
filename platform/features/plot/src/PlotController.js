@@ -65,6 +65,7 @@ define(
                 subPlotFactory = new SubPlotFactory(telemetryFormatter),
                 cachedObjects = [],
                 updater,
+                lastBounds,
                 handle;
 
             // Populate the scope with axis information (specifically, options
@@ -139,13 +140,14 @@ define(
             }
 
             // Change the displayable bounds
-            function setBasePanZoom(event, bounds) {
+            function setBasePanZoom(unused, bounds) {
                 var start = bounds.start,
                     end = bounds.end;
                 if (updater) {
                     updater.setDomainBounds(start, end);
                     self.update();
                 }
+                lastBounds = bounds;
             }
 
             // Create a new subscription; telemetrySubscriber gets
@@ -175,6 +177,18 @@ define(
                 }
             }
 
+            // Initiate a new query for data because query bounds changed
+            function requery() {
+                if (handle) {
+                    recreateUpdater();
+                    requestTelemetry();
+                    // Keep any externally-provided bounds
+                    if (lastBounds) {
+                        setBasePanZoom({}, lastBounds);
+                    }
+                }
+            }
+
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
             this.updateValues = updateValues;
 
@@ -189,6 +203,9 @@ define(
 
             // Respond to external bounds changes
             $scope.$on("telemetry:display:bounds", setBasePanZoom);
+
+            // Respond to external query range changes
+            $scope.$on("telemetry:query:bounds", throttle(requery, 250));
 
             // Unsubscribe when the plot is destroyed
             $scope.$on("$destroy", releaseSubscription);
