@@ -22,15 +22,71 @@
 /*global define,Promise,describe,it,expect,xit,beforeEach,waitsFor,jasmine*/
 
 define(
-    ["../src/directives/MCTPinch"],
+    ["../../src/directives/MCTPinch"],
     function (MCTPinch) {
         "use strict";
 
         describe("The MCT Pinch directive", function () {
-            var mockScope;
+            var mockScope,
+                mockElement,
+                mockAgentService,
+                mctPinch,
+                mockEvent,
+                mockTouches,
+                mockChangedTouches,
+                mockTarget,
+                mockTouchEvent;
 
 
             beforeEach(function () {
+                mockScope = jasmine.createSpyObj("$scope", [ "$emit", "$on" ]);
+                mockElement = jasmine.createSpyObj("element", [ "on", "off" ]);
+                mockAgentService = jasmine.createSpyObj("agentService", ["isMobile"]);
+                mockEvent = jasmine.createSpyObj("event", [ "touches", "changedTouches", "preventDefault", "target" ]);
+                mockTouchEvent = jasmine.createSpyObj("event",
+                    [ "clientX", "clientY" ]);
+                mockTarget = jasmine.createSpyObj("event.target", ["getBoundingClientRect"])
+
+                mockAgentService.isMobile.andReturn(true);
+
+                mctPinch = new MCTPinch(mockAgentService);
+                mctPinch.link(mockScope, mockElement);
+
+                mockTouches = [mockTouchEvent];
+                mockChangedTouches = [mockTouchEvent];
+
+                mockEvent.touches = mockTouches;
+                mockEvent.changedTouches = mockChangedTouches;
+                mockEvent.target = mockTarget;
+            });
+
+            it("Start touch", function() {
+                // Touch Start
+                mockElement.on.calls[0].args[1](mockEvent);
+                // Touch Move
+                mockElement.on.calls[1].args[1](mockEvent);
+                // Touch End
+                mockElement.on.calls[2].args[1](mockEvent);
+                // Touch Cancel
+                mockElement.on.calls[3].args[1](mockEvent);
+
+                mockTouches = [mockTouchEvent, mockTouchEvent];
+                mockChangedTouches = [mockTouchEvent, mockTouchEvent];
+
+                mockEvent.touches = mockTouches;
+                mockEvent.changedTouches = mockChangedTouches;
+                mockEvent.target = mockTarget;
+
+                // Touch Start
+                mockElement.on.calls[0].args[1](mockEvent);
+                // Touch Move
+                mockElement.on.calls[1].args[1](mockEvent);
+                // Touch End
+                mockElement.on.calls[2].args[1](mockEvent);
+                // Touch Cancel
+                mockElement.on.calls[3].args[1](mockEvent);
+
+                //console.log(mockScope.on.calls);
             });
         });
     }
