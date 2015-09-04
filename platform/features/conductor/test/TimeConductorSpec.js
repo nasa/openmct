@@ -30,6 +30,33 @@ define(
         "use strict";
 
         describe("TimeConductor", function () {
+            var testStart,
+                testEnd,
+                conductor;
+
+            beforeEach(function () {
+                testStart = 42;
+                testEnd = 12321;
+                conductor = new TimeConductor(testStart, testEnd);
+            });
+
+            it("provides accessors for query/display start/end times", function () {
+                expect(conductor.queryStart()).toEqual(testStart);
+                expect(conductor.queryEnd()).toEqual(testEnd);
+                expect(conductor.displayStart()).toEqual(testStart);
+                expect(conductor.displayEnd()).toEqual(testEnd);
+            });
+
+            it("provides setters for query/display start/end times", function () {
+                expect(conductor.queryStart(1)).toEqual(1);
+                expect(conductor.queryEnd(2)).toEqual(2);
+                expect(conductor.displayStart(3)).toEqual(3);
+                expect(conductor.displayEnd(4)).toEqual(4);
+                expect(conductor.queryStart()).toEqual(1);
+                expect(conductor.queryEnd()).toEqual(2);
+                expect(conductor.displayStart()).toEqual(3);
+                expect(conductor.displayEnd()).toEqual(4);
+            });
 
         });
     }

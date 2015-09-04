@@ -29,8 +29,30 @@ define(
     function (ConductorService) {
         "use strict";
 
-        describe("ConductorService", function () {
+        var TEST_NOW = 1020304050;
 
+        describe("ConductorService", function () {
+            var mockNow,
+                conductorService;
+
+            beforeEach(function () {
+                mockNow = jasmine.createSpy('now');
+                mockNow.andReturn(TEST_NOW);
+                conductorService = new ConductorService(mockNow);
+            });
+
+            it("initializes a time conductor around the current time", function () {
+                var conductor = conductorService.getConductor();
+                expect(conductor.queryStart() <= TEST_NOW).toBeTruthy();
+                expect(conductor.queryEnd() >= TEST_NOW).toBeTruthy();
+                expect(conductor.queryEnd() > conductor.queryStart())
+                    .toBeTruthy();
+            });
+
+            it("provides a single shared time conductor instance", function () {
+                expect(conductorService.getConductor())
+                    .toBe(conductorService.getConductor());
+            });
         });
     }
 );
