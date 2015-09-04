@@ -38,13 +38,71 @@ define(
 
 
             beforeEach(function () {
-               
+                mockScope = jasmine.createSpyObj(
+                    "$scope",
+                    [ "$watch", "$on", "viewport", "axes" ]
+                );
+
+                mockColorService = jasmine.createSpyObj(
+                    "colorService", [ "ColorPalette" ]
+                );
+
+                mockAgentService = jasmine.createSpyObj("agentService", ["isMobile"]);
+
+                mockViewport = jasmine.createSpyObj(
+                    "viewport", [ "bottomRight, topLeft" ]
+                );
+
+                mockAxes = jasmine.createSpyObj(
+                    "axes", [ "domain" ]
+                );
+
+                mockTopLeft = {
+                    range: 1,
+                    domain: 1
+                }
+                mockBottomRight = {
+                    range: 1,
+                    domain: 1
+                }
+
+                mockViewport.topLeft = mockTopLeft;
+                mockViewport.bottomRight = mockBottomRight;
+
+                mockScope.axes = mockAxes;
+
+                mockAgentService.isMobile.andReturn(false);
+
+                controller = new PlotController(
+                    mockScope,
+                    mockColorService,
+                    mockAgentService
+                );
 
             });
 
             it("Performs scope call when viewport stops changing", function () {
 
+                mockAgentService.isMobile.andReturn(true);
 
+                // Calls end viewport with no snap-to-right opportunity and on mobile
+                mockScope.$on.calls[1].args[1]("event", mockViewport);
+
+                mockBottomRight = {
+                    range: 1,
+                    domain: +new Date()
+                }
+
+                mockViewport.bottomRight = mockBottomRight;
+
+                controller = new PlotController(
+                    mockScope,
+                    mockColorService,
+                    mockAgentService
+                );
+
+                // Calls end viewport with snap-to-right opportunity and on mobile
+                mockScope.$on.calls[1].args[1]("event", mockViewport);
             });
         });
     }
