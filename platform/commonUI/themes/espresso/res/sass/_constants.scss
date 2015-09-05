@@ -50,10 +50,17 @@ $colorThumbsBubbleBg: lighten($colorBodyBg, 10%);
 $colorOvrBlocker: rgba(black, 0.7);
 $colorOvrBg: pullForward($colorBodyBg, 10%);
 $colorOvrFg: $colorBodyFg;
+
 // Items
-$colorItemBase: lighten($colorBodyBg, 5%);
-$colorItemFg: lighten($colorItemBase, 20%);
-$colorItemSelected: $colorKey;
+$colorItemBg: lighten($colorBodyBg, 5%);
+$colorItemFg: lighten($colorItemBg, 50%);
+$colorItemFgDetails: lighten($colorItemBg, 30%);
+$colorItemIcon: $colorKey; //pullForward($colorItemFg, 20%);
+$colorItemSubIcons: $colorItemFgDetails;
+$colorItemOpenIcon: $colorItemFgDetails;
+$shdwItemText: rgba(black, 0.1) 0 1px 2px;
+$colorItemBgSelected: $colorKey;
+
 // Tabular
 $tabularColorBorder: rgba(white, 0.1);
 $tabularColorBodyBg: darken($colorBodyBg, 10%);

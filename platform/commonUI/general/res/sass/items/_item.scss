@@ -33,7 +33,8 @@
             $iconMargin: 40px;
             $iconD: ($d - ($iconMargin * 2)) * 0.85;
             $transTime: 200ms;
-            @include btnSubtle($colorItemBase);
+            //@include btnSubtle($colorItemBg);
+            @include btnSubtle($colorItemBg, $colorItemFg, $colorItemIcon);
             box-sizing: border-box;
             cursor: pointer;
             float: left;
@@ -44,7 +45,7 @@
             position: relative;
             &:hover .item-main {
 	            .item-type {
-		            color: lighten($colorKey, 10%) !important;
+		            color: lighten($colorKey, 10%);
                     .l-icon-link {
                         color: $colorIconLink;
                     }
@@ -62,6 +63,7 @@
             .bar {
                 &.top-bar {
                     bottom: auto;
+	                color: $colorItemSubIcons;
                     height: $ueBrowseGridItemTopBarH;
                     line-height: $ueBrowseGridItemTopBarH;
                     text-align: right;
@@ -85,14 +87,14 @@
             .item-main {
 	            $h: $ueBrowseGridItemLg;
 	            $lh: $h * 0.8;
-                //top: $ueBrowseGridItemTopBarH; bottom: $ueBrowseGridItemBottomBarH;
+                //top: $ueBrowseGridItemTopBarH; bottom: $ueBrowseGridItemBottomBarH; //
                 line-height: $lh;
 	            z-index: 1;
                 .item-type {
                     //@include trans-prop-nice("color", $transTime);
                     @include absPosDefault($iconMargin, false);
                     //@include test(red);
-                    //color: $colorItemFg;
+                    color: $colorItemIcon;
                     text-align: center;
                     font-size: $iconD * 0.95; //6em;
                     line-height: $iconD;
@@ -102,7 +104,6 @@
                     //line-height: $lh;
                     .l-icon-link {
                         // When the link icon is in the item-type icon holder
-                        //color: darken($colorIconLink, 25%);
                         color: $colorIconLink;
                         height: auto;
                         line-height: 100%;
@@ -117,27 +118,27 @@
                     //@include test();
                     @include trans-prop-nice("opacity", $transTime);
                     opacity: 0;
-	                //display: none;
+	                color: $colorItemOpenIcon;
                     font-size: 3em;
-                    //line-height: $lh;
                     left: auto; width: 50px;
                     pointer-events: none;
                     text-align: right;
                 }
             }
             .title {
-	            @include txtShdwSubtle();
+	            @include txtShdw($shdwItemText);
                 @include ellipsize();
-                color: lighten($colorBodyFg, 20%);
+                color: $colorItemFg;
             }
             .details {
                 @include ellipsize();
+	            color: $colorItemFgDetails;
                 font-size: 0.8em;
             }
 	        &.selected {
-		        $cfg: lighten($colorItemSelected, 35%);
+		        $cfg: lighten($colorItemBgSelected, 35%);
 		        $cfgh: lighten($cfg, 30%);
-		        @include btnSubtle($colorItemSelected);
+		        @include btnSubtle($colorItemBgSelected);
 		        color: $cfg;
 		        .item-type, .top-bar .icon:not(.alert) { color: $cfg }
 		        .item-main .item-open { color: $cfg }
