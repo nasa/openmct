@@ -168,7 +168,8 @@
                     "$q",
                     "dialogService",
                     "telemetrySubscriber",
-                    "telemetryFormatter"
+                    "telemetryFormatter",
+                    "throttle"
                 ]
             }
         ],

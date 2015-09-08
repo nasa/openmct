@@ -38,9 +38,9 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function FixedController($scope, $q, dialogService, telemetrySubscriber, telemetryFormatter) {
+        function FixedController($scope, $q, dialogService, telemetryHandler, telemetryFormatter, throttle) {
             var self = this,
-                subscription,
+                handle,
                 names = {}, // Cache names by ID
                 values = {}, // Cache values by ID
                 elementProxiesById = {};
@@ -87,14 +87,14 @@ define(
                     limit = telemetryObject &&
                         telemetryObject.getCapability('limit'),
                     datum = telemetryObject &&
-                        subscription.getDatum(telemetryObject),
+                        handle.getDatum(telemetryObject),
                     alarm = limit && datum && limit.evaluate(datum);
 
                 if (id) {
                     (elementProxiesById[id] || []).forEach(function (element) {
                         names[id] = telemetryObject.getModel().name;
                         values[id] = telemetryFormatter.formatRangeValue(
-                            subscription.getRangeValue(telemetryObject)
+                            handle.getRangeValue(telemetryObject)
                         );
                         element.name = names[id];
                         element.value = values[id];
@@ -115,8 +115,8 @@ define(
 
             // Update telemetry values based on new data available
             function updateValues() {
-                if (subscription) {
-                    subscription.getTelemetryObjects().forEach(updateValue);
+                if (handle) {
+                    handle.getTelemetryObjects().forEach(updateValue);
                 }
             }
 
@@ -178,22 +178,24 @@ define(
 
             // Free up subscription to telemetry
             function releaseSubscription() {
-                if (subscription) {
-                    subscription.unsubscribe();
-                    subscription = undefined;
+                if (handle) {
+                    handle.unsubscribe();
+                    handle = undefined;
                 }
             }
 
             // Subscribe to telemetry updates for this domain object
             function subscribe(domainObject) {
                 // Release existing subscription (if any)
-                if (subscription) {
-                    subscription.unsubscribe();
+                if (handle) {
+                    handle.unsubscribe();
                 }
 
                 // Make a new subscription
-                subscription = domainObject &&
-                    telemetrySubscriber.subscribe(domainObject, updateValues);
+                handle = domainObject && telemetryHandler.handle(
+                    domainObject,
+                    updateValues
+                );
             }
 
             // Handle changes in the object's composition
@@ -201,6 +203,11 @@ define(
                 // Populate panel positions
                 // TODO: Ensure defaults here
                 // Resubscribe - objects in view have changed
+                subscribe($scope.domainObject);
+            }
+
+            // Trigger a new query for telemetry data
+            function requery() {
                 subscribe($scope.domainObject);
             }
 
@@ -277,6 +284,12 @@ define(
 
             // Position panes where they are dropped
             $scope.$on("mctDrop", handleDrop);
+
+            // Respond to external bounds changes
+            $scope.$on("telemetry:display:bounds", throttle(requery, 250));
+
+            // Respond to external query range changes
+            $scope.$on("telemetry:query:bounds", throttle(requery, 250));
         }
 
         /**
