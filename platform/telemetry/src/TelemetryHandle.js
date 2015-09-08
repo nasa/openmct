@@ -79,8 +79,7 @@ define(
 
             /**
              * Change the request duration.
-             * @param {object|number} request the duration of historical
-             *        data to look at; or, the request to issue
+             * @param {TelemetryRequest} request the request to issue
              * @param {Function} [callback] a callback that will be
              *        invoked as new data becomes available, with the
              *        domain object for which new data is available.
@@ -105,6 +104,12 @@ define(
                 // then issue new requests.
                 return subscription.promiseTelemetryObjects()
                     .then(issueRequests);
+            };
+
+            self.getDatum = function (telemetryObject, series, index) {
+                return arguments.length > 1 ?
+                        subscription.getDatum(telemetryObject) :
+                        subscription.makeDatum(telemetryObject, series, index);
             };
 
             return self;

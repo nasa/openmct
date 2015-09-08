@@ -239,6 +239,10 @@ define(
 
             initialize();
             this.unlistenToMutation = addMutationListener();
+
+            // Expose makeDatum for TelemetryHandler to use, but not
+            // as part of public API
+            this.makeDatum = makeDatum;
         }
 
         TelemetrySubscription.prototype.unsubscribeAll = function () {
