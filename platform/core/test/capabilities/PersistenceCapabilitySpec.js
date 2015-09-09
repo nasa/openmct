@@ -48,7 +48,7 @@ define(
             beforeEach(function () {
                 mockPersistenceService = jasmine.createSpyObj(
                     "persistenceService",
-                    [ "updateObject", "readObject" ]
+                    [ "updateObject", "readObject", "createObject", "deleteObject" ]
                 );
                 mockDomainObject = {
                     getId: function () { return id; },
@@ -68,10 +68,24 @@ define(
                 );
             });
 
-            it("makes a call to the persistence service when invoked", function () {
+            it("creates unpersisted objects with the persistence service", function () {
+                // Verify precondition; no call made during constructor
+                expect(mockPersistenceService.createObject).not.toHaveBeenCalled();
+
+                persistence.persist();
+
+                expect(mockPersistenceService.createObject).toHaveBeenCalledWith(
+                    SPACE,
+                    id,
+                    model
+                );
+            });
+
+            it("updates previously persisted objects with the persistence service", function () {
                 // Verify precondition; no call made during constructor
                 expect(mockPersistenceService.updateObject).not.toHaveBeenCalled();
 
+                model.persisted = 12321;
                 persistence.persist();
 
                 expect(mockPersistenceService.updateObject).toHaveBeenCalledWith(

@@ -229,10 +229,12 @@
 			    bottom: $interiorMargin;
 		    }
 	    }
+	    .search-holder {
+		    top: $ueTopBarH + $interiorMarginLg;
+	    }
 	    .tree-holder {
 		    overflow: auto;
-		    top: $ueTopBarH + $interiorMarginLg;
-            padding-right: $interiorMargin;
+			top: $ueTopBarH + $interiorMarginLg + $treeSearchInputBarH + $interiorMargin;
 	    }
     }
     &.items {

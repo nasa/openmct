@@ -59,10 +59,10 @@ define(
                 var locatingType = locatingObject &&
                     locatingObject.getCapability('type');
                 return locatingType && policyService.allow(
-                        "composition",
-                        locatingType,
-                        type
-                    );
+                    "composition",
+                    locatingType,
+                    type
+                );
             }
 
             sections.push({
@@ -77,6 +77,9 @@ define(
                     row.key = index;
 
                     return row;
+                }).filter(function (row) {
+                    // Only show rows which have defined controls
+                    return row && row.control;
                 })
             });
 

@@ -25,7 +25,7 @@
  *  SearchSpec. Created by shale on 07/31/2015.
  */
 define(
-    ["../src/SearchAggregator"],
+    ["../../src/services/SearchAggregator"],
     function (SearchAggregator) {
         "use strict";
 
