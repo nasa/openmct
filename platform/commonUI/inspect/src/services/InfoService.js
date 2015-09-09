@@ -69,7 +69,7 @@ define(
             scope.bubbleModel = content;
             scope.bubbleTemplate = templateKey;
             scope.bubbleLayout = (goUp ? 'arw-btm' : 'arw-top') + ' ' +
-            (goLeft ? 'arw-right' : 'arw-left');
+                (goLeft ? 'arw-right' : 'arw-left');
             scope.bubbleTitle = title;
 
             // Create the context menu
@@ -92,7 +92,9 @@ define(
             body.append(bubble);
 
             // Return a function to dismiss the bubble
-            return function () { bubble.remove(); };
+            return function () {
+                bubble.remove();
+            };
         };
 
         return InfoService;
