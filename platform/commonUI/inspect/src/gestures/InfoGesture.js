@@ -111,7 +111,9 @@ define(
 
             this.trackPosition(event);
 
-            // If we're already going to sho
+            // Do nothing if we're already scheduled to show a bubble.
+            // This may happen due to redundant event firings caused
+            // by https://github.com/angular/angular.js/issues/12795
             if (this.pendingBubble) {
                 return;
             }
@@ -121,8 +123,7 @@ define(
 
             // Show the bubble, after a suitable delay (if mouse has
             // left before this time is up, this will be canceled.)
-            this.pendingBubble = this.pendingBubble ||
-                this.$timeout(displayBubble, this.delay);
+            this.pendingBubble = this.$timeout(displayBubble, this.delay);
 
             this.element.on('mouseleave', this.hideBubbleCallback);
         };
