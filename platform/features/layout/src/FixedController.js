@@ -102,7 +102,6 @@ define(
                         telemetryObject.getCapability('limit'),
                     datum = telemetryObject && handle.getDatum(
                         telemetryObject,
-                        telemetrySeries,
                         index
                     );
 

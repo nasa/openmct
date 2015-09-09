@@ -106,10 +106,24 @@ define(
                     .then(issueRequests);
             };
 
-            self.getDatum = function (telemetryObject, series, index) {
-                return arguments.length > 1 ?
+            /**
+             * Get the latest telemetry datum for this domain object. This
+             * will be from real-time telemetry, unless an index is specified,
+             * in which case it will be pulled from the historical telemetry
+             * series at the specified index.
+             *
+             * @param {DomainObject} domainObject the object of interest
+             * @param {number} [index] the index of the data of interest
+             * @returns {TelemetryDatum} the most recent datum
+             */
+            self.getDatum = function (telemetryObject, index) {
+                return typeof index !== 'number' ?
                         subscription.getDatum(telemetryObject) :
-                        subscription.makeDatum(telemetryObject, series, index);
+                        subscription.makeDatum(
+                            telemetryObject,
+                            this.getSeries(telemetryObject),
+                            index
+                        );
             };
 
             return self;
