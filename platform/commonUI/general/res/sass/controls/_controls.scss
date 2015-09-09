@@ -349,18 +349,20 @@ label.checkbox.custom {
 	}
 
 	::-webkit-scrollbar-thumb {
-		$bg: lighten($colorBodyBg, 10%);
-		@include background-image(linear-gradient(lighten($bg, 10%), lighten($bg, 5%) 20px));
-		@include border-radius(1px);
+		$bg: $scrollbarThumbColor;
+		$hc: $scrollbarThumbColorHov;
+		$gr: 5%;
+		@include background-image(linear-gradient(lighten($bg, $gr), $bg 20px));
+		@include border-radius(2px);
 		@include box-sizing(border-box);
-		@include boxShdwSubtle();
-		border-top: 1px solid lighten($bg, 20%);
+		//@include boxShdwSubtle();
+		//border-top: 1px solid lighten($bg, 20%);
 		&:hover {
-			@include background-image(linear-gradient(lighten($bg, 20%), lighten($bg, 15%) 20px));
+			@include background-image(linear-gradient(lighten($hc, $gr), $hc 20px));
 		}
 	}
 
 	::-webkit-scrollbar-corner {
-		background: rgba(#000, 0.4);
+		background: $scrollbarTrackColorBg;
 	}
 }

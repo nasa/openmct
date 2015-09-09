@@ -31,7 +31,7 @@
     }
 	>.holder {
 		$i: 15%;
-		@include containerSubtle();
+		@include containerSubtle($colorOvrBg, $colorOvrFg);
 		@include border-radius($basicCr * 3);
 		color: $colorOvrFg;
 		top: $i; right: $i; bottom: $i; left: $i;
@@ -64,19 +64,21 @@
         height: $ovrFooterH;
         text-align: right;
         .s-btn {
-	        $l: 15%;
-	        @include containerSubtle(lighten($colorBodyBg, $l), lighten($colorBodyFg, $l), true);
+	        $bg: $colorOvrBtnBg;
+	        &:not(.major) {
+	            @include btnSubtle($bg, pullForward($bg, 10%), $colorOvrBtnFg, $colorOvrBtnFg);
+	        }
 	        font-size: 95%;
 	        height: $ovrFooterH;
 	        line-height: $ovrFooterH;
             margin-left: $interiorMargin;
 	        padding: 0 $interiorMargin * 3;
-	        &.major {
-		        @extend .s-btn.major;
-		        &:hover {
-			        @extend .s-btn.major:hover;
-		        }
-	        }
+	        //&.major {
+		     //   @extend .s-btn.major;
+		     //   &:hover {
+			 //       @extend .s-btn.major:hover;
+		     //   }
+	        //}
         }
     }
     .contents.l-dialog {

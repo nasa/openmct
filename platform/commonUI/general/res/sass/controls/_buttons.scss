@@ -80,22 +80,24 @@ $pad: $interiorMargin * $baseRatio;
 	&.sm {
 		padding: 0 $pad / $baseRatio;
 	}
+
 	&.vsm {
 		padding: 0 ($pad / $baseRatio) / 2;
 	}
 
-	&:not(.major) {
-		@include btnSubtle($colorBtnBg, $colorBtnFg, $colorBtnIcon);
+	&.major {
+		$bg: $colorBtnMajorBg;
+		$hc: lighten($bg, 10%);
+		@include btnSubtle($bg, $hc, $colorBtnMajorFg, $colorBtnMajorFg);
 	}
 
-	&.major {
-		$bg: $colorKey;
-		$fg: lighten($bg, 70%);
-		@include btnSubtle($bg, $fg, $fg);
+	&:not(.major) {
+		// bg, bgHov, fg, ic
+		@include btnSubtle($colorBtnBg, $colorKey, $colorBtnFg, $colorBtnIcon);
 	}
 
 	&.paused {
-		@include btnSubtle($colorPausedBg, $colorPausedFg, $colorPausedFg);
+		@include btnSubtle($colorPausedBg, lighten($colorPausedBg, 10%), $colorPausedFg, $colorPausedFg);
 		.icon:before {
 			content: "\0000EF";
 		}

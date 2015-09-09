@@ -1,14 +1,17 @@
 /************************** COLORS AND SHADING */
 $colorBodyBg: #333;
+$colorGenBg: #222;
 $colorBodyFg: #999;
 $colorFooterBg: #000;
 $colorKey: #0099cc;
 $colorKeySelectedBg: #005177;
 $colorKeyFg: #fff;
-
+$colorInteriorBorder: rgba($colorBodyFg, 0.1);
 $contrastRatioPercent: 7%;
-$colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent);
+$colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent); //
 $colorBtnFg: $colorBodyFg;
+$colorBtnMajorBg: $colorKey;
+$colorBtnMajorFg: $colorKeyFg;
 $colorBtnIcon: $colorKey;
 $colorInvokeMenu: #fff;
 $contrastInvokeMenuPercent: 20%;
@@ -24,17 +27,23 @@ $colorFormLines: rgba(#fff, 0.1);
 $colorFormSectionHeader: rgba(#000, 0.2);
 $colorInvokeMenu: #fff;
 // Menu colors
-$colorMenuBg: lighten($colorBodyBg, 23%);
-$colorMenuFg: lighten($colorMenuBg, 70%);
-$colorMenuIc: lighten($colorKey, 17%);
-$colorInteriorBorder: lighten($colorBodyBg, 10%);
-$colorObjFrameBg: darken($colorBodyBg, 5%);
+$colorMenuBg: pullForward($colorBodyBg, 23%);
+$colorMenuFg: pullForward($colorMenuBg, 70%);
+$colorMenuIc: pullForward($colorKey, 17%);
+$colorMenuHov: pullForward($colorMenuBg, 10%);//
+$shdwMenu: none;
+$shdwMenuText: rgba(black, 0.1) 0 1px 2px;
+$colorCreateMenuLgIcon: $colorMenuFg;
+$colorCreateMenuText: $colorMenuFg;//
 // Form colors
 $colorCheck: $colorKey;
-$colorFormRequired: #ffc700;
+$colorFormRequired: $colorAlt1;
 $colorFormValid: #33cc33;
 $colorFormError: #cc0000;
-$colorFormInvalid: #ff9900;
+$colorFormInvalid: #ff3300;
+$colorInputBg: rgba(#fff, 0.1);
+$colorInputFg: pullForward($colorBodyFg, 20%);
+$colorFormText: rgba(#fff, 0.5);
 // Limits and staleness colors
 $colorLimitYellow: #9d7500;
 $colorLimitRed: #aa0000;
@@ -49,8 +58,9 @@ $colorThumbsBubbleBg: lighten($colorBodyBg, 10%);
 // Overlay
 $colorOvrBlocker: rgba(black, 0.7);
 $colorOvrBg: pullForward($colorBodyBg, 10%);
-$colorOvrFg: $colorBodyFg;
-
+$colorOvrFg: pullForward($colorBodyFg, 30%);
+$colorOvrBtnBg: pullForward($colorOvrBg, 20%);
+$colorOvrBtnFg: #fff;
 // Items
 $colorItemBg: lighten($colorBodyBg, 5%);
 $colorItemFg: lighten($colorItemBg, 50%);
@@ -60,7 +70,6 @@ $colorItemSubIcons: $colorItemFgDetails;
 $colorItemOpenIcon: $colorItemFgDetails;
 $shdwItemText: rgba(black, 0.1) 0 1px 2px;
 $colorItemBgSelected: $colorKey;
-
 // Tabular
 $tabularColorBorder: rgba(white, 0.1);
 $tabularColorBodyBg: darken($colorBodyBg, 10%);
@@ -79,9 +88,15 @@ $colorItemTreeSelectedVC: $colorItemTreeVC;
 $colorItemTreeVCHover: $colorAlt1;
 $shdwItemTreeIcon: 0.6;
 // Scrollbar
+$scrollbarTrackSize: 10px;
 $scrollbarTrackColorBg: rgba(#000, 0.4);
+$scrollbarThumbColor: lighten($colorBodyBg, 10%);
+$scrollbarThumbColorHov: lighten($scrollbarThumbColor, 2%);
 // Splitter
 $splitterShdw: rgba(black, 0.4) 0 0 3px;
 $colorSplitterInterior: $colorBodyBg;
 $colorSplitterHover: none;
 $colorGrippyInteriorHover: $colorKey;
+
+/********************************* MOBILE */
+$colorMobilePaneLeft: darken($colorBodyBg, 5%);

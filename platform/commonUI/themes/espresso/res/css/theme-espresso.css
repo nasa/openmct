@@ -98,6 +98,27 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /*********************************************** FORM ELEMENTS */
+/*
+
+@mixin input-base($bg: $colorBodyBg, $fg: $colorBodyFg) {
+    @include appearance(none);
+    @include border-radius($controlCr);
+    @include box-sizing(border-box);
+    @include box-shadow(inset rgba(black, 0.65) 0 1px 4px);
+    background: rgba(#fff, 0.1);
+    border: none;
+    color: lighten($fg, 20%);
+    outline: none;
+    &.error {
+        background: rgba(red, 0.5);
+    }
+}
+
+@mixin nice-input($bg: $colorBodyBg, $fg: $colorBodyFg) {
+    @include input-base($bg, $fg);
+    padding: 0 $interiorMarginSm;
+}
+*/
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -168,7 +189,6 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/************************** STYLE */
 /************************** MOBILE REPRESENTATION ITEMS DIMENSIONS */
 /************************** MOBILE TREE MENU DIMENSIONS */
 /************************** WINDOW DIMENSIONS FOR RWD */
@@ -176,6 +196,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /************************** MEDIA QUERIES: WINDOWS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
 /************************** DEVICE PARAMETERS FOR MENUS/REPRESENTATIONS */
 /************************** COLORS AND SHADING */
+/********************************* MOBILE */
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -375,7 +396,7 @@ mct-container {
   display: block; }
 
 /* line 98, ../../../../general/res/sass/_global.scss */
-.abs, .s-menu span.l-click-area {
+.abs, .s-menu span.l-click-area, .select span.l-click-area {
   position: absolute;
   top: 0;
   right: 0;
@@ -424,7 +445,7 @@ mct-container {
   display: none !important; }
 
 /* line 147, ../../../../general/res/sass/_global.scss */
-.paused:not(.s-btn):not(.s-menu) {
+.paused:not(.s-btn):not(.s-menu):not(.select) {
   border-color: #c56f01 !important;
   color: #c56f01 !important; }
 
@@ -454,7 +475,7 @@ mct-container {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* line 26, ../../../../general/res/sass/_about.scss */
-.l-about.abs, .s-menu span.l-about.l-click-area {
+.l-about.abs, .s-menu span.l-about.l-click-area, .select span.l-about.l-click-area {
   overflow: auto; }
 /* line 31, ../../../../general/res/sass/_about.scss */
 .l-about .l-logo-holder {
@@ -504,11 +525,11 @@ mct-container {
   .s-about .s-logo-openmctweb {
     background-image: url("../../../../general/res/images/logo-openmctweb-shdw.svg"); }
   /* line 81, ../../../../general/res/sass/_about.scss */
-  .s-about .s-btn, .s-about .s-menu {
+  .s-about .s-btn, .s-about .s-menu, .s-about .select {
     line-height: 2em; }
   /* line 85, ../../../../general/res/sass/_about.scss */
   .s-about .l-licenses-software .l-license-software {
-    border-top: 1px solid #4d4d4d;
+    border-top: 1px solid rgba(153, 153, 153, 0.1);
     padding: 0.5em 0; }
     /* line 88, ../../../../general/res/sass/_about.scss */
     .s-about .l-licenses-software .l-license-software:first-child {
@@ -545,7 +566,7 @@ mct-container {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* line 24, ../../../../general/res/sass/_text.scss */
-.abs.l-standalone, .s-menu span.l-standalone.l-click-area {
+.abs.l-standalone, .s-menu span.l-standalone.l-click-area, .select span.l-standalone.l-click-area {
   padding: 5% 20%; }
 
 /* line 29, ../../../../general/res/sass/_text.scss */
@@ -562,7 +583,7 @@ mct-container {
     margin-bottom: 1em; }
   /* line 45, ../../../../general/res/sass/_text.scss */
   .s-text h2 {
-    border-top: 1px solid #4d4d4d;
+    border-top: 1px solid rgba(153, 153, 153, 0.1);
     font-size: 1.5em;
     margin-top: 2em;
     padding-top: 1em; }
@@ -629,7 +650,7 @@ mct-container {
   display: inline-block; }
 
 /* line 55, ../../../../general/res/sass/_icons.scss */
-.s-menu .invoke-menu,
+.s-menu .invoke-menu, .select .invoke-menu,
 .icon.major .invoke-menu {
   margin-left: 3px; }
 
@@ -1224,7 +1245,7 @@ mct-container {
 /* Classes to be used for lists of properties and values */
 /* line 25, ../../../../general/res/sass/_properties.scss */
 .properties .s-row {
-  border-top: 1px solid #4d4d4d;
+  border-top: 1px solid rgba(153, 153, 153, 0.1);
   font-size: 0.8em; }
   /* line 28, ../../../../general/res/sass/_properties.scss */
   .properties .s-row:first-child {
@@ -1324,7 +1345,7 @@ mct-container {
 }*/
 /*********************************** STYLE STYLES */
 /* line 61, ../../../../general/res/sass/controls/_buttons.scss */
-.s-btn, .s-menu {
+.s-btn, .s-menu, .select {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
@@ -1339,20 +1360,62 @@ mct-container {
   padding: 0 7.5px;
   font-size: 0.7rem; }
   /* line 71, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn .icon, .s-menu .icon {
+  .s-btn .icon, .s-menu .icon, .select .icon {
     font-size: 0.8rem;
     color: #0099cc; }
   /* line 76, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn .title-label, .s-menu .title-label {
+  .s-btn .title-label, .s-menu .title-label, .select .title-label {
     vertical-align: top; }
   /* line 80, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn.sm, .sm.s-menu {
+  .s-btn.sm, .sm.s-menu, .sm.select {
     padding: 0 5px; }
-  /* line 83, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn.vsm, .vsm.s-menu {
+  /* line 84, ../../../../general/res/sass/controls/_buttons.scss */
+  .s-btn.vsm, .vsm.s-menu, .vsm.select {
     padding: 0 2.5px; }
-  /* line 87, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn:not(.major), .s-menu:not(.major) {
+  /* line 88, ../../../../general/res/sass/controls/_buttons.scss */
+  .s-btn.major, .major.s-menu, .major.select {
+    -moz-user-select: -moz-none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwYWNlNiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwOTljYyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+    background-size: 100%;
+    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #00ace6), color-stop(100%, #0099cc));
+    background-image: -moz-linear-gradient(#00ace6, #0099cc);
+    background-image: -webkit-linear-gradient(#00ace6, #0099cc);
+    background-image: linear-gradient(#00ace6, #0099cc);
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+    border: none;
+    color: #fff;
+    display: inline-block;
+    text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px;
+    color: #fff; }
+    /* line 27, ../sass/_mixins.scss */
+    .s-btn.major .icon, .major.s-menu .icon, .major.select .icon {
+      color: #fff; }
+    /* line 31, ../sass/_mixins.scss */
+    .s-btn.major:not(.disabled):hover, .major.s-menu:not(.disabled):hover, .major.select:not(.disabled):hover {
+      background-color: deepskyblue; }
+      /* line 33, ../sass/_mixins.scss */
+      .s-btn.major:not(.disabled):hover .icon, .major.s-menu:not(.disabled):hover .icon, .major.select:not(.disabled):hover .icon {
+        color: white; }
+  /* line 94, ../../../../general/res/sass/controls/_buttons.scss */
+  .s-btn:not(.major), .s-menu:not(.major), .select:not(.major) {
+    -moz-user-select: -moz-none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     border-radius: 3px;
@@ -1374,63 +1437,23 @@ mct-container {
     border: none;
     color: #999;
     display: inline-block;
-    text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px; }
-    /* line 20, ../sass/_mixins.scss */
-    .s-btn:not(.major):not(.disabled):hover, .s-menu:not(.major):not(.disabled):hover {
-      background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzYzNjM2MyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU3NTc1NyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-      background-size: 100%;
-      background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #636363), color-stop(100%, #575757));
-      background-image: -moz-linear-gradient(#636363, #575757);
-      background-image: -webkit-linear-gradient(#636363, #575757);
-      background-image: linear-gradient(#636363, #575757);
-      color: #ababab; }
-    /* line 32, ../sass/_mixins.scss */
-    .s-btn:not(.major) .icon, .s-menu:not(.major) .icon {
+    text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px;
+    color: #999; }
+    /* line 27, ../sass/_mixins.scss */
+    .s-btn:not(.major) .icon, .s-menu:not(.major) .icon, .select:not(.major) .icon {
       color: #0099cc; }
-    /* line 38, ../sass/_mixins.scss */
-    .s-btn:not(.major):not(.disabled):not(.paused):hover .icon, .s-menu:not(.major):not(.disabled):not(.paused):hover .icon {
-      color: #33ccff; }
-  /* line 91, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn.major, .major.s-menu, .overlay .bottom-bar .s-btn.major, .overlay .bottom-bar .major.s-menu {
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwYWNlNiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwOTljYyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-    background-size: 100%;
-    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #00ace6), color-stop(100%, #0099cc));
-    background-image: -moz-linear-gradient(#00ace6, #0099cc);
-    background-image: -webkit-linear-gradient(#00ace6, #0099cc);
-    background-image: linear-gradient(#00ace6, #0099cc);
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-    -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-    box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-    border: none;
-    color: white;
-    display: inline-block;
-    text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px; }
-    /* line 20, ../sass/_mixins.scss */
-    .s-btn.major:not(.disabled):hover, .major.s-menu:not(.disabled):hover, .overlay .bottom-bar .s-btn.major:not(.disabled):hover, .overlay .bottom-bar .major.s-menu:not(.disabled):hover {
-      background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzBhYzJmZiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwYjRmMCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-      background-size: 100%;
-      background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #0ac2ff), color-stop(100%, #00b4f0));
-      background-image: -moz-linear-gradient(#0ac2ff, #00b4f0);
-      background-image: -webkit-linear-gradient(#0ac2ff, #00b4f0);
-      background-image: linear-gradient(#0ac2ff, #00b4f0);
-      color: white; }
-    /* line 32, ../sass/_mixins.scss */
-    .s-btn.major .icon, .major.s-menu .icon, .overlay .bottom-bar .s-btn.major .icon, .overlay .bottom-bar .major.s-menu .icon {
-      color: white; }
-    /* line 38, ../sass/_mixins.scss */
-    .s-btn.major:not(.disabled):not(.paused):hover .icon, .major.s-menu:not(.disabled):not(.paused):hover .icon {
-      color: white; }
-  /* line 97, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn.paused, .paused.s-menu {
+    /* line 31, ../sass/_mixins.scss */
+    .s-btn:not(.major):not(.disabled):hover, .s-menu:not(.major):not(.disabled):hover, .select:not(.major):not(.disabled):hover {
+      background-color: #0099cc; }
+      /* line 33, ../sass/_mixins.scss */
+      .s-btn:not(.major):not(.disabled):hover .icon, .s-menu:not(.major):not(.disabled):hover .icon, .select:not(.major):not(.disabled):hover .icon {
+        color: #33ccff; }
+  /* line 99, ../../../../general/res/sass/controls/_buttons.scss */
+  .s-btn.paused, .paused.s-menu, .paused.select {
+    -moz-user-select: -moz-none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     border-radius: 3px;
@@ -1452,27 +1475,22 @@ mct-container {
     border: none;
     color: #fff;
     display: inline-block;
-    text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px; }
-    /* line 20, ../sass/_mixins.scss */
-    .s-btn.paused:not(.disabled):hover, .paused.s-menu:not(.disabled):hover {
-      background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZlOTEwNSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2U5ODMwMSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-      background-size: 100%;
-      background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fe9105), color-stop(100%, #e98301));
-      background-image: -moz-linear-gradient(#fe9105, #e98301);
-      background-image: -webkit-linear-gradient(#fe9105, #e98301);
-      background-image: linear-gradient(#fe9105, #e98301);
-      color: white; }
-    /* line 32, ../sass/_mixins.scss */
-    .s-btn.paused .icon, .paused.s-menu .icon {
+    text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px;
+    color: #fff; }
+    /* line 27, ../sass/_mixins.scss */
+    .s-btn.paused .icon, .paused.s-menu .icon, .paused.select .icon {
       color: #fff; }
-    /* line 38, ../sass/_mixins.scss */
-    .s-btn.paused:not(.disabled):not(.paused):hover .icon, .paused.s-menu:not(.disabled):not(.paused):hover .icon {
-      color: white; }
-    /* line 99, ../../../../general/res/sass/controls/_buttons.scss */
-    .s-btn.paused .icon:before, .paused.s-menu .icon:before {
+    /* line 31, ../sass/_mixins.scss */
+    .s-btn.paused:not(.disabled):hover, .paused.s-menu:not(.disabled):hover, .paused.select:not(.disabled):hover {
+      background-color: #f88c01; }
+      /* line 33, ../sass/_mixins.scss */
+      .s-btn.paused:not(.disabled):hover .icon, .paused.s-menu:not(.disabled):hover .icon, .paused.select:not(.disabled):hover .icon {
+        color: white; }
+    /* line 101, ../../../../general/res/sass/controls/_buttons.scss */
+    .s-btn.paused .icon:before, .paused.s-menu .icon:before, .paused.select .icon:before {
       content: "\0000EF"; }
-  /* line 104, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn.pause-play, .pause-play.s-menu {
+  /* line 106, ../../../../general/res/sass/controls/_buttons.scss */
+  .s-btn.pause-play, .pause-play.s-menu, .pause-play.select {
     /*
     	&.paused {
     		.icon {
@@ -1480,24 +1498,24 @@ mct-container {
     		}
     	}
     */ }
-    /* line 112, ../../../../general/res/sass/controls/_buttons.scss */
-    .s-btn.pause-play .icon:before, .pause-play.s-menu .icon:before {
+    /* line 114, ../../../../general/res/sass/controls/_buttons.scss */
+    .s-btn.pause-play .icon:before, .pause-play.s-menu .icon:before, .pause-play.select .icon:before {
       content: "\0000F1"; }
-  /* line 118, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn.show-thumbs .icon:before, .show-thumbs.s-menu .icon:before {
+  /* line 120, ../../../../general/res/sass/controls/_buttons.scss */
+  .s-btn.show-thumbs .icon:before, .show-thumbs.s-menu .icon:before, .show-thumbs.select .icon:before {
     content: "\000039"; }
 
-/* line 124, ../../../../general/res/sass/controls/_buttons.scss */
+/* line 126, ../../../../general/res/sass/controls/_buttons.scss */
 .l-btn-set {
   font-size: 0; }
-  /* line 130, ../../../../general/res/sass/controls/_buttons.scss */
-  .l-btn-set .s-btn, .l-btn-set .s-menu {
+  /* line 132, ../../../../general/res/sass/controls/_buttons.scss */
+  .l-btn-set .s-btn, .l-btn-set .s-menu, .l-btn-set .select {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
     border-radius: 0;
     margin-left: 1px; }
-  /* line 136, ../../../../general/res/sass/controls/_buttons.scss */
-  .l-btn-set .first .s-btn, .l-btn-set .first .s-menu {
+  /* line 138, ../../../../general/res/sass/controls/_buttons.scss */
+  .l-btn-set .first .s-btn, .l-btn-set .first .s-menu, .l-btn-set .first .select {
     -moz-border-radius-topleft: 3px;
     -webkit-border-top-left-radius: 3px;
     border-top-left-radius: 3px;
@@ -1505,8 +1523,8 @@ mct-container {
     -webkit-border-bottom-left-radius: 3px;
     border-bottom-left-radius: 3px;
     margin-left: 0; }
-  /* line 143, ../../../../general/res/sass/controls/_buttons.scss */
-  .l-btn-set .last .s-btn, .l-btn-set .last .s-menu {
+  /* line 145, ../../../../general/res/sass/controls/_buttons.scss */
+  .l-btn-set .last .s-btn, .l-btn-set .last .s-menu, .l-btn-set .last .select {
     -moz-border-radius-topright: 3px;
     -webkit-border-top-right-radius: 3px;
     border-top-right-radius: 3px;
@@ -1720,7 +1738,7 @@ a.s-btn span {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  border-left: 1px solid #4d4d4d;
+  border-left: 1px solid rgba(153, 153, 153, 0.1);
   display: inline-block;
   padding: 0 5px;
   position: relative; }
@@ -1808,7 +1826,7 @@ label.checkbox.custom {
     margin-left: 0; }
 
 /* line 207, ../../../../general/res/sass/controls/_controls.scss */
-.s-menu label.checkbox.custom {
+.s-menu label.checkbox.custom, .select label.checkbox.custom {
   margin-left: 5px; }
 
 /* line 212, ../../../../general/res/sass/controls/_controls.scss */
@@ -1906,8 +1924,6 @@ label.checkbox.custom {
   -webkit-box-shadow: inset rgba(0, 0, 0, 0.7) 0 1px 5px;
   box-shadow: inset rgba(0, 0, 0, 0.7) 0 1px 5px;
   background-color: rgba(0, 0, 0, 0.4);
-  border-bottom: 1px solid rgba(77, 77, 77, 0.4);
-  border-right: 1px solid rgba(77, 77, 77, 0.4);
   height: 50%;
   width: auto;
   position: absolute;
@@ -1917,6 +1933,10 @@ label.checkbox.custom {
   left: 0; }
 /* line 308, ../../../../general/res/sass/controls/_controls.scss */
 .slider .knob {
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
@@ -1939,6 +1959,7 @@ label.checkbox.custom {
   color: #999;
   display: inline-block;
   text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px;
+  color: #999;
   cursor: ew-resize;
   position: absolute;
   height: 100%;
@@ -1947,21 +1968,9 @@ label.checkbox.custom {
   auto: 0;
   bottom: auto;
   left: auto; }
-  /* line 20, ../sass/_mixins.scss */
-  .slider .knob:not(.disabled):hover {
-    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzUyNTI1MiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzQ1NDU0NSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-    background-size: 100%;
-    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #525252), color-stop(100%, #454545));
-    background-image: -moz-linear-gradient(#525252, #454545);
-    background-image: -webkit-linear-gradient(#525252, #454545);
-    background-image: linear-gradient(#525252, #454545);
-    color: #ababab; }
-  /* line 32, ../sass/_mixins.scss */
+  /* line 27, ../sass/_mixins.scss */
   .slider .knob .icon {
     color: #0099cc; }
-  /* line 38, ../sass/_mixins.scss */
-  .slider .knob:not(.disabled):not(.paused):hover .icon {
-    color: #33ccff; }
   /* line 159, ../../../../general/res/sass/_mixins.scss */
   .slider .knob:before {
     -moz-transition-property: "border-color";
@@ -2035,39 +2044,33 @@ label.checkbox.custom {
     -webkit-box-shadow: inset rgba(0, 0, 0, 0.7) 0 1px 5px;
     box-shadow: inset rgba(0, 0, 0, 0.7) 0 1px 5px;
     background-color: rgba(0, 0, 0, 0.4);
-    border-bottom: 1px solid rgba(77, 77, 77, 0.4);
-    border-right: 1px solid rgba(77, 77, 77, 0.4);
     height: 10px;
     width: 10px; }
 
   /* line 351, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar-thumb {
-    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzY2NjY2NiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
-    background-image: -webkit-gradient(linear, 50% 0%, 50% 20, color-stop(0%, #666666), color-stop(100%, #595959));
-    background-image: -moz-linear-gradient(#666666, #595959 20px);
-    background-image: -webkit-linear-gradient(#666666, #595959 20px);
-    background-image: linear-gradient(#666666, #595959 20px);
-    -moz-border-radius: 1px;
-    -webkit-border-radius: 1px;
-    border-radius: 1px;
+    background-image: -webkit-gradient(linear, 50% 0%, 50% 20, color-stop(0%, #595959), color-stop(100%, #4d4d4d));
+    background-image: -moz-linear-gradient(#595959, #4d4d4d 20px);
+    background-image: -webkit-linear-gradient(#595959, #4d4d4d 20px);
+    background-image: linear-gradient(#595959, #4d4d4d 20px);
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-    -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-    box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-    border-top: 1px solid gray; }
-    /* line 358, ../../../../general/res/sass/controls/_controls.scss */
+    box-sizing: border-box; }
+    /* line 360, ../../../../general/res/sass/controls/_controls.scss */
     ::-webkit-scrollbar-thumb:hover {
-      background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzgwODA4MCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzczNzM3MyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+      background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzVlNWU1ZSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzUyNTI1MiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
-      background-image: -webkit-gradient(linear, 50% 0%, 50% 20, color-stop(0%, #808080), color-stop(100%, #737373));
-      background-image: -moz-linear-gradient(#808080, #737373 20px);
-      background-image: -webkit-linear-gradient(#808080, #737373 20px);
-      background-image: linear-gradient(#808080, #737373 20px); }
+      background-image: -webkit-gradient(linear, 50% 0%, 50% 20, color-stop(0%, #5e5e5e), color-stop(100%, #525252));
+      background-image: -moz-linear-gradient(#5e5e5e, #525252 20px);
+      background-image: -webkit-linear-gradient(#5e5e5e, #525252 20px);
+      background-image: linear-gradient(#5e5e5e, #525252 20px); }
 
-  /* line 363, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 365, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar-corner {
     background: rgba(0, 0, 0, 0.4); } }
 /*****************************************************************************
@@ -2126,13 +2129,13 @@ label.checkbox.custom {
  *****************************************************************************/
 /******************************************************** MENU BUTTONS */
 /* line 31, ../../../../general/res/sass/controls/_menus.scss */
-.s-menu .icon {
+.s-menu .icon, .select .icon {
   font-size: 120%; }
 /* line 35, ../../../../general/res/sass/controls/_menus.scss */
-.s-menu .title-label {
+.s-menu .title-label, .select .title-label {
   margin-left: 3px; }
 /* line 39, ../../../../general/res/sass/controls/_menus.scss */
-.s-menu:after {
+.s-menu:after, .select:after {
   color: rgba(255, 255, 255, 0.2);
   content: '\76';
   display: inline-block;
@@ -2141,14 +2144,14 @@ label.checkbox.custom {
   text-shadow: none;
   vertical-align: top; }
 /* line 50, ../../../../general/res/sass/controls/_menus.scss */
-.s-menu.create-btn .title-label {
+.s-menu.create-btn .title-label, .create-btn.select .title-label {
   font-size: 1rem; }
 /* line 58, ../../../../general/res/sass/controls/_menus.scss */
-.s-menu .menu {
+.s-menu .menu, .select .menu {
   left: 0;
   text-align: left; }
   /* line 61, ../../../../general/res/sass/controls/_menus.scss */
-  .s-menu .menu .ui-symbol.icon {
+  .s-menu .menu .ui-symbol.icon, .select .menu .ui-symbol.icon {
     width: 12px; }
 
 /******************************************************** MENUS THEMSELVES */
@@ -2156,71 +2159,11 @@ label.checkbox.custom {
 .menu-element {
   cursor: pointer;
   position: relative; }
-  /* line 74, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 76, ../../../../general/res/sass/controls/_menus.scss */
   .menu-element .menu {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
     border-radius: 2px;
-    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzQwNDA0MCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-    background-size: 100%;
-    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #4d4d4d), color-stop(100%, #404040));
-    background-image: -moz-linear-gradient(#4d4d4d, #404040);
-    background-image: -webkit-linear-gradient(#4d4d4d, #404040);
-    background-image: linear-gradient(#4d4d4d, #404040);
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-    -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-    box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-    border: none;
-    color: #999;
-    display: inline-block;
-    text-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-    display: block;
-    padding: 3px 0;
-    position: absolute;
-    z-index: 10; }
-    /* line 82, ../../../../general/res/sass/controls/_menus.scss */
-    .menu-element .menu ul {
-      margin: 0;
-      padding: 0; }
-      /* line 293, ../../../../general/res/sass/_mixins.scss */
-      .menu-element .menu ul li {
-        list-style-type: none;
-        margin: 0;
-        padding: 0; }
-      /* line 84, ../../../../general/res/sass/controls/_menus.scss */
-      .menu-element .menu ul li {
-        -moz-box-sizing: border-box;
-        -webkit-box-sizing: border-box;
-        box-sizing: border-box;
-        border-top: 1px solid #737373;
-        color: #d9d9d9;
-        line-height: 1.5rem;
-        padding: 3px 10px 3px 30px;
-        position: relative;
-        white-space: nowrap; }
-        /* line 92, ../../../../general/res/sass/controls/_menus.scss */
-        .menu-element .menu ul li:first-child {
-          border: none; }
-        /* line 95, ../../../../general/res/sass/controls/_menus.scss */
-        .menu-element .menu ul li:hover {
-          background: #737373;
-          color: #fff; }
-          /* line 101, ../../../../general/res/sass/controls/_menus.scss */
-          .menu-element .menu ul li:hover .icon {
-            color: #33ccff; }
-        /* line 109, ../../../../general/res/sass/controls/_menus.scss */
-        .menu-element .menu ul li .type-icon {
-          left: 10px; }
-  /* line 116, ../../../../general/res/sass/controls/_menus.scss */
-  .menu-element .context-menu, .menu-element .checkbox-menu,
-  .menu-element .super-menu {
-    pointer-events: auto;
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzdhN2E3YSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzZlNmU2ZSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
     background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #7a7a7a), color-stop(100%, #6e6e6e));
@@ -2237,55 +2180,97 @@ label.checkbox.custom {
     -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
     box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
     border: none;
-    color: #999;
-    display: inline-block; }
-    /* line 124, ../../../../general/res/sass/controls/_menus.scss */
+    color: white;
+    display: inline-block;
+    text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px;
+    display: block;
+    padding: 3px 0;
+    position: absolute;
+    z-index: 10; }
+    /* line 85, ../../../../general/res/sass/controls/_menus.scss */
+    .menu-element .menu ul {
+      margin: 0;
+      padding: 0; }
+      /* line 319, ../../../../general/res/sass/_mixins.scss */
+      .menu-element .menu ul li {
+        list-style-type: none;
+        margin: 0;
+        padding: 0; }
+      /* line 87, ../../../../general/res/sass/controls/_menus.scss */
+      .menu-element .menu ul li {
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        border-top: 1px solid #a1a1a1;
+        color: white;
+        line-height: 1.5rem;
+        padding: 3px 10px 3px 30px;
+        position: relative;
+        white-space: nowrap; }
+        /* line 95, ../../../../general/res/sass/controls/_menus.scss */
+        .menu-element .menu ul li:first-child {
+          border: none; }
+        /* line 98, ../../../../general/res/sass/controls/_menus.scss */
+        .menu-element .menu ul li:hover {
+          background: #878787;
+          color: #fff; }
+          /* line 101, ../../../../general/res/sass/controls/_menus.scss */
+          .menu-element .menu ul li:hover .icon {
+            color: #33ccff; }
+        /* line 105, ../../../../general/res/sass/controls/_menus.scss */
+        .menu-element .menu ul li .type-icon {
+          left: 10px; }
+  /* line 112, ../../../../general/res/sass/controls/_menus.scss */
+  .menu-element .context-menu, .menu-element .checkbox-menu,
+  .menu-element .super-menu {
+    pointer-events: auto; }
+    /* line 115, ../../../../general/res/sass/controls/_menus.scss */
     .menu-element .context-menu ul li, .menu-element .checkbox-menu ul li,
     .menu-element .super-menu ul li {
       padding-left: 25px; }
-      /* line 126, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 117, ../../../../general/res/sass/controls/_menus.scss */
       .menu-element .context-menu ul li a, .menu-element .checkbox-menu ul li a,
       .menu-element .super-menu ul li a {
         color: white; }
-      /* line 129, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 120, ../../../../general/res/sass/controls/_menus.scss */
       .menu-element .context-menu ul li .icon, .menu-element .checkbox-menu ul li .icon,
       .menu-element .super-menu ul li .icon {
         color: #24c8ff; }
-      /* line 132, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 123, ../../../../general/res/sass/controls/_menus.scss */
       .menu-element .context-menu ul li .type-icon, .menu-element .checkbox-menu ul li .type-icon,
       .menu-element .super-menu ul li .type-icon {
         left: 5px; }
-      /* line 135, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 126, ../../../../general/res/sass/controls/_menus.scss */
       .menu-element .context-menu ul li:hover .icon, .menu-element .checkbox-menu ul li:hover .icon,
       .menu-element .super-menu ul li:hover .icon {
         color: #3dcfff; }
-  /* line 144, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 135, ../../../../general/res/sass/controls/_menus.scss */
   .menu-element .checkbox-menu ul li {
     padding-left: 50px; }
-    /* line 146, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 137, ../../../../general/res/sass/controls/_menus.scss */
     .menu-element .checkbox-menu ul li .checkbox {
       position: absolute;
       left: 5px;
       top: 0.53333rem; }
-      /* line 151, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 142, ../../../../general/res/sass/controls/_menus.scss */
       .menu-element .checkbox-menu ul li .checkbox em {
         height: 0.7rem;
         width: 0.7rem; }
-        /* line 154, ../../../../general/res/sass/controls/_menus.scss */
+        /* line 145, ../../../../general/res/sass/controls/_menus.scss */
         .menu-element .checkbox-menu ul li .checkbox em:before {
           font-size: 7px !important;
           height: 0.7rem;
           width: 0.7rem;
           line-height: 0.7rem; }
-    /* line 162, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 153, ../../../../general/res/sass/controls/_menus.scss */
     .menu-element .checkbox-menu ul li .type-icon {
       left: 25px; }
-  /* line 168, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 159, ../../../../general/res/sass/controls/_menus.scss */
   .menu-element .super-menu {
     display: block;
     width: 500px;
     height: 480px; }
-    /* line 178, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 168, ../../../../general/res/sass/controls/_menus.scss */
     .menu-element .super-menu .contents {
       overflow: hidden;
       position: absolute;
@@ -2295,12 +2280,12 @@ label.checkbox.custom {
       left: 5px;
       width: auto;
       height: auto; }
-    /* line 181, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 171, ../../../../general/res/sass/controls/_menus.scss */
     .menu-element .super-menu .pane {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box; }
-      /* line 183, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 173, ../../../../general/res/sass/controls/_menus.scss */
       .menu-element .super-menu .pane.left {
         border-right: 1px solid rgba(255, 255, 255, 0.2);
         left: 0;
@@ -2309,24 +2294,22 @@ label.checkbox.custom {
         width: 50%;
         overflow-x: hidden;
         overflow-y: auto; }
-        /* line 193, ../../../../general/res/sass/controls/_menus.scss */
+        /* line 183, ../../../../general/res/sass/controls/_menus.scss */
         .menu-element .super-menu .pane.left ul li {
           -moz-border-radius: 3px;
           -webkit-border-radius: 3px;
           border-radius: 3px;
           padding-left: 30px;
           border-top: none; }
-      /* line 200, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 190, ../../../../general/res/sass/controls/_menus.scss */
       .menu-element .super-menu .pane.right {
         left: auto;
         right: 0;
         padding: 25px;
         width: 50%; }
-        /* line 206, ../../../../general/res/sass/controls/_menus.scss */
-        .menu-element .super-menu .pane.right .icon {
-          color: #fff; }
-    /* line 213, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 200, ../../../../general/res/sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.icon {
+      color: white;
       position: relative;
       font-size: 8em;
       left: 0;
@@ -2334,40 +2317,40 @@ label.checkbox.custom {
       line-height: 150px;
       margin-bottom: 25px;
       text-align: center; }
-    /* line 223, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 211, ../../../../general/res/sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.title {
-      color: #fff;
+      color: white;
       font-size: 1.2em;
       margin-bottom: 0.5em; }
-    /* line 228, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 216, ../../../../general/res/sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.description {
-      color: #fff;
+      color: white;
       font-size: 0.8em;
       line-height: 1.5em; }
-  /* line 237, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 225, ../../../../general/res/sass/controls/_menus.scss */
   .menu-element .context-menu, .menu-element .checkbox-menu {
     font-size: 0.80rem; }
 
-/* line 242, ../../../../general/res/sass/controls/_menus.scss */
+/* line 230, ../../../../general/res/sass/controls/_menus.scss */
 .context-menu-holder {
   pointer-events: none;
   position: absolute;
   height: 200px;
   width: 170px;
   z-index: 70; }
-  /* line 248, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 236, ../../../../general/res/sass/controls/_menus.scss */
   .context-menu-holder .context-menu-wrapper {
     position: absolute;
     height: 100%;
     width: 100%; }
-  /* line 255, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 243, ../../../../general/res/sass/controls/_menus.scss */
   .context-menu-holder.go-left .context-menu, .context-menu-holder.go-left .menu-element .checkbox-menu, .menu-element .context-menu-holder.go-left .checkbox-menu {
     right: 0; }
-  /* line 258, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 246, ../../../../general/res/sass/controls/_menus.scss */
   .context-menu-holder.go-up .context-menu, .context-menu-holder.go-up .menu-element .checkbox-menu, .menu-element .context-menu-holder.go-up .checkbox-menu {
     bottom: 0; }
 
-/* line 263, ../../../../general/res/sass/controls/_menus.scss */
+/* line 251, ../../../../general/res/sass/controls/_menus.scss */
 .btn-bar.right .menu,
 .menus-to-left .menu {
   left: auto;
@@ -2424,10 +2407,10 @@ label.checkbox.custom {
     height: 10px; }
     /* line 52, ../../../../general/res/sass/controls/_time-controller.scss */
     .l-time-controller .l-time-range-ticks-holder .l-time-range-ticks {
-      border-top: 1px solid #4d4d4d; }
+      border-top: 1px solid rgba(153, 153, 153, 0.1); }
       /* line 54, ../../../../general/res/sass/controls/_time-controller.scss */
       .l-time-controller .l-time-range-ticks-holder .l-time-range-ticks .tick {
-        background-color: #4d4d4d;
+        background-color: rgba(153, 153, 153, 0.1);
         border: none;
         width: 1px;
         margin-left: -1px; }
@@ -2436,7 +2419,7 @@ label.checkbox.custom {
           margin-left: 0; }
         /* line 62, ../../../../general/res/sass/controls/_time-controller.scss */
         .l-time-controller .l-time-range-ticks-holder .l-time-range-ticks .tick .l-time-range-tick-label {
-          color: gray;
+          color: rgba(204, 204, 204, 0.1);
           font-size: 0.7em;
           position: absolute;
           margin-left: -25px;
@@ -2532,193 +2515,139 @@ label.checkbox.custom {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
   color: #cccccc;
   font-size: 0.8em;
   padding: 5px 5px;
   text-transform: uppercase; }
 
-/* line 35, ../../../../general/res/sass/forms/_elems.scss */
-.form .form-section {
-  position: relative;
-  margin-bottom: 20px; }
-/* line 40, ../../../../general/res/sass/forms/_elems.scss */
-.form .form-row {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  overflow: hidden;
-  *zoom: 1;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin-top: 5px;
-  padding: 5px 0;
-  position: relative; }
-  /* line 48, ../../../../general/res/sass/forms/_elems.scss */
-  .form .form-row.first {
-    border-top: none; }
-  /* line 52, ../../../../general/res/sass/forms/_elems.scss */
-  .form .form-row > .label,
-  .form .form-row > .controls {
+/* line 33, ../../../../general/res/sass/forms/_elems.scss */
+.form {
+  color: rgba(255, 255, 255, 0.5); }
+  /* line 36, ../../../../general/res/sass/forms/_elems.scss */
+  .form .form-section {
+    position: relative;
+    margin-bottom: 20px; }
+  /* line 41, ../../../../general/res/sass/forms/_elems.scss */
+  .form .form-row {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     overflow: hidden;
     *zoom: 1;
-    font-size: 0.8rem;
-    line-height: 22px;
-    min-height: 22px; }
-  /* line 61, ../../../../general/res/sass/forms/_elems.scss */
-  .form .form-row > .label {
-    float: left;
-    min-width: 120px;
-    position: relative;
-    white-space: nowrap;
-    width: 30%; }
-  /* line 71, ../../../../general/res/sass/forms/_elems.scss */
-  .form .form-row .value {
-    color: #cccccc; }
-  /* line 75, ../../../../general/res/sass/forms/_elems.scss */
-  .form .form-row .controls {
-    float: left;
-    position: relative;
-    width: 69.9%; }
-    /* line 82, ../../../../general/res/sass/forms/_elems.scss */
-    .form .form-row .controls .l-composite-control.l-checkbox {
-      display: inline-block;
-      line-height: 14px;
-      margin-right: 5px; }
-    /* line 91, ../../../../general/res/sass/forms/_elems.scss */
-    .form .form-row .controls .l-med input[type="text"] {
-      width: 200px; }
-    /* line 95, ../../../../general/res/sass/forms/_elems.scss */
-    .form .form-row .controls .l-small input[type="text"] {
-      width: 50px; }
-    /* line 99, ../../../../general/res/sass/forms/_elems.scss */
-    .form .form-row .controls .l-numeric input[type="text"] {
-      text-align: right; }
-    /* line 103, ../../../../general/res/sass/forms/_elems.scss */
-    .form .form-row .controls .select {
-      margin-right: 5px; }
-  /* line 108, ../../../../general/res/sass/forms/_elems.scss */
-  .form .form-row .field-hints {
-    color: #666666; }
-  /* line 112, ../../../../general/res/sass/forms/_elems.scss */
-  .form .form-row .selector-list {
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 5px;
-    position: relative;
-    height: 150px;
-    overflow: auto; }
-    /* line 123, ../../../../general/res/sass/forms/_elems.scss */
-    .form .form-row .selector-list .wrapper {
-      overflow-y: auto;
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      bottom: 5px;
-      left: 5px; }
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 5px;
+    padding: 5px 0;
+    position: relative; }
+    /* line 49, ../../../../general/res/sass/forms/_elems.scss */
+    .form .form-row.first {
+      border-top: none; }
+    /* line 53, ../../../../general/res/sass/forms/_elems.scss */
+    .form .form-row > .label,
+    .form .form-row > .controls {
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      overflow: hidden;
+      *zoom: 1;
+      font-size: 0.8rem;
+      line-height: 22px;
+      min-height: 22px; }
+    /* line 62, ../../../../general/res/sass/forms/_elems.scss */
+    .form .form-row > .label {
+      float: left;
+      min-width: 120px;
+      position: relative;
+      white-space: nowrap;
+      width: 30%; }
+    /* line 72, ../../../../general/res/sass/forms/_elems.scss */
+    .form .form-row .value {
+      color: #cccccc; }
+    /* line 76, ../../../../general/res/sass/forms/_elems.scss */
+    .form .form-row .controls {
+      float: left;
+      position: relative;
+      width: 69.9%; }
+      /* line 83, ../../../../general/res/sass/forms/_elems.scss */
+      .form .form-row .controls .l-composite-control.l-checkbox {
+        display: inline-block;
+        line-height: 14px;
+        margin-right: 5px; }
+      /* line 92, ../../../../general/res/sass/forms/_elems.scss */
+      .form .form-row .controls .l-med input[type="text"] {
+        width: 200px; }
+      /* line 96, ../../../../general/res/sass/forms/_elems.scss */
+      .form .form-row .controls .l-small input[type="text"] {
+        width: 50px; }
+      /* line 100, ../../../../general/res/sass/forms/_elems.scss */
+      .form .form-row .controls .l-numeric input[type="text"] {
+        text-align: right; }
+      /* line 104, ../../../../general/res/sass/forms/_elems.scss */
+      .form .form-row .controls .select {
+        margin-right: 5px; }
+    /* line 109, ../../../../general/res/sass/forms/_elems.scss */
+    .form .form-row .field-hints {
+      color: #666666; }
+    /* line 113, ../../../../general/res/sass/forms/_elems.scss */
+    .form .form-row .selector-list {
+      -moz-appearance: none;
+      -webkit-appearance: none;
+      -moz-border-radius: 3px;
+      -webkit-border-radius: 3px;
+      border-radius: 3px;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+      -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+      box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: #cccccc;
+      outline: none;
+      padding: 0 3px;
+      position: relative;
+      height: 150px; }
+      /* line 270, ../../../../general/res/sass/_mixins.scss */
+      .form .form-row .selector-list.error {
+        background: rgba(255, 0, 0, 0.5); }
+      /* line 124, ../../../../general/res/sass/forms/_elems.scss */
+      .form .form-row .selector-list > .wrapper {
+        overflow: auto;
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        bottom: 5px;
+        left: 5px; }
 
-/* line 137, ../../../../general/res/sass/forms/_elems.scss */
+/* line 138, ../../../../general/res/sass/forms/_elems.scss */
 label.form-control.checkbox input {
   margin-right: 5px;
   vertical-align: top; }
 
-/* line 143, ../../../../general/res/sass/forms/_elems.scss */
+/* line 144, ../../../../general/res/sass/forms/_elems.scss */
 .hint,
 .s-hint {
   font-size: 0.9em; }
 
-/* line 148, ../../../../general/res/sass/forms/_elems.scss */
+/* line 149, ../../../../general/res/sass/forms/_elems.scss */
 .l-result {
   display: inline-block;
   min-width: 32px;
   min-height: 32px;
   position: relative;
   vertical-align: top; }
-  /* line 155, ../../../../general/res/sass/forms/_elems.scss */
+  /* line 156, ../../../../general/res/sass/forms/_elems.scss */
   .l-result div.s-hint {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
     border-radius: 2px;
-    background: rgba(255, 153, 0, 0.8);
+    background: rgba(255, 51, 0, 0.8);
     display: block;
-    color: #ffd699;
+    color: #ffad99;
     padding: 5px; }
 
-/*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
- * as represented by the Administrator of the National Aeronautics and Space
- * Administration. All rights reserved.
- *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- * Open MCT Web includes source code licensed under additional open source
- * licenses. See the Open Source Licenses file (LICENSES.md) included with
- * this source code distribution or the Licensing information page available
- * at runtime from the About dialog for additional information.
- *****************************************************************************/
-/* line 22, ../../../../general/res/sass/forms/_textarea.scss */
-.edit-main textarea {
-  -moz-appearance: none;
-  -webkit-appearance: none;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  -moz-box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
-  box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: #cccccc;
-  outline: none;
-  padding: 5px;
-  position: absolute;
-  height: 100%;
-  width: 100%; }
-  /* line 269, ../../../../general/res/sass/_mixins.scss */
-  .edit-main textarea.error {
-    background: rgba(255, 0, 0, 0.5); }
-
-/*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
- * as represented by the Administrator of the National Aeronautics and Space
- * Administration. All rights reserved.
- *
- * Open MCT Web is licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0.
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations
- * under the License.
- *
- * Open MCT Web includes source code licensed under additional open source
- * licenses. See the Open Source Licenses file (LICENSES.md) included with
- * this source code distribution or the Licensing information page available
- * at runtime from the About dialog for additional information.
- *****************************************************************************/
-/* line 22, ../../../../general/res/sass/forms/_text-input.scss */
+/* line 165, ../../../../general/res/sass/forms/_elems.scss */
 input[type="text"] {
   -moz-appearance: none;
   -webkit-appearance: none;
@@ -2728,20 +2657,45 @@ input[type="text"] {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -moz-box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
-  box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
+  -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+  box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
   background: rgba(255, 255, 255, 0.1);
   border: none;
   color: #cccccc;
   outline: none;
   padding: 0 3px; }
-  /* line 269, ../../../../general/res/sass/_mixins.scss */
+  /* line 270, ../../../../general/res/sass/_mixins.scss */
   input[type="text"].error {
     background: rgba(255, 0, 0, 0.5); }
-  /* line 29, ../../../../general/res/sass/forms/_text-input.scss */
+  /* line 172, ../../../../general/res/sass/forms/_elems.scss */
   input[type="text"].numeric {
     text-align: right; }
+
+/* line 177, ../../../../general/res/sass/forms/_elems.scss */
+textarea {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+  box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #cccccc;
+  outline: none;
+  padding: 5px;
+  position: absolute;
+  height: 100%;
+  width: 100%; }
+  /* line 270, ../../../../general/res/sass/_mixins.scss */
+  textarea.error {
+    background: rgba(255, 0, 0, 0.5); }
 
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
@@ -2765,7 +2719,11 @@ input[type="text"] {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* line 22, ../../../../general/res/sass/forms/_selects.scss */
-.form-control.select {
+.select {
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
@@ -2788,28 +2746,15 @@ input[type="text"] {
   color: #999;
   display: inline-block;
   text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px;
-  cursor: pointer;
-  display: inline-block;
+  color: #999;
   margin: 0 0 2px 2px;
   overflow: hidden;
   position: relative; }
-  /* line 20, ../sass/_mixins.scss */
-  .form-control.select:not(.disabled):hover {
-    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzUyNTI1MiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzQ1NDU0NSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-    background-size: 100%;
-    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #525252), color-stop(100%, #454545));
-    background-image: -moz-linear-gradient(#525252, #454545);
-    background-image: -webkit-linear-gradient(#525252, #454545);
-    background-image: linear-gradient(#525252, #454545);
-    color: #ababab; }
-  /* line 32, ../sass/_mixins.scss */
-  .form-control.select .icon {
+  /* line 27, ../sass/_mixins.scss */
+  .select .icon {
     color: #0099cc; }
-  /* line 38, ../sass/_mixins.scss */
-  .form-control.select:not(.disabled):not(.paused):hover .icon {
-    color: #33ccff; }
-  /* line 29, ../../../../general/res/sass/forms/_selects.scss */
-  .form-control.select select {
+  /* line 30, ../../../../general/res/sass/forms/_selects.scss */
+  .select select {
     -moz-appearance: none;
     -webkit-appearance: none;
     -moz-box-sizing: border-box;
@@ -2818,19 +2763,13 @@ input[type="text"] {
     background: none;
     color: #999;
     border: none !important;
-    cursor: pointer;
-    padding: 4px 25px 2px 5px;
+    padding: 4px 25px 2px 0px;
     width: 120%; }
-    /* line 38, ../../../../general/res/sass/forms/_selects.scss */
-    .form-control.select select option {
+    /* line 39, ../../../../general/res/sass/forms/_selects.scss */
+    .select select option {
       margin: 5px 0; }
-  /* line 42, ../../../../general/res/sass/forms/_selects.scss */
-  .form-control.select:after {
-    color: #0099cc;
-    content: "v";
-    display: block;
-    font-family: 'symbolsfont';
-    pointer-events: none;
+  /* line 43, ../../../../general/res/sass/forms/_selects.scss */
+  .select:after {
     position: absolute;
     right: 5px;
     top: 0; }
@@ -2870,12 +2809,12 @@ input[type="text"] {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -moz-box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
-  box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
-  background: rgba(255, 255, 255, 0.1);
+  -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+  box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+  background: #333;
   border: none;
-  color: #cccccc;
+  color: #999;
   outline: none;
   padding: 0 3px;
   background: #3b3b3b;
@@ -2884,7 +2823,7 @@ input[type="text"] {
   max-height: 400px;
   overflow: auto;
   padding: 5px; }
-  /* line 269, ../../../../general/res/sass/_mixins.scss */
+  /* line 270, ../../../../general/res/sass/_mixins.scss */
   .channel-selector .treeview.error {
     background: rgba(255, 0, 0, 0.5); }
 /* line 36, ../../../../general/res/sass/forms/_channel-selector.scss */
@@ -2978,7 +2917,7 @@ input[type="text"] {
     font-size: 0.7em; }
 /* line 44, ../../../../general/res/sass/forms/_validation.scss */
 .validates.invalid > .label::after, .validates.invalid.req > .label::after {
-  color: #ff9900;
+  color: #ff3300;
   content: "x"; }
 /* line 51, ../../../../general/res/sass/forms/_validation.scss */
 .validates.valid > .label::after, .validates.valid.req > .label::after {
@@ -3031,17 +2970,17 @@ span.req {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -moz-box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
-  box-shadow: inset rgba(0, 0, 0, 0.65) 0 1px 4px;
-  background: rgba(255, 255, 255, 0.1);
+  -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+  box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+  background: #333;
   border: none;
-  color: #cccccc;
+  color: #999;
   outline: none;
   padding: 0 3px;
   background: #3b3b3b;
   border-bottom: 1px solid #4d4d4d; }
-  /* line 269, ../../../../general/res/sass/_mixins.scss */
+  /* line 270, ../../../../general/res/sass/_mixins.scss */
   .filter input.filter.error,
   .filter input.t-filter-input.error,
   .t-filter input.filter.error,
@@ -3181,33 +3120,38 @@ span.req {
 .bar .icon.major {
   margin-right: 5px; }
 /* line 70, ../../../../general/res/sass/user-environ/_layout.scss */
-.bar.abs, .s-menu span.bar.l-click-area {
+.bar.abs, .s-menu span.bar.l-click-area, .select span.bar.l-click-area {
   text-wrap: none;
   white-space: nowrap; }
   /* line 73, ../../../../general/res/sass/user-environ/_layout.scss */
-  .bar.abs.left, .s-menu span.bar.left.l-click-area,
+  .bar.abs.left, .s-menu span.bar.left.l-click-area, .select span.bar.left.l-click-area,
   .bar.abs .left,
-  .s-menu span.bar.l-click-area .left {
+  .s-menu span.bar.l-click-area .left,
+  .select span.bar.l-click-area .left {
     width: 45%;
     right: auto; }
   /* line 78, ../../../../general/res/sass/user-environ/_layout.scss */
-  .bar.abs.right, .s-menu span.bar.right.l-click-area,
+  .bar.abs.right, .s-menu span.bar.right.l-click-area, .select span.bar.right.l-click-area,
   .bar.abs .right,
-  .s-menu span.bar.l-click-area .right {
+  .s-menu span.bar.l-click-area .right,
+  .select span.bar.l-click-area .right {
     width: 45%;
     left: auto;
     text-align: right; }
     /* line 83, ../../../../general/res/sass/user-environ/_layout.scss */
-    .bar.abs.right .icon.major, .s-menu span.bar.right.l-click-area .icon.major,
+    .bar.abs.right .icon.major, .s-menu span.bar.right.l-click-area .icon.major, .select span.bar.right.l-click-area .icon.major,
     .bar.abs .right .icon.major,
-    .s-menu span.bar.l-click-area .right .icon.major {
+    .s-menu span.bar.l-click-area .right .icon.major,
+    .select span.bar.l-click-area .right .icon.major {
       margin-left: 15px; }
   /* line 89, ../../../../general/res/sass/user-environ/_layout.scss */
-  .bar.abs .l-flex .left, .s-menu span.bar.l-click-area .l-flex .left,
+  .bar.abs .l-flex .left, .s-menu span.bar.l-click-area .l-flex .left, .select span.bar.l-click-area .l-flex .left,
   .bar.abs .l-flex .right,
-  .s-menu span.bar.l-click-area .l-flex .right, .bar.abs.l-flex .left, .s-menu span.bar.l-flex.l-click-area .left,
+  .s-menu span.bar.l-click-area .l-flex .right,
+  .select span.bar.l-click-area .l-flex .right, .bar.abs.l-flex .left, .s-menu span.bar.l-flex.l-click-area .left, .select span.bar.l-flex.l-click-area .left,
   .bar.abs.l-flex .right,
-  .s-menu span.bar.l-flex.l-click-area .right {
+  .s-menu span.bar.l-flex.l-click-area .right,
+  .select span.bar.l-flex.l-click-area .right {
     width: auto; }
 
 /* line 98, ../../../../general/res/sass/user-environ/_layout.scss */
@@ -3345,10 +3289,12 @@ span.req {
     overflow: auto;
     top: 64px; }
   /* line 251, ../../../../general/res/sass/user-environ/_layout.scss */
-  .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .s-menu span.left.l-click-area, .s-menu .pane.items .object-browse-bar span.left.l-click-area,
+  .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .s-menu span.left.l-click-area, .s-menu .pane.items .object-browse-bar span.left.l-click-area, .pane.items .object-browse-bar .select span.left.l-click-area, .select .pane.items .object-browse-bar span.left.l-click-area,
   .pane.items .object-browse-bar .right.abs,
   .pane.items .object-browse-bar .s-menu span.right.l-click-area,
-  .s-menu .pane.items .object-browse-bar span.right.l-click-area {
+  .s-menu .pane.items .object-browse-bar span.right.l-click-area,
+  .pane.items .object-browse-bar .select span.right.l-click-area,
+  .select .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
   /* line 262, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.items .object-holder {
@@ -3378,13 +3324,17 @@ span.req {
       right: 3px; }
 
 /* line 302, ../../../../general/res/sass/user-environ/_layout.scss */
-.object-browse-bar .s-btn, .object-browse-bar .s-menu,
+.object-browse-bar .s-btn, .object-browse-bar .s-menu, .object-browse-bar .select,
 .top-bar .buttons-main .s-btn,
 .top-bar .buttons-main .s-menu,
+.top-bar .buttons-main .select,
 .top-bar .s-menu,
+.top-bar .select,
 .tool-bar .s-btn,
 .tool-bar .s-menu,
-.tool-bar .s-menu {
+.tool-bar .select,
+.tool-bar .s-menu,
+.tool-bar .select {
   height: 25px;
   line-height: 25px;
   vertical-align: top; }
@@ -3466,7 +3416,7 @@ span.req {
 
   /* line 31, ../../../../general/res/sass/mobile/_layout.scss */
   .pane.left.treeview {
-    background-color: #222; }
+    background-color: #262626; }
 
   /* line 35, ../../../../general/res/sass/mobile/_layout.scss */
   .pane.right-repr {
@@ -3779,13 +3729,13 @@ span.req {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* line 23, ../../../../general/res/sass/search/_search.scss */
-.abs.search-holder, .s-menu span.search-holder.l-click-area {
+.abs.search-holder, .s-menu span.search-holder.l-click-area, .select span.search-holder.l-click-area {
   height: 25px;
   bottom: 0;
   top: 23px;
   z-index: 5; }
   /* line 27, ../../../../general/res/sass/search/_search.scss */
-  .abs.search-holder.active, .s-menu span.search-holder.active.l-click-area {
+  .abs.search-holder.active, .s-menu span.search-holder.active.l-click-area, .select span.search-holder.active.l-click-area {
     height: auto;
     bottom: 0; }
 
@@ -3993,12 +3943,12 @@ span.req {
   z-index: 100; }
 /* line 32, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay > .holder {
-  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzQwNDA0MCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzMzMzMzMyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
   background-size: 100%;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #404040), color-stop(100%, #333333));
-  background-image: -moz-linear-gradient(#404040, #333333);
-  background-image: -webkit-linear-gradient(#404040, #333333);
-  background-image: linear-gradient(#404040, #333333);
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #595959), color-stop(100%, #4d4d4d));
+  background-image: -moz-linear-gradient(#595959, #4d4d4d);
+  background-image: -webkit-linear-gradient(#595959, #4d4d4d);
+  background-image: linear-gradient(#595959, #4d4d4d);
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
@@ -4009,12 +3959,12 @@ span.req {
   -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
   box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
   border: none;
-  color: #999;
+  color: #e6e6e6;
   display: inline-block;
   -moz-border-radius: 6px;
   -webkit-border-radius: 6px;
   border-radius: 6px;
-  color: #999;
+  color: #e6e6e6;
   top: 15%;
   right: 15%;
   bottom: 15%;
@@ -4052,40 +4002,51 @@ span.req {
   height: 30px;
   text-align: right; }
   /* line 66, ../../../../general/res/sass/overlay/_overlay.scss */
-  .overlay .bottom-bar .s-btn, .overlay .bottom-bar .s-menu {
-    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzY2NjY2NiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-    background-size: 100%;
-    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #666666), color-stop(100%, #595959));
-    background-image: -moz-linear-gradient(#666666, #595959);
-    background-image: -webkit-linear-gradient(#666666, #595959);
-    background-image: linear-gradient(#666666, #595959);
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-    -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-    box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-    border: none;
-    color: #bfbfbf;
-    display: inline-block;
+  .overlay .bottom-bar .s-btn, .overlay .bottom-bar .s-menu, .overlay .bottom-bar .select {
     font-size: 95%;
     height: 30px;
     line-height: 30px;
     margin-left: 5px;
     padding: 0 15px; }
-    /* line 20, ../sass/_mixins.scss */
-    .overlay .bottom-bar .s-btn:not(.disabled):hover, .overlay .bottom-bar .s-menu:not(.disabled):hover {
-      background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzc4Nzg3OCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzZiNmI2YiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+    /* line 68, ../../../../general/res/sass/overlay/_overlay.scss */
+    .overlay .bottom-bar .s-btn:not(.major), .overlay .bottom-bar .s-menu:not(.major), .overlay .bottom-bar .select:not(.major) {
+      -moz-user-select: -moz-none;
+      -ms-user-select: none;
+      -webkit-user-select: none;
+      user-select: none;
+      -moz-border-radius: 3px;
+      -webkit-border-radius: 3px;
+      border-radius: 3px;
+      background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzhjOGM4YyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzgwODA4MCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
-      background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #787878), color-stop(100%, #6b6b6b));
-      background-image: -moz-linear-gradient(#787878, #6b6b6b);
-      background-image: -webkit-linear-gradient(#787878, #6b6b6b);
-      background-image: linear-gradient(#787878, #6b6b6b);
-      color: #d1d1d1; }
-/* line 82, ../../../../general/res/sass/overlay/_overlay.scss */
+      background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #8c8c8c), color-stop(100%, #808080));
+      background-image: -moz-linear-gradient(#8c8c8c, #808080);
+      background-image: -webkit-linear-gradient(#8c8c8c, #808080);
+      background-image: linear-gradient(#8c8c8c, #808080);
+      -moz-border-radius: 3px;
+      -webkit-border-radius: 3px;
+      border-radius: 3px;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+      -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+      box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+      border: none;
+      color: #fff;
+      display: inline-block;
+      text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px;
+      color: #fff; }
+      /* line 27, ../sass/_mixins.scss */
+      .overlay .bottom-bar .s-btn:not(.major) .icon, .overlay .bottom-bar .s-menu:not(.major) .icon, .overlay .bottom-bar .select:not(.major) .icon {
+        color: #fff; }
+      /* line 31, ../sass/_mixins.scss */
+      .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover, .overlay .bottom-bar .select:not(.major):not(.disabled):hover {
+        background-color: #999999; }
+        /* line 33, ../sass/_mixins.scss */
+        .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover .icon, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover .icon, .overlay .bottom-bar .select:not(.major):not(.disabled):hover .icon {
+          color: white; }
+/* line 84, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .contents.l-dialog {
   top: 5px;
   right: 5px;
@@ -4161,7 +4122,7 @@ ul.tree {
   -ms-user-select: none;
   -webkit-user-select: none;
   user-select: none; }
-  /* line 293, ../../../../general/res/sass/_mixins.scss */
+  /* line 319, ../../../../general/res/sass/_mixins.scss */
   ul.tree li {
     list-style-type: none;
     margin: 0;
@@ -4412,17 +4373,17 @@ ul.tree {
 /* line 25, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame.child-frame.panel {
   background: #333;
-  border: 1px solid #4d4d4d; }
+  border: 1px solid rgba(153, 153, 153, 0.1); }
   /* line 28, ../../../../general/res/sass/user-environ/_frame.scss */
   .frame.child-frame.panel:hover {
-    border-color: #666666; }
+    border-color: rgba(179, 179, 179, 0.1); }
 /* line 32, ../../../../general/res/sass/user-environ/_frame.scss */
-.frame > .object-header.abs, .s-menu .frame > span.object-header.l-click-area {
+.frame > .object-header.abs, .s-menu .frame > span.object-header.l-click-area, .select .frame > span.object-header.l-click-area {
   font-size: 0.75em;
   height: 16px;
   line-height: 16px; }
 /* line 38, ../../../../general/res/sass/user-environ/_frame.scss */
-.frame > .object-holder.abs, .s-menu .frame > span.object-holder.l-click-area {
+.frame > .object-holder.abs, .s-menu .frame > span.object-holder.l-click-area, .select .frame > span.object-holder.l-click-area {
   top: 21px; }
 /* line 41, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame .contents {
@@ -4468,29 +4429,31 @@ ul.tree {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 23, ../../../../general/res/sass/user-environ/_top-bar.scss */
-.top-bar.browse, .top-bar.edit {
-  border-bottom: 1px solid #4d4d4d;
-  top: 10px;
-  right: 10px;
-  bottom: auto;
-  left: 10px;
-  height: 30px;
-  line-height: 24px; }
-/* line 31, ../../../../general/res/sass/user-environ/_top-bar.scss */
-.top-bar .title {
-  color: #fff; }
-/* line 35, ../../../../general/res/sass/user-environ/_top-bar.scss */
-.top-bar .buttons-main {
-  font-size: 0.8em;
-  left: auto;
-  text-align: right; }
+/* line 22, ../../../../general/res/sass/user-environ/_top-bar.scss */
+.top-bar {
+  /*	.title {
+  		color: #fff;
+  	}*/ }
+  /* line 23, ../../../../general/res/sass/user-environ/_top-bar.scss */
+  .top-bar.browse, .top-bar.edit {
+    border-bottom: 1px solid rgba(153, 153, 153, 0.1);
+    top: 10px;
+    right: 10px;
+    bottom: auto;
+    left: 10px;
+    height: 30px;
+    line-height: 24px; }
+  /* line 35, ../../../../general/res/sass/user-environ/_top-bar.scss */
+  .top-bar .buttons-main {
+    font-size: 0.8em;
+    left: auto;
+    text-align: right; }
 
 /* line 48, ../../../../general/res/sass/user-environ/_top-bar.scss */
 .edit-mode .top-bar .buttons-main {
   white-space: nowrap; }
   /* line 52, ../../../../general/res/sass/user-environ/_top-bar.scss */
-  .edit-mode .top-bar .buttons-main.abs, .edit-mode .top-bar .s-menu span.buttons-main.l-click-area, .s-menu .edit-mode .top-bar span.buttons-main.l-click-area {
+  .edit-mode .top-bar .buttons-main.abs, .edit-mode .top-bar .s-menu span.buttons-main.l-click-area, .s-menu .edit-mode .top-bar span.buttons-main.l-click-area, .edit-mode .top-bar .select span.buttons-main.l-click-area, .select .edit-mode .top-bar span.buttons-main.l-click-area {
     bottom: auto;
     left: auto; }
 
@@ -4597,7 +4560,7 @@ ul.tree {
  *****************************************************************************/
 /* line 22, ../../../../general/res/sass/user-environ/_tool-bar.scss */
 .tool-bar {
-  border-bottom: 1px solid #4d4d4d; }
+  border-bottom: 1px solid rgba(153, 153, 153, 0.1); }
   /* line 24, ../../../../general/res/sass/user-environ/_tool-bar.scss */
   .tool-bar .l-control-group {
     height: 25px; }
@@ -5068,7 +5031,7 @@ table {
     bottom: 37px;
     left: 60px;
     cursor: crosshair;
-    border: 1px solid #4d4d4d; }
+    border: 1px solid rgba(153, 153, 153, 0.1); }
   /* line 86, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-label,
   .gl-plot .l-plot-label {
@@ -5397,6 +5360,10 @@ table {
     top: 0; }
   /* line 29, ../../../../general/res/sass/items/_item.scss */
   .items-holder .item.grid-item {
+    -moz-user-select: -moz-none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     border-radius: 3px;
@@ -5416,9 +5383,10 @@ table {
     -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
     box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
     border: none;
-    color: #bfbfbf;
+    color: #0099cc;
     display: inline-block;
     text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px;
+    color: #0099cc;
     box-sizing: border-box;
     cursor: pointer;
     float: left;
@@ -5427,21 +5395,15 @@ table {
     margin-bottom: 3px;
     margin-right: 3px;
     position: relative; }
-    /* line 20, ../sass/_mixins.scss */
-    .items-holder .item.grid-item:not(.disabled):hover {
-      background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzVlNWU1ZSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzUyNTI1MiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-      background-size: 100%;
-      background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #5e5e5e), color-stop(100%, #525252));
-      background-image: -moz-linear-gradient(#5e5e5e, #525252);
-      background-image: -webkit-linear-gradient(#5e5e5e, #525252);
-      background-image: linear-gradient(#5e5e5e, #525252);
-      color: #d1d1d1; }
-    /* line 32, ../sass/_mixins.scss */
+    /* line 27, ../sass/_mixins.scss */
     .items-holder .item.grid-item .icon {
       color: #0099cc; }
-    /* line 38, ../sass/_mixins.scss */
-    .items-holder .item.grid-item:not(.disabled):not(.paused):hover .icon {
-      color: #33ccff; }
+    /* line 31, ../sass/_mixins.scss */
+    .items-holder .item.grid-item:not(.disabled):hover {
+      background-color: #bfbfbf; }
+      /* line 33, ../sass/_mixins.scss */
+      .items-holder .item.grid-item:not(.disabled):hover .icon {
+        color: #33ccff; }
     /* line 47, ../../../../general/res/sass/items/_item.scss */
     .items-holder .item.grid-item:hover .item-main .item-type {
       color: deepskyblue; }
@@ -5546,6 +5508,10 @@ table {
       font-size: 0.8em; }
     /* line 138, ../../../../general/res/sass/items/_item.scss */
     .items-holder .item.grid-item.selected {
+      -moz-user-select: -moz-none;
+      -ms-user-select: none;
+      -webkit-user-select: none;
+      user-select: none;
       -moz-border-radius: 3px;
       -webkit-border-radius: 3px;
       border-radius: 3px;
@@ -5568,22 +5534,11 @@ table {
       color: #999;
       display: inline-block;
       text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px;
+      color: #999;
       color: #80dfff; }
-      /* line 20, ../sass/_mixins.scss */
-      .items-holder .item.grid-item.selected:not(.disabled):hover {
-        background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzBhYzJmZiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwYjRmMCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-        background-size: 100%;
-        background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #0ac2ff), color-stop(100%, #00b4f0));
-        background-image: -moz-linear-gradient(#0ac2ff, #00b4f0);
-        background-image: -webkit-linear-gradient(#0ac2ff, #00b4f0);
-        background-image: linear-gradient(#0ac2ff, #00b4f0);
-        color: #ababab; }
-      /* line 32, ../sass/_mixins.scss */
+      /* line 27, ../sass/_mixins.scss */
       .items-holder .item.grid-item.selected .icon {
         color: #0099cc; }
-      /* line 38, ../sass/_mixins.scss */
-      .items-holder .item.grid-item.selected:not(.disabled):not(.paused):hover .icon {
-        color: #33ccff; }
       /* line 143, ../../../../general/res/sass/items/_item.scss */
       .items-holder .item.grid-item.selected .item-type, .items-holder .item.grid-item.selected .top-bar .icon:not(.alert) {
         color: #80dfff; }
@@ -5725,7 +5680,7 @@ table {
 .autoflow {
   font-size: 0.75rem; }
   /* line 32, ../../../../general/res/sass/_autoflow.scss */
-  .autoflow:hover .l-autoflow-header .s-btn.change-column-width, .autoflow:hover .l-autoflow-header .change-column-width.s-menu {
+  .autoflow:hover .l-autoflow-header .s-btn.change-column-width, .autoflow:hover .l-autoflow-header .change-column-width.s-menu, .autoflow:hover .l-autoflow-header .change-column-width.select {
     -moz-transition-property: visibility, opacity, background-color, border-color;
     -o-transition-property: visibility, opacity, background-color, border-color;
     -webkit-transition-property: visibility, opacity, background-color, border-color;
@@ -5749,7 +5704,7 @@ table {
     .autoflow .l-autoflow-header span {
       vertical-align: middle; }
     /* line 48, ../../../../general/res/sass/_autoflow.scss */
-    .autoflow .l-autoflow-header .s-btn.change-column-width, .autoflow .l-autoflow-header .change-column-width.s-menu {
+    .autoflow .l-autoflow-header .s-btn.change-column-width, .autoflow .l-autoflow-header .change-column-width.s-menu, .autoflow .l-autoflow-header .change-column-width.select {
       -moz-transition-property: visibility, opacity, background-color, border-color;
       -o-transition-property: visibility, opacity, background-color, border-color;
       -webkit-transition-property: visibility, opacity, background-color, border-color;
@@ -5780,7 +5735,7 @@ table {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
-      border-left: 1px solid #4d4d4d;
+      border-left: 1px solid rgba(153, 153, 153, 0.1);
       display: inline-block;
       padding-left: 5px;
       padding-right: 5px;
@@ -5817,7 +5772,7 @@ table {
           color: #b3b3b3; }
         /* line 101, ../../../../general/res/sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row.first-in-group {
-          border-top: 1px solid gray; }
+          border-top: 1px solid rgba(204, 204, 204, 0.1); }
         /* line 104, ../../../../general/res/sass/_autoflow.scss */
         .autoflow .l-autoflow-items .l-autoflow-col .l-autoflow-row .l-autoflow-item {
           display: block; }

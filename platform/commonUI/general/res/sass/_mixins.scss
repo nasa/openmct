@@ -146,13 +146,13 @@
 }
 
 @mixin sliderTrack($bg: $scrollbarTrackColorBg) {
-    $b: 1px solid lighten($bg, 30%);
+    //$b: 1px solid lighten($bg, 30%);
     @include border-radius(2px);
     @include box-sizing(border-box);
     @include boxIncised(0.7);
     background-color: $bg;
-    border-bottom: $b;
-    border-right: $b;
+    //border-bottom: $b;
+    //border-right: $b;
 }
 
 @mixin controlGrippy($b, $direction: horizontal, $w: 1px, $style: dotted) {
@@ -184,8 +184,8 @@
     }
 }
 
-@mixin boxIncised($sVal: 0.6) {
-    @include box-shadow(inset rgba(black, $sVal) 0 1px 5px);
+@mixin boxIncised($sVal: 0.6, $inset: 5px) {
+    @include box-shadow(inset rgba(black, $sVal) 0 1px $inset);
 }
 
 @mixin boxOutline($c: lighten($colorBodyBg, 20%)) {
@@ -257,6 +257,30 @@
 }
 
 /*********************************************** FORM ELEMENTS */
+
+@mixin input-base($bg: $colorBodyBg, $fg: $colorBodyFg) {
+	@include appearance(none);
+	@include border-radius($controlCr);
+	@include box-sizing(border-box);
+	@include box-shadow(inset rgba(black, 0.4) 0 1px 2px);
+	background: $bg;
+	border: none;
+	color: $fg;
+	outline: none;
+	&.error {
+		background: rgba(red, 0.5);
+	}
+}
+
+@mixin nice-input($bg: $colorBodyBg, $fg: $colorBodyFg) {
+	@include input-base($bg, $fg);
+	padding: 0 $interiorMarginSm;
+}
+
+
+
+/*
+
 @mixin input-base($bg: $colorBodyBg, $fg: $colorBodyFg) {
     @include appearance(none);
     @include border-radius($controlCr);
@@ -275,6 +299,8 @@
     @include input-base($bg, $fg);
     padding: 0 $interiorMarginSm;
 }
+*/
+
 
 @mixin nice-textarea($bg: $colorBodyBg, $fg: $colorBodyFg) {
     @include input-base($bg, $fg);

@@ -1,8 +1,5 @@
 .s-btn {
 	&.major {
-		$bg: $colorKey;
-		$fg: lighten($bg, 70%);
-		@include btnSubtle($bg, $fg, $fg, 0);
 		.title-label {
 			text-transform: uppercase;
 		}

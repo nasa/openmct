@@ -1,4 +1,4 @@
-@mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $hover: false, $contrastRatioPercent: 20%) {
+@mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg) {
     $hovRatio: 5%;
     $bgBase: $bg; //pullForward($bg, $contrastRatioPercent);
     $fgBase: $fg; //pushBack($bg, $contrastRatioPercent);
@@ -6,35 +6,22 @@
     background-color: $bgBase;
     @include border-radius($controlCr);
     @include box-sizing(border-box);
-    //@include boxShdwSubtle();
-    //border: none;
-    //border-top: 1px solid lighten($gradC1, 2%);
     display: inline-block;
-    @if $hover == true {
-        &:not(.disabled):hover {
-            background-color: $colorKey; //pullForward($bgBase, $hovRatio);
-            //color: pushBack($fgBase, $hovRatio);
-        }
-    }
 }
 
-@mixin btnSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $ic: $colorBtnIcon, $contrastRatioPercent: 20%) {
-    // $ic: Icon color
+@mixin btnSubtle($bg: $colorBtnBg, $bgHov: none, $fg: $colorBtnFg, $ic: $colorBtnIcon) {
+	@include user-select(none);
     @include border-radius($controlCr);
-    @include containerSubtle($bg, $fg, true, 30%);
+    @include containerSubtle($bg, $fg);
     color: $ic;
     .icon {
         color: $ic;
     }
-/*    &:not(.disabled) {
-        &:not(.paused) {
-            &:hover {
-                .icon {
-                    color: pullForward($ic, $ltGamma);
-                }
-            }
-        }
-    }*/
+	@if $bgHov != none {
+		&:not(.disabled):hover {
+			background-color: $bgHov;
+		}
+	}
 }
 
 @function pullForward($c: $colorBodyBg, $p: 20%) {
