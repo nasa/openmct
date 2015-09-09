@@ -37,12 +37,19 @@ define(
          */
         function SinewaveTelemetrySeries(request) {
             var latestObservedTime = Math.floor(Date.now() / 1000),
-                count = latestObservedTime - firstObservedTime,
+                endTime = (request.end !== undefined) ?
+                        Math.floor(request.end / 1000) : latestObservedTime,
+                count =
+                    Math.min(endTime, latestObservedTime) - firstObservedTime,
                 period = request.period || 30,
                 generatorData = {},
                 offset = (request.start !== undefined) ?
                         Math.floor(request.start / 1000) - firstObservedTime :
                         0;
+
+            if (request.size !== undefined) {
+                offset = Math.max(offset, count - request.size);
+            }
 
             generatorData.getPointCount = function () {
                 return count - offset;
@@ -50,8 +57,7 @@ define(
 
             generatorData.getDomainValue = function (i, domain) {
                 return (i + offset) * 1000 +
-                        (domain !== 'delta' ?
-                            (firstObservedTime * 1000) : 0);
+                        (domain !== 'delta' ? (firstObservedTime * 1000) : 0);
             };
 
             generatorData.getRangeValue = function (i, range) {

@@ -44,18 +44,35 @@ define(
             this.wrappedCapability = telemetryCapability;
         }
 
+        ConductorTelemetryCapability.prototype.amendRequest = function (request) {
+            request = request || {};
+
+            // This isn't really the right check, but it happens to distinguish
+            // plots (which want to query for the full set of data for easy
+            // panning) from views like fixed position, which only want the
+            // single latest data point.
+            if (request.size !== undefined) {
+                request.start = this.timeConductor.displayStart();
+                request.end = this.timeConductor.displayEnd();
+            } else {
+                request.start = this.timeConductor.queryStart();
+                request.end = this.timeConductor.queryEnd();
+            }
+
+            return request;
+        };
+
         ConductorTelemetryCapability.prototype.getMetadata = function () {
             return this.wrappedCapability.getMetadata();
         };
 
         ConductorTelemetryCapability.prototype.requestData = function (request) {
-            request = request || {};
-            request.start = this.timeConductor.queryStart();
-            request.end = this.timeConductor.queryEnd();
+            request = this.amendRequest(request);
             return this.wrappedCapability.requestData(request);
         };
 
         ConductorTelemetryCapability.prototype.subscribe = function (callback, request) {
+            request = this.amendRequest(request);
             return this.wrappedCapability.subscribe(callback, request);
         };
 

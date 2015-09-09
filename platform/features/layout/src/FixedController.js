@@ -120,7 +120,7 @@ define(
                         handle.getDatum(telemetryObject);
 
                 if (telemetryObject &&
-                        handle.getDomainValue(telemetryObject) < maxDomainValue) {
+                        (handle.getDomainValue(telemetryObject) < maxDomainValue)) {
                     setDisplayedValue(
                         telemetryObject,
                         handle.getRangeValue(telemetryObject),
@@ -233,7 +233,7 @@ define(
             }
 
             // Trigger a new query for telemetry data
-            function updateDisplayBounds(bounds) {
+            function updateDisplayBounds(event, bounds) {
                 maxDomainValue = bounds.end;
                 if (handle) {
                     handle.request(
