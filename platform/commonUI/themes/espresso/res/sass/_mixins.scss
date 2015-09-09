@@ -1,41 +1,14 @@
 @mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $hover: false) {
-	$ltnRatio: 7%;
-	$gradRatio: 5%;
-	$hovRatio: 7%;
-	$bgBase: $bg; //pullForward($bg, $ltnRatio);
-	$fgBase: $fg; // pullForward($fg, $ltnRatio);
-	$gradC1: lighten($bgBase, $gradRatio); // Container should be lighter higher up
-	$gradC2: $bgBase;
-	$cInvokeBase: #fff;
-
-	@include background-image(linear-gradient($gradC1, $gradC2));
-	@include border-radius($controlCr);
-	@include box-sizing(border-box);
+	@include containerBase($bg, $fg);
+	@include background-image(linear-gradient(lighten($bg, 5%), $bg));
 	@include boxShdwSubtle();
-	border: none;
-	//border-top: 1px solid lighten($gradC1, 2%);
-	color: $fg;
-	display: inline-block;//
 }
 
 @mixin btnSubtle($bg: $colorBodyBg, $bgHov: none, $fg: $colorBodyFg, $ic: $colorBtnIcon) {
-	@include user-select(none);
-	@include border-radius($controlCr);
 	@include containerSubtle($bg, $fg);
+	@include btnBase($bg, linear-gradient(lighten($bg, 15%), lighten($bg, 10%)), $fg, $ic);
 	@include text-shadow(rgba(black, 0.3) 0 1px 1px);
-	color: $fg;
-	.icon {
-		color: $ic;
-	}
-	@if $bgHov != none {
-		&:not(.disabled):hover {
-			background-color: $bgHov;
-			.icon {
-				color: lighten($ic, $ltGamma);
-			}
-		}
-	}
-}//
+}
 
 @function pullForward($c: $colorBodyBg, $p: 20%) {
     // For dark interfaces, lighter things come forward - opposite for light interfaces

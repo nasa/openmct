@@ -1,27 +1,10 @@
 @mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg) {
-    $hovRatio: 5%;
-    $bgBase: $bg; //pullForward($bg, $contrastRatioPercent);
-    $fgBase: $fg; //pushBack($bg, $contrastRatioPercent);
-
-    background-color: $bgBase;
-    @include border-radius($controlCr);
-    @include box-sizing(border-box);
-    display: inline-block;
+	@include containerBase($bg, $fg);
 }
 
 @mixin btnSubtle($bg: $colorBtnBg, $bgHov: none, $fg: $colorBtnFg, $ic: $colorBtnIcon) {
-	@include user-select(none);
-    @include border-radius($controlCr);
-    @include containerSubtle($bg, $fg);
-    color: $ic;
-    .icon {
-        color: $ic;
-    }
-	@if $bgHov != none {
-		&:not(.disabled):hover {
-			background-color: $bgHov;
-		}
-	}
+	@include containerSubtle($bg, $fg);
+	@include btnBase($bg, $colorKey, $fg, $ic);
 }
 
 @function pullForward($c: $colorBodyBg, $p: 20%) {
