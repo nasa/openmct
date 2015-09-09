@@ -83,7 +83,7 @@ define(
                 });
             });
 
-            it("simply delegates subscribe calls", function () {
+            it("adds start/end times to subscribe calls", function () {
                 var mockCallback = jasmine.createSpy('callback'),
                     testRequest = { someKey: "some value" };
                 expect(conductorTelemetryCapability.subscribe(
@@ -92,7 +92,11 @@ define(
                 )).toBe(mockUnsubscribe);
                 expect(mockTelemetryCapability.subscribe).toHaveBeenCalledWith(
                     mockCallback,
-                    { someKey: "some value" }
+                    {
+                        someKey: "some value",
+                        start: testStartTime,
+                        end: testEndTime
+                    }
                 );
             });
 
