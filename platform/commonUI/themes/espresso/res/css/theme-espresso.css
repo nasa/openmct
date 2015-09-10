@@ -97,7 +97,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*********************************************** FORM ELEMENTS */
+/*********************************************** CONTROLS, FORM ELEMENTS */
 /*
 
 @mixin input-base($bg: $colorBodyBg, $fg: $colorBodyFg) {
@@ -975,7 +975,7 @@ mct-container {
     right: 0;
     width: auto;
     height: 5px; }
-    /* line 185, ../../../../general/res/sass/_mixins.scss */
+    /* line 159, ../../../../general/res/sass/_mixins.scss */
     .split-layout.horizontal > .splitter:before {
       -moz-transition-property: "border-color";
       -o-transition-property: "border-color";
@@ -999,7 +999,7 @@ mct-container {
       top: 2px;
       left: 5px;
       right: 5px; }
-    /* line 207, ../../../../general/res/sass/_mixins.scss */
+    /* line 181, ../../../../general/res/sass/_mixins.scss */
     .split-layout.horizontal > .splitter:not(.disabled):hover:before {
       -moz-transition-property: "border-color";
       -o-transition-property: "border-color";
@@ -1029,7 +1029,7 @@ mct-container {
   bottom: 0;
   cursor: col-resize;
   width: 5px; }
-  /* line 185, ../../../../general/res/sass/_mixins.scss */
+  /* line 159, ../../../../general/res/sass/_mixins.scss */
   .split-layout.vertical > .splitter:before {
     -moz-transition-property: "border-color";
     -o-transition-property: "border-color";
@@ -1053,7 +1053,7 @@ mct-container {
     left: 2px;
     bottom: 5px;
     top: 5px; }
-  /* line 207, ../../../../general/res/sass/_mixins.scss */
+  /* line 181, ../../../../general/res/sass/_mixins.scss */
   .split-layout.vertical > .splitter:not(.disabled):hover:before {
     -moz-transition-property: "border-color";
     -o-transition-property: "border-color";
@@ -1397,15 +1397,15 @@ mct-container {
     -webkit-user-select: none;
     user-select: none;
     text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px; }
-    /* line 159, ../../../../general/res/sass/_mixins.scss */
+    /* line 271, ../../../../general/res/sass/_mixins.scss */
     .s-btn.major .icon, .major.s-menu .icon, .major.select .icon {
       color: #fff; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 164, ../../../../general/res/sass/_mixins.scss */
+      /* line 276, ../../../../general/res/sass/_mixins.scss */
       .s-btn.major:not(.disabled):hover, .major.s-menu:not(.disabled):hover, .major.select:not(.disabled):hover {
         background: linear-gradient(#1ac6ff, #00bfff); }
-        /* line 166, ../../../../general/res/sass/_mixins.scss */
-        .s-btn.major:not(.disabled):hover .icon, .major.s-menu:not(.disabled):hover .icon, .major.select:not(.disabled):hover .icon {
+        /* line 278, ../../../../general/res/sass/_mixins.scss */
+        .s-btn.major:not(.disabled):hover > .icon, .major.s-menu:not(.disabled):hover > .icon, .major.select:not(.disabled):hover > .icon {
           color: white; } }
   /* line 94, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn:not(.major), .s-menu:not(.major), .select:not(.major) {
@@ -1432,15 +1432,15 @@ mct-container {
     -webkit-user-select: none;
     user-select: none;
     text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px; }
-    /* line 159, ../../../../general/res/sass/_mixins.scss */
+    /* line 271, ../../../../general/res/sass/_mixins.scss */
     .s-btn:not(.major) .icon, .s-menu:not(.major) .icon, .select:not(.major) .icon {
       color: #0099cc; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 164, ../../../../general/res/sass/_mixins.scss */
+      /* line 276, ../../../../general/res/sass/_mixins.scss */
       .s-btn:not(.major):not(.disabled):hover, .s-menu:not(.major):not(.disabled):hover, .select:not(.major):not(.disabled):hover {
         background: linear-gradient(#6b6b6b, #5e5e5e); }
-        /* line 166, ../../../../general/res/sass/_mixins.scss */
-        .s-btn:not(.major):not(.disabled):hover .icon, .s-menu:not(.major):not(.disabled):hover .icon, .select:not(.major):not(.disabled):hover .icon {
+        /* line 278, ../../../../general/res/sass/_mixins.scss */
+        .s-btn:not(.major):not(.disabled):hover > .icon, .s-menu:not(.major):not(.disabled):hover > .icon, .select:not(.major):not(.disabled):hover > .icon {
           color: #33ccff; } }
   /* line 99, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.paused, .paused.s-menu, .paused.select {
@@ -1467,15 +1467,15 @@ mct-container {
     -webkit-user-select: none;
     user-select: none;
     text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px; }
-    /* line 159, ../../../../general/res/sass/_mixins.scss */
+    /* line 271, ../../../../general/res/sass/_mixins.scss */
     .s-btn.paused .icon, .paused.s-menu .icon, .paused.select .icon {
       color: #fff; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 164, ../../../../general/res/sass/_mixins.scss */
+      /* line 276, ../../../../general/res/sass/_mixins.scss */
       .s-btn.paused:not(.disabled):hover, .paused.s-menu:not(.disabled):hover, .paused.select:not(.disabled):hover {
         background: linear-gradient(#fe9815, #f88c01); }
-        /* line 166, ../../../../general/res/sass/_mixins.scss */
-        .s-btn.paused:not(.disabled):hover .icon, .paused.s-menu:not(.disabled):hover .icon, .paused.select:not(.disabled):hover .icon {
+        /* line 278, ../../../../general/res/sass/_mixins.scss */
+        .s-btn.paused:not(.disabled):hover > .icon, .paused.s-menu:not(.disabled):hover > .icon, .paused.select:not(.disabled):hover > .icon {
           color: white; } }
     /* line 101, ../../../../general/res/sass/controls/_buttons.scss */
     .s-btn.paused .icon:before, .paused.s-menu .icon:before, .paused.select .icon:before {
@@ -1954,17 +1954,17 @@ label.checkbox.custom {
   auto: 0;
   bottom: auto;
   left: auto; }
-  /* line 159, ../../../../general/res/sass/_mixins.scss */
+  /* line 271, ../../../../general/res/sass/_mixins.scss */
   .slider .knob .icon {
     color: #0099cc; }
   @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-    /* line 164, ../../../../general/res/sass/_mixins.scss */
+    /* line 276, ../../../../general/res/sass/_mixins.scss */
     .slider .knob:not(.disabled):hover {
       background: linear-gradient(#595959, #4d4d4d); }
-      /* line 166, ../../../../general/res/sass/_mixins.scss */
-      .slider .knob:not(.disabled):hover .icon {
+      /* line 278, ../../../../general/res/sass/_mixins.scss */
+      .slider .knob:not(.disabled):hover > .icon {
         color: #33ccff; } }
-  /* line 185, ../../../../general/res/sass/_mixins.scss */
+  /* line 159, ../../../../general/res/sass/_mixins.scss */
   .slider .knob:before {
     -moz-transition-property: "border-color";
     -o-transition-property: "border-color";
@@ -1988,7 +1988,7 @@ label.checkbox.custom {
     left: 2px;
     bottom: 5px;
     top: 5px; }
-  /* line 207, ../../../../general/res/sass/_mixins.scss */
+  /* line 181, ../../../../general/res/sass/_mixins.scss */
   .slider .knob:not(.disabled):hover:before {
     -moz-transition-property: "border-color";
     -o-transition-property: "border-color";
@@ -2152,7 +2152,7 @@ label.checkbox.custom {
 .menu-element {
   cursor: pointer;
   position: relative; }
-  /* line 76, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 74, ../../../../general/res/sass/controls/_menus.scss */
   .menu-element .menu {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -2180,16 +2180,16 @@ label.checkbox.custom {
     padding: 3px 0;
     position: absolute;
     z-index: 10; }
-    /* line 85, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 83, ../../../../general/res/sass/controls/_menus.scss */
     .menu-element .menu ul {
       margin: 0;
       padding: 0; }
-      /* line 345, ../../../../general/res/sass/_mixins.scss */
+      /* line 344, ../../../../general/res/sass/_mixins.scss */
       .menu-element .menu ul li {
         list-style-type: none;
         margin: 0;
         padding: 0; }
-      /* line 87, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 85, ../../../../general/res/sass/controls/_menus.scss */
       .menu-element .menu ul li {
         -moz-box-sizing: border-box;
         -webkit-box-sizing: border-box;
@@ -2200,70 +2200,70 @@ label.checkbox.custom {
         padding: 3px 10px 3px 30px;
         position: relative;
         white-space: nowrap; }
-        /* line 95, ../../../../general/res/sass/controls/_menus.scss */
+        /* line 93, ../../../../general/res/sass/controls/_menus.scss */
         .menu-element .menu ul li:first-child {
           border: none; }
-        /* line 98, ../../../../general/res/sass/controls/_menus.scss */
+        /* line 96, ../../../../general/res/sass/controls/_menus.scss */
         .menu-element .menu ul li:hover {
           background: #878787;
           color: #fff; }
-          /* line 101, ../../../../general/res/sass/controls/_menus.scss */
+          /* line 99, ../../../../general/res/sass/controls/_menus.scss */
           .menu-element .menu ul li:hover .icon {
-            color: #33ccff; }
-        /* line 105, ../../../../general/res/sass/controls/_menus.scss */
+            color: #fff; }
+        /* line 103, ../../../../general/res/sass/controls/_menus.scss */
         .menu-element .menu ul li .type-icon {
           left: 10px; }
-  /* line 112, ../../../../general/res/sass/controls/_menus.scss */
-  .menu-element .context-menu, .menu-element .checkbox-menu,
+  /* line 110, ../../../../general/res/sass/controls/_menus.scss */
+  .menu-element .menu,
+  .menu-element .context-menu,
+  .menu-element .checkbox-menu,
   .menu-element .super-menu {
     pointer-events: auto; }
-    /* line 115, ../../../../general/res/sass/controls/_menus.scss */
-    .menu-element .context-menu ul li, .menu-element .checkbox-menu ul li,
-    .menu-element .super-menu ul li {
-      padding-left: 25px; }
-      /* line 117, ../../../../general/res/sass/controls/_menus.scss */
-      .menu-element .context-menu ul li a, .menu-element .checkbox-menu ul li a,
-      .menu-element .super-menu ul li a {
-        color: white; }
-      /* line 120, ../../../../general/res/sass/controls/_menus.scss */
-      .menu-element .context-menu ul li .icon, .menu-element .checkbox-menu ul li .icon,
-      .menu-element .super-menu ul li .icon {
-        color: #24c8ff; }
-      /* line 123, ../../../../general/res/sass/controls/_menus.scss */
-      .menu-element .context-menu ul li .type-icon, .menu-element .checkbox-menu ul li .type-icon,
-      .menu-element .super-menu ul li .type-icon {
-        left: 5px; }
-      /* line 126, ../../../../general/res/sass/controls/_menus.scss */
-      .menu-element .context-menu ul li:hover .icon, .menu-element .checkbox-menu ul li:hover .icon,
-      .menu-element .super-menu ul li:hover .icon {
-        color: #3dcfff; }
-  /* line 135, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 116, ../../../../general/res/sass/controls/_menus.scss */
+    .menu-element .menu ul li a,
+    .menu-element .context-menu ul li a,
+    .menu-element .checkbox-menu ul li a,
+    .menu-element .super-menu ul li a {
+      color: white; }
+    /* line 119, ../../../../general/res/sass/controls/_menus.scss */
+    .menu-element .menu ul li .icon,
+    .menu-element .context-menu ul li .icon,
+    .menu-element .checkbox-menu ul li .icon,
+    .menu-element .super-menu ul li .icon {
+      color: #24c8ff; }
+    /* line 122, ../../../../general/res/sass/controls/_menus.scss */
+    .menu-element .menu ul li .type-icon,
+    .menu-element .context-menu ul li .type-icon,
+    .menu-element .checkbox-menu ul li .type-icon,
+    .menu-element .super-menu ul li .type-icon {
+      left: 5px; }
+  /* line 134, ../../../../general/res/sass/controls/_menus.scss */
   .menu-element .checkbox-menu ul li {
     padding-left: 50px; }
-    /* line 137, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 136, ../../../../general/res/sass/controls/_menus.scss */
     .menu-element .checkbox-menu ul li .checkbox {
       position: absolute;
       left: 5px;
       top: 0.53333rem; }
-      /* line 142, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 141, ../../../../general/res/sass/controls/_menus.scss */
       .menu-element .checkbox-menu ul li .checkbox em {
         height: 0.7rem;
         width: 0.7rem; }
-        /* line 145, ../../../../general/res/sass/controls/_menus.scss */
+        /* line 144, ../../../../general/res/sass/controls/_menus.scss */
         .menu-element .checkbox-menu ul li .checkbox em:before {
           font-size: 7px !important;
           height: 0.7rem;
           width: 0.7rem;
           line-height: 0.7rem; }
-    /* line 153, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 152, ../../../../general/res/sass/controls/_menus.scss */
     .menu-element .checkbox-menu ul li .type-icon {
       left: 25px; }
-  /* line 159, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 158, ../../../../general/res/sass/controls/_menus.scss */
   .menu-element .super-menu {
     display: block;
     width: 500px;
     height: 480px; }
-    /* line 168, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 167, ../../../../general/res/sass/controls/_menus.scss */
     .menu-element .super-menu .contents {
       overflow: hidden;
       position: absolute;
@@ -2273,12 +2273,12 @@ label.checkbox.custom {
       left: 5px;
       width: auto;
       height: auto; }
-    /* line 171, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 170, ../../../../general/res/sass/controls/_menus.scss */
     .menu-element .super-menu .pane {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box; }
-      /* line 173, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 172, ../../../../general/res/sass/controls/_menus.scss */
       .menu-element .super-menu .pane.left {
         border-right: 1px solid rgba(255, 255, 255, 0.2);
         left: 0;
@@ -2287,20 +2287,20 @@ label.checkbox.custom {
         width: 50%;
         overflow-x: hidden;
         overflow-y: auto; }
-        /* line 183, ../../../../general/res/sass/controls/_menus.scss */
+        /* line 182, ../../../../general/res/sass/controls/_menus.scss */
         .menu-element .super-menu .pane.left ul li {
           -moz-border-radius: 3px;
           -webkit-border-radius: 3px;
           border-radius: 3px;
           padding-left: 30px;
           border-top: none; }
-      /* line 190, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 189, ../../../../general/res/sass/controls/_menus.scss */
       .menu-element .super-menu .pane.right {
         left: auto;
         right: 0;
         padding: 25px;
         width: 50%; }
-    /* line 200, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 199, ../../../../general/res/sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.icon {
       color: white;
       position: relative;
@@ -2310,40 +2310,40 @@ label.checkbox.custom {
       line-height: 150px;
       margin-bottom: 25px;
       text-align: center; }
-    /* line 211, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 210, ../../../../general/res/sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.title {
       color: white;
       font-size: 1.2em;
       margin-bottom: 0.5em; }
-    /* line 216, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 215, ../../../../general/res/sass/controls/_menus.scss */
     .menu-element .super-menu .menu-item-description .desc-area.description {
       color: white;
       font-size: 0.8em;
       line-height: 1.5em; }
-  /* line 225, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 224, ../../../../general/res/sass/controls/_menus.scss */
   .menu-element .context-menu, .menu-element .checkbox-menu {
     font-size: 0.80rem; }
 
-/* line 230, ../../../../general/res/sass/controls/_menus.scss */
+/* line 229, ../../../../general/res/sass/controls/_menus.scss */
 .context-menu-holder {
   pointer-events: none;
   position: absolute;
   height: 200px;
   width: 170px;
   z-index: 70; }
-  /* line 236, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 235, ../../../../general/res/sass/controls/_menus.scss */
   .context-menu-holder .context-menu-wrapper {
     position: absolute;
     height: 100%;
     width: 100%; }
-  /* line 243, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 242, ../../../../general/res/sass/controls/_menus.scss */
   .context-menu-holder.go-left .context-menu, .context-menu-holder.go-left .menu-element .checkbox-menu, .menu-element .context-menu-holder.go-left .checkbox-menu {
     right: 0; }
-  /* line 246, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 245, ../../../../general/res/sass/controls/_menus.scss */
   .context-menu-holder.go-up .context-menu, .context-menu-holder.go-up .menu-element .checkbox-menu, .menu-element .context-menu-holder.go-up .checkbox-menu {
     bottom: 0; }
 
-/* line 251, ../../../../general/res/sass/controls/_menus.scss */
+/* line 250, ../../../../general/res/sass/controls/_menus.scss */
 .btn-bar.right .menu,
 .menus-to-left .menu {
   left: auto;
@@ -2601,7 +2601,7 @@ label.checkbox.custom {
       padding: 0 3px;
       position: relative;
       height: 150px; }
-      /* line 296, ../../../../general/res/sass/_mixins.scss */
+      /* line 295, ../../../../general/res/sass/_mixins.scss */
       .form .form-row .selector-list.error {
         background: rgba(255, 0, 0, 0.5); }
       /* line 124, ../../../../general/res/sass/forms/_elems.scss */
@@ -2658,7 +2658,7 @@ input[type="text"] {
   color: #cccccc;
   outline: none;
   padding: 0 3px; }
-  /* line 296, ../../../../general/res/sass/_mixins.scss */
+  /* line 295, ../../../../general/res/sass/_mixins.scss */
   input[type="text"].error {
     background: rgba(255, 0, 0, 0.5); }
   /* line 172, ../../../../general/res/sass/forms/_elems.scss */
@@ -2686,7 +2686,7 @@ textarea {
   position: absolute;
   height: 100%;
   width: 100%; }
-  /* line 296, ../../../../general/res/sass/_mixins.scss */
+  /* line 295, ../../../../general/res/sass/_mixins.scss */
   textarea.error {
     background: rgba(255, 0, 0, 0.5); }
 
@@ -2739,15 +2739,15 @@ textarea {
   margin: 0 0 2px 2px;
   overflow: hidden;
   position: relative; }
-  /* line 159, ../../../../general/res/sass/_mixins.scss */
+  /* line 271, ../../../../general/res/sass/_mixins.scss */
   .select .icon {
     color: #0099cc; }
   @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-    /* line 164, ../../../../general/res/sass/_mixins.scss */
+    /* line 276, ../../../../general/res/sass/_mixins.scss */
     .select:not(.disabled):hover {
       background: linear-gradient(#595959, #4d4d4d); }
-      /* line 166, ../../../../general/res/sass/_mixins.scss */
-      .select:not(.disabled):hover .icon {
+      /* line 278, ../../../../general/res/sass/_mixins.scss */
+      .select:not(.disabled):hover > .icon {
         color: #33ccff; } }
   /* line 30, ../../../../general/res/sass/forms/_selects.scss */
   .select select {
@@ -2819,7 +2819,7 @@ textarea {
   max-height: 400px;
   overflow: auto;
   padding: 5px; }
-  /* line 296, ../../../../general/res/sass/_mixins.scss */
+  /* line 295, ../../../../general/res/sass/_mixins.scss */
   .channel-selector .treeview.error {
     background: rgba(255, 0, 0, 0.5); }
 /* line 36, ../../../../general/res/sass/forms/_channel-selector.scss */
@@ -2976,7 +2976,7 @@ span.req {
   padding: 0 3px;
   background: #3b3b3b;
   border-bottom: 1px solid #4d4d4d; }
-  /* line 296, ../../../../general/res/sass/_mixins.scss */
+  /* line 295, ../../../../general/res/sass/_mixins.scss */
   .filter input.filter.error,
   .filter input.t-filter-input.error,
   .t-filter input.filter.error,
@@ -4029,15 +4029,15 @@ span.req {
       -webkit-user-select: none;
       user-select: none;
       text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px; }
-      /* line 159, ../../../../general/res/sass/_mixins.scss */
+      /* line 271, ../../../../general/res/sass/_mixins.scss */
       .overlay .bottom-bar .s-btn:not(.major) .icon, .overlay .bottom-bar .s-menu:not(.major) .icon, .overlay .bottom-bar .select:not(.major) .icon {
         color: #fff; }
       @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-        /* line 164, ../../../../general/res/sass/_mixins.scss */
+        /* line 276, ../../../../general/res/sass/_mixins.scss */
         .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover, .overlay .bottom-bar .select:not(.major):not(.disabled):hover {
           background: linear-gradient(#a6a6a6, #999999); }
-          /* line 166, ../../../../general/res/sass/_mixins.scss */
-          .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover .icon, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover .icon, .overlay .bottom-bar .select:not(.major):not(.disabled):hover .icon {
+          /* line 278, ../../../../general/res/sass/_mixins.scss */
+          .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .select:not(.major):not(.disabled):hover > .icon {
             color: white; } }
 /* line 84, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .contents.l-dialog {
@@ -4115,7 +4115,7 @@ ul.tree {
   -ms-user-select: none;
   -webkit-user-select: none;
   user-select: none; }
-  /* line 345, ../../../../general/res/sass/_mixins.scss */
+  /* line 344, ../../../../general/res/sass/_mixins.scss */
   ul.tree li {
     list-style-type: none;
     margin: 0;
@@ -5384,15 +5384,15 @@ table {
     margin-bottom: 3px;
     margin-right: 3px;
     position: relative; }
-    /* line 159, ../../../../general/res/sass/_mixins.scss */
+    /* line 271, ../../../../general/res/sass/_mixins.scss */
     .items-holder .item.grid-item .icon {
       color: #0099cc; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 164, ../../../../general/res/sass/_mixins.scss */
+      /* line 276, ../../../../general/res/sass/_mixins.scss */
       .items-holder .item.grid-item:not(.disabled):hover {
         background: linear-gradient(#666666, #595959); }
-        /* line 166, ../../../../general/res/sass/_mixins.scss */
-        .items-holder .item.grid-item:not(.disabled):hover .icon {
+        /* line 278, ../../../../general/res/sass/_mixins.scss */
+        .items-holder .item.grid-item:not(.disabled):hover > .icon {
           color: #33ccff; } }
     /* line 47, ../../../../general/res/sass/items/_item.scss */
     .items-holder .item.grid-item:hover .item-main .item-type {
@@ -5522,15 +5522,15 @@ table {
       user-select: none;
       text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px;
       color: #80dfff; }
-      /* line 159, ../../../../general/res/sass/_mixins.scss */
+      /* line 271, ../../../../general/res/sass/_mixins.scss */
       .items-holder .item.grid-item.selected .icon {
         color: #0099cc; }
       @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-        /* line 164, ../../../../general/res/sass/_mixins.scss */
+        /* line 276, ../../../../general/res/sass/_mixins.scss */
         .items-holder .item.grid-item.selected:not(.disabled):hover {
           background: linear-gradient(#1ac6ff, #00bfff); }
-          /* line 166, ../../../../general/res/sass/_mixins.scss */
-          .items-holder .item.grid-item.selected:not(.disabled):hover .icon {
+          /* line 278, ../../../../general/res/sass/_mixins.scss */
+          .items-holder .item.grid-item.selected:not(.disabled):hover > .icon {
             color: #33ccff; } }
       /* line 143, ../../../../general/res/sass/items/_item.scss */
       .items-holder .item.grid-item.selected .item-type, .items-holder .item.grid-item.selected .top-bar .icon:not(.alert) {

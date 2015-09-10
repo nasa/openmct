@@ -145,31 +145,6 @@
     background-repeat: $repeatDir;
 }
 
-@mixin containerBase($bg: $colorBodyBg, $fg: $colorBodyFg) {
-	background-color: $bg;
-	@include border-radius($controlCr);
-	@include box-sizing(border-box);
-	color: $fg;
-	display: inline-block;
-}
-
-@mixin btnBase($bg: $colorBodyBg, $bgHov: none, $fg: $colorBodyFg, $ic: $colorBtnIcon) {
-	@include user-select(none);
-	.icon {
-		color: $ic;
-	}
-	@include desktop {
-		@if $bgHov != none {
-			&:not(.disabled):hover {
-				background: $bgHov;
-				.icon {
-					color: lighten($ic, $ltGamma);
-				}
-			}
-		}
-	}
-}
-
 @mixin sliderTrack($bg: $scrollbarTrackColorBg) {
     //$b: 1px solid lighten($bg, 30%);
     @include border-radius(2px);
@@ -281,7 +256,32 @@
 	@return percentage($d);
 }
 
-/*********************************************** FORM ELEMENTS */
+/*********************************************** CONTROLS, FORM ELEMENTS */
+
+@mixin containerBase($bg: $colorBodyBg, $fg: $colorBodyFg) {
+	background-color: $bg;
+	@include border-radius($controlCr);
+	@include box-sizing(border-box);
+	color: $fg;
+	display: inline-block;
+}
+
+@mixin btnBase($bg: $colorBodyBg, $bgHov: none, $fg: $colorBodyFg, $ic: $colorBtnIcon) {
+	@include user-select(none);
+	.icon {
+		color: $ic;
+	}
+	@include desktop {
+		@if $bgHov != none {
+			&:not(.disabled):hover {
+				background: $bgHov;
+				>.icon {
+					color: lighten($ic, $ltGamma);
+				}
+			}
+		}
+	}
+}
 
 @mixin input-base($bg: $colorBodyBg, $fg: $colorBodyFg) {
 	@include appearance(none);
