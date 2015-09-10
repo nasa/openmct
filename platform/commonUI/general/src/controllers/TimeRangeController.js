@@ -124,10 +124,10 @@ define(
             }
 
             function startMiddleDrag() {
-                initialDragValue = [
-                    $scope.ngModel.inner.start,
-                    $scope.ngModel.inner.end
-                ];
+                initialDragValue = {
+                    start: $scope.ngModel.inner.start,
+                    end: $scope.ngModel.inner.end
+                };
             }
 
             function toMillis(pixels) {
