@@ -81,7 +81,7 @@ define(
                 var persistence = domainObject.getCapability('persistence');
                 return persistence && persistence.persist();
             }
-            
+
             /*
              * Checks current object and ascendants of current
              * object with object being removed, if the current
@@ -90,11 +90,12 @@ define(
              */
             function checkObjectNavigation(object, parentObject) {
                 // Traverse object starts at current location
-                var traverseObject = (navigationService).getNavigation();
-                
+                var traverseObject = (navigationService).getNavigation(),
+                    context;
+
                 // Stop when object is not defined (above ROOT)
                 while (traverseObject) {
-                    
+
                     // If object currently traversed to is object being removed
                     // navigate to parent of current object and then exit loop
                     if (traverseObject.getId() === object.getId()) {
@@ -103,7 +104,8 @@ define(
                     }
                     // Traverses to parent of current object, moving
                     // up the ascendant path
-                    traverseObject = traverseObject.getCapability('context').getParent();
+                    context = traverseObject.getCapability('context');
+                    traverseObject = context && context.getParent();
                 }
             }
 
@@ -115,11 +117,11 @@ define(
             function removeFromContext(object) {
                 var contextCapability = object.getCapability('context'),
                     parent = contextCapability.getParent();
-                
+
                 // If currently within path of removed object(s),
                 // navigates to existing object up tree
                 checkObjectNavigation(object, parent);
-                
+
                 return $q.when(
                     parent.useCapability('mutation', doMutate)
                 ).then(function () {
