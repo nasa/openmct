@@ -138,7 +138,7 @@
 }
 
 label.checkbox.custom {
-	$bg: lighten($colorBodyBg, $ltGamma);
+	$bg: pullForward($colorBodyBg, 10%);
 	$d: $formRowCtrlsH;
 	cursor: pointer;
 	display: inline-block;
@@ -154,8 +154,9 @@ label.checkbox.custom {
 		min-width: $d;
 		&:before {
 			@include border-radius($basicCr * .75);
-			background: $bg;
-			border-bottom: 1px solid lighten($bg, 10%);
+			//background: $bg;
+			//border-bottom: 1px solid lighten($bg, 10%);
+			@include box-shadow(inset rgba(black, 0.4) 0 1px 2px);
 			box-sizing: border-box;
 			content: " ";
 			font-family: 'symbolsfont';
@@ -344,7 +345,10 @@ label.checkbox.custom {
 
 @include desktop {
 	::-webkit-scrollbar {
-		@include sliderTrack();
+		@include border-radius(2px);
+		@include box-sizing(border-box);
+		@include box-shadow(inset $scrollbarTrackShdw);
+		background-color: $scrollbarTrackColorBg;
 		height: $scrollbarTrackSize;
 		width: $scrollbarTrackSize;
 	}

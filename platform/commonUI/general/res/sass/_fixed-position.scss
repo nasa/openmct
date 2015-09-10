@@ -76,7 +76,7 @@
 		}
 
 		.l-fixed-position-text {
-			@include txtShdwSubtle();
+			//@include txtShdwSubtle();
 			border: 1px solid transparent;
 			font-size: 0.8rem;
 			$p: 1px; //$interiorMarginSm;

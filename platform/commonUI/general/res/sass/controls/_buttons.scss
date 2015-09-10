@@ -59,94 +59,103 @@ $pad: $interiorMargin * $baseRatio;
 
 /*********************************** STYLE STYLES */
 .s-btn {
-	@include box-sizing(border-box);
-	@include user-select(none);
-	cursor: pointer;
-	text-decoration: none;
-	height: $btnStdH;
-	line-height: $btnStdH;
-	padding: 0 $pad;
-	font-size: 0.7rem;
+    @include box-sizing(border-box);
+    @include user-select(none);
+    cursor: pointer;
+    text-decoration: none;
+    height: $btnStdH;
+    line-height: $btnStdH;
+    padding: 0 $pad;
+    font-size: 0.7rem;
 
-	.icon {
-		font-size: 0.8rem;
-		color: $colorKey;
-	}
+    .icon {
+        font-size: 0.8rem;
+        color: $colorKey;
+    }
 
-	.title-label {
-		vertical-align: top;
-	}
+    .title-label {
+        vertical-align: top;
+    }
 
-	&.sm {
-		padding: 0 $pad / $baseRatio;
-	}
+    &.sm {
+        padding: 0 $pad / $baseRatio;
+    }
 
-	&.vsm {
-		padding: 0 ($pad / $baseRatio) / 2;
-	}
+    &.vsm {
+        padding: 0 ($pad / $baseRatio) / 2;
+    }
 
-	&.major {
-		$bg: $colorBtnMajorBg;
-		$hc: lighten($bg, 10%);
-		@include btnSubtle($bg, $hc, $colorBtnMajorFg, $colorBtnMajorFg);
-	}
+    &.major {
+        $bg: $colorBtnMajorBg;
+        $hc: lighten($bg, 10%);
+        @include btnSubtle($bg, $hc, $colorBtnMajorFg, $colorBtnMajorFg);
+    }
 
-	&:not(.major) {
-		// bg, bgHov, fg, ic
-		@include btnSubtle($colorBtnBg, $colorKey, $colorBtnFg, $colorBtnIcon);
-	}
+    &:not(.major) {
+        // bg, bgHov, fg, ic
+        @include btnSubtle($colorBtnBg, $colorKey, $colorBtnFg, $colorBtnIcon);
+    }
+    &.pause-play {
 
-	&.paused {
-		@include btnSubtle($colorPausedBg, lighten($colorPausedBg, 10%), $colorPausedFg, $colorPausedFg);
-		.icon:before {
-			content: "\0000EF";
-		}
-	}
+    }
 
-	&.pause-play {
-		/*
-			&.paused {
-				.icon {
-					@include pulse(500ms);
-				}
-			}
-		*/
-		.icon:before {
-			content: "\0000F1";
-		}
-	}
+    //&.paused {
+    //    @include btnSubtle($colorPausedBg, lighten($colorPausedBg, 10%), $colorPausedFg, $colorPausedFg);
+    //    .icon {
+    //        @include pulse(500ms);
+    //        &:before {
+    //            content: "\0000EF";
+    //        }
+    //    }
+    //}
 
-	&.show-thumbs {
-		.icon:before {
-			content: "\000039";
-		}
-	}
+    &.pause-play {
+        .icon:before {
+            content: "\0000F1";
+        }
+        &.paused {
+            @include btnSubtle($colorPausedBg, pushBack($colorPausedBg, 10%), $colorPausedFg, $colorPausedFg);
+            .icon {
+                @include pulse(1000ms);
+                :before {
+                    content: "\0000EF";
+                }
+            }
+        }
+    }
+
+    &.show-thumbs {
+        .icon:before {
+            content: "\000039";
+        }
+    }
 }
 
 .l-btn-set {
-	// Buttons that have a very tight conceptual grouping - no internal space between them.
-	// Structure: .btn-set > mct-representation class=first|last > .s-btn
-	//@include test(red);
-	font-size: 0; // Remove space between s-btn elements due to white space in markup
+    // Buttons that have a very tight conceptual grouping - no internal space between them.
+    // Structure: .btn-set > mct-representation class=first|last > .s-btn
+    //@include test(red);
+    font-size: 0; // Remove space between s-btn elements due to white space in markup
 
-	.s-btn {
-		@include border-radius(0);
-		margin-left: 1px;
-	}
+    .s-btn {
+        @include border-radius(0);
+        margin-left: 1px;
+    }
 
-	.first {
-		.s-btn {
-			@include border-left-radius($controlCr);
-			margin-left: 0;
-		}
-	}
+    .first {
+        .s-btn {
+            @include border-left-radius($controlCr);
+            margin-left: 0;
+        }
+    }
 
-	.last {
-		.s-btn {
-			@include border-right-radius($controlCr);
-		}
-	}
+    .last {
+        .s-btn {
+            @include border-right-radius($controlCr);
+        }
+    }
 }
+
 /*********************************** LAYOUT STYLES */
 /*
 

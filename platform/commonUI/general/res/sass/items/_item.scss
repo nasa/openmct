@@ -29,12 +29,10 @@
         &.grid-item {
             //div { @include test() }
             $d: $ueBrowseGridItemLg;
-            //$iconD: 100px;
             $iconMargin: 40px;
             $iconD: ($d - ($iconMargin * 2)) * 0.85;
             $transTime: 200ms;
-            //@include btnSubtle($colorItemBg);
-            @include btnSubtle($colorItemBg, $colorItemFg, $colorItemIcon);
+            @include btnSubtle($colorItemBg, pullForward($colorItemBg, 20%), $colorItemFg, $colorItemIcon);
             box-sizing: border-box;
             cursor: pointer;
             float: left;
@@ -51,7 +49,6 @@
                     }
                 }
 	            .item-open {
-		            //display: block;
                     opacity: 1;
 	            }
             }
@@ -80,7 +77,6 @@
                 }
                 &.bottom-bar {
                     top: auto;
-                    //height: $ueBrowseGridItemBottomBarH;
                     line-height: 110%;
                 }
             }
@@ -101,9 +97,7 @@
                     bottom: auto;
                     height: $iconD;
                     top: $iconMargin - 10;
-                    //line-height: $lh;
                     .l-icon-link {
-                        // When the link icon is in the item-type icon holder
                         color: $colorIconLink;
                         height: auto;
                         line-height: 100%;
@@ -115,7 +109,6 @@
                     }
                 }
                 .item-open {
-                    //@include test();
                     @include trans-prop-nice("opacity", $transTime);
                     opacity: 0;
 	                color: $colorItemOpenIcon;

@@ -1,6 +1,4 @@
-$basicCr: 4px;
-$controlCr: $basicCr;
-/************************** COLORS AND SHADING */
+// Global
 $colorBodyBg: #fcfcfc;
 $colorBodyFg: #666;
 $colorGenBg: #fff;
@@ -10,25 +8,30 @@ $colorKeySelectedBg: $colorKey;
 $colorKeyFg: #fff;
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $contrastRatioPercent: 30%;
+$basicCr: 4px;
+$controlCr: $basicCr;
+$smallCr: 3px;
 
 // Buttons
 $colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent);
 $colorBtnFg: #fff;
 $colorBtnMajorBg: $colorKey;
 $colorBtnMajorFg: $colorKeyFg;
-$colorBtnIcon: #ddd;
+$colorBtnIcon: #eee;
 $colorObjHdrIcon: $colorBodyFg;
 $colorInvokeMenu: #000;
-$contrastInvokeMenuPercent: 50%;
+$contrastInvokeMenuPercent: 40%;
 
+// General Colors
 $colorAlt1: #ff6600;
 $colorAlert: #ff3c00;
 $colorIconLink: #49dedb;
-$colorPausedBg: #c56f01;
+$colorPausedBg: #ff9900;
 $colorPausedFg: #fff;
 $colorCreateBtn: $colorKey;
-$colorGridLines: rgba(#fff, 0.05);
+$colorGridLines: rgba(#000, 0.05);
 $colorInvokeMenu: #fff;
+
 // Menu colors
 $colorMenuBg: pushBack($colorBodyBg, 10%);
 $colorMenuFg: pullForward($colorMenuBg, 70%);
@@ -40,54 +43,62 @@ $colorCreateMenuLgIcon: $colorKey;
 $colorCreateMenuText: $colorBodyFg;
 $shdwMenu: rgba(black, 0.5) 0 1px 5px;
 $shdwMenuText: none;
+
 // Form colors
 $colorCheck: $colorKey;
 $colorFormRequired: $colorKey;
 $colorFormValid: #33cc33;
 $colorFormError: #cc0000;
 $colorFormInvalid: #ff2200;
-$colorFormLines: rgba(#fff, 0.1); // MOVED
+$colorFormLines: rgba(#000, 0.1); // MOVED
 $colorFormSectionHeader: rgba(#000, 0.1);
 $colorInputBg: $colorGenBg;
 $colorInputFg: $colorBodyFg;
 $colorFormText: pushBack($colorBodyFg, 10%);
 $colorInputIcon: pushBack($colorBodyFg, 25%);
+
 // Limits and staleness colors//
 $colorLimitYellow: #9d7500;
 $colorLimitRed: #aa0000;
-$colorTelemFresh: #fff;
-$colorTelemStale: #888;
+$colorTelemFresh: pullForward($colorBodyFg, 20%);
+$colorTelemStale: pushBack($colorBodyFg, 20%);
 $styleTelemStale: italic;
+
 // Bubble colors
 $colorInfoBubbleFg: #666;
 $colorInfoBubbleBg: $colorMenuBg;
 $colorThumbsBubbleFg: lighten($colorBodyFg, 10%);
 $colorThumbsBubbleBg: lighten($colorBodyBg, 10%);
+
 // Overlay
 $colorOvrBlocker: rgba(black, 0.7);//
 $colorOvrBg: $colorBodyBg;
 $colorOvrFg: $colorBodyFg;
 $colorOvrBtnBg: pullForward($colorOvrBg, 40%);
 $colorOvrBtnFg: #fff;
+
 // Items
-$colorItemBg: $colorBtnBg; //pullForward($colorBodyBg, 15%);
-$colorItemFg: $colorBtnFg; //lighten($colorItemBg, 20%);
+$colorItemBg: $colorBtnBg;
+$colorItemFg: $colorBtnFg;
 $colorItemFgDetails: darken($colorItemFg, 15%);
 $colorItemIcon: $colorBtnIcon;
 $colorItemSubIcons: $colorItemFgDetails;
 $colorItemOpenIcon: $colorItemFgDetails;
 $shdwItemText: rgba(black, 0.2) 0 1px 2px;
 $colorItemBgSelected: $colorKey;
+
 // Tabular
-$tabularColorBorder: rgba(white, 0.1);
-$tabularColorBodyBg: darken($colorBodyBg, 10%);
-$tabularColorBodyFg: lighten($tabularColorBodyBg, 40%);
-$tabularColorHeaderBg: lighten($colorBodyBg, 10%);
-$tabularColorHeaderFg: lighten($tabularColorHeaderBg, 40%);
-$tabularColorHeaderBorder: $colorBodyBg;
+$colorTabBorder: pullForward($colorBodyBg, 10%);
+$colorTabBodyBg: $colorBodyBg;
+$colorTabBodyFg: pullForward($colorBodyFg, 20%);
+$colorTabHeaderBg: pullForward($colorBodyBg, 10%);
+$colorTabHeaderFg: pullForward($colorBodyFg, 20%);
+$colorTabHeaderBorder: $colorBodyBg;
+
 // Plot
-$colorPlotBg: #eee; //
+$colorPlotBg: #eee;
 $colorPlotFg: $colorBodyFg;
+
 // Tree
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: $colorItemTreeIcon; //pushBack($colorItemTreeIcon, 20%);
@@ -98,11 +109,14 @@ $colorItemTreeSelectedFg: $colorBodyBg;
 $colorItemTreeVC: $colorBodyFg;
 $colorItemTreeSelectedVC: $colorBodyBg;
 $shdwItemTreeIcon: none;
+
 // Scrollbar
 $scrollbarTrackSize: 10px;
-$scrollbarTrackColorBg: rgba(#000, 0.5);
-$scrollbarThumbColor: darken($colorBodyBg, 25%);//
+$scrollbarTrackShdw: rgba(#000, 0.2) 0 1px 2px;
+$scrollbarTrackColorBg: rgba(#000, 0.1);
+$scrollbarThumbColor: darken($colorBodyBg, 50%);//
 $scrollbarThumbColorHov: $colorKey;
+
 // Splitter
 $splitterShdw: none;
 $colorSplitterInterior: $colorBodyBg;
@@ -111,5 +125,5 @@ $splitterW: 5px;
 $splitterEndCr: $splitterW;
 $colorGrippyInteriorHover: $colorBodyBg;
 
-/********************************* MOBILE */
+// Mobile
 $colorMobilePaneLeft: darken($colorBodyBg, 2%);

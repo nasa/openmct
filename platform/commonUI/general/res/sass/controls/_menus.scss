@@ -158,9 +158,8 @@
 	.super-menu {
 		$w: 500px;
 		$h: $w - 20;
-		$plw: 50%; //$w * 0.5;
-		$prw: 50%; //$w - $plw;
-		//$fg: #fff; //lighten($colorBodyFg, 40%);
+		$plw: 50%;
+		$prw: 50%;
 		display: block;
 		width: $w;
 		height: $h;
@@ -171,7 +170,7 @@
 			@include box-sizing(border-box);
 			&.left {
 				//@include test();
-				border-right: 1px solid rgba(white, 0.2);
+				border-right: 1px solid pullForward($colorMenuBg, 10%);
 				left: 0;
 				padding-right: $interiorMargin;
 				right: auto;

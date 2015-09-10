@@ -223,9 +223,9 @@
 }
 
 @mixin txtShdw($sVal) {
-	@if $sVal != 'none' {
+	//@if $sVal != 'none' {
 		@include text-shadow($sVal);
-	}
+	//}
 }
 
 @mixin txtShdwSubtle($sVal: 0.1) {
