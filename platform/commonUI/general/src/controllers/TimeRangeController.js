@@ -186,7 +186,7 @@ define(
                 ngModel.inner.start =
                     Math.max(ngModel.outer.start, ngModel.inner.start);
                 ngModel.inner.end =
-                    Math.max(ngModel.outer.end, ngModel.inner.end);
+                    Math.max(ngModel.outer.start, ngModel.inner.end);
                 updateViewForInnerSpanFromModel(ngModel);
             }
 
