@@ -30,20 +30,18 @@ define(
     function () {
         "use strict";
 
-        var UNKNOWN_USER = {
-            key: "unknown",
-            name: "Unknown User"
-        };
-
         /**
          * Default implementation of an identity service. Provides an
-         * unkown user.
+         * unknown user as an `undefined` value; this is present simply
+         * to ensure that there is always an `identityService` available
+         * for platform components to use.
+         *
          * @constructor
          * @implements {IdentityService}
          * @memberof platform/identity
          */
         function IdentityProvider($q) {
-            this.userPromise = $q.when(UNKNOWN_USER);
+            this.userPromise = $q.when(undefined);
         }
 
         IdentityProvider.prototype.getUser = function () {

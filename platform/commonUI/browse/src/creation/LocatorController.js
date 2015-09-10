@@ -33,7 +33,7 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function LocatorController($scope) {
+        function LocatorController($scope, $timeout) {
             // Populate values needed by the locator control. These are:
             // * rootObject: The top-level object, since we want to show
             //               the full tree
@@ -41,9 +41,19 @@ define(
             //              used for bi-directional object selection.
             function setLocatingObject(domainObject, priorObject) {
                 var context = domainObject &&
-                    domainObject.getCapability("context");
+                    domainObject.getCapability("context"),
+                    contextRoot = context && context.getRoot();
 
-                $scope.rootObject = (context && context.getRoot()) || $scope.rootObject;
+                if (contextRoot && contextRoot !== $scope.rootObject) {
+                    $scope.rootObject = undefined;
+                    // Update the displayed tree on a timeout to avoid
+                    // an infinite digest exception.
+                    $timeout(function () {
+                        $scope.rootObject =
+                            (context && context.getRoot()) || $scope.rootObject;
+                    }, 0);
+                }
+
                 $scope.treeModel.selectedObject = domainObject;
                 $scope.ngModel[$scope.field] = domainObject;
 
@@ -52,10 +62,7 @@ define(
                         $scope.structure &&
                             $scope.structure.validate) {
                     if (!$scope.structure.validate(domainObject)) {
-                        setLocatingObject(
-                            $scope.structure.validate(priorObject) ?
-                                    priorObject : undefined
-                        );
+                        setLocatingObject(priorObject, undefined);
                         return;
                     }
                 }

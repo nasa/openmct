@@ -46,15 +46,12 @@ define(
                 provider = new IdentityProvider(mockQ);
             });
 
-            it("provides an unknown user", function () {
+            it("provides an undefined user", function () {
                 provider.getUser().then(mockCallback);
 
                 waitsFor(calledBack);
                 runs(function () {
-                    expect(mockCallback).toHaveBeenCalledWith({
-                        key: jasmine.any(String),
-                        name: jasmine.any(String)
-                    });
+                    expect(mockCallback).toHaveBeenCalledWith(undefined);
                 });
             });
 
