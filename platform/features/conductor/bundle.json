@@ -9,8 +9,8 @@
         "components": [
             {
                 "type": "decorator",
-                "provides": "capabilityService",
-                "implementation": "ConductorCapabilityDecorator.js",
+                "provides": "telemetryService",
+                "implementation": "ConductorTelemetryDecorator.js",
                 "depends": [ "conductorService" ]
             }
         ],

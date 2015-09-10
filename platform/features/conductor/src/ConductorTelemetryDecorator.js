@@ -22,43 +22,51 @@
 /*global define*/
 
 define(
-    ['./ConductorTelemetryCapability'],
-    function (ConductorTelemetryCapability) {
+    [],
+    function () {
         'use strict';
 
         /**
-         * Decorates the `capabilityService` such that any exposed `telemetry`
-         * capabilities have their requests mediated by the time conductor.
+         * Decorates the `telemetryService` such that requests are
+         * mediated by the time conductor.
          *
          * @constructor
          * @memberof platform/features/conductor
-         * @implements {CapabilityService}
+         * @implements {TelemetryService}
          * @param {platform/features/conductor.ConductorService} conductorServe
          *        the service which exposes the global time conductor
-         * @param {CapabilityService} capabilityService the decorated service
+         * @param {TelemetryService} telemetryService the decorated service
          */
-        function ConductorCapabilityDecorator(conductorService, capabilityService) {
+        function ConductorTelemetryDecorator(conductorService, telemetryService) {
             this.conductorService = conductorService;
-            this.capabilityService = capabilityService;
+            this.telemetryService = telemetryService;
         }
 
-        ConductorCapabilityDecorator.prototype.getCapabilities = function (model) {
-            var capabilities = this.capabilityService.getCapabilities(model),
-                TelemetryCapability = capabilities.telemetry,
-                conductorService = this.conductorService;
+        ConductorTelemetryDecorator.prototype.amendRequests = function (requests) {
+            var conductor = this.conductorService.getConductor(),
+                start = conductor.displayStart(),
+                end = conductor.displayEnd();
 
-            if (TelemetryCapability) {
-                capabilities.telemetry = function (domainObject) {
-                    return new ConductorTelemetryCapability(
-                        conductorService.getConductor(),
-                        new TelemetryCapability(domainObject)
-                    );
-                };
+            function amendRequest(request) {
+                request = request || {};
+                request.start = start;
+                request.end = end;
+                return request;
             }
 
-            return capabilities;
+            return (requests || []).map(amendRequest);
         };
 
-        return ConductorCapabilityDecorator;
+        ConductorTelemetryDecorator.prototype.requestTelemetry = function (requests) {
+            return this.telemetryService
+                .requestTelemetry(this.amendRequests(requests));
+        };
+
+        ConductorTelemetryDecorator.prototype.subscribe = function (callback, requests) {
+            return this.telemetryService
+                .subscribe(callback, this.amendRequests(requests));
+        };
+
+        return ConductorTelemetryDecorator;
     }
 );

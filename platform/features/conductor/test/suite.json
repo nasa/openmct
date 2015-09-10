@@ -1,7 +1,5 @@
 [
-    "ConductorCapabilityDecorator",
     "ConductorRepresenter",
     "ConductorService",
-    "ConductorTelemetryCapability",
     "TimeConductor"
 ]
