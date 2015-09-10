@@ -67,8 +67,8 @@ $styleTelemStale: italic;
 // Bubble colors
 $colorInfoBubbleFg: #666;
 $colorInfoBubbleBg: $colorMenuBg;
-$colorThumbsBubbleFg: lighten($colorBodyFg, 10%);
-$colorThumbsBubbleBg: lighten($colorBodyBg, 10%);
+$colorThumbsBubbleFg: pullForward($colorBodyFg, 10%);
+$colorThumbsBubbleBg: pullForward($colorBodyBg, 10%);
 
 // Overlay
 $colorOvrBlocker: rgba(black, 0.7);//
@@ -81,7 +81,7 @@ $colorOvrBtnFg: #fff;
 $colorItemBg: $colorBtnBg;
 $colorItemFg: $colorBtnFg;
 $colorItemFgDetails: darken($colorItemFg, 15%);
-$colorItemIcon: $colorBtnIcon;
+$colorItemIc: $colorBtnIcon;
 $colorItemSubIcons: $colorItemFgDetails;
 $colorItemOpenIcon: $colorItemFgDetails;
 $shdwItemText: rgba(black, 0.2) 0 1px 2px;
@@ -127,3 +127,6 @@ $colorGrippyInteriorHover: $colorBodyBg;
 
 // Mobile
 $colorMobilePaneLeft: darken($colorBodyBg, 2%);
+
+// About Screen
+$colorAboutLink: #84b3ff;

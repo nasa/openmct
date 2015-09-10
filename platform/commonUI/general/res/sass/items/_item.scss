@@ -32,7 +32,7 @@
             $iconMargin: 40px;
             $iconD: ($d - ($iconMargin * 2)) * 0.85;
             $transTime: 200ms;
-            @include btnSubtle($colorItemBg, pullForward($colorItemBg, 20%), $colorItemFg, $colorItemIcon);
+            @include btnSubtle($colorItemBg, pullForward($colorItemBg, 20%), $colorItemFg, $colorItemIc);
             box-sizing: border-box;
             cursor: pointer;
             float: left;
@@ -90,7 +90,7 @@
                     //@include trans-prop-nice("color", $transTime);
                     @include absPosDefault($iconMargin, false);
                     //@include test(red);
-                    color: $colorItemIcon;
+                    //color: $colorItemIc;
                     text-align: center;
                     font-size: $iconD * 0.95; //6em;
                     line-height: $iconD;

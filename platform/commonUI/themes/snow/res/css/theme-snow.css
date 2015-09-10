@@ -364,20 +364,20 @@ body, html {
 em {
   font-style: normal; }
 
-/* line 69, ../../../../general/res/sass/_global.scss */
+/* line 68, ../../../../general/res/sass/_global.scss */
 input, textarea {
   font-family: Helvetica, Arial, sans-serif; }
 
-/* line 73, ../../../../general/res/sass/_global.scss */
+/* line 72, ../../../../general/res/sass/_global.scss */
 input[type="text"] {
   vertical-align: baseline;
   padding: 3px 5px !important; }
 
-/* line 78, ../../../../general/res/sass/_global.scss */
+/* line 77, ../../../../general/res/sass/_global.scss */
 h1, h2, h3 {
   margin: 0; }
 
-/* line 82, ../../../../general/res/sass/_global.scss */
+/* line 81, ../../../../general/res/sass/_global.scss */
 h1 {
   font-size: 1.7em;
   font-weight: normal !important;
@@ -385,15 +385,15 @@ h1 {
   margin-bottom: 20px;
   margin-top: 0; }
 
-/* line 90, ../../../../general/res/sass/_global.scss */
+/* line 89, ../../../../general/res/sass/_global.scss */
 p {
   margin-bottom: 10px; }
 
-/* line 94, ../../../../general/res/sass/_global.scss */
+/* line 93, ../../../../general/res/sass/_global.scss */
 mct-container {
   display: block; }
 
-/* line 98, ../../../../general/res/sass/_global.scss */
+/* line 97, ../../../../general/res/sass/_global.scss */
 .abs, .s-menu span.l-click-area, .select span.l-click-area {
   position: absolute;
   top: 0;
@@ -403,51 +403,42 @@ mct-container {
   height: auto;
   width: auto; }
 
-/* line 108, ../../../../general/res/sass/_global.scss */
+/* line 107, ../../../../general/res/sass/_global.scss */
 .code, .codehilite {
   font-family: "Lucida Console", monospace;
   font-size: 0.7em;
   line-height: 150%;
   white-space: pre; }
 
-/* line 115, ../../../../general/res/sass/_global.scss */
+/* line 114, ../../../../general/res/sass/_global.scss */
 .codehilite {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(102, 102, 102, 0.1);
   padding: 1em; }
 
-/* line 121, ../../../../general/res/sass/_global.scss */
+/* line 120, ../../../../general/res/sass/_global.scss */
 .align-right {
   text-align: right; }
 
-/* line 125, ../../../../general/res/sass/_global.scss */
+/* line 124, ../../../../general/res/sass/_global.scss */
 .centered {
   text-align: center; }
 
-/* line 129, ../../../../general/res/sass/_global.scss */
+/* line 128, ../../../../general/res/sass/_global.scss */
 .no-margin {
   margin: 0; }
 
-/* line 133, ../../../../general/res/sass/_global.scss */
-.colorKey {
-  color: #0099cc; }
-
-/* line 137, ../../../../general/res/sass/_global.scss */
+/* line 132, ../../../../general/res/sass/_global.scss */
 .ds {
   -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px; }
 
-/* line 141, ../../../../general/res/sass/_global.scss */
+/* line 136, ../../../../general/res/sass/_global.scss */
 .hide,
 .hidden {
   display: none !important; }
 
-/* line 147, ../../../../general/res/sass/_global.scss */
-.paused:not(.s-btn):not(.s-menu):not(.select) {
-  border-color: #ff9900 !important;
-  color: #ff9900 !important; }
-
-/* line 153, ../../../../general/res/sass/_global.scss */
+/* line 141, ../../../../general/res/sass/_global.scss */
 .sep {
   color: rgba(255, 255, 255, 0.2); }
 
@@ -534,7 +525,7 @@ mct-container {
       border-top: none; }
     /* line 91, ../../../../general/res/sass/_about.scss */
     .s-about .l-licenses-software .l-license-software em {
-      color: #333333; }
+      color: #999999; }
     /* line 98, ../../../../general/res/sass/_about.scss */
     .s-about .l-licenses-software .l-license-software h3 {
       font-size: 1.25em; }
@@ -576,7 +567,7 @@ mct-container {
     margin-left: 1.5em; }
   /* line 39, ../../../../general/res/sass/_text.scss */
   .s-text h1, .s-text h2, .s-text h3 {
-    color: #fff;
+    color: #333333;
     font-weight: normal !important;
     margin-bottom: 1em; }
   /* line 45, ../../../../general/res/sass/_text.scss */
@@ -873,14 +864,14 @@ mct-container {
   height: 0;
   border-left: 6.66667px solid transparent;
   border-right: 6.66667px solid transparent;
-  border-bottom: 10px solid white; }
+  border-bottom: 10px solid #e3e3e3; }
 /* line 145, ../../../../general/res/sass/helpers/_bubbles.scss */
 .l-thumbsbubble-wrapper .arw-down {
   width: 0;
   height: 0;
   border-left: 6.66667px solid transparent;
   border-right: 6.66667px solid transparent;
-  border-top: 10px solid white; }
+  border-top: 10px solid #e3e3e3; }
 
 /* line 150, ../../../../general/res/sass/helpers/_bubbles.scss */
 .s-infobubble {
@@ -917,8 +908,8 @@ mct-container {
 
 /* line 188, ../../../../general/res/sass/helpers/_bubbles.scss */
 .s-thumbsbubble {
-  background: white;
-  color: gray; }
+  background: #e3e3e3;
+  color: #4d4d4d; }
 
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
@@ -1307,42 +1298,7 @@ mct-container {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/******* LAYOUT AND SIZING */
-/*.l-btn {
-	@include user-select(none);
-	//line-height: 1.5em; // Was 1.25em
-	line-height: 150%;
-	padding: 0 $pad;
-	text-decoration: none;
-	&.lg,
-	&.create-btn {
-		$h: $ueTopBarH; // - $interiorMargin;
-		height: $h;
-		line-height: $h - 2;
-		padding: 0 $pad * 3;
-	}
-	&.create-btn {
-		font-size: 1em;
-		&:before {
-			content:"+";
-			font-family: symbolsfont;
-		}
-		.menu {
-			margin-left: $pad * -1;
-		}
-		>.ui-symbol {
-			//font-size: 1.1em; // Normalizing for new icomoon symbols font
-		}
-	}
-	&.sm {
-		padding: 0 $pad / $baseRatio;
-	}
-	&.vsm {
-		padding: 0 ($pad / $baseRatio) / 2;
-	}
-}*/
-/*********************************** STYLE STYLES */
-/* line 61, ../../../../general/res/sass/controls/_buttons.scss */
+/* line 25, ../../../../general/res/sass/controls/_buttons.scss */
 .s-btn, .s-menu, .select {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -1357,20 +1313,20 @@ mct-container {
   line-height: 25px;
   padding: 0 7.5px;
   font-size: 0.7rem; }
-  /* line 71, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 35, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn .icon, .s-menu .icon, .select .icon {
     font-size: 0.8rem;
     color: #0099cc; }
-  /* line 76, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 40, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn .title-label, .s-menu .title-label, .select .title-label {
     vertical-align: top; }
-  /* line 80, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 44, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.sm, .sm.s-menu, .sm.select {
     padding: 0 5px; }
-  /* line 84, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 48, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.vsm, .vsm.s-menu, .vsm.select {
     padding: 0 2.5px; }
-  /* line 88, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 52, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.major, .major.s-menu, .major.select {
     background-color: #0099cc;
     -moz-border-radius: 4px;
@@ -1385,18 +1341,22 @@ mct-container {
     -ms-user-select: none;
     -webkit-user-select: none;
     user-select: none;
+    -moz-transition: background, 0.25s;
+    -o-transition: background, 0.25s;
+    -webkit-transition: background, 0.25s;
+    transition: background, 0.25s;
     text-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px; }
-    /* line 271, ../../../../general/res/sass/_mixins.scss */
+    /* line 272, ../../../../general/res/sass/_mixins.scss */
     .s-btn.major .icon, .major.s-menu .icon, .major.select .icon {
       color: #fff; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 276, ../../../../general/res/sass/_mixins.scss */
+      /* line 277, ../../../../general/res/sass/_mixins.scss */
       .s-btn.major:not(.disabled):hover, .major.s-menu:not(.disabled):hover, .major.select:not(.disabled):hover {
         background: deepskyblue; }
-        /* line 278, ../../../../general/res/sass/_mixins.scss */
+        /* line 279, ../../../../general/res/sass/_mixins.scss */
         .s-btn.major:not(.disabled):hover > .icon, .major.s-menu:not(.disabled):hover > .icon, .major.select:not(.disabled):hover > .icon {
           color: white; } }
-  /* line 94, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 58, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn:not(.major), .s-menu:not(.major), .select:not(.major) {
     background-color: #b0b0b0;
     -moz-border-radius: 4px;
@@ -1411,21 +1371,25 @@ mct-container {
     -ms-user-select: none;
     -webkit-user-select: none;
     user-select: none;
+    -moz-transition: background, 0.25s;
+    -o-transition: background, 0.25s;
+    -webkit-transition: background, 0.25s;
+    transition: background, 0.25s;
     text-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px; }
-    /* line 271, ../../../../general/res/sass/_mixins.scss */
+    /* line 272, ../../../../general/res/sass/_mixins.scss */
     .s-btn:not(.major) .icon, .s-menu:not(.major) .icon, .select:not(.major) .icon {
       color: #eee; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 276, ../../../../general/res/sass/_mixins.scss */
+      /* line 277, ../../../../general/res/sass/_mixins.scss */
       .s-btn:not(.major):not(.disabled):hover, .s-menu:not(.major):not(.disabled):hover, .select:not(.major):not(.disabled):hover {
         background: #0099cc; }
-        /* line 278, ../../../../general/res/sass/_mixins.scss */
+        /* line 279, ../../../../general/res/sass/_mixins.scss */
         .s-btn:not(.major):not(.disabled):hover > .icon, .s-menu:not(.major):not(.disabled):hover > .icon, .select:not(.major):not(.disabled):hover > .icon {
           color: white; } }
-  /* line 113, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 77, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.pause-play .icon:before, .pause-play.s-menu .icon:before, .pause-play.select .icon:before {
     content: "\0000F1"; }
-  /* line 116, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 80, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.pause-play.paused, .pause-play.paused.s-menu, .pause-play.paused.select {
     background-color: #ff9900;
     -moz-border-radius: 4px;
@@ -1440,18 +1404,22 @@ mct-container {
     -ms-user-select: none;
     -webkit-user-select: none;
     user-select: none;
+    -moz-transition: background, 0.25s;
+    -o-transition: background, 0.25s;
+    -webkit-transition: background, 0.25s;
+    transition: background, 0.25s;
     text-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px; }
-    /* line 271, ../../../../general/res/sass/_mixins.scss */
+    /* line 272, ../../../../general/res/sass/_mixins.scss */
     .s-btn.pause-play.paused .icon, .pause-play.paused.s-menu .icon, .pause-play.paused.select .icon {
       color: #fff; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 276, ../../../../general/res/sass/_mixins.scss */
+      /* line 277, ../../../../general/res/sass/_mixins.scss */
       .s-btn.pause-play.paused:not(.disabled):hover, .pause-play.paused.s-menu:not(.disabled):hover, .pause-play.paused.select:not(.disabled):hover {
         background: #ffad33; }
-        /* line 278, ../../../../general/res/sass/_mixins.scss */
+        /* line 279, ../../../../general/res/sass/_mixins.scss */
         .s-btn.pause-play.paused:not(.disabled):hover > .icon, .pause-play.paused.s-menu:not(.disabled):hover > .icon, .pause-play.paused.select:not(.disabled):hover > .icon {
           color: white; } }
-    /* line 118, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 82, ../../../../general/res/sass/controls/_buttons.scss */
     .s-btn.pause-play.paused .icon, .pause-play.paused.s-menu .icon, .pause-play.paused.select .icon {
       -moz-animation-name: pulse;
       -webkit-animation-name: pulse;
@@ -1468,23 +1436,23 @@ mct-container {
       -moz-animation-timing-function: ease-in-out;
       -webkit-animation-timing-function: ease-in-out;
       animation-timing-function: ease-in-out; }
-      /* line 120, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 84, ../../../../general/res/sass/controls/_buttons.scss */
       .s-btn.pause-play.paused .icon :before, .pause-play.paused.s-menu .icon :before, .pause-play.paused.select .icon :before {
         content: "\0000EF"; }
-  /* line 128, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 92, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.show-thumbs .icon:before, .show-thumbs.s-menu .icon:before, .show-thumbs.select .icon:before {
     content: "\000039"; }
 
-/* line 134, ../../../../general/res/sass/controls/_buttons.scss */
+/* line 98, ../../../../general/res/sass/controls/_buttons.scss */
 .l-btn-set {
   font-size: 0; }
-  /* line 140, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 104, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .s-btn, .l-btn-set .s-menu, .l-btn-set .select {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
     border-radius: 0;
     margin-left: 1px; }
-  /* line 146, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 110, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .first .s-btn, .l-btn-set .first .s-menu, .l-btn-set .first .select {
     -moz-border-radius-topleft: 4px;
     -webkit-border-top-left-radius: 4px;
@@ -1493,7 +1461,7 @@ mct-container {
     -webkit-border-bottom-left-radius: 4px;
     border-bottom-left-radius: 4px;
     margin-left: 0; }
-  /* line 153, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 117, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .last .s-btn, .l-btn-set .last .s-menu, .l-btn-set .last .select {
     -moz-border-radius-topright: 4px;
     -webkit-border-top-right-radius: 4px;
@@ -1502,18 +1470,11 @@ mct-container {
     -webkit-border-bottom-right-radius: 4px;
     border-bottom-right-radius: 4px; }
 
-/*********************************** LAYOUT STYLES */
-/*
+/* line 124, ../../../../general/res/sass/controls/_buttons.scss */
+.paused:not(.s-btn):not(.s-menu):not(.select) {
+  border-color: #ff9900 !important;
+  color: #ff9900 !important; }
 
-span.s-btn,
-span.s-btn span,
-a.s-btn,
-a.s-btn span,
-a.s-btn,
-a.s-btn span {
-	display: inline-block;
-}
-*/
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -1917,6 +1878,10 @@ label.checkbox.custom {
   -ms-user-select: none;
   -webkit-user-select: none;
   user-select: none;
+  -moz-transition: background, 0.25s;
+  -o-transition: background, 0.25s;
+  -webkit-transition: background, 0.25s;
+  transition: background, 0.25s;
   text-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
   cursor: ew-resize;
   position: absolute;
@@ -1926,7 +1891,7 @@ label.checkbox.custom {
   auto: 0;
   bottom: auto;
   left: auto; }
-  /* line 271, ../../../../general/res/sass/_mixins.scss */
+  /* line 272, ../../../../general/res/sass/_mixins.scss */
   .slider .knob .icon {
     color: #eee; }
   /* line 159, ../../../../general/res/sass/_mixins.scss */
@@ -2143,7 +2108,7 @@ label.checkbox.custom {
     .menu-element .menu ul {
       margin: 0;
       padding: 0; }
-      /* line 344, ../../../../general/res/sass/_mixins.scss */
+      /* line 345, ../../../../general/res/sass/_mixins.scss */
       .menu-element .menu ul li {
         list-style-type: none;
         margin: 0;
@@ -2560,7 +2525,7 @@ label.checkbox.custom {
       padding: 0 3px;
       position: relative;
       height: 150px; }
-      /* line 295, ../../../../general/res/sass/_mixins.scss */
+      /* line 296, ../../../../general/res/sass/_mixins.scss */
       .form .form-row .selector-list.error {
         background: rgba(255, 0, 0, 0.5); }
       /* line 124, ../../../../general/res/sass/forms/_elems.scss */
@@ -2617,7 +2582,7 @@ input[type="text"] {
   color: #666;
   outline: none;
   padding: 0 3px; }
-  /* line 295, ../../../../general/res/sass/_mixins.scss */
+  /* line 296, ../../../../general/res/sass/_mixins.scss */
   input[type="text"].error {
     background: rgba(255, 0, 0, 0.5); }
   /* line 172, ../../../../general/res/sass/forms/_elems.scss */
@@ -2645,7 +2610,7 @@ textarea {
   position: absolute;
   height: 100%;
   width: 100%; }
-  /* line 295, ../../../../general/res/sass/_mixins.scss */
+  /* line 296, ../../../../general/res/sass/_mixins.scss */
   textarea.error {
     background: rgba(255, 0, 0, 0.5); }
 
@@ -2685,11 +2650,15 @@ textarea {
   -ms-user-select: none;
   -webkit-user-select: none;
   user-select: none;
+  -moz-transition: background, 0.25s;
+  -o-transition: background, 0.25s;
+  -webkit-transition: background, 0.25s;
+  transition: background, 0.25s;
   text-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
   margin: 0 0 2px 2px;
   overflow: hidden;
   position: relative; }
-  /* line 271, ../../../../general/res/sass/_mixins.scss */
+  /* line 272, ../../../../general/res/sass/_mixins.scss */
   .select .icon {
     color: #eee; }
   /* line 30, ../../../../general/res/sass/forms/_selects.scss */
@@ -2762,7 +2731,7 @@ textarea {
   max-height: 400px;
   overflow: auto;
   padding: 5px; }
-  /* line 295, ../../../../general/res/sass/_mixins.scss */
+  /* line 296, ../../../../general/res/sass/_mixins.scss */
   .channel-selector .treeview.error {
     background: rgba(255, 0, 0, 0.5); }
 /* line 36, ../../../../general/res/sass/forms/_channel-selector.scss */
@@ -2919,7 +2888,7 @@ span.req {
   padding: 0 3px;
   background: white;
   border-bottom: 1px solid white; }
-  /* line 295, ../../../../general/res/sass/_mixins.scss */
+  /* line 296, ../../../../general/res/sass/_mixins.scss */
   .filter input.filter.error,
   .filter input.t-filter-input.error,
   .t-filter input.filter.error,
@@ -3715,7 +3684,10 @@ span.req {
     .search .search-bar .clear-icon,
     .search .search-bar .menu-icon {
       cursor: pointer;
-      transition: color .25s; }
+      -moz-transition: color, 0.25s;
+      -o-transition: color, 0.25s;
+      -webkit-transition: color, 0.25s;
+      transition: color, 0.25s; }
     /* line 87, ../../../../general/res/sass/search/_search.scss */
     .search .search-bar .search-input {
       position: relative;
@@ -3954,15 +3926,19 @@ span.req {
       -ms-user-select: none;
       -webkit-user-select: none;
       user-select: none;
+      -moz-transition: background, 0.25s;
+      -o-transition: background, 0.25s;
+      -webkit-transition: background, 0.25s;
+      transition: background, 0.25s;
       text-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px; }
-      /* line 271, ../../../../general/res/sass/_mixins.scss */
+      /* line 272, ../../../../general/res/sass/_mixins.scss */
       .overlay .bottom-bar .s-btn:not(.major) .icon, .overlay .bottom-bar .s-menu:not(.major) .icon, .overlay .bottom-bar .select:not(.major) .icon {
         color: #fff; }
       @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-        /* line 276, ../../../../general/res/sass/_mixins.scss */
+        /* line 277, ../../../../general/res/sass/_mixins.scss */
         .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover, .overlay .bottom-bar .select:not(.major):not(.disabled):hover {
           background: #7d7d7d; }
-          /* line 278, ../../../../general/res/sass/_mixins.scss */
+          /* line 279, ../../../../general/res/sass/_mixins.scss */
           .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .select:not(.major):not(.disabled):hover > .icon {
             color: white; } }
 /* line 85, ../../../../general/res/sass/overlay/_overlay.scss */
@@ -4041,7 +4017,7 @@ ul.tree {
   -ms-user-select: none;
   -webkit-user-select: none;
   user-select: none; }
-  /* line 344, ../../../../general/res/sass/_mixins.scss */
+  /* line 345, ../../../../general/res/sass/_mixins.scss */
   ul.tree li {
     list-style-type: none;
     margin: 0;
@@ -5294,6 +5270,10 @@ table {
     -ms-user-select: none;
     -webkit-user-select: none;
     user-select: none;
+    -moz-transition: background, 0.25s;
+    -o-transition: background, 0.25s;
+    -webkit-transition: background, 0.25s;
+    transition: background, 0.25s;
     text-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
     box-sizing: border-box;
     cursor: pointer;
@@ -5303,32 +5283,32 @@ table {
     margin-bottom: 3px;
     margin-right: 3px;
     position: relative; }
-    /* line 271, ../../../../general/res/sass/_mixins.scss */
+    /* line 272, ../../../../general/res/sass/_mixins.scss */
     .items-holder .item.grid-item .icon {
       color: #eee; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 276, ../../../../general/res/sass/_mixins.scss */
+      /* line 277, ../../../../general/res/sass/_mixins.scss */
       .items-holder .item.grid-item:not(.disabled):hover {
         background: #7d7d7d; }
-        /* line 278, ../../../../general/res/sass/_mixins.scss */
+        /* line 279, ../../../../general/res/sass/_mixins.scss */
         .items-holder .item.grid-item:not(.disabled):hover > .icon {
           color: white; } }
-    /* line 46, ../../../../general/res/sass/items/_item.scss */
+    /* line 45, ../../../../general/res/sass/items/_item.scss */
     .items-holder .item.grid-item:hover .item-main .item-type {
       color: deepskyblue; }
-      /* line 48, ../../../../general/res/sass/items/_item.scss */
+      /* line 47, ../../../../general/res/sass/items/_item.scss */
       .items-holder .item.grid-item:hover .item-main .item-type .l-icon-link {
         color: #49dedb; }
-    /* line 52, ../../../../general/res/sass/items/_item.scss */
+    /* line 51, ../../../../general/res/sass/items/_item.scss */
     .items-holder .item.grid-item:hover .item-main .item-open {
       opacity: 1; }
-    /* line 57, ../../../../general/res/sass/items/_item.scss */
+    /* line 55, ../../../../general/res/sass/items/_item.scss */
     .items-holder .item.grid-item .contents {
       top: 10px;
       right: 10px;
       bottom: 10px;
       left: 10px; }
-    /* line 63, ../../../../general/res/sass/items/_item.scss */
+    /* line 61, ../../../../general/res/sass/items/_item.scss */
     .items-holder .item.grid-item .bar.top-bar {
       bottom: auto;
       color: #d9d9d9;
@@ -5336,24 +5316,24 @@ table {
       line-height: 20px;
       text-align: right;
       z-index: 5; }
-      /* line 70, ../../../../general/res/sass/items/_item.scss */
+      /* line 68, ../../../../general/res/sass/items/_item.scss */
       .items-holder .item.grid-item .bar.top-bar .left, .items-holder .item.grid-item .bar.top-bar .right {
         width: auto; }
-        /* line 72, ../../../../general/res/sass/items/_item.scss */
+        /* line 70, ../../../../general/res/sass/items/_item.scss */
         .items-holder .item.grid-item .bar.top-bar .left .icon, .items-holder .item.grid-item .bar.top-bar .right .icon {
           margin-left: 3px; }
-          /* line 74, ../../../../general/res/sass/items/_item.scss */
+          /* line 72, ../../../../general/res/sass/items/_item.scss */
           .items-holder .item.grid-item .bar.top-bar .left .icon.l-icon-link, .items-holder .item.grid-item .bar.top-bar .right .icon.l-icon-link {
             color: #49dedb; }
-    /* line 80, ../../../../general/res/sass/items/_item.scss */
+    /* line 78, ../../../../general/res/sass/items/_item.scss */
     .items-holder .item.grid-item .bar.bottom-bar {
       top: auto;
       line-height: 110%; }
-    /* line 86, ../../../../general/res/sass/items/_item.scss */
+    /* line 83, ../../../../general/res/sass/items/_item.scss */
     .items-holder .item.grid-item .item-main {
       line-height: 160px;
       z-index: 1; }
-      /* line 92, ../../../../general/res/sass/items/_item.scss */
+      /* line 89, ../../../../general/res/sass/items/_item.scss */
       .items-holder .item.grid-item .item-main .item-type {
         overflow: false;
         position: absolute;
@@ -5363,14 +5343,13 @@ table {
         left: 40px;
         width: auto;
         height: auto;
-        color: #eee;
         text-align: center;
         font-size: 96.9px;
         line-height: 102px;
         bottom: auto;
         height: 102px;
         top: 30px; }
-        /* line 104, ../../../../general/res/sass/items/_item.scss */
+        /* line 100, ../../../../general/res/sass/items/_item.scss */
         .items-holder .item.grid-item .item-main .item-type .l-icon-link {
           color: #49dedb;
           height: auto;
@@ -5380,7 +5359,7 @@ table {
           left: 0px;
           bottom: 10px;
           z-index: 2; }
-      /* line 116, ../../../../general/res/sass/items/_item.scss */
+      /* line 111, ../../../../general/res/sass/items/_item.scss */
       .items-holder .item.grid-item .item-main .item-open {
         -moz-transition-property: "opacity";
         -o-transition-property: "opacity";
@@ -5401,14 +5380,14 @@ table {
         width: 50px;
         pointer-events: none;
         text-align: right; }
-    /* line 127, ../../../../general/res/sass/items/_item.scss */
+    /* line 121, ../../../../general/res/sass/items/_item.scss */
     .items-holder .item.grid-item .title {
       text-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       color: #fff; }
-    /* line 132, ../../../../general/res/sass/items/_item.scss */
+    /* line 126, ../../../../general/res/sass/items/_item.scss */
     .items-holder .item.grid-item .details {
       text-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
       overflow: hidden;
@@ -5416,7 +5395,7 @@ table {
       white-space: nowrap;
       color: #d9d9d9;
       font-size: 0.8em; }
-    /* line 138, ../../../../general/res/sass/items/_item.scss */
+    /* line 132, ../../../../general/res/sass/items/_item.scss */
     .items-holder .item.grid-item.selected {
       background-color: #0099cc;
       -moz-border-radius: 4px;
@@ -5431,21 +5410,25 @@ table {
       -ms-user-select: none;
       -webkit-user-select: none;
       user-select: none;
+      -moz-transition: background, 0.25s;
+      -o-transition: background, 0.25s;
+      -webkit-transition: background, 0.25s;
+      transition: background, 0.25s;
       text-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
       color: #80dfff; }
-      /* line 271, ../../../../general/res/sass/_mixins.scss */
+      /* line 272, ../../../../general/res/sass/_mixins.scss */
       .items-holder .item.grid-item.selected .icon {
         color: #eee; }
-      /* line 143, ../../../../general/res/sass/items/_item.scss */
+      /* line 137, ../../../../general/res/sass/items/_item.scss */
       .items-holder .item.grid-item.selected .item-type, .items-holder .item.grid-item.selected .top-bar .icon:not(.alert) {
         color: #80dfff; }
-      /* line 144, ../../../../general/res/sass/items/_item.scss */
+      /* line 138, ../../../../general/res/sass/items/_item.scss */
       .items-holder .item.grid-item.selected .item-main .item-open {
         color: #80dfff; }
-      /* line 145, ../../../../general/res/sass/items/_item.scss */
+      /* line 139, ../../../../general/res/sass/items/_item.scss */
       .items-holder .item.grid-item.selected .title {
         color: white; }
-      /* line 147, ../../../../general/res/sass/items/_item.scss */
+      /* line 141, ../../../../general/res/sass/items/_item.scss */
       .items-holder .item.grid-item.selected:hover .item-main .item-type {
         color: white !important; }
 

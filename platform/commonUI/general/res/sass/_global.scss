@@ -62,7 +62,6 @@ body, html {
 }
 
 em {
-//	color: rgba(white, 0.2); Removed this as a global setting
 	font-style: normal;
 }
 
@@ -114,7 +113,7 @@ mct-container {
 
 .codehilite {
 	@extend .code;
-	background-color: rgba(#fff, 0.1);
+	background-color: rgba($colorBodyFg, 0.1);
 	padding: 1em;
 }
 
@@ -130,10 +129,6 @@ mct-container {
 	margin: 0;
 }
 
-.colorKey {
-	color: $colorKey;
-}
-
 .ds {
 	@include box-shadow(rgba(#000, 0.7) 0 4px 10px 2px);
 }
@@ -141,13 +136,6 @@ mct-container {
 .hide,
 .hidden {
 	display: none !important;
-}
-
-.paused {
-	&:not(.s-btn) {
-		border-color: $colorPausedBg !important;
-		color: $colorPausedBg !important;
-	}
 }
 
 .sep {

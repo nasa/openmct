@@ -80,7 +80,7 @@
 		.clear-icon,
 		.menu-icon {
 			cursor: pointer;
-			transition: color .25s;
+			@include transition(color, .25s);
 		}
 
 

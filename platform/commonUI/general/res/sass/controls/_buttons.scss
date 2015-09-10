@@ -22,42 +22,6 @@
 $baseRatio: 1.5;
 $pad: $interiorMargin * $baseRatio;
 
-/******* LAYOUT AND SIZING */
-/*.l-btn {
-	@include user-select(none);
-	//line-height: 1.5em; // Was 1.25em
-	line-height: 150%;
-	padding: 0 $pad;
-	text-decoration: none;
-	&.lg,
-	&.create-btn {
-		$h: $ueTopBarH; // - $interiorMargin;
-		height: $h;
-		line-height: $h - 2;
-		padding: 0 $pad * 3;
-	}
-	&.create-btn {
-		font-size: 1em;
-		&:before {
-			content:"+";
-			font-family: symbolsfont;
-		}
-		.menu {
-			margin-left: $pad * -1;
-		}
-		>.ui-symbol {
-			//font-size: 1.1em; // Normalizing for new icomoon symbols font
-		}
-	}
-	&.sm {
-		padding: 0 $pad / $baseRatio;
-	}
-	&.vsm {
-		padding: 0 ($pad / $baseRatio) / 2;
-	}
-}*/
-
-/*********************************** STYLE STYLES */
 .s-btn {
     @include box-sizing(border-box);
     @include user-select(none);
@@ -156,15 +120,10 @@ $pad: $interiorMargin * $baseRatio;
     }
 }
 
-/*********************************** LAYOUT STYLES */
-/*
-
-span.s-btn,
-span.s-btn span,
-a.s-btn,
-a.s-btn span,
-a.s-btn,
-a.s-btn span {
-	display: inline-block;
+.paused {
+    &:not(.s-btn) {
+        border-color: $colorPausedBg !important;
+        color: $colorPausedBg !important;
+    }
 }
-*/
+
