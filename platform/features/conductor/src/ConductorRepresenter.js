@@ -53,21 +53,14 @@ define(
          * @param element the jqLite-wrapped representation element
          */
         function ConductorRepresenter(conductorService, $compile, views, scope, element) {
-            var conductorScope;
-
-            // Angular doesn't like objects to retain references to scopes
-            this.getScope = function () {
-                return scope;
-            };
-            this.conductorScope = function (s) {
-                return (conductorScope = arguments.length > 0 ? s : conductorScope);
-            };
-
+            this.scope = scope;
             this.conductorService = conductorService;
             this.element = element;
             this.views = views;
             this.$compile = $compile;
         }
+
+
 
         // Update the time conductor from the scope
         function wireScope(conductor, conductorScope, repScope) {
@@ -102,6 +95,11 @@ define(
             repScope.$on('telemetry:view', updateConductorInner);
         }
 
+        ConductorRepresenter.prototype.conductorScope = function (s) {
+            return (this.cScope = arguments.length > 0 ?
+                    s : this.cScope);
+        };
+
         // Handle a specific representation of a specific domain object
         ConductorRepresenter.prototype.represent = function represent(representation, representedObject) {
             this.destroy();
@@ -112,11 +110,11 @@ define(
                 this.hadAbs = this.element.hasClass('abs');
 
                 // Create a new scope for the conductor
-                this.conductorScope(this.getScope().$new());
+                this.conductorScope(this.scope.$new());
                 wireScope(
                     this.conductorService.getConductor(),
                     this.conductorScope(),
-                    this.getScope()
+                    this.scope
                 );
                 this.conductorElement =
                     this.$compile(TEMPLATE)(this.conductorScope());
