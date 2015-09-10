@@ -50,8 +50,8 @@ define(
          *        the wrapped capability
          */
         function TimeConductor(start, end) {
-            this.inner = [ start, end ];
-            this.outer = [ start, end ];
+            this.inner = { start: start, end: end };
+            this.outer = { start: start, end: end };
         }
 
         /**
@@ -61,9 +61,9 @@ define(
          */
         TimeConductor.prototype.queryStart = function (value) {
             if (arguments.length > 0) {
-                this.outer[0] = value;
+                this.outer.start = value;
             }
-            return this.outer[0];
+            return this.outer.start;
         };
 
         /**
@@ -73,9 +73,9 @@ define(
          */
         TimeConductor.prototype.queryEnd = function (value) {
             if (arguments.length > 0) {
-                this.outer[1] = value;
+                this.outer.end = value;
             }
-            return this.outer[1];
+            return this.outer.end;
         };
 
 
@@ -86,9 +86,9 @@ define(
          */
         TimeConductor.prototype.displayStart = function (value) {
             if (arguments.length > 0) {
-                this.inner[0] = value;
+                this.inner.start = value;
             }
-            return this.inner[0];
+            return this.inner.start;
         };
 
         /**
@@ -98,9 +98,9 @@ define(
          */
         TimeConductor.prototype.displayEnd = function (value) {
             if (arguments.length > 0) {
-                this.inner[1] = value;
+                this.inner.end = value;
             }
-            return this.inner[1];
+            return this.inner.end;
         };
 
         return TimeConductor;
