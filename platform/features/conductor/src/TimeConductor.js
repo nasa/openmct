@@ -33,21 +33,12 @@ define(
         'use strict';
 
         /**
-         * Wrapper for the `telemetry` capability which adds start/end
-         * times to all requests based on the current state of a time
-         * conductor.
-         *
-         * Note that both start and end times are in units which may
-         * vary depending on the domains of telemetry being used. Most
-         * commonly, these are UNIX timestamps in milliseconds.
+         * Tracks the current state of the time conductor.
          *
          * @memberof platform/features/conductor
          * @constructor
-         * @augments {platform/telemetry.TelemetryCapability}
-         * @param {platform/features/conductor.TimeConductor} timeConductor
-         *        the time conductor which controls these queries
-         * @param {platform/telemetry.TelemetryCapability} telemetryCapability
-         *        the wrapped capability
+         * @param {number} start the initial start time
+         * @param {number} end the initial end time
          */
         function TimeConductor(start, end) {
             this.inner = { start: start, end: end };
