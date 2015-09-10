@@ -134,31 +134,31 @@ define(
                 representer.represent(testViews[0], {});
 
                 expect(mockNewScope.conductor).toEqual({
-                    inner: [ 1977, 1984 ],
-                    outer: [ 42, 12321 ]
+                    inner: { start: 1977, end: 1984 },
+                    outer: { start: 42, end: 12321 }
                 });
             });
 
             it("updates conductor state from scope", function () {
                 var testState = {
-                    inner: [ 42, 1984 ],
-                    outer: [ -1977, 12321 ]
+                    inner: { start: 42, end: 1984 },
+                    outer: { start: -1977, end: 12321 }
                 };
 
                 representer.represent(testViews[0], {});
 
                 mockNewScope.conductor = testState;
 
-                fireWatch(mockNewScope, 'conductor.inner[0]', testState.inner[0]);
+                fireWatch(mockNewScope, 'conductor.inner.start', testState.inner.start);
                 expect(mockConductor.displayStart).toHaveBeenCalledWith(42);
 
-                fireWatch(mockNewScope, 'conductor.inner[1]', testState.inner[1]);
+                fireWatch(mockNewScope, 'conductor.inner.end', testState.inner.end);
                 expect(mockConductor.displayEnd).toHaveBeenCalledWith(1984);
 
-                fireWatch(mockNewScope, 'conductor.outer[0]', -1977);
+                fireWatch(mockNewScope, 'conductor.outer.start', testState.outer.start);
                 expect(mockConductor.queryStart).toHaveBeenCalledWith(-1977);
 
-                fireWatch(mockNewScope, 'conductor.outer[1]', 12321);
+                fireWatch(mockNewScope, 'conductor.outer.end', testState.outer.end);
                 expect(mockConductor.queryEnd).toHaveBeenCalledWith(12321);
             });
 
