@@ -52,8 +52,8 @@ define(
 
             function updateTicks() {
                 var i, p, ts, start, end, span;
-                end = $scope.ngModel.outer[1];
-                start = $scope.ngModel.outer[0];
+                end = $scope.ngModel.outer.end;
+                start = $scope.ngModel.outer.start;
                 span = end - start;
                 $scope.ticks = [];
                 for (i = 0; i < tickCount; i += 1) {
@@ -70,29 +70,41 @@ define(
             }
 
             function updateViewForInnerSpanFromModel(ngModel) {
-                var span = ngModel.outer[1] - ngModel.outer[0];
+                var span = ngModel.outer.end - ngModel.outer.start;
 
                 // Expose readable dates for the knobs
-                $scope.startInnerText = formatTimestamp(ngModel.inner[0]);
-                $scope.endInnerText = formatTimestamp(ngModel.inner[1]);
+                $scope.startInnerText = formatTimestamp(ngModel.inner.start);
+                $scope.endInnerText = formatTimestamp(ngModel.inner.end);
 
                 // And positions for the knobs
                 $scope.startInnerPct =
-                    toPercent((ngModel.inner[0] - ngModel.outer[0]) / span);
+                    toPercent((ngModel.inner.start - ngModel.outer.start) / span);
                 $scope.endInnerPct =
-                    toPercent((ngModel.outer[1] - ngModel.inner[1]) / span);
+                    toPercent((ngModel.outer.end - ngModel.inner.end) / span);
+            }
+
+            function defaultBounds() {
+                var t = now();
+                return {
+                    start: t - 24 * 3600 * 1000, // One day
+                    end: t
+                };
+            }
+
+            function copyBounds(bounds) {
+                return { start: bounds.start, end: bounds.end };
             }
 
             function updateViewFromModel(ngModel) {
                 var t = now();
 
                 ngModel = ngModel || {};
-                ngModel.outer = ngModel.outer || [ t - 24 * 3600 * 1000, t ];
-                ngModel.inner = ngModel.inner || [ t - 24 * 3600 * 1000, t ];
+                ngModel.outer = ngModel.outer || defaultBounds();
+                ngModel.inner = ngModel.inner || copyBounds(ngModel.outer);
 
                 // First, dates for the date pickers for outer bounds
-                $scope.startOuterDate = formatTimestamp(ngModel.outer[0]);
-                $scope.endOuterDate = formatTimestamp(ngModel.outer[1]);
+                $scope.startOuterDate = formatTimestamp(ngModel.outer.start);
+                $scope.endOuterDate = formatTimestamp(ngModel.outer.end);
 
                 // Then various updates for the inner span
                 updateViewForInnerSpanFromModel(ngModel);
@@ -104,22 +116,22 @@ define(
             }
 
             function startLeftDrag() {
-                initialDragValue = $scope.ngModel.inner[0];
+                initialDragValue = $scope.ngModel.inner.start;
             }
 
             function startRightDrag() {
-                initialDragValue = $scope.ngModel.inner[1];
+                initialDragValue = $scope.ngModel.inner.end;
             }
 
             function startMiddleDrag() {
                 initialDragValue = [
-                    $scope.ngModel.inner[0],
-                    $scope.ngModel.inner[1]
+                    $scope.ngModel.inner.start,
+                    $scope.ngModel.inner.end
                 ];
             }
 
             function toMillis(pixels) {
-                var span = $scope.ngModel.outer[1] - $scope.ngModel.outer[0];
+                var span = $scope.ngModel.outer.end - $scope.ngModel.outer.start;
                 return (pixels / $scope.spanWidth) * span;
             }
 
@@ -129,57 +141,65 @@ define(
 
             function leftDrag(pixels) {
                 var delta = toMillis(pixels);
-                $scope.ngModel.inner[0] = clamp(
+                $scope.ngModel.inner.start = clamp(
                     initialDragValue + delta,
-                    $scope.ngModel.outer[0],
-                    $scope.ngModel.inner[1]
+                    $scope.ngModel.outer.start,
+                    $scope.ngModel.inner.end
                 );
                 updateViewFromModel($scope.ngModel);
             }
 
             function rightDrag(pixels) {
                 var delta = toMillis(pixels);
-                $scope.ngModel.inner[1] = clamp(
+                $scope.ngModel.inner.end = clamp(
                     initialDragValue + delta,
-                    $scope.ngModel.inner[0],
-                    $scope.ngModel.outer[1]
+                    $scope.ngModel.inner.start,
+                    $scope.ngModel.outer.end
                 );
                 updateViewFromModel($scope.ngModel);
             }
 
             function middleDrag(pixels) {
                 var delta = toMillis(pixels),
-                    index = delta < 0 ? 0 : 1,
-                    opposite = Math.abs(1 - index);
+                    edge = delta < 0 ? 'start' : 'end',
+                    opposite = delta < 0 ? 'end' : 'start';
 
                 // Adjust the position of the edge in the direction of drag
-                $scope.ngModel.inner[index] = clamp(
-                    initialDragValue[index] + delta,
-                    $scope.ngModel.outer[0],
-                    $scope.ngModel.outer[1]
+                $scope.ngModel.inner[edge] = clamp(
+                    initialDragValue[edge] + delta,
+                    $scope.ngModel.outer.start,
+                    $scope.ngModel.outer.end
                 );
                 // Adjust opposite knob to maintain span
-                $scope.ngModel.inner[opposite] = $scope.ngModel.inner[index] +
-                    initialDragValue[opposite] - initialDragValue[index];
+                $scope.ngModel.inner[opposite] = $scope.ngModel.inner[edge] +
+                    initialDragValue[opposite] - initialDragValue[edge];
 
                 updateViewFromModel($scope.ngModel);
             }
 
             function updateOuterStart(text) {
                 var ngModel = $scope.ngModel;
-                ngModel.outer[0] = parseTimestamp(text, ngModel.outer[0]);
-                ngModel.outer[1] = Math.max(ngModel.outer[0], ngModel.outer[1]);
-                ngModel.inner[0] = Math.max(ngModel.outer[0], ngModel.inner[0]);
-                ngModel.inner[1] = Math.max(ngModel.outer[0], ngModel.inner[1]);
+                ngModel.outer.start =
+                    parseTimestamp(text, ngModel.outer.start);
+                ngModel.outer.end =
+                    Math.max(ngModel.outer.start, ngModel.outer.end);
+                ngModel.inner.start =
+                    Math.max(ngModel.outer.start, ngModel.inner.start);
+                ngModel.inner.end =
+                    Math.max(ngModel.outer.end, ngModel.inner.end);
                 updateViewForInnerSpanFromModel(ngModel);
             }
 
             function updateOuterEnd(text) {
                 var ngModel = $scope.ngModel;
-                ngModel.outer[1] = parseTimestamp(text, ngModel.outer[1]);
-                ngModel.outer[0] = Math.min(ngModel.outer[1], ngModel.outer[0]);
-                ngModel.inner[0] = Math.min(ngModel.outer[1], ngModel.inner[0]);
-                ngModel.inner[1] = Math.min(ngModel.outer[1], ngModel.inner[1]);
+                ngModel.outer.end =
+                    parseTimestamp(text, ngModel.outer.end);
+                ngModel.outer.start =
+                    Math.min(ngModel.outer.end, ngModel.outer.start);
+                ngModel.inner.start =
+                    Math.min(ngModel.outer.end, ngModel.inner.start);
+                ngModel.inner.end =
+                    Math.min(ngModel.outer.end, ngModel.inner.end);
                 updateViewForInnerSpanFromModel(ngModel);
             }
 

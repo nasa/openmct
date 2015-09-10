@@ -60,37 +60,44 @@ define(
             this.$compile = $compile;
         }
 
-
+        // Combine start/end times into a single object
+        function bounds(start, end) {
+            return { start: start, end: end };
+        }
 
         // Update the time conductor from the scope
         function wireScope(conductor, conductorScope, repScope) {
             function updateConductorOuter() {
-                conductor.queryStart(conductorScope.conductor.outer[0]);
-                conductor.queryEnd(conductorScope.conductor.outer[1]);
-                repScope.$broadcast('telemetry:query:bounds', {
-                    start: conductor.queryStart(),
-                    end: conductor.queryEnd()
-                });
+                conductor.queryStart(conductorScope.conductor.outer.start);
+                conductor.queryEnd(conductorScope.conductor.outer.end);
+                repScope.$broadcast(
+                    'telemetry:query:bounds',
+                    bounds(conductor.queryStart(), conductor.queryEnd())
+                );
             }
 
             function updateConductorInner() {
-                conductor.displayStart(conductorScope.conductor.inner[0]);
-                conductor.displayEnd(conductorScope.conductor.inner[1]);
-                repScope.$broadcast('telemetry:display:bounds', {
-                    start: conductor.displayStart(),
-                    end: conductor.displayEnd()
-                });
+                conductor.displayStart(conductorScope.conductor.inner.start);
+                conductor.displayEnd(conductorScope.conductor.inner.end);
+                repScope.$broadcast(
+                    'telemetry:display:bounds',
+                    bounds(conductor.displayStart(), conductor.displayEnd())
+                );
             }
 
             conductorScope.conductor = {
-                outer: [ conductor.queryStart(), conductor.queryEnd() ],
-                inner: [ conductor.displayStart(), conductor.displayEnd() ]
+                outer: bounds(conductor.queryStart(), conductor.queryEnd()),
+                inner: bounds(conductor.displayStart(), conductor.displayEnd())
             };
 
-            conductorScope.$watch('conductor.outer[0]', updateConductorOuter);
-            conductorScope.$watch('conductor.outer[1]', updateConductorOuter);
-            conductorScope.$watch('conductor.inner[0]', updateConductorInner);
-            conductorScope.$watch('conductor.inner[1]', updateConductorInner);
+            conductorScope
+                .$watch('conductor.outer.start', updateConductorOuter);
+            conductorScope
+                .$watch('conductor.outer.end', updateConductorOuter);
+            conductorScope
+                .$watch('conductor.inner.start', updateConductorInner);
+            conductorScope
+                .$watch('conductor.inner.end', updateConductorInner);
 
             repScope.$on('telemetry:view', updateConductorInner);
         }

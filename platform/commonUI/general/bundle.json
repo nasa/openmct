@@ -58,8 +58,8 @@
         ],
         "controllers": [
             {
-                "key": "TimeConductorController",
-                "implementation": "controllers/TimeConductorController.js",
+                "key": "TimeRangeController",
+                "implementation": "controllers/TimeRangeController.js",
                 "depends": [ "$scope", "now" ]
             },
             {
