@@ -69,7 +69,7 @@
 		.menu-icon {
 			//@include test(#008800);
 			@include box-sizing(border-box);
-			color: $colorItemFg;
+			color: $colorInputIcon;
 			height: $iconD; width: $iconD;
 			line-height: $iconD;
 			position: absolute;
@@ -97,7 +97,7 @@
 		}
 
 		.search-icon {
-			color: $colorItemFg;
+			//color: $colorItemFg;
 			left: $interiorMarginSm;
 			transition: visibility .15s, opacity .15s, color .2s;
 			pointer-events: none;
@@ -117,7 +117,7 @@
 
 		// Make icon lighten when hovering over search bar
 		.search-input:hover + div.search-icon {
-			color: lighten($colorItemFg, 20%);
+			color: pullForward($colorInputIcon, 10%);
 		}
 
 		.clear-icon {
@@ -135,7 +135,7 @@
 			}
 
 			&:hover {
-				color: lighten($colorItemFg, 20%);
+				color: pullForward($colorInputIcon, 10%);
 			}
 		}
 
@@ -146,7 +146,7 @@
 			text-align: right;
 
 			&:hover {
-				color: lighten($colorItemFg, 20%);
+				color: pullForward($colorInputIcon, 10%);
 			}
 		}
 
@@ -191,7 +191,8 @@
 
 
 		.clear-filters-icon {
-			opacity: 0.4;
+			color: $colorInputIcon;
+			opacity: 1;
 			font-size: 0.8em;
 			position: absolute;
 			left: 1px;

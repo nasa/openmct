@@ -131,6 +131,7 @@
                 color: $colorItemFg;
             }
             .details {
+                @include txtShdw($shdwItemText);
                 @include ellipsize();
 	            color: $colorItemFgDetails;
                 font-size: 0.8em;

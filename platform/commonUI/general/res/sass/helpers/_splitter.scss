@@ -21,10 +21,10 @@
  *****************************************************************************/
 .split-layout {
 	$b: pullForward($colorBodyBg, $contrastRatioPercent);
-	$splitterD: 5px;
 
 	.splitter {
 		background-color: $b;
+		@include border-radius($splitterEndCr);
 		@include boxShdw($splitterShdw);
 		overflow: hidden;
 		position: absolute;
@@ -53,7 +53,7 @@
 			cursor: row-resize;
 			left: 0; right: 0;
 			width: auto;
-			height: $splitterD;
+			height: $splitterW;
 		}
 	}
 	&.vertical {
@@ -72,7 +72,7 @@
 			@include controlGrippy($colorBodyBg, vertical);
 			bottom: 0;
 			cursor: col-resize;
-			width: $splitterD;
+			width: $splitterW;
 		}
 	}
 }

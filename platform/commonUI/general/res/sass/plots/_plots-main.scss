@@ -29,7 +29,7 @@ $swatchD: 8px;
 $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBarW); // Top, right, bottom, left
 
 .gl-plot {
-	color: $colorBodyFg;
+	color: $colorPlotFg;
 	font-size: 0.7rem;
 	position: relative;
 	width: 100%;
@@ -74,6 +74,9 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 	}
 
 	.gl-plot-display-area {
+		@if $colorPlotBg != none {
+			background-color: $colorPlotBg;
+		}
 		position: absolute;
 		top: nth($plotDisplayArea, 1);
 		right: nth($plotDisplayArea, 2);
@@ -213,7 +216,11 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 			width: $swatchD;
 			//margin-right: $interiorMarginSm;
 		}
-		.title-label {}
+		&[class*='s-limit'] {
+			.title-label {
+				color: #fff;
+			}
+		}
 	}
 }
 
@@ -221,7 +228,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 	.plot-legend-item {
 		//@include test();
 		@include border-radius($smallCr);
-		color: #fff;
+		//color: #fff;
 		line-height: 1.5em;
 		padding: 0px $itemPadLR;
 		.plot-color-swatch {

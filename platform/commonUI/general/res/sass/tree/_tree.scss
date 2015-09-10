@@ -83,7 +83,7 @@ ul.tree {
 			.icon {
 				&.l-icon-link,
 				&.l-icon-alert {
-					@include txtShdwSubtle(1);
+					//@include txtShdw($shdwItemTreeIcon);
 					position: absolute;
 					z-index: 2;
 				}

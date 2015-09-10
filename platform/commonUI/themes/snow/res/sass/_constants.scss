@@ -1,9 +1,9 @@
 $basicCr: 4px;
 $controlCr: $basicCr;
 /************************** COLORS AND SHADING */
-$colorBodyBg: #efefef;
-$colorGenBg: #fff; // NEW
+$colorBodyBg: #fcfcfc;
 $colorBodyFg: #666;
+$colorGenBg: #fff;
 $colorFooterBg: #000;
 $colorKey: #0099cc;
 $colorKeySelectedBg: $colorKey;
@@ -16,7 +16,8 @@ $colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent);
 $colorBtnFg: #fff;
 $colorBtnMajorBg: $colorKey;
 $colorBtnMajorFg: $colorKeyFg;
-$colorBtnIcon: $colorBtnFg;
+$colorBtnIcon: #ddd;
+$colorObjHdrIcon: $colorBodyFg;
 $colorInvokeMenu: #000;
 $contrastInvokeMenuPercent: 50%;
 
@@ -50,7 +51,8 @@ $colorFormSectionHeader: rgba(#000, 0.1);
 $colorInputBg: $colorGenBg;
 $colorInputFg: $colorBodyFg;
 $colorFormText: pushBack($colorBodyFg, 10%);
-// Limits and staleness colors
+$colorInputIcon: pushBack($colorBodyFg, 25%);
+// Limits and staleness colors//
 $colorLimitYellow: #9d7500;
 $colorLimitRed: #aa0000;
 $colorTelemFresh: #fff;
@@ -58,7 +60,7 @@ $colorTelemStale: #888;
 $styleTelemStale: italic;
 // Bubble colors
 $colorInfoBubbleFg: #666;
-$colorInfoBubbleBg: #ddd;
+$colorInfoBubbleBg: $colorMenuBg;
 $colorThumbsBubbleFg: lighten($colorBodyFg, 10%);
 $colorThumbsBubbleBg: lighten($colorBodyBg, 10%);
 // Overlay
@@ -71,10 +73,10 @@ $colorOvrBtnFg: #fff;
 $colorItemBg: $colorBtnBg; //pullForward($colorBodyBg, 15%);
 $colorItemFg: $colorBtnFg; //lighten($colorItemBg, 20%);
 $colorItemFgDetails: darken($colorItemFg, 15%);
-$colorItemIcon: $colorItemFg;
+$colorItemIcon: $colorBtnIcon;
 $colorItemSubIcons: $colorItemFgDetails;
 $colorItemOpenIcon: $colorItemFgDetails;
-$shdwItemText: none;
+$shdwItemText: rgba(black, 0.2) 0 1px 2px;
 $colorItemBgSelected: $colorKey;
 // Tabular
 $tabularColorBorder: rgba(white, 0.1);
@@ -83,6 +85,9 @@ $tabularColorBodyFg: lighten($tabularColorBodyBg, 40%);
 $tabularColorHeaderBg: lighten($colorBodyBg, 10%);
 $tabularColorHeaderFg: lighten($tabularColorHeaderBg, 40%);
 $tabularColorHeaderBorder: $colorBodyBg;
+// Plot
+$colorPlotBg: #eee; //
+$colorPlotFg: $colorBodyFg;
 // Tree
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: $colorItemTreeIcon; //pushBack($colorItemTreeIcon, 20%);
@@ -102,6 +107,8 @@ $scrollbarThumbColorHov: $colorKey;
 $splitterShdw: none;
 $colorSplitterInterior: $colorBodyBg;
 $colorSplitterHover: $colorKey;
+$splitterW: 5px;
+$splitterEndCr: $splitterW;
 $colorGrippyInteriorHover: $colorBodyBg;
 
 /********************************* MOBILE */

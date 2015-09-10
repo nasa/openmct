@@ -20,7 +20,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -41,38 +41,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -943,9 +943,12 @@ mct-container {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 26, ../../../../general/res/sass/helpers/_splitter.scss */
+/* line 25, ../../../../general/res/sass/helpers/_splitter.scss */
 .split-layout .splitter {
   background-color: #454545;
+  -moz-border-radius: 1px;
+  -webkit-border-radius: 1px;
+  border-radius: 1px;
   -moz-box-shadow: rgba(0, 0, 0, 0.4) 0 0 3px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0 0 3px;
   box-shadow: rgba(0, 0, 0, 0.4) 0 0 3px;
@@ -1855,20 +1858,21 @@ label.checkbox.custom {
   font-size: 1em; }
   /* line 242, ../../../../general/res/sass/controls/_controls.scss */
   .object-header > .type-icon {
+    color: #cccccc;
     font-size: 120%;
     float: left;
     margin-right: 5px; }
-  /* line 248, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 249, ../../../../general/res/sass/controls/_controls.scss */
   .object-header .l-elem-wrapper {
     justify-content: flex-start;
     -webkit-justify-content: flex-start; }
-    /* line 251, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 252, ../../../../general/res/sass/controls/_controls.scss */
     .object-header .l-elem-wrapper mct-representation {
       min-width: 0.7em; }
-  /* line 259, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 260, ../../../../general/res/sass/controls/_controls.scss */
   .object-header .action {
     margin-right: 5px; }
-  /* line 263, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 264, ../../../../general/res/sass/controls/_controls.scss */
   .object-header .title-label {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1876,13 +1880,13 @@ label.checkbox.custom {
     flex: 0 1 auto;
     -webkit-flex: 0 1 auto;
     padding-right: 0.35em; }
-  /* line 272, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 273, ../../../../general/res/sass/controls/_controls.scss */
   .object-header .context-available {
     font-size: 0.7em;
     flex: 0 0 1;
     -webkit-flex: 0 0 1; }
   @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-    /* line 279, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 280, ../../../../general/res/sass/controls/_controls.scss */
     .object-header .context-available {
       -moz-transition-property: opacity;
       -o-transition-property: opacity;
@@ -1897,12 +1901,12 @@ label.checkbox.custom {
       -webkit-transition-timing-function: ease-in-out;
       transition-timing-function: ease-in-out;
       opacity: 0; }
-    /* line 284, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 285, ../../../../general/res/sass/controls/_controls.scss */
     .object-header:hover .context-available {
       opacity: 1; } }
 
 /******************************************************** SLIDERS */
-/* line 297, ../../../../general/res/sass/controls/_controls.scss */
+/* line 298, ../../../../general/res/sass/controls/_controls.scss */
 .slider .slot {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1921,7 +1925,7 @@ label.checkbox.custom {
   right: 0;
   bottom: auto;
   left: 0; }
-/* line 308, ../../../../general/res/sass/controls/_controls.scss */
+/* line 309, ../../../../general/res/sass/controls/_controls.scss */
 .slider .knob {
   background-color: #333;
   -moz-border-radius: 3px;
@@ -2003,12 +2007,12 @@ label.checkbox.custom {
     -webkit-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
     border-color: #0099cc; }
-  /* line 319, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 320, ../../../../general/res/sass/controls/_controls.scss */
   .slider .knob:before {
     top: 1px;
     bottom: 3px;
     left: 5px; }
-/* line 326, ../../../../general/res/sass/controls/_controls.scss */
+/* line 327, ../../../../general/res/sass/controls/_controls.scss */
 .slider .range {
   background: rgba(0, 153, 204, 0.6);
   cursor: ew-resize;
@@ -2019,13 +2023,13 @@ label.checkbox.custom {
   left: auto;
   height: auto;
   width: auto; }
-  /* line 336, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 337, ../../../../general/res/sass/controls/_controls.scss */
   .slider .range:hover {
     background: rgba(0, 153, 204, 0.7); }
 
 /******************************************************** BROWSER ELEMENTS */
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 345, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 346, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -2040,7 +2044,7 @@ label.checkbox.custom {
     height: 10px;
     width: 10px; }
 
-  /* line 351, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 352, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar-thumb {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -2054,7 +2058,7 @@ label.checkbox.custom {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box; }
-    /* line 360, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 361, ../../../../general/res/sass/controls/_controls.scss */
     ::-webkit-scrollbar-thumb:hover {
       background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzVlNWU1ZSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzUyNTI1MiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
@@ -2063,7 +2067,7 @@ label.checkbox.custom {
       background-image: -webkit-linear-gradient(#5e5e5e, #525252 20px);
       background-image: linear-gradient(#5e5e5e, #525252 20px); }
 
-  /* line 365, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 366, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar-corner {
     background: rgba(0, 0, 0, 0.4); } }
 /*****************************************************************************
@@ -2591,9 +2595,9 @@ label.checkbox.custom {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
-      -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
-      -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
-      box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+      -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
+      -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
+      box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
       background: rgba(255, 255, 255, 0.1);
       border: none;
       color: #cccccc;
@@ -2650,9 +2654,9 @@ input[type="text"] {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
-  box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+  -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
+  box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
   background: rgba(255, 255, 255, 0.1);
   border: none;
   color: #cccccc;
@@ -2675,9 +2679,9 @@ textarea {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
-  box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+  -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
+  box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
   background: rgba(255, 255, 255, 0.1);
   border: none;
   color: #cccccc;
@@ -2805,9 +2809,9 @@ textarea {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
-  box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+  -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
+  box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
   background: #333;
   border: none;
   color: #999;
@@ -2966,9 +2970,9 @@ span.req {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
-  box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
+  -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
+  box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
   background: #333;
   border: none;
   color: #999;
@@ -3761,7 +3765,7 @@ span.req {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
-      color: #bfbfbf;
+      color: #595959;
       height: 17px;
       width: 17px;
       line-height: 17px;
@@ -3784,13 +3788,12 @@ span.req {
         width: 100%; }
     /* line 99, ../../../../general/res/sass/search/_search.scss */
     .search .search-bar .search-icon {
-      color: #bfbfbf;
       left: 3px;
       transition: visibility .15s, opacity .15s, color .2s;
       pointer-events: none; }
     /* line 119, ../../../../general/res/sass/search/_search.scss */
     .search .search-bar .search-input:hover + div.search-icon {
-      color: #f2f2f2; }
+      color: #737373; }
     /* line 123, ../../../../general/res/sass/search/_search.scss */
     .search .search-bar .clear-icon {
       right: 22px;
@@ -3803,7 +3806,7 @@ span.req {
         opacity: 1; }
       /* line 137, ../../../../general/res/sass/search/_search.scss */
       .search .search-bar .clear-icon:hover {
-        color: #f2f2f2; }
+        color: #737373; }
     /* line 142, ../../../../general/res/sass/search/_search.scss */
     .search .search-bar .menu-icon {
       font-size: 0.8em;
@@ -3812,7 +3815,7 @@ span.req {
       text-align: right; }
       /* line 148, ../../../../general/res/sass/search/_search.scss */
       .search .search-bar .menu-icon:hover {
-        color: #f2f2f2; }
+        color: #737373; }
     /* line 153, ../../../../general/res/sass/search/_search.scss */
     .search .search-bar .search-menu-holder {
       float: right;
@@ -3844,12 +3847,13 @@ span.req {
     margin-top: 3px; }
     /* line 193, ../../../../general/res/sass/search/_search.scss */
     .search .active-filter-display .clear-filters-icon {
-      opacity: 0.4;
+      color: #595959;
+      opacity: 1;
       font-size: 0.8em;
       position: absolute;
       left: 1px;
       cursor: pointer; }
-    /* line 204, ../../../../general/res/sass/search/_search.scss */
+    /* line 205, ../../../../general/res/sass/search/_search.scss */
     .search .active-filter-display.off {
       visibility: hidden;
       opacity: 0;
@@ -3857,7 +3861,7 @@ span.req {
       margin: 0;
       padding: 0;
       border: 0; }
-  /* line 214, ../../../../general/res/sass/search/_search.scss */
+  /* line 215, ../../../../general/res/sass/search/_search.scss */
   .search .search-scroll {
     order: 3;
     margin-top: 4px;
@@ -3866,27 +3870,27 @@ span.req {
     height: auto;
     max-height: 100%;
     position: relative; }
-    /* line 227, ../../../../general/res/sass/search/_search.scss */
+    /* line 228, ../../../../general/res/sass/search/_search.scss */
     .search .search-scroll .load-icon {
       position: relative; }
-      /* line 229, ../../../../general/res/sass/search/_search.scss */
+      /* line 230, ../../../../general/res/sass/search/_search.scss */
       .search .search-scroll .load-icon.loading {
         pointer-events: none;
         margin-left: 6px; }
-        /* line 233, ../../../../general/res/sass/search/_search.scss */
+        /* line 234, ../../../../general/res/sass/search/_search.scss */
         .search .search-scroll .load-icon.loading .title-label {
           font-style: italic;
           font-size: .9em;
           opacity: 0.5;
           margin-left: 26px;
           line-height: 24px; }
-        /* line 243, ../../../../general/res/sass/search/_search.scss */
+        /* line 244, ../../../../general/res/sass/search/_search.scss */
         .search .search-scroll .load-icon.loading .wait-spinner {
           margin-left: 6px; }
-      /* line 248, ../../../../general/res/sass/search/_search.scss */
+      /* line 249, ../../../../general/res/sass/search/_search.scss */
       .search .search-scroll .load-icon:not(.loading) {
         cursor: pointer; }
-    /* line 253, ../../../../general/res/sass/search/_search.scss */
+    /* line 254, ../../../../general/res/sass/search/_search.scss */
     .search .search-scroll .load-more-button {
       margin-top: 5px 0;
       font-size: 0.8em;
@@ -4191,7 +4195,6 @@ ul.tree {
       .tree-item .label .type-icon .icon.l-icon-link, .tree-item .label .type-icon .icon.l-icon-alert,
       .search-result-item .label .type-icon .icon.l-icon-link,
       .search-result-item .label .type-icon .icon.l-icon-alert {
-        text-shadow: black 0 1px 2px;
         position: absolute;
         z-index: 2; }
       /* line 90, ../../../../general/res/sass/tree/_tree.scss */
@@ -5025,13 +5028,13 @@ table {
     left: 60px;
     cursor: crosshair;
     border: 1px solid rgba(153, 153, 153, 0.1); }
-  /* line 86, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 89, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-label,
   .gl-plot .l-plot-label {
     color: #cccccc;
     position: absolute;
     text-align: center; }
-    /* line 94, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 97, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-label.gl-plot-x-label, .gl-plot .gl-plot-label.l-plot-x-label,
     .gl-plot .l-plot-label.gl-plot-x-label,
     .gl-plot .l-plot-label.l-plot-x-label {
@@ -5040,7 +5043,7 @@ table {
       bottom: 0;
       left: 0;
       height: auto; }
-    /* line 103, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 106, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-label.gl-plot-y-label, .gl-plot .gl-plot-label.l-plot-y-label,
     .gl-plot .l-plot-label.gl-plot-y-label,
     .gl-plot .l-plot-label.l-plot-y-label {
@@ -5057,7 +5060,7 @@ table {
       left: 0;
       top: 50%;
       white-space: nowrap; }
-  /* line 117, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 120, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-y-options {
     position: absolute;
     top: 50%;
@@ -5068,19 +5071,19 @@ table {
     height: auto;
     min-height: 32px;
     width: 32px; }
-  /* line 131, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 134, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-hash {
     position: absolute;
     border: 0 rgba(255, 255, 255, 0.3) dashed; }
-    /* line 134, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 137, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-hash.hash-v {
       border-right-width: 1px;
       height: 100%; }
-    /* line 138, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 141, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-hash.hash-h {
       border-bottom-width: 1px;
       width: 100%; }
-  /* line 144, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 147, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-legend {
     position: absolute;
     top: 0;
@@ -5090,24 +5093,24 @@ table {
     height: 20px;
     overflow-x: hidden;
     overflow-y: auto; }
-  /* line 157, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 160, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .l-limit-bar,
   .gl-plot .l-oob-data {
     position: absolute;
     left: 0;
     right: 0;
     width: auto; }
-  /* line 165, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 168, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .l-limit-bar {
     height: auto;
     z-index: 0; }
-    /* line 173, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 176, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .l-limit-bar.s-limit-yellow {
       background: rgba(157, 117, 0, 0.2); }
-    /* line 174, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 177, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .l-limit-bar.s-limit-red {
       background: rgba(170, 0, 0, 0.2); }
-  /* line 177, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 180, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .l-oob-data {
     overflow: hidden;
     position: absolute;
@@ -5120,7 +5123,7 @@ table {
     pointer-events: none;
     height: 10px;
     z-index: 1; }
-    /* line 185, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 188, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .l-oob-data.l-oob-data-up {
       top: 0;
       bottom: auto;
@@ -5129,7 +5132,7 @@ table {
       background-image: -moz-linear-gradient(90deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%);
       background-image: -webkit-linear-gradient(90deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%);
       background-image: linear-gradient(0deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%); }
-    /* line 190, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 193, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .l-oob-data.l-oob-data-dwn {
       bottom: 0;
       top: auto;
@@ -5139,7 +5142,7 @@ table {
       background-image: -webkit-linear-gradient(270deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%);
       background-image: linear-gradient(180deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%); }
 
-/* line 200, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 203, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot-legend .plot-legend-item,
 .gl-plot-legend .legend-item,
 .legend .plot-legend-item,
@@ -5147,13 +5150,13 @@ table {
   display: inline-block;
   margin-right: 10px;
   margin-bottom: 3px; }
-  /* line 205, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 208, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item span,
   .gl-plot-legend .legend-item span,
   .legend .plot-legend-item span,
   .legend .legend-item span {
     vertical-align: middle; }
-  /* line 208, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 211, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item .plot-color-swatch,
   .gl-plot-legend .plot-legend-item .color-swatch,
   .gl-plot-legend .legend-item .plot-color-swatch,
@@ -5168,31 +5171,36 @@ table {
     display: inline-block;
     height: 8px;
     width: 8px; }
+  /* line 220, ../../../../general/res/sass/plots/_plots-main.scss */
+  .gl-plot-legend .plot-legend-item[class*='s-limit'] .title-label,
+  .gl-plot-legend .legend-item[class*='s-limit'] .title-label,
+  .legend .plot-legend-item[class*='s-limit'] .title-label,
+  .legend .legend-item[class*='s-limit'] .title-label {
+    color: #fff; }
 
-/* line 221, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 228, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot-legend .plot-legend-item {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
   border-radius: 2px;
-  color: #fff;
   line-height: 1.5em;
   padding: 0px 5px; }
-  /* line 227, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 234, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item .plot-color-swatch {
     border: 1px solid #333;
     height: 9px;
     width: 9px; }
 
-/* line 235, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 242, ../../../../general/res/sass/plots/_plots-main.scss */
 .tick {
   position: absolute;
   border: 0 rgba(255, 255, 255, 0.3) solid; }
-  /* line 238, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 245, ../../../../general/res/sass/plots/_plots-main.scss */
   .tick.tick-x {
     border-right-width: 1px;
     height: 100%; }
 
-/* line 244, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 251, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot-tick,
 .tick-label {
   font-size: 0.7rem;
@@ -5200,7 +5208,7 @@ table {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis; }
-  /* line 252, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 259, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-x-tick-label, .gl-plot-tick.tick-label-x,
   .tick-label.gl-plot-x-tick-label,
   .tick-label.tick-label-x {
@@ -5211,7 +5219,7 @@ table {
     width: 20%;
     margin-left: -10%;
     text-align: center; }
-  /* line 262, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 269, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-y-tick-label, .gl-plot-tick.tick-label-y,
   .tick-label.gl-plot-y-tick-label,
   .tick-label.tick-label-y {
@@ -5221,18 +5229,18 @@ table {
     margin-bottom: -0.5em;
     text-align: right; }
 
-/* line 274, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 281, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-x-tick-label {
   top: 5px; }
-/* line 277, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 284, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-y-tick-label {
   right: 5px;
   left: 5px; }
 
-/* line 284, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 291, ../../../../general/res/sass/plots/_plots-main.scss */
 .tick-label.tick-label-x {
   top: 0; }
-/* line 287, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 294, ../../../../general/res/sass/plots/_plots-main.scss */
 .tick-label.tick-label-y {
   right: 0;
   left: 0; }

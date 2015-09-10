@@ -1,7 +1,7 @@
 /************************** COLORS AND SHADING */
 $colorBodyBg: #333;
-$colorGenBg: #222;
 $colorBodyFg: #999;
+$colorGenBg: #222;
 $colorFooterBg: #000;
 $colorKey: #0099cc;
 $colorKeySelectedBg: #005177;
@@ -13,6 +13,7 @@ $colorBtnFg: $colorBodyFg;
 $colorBtnMajorBg: $colorKey;
 $colorBtnMajorFg: $colorKeyFg;
 $colorBtnIcon: $colorKey;
+$colorObjHdrIcon: pullForward($colorBodyFg, 20%);
 $colorInvokeMenu: #fff;
 $contrastInvokeMenuPercent: 20%;
 
@@ -46,6 +47,7 @@ $colorFormInvalid: #ff3300;
 $colorInputBg: rgba(#fff, 0.1);
 $colorInputFg: pullForward($colorBodyFg, 20%);
 $colorFormText: rgba(#fff, 0.5);
+$colorInputIcon: pushBack($colorBodyFg, 25%);
 // Limits and staleness colors
 $colorLimitYellow: #9d7500;
 $colorLimitRed: #aa0000;
@@ -79,6 +81,9 @@ $tabularColorBodyFg: lighten($tabularColorBodyBg, 40%);
 $tabularColorHeaderBg: lighten($colorBodyBg, 10%);
 $tabularColorHeaderFg: lighten($tabularColorHeaderBg, 40%);
 $tabularColorHeaderBorder: $colorBodyBg;
+// Plot
+$colorPlotBg: none;
+$colorPlotFg: $colorBodyFg;
 // Tree
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
@@ -98,6 +103,8 @@ $scrollbarThumbColorHov: lighten($scrollbarThumbColor, 2%);
 $splitterShdw: rgba(black, 0.4) 0 0 3px;
 $colorSplitterInterior: $colorBodyBg;
 $colorSplitterHover: none;
+$splitterW: 5px;
+$splitterEndCr: 1px;
 $colorGrippyInteriorHover: $colorKey;
 
 /********************************* MOBILE */
