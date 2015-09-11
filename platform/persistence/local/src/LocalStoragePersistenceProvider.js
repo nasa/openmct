@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,localStorage*/
+/*global define,window*/
 
 define(
     [],
@@ -42,6 +42,7 @@ define(
             this.$q = $q;
             this.space = space;
             this.spaces = space ? [space] : [];
+            this.localStorage = window.localStorage;
         }
 
         /**
@@ -49,7 +50,7 @@ define(
          * @private
          */
         LocalStoragePersistenceProvider.prototype.setValue = function (key, value) {
-            localStorage[key] = JSON.stringify(value);
+            this.localStorage[key] = JSON.stringify(value);
         };
 
         /**
@@ -57,7 +58,8 @@ define(
          * @private
          */
         LocalStoragePersistenceProvider.prototype.getValue = function (key) {
-            return localStorage[key] ? JSON.parse(localStorage[key]) : {};
+            return this.localStorage[key] ?
+                    JSON.parse(this.localStorage[key]) : {};
         };
 
         LocalStoragePersistenceProvider.prototype.listSpaces = function () {
