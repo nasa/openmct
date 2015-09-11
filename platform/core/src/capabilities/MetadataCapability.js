@@ -78,10 +78,6 @@ define(
                     {
                         name: "Type",
                         value: type && type.getName()
-                    },
-                    {
-                        name: "ID",
-                        value: domainObject.getId()
                     }
                 ];
             }
