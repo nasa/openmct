@@ -21,66 +21,75 @@
  *****************************************************************************/
 
 /*global define,localStorage*/
-/**
- * Stubbed implementation of a persistence provider,
- * to permit objects to be created, saved, etc.
- */
+
 define(
     [],
     function () {
         'use strict';
 
-        function BrowserPersistenceProvider($q, SPACE) {
-            var spaces = SPACE ? [SPACE] : [],
-                promises = {
-                    as: function (value) {
-                        return $q.when(value);
-                    }
-                },
-                provider;
-
-            function setValue(key, value) {
-                localStorage[key] = JSON.stringify(value);
-            }
-
-            function getValue(key) {
-                if (localStorage[key]) {
-                    return JSON.parse(localStorage[key]);
-                }
-                return {};
-            }
-
-            provider = {
-                listSpaces: function () {
-                    return promises.as(spaces);
-                },
-                listObjects: function (space) {
-                    var space_obj = getValue(space);
-                    return promises.as(Object.keys(space_obj));
-                },
-                createObject: function (space, key, value) {
-                    var space_obj = getValue(space);
-                    space_obj[key] = value;
-                    setValue(space, space_obj);
-                    return promises.as(true);
-                },
-                readObject: function (space, key) {
-                    var space_obj = getValue(space);
-                    return promises.as(space_obj[key]);
-                },
-                deleteObject: function (space, key, value) {
-                    var space_obj = getValue(space);
-                    delete space_obj[key];
-                    return promises.as(true);
-                }
-            };
-
-            provider.updateObject = provider.createObject;
-
-            return provider;
-
+        /**
+         * The LocalStoragePersistenceProvider reads and writes JSON documents
+         * (more specifically, domain object models) to/from the browser's
+         * local storage.
+         * @memberof platform/persistence/local
+         * @constructor
+         * @implements {PersistenceService}
+         * @param q Angular's $q, for promises
+         * @param $interval Angular's $interval service
+         * @param {string} space the name of the persistence space being served
+         */
+        function LocalStoragePersistenceProvider($q, space) {
+            this.$q = $q;
+            this.space = space;
+            this.spaces = space ? [space] : [];
         }
 
-        return BrowserPersistenceProvider;
+        /**
+         * Set a value in local storage.
+         * @private
+         */
+        LocalStoragePersistenceProvider.prototype.setValue = function (key, value) {
+            localStorage[key] = JSON.stringify(value);
+        };
+
+        /**
+         * Get a value from local storage.
+         * @private
+         */
+        LocalStoragePersistenceProvider.prototype.getValue = function (key) {
+            return localStorage[key] ? JSON.parse(localStorage[key]) : {};
+        };
+
+        LocalStoragePersistenceProvider.prototype.listSpaces = function () {
+            return this.$q.when(this.spaces);
+        };
+
+        LocalStoragePersistenceProvider.prototype.listObjects = function (space) {
+            return this.$q.when(Object.keys(this.getValue(space)));
+        };
+
+        LocalStoragePersistenceProvider.prototype.createObject = function (space, key, value) {
+            var spaceObj = this.getValue(space);
+            spaceObj[key] = value;
+            this.setValue(space, spaceObj);
+            return this.$q.when(true);
+        };
+
+        LocalStoragePersistenceProvider.prototype.readObject = function (space, key) {
+            var spaceObj = this.getValue(space);
+            return this.$q.when(spaceObj[key]);
+        };
+
+        LocalStoragePersistenceProvider.prototype.deleteObject = function (space, key, value) {
+            var spaceObj = this.getValue(space);
+            delete spaceObj[key];
+            this.setValue(space, spaceObj);
+            return this.$q.when(true);
+        };
+
+        LocalStoragePersistenceProvider.prototype.updateObject =
+            LocalStoragePersistenceProvider.prototype.createObject;
+
+        return LocalStoragePersistenceProvider;
     }
 );
