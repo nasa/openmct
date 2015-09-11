@@ -89,5 +89,10 @@
 	    bottom: $myM;
 	    left: $myM;
         overflow: auto;
+	    .field.l-med {
+		    input[type='text'] {
+			    width: 100%;
+		    }
+	    }
     }
 }

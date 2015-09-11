@@ -154,7 +154,7 @@ label.checkbox.custom {
 		min-width: $d;
 		&:before {
 			@include border-radius($basicCr * .75);
-			//background: $bg;
+			background: $bg;
 			//border-bottom: 1px solid lighten($bg, 10%);
 			@include box-shadow(inset rgba(black, 0.4) 0 1px 2px);
 			box-sizing: border-box;
@@ -241,7 +241,7 @@ label.checkbox.custom {
 	//}
 
 	> .type-icon {
-		color: $colorObjHdrIcon;
+		color: $colorObjHdrIc;
 		font-size: 120%;
 		float: left;
 		margin-right: $interiorMargin;
@@ -264,6 +264,7 @@ label.checkbox.custom {
 
 	.title-label {
 		//@include test(green, 0.9);
+		color: $colorObjHdrTxt;
 		@include ellipsize();
 		//color: pushBack($colorBodyFg, 40%);
 		@include webkitProp(flex, '0 1 auto');

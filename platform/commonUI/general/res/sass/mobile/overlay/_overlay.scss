@@ -47,5 +47,10 @@
             float: none;
             width: 100%;
         }
+	    > .label {
+		    &:after {
+			    float: none;
+		    }
+	    }
     }
 }

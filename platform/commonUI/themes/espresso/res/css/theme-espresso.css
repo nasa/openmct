@@ -20,7 +20,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -41,38 +41,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -272,17 +272,17 @@ a.disabled {
 
 @-moz-keyframes pulse {
   0% {
-    opacity: 0.2; }
+    opacity: 0.5; }
   100% {
     opacity: 1; } }
 @-webkit-keyframes pulse {
   0% {
-    opacity: 0.2; }
+    opacity: 0.5; }
   100% {
     opacity: 1; } }
 @keyframes pulse {
   0% {
-    opacity: 0.2; }
+    opacity: 0.5; }
   100% {
     opacity: 1; } }
 /* line 69, ../../../../general/res/sass/_effects.scss */
@@ -661,72 +661,45 @@ mct-container {
     color: #ff3c00;
     content: "!"; }
 
-/*.s-limit-upr,
-.s-limit-lwr {
-	$a: 0.5;
-	$l: 30%;
-	white-space: nowrap;
-	&:before {
-		display: inline-block;
-		font-family: symbolsfont;
-		font-size: 0.85em;
-		font-style: normal !important;
-		margin-right: $interiorMarginSm;
-		vertical-align: middle;
-	}
-}
+/* line 13, ../../../../general/res/sass/_limits.scss */
+[class*="s-limit"]:before {
+  display: inline-block;
+  font-family: symbolsfont;
+  font-size: 0.75em;
+  font-style: normal !important;
+  margin-right: 3px;
+  vertical-align: middle; }
 
-.s-limit-upr {
-	&.s-limit-yellow { @include limit($colorLimitYellow, "\0000ed"); }
-	&.s-limit-red { @include limit($colorLimitRed, "\0000eb"); }
-}
-
-.s-limit-lwr {
-	&.s-limit-yellow { @include limit($colorLimitYellow, "\0000ec"); }
-	&.s-limit-red { @include limit($colorLimitRed, "\0000ee"); }
-}*/
-/* line 35, ../../../../general/res/sass/_limits.scss */
-[class*="s-limit"] {
-  white-space: nowrap; }
-  /* line 39, ../../../../general/res/sass/_limits.scss */
-  [class*="s-limit"]:before {
-    display: inline-block;
-    font-family: symbolsfont;
-    font-size: 0.85em;
-    font-style: normal !important;
-    margin-right: 3px;
-    vertical-align: middle; }
-
-/* line 49, ../../../../general/res/sass/_limits.scss */
+/* line 23, ../../../../general/res/sass/_limits.scss */
 .s-limit-upr-red {
-  background: #aa0000; }
-  /* line 3, ../../../../general/res/sass/_limits.scss */
+  background: rgba(255, 0, 0, 0.3) !important; }
+  /* line 4, ../../../../general/res/sass/_limits.scss */
   .s-limit-upr-red:before {
-    color: #ff4444;
+    color: red;
     content: "ë"; }
 
-/* line 50, ../../../../general/res/sass/_limits.scss */
+/* line 24, ../../../../general/res/sass/_limits.scss */
 .s-limit-upr-yellow {
-  background: #9d7500; }
-  /* line 3, ../../../../general/res/sass/_limits.scss */
+  background: rgba(255, 170, 0, 0.3) !important; }
+  /* line 4, ../../../../general/res/sass/_limits.scss */
   .s-limit-upr-yellow:before {
-    color: #ffcc37;
+    color: #ffaa00;
     content: "í"; }
 
-/* line 51, ../../../../general/res/sass/_limits.scss */
+/* line 25, ../../../../general/res/sass/_limits.scss */
 .s-limit-lwr-yellow {
-  background: #9d7500; }
-  /* line 3, ../../../../general/res/sass/_limits.scss */
+  background: rgba(255, 170, 0, 0.3) !important; }
+  /* line 4, ../../../../general/res/sass/_limits.scss */
   .s-limit-lwr-yellow:before {
-    color: #ffcc37;
+    color: #ffaa00;
     content: "ì"; }
 
-/* line 52, ../../../../general/res/sass/_limits.scss */
+/* line 26, ../../../../general/res/sass/_limits.scss */
 .s-limit-lwr-red {
-  background: #aa0000; }
-  /* line 3, ../../../../general/res/sass/_limits.scss */
+  background: rgba(255, 0, 0, 0.3) !important; }
+  /* line 4, ../../../../general/res/sass/_limits.scss */
   .s-limit-lwr-red:before {
-    color: #ff4444;
+    color: red;
     content: "î"; }
 
 /* line 1, ../../../../general/res/sass/_data-status.scss */
@@ -1407,10 +1380,10 @@ mct-container {
         /* line 279, ../../../../general/res/sass/_mixins.scss */
         .s-btn:not(.major):not(.disabled):hover > .icon, .s-menu:not(.major):not(.disabled):hover > .icon, .select:not(.major):not(.disabled):hover > .icon {
           color: #33ccff; } }
-  /* line 77, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 67, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.pause-play .icon:before, .pause-play.s-menu .icon:before, .pause-play.select .icon:before {
     content: "\0000F1"; }
-  /* line 80, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 70, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.pause-play.paused, .pause-play.paused.s-menu, .pause-play.paused.select {
     background-color: #c56f01;
     -moz-border-radius: 3px;
@@ -1449,7 +1422,7 @@ mct-container {
         /* line 279, ../../../../general/res/sass/_mixins.scss */
         .s-btn.pause-play.paused:not(.disabled):hover > .icon, .pause-play.paused.s-menu:not(.disabled):hover > .icon, .pause-play.paused.select:not(.disabled):hover > .icon {
           color: white; } }
-    /* line 82, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 72, ../../../../general/res/sass/controls/_buttons.scss */
     .s-btn.pause-play.paused .icon, .pause-play.paused.s-menu .icon, .pause-play.paused.select .icon {
       -moz-animation-name: pulse;
       -webkit-animation-name: pulse;
@@ -1466,23 +1439,23 @@ mct-container {
       -moz-animation-timing-function: ease-in-out;
       -webkit-animation-timing-function: ease-in-out;
       animation-timing-function: ease-in-out; }
-      /* line 84, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 74, ../../../../general/res/sass/controls/_buttons.scss */
       .s-btn.pause-play.paused .icon :before, .pause-play.paused.s-menu .icon :before, .pause-play.paused.select .icon :before {
         content: "\0000EF"; }
-  /* line 92, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 82, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.show-thumbs .icon:before, .show-thumbs.s-menu .icon:before, .show-thumbs.select .icon:before {
     content: "\000039"; }
 
-/* line 98, ../../../../general/res/sass/controls/_buttons.scss */
+/* line 88, ../../../../general/res/sass/controls/_buttons.scss */
 .l-btn-set {
   font-size: 0; }
-  /* line 104, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 94, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .s-btn, .l-btn-set .s-menu, .l-btn-set .select {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
     border-radius: 0;
     margin-left: 1px; }
-  /* line 110, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 100, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .first .s-btn, .l-btn-set .first .s-menu, .l-btn-set .first .select {
     -moz-border-radius-topleft: 3px;
     -webkit-border-top-left-radius: 3px;
@@ -1491,7 +1464,7 @@ mct-container {
     -webkit-border-bottom-left-radius: 3px;
     border-bottom-left-radius: 3px;
     margin-left: 0; }
-  /* line 117, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 107, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .last .s-btn, .l-btn-set .last .s-menu, .l-btn-set .last .select {
     -moz-border-radius-topright: 3px;
     -webkit-border-top-right-radius: 3px;
@@ -1500,7 +1473,7 @@ mct-container {
     -webkit-border-bottom-right-radius: 3px;
     border-bottom-right-radius: 3px; }
 
-/* line 124, ../../../../general/res/sass/controls/_buttons.scss */
+/* line 114, ../../../../general/res/sass/controls/_buttons.scss */
 .paused:not(.s-btn):not(.s-menu):not(.select) {
   border-color: #c56f01 !important;
   color: #c56f01 !important; }
@@ -1739,6 +1712,7 @@ label.checkbox.custom {
       -moz-border-radius: 1.5px;
       -webkit-border-radius: 1.5px;
       border-radius: 1.5px;
+      background: #4d4d4d;
       -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
       -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
       box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
@@ -1842,19 +1816,20 @@ label.checkbox.custom {
     margin-right: 5px; }
   /* line 265, ../../../../general/res/sass/controls/_controls.scss */
   .object-header .title-label {
+    color: #999;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     flex: 0 1 auto;
     -webkit-flex: 0 1 auto;
     padding-right: 0.35em; }
-  /* line 274, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 275, ../../../../general/res/sass/controls/_controls.scss */
   .object-header .context-available {
     font-size: 0.7em;
     flex: 0 0 1;
     -webkit-flex: 0 0 1; }
   @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-    /* line 281, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 282, ../../../../general/res/sass/controls/_controls.scss */
     .object-header .context-available {
       -moz-transition-property: opacity;
       -o-transition-property: opacity;
@@ -1869,12 +1844,12 @@ label.checkbox.custom {
       -webkit-transition-timing-function: ease-in-out;
       transition-timing-function: ease-in-out;
       opacity: 0; }
-    /* line 286, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 287, ../../../../general/res/sass/controls/_controls.scss */
     .object-header:hover .context-available {
       opacity: 1; } }
 
 /******************************************************** SLIDERS */
-/* line 299, ../../../../general/res/sass/controls/_controls.scss */
+/* line 300, ../../../../general/res/sass/controls/_controls.scss */
 .slider .slot {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1893,7 +1868,7 @@ label.checkbox.custom {
   right: 0;
   bottom: auto;
   left: 0; }
-/* line 310, ../../../../general/res/sass/controls/_controls.scss */
+/* line 311, ../../../../general/res/sass/controls/_controls.scss */
 .slider .knob {
   background-color: #333;
   -moz-border-radius: 3px;
@@ -1979,12 +1954,12 @@ label.checkbox.custom {
     -webkit-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
     border-color: #0099cc; }
-  /* line 321, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 322, ../../../../general/res/sass/controls/_controls.scss */
   .slider .knob:before {
     top: 1px;
     bottom: 3px;
     left: 5px; }
-/* line 328, ../../../../general/res/sass/controls/_controls.scss */
+/* line 329, ../../../../general/res/sass/controls/_controls.scss */
 .slider .range {
   background: rgba(0, 153, 204, 0.6);
   cursor: ew-resize;
@@ -1995,13 +1970,13 @@ label.checkbox.custom {
   left: auto;
   height: auto;
   width: auto; }
-  /* line 338, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 339, ../../../../general/res/sass/controls/_controls.scss */
   .slider .range:hover {
     background: rgba(0, 153, 204, 0.7); }
 
 /******************************************************** BROWSER ELEMENTS */
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 347, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 348, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -2016,7 +1991,7 @@ label.checkbox.custom {
     height: 10px;
     width: 10px; }
 
-  /* line 356, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 357, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar-thumb {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -2030,7 +2005,7 @@ label.checkbox.custom {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box; }
-    /* line 365, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 366, ../../../../general/res/sass/controls/_controls.scss */
     ::-webkit-scrollbar-thumb:hover {
       background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzVlNWU1ZSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzUyNTI1MiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
@@ -2039,7 +2014,7 @@ label.checkbox.custom {
       background-image: -webkit-linear-gradient(#5e5e5e, #525252 20px);
       background-image: linear-gradient(#5e5e5e, #525252 20px); }
 
-  /* line 370, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 371, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar-corner {
     background: rgba(0, 0, 0, 0.4); } }
 /*****************************************************************************
@@ -2878,37 +2853,30 @@ textarea {
  *****************************************************************************/
 /* line 23, ../../../../general/res/sass/forms/_validation.scss */
 .validates > .label {
-  padding-right: 25px; }
-  /* line 26, ../../../../general/res/sass/forms/_validation.scss */
+  padding-right: 10px; }
+  /* line 25, ../../../../general/res/sass/forms/_validation.scss */
   .validates > .label::after {
-    /*            display: block;
-                position: absolute;
-                top: 0;
-                right: $reqSymbolM;
-                bottom: 0;
-                left: auto;
-                height: auto;
-                width: $reqSymbolW;*/
+    float: right;
     font-family: symbolsfont;
     font-size: 0.7em; }
-/* line 44, ../../../../general/res/sass/forms/_validation.scss */
+/* line 33, ../../../../general/res/sass/forms/_validation.scss */
 .validates.invalid > .label::after, .validates.invalid.req > .label::after {
   color: #ff3300;
   content: "x"; }
-/* line 51, ../../../../general/res/sass/forms/_validation.scss */
+/* line 40, ../../../../general/res/sass/forms/_validation.scss */
 .validates.valid > .label::after, .validates.valid.req > .label::after {
   color: #33cc33;
   content: "2"; }
-/* line 57, ../../../../general/res/sass/forms/_validation.scss */
+/* line 46, ../../../../general/res/sass/forms/_validation.scss */
 .validates.req > .label::after {
   color: #ffc700;
   content: "*"; }
 
-/* line 63, ../../../../general/res/sass/forms/_validation.scss */
+/* line 52, ../../../../general/res/sass/forms/_validation.scss */
 .req {
   font-size: 0.7em; }
 
-/* line 66, ../../../../general/res/sass/forms/_validation.scss */
+/* line 55, ../../../../general/res/sass/forms/_validation.scss */
 span.req {
   color: #ffc700; }
 
@@ -3354,9 +3322,10 @@ span.req {
   /* line 341, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-flex .left {
     flex: 1 1 0;
-    -webkit-flex: 1 1 0; }
+    -webkit-flex: 1 1 0;
+    padding-right: 10px; }
 
-/* line 347, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 348, ../../../../general/res/sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
 
@@ -4034,6 +4003,9 @@ span.req {
   bottom: 5px;
   left: 5px;
   overflow: auto; }
+  /* line 93, ../../../../general/res/sass/overlay/_overlay.scss */
+  .overlay .contents.l-dialog .field.l-med input[type='text'] {
+    width: 100%; }
 
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
   /* line 4, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
@@ -4073,7 +4045,10 @@ span.req {
   .overlay > .holder > .contents .form.editor .contents .form-row > .controls {
     display: block;
     float: none;
-    width: 100%; } }
+    width: 100%; }
+  /* line 51, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
+  .overlay > .holder > .contents .form.editor .contents .form-row > .label:after {
+    float: none; } }
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -4373,18 +4348,20 @@ ul.tree {
   left: 5px; }
 /* line 49, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame.frame-template .view-switcher {
-  font-size: 80%;
   height: 16px;
   line-height: 16px;
   z-index: 10; }
+  /* line 53, ../../../../general/res/sass/user-environ/_frame.scss */
+  .frame.frame-template .view-switcher > span {
+    font-size: 0.7rem; }
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 58, ../../../../general/res/sass/user-environ/_frame.scss */
+  /* line 60, ../../../../general/res/sass/user-environ/_frame.scss */
   .frame.frame-template .view-switcher {
     opacity: 0; }
-  /* line 61, ../../../../general/res/sass/user-environ/_frame.scss */
+  /* line 63, ../../../../general/res/sass/user-environ/_frame.scss */
   .frame.frame-template:hover .view-switcher {
     opacity: 1; } }
-/* line 69, ../../../../general/res/sass/user-environ/_frame.scss */
+/* line 71, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame .view-switcher .title-label {
   display: none; }
 
@@ -5056,7 +5033,7 @@ table {
   /* line 134, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-hash {
     position: absolute;
-    border: 0 rgba(255, 255, 255, 0.3) dashed; }
+    border: 0 rgba(255, 255, 255, 0.2) dashed; }
     /* line 137, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-hash.hash-v {
       border-right-width: 1px;
@@ -5088,10 +5065,10 @@ table {
     z-index: 0; }
     /* line 176, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .l-limit-bar.s-limit-yellow {
-      background: rgba(157, 117, 0, 0.2); }
+      background: rgba(255, 170, 0, 0.2); }
     /* line 177, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .l-limit-bar.s-limit-red {
-      background: rgba(170, 0, 0, 0.2); }
+      background: rgba(255, 0, 0, 0.2); }
   /* line 180, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .l-oob-data {
     overflow: hidden;
@@ -5153,12 +5130,6 @@ table {
     display: inline-block;
     height: 8px;
     width: 8px; }
-  /* line 220, ../../../../general/res/sass/plots/_plots-main.scss */
-  .gl-plot-legend .plot-legend-item[class*='s-limit'] .title-label,
-  .gl-plot-legend .legend-item[class*='s-limit'] .title-label,
-  .legend .plot-legend-item[class*='s-limit'] .title-label,
-  .legend .legend-item[class*='s-limit'] .title-label {
-    color: #fff; }
 
 /* line 228, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot-legend .plot-legend-item {
@@ -5176,7 +5147,7 @@ table {
 /* line 242, ../../../../general/res/sass/plots/_plots-main.scss */
 .tick {
   position: absolute;
-  border: 0 rgba(255, 255, 255, 0.3) solid; }
+  border: 0 rgba(255, 255, 255, 0.2) solid; }
   /* line 245, ../../../../general/res/sass/plots/_plots-main.scss */
   .tick.tick-x {
     border-right-width: 1px;

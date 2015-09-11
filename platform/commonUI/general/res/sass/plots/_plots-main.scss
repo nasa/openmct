@@ -23,8 +23,8 @@ $yBarW: 60px;
 $yLabelW: auto;
 $xBarH: 32px;
 $legendH: 20px;
-$colorHash: rgba(white, 0.3);
-$styleHash: dashed;
+//$colorHash: rgba(white, 0.3); // MOVED INTO CONSTANTS
+//$styleHash: dashed; // MOVED INTO CONSTANTS
 $swatchD: 8px;
 $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBarW); // Top, right, bottom, left
 
@@ -83,7 +83,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 		bottom: nth($plotDisplayArea, 3);
 		left: nth($plotDisplayArea, 4);
 		cursor: crosshair;
-		border: 1px solid $colorInteriorBorder;
+		border: 1px solid $colorPlotAreaBorder;
 	}
 
 	.gl-plot-label,
@@ -133,7 +133,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 
 	.gl-plot-hash {
 		position: absolute;
-		border: 0 $colorHash $styleHash;
+		border: 0 $colorPlotHash $stylePlotHash;
 		&.hash-v {
 			border-right-width: 1px;
 			height: 100%;
@@ -173,8 +173,8 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 
 		height: auto;
 		z-index: 0;
-		&.s-limit-yellow { @include limitBg($colorLimitYellow); }
-		&.s-limit-red { @include limitBg($colorLimitRed); }
+		&.s-limit-yellow { @include limitBg($colorLimitYellowBg); }
+		&.s-limit-red { @include limitBg($colorLimitRedBg); }
 	}
 
 	.l-oob-data {
@@ -218,7 +218,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 		}
 		&[class*='s-limit'] {
 			.title-label {
-				color: #fff;
+				//color: #fff;
 			}
 		}
 	}
@@ -241,7 +241,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 
 .tick {
 	position: absolute;
-	border: 0 $colorHash solid;
+	border: 0 $colorPlotHash solid;
 	&.tick-x {
 		border-right-width: 1px;
 		height: 100%; // Assumption is that the tick will be in a holder that will set it's height;

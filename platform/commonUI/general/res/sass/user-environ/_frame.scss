@@ -47,10 +47,12 @@
 	}
 	&.frame-template {
 		.view-switcher {
-			font-size: 80%;
 			height: $ohH;
 			line-height: $ohH;
 			z-index: 10;
+			> span {
+				font-size: 0.7rem;
+			}
 		}
 		// Hide the view switcher by default when it's in an element that's in a frame context
 		// Frame template is used because we need to target the lowest nested frame

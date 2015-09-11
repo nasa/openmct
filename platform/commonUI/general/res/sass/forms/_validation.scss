@@ -21,22 +21,11 @@
  *****************************************************************************/
 .validates {
     > .label {
-        //        @include test(green, 0.1);
-        padding-right: $reqSymbolW + $reqSymbolM; // Keep room for validation element
+        padding-right: $reqSymbolM; // Keep room for validation element
         &::after {
-            //            @include test(yellow, 0.3);
-/*            display: block;
-            position: absolute;
-            top: 0;
-            right: $reqSymbolM;
-            bottom: 0;
-            left: auto;
-            height: auto;
-            width: $reqSymbolW;*/
+	        float: right;
             font-family: symbolsfont;
             font-size: $reqSymbolFontSize;
-            //text-align: right;
-            //vertical-align: middle;
         }
     }
     &.invalid,

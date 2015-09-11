@@ -32,7 +32,7 @@
             $iconMargin: 40px;
             $iconD: ($d - ($iconMargin * 2)) * 0.85;
             $transTime: 200ms;
-            @include btnSubtle($colorItemBg, pullForward($colorItemBg, 20%), $colorItemFg, $colorItemIc);
+            @include btnSubtle($colorItemBg, $colorItemBgHov, $colorItemFg, $colorItemIc);
             box-sizing: border-box;
             cursor: pointer;
             float: left;

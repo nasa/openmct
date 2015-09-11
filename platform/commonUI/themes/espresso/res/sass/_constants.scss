@@ -18,7 +18,6 @@ $colorBtnFg: $colorBodyFg;
 $colorBtnMajorBg: $colorKey;
 $colorBtnMajorFg: $colorKeyFg;
 $colorBtnIcon: $colorKey;
-$colorObjHdrIcon: pullForward($colorBodyFg, 20%);
 $colorInvokeMenu: #fff;
 $contrastInvokeMenuPercent: 20%;
 
@@ -33,6 +32,8 @@ $colorGridLines: rgba(#fff, 0.05);
 $colorFormLines: rgba(#fff, 0.1);
 $colorFormSectionHeader: rgba(#000, 0.2);
 $colorInvokeMenu: #fff;
+$colorObjHdrTxt: $colorBodyFg;
+$colorObjHdrIc: pullForward($colorObjHdrTxt, 20%);
 
 // Menu colors
 $colorMenuBg: pullForward($colorBodyBg, 23%);
@@ -56,12 +57,16 @@ $colorInputBg: rgba(#fff, 0.1);
 $colorInputFg: pullForward($colorBodyFg, 20%);
 $colorFormText: rgba(#fff, 0.5);
 $colorInputIcon: pushBack($colorBodyFg, 15%);
+
 // Limits and staleness colors
-$colorLimitYellow: #9d7500;
-$colorLimitRed: #aa0000;
 $colorTelemFresh: pullForward($colorBodyFg, 20%);
 $colorTelemStale: pushBack($colorBodyFg, 20%);
 $styleTelemStale: italic;
+$colorLimitYellowBg: rgba(#ffaa00, 0.3);
+$colorLimitYellowIc: #ffaa00;
+$colorLimitRedBg: rgba(red, 0.3);
+$colorLimitRedIc: red;
+
 // Bubble colors
 $colorInfoBubbleFg: #666;
 $colorInfoBubbleBg: #ddd;
@@ -77,6 +82,7 @@ $colorOvrBtnFg: #fff;
 
 // Items
 $colorItemBg: lighten($colorBodyBg, 5%);
+$colorItemBgHov: pullForward($colorItemBg, 15%);
 $colorItemFg: lighten($colorItemBg, 50%);
 $colorItemFgDetails: lighten($colorItemBg, 30%);
 $colorItemIc: $colorKey; //pullForward($colorItemFg, 20%);
@@ -96,6 +102,9 @@ $colorTabHeaderBorder: $colorBodyBg;
 // Plot
 $colorPlotBg: none;
 $colorPlotFg: $colorBodyFg;
+$colorPlotHash: rgba(white, 0.2);
+$stylePlotHash: dashed;
+$colorPlotAreaBorder: $colorInteriorBorder;
 
 // Tree
 $colorItemTreeIcon: $colorKey;

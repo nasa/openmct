@@ -1,19 +1,32 @@
 {
 	"metadata": {
-		"name": "WTD Symbols v2.",
-		"lastOpened": 1441911912596,
-		"created": 1441911876817
+		"name": "WTD Symbols v24",
+		"lastOpened": 1441992412958,
+		"created": 1441992410384
 	},
 	"iconSets": [
 		{
 			"selection": [
+				{
+					"order": 86,
+					"id": 85,
+					"prevSize": 32,
+					"code": 58888,
+					"codes": [
+						58888,
+						58889,
+						58890
+					],
+					"name": "icon-info-v15",
+					"tempChar": ""
+				},
 				{
 					"order": 82,
 					"id": 84,
 					"prevSize": 32,
 					"code": 58887,
 					"name": "icon-x-in-circle",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 77,
@@ -21,7 +34,7 @@
 					"prevSize": 32,
 					"code": 58881,
 					"name": "icon-datatable",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 78,
@@ -29,7 +42,7 @@
 					"prevSize": 32,
 					"code": 58882,
 					"name": "icon-tabular-scrolling",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 79,
@@ -37,7 +50,7 @@
 					"prevSize": 32,
 					"code": 58884,
 					"name": "icon-tabular",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 80,
@@ -45,7 +58,7 @@
 					"prevSize": 32,
 					"code": 58885,
 					"name": "icon-calendar",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 83,
@@ -53,7 +66,7 @@
 					"prevSize": 32,
 					"code": 58886,
 					"name": "icon-paint-bucket",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 1,
@@ -61,7 +74,7 @@
 					"prevSize": 32,
 					"code": 123,
 					"name": "icon-pointer-left",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 3,
@@ -69,7 +82,7 @@
 					"prevSize": 32,
 					"code": 125,
 					"name": "icon-pointer-right",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 4,
@@ -77,7 +90,7 @@
 					"prevSize": 32,
 					"code": 80,
 					"name": "icon-person",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 5,
@@ -85,7 +98,7 @@
 					"prevSize": 32,
 					"code": 232,
 					"name": "icon-chain-links",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 6,
@@ -93,7 +106,7 @@
 					"prevSize": 32,
 					"code": 115,
 					"name": "icon-database-in-brackets",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 7,
@@ -101,7 +114,7 @@
 					"prevSize": 32,
 					"code": 114,
 					"name": "icon-refresh",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 8,
@@ -109,7 +122,7 @@
 					"prevSize": 32,
 					"code": 108,
 					"name": "icon-lock",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 9,
@@ -117,7 +130,7 @@
 					"prevSize": 32,
 					"code": 51,
 					"name": "icon-box-with-dashed-lines",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 10,
@@ -125,7 +138,7 @@
 					"prevSize": 32,
 					"code": 58880,
 					"name": "icon-box-with-arrow-cursor",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 11,
@@ -133,7 +146,7 @@
 					"prevSize": 32,
 					"code": 65,
 					"name": "icon-activity-mode",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 12,
@@ -141,7 +154,7 @@
 					"prevSize": 32,
 					"code": 97,
 					"name": "icon-activity",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 13,
@@ -149,7 +162,7 @@
 					"prevSize": 32,
 					"code": 33,
 					"name": "icon-alert-rect",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 14,
@@ -157,7 +170,7 @@
 					"prevSize": 32,
 					"code": 58883,
 					"name": "icon-alert-triangle",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 15,
@@ -165,7 +178,7 @@
 					"prevSize": 32,
 					"code": 238,
 					"name": "icon-arrow-double-down",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 16,
@@ -173,7 +186,7 @@
 					"prevSize": 32,
 					"code": 235,
 					"name": "icon-arrow-double-up",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 2,
@@ -181,7 +194,7 @@
 					"prevSize": 32,
 					"code": 118,
 					"name": "icon-arrow-down",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 19,
@@ -189,7 +202,7 @@
 					"prevSize": 32,
 					"code": 60,
 					"name": "icon-arrow-left",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 20,
@@ -197,7 +210,7 @@
 					"prevSize": 32,
 					"code": 62,
 					"name": "icon-arrow-right",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 21,
@@ -205,7 +218,7 @@
 					"prevSize": 32,
 					"code": 236,
 					"name": "icon-arrow-tall-down",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 22,
@@ -213,7 +226,7 @@
 					"prevSize": 32,
 					"code": 237,
 					"name": "icon-arrow-tall-up",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 23,
@@ -221,7 +234,7 @@
 					"prevSize": 32,
 					"code": 94,
 					"name": "icon-arrow-up",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 24,
@@ -229,7 +242,7 @@
 					"prevSize": 32,
 					"code": 73,
 					"name": "icon-arrows-out",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 25,
@@ -237,7 +250,7 @@
 					"prevSize": 32,
 					"code": 58893,
 					"name": "icon-arrows-right-left",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 33,
@@ -245,7 +258,7 @@
 					"prevSize": 32,
 					"code": 53,
 					"name": "icon-arrows-up-down",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 26,
@@ -253,7 +266,7 @@
 					"prevSize": 32,
 					"code": 42,
 					"name": "icon-asterisk",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 27,
@@ -261,7 +274,7 @@
 					"prevSize": 32,
 					"code": 72,
 					"name": "icon-autoflow-tabular",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 28,
@@ -269,7 +282,7 @@
 					"prevSize": 32,
 					"code": 224,
 					"name": "icon-box",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 29,
@@ -277,7 +290,7 @@
 					"prevSize": 32,
 					"code": 50,
 					"name": "icon-check",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 30,
@@ -285,7 +298,7 @@
 					"prevSize": 32,
 					"code": 67,
 					"name": "icon-clock",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 31,
@@ -293,7 +306,7 @@
 					"prevSize": 32,
 					"code": 46,
 					"name": "icon-connectivity",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 32,
@@ -301,7 +314,7 @@
 					"prevSize": 32,
 					"code": 100,
 					"name": "icon-database-query",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 17,
@@ -309,7 +322,7 @@
 					"prevSize": 32,
 					"code": 68,
 					"name": "icon-database",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 35,
@@ -317,7 +330,7 @@
 					"prevSize": 32,
 					"code": 81,
 					"name": "icon-dictionary",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 36,
@@ -325,7 +338,7 @@
 					"prevSize": 32,
 					"code": 242,
 					"name": "icon-duplicate",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 37,
@@ -333,7 +346,7 @@
 					"prevSize": 32,
 					"code": 102,
 					"name": "icon-folder-new",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 38,
@@ -341,7 +354,7 @@
 					"prevSize": 32,
 					"code": 70,
 					"name": "icon-folder",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 39,
@@ -349,7 +362,7 @@
 					"prevSize": 32,
 					"code": 95,
 					"name": "icon-fullscreen-collapse",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 40,
@@ -357,7 +370,7 @@
 					"prevSize": 32,
 					"code": 122,
 					"name": "icon-fullscreen-expand",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 41,
@@ -365,7 +378,7 @@
 					"prevSize": 32,
 					"code": 71,
 					"name": "icon-gear",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 49,
@@ -373,7 +386,7 @@
 					"prevSize": 32,
 					"code": 227,
 					"name": "icon-image",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 42,
@@ -381,7 +394,7 @@
 					"prevSize": 32,
 					"code": 225,
 					"name": "icon-layers",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 43,
@@ -389,7 +402,7 @@
 					"prevSize": 32,
 					"code": 76,
 					"name": "icon-layout",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 44,
@@ -397,7 +410,7 @@
 					"prevSize": 32,
 					"code": 226,
 					"name": "icon-line-horz",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 75,
@@ -405,7 +418,7 @@
 					"prevSize": 32,
 					"code": 244,
 					"name": "icon-link",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 46,
@@ -413,7 +426,7 @@
 					"prevSize": 32,
 					"code": 88,
 					"name": "icon-magnify-in",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 47,
@@ -421,7 +434,7 @@
 					"prevSize": 32,
 					"code": 89,
 					"name": "icon-magnify-out",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 48,
@@ -429,7 +442,7 @@
 					"prevSize": 32,
 					"code": 77,
 					"name": "icon-magnify",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 34,
@@ -437,7 +450,7 @@
 					"prevSize": 32,
 					"code": 109,
 					"name": "icon-menu",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 50,
@@ -445,7 +458,7 @@
 					"prevSize": 32,
 					"code": 243,
 					"name": "icon-move",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 51,
@@ -453,7 +466,7 @@
 					"prevSize": 32,
 					"code": 121,
 					"name": "icon-new-window",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 52,
@@ -461,7 +474,7 @@
 					"prevSize": 32,
 					"code": 111,
 					"name": "icon-object",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 73,
@@ -469,7 +482,7 @@
 					"prevSize": 32,
 					"code": 63,
 					"name": "icon-object-unknown",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 53,
@@ -477,7 +490,7 @@
 					"prevSize": 32,
 					"code": 86,
 					"name": "icon-packet",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 54,
@@ -485,7 +498,7 @@
 					"prevSize": 32,
 					"code": 234,
 					"name": "icon-page",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 55,
@@ -493,7 +506,7 @@
 					"prevSize": 32,
 					"code": 241,
 					"name": "icon-pause",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 56,
@@ -501,7 +514,7 @@
 					"prevSize": 32,
 					"code": 112,
 					"name": "icon-pencil",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 65,
@@ -509,7 +522,7 @@
 					"prevSize": 32,
 					"code": 79,
 					"name": "icon-people",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 57,
@@ -517,7 +530,7 @@
 					"prevSize": 32,
 					"code": 239,
 					"name": "icon-play",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 58,
@@ -525,7 +538,7 @@
 					"prevSize": 32,
 					"code": 233,
 					"name": "icon-plot-resource",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 59,
@@ -533,7 +546,7 @@
 					"prevSize": 32,
 					"code": 43,
 					"name": "icon-plus",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 60,
@@ -541,7 +554,7 @@
 					"prevSize": 32,
 					"code": 45,
 					"name": "icon-minus",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 61,
@@ -549,7 +562,7 @@
 					"prevSize": 32,
 					"code": 54,
 					"name": "icon-sine",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 62,
@@ -557,7 +570,7 @@
 					"prevSize": 32,
 					"code": 228,
 					"name": "icon-T",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 63,
@@ -565,7 +578,7 @@
 					"prevSize": 32,
 					"code": 116,
 					"name": "icon-telemetry-panel",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 64,
@@ -573,7 +586,7 @@
 					"prevSize": 32,
 					"code": 84,
 					"name": "icon-telemetry",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 18,
@@ -581,7 +594,7 @@
 					"prevSize": 32,
 					"code": 246,
 					"name": "icon-thumbs-strip",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 67,
@@ -589,7 +602,7 @@
 					"prevSize": 32,
 					"code": 83,
 					"name": "icon-timeline",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 68,
@@ -597,7 +610,7 @@
 					"prevSize": 32,
 					"code": 245,
 					"name": "icon-timer",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 69,
@@ -605,7 +618,7 @@
 					"prevSize": 32,
 					"code": 90,
 					"name": "icon-trash",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 70,
@@ -613,7 +626,7 @@
 					"prevSize": 32,
 					"code": 229,
 					"name": "icon-two-parts-both",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 71,
@@ -621,7 +634,7 @@
 					"prevSize": 32,
 					"code": 231,
 					"name": "icon-two-parts-one-only",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 72,
@@ -629,7 +642,7 @@
 					"prevSize": 32,
 					"code": 120,
 					"name": "icon-x-heavy",
-					"tempChar": ""
+					"tempChar": ""
 				},
 				{
 					"order": 66,
@@ -637,7 +650,7 @@
 					"prevSize": 32,
 					"code": 58946,
 					"name": "icon-x",
-					"tempChar": ""
+					"tempChar": ""
 				}
 			],
 			"id": 2,
@@ -652,6 +665,27 @@
 			"height": 1024,
 			"prevSize": 32,
 			"icons": [
+				{
+					"id": 85,
+					"paths": [
+						"M512 0c-282.8 0-512 229.2-512 512s229.2 512 512 512 512-229.2 512-512-229.2-512-512-512zM512 128c70.6 0 128 57.4 128 128s-57.4 128-128 128c-70.6 0-128-57.4-128-128s57.4-128 128-128zM704 832h-384v-128h64v-256h256v256h64v128z"
+					],
+					"attrs": [
+						{
+							"fill": "rgb(0, 0, 0)"
+						}
+					],
+					"isMulticolor": false,
+					"grid": 0,
+					"tags": [
+						"icon-info-v1.5"
+					],
+					"colorPermutations": {
+						"125525525516161751": [
+							0
+						]
+					}
+				},
 				{
 					"id": 84,
 					"paths": [
@@ -2051,6 +2085,12 @@
 						6,
 						161,
 						75,
+						1
+					],
+					[
+						255,
+						255,
+						255,
 						1
 					]
 				]
@@ -14813,5 +14853,6 @@
 		"gridSize": 16,
 		"showLiga": false
 	},
-	"uid": -1
+	"uid": -1,
+	"time": 1441993324496
 }
