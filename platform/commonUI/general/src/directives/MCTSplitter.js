@@ -44,8 +44,7 @@ define(
          */
         function MCTSplitter() {
             function link(scope, element, attrs, mctSplitPane) {
-                var initialPosition,
-                    activeInterval;
+                var initialPosition;
 
                 element.addClass("splitter");
 
