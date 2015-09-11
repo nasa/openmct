@@ -66,6 +66,7 @@ define(
                 cachedObjects = [],
                 updater,
                 lastBounds,
+                throttledRequery,
                 handle;
 
             // Populate the scope with axis information (specifically, options
@@ -96,7 +97,7 @@ define(
             }
 
             // Change the displayable bounds
-            function setBasePanZoom(unused, bounds) {
+            function setBasePanZoom(bounds) {
                 var start = bounds.start,
                     end = bounds.end;
                 if (updater) {
@@ -121,7 +122,7 @@ define(
                 );
                 // Keep any externally-provided bounds
                 if (lastBounds) {
-                    setBasePanZoom({}, lastBounds);
+                    setBasePanZoom(lastBounds);
                 }
             }
 
@@ -181,13 +182,16 @@ define(
                 }
             }
 
-            // Initiate a new query for data because query bounds changed
-            function requery() {
+            // Respond to a display bounds change (requery for data)
+            function changeDisplayBounds(event, bounds) {
+                setBasePanZoom(bounds);
                 if (handle) {
                     recreateUpdater();
-                    requestTelemetry();
+                    throttledRequery();
                 }
             }
+
+            throttledRequery = throttle(requestTelemetry, 250);
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
             this.updateValues = updateValues;
@@ -202,10 +206,7 @@ define(
             $scope.$watch('domainObject', subscribe);
 
             // Respond to external bounds changes
-            $scope.$on("telemetry:display:bounds", setBasePanZoom);
-
-            // Respond to external query range changes
-            $scope.$on("telemetry:query:bounds", throttle(requery, 250));
+            $scope.$on("telemetry:display:bounds", changeDisplayBounds);
 
             // Unsubscribe when the plot is destroyed
             $scope.$on("$destroy", releaseSubscription);
