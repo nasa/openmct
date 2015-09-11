@@ -44,13 +44,10 @@ define(
          */
         function MCTSplitter() {
             function link(scope, element, attrs, mctSplitPane) {
-                var initialPosition;
+                var initialPosition,
+                    activeInterval;
 
                 element.addClass("splitter");
-
-                // Now that we have the above class, the splitter width
-                // will have changed, so trigger a positioning update.
-                mctSplitPane.position(mctSplitPane.position());
 
                 scope.splitter = {
                     // Begin moving this splitter
