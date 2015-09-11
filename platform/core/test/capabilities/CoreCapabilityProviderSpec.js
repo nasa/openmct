@@ -86,6 +86,18 @@ define(
                 expect(mockLog.warn).not.toHaveBeenCalled();
             });
 
+            it("prefers higher-priority capability", function () {
+                KeylessCapability.key = BasicCapability.key;
+                expect(provider.getCapabilities({}).basic)
+                    .toEqual(BasicCapability);
+            });
+
+            // https://github.com/nasa/openmctweb/issues/49
+            it("does not log a warning for multiple capabilities with the same key", function () {
+                KeylessCapability.key = BasicCapability.key;
+                provider.getCapabilities({});
+                expect(mockLog.warn).not.toHaveBeenCalled();
+            });
 
         });
     }
