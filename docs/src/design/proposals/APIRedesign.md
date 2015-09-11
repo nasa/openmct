@@ -180,6 +180,11 @@ to develop a tabular visualization plugin.
       * Add a model property to the bundle.json to take in "Hello World"
         as a parameter and pass through to the controller/view
 
+### Open Source Contributer
+
+ * [Failures are non-graceful when services are missing.](
+   https://github.com/nasa/openmctweb/issues/79)
+
 ## Misc. Feedback (mostly verbal)
 
 * Easy to add things.
@@ -950,3 +955,48 @@ a telemetry series.
 
 * Merging with `subscribe` may lose the clarity/simplicity of the
   current API.
+
+## Allow Composite Services to Fail Gracefully
+
+Currently, when no providers are available for a composite service
+that is depended-upon, dependencies cannot be resolved and the
+application fails to initialize, with errors appearing in the
+developer console.
+
+This is acceptable behavior for truly unrecoverable missing
+dependencies, but in many cases it would be preferable to allow a
+given type of composite service to define some failure behavior
+when no service of an appropriate type is available.
+
+To address this:
+
+* Provide an interface (preferably
+  [imperative](#bundle-Declarations-in-javascript))
+  for declaring composite services, independent of any implementation
+  of an aggregator/decorator/provider. This allows the framework
+  layer to distinguish between unimplemented dependencies (which
+  could have defined failover strategies) from undefined dependencies
+  (which cannot.)
+* Provide a default strategy for service composition that picks
+  the highest-priority provider, and logs an error (and fails to
+  satisfy) if no providers have been defined.
+* Allow this aggregation strategy to be overridden, much as one
+  can declare aggregators currently. However, these aggregators should
+  get empty arrays when no providers have been registered (instead of
+  being ignored), at which point they can decide how to handle this
+  situation (graceful failure when it's possible, noisy errors when
+  it is not.)
+
+### Benefits
+
+* Allows for improved robustness and fault tolerance.
+* Makes service declarations explicit, reducing "magic."
+
+### Detriments
+
+* Requires the inclusion of software units which define services,
+  instead of inferring their existence (slight increase in amount
+  of code that needs to be written.)
+* May result in harder-to-understand errors when overridden
+  composition strategies do not failover well (that is, when they
+  do need at least implementation, but fail to check for this.)
