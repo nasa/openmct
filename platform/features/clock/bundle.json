@@ -1,5 +1,5 @@
 {
-    "name": "WARP Clocks/Timers",
+    "name": "Clocks/Timers",
     "descriptions": "Domain objects for displaying current & relative times.",
     "configuration": {
         "paths": {
@@ -17,13 +17,13 @@
         "indicators": [
             {
                 "implementation": "indicators/ClockIndicator.js",
-                "depends": [ "warp.tickerService", "CLOCK_INDICATOR_FORMAT" ],
+                "depends": [ "tickerService", "CLOCK_INDICATOR_FORMAT" ],
                 "priority": "preferred"
             }
         ],
         "services": [
             {
-                "key": "warp.tickerService",
+                "key": "tickerService",
                 "implementation": "services/TickerService.js",
                 "depends": [ "$timeout", "now" ]
             }
@@ -32,7 +32,7 @@
             {
                 "key": "ClockController",
                 "implementation": "controllers/ClockController.js",
-                "depends": [ "$scope", "warp.tickerService" ]
+                "depends": [ "$scope", "tickerService" ]
             },
             {
                 "key": "TimerController",
@@ -42,24 +42,24 @@
             {
                 "key": "RefreshingController",
                 "implementation": "controllers/RefreshingController.js",
-                "depends": [ "$scope", "warp.tickerService" ]
+                "depends": [ "$scope", "tickerService" ]
             }
         ],
         "views": [
             {
-                "key": "warp.clock",
-                "type": "warp.clock",
+                "key": "clock",
+                "type": "clock",
                 "templateUrl": "templates/clock.html"
             },
             {
-                "key": "warp.timer",
-                "type": "warp.timer",
+                "key": "timer",
+                "type": "timer",
                 "templateUrl": "templates/timer.html"
             }
         ],
         "actions": [
             {
-                "key": "warp.timer.start",
+                "key": "timer.start",
                 "implementation": "actions/StartTimerAction.js",
                 "depends": ["now"],
                 "category": "contextual",
@@ -68,7 +68,7 @@
                 "priority": "preferred"
             },
             {
-                "key": "warp.timer.restart",
+                "key": "timer.restart",
                 "implementation": "actions/RestartTimerAction.js",
                 "depends": ["now"],
                 "category": "contextual",
@@ -79,7 +79,7 @@
         ],
         "types": [
             {
-                "key": "warp.clock",
+                "key": "clock",
                 "name": "Clock",
                 "glyph": "C",
                 "features": [ "creation" ],
@@ -127,7 +127,7 @@
                 }
             },
             {
-                "key": "warp.timer",
+                "key": "timer",
                 "name": "Timer",
                 "glyph": "\u00F5",
                 "features": [ "creation" ],

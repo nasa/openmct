@@ -23,7 +23,7 @@ define(
 
             // We show this variant for timers which already have
             // a target time.
-            return model.type === 'warp.timer' &&
+            return model.type === 'timer' &&
                     model.timestamp !== undefined;
         };
 

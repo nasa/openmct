@@ -62,8 +62,8 @@ define(
                 });
                 mockActionCapability.getActions.andCallFake(function (k) {
                     return [{
-                        'warp.timer.start': mockStart,
-                        'warp.timer.restart': mockRestart
+                        'timer.start': mockStart,
+                        'timer.restart': mockRestart
                     }[k]];
                 });
                 mockStart.getMetadata.andReturn({ glyph: "S", name: "Start" });

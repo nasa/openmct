@@ -49,7 +49,7 @@ define(
                     formatKey = model.timerFormat,
                     actionCapability = domainObject.getCapability('action'),
                     actionKey = (timestamp === undefined) ?
-                            'warp.timer.start' : 'warp.timer.restart';
+                            'timer.start' : 'timer.restart';
 
                 updateFormat(formatKey);
                 updateTimestamp(timestamp);
