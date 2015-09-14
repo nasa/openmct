@@ -8,12 +8,12 @@ define(
             var max = series.getPointCount() - 1;
 
             function binSearch(min, max, value) {
-                var mid = Math.floor((min + max) / 2),
-                    domainValue = series.getDomainValue(mid);
+                var mid = Math.floor((min + max) / 2);
 
                 return min >= max ? min :
-                        domainValue < value ? binSearch(mid + 1, max, value) :
-                                binSearch(min, mid - 1, value);
+                        series.getDomainValue(mid) < value ?
+                                binSearch(mid + 1, max, value) :
+                                        binSearch(min, mid - 1, value);
             }
 
             this.startIndex = binSearch(0, max, conductor.displayStart());
