@@ -22,8 +22,8 @@
 /*global define*/
 
 define(
-    [],
-    function () {
+    ['./ConductorTelemetrySeries'],
+    function (ConductorTelemetrySeries) {
         'use strict';
 
         /**
@@ -44,20 +44,18 @@ define(
 
         // Strip out any realtime data series that is outside of the conductor's
         // bounds.
-        ConductorTelemetryDecorator.prototype.stripRealtime = function (packaged) {
+        ConductorTelemetryDecorator.prototype.pruneNonDisplayable = function (packaged) {
             var conductor = this.conductorService.getConductor(),
-                start = conductor.displayStart(),
-                end = conductor.displayEnd(),
                 repackaged = {};
 
             function filterSource(packagedBySource) {
                 var repackagedBySource = {};
 
-                Object.keys(packagedBySource).filter(function (k) {
-                    return packagedBySource[k].getPointCount() > 0 &&
-                        packagedBySource[k].getDomainValue(0) <= end;
-                }).forEach(function (k) {
-                    repackagedBySource[k] = packagedBySource[k];
+                Object.keys(packagedBySource).forEach(function (k) {
+                    repackagedBySource[k] = new ConductorTelemetrySeries(
+                        packagedBySource[k],
+                        conductor
+                    );
                 });
 
                 return repackagedBySource;
@@ -86,15 +84,19 @@ define(
         };
 
         ConductorTelemetryDecorator.prototype.requestTelemetry = function (requests) {
+            var self = this;
             return this.telemetryService
-                .requestTelemetry(this.amendRequests(requests));
+                .requestTelemetry(this.amendRequests(requests))
+                .then(function (packaged) {
+                    return self.pruneNonDisplayable(packaged);
+                });
         };
 
         ConductorTelemetryDecorator.prototype.subscribe = function (callback, requests) {
             var self = this;
 
             function internalCallback(packagedSeries) {
-                return callback(self.stripRealtime(packagedSeries));
+                return callback(self.pruneNonDisplayable(packagedSeries));
             }
 
             return this.telemetryService
