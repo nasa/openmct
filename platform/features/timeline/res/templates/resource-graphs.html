@@ -1,0 +1,13 @@
+<span ng-controller="TimelineGraphController as graphController">
+    <div class="t-graph l-graph" ng-repeat="graph in parameters.graphs">
+        <div class="l-graph-area l-canvas-holder">
+            <mct-chart draw="graph.drawingObject"></mct-chart>
+        </div>
+        <div class="t-graph-labels l-graph-labels">
+            <mct-include key="'timeline-resource-graph-labels'"
+                         parameters="graphController.label(graph)"
+                         ng-model="graph">
+            </mct-include>
+        </div>
+    </div>
+</span>

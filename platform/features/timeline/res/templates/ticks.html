@@ -1,0 +1,18 @@
+<div class="t-header l-header s-header"
+     ng-controller="TimelineTickController as tick"
+     ng-style="{ width: parameters.fullWidth + 'px' }">
+
+    <div class="l-header-elem t-labels l-labels">
+        <div class="t-label l-label s-label"
+             ng-repeat="label in tick.labels(parameters.start, parameters.width, parameters.step, parameters.toMillis)"
+             ng-style="{ left: label.left + 'px' }">
+            {{label.text}}
+        </div>
+    </div>
+    <div class="t-ticks l-ticks s-ticks"
+         ng-style="{ 'background-size': parameters.step + 'px 100%' }">
+    </div>
+    <div class="t-ticks s-ticks l-subticks"
+         ng-style="{ 'background-size': (parameters.step / 40) + 'px 100%' }">
+    </div>
+</div>

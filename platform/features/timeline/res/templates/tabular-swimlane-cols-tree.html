@@ -1,0 +1,36 @@
+<div class="t-swimlane s-swimlane l-swimlane {{ngModel.activitystate}} {{ngModel.swimlanestate}}"
+     warp-swimlane-drop="ngModel"
+     ng-class="{
+               exceeded: ngModel.exceeded(),
+               selected: ngModel.selected(swimlane),
+               'drop-into': ngModel.highlight(),
+               'drop-after': ngModel.highlightBottom()
+               }">
+	<div class="l-cols">
+        <span class="l-col l-col-icon l-plot-resource"
+              ng-click="ngModel.toggleGraph()">
+            <span class="ui-symbol"
+                  ng-show="ngModel.graph()">
+                &#x00e9;
+            </span>
+        </span>
+        <span class="l-col l-col-icon l-link">
+            <a class="ui-symbol"
+               target="_blank"
+               ng-href="{{ngModel.link()}}"
+               ng-if="ngModel.link().length > 0"
+               title="{{ngModel.link()}}"
+	           >
+                &#x00e8;
+            </a>
+        </span>
+		<span class="l-col l-title"
+              ng-click="ngModel.select()"
+              ng-style="{ 'margin-left': 15 * ngModel.depth + 'px' }">
+            <mct-representation key="'label'"
+                                mct-object="ngModel.domainObject"
+                                warp-swimlane-drag="ngModel">
+            </mct-representation>
+        </span>
+	</div>
+</div>

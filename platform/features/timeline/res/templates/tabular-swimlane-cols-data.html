@@ -1,0 +1,16 @@
+<div class="t-swimlane s-swimlane l-swimlane {{ngModel.activitystate}} {{ngModel.swimlanestate}}"
+     ng-class="{
+               exceeded: ngModel.exceeded(),
+               selected: ngModel.selected(swimlane),
+               'drop-into': ngModel.highlight(),
+               'drop-after': ngModel.highlightBottom()
+               }">
+	<div
+		class="l-cols"
+		ng-controller="TimelineTableController as tabularVal">
+		<span class="align-right l-col l-start">{{tabularVal.niceTime(ngModel.timespan().getStart())}}</span>
+		<span class="align-right l-col l-end">{{tabularVal.niceTime(ngModel.timespan().getEnd())}}</span>
+		<span class="align-right l-col l-duration">{{tabularVal.niceTime(ngModel.timespan().getDuration())}}</span>
+		<span class="l-col l-activity-modes"></span>
+	</div>
+</div>

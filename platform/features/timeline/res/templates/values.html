@@ -1,0 +1,6 @@
+<ul ng-controller="ActivityModeValuesController as controller" class="cols cols-2-ff properties">
+    <li ng-repeat="(key, value) in cost" class="l-row s-row">
+        <span class="col col-100px s-title">{{controller.metadata(key).name}}</span>
+        <span class="col s-value">{{value}} {{controller.metadata(key).units}}</span>
+    </li>
+</ul>

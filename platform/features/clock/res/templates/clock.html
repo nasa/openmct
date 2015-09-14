@@ -1,0 +1,13 @@
+<div class="l-time-display l-digital l-clock s-clock" ng-controller="ClockController as clock">
+	<div class="l-elem-wrapper">
+	    <span class="l-elem timezone">
+	        {{clock.zone()}}
+	    </span>
+	    <span class="l-elem value active">
+	        {{clock.text()}}
+	    </span>
+	    <span class="l-elem ampm">
+	        {{clock.ampm()}}
+	    </span>
+	</div>
+</div>

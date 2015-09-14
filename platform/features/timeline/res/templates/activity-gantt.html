@@ -1,0 +1,18 @@
+<div class="t-timeline-gantt l-timeline-gantt s-timeline-gantt"
+     title="{{model.name}}"
+     ng-controller="TimelineGanttController as gantt"
+     ng-style="{
+               left: gantt.left(timespan, parameters.scroll, parameters.toPixels) + 'px',
+               width: gantt.width(timespan, parameters.scroll, parameters.toPixels) + 'px'
+               }">
+
+    <div class="bar">
+		<span class="s-activity-type ui-symbol">
+            {{type.getGlyph()}}
+        </span>
+		<span class="s-title">
+            {{model.name}}
+        </span>
+	</div>
+
+</div>

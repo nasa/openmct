@@ -1,0 +1,13 @@
+<!-- TO-DO: make legend item color-swatch dynamic -->
+<span
+	class="legend-item s-legend-item"
+	title="{{ngModel.path}}{{ngModel.domainObject.getModel().name}}"
+	>
+	<span class="color-swatch"
+          ng-style="{ 'background-color': ngModel.color() }">
+    </span>
+	<span class="title-label">
+        <span class="l-parent-path">{{ngModel.path}}</span>
+        <span class="l-leaf-title">{{ngModel.domainObject.getModel().name}}</span>
+    </span>
+</span>
