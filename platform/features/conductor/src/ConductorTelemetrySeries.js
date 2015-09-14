@@ -30,7 +30,7 @@ define(
         };
 
         ConductorTelemetrySeries.prototype.getRangeValue = function (i, r) {
-            return this.series.getDomainValue(i + this.startIndex, r);
+            return this.series.getRangeValue(i + this.startIndex, r);
         };
 
         return ConductorTelemetrySeries;
