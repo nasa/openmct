@@ -42,6 +42,34 @@ define(
             this.telemetryService = telemetryService;
         }
 
+        // Strip out any realtime data series that is outside of the conductor's
+        // bounds.
+        ConductorTelemetryDecorator.prototype.stripRealtime = function (packaged) {
+            var conductor = this.conductorService.getConductor(),
+                start = conductor.displayStart(),
+                end = conductor.displayEnd(),
+                repackaged = {};
+
+            function filterSource(packagedBySource) {
+                var repackagedBySource = {};
+
+                Object.keys(packagedBySource).filter(function (k) {
+                    return packagedBySource[k].getPointCount() > 0 &&
+                        packagedBySource[k].getDomainValue(0) <= end;
+                }).forEach(function (k) {
+                    repackagedBySource[k] = packagedBySource[k];
+                });
+
+                return repackagedBySource;
+            }
+
+            Object.keys(packaged).forEach(function (source) {
+                repackaged[source] = filterSource(packaged[source]);
+            });
+
+            return repackaged;
+        };
+
         ConductorTelemetryDecorator.prototype.amendRequests = function (requests) {
             var conductor = this.conductorService.getConductor(),
                 start = conductor.displayStart(),
@@ -63,8 +91,14 @@ define(
         };
 
         ConductorTelemetryDecorator.prototype.subscribe = function (callback, requests) {
+            var self = this;
+
+            function internalCallback(packagedSeries) {
+                return callback(self.stripRealtime(packagedSeries));
+            }
+
             return this.telemetryService
-                .subscribe(callback, this.amendRequests(requests));
+                .subscribe(internalCallback, this.amendRequests(requests));
         };
 
         return ConductorTelemetryDecorator;
