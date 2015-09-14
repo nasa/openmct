@@ -11,15 +11,9 @@ define(
                 var mid = Math.floor((min + max) / 2),
                     domainValue = series.getDomainValue(mid);
 
-                if (min >= max) {
-                    return min;
-                }
-
-                if (domainValue < value) {
-                    return binSearch(mid + 1, max);
-                } else {
-                    return binSearch(min, mid - 1);
-                }
+                return min >= max ? min :
+                        domainValue < value ? binSearch(mid + 1, max, value) :
+                                binSearch(min, mid - 1, value);
             }
 
             this.startIndex = binSearch(0, max, conductor.displayStart());
