@@ -16,5 +16,5 @@ define({
     /**
      * String identifier for swimlanes being dragged.
      */
-    WARP_SWIMLANE_DRAG_TYPE: 'warp-swimlane'
+    TIMELINE_SWIMLANE_DRAG_TYPE: 'timeline-swimlane'
 });

@@ -17,19 +17,19 @@ define(
             function link(scope, element, attrs) {
                 // Look up the swimlane from the provided expression
                 function swimlane() {
-                    return scope.$eval(attrs.warpSwimlaneDrag);
+                    return scope.$eval(attrs.mctSwimlaneDrag);
                 }
                 // When drag starts, publish via dndService
                 element.on('dragstart', function () {
                     dndService.setData(
-                        SwimlaneDragConstants.WARP_SWIMLANE_DRAG_TYPE,
+                        SwimlaneDragConstants.TIMELINE_SWIMLANE_DRAG_TYPE,
                         swimlane()
                     );
                 });
                 // When drag ends, clear via dndService
                 element.on('dragend', function () {
                     dndService.removeData(
-                        SwimlaneDragConstants.WARP_SWIMLANE_DRAG_TYPE
+                        SwimlaneDragConstants.TIMELINE_SWIMLANE_DRAG_TYPE
                     );
                 });
             }

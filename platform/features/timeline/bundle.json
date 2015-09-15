@@ -48,16 +48,16 @@
         ],
         "types": [
             {
-                "key": "warp.timeline",
+                "key": "timeline",
                 "name": "Timeline",
                 "glyph": "S",
                 "description": "A container for arranging Timelines and Activities in time.",
                 "features": [ "creation" ],
-                "contains": [ "warp.timeline", "warp.activity" ],
+                "contains": [ "timeline", "activity" ],
                 "properties": [
                     {
                         "name": "Start date/time",
-                        "control": "warp.datetime",
+                        "control": "datetime",
                         "required": true,
                         "property": [ "start" ],
                         "options": [ "SET" ]
@@ -74,23 +74,23 @@
                 "model": { "composition": [] }
             },
             {
-                "key": "warp.activity",
+                "key": "activity",
                 "name": "Activity",
                 "glyph": "a",
                 "features": [ "creation" ],
-                "contains": [ "warp.activity" ],
+                "contains": [ "activity" ],
                 "description": "An action that takes place in time. You can define a start time and duration. Activities can be nested within other Activities, or within Timelines.",
                 "properties": [
                     {
                         "name": "Start date/time",
-                        "control": "warp.datetime",
+                        "control": "datetime",
                         "required": true,
                         "property": [ "start" ],
                         "options": [ "SET" ]
                     },
                     {
                         "name": "Duration",
-                        "control": "warp.duration",
+                        "control": "duration",
                         "required": true,
                         "property": [ "duration" ]
                     }
@@ -98,7 +98,7 @@
                 "model": { "composition": [], "relationships": { "modes": [] } }
             },
             {
-                "key": "warp.mode",
+                "key": "mode",
                 "name": "Activity Mode",
                 "glyph": "A",
                 "features": [ "creation" ],
@@ -124,19 +124,19 @@
         ],
         "views": [
             {
-                "key": "warp.values",
+                "key": "values",
                 "name": "Values",
                 "glyph": "A",
                 "templateUrl": "templates/values.html",
-                "type": "warp.mode",
+                "type": "mode",
                 "uses": [ "cost" ],
                 "editable": false
             },
             {
-                "key": "warp.timeline",
+                "key": "timeline",
                 "name": "Timeline",
                 "glyph": "S",
-                "type": "warp.timeline",
+                "type": "timeline",
                 "description": "A timeline view of Timelines and Activities.",
                 "templateUrl": "templates/timeline.html",
                 "toolbar": {
@@ -152,12 +152,12 @@
                                         {
                                             "name": "Timeline",
                                             "glyph": "S",
-                                            "key": "warp.timeline"
+                                            "key": "timeline"
                                         },
                                         {
                                             "name": "Activity",
                                             "glyph": "a",
-                                            "key": "warp.activity"
+                                            "key": "activity"
                                         }
                                     ]
                                 }
@@ -179,7 +179,7 @@
                                     "dialog": {
                                         "control": "selector",
                                         "name": "Modes",
-                                        "type": "warp.mode"
+                                        "type": "mode"
                                     },
                                     "property": "modes"
                                 },
@@ -219,7 +219,7 @@
         ],
         "representations": [
             {
-                "key": "warp.gantt",
+                "key": "gantt",
                 "templateUrl": "templates/activity-gantt.html",
                 "uses": [ "timespan", "type" ]
             }
@@ -258,11 +258,11 @@
         ],
         "controls": [
             {
-                "key": "warp.datetime",
+                "key": "datetime",
                 "templateUrl": "templates/controls/datetime.html"
             },
             {
-                "key": "warp.duration",
+                "key": "duration",
                 "templateUrl": "templates/controls/datetime.html"
             }
         ],
@@ -270,12 +270,12 @@
             {
                 "key": "TimelineController",
                 "implementation": "controllers/TimelineController.js",
-                "depends": [ "$scope", "$q", "warp.objectLoader", "TIMELINE_MINIMUM_DURATION" ]
+                "depends": [ "$scope", "$q", "objectLoader", "TIMELINE_MINIMUM_DURATION" ]
             },
             {
                 "key": "TimelineGraphController",
                 "implementation": "controllers/TimelineGraphController.js",
-                "depends": [ "$scope", "warp.resources[]" ]
+                "depends": [ "$scope", "resources[]" ]
             },
             {
                 "key": "WARPDateTimeController",
@@ -303,7 +303,7 @@
             {
                 "key": "ActivityModeValuesController",
                 "implementation": "controllers/ActivityModeValuesController.js",
-                "depends": [ "warp.resources[]" ]
+                "depends": [ "resources[]" ]
             }
         ],
         "capabilities": [
@@ -334,24 +334,24 @@
         ],
         "directives": [
             {
-                "key": "warpSwimlaneDrop",
+                "key": "mctSwimlaneDrop",
                 "implementation": "directives/WARPSwimlaneDrop.js",
                 "depends": [ "dndService" ]
             },
             {
-                "key": "warpSwimlaneDrag",
+                "key": "mctSwimlaneDrag",
                 "implementation": "directives/WARPSwimlaneDrag.js",
                 "depends": [ "dndService" ]
             }
         ],
         "services": [
             {
-                "key": "warp.objectLoader",
+                "key": "objectLoader",
                 "implementation": "services/ObjectLoader.js",
                 "depends": [ "$q" ]
             }
         ],
-        "warp.resources": [
+        "resources": [
             {
                 "key": "power",
                 "name": "Power",
