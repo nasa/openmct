@@ -6,6 +6,7 @@
     "controllers/GetterSetterController",
     "controllers/SelectorController",
     "controllers/SplitPaneController",
+    "controllers/TimeRangeController",
     "controllers/ToggleController",
     "controllers/TreeNodeController",
     "controllers/ViewSwitcherController",

@@ -40,11 +40,6 @@ define(
                 return moment.utc(ts).format(DATE_FORMAT);
             }
 
-            function parseTimestamp(text, fallback) {
-                var m = moment.utc(text, DATE_FORMAT);
-                return m.isValid() ? m.valueOf() : fallback;
-            }
-
             // From 0.0-1.0 to "0%"-"1%"
             function toPercent(p) {
                 return (100 * p) + "%";
@@ -103,8 +98,8 @@ define(
                 ngModel.inner = ngModel.inner || copyBounds(ngModel.outer);
 
                 // First, dates for the date pickers for outer bounds
-                $scope.startOuterDate = formatTimestamp(ngModel.outer.start);
-                $scope.endOuterDate = formatTimestamp(ngModel.outer.end);
+                $scope.startOuterDate = new Date(ngModel.outer.start);
+                $scope.endOuterDate = new Date(ngModel.outer.end);
 
                 // Then various updates for the inner span
                 updateViewForInnerSpanFromModel(ngModel);
@@ -177,10 +172,10 @@ define(
                 updateViewFromModel($scope.ngModel);
             }
 
-            function updateOuterStart(text) {
+            function updateOuterStart(date) {
                 var ngModel = $scope.ngModel;
                 ngModel.outer.start =
-                    parseTimestamp(text, ngModel.outer.start);
+                    date.getTime();
                 ngModel.outer.end =
                     Math.max(ngModel.outer.start, ngModel.outer.end);
                 ngModel.inner.start =
@@ -190,10 +185,10 @@ define(
                 updateViewForInnerSpanFromModel(ngModel);
             }
 
-            function updateOuterEnd(text) {
+            function updateOuterEnd(date) {
                 var ngModel = $scope.ngModel;
                 ngModel.outer.end =
-                    parseTimestamp(text, ngModel.outer.end);
+                    date.getTime();
                 ngModel.outer.start =
                     Math.min(ngModel.outer.end, ngModel.outer.start);
                 ngModel.inner.start =

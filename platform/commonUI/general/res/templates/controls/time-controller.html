@@ -22,12 +22,8 @@
 
 <div class="l-time-controller" ng-controller="TimeRangeController">
     <div class="l-time-range-inputs-holder">
-        Start: <input type="textfield"
-                      placeholder="YYYY-MM-DD HH:mm:ss"
-                      ng-model="startOuterDate"/>
-        End: <input type="textfield"
-                      placeholder="YYYY-MM-DD HH:mm:ss"
-                      ng-model="endOuterDate"/>
+        Start: <input type="date" ng-model="startOuterDate"/>
+        End: <input type="date" ng-model="endOuterDate"/>
     </div>
 
     <div class="l-time-range-slider-holder">
