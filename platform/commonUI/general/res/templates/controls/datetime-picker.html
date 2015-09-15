@@ -37,7 +37,11 @@
                 <tr ng-repeat="row in table">
                     <td style="text-align: center;"
                         ng-repeat="cell in row"
-                        ng-class='{ disabled: !isSelectable(cell) }'>
+                        ng-click="select(cell)"
+                        ng-class='{
+                                  disabled: !isSelectable(cell),
+                                  test: isSelected(cell)
+                                  }'>
                         <div>{{cell.day}}</div>
                         <div style="font-size: 80%">{{cell.dayOfYear}}</div>
                     </td>
@@ -51,7 +55,7 @@
         <div>{{nameFor(key)}}</div>
         <select size="10"
                 ng-model="time[key]"
-                ng-options="i for i in [0,1,2,3,4,5,6,7,8,9,10,11,12,13]">
+                ng-options="i for i in optionsFor(key)">
         </select>
     </div>
 </div>

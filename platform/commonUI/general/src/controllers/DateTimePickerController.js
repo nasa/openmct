@@ -31,7 +31,18 @@ define(
                 'minutes': "Minute",
                 'seconds': "Second"
             },
-            MONTHS = moment.months();
+            MONTHS = moment.months(),
+            TIME_OPTIONS = (function makeRanges() {
+                var arr = [];
+                while (arr.length < 60) {
+                    arr.push(arr.length);
+                }
+                return {
+                    hours: arr.slice(0, 24),
+                    minutes: arr,
+                    seconds: arr
+                };
+            }());
 
         /**
          * Controller to support the date-time picker.
@@ -52,14 +63,13 @@ define(
          *   * `hours`: Hours chosen
          *   * `minutes`: Minutes chosen
          *   * `seconds`: Seconds chosen
+         *
+         * Months are zero-indexed, day-of-months are one-indexed.
          */
-        function DateTimePickerController($scope) {
-            var year = 2015,
-                month = 8; // For picker state, not model state
-
-            function generateTableCell() {
-
-            }
+        function DateTimePickerController($scope, now) {
+            var year,
+                month, // For picker state, not model state
+                interacted = false;
 
             function generateTable() {
                 var m = moment.utc({ year: year, month: month }).day(0),
@@ -90,9 +100,63 @@ define(
                 console.log($scope.table);
             }
 
+            function updateFromModel(ngModel) {
+                var m;
+
+                m = moment.utc(ngModel);
+
+                $scope.date = {
+                    year: m.year(),
+                    month: m.month(),
+                    day: m.date()
+                };
+                $scope.time = {
+                    hours: m.hour(),
+                    minutes: m.minute(),
+                    seconds: m.second()
+                };
+
+                //window.alert($scope.date.day + " " + ngModel);
+
+                // Zoom to that date in the picker, but
+                // only if the user hasn't interacted with it yet.
+                if (!interacted) {
+                    year = m.year();
+                    month = m.month();
+                    updateScopeForMonth();
+                }
+            }
+
+            function updateFromView() {
+                var m = moment.utc({
+                    year: $scope.date.year,
+                    month: $scope.date.month,
+                    day: $scope.date.day,
+                    hour: $scope.time.hours,
+                    minute: $scope.time.minutes,
+                    second: $scope.time.seconds
+                });
+                $scope.ngModel = m.valueOf();
+            }
+
             $scope.isSelectable = function (cell) {
                 return cell.month === month;
-            }
+            };
+
+            $scope.isSelected = function (cell) {
+                var date = $scope.date || {};
+                return cell.day === date.day &&
+                    cell.month === date.month &&
+                    cell.year === date.year;
+            };
+
+            $scope.select = function (cell) {
+                $scope.date = $scope.date || {};
+                $scope.date.month = cell.month;
+                $scope.date.year = cell.year;
+                $scope.date.day = cell.day;
+                updateFromView();
+            };
 
             $scope.dateEquals = function (d1, d2) {
                 return d1.year === d2.year &&
@@ -110,6 +174,7 @@ define(
                     month = 11;
                     year -= 1;
                 }
+                interacted = true;
                 updateScopeForMonth();
             };
 
@@ -117,7 +182,19 @@ define(
                 return TIME_NAMES[key];
             };
 
+            $scope.optionsFor = function (key) {
+                return TIME_OPTIONS[key];
+            };
+
             updateScopeForMonth();
+
+            // Ensure some useful default
+            $scope.ngModel = $scope.ngModel === undefined ?
+                now() : $scope.ngModel;
+
+            $scope.$watch('ngModel', updateFromModel);
+            $scope.$watchCollection('date', updateFromView);
+            $scope.$watchCollection('time', updateFromView);
         }
 
         return DateTimePickerController;

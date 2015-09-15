@@ -69,7 +69,7 @@
             {
                 "key": "DateTimePickerController",
                 "implementation": "controllers/DateTimePickerController.js",
-                "depends": [ "$scope" ]
+                "depends": [ "$scope", "now" ]
             },
             {
                 "key": "TreeNodeController",
