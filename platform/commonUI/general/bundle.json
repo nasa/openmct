@@ -67,6 +67,11 @@
                 "depends": [ "$scope", "now" ]
             },
             {
+                "key": "DateTimePickerController",
+                "implementation": "controllers/DateTimePickerController.js",
+                "depends": [ "$scope" ]
+            },
+            {
                 "key": "TreeNodeController",
                 "implementation": "controllers/TreeNodeController.js",
                 "depends": [ "$scope", "$timeout" ]

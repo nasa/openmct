@@ -20,12 +20,12 @@
  at runtime from the About dialog for additional information.
 -->
 
-<div>
+<div ng-controller="DateTimePickerController">
     <div style="vertical-align: top; display: inline-block">
         <div style="text-align: center;">
-            <a>&lt;</a>
-            March 2016
-            <a>&gt;</a>
+            <a ng-click="changeMonth(-1)">&lt;</a>
+            {{month}} {{year}}
+            <a ng-click="changeMonth(1)">&gt;</a>
         </div>
         <div>
             <table>
@@ -34,21 +34,23 @@
                         {{day}}
                     </th>
                 </tr>
-                <tr ng-repeat="wk in [0,1,2,3,4,5]">
+                <tr ng-repeat="row in table">
                     <td style="text-align: center;"
-                        ng-repeat="d in [0,1,2,3,4,5,6]">
-                        <div>{{wk + d}}</div>
-                        <div>{{wk * d}}</div>
+                        ng-repeat="cell in row"
+                        ng-class='{ disabled: !isSelectable(cell) }'>
+                        <div>{{cell.day}}</div>
+                        <div style="font-size: 80%">{{cell.dayOfYear}}</div>
                     </td>
                 </tr>
             </table>
         </div>
     </div>
     <div style="vertical-align: top; display: inline-block"
-         ng-repeat="name in ['Hour', 'Min', 'Sec']">
-        <div>{{name}}</div>
+         ng-repeat="key in ['hours', 'minutes', 'seconds']"
+         ng-if="parameters[key]">
+        <div>{{nameFor(key)}}</div>
         <select size="10"
-                ng-model="ngModel.hours"
+                ng-model="time[key]"
                 ng-options="i for i in [0,1,2,3,4,5,6,7,8,9,10,11,12,13]">
         </select>
     </div>
