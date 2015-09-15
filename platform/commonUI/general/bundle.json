@@ -54,6 +54,10 @@
             {
               "key": "time-controller",
               "templateUrl": "templates/controls/time-controller.html"
+            },
+            {
+              "key": "datetime-picker",
+              "templateUrl": "templates/controls/datetime-picker.html"
             }
         ],
         "controllers": [
