@@ -31,7 +31,7 @@
             {
                 "key": "LocatorController",
                 "implementation": "creation/LocatorController",
-                "depends": [ "$scope" ]
+                "depends": [ "$scope", "$timeout" ]
             },
             {
                 "key": "MenuArrowController",

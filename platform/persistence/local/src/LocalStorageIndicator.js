@@ -1,0 +1,60 @@
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*global define,window*/
+
+define(
+    [],
+    function () {
+        "use strict";
+
+        var LOCAL_STORAGE_WARNING = [
+            "Using browser local storage for persistence.",
+            "Anything you create or change will be visible only",
+            "in this browser on this machine."
+        ].join(' ');
+
+        /**
+         * Indicator for local storage persistence. Provides a minimum
+         * level of feedback indicating that local storage is in use.
+         * @constructor
+         * @memberof platform/persistence/local
+         * @implements {Indicator}
+         */
+        function LocalStorageIndicator() {
+        }
+
+        LocalStorageIndicator.prototype.getGlyph = function () {
+            return "D";
+        };
+        LocalStorageIndicator.prototype.getGlyphClass = function () {
+            return 'caution';
+        };
+        LocalStorageIndicator.prototype.getText = function () {
+            return "Off-line storage";
+        };
+        LocalStorageIndicator.prototype.getDescription = function () {
+            return LOCAL_STORAGE_WARNING;
+        };
+
+        return LocalStorageIndicator;
+    }
+);

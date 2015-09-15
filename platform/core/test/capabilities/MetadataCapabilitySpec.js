@@ -92,7 +92,6 @@ define(
 
             it("reports generic properties", function () {
                 var properties = metadata.invoke();
-                expect(findValue(properties, 'ID')).toEqual("Test id");
                 expect(findValue(properties, 'Type')).toEqual("Test type");
             });
 

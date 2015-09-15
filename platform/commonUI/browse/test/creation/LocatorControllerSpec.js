@@ -31,6 +31,7 @@ define(
 
         describe("The locator controller", function () {
             var mockScope,
+                mockTimeout,
                 mockDomainObject,
                 mockRootObject,
                 mockContext,
@@ -41,6 +42,7 @@ define(
                     "$scope",
                     [ "$watch" ]
                 );
+                mockTimeout = jasmine.createSpy("$timeout");
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     [ "getCapability" ]
@@ -60,7 +62,7 @@ define(
                 mockScope.ngModel = {};
                 mockScope.field = "someField";
 
-                controller = new LocatorController(mockScope);
+                controller = new LocatorController(mockScope, mockTimeout);
             });
 
             it("adds a treeModel to scope", function () {
@@ -80,6 +82,7 @@ define(
                 // Need to pass on selection changes as updates to
                 // the control's value
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockTimeout.mostRecentCall.args[0]();
                 expect(mockScope.ngModel.someField).toEqual(mockDomainObject);
                 expect(mockScope.rootObject).toEqual(mockRootObject);
 
@@ -95,6 +98,7 @@ define(
 
                 // Pass selection change
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockTimeout.mostRecentCall.args[0]();
 
                 expect(mockScope.structure.validate).toHaveBeenCalled();
                 // Change should have been rejected
@@ -108,10 +112,12 @@ define(
                 );
 
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockTimeout.mostRecentCall.args[0]();
                 expect(mockScope.ngModelController.$setValidity)
                     .toHaveBeenCalledWith(jasmine.any(String), true);
 
                 mockScope.$watch.mostRecentCall.args[1](undefined);
+                mockTimeout.mostRecentCall.args[0]();
                 expect(mockScope.ngModelController.$setValidity)
                     .toHaveBeenCalledWith(jasmine.any(String), false);
             });

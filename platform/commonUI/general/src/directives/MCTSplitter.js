@@ -48,10 +48,6 @@ define(
 
                 element.addClass("splitter");
 
-                // Now that we have the above class, the splitter width
-                // will have changed, so trigger a positioning update.
-                mctSplitPane.position(mctSplitPane.position());
-
                 scope.splitter = {
                     // Begin moving this splitter
                     startMove: function () {
