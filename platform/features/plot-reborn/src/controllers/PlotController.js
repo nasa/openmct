@@ -9,7 +9,7 @@ define(
         // domainObject metadata.
         var DOMAIN_INTERVAL = 2 * 60 * 1000; // Two minutes.
 
-        function PlotController($scope, colorService) {
+        function PlotController($scope, $q, colorService) {
             var plotHistory = [],
                 isLive = true,
                 maxDomain = +new Date(),
@@ -46,31 +46,41 @@ define(
 
             $scope.rectangles = [];
 
-            function updateSeriesFromTelemetry(series, seriesIndex, telemetry) {
-                var domainValue = telemetry.getDomainValue(
-                        telemetry.getPointCount() - 1
-                    ),
-                    rangeValue = telemetry.getRangeValue(
-                        telemetry.getPointCount() - 1
-                    ),
-                    newTelemetry;
-                // Track the biggest domain we've seen for sticky-ness.
-                maxDomain = Math.max(maxDomain, domainValue);
+            function addPointToSeries(series, seriesIndex, point) {
+                maxDomain = Math.max(maxDomain, point.domain);
+                series.data.push(point);
+                $scope.$broadcast('series:data:add', seriesIndex, [point]);
+            }
 
-                newTelemetry = {
-                    domain: domainValue,
-                    range: rangeValue
+            function addTelemetrySeriesToPlotSeries(series, seriesIndex) {
+                return function (telemSeries) {
+                    var i = 0,
+                        len = telemSeries.getPointCount();
+
+                    for (; i < len; i++) {
+                        addPointToSeries(series, seriesIndex, {
+                            domain: telemSeries.getDomainValue(i),
+                            range: telemSeries.getRangeValue(i)
+                        });
+                    }
+                    return;
                 };
-                series.data.push(newTelemetry);
-                $scope.$broadcast('series:data:add', seriesIndex, [newTelemetry]);
+            }
+
+            function startRealTimeFeed(series, seriesIndex, telemetryCapability) {
+                var updater = addTelemetrySeriesToPlotSeries(
+                    series,
+                    seriesIndex
+                );
+                unsubscribes.push(telemetryCapability.subscribe(updater));
+                return;
             }
 
             function subscribeToDomainObject(domainObject) {
                 var telemetryCapability = domainObject.getCapability('telemetry'),
                     model = domainObject.getModel(),
                     series,
-                    seriesIndex,
-                    updater;
+                    seriesIndex;
 
                 series = {
                     name: model.name,
@@ -82,12 +92,17 @@ define(
                 $scope.series.push(series);
                 seriesIndex = $scope.series.indexOf(series);
 
-                updater = updateSeriesFromTelemetry.bind(
-                    null,
-                    series,
-                    seriesIndex
-                );
-                unsubscribes.push(telemetryCapability.subscribe(updater));
+                return telemetryCapability.requestData({})
+                    .then(addTelemetrySeriesToPlotSeries(
+                        series,
+                        seriesIndex
+                    ))
+                    .then(startRealTimeFeed(
+                        series,
+                        seriesIndex,
+                        telemetryCapability
+                    ));
+
             }
 
             function unlinkDomainObject() {
@@ -101,12 +116,15 @@ define(
 
             function linkDomainObject(domainObject) {
                 unlinkDomainObject();
+                if (!domainObject) {
+                    return;
+                }
                 if (domainObject.hasCapability('telemetry')) {
                     subscribeToDomainObject(domainObject);
                 } else if (domainObject.hasCapability('delegation')) {
                     // Makes no sense that we have to use a subscription to get domain objects associated with delegates (and their names).  We can map the same series generation code to telemetry delegates; Let's do that ourselves.
                     var subscribeToDelegates = function(delegates) {
-                        return delegates.forEach(subscribeToDomainObject);
+                        return $q.all(delegates.map(subscribeToDomainObject));
                         // TODO: Should return a promise.
                     };
                     domainObject

@@ -55,7 +55,7 @@
             {
                 "key": "PlotController",
                 "implementation": "controllers/PlotController.js",
-                "depends": [ "$scope", "colorService"]
+                "depends": [ "$scope", "$q", "colorService"]
             },
             {
                 "key": "StackedPlotController",
