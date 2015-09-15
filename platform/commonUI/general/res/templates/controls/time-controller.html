@@ -1,25 +1,23 @@
 <!--
+ Open MCT Web, Copyright (c) 2014-2015, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
 
-NOTES
+ Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
 
-Ticks:
-The thinking is to divide whatever the current time span is by 5,
-and assign values accordingly to 5 statically-positioned ticks. So the tick x-position is a static percentage
-of the total width available, and the labels change dynamically. This is consistent
-with our current approach to the time axis of plots.
-I'm keeping the number of ticks low so that when the view portal gets narrow,
-the tick labels won't collide with each other. For extra credit, add/remove ticks as the user resizes the view area.
-Note: this eval needs to be based on the whatever is containing the
-time-controller component, not the whole browser window.
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
 
-Range indicator and slider knobs:
-The left and right properties used in .slider .range-holder and  the .knobs are
-CSS offsets from the left and right of their respective containers. You
-may want or need to calculate those positions as pure offsets from the start datetime
-(or left, as it were) and set them as left properties. No problem if so, but
-we'll need to tweak the CSS tiny bit to get the center of the knobs to line up
-properly on the range left and right bounds.
-
+ Open MCT Web includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
 -->
 
 <div class="l-time-controller" ng-controller="TimeRangeController">
