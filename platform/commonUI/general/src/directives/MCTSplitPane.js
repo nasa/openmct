@@ -28,6 +28,7 @@ define(
 
         // Pixel width to allocate for the splitter itself
         var DEFAULT_ANCHOR = 'left',
+            POLLING_INTERVAL = 15, // milliseconds
             CHILDREN_WARNING_MESSAGE = [
                 "Invalid mct-split-pane contents.",
                 "This element should contain exactly three",
@@ -94,7 +95,7 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function MCTSplitPane($parse, $log) {
+        function MCTSplitPane($parse, $log, $interval) {
             var anchors = {
                 left: true,
                 right: true,
@@ -105,6 +106,7 @@ define(
             function controller($scope, $element, $attrs) {
                 var anchorKey = $attrs.anchor || DEFAULT_ANCHOR,
                     anchor,
+                    activeInterval,
                     positionParsed = $parse($attrs.position),
                     position; // Start undefined, until explicitly set
 
@@ -162,14 +164,14 @@ define(
                 // Getter-setter for the pixel offset of the splitter,
                 // relative to the current edge.
                 function getSetPosition(value) {
-                    var min, max;
+                    var min, max, prior = position;
                     if (typeof value === 'number') {
                         position = value;
                         enforceExtrema();
                         updateElementPositions();
 
                         // Pass change up so this state can be shared
-                        if (positionParsed.assign) {
+                        if (positionParsed.assign && position !== prior) {
                             positionParsed.assign($scope, position);
                         }
                     }
@@ -192,6 +194,16 @@ define(
                 getSetPosition(getSize(
                     $element.children().eq(anchor.reversed ? 2 : 0)[0]
                 ));
+
+                // And poll for position changes enforced by styles
+                activeInterval = $interval(function () {
+                    getSetPosition(getSetPosition());
+                }, POLLING_INTERVAL, false);
+
+                // ...and stop polling when we're destroyed.
+                $scope.$on('$destroy', function () {
+                    $interval.cancel(activeInterval);
+                });
 
                 // Interface exposed by controller, for mct-splitter to user
                 return {

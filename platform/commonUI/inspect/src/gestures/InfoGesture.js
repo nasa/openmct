@@ -57,7 +57,8 @@ define(
 
             // Also make sure we dismiss bubble if representation is destroyed
             // before the mouse actually leaves it
-            this.scopeOff = element.scope().$on('$destroy', this.hideBubbleCallback);
+            this.scopeOff =
+                element.scope().$on('$destroy', this.hideBubbleCallback);
 
             this.element = element;
             this.$timeout = $timeout;
@@ -102,14 +103,7 @@ define(
         InfoGesture.prototype.showBubble = function (event) {
             var self = this;
 
-            this.trackPosition(event);
-
-            // Also need to track position during hover
-            this.element.on('mousemove', this.trackPositionCallback);
-
-            // Show the bubble, after a suitable delay (if mouse has
-            // left before this time is up, this will be canceled.)
-            this.pendingBubble = this.$timeout(function () {
+            function displayBubble() {
                 self.dismissBubble = self.infoService.display(
                     "info-table",
                     self.domainObject.getModel().name,
@@ -118,7 +112,23 @@ define(
                 );
                 self.element.off('mousemove', self.trackPositionCallback);
                 self.pendingBubble = undefined;
-            }, this.delay);
+            }
+
+            this.trackPosition(event);
+
+            // Do nothing if we're already scheduled to show a bubble.
+            // This may happen due to redundant event firings caused
+            // by https://github.com/angular/angular.js/issues/12795
+            if (this.pendingBubble) {
+                return;
+            }
+
+            // Also need to track position during hover
+            this.element.on('mousemove', this.trackPositionCallback);
+
+            // Show the bubble, after a suitable delay (if mouse has
+            // left before this time is up, this will be canceled.)
+            this.pendingBubble = this.$timeout(displayBubble, this.delay);
 
             this.element.on('mouseleave', this.hideBubbleCallback);
         };

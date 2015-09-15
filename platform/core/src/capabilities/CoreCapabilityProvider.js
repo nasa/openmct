@@ -67,8 +67,9 @@ define(
             function packageCapabilities(capabilities) {
                 var result = {};
                 capabilities.forEach(function (capability) {
-                    if (capability.key && !result[capability.key]) {
-                        result[capability.key] = capability;
+                    if (capability.key) {
+                        result[capability.key] =
+                            result[capability.key] || capability;
                     } else {
                         $log.warn("No key defined for capability; skipping.");
                     }

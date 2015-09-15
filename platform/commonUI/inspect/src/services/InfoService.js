@@ -100,7 +100,9 @@ define(
             body.append(bubble);
 
             // Return a function to dismiss the bubble
-            return function () { bubble.remove(); };
+            return function () {
+                bubble.remove();
+            };
         };
 
         return InfoService;

@@ -19,42 +19,42 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-/*global define,describe,beforeEach,it,jasmine,expect,Promise,waitsFor,runs */
+/*global define,window*/
 
 define(
-    [
-        '../src/IdentityProvider'
-    ],
-    function (IdentityProvider) {
+    [],
+    function () {
         "use strict";
 
-        describe("IdentityProvider", function () {
-            var mockQ, mockCallback, provider;
+        var LOCAL_STORAGE_WARNING = [
+            "Using browser local storage for persistence.",
+            "Anything you create or change will be visible only",
+            "in this browser on this machine."
+        ].join(' ');
 
-            function calledBack() {
-                return mockCallback.calls.length > 0;
-            }
+        /**
+         * Indicator for local storage persistence. Provides a minimum
+         * level of feedback indicating that local storage is in use.
+         * @constructor
+         * @memberof platform/persistence/local
+         * @implements {Indicator}
+         */
+        function LocalStorageIndicator() {
+        }
 
-            beforeEach(function () {
-                mockCallback = jasmine.createSpy('callback');
-                mockQ = jasmine.createSpyObj('$q', ['when']);
-                mockQ.when.andCallFake(function (v) {
-                    return Promise.resolve(v);
-                });
+        LocalStorageIndicator.prototype.getGlyph = function () {
+            return "D";
+        };
+        LocalStorageIndicator.prototype.getGlyphClass = function () {
+            return 'caution';
+        };
+        LocalStorageIndicator.prototype.getText = function () {
+            return "Off-line storage";
+        };
+        LocalStorageIndicator.prototype.getDescription = function () {
+            return LOCAL_STORAGE_WARNING;
+        };
 
-                provider = new IdentityProvider(mockQ);
-            });
-
-            it("provides an undefined user", function () {
-                provider.getUser().then(mockCallback);
-
-                waitsFor(calledBack);
-                runs(function () {
-                    expect(mockCallback).toHaveBeenCalledWith(undefined);
-                });
-            });
-
-        });
+        return LocalStorageIndicator;
     }
 );

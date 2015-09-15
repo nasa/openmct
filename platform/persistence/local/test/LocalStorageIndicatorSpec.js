@@ -19,41 +19,43 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-/*global define,describe,beforeEach,it,jasmine,expect,Promise,waitsFor,runs */
+/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    [
-        '../src/IdentityProvider'
-    ],
-    function (IdentityProvider) {
+    ["../src/LocalStorageIndicator"],
+    function (LocalStorageIndicator) {
         "use strict";
 
-        describe("IdentityProvider", function () {
-            var mockQ, mockCallback, provider;
-
-            function calledBack() {
-                return mockCallback.calls.length > 0;
-            }
+        describe("The local storage status indicator", function () {
+            var indicator;
 
             beforeEach(function () {
-                mockCallback = jasmine.createSpy('callback');
-                mockQ = jasmine.createSpyObj('$q', ['when']);
-                mockQ.when.andCallFake(function (v) {
-                    return Promise.resolve(v);
-                });
-
-                provider = new IdentityProvider(mockQ);
+                indicator = new LocalStorageIndicator();
             });
 
-            it("provides an undefined user", function () {
-                provider.getUser().then(mockCallback);
-
-                waitsFor(calledBack);
-                runs(function () {
-                    expect(mockCallback).toHaveBeenCalledWith(undefined);
-                });
+            it("provides text to display in status area", function () {
+                // Don't particularly care what is there so long
+                // as interface is appropriately implemented.
+                expect(indicator.getText()).toEqual(jasmine.any(String));
             });
+
+            it("has a database icon", function () {
+                expect(indicator.getGlyph()).toEqual("D");
+            });
+
+            it("has a 'caution' class to draw attention", function () {
+                expect(indicator.getGlyphClass()).toEqual("caution");
+            });
+
+            it("provides a description for a tooltip", function () {
+                // Just want some non-empty string here. Providing a
+                // message here is important but don't want to test wording.
+                var description = indicator.getDescription();
+                expect(description).toEqual(jasmine.any(String));
+                expect(description.length).not.toEqual(0);
+            });
+
+
 
         });
     }
