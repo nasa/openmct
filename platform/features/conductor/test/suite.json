@@ -1,5 +1,7 @@
 [
     "ConductorRepresenter",
     "ConductorService",
+    "ConductorTelemetryDecorator",
+    "ConductorTelemetrySeries",
     "TimeConductor"
 ]

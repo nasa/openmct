@@ -43,7 +43,7 @@ define(
             function binSearch(min, max, value) {
                 var mid = Math.floor((min + max) / 2);
 
-                return min >= max ? min :
+                return min > max ? min :
                         series.getDomainValue(mid) < value ?
                                 binSearch(mid + 1, max, value) :
                                         binSearch(min, mid - 1, value);
