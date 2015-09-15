@@ -55,7 +55,7 @@ define(
 
                 unlisten = $scope.$on('$locationChangeSuccess', function () {
                     // Checks path to make sure /browse/ is at front
-                    // if so, change $route.current                    
+                    // if so, change $route.current
                     if ($location.path().indexOf("/browse/") === 0) {
                         $route.current = priorRoute;
                     }
@@ -127,78 +127,6 @@ define(
                     navigateTo(domainObject);
                 }
             }
-            
-            // Uses the current navigation to get the 
-            // current ContextCapability, then the
-            // parent is gotten from that. If the parent
-            // is not the root, then user is navigated to
-            // parent
-            function navigateToParent() {
-                var context = navigationService.getNavigation().getCapability('context'),
-                    parentContext,
-                    parent,
-                    grandparentId;
-                
-                // Checks if the current object has a context
-                if (context) {
-                    
-                    // Sets the parent and the parent context
-                    // which is checked
-                    parent = context.getParent();
-                    parentContext = parent.getCapability('context');
-                    
-                    if ((parent.getId() !== ROOT_ID) && parentContext) {
-                        // Gets the grandparent id
-                        grandparentId = parentContext.getParent().getId();
-                        
-                        // Navigates to the parent
-                        navigateTo(parent);
-                        
-                        // Checks after navigation if the user is located at the 
-                        // root (grandparent of original selected object, after
-                        // navigation, user is at parent of original object and
-                        // child of grandparent)
-                        if (grandparentId && grandparentId !== ROOT_ID) {
-                            $scope.atRoot = false;
-                            return;
-                        }
-                        
-                        // Set at root if no grandparent exists and
-                        // if grandparent is ROOT, after navigation
-                        $scope.atRoot = true;
-                    }
-                }
-            }
-            
-            function checkRoot() {
-                var context = navigationService.getNavigation().getCapability('context'),
-                    parentContext,
-                    parent,
-                    grandparent;
-                
-                // Checks if the current object has a context
-                if (context) {
-                    parent = context.getParent();
-                    parentContext = parent.getCapability('context');
-                    if ((parent.getId() !== ROOT_ID) && parentContext) {
-                        grandparent = parentContext.getParent();
-                        
-                        // Checks if the grandparent exists
-                        // if it does not exist (for example in search),
-                        // than do not show the back button
-                        if (grandparent) {
-                            $scope.atRoot = false;
-                            return;
-                        }
-                    }
-                }
-                
-                // In any other situation where the context or parent
-                // context does not exist or the user is at ROOT, than
-                // hide the back arrow
-                $scope.atRoot = true;
-               
-            }
 
             // Load the root object, put it in the scope.
             // Also, load its immediate children, and (possibly)
@@ -213,13 +141,13 @@ define(
             $scope.treeModel = {
                 selectedObject: navigationService.getNavigation()
             };
-            
+
             // SlideMenu boolean used to hide and show
             // tree menu
             $scope.treeSlide = function () {
                 $scope.treeClass = !$scope.treeClass;
             };
-            
+
             // Listen for changes in navigation state.
             navigationService.addListener(setNavigation);
 
@@ -230,17 +158,12 @@ define(
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);
             });
-            
+
             // If the user has selected an object (and is portrait
             // on a phone), then hide the tree menu
             $scope.$on("select-obj", function () {
                 $scope.treeSlide();
             });
-            
-            $scope.backArrow = navigateToParent;
-            
-            $scope.checkRoot = checkRoot;
-
         }
 
         return BrowseController;
