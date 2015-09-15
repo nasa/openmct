@@ -21,29 +21,33 @@
 -->
 
 <div>
-    <div>
-        <a>&lt;</a>
-        March 2016
-        <a>&gt;</a>
+    <div style="vertical-align: top; display: inline-block">
+        <div style="text-align: center;">
+            <a>&lt;</a>
+            March 2016
+            <a>&gt;</a>
+        </div>
+        <div>
+            <table>
+                <tr>
+                    <th ng-repeat="day in ['Su','Mo','Tu','We','Th','Fr','Sa']">
+                        {{day}}
+                    </th>
+                </tr>
+                <tr ng-repeat="wk in [0,1,2,3,4,5]">
+                    <td style="text-align: center;"
+                        ng-repeat="d in [0,1,2,3,4,5,6]">
+                        <div>{{wk + d}}</div>
+                        <div>{{wk * d}}</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
-    <div>
-        <table>
-            <tr>
-                <th ng-repeat="day in ['Su','Mo','Tu','We','Th','Fr','Sa']">
-                    {{day}}
-                </th>
-            </tr>
-            <tr ng-repeat="wk in [0,1,2,3,4,5]">
-                <td ng-repeat="d in [0,1,2,3,4,5,6]">
-                    <div>{{wk + d}}</div>
-                    <div>{{wk * d}}</div>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div ng-repeat="name in ['Hour', 'Min', 'Sec']">
+    <div style="vertical-align: top; display: inline-block"
+         ng-repeat="name in ['Hour', 'Min', 'Sec']">
         <div>{{name}}</div>
-        <select size="12"
+        <select size="10"
                 ng-model="ngModel.hours"
                 ng-options="i for i in [0,1,2,3,4,5,6,7,8,9,10,11,12,13]">
         </select>
