@@ -16,7 +16,14 @@
             {
                 "key": "BrowseController",
                 "implementation": "BrowseController.js",
-                "depends": [ "$scope", "$route", "$location", "objectService", "navigationService", "urlService" ]
+                "depends": [
+                    "$scope",
+                    "$route",
+                    "$location",
+                    "objectService",
+                    "navigationService",
+                    "urlService"
+                ]
             },
             {
                 "key": "BrowseObjectController",
@@ -25,17 +32,22 @@
             },
             {
                 "key": "CreateMenuController",
-                "implementation": "creation/CreateMenuController",
+                "implementation": "creation/CreateMenuController.js",
                 "depends": [ "$scope" ]
             },
             {
                 "key": "LocatorController",
-                "implementation": "creation/LocatorController",
+                "implementation": "creation/LocatorController.js",
                 "depends": [ "$scope", "$timeout" ]
             },
             {
                 "key": "MenuArrowController",
-                "implementation": "MenuArrowController",
+                "implementation": "MenuArrowController.js",
+                "depends": [ "$scope" ]
+            },
+            {
+                "key": "BackArrowController",
+                "implementation": "BackArrowController.js",
                 "depends": [ "$scope" ]
             }
         ],

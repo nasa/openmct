@@ -22,7 +22,9 @@
 <span ng-controller="BrowseObjectController">
     <div class="object-browse-bar bar l-flex">
         <div class="items-select left">
-            <mct-representation key="'back-arrow'" class="l-back"></mct-representation>
+            <mct-representation key="'back-arrow'"
+                                mct-object="domainObject"
+                                class="l-back"></mct-representation>
             <mct-representation key="'object-header'" mct-object="domainObject">
             </mct-representation>
         </div>

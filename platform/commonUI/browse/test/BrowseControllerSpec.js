@@ -91,7 +91,7 @@ define(
                     "nextObject",
                     [ "getId", "getCapability", "getModel", "useCapability" ]
                 );
-                
+
 
                 mockParentContext = jasmine.createSpyObj('context', ['getParent']);
                 mockParent  = jasmine.createSpyObj(
@@ -159,7 +159,7 @@ define(
                 );
                 expect(mockScope.navigatedObject).toEqual(mockDomainObject);
             });
-            
+
             // Mocks the tree slide call that
             // lets the html code know if the
             // tree menu is open.
@@ -168,7 +168,7 @@ define(
                     "select-obj",
                     jasmine.any(Function)
                 );
-                
+
                 mockScope.$on.calls[1].args[1]();
             });
 
@@ -177,7 +177,7 @@ define(
                     "$destroy",
                     jasmine.any(Function)
                 );
-                
+
                 mockScope.$on.calls[0].args[1]();
                 // Should remove the listener it added earlier
                 expect(mockNavigationService.removeListener).toHaveBeenCalledWith(
@@ -249,132 +249,22 @@ define(
                 mockNavigationService.addListener.mostRecentCall.args[0](
                     mockNextObject
                 );
-                
+
                 // Allows the path index to be checked
-                // prior to setting $route.current                
+                // prior to setting $route.current
                 mockLocation.path.andReturn("/browse/");
-                
+
                 // Exercise the Angular workaround
                 mockScope.$on.mostRecentCall.args[1]();
                 expect(mockUnlisten).toHaveBeenCalled();
-                
-                // location.path to be called with the urlService's 
+
+                // location.path to be called with the urlService's
                 // urlFor function with the next domainObject and mode
                 expect(mockLocation.path).toHaveBeenCalledWith(
                     mockUrlService.urlForLocation(mockMode, mockNextObject)
                 );
             });
-            
-            it("checks if the user is current navigated to the root", function () {
-                var mockContext = jasmine.createSpyObj('context', ['getParent']);
-                
-                mockRoute.current.params.ids = "ROOT/mine";
-                mockParent.getId.andReturn("ROOT");
-                
-                mockDomainObject.getCapability.andCallFake(function (c) {
-                    return c === 'context' && mockContext;
-                });
-                
-                mockNavigationService.getNavigation.andReturn(mockDomainObject);
-                mockContext.getParent.andReturn(mockParent);
-                mockParent.getCapability.andCallFake(function (c) {
-                    return c === 'context' && mockParentContext;
-                });
-                mockParentContext.getParent.andReturn(mockGrandparent);
-                
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService
-                );
-                
-                mockScope.checkRoot();
-                
-                mockRoute.current.params.ids = "mine/junk";
-                mockParent.getId.andReturn("mine");
-                
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService
-                );
-                
-                mockScope.checkRoot();
-                
-                mockDomainObject.getCapability.andReturn(undefined);
-                mockNavigationService.getNavigation.andReturn(mockDomainObject);
-                
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService
-                );
-                
-                mockScope.checkRoot();
-            });
-            
-            // Mocks the back arrow call that
-            // lets the html code know the back
-            // arrow navigation needs to be done
-            it("calls the backArrow function", function () {
-                var mockContext = jasmine.createSpyObj('context', ['getParent']);
-                
-                mockRoute.current.params.ids = "mine/junk";
-                mockParent.getId.andReturn("mine");
-                
-                mockDomainObject.getCapability.andCallFake(function (c) {
-                    return c === 'context' && mockContext;
-                });
-                
-                mockNavigationService.getNavigation.andReturn(mockDomainObject);
-                mockContext.getParent.andReturn(mockParent);
-                mockParent.getCapability.andCallFake(function (c) {
-                    return c === 'context' && mockParentContext;
-                });
-                mockParentContext.getParent.andReturn(mockGrandparent);
-                
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService
-                );
-                
-                mockScope.backArrow();
-                
-                mockRoute.current.params.ids = "mine/lessjunk/morejunk";
-                mockGrandparent.getId.andReturn("mine");
-                
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService
-                );
-                
-                mockScope.backArrow();
-                
-                mockRoute.current.params.ids = "ROOT/mine";
-                mockParent.getId.andReturn("ROOT");
-                
-                controller = new BrowseController(
-                    mockScope,
-                    mockRoute,
-                    mockLocation,
-                    mockObjectService,
-                    mockNavigationService
-                );
-                
-                mockScope.backArrow();
-            });
+
         });
     }
 );
