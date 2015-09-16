@@ -140,7 +140,7 @@ define(
 
             function linkDomainObject(domainObject) {
                 unlinkDomainObject();
-                if (!domainObject) {
+                if (!domainObject || !domainObject.hasCapability) {
                     return;
                 }
                 if (domainObject.hasCapability('telemetry')) {
