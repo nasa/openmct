@@ -57,6 +57,8 @@ $colorInputBg: $colorGenBg;
 $colorInputFg: $colorBodyFg;
 $colorFormText: pushBack($colorBodyFg, 10%);
 $colorInputIcon: pushBack($colorBodyFg, 25%);
+$colorSelectBg: pushBack($colorBodyFg, 45%);
+$colorSelectFg: $colorBodyFg;
 
 // Limits and staleness colors//
 $colorTelemFresh: pullForward($colorBodyFg, 20%);

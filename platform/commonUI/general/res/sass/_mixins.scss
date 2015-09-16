@@ -303,30 +303,14 @@
 	padding: 0 $interiorMarginSm;
 }
 
-
-
-/*
-
-@mixin input-base($bg: $colorBodyBg, $fg: $colorBodyFg) {
-    @include appearance(none);
-    @include border-radius($controlCr);
-    @include box-sizing(border-box);
-    @include box-shadow(inset rgba(black, 0.65) 0 1px 4px);
-    background: rgba(#fff, 0.1);
-    border: none;
-    color: lighten($fg, 20%);
-    outline: none;
-    &.error {
-        background: rgba(red, 0.5);
-    }
+@mixin contextArrow() {
+	@include text-shadow(none);
+	content: '\76';
+	display: inline-block;
+	font-family: 'symbolsfont';
+	margin-left: $interiorMarginSm;
+	vertical-align: top;
 }
-
-@mixin nice-input($bg: $colorBodyBg, $fg: $colorBodyFg) {
-    @include input-base($bg, $fg);
-    padding: 0 $interiorMarginSm;
-}
-*/
-
 
 @mixin nice-textarea($bg: $colorBodyBg, $fg: $colorBodyFg) {
     @include input-base($bg, $fg);

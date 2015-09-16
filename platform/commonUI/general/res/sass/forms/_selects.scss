@@ -20,20 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .select {
-	@include btnSubtle();
-	@extend .s-menu;
-	//cursor: pointer;
-	//display: inline-block;
+	@include btnSubtle($colorSelectBg);
 	margin: 0 0 2px 2px; // Needed to avoid dropshadow from being clipped by parent containers
+	padding: 0 $interiorMargin;
     overflow: hidden;
 	position: relative;
 	select {
 		@include appearance(none);
 		@include box-sizing(border-box);
 		background: none;
-		color: $colorBtnFg;
+		color: $colorSelectFg;
+		cursor: pointer;
 		border: none !important;
-		//cursor: pointer;
 		padding: 4px 25px 2px 0px;
         width: 120%;
         option {
@@ -41,7 +39,8 @@
         }
 	}
 	&:after {
-		//color: $colorKey;
+		@include contextArrow();
+		color: rgba($colorSelectFg, percentToDecimal($contrastInvokeMenuPercent));
 		//content:"v";
 		//display: block;
 		//font-family: 'symbolsfont';

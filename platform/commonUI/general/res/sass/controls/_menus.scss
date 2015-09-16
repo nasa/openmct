@@ -38,14 +38,10 @@
 
 	&:after {
 		// Adds the downward facing 'context available / invoke menu' arrow element
+		@include contextArrow();
 		color: rgba($colorInvokeMenu, percentToDecimal($contrastInvokeMenuPercent));
-		content: '\76';
-		display: inline-block;
-		font-family: 'symbolsfont';
-		margin-left: $interiorMarginSm;
-		@include text-shadow(none);
-		vertical-align: top;
 	}
+
 	&.create-btn {
 		.title-label {
 			font-size: 1rem;

@@ -58,6 +58,10 @@ $colorInputFg: pullForward($colorBodyFg, 20%);
 $colorFormText: rgba(#fff, 0.5);
 $colorInputIcon: pushBack($colorBodyFg, 15%);
 
+// Selects
+$colorSelectBg: $colorBtnBg;
+$colorSelectFg: $colorBtnFg;
+
 // Limits and staleness colors
 $colorTelemFresh: pullForward($colorBodyFg, 20%);
 $colorTelemStale: pushBack($colorBodyFg, 20%);
