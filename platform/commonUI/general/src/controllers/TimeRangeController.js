@@ -172,29 +172,31 @@ define(
                 updateViewFromModel($scope.ngModel);
             }
 
-            function updateOuterStart(date) {
+            function updateOuterStart(t) {
                 var ngModel = $scope.ngModel;
-                ngModel.outer.start =
-                    date.getTime();
                 ngModel.outer.end =
                     Math.max(ngModel.outer.start, ngModel.outer.end);
                 ngModel.inner.start =
                     Math.max(ngModel.outer.start, ngModel.inner.start);
                 ngModel.inner.end =
                     Math.max(ngModel.outer.start, ngModel.inner.end);
+
+                $scope.startOuterText = formatTimestamp(t);
+
                 updateViewForInnerSpanFromModel(ngModel);
             }
 
-            function updateOuterEnd(date) {
+            function updateOuterEnd(t) {
                 var ngModel = $scope.ngModel;
-                ngModel.outer.end =
-                    date.getTime();
                 ngModel.outer.start =
                     Math.min(ngModel.outer.end, ngModel.outer.start);
                 ngModel.inner.start =
                     Math.min(ngModel.outer.end, ngModel.inner.start);
                 ngModel.inner.end =
                     Math.min(ngModel.outer.end, ngModel.inner.end);
+
+                $scope.endOuterText = formatTimestamp(t);
+
                 updateViewForInnerSpanFromModel(ngModel);
             }
 
@@ -213,8 +215,8 @@ define(
 
             $scope.$watchCollection("ngModel", updateViewFromModel);
             $scope.$watch("spanWidth", updateSpanWidth);
-            $scope.$watch("startOuterDate", updateOuterStart);
-            $scope.$watch("endOuterDate", updateOuterEnd);
+            $scope.$watch("ngModel.outer.start", updateOuterStart);
+            $scope.$watch("ngModel.outer.end", updateOuterEnd);
         }
 
         return TimeConductorController;

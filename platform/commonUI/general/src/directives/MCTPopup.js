@@ -23,6 +23,8 @@
 
 define(
     function () {
+        'use strict';
+
         var TEMPLATE = "<div></div>";
 
         function MCTPopup($window, $document, $compile) {
@@ -60,7 +62,7 @@ define(
                 transclude: true,
                 link: link,
                 scope: {}
-            }
+            };
         }
 
         return MCTPopup;

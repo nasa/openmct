@@ -22,12 +22,9 @@
 
 <div class="l-time-controller" ng-controller="TimeRangeController">
     <div class="l-time-range-inputs-holder">
-        Start: {{ngModel.outer.start}}
-
+        Start: {{startOuterText}}
         <span ng-controller="ToggleController as t">
-            <a class="ui-symbol" ng-click="t.toggle()">
-                p
-            </a>
+            <a class="ui-symbol" ng-click="t.toggle()">p</a>
             <mct-popup ng-if="t.isActive()">
                 <div style="background: #555;"
                      mct-click-elsewhere="t.setState(false)">
@@ -39,7 +36,22 @@
                 </div>
             </mct-popup>
         </span>
-        End: <input type="date" ng-model="endOuterDate"/>
+
+        End: {{endOuterText}}
+        <span ng-controller="ToggleController as t2">
+            <a class="ui-symbol" ng-click="t2.toggle()">p</a>
+            <mct-popup ng-if="t2.isActive()">
+                <div style="background: #555;"
+                     mct-click-elsewhere="t2.setState(false)">
+                    <mct-control key="'datetime-picker'"
+                                 ng-model="ngModel.outer"
+                                 field="'end'"
+                                 options="{ hours: true }">
+                    </mct-control>
+                </div>
+            </mct-popup>
+        </span>
+
 
     </div>
 
