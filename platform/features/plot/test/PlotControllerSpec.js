@@ -212,7 +212,12 @@ define(
             });
 
             it("indicates if a request is pending", function () {
-                // Placeholder; need to support requesting telemetry
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                expect(controller.isRequestPending()).toBeTruthy();
+                mockHandle.request.mostRecentCall.args[1](
+                    mockDomainObject,
+                    mockSeries
+                );
                 expect(controller.isRequestPending()).toBeFalsy();
             });
 

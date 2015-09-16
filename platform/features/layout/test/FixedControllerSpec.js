@@ -102,7 +102,8 @@ define(
                         'getDomainValue',
                         'getTelemetryObjects',
                         'getRangeValue',
-                        'getDatum'
+                        'getDatum',
+                        'request'
                     ]
                 );
                 mockEvent = jasmine.createSpyObj(
