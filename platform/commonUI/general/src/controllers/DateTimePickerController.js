@@ -97,7 +97,6 @@ define(
                 $scope.month = MONTHS[month];
                 $scope.year = year;
                 $scope.table = generateTable();
-                console.log($scope.table);
             }
 
             function updateFromModel(ngModel) {
