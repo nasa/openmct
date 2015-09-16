@@ -36,10 +36,15 @@ define(
          *
          * Returns a function that, when invoked, will invoke `fn` after
          * `delay` milliseconds, only if no other invocations are pending.
-         * The optional argument `apply` determines whether.
+         * The optional argument `apply` determines whether or not a
+         * digest cycle should be triggered.
          *
          * The returned function will itself return a `Promise` which will
          * resolve to the returned value of `fn` whenever that is invoked.
+         *
+         * In cases where arguments are provided, only the most recent
+         * set of arguments will be passed on to the throttled function
+         * at the time it is executed.
          *
          * @returns {Function}
          * @memberof platform/core
@@ -56,7 +61,8 @@ define(
              * @memberof platform/core.Throttle#
              */
             return function (fn, delay, apply) {
-                var activeTimeout;
+                var activeTimeout,
+                    args = [];
 
                 // Clear active timeout, so that next invocation starts
                 // a new one.
@@ -64,14 +70,21 @@ define(
                     activeTimeout = undefined;
                 }
 
+                // Invoke the function with the latest supplied arguments.
+                function invoke() {
+                    fn.apply(null, args);
+                }
+
                 // Defaults
                 delay = delay || 0;
                 apply = apply || false;
 
                 return function () {
+                    // Store arguments from this invocation
+                    args = Array.prototype.slice.apply(arguments, [0]);
                     // Start a timeout if needed
                     if (!activeTimeout) {
-                        activeTimeout = $timeout(fn, delay, apply);
+                        activeTimeout = $timeout(invoke, delay, apply);
                         activeTimeout.then(clearActiveTimeout);
                     }
                     // Return whichever timeout is active (to get
