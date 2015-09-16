@@ -128,6 +128,7 @@ define(
 
             // Handle new telemetry data in this plot
             function updateValues() {
+                self.pending = false;
                 if (handle) {
                     setupModes(handle.getTelemetryObjects());
                 }
@@ -143,6 +144,7 @@ define(
 
             // Display new historical data as it becomes available
             function addHistoricalData(domainObject, series) {
+                self.pending = false;
                 updater.addHistorical(domainObject, series);
                 self.modeOptions.getModeHandler().plotTelemetry(updater);
                 self.update();
@@ -184,14 +186,16 @@ define(
 
             // Respond to a display bounds change (requery for data)
             function changeDisplayBounds(event, bounds) {
+                self.pending = true;
+                releaseSubscription();
+                throttledRequery();
                 setBasePanZoom(bounds);
-                if (handle) {
-                    recreateUpdater();
-                    throttledRequery();
-                }
             }
 
-            throttledRequery = throttle(requestTelemetry, 250);
+            // Reestablish/reissue request for telemetry
+            throttledRequery = throttle(function () {
+                subscribe($scope.domainObject);
+            }, 250);
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
             this.updateValues = updateValues;
@@ -201,6 +205,8 @@ define(
                 self.modeOptions.getModeHandler().getSubPlots()
                     .forEach(updateSubplot);
             });
+
+            self.pending = true;
 
             // Subscribe to telemetry when a domain object becomes available
             $scope.$watch('domainObject', subscribe);
@@ -308,7 +314,7 @@ define(
         PlotController.prototype.isRequestPending = function () {
             // Placeholder; this should reflect request state
             // when requesting historical telemetry
-            return false;
+            return this.pending;
         };
 
         return PlotController;
