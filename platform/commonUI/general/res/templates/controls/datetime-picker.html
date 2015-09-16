@@ -51,7 +51,7 @@
     </div>
     <div style="vertical-align: top; display: inline-block"
          ng-repeat="key in ['hours', 'minutes', 'seconds']"
-         ng-if="parameters[key]">
+         ng-if="options[key]">
         <div>{{nameFor(key)}}</div>
         <select size="10"
                 ng-model="time[key]"

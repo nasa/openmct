@@ -136,7 +136,7 @@ define(
                     minute: $scope.time.minutes,
                     second: $scope.time.seconds
                 });
-                $scope.ngModel = m.valueOf();
+                $scope.ngModel[$scope.field] = m.valueOf();
             }
 
             $scope.isSelectable = function (cell) {
@@ -189,10 +189,11 @@ define(
             updateScopeForMonth();
 
             // Ensure some useful default
-            $scope.ngModel = $scope.ngModel === undefined ?
-                now() : $scope.ngModel;
+            $scope.ngModel[$scope.field] =
+                $scope.ngModel[$scope.field] === undefined ?
+                        now() : $scope.ngModel[$scope.field];
 
-            $scope.$watch('ngModel', updateFromModel);
+            $scope.$watch('ngModel[field]', updateFromModel);
             $scope.$watchCollection('date', updateFromView);
             $scope.$watchCollection('time', updateFromView);
         }

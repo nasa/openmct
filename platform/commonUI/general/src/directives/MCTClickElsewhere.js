@@ -26,6 +26,13 @@ define(
     function () {
         "use strict";
 
+        /**
+         * The `mct-click-elsewhere` directive will evaluate its
+         * associated expression whenever a `mousedown` occurs anywhere
+         * outside of the element that has the `mct-click-elsewhere`
+         * directive attached. This is useful for dismissing popups
+         * and the like.
+         */
         function MCTClickElsewhere($document) {
 
             // Link; install event handlers.

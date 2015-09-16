@@ -25,7 +25,7 @@ define(
     function () {
         var TEMPLATE = "<div></div>";
 
-        function MCTPopup($window, $document, $compile, $interval) {
+        function MCTPopup($window, $document, $compile) {
             function link(scope, element, attrs, ctrl, transclude) {
                 var body = $document.find('body'),
                     popup = $compile(TEMPLATE)(scope),
@@ -52,7 +52,6 @@ define(
 
                 scope.$on('$destroy', function () {
                     popup.remove();
-                    $interval.cancel(activeInterval);
                 });
             }
 
