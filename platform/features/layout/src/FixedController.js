@@ -222,6 +222,11 @@ define(
                     domainObject,
                     updateValues
                 );
+                // Request an initial historical telemetry value
+                handle.request(
+                    { size: 1 }, // Only need a single data point
+                    updateValueFromSeries
+                );
             }
 
             // Handle changes in the object's composition
