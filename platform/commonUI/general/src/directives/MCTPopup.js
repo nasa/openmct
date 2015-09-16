@@ -32,7 +32,7 @@ define(
                 var body = $document.find('body'),
                     popup = $compile(TEMPLATE)(scope),
                     winDim = [$window.innerWidth, $window.innerHeight],
-                    rect = element[0].getBoundingClientRect(),
+                    rect = element.parent()[0].getBoundingClientRect(),
                     position = [ rect.left, rect.top ],
                     isLeft = position[0] <= (winDim[0] / 2),
                     isTop = position[1] <= (winDim[1] / 2);
