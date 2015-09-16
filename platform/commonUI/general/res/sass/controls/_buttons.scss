@@ -41,6 +41,10 @@ $pad: $interiorMargin * $baseRatio;
         vertical-align: top;
     }
 
+	&.lg {
+		font-size: 1rem;
+	}
+
     &.sm {
         padding: 0 $pad / $baseRatio;
     }

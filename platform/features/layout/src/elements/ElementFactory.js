@@ -44,8 +44,7 @@ define(
                 },
                 "fixed.text": {
                     fill: "transparent",
-                    stroke: "transparent",
-                    color: "#cccccc"
+                    stroke: "transparent"
                 }
             },
             DIALOGS = {

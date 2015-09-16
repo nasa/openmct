@@ -1,6 +1,6 @@
 {
     "name": "Layout components.",
-    "description": "Plug in adding Layout capabiltiies.",
+    "description": "Plug in adding Layout capabilities.",
     "extensions": {
         "views": [
             {
