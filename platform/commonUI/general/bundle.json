@@ -132,9 +132,19 @@
                 "depends": [ "$document" ]
             },
             {
+                "key": "mctClickElsewhere",
+                "implementation": "directives/MCTClickElsewhere.js",
+                "depends": [ "$document" ]
+            },
+            {
                 "key": "mctResize",
                 "implementation": "directives/MCTResize.js",
                 "depends": [ "$timeout" ]
+            },
+            {
+                "key": "mctPopup",
+                "implementation": "directives/MCTPopup.js",
+                "depends": [ "$window", "$document", "$compile", "$interval" ]
             },
             {
                 "key": "mctScrollX",
