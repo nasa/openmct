@@ -51,19 +51,25 @@ define(
                     return;
                 }
 
-                function createOffset() {
+                function ensureOffset() {
                     if (offset) {
                         return;
                     }
-                    if (!$scope.viewport ||
-                        !$scope.viewport.topLeft ||
-                        !$scope.viewport.bottomRight) {
+                    if ($scope.series &&
+                        $scope.series.length &&
+                        $scope.series[0].data &&
+                        $scope.series[0].data.length) {
+
+                        // Take offset from series.
+                        var point = $scope.series[0].data[0];
+                        offset = new Offsetter(
+                            point.domain,
+                            point.range
+                        );
                         return;
                     }
-                    offset = new Offsetter(
-                        $scope.viewport.topLeft.domain,
-                        $scope.viewport.topLeft.range
-                    );
+                    // TODO: Fallback and get offset from viewport.
+                    // TODO: Fallback and get offset from rectangles.
                 }
 
                 function lineFromSeries(series) {
@@ -81,6 +87,7 @@ define(
                     // appears minimal.
                     var lineBuffer = new Float32Array(20000),
                         i = 0;
+                    ensureOffset();
                     for (i = 0; i < series.data.length; i++) {
                         lineBuffer[2*i] = offset.domain(series.data[i].domain);
                         lineBuffer[2*i+1] = offset.range(series.data[i].range);
@@ -93,11 +100,9 @@ define(
                 }
 
                 function drawSeries() {
-                    // TODO: Don't regenerate lines on each frame.
-                    if (!$scope.series || !$scope.series.length) {
+                    if (!lines && !lines.length) {
                         return;
                     }
-                    lines = $scope.series.map(lineFromSeries);
                     lines.forEach(function(line) {
                         drawAPI.drawLine(
                             line.buffer,
@@ -157,6 +162,8 @@ define(
 
                 function onSeriesDataAdd(event, seriesIndex, points) {
                     var line = lines[seriesIndex];
+                    if (!line) { return; }
+                    ensureOffset();
                     points.forEach(function (point) {
                         line.buffer[2*line.pointCount] = offset.domain(point.domain);
                         line.buffer[2*line.pointCount+1] = offset.range(point.range);
@@ -175,7 +182,7 @@ define(
                     canvas.width = canvas.offsetWidth;
                     canvas.height = canvas.offsetHeight;
                     drawAPI.clear();
-                    createOffset();
+                    ensureOffset();
                     if (!offset) {
                         return;
                     }
@@ -199,10 +206,19 @@ define(
                     }
                 }
 
+                function recreateLines() {
+                    offset = undefined;
+                    if ($scope.series && $scope.series.length) {
+                        lines = $scope.series.map(lineFromSeries);
+                    }
+                    ensureOffset();
+                }
+
                 // Check for resize, on a timer
                 activeInterval = $interval(drawIfResized, 1000);
 
                 $scope.$on('series:data:add', onSeriesDataAdd);
+                $scope.$watchCollection('series', recreateLines);
                 redraw();
 
                 // Stop checking for resize when $scope is destroyed

@@ -12,21 +12,24 @@ define(
         function PlotController($scope, $q, colorService) {
             var plotHistory = [],
                 isLive = true,
-                maxDomain = +new Date(),
+                extrema = {},
                 unsubscribes = [],
                 palette = new colorService.ColorPalette();
 
 
             function setToDefaultViewport() {
                 // TODO: We shouldn't set the viewport until we have received data or something has given us a reasonable viewport.
+                if (!extrema.domain || !extrema.range) {
+                    return;
+                }
                 $scope.viewport = {
                     topLeft: {
-                        domain: maxDomain - DOMAIN_INTERVAL,
-                        range: 1
+                        domain: extrema.domain.min,
+                        range: extrema.range.max
                     },
                     bottomRight: {
-                        domain: maxDomain,
-                        range: -1
+                        domain: extrema.domain.max,
+                        range: extrema.range.min
                     }
                 };
             }
@@ -47,7 +50,28 @@ define(
             $scope.rectangles = [];
 
             function addPointToSeries(series, seriesIndex, point) {
-                maxDomain = Math.max(maxDomain, point.domain);
+                if (!extrema.domain) {
+                    extrema.domain = {};
+                    extrema.domain.max = extrema.domain.min = point.domain;
+                } else {
+                    extrema.domain.max = Math.max(
+                        extrema.domain.max, point.domain
+                    );
+                    extrema.domain.min = Math.min(
+                        extrema.domain.min, point.domain
+                    );
+                }
+                if (!extrema.range) {
+                    extrema.range = {};
+                    extrema.range.max = extrema.range.min = point.range;
+                } else {
+                    extrema.range.max = Math.max(
+                        extrema.range.max, point.range
+                    );
+                    extrema.range.min = Math.min(
+                        extrema.range.min, point.range
+                    );
+                }
                 series.data.push(point);
                 $scope.$broadcast('series:data:add', seriesIndex, [point]);
             }
@@ -151,31 +175,31 @@ define(
                 // interval.
                 // TODO: Better UX pattern for this.
 
-                if (Math.abs(maxDomain - viewport.bottomRight.domain) < (DOMAIN_INTERVAL/10)) {
-                    isLive = true;
-                    $scope.viewport.bottomRight.domain = maxDomain;
-                } else {
-                    isLive = false;
-                }
+                // if (Math.abs(maxDomain - viewport.bottomRight.domain) < (DOMAIN_INTERVAL/10)) {
+                //     isLive = true;
+                //     $scope.viewport.bottomRight.domain = maxDomain;
+                // } else {
+                //     isLive = false;
+                // }
                 plotHistory.push(viewport);
             }
 
-             function viewportForMaxDomain() {
+             function viewportForExtrema() {
                  return {
                     topLeft: {
-                        range: $scope.viewport.topLeft.range,
-                        domain: maxDomain - DOMAIN_INTERVAL
+                        domain: extrema.domain.min,
+                        range: extrema.range.max
                     },
                     bottomRight: {
-                        range: $scope.viewport.bottomRight.range,
-                        domain: maxDomain
+                        domain: extrema.domain.max,
+                        range: extrema.range.min
                     }
                 };
             }
 
             function followDataIfLive() {
                 if (isLive) {
-                    $scope.viewport = viewportForMaxDomain();
+                    $scope.viewport = viewportForExtrema();
                 }
             }
 

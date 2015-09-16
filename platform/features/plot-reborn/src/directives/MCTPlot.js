@@ -48,6 +48,9 @@ define(
 
                 function updateAxesForCurrentViewport() {
                     // Update axes definitions for current viewport.
+                    if (!$scope.axes || !$scope.viewport) {
+                        return;
+                    }
                     ['domain', 'range'].forEach(function(axisName) {
                         var axis = $scope.axes[axisName],
                             firstTick = $scope.viewport.topLeft[axisName],
@@ -149,6 +152,7 @@ define(
                 }
 
                 function trackMousePosition($event) {
+                    if (!$scope.viewport) { return; }
                     // Calculate coordinates of mouse related to canvas and as
                     // domain, range value and make available in scope for display.
 
