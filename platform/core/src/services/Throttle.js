@@ -61,18 +61,14 @@ define(
              * @memberof platform/core.Throttle#
              */
             return function (fn, delay, apply) {
-                var activeTimeout,
+                var promise, // Promise for the result of throttled function
                     args = [];
 
-                // Clear active timeout, so that next invocation starts
-                // a new one.
-                function clearActiveTimeout() {
-                    activeTimeout = undefined;
-                }
-
-                // Invoke the function with the latest supplied arguments.
                 function invoke() {
-                    fn.apply(null, args);
+                    // Clear the active timeout so a new one starts next time.
+                    promise = undefined;
+                    // Invoke the function with the latest supplied arguments.
+                    return fn.apply(null, args);
                 }
 
                 // Defaults
@@ -83,13 +79,10 @@ define(
                     // Store arguments from this invocation
                     args = Array.prototype.slice.apply(arguments, [0]);
                     // Start a timeout if needed
-                    if (!activeTimeout) {
-                        activeTimeout = $timeout(invoke, delay, apply);
-                        activeTimeout.then(clearActiveTimeout);
-                    }
+                    promise = promise || $timeout(invoke, delay, apply);
                     // Return whichever timeout is active (to get
                     // a promise for the results of fn)
-                    return activeTimeout;
+                    return promise;
                 };
             };
         }
