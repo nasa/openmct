@@ -47,28 +47,19 @@ define(
                 objectService = this.objectService,
                 result = {};
 
+            // Load a single object using location to establish a context
             function loadObjectInContext(id, exclude) {
-                function attachContextById(domainObject, locationId) {
-                    return loadObjectInContext(locationId, exclude)
-                        .then(function (parent) {
-                            return contextualize(domainObject, parent);
-                        });
-                }
-
-                function attachContextForLocation(domainObject) {
-                    var model = domainObject && domainObject.getModel(),
+                function attachContext(objects) {
+                    var domainObject = (objects || {})[id],
+                        model = domainObject && domainObject.getModel(),
                         location = (model || {}).location;
 
-                    // Don't pursue a context if we encounter this
-                    // object again during this sequence of invocations.
-                    exclude[id] = true;
+                    // If no location is defined, we can't look up a context.
+                    if (!location) {
+                        return domainObject;
+                    }
 
-                    return location ?
-                            attachContextById(domainObject, location) :
-                            domainObject;
-                }
-
-                return objectService.getObjects([id]).then(function (objects) {
+                    // Avoid looping indefinitely on cyclical locations
                     if (exclude[id]) {
                         $log.warn([
                             "LocatingObjectDecorator detected a cycle",
@@ -77,11 +68,21 @@ define(
                             "no context will be added and unexpected behavior",
                             "may follow."
                         ].join(" "));
-                        return objects[id];
+                        return domainObject;
                     }
 
-                    return attachContextForLocation(objects[id]);
-                });
+                    // Record that we've visited this ID to detect cycles.
+                    exclude[id] = true;
+
+                    // Do the recursive step to get the parent...
+                    return loadObjectInContext(location, exclude)
+                        .then(function (parent) {
+                            // ...and then contextualize with it!
+                            return contextualize(domainObject, parent);
+                        });
+                }
+
+                return objectService.getObjects([id]).then(attachContext);
             }
 
             ids.forEach(function (id) {
