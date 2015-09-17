@@ -139,7 +139,7 @@
             {
                 "key": "mctSplitPane",
                 "implementation": "directives/MCTSplitPane.js",
-                "depends": [ "$parse", "$log" ]
+                "depends": [ "$parse", "$log", "$interval" ]
             },
             {
                 "key": "mctSplitter",

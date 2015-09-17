@@ -13,6 +13,11 @@
                 "key": "PERSISTENCE_SPACE",
                 "value": "mct"
             }
+        ],
+        "indicators": [
+            {
+                "implementation": "LocalStorageIndicator.js"
+            }
         ]
     }
 }
