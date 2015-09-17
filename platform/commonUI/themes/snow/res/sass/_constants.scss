@@ -51,13 +51,13 @@ $colorFormRequired: $colorKey;
 $colorFormValid: #33cc33;
 $colorFormError: #cc0000;
 $colorFormInvalid: #ff2200;
-$colorFormLines: rgba(#000, 0.1); // MOVED
-$colorFormSectionHeader: rgba(#000, 0.1);
+$colorFormLines: rgba(#000, 0.1);
+$colorFormSectionHeader: rgba(#000, 0.05);
 $colorInputBg: $colorGenBg;
 $colorInputFg: $colorBodyFg;
 $colorFormText: pushBack($colorBodyFg, 10%);
 $colorInputIcon: pushBack($colorBodyFg, 25%);
-$colorSelectBg: pushBack($colorBodyFg, 45%);
+$colorSelectBg: #ddd;
 $colorSelectFg: $colorBodyFg;
 
 // Limits and staleness colors//
