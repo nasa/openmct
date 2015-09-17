@@ -69,9 +69,18 @@ define(
                 }
 
                 return objectService.getObjects([id]).then(function (objects) {
-                    return exclude[id] ?
-                            objects[id] : // Don't loop indefinitely.
-                            attachContextForLocation(objects[id]);
+                    if (exclude[id]) {
+                        $log.warn([
+                            "LocatingObjectDecorator detected a cycle",
+                            "while attempted to define a context for",
+                            id + ";",
+                            "no context will be added and unexpected behavior",
+                            "may follow."
+                        ].join(" "));
+                        return objects[id];
+                    }
+
+                    return attachContextForLocation(objects[id]);
                 });
             }
 
