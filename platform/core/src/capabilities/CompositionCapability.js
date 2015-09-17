@@ -25,8 +25,7 @@
  * Module defining CompositionCapability. Created by vwoeltje on 11/7/14.
  */
 define(
-    ["./ContextualDomainObject"],
-    function (ContextualDomainObject) {
+    function () {
         "use strict";
 
         /**
@@ -41,12 +40,13 @@ define(
          * @constructor
          * @implements {Capability}
          */
-        function CompositionCapability($injector, domainObject) {
+        function CompositionCapability($injector, contextualize, domainObject) {
             // Get a reference to the object service from $injector
             this.injectObjectService = function () {
                 this.objectService = $injector.get("objectService");
             };
 
+            this.contextualize = contextualize;
             this.domainObject = domainObject;
         }
 
@@ -58,19 +58,17 @@ define(
         CompositionCapability.prototype.invoke = function () {
             var domainObject = this.domainObject,
                 model = domainObject.getModel(),
+                contextualize = this.contextualize,
                 ids;
 
             // Then filter out non-existent objects,
             // and wrap others (such that they expose a
             // "context" capability)
-            function contextualize(objects) {
+            function contextualizeObjects(objects) {
                 return ids.filter(function (id) {
                     return objects[id];
                 }).map(function (id) {
-                    return new ContextualDomainObject(
-                        objects[id],
-                        domainObject
-                    );
+                    return contextualize(objects[id], domainObject);
                 });
             }
 
@@ -86,7 +84,7 @@ define(
                 this.lastModified = model.modified;
                 // Load from the underlying object service
                 this.lastPromise = this.objectService.getObjects(ids)
-                    .then(contextualize);
+                    .then(contextualizeObjects);
             }
 
             return this.lastPromise;

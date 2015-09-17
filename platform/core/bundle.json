@@ -147,7 +147,7 @@
             {
                 "key": "composition",
                 "implementation": "capabilities/CompositionCapability.js",
-                "depends": [ "$injector" ]
+                "depends": [ "$injector", "contextualize" ]
             },
             {
                 "key": "relationship",
@@ -202,6 +202,11 @@
             {
                 "key": "topic",
                 "implementation": "services/Topic.js"
+            },
+            {
+                "key": "contextualize",
+                "implementation": "services/Contextualize.js",
+                "depends": [ "$log" ]
             }
         ],
         "roots": [

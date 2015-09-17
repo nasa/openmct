@@ -37,6 +37,12 @@
                 "type": "decorator",
                 "provides": "creationService",
                 "implementation": "services/LocatingCreationDecorator.js"
+            },
+            {
+                "type": "decorator",
+                "provides": "objectService",
+                "implementation": "services/LocatingObjectDecorator.js",
+                "depends": ["contextualize", "$q", "$log"]
             }
         ],
         "controllers": [
