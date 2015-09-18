@@ -113,6 +113,25 @@ define(
                 // Notably, keys are not needed for run calls
             });
 
+            it("does not re-register duplicate keys", function () {
+                // Verify preconditions, invoke, expect to have been called
+                expect(mockApp.directive.calls.length).toEqual(0);
+                customRegistrars.directives([{ key: "a" }, { key: "a" }]);
+                expect(mockApp.directive.calls.length).toEqual(1);
+
+                expect(mockApp.controller.calls.length).toEqual(0);
+                customRegistrars.controllers([{ key: "c" }, { key: "c" }, { key: "c" }]);
+                expect(mockApp.controller.calls.length).toEqual(1);
+
+                expect(mockApp.service.calls.length).toEqual(0);
+                customRegistrars.services([{ key: "b" }, { key: "b" }]);
+                expect(mockApp.service.calls.length).toEqual(1);
+
+                // None of this should have warned, this is all
+                // nominal behavior
+                expect(mockLog.warn.calls.length).toEqual(0);
+            });
+
             it("allows routes to be registered", function () {
                 var mockRouteProvider = jasmine.createSpyObj(
                         "$routeProvider",
