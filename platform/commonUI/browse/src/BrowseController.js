@@ -142,12 +142,6 @@ define(
                 selectedObject: navigationService.getNavigation()
             };
 
-            // SlideMenu boolean used to hide and show
-            // tree menu
-            $scope.treeSlide = function () {
-                $scope.treeClass = !$scope.treeClass;
-            };
-
             // Listen for changes in navigation state.
             navigationService.addListener(setNavigation);
 
@@ -157,12 +151,6 @@ define(
             // Clean up when the scope is destroyed
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);
-            });
-
-            // If the user has selected an object (and is portrait
-            // on a phone), then hide the tree menu
-            $scope.$on("select-obj", function () {
-                $scope.treeSlide();
             });
         }
 

@@ -22,27 +22,29 @@
 
 <div class="abs holder-all browse-mode" ng-controller="BrowseController">
     <mct-include key="'topbar-browse'"></mct-include>
-    <div class="holder browse-area s-browse-area abs browse-wrapper" ng-class="treeClass ? 'browse-showtree' : 'browse-hidetree'">
+    <div class="holder browse-area s-browse-area abs browse-wrapper"
+         ng-controller="BrowseTreeController as tree"
+         ng-class="tree.visible() ? 'browse-showtree' : 'browse-hidetree'">
         <mct-split-pane class='contents abs' anchor='left'>
             <div class='split-pane-component treeview pane left'>
-	            <div class="holder abs l-mobile">
-	                <mct-representation key="'create-button'" mct-object="navigatedObject">
-	                </mct-representation>
-	                <div class='holder search-holder abs'
-	                     ng-class="{active: treeModel.search}">
-	                    <mct-representation key="'search'"
-	                                 mct-object="domainObject"
-	                                 ng-model="treeModel">
-	                    </mct-representation>
-	                </div>
-	                <div class='tree-holder abs mobile-tree-holder'
-	                     ng-hide="treeModel.search">
-	                    <mct-representation key="'tree'"
-	                                        mct-object="domainObject"
-	                                        ng-model="treeModel">
-	                    </mct-representation>
-	                </div>
-	            </div>
+                <div class="holder abs l-mobile">
+                    <mct-representation key="'create-button'" mct-object="navigatedObject">
+                    </mct-representation>
+                    <div class='holder search-holder abs'
+                         ng-class="{active: treeModel.search}">
+                        <mct-representation key="'search'"
+                                     mct-object="domainObject"
+                                     ng-model="treeModel">
+                        </mct-representation>
+                    </div>
+                    <div class='tree-holder abs mobile-tree-holder'
+                         ng-hide="treeModel.search">
+                        <mct-representation key="'tree'"
+                                            mct-object="domainObject"
+                                            ng-model="treeModel">
+                        </mct-representation>
+                    </div>
+                </div>
             </div>
 
             <mct-splitter class="mobile-hide"></mct-splitter>
@@ -52,7 +54,8 @@
                     <mct-representation mct-object="navigatedObject" key="'browse-object'">
                     </mct-representation>
                 </div>
-                <div class="key-properties ui-symbol icon mobile-menu-icon desktop-hide" ng-click="treeSlide()">m</div>
+                <div class="key-properties ui-symbol icon mobile-menu-icon desktop-hide"
+                     ng-click="tree.toggle()">m</div>
             </div>
         </mct-split-pane>
     </div>

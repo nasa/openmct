@@ -26,6 +26,10 @@
                 ]
             },
             {
+                "key": "BrowseTreeController",
+                "implementation": "BrowseTreeController.js"
+            },
+            {
                 "key": "BrowseObjectController",
                 "implementation": "BrowseObjectController.js",
                 "depends": [ "$scope", "$location", "$route" ]
