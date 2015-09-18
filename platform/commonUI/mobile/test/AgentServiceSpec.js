@@ -21,48 +21,65 @@
  *****************************************************************************/
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
-/**
- * MCTRepresentationSpec. Created by vwoeltje on 11/6/14.
- */
+
 define(
-    ["../../src/services/AgentService"],
+    ["../src/AgentService"],
     function (AgentService) {
         "use strict";
 
-        describe("The url service", function () {
-            var agentService,
-                mockWindow,
-                mockNavigator;
+        var TEST_USER_AGENTS = {
+            DESKTOP: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36",
+            IPHONE: "Mozilla/5.0 (iPad; CPU OS 7_0 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53",
+            IPAD: "Mozilla/5.0 (iPhone; CPU iPhone OS 7_0 like Mac OS X; en-us) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53"
+        };
+
+        describe("The AgentService", function () {
+            var testWindow, agentService;
 
             beforeEach(function () {
-                // Creates a mockLocation, used to 
-                // do the view search
-                mockWindow = jasmine.createSpyObj(
-                    "window",
-                    [ "innerWidth", "innerHeight" ]
-                );
-                
-                mockNavigator = jasmine.createSpyObj(
-                    "navigator",
-                    [ "userAgent" ]
-                );
-                
-                agentService = new AgentService();
+                testWindow = {
+                    innerWidth: 640,
+                    innerHeight: 480,
+                    navigator: {
+                        userAgent: TEST_USER_AGENTS.DESKTOP
+                    }
+                };
             });
-            
-            it("get current device user agent", function () {
-                mockNavigator.userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.89 Safari/537.36";
-                agentService.isMobile(mockNavigator.userAgent);
-                agentService.isPhone(mockNavigator.userAgent);
-                mockNavigator.userAgent = "Mozilla/5.0 (iPad; CPU OS 7_0 like Mac OS X) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53";
-                agentService.isMobile(mockNavigator.userAgent);
-                mockNavigator.userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 7_0 like Mac OS X; en-us) AppleWebKit/537.51.1 (KHTML, like Gecko) Version/7.0 Mobile/11A465 Safari/9537.53";
-                agentService.isPhone(mockNavigator.userAgent);
+
+            it("recognizes desktop devices as non-mobile", function () {
+                testWindow.navigator.userAgent = TEST_USER_AGENTS.DESKTOP;
+                agentService = new AgentService(testWindow);
+                expect(agentService.isMobile()).toBeFalsy();
+                expect(agentService.isPhone()).toBeFalsy();
+                expect(agentService.isTablet()).toBeFalsy();
             });
-            
-            it("get orientation of the current device", function () {
-                agentService.getOrientation(1024, 768);
-                agentService.getOrientation(768, 1024);
+
+            it("detects iPhones", function () {
+                testWindow.navigator.userAgent = TEST_USER_AGENTS.IPHONE;
+                agentService = new AgentService(testWindow);
+                expect(agentService.isMobile()).toBeTruthy();
+                expect(agentService.isPhone()).toBeTruthy();
+                expect(agentService.isTablet()).toBeFalsy();
+            });
+
+            it("detects iPads", function () {
+                testWindow.navigator.userAgent = TEST_USER_AGENTS.IPAD;
+                agentService = new AgentService(testWindow);
+                expect(agentService.isMobile()).toBeTruthy();
+                expect(agentService.isPhone()).toBeFalsy();
+                expect(agentService.isTablet()).toBeTruthy();
+            });
+
+            it("detects display orientation", function () {
+                var agentService = new AgentService(testWindow);
+                testWindow.innerWidth = 1024;
+                testWindow.innerHeight = 400;
+                expect(agentService.isPortrait()).toBeFalsy();
+                expect(agentService.isLandscape()).toBeTruthy();
+                testWindow.innerWidth = 400;
+                testWindow.innerHeight = 1024;
+                expect(agentService.isPortrait()).toBeTruthy();
+                expect(agentService.isLandscape()).toBeFalsy();
             });
         });
     }
