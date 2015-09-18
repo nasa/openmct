@@ -24,7 +24,7 @@
 /**
  * Provides features which support variant behavior on mobile devices.
  *
- * @namespace platform/mobile
+ * @namespace platform/commonUI/mobile
  */
 define(
     [],
@@ -37,7 +37,7 @@ define(
          * device names
          * @constructor
          * @param $window Angular-injected instance of the window
-         * @memberof platform/mobile
+         * @memberof platform/commonUI/mobile
          */
         function AgentService($window) {
             var userAgent = $window.navigator.userAgent,
