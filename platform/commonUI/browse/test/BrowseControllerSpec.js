@@ -39,9 +39,6 @@ define(
                 mockUrlService,
                 mockDomainObject,
                 mockNextObject,
-                mockParentContext,
-                mockParent,
-                mockGrandparent,
                 controller;
 
             function mockPromise(value) {
@@ -55,7 +52,7 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$on", "$watch", "treeSlide", "backArrow" ]
+                    [ "$on", "$watch" ]
                 );
                 mockRoute = { current: { params: {} } };
                 mockLocation = jasmine.createSpyObj(
@@ -89,17 +86,6 @@ define(
                 );
                 mockNextObject = jasmine.createSpyObj(
                     "nextObject",
-                    [ "getId", "getCapability", "getModel", "useCapability" ]
-                );
-
-
-                mockParentContext = jasmine.createSpyObj('context', ['getParent']);
-                mockParent  = jasmine.createSpyObj(
-                    "domainObject",
-                    [ "getId", "getCapability", "getModel", "useCapability" ]
-                );
-                mockGrandparent  = jasmine.createSpyObj(
-                    "domainObject",
                     [ "getId", "getCapability", "getModel", "useCapability" ]
                 );
 
@@ -160,25 +146,12 @@ define(
                 expect(mockScope.navigatedObject).toEqual(mockDomainObject);
             });
 
-            // Mocks the tree slide call that
-            // lets the html code know if the
-            // tree menu is open.
-            it("calls the treeSlide function", function () {
-                expect(mockScope.$on).toHaveBeenCalledWith(
-                    "select-obj",
-                    jasmine.any(Function)
-                );
-
-                mockScope.$on.calls[1].args[1]();
-            });
-
             it("releases its navigation listener when its scope is destroyed", function () {
                 expect(mockScope.$on).toHaveBeenCalledWith(
                     "$destroy",
                     jasmine.any(Function)
                 );
-
-                mockScope.$on.calls[0].args[1]();
+                mockScope.$on.mostRecentCall.args[1]();
                 // Should remove the listener it added earlier
                 expect(mockNavigationService.removeListener).toHaveBeenCalledWith(
                     mockNavigationService.addListener.mostRecentCall.args[0]
@@ -249,16 +222,16 @@ define(
                 mockNavigationService.addListener.mostRecentCall.args[0](
                     mockNextObject
                 );
-
+                
                 // Allows the path index to be checked
-                // prior to setting $route.current
+                // prior to setting $route.current                
                 mockLocation.path.andReturn("/browse/");
-
+                
                 // Exercise the Angular workaround
                 mockScope.$on.mostRecentCall.args[1]();
                 expect(mockUnlisten).toHaveBeenCalled();
-
-                // location.path to be called with the urlService's
+                
+                // location.path to be called with the urlService's 
                 // urlFor function with the next domainObject and mode
                 expect(mockLocation.path).toHaveBeenCalledWith(
                     mockUrlService.urlForLocation(mockMode, mockNextObject)

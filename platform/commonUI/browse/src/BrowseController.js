@@ -55,7 +55,7 @@ define(
 
                 unlisten = $scope.$on('$locationChangeSuccess', function () {
                     // Checks path to make sure /browse/ is at front
-                    // if so, change $route.current
+                    // if so, change $route.current                    
                     if ($location.path().indexOf("/browse/") === 0) {
                         $route.current = priorRoute;
                     }
@@ -65,6 +65,7 @@ define(
                 // path to new, addressed, path based on
                 // domainObject
                 $location.path(urlService.urlForLocation("browse", domainObject));
+                
             }
 
             // Callback for updating the in-scope reference to the object
@@ -152,6 +153,7 @@ define(
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);
             });
+
         }
 
         return BrowseController;
