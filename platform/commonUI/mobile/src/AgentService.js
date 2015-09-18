@@ -41,7 +41,7 @@ define(
          */
         function AgentService($window) {
             var userAgent = $window.navigator.userAgent,
-                matches = ua.match(/iPad|iPhone|Android/i) || [];
+                matches = userAgent.match(/iPad|iPhone|Android/i) || [];
 
             this.mobileName = matches[0];
             this.$window = $window;
@@ -79,7 +79,7 @@ define(
          * @returns {boolean} true in portrait mode
          */
         AgentService.prototype.isPortrait = function () {
-            return $window.innerWidth < $window.innerHeight;
+            return this.$window.innerWidth < this.$window.innerHeight;
         };
 
         /**

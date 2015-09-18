@@ -43,7 +43,10 @@ define(
             }
 
             if (agentService.isMobile()) {
-                navigationService.listen(changeObject);
+                navigationService.addListener(changeObject);
+                $scope.$on("$destroy", function () {
+                    navigationService.removeListener(changeObject);
+                });
             }
 
             this.state = true;
