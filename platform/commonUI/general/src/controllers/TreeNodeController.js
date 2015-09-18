@@ -51,7 +51,7 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function TreeNodeController($scope, $timeout, agentService) {
+        function TreeNodeController($scope, $timeout) {
             var self = this,
                 selectedObject = ($scope.ngModel || {}).selectedObject,
                 isSelected = false,
@@ -133,7 +133,6 @@ define(
             this.isSelectedFlag = false;
             this.hasBeenExpandedFlag = false;
             this.$timeout = $timeout;
-            this.agentService = agentService;
             this.$scope = $scope;
 
             // Listen for changes which will effect display parameters
@@ -175,20 +174,6 @@ define(
          */
         TreeNodeController.prototype.isSelected = function () {
             return this.isSelectedFlag;
-        };
-
-        // Sets the selected object in the tree, to be the
-        // currently represented object. If the user is on phone
-        // and in portrait mode, than, hide the tree menu
-        TreeNodeController.prototype.setObject = function (ngModel, domainObject) {
-            ngModel.selectedObject = domainObject;
-            if (this.agentService.isPhone() && this.agentService.isPortrait()) {
-                this.$scope.$emit('select-obj');
-            }
-        };
-
-        TreeNodeController.prototype.checkMobile = function () {
-            return this.agentService.isMobile();
         };
 
         return TreeNodeController;

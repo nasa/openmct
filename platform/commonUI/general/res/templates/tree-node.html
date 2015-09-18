@@ -22,27 +22,38 @@
 <span ng-controller="ToggleController as toggle">
     <span ng-controller="TreeNodeController as treeNode">
         <span
-	        class="tree-item menus-to-left"
-	        ng-class="{selected: treeNode.isSelected()}"
-	        >
-            <mct-representation
-                key="'label'"
-				mct-object="domainObject"
-				ng-model="ngModel"
-				ng-click="!treeNode.checkMobile() || model.composition == undefined ||
-                          model.composition.length == 0 ? treeNode.setObject(ngModel, domainObject) : toggle.toggle();
-                          treeNode.trackExpansion()"
-				>
-            </mct-representation>
+            class="tree-item menus-to-left"
+            ng-class="{selected: treeNode.isSelected()}"
+            >
             <span
-	            class='ui-symbol view-control'
+                class='ui-symbol view-control mobile-hide'
+                ng-click="toggle.toggle(); treeNode.trackExpansion()"
+                ng-if="model.composition !== undefined"
+                >
+                {{toggle.isActive() ? "v" : ">"}}
+            </span>
+
+            <mct-representation
+                class="mobile-hide"
+                key="'label'"
                 mct-object="domainObject"
+                ng-click="ngModel.selectedObject = domainObject"
+                >
+            </mct-representation>
+            <mct-representation
+                class="desktop-hide"
+                key="'label'"
+                mct-object="domainObject"
+                ng-click="toggle.toggle(); treeNode.trackExpansion()"
+                >
+            </mct-representation>
+
+            <span
+                class='ui-symbol view-control desktop-hide'
                 ng-model="ngModel"
-				ng-click="treeNode.checkMobile() ? treeNode.setObject(ngModel, domainObject) :
-                          toggle.toggle(); treeNode.trackExpansion()"
-				ng-if="model.composition !== undefined || treeNode.checkMobile()"
-				>
-                {{treeNode.checkMobile() ? "}" : toggle.isActive() ? "v" : ">"}}
+                ng-click="ngModel.selectedObject = domainObject"
+                >
+                }
             </span>
         </span>
         <span
