@@ -6,12 +6,8 @@
         "services": [
             {
                 "key": "urlService",
-                "implementation": "/services/UrlService.js",
+                "implementation": "services/UrlService.js",
                 "depends": [ "$location" ]
-            },
-            {
-                "key": "agentService",
-                "implementation": "/services/AgentService.js"
             }
         ],
         "runs": [
