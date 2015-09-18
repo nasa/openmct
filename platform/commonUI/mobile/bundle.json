@@ -1,13 +1,5 @@
 {
     "extensions": {
-        "controllers": [
-            {
-                "key": "BrowseTreeController",
-                "implementation": "MobileBrowseTreeController.js",
-                "priority": "preferred",
-                "depends": [ "$scope", "navigationService", "agentService" ]
-            }
-        ],
         "directives": [
             {
                 "key": "mctDevice",

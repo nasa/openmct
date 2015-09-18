@@ -21,11 +21,11 @@
  *****************************************************************************/
 /*global define,Promise*/
 
+
 define(
     [],
     function () {
         "use strict";
-
 
         /**
          * Controller to provide the ability to show/hide the tree in
@@ -33,7 +33,27 @@ define(
          * @constructor
          * @memberof platform/commonUI/browse
          */
-        function BrowseTreeController() {
+        function BrowseTreeController($scope, navigationService, agentService) {
+            var object = navigationService.getNavigation(),
+                self = this;
+
+            // Collapse tree when navigation changes
+            function changeObject(newObject) {
+                if (newObject !== object && agentService.isPortrait()) {
+                    object = newObject;
+                    self.state = false;
+                }
+            }
+
+            // On phones, trees should collapse in portrait mode
+            // when something is navigated-to.
+            if (agentService.isPhone()) {
+                navigationService.addListener(changeObject);
+                $scope.$on("$destroy", function () {
+                    navigationService.removeListener(changeObject);
+                });
+            }
+
             this.state = true;
         }
 

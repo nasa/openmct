@@ -1,5 +1,4 @@
 [
     "AgentService",
-    "MCTDevice",
-    "MobileBrowseTreeController"
+    "MCTDevice"
 ]
