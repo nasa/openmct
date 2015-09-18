@@ -48,11 +48,6 @@
                 "key": "MenuArrowController",
                 "implementation": "MenuArrowController.js",
                 "depends": [ "$scope" ]
-            },
-            {
-                "key": "BackArrowController",
-                "implementation": "BackArrowController.js",
-                "depends": [ "$scope" ]
             }
         ],
         "controls": [
@@ -101,7 +96,7 @@
             },
             {
                 "key": "back-arrow",
-                "uses": [ "type", "action" ],
+                "uses": [ "context" ],
                 "templateUrl": "templates/back-arrow.html"
             }
         ],
