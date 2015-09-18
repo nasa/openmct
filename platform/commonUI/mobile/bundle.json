@@ -8,6 +8,13 @@
                 "depends": [ "$scope", "navigationService", "agentService" ]
             }
         ],
+        "directives": [
+            {
+                "key": "mctDevice",
+                "implementation": "MCTDevice.js",
+                "depends": [ "agentService" ]
+            }
+        ],
         "services": [
             {
                 "key": "agentService",
