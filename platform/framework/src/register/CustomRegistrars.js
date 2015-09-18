@@ -39,6 +39,7 @@ define(
         function CustomRegistrars(app, $log) {
             this.app = app;
             this.$log = $log;
+            this.registered = {}; // Track registered keys by extension
         }
 
         // Utility; bind a function to a "this" pointer
@@ -52,12 +53,14 @@ define(
         // named methods on Angular modules, which follow the normal
         // app.method(key, [ deps..., function ]) pattern.
         function customRegistrar(angularFunction) {
-            var registered = {};
             return function (extension, index) {
                 var app = this.app,
                     $log = this.$log,
                     key = extension.key,
-                    dependencies = extension.depends || [];
+                    dependencies = extension.depends || [],
+                    registered = this.registered[angularFunction] || {};
+
+                this.registered[angularFunction] = registered;
 
                 if (!key) {
                     $log.warn([
