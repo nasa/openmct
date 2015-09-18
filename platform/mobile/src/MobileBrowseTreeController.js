@@ -30,18 +30,30 @@ define(
     function () {
         "use strict";
 
-        function BrowseTreeController() {
+        function MobileBrowseTreeController($scope, navigationService, agentService) {
+            var object = navigationService.getNavigation();
+
+            // Collapse tree when navigation changes
+            function changeObject(newObject) {
+                if (newObject !== object) {
+                    object = newObject;
+                    this.state = false;
+                }
+            }
+
+            navigationService.listen(changeObject);
+
             this.state = true;
         }
 
-        BrowseTreeController.prototype.toggle = function () {
+        MobileBrowseTreeController.prototype.toggle = function () {
             this.state = !this.state;
         };
 
-        BrowseTreeController.prototype.visible = function () {
+        MobileBrowseTreeController.prototype.visible = function () {
             return this.state;
         };
 
-        return BrowseTreeController;
+        return MobileBrowseTreeController;
     }
 );
