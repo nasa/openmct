@@ -22,8 +22,102 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ['../src/MobileBrowseTreeController'],
+    ["../src/MobileBrowseTreeController"],
     function (MobileBrowseTreeController) {
-        "use strict";
+        'use strict';
+
+        describe("The mobile variant of the BrowseTreeController", function () {
+            var mockScope,
+                mockNavigationService,
+                mockAgentService,
+                mockDomainObjects,
+                controller;
+
+            // We want to reinstantiate for each test case
+            // because device state can influence constructor-time behavior
+            function instantiateController() {
+                return new MobileBrowseTreeController(
+                    mockScope,
+                    mockNavigationService,
+                    mockAgentService
+                );
+            }
+
+            beforeEach(function () {
+                mockScope = jasmine.createSpyObj("$scope", [ "$on" ]);
+                mockNavigationService = jasmine.createSpyObj(
+                    "navigationService",
+                    [ "getNavigation", "addListener", "removeListener" ]
+                );
+                mockDomainObjects = ['a', 'b'].map(function (id) {
+                    var mockDomainObject = jasmine.createSpyObj(
+                        'domainObject-' + id,
+                        [ 'getId', 'getModel', 'getCapability' ]
+                    );
+
+                    mockDomainObject.getId.andReturn(id);
+                    mockDomainObject.getModel.andReturn({});
+
+                    return mockDomainObject;
+                });
+                mockAgentService = jasmine.createSpyObj(
+                    "agentService",
+                    [ "isMobile", "isPhone", "isTablet", "isPortrait", "isLandscape" ]
+                );
+
+                mockNavigationService.getNavigation.andReturn(mockDomainObjects[0]);
+            });
+
+            it("is initially visible", function () {
+                expect(instantiateController().visible()).toBeTruthy();
+            });
+
+            it("allows visibility to be toggled", function () {
+                controller = instantiateController();
+                controller.toggle();
+                expect(controller.visible()).toBeFalsy();
+                controller.toggle();
+                expect(controller.visible()).toBeTruthy();
+            });
+
+            it("collapses on navigation changes on portrait-oriented phones", function () {
+                mockAgentService.isMobile.andReturn(true);
+                mockAgentService.isPhone.andReturn(true);
+                mockAgentService.isPortrait.andReturn(true);
+                controller = instantiateController();
+                expect(controller.visible()).toBeTruthy();
+
+                // Simulate a navigation change
+                mockNavigationService.getNavigation.andReturn(mockDomainObjects[1]);
+                mockNavigationService.addListener.calls.forEach(function (call) {
+                    call.args[0](mockDomainObjects[1]);
+                });
+
+                // Tree should have collapsed
+                expect(controller.visible()).toBeFalsy();
+            });
+
+            it("detaches registered listeners when the scope is destroyed", function () {
+                mockAgentService.isMobile.andReturn(true);
+                mockAgentService.isPhone.andReturn(true);
+                mockAgentService.isPortrait.andReturn(true);
+                controller = instantiateController();
+
+                // Verify precondition
+                expect(mockNavigationService.removeListener)
+                    .not.toHaveBeenCalled();
+
+                mockScope.$on.calls.forEach(function (call) {
+                    if (call.args[0] === '$destroy') {
+                        call.args[1]();
+                    }
+                });
+
+                expect(mockNavigationService.removeListener)
+                    .toHaveBeenCalledWith(
+                        mockNavigationService.addListener.mostRecentCall.args[0]
+                    );
+            });
+        });
     }
 );

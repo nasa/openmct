@@ -24,5 +24,20 @@
 define(
     ["../src/BrowseTreeController"],
     function (BrowseTreeController) {
+        'use strict';
+        describe("The BrowseTreeController", function () {
+            var controller = new BrowseTreeController();
+
+            it("is initially visible", function () {
+                expect(controller.visible()).toBeTruthy();
+            });
+
+            it("allows visibility to be toggled", function () {
+                controller.toggle();
+                expect(controller.visible()).toBeFalsy();
+                controller.toggle();
+                expect(controller.visible()).toBeTruthy();
+            });
+        });
     }
 );

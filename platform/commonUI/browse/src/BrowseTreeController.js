@@ -21,23 +21,33 @@
  *****************************************************************************/
 /*global define,Promise*/
 
-/**
- * This bundle implements Browse mode.
- * @namespace platform/commonUI/browse
- */
 define(
     [],
     function () {
         "use strict";
 
+
+        /**
+         * Controller to provide the ability to show/hide the tree in
+         * Browse mode.
+         * @constructor
+         * @memberof platform/commonUI/browse
+         */
         function BrowseTreeController() {
             this.state = true;
         }
 
+        /**
+         * Toggle the visibility of the tree.
+         */
         BrowseTreeController.prototype.toggle = function () {
             this.state = !this.state;
         };
 
+        /**
+         * Get the desired visibility state of the tree.
+         * @returns {boolean} true when visible
+         */
         BrowseTreeController.prototype.visible = function () {
             return this.state;
         };
