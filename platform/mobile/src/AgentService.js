@@ -22,9 +22,10 @@
 /*global define,Promise*/
 
 /**
- * Module defining AgentService.
+ * Provides features which support variant behavior on mobile devices.
+ *
+ * @namespace platform/mobile
  */
-
 define(
     [],
     function () {
@@ -34,13 +35,16 @@ define(
          * The query service handles calls for browser and userAgent
          * info using a comparison between the userAgent and key
          * device names
+         * @constructor
+         * @param $window Angular-injected instance of the window
+         * @memberof platform/mobile
          */
         function AgentService($window) {
             var userAgent = $window.navigator.userAgent,
                 matches = ua.match(/iPad|iPhone|Android/i) || [];
 
             this.mobileName = matches[0];
-            this.portrait = $window.innerWidth < $window.innerHeight;
+            this.$window = $window;
         }
 
         /**
@@ -75,7 +79,7 @@ define(
          * @returns {boolean} true in portrait mode
          */
         AgentService.prototype.isPortrait = function () {
-            return this.portrait;
+            return $window.innerWidth < $window.innerHeight;
         };
 
         /**
