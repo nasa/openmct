@@ -258,16 +258,6 @@
                         "pattern": "^(\\d*[1-9]\\d*)?$",
                         "property": "layoutGrid",
                         "conversion": "number[]"
-                    },
-                    {
-                        "name": "Default View",
-                        "control": "select",
-                        "options": [
-                            { "name": "Plot", "value": "plot" },
-                            { "name": "Scrolling", "value": "scrolling" }
-                        ],
-                        "comment": "TODO: Infer values from type",
-                        "key": "defaultView"
                     }
                 ]
             }
