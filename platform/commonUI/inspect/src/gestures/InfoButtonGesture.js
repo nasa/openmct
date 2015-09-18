@@ -58,11 +58,11 @@ define(
                     dismissBubble();
                     dismissBubble = undefined;
                 }
-                
+
                 // Detaches body touch listener
                 body.off('touchstart', hideBubble);
             }
-            
+
             // Displays the bubble by tracking position of
             // touch, using infoService to display the bubble,
             // and then on any body touch the bubble is dismissed
@@ -77,7 +77,7 @@ define(
                     domainObject.useCapability('metadata'),
                     touchPosition
                 );
-                
+
                 // On any touch on the body, default body touches/events
                 // are prevented, the bubble is dismissed, and the touchstart
                 // body event is unbound, reallowing gestures
@@ -87,12 +87,12 @@ define(
                     body.unbind('touchstart');
                 });
             }
-            
+
             // Checks if you are on a mobile device, if the device is
             // mobile (agentService.isMobile() = true), then
-            // the a click on something (info button) brings up 
+            // the a click on something (info button) brings up
             // the bubble
-            if (agentService.isMobile(navigator.userAgent)) {
+            if (agentService.isMobile()) {
                 element.on('click', showBubble);
             }
 

@@ -71,6 +71,7 @@ define(
                 scope = $rootScope.$new(),
                 goLeft = eventCoors[0] + menuDim[0] > winDim[0],
                 goUp = eventCoors[1] + menuDim[1] > winDim[1],
+                initiatingEvent = this.agentService.isMobile() ? 'touchstart' : 'mousedown',
                 menu;
 
             // Remove the context menu
@@ -107,27 +108,16 @@ define(
             body.append(menu);
 
             // Stop propagation so that clicks or touches on the menu do not close the menu
-            if (!(this.agentService.isMobile(navigator.userAgent))) {
-                menu.on('mousedown', function (event) {
-                    event.stopPropagation();
-                });
-            } else if ((this.agentService.isMobile(navigator.userAgent))) {
-                menu.on('touchstart', function (event) {
-                    event.stopPropagation();
-                });
-            }
+            menu.on(initiatingEvent, function (event) {
+                event.stopPropagation();
+            });
 
             // Dismiss the menu when body is clicked/touched elsewhere
             // ('mousedown' because 'click' breaks left-click context menus)
             // ('touchstart' because 'touch' breaks context menus up)
-            if (!(this.agentService.isMobile(navigator.userAgent))) {
-                body.on('mousedown', dismiss);
-                // NOTE: Apply to mobile?
-                menu.on('click', dismiss);
-            } else if (this.agentService.isMobile(navigator.userAgent)) {
-                body.on('touchstart', dismiss);
-            }
-            
+            body.on(initiatingEvent, dismiss);
+            // NOTE: Apply to mobile?
+            menu.on('click', dismiss);
 
             // Don't launch browser's context menu
             actionContext.event.preventDefault();

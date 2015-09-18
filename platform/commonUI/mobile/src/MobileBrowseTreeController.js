@@ -31,17 +31,20 @@ define(
         "use strict";
 
         function MobileBrowseTreeController($scope, navigationService, agentService) {
-            var object = navigationService.getNavigation();
+            var object = navigationService.getNavigation(),
+                self = this;
 
             // Collapse tree when navigation changes
             function changeObject(newObject) {
-                if (newObject !== object) {
+                if (newObject !== object && agentService.isPortrait()) {
                     object = newObject;
-                    this.state = false;
+                    self.state = false;
                 }
             }
 
-            navigationService.listen(changeObject);
+            if (agentService.isMobile()) {
+                navigationService.listen(changeObject);
+            }
 
             this.state = true;
         }

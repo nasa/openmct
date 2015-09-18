@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,window*/
+/*global define,Promise*/
 
 /**
  * Module defining TreeNodeController. Created by vwoeltje on 11/10/14.
@@ -77,7 +77,7 @@ define(
                         ((navPath[index] === nodePath[index]) &&
                                 checkPath(nodePath, navPath, index + 1));
             }
-            
+
             // Consider the currently-navigated object and update
             // parameters which support display.
             function checkSelection() {
@@ -176,20 +176,19 @@ define(
         TreeNodeController.prototype.isSelected = function () {
             return this.isSelectedFlag;
         };
-        
+
         // Sets the selected object in the tree, to be the
         // currently represented object. If the user is on phone
         // and in portrait mode, than, hide the tree menu
         TreeNodeController.prototype.setObject = function (ngModel, domainObject) {
             ngModel.selectedObject = domainObject;
-            if (this.agentService.getOrientation(window.innerWidth, window.innerHeight) === "portrait" &&
-                    this.agentService.isPhone(navigator.userAgent)) {
+            if (this.agentService.isPhone() && this.agentService.isPortrait()) {
                 this.$scope.$emit('select-obj');
             }
         };
-            
+
         TreeNodeController.prototype.checkMobile = function () {
-            return this.agentService.isMobile(navigator.userAgent);
+            return this.agentService.isMobile();
         };
 
         return TreeNodeController;

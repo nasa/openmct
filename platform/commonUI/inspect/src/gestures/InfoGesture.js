@@ -65,11 +65,11 @@ define(
             this.infoService = infoService;
             this.delay = delay;
             this.domainObject = domainObject;
-            
+
             // Checks if you are on a mobile device, if the device is
             // not mobile (agentService.isMobile() = false), then
             // the pendingBubble and therefore hovering is allowed
-            if (!agentService.isMobile(navigator.userAgent)) {
+            if (!agentService.isMobile()) {
                 // Show bubble (on a timeout) on mouse over
                 element.on('mouseenter', this.showBubbleCallback);
             }
@@ -99,7 +99,7 @@ define(
             // arrays allocated while user mouses over things
             this.mousePosition = undefined;
         };
-            
+
         InfoGesture.prototype.showBubble = function (event) {
             var self = this;
 
@@ -132,7 +132,7 @@ define(
 
             this.element.on('mouseleave', this.hideBubbleCallback);
         };
-            
+
 
         /**
          * Detach any event handlers associated with this gesture.
