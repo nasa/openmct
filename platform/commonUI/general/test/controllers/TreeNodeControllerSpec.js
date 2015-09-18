@@ -52,10 +52,10 @@ define(
                     "domainObject",
                     [ "getId", "getCapability", "getModel", "useCapability" ]
                 );
-                
+
                 mockAgentService.getOrientation.andReturn("portrait");
                 mockAgentService.isPhone.andReturn(true);
-                
+
                 controller = new TreeNodeController(mockScope, mockTimeout, mockAgentService);
             });
 
@@ -195,17 +195,6 @@ define(
                 expect(controller.hasBeenExpanded()).toBeFalsy();
                 expect(controller.isSelected()).toBeFalsy();
 
-            });
-            
-            it("check if tree node is in a mobile device", function () {
-                if (controller) {
-                    controller.checkMobile();
-                }
-            });
-            
-            it("allows a set object to emit select-obj", function () {
-                controller.setObject(mockNgModel, mockDomainObject);
-                expect(mockScope.$emit).toHaveBeenCalledWith('select-obj');
             });
         });
     }
