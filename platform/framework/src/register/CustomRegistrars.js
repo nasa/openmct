@@ -52,6 +52,7 @@ define(
         // named methods on Angular modules, which follow the normal
         // app.method(key, [ deps..., function ]) pattern.
         function customRegistrar(angularFunction) {
+            var registered = {};
             return function (extension, index) {
                 var app = this.app,
                     $log = this.$log,
@@ -67,6 +68,14 @@ define(
                         ", no key specified. ",
                         JSON.stringify(extension)
                     ].join(""));
+                } else if (registered[key]) {
+                    $log.debug([
+                        "Already registered ",
+                        angularFunction,
+                        " with key ",
+                        key,
+                        "; skipping."
+                    ].join(""));
                 } else {
                     $log.info([
                         "Registering ",
@@ -74,6 +83,7 @@ define(
                         ": ",
                         key
                     ].join(""));
+                    registered[key] = true;
                     app[angularFunction](
                         key,
                         dependencies.concat([extension])
