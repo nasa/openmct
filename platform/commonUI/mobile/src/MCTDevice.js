@@ -94,6 +94,10 @@ define(
                 link: link,
                 // We are transcluding the whole element (like ng-if)
                 transclude: 'element',
+                // 1 more than ng-if
+                priority: 601,
+                // Also terminal, since element will be transcluded
+                terminal: true,
                 // Only apply as an attribute
                 restrict: "A"
             };

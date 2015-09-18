@@ -26,7 +26,8 @@
             ng-class="{selected: treeNode.isSelected()}"
             >
             <span
-                class='ui-symbol view-control mobile-hide'
+                mct-device="desktop"
+                class='ui-symbol view-control'
                 ng-click="toggle.toggle(); treeNode.trackExpansion()"
                 ng-if="model.composition !== undefined"
                 >
@@ -34,6 +35,7 @@
             </span>
 
             <mct-representation
+                mct-device="desktop"
                 class="mobile-hide"
                 key="'label'"
                 mct-object="domainObject"
@@ -41,15 +43,22 @@
                 >
             </mct-representation>
             <mct-representation
+                mct-device="mobile"
                 class="desktop-hide"
                 key="'label'"
                 mct-object="domainObject"
-                ng-click="toggle.toggle(); treeNode.trackExpansion()"
+                ng-click="ngModel.selectedObject =
+                              model.composition === undefined ?
+                                  domainObject : ngModel.selectedObject;
+                          toggle.toggle();
+                          treeNode.trackExpansion();
+                          "
                 >
             </mct-representation>
 
             <span
-                class='ui-symbol view-control desktop-hide'
+                mct-device="mobile"
+                class='ui-symbol view-control'
                 ng-model="ngModel"
                 ng-click="ngModel.selectedObject = domainObject"
                 >
