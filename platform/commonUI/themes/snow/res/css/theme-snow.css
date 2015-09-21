@@ -20,7 +20,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -41,38 +41,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -3223,19 +3223,30 @@ span.req {
       float: left;
       margin-right: 10px; }
 
-/* line 338, ../../../../general/res/sass/user-environ/_layout.scss */
+/*.object-holder {
+    .s-btn {
+        //background: red !important;
+        $h: 16px;
+        height: $h;
+        line-height: $h;
+        > span {
+            font-size: 0.7rem;
+        }
+    }
+}*/
+/* line 350, ../../../../general/res/sass/user-environ/_layout.scss */
 .l-flex {
   display: flex;
   display: -webkit-flex;
   flex-flow: row nowrap;
   -webkit-flex-flow: row nowrap; }
-  /* line 341, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 353, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-flex .left {
     flex: 1 1 0;
     -webkit-flex: 1 1 0;
     padding-right: 10px; }
 
-/* line 348, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 360, ../../../../general/res/sass/user-environ/_layout.scss */
 .vscroll {
   overflow-y: auto; }
 
@@ -4238,21 +4249,29 @@ ul.tree {
   bottom: 5px;
   left: 5px; }
 /* line 49, ../../../../general/res/sass/user-environ/_frame.scss */
-.frame.frame-template .view-switcher {
+.frame.frame-template .s-btn, .frame.frame-template .s-menu,
+.frame.frame-template .s-menu {
   height: 16px;
   line-height: 16px;
+  padding: 0 5px; }
+  /* line 54, ../../../../general/res/sass/user-environ/_frame.scss */
+  .frame.frame-template .s-btn > span, .frame.frame-template .s-menu > span,
+  .frame.frame-template .s-menu > span {
+    font-size: 0.65rem; }
+/* line 59, ../../../../general/res/sass/user-environ/_frame.scss */
+.frame.frame-template .s-menu:after {
+  font-size: 8px; }
+/* line 63, ../../../../general/res/sass/user-environ/_frame.scss */
+.frame.frame-template .view-switcher {
   z-index: 10; }
-  /* line 53, ../../../../general/res/sass/user-environ/_frame.scss */
-  .frame.frame-template .view-switcher > span {
-    font-size: 0.7rem; }
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 60, ../../../../general/res/sass/user-environ/_frame.scss */
+  /* line 69, ../../../../general/res/sass/user-environ/_frame.scss */
   .frame.frame-template .view-switcher {
     opacity: 0; }
-  /* line 63, ../../../../general/res/sass/user-environ/_frame.scss */
+  /* line 72, ../../../../general/res/sass/user-environ/_frame.scss */
   .frame.frame-template:hover .view-switcher {
     opacity: 1; } }
-/* line 71, ../../../../general/res/sass/user-environ/_frame.scss */
+/* line 80, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame .view-switcher .title-label {
   display: none; }
 
@@ -4871,7 +4890,7 @@ table {
       display: none; }
   /* line 76, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-display-area {
-    background-color: #eee;
+    background-color: rgba(0, 0, 0, 0.05);
     position: absolute;
     top: 25px;
     right: 0;
@@ -5648,7 +5667,7 @@ table {
   min-width: 150px; }
   /* line 16, ../../../../general/res/sass/features/_imagery.scss */
   .l-image-main-wrapper .l-image-main {
-    background-color: #eee;
+    background-color: rgba(0, 0, 0, 0.05);
     bottom: 30px; }
   /* line 20, ../../../../general/res/sass/features/_imagery.scss */
   .l-image-main-wrapper .l-image-main-controlbar {

@@ -102,7 +102,7 @@ $colorTabHeaderFg: pullForward($colorBodyFg, 20%);
 $colorTabHeaderBorder: $colorBodyBg;
 
 // Plot
-$colorPlotBg: #eee;
+$colorPlotBg: rgba(black, 0.05);
 $colorPlotFg: $colorBodyFg;
 $colorPlotHash: rgba(black, 0.2);
 $stylePlotHash: dashed;

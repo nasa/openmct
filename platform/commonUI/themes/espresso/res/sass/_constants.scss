@@ -104,7 +104,7 @@ $colorTabHeaderFg: lighten($colorTabHeaderBg, 40%);
 $colorTabHeaderBorder: $colorBodyBg;
 
 // Plot
-$colorPlotBg: none;
+$colorPlotBg: rgba(black, 0.1);
 $colorPlotFg: $colorBodyFg;
 $colorPlotHash: rgba(white, 0.2);
 $stylePlotHash: dashed;
