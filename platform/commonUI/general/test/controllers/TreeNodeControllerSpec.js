@@ -47,7 +47,6 @@ define(
                 mockScope = jasmine.createSpyObj("$scope", ["$watch", "$on", "$emit"]);
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockAgentService = jasmine.createSpyObj("agentService", ["isMobile", "isPhone", "getOrientation"]);
-                mockNgModel = jasmine.createSpyObj("ngModel", ["selectedObject"]);
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     [ "getId", "getCapability", "getModel", "useCapability" ]
@@ -196,6 +195,22 @@ define(
                 expect(controller.isSelected()).toBeFalsy();
 
             });
+
+            it("exposes selected objects in scope", function () {
+                mockScope.domainObject = mockDomainObject;
+                mockScope.ngModel = {};
+                controller.select();
+                expect(mockScope.ngModel.selectedObject)
+                    .toEqual(mockDomainObject);
+            });
+
+            it("invokes optional callbacks upon selection", function () {
+                mockScope.parameters =
+                    { callback: jasmine.createSpy('callback') };
+                controller.select();
+                expect(mockScope.parameters.callback).toHaveBeenCalled();
+            });
+
         });
     }
 );

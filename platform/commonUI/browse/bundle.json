@@ -29,7 +29,7 @@
                 "key": "BrowseTreeController",
                 "implementation": "BrowseTreeController.js",
                 "priority": "preferred",
-                "depends": [ "$scope", "navigationService", "agentService" ]
+                "depends": [ "$scope", "agentService" ]
             },
             {
                 "key": "BrowseObjectController",

@@ -39,7 +39,7 @@
                 class="mobile-hide"
                 key="'label'"
                 mct-object="domainObject"
-                ng-click="ngModel.selectedObject = domainObject"
+                ng-click="treeNode.select()"
                 >
             </mct-representation>
             <mct-representation
@@ -47,12 +47,9 @@
                 class="desktop-hide"
                 key="'label'"
                 mct-object="domainObject"
-                ng-click="ngModel.selectedObject =
-                              model.composition === undefined ?
-                                  domainObject : ngModel.selectedObject;
+                ng-click="(model.composition === undefined) && treeNode.select();
                           toggle.toggle();
-                          treeNode.trackExpansion();
-                          "
+                          treeNode.trackExpansion();"
                 >
             </mct-representation>
 
@@ -60,7 +57,7 @@
                 mct-device="mobile"
                 class='ui-symbol view-control'
                 ng-model="ngModel"
-                ng-click="ngModel.selectedObject = domainObject"
+                ng-click="treeNode.select()"
                 >
                 }
             </span>
@@ -73,6 +70,7 @@
 
             <mct-representation key="'subtree'"
                                 ng-model="ngModel"
+                                parameters="parameters"
                                 mct-object="treeNode.hasBeenExpanded() && domainObject">
             </mct-representation>
 

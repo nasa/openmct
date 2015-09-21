@@ -28,7 +28,6 @@ define(
 
         describe("The BrowseTreeController", function () {
             var mockScope,
-                mockNavigationService,
                 mockAgentService,
                 mockDomainObjects,
                 controller;
@@ -38,17 +37,12 @@ define(
             function instantiateController() {
                 return new BrowseTreeController(
                     mockScope,
-                    mockNavigationService,
                     mockAgentService
                 );
             }
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj("$scope", [ "$on" ]);
-                mockNavigationService = jasmine.createSpyObj(
-                    "navigationService",
-                    [ "getNavigation", "addListener", "removeListener" ]
-                );
                 mockDomainObjects = ['a', 'b'].map(function (id) {
                     var mockDomainObject = jasmine.createSpyObj(
                         'domainObject-' + id,
@@ -64,8 +58,6 @@ define(
                     "agentService",
                     [ "isMobile", "isPhone", "isTablet", "isPortrait", "isLandscape" ]
                 );
-
-                mockNavigationService.getNavigation.andReturn(mockDomainObjects[0]);
             });
 
             it("is initially visible", function () {
@@ -87,36 +79,11 @@ define(
                 controller = instantiateController();
                 expect(controller.visible()).toBeTruthy();
 
-                // Simulate a navigation change
-                mockNavigationService.getNavigation.andReturn(mockDomainObjects[1]);
-                mockNavigationService.addListener.calls.forEach(function (call) {
-                    call.args[0](mockDomainObjects[1]);
-                });
+                // Simulate a change from the tree by invoking controller's
+                controller.callback();
 
                 // Tree should have collapsed
                 expect(controller.visible()).toBeFalsy();
-            });
-
-            it("detaches registered listeners when the scope is destroyed", function () {
-                mockAgentService.isMobile.andReturn(true);
-                mockAgentService.isPhone.andReturn(true);
-                mockAgentService.isPortrait.andReturn(true);
-                controller = instantiateController();
-
-                // Verify precondition
-                expect(mockNavigationService.removeListener)
-                    .not.toHaveBeenCalled();
-
-                mockScope.$on.calls.forEach(function (call) {
-                    if (call.args[0] === '$destroy') {
-                        call.args[1]();
-                    }
-                });
-
-                expect(mockNavigationService.removeListener)
-                    .toHaveBeenCalledWith(
-                        mockNavigationService.addListener.mostRecentCall.args[0]
-                    );
             });
         });
     }

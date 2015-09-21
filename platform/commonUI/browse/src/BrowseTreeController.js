@@ -33,28 +33,29 @@ define(
          * @constructor
          * @memberof platform/commonUI/browse
          */
-        function BrowseTreeController($scope, navigationService, agentService) {
-            var object = navigationService.getNavigation(),
-                self = this;
+        function BrowseTreeController($scope, agentService) {
+            var self = this;
+            this.agentService = agentService;
+            this.state = true;
 
-            // Collapse tree when navigation changes
-            function changeObject(newObject) {
-                if (newObject !== object && agentService.isPortrait()) {
-                    object = newObject;
+            /**
+             * Callback to invoke when any selection occurs in the tree.
+             * This controller can be passed in as the `parameters` object
+             * to the tree representation.
+             *
+             * @property {Function} callback
+             * @memberof platform/commonUI/browse.BrowseTreeController#
+             */
+            this.callback = function () {
+                // Note that, since this is a callback to pass, this is not
+                // declared as a method but as a property which happens to
+                // be a function.
+                if (agentService.isPhone() && agentService.isPortrait()) {
+                    // On phones, trees should collapse in portrait mode
+                    // when something is navigated-to.
                     self.state = false;
                 }
-            }
-
-            // On phones, trees should collapse in portrait mode
-            // when something is navigated-to.
-            if (agentService.isPhone()) {
-                navigationService.addListener(changeObject);
-                $scope.$on("$destroy", function () {
-                    navigationService.removeListener(changeObject);
-                });
-            }
-
-            this.state = true;
+            };
         }
 
         /**

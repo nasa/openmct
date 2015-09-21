@@ -41,6 +41,7 @@
                          ng-hide="treeModel.search">
                         <mct-representation key="'tree'"
                                             mct-object="domainObject"
+                                            parameters="tree"
                                             ng-model="treeModel">
                         </mct-representation>
                     </div>
@@ -51,7 +52,8 @@
 
             <div class='split-pane-component items pane right-repr'>
                 <div class='holder abs l-mobile' id='content-area'>
-                    <mct-representation mct-object="navigatedObject" key="'browse-object'">
+                    <mct-representation mct-object="navigatedObject"
+                                        key="'browse-object'">
                     </mct-representation>
                 </div>
                 <div class="key-properties ui-symbol icon mobile-menu-icon desktop-hide"
