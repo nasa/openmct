@@ -53,15 +53,18 @@ define(
         };
 
         LinkService.prototype.perform = function (object, parentObject) {
-            // It is assumed here that validate has been called, and therefore
-            // that parentObject.hasCapability('composition').
-            var composition = parentObject.getCapability('composition');
+            if (!this.validate(object, parentObject)) {
+                throw new Error(
+                    "Tried to link objects without validating first."
+                );
+            }
 
-            return composition.add(object).then(function (objectInNewContext) {
-                return parentObject.getCapability('persistence')
-                    .persist()
-                    .then(function () { return objectInNewContext; });
-            });
+            return parentObject.getCapability('composition').add(object)
+                .then(function (objectInNewContext) {
+                    return parentObject.getCapability('persistence')
+                        .persist()
+                        .then(function () { return objectInNewContext; });
+                });
         };
 
         return LinkService;
