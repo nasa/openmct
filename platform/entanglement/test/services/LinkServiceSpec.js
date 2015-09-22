@@ -88,19 +88,15 @@ define(
                     expect(validate()).toBe(false);
                 });
 
-                it("does not allow parents that contains object", function () {
-                    object.id = 'abc';
-                    parentCandidate.id = 'xyz';
-                    parentCandidate.model.composition = ['abc'];
-                    expect(validate()).toBe(false);
-                });
-
                 it("does not allow parents without composition", function () {
                     parentCandidate = domainObjectFactory({
                         name: 'parentCandidate'
                     });
                     object.id = 'abc';
                     parentCandidate.id = 'xyz';
+                    parentCandidate.hasCapability.andCallFake(function (c) {
+                        return c !== 'composition';
+                    });
                     parentCandidate.model.composition = undefined;
                     expect(validate()).toBe(false);
                 });
