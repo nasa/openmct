@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/controllers/TreeNodeController"],
@@ -29,8 +29,6 @@ define(
         describe("The tree node controller", function () {
             var mockScope,
                 mockTimeout,
-                mockAgentService,
-                mockNgModel,
                 mockDomainObject,
                 controller;
 
@@ -46,16 +44,12 @@ define(
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj("$scope", ["$watch", "$on", "$emit"]);
                 mockTimeout = jasmine.createSpy("$timeout");
-                mockAgentService = jasmine.createSpyObj("agentService", ["isMobile", "isPhone", "getOrientation"]);
                 mockDomainObject = jasmine.createSpyObj(
                     "domainObject",
                     [ "getId", "getCapability", "getModel", "useCapability" ]
                 );
 
-                mockAgentService.getOrientation.andReturn("portrait");
-                mockAgentService.isPhone.andReturn(true);
-
-                controller = new TreeNodeController(mockScope, mockTimeout, mockAgentService);
+                controller = new TreeNodeController(mockScope, mockTimeout);
             });
 
             it("allows tracking of expansion state", function () {

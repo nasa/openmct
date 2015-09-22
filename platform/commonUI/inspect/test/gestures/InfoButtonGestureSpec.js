@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ['../../src/gestures/InfoButtonGesture'],
@@ -38,12 +38,11 @@ define(
                 mockScope,
                 mockOff,
                 testMetadata,
-                mockPromise,
                 mockHide,
                 gesture,
                 fireGesture,
                 fireDismissGesture;
-            
+
             beforeEach(function () {
                 mockTimeout = jasmine.createSpy('$timeout');
                 mockDocument = jasmine.createSpyObj('$document', ['find']);
@@ -62,7 +61,7 @@ define(
                     'domainObject',
                     [ 'getId', 'getCapability', 'useCapability', 'getModel' ]
                 );
-                
+
                 mockEvent = jasmine.createSpyObj("event", ["preventDefault", "stopPropagation"]);
                 mockEvent.pageX = 0;
                 mockEvent.pageY = 0;
@@ -88,7 +87,7 @@ define(
                 );
                 fireGesture =  mockElement.on.mostRecentCall.args[1];
             });
-            
+
             it("expect click on the representation", function () {
                 // Fires a click call on element and then
                 // expects the click to have happened
@@ -98,7 +97,7 @@ define(
                     jasmine.any(Function)
                 );
             });
-            
+
             it("expect click then dismiss on the representation", function () {
                 // Fire the click and then expect the click
                 fireGesture(mockEvent);
@@ -106,14 +105,14 @@ define(
                     "click",
                     jasmine.any(Function)
                 );
-                
+
                 // Get the touch start on the body
                 // and fire the dismiss gesture
                 fireDismissGesture =  mockBody.on.mostRecentCall.args[1];
                 fireDismissGesture(mockEvent);
                 // Expect Body to have been touched, event.preventDefault()
                 // to be called, then the mockBody listener to be detached
-                // lastly unbind the touchstart used to dismiss so other 
+                // lastly unbind the touchstart used to dismiss so other
                 // events can be called
                 expect(mockBody.on).toHaveBeenCalledWith(
                     "touchstart",
@@ -128,7 +127,7 @@ define(
                     'touchstart'
                 );
             });
-            
+
             it("detaches a callback for info bubble events when destroyed", function () {
                 expect(mockElement.off).not.toHaveBeenCalled();
 
@@ -139,7 +138,7 @@ define(
                     jasmine.any(Function)
                 );
             });
-            
+
         });
     }
 );

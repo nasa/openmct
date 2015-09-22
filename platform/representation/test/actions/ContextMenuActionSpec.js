@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,describe,it,expect,beforeEach,jasmine*/
 
 
 /**
@@ -49,18 +49,8 @@ define(
                 mockDomainObject,
                 mockEvent,
                 mockActionContext,
-                mockNavigator,
-                mockStopPropagation,
                 action;
 
-            function fireEvent(evt, value) {
-                mockElement.on.calls.forEach(function (call) {
-                    if (call.args[0] === evt) {
-                        call.args[1](value);
-                    }
-                });
-            }
-            
             beforeEach(function () {
                 mockCompile = jasmine.createSpy("$compile");
                 mockCompiledTemplate = jasmine.createSpy("template");
@@ -83,7 +73,7 @@ define(
                 mockRootScope.$new.andReturn(mockScope);
 
                 mockActionContext = {key: 'menu', domainObject: mockDomainObject, event: mockEvent};
-                
+
                 action = new ContextMenuAction(
                     mockCompile,
                     mockDocument,
@@ -169,7 +159,7 @@ define(
                 // Menu should have been removed
                 expect(mockMenu.remove).toHaveBeenCalled();
             });
-            
+
             it("keeps a menu when menu is clicked", function () {
                 // Show the menu
                 action.perform();
@@ -186,7 +176,7 @@ define(
                 // Listener should have been detached from body
                 expect(mockBody.off).not.toHaveBeenCalled();
             });
-            
+
             it("keeps a menu when menu is clicked on mobile", function () {
                 mockAgentService.isMobile.andReturn(true);
                 action = new ContextMenuAction(
@@ -198,7 +188,7 @@ define(
                     mockActionContext
                 );
                 action.perform();
-                
+
                 mockMenu.on.calls.forEach(function (call) {
                     if (call.args[0] === 'touchstart') {
                         call.args[1](mockEvent);
