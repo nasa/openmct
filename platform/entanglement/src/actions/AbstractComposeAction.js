@@ -44,7 +44,8 @@ define(
          * @method platform/entanglement.AbstractComposeService#perform
          */
         /**
-         * Check if one object can be composed into another.
+         * Check if this composition change is valid for these objects.
+         *
          * @param {DomainObject} domainObject  the domain object to
          *    move, copy, or link.
          * @param {DomainObject} parent  the domain object whose composition

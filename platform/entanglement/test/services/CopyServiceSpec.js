@@ -41,19 +41,24 @@ define(
         }
 
         describe("CopyService", function () {
+            var policyService;
+
+            beforeEach(function () {
+                policyService = jasmine.createSpyObj(
+                    'policyService',
+                    ['allow']
+                );
+                policyService.allow.andReturn(true);
+            });
+
             describe("validate", function () {
 
-                var policyService,
-                    copyService,
+                var copyService,
                     object,
                     parentCandidate,
                     validate;
 
                 beforeEach(function () {
-                    policyService = jasmine.createSpyObj(
-                        'policyService',
-                        ['allow']
-                    );
                     copyService = new CopyService(
                         null,
                         null,
@@ -148,7 +153,7 @@ define(
                         );
                         createObjectPromise = synchronousPromise(undefined);
                         creationService.createObject.andReturn(createObjectPromise);
-                        copyService = new CopyService(null, creationService);
+                        copyService = new CopyService(null, creationService, policyService);
                         copyResult = copyService.perform(object, newParent);
                         copyFinished = jasmine.createSpy('copyFinished');
                         copyResult.then(copyFinished);
@@ -180,7 +185,8 @@ define(
                 });
 
                 describe("on domainObject with composition", function () {
-                    var childObject,
+                    var newObject,
+                        childObject,
                         compositionCapability,
                         compositionPromise;
 
@@ -216,6 +222,17 @@ define(
                                 composition: compositionCapability
                             }
                         });
+                        newObject = domainObjectFactory({
+                            name: 'object',
+                            id: 'abc2',
+                            model: {
+                                name: 'some object',
+                                composition: []
+                            },
+                            capabilities: {
+                                composition: compositionCapability
+                            }
+                        });
                         newParent = domainObjectFactory({
                             name: 'newParent',
                             id: '456',
@@ -227,9 +244,11 @@ define(
                             'creationService',
                             ['createObject']
                         );
-                        createObjectPromise = synchronousPromise(undefined);
+                        policyService.allow.andReturn(true);
+
+                        createObjectPromise = synchronousPromise(newObject);
                         creationService.createObject.andReturn(createObjectPromise);
-                        copyService = new CopyService(mockQ, creationService);
+                        copyService = new CopyService(mockQ, creationService, policyService);
                         copyResult = copyService.perform(object, newParent);
                         copyFinished = jasmine.createSpy('copyFinished');
                         copyResult.then(copyFinished);

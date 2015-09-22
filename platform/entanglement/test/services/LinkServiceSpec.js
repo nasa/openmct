@@ -41,6 +41,7 @@ define(
                     'policyService',
                     ['allow']
                 );
+                mockPolicyService.allow.andReturn(true);
                 linkService = new LinkService(mockPolicyService);
             });
 
@@ -66,7 +67,6 @@ define(
                     validate = function () {
                         return linkService.validate(object, parentCandidate);
                     };
-                    mockPolicyService.allow.andReturn(true);
                 });
 
                 it("does not allow invalid parentCandidate", function () {

@@ -40,58 +40,57 @@ define(
 
             var moveService,
                 policyService,
+                object,
+                objectContextCapability,
+                currentParent,
+                parentCandidate,
                 linkService;
 
             beforeEach(function () {
+                objectContextCapability = jasmine.createSpyObj(
+                    'objectContextCapability',
+                    [
+                        'getParent'
+                    ]
+                );
+
+                object = domainObjectFactory({
+                    name: 'object',
+                    id: 'a',
+                    capabilities: {
+                        context: objectContextCapability,
+                        type: { type: 'object' }
+                    }
+                });
+
+                currentParent = domainObjectFactory({
+                    name: 'currentParent',
+                    id: 'b'
+                });
+
+                objectContextCapability.getParent.andReturn(currentParent);
+
+                parentCandidate = domainObjectFactory({
+                    name: 'parentCandidate',
+                    model: { composition: [] },
+                    id: 'c',
+                    capabilities: {
+                        type: { type: 'parentCandidate' }
+                    }
+                });
                 policyService = jasmine.createSpyObj(
                     'policyService',
                     ['allow']
                 );
                 linkService = new MockLinkService();
+                policyService.allow.andReturn(true);
                 moveService = new MoveService(policyService, linkService);
             });
 
             describe("validate", function () {
-                var object,
-                    objectContextCapability,
-                    currentParent,
-                    parentCandidate,
-                    validate;
+                var validate;
 
                 beforeEach(function () {
-
-                    objectContextCapability = jasmine.createSpyObj(
-                        'objectContextCapability',
-                        [
-                            'getParent'
-                        ]
-                    );
-
-                    object = domainObjectFactory({
-                        name: 'object',
-                        id: 'a',
-                        capabilities: {
-                            context: objectContextCapability,
-                            type: { type: 'object' }
-                        }
-                    });
-
-                    currentParent = domainObjectFactory({
-                        name: 'currentParent',
-                        id: 'b'
-                    });
-
-                    objectContextCapability.getParent.andReturn(currentParent);
-
-                    parentCandidate = domainObjectFactory({
-                        name: 'parentCandidate',
-                        model: { composition: [] },
-                        id: 'c',
-                        capabilities: {
-                            type: { type: 'parentCandidate' }
-                        }
-                    });
-
                     validate = function () {
                         return moveService.validate(object, parentCandidate);
                     };
@@ -145,14 +144,15 @@ define(
 
             describe("perform", function () {
 
-                var object,
-                    newParent,
-                    actionCapability,
+                var actionCapability,
                     locationCapability,
                     locationPromise,
+                    newParent,
                     moveResult;
 
                 beforeEach(function () {
+                    newParent = parentCandidate;
+
                     actionCapability = jasmine.createSpyObj(
                         'actionCapability',
                         ['perform']
@@ -175,7 +175,9 @@ define(
                         name: 'object',
                         capabilities: {
                             action: actionCapability,
-                            location: locationCapability
+                            location: locationCapability,
+                            context: objectContextCapability,
+                            type: { type: 'object' }
                         }
                     });
 
