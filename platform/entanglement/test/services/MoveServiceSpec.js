@@ -196,6 +196,17 @@ define(
                         .toHaveBeenCalledWith(jasmine.any(Function));
                 });
 
+                it("throws an expection when performed on invalid inputs", function () {
+                    function perform() {
+                        moveService.perform(object, newParent);
+                    }
+
+                    policyService.allow.andReturn(true);
+                    expect(perform).not.toThrow();
+                    policyService.allow.andReturn(false); // Cause validate to fail
+                    expect(perform).toThrow();
+                });
+
                 describe("when moving an original", function () {
                     beforeEach(function () {
                         locationCapability.getContextualLocation

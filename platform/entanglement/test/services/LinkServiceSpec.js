@@ -220,6 +220,17 @@ define(
                     compositionPromise.resolve([linkedObject]);
                     expect(whenComplete).toHaveBeenCalledWith(linkedObject);
                 });
+
+                it("throws an expection when performed on invalid inputs", function () {
+                    function perform() {
+                        linkService.perform(object, parentObject);
+                    }
+
+                    mockPolicyService.allow.andReturn(true);
+                    expect(perform).not.toThrow();
+                    mockPolicyService.allow.andReturn(false); // Cause validate to fail
+                    expect(perform).toThrow();
+                });
             });
         });
     }
