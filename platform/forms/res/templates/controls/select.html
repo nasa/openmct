@@ -20,11 +20,11 @@
  at runtime from the About dialog for additional information.
 -->
 <div class='form-control select'>
-	<select
-	        ng-model="ngModel[field]"
-	        ng-options="opt.value as opt.name for opt in options"
-	        ng-required="ngRequired"
-	        name="mctControl">
-	    <option value="" ng-if="!ngModel[field]">- Select One -</option>
-	</select>
+    <select
+            ng-model="ngModel[field]"
+            ng-options="opt.value as opt.name for opt in options"
+            ng-required="ngRequired"
+            name="mctControl">
+        <option value="" ng-show="!ngModel[field]">- Select One -</option>
+    </select>
 </div>
