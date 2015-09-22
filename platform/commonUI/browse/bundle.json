@@ -142,7 +142,7 @@
                 "provides": "creationService",
                 "type": "provider",
                 "implementation": "creation/CreationService.js",
-                "depends": [ "persistenceService", "$q", "$log" ]
+                "depends": [ "persistenceService", "now", "$q", "$log" ]
             }
         ],
         "runs": [

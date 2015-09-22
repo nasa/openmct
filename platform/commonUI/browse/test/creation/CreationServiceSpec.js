@@ -31,6 +31,7 @@ define(
 
         describe("The creation service", function () {
             var mockPersistenceService,
+                mockNow,
                 mockQ,
                 mockLog,
                 mockParentObject,
@@ -63,6 +64,7 @@ define(
                     "persistenceService",
                     [ "createObject" ]
                 );
+                mockNow = jasmine.createSpy('now');
                 mockQ = { when: mockPromise, reject: mockReject };
                 mockLog = jasmine.createSpyObj(
                     "$log",
@@ -103,6 +105,8 @@ define(
                     mockPromise(true)
                 );
 
+                mockNow.andReturn(12321);
+
                 mockParentObject.getCapability.andCallFake(function (key) {
                     return mockCapabilities[key];
                 });
@@ -123,6 +127,7 @@ define(
 
                 creationService = new CreationService(
                     mockPersistenceService,
+                    mockNow,
                     mockQ,
                     mockLog
                 );
@@ -199,6 +204,12 @@ define(
                 creationService.createObject(model, mockParentObject);
 
                 expect(mockLog.error).toHaveBeenCalled();
+            });
+
+            it("attaches a 'persisted' timestamp", function () {
+                var model = { someKey: "some value" };
+                creationService.createObject(model, mockParentObject);
+                expect(model.persisted).toEqual(mockNow());
             });
 
         });
