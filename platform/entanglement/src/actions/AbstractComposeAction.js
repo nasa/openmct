@@ -32,7 +32,8 @@ define(
          * @private
          */
         /**
-         * Change the composition of the specified objects.
+         * Change the composition of the specified objects. Note that this
+         * should only be invoked after successfully validating.
          *
          * @param {DomainObject} domainObject  the domain object to
          *    move, copy, or link.
