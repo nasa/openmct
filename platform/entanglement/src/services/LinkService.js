@@ -45,14 +45,17 @@ define(
             if (parentCandidate.getId() === object.getId()) {
                 return false;
             }
-            if ((parentCandidate.getModel().composition || []).indexOf(object.getId()) !== -1) {
+            if (!parentCandidate.hasCapability('composition')) {
+                return false;
+            }
+            if (parentCandidate.getModel().composition.indexOf(object.getId()) !== -1) {
                 return false;
             }
             return this.policyService.allow(
                 "composition",
                 parentCandidate.getCapability('type'),
                 object.getCapability('type')
-            ) && parentCandidate.hasCapability('composition');
+            );
         };
 
         LinkService.prototype.perform = function (object, parentObject) {
