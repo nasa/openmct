@@ -216,15 +216,16 @@
 .edit-mode {
     .split-layout {
         .split-pane-component.pane.right {
-            //min-width: 150px;
-            //max-width: 50%;
-            .split-pane-component.pane.bottom {
+            width: 15%;
+            .pane.bottom {
                 min-height: 50px;
-                max-height: 80%;
+                height: 30%;
             }
         }
     }
 }
+
+
 
 .pane {
     position: absolute;
@@ -298,19 +299,15 @@
 	}
 }
 
-.object-browse-bar .btn,
-.object-browse-bar .t-btn,
-.object-browse-bar .view-switcher,
-.top-bar .buttons-main .btn,
-.top-bar .buttons-main .t-btn,
-.top-bar .view-switcher,
-.tool-bar .btn,
-.tool-bar .t-btn {
-    $h: $btnToolbarH;
-    display: inline-block;
-    font-size: $h * $btnFontSizeToH;
-    line-height: 200%;
-    vertical-align: top;
+.object-browse-bar .s-btn,
+.top-bar .buttons-main .s-btn,
+.top-bar .s-menu,
+.tool-bar .s-btn,
+.tool-bar .s-menu {
+	$h: $btnToolbarH;
+	height: $h;
+	line-height: $h;
+	vertical-align: top;
 }
 
 .object-browse-bar,
@@ -344,6 +341,7 @@
 	.left {
 		//@include test(red);
 		@include webkitProp(flex, '1 1 0');
+		padding-right: $interiorMarginLg;
 	}
 }
 

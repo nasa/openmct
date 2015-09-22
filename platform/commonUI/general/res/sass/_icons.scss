@@ -29,10 +29,8 @@
 }
 
 .ui-symbol {
-	$c: $colorKey;
 	&.icon {
-		color: $c;
-		@include txtShdwSubtle();
+		color: $colorKey;
 		&.alert {
 			color: $colorAlert;
 			&:hover {
@@ -54,7 +52,7 @@
 	display: inline-block;
 }
 
-.btn-menu .invoke-menu,
+.s-menu .invoke-menu,
 .icon.major .invoke-menu {
 	margin-left: $interiorMarginSm;
 }

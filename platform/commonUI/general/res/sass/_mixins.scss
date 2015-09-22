@@ -145,46 +145,14 @@
     background-repeat: $repeatDir;
 }
 
-@mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $hover: false) {
-    $ltnRatio: 7%;
-    $gradRatio: 5%;
-    $hovRatio: 7%;
-    $bgBase: lighten($bg, $ltnRatio);
-    $fgBase: lighten($fg, $ltnRatio);
-    $gradC1: lighten($bgBase, $gradRatio);
-    $gradC2: $bgBase;
-    $cInvokeBase: lighten($gradC1, $ltnRatio*2);
-
-    @include background-image(linear-gradient($gradC1, $gradC2));
-    @include border-radius($controlCr);
-    @include box-sizing(border-box);
-    @include boxShdwSubtle();
-    border: none;
-    border-top: 1px solid lighten($gradC1, 2%);
-    color: $fg;
-    display: inline-block;
-    @if $hover == true {
-        &:not(.disabled):hover {
-            @include background-image(linear-gradient(lighten($gradC1, $hovRatio), lighten($gradC2, $hovRatio)));
-            color: lighten($fgBase, $hovRatio);
-            &.btn-menu .invoke-menu {
-                color: lighten($cInvokeBase, $hovRatio);
-            }
-        }
-    }
-    &.btn-menu .invoke-menu {
-        color: $cInvokeBase;
-    }
-}
-
 @mixin sliderTrack($bg: $scrollbarTrackColorBg) {
-    $b: 1px solid lighten($bg, 30%);
+    //$b: 1px solid lighten($bg, 30%);
     @include border-radius(2px);
     @include box-sizing(border-box);
     @include boxIncised(0.7);
     background-color: $bg;
-    border-bottom: $b;
-    border-right: $b;
+    //border-bottom: $b;
+    //border-right: $b;
 }
 
 @mixin controlGrippy($b, $direction: horizontal, $w: 1px, $style: dotted) {
@@ -211,38 +179,35 @@
         }
     }
     &:not(.disabled):hover:before {
-        @include trans-prop-nice("border-color", 50ms);
-        border-color: $colorKey;
+        @include trans-prop-nice("border-color", 25ms);
+        border-color: $colorGrippyInteriorHover;
     }
 }
 
-@mixin btnSubtle($bg: $colorBodyBg, $fg: $colorBodyFg) {
-    @include containerSubtle($bg, $fg, true);
-}
-
-@mixin btnNoticeable($bg: $colorBodyBg, $fg: $colorBodyFg) {
-    // No longer should be used; use btnSubtle instead
-    //@include containerSubtle($bg, $fg, true);
-    //@include background-image(linear-gradient(lighten($bg, 20%), $bg));
-    /*	&:not(.disabled):hover {
-            @include background-image(linear-gradient(lighten($bg, 30%), lighten($bg, 10%)));
-        }*/
-}
-
-@mixin boxIncised($sVal: 0.6) {
-    @include box-shadow(inset rgba(black, $sVal) 0 1px 5px);
+@mixin boxIncised($sVal: 0.6, $inset: 5px) {
+    @include box-shadow(inset rgba(black, $sVal) 0 1px $inset);
 }
 
 @mixin boxOutline($c: lighten($colorBodyBg, 20%)) {
     border: 1px solid $c;
 }
 
+@mixin boxShdw($sVal: rgba(black, 0.4) 0 0 3px) {
+	@if $sVal != 'none' {
+		@include box-shadow($sVal);
+	}
+}
+
 @mixin boxShdwSubtle($sVal: 0.2) {
-    @include box-shadow(rgba(black, $sVal) 0 1px 2px);
+	@if $sVal != 'none' {
+		@include box-shadow(rgba(black, $sVal) 0 1px 2px);
+	}
 }
 
 @mixin boxShdwLarge($sVal: 0.7) {
-    @include box-shadow(rgba(black, $sVal) 0 3px 10px);
+	@if $sVal != 'none' {
+		@include box-shadow(rgba(black, $sVal) 0 3px 10px);
+	}
 }
 
 @mixin outerGlow($color: #fff, $sVal: 0.3) {
@@ -257,34 +222,94 @@
     @include background-image(linear-gradient($deg, rgba($c, $a0), rgba($c, $a1) 100%));
 }
 
+@mixin txtShdw($sVal) {
+	//@if $sVal != 'none' {
+		@include text-shadow($sVal);
+	//}
+}
+
 @mixin txtShdwSubtle($sVal: 0.1) {
-    @include text-shadow(rgba(black, $sVal) 0 1px 2px);
+	@if $sVal != 'none' {
+	    @include text-shadow(rgba(black, $sVal) 0 1px 2px);
+	}
 }
 
 @mixin txtShdwLarge($sVal: 0.7) {
     @include text-shadow(rgba(black, $sVal) 0 3px 7px);
 }
 
-/*********************************************** FORM ELEMENTS */
+@function pullForward($c, $p: 20%) {
+    // For dark interfaces, lighter things come forward
+    @return lighten($c, $p);
+}
+
+@function pushBack($c, $p: 20%) {
+    // For dark interfaces, darker things move back
+    @return darken($c, $p);
+}
+
+@function percentToDecimal($p) {
+	@return $p / 100%;
+}
+
+@function decimalToPercent($d) {
+	@return percentage($d);
+}
+
+/*********************************************** CONTROLS, FORM ELEMENTS */
+
+@mixin containerBase($bg: $colorBodyBg, $fg: $colorBodyFg) {
+	background-color: $bg;
+	@include border-radius($controlCr);
+	@include box-sizing(border-box);
+	color: $fg;
+	display: inline-block;
+}
+
+@mixin btnBase($bg: $colorBodyBg, $bgHov: none, $fg: $colorBodyFg, $ic: $colorBtnIcon) {
+	@include user-select(none);
+    @include transition(background, .25s);
+	.icon {
+		color: $ic;
+	}
+	@include desktop {
+		@if $bgHov != none {
+			&:not(.disabled):hover {
+				background: $bgHov;
+				>.icon {
+					color: lighten($ic, $ltGamma);
+				}
+			}
+		}
+	}
+}
+
 @mixin input-base($bg: $colorBodyBg, $fg: $colorBodyFg) {
-    @include appearance(none);
-    @include border-radius($controlCr);
-    @include box-sizing(border-box);
-    @include box-shadow(inset rgba(black, 0.65) 0 1px 4px);
-    //	background: lighten($bg, 20%);
-    background: rgba(#fff, 0.1);
-    border: none;
-    //border-bottom: 1px solid rgba(#fff, 0.1);
-    color: lighten($fg, 20%);
-    outline: none;
-    &.error {
-        background: rgba(red, 0.5);
-    }
+	@include appearance(none);
+	@include border-radius($controlCr);
+	@include box-sizing(border-box);
+	@include box-shadow(inset rgba(black, 0.4) 0 1px 3px);
+	background: $bg;
+	border: none;
+	color: $fg;
+	outline: none;
+	&.error {
+		background: rgba(red, 0.5);
+	}
 }
 
 @mixin nice-input($bg: $colorBodyBg, $fg: $colorBodyFg) {
-    @include input-base($bg, $fg);
-    padding: 0 $interiorMarginSm;
+	@include input-base($bg, $fg);
+	padding: 0 $interiorMarginSm;
+}
+
+@mixin contextArrow() {
+	@include text-shadow(none);
+	content: '\76';
+	display: inline-block;
+	font-family: 'symbolsfont';
+	margin-left: $interiorMarginSm;
+	vertical-align: top;
 }
 
 @mixin nice-textarea($bg: $colorBodyBg, $fg: $colorBodyFg) {
@@ -297,16 +322,6 @@
     background: lighten($bg, 3%);
     border-bottom: 1px solid lighten($bg, 10%);
 }
-
-/*
-@mixin invokeMenu($baseColor: $colorBodyFg) {
-	$c: $baseColor;
-	color: $c;
-	&:hover {
-		color: lighten($c, $ltGamma);
-	}
-}
-*/
 
 @mixin menuUlReset() {
     margin: 0;

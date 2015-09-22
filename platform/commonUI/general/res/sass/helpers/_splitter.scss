@@ -20,18 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .split-layout {
-	$b: lighten($colorBodyBg, 5%);
-	$splitterD: 5px;
-	// TEMP VAlS - this will need to be redone when we implement a draggable splitter
-	$splitL: 85%;
-	$splitT: 70%;
+	$b: pullForward($colorBodyBg, $contrastRatioPercent);
 
 	.splitter {
 		background-color: $b;
-		@include box-shadow(rgba(black, 0.4) 0 0 3px);
+		@include border-radius($splitterEndCr);
+		@include boxShdw($splitterShdw);
 		overflow: hidden;
 		position: absolute;
 		z-index: 1;
+		//@if $colorSplitterHover != 'none' {
+			&:hover {
+				background-color: $colorSplitterHover;
+			}
+		//}
 	}
 	&.horizontal {
 		// Slides vertically up and down, splitting the element horizontally
@@ -41,21 +43,17 @@
 			right: 0;
 			&.top {
 				bottom: auto;
-//				height: $splitT;
 			}
 			&.bottom {
 				top: auto;
-//				height: 100% - $splitT;
 			}
 		}
 		>.splitter {
-			@include controlGrippy($b, horizontal);
+			@include controlGrippy($colorSplitterInterior, horizontal);
 			cursor: row-resize;
 			left: 0; right: 0;
 			width: auto;
-			height: $splitterD;
-//			margin-top: ($splitterD + 2) * -1;  // Controlled by splitter
-//			top: $splitT;  // Controlled by splitter
+			height: $splitterW;
 		}
 	}
 	&.vertical {
@@ -65,20 +63,16 @@
 			bottom: 0;
 			&.left {
 				right: auto;
-//				width: $splitL - 1%; // Controlled by splitter
 			}
 			&.right {
 				left: auto;
-//				width: 100% - $splitL; // Controlled by splitter
 			}
 		}
 		>.splitter {
-			@include controlGrippy($b, vertical);
+			@include controlGrippy($colorBodyBg, vertical);
 			bottom: 0;
 			cursor: col-resize;
-			width: $splitterD;
-//			margin-left: ($splitterD + 2) * -1;  // Controlled by splitter
-//			left: $splitL;  // Controlled by splitter
+			width: $splitterW;
 		}
 	}
 }

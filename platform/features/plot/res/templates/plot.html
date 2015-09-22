@@ -105,23 +105,21 @@
                  ng-show="representation.showControls"
                  style="position: absolute; top: 8px; right: 8px;">
 
-                <a href=""
-                   class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
+                <a class="s-btn"
                    ng-click="plot.stepBackPanZoom()"
                    ng-show="plot.isZoomed()"
                    title="Restore previous pan/zoom">
                     <span class="ui-symbol icon">&lt;</span>
                 </a>
 
-                <a href=""
-                   class="t-btn l-btn s-btn s-icon-btn s-very-subtle"
+                <a class="s-btn"
                    ng-click="plot.unzoom()"
                    ng-show="plot.isZoomed()"
                    title="Reset pan/zoom">
                     <span class="ui-symbol icon">I</span>
                 </a>
 
-                <div class="menu-element btn s-very-subtle btn-menu dropdown menus-to-left"
+                <div class="menu-element s-menu menus-to-left"
                      ng-if="plot.getModeOptions().length > 1"
                      ng-controller="ClickAwayController as toggle">
 
@@ -129,9 +127,8 @@
 
                     <span class="ui-symbol icon type-icon">{{plot.getMode().glyph}}</span>
                     <span>{{plot.getMode().name}}</span>
-                    <span class='ui-symbol invoke-menu'>v</span>
 
-                    <div class="menu dropdown" ng-show="toggle.isActive()">
+                    <div class="menu" ng-show="toggle.isActive()">
                         <ul>
                             <li ng-repeat="option in plot.getModeOptions()">
                                 <a href="" ng-click="plot.setMode(option); toggle.setState(false)">

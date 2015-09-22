@@ -229,6 +229,7 @@ define(
             // Position a panel after a drop event
             function handleDrop(e, id, position) {
                 // Don't handle this event if it has already been handled
+			  	// color is set to "" to let the CSS theme determine the default color
                 if (e.defaultPrevented) {
                     return;
                 }
@@ -240,7 +241,7 @@ define(
                     y: Math.floor(position.y / self.gridSize[1]),
                     id: id,
                     stroke: "transparent",
-                    color: "#cccccc",
+                    color: "",
                     titled: true,
                     width: DEFAULT_DIMENSIONS[0],
                     height: DEFAULT_DIMENSIONS[1]

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .frame {
-	$ohH: 16px;
+	$ohH: $btnFrameH;
 	$bc: $colorInteriorBorder;
 	&.child-frame.panel {
 		background: $colorBodyBg;
@@ -46,8 +46,21 @@
 		left: $myM;
 	}
 	&.frame-template {
-		.view-switcher {
+		.s-btn,
+		.s-menu {
+			height: $ohH;
 			line-height: $ohH;
+			padding: 0 $interiorMargin;
+			> span {
+				font-size: 0.65rem;
+			}
+		}
+
+		.s-menu:after {
+			font-size: 8px;
+		}
+
+		.view-switcher {
 			z-index: 10;
 		}
 		// Hide the view switcher by default when it's in an element that's in a frame context
@@ -64,7 +77,7 @@
 	}
 	.view-switcher {
 		// Hide the name when the view switcher is in a frame context
-		.name {
+		.title-label {
 			display: none;
 		}
 	}

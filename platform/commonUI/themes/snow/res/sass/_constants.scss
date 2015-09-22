@@ -1,0 +1,141 @@
+// Global
+$colorBodyBg: #fcfcfc;
+$colorBodyFg: #666;
+$colorGenBg: #fff;
+$colorFooterBg: #000;
+$colorKey: #0099cc;
+$colorKeySelectedBg: $colorKey;
+$colorKeyFg: #fff;
+$colorInteriorBorder: rgba($colorBodyFg, 0.2);
+$contrastRatioPercent: 40%;
+$basicCr: 4px;
+$controlCr: $basicCr;
+$smallCr: 3px;
+
+// Buttons
+$colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent);
+$colorBtnFg: #fff;
+$colorBtnMajorBg: $colorKey;
+$colorBtnMajorFg: $colorKeyFg;
+$colorBtnIcon: #eee;
+$colorInvokeMenu: #000;
+$contrastInvokeMenuPercent: 40%;
+
+// General Colors
+$colorAlt1: #ff6600;
+$colorAlert: #ff3c00;
+$colorIconLink: #49dedb;
+$colorPausedBg: #ff9900;
+$colorPausedFg: #fff;
+$colorCreateBtn: $colorKey;
+$colorGridLines: rgba(#000, 0.05);
+$colorInvokeMenu: #fff;
+$colorObjHdrTxt: $colorBodyFg;
+$colorObjHdrIc: pushBack($colorObjHdrTxt, 30%);
+
+// Menu colors
+$colorMenuBg: pushBack($colorBodyBg, 10%);
+$colorMenuFg: pullForward($colorMenuBg, 70%);
+$colorMenuIc: $colorKey;
+$colorMenuHovBg: pullForward($colorMenuBg, 10%);
+$colorMenuHovFg: $colorMenuFg;
+$colorMenuHovIc: $colorMenuIc;
+$colorCreateMenuLgIcon: $colorKey;
+$colorCreateMenuText: $colorBodyFg;
+$shdwMenu: rgba(black, 0.5) 0 1px 5px;
+$shdwMenuText: none;
+
+// Form colors
+$colorCheck: $colorKey;
+$colorFormRequired: $colorKey;
+$colorFormValid: #33cc33;
+$colorFormError: #cc0000;
+$colorFormInvalid: #ff2200;
+$colorFormLines: rgba(#000, 0.1);
+$colorFormSectionHeader: rgba(#000, 0.05);
+$colorInputBg: $colorGenBg;
+$colorInputFg: $colorBodyFg;
+$colorFormText: pushBack($colorBodyFg, 10%);
+$colorInputIcon: pushBack($colorBodyFg, 25%);
+$colorSelectBg: #ddd;
+$colorSelectFg: $colorBodyFg;
+
+// Limits and staleness colors//
+$colorTelemFresh: pullForward($colorBodyFg, 20%);
+$colorTelemStale: pushBack($colorBodyFg, 20%);
+$styleTelemStale: italic;
+$colorLimitYellowBg: rgba(#ffaa00, 0.3);
+$colorLimitYellowIc: #ffaa00;
+$colorLimitRedBg: rgba(red, 0.3);
+$colorLimitRedIc: red;
+
+// Bubble colors
+$colorInfoBubbleFg: #666;
+$colorInfoBubbleBg: $colorMenuBg;
+$colorThumbsBubbleFg: pullForward($colorBodyFg, 10%);
+$colorThumbsBubbleBg: pullForward($colorBodyBg, 10%);
+
+// Overlay
+$colorOvrBlocker: rgba(black, 0.7);//
+$colorOvrBg: $colorBodyBg;
+$colorOvrFg: $colorBodyFg;
+$colorOvrBtnBg: pullForward($colorOvrBg, 40%);
+$colorOvrBtnFg: #fff;
+
+// Items
+$colorItemBg: #ddd;
+$colorItemBgHov: pullForward($colorItemBg, 5%);
+$colorItemFg: $colorBodyFg;
+$colorItemFgDetails: pushBack($colorItemFg, 15%);
+$colorItemIc: $colorKey;
+$colorItemSubIcons: $colorItemFgDetails;
+$colorItemOpenIcon: $colorItemFgDetails;
+$shdwItemText: none; //rgba(black, 0.2) 0 1px 2px;
+$colorItemBgSelected: $colorKey;
+
+// Tabular
+$colorTabBorder: pullForward($colorBodyBg, 10%);
+$colorTabBodyBg: $colorBodyBg;
+$colorTabBodyFg: pullForward($colorBodyFg, 20%);
+$colorTabHeaderBg: pullForward($colorBodyBg, 10%);
+$colorTabHeaderFg: pullForward($colorBodyFg, 20%);
+$colorTabHeaderBorder: $colorBodyBg;
+
+// Plot
+$colorPlotBg: rgba(black, 0.05);
+$colorPlotFg: $colorBodyFg;
+$colorPlotHash: rgba(black, 0.2);
+$stylePlotHash: dashed;
+$colorPlotAreaBorder: $colorInteriorBorder;
+
+// Tree
+$colorItemTreeIcon: $colorKey;
+$colorItemTreeIconHover: $colorItemTreeIcon; //pushBack($colorItemTreeIcon, 20%);
+$colorItemTreeVCHover: $colorKey;
+$colorItemTreeFg: $colorBodyFg;
+$colorItemTreeSelectedBg: pushBack($colorKey, 15%);
+$colorItemTreeSelectedFg: $colorBodyBg;
+$colorItemTreeVC: $colorBodyFg;
+$colorItemTreeSelectedVC: $colorBodyBg;
+$shdwItemTreeIcon: none;
+
+// Scrollbar
+$scrollbarTrackSize: 10px;
+$scrollbarTrackShdw: rgba(#000, 0.2) 0 1px 2px;
+$scrollbarTrackColorBg: rgba(#000, 0.1);
+$scrollbarThumbColor: darken($colorBodyBg, 50%);//
+$scrollbarThumbColorHov: $colorKey;
+
+// Splitter
+$splitterShdw: none;
+$colorSplitterInterior: $colorBodyBg;
+$colorSplitterHover: $colorKey;
+$splitterW: 5px;
+$splitterEndCr: $splitterW;
+$colorGrippyInteriorHover: $colorBodyBg;
+
+// Mobile
+$colorMobilePaneLeft: darken($colorBodyBg, 2%);
+
+// About Screen
+$colorAboutLink: #84b3ff;

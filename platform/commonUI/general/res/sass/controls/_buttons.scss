@@ -22,140 +22,102 @@
 $baseRatio: 1.5;
 $pad: $interiorMargin * $baseRatio;
 
-/******* LAYOUT AND SIZING */
-.btn,
-.l-btn {
-	@include user-select(none);
-	//line-height: 1.5em; // Was 1.25em
-	line-height: 150%;
-	padding: 0 $pad;
-	text-decoration: none;
-	&.lg,
-	&.create-btn {
-		$h: $ueTopBarH; // - $interiorMargin;
-		height: $h;
-		line-height: $h - 2;
-		//padding: 0 $pad * 6 0 $pad;
-		padding: 0 $pad * 3;
-	}
-	&.create-btn {
-		&:before {
-			content:"+";
-			font-family: symbolsfont;
-			font-size: 0.8em;
-		}
-		.menu {
-			margin-left: $pad * -1;
-		}
-		>.ui-symbol {
-			//font-size: 1.1em; // Normalizing for new icomoon symbols font
-		}
-	}
-	&.sm {
-		padding: 0 $pad / $baseRatio;
-	}
-	&.vsm {
-		padding: 0 ($pad / $baseRatio) / 2;
-	}
-}
-
-/*********************************** STYLE STYLES */
-.btn,
 .s-btn {
-	$base: lighten($colorBodyBg, 20%); // Moved to s-btn
-	@include border-radius($controlCr);
-	@include box-sizing(border-box);
-	@include text-shadow(rgba(black, 0.3) 0 1px 1px);
-	cursor: pointer;
-	//line-height: 1.2em;
-	text-decoration: none;
-	&.major {
-		$bg: $colorKey;
-		@include btnSubtle($bg);
-		$fg: lighten($bg, 50%);
-		color: $fg;
-		&:hover {
-			@include btnSubtle(lighten($bg, 5%), $fg);
-			//color: $fg;
-		}
-		.invoke-menu {
-			color: $fg;
-		}
+    @include box-sizing(border-box);
+    @include user-select(none);
+    cursor: pointer;
+    text-decoration: none;
+    height: $btnStdH;
+    line-height: $btnStdH;
+    padding: 0 $pad;
+    font-size: 0.7rem;
+
+    .icon {
+        font-size: 0.8rem;
+        color: $colorKey;
+    }
+
+    .title-label {
+        vertical-align: top;
+    }
+
+	&.lg {
+		font-size: 1rem;
 	}
-	&.subtle {
-		@include btnSubtle($base, lighten($base, 40%));
-	}
-	&.very-subtle,
-	&.s-very-subtle {
-		@include containerSubtle($colorBodyBg, $colorBodyFg, true);
-		&.paused {
-			@include containerSubtle($colorPausedBg, $colorPausedFg, true);
-			.icon:before {
-				content:"\0000EF";
-			}
-		}
-	}
+
+    &.sm {
+        padding: 0 $pad / $baseRatio;
+    }
+
+    &.vsm {
+        padding: 0 ($pad / $baseRatio) / 2;
+    }
+
+    &.major {
+        $bg: $colorBtnMajorBg;
+        $hc: lighten($bg, 10%);
+        @include btnSubtle($bg, $hc, $colorBtnMajorFg, $colorBtnMajorFg);
+    }
+
+    &:not(.major) {
+        // bg, bgHov, fg, ic
+        @include btnSubtle($colorBtnBg, $colorKey, $colorBtnFg, $colorBtnIcon);
+    }
+    &.pause-play {
+
+    }
+
+    &.pause-play {
+        .icon:before {
+            content: "\0000F1";
+        }
+        &.paused {
+            @include btnSubtle($colorPausedBg, pushBack($colorPausedBg, 10%), $colorPausedFg, $colorPausedFg);
+            .icon {
+                @include pulse(1000ms);
+                :before {
+                    content: "\0000EF";
+                }
+            }
+        }
+    }
+
+    &.show-thumbs {
+        .icon:before {
+            content: "\000039";
+        }
+    }
 }
 
-.icon-btn,
-.s-icon-btn {
-	@extend .s-btn;
-	font-size: 1em;
-	.icon {
-		color: $colorKey;
-	}
-	&.paused {
-		.icon {
-			color: $colorPausedFg;
-		}
-	}
+.l-btn-set {
+    // Buttons that have a very tight conceptual grouping - no internal space between them.
+    // Structure: .btn-set > mct-representation class=first|last > .s-btn
+    //@include test(red);
+    font-size: 0; // Remove space between s-btn elements due to white space in markup
 
-	&:not(.disabled) {
-		&:not(.paused) {
-			&:hover {
-				.icon {
-					color: lighten($colorKey, $ltGamma);
-				}
-			}
-		}
-	}
+    .s-btn {
+        @include border-radius(0);
+        margin-left: 1px;
+    }
 
-	&.labeled {
-		padding: 0 $pad/2;
-		.icon {
-			//font-size: 1.5em;
-		}
-		.title-label {
-			margin-left: $interiorMargin;
-		}
-	}
+    .first {
+        .s-btn {
+            @include border-left-radius($controlCr);
+            margin-left: 0;
+        }
+    }
 
-	&.pause-play {
-/*		&.paused {
-			.icon {
-				@include pulse(500ms);
-			}
-		}*/
-		.icon:before {
-			content:"\0000F1";
-		}
-	}
-
-	&.show-thumbs {
-		.icon:before {
-			content:"\000039";
-		}
-	}
+    .last {
+        .s-btn {
+            @include border-right-radius($controlCr);
+        }
+    }
 }
 
-/*********************************** LAYOUT STYLES */
-span.btn,
-span.btn span,
-span.l-btn,
-span.l-btn span,
-a.btn,
-a.btn span,
-a.l-btn,
-a.l-btn span {
-	display: inline-block;
+.paused {
+    &:not(.s-btn) {
+        border-color: $colorPausedBg !important;
+        color: $colorPausedBg !important;
+    }
 }
+

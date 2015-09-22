@@ -19,63 +19,64 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@import "compass";
-@import "compass/reset";
-@import "compass/css3";
-@import "compass/css3/animation";
-@import "compass/css3/user-interface";
-@import "compass/utilities";
-
-@import "mixins";
-@import "mobile/mixins";
-
 @import "effects";
 @import "global";
-@import "fonts";
-@import "user-environ/layout";
-@import "mobile/layout";
-@import "fixed-position";
 @import "about";
 @import "text";
 @import "icons";
 @import "limits";
 @import "data-status";
-@import "lists/tabular";
+@import "helpers/bubbles";
+@import "helpers/splitter";
+@import "helpers/wait-spinner";
+@import "messages";
+@import "properties";
+
+/********************************* CONTROLS */
 @import "controls/breadcrumb";
 @import "controls/buttons";
 @import "controls/color-palette";
 @import "controls/controls";
 @import "controls/lists";
 @import "controls/menus";
-@import "mobile/controls/menus";
 @import "controls/time-controller";
-@import "edit/editor";
-@import "features/imagery";
-@import "features/time-display";
+@import "mobile/controls/menus";
+
+/********************************* FORMS */
 @import "forms/elems";
-@import "forms/validation";
-@import "forms/text-input";
 @import "forms/selects";
 @import "forms/channel-selector";
 @import "forms/datetime";
+@import "forms/validation";
 @import "forms/filter";
-@import "plots/plots-main";
+
+/********************************* USER ENVIRON */
+@import "user-environ/layout";
+@import "mobile/layout";
+@import "edit/editor";
 @import "search/search";
 @import "mobile/search/search";
 @import "overlay/overlay";
 @import "mobile/overlay/overlay";
+@import "tree/tree";
+@import "mobile/tree";
 @import "user-environ/frame";
 @import "user-environ/top-bar";
 @import "user-environ/bottom-bar";
-//@import "user-environ/object-browse";
 @import "user-environ/tool-bar";
-@import "helpers/bubbles";
-@import "helpers/splitter";
-@import "helpers/wait-spinner";
-@import "properties";
-@import "autoflow";
+
+/********************************* VIEWS */
+@import "fixed-position";
+@import "lists/tabular";
+@import "plots/plots-main";
 @import "iframe";
-@import "messages";
-@import "initialization";
 @import "hide-non-functional";
 @import "views";
+@import "items/item";
+@import "mobile/item";
+
+
+/********************************* TO BE MOVED */
+@import "autoflow";
+@import "features/imagery";
+@import "features/time-display";

@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <div
-	class="t-btn l-btn s-btn s-icon-btn s-very-subtle btn-menu menu-element dropdown click-invoke t-color-palette"
+	class="t-btn l-btn s-btn s-icon-btn s-menu menu-element t-color-palette"
     ng-controller="ClickAwayController as toggle"
 	>
 
@@ -30,11 +30,9 @@
     <span class="title-label" ng-if="structure.text">
         {{structure.text}}
     </span>
-    <span class='ui-symbol invoke-menu' ng-if="!structure.text">v</span>
-
 
     <div
-	    class="menu dropdown l-color-palette"
+	    class="menu l-color-palette"
         ng-controller="ColorController as colors"
         ng-show="toggle.isActive()"
 	    >

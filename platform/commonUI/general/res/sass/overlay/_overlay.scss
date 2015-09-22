@@ -25,13 +25,14 @@
 		z-index: 100;
 	}
     .clk-icon.close {
+        font-size: 0.8rem;
         position: absolute;
         top: $interiorMarginLg; right: $interiorMarginLg; bottom: auto; left: auto;
 	    z-index: 100;
     }
 	>.holder {
 		$i: 15%;
-		@include containerSubtle();
+		@include containerSubtle($colorOvrBg, $colorOvrFg);
 		@include border-radius($basicCr * 3);
 		color: $colorOvrFg;
 		top: $i; right: $i; bottom: $i; left: $i;
@@ -63,8 +64,22 @@
         //font-size: 1em;
         height: $ovrFooterH;
         text-align: right;
-        .btn {
-            margin-left: 10px;
+        .s-btn {
+	        $bg: $colorOvrBtnBg;
+	        &:not(.major) {
+	            @include btnSubtle($bg, pullForward($bg, 10%), $colorOvrBtnFg, $colorOvrBtnFg);
+	        }
+	        font-size: 95%;
+	        height: $ovrFooterH;
+	        line-height: $ovrFooterH;
+            margin-left: $interiorMargin;
+	        padding: 0 $interiorMargin * 3;
+	        //&.major {
+		     //   @extend .s-btn.major;
+		     //   &:hover {
+			 //       @extend .s-btn.major:hover;
+		     //   }
+	        //}
         }
     }
     .contents.l-dialog {
@@ -74,5 +89,10 @@
 	    bottom: $myM;
 	    left: $myM;
         overflow: auto;
+	    .field.l-med {
+		    input[type='text'] {
+			    width: 100%;
+		    }
+	    }
     }
 }
