@@ -57,10 +57,10 @@ define(
             // that parentObject.hasCapability('composition').
             var composition = parentObject.getCapability('composition');
 
-            return composition.add(object).then(function (result) {
+            return composition.add(object).then(function (objectInNewContext) {
                 return parentObject.getCapability('persistence')
                     .persist()
-                    .then(function () { return result; });
+                    .then(function () { return objectInNewContext; });
             });
         };
 
