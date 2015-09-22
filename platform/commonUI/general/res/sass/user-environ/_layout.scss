@@ -70,19 +70,26 @@
     &.abs {
 	    text-wrap: none;
 	    white-space: nowrap;
-    }
-    &.left,
-    .left {
-        width: 45% !important;
-        right: auto !important;
-    }
-    &.right,
-    .right {
-        width: 45% !important;
-        left: auto !important;
-        text-align: right;
-        .icon.major {
-            margin-left: $interiorMargin * 3;
+        &.left,
+        .left {
+            width: 45%;
+            right: auto;
+        }
+        &.right,
+        .right {
+            width: 45%;
+            left: auto;
+            text-align: right;
+            .icon.major {
+                margin-left: $interiorMargin * 3;
+            }
+        }
+        .l-flex,
+        &.l-flex {
+            .left,
+            .right {
+                width: auto;
+            }
         }
     }
 }
@@ -118,7 +125,7 @@
 		}
 	}
 
-	.bottom-bar {
+	.ue-bottom-bar {
         //@include absPosDefault($bodyMargin);
 		@include absPosDefault(0);// New status bar design
 		top: auto;
@@ -200,7 +207,8 @@
     .split-layout {
         .split-pane-component.pane.left {
             min-width: 150px;
-            max-width: 50%;
+            max-width: 800px;
+            width: $ueBrowseLeftPaneW;
         }
     }
 }
@@ -208,8 +216,8 @@
 .edit-mode {
     .split-layout {
         .split-pane-component.pane.right {
-            min-width: 150px;
-            max-width: 50%;
+            //min-width: 150px;
+            //max-width: 50%;
             .split-pane-component.pane.bottom {
                 min-height: 50px;
                 max-height: 80%;
@@ -243,6 +251,12 @@
 	        .right.abs {
 		        top: auto;
 	        }
+            //.left.abs {
+            //    @include tmpBorder(green);
+            //}
+            //.right.abs {
+            //    @include tmpBorder(red);
+            //}
         }
         .object-holder {
             top: $ueTopBarH + $interiorMarginLg;
@@ -267,6 +281,7 @@
 	&.vertical {
 		// Slides left and right
 		>.pane {
+//            @include test();
 			margin-left: $interiorMargin;
 			>.holder {
 				left: 0;
@@ -280,6 +295,55 @@
 			}
 		}
 
+	}
+}
+
+.object-browse-bar .btn,
+.object-browse-bar .t-btn,
+.object-browse-bar .view-switcher,
+.top-bar .buttons-main .btn,
+.top-bar .buttons-main .t-btn,
+.top-bar .view-switcher,
+.tool-bar .btn,
+.tool-bar .t-btn {
+    $h: $btnToolbarH;
+    display: inline-block;
+    font-size: $h * $btnFontSizeToH;
+    line-height: 200%;
+    vertical-align: top;
+}
+
+.object-browse-bar,
+.top-bar {
+    .view-switcher {
+        margin-right: $interiorMarginLg * 2;
+    }
+}
+
+.object-browse-bar {
+	//@include test(blue);
+	@include absPosDefault(0, visible);
+	@include box-sizing(border-box);
+	height: $ueTopBarH;
+	line-height: $ueTopBarH;
+	white-space: nowrap;
+
+	.left {
+		padding-right: $interiorMarginLg * 2;
+		.l-back {
+			display: inline-block;
+			float: left;
+			margin-right: $interiorMarginLg;
+		}
+	}
+}
+
+.l-flex {
+	@include webkitVal('display', 'flex');
+	@include webkitProp('flex-flow', 'row nowrap');
+	.left {
+		//@include test(red);
+		@include webkitProp(flex, '1 1 0');
 	}
 }
 

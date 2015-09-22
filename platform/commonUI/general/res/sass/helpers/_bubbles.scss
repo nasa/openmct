@@ -75,15 +75,32 @@
 		margin-left: $bubbleArwSize*2;
 		.l-infobubble::before {
 			right: 100%;
-			@include triangle('left', $bubbleArwSize, 1.5, $colorInfoBubbleBg);
+            // NOTE: [MOBILE] REMOVES TRIANGLE
+            // Removes the triangle located on the info
+            // bubble for phones only, for tablets and
+            // desktops, triangle remains.
+            @include desktopandtablet {
+                @include triangle('left', $bubbleArwSize, 1.5, $colorInfoBubbleBg);
+            }
 		}
 	}
 
 	&.arw-right {
-		margin-right: $bubbleArwSize*2;
+        // NOTE: [MOBILE] REMOVES RIGHT MARGIN
+        // Removes right margin made for the 
+        // triangle on mobile
+        @include desktopandtablet {
+		  margin-right: $bubbleArwSize*2;
+        }
 		.l-infobubble::before {
 			left: 100%;
-			@include triangle('right', $bubbleArwSize, 1.5, $colorInfoBubbleBg);
+            // NOTE: [MOBILE] REMOVES TRIANGLE
+            // Removes the triangle located on the info
+            // bubble for phones only, for tablets and
+            // desktops, triangle remains.
+            @include desktopandtablet {
+                @include triangle('right', $bubbleArwSize, 1.5, $colorInfoBubbleBg);
+            }
 		}
 	}
 
@@ -122,12 +139,12 @@
 //************************************************* LOOK AND FEEL
 
 .l-thumbsbubble-wrapper {
-	.arw-up {
-		@include triangle('up', $bubbleArwSize, 1.5, $colorThumbsBubbleBg);
-	}
-	.arw-down {
-		@include triangle('down', $bubbleArwSize, 1.5, $colorThumbsBubbleBg);
-	}
+    .arw-up {
+        @include triangle('up', $bubbleArwSize, 1.5, $colorThumbsBubbleBg);
+    }
+    .arw-down {
+        @include triangle('down', $bubbleArwSize, 1.5, $colorThumbsBubbleBg);
+    }
 }
 
 .s-infobubble {

@@ -39,6 +39,7 @@ define(
         function CustomRegistrars(app, $log) {
             this.app = app;
             this.$log = $log;
+            this.registered = {}; // Track registered keys by extension
         }
 
         // Utility; bind a function to a "this" pointer
@@ -56,7 +57,10 @@ define(
                 var app = this.app,
                     $log = this.$log,
                     key = extension.key,
-                    dependencies = extension.depends || [];
+                    dependencies = extension.depends || [],
+                    registered = this.registered[angularFunction] || {};
+
+                this.registered[angularFunction] = registered;
 
                 if (!key) {
                     $log.warn([
@@ -67,6 +71,14 @@ define(
                         ", no key specified. ",
                         JSON.stringify(extension)
                     ].join(""));
+                } else if (registered[key]) {
+                    $log.debug([
+                        "Already registered ",
+                        angularFunction,
+                        " with key ",
+                        key,
+                        "; skipping."
+                    ].join(""));
                 } else {
                     $log.info([
                         "Registering ",
@@ -74,6 +86,7 @@ define(
                         ": ",
                         key
                     ].join(""));
+                    registered[key] = true;
                     app[angularFunction](
                         key,
                         dependencies.concat([extension])

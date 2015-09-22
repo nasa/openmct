@@ -44,7 +44,7 @@
             position: relative;
             &:hover .item-main {
 	            .item-type {
-		            color: $colorKey !important;
+		            color: lighten($colorKey, 10%) !important;
                     .l-icon-link {
                         color: $colorIconLink;
                     }
@@ -55,13 +55,16 @@
 	            }
             }
 	        .contents {
-		        top: $interiorMargin; right: $interiorMargin; bottom: $interiorMargin; left: $interiorMargin;
+                //@include test(red);
+                $m: $interiorMarginLg;
+		        top: $m; right: $m; bottom: $m; left: $m;
 	        }
             .bar {
-                &.top-bar.abs {
+                &.top-bar {
                     bottom: auto;
                     height: $ueBrowseGridItemTopBarH;
                     line-height: $ueBrowseGridItemTopBarH;
+                    text-align: right;
 	                z-index: 5;
 	                .left, .right {
 		                width: auto;
@@ -73,10 +76,10 @@
 		                }
 	                }
                 }
-                &.bottom-bar.abs {
+                &.bottom-bar {
                     top: auto;
-                    height: $ueBrowseGridItemBottomBarH;
-	                padding: $interiorMargin;
+                    //height: $ueBrowseGridItemBottomBarH;
+                    line-height: 110%;
                 }
             }
             .item-main {
@@ -89,7 +92,7 @@
                     //@include trans-prop-nice("color", $transTime);
                     @include absPosDefault($iconMargin, false);
                     //@include test(red);
-                    color: $colorItemFg;
+                    //color: $colorItemFg;
                     text-align: center;
                     font-size: $iconD * 0.95; //6em;
                     line-height: $iconD;
@@ -99,11 +102,12 @@
                     //line-height: $lh;
                     .l-icon-link {
                         // When the link icon is in the item-type icon holder
-                        color: darken($colorIconLink, 25%);
-                        height: 36px;
-                        line-height: 36px;
+                        //color: darken($colorIconLink, 25%);
+                        color: $colorIconLink;
+                        height: auto;
+                        line-height: 100%;
                         position: absolute;
-                        font-size: 32px;
+                        font-size: 0.3em;
                         left: 0px;
                         bottom: 10px;
                         z-index: 2;
@@ -123,13 +127,11 @@
             }
             .title {
 	            @include txtShdwSubtle();
+                @include ellipsize();
                 color: lighten($colorBodyFg, 20%);
-	            overflow: hidden;
-	            white-space: nowrap;
-	            text-overflow: ellipsis;
-//                font-weight: bold;
             }
             .details {
+                @include ellipsize();
                 font-size: 0.8em;
             }
 	        &.selected {

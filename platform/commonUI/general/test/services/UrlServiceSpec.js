@@ -91,7 +91,7 @@ define(
             
             it("get url for a new tab using domainObject and mode", function () {
                 urlService.urlForNewTab(mockMode, mockDomainObject);
-            });            
+            });
         });
     }
 );

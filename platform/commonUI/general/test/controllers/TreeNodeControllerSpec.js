@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/controllers/TreeNodeController"],
@@ -29,6 +29,7 @@ define(
         describe("The tree node controller", function () {
             var mockScope,
                 mockTimeout,
+                mockDomainObject,
                 controller;
 
             function TestObject(id, context) {
@@ -41,8 +42,13 @@ define(
             }
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj("$scope", ["$watch", "$on"]);
+                mockScope = jasmine.createSpyObj("$scope", ["$watch", "$on", "$emit"]);
                 mockTimeout = jasmine.createSpy("$timeout");
+                mockDomainObject = jasmine.createSpyObj(
+                    "domainObject",
+                    [ "getId", "getCapability", "getModel", "useCapability" ]
+                );
+
                 controller = new TreeNodeController(mockScope, mockTimeout);
             });
 
@@ -183,6 +189,22 @@ define(
                 expect(controller.isSelected()).toBeFalsy();
 
             });
+
+            it("exposes selected objects in scope", function () {
+                mockScope.domainObject = mockDomainObject;
+                mockScope.ngModel = {};
+                controller.select();
+                expect(mockScope.ngModel.selectedObject)
+                    .toEqual(mockDomainObject);
+            });
+
+            it("invokes optional callbacks upon selection", function () {
+                mockScope.parameters =
+                    { callback: jasmine.createSpy('callback') };
+                controller.select();
+                expect(mockScope.parameters.callback).toHaveBeenCalled();
+            });
+
         });
     }
 );
