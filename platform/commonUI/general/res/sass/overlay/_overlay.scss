@@ -24,16 +24,10 @@
 		background: $colorOvrBlocker;
 		z-index: 100;
 	}
-    .btn.close {
-	    @include border-radius($basicCr * 2);
-	    padding: 3px 6px;
+    .clk-icon.close {
         position: absolute;
-	    border: none;
-        top: $interiorMarginSm; right: $interiorMarginSm; bottom: auto; left: auto;
+        top: $interiorMarginLg; right: $interiorMarginLg; bottom: auto; left: auto;
 	    z-index: 100;
-    }
-    .editor {
-//        background: $colorBodyBg;
     }
 	>.holder {
 		$i: 15%;
@@ -43,13 +37,13 @@
 		top: $i; right: $i; bottom: $i; left: $i;
 		z-index: 101;
         >.contents {
-            $m: 25px;
+            $m: $overlayMargin;
             top: $m; right: $m; bottom: $m; left: $m;
         }
 	}
     .title {
 	    @include ellipsize();
-        font-size: 1.3em;
+        font-size: 1.2em;
 	    margin-bottom: $interiorMargin;
     }
     

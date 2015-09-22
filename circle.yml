@@ -8,3 +8,7 @@ deployment:
     branch: search
     heroku:
       appname: openmctweb-staging-un
+  openmctweb-staging-deux:
+    branch: mobile
+    heroku:
+      appname: openmctweb-staging-deux

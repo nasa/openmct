@@ -43,13 +43,24 @@ define(
                 mockBody,
                 mockWindow,
                 mockRootScope,
+                mockAgentService,
                 mockScope,
                 mockElement,
                 mockDomainObject,
                 mockEvent,
                 mockActionContext,
+                mockNavigator,
+                mockStopPropagation,
                 action;
 
+            function fireEvent(evt, value) {
+                mockElement.on.calls.forEach(function (call) {
+                    if (call.args[0] === evt) {
+                        call.args[1](value);
+                    }
+                });
+            }
+            
             beforeEach(function () {
                 mockCompile = jasmine.createSpy("$compile");
                 mockCompiledTemplate = jasmine.createSpy("template");
@@ -58,10 +69,11 @@ define(
                 mockBody = jasmine.createSpyObj("body", JQLITE_FUNCTIONS);
                 mockWindow = { innerWidth: MENU_DIMENSIONS[0] * 4, innerHeight: MENU_DIMENSIONS[1] * 4 };
                 mockRootScope = jasmine.createSpyObj("$rootScope", ["$new"]);
+                mockAgentService = jasmine.createSpyObj("agentService", ["isMobile"]);
                 mockScope = {};
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
-                mockEvent = jasmine.createSpyObj("event", ["preventDefault"]);
+                mockEvent = jasmine.createSpyObj("event", ["preventDefault", "stopPropagation"]);
                 mockEvent.pageX = 0;
                 mockEvent.pageY = 0;
 
@@ -71,12 +83,13 @@ define(
                 mockRootScope.$new.andReturn(mockScope);
 
                 mockActionContext = {key: 'menu', domainObject: mockDomainObject, event: mockEvent};
-
+                
                 action = new ContextMenuAction(
                     mockCompile,
                     mockDocument,
                     mockWindow,
                     mockRootScope,
+                    mockAgentService,
                     mockActionContext
                 );
             });
@@ -155,6 +168,42 @@ define(
 
                 // Menu should have been removed
                 expect(mockMenu.remove).toHaveBeenCalled();
+            });
+            
+            it("keeps a menu when menu is clicked", function () {
+                // Show the menu
+                action.perform();
+                // Find and fire body's mousedown listener
+                mockMenu.on.calls.forEach(function (call) {
+                    if (call.args[0] === 'mousedown') {
+                        call.args[1](mockEvent);
+                    }
+                });
+
+                // Menu should have been removed
+                expect(mockMenu.remove).not.toHaveBeenCalled();
+
+                // Listener should have been detached from body
+                expect(mockBody.off).not.toHaveBeenCalled();
+            });
+            
+            it("keeps a menu when menu is clicked on mobile", function () {
+                mockAgentService.isMobile.andReturn(true);
+                action = new ContextMenuAction(
+                    mockCompile,
+                    mockDocument,
+                    mockWindow,
+                    mockRootScope,
+                    mockAgentService,
+                    mockActionContext
+                );
+                action.perform();
+                
+                mockMenu.on.calls.forEach(function (call) {
+                    if (call.args[0] === 'touchstart') {
+                        call.args[1](mockEvent);
+                    }
+                });
             });
         });
     }

@@ -29,6 +29,9 @@ define(
         describe("The tree node controller", function () {
             var mockScope,
                 mockTimeout,
+                mockAgentService,
+                mockNgModel,
+                mockDomainObject,
                 controller;
 
             function TestObject(id, context) {
@@ -41,9 +44,18 @@ define(
             }
 
             beforeEach(function () {
-                mockScope = jasmine.createSpyObj("$scope", ["$watch", "$on"]);
+                mockScope = jasmine.createSpyObj("$scope", ["$watch", "$on", "$emit"]);
                 mockTimeout = jasmine.createSpy("$timeout");
-                controller = new TreeNodeController(mockScope, mockTimeout);
+                mockAgentService = jasmine.createSpyObj("agentService", ["isMobile", "isPhone", "getOrientation"]);
+                mockDomainObject = jasmine.createSpyObj(
+                    "domainObject",
+                    [ "getId", "getCapability", "getModel", "useCapability" ]
+                );
+
+                mockAgentService.getOrientation.andReturn("portrait");
+                mockAgentService.isPhone.andReturn(true);
+
+                controller = new TreeNodeController(mockScope, mockTimeout, mockAgentService);
             });
 
             it("allows tracking of expansion state", function () {
@@ -183,6 +195,22 @@ define(
                 expect(controller.isSelected()).toBeFalsy();
 
             });
+
+            it("exposes selected objects in scope", function () {
+                mockScope.domainObject = mockDomainObject;
+                mockScope.ngModel = {};
+                controller.select();
+                expect(mockScope.ngModel.selectedObject)
+                    .toEqual(mockDomainObject);
+            });
+
+            it("invokes optional callbacks upon selection", function () {
+                mockScope.parameters =
+                    { callback: jasmine.createSpy('callback') };
+                controller.select();
+                expect(mockScope.parameters.callback).toHaveBeenCalled();
+            });
+
         });
     }
 );

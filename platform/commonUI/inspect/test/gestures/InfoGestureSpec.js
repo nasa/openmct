@@ -28,6 +28,7 @@ define(
 
         describe("The info gesture", function () {
             var mockTimeout,
+                mockAgentService,
                 mockInfoService,
                 testDelay = 12321,
                 mockElement,
@@ -50,6 +51,7 @@ define(
             beforeEach(function () {
                 mockTimeout = jasmine.createSpy('$timeout');
                 mockTimeout.cancel = jasmine.createSpy('cancel');
+                mockAgentService = jasmine.createSpyObj('agentService', ['isMobile']);
                 mockInfoService = jasmine.createSpyObj(
                     'infoService',
                     [ 'display' ]
@@ -79,6 +81,7 @@ define(
 
                 gesture = new InfoGesture(
                     mockTimeout,
+                    mockAgentService,
                     mockInfoService,
                     testDelay,
                     mockElement,

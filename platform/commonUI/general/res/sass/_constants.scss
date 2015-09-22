@@ -47,6 +47,8 @@ $colorPausedBg: #c56f01;
 $colorPausedFg: #fff;
 $colorCreateBtn: $colorKey;
 $colorGridLines: rgba(#fff, 0.05);
+$colorFormLines: rgba(#fff, 0.1);
+$colorFormSectionHeader: rgba(#000, 0.2);
 // Menu colors
 $colorMenuBg: lighten($colorBodyBg, 23%);
 $colorMenuFg: lighten($colorMenuBg, 70%);
@@ -104,6 +106,7 @@ $treeSearchInputBarH: 25px;
 // Overlay
 $ovrTopBarH: 60px;
 $ovrFooterH: 40px;
+$overlayMargin: 25px;
 // Items
 $ueBrowseGridItemLg: 200px;
 $ueBrowseGridItemTopBarH: 20px;
@@ -111,6 +114,7 @@ $ueBrowseGridItemBottomBarH: 30px;
 $itemPadLR: 5px;
 // Tree
 $treeVCW: 10px;
+$treeTypeIconH: 16px;
 $treeTypeIconW: 20px;
 $treeContextTriggerW: 20px;
 $colorItemTreeIcon: $colorKey;
@@ -144,10 +148,13 @@ $reqSymbolFontSize: 0.7em;
 
 /************************** CONTROLS */
 $controlDisabledOpacity: 0.3;
-$formLabelW: 20%;
+$formLabelW: 30%;
 $formInputH: 22px;
 $formRowCtrlsH: 14px;
+$formTBPad: $interiorMargin;
+$formLRPad: $interiorMargin;
 $menuLineH: 1.5rem;
+$menuLineHPx: 24px;
 $scrollbarTrackSize: 10px;
 $scrollbarTrackColorBg: rgba(#000, 0.4);
 $btnStdH: 25px;

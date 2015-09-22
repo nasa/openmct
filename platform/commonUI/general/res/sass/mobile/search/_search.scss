@@ -1,0 +1,13 @@
+@include phone {
+	.search {
+		.search-bar {
+			// Hide menu-icon and adjust spacing when in phone mode
+			.menu-icon {
+				display: none;
+			}
+			.clear-icon {
+				right: $interiorMargin;
+			}
+		}
+	}
+}

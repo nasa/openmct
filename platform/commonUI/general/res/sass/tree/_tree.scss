@@ -25,133 +25,152 @@ ul.tree {
 	li {
 		display: block;
 		position: relative;
-		span.tree-item {
-			$runningItemW: 0;
-			@include border-radius($basicCr);
-			@include single-transition(background-color, 0.25s);
+	}
+	ul.tree {
+		margin-left: $treeVCW + $interiorMargin;
+	}
+}
+
+.tree-item,
+.search-result-item {
+	$runningItemW: 0;
+	@include box-sizing(border-box);
+	@include border-radius($basicCr);
+	@include single-transition(background-color, 0.25s);
+	display: block;
+	font-size: 0.8rem;
+	height: $menuLineH;
+	line-height: $menuLineH;
+	margin-bottom: $interiorMarginSm;
+	position: relative;
+
+	.view-control {
+		display: inline-block;
+		margin-left: $interiorMargin;
+		font-size: 0.75em;
+		width: $treeVCW;
+		$runningItemW: $interiorMargin + $treeVCW;
+		// NOTE: [Mobile] Removed Hover on Mobile
+		@include desktop {
+			&:hover {
+				color: $colorItemTreeVCHover;
+			}
+		}
+	}
+
+	.label {
+		display: block;
+		//				@include test(orange);
+		@include absPosDefault();
+		//left: $runningItemW + $interiorMargin; // Adding pad to left to make room for link icon
+		line-height: $menuLineH;
+		//left: $runningItemW;
+
+		.type-icon {
+			//@include absPosDefault(0, false);
+			$d: $treeTypeIconH; // 16px is crisp size
+			@include txtShdwSubtle(0.6);
+			font-size: $d;
+			color: $colorItemTreeIcon;
+			left: $interiorMargin;
+			position: absolute;
+			@include verticalCenterBlock($menuLineHPx, $d);
+			line-height: 100%;
+			right: auto; width: $d;
+
+			.icon {
+				&.l-icon-link,
+				&.l-icon-alert {
+					@include txtShdwSubtle(1);
+					position: absolute;
+					z-index: 2;
+				}
+				&.l-icon-alert {
+					$d: 8px;
+					@include ancillaryIcon($d, $colorAlert);
+					top: 1px;
+					right: -2px;
+				}
+				&.l-icon-link {
+					$d: 8px;
+					@include ancillaryIcon($d, $colorIconLink);
+					left: -3px;
+					bottom: 0px;
+				}
+			}
+		}
+		.title-label {
+			@include absPosDefault();
 			display: block;
-			font-size: 0.8em;
-			height: $menuLineH;
-			line-height: $menuLineH;
-			margin-bottom: $interiorMarginSm;
-			position: relative;
+			left: $runningItemW + ($interiorMargin * 3);
+			//right: $treeContextTriggerW + $interiorMargin;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+	}
 
-			.view-control {
-				display: inline-block;
-                margin-left: $interiorMargin;
-				font-size: 0.75em;
-				width: $treeVCW;
-				$runningItemW: $interiorMargin + $treeVCW;
-				&:hover {
-					color: $colorItemTreeVCHover;
-				}
+	&.loading {
+		pointer-events: none;
+		.label {
+			opacity: 0.5;
+			.title-label {
+				font-style: italic;
 			}
+		}
+		.wait-spinner {
+			margin-left: 14px;
+		}
+	}
 
-			.label {
-				display: block;
-//				@include test(orange);
-				@include absPosDefault();
-				//left: $runningItemW + $interiorMargin; // Adding pad to left to make room for link icon
-				left: $runningItemW;
+	&.selected {
+		$c: #fff;
+		background: $colorKeySelectedBg;
+		color: $c;
+		.view-control {
+			color: $colorItemTreeIcon;
+		}
+		.label .type-icon {
+			color: #fff; //$colorItemTreeIconHover;
+		}
+	}
 
-				.type-icon {
-					@include absPosDefault(0, false);
-					@include txtShdwSubtle(0.6);
-					color: $colorItemTreeIcon;
-					left: $interiorMargin;
-                    right: auto; width: 1em;
-
-					.icon {
-						&.l-icon-link,
-						&.l-icon-alert {
-							@include txtShdwSubtle(1);
-							position: absolute;
-							z-index: 2;
-						}
-						&.l-icon-alert {
-							$d: 8px;
-							@include ancillaryIcon($d, $colorAlert);
-							top: 1px;
-							right: -2px;
-						}
-						&.l-icon-link {
-							$d: 8px;
-							@include ancillaryIcon($d, $colorIconLink);
-							left: -3px;
-							bottom: 5px;
-
-						}
-					}
-				}
-				.title-label {
-					@include absPosDefault();
+	&:not(.selected) {
+		// NOTE: [Mobile] Removed Hover on Mobile
+		@include desktop {
+			&:hover {
+				background: rgba(#fff, 0.1); //lighten($colorBodyBg, 5%);
+				color: lighten($colorBodyFg, 20%);
+				.context-trigger {
 					display: block;
-					left: $runningItemW + ($interiorMargin * 3);
-	                //right: $treeContextTriggerW + $interiorMargin;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
 				}
-			}
-
-			&.loading {
-				pointer-events: none;
-				.label {
-					opacity: 0.5;
-					.title-label {
-						font-style: italic;
-					}
-				}
-				.wait-spinner {
-					margin-left: 14px;
-				}
-			}
-
-			&.selected {
-				$c: #fff;
-				background: $colorKeySelectedBg;
-				color: $c;
-				.view-control {
-					color: $colorItemTreeIcon;
-				}
-				.label .type-icon {
-					color: #fff; //$colorItemTreeIconHover;
-				}
-			}
-
-			&:not(.selected) {
-				&:hover {
-					background: lighten($colorBodyBg, 5%);
-					color: lighten($colorBodyFg, 20%);
-					.context-trigger {
-						display: block;
-					}
-					.icon {
-						color: $colorItemTreeIconHover;
-					}
-				}
-			}
-
-			&:not(.loading) {
-				cursor: pointer;
-			}
-
-			.context-trigger {
-				$h: 0.9rem;
-				//display: none;
-				top: -1px;
-				position: absolute;
-				right: $interiorMarginSm;
-				.invoke-menu {
-					font-size: 0.75em;
-					height: $h;
-					line-height: $h;
+				.icon {
+					color: $colorItemTreeIconHover;
 				}
 			}
 		}
 	}
 
-	ul.tree {
-		margin-left: $treeVCW + $interiorMargin;
+	&:not(.loading) {
+		cursor: pointer;
+	}
+
+	.context-trigger {
+		$h: 0.9rem;
+		//display: none;
+		top: -1px;
+		position: absolute;
+		right: $interiorMarginSm;
+		.invoke-menu {
+			font-size: 0.75em;
+			height: $h;
+			line-height: $h;
+		}
+	}
+}
+
+.tree-item {
+	.label {
+		left: $interiorMargin + $treeVCW;
 	}
 }
