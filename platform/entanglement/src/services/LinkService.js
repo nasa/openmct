@@ -53,7 +53,8 @@ define(
         };
 
         LinkService.prototype.perform = function (object, parentObject) {
-            // Note that this was checked-for explicitly during validate step
+            // It is assumed here that validate has been called, and therefore
+            // that parentObject.hasCapability('composition').
             var composition = parentObject.getCapability('composition');
 
             return composition.add(object).then(function (result) {
