@@ -39,20 +39,17 @@ define(
         }
 
         LinkService.prototype.validate = function (object, parentCandidate) {
-            if (!parentCandidate || !parentCandidate.getId) {
-                return false;
-            }
-            if (parentCandidate.getId() === object.getId()) {
-                return false;
-            }
-            if ((parentCandidate.getModel().composition || []).indexOf(object.getId()) !== -1) {
-                return false;
-            }
-            return this.policyService.allow(
-                "composition",
-                parentCandidate.getCapability('type'),
-                object.getCapability('type')
-            ) && parentCandidate.hasCapability('composition');
+            var objectId = object.getId();
+            return !!parentCandidate &&
+                !!parentCandidate.getId &&
+                parentCandidate.getId() !== objectId &&
+                parentCandidate.hasCapability("composition") &&
+                parentCandidate.getModel().composition.indexOf(objectId) === -1 &&
+                this.policyService.allow(
+                    "composition",
+                    parentCandidate.getCapability('type'),
+                    object.getCapability('type')
+                );
         };
 
         LinkService.prototype.perform = function (object, parentObject) {
