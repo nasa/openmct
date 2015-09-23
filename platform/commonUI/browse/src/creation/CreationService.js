@@ -42,10 +42,11 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function CreationService(persistenceService, $q, $log) {
+        function CreationService(persistenceService, now, $q, $log) {
             this.persistenceService = persistenceService;
             this.$q = $q;
             this.$log = $log;
+            this.now = now;
         }
 
         /**
@@ -86,37 +87,18 @@ define(
             // composition, so that it will subsequently appear
             // as a child contained by that parent.
             function addToComposition(id, parent, parentPersistence) {
-                var mutatationResult = parent.useCapability("mutation", function (model) {
-                    if (Array.isArray(model.composition)) {
-                        // Don't add if the id is already there
-                        if (model.composition.indexOf(id) === -1) {
-                            model.composition.push(id);
-                        }
-                    } else {
-                        // This is abnormal; composition should be an array
-                        self.$log.warn(NO_COMPOSITION_WARNING + parent.getId());
-                        return false; // Cancel mutation
-                    }
-                });
+                var compositionCapability = parent.getCapability('composition'),
+                    addResult = compositionCapability &&
+                        compositionCapability.add(id);
 
-                return self.$q.when(mutatationResult).then(function (result) {
+                return self.$q.when(addResult).then(function (result) {
                     if (!result) {
-                        self.$log.error("Could not mutate " + parent.getId());
+                        self.$log.error("Could not modify " + parent.getId());
                         return undefined;
                     }
 
                     return parentPersistence.persist().then(function () {
-                        // Locate and return new Object in context of parent.
-                        return parent
-                            .useCapability('composition')
-                            .then(function (children) {
-                                var i;
-                                for (i = 0; i < children.length; i += 1) {
-                                    if (children[i].getId() === id) {
-                                        return children[i];
-                                    }
-                                }
-                            });
+                        return result;
                     });
                 });
             }
@@ -133,6 +115,7 @@ define(
             // 2. Create a model with that ID in the persistence space
             // 3. Add that ID to
             return self.$q.when(uuid()).then(function (id) {
+                model.persisted = self.now();
                 return doPersist(persistence.getSpace(), id, model);
             }).then(function (id) {
                 return addToComposition(id, parent, persistence);

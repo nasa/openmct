@@ -40,7 +40,7 @@ define(
          * @param {DomainObject} domainObject the domain object for which to
          *        show information
          */
-        function InfoGesture($timeout, infoService, delay, element, domainObject) {
+        function InfoGesture($timeout, agentService, infoService, delay, element, domainObject) {
             var self = this;
 
             // Callback functions to preserve the "this" pointer (in the
@@ -66,8 +66,13 @@ define(
             this.delay = delay;
             this.domainObject = domainObject;
 
-            // Show bubble (on a timeout) on mouse over
-            element.on('mouseenter', this.showBubbleCallback);
+            // Checks if you are on a mobile device, if the device is
+            // not mobile (agentService.isMobile() = false), then
+            // the pendingBubble and therefore hovering is allowed
+            if (!agentService.isMobile()) {
+                // Show bubble (on a timeout) on mouse over
+                element.on('mouseenter', this.showBubbleCallback);
+            }
         }
 
         InfoGesture.prototype.trackPosition = function (event) {
@@ -127,6 +132,7 @@ define(
 
             this.element.on('mouseleave', this.hideBubbleCallback);
         };
+
 
         /**
          * Detach any event handlers associated with this gesture.

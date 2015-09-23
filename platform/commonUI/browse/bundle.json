@@ -16,7 +16,20 @@
             {
                 "key": "BrowseController",
                 "implementation": "BrowseController.js",
-                "depends": [ "$scope", "$route", "$location", "objectService", "navigationService", "urlService" ]
+                "depends": [
+                    "$scope",
+                    "$route",
+                    "$location",
+                    "objectService",
+                    "navigationService",
+                    "urlService"
+                ]
+            },
+            {
+                "key": "BrowseTreeController",
+                "implementation": "BrowseTreeController.js",
+                "priority": "preferred",
+                "depends": [ "$scope", "agentService" ]
             },
             {
                 "key": "BrowseObjectController",
@@ -25,17 +38,17 @@
             },
             {
                 "key": "CreateMenuController",
-                "implementation": "creation/CreateMenuController",
+                "implementation": "creation/CreateMenuController.js",
                 "depends": [ "$scope" ]
             },
             {
                 "key": "LocatorController",
-                "implementation": "creation/LocatorController",
+                "implementation": "creation/LocatorController.js",
                 "depends": [ "$scope", "$timeout" ]
             },
             {
                 "key": "MenuArrowController",
-                "implementation": "MenuArrowController",
+                "implementation": "MenuArrowController.js",
                 "depends": [ "$scope" ]
             }
         ],
@@ -43,12 +56,6 @@
             {
                 "key": "locator",
                 "templateUrl": "templates/create/locator.html"
-            }
-        ],
-        "templates": [
-            {
-                "key": "topbar-browse",
-                "templateUrl": "templates/topbar-browse.html"
             }
         ],
         "representations": [
@@ -82,6 +89,11 @@
                 "templateUrl": "templates/menu-arrow.html",
                 "uses": [ "action" ],
                 "gestures": [ "menu" ]
+            },
+            {
+                "key": "back-arrow",
+                "uses": [ "context" ],
+                "templateUrl": "templates/back-arrow.html"
             }
         ],
         "services": [
@@ -142,7 +154,7 @@
                 "provides": "creationService",
                 "type": "provider",
                 "implementation": "creation/CreationService.js",
-                "depends": [ "persistenceService", "$q", "$log" ]
+                "depends": [ "persistenceService", "now", "$q", "$log" ]
             }
         ],
         "runs": [

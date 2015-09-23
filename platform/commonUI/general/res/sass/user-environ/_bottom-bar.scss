@@ -54,7 +54,7 @@
 .status.block {
 	//display: inline-block;
 	display: inline;  // New status bar design. Inline to support ellipsis overflow
-	margin-right: $interiorMargin * 2;
+	margin-right: $interiorMarginLg;
 	.status-indicator {
 		//@include border-radius($controlCr * 0.9);
 		//@include box-shadow(inset rgba(black, 0.5) 0 0 3px);

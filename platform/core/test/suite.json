@@ -24,6 +24,7 @@
     "objects/DomainObject",
     "objects/DomainObjectProvider",
 
+    "services/Contextualize",
     "services/Now",
     "services/Throttle",
     "services/Topic",

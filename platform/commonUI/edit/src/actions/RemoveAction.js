@@ -95,7 +95,6 @@ define(
 
                 // Stop when object is not defined (above ROOT)
                 while (traverseObject) {
-
                     // If object currently traversed to is object being removed
                     // navigate to parent of current object and then exit loop
                     if (traverseObject.getId() === object.getId()) {

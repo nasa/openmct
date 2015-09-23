@@ -25,8 +25,11 @@
  * CompositionCapabilitySpec. Created by vwoeltje on 11/6/14.
  */
 define(
-    ["../../src/capabilities/CompositionCapability"],
-    function (CompositionCapability) {
+    [
+        "../../src/capabilities/CompositionCapability",
+        "../../src/capabilities/ContextualDomainObject"
+    ],
+    function (CompositionCapability, ContextualDomainObject) {
         "use strict";
 
         var DOMAIN_OBJECT_METHODS = [
@@ -40,6 +43,7 @@ define(
         describe("The composition capability", function () {
             var mockDomainObject,
                 mockInjector,
+                mockContextualize,
                 mockObjectService,
                 composition;
 
@@ -47,7 +51,7 @@ define(
             // so support that, but don't introduce complication of
             // native promises.
             function mockPromise(value) {
-                return {
+                return (value || {}).then ? value : {
                     then: function (callback) {
                         return mockPromise(callback(value));
                     }
@@ -70,11 +74,19 @@ define(
                         return (name === "objectService") && mockObjectService;
                     }
                 };
+                mockContextualize = jasmine.createSpy('contextualize');
+
+                // Provide a minimal (e.g. no error-checking) implementation
+                // of contextualize for simplicity
+                mockContextualize.andCallFake(function (domainObject, parentObject) {
+                    return new ContextualDomainObject(domainObject, parentObject);
+                });
 
                 mockObjectService.getObjects.andReturn(mockPromise([]));
 
                 composition = new CompositionCapability(
                     mockInjector,
+                    mockContextualize,
                     mockDomainObject
                 );
             });
@@ -109,6 +121,98 @@ define(
                 // Should have been added by a wrapper
                 expect(result[0].getCapability('context')).toBeDefined();
 
+            });
+
+            it("allows domain objects to be added", function () {
+                var result,
+                    testModel = { composition: [] },
+                    mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
+
+                mockDomainObject.getModel.andReturn(testModel);
+                mockObjectService.getObjects.andReturn(mockPromise({a: mockChild}));
+                mockChild.getCapability.andReturn(undefined);
+                mockChild.getId.andReturn('a');
+
+                mockDomainObject.useCapability.andCallFake(function (key, mutator) {
+                    if (key === 'mutation') {
+                        mutator(testModel);
+                        return mockPromise(true);
+                    }
+                });
+
+                composition.add(mockChild).then(function (domainObject) {
+                    result = domainObject;
+                });
+
+                expect(testModel.composition).toEqual(['a']);
+
+                // Should have returned the added object in its new context
+                expect(result.getId()).toEqual('a');
+                expect(result.getCapability('context')).toBeDefined();
+                expect(result.getCapability('context').getParent())
+                    .toEqual(mockDomainObject);
+            });
+
+            it("does not re-add IDs which are already present", function () {
+                var result,
+                    testModel = { composition: [ 'a' ] },
+                    mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
+
+                mockDomainObject.getModel.andReturn(testModel);
+                mockObjectService.getObjects.andReturn(mockPromise({a: mockChild}));
+                mockChild.getCapability.andReturn(undefined);
+                mockChild.getId.andReturn('a');
+
+                mockDomainObject.useCapability.andCallFake(function (key, mutator) {
+                    if (key === 'mutation') {
+                        mutator(testModel);
+                        return mockPromise(true);
+                    }
+                });
+
+                composition.add(mockChild).then(function (domainObject) {
+                    result = domainObject;
+                });
+
+                // Still just 'a'
+                expect(testModel.composition).toEqual(['a']);
+
+                // Should have returned the added object in its new context
+                expect(result.getId()).toEqual('a');
+                expect(result.getCapability('context')).toBeDefined();
+                expect(result.getCapability('context').getParent())
+                    .toEqual(mockDomainObject);
+            });
+
+            it("can add objects at a specified index", function () {
+                var result,
+                    testModel = { composition: [ 'a', 'b', 'c' ] },
+                    mockChild = jasmine.createSpyObj("child", DOMAIN_OBJECT_METHODS);
+
+                mockDomainObject.getModel.andReturn(testModel);
+                mockObjectService.getObjects.andReturn(mockPromise({a: mockChild}));
+                mockChild.getCapability.andReturn(undefined);
+                mockChild.getId.andReturn('a');
+
+                mockDomainObject.useCapability.andCallFake(function (key, mutator) {
+                    if (key === 'mutation') {
+                        mutator(testModel);
+                        return mockPromise(true);
+                    }
+                });
+
+                composition.add(mockChild, 1).then(function (domainObject) {
+                    result = domainObject;
+                });
+
+                // Still just 'a'
+                expect(testModel.composition).toEqual(['b', 'a', 'c']);
+
+                // Should have returned the added object in its new context
+                expect(result.getId()).toEqual('a');
+                expect(result.getCapability('context')).toBeDefined();
+                expect(result.getCapability('context').getParent())
+                    .toEqual(mockDomainObject);
             });
 
         });

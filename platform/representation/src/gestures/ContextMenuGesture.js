@@ -22,7 +22,7 @@
 /*global define,Promise*/
 
 /**
- * Module defining ContextMenuGesture. 
+ * Module defining ContextMenuGesture.
  * Created by vwoeltje on 11/17/14. Modified by shale on 06/30/2015.
  */
 define(
@@ -41,7 +41,10 @@ define(
          *                       in the context menu will be performed
          * @implements {Gesture}
          */
-        function ContextMenuGesture(element, domainObject) {
+        function ContextMenuGesture($timeout, agentService, element, domainObject) {
+            var isPressing,
+                longTouchTime = 500;
+
             function showMenu(event) {
                 domainObject.getCapability('action').perform({
                     key: 'menu',
@@ -51,7 +54,33 @@ define(
             }
 
             // When context menu event occurs, show object actions instead
-            element.on('contextmenu', showMenu);
+            if (!agentService.isMobile()) {
+
+                // When context menu event occurs, show object actions instead
+                element.on('contextmenu', showMenu);
+            } else if (agentService.isMobile()) {
+
+                // If on mobile device, then start timeout for the single touch event
+                // during the timeout 'isPressing' is true.
+                element.on('touchstart', function (event) {
+                    if (event.touches.length < 2) {
+                        isPressing = true;
+
+                        // After the timeout, if 'isPressing' is
+                        // true, display context menu for object
+                        $timeout(function () {
+                            if (isPressing) {
+                                showMenu(event);
+                            }
+                        }, longTouchTime);
+                    }
+                });
+
+                // Whenever the touch event ends, 'isPressing' is false.
+                element.on('touchend', function (event) {
+                    isPressing = false;
+                });
+            }
 
             this.showMenuCallback = showMenu;
             this.element = element;

@@ -19,257 +19,279 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 @mixin absPosDefault($offset: 0px, $overflowHidden: hidden) {
     overflow: $overflowHidden;
     position: absolute;
-    top: $offset; right: $offset; bottom: $offset; left: $offset;
-    width: auto; height: auto;
+    top: $offset;
+    right: $offset;
+    bottom: $offset;
+    left: $offset;
+    width: auto;
+    height: auto;
 }
 
 @mixin ancillaryIcon($d, $c) {
-	// Used for small icons used in combination with larger icons,
-	// like the link and alert icons in tree items.
-	color: $c;
-	font-size: $d;
-	line-height: $d;
-	height: $d;
-	width: $d;
+    // Used for small icons used in combination with larger icons,
+    // like the link and alert icons in tree items.
+    color: $c;
+    font-size: $d;
+    line-height: $d;
+    height: $d;
+    width: $d;
 }
 
 @mixin trans-prop-nice($props, $t: 500ms) {
-	@if $t == 0 {
-		@include transition-property(none);
-	} @else {
-		@include transition-property($props);
-		@include transition-duration($t);
-		@include transition-timing-function(ease-in-out);
-	}
+    @if $t == 0 {
+        @include transition-property(none);
+    } @else {
+        @include transition-property($props);
+        @include transition-duration($t);
+        @include transition-timing-function(ease-in-out);
+    }
 }
 
 @mixin trans-prop-nice-fade($t: 0.5s) {
-	@if $t == 0 {
-		@include transition-property(none);
-	} @else {
-		@include transition-property(visibility, opacity, background-color, border-color);
-		@include transition-duration($t);
-		@include transition-timing-function(ease-in-out);
-	}
+    @if $t == 0 {
+        @include transition-property(none);
+    } @else {
+        @include transition-property(visibility, opacity, background-color, border-color);
+        @include transition-duration($t);
+        @include transition-timing-function(ease-in-out);
+    }
 }
 
 @mixin trans-prop-nice-resize-h($t: 0.5s) {
-	@include transition-property(height, bottom, top);
-	@include transition-duration($t);
-	@include transition-timing-function(ease-in-out);
+    @include transition-property(height, bottom, top);
+    @include transition-duration($t);
+    @include transition-timing-function(ease-in-out);
 }
 
 @mixin trans-prop-nice-resize-w($t: 0.5s) {
-	@include transition-property(width, left, right);
-	@include transition-duration($t);
-	@include transition-timing-function(ease-in-out);
+    @include transition-property(width, left, right);
+    @include transition-duration($t);
+    @include transition-timing-function(ease-in-out);
 }
 
 @mixin triangle-right($size, $color) {
-	$size: $size/2;
-	$ratio: 1;
-	width: 0;
-	height: 0;
-	border-top: $size/$ratio solid transparent;
-	border-left: $size solid $color;
-	border-bottom: $size/$ratio solid transparent;
+    $size: $size/2;
+    $ratio: 1;
+    width: 0;
+    height: 0;
+    border-top: $size/$ratio solid transparent;
+    border-left: $size solid $color;
+    border-bottom: $size/$ratio solid transparent;
 }
 
 @mixin triangle-down($size, $color) {
-	$size: $size/2;
-	$ratio: 1;
-	width: 0;
-	height: 0;
-	border-left: $size/$ratio solid transparent;
-	border-top: $size solid $color;
-	border-right: $size/$ratio solid transparent;
+    $size: $size/2;
+    $ratio: 1;
+    width: 0;
+    height: 0;
+    border-left: $size/$ratio solid transparent;
+    border-top: $size solid $color;
+    border-right: $size/$ratio solid transparent;
 }
 
 @mixin triangle($dir: "left", $size: 5px, $ratio: 1, $color: red) {
-	//$size: $size*2;
-	width: 0;
-	height: 0;
-	$slopedB: $size/$ratio solid transparent;
-	$straightB: $size solid $color;
-	@if $dir == "up" {
-		border-left: $slopedB;
-		border-right: $slopedB;
-		border-bottom: $straightB;
-	} @else if $dir == "right" {
-		border-top: $slopedB;
-		border-bottom: $slopedB;
-		border-left: $straightB;
-	} @else if $dir == "down"  {
-		border-left: $slopedB;
-		border-right: $slopedB;
-		border-top: $straightB;
-	} @else {
-		border-top: $slopedB;
-		border-bottom: $slopedB;
-		border-right: $straightB;
-	}
+    //$size: $size*2;
+    width: 0;
+    height: 0;
+    $slopedB: $size/$ratio solid transparent;
+    $straightB: $size solid $color;
+    @if $dir == "up" {
+        border-left: $slopedB;
+        border-right: $slopedB;
+        border-bottom: $straightB;
+    } @else if $dir == "right" {
+        border-top: $slopedB;
+        border-bottom: $slopedB;
+        border-left: $straightB;
+    } @else if $dir == "down" {
+        border-left: $slopedB;
+        border-right: $slopedB;
+        border-top: $straightB;
+    } @else {
+        border-top: $slopedB;
+        border-bottom: $slopedB;
+        border-right: $straightB;
+    }
 }
 
 @mixin bgDiagonalStripes($c: yellow, $a: 0.1, $d: 40px) {
-	@include background-image(linear-gradient(-45deg,
-		rgba($c, $a) 25%, transparent 25%,
-		transparent 50%, rgba($c, $a) 50%,
-		rgba($c, $a) 75%, transparent 75%,
-		transparent 100%
-	));
-	background-repeat: repeat;
-	background-size: $d $d;
+    @include background-image(linear-gradient(-45deg,
+        rgba($c, $a) 25%, transparent 25%,
+        transparent 50%, rgba($c, $a) 50%,
+        rgba($c, $a) 75%, transparent 75%,
+        transparent 100%
+    ));
+    background-repeat: repeat;
+    background-size: $d $d;
 }
 
 @mixin bgTicks($c: $colorBodyFg, $repeatDir: 'x') {
-	$deg: 90deg;
-	@if ($repeatDir != 'x') {
-		$deg: 0deg;
-		$repeatDir: repeat-y;
-	} @else {
-		$repeatDir: repeat-x;
-	}
+    $deg: 90deg;
+    @if ($repeatDir != 'x') {
+        $deg: 0deg;
+        $repeatDir: repeat-y;
+    } @else {
+        $repeatDir: repeat-x;
+    }
 
-	@include background-image(linear-gradient($deg,
-		$c 1px, transparent 1px,
-		transparent 100%
-	));
-	background-repeat: $repeatDir;
-}
-
-@mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $hover: false) {
-	$ltnRatio: 7%;
-	$gradRatio: 5%;
-	$hovRatio: 7%;
-	$bgBase: lighten($bg, $ltnRatio);
-	$fgBase: lighten($fg, $ltnRatio);
-	$gradC1: lighten($bgBase, $gradRatio);
-	$gradC2: $bgBase;
-	$cInvokeBase: lighten($gradC1, $ltnRatio*2);
-
-	@include background-image(linear-gradient($gradC1, $gradC2));
-	@include border-radius($controlCr);
-	@include box-sizing(border-box);
-	@include boxShdwSubtle();
-	border: none;
-	border-top: 1px solid lighten($gradC1, 2%);
-	color: $fg;
-	display: inline-block;
-	@if $hover == true {
-		&:not(.disabled):hover {
-			@include background-image(linear-gradient(lighten($gradC1, $hovRatio), lighten($gradC2, $hovRatio)));
-			color: lighten($fgBase, $hovRatio);
-			&.btn-menu .invoke-menu {
-				color: lighten($cInvokeBase, $hovRatio);
-			}
-		}
-	}
-	&.btn-menu .invoke-menu {
-		color: $cInvokeBase;
-	}
+    @include background-image(linear-gradient($deg,
+        $c 1px, transparent 1px,
+        transparent 100%
+    ));
+    background-repeat: $repeatDir;
 }
 
 @mixin sliderTrack($bg: $scrollbarTrackColorBg) {
-    $b: 1px solid lighten($bg, 30%);
+    //$b: 1px solid lighten($bg, 30%);
     @include border-radius(2px);
     @include box-sizing(border-box);
     @include boxIncised(0.7);
     background-color: $bg;
-    border-bottom: $b;
-    border-right: $b;
+    //border-bottom: $b;
+    //border-right: $b;
 }
 
 @mixin controlGrippy($b, $direction: horizontal, $w: 1px, $style: dotted) {
-	&:before {
-		@include trans-prop-nice("border-color",0.75s);
-		content: '';
-		display: block;
-		height: auto;
-		pointer-events: none;
-		position: absolute;
-		z-index: 2;
+    &:before {
+        @include trans-prop-nice("border-color", 0.75s);
+        content: '';
+        display: block;
+        height: auto;
+        pointer-events: none;
+        position: absolute;
+        z-index: 2;
 
-		@if $direction == "horizontal" {
-			border-top: $w $style darken($b, 15%);
-			top: 2px;
-			left: 5px;
-			right: 5px;
+        @if $direction == "horizontal" {
+            border-top: $w $style darken($b, 15%);
+            top: 2px;
+            left: 5px;
+            right: 5px;
 
-		} @else if $direction == "vertical" {
-			border-left: $w $style darken($b, 15%);
-			left: 2px;
-			bottom: 5px;
-			top: 5px;
-		}
-	}
-	&:not(.disabled):hover:before {
-		@include trans-prop-nice("border-color",50ms);
-		border-color: $colorKey;
-	}
+        } @else if $direction == "vertical" {
+            border-left: $w $style darken($b, 15%);
+            left: 2px;
+            bottom: 5px;
+            top: 5px;
+        }
+    }
+    &:not(.disabled):hover:before {
+        @include trans-prop-nice("border-color", 25ms);
+        border-color: $colorGrippyInteriorHover;
+    }
 }
 
-@mixin btnSubtle($bg: $colorBodyBg, $fg: $colorBodyFg) {
-	@include containerSubtle($bg, $fg, true);
-}
-
-@mixin btnNoticeable($bg: $colorBodyBg, $fg: $colorBodyFg) {
-	// No longer should be used; use btnSubtle instead
-	//@include containerSubtle($bg, $fg, true);
-	//@include background-image(linear-gradient(lighten($bg, 20%), $bg));
-/*	&:not(.disabled):hover {
-		@include background-image(linear-gradient(lighten($bg, 30%), lighten($bg, 10%)));
-	}*/
-}
-
-@mixin boxIncised($sVal: 0.6) {
-    @include box-shadow(inset rgba(black, $sVal) 0 1px 5px);
+@mixin boxIncised($sVal: 0.6, $inset: 5px) {
+    @include box-shadow(inset rgba(black, $sVal) 0 1px $inset);
 }
 
 @mixin boxOutline($c: lighten($colorBodyBg, 20%)) {
     border: 1px solid $c;
 }
 
+@mixin boxShdw($sVal: rgba(black, 0.4) 0 0 3px) {
+	@if $sVal != 'none' {
+		@include box-shadow($sVal);
+	}
+}
+
 @mixin boxShdwSubtle($sVal: 0.2) {
-    @include box-shadow(rgba(black, $sVal) 0 1px 2px);
+	@if $sVal != 'none' {
+		@include box-shadow(rgba(black, $sVal) 0 1px 2px);
+	}
 }
 
 @mixin boxShdwLarge($sVal: 0.7) {
-	@include box-shadow(rgba(black, $sVal) 0 3px 10px);
+	@if $sVal != 'none' {
+		@include box-shadow(rgba(black, $sVal) 0 3px 10px);
+	}
 }
 
 @mixin outerGlow($color: #fff, $sVal: 0.3) {
-	@include box-shadow(rgba($color, $sVal) 0 0 30px);
+    @include box-shadow(rgba($color, $sVal) 0 0 30px);
 }
 
 @mixin linearGlow($deg: 0, $c: red, $a: 0.4) {
-    @include background-image(linear-gradient($deg, rgba($c,0), rgba($c, $a) 100%));
+    @include background-image(linear-gradient($deg, rgba($c, 0), rgba($c, $a) 100%));
 }
 
 @mixin subtleGrad($deg: 0, $c: red, $a0: 0.2, $a1: 0.3) {
-	@include background-image(linear-gradient($deg, rgba($c,$a0), rgba($c, $a1) 100%));
+    @include background-image(linear-gradient($deg, rgba($c, $a0), rgba($c, $a1) 100%));
+}
+
+@mixin txtShdw($sVal) {
+	//@if $sVal != 'none' {
+		@include text-shadow($sVal);
+	//}
 }
 
 @mixin txtShdwSubtle($sVal: 0.1) {
-	@include text-shadow(rgba(black, $sVal) 0 1px 2px);
-}
-@mixin txtShdwLarge($sVal: 0.7) {
-	@include text-shadow(rgba(black, $sVal) 0 3px 7px);
+	@if $sVal != 'none' {
+	    @include text-shadow(rgba(black, $sVal) 0 1px 2px);
+	}
 }
 
-/*********************************************** FORM ELEMENTS */
+@mixin txtShdwLarge($sVal: 0.7) {
+    @include text-shadow(rgba(black, $sVal) 0 3px 7px);
+}
+
+@function pullForward($c, $p: 20%) {
+    // For dark interfaces, lighter things come forward
+    @return lighten($c, $p);
+}
+
+@function pushBack($c, $p: 20%) {
+    // For dark interfaces, darker things move back
+    @return darken($c, $p);
+}
+
+@function percentToDecimal($p) {
+	@return $p / 100%;
+}
+
+@function decimalToPercent($d) {
+	@return percentage($d);
+}
+
+/*********************************************** CONTROLS, FORM ELEMENTS */
+
+@mixin containerBase($bg: $colorBodyBg, $fg: $colorBodyFg) {
+	background-color: $bg;
+	@include border-radius($controlCr);
+	@include box-sizing(border-box);
+	color: $fg;
+	display: inline-block;
+}
+
+@mixin btnBase($bg: $colorBodyBg, $bgHov: none, $fg: $colorBodyFg, $ic: $colorBtnIcon) {
+	@include user-select(none);
+    @include transition(background, .25s);
+	.icon {
+		color: $ic;
+	}
+	@include desktop {
+		@if $bgHov != none {
+			&:not(.disabled):hover {
+				background: $bgHov;
+				>.icon {
+					color: lighten($ic, $ltGamma);
+				}
+			}
+		}
+	}
+}
+
 @mixin input-base($bg: $colorBodyBg, $fg: $colorBodyFg) {
 	@include appearance(none);
 	@include border-radius($controlCr);
 	@include box-sizing(border-box);
-	@include box-shadow(inset rgba(black, 0.65) 0 1px 4px);
-	//	background: lighten($bg, 20%);
-	background: rgba(#fff, 0.1);
+	@include box-shadow(inset rgba(black, 0.4) 0 1px 3px);
+	background: $bg;
 	border: none;
-	//border-bottom: 1px solid rgba(#fff, 0.1);
-	color: lighten($fg, 20%);
+	color: $fg;
 	outline: none;
 	&.error {
 		background: rgba(red, 0.5);
@@ -281,50 +303,65 @@
 	padding: 0 $interiorMarginSm;
 }
 
+@mixin contextArrow() {
+	@include text-shadow(none);
+	content: '\76';
+	display: inline-block;
+	font-family: 'symbolsfont';
+	margin-left: $interiorMarginSm;
+	vertical-align: top;
+}
+
 @mixin nice-textarea($bg: $colorBodyBg, $fg: $colorBodyFg) {
-	@include input-base($bg, $fg);
-	padding: $interiorMargin;
+    @include input-base($bg, $fg);
+    padding: $interiorMargin;
 }
 
 @mixin subdued-input($bg: $colorBodyBg, $fg: $colorBodyFg) {
-	@include nice-input($bg, $fg);
-	background: lighten($bg, 3%);
-	border-bottom: 1px solid lighten($bg, 10%);
+    @include nice-input($bg, $fg);
+    background: lighten($bg, 3%);
+    border-bottom: 1px solid lighten($bg, 10%);
 }
-
-/*
-@mixin invokeMenu($baseColor: $colorBodyFg) {
-	$c: $baseColor;
-	color: $c;
-	&:hover {
-		color: lighten($c, $ltGamma);
-	}
-}
-*/
 
 @mixin menuUlReset() {
     margin: 0;
     padding: 0;
     li {
         list-style-type: none;
-        margin:0;
+        margin: 0;
         padding: 0;
     }
 }
 
-@mixin vertical-align {
-	/* This doesn't work on an element inside an element with absolute positioning that has height: auto */
-	position: relative;
-	top: 50%;
-	-webkit-transform: translateY(-50%);
-	-ms-transform: translateY(-50%);
-	transform: translateY(-50%);
+@mixin webkitProp($name, $val) {
+	#{$name}: #{$val};
+	-webkit-#{$name}: #{$val};
+}
+
+@mixin webkitVal($name, $val) {
+	#{$name}: #{$val};
+	#{$name}: -webkit-#{$val};
+}
+
+@mixin verticalCenter {
+    /* This doesn't work on an element inside an element with absolute positioning that has height: auto */
+    //position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+@mixin verticalCenterBlock($holderH, $itemH) {
+    top: floor(($holderH - $itemH) / 2);
+    bottom: auto;
+    height: $itemH;
 }
 
 @mixin ellipsize() {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 @mixin scrollH($showBar: auto) {
@@ -338,21 +375,26 @@
 }
 
 @mixin wait-spinner($b: 5px, $c: $colorAlt1) {
-	display: block;
-	position: absolute;
-	-webkit-animation: rotation .6s infinite linear;
-	-moz-animation: rotation .6s infinite linear;
-	-o-animation: rotation .6s infinite linear;
-	animation: rotation .6s infinite linear;
-	border-color: rgba($c, 0.25);
-	border-top-color: rgba($c, 1.0);
-	border-style: solid;
-	border-width: $b;
-	border-radius: 100%;
+    display: block;
+    position: absolute;
+    -webkit-animation: rotation .6s infinite linear;
+    -moz-animation: rotation .6s infinite linear;
+    -o-animation: rotation .6s infinite linear;
+    animation: rotation .6s infinite linear;
+    border-color: rgba($c, 0.25);
+    border-top-color: rgba($c, 1.0);
+    border-style: solid;
+    border-width: $b;
+    border-radius: 100%;
 }
 
 @mixin test($c: #ffcc00, $a: 0.2) {
-	background-color: rgba($c, $a);
+    background-color: rgba($c, $a);
+}
+
+@mixin tmpBorder($c: #ffcc00, $a: 0.75) {
+    @include box-sizing(border-box);
+    border: 1px dotted rgba($c, $a);
 }
 
 @mixin testObj($w: 2000px, $h: 1000px, $c: black, $a: 0.1) {
@@ -373,6 +415,6 @@
 }
 
 @mixin s-stale($a: 0.5) {
-	color: rgba($colorTelemFresh, $a) !important;
-	font-style: italic;
+    color: rgba($colorTelemFresh, $a) !important;
+    font-style: italic;
 }

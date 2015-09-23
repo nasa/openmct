@@ -48,12 +48,23 @@ define(
          * node expansion when this tree node's _subtree_ will contain
          * the navigated object (recursively, this becomes an
          * expand-to-show-navigated-object behavior.)
+         *
+         * Finally, if a `callback` property is passed in through the
+         * `parameters` attribute of the `tree-node`, that callback
+         * will be invoked whenever a user clicks in a manner which
+         * would result in a selection. This callback is invoked
+         * even if the selection does not change (if you are only
+         * interested in changes, watch the `selectedObject` property
+         * of the object passed in `ng-model` instead.)
+         *
          * @memberof platform/commonUI/general
          * @constructor
          */
         function TreeNodeController($scope, $timeout) {
             var self = this,
-                selectedObject = ($scope.ngModel || {}).selectedObject;
+                selectedObject = ($scope.ngModel || {}).selectedObject,
+                isSelected = false,
+                hasBeenExpanded = false;
 
             // Look up the id for a domain object. A convenience
             // for mapping; additionally does some undefined-checking.
@@ -131,11 +142,28 @@ define(
             this.isSelectedFlag = false;
             this.hasBeenExpandedFlag = false;
             this.$timeout = $timeout;
+            this.$scope = $scope;
 
             // Listen for changes which will effect display parameters
             $scope.$watch("ngModel.selectedObject", setSelection);
             $scope.$watch("domainObject", checkSelection);
         }
+
+        /**
+         * Select the domain object represented by this node in the tree.
+         * This will both update the `selectedObject` property in
+         * the object passed in via `ng-model`, and will fire any `callback`
+         * passed in via `parameters`.
+         */
+        TreeNodeController.prototype.select = function () {
+            if (this.$scope.ngModel) {
+                this.$scope.ngModel.selectedObject =
+                    this.$scope.domainObject;
+            }
+            if ((this.$scope.parameters || {}).callback) {
+                this.$scope.parameters.callback(this.$scope.domainObject);
+            }
+        };
 
         /**
          * This method should be called when a node is expanded

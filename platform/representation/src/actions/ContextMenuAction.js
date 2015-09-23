@@ -49,8 +49,9 @@ define(
          *                      should be performed
          * @implements {Action}
          */
-        function ContextMenuAction($compile, $document, $window, $rootScope, actionContext) {
+        function ContextMenuAction($compile, $document, $window, $rootScope, agentService, actionContext) {
             this.$compile = $compile;
+            this.agentService = agentService;
             this.actionContext = actionContext;
             this.getDocument = function () { return $document; };
             this.getWindow = function () { return $window; };
@@ -70,6 +71,7 @@ define(
                 scope = $rootScope.$new(),
                 goLeft = eventCoors[0] + menuDim[0] > winDim[0],
                 goUp = eventCoors[1] + menuDim[1] > winDim[1],
+                initiatingEvent = this.agentService.isMobile() ? 'touchstart' : 'mousedown',
                 menu;
 
             // Remove the context menu
@@ -99,21 +101,22 @@ define(
                 "go-up": goUp,
                 "context-menu-holder": true
             };
-
             // Create the context menu
             menu = $compile(MENU_TEMPLATE)(scope);
 
             // Add the menu to the body
             body.append(menu);
 
-            // Stop propagation so that clicks on the menu do not close the menu
-            menu.on('mousedown', function (event) {
+            // Stop propagation so that clicks or touches on the menu do not close the menu
+            menu.on(initiatingEvent, function (event) {
                 event.stopPropagation();
             });
 
-            // Dismiss the menu when body is clicked elsewhere
+            // Dismiss the menu when body is clicked/touched elsewhere
             // ('mousedown' because 'click' breaks left-click context menus)
-            body.on('mousedown', dismiss);
+            // ('touchstart' because 'touch' breaks context menus up)
+            body.on(initiatingEvent, dismiss);
+            // NOTE: Apply to mobile?
             menu.on('click', dismiss);
 
             // Don't launch browser's context menu
