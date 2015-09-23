@@ -40,9 +40,11 @@ define(
          * @param {number} start the initial start time
          * @param {number} end the initial end time
          */
-        function TimeConductor(start, end) {
+        function TimeConductor(start, end, domains) {
             this.inner = { start: start, end: end };
             this.outer = { start: start, end: end };
+            this.domains = domains;
+            this.domain = domains[0];
         }
 
         /**
@@ -92,6 +94,32 @@ define(
                 this.inner.end = value;
             }
             return this.inner.end;
+        };
+
+        /**
+         * Get available domain options which can be used to bound time
+         * selection.
+         * @returns {TelemetryDomain[]} available domains
+         */
+        TimeConductor.prototype.domainOptions = function () {
+            return this.domains;
+        };
+
+        /**
+         * Get or set (if called with an argument) the active domain.
+         * @param {string} [key] the key identifying the domain choice
+         * @returns {TelemetryDomain} the active telemetry domain
+         */
+        TimeConductor.prototype.activeDomain = function (key) {
+            var i;
+            if (arguments.length > 0) {
+                for (i = 0; i < this.domains.length; i += 1) {
+                    if (this.domains[i].key === key) {
+                        this.domain = this.domains[i];
+                    }
+                }
+            }
+            return this.domain;
         };
 
         return TimeConductor;

@@ -39,12 +39,15 @@ define(
          * @param {Function} now a function which returns the current time
          *        as a UNIX timestamp, in milliseconds
          */
-        function ConductorService(now) {
+        function ConductorService(now, domains) {
             var initialEnd =
                 Math.ceil(now() /  SIX_HOURS_IN_MS) * SIX_HOURS_IN_MS;
 
-            this.conductor =
-                new TimeConductor(initialEnd - ONE_DAY_IN_MS, initialEnd);
+            this.conductor = new TimeConductor(
+                initialEnd - ONE_DAY_IN_MS,
+                initialEnd,
+                domains
+            );
         }
 
         /**
