@@ -14,7 +14,7 @@
 	min-height: 100px;
 	min-width: 150px;
 	.l-image-main {
-		background-color: rgba(#fff, 0.1);
+		background-color: $colorPlotBg;
 		bottom: $imageMainControlBarH + $interiorMargin;
 	}
 	.l-image-main-controlbar {
@@ -66,7 +66,7 @@
 	}
 	.l-date,
 	.l-time {
-		color: #fff;
+		color: pullForward($colorBodyFg, 20%);
 	}
 	.l-mag {
 		direction: ltr;
@@ -77,7 +77,7 @@
 		}
 	}
 	.s-mag {
-		color: darken($colorBodyFg, 20%);
+		color: pushBack($colorBodyFg, 20%);
 	}
 	.l-btn.show-thumbs {
 		display: none;

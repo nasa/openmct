@@ -58,12 +58,6 @@
                 "templateUrl": "templates/create/locator.html"
             }
         ],
-        "templates": [
-            {
-                "key": "topbar-browse",
-                "templateUrl": "templates/topbar-browse.html"
-            }
-        ],
         "representations": [
             {
                 "key": "browse-object",

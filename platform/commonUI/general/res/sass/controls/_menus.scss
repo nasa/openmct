@@ -19,17 +19,59 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/******************************************************** MENUS */
+/******************************************************** MENU BUTTONS */
+.s-menu {
+	// Formerly .btn-menu
+	@extend .s-btn;
+	span.l-click-area {
+		// In markup, this element should not enclose anything.
+		@extend .abs;
+	}
+
+	.icon {
+		font-size: 120%;
+	}
+
+	.title-label {
+		margin-left: $interiorMarginSm;
+	}
+
+	&:after {
+		// Adds the downward facing 'context available / invoke menu' arrow element
+		@include contextArrow();
+		color: rgba($colorInvokeMenu, percentToDecimal($contrastInvokeMenuPercent));
+	}
+
+	&.create-btn {
+		.title-label {
+			font-size: 1rem;
+		}
+		//&:after {
+		//	color: rgba($colorInvokeMenu, 0.5);
+		//}
+	}
+
+	.menu {
+		left: 0;
+		text-align: left;
+		.ui-symbol.icon {
+			width: 12px;
+		}
+	}
+}
+
+/******************************************************** MENUS THEMSELVES */
 .menu-element {
-	$bg: lighten($colorBodyBg, 5%);
-	$bgHover: lighten($bg, 20%);
-	$iconColor: $colorKey;
+	$bg: $colorMenuBg;
+	$fg: $colorMenuFg;
+	$ic: $colorMenuIc;
 	cursor: pointer;
 	position: relative;
 	.menu {
 		@include border-radius($basicCr);
-		@include containerSubtle($bg);
-		@include txtShdwSubtle(0.2);
+		@include containerSubtle($bg, $fg);
+		@include boxShdw($shdwMenu);
+		@include txtShdw($shdwMenuText);
 		display: block; // set to block via jQuery
 		padding: $interiorMarginSm 0;
 		position: absolute;
@@ -39,7 +81,7 @@
 			li {
 				@include box-sizing(border-box);
 				border-top: 1px solid lighten($bg, 20%);
-				color: lighten($bg, 60%);
+				color: pullForward($bg, 60%);
 				line-height: $menuLineH;
 				padding: $interiorMarginSm $interiorMargin * 2 $interiorMarginSm ($interiorMargin * 2) + $treeTypeIconW;
 				position: relative;
@@ -48,19 +90,12 @@
 					border: none;
 				}
 				&:hover {
-					background: $bgHover;
-					color: $colorKeyFg;
-					//a {
-					//	color: $colorKeyFg;
-					//}
+					background: $colorMenuHovBg;
+					color: $colorMenuHovFg;
 					.icon {
-						color: lighten($iconColor, 20%);
+						color: $colorMenuHovIc;
 					}
 				}
-				//a {
-				//	color: lighten($bg, 60%);
-				//	display: block;
-				//}
 				.type-icon {
 					left: $interiorMargin * 2;
 				}
@@ -68,16 +103,12 @@
 		}
 	}
 
+	.menu,
 	.context-menu,
 	.super-menu {
-		$bg: $colorMenuBg;
-		$fg: $colorMenuFg;
-		$ic: $colorMenuIc;
-		//font-size: 0.80rem;
 		pointer-events: auto;
-		@include containerSubtle($bg);
 		ul li {
-			padding-left: 25px;
+			//padding-left: 25px;
 			a {
 				color: $fg;
 			}
@@ -88,7 +119,7 @@
 				left: $interiorMargin;
 			}
 			&:hover .icon {
-				color: lighten($ic, 5%);
+				//color: lighten($ic, 5%);
 			}
 		}
 	}
@@ -123,10 +154,8 @@
 	.super-menu {
 		$w: 500px;
 		$h: $w - 20;
-		$plw: 50%; //$w * 0.5;
-		$prw: 50%; //$w - $plw;
-		$fg: #fff; //lighten($colorBodyFg, 40%);
-		$bgHover: $colorKey; //$bg;
+		$plw: 50%;
+		$prw: 50%;
 		display: block;
 		width: $w;
 		height: $h;
@@ -137,7 +166,7 @@
 			@include box-sizing(border-box);
 			&.left {
 				//@include test();
-				border-right: 1px solid rgba(white, 0.2);
+				border-right: 1px solid pullForward($colorMenuBg, 10%);
 				left: 0;
 				padding-right: $interiorMargin;
 				right: auto;
@@ -158,15 +187,13 @@
 				right: 0;
 				padding: $interiorMargin * 5;
 				width: $prw;
-				.icon {
-					color: $fg;
-				}
 			}
 		}
 		.menu-item-description {
 			.desc-area {
 				&.icon {
 					$h: 150px;
+					color: $colorCreateMenuLgIcon;
 					position: relative;
 					font-size: 8em;
 					left: 0;
@@ -176,13 +203,13 @@
 					text-align: center;
 				}
 				&.title {
-					color: $fg;
+					color: $colorCreateMenuText;
 					font-size: 1.2em;
 					margin-bottom: 0.5em;
 				}
 				&.description {
 					//color: lighten($bg, 30%);
-					color: $fg;
+					color: $colorCreateMenuText;
 					font-size: 0.8em;
 					line-height: 1.5em;
 				}
