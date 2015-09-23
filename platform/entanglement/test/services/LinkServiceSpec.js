@@ -97,7 +97,6 @@ define(
                     parentCandidate.hasCapability.andCallFake(function (c) {
                         return c !== 'composition';
                     });
-                    parentCandidate.model.composition = undefined;
                     expect(validate()).toBe(false);
                 });
 
