@@ -32,6 +32,30 @@ define(
         "use strict";
 
         /**
+         * Describes a request for telemetry data. Note that responses
+         * may contain either a sub- or superset of the requested data.
+         * @typedef TelemetryRequest
+         * @property {string} source an identifier for the relevant
+         *           source of telemetry data
+         * @property {string} key an identifier for the specific
+         *           series of telemetry data provided by that source
+         * @property {number} [start] the earliest domain value of
+         *           interest for that telemetry data; for time-based
+         *           domains, this is in milliseconds since the start
+         *           of 1970
+         * @property {number} [end] the latest domain value of interest
+         *           for that telemetry data; for time-based domains,
+         *           this is in milliseconds since 1970
+         * @property {string} [domain] the domain for the query; if
+         *           omitted, this will be whatever the "normal"
+         *           domain is for a given telemetry series (the
+         *           first domain from its metadata)
+         * @property {number} [size] if set, indicates the maximum number
+         *           of data points of interest for this request (more
+         *           recent domain values will be preferred)
+         */
+
+        /**
          * Request telemetry data.
          * @param {TelemetryRequest[]} requests and array of
          *        requests to be handled

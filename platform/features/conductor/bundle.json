@@ -1,0 +1,25 @@
+{
+    "extensions": {
+        "representers": [
+            {
+                "implementation": "ConductorRepresenter.js",
+                "depends": [ "conductorService", "$compile", "views[]" ]
+            }
+        ],
+        "components": [
+            {
+                "type": "decorator",
+                "provides": "telemetryService",
+                "implementation": "ConductorTelemetryDecorator.js",
+                "depends": [ "conductorService" ]
+            }
+        ],
+        "services": [
+            {
+                "key": "conductorService",
+                "implementation": "ConductorService.js",
+                "depends": [ "now" ]
+            }
+        ]
+    }
+}

@@ -38,12 +38,13 @@ define(
          * @constructor
          * @param {Scope} $scope the controller's Angular scope
          */
-        function FixedController($scope, $q, dialogService, telemetrySubscriber, telemetryFormatter) {
+        function FixedController($scope, $q, dialogService, telemetryHandler, telemetryFormatter, throttle) {
             var self = this,
-                subscription,
+                handle,
                 names = {}, // Cache names by ID
                 values = {}, // Cache values by ID
-                elementProxiesById = {};
+                elementProxiesById = {},
+                maxDomainValue = Number.POSITIVE_INFINITY;
 
             // Convert from element x/y/width/height to an
             // appropriate ng-style argument, to position elements.
@@ -81,25 +82,50 @@ define(
                 return element.handles().map(generateDragHandle);
             }
 
-            // Update the displayed value for this object
-            function updateValue(telemetryObject) {
-                var id = telemetryObject && telemetryObject.getId(),
+            // Update the value displayed in elements of this telemetry object
+            function setDisplayedValue(telemetryObject, value, alarm) {
+                var id = telemetryObject.getId();
+                (elementProxiesById[id] || []).forEach(function (element) {
+                    names[id] = telemetryObject.getModel().name;
+                    values[id] = telemetryFormatter.formatRangeValue(value);
+                    element.name = names[id];
+                    element.value = values[id];
+                    element.cssClass = alarm && alarm.cssClass;
+                });
+            }
+
+            // Update the displayed value for this object, from a specific
+            // telemetry series
+            function updateValueFromSeries(telemetryObject, telemetrySeries) {
+                var index = telemetrySeries.getPointCount() - 1,
                     limit = telemetryObject &&
                         telemetryObject.getCapability('limit'),
-                    datum = telemetryObject &&
-                        subscription.getDatum(telemetryObject),
-                    alarm = limit && datum && limit.evaluate(datum);
+                    datum = telemetryObject && handle.getDatum(
+                        telemetryObject,
+                        index
+                    );
 
-                if (id) {
-                    (elementProxiesById[id] || []).forEach(function (element) {
-                        names[id] = telemetryObject.getModel().name;
-                        values[id] = telemetryFormatter.formatRangeValue(
-                            subscription.getRangeValue(telemetryObject)
-                        );
-                        element.name = names[id];
-                        element.value = values[id];
-                        element.cssClass = alarm && alarm.cssClass;
-                    });
+                setDisplayedValue(
+                    telemetryObject,
+                    telemetrySeries.getRangeValue(index),
+                    limit && datum && limit.evaluate(datum)
+                );
+            }
+
+            // Update the displayed value for this object
+            function updateValue(telemetryObject) {
+                var limit = telemetryObject &&
+                        telemetryObject.getCapability('limit'),
+                    datum = telemetryObject &&
+                        handle.getDatum(telemetryObject);
+
+                if (telemetryObject &&
+                        (handle.getDomainValue(telemetryObject) < maxDomainValue)) {
+                    setDisplayedValue(
+                        telemetryObject,
+                        handle.getRangeValue(telemetryObject),
+                        limit && datum && limit.evaluate(datum)
+                    );
                 }
             }
 
@@ -115,8 +141,8 @@ define(
 
             // Update telemetry values based on new data available
             function updateValues() {
-                if (subscription) {
-                    subscription.getTelemetryObjects().forEach(updateValue);
+                if (handle) {
+                    handle.getTelemetryObjects().forEach(updateValue);
                 }
             }
 
@@ -178,22 +204,29 @@ define(
 
             // Free up subscription to telemetry
             function releaseSubscription() {
-                if (subscription) {
-                    subscription.unsubscribe();
-                    subscription = undefined;
+                if (handle) {
+                    handle.unsubscribe();
+                    handle = undefined;
                 }
             }
 
             // Subscribe to telemetry updates for this domain object
             function subscribe(domainObject) {
                 // Release existing subscription (if any)
-                if (subscription) {
-                    subscription.unsubscribe();
+                if (handle) {
+                    handle.unsubscribe();
                 }
 
                 // Make a new subscription
-                subscription = domainObject &&
-                    telemetrySubscriber.subscribe(domainObject, updateValues);
+                handle = domainObject && telemetryHandler.handle(
+                    domainObject,
+                    updateValues
+                );
+                // Request an initial historical telemetry value
+                handle.request(
+                    { size: 1 }, // Only need a single data point
+                    updateValueFromSeries
+                );
             }
 
             // Handle changes in the object's composition
@@ -202,6 +235,17 @@ define(
                 // TODO: Ensure defaults here
                 // Resubscribe - objects in view have changed
                 subscribe($scope.domainObject);
+            }
+
+            // Trigger a new query for telemetry data
+            function updateDisplayBounds(event, bounds) {
+                maxDomainValue = bounds.end;
+                if (handle) {
+                    handle.request(
+                        { size: 1 }, // Only need a single data point
+                        updateValueFromSeries
+                    );
+                }
             }
 
             // Add an element to this view
@@ -278,6 +322,9 @@ define(
 
             // Position panes where they are dropped
             $scope.$on("mctDrop", handleDrop);
+
+            // Respond to external bounds changes
+            $scope.$on("telemetry:display:bounds", updateDisplayBounds);
         }
 
         /**

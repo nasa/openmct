@@ -19,45 +19,40 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise*/
+/*global define,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 /**
- * Module defining SinewaveTelemetry. Created by vwoeltje on 11/12/14.
+ *  EventSpec. Created by vwoeltje on 11/6/14. Modified by shale on 06/23/2015.
  */
 define(
-    [],
-    function () {
+    ["../src/ConductorService"],
+    function (ConductorService) {
         "use strict";
 
-        var firstObservedTime = Date.now();
+        var TEST_NOW = 1020304050;
 
-        /**
-         *
-         * @constructor
-         */
-        function SinewaveTelemetry(request) {
-            var latestObservedTime = Date.now(),
-                count = Math.floor((latestObservedTime - firstObservedTime) / 1000),
-                period = request.period || 30,
-                generatorData = {};
+        describe("ConductorService", function () {
+            var mockNow,
+                conductorService;
 
-            generatorData.getPointCount = function () {
-                return count;
-            };
+            beforeEach(function () {
+                mockNow = jasmine.createSpy('now');
+                mockNow.andReturn(TEST_NOW);
+                conductorService = new ConductorService(mockNow);
+            });
 
-            generatorData.getDomainValue = function (i, domain) {
-                return i * 1000 +
-                        (domain !== 'delta' ? firstObservedTime : 0);
-            };
+            it("initializes a time conductor around the current time", function () {
+                var conductor = conductorService.getConductor();
+                expect(conductor.queryStart() <= TEST_NOW).toBeTruthy();
+                expect(conductor.queryEnd() >= TEST_NOW).toBeTruthy();
+                expect(conductor.queryEnd() > conductor.queryStart())
+                    .toBeTruthy();
+            });
 
-            generatorData.getRangeValue = function (i, range) {
-                range = range || "sin";
-                return Math[range](i * Math.PI * 2 / period);
-            };
-
-            return generatorData;
-        }
-
-        return SinewaveTelemetry;
+            it("provides a single shared time conductor instance", function () {
+                expect(conductorService.getConductor())
+                    .toBe(conductorService.getConductor());
+            });
+        });
     }
 );

@@ -65,6 +65,8 @@ define(
                 subPlotFactory = new SubPlotFactory(telemetryFormatter),
                 cachedObjects = [],
                 updater,
+                lastBounds,
+                throttledRequery,
                 handle;
 
             // Populate the scope with axis information (specifically, options
@@ -94,6 +96,17 @@ define(
                 }
             }
 
+            // Change the displayable bounds
+            function setBasePanZoom(bounds) {
+                var start = bounds.start,
+                    end = bounds.end;
+                if (updater) {
+                    updater.setDomainBounds(start, end);
+                    self.update();
+                }
+                lastBounds = bounds;
+            }
+
             // Reinstantiate the plot updater (e.g. because we have a
             // new subscription.) This will clear the plot.
             function recreateUpdater() {
@@ -107,10 +120,15 @@ define(
                     handle,
                     ($scope.axes[1].active || {}).key
                 );
+                // Keep any externally-provided bounds
+                if (lastBounds) {
+                    setBasePanZoom(lastBounds);
+                }
             }
 
             // Handle new telemetry data in this plot
             function updateValues() {
+                self.pending = false;
                 if (handle) {
                     setupModes(handle.getTelemetryObjects());
                 }
@@ -126,6 +144,7 @@ define(
 
             // Display new historical data as it becomes available
             function addHistoricalData(domainObject, series) {
+                self.pending = false;
                 updater.addHistorical(domainObject, series);
                 self.modeOptions.getModeHandler().plotTelemetry(updater);
                 self.update();
@@ -165,6 +184,19 @@ define(
                 }
             }
 
+            // Respond to a display bounds change (requery for data)
+            function changeDisplayBounds(event, bounds) {
+                self.pending = true;
+                releaseSubscription();
+                throttledRequery();
+                setBasePanZoom(bounds);
+            }
+
+            // Reestablish/reissue request for telemetry
+            throttledRequery = throttle(function () {
+                subscribe($scope.domainObject);
+            }, 250);
+
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
             this.updateValues = updateValues;
 
@@ -174,12 +206,19 @@ define(
                     .forEach(updateSubplot);
             });
 
+            self.pending = true;
+
             // Subscribe to telemetry when a domain object becomes available
             $scope.$watch('domainObject', subscribe);
+
+            // Respond to external bounds changes
+            $scope.$on("telemetry:display:bounds", changeDisplayBounds);
 
             // Unsubscribe when the plot is destroyed
             $scope.$on("$destroy", releaseSubscription);
 
+            // Notify any external observers that a new telemetry view is here
+            $scope.$emit("telemetry:view");
         }
 
         /**
@@ -275,7 +314,7 @@ define(
         PlotController.prototype.isRequestPending = function () {
             // Placeholder; this should reflect request state
             // when requesting historical telemetry
-            return false;
+            return this.pending;
         };
 
         return PlotController;

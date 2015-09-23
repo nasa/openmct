@@ -167,8 +167,9 @@
                     "$scope",
                     "$q",
                     "dialogService",
-                    "telemetrySubscriber",
-                    "telemetryFormatter"
+                    "telemetryHandler",
+                    "telemetryFormatter",
+                    "throttle"
                 ]
             }
         ],

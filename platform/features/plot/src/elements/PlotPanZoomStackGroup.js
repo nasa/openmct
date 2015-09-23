@@ -143,8 +143,7 @@ define(
         PlotPanZoomStackGroup.prototype.getDepth = function () {
             // All stacks are kept in sync, so look up depth
             // from the first one.
-            return this.stacks.length > 0 ?
-                this.stacks[0].getDepth() : 0;
+            return this.stacks.length > 0 ? this.stacks[0].getDepth() : 0;
         };
 
         /**

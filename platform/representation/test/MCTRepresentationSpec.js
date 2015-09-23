@@ -106,7 +106,7 @@ define(
                 mockSce.trustAsResourceUrl.andCallFake(function (url) {
                     return url;
                 });
-                mockScope = jasmine.createSpyObj("scope", [ "$watch" ]);
+                mockScope = jasmine.createSpyObj("scope", [ "$watch", "$on" ]);
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
 
