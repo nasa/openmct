@@ -229,7 +229,7 @@ define(
             // Position a panel after a drop event
             function handleDrop(e, id, position) {
                 // Don't handle this event if it has already been handled
-			  	// color is set to "" to let the CSS theme determine the default color
+                // color is set to "" to let the CSS theme determine the default color
                 if (e.defaultPrevented) {
                     return;
                 }
