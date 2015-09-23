@@ -31,11 +31,10 @@ define(
 
         var firstObservedTime = Date.now(),
             images = [
-                "http://www.esa.int/var/esa/storage/images/esa_multimedia/images/2015/01/comet_on_16_january_2015_navcam/15205508-1-eng-GB/Comet_on_16_January_2015_NavCam.jpg",
-                "http://www.esa.int/var/esa/storage/images/esa_multimedia/images/2014/08/comet_on_7_august_a/14721226-1-eng-GB/Comet_on_7_August_a_node_full_image_2.jpg",
-                "http://http://resources0.news.com.au/images/2014/10/26/1227102/619948-e62d0d0c-5cb3-11e4-9c68-d403f5dcc36d.jpg",
-                "http://www.esa.int/var/esa/storage/images/esa_multimedia/images/2014/08/comet_on_16_august_a/14735866-1-eng-GB/Comet_on_16_August_a_node_full_image_2.jpg",
-			  	"http://www.esa.int/var/esa/storage/images/esa_multimedia/images/2015/08/year_at_a_comet_may_2015/15549436-1-eng-GB/Year_at_a_comet_May_2015_node_full_image_2.jpg"
+                "http://www.nasa.gov/393811main_Palomar_ao_bouchez_10s_after_impact_4x3_946-710.png",
+                "http://www.nasa.gov/393821main_Palomar_ao_bouchez_15s_after_impact_4x3_946-710.png",
+                "http://www.nasa.gov/images/content/393801main_CfhtVeillet2_4x3_516-387.jpg",
+                "http://www.nasa.gov/images/content/392790main_1024_768_GeminiNorth_NightBeforeImpact_946-710.jpg"
             ].map(function (url, index) {
                 return {
                     timestamp: firstObservedTime + 1000 * index,
