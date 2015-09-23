@@ -131,6 +131,15 @@ define(
                     copyResult,
                     copyFinished;
 
+                beforeEach(function () {
+                    creationService = jasmine.createSpyObj(
+                        'creationService',
+                        ['createObject']
+                    );
+                    createObjectPromise = synchronousPromise(undefined);
+                    creationService.createObject.andReturn(createObjectPromise);
+                });
+
                 describe("on domain object without composition", function () {
                     beforeEach(function () {
                         object = domainObjectFactory({
@@ -147,12 +156,6 @@ define(
                                 composition: []
                             }
                         });
-                        creationService = jasmine.createSpyObj(
-                            'creationService',
-                            ['createObject']
-                        );
-                        createObjectPromise = synchronousPromise(undefined);
-                        creationService.createObject.andReturn(createObjectPromise);
                         copyService = new CopyService(null, creationService, policyService);
                         copyResult = copyService.perform(object, newParent);
                         copyFinished = jasmine.createSpy('copyFinished');
@@ -240,10 +243,6 @@ define(
                                 composition: []
                             }
                         });
-                        creationService = jasmine.createSpyObj(
-                            'creationService',
-                            ['createObject']
-                        );
                         policyService.allow.andReturn(true);
 
                         createObjectPromise = synchronousPromise(newObject);
@@ -285,18 +284,36 @@ define(
                     });
                 });
 
-                it("throws an expection when performed on invalid inputs", function () {
-                    var copyService =
-                        new CopyService(mockQ, creationService, policyService);
+                describe("on invalid inputs", function () {
+                    beforeEach(function () {
+                        object = domainObjectFactory({
+                            name: 'object',
+                            capabilities: {
+                                type: { type: 'object' }
+                            }
+                        });
+                        newParent = domainObjectFactory({
+                            name: 'parentCandidate',
+                            capabilities: {
+                                type: { type: 'parentCandidate' }
+                            }
+                        });
+                    });
 
-                    function perform() {
-                        copyService.perform(object, newParent);
-                    }
+                    it("throws an error", function () {
+                        var copyService =
+                            new CopyService(mockQ, creationService, policyService);
 
-                    policyService.allow.andReturn(true);
-                    expect(perform).not.toThrow();
-                    policyService.allow.andReturn(false); // Cause validate to fail
-                    expect(perform).toThrow();
+                        function perform() {
+                            copyService.perform(object, newParent);
+                        }
+
+                        spyOn(copyService, "validate");
+                        copyService.validate.andReturn(true);
+                        expect(perform).not.toThrow();
+                        copyService.validate.andReturn(false);
+                        expect(perform).toThrow();
+                    });
                 });
 
             });

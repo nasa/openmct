@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect */
+/*global define,describe,beforeEach,it,jasmine,expect,spyOn */
 define(
     [
         '../../src/services/MoveService',
@@ -196,14 +196,15 @@ define(
                         .toHaveBeenCalledWith(jasmine.any(Function));
                 });
 
-                it("throws an expection when performed on invalid inputs", function () {
+                it("throws an error when performed on invalid inputs", function () {
                     function perform() {
                         moveService.perform(object, newParent);
                     }
 
-                    policyService.allow.andReturn(true);
+                    spyOn(moveService, "validate");
+                    moveService.validate.andReturn(true);
                     expect(perform).not.toThrow();
-                    policyService.allow.andReturn(false); // Cause validate to fail
+                    moveService.validate.andReturn(false);
                     expect(perform).toThrow();
                 });
 

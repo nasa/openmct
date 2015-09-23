@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect */
+/*global define,describe,beforeEach,it,jasmine,expect,spyOn */
 
 define(
     [
@@ -221,14 +221,15 @@ define(
                     expect(whenComplete).toHaveBeenCalledWith(linkedObject);
                 });
 
-                it("throws an expection when performed on invalid inputs", function () {
+                it("throws an error when performed on invalid inputs", function () {
                     function perform() {
                         linkService.perform(object, parentObject);
                     }
 
-                    mockPolicyService.allow.andReturn(true);
+                    spyOn(linkService, 'validate');
+                    linkService.validate.andReturn(true);
                     expect(perform).not.toThrow();
-                    mockPolicyService.allow.andReturn(false); // Cause validate to fail
+                    linkService.validate.andReturn(false);
                     expect(perform).toThrow();
                 });
             });
