@@ -41,19 +41,23 @@ define(
         }
 
         describe("CopyService", function () {
+            var policyService;
+
+            beforeEach(function () {
+                policyService = jasmine.createSpyObj(
+                    'policyService',
+                    ['allow']
+                );
+            });
+
             describe("validate", function () {
 
-                var policyService,
-                    copyService,
+                var copyService,
                     object,
                     parentCandidate,
                     validate;
 
                 beforeEach(function () {
-                    policyService = jasmine.createSpyObj(
-                        'policyService',
-                        ['allow']
-                    );
                     copyService = new CopyService(
                         null,
                         null,
@@ -126,6 +130,16 @@ define(
                     copyResult,
                     copyFinished;
 
+                beforeEach(function () {
+                    creationService = jasmine.createSpyObj(
+                        'creationService',
+                        ['createObject']
+                    );
+                    createObjectPromise = synchronousPromise(undefined);
+                    creationService.createObject.andReturn(createObjectPromise);
+                    policyService.allow.andReturn(true);
+                });
+
                 describe("on domain object without composition", function () {
                     beforeEach(function () {
                         object = domainObjectFactory({
@@ -142,13 +156,7 @@ define(
                                 composition: []
                             }
                         });
-                        creationService = jasmine.createSpyObj(
-                            'creationService',
-                            ['createObject']
-                        );
-                        createObjectPromise = synchronousPromise(undefined);
-                        creationService.createObject.andReturn(createObjectPromise);
-                        copyService = new CopyService(null, creationService);
+                        copyService = new CopyService(null, creationService, policyService);
                         copyResult = copyService.perform(object, newParent);
                         copyFinished = jasmine.createSpy('copyFinished');
                         copyResult.then(copyFinished);
@@ -180,7 +188,8 @@ define(
                 });
 
                 describe("on domainObject with composition", function () {
-                    var childObject,
+                    var newObject,
+                        childObject,
                         compositionCapability,
                         compositionPromise;
 
@@ -216,6 +225,17 @@ define(
                                 composition: compositionCapability
                             }
                         });
+                        newObject = domainObjectFactory({
+                            name: 'object',
+                            id: 'abc2',
+                            model: {
+                                name: 'some object',
+                                composition: []
+                            },
+                            capabilities: {
+                                composition: compositionCapability
+                            }
+                        });
                         newParent = domainObjectFactory({
                             name: 'newParent',
                             id: '456',
@@ -223,13 +243,10 @@ define(
                                 composition: []
                             }
                         });
-                        creationService = jasmine.createSpyObj(
-                            'creationService',
-                            ['createObject']
-                        );
-                        createObjectPromise = synchronousPromise(undefined);
+
+                        createObjectPromise = synchronousPromise(newObject);
                         creationService.createObject.andReturn(createObjectPromise);
-                        copyService = new CopyService(mockQ, creationService);
+                        copyService = new CopyService(mockQ, creationService, policyService);
                         copyResult = copyService.perform(object, newParent);
                         copyFinished = jasmine.createSpy('copyFinished');
                         copyResult.then(copyFinished);
@@ -263,6 +280,38 @@ define(
                     it("returns a promise", function () {
                         expect(copyResult.then).toBeDefined();
                         expect(copyFinished).toHaveBeenCalled();
+                    });
+                });
+
+                describe("on invalid inputs", function () {
+                    beforeEach(function () {
+                        object = domainObjectFactory({
+                            name: 'object',
+                            capabilities: {
+                                type: { type: 'object' }
+                            }
+                        });
+                        newParent = domainObjectFactory({
+                            name: 'parentCandidate',
+                            capabilities: {
+                                type: { type: 'parentCandidate' }
+                            }
+                        });
+                    });
+
+                    it("throws an error", function () {
+                        var copyService =
+                            new CopyService(mockQ, creationService, policyService);
+
+                        function perform() {
+                            copyService.perform(object, newParent);
+                        }
+
+                        spyOn(copyService, "validate");
+                        copyService.validate.andReturn(true);
+                        expect(perform).not.toThrow();
+                        copyService.validate.andReturn(false);
+                        expect(perform).toThrow();
                     });
                 });
 
