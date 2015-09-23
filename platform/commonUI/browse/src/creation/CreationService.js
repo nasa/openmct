@@ -42,10 +42,11 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function CreationService(persistenceService, $q, $log) {
+        function CreationService(persistenceService, now, $q, $log) {
             this.persistenceService = persistenceService;
             this.$q = $q;
             this.$log = $log;
+            this.now = now;
         }
 
         /**
@@ -114,6 +115,7 @@ define(
             // 2. Create a model with that ID in the persistence space
             // 3. Add that ID to
             return self.$q.when(uuid()).then(function (id) {
+                model.persisted = self.now();
                 return doPersist(persistence.getSpace(), id, model);
             }).then(function (id) {
                 return addToComposition(id, parent, persistence);
