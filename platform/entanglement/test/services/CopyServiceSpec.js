@@ -48,7 +48,6 @@ define(
                     'policyService',
                     ['allow']
                 );
-                policyService.allow.andReturn(true);
             });
 
             describe("validate", function () {
@@ -138,6 +137,7 @@ define(
                     );
                     createObjectPromise = synchronousPromise(undefined);
                     creationService.createObject.andReturn(createObjectPromise);
+                    policyService.allow.andReturn(true);
                 });
 
                 describe("on domain object without composition", function () {
@@ -243,7 +243,6 @@ define(
                                 composition: []
                             }
                         });
-                        policyService.allow.andReturn(true);
 
                         createObjectPromise = synchronousPromise(newObject);
                         creationService.createObject.andReturn(createObjectPromise);
