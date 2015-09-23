@@ -29,7 +29,8 @@ define(
     function () {
         "use strict";
 
-        var firstObservedTime = Math.floor(Date.now() / 1000);
+        var ONE_DAY = 1000 * 60 * 60 * 24,
+            firstObservedTime = Math.floor(Date.now() / 1000);
 
         /**
          *
@@ -56,8 +57,8 @@ define(
             };
 
             generatorData.getDomainValue = function (i, domain) {
-                return (i + offset) * 1000 +
-                        (domain !== 'delta' ? (firstObservedTime * 1000) : 0);
+                return (i + offset) * 1000 + firstObservedTime * 1000 -
+                        (domain === 'yesterday' ? ONE_DAY : 0);
             };
 
             generatorData.getRangeValue = function (i, range) {
