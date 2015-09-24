@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /******************************************************** MENU BUTTONS */
-.s-menu {
+.s-menu-btn {
 	// Formerly .btn-menu
 	@extend .s-btn;
 	span.l-click-area {
@@ -66,13 +66,17 @@
 	position: relative;
 }
 
-.menu {
+.s-menu {
 	@include border-radius($basicCr);
 	@include containerSubtle($colorMenuBg, $colorMenuFg);
 	@include boxShdw($shdwMenu);
 	@include txtShdw($shdwMenuText);
-	display: block; // set to block via jQuery
 	padding: $interiorMarginSm 0;
+}
+
+.menu {
+	@extend .s-menu;
+	display: block;
 	position: absolute;
 	z-index: 10;
 	ul {
@@ -221,7 +225,6 @@
 
 .context-menu-holder,
 .menu-holder {
-	pointer-events: none;
 	position: absolute;
 	z-index: 70;
 	.context-menu-wrapper {
@@ -240,6 +243,7 @@
 }
 
 .context-menu-holder {
+	pointer-events: none;
 	height: 200px;
 	width: 170px;
 }

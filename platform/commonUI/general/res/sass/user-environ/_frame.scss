@@ -47,7 +47,7 @@
 	}
 	&.frame-template {
 		.s-btn,
-		.s-menu {
+		.s-menu-btn {
 			height: $ohH;
 			line-height: $ohH;
 			padding: 0 $interiorMargin;
@@ -56,7 +56,7 @@
 			}
 		}
 
-		.s-menu:after {
+		.s-menu-btn:after {
 			font-size: 8px;
 		}
 

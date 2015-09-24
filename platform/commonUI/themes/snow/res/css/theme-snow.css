@@ -373,7 +373,7 @@ mct-container {
   display: block; }
 
 /* line 97, ../../../../general/res/sass/_global.scss */
-.abs, .s-menu span.l-click-area {
+.abs, .s-menu-btn span.l-click-area {
   position: absolute;
   top: 0;
   right: 0;
@@ -443,7 +443,7 @@ mct-container {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* line 26, ../../../../general/res/sass/_about.scss */
-.l-about.abs, .s-menu span.l-about.l-click-area {
+.l-about.abs, .s-menu-btn span.l-about.l-click-area {
   overflow: auto; }
 /* line 31, ../../../../general/res/sass/_about.scss */
 .l-about .l-logo-holder {
@@ -493,7 +493,7 @@ mct-container {
   .s-about .s-logo-openmctweb {
     background-image: url("../../../../general/res/images/logo-openmctweb-shdw.svg"); }
   /* line 81, ../../../../general/res/sass/_about.scss */
-  .s-about .s-btn, .s-about .s-menu {
+  .s-about .s-btn, .s-about .s-menu-btn {
     line-height: 2em; }
   /* line 85, ../../../../general/res/sass/_about.scss */
   .s-about .l-licenses-software .l-license-software {
@@ -534,7 +534,7 @@ mct-container {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* line 24, ../../../../general/res/sass/_text.scss */
-.abs.l-standalone, .s-menu span.l-standalone.l-click-area {
+.abs.l-standalone, .s-menu-btn span.l-standalone.l-click-area {
   padding: 5% 20%; }
 
 /* line 29, ../../../../general/res/sass/_text.scss */
@@ -624,7 +624,7 @@ mct-container {
   display: inline-block; }
 
 /* line 61, ../../../../general/res/sass/_icons.scss */
-.s-menu .invoke-menu,
+.s-menu-btn .invoke-menu,
 .icon.major .invoke-menu {
   margin-left: 3px; }
 
@@ -1257,7 +1257,7 @@ mct-container {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* line 25, ../../../../general/res/sass/controls/_buttons.scss */
-.s-btn, .s-menu {
+.s-btn, .s-menu-btn {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
@@ -1272,23 +1272,23 @@ mct-container {
   padding: 0 7.5px;
   font-size: 0.7rem; }
   /* line 35, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn .icon, .s-menu .icon {
+  .s-btn .icon, .s-menu-btn .icon {
     font-size: 0.8rem;
     color: #0099cc; }
   /* line 40, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn .title-label, .s-menu .title-label {
+  .s-btn .title-label, .s-menu-btn .title-label {
     vertical-align: top; }
   /* line 44, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn.lg, .lg.s-menu {
+  .s-btn.lg, .lg.s-menu-btn {
     font-size: 1rem; }
   /* line 48, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn.sm, .sm.s-menu {
+  .s-btn.sm, .sm.s-menu-btn {
     padding: 0 5px; }
   /* line 52, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn.vsm, .vsm.s-menu {
+  .s-btn.vsm, .vsm.s-menu-btn {
     padding: 0 2.5px; }
   /* line 56, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn.major, .major.s-menu {
+  .s-btn.major, .major.s-menu-btn {
     background-color: #0099cc;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
@@ -1308,17 +1308,17 @@ mct-container {
     transition: background, 0.25s;
     text-shadow: none; }
     /* line 272, ../../../../general/res/sass/_mixins.scss */
-    .s-btn.major .icon, .major.s-menu .icon {
+    .s-btn.major .icon, .major.s-menu-btn .icon {
       color: #fff; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
       /* line 277, ../../../../general/res/sass/_mixins.scss */
-      .s-btn.major:not(.disabled):hover, .major.s-menu:not(.disabled):hover {
+      .s-btn.major:not(.disabled):hover, .major.s-menu-btn:not(.disabled):hover {
         background: deepskyblue; }
         /* line 279, ../../../../general/res/sass/_mixins.scss */
-        .s-btn.major:not(.disabled):hover > .icon, .major.s-menu:not(.disabled):hover > .icon {
+        .s-btn.major:not(.disabled):hover > .icon, .major.s-menu-btn:not(.disabled):hover > .icon {
           color: white; } }
   /* line 62, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn:not(.major), .s-menu:not(.major) {
+  .s-btn:not(.major), .s-menu-btn:not(.major) {
     background-color: #969696;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
@@ -1338,20 +1338,20 @@ mct-container {
     transition: background, 0.25s;
     text-shadow: none; }
     /* line 272, ../../../../general/res/sass/_mixins.scss */
-    .s-btn:not(.major) .icon, .s-menu:not(.major) .icon {
+    .s-btn:not(.major) .icon, .s-menu-btn:not(.major) .icon {
       color: #eee; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
       /* line 277, ../../../../general/res/sass/_mixins.scss */
-      .s-btn:not(.major):not(.disabled):hover, .s-menu:not(.major):not(.disabled):hover {
+      .s-btn:not(.major):not(.disabled):hover, .s-menu-btn:not(.major):not(.disabled):hover {
         background: #0099cc; }
         /* line 279, ../../../../general/res/sass/_mixins.scss */
-        .s-btn:not(.major):not(.disabled):hover > .icon, .s-menu:not(.major):not(.disabled):hover > .icon {
+        .s-btn:not(.major):not(.disabled):hover > .icon, .s-menu-btn:not(.major):not(.disabled):hover > .icon {
           color: white; } }
   /* line 71, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn.pause-play .icon:before, .pause-play.s-menu .icon:before {
+  .s-btn.pause-play .icon:before, .pause-play.s-menu-btn .icon:before {
     content: "\0000F1"; }
   /* line 74, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn.pause-play.paused, .pause-play.paused.s-menu {
+  .s-btn.pause-play.paused, .pause-play.paused.s-menu-btn {
     background-color: #ff9900;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
@@ -1371,17 +1371,17 @@ mct-container {
     transition: background, 0.25s;
     text-shadow: none; }
     /* line 272, ../../../../general/res/sass/_mixins.scss */
-    .s-btn.pause-play.paused .icon, .pause-play.paused.s-menu .icon {
+    .s-btn.pause-play.paused .icon, .pause-play.paused.s-menu-btn .icon {
       color: #fff; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
       /* line 277, ../../../../general/res/sass/_mixins.scss */
-      .s-btn.pause-play.paused:not(.disabled):hover, .pause-play.paused.s-menu:not(.disabled):hover {
+      .s-btn.pause-play.paused:not(.disabled):hover, .pause-play.paused.s-menu-btn:not(.disabled):hover {
         background: #ffad33; }
         /* line 279, ../../../../general/res/sass/_mixins.scss */
-        .s-btn.pause-play.paused:not(.disabled):hover > .icon, .pause-play.paused.s-menu:not(.disabled):hover > .icon {
+        .s-btn.pause-play.paused:not(.disabled):hover > .icon, .pause-play.paused.s-menu-btn:not(.disabled):hover > .icon {
           color: white; } }
     /* line 76, ../../../../general/res/sass/controls/_buttons.scss */
-    .s-btn.pause-play.paused .icon, .pause-play.paused.s-menu .icon {
+    .s-btn.pause-play.paused .icon, .pause-play.paused.s-menu-btn .icon {
       -moz-animation-name: pulse;
       -webkit-animation-name: pulse;
       animation-name: pulse;
@@ -1398,23 +1398,23 @@ mct-container {
       -webkit-animation-timing-function: ease-in-out;
       animation-timing-function: ease-in-out; }
       /* line 78, ../../../../general/res/sass/controls/_buttons.scss */
-      .s-btn.pause-play.paused .icon :before, .pause-play.paused.s-menu .icon :before {
+      .s-btn.pause-play.paused .icon :before, .pause-play.paused.s-menu-btn .icon :before {
         content: "\0000EF"; }
   /* line 86, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-btn.show-thumbs .icon:before, .show-thumbs.s-menu .icon:before {
+  .s-btn.show-thumbs .icon:before, .show-thumbs.s-menu-btn .icon:before {
     content: "\000039"; }
 
 /* line 92, ../../../../general/res/sass/controls/_buttons.scss */
 .l-btn-set {
   font-size: 0; }
   /* line 98, ../../../../general/res/sass/controls/_buttons.scss */
-  .l-btn-set .s-btn, .l-btn-set .s-menu {
+  .l-btn-set .s-btn, .l-btn-set .s-menu-btn {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
     border-radius: 0;
     margin-left: 1px; }
   /* line 104, ../../../../general/res/sass/controls/_buttons.scss */
-  .l-btn-set .first .s-btn, .l-btn-set .first .s-menu {
+  .l-btn-set .first .s-btn, .l-btn-set .first .s-menu-btn {
     -moz-border-radius-topleft: 4px;
     -webkit-border-top-left-radius: 4px;
     border-top-left-radius: 4px;
@@ -1423,7 +1423,7 @@ mct-container {
     border-bottom-left-radius: 4px;
     margin-left: 0; }
   /* line 111, ../../../../general/res/sass/controls/_buttons.scss */
-  .l-btn-set .last .s-btn, .l-btn-set .last .s-menu {
+  .l-btn-set .last .s-btn, .l-btn-set .last .s-menu-btn {
     -moz-border-radius-topright: 4px;
     -webkit-border-top-right-radius: 4px;
     border-top-right-radius: 4px;
@@ -1432,7 +1432,7 @@ mct-container {
     border-bottom-right-radius: 4px; }
 
 /* line 118, ../../../../general/res/sass/controls/_buttons.scss */
-.paused:not(.s-btn):not(.s-menu) {
+.paused:not(.s-btn):not(.s-menu-btn) {
   border-color: #ff9900 !important;
   color: #ff9900 !important; }
 
@@ -1720,7 +1720,7 @@ label.checkbox.custom {
     margin-left: 0; }
 
 /* line 208, ../../../../general/res/sass/controls/_controls.scss */
-.s-menu label.checkbox.custom {
+.s-menu-btn label.checkbox.custom {
   margin-left: 5px; }
 
 /* line 213, ../../../../general/res/sass/controls/_controls.scss */
@@ -1972,13 +1972,13 @@ label.checkbox.custom {
  *****************************************************************************/
 /******************************************************** MENU BUTTONS */
 /* line 31, ../../../../general/res/sass/controls/_menus.scss */
-.s-menu .icon {
+.s-menu-btn .icon {
   font-size: 120%; }
 /* line 35, ../../../../general/res/sass/controls/_menus.scss */
-.s-menu .title-label {
+.s-menu-btn .title-label {
   margin-left: 3px; }
 /* line 39, ../../../../general/res/sass/controls/_menus.scss */
-.s-menu:after {
+.s-menu-btn:after {
   text-shadow: none;
   content: '\76';
   display: inline-block;
@@ -1987,14 +1987,14 @@ label.checkbox.custom {
   vertical-align: top;
   color: rgba(255, 255, 255, 0.4); }
 /* line 46, ../../../../general/res/sass/controls/_menus.scss */
-.s-menu.create-btn .title-label {
+.s-menu-btn.create-btn .title-label {
   font-size: 1rem; }
 /* line 54, ../../../../general/res/sass/controls/_menus.scss */
-.s-menu .menu {
+.s-menu-btn .menu {
   left: 0;
   text-align: left; }
   /* line 57, ../../../../general/res/sass/controls/_menus.scss */
-  .s-menu .menu .ui-symbol.icon {
+  .s-menu-btn .menu .ui-symbol.icon {
     width: 12px; }
 
 /******************************************************** MENUS THEMSELVES */
@@ -2004,7 +2004,7 @@ label.checkbox.custom {
   position: relative; }
 
 /* line 69, ../../../../general/res/sass/controls/_menus.scss */
-.menu {
+.s-menu, .menu {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
@@ -2021,11 +2021,14 @@ label.checkbox.custom {
   -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0 1px 5px;
   box-shadow: rgba(0, 0, 0, 0.5) 0 1px 5px;
   text-shadow: none;
+  padding: 3px 0; }
+
+/* line 77, ../../../../general/res/sass/controls/_menus.scss */
+.menu {
   display: block;
-  padding: 3px 0;
   position: absolute;
   z-index: 10; }
-  /* line 78, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 87, ../../../../general/res/sass/controls/_menus.scss */
   .menu ul {
     margin: 0;
     padding: 0; }
@@ -2034,7 +2037,7 @@ label.checkbox.custom {
       list-style-type: none;
       margin: 0;
       padding: 0; }
-    /* line 80, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 89, ../../../../general/res/sass/controls/_menus.scss */
     .menu ul li {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
@@ -2045,73 +2048,73 @@ label.checkbox.custom {
       padding: 3px 10px 3px 30px;
       position: relative;
       white-space: nowrap; }
-      /* line 88, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 97, ../../../../general/res/sass/controls/_menus.scss */
       .menu ul li:first-child {
         border: none; }
-      /* line 91, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 100, ../../../../general/res/sass/controls/_menus.scss */
       .menu ul li:hover {
         background: #e6e6e6;
         color: #4d4d4d; }
-        /* line 94, ../../../../general/res/sass/controls/_menus.scss */
+        /* line 103, ../../../../general/res/sass/controls/_menus.scss */
         .menu ul li:hover .icon {
           color: #0099cc; }
-      /* line 98, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 107, ../../../../general/res/sass/controls/_menus.scss */
       .menu ul li .type-icon {
         left: 10px; }
 
-/* line 105, ../../../../general/res/sass/controls/_menus.scss */
+/* line 114, ../../../../general/res/sass/controls/_menus.scss */
 .menu,
 .context-menu,
 .checkbox-menu,
 .super-menu {
   pointer-events: auto; }
-  /* line 111, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 120, ../../../../general/res/sass/controls/_menus.scss */
   .menu ul li a,
   .context-menu ul li a,
   .checkbox-menu ul li a,
   .super-menu ul li a {
     color: #4d4d4d; }
-  /* line 114, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 123, ../../../../general/res/sass/controls/_menus.scss */
   .menu ul li .icon,
   .context-menu ul li .icon,
   .checkbox-menu ul li .icon,
   .super-menu ul li .icon {
     color: #0099cc; }
-  /* line 117, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 126, ../../../../general/res/sass/controls/_menus.scss */
   .menu ul li .type-icon,
   .context-menu ul li .type-icon,
   .checkbox-menu ul li .type-icon,
   .super-menu ul li .type-icon {
     left: 5px; }
 
-/* line 129, ../../../../general/res/sass/controls/_menus.scss */
+/* line 138, ../../../../general/res/sass/controls/_menus.scss */
 .checkbox-menu ul li {
   padding-left: 50px; }
-  /* line 131, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 140, ../../../../general/res/sass/controls/_menus.scss */
   .checkbox-menu ul li .checkbox {
     position: absolute;
     left: 5px;
     top: 0.53333rem; }
-    /* line 136, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 145, ../../../../general/res/sass/controls/_menus.scss */
     .checkbox-menu ul li .checkbox em {
       height: 0.7rem;
       width: 0.7rem; }
-      /* line 139, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 148, ../../../../general/res/sass/controls/_menus.scss */
       .checkbox-menu ul li .checkbox em:before {
         font-size: 7px !important;
         height: 0.7rem;
         width: 0.7rem;
         line-height: 0.7rem; }
-  /* line 147, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 156, ../../../../general/res/sass/controls/_menus.scss */
   .checkbox-menu ul li .type-icon {
     left: 25px; }
 
-/* line 153, ../../../../general/res/sass/controls/_menus.scss */
+/* line 162, ../../../../general/res/sass/controls/_menus.scss */
 .super-menu {
   display: block;
   width: 500px;
   height: 480px; }
-  /* line 161, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 170, ../../../../general/res/sass/controls/_menus.scss */
   .super-menu .contents {
     overflow: hidden;
     position: absolute;
@@ -2121,12 +2124,12 @@ label.checkbox.custom {
     left: 5px;
     width: auto;
     height: auto; }
-  /* line 164, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 173, ../../../../general/res/sass/controls/_menus.scss */
   .super-menu .pane {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box; }
-    /* line 166, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 175, ../../../../general/res/sass/controls/_menus.scss */
     .super-menu .pane.left {
       border-right: 1px solid #e6e6e6;
       left: 0;
@@ -2135,20 +2138,20 @@ label.checkbox.custom {
       width: 50%;
       overflow-x: hidden;
       overflow-y: auto; }
-      /* line 176, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 185, ../../../../general/res/sass/controls/_menus.scss */
       .super-menu .pane.left ul li {
         -moz-border-radius: 4px;
         -webkit-border-radius: 4px;
         border-radius: 4px;
         padding-left: 30px;
         border-top: none; }
-    /* line 183, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 192, ../../../../general/res/sass/controls/_menus.scss */
     .super-menu .pane.right {
       left: auto;
       right: 0;
       padding: 25px;
       width: 50%; }
-  /* line 193, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 202, ../../../../general/res/sass/controls/_menus.scss */
   .super-menu .menu-item-description .desc-area.icon {
     color: #0099cc;
     position: relative;
@@ -2158,52 +2161,52 @@ label.checkbox.custom {
     line-height: 150px;
     margin-bottom: 25px;
     text-align: center; }
-  /* line 204, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 213, ../../../../general/res/sass/controls/_menus.scss */
   .super-menu .menu-item-description .desc-area.title {
     color: #666;
     font-size: 1.2em;
     margin-bottom: 0.5em; }
-  /* line 209, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 218, ../../../../general/res/sass/controls/_menus.scss */
   .super-menu .menu-item-description .desc-area.description {
     color: #666;
     font-size: 0.8em;
     line-height: 1.5em; }
 
-/* line 218, ../../../../general/res/sass/controls/_menus.scss */
+/* line 227, ../../../../general/res/sass/controls/_menus.scss */
 .context-menu, .checkbox-menu {
   font-size: 0.80rem; }
 
-/* line 222, ../../../../general/res/sass/controls/_menus.scss */
+/* line 231, ../../../../general/res/sass/controls/_menus.scss */
 .context-menu-holder,
 .menu-holder {
-  pointer-events: none;
   position: absolute;
   z-index: 70; }
-  /* line 227, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 235, ../../../../general/res/sass/controls/_menus.scss */
   .context-menu-holder .context-menu-wrapper,
   .menu-holder .context-menu-wrapper {
     position: absolute;
     height: 100%;
     width: 100%; }
-  /* line 232, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 240, ../../../../general/res/sass/controls/_menus.scss */
   .context-menu-holder.go-left .context-menu, .context-menu-holder.go-left .checkbox-menu, .context-menu-holder.go-left .menu,
   .menu-holder.go-left .context-menu,
   .menu-holder.go-left .checkbox-menu,
   .menu-holder.go-left .menu {
     right: 0; }
-  /* line 236, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 244, ../../../../general/res/sass/controls/_menus.scss */
   .context-menu-holder.go-up .context-menu, .context-menu-holder.go-up .checkbox-menu, .context-menu-holder.go-up .menu,
   .menu-holder.go-up .context-menu,
   .menu-holder.go-up .checkbox-menu,
   .menu-holder.go-up .menu {
     bottom: 0; }
 
-/* line 242, ../../../../general/res/sass/controls/_menus.scss */
+/* line 250, ../../../../general/res/sass/controls/_menus.scss */
 .context-menu-holder {
+  pointer-events: none;
   height: 200px;
   width: 170px; }
 
-/* line 247, ../../../../general/res/sass/controls/_menus.scss */
+/* line 256, ../../../../general/res/sass/controls/_menus.scss */
 .btn-bar.right .menu,
 .menus-to-left .menu {
   left: auto;
@@ -2716,7 +2719,7 @@ textarea {
 .channel-selector .btns-add-remove {
   margin-top: 150px; }
   /* line 39, ../../../../general/res/sass/forms/_channel-selector.scss */
-  .channel-selector .btns-add-remove .s-btn, .channel-selector .btns-add-remove .s-menu {
+  .channel-selector .btns-add-remove .s-btn, .channel-selector .btns-add-remove .s-menu-btn {
     display: block;
     margin-bottom: 5px;
     text-align: center; }
@@ -2997,33 +3000,33 @@ span.req {
 .bar .icon.major {
   margin-right: 5px; }
 /* line 70, ../../../../general/res/sass/user-environ/_layout.scss */
-.bar.abs, .s-menu span.bar.l-click-area {
+.bar.abs, .s-menu-btn span.bar.l-click-area {
   text-wrap: none;
   white-space: nowrap; }
   /* line 73, ../../../../general/res/sass/user-environ/_layout.scss */
-  .bar.abs.left, .s-menu span.bar.left.l-click-area,
+  .bar.abs.left, .s-menu-btn span.bar.left.l-click-area,
   .bar.abs .left,
-  .s-menu span.bar.l-click-area .left {
+  .s-menu-btn span.bar.l-click-area .left {
     width: 45%;
     right: auto; }
   /* line 78, ../../../../general/res/sass/user-environ/_layout.scss */
-  .bar.abs.right, .s-menu span.bar.right.l-click-area,
+  .bar.abs.right, .s-menu-btn span.bar.right.l-click-area,
   .bar.abs .right,
-  .s-menu span.bar.l-click-area .right {
+  .s-menu-btn span.bar.l-click-area .right {
     width: 45%;
     left: auto;
     text-align: right; }
     /* line 83, ../../../../general/res/sass/user-environ/_layout.scss */
-    .bar.abs.right .icon.major, .s-menu span.bar.right.l-click-area .icon.major,
+    .bar.abs.right .icon.major, .s-menu-btn span.bar.right.l-click-area .icon.major,
     .bar.abs .right .icon.major,
-    .s-menu span.bar.l-click-area .right .icon.major {
+    .s-menu-btn span.bar.l-click-area .right .icon.major {
       margin-left: 15px; }
   /* line 89, ../../../../general/res/sass/user-environ/_layout.scss */
-  .bar.abs .l-flex .left, .s-menu span.bar.l-click-area .l-flex .left,
+  .bar.abs .l-flex .left, .s-menu-btn span.bar.l-click-area .l-flex .left,
   .bar.abs .l-flex .right,
-  .s-menu span.bar.l-click-area .l-flex .right, .bar.abs.l-flex .left, .s-menu span.bar.l-flex.l-click-area .left,
+  .s-menu-btn span.bar.l-click-area .l-flex .right, .bar.abs.l-flex .left, .s-menu-btn span.bar.l-flex.l-click-area .left,
   .bar.abs.l-flex .right,
-  .s-menu span.bar.l-flex.l-click-area .right {
+  .s-menu-btn span.bar.l-flex.l-click-area .right {
     width: auto; }
 
 /* line 98, ../../../../general/res/sass/user-environ/_layout.scss */
@@ -3161,10 +3164,10 @@ span.req {
     overflow: auto;
     top: 64px; }
   /* line 251, ../../../../general/res/sass/user-environ/_layout.scss */
-  .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .s-menu span.left.l-click-area, .s-menu .pane.items .object-browse-bar span.left.l-click-area,
+  .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .s-menu-btn span.left.l-click-area, .s-menu-btn .pane.items .object-browse-bar span.left.l-click-area,
   .pane.items .object-browse-bar .right.abs,
-  .pane.items .object-browse-bar .s-menu span.right.l-click-area,
-  .s-menu .pane.items .object-browse-bar span.right.l-click-area {
+  .pane.items .object-browse-bar .s-menu-btn span.right.l-click-area,
+  .s-menu-btn .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
   /* line 262, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.items .object-holder {
@@ -3194,13 +3197,13 @@ span.req {
       right: 3px; }
 
 /* line 302, ../../../../general/res/sass/user-environ/_layout.scss */
-.object-browse-bar .s-btn, .object-browse-bar .s-menu,
+.object-browse-bar .s-btn, .object-browse-bar .s-menu-btn,
 .top-bar .buttons-main .s-btn,
-.top-bar .buttons-main .s-menu,
-.top-bar .s-menu,
+.top-bar .buttons-main .s-menu-btn,
+.top-bar .s-menu-btn,
 .tool-bar .s-btn,
-.tool-bar .s-menu,
-.tool-bar .s-menu {
+.tool-bar .s-menu-btn,
+.tool-bar .s-menu-btn {
   height: 25px;
   line-height: 25px;
   vertical-align: top; }
@@ -3596,13 +3599,13 @@ span.req {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* line 23, ../../../../general/res/sass/search/_search.scss */
-.abs.search-holder, .s-menu span.search-holder.l-click-area {
+.abs.search-holder, .s-menu-btn span.search-holder.l-click-area {
   height: 25px;
   bottom: 0;
   top: 23px;
   z-index: 5; }
   /* line 27, ../../../../general/res/sass/search/_search.scss */
-  .abs.search-holder.active, .s-menu span.search-holder.active.l-click-area {
+  .abs.search-holder.active, .s-menu-btn span.search-holder.active.l-click-area {
     height: auto;
     bottom: 0; }
 
@@ -3864,14 +3867,14 @@ span.req {
   height: 30px;
   text-align: right; }
   /* line 67, ../../../../general/res/sass/overlay/_overlay.scss */
-  .overlay .bottom-bar .s-btn, .overlay .bottom-bar .s-menu {
+  .overlay .bottom-bar .s-btn, .overlay .bottom-bar .s-menu-btn {
     font-size: 95%;
     height: 30px;
     line-height: 30px;
     margin-left: 5px;
     padding: 0 15px; }
     /* line 69, ../../../../general/res/sass/overlay/_overlay.scss */
-    .overlay .bottom-bar .s-btn:not(.major), .overlay .bottom-bar .s-menu:not(.major) {
+    .overlay .bottom-bar .s-btn:not(.major), .overlay .bottom-bar .s-menu-btn:not(.major) {
       background-color: #969696;
       -moz-border-radius: 4px;
       -webkit-border-radius: 4px;
@@ -3891,14 +3894,14 @@ span.req {
       transition: background, 0.25s;
       text-shadow: none; }
       /* line 272, ../../../../general/res/sass/_mixins.scss */
-      .overlay .bottom-bar .s-btn:not(.major) .icon, .overlay .bottom-bar .s-menu:not(.major) .icon {
+      .overlay .bottom-bar .s-btn:not(.major) .icon, .overlay .bottom-bar .s-menu-btn:not(.major) .icon {
         color: #fff; }
       @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
         /* line 277, ../../../../general/res/sass/_mixins.scss */
-        .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover {
+        .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover, .overlay .bottom-bar .s-menu-btn:not(.major):not(.disabled):hover {
           background: #7d7d7d; }
           /* line 279, ../../../../general/res/sass/_mixins.scss */
-          .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover > .icon {
+          .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .s-menu-btn:not(.major):not(.disabled):hover > .icon {
             color: white; } }
 /* line 85, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .contents.l-dialog {
@@ -4236,12 +4239,12 @@ ul.tree {
   .frame.child-frame.panel:hover {
     border-color: rgba(128, 128, 128, 0.2); }
 /* line 32, ../../../../general/res/sass/user-environ/_frame.scss */
-.frame > .object-header.abs, .s-menu .frame > span.object-header.l-click-area {
+.frame > .object-header.abs, .s-menu-btn .frame > span.object-header.l-click-area {
   font-size: 0.75em;
   height: 16px;
   line-height: 16px; }
 /* line 38, ../../../../general/res/sass/user-environ/_frame.scss */
-.frame > .object-holder.abs, .s-menu .frame > span.object-holder.l-click-area {
+.frame > .object-holder.abs, .s-menu-btn .frame > span.object-holder.l-click-area {
   top: 21px; }
 /* line 41, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame .contents {
@@ -4250,17 +4253,17 @@ ul.tree {
   bottom: 5px;
   left: 5px; }
 /* line 49, ../../../../general/res/sass/user-environ/_frame.scss */
-.frame.frame-template .s-btn, .frame.frame-template .s-menu,
-.frame.frame-template .s-menu {
+.frame.frame-template .s-btn, .frame.frame-template .s-menu-btn,
+.frame.frame-template .s-menu-btn {
   height: 16px;
   line-height: 16px;
   padding: 0 5px; }
   /* line 54, ../../../../general/res/sass/user-environ/_frame.scss */
-  .frame.frame-template .s-btn > span, .frame.frame-template .s-menu > span,
-  .frame.frame-template .s-menu > span {
+  .frame.frame-template .s-btn > span, .frame.frame-template .s-menu-btn > span,
+  .frame.frame-template .s-menu-btn > span {
     font-size: 0.65rem; }
 /* line 59, ../../../../general/res/sass/user-environ/_frame.scss */
-.frame.frame-template .s-menu:after {
+.frame.frame-template .s-menu-btn:after {
   font-size: 8px; }
 /* line 63, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame.frame-template .view-switcher {
@@ -4321,7 +4324,7 @@ ul.tree {
 .edit-mode .top-bar .buttons-main {
   white-space: nowrap; }
   /* line 52, ../../../../general/res/sass/user-environ/_top-bar.scss */
-  .edit-mode .top-bar .buttons-main.abs, .edit-mode .top-bar .s-menu span.buttons-main.l-click-area, .s-menu .edit-mode .top-bar span.buttons-main.l-click-area {
+  .edit-mode .top-bar .buttons-main.abs, .edit-mode .top-bar .s-menu-btn span.buttons-main.l-click-area, .s-menu-btn .edit-mode .top-bar span.buttons-main.l-click-area {
     bottom: auto;
     left: auto; }
 
@@ -5529,7 +5532,7 @@ table {
 .autoflow {
   font-size: 0.75rem; }
   /* line 32, ../../../../general/res/sass/_autoflow.scss */
-  .autoflow:hover .l-autoflow-header .s-btn.change-column-width, .autoflow:hover .l-autoflow-header .change-column-width.s-menu {
+  .autoflow:hover .l-autoflow-header .s-btn.change-column-width, .autoflow:hover .l-autoflow-header .change-column-width.s-menu-btn {
     -moz-transition-property: visibility, opacity, background-color, border-color;
     -o-transition-property: visibility, opacity, background-color, border-color;
     -webkit-transition-property: visibility, opacity, background-color, border-color;
@@ -5553,7 +5556,7 @@ table {
     .autoflow .l-autoflow-header span {
       vertical-align: middle; }
     /* line 48, ../../../../general/res/sass/_autoflow.scss */
-    .autoflow .l-autoflow-header .s-btn.change-column-width, .autoflow .l-autoflow-header .change-column-width.s-menu {
+    .autoflow .l-autoflow-header .s-btn.change-column-width, .autoflow .l-autoflow-header .change-column-width.s-menu-btn {
       -moz-transition-property: visibility, opacity, background-color, border-color;
       -o-transition-property: visibility, opacity, background-color, border-color;
       -webkit-transition-property: visibility, opacity, background-color, border-color;
@@ -5857,5 +5860,5 @@ table {
   vertical-align: top; }
 
 /* line 3, ../sass/_controls.scss */
-.s-btn.major .title-label, .major.s-menu .title-label {
+.s-btn.major .title-label, .major.s-menu-btn .title-label {
   text-transform: uppercase; }
