@@ -64,6 +64,12 @@ define(
                 return self.perform(domainObject, parent);
             }
 
+            if (!this.validate(domainObject, parent)) {
+                throw new Error(
+                    "Tried to copy objects without validating first."
+                );
+            }
+
             if (domainObject.hasCapability('composition')) {
                 model.composition = [];
             }

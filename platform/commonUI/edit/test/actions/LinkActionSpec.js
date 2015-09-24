@@ -31,7 +31,7 @@ define(
                 mockDomainObject,
                 mockParent,
                 mockContext,
-                mockMutation,
+                mockComposition,
                 mockPersistence,
                 mockType,
                 actionContext,
@@ -67,7 +67,7 @@ define(
                     }
                 };
                 mockContext = jasmine.createSpyObj("context", [ "getParent" ]);
-                mockMutation = jasmine.createSpyObj("mutation", [ "invoke" ]);
+                mockComposition = jasmine.createSpyObj("composition", [ "invoke", "add" ]);
                 mockPersistence = jasmine.createSpyObj("persistence", [ "persist" ]);
                 mockType = jasmine.createSpyObj("type", [ "hasFeature" ]);
 
@@ -75,11 +75,11 @@ define(
                 mockDomainObject.getCapability.andReturn(mockContext);
                 mockContext.getParent.andReturn(mockParent);
                 mockType.hasFeature.andReturn(true);
-                mockMutation.invoke.andReturn(mockPromise(true));
-
+                mockComposition.invoke.andReturn(mockPromise(true));
+                mockComposition.add.andReturn(mockPromise(true));
 
                 capabilities = {
-                    mutation: mockMutation,
+                    composition: mockComposition,
                     persistence: mockPersistence,
                     type: mockType
                 };
@@ -96,30 +96,14 @@ define(
             });
 
 
-            it("mutates the parent when performed", function () {
+            it("adds to the parent's composition when performed", function () {
                 action.perform();
-                expect(mockMutation.invoke)
-                    .toHaveBeenCalledWith(jasmine.any(Function));
+                expect(mockComposition.add)
+                    .toHaveBeenCalledWith(mockDomainObject);
             });
 
-            it("changes composition from its mutation function", function () {
-                var mutator, result;
+            it("persists changes afterward", function () {
                 action.perform();
-                mutator = mockMutation.invoke.mostRecentCall.args[0];
-                result = mutator(model);
-
-                // Should not have cancelled the mutation
-                expect(result).not.toBe(false);
-
-                // Simulate mutate's behavior (remove can either return a
-                // new model or modify this one in-place)
-                result = result || model;
-
-                // Should have removed "test" - that was our
-                // mock domain object's id.
-                expect(result.composition).toEqual(["a", "b", "c", "test"]);
-
-                // Finally, should have persisted
                 expect(mockPersistence.persist).toHaveBeenCalled();
             });
 

@@ -36,19 +36,10 @@ define(
         function LinkAction(context) {
             this.domainObject = (context || {}).domainObject;
             this.selectedObject = (context || {}).selectedObject;
-            this.selectedId = this.selectedObject && this.selectedObject.getId();
         }
 
         LinkAction.prototype.perform = function () {
             var self = this;
-
-            // Add this domain object's identifier
-            function addId(model) {
-                if (Array.isArray(model.composition) &&
-                    model.composition.indexOf(self.selectedId) < 0) {
-                    model.composition.push(self.selectedId);
-                }
-            }
 
             // Persist changes to the domain object
             function doPersist() {
@@ -59,11 +50,13 @@ define(
 
             // Link these objects
             function doLink() {
-                return self.domainObject.useCapability("mutation", addId)
-                    .then(doPersist);
+                var composition = self.domainObject &&
+                        self.domainObject.getCapability('composition');
+                return composition && composition.add(self.selectedObject)
+                        .then(doPersist);
             }
 
-            return this.selectedId && doLink();
+            return this.selectedObject && doLink();
         };
 
         return LinkAction;

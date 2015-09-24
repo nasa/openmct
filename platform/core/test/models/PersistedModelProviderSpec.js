@@ -32,7 +32,9 @@ define(
         describe("The persisted model provider", function () {
             var mockQ,
                 mockPersistenceService,
-                SPACE = "some space",
+                SPACE = "space0",
+                spaces = [ "space1" ],
+                modTimes,
                 provider;
 
             function mockPromise(value) {
@@ -51,12 +53,14 @@ define(
             }
 
             beforeEach(function () {
+                modTimes = {};
                 mockQ = { when: mockPromise, all: mockAll };
                 mockPersistenceService = {
                     readObject: function (space, id) {
                         return mockPromise({
                             space: space,
-                            id: id
+                            id: id,
+                            modified: (modTimes[space] || {})[id]
                         });
                     }
                 };
@@ -64,7 +68,8 @@ define(
                 provider = new PersistedModelProvider(
                     mockPersistenceService,
                     mockQ,
-                    SPACE
+                    SPACE,
+                    spaces
                 );
             });
 
@@ -78,6 +83,24 @@ define(
                 expect(models).toEqual({
                     a: { space: SPACE, id: "a" },
                     x: { space: SPACE, id: "x" },
+                    zz: { space: SPACE, id: "zz" }
+                });
+            });
+
+            it("reads object models from multiple spaces", function () {
+                var models;
+
+                modTimes.space1 = {
+                    'x': 12321
+                };
+
+                provider.getModels(["a", "x", "zz"]).then(function (m) {
+                    models = m;
+                });
+
+                expect(models).toEqual({
+                    a: { space: SPACE, id: "a" },
+                    x: { space: 'space1', id: "x", modified: 12321 },
                     zz: { space: SPACE, id: "zz" }
                 });
             });

@@ -51,6 +51,66 @@ define(
         }
 
         /**
+         * Add a domain object to the composition of the field.
+         * This mutates but does not persist the modified object.
+         *
+         * If no index is given, this is added to the end of the composition.
+         *
+         * @param {DomainObject|string} domainObject the domain object to add,
+         *        or simply its identifier
+         * @param {number} [index] the index at which to add the object
+         * @returns {Promise.<DomainObject>} a promise for the added object
+         *          in its new context
+         */
+        CompositionCapability.prototype.add = function (domainObject, index) {
+            var self = this,
+                id = typeof domainObject === 'string' ?
+                        domainObject : domainObject.getId(),
+                model = self.domainObject.getModel(),
+                composition = model.composition,
+                oldIndex = composition.indexOf(id);
+
+            // Find the object with the above id, used to contextualize
+            function findObject(objects) {
+                var i;
+                for (i = 0; i < objects.length; i += 1) {
+                    if (objects[i].getId() === id) {
+                        return objects[i];
+                    }
+                }
+            }
+
+            function contextualize(mutationResult) {
+                return mutationResult && self.invoke().then(findObject);
+            }
+
+            function addIdToModel(model) {
+                // Pick a specific index if needed.
+                index = isNaN(index) ? composition.length : index;
+                // Also, don't put past the end of the array
+                index = Math.min(composition.length, index);
+
+                // Remove the existing instance of the id
+                if (oldIndex !== -1) {
+                    model.composition.splice(oldIndex, 1);
+                }
+
+                // ...and add it back at the appropriate index.
+                model.composition.splice(index, 0, id);
+            }
+
+            // If no index has been specified already and the id is already
+            // present, nothing to do. If the id is already at that index,
+            // also nothing to do, so cancel mutation.
+            if ((isNaN(index) && oldIndex !== -1) || (index === oldIndex)) {
+                return contextualize(true);
+            }
+
+            return this.domainObject.useCapability('mutation', addIdToModel)
+                    .then(contextualize);
+        };
+
+        /**
          * Request the composition of this object.
          * @returns {Promise.<DomainObject[]>} a list of all domain
          *     objects which compose this domain object.
