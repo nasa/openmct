@@ -1,8 +1,8 @@
 .l-time-controller {
-	$inputTxtW: 90px;
-	$knobW: 9px;
+	$timeRangeSliderLROffset: 125px;
+	//$sliderKnobW: 9px;
 	$r1H: 20px;
-	$r2H: 30px;
+	$r2H: 20px;
 	$r3H: 10px;
 
 	position: relative;
@@ -28,23 +28,33 @@
 	}
 
 	.l-time-range-inputs-holder {
+		//@include test(red);
 		height: $r1H;
+		.l-time-range-input {
+			//display: inline-block;
+			margin-right: $interiorMarginLg;
+			.ui-symbol.icon {
+				font-size: 11px;
+				width: 11px;
+			}
+		}
 	}
 
 	.l-time-range-slider,
 	.l-time-range-ticks {
-		left: $inputTxtW; right: $inputTxtW;
+		left: $timeRangeSliderLROffset; right: $timeRangeSliderLROffset;
 
 	}
 
 	.l-time-range-slider-holder {
+		//@include test(green);
 		height: $r2H;
 		.range-holder {
 			@include box-shadow(none);
 			background: none;
 			border: none;
-			height: 75%;
-		}
+			//height: 75%;
+		}   
 	}
 
 	.l-time-range-ticks-holder {
@@ -74,31 +84,42 @@
 	}
 
 	.knob {
-		width: $knobW;
+		width: $sliderKnobW;
 		.range-value {
-			$w: 75px;
+			//$w: 75px;
 			//@include test();
+			//@include verticalCenter();
 			position: absolute;
-			top: 50%;
-			margin-top: -7px; // Label is 13px high
+			height: $r2H;
+			line-height: $r2H;
+			//top: 50%;
+			//margin-top: -7px; // Label is 13px high
 			white-space: nowrap;
-			width: $w;
+			//width: $w;
 		}
 		&:hover .range-value {
 			color: $colorKey;
 		}
 		&.knob-l {
-			margin-left: $knobW / -2;
+			//margin-left: $sliderKnobW / -2;
 			.range-value {
 				text-align: right;
-				right: $knobW + $interiorMargin;
+				right: $sliderKnobW + $interiorMargin;
 			}
 		}
 		&.knob-r {
-			margin-right: $knobW / -2;
+			//margin-right: $sliderKnobW / -2;
 			.range-value {
-				left: $knobW + $interiorMargin;
+				left: $sliderKnobW + $interiorMargin;
 			}
 		}
 	}
+}
+
+
+.s-time-range-val {
+	//@include test();
+	@include border-radius($controlCr);
+	background-color: $colorInputBg;
+	padding: 1px 1px 0 $interiorMargin;
 }

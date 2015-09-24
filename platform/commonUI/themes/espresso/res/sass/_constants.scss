@@ -12,7 +12,7 @@ $basicCr: 2px;
 $controlCr: 3px;
 $smallCr: 2px;
 
-// Buttons
+// Buttons and Controls
 $colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent); //
 $colorBtnFg: $colorBodyFg;
 $colorBtnMajorBg: $colorKey;
@@ -20,6 +20,12 @@ $colorBtnMajorFg: $colorKeyFg;
 $colorBtnIcon: $colorKey;
 $colorInvokeMenu: #fff;
 $contrastInvokeMenuPercent: 20%;
+$sliderColorBase: $colorKey;
+$sliderColorRange: rgba($sliderColorBase, 0.3);
+$sliderColorRangeHov: rgba($sliderColorBase, 0.5);
+$sliderColorKnob: $sliderColorRange;
+$sliderColorKnobHov: $sliderColorRangeHov;
+$sliderKnobW: 5px;
 
 // General Colors
 $colorAlt1: #ffc700;

@@ -20,77 +20,89 @@
  at runtime from the About dialog for additional information.
 -->
 
+
+
 <div class="l-time-controller" ng-controller="TimeRangeController">
-    <div class="l-time-range-inputs-holder">
-        Start: {{startOuterText}}
-        <span ng-controller="ToggleController as t">
-            <a class="ui-symbol" ng-click="t.toggle()">p</a>
-            <mct-popup ng-if="t.isActive()">
-                <div style="background: #222;"
-                     mct-click-elsewhere="t.setState(false)">
-                    <mct-control key="'datetime-picker'"
-                                 ng-model="ngModel.outer"
-                                 field="'start'"
-                                 options="{ hours: true }">
-                    </mct-control>
-                </div>
-            </mct-popup>
-        </span>
+	<div class="l-time-range-inputs-holder">
+	    <span class="l-time-range-input">
+	        Start:
+		    <span class="s-time-range-val time-range-start">
+		        <span class="val">{{startOuterText}}</span>
+		        <span ng-controller="ToggleController as t1">
+		            <a class="ui-symbol icon icon-calendar" ng-click="t1.toggle()"></a>
+		            <mct-popup ng-if="t1.isActive()">
+			            <div style="background: #222;"
+			                 mct-click-elsewhere="t1.setState(false)">
+				            <mct-control key="'datetime-picker'"
+				                         ng-model="ngModel.outer"
+				                         field="'start'"
+				                         options="{ hours: true }">
+				            </mct-control>
+			            </div>
+		            </mct-popup>
+		        </span>
+		    </span>
+	    </span>
 
-        End: {{endOuterText}}
-        <span ng-controller="ToggleController as t2">
-            <a class="ui-symbol" ng-click="t2.toggle()">p</a>
-            <mct-popup ng-if="t2.isActive()">
-                <div style="background: #222;"
-                     mct-click-elsewhere="t2.setState(false)">
-                    <mct-control key="'datetime-picker'"
-                                 ng-model="ngModel.outer"
-                                 field="'end'"
-                                 options="{ hours: true }">
-                    </mct-control>
-                </div>
-            </mct-popup>
-        </span>
+	    <span class="l-time-range-input">
+			End:
+		    <span class="s-time-range-val time-range-end">
+			    <span class="val">{{endOuterText}}</span>
+		        <span ng-controller="ToggleController as t2">
+		            <a class="ui-symbol icon icon-calendar" ng-click="t2.toggle()"></a>
+		            <mct-popup ng-if="t2.isActive()">
+			            <div style="background: #222;"
+			                 mct-click-elsewhere="t2.setState(false)">
+				            <mct-control key="'datetime-picker'"
+				                         ng-model="ngModel.outer"
+				                         field="'end'"
+				                         options="{ hours: true }">
+				            </mct-control>
+			            </div>
+		            </mct-popup>
+		        </span>
+		    </span>&nbsp;
+	    </span>
 
 
-    </div>
+	</div>
 
-    <div class="l-time-range-slider-holder">
-        <div class="l-time-range-slider">
-            <div class="slider"
-                 mct-resize="spanWidth = bounds.width">
-                <div class="slot range-holder">
-                    <div class="range"
-                         mct-drag-down="startMiddleDrag()"
-                         mct-drag="middleDrag(delta[0])"
-                         ng-style="{ left: startInnerPct, right: endInnerPct}">
-                    </div>
-                </div>
-                <div class="knob knob-l"
-                     mct-drag-down="startLeftDrag()"
-                     mct-drag="leftDrag(delta[0])"
-                     ng-style="{ left: startInnerPct }">
-                    <div class="range-value">{{startInnerText}}</div>
-                </div>
-                <div class="knob knob-r"
-                     mct-drag-down="startRightDrag()"
-                     mct-drag="rightDrag(delta[0])"
-                     ng-style="{ right: endInnerPct }">
-                    <div class="range-value">{{endInnerText}}</div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="l-time-range-slider-holder">
+		<div class="l-time-range-slider">
+			<div class="slider"
+			     mct-resize="spanWidth = bounds.width">
+				<div class="slot range-holder">
+					<div class="range"
+					     mct-drag-down="startMiddleDrag()"
+					     mct-drag="middleDrag(delta[0])"
+					     ng-style="{ left: startInnerPct, right: endInnerPct}">
+					</div>
+				</div>
+				<div class="knob knob-l"
+				     mct-drag-down="startLeftDrag()"
+				     mct-drag="leftDrag(delta[0])"
+				     ng-style="{ left: startInnerPct }">
+					<div class="range-value">{{startInnerText}}</div>
+				</div>
+				<div class="knob knob-r"
+				     mct-drag-down="startRightDrag()"
+				     mct-drag="rightDrag(delta[0])"
+				     ng-style="{ right: endInnerPct }">
+					<div class="range-value">{{endInnerText}}</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <div class="l-time-range-ticks-holder">
-        <div class="l-time-range-ticks">
-            <div
-                ng-repeat="tick in ticks"
-                ng-style="{ left: $index * (100 / (ticks.length - 1)) + '%' }"
-                class="tick tick-x"
-                >
-                <span class="l-time-range-tick-label">{{tick}}</span>
-            </div>
-        </div>
-    </div>
+	<div class="l-time-range-ticks-holder">
+		<div class="l-time-range-ticks">
+			<div
+				ng-repeat="tick in ticks"
+				ng-style="{ left: $index * (100 / (ticks.length - 1)) + '%' }"
+				class="tick tick-x"
+				>
+				<span class="l-time-range-tick-label">{{tick}}</span>
+			</div>
+		</div>
+	</div>
 </div>

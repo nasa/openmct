@@ -41,6 +41,9 @@
 			font-size: 1.65em;
 		}
 	}
+	&.icon-calendar:after {
+		content: "\e605";
+	}
 }
 
 .bar .ui-symbol {
