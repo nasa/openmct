@@ -24,12 +24,13 @@
 
 <div class="l-time-controller" ng-controller="TimeRangeController">
 	<div class="l-time-range-inputs-holder">
-	    <span class="l-time-range-input">
-	        Start:
-		    <span class="s-time-range-val time-range-start">
+		<span class="l-time-range-inputs-elem ui-symbol type-icon">&#x43;</span>
+	    <span class="l-time-range-input" ng-controller="ToggleController as t1">
+	        <!--<span class="lbl">Start</span>-->
+		    <span class="s-btn time-range-start" ng-click="t1.toggle()">
 		        <span class="val">{{startOuterText}}</span>
-		        <span ng-controller="ToggleController as t1">
-		            <a class="ui-symbol icon icon-calendar" ng-click="t1.toggle()"></a>
+		        <span>
+		            <a class="ui-symbol icon icon-calendar"></a>
 		            <mct-popup ng-if="t1.isActive()">
 			            <div style="background: #222;"
 			                 mct-click-elsewhere="t1.setState(false)">
@@ -44,12 +45,14 @@
 		    </span>
 	    </span>
 
-	    <span class="l-time-range-input">
-			End:
-		    <span class="s-time-range-val time-range-end">
+		<span class="l-time-range-inputs-elem lbl">to</span>
+
+	    <span class="l-time-range-input" ng-controller="ToggleController as t2">
+	        <!--<span class="lbl">End</span>-->
+		    <span class="s-btn l-time-range-input" ng-click="t2.toggle()">
 			    <span class="val">{{endOuterText}}</span>
-		        <span ng-controller="ToggleController as t2">
-		            <a class="ui-symbol icon icon-calendar" ng-click="t2.toggle()"></a>
+		        <span>
+		            <a class="ui-symbol icon icon-calendar"></a>
 		            <mct-popup ng-if="t2.isActive()">
 			            <div style="background: #222;"
 			                 mct-click-elsewhere="t2.setState(false)">

@@ -29,6 +29,9 @@
 }
 
 .ui-symbol {
+	&.type-icon {
+		color: $colorObjHdrIc;
+	}
 	&.icon {
 		color: $colorKey;
 		&.alert {

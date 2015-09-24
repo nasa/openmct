@@ -21,10 +21,11 @@ $colorBtnIcon: $colorKey;
 $colorInvokeMenu: #fff;
 $contrastInvokeMenuPercent: 20%;
 $sliderColorBase: $colorKey;
+$sliderColorRangeHolder: rgba(black, 0.1);
 $sliderColorRange: rgba($sliderColorBase, 0.3);
 $sliderColorRangeHov: rgba($sliderColorBase, 0.5);
 $sliderColorKnob: $sliderColorRange;
-$sliderColorKnobHov: $sliderColorRangeHov;
+$sliderColorKnobHov: $sliderColorBase;
 $sliderKnobW: 5px;
 
 // General Colors
@@ -40,6 +41,7 @@ $colorFormSectionHeader: rgba(#000, 0.2);
 $colorInvokeMenu: #fff;
 $colorObjHdrTxt: $colorBodyFg;
 $colorObjHdrIc: pullForward($colorObjHdrTxt, 20%);
+$colorTick: rgba(white, 0.2);
 
 // Menu colors
 $colorMenuBg: pullForward($colorBodyBg, 23%);
@@ -112,9 +114,10 @@ $colorTabHeaderBorder: $colorBodyBg;
 // Plot
 $colorPlotBg: rgba(black, 0.1);
 $colorPlotFg: $colorBodyFg;
-$colorPlotHash: rgba(white, 0.2);
+$colorPlotHash: $colorTick;
 $stylePlotHash: dashed;
 $colorPlotAreaBorder: $colorInteriorBorder;
+$colorPlotLabelFg: pushBack($colorPlotFg, 20%);
 
 // Tree
 $colorItemTreeIcon: $colorKey;
