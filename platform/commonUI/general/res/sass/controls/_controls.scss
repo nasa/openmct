@@ -349,6 +349,11 @@ label.checkbox.custom {
 	}
 }
 
+/******************************************************** DATETIME PICKER */
+.l-datetime-picker {
+	padding: $interiorMarginLg !important;
+}
+
 /******************************************************** BROWSER ELEMENTS */
 
 @include desktop {

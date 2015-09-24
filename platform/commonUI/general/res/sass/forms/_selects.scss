@@ -40,11 +40,8 @@
 	}
 	&:after {
 		@include contextArrow();
+		pointer-events: none;
 		color: rgba($colorSelectFg, percentToDecimal($contrastInvokeMenuPercent));
-		//content:"v";
-		//display: block;
-		//font-family: 'symbolsfont';
-		//pointer-events: none;
 		position: absolute;
 		right: $interiorMargin; top: 0;
 	}

@@ -20,8 +20,6 @@
  at runtime from the About dialog for additional information.
 -->
 
-
-
 <div class="l-time-controller" ng-controller="TimeRangeController">
 	<div class="l-time-range-inputs-holder">
 		<span class="l-time-range-inputs-elem ui-symbol type-icon">&#x43;</span>
@@ -29,19 +27,16 @@
 	        <!--<span class="lbl">Start</span>-->
 		    <span class="s-btn time-range-start" ng-click="t1.toggle()">
 		        <span class="val">{{startOuterText}}</span>
-		        <span>
-		            <a class="ui-symbol icon icon-calendar"></a>
-		            <mct-popup ng-if="t1.isActive()">
-			            <div style="background: #222;"
-			                 mct-click-elsewhere="t1.setState(false)">
-				            <mct-control key="'datetime-picker'"
-				                         ng-model="ngModel.outer"
-				                         field="'start'"
-				                         options="{ hours: true }">
-				            </mct-control>
-			            </div>
-		            </mct-popup>
-		        </span>
+	            <a class="ui-symbol icon icon-calendar"></a>
+	            <mct-popup ng-if="t1.isActive()">
+		            <div mct-click-elsewhere="t1.setState(false)" class="menu-holder go-up">
+			            <mct-control key="'datetime-picker'"
+			                         ng-model="ngModel.outer"
+			                         field="'start'"
+			                         options="{ hours: true }">
+			            </mct-control>
+		            </div>
+	            </mct-popup>
 		    </span>
 	    </span>
 
@@ -51,19 +46,16 @@
 	        <!--<span class="lbl">End</span>-->
 		    <span class="s-btn l-time-range-input" ng-click="t2.toggle()">
 			    <span class="val">{{endOuterText}}</span>
-		        <span>
-		            <a class="ui-symbol icon icon-calendar"></a>
-		            <mct-popup ng-if="t2.isActive()">
-			            <div style="background: #222;"
-			                 mct-click-elsewhere="t2.setState(false)">
-				            <mct-control key="'datetime-picker'"
-				                         ng-model="ngModel.outer"
-				                         field="'end'"
-				                         options="{ hours: true }">
-				            </mct-control>
-			            </div>
-		            </mct-popup>
-		        </span>
+	            <a class="ui-symbol icon icon-calendar"></a>
+	            <mct-popup ng-if="t2.isActive()">
+		            <div mct-click-elsewhere="t2.setState(false)" class="menu-holder go-up">
+			            <mct-control key="'datetime-picker'"
+			                         ng-model="ngModel.outer"
+			                         field="'end'"
+			                         options="{ hours: true }">
+			            </mct-control>
+		            </div>
+	            </mct-popup>
 		    </span>&nbsp;
 	    </span>
 
