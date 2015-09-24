@@ -390,7 +390,7 @@
 }
 
 @mixin test($c: #ffcc00, $a: 0.2) {
-    background-color: rgba($c, $a);
+    background-color: rgba($c, $a) !important;
 }
 
 @mixin tmpBorder($c: #ffcc00, $a: 0.75) {

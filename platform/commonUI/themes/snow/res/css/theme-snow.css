@@ -247,7 +247,7 @@ a.disabled {
 
 /* line 42, ../../../../general/res/sass/_effects.scss */
 .test {
-  background-color: rgba(255, 204, 0, 0.2); }
+  background-color: rgba(255, 204, 0, 0.2) !important; }
 
 @-moz-keyframes pulse {
   0% {
