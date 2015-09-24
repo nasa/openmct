@@ -60,9 +60,9 @@ define(
             this.$compile = $compile;
         }
 
-        // Combine start/end times into a single object
-        function bounds(start, end) {
-            return { start: start, end: end };
+        // Combine start/end times & domain into a single object
+        function bounds(start, end, domain) {
+            return { start: start, end: end, domain: domain };
         }
 
         // Update the time conductor from the scope
@@ -70,27 +70,30 @@ define(
             function updateConductorOuter() {
                 conductor.queryStart(conductorScope.ngModel.conductor.outer.start);
                 conductor.queryEnd(conductorScope.ngModel.conductor.outer.end);
-                repScope.$broadcast(
-                    'telemetry:query:bounds',
-                    bounds(conductor.queryStart(), conductor.queryEnd())
-                );
+                repScope.$broadcast('telemetry:query:bounds', bounds(
+                    conductor.queryStart(),
+                    conductor.queryEnd(),
+                    conductor.activeDomain()
+                ));
             }
 
             function updateConductorInner() {
                 conductor.displayStart(conductorScope.ngModel.conductor.inner.start);
                 conductor.displayEnd(conductorScope.ngModel.conductor.inner.end);
-                repScope.$broadcast(
-                    'telemetry:display:bounds',
-                    bounds(conductor.displayStart(), conductor.displayEnd())
-                );
+                repScope.$broadcast('telemetry:display:bounds', bounds(
+                    conductor.displayStart(),
+                    conductor.displayEnd(),
+                    conductor.activeDomain()
+                ));
             }
 
             function updateDomain(value) {
                 conductor.activeDomain(value);
-                repScope.$broadcast(
-                    'telemetry:query:bounds',
-                    bounds(conductor.queryStart(), conductor.queryEnd())
-                );
+                repScope.$broadcast('telemetry:display:bounds', bounds(
+                    conductor.displayStart(),
+                    conductor.displayEnd(),
+                    conductor.activeDomain()
+                ));
             }
 
             // telemetry domain metadata -> option for a select control
