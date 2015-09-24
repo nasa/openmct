@@ -21,7 +21,13 @@
                 "depends": [ "now", "TIME_CONDUCTOR_DOMAINS" ]
             }
         ],
-        "contants": [
+        "templates": [
+            {
+                "key": "time-conductor",
+                "templateUrl": "templates/time-conductor.html"
+            }
+        ],
+        "constants": [
             {
                 "key": "TIME_CONDUCTOR_DOMAINS",
                 "value": [

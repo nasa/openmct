@@ -44,7 +44,7 @@ define(
             this.inner = { start: start, end: end };
             this.outer = { start: start, end: end };
             this.domains = domains;
-            this.domain = domains[0];
+            this.domain = domains[0].key;
         }
 
         /**
@@ -111,13 +111,15 @@ define(
          * @returns {TelemetryDomain} the active telemetry domain
          */
         TimeConductor.prototype.activeDomain = function (key) {
-            var i;
+            function matchesKey(domain) {
+                return domain.key === key;
+            }
+
             if (arguments.length > 0) {
-                for (i = 0; i < this.domains.length; i += 1) {
-                    if (this.domains[i].key === key) {
-                        this.domain = this.domains[i];
-                    }
+                if (!this.domains.some(matchesKey)) {
+                    throw new Error("Unknown domain " + key);
                 }
+                this.domain = key;
             }
             return this.domain;
         };

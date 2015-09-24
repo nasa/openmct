@@ -32,7 +32,7 @@ define(
                 '"position: absolute; bottom: 0; width: 100%; ',
                 'overflow: hidden; ',
                 'height: ' + CONDUCTOR_HEIGHT + '">',
-                "<mct-include key=\"'time-controller'\" ng-model='conductor'>",
+                "<mct-include key=\"'time-conductor'\" ng-model='ngModel'>",
                 "</mct-include>",
                 '</div>'
             ].join(''),
@@ -68,8 +68,8 @@ define(
         // Update the time conductor from the scope
         function wireScope(conductor, conductorScope, repScope) {
             function updateConductorOuter() {
-                conductor.queryStart(conductorScope.conductor.outer.start);
-                conductor.queryEnd(conductorScope.conductor.outer.end);
+                conductor.queryStart(conductorScope.ngModel.conductor.outer.start);
+                conductor.queryEnd(conductorScope.ngModel.conductor.outer.end);
                 repScope.$broadcast(
                     'telemetry:query:bounds',
                     bounds(conductor.queryStart(), conductor.queryEnd())
@@ -77,27 +77,49 @@ define(
             }
 
             function updateConductorInner() {
-                conductor.displayStart(conductorScope.conductor.inner.start);
-                conductor.displayEnd(conductorScope.conductor.inner.end);
+                conductor.displayStart(conductorScope.ngModel.conductor.inner.start);
+                conductor.displayEnd(conductorScope.ngModel.conductor.inner.end);
                 repScope.$broadcast(
                     'telemetry:display:bounds',
                     bounds(conductor.displayStart(), conductor.displayEnd())
                 );
             }
 
-            conductorScope.conductor = {
+            function updateDomain(value) {
+                conductor.activeDomain(value);
+                repScope.$broadcast(
+                    'telemetry:query:bounds',
+                    bounds(conductor.queryStart(), conductor.queryEnd())
+                );
+            }
+
+            // telemetry domain metadata -> option for a select control
+            function makeOption(domainOption) {
+                return {
+                    name: domainOption.name,
+                    value: domainOption.key
+                };
+            }
+
+            conductorScope.ngModel = {};
+            conductorScope.ngModel.conductor = {
                 outer: bounds(conductor.queryStart(), conductor.queryEnd()),
                 inner: bounds(conductor.displayStart(), conductor.displayEnd())
             };
+            conductorScope.ngModel.options =
+                conductor.domainOptions().map(makeOption);
+            conductorScope.ngModel.domain = conductor.activeDomain();
 
             conductorScope
-                .$watch('conductor.outer.start', updateConductorOuter);
+                .$watch('ngModel.conductor.outer.start', updateConductorOuter);
             conductorScope
-                .$watch('conductor.outer.end', updateConductorOuter);
+                .$watch('ngModel.conductor.outer.end', updateConductorOuter);
             conductorScope
-                .$watch('conductor.inner.start', updateConductorInner);
+                .$watch('ngModel.conductor.inner.start', updateConductorInner);
             conductorScope
-                .$watch('conductor.inner.end', updateConductorInner);
+                .$watch('ngModel.conductor.inner.end', updateConductorInner);
+            conductorScope
+                .$watch('ngModel.domain', updateDomain);
 
             repScope.$on('telemetry:view', updateConductorInner);
         }
