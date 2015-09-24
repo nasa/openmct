@@ -19,6 +19,26 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/************************** FONTS */
+@font-face {
+	/*
+    * Use https://icomoon.io/app with /platform/commonUI/general/res/fonts/symbols/icomoon.io-WTD-symbols-project.json
+    */
+	font-family: 'symbolsfont';
+	src: url($dirCommonRes + 'fonts/symbols/wtdsymbols.eot');
+	src: url($dirCommonRes + 'fonts/symbols/wtdsymbols.eot?#iefix') format('embedded-opentype'),
+	url($dirCommonRes + 'fonts/symbols/wtdsymbols.woff') format('woff'),
+	url($dirCommonRes + 'fonts/symbols/wtdsymbols.ttf') format('truetype'),
+	url($dirCommonRes + 'fonts/symbols/wtdsymbols.svg#armataregular') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.ui-symbol {
+	font-family: 'symbolsfont';
+}
+
+/************************** HTML ENTITIES */
 a {
 	color: #ccc;
 	cursor: pointer;
@@ -42,7 +62,6 @@ body, html {
 }
 
 em {
-//	color: rgba(white, 0.2); Removed this as a global setting
 	font-style: normal;
 }
 
@@ -71,12 +90,6 @@ p {
 	margin-bottom: $interiorMarginLg;
 }
 
-span {
-	/* 618 DEBUG
-	box-sizing: border-box;
-	*/
-}
-
 mct-container {
 	display: block;
 }
@@ -100,7 +113,7 @@ mct-container {
 
 .codehilite {
 	@extend .code;
-	background-color: rgba(#fff, 0.1);
+	background-color: rgba($colorBodyFg, 0.1);
 	padding: 1em;
 }
 
@@ -116,10 +129,6 @@ mct-container {
 	margin: 0;
 }
 
-.colorKey {
-	color: $colorKey;
-}
-
 .ds {
 	@include box-shadow(rgba(#000, 0.7) 0 4px 10px 2px);
 }
@@ -127,13 +136,6 @@ mct-container {
 .hide,
 .hidden {
 	display: none !important;
-}
-
-.paused {
-	&:not(.s-btn) {
-		border-color: $colorPausedBg !important;
-		color: $colorPausedBg !important;
-	}
 }
 
 .sep {

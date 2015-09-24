@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ['../../src/gestures/InfoGesture'],
@@ -28,6 +28,7 @@ define(
 
         describe("The info gesture", function () {
             var mockTimeout,
+                mockAgentService,
                 mockInfoService,
                 testDelay = 12321,
                 mockElement,
@@ -50,6 +51,7 @@ define(
             beforeEach(function () {
                 mockTimeout = jasmine.createSpy('$timeout');
                 mockTimeout.cancel = jasmine.createSpy('cancel');
+                mockAgentService = jasmine.createSpyObj('agentService', ['isMobile']);
                 mockInfoService = jasmine.createSpyObj(
                     'infoService',
                     [ 'display' ]
@@ -79,6 +81,7 @@ define(
 
                 gesture = new InfoGesture(
                     mockTimeout,
+                    mockAgentService,
                     mockInfoService,
                     testDelay,
                     mockElement,

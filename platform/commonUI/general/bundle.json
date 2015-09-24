@@ -6,7 +6,7 @@
         "services": [
             {
                 "key": "urlService",
-                "implementation": "/services/UrlService.js",
+                "implementation": "services/UrlService.js",
                 "depends": [ "$location" ]
             }
         ],
@@ -20,18 +20,6 @@
             {
                 "stylesheetUrl": "css/normalize.min.css",
                 "priority": "mandatory"
-            },
-            {
-                "stylesheetUrl": "css/theme-espresso.css",
-                "priority": 1000
-            },
-            {
-                "stylesheetUrl": "css/items.css",
-                "priority": 901
-            },
-            {
-                "stylesheetUrl": "css/tree.css",
-                "priority": 900
             }
         ],
         "templates": [

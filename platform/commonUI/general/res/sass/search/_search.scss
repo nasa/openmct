@@ -28,7 +28,7 @@
 		height: auto;
 		bottom: 0;
 	}
-	//top: 23px;
+	top: 23px;
 
 	// Align with the top of the divider bar, below create button
 	//margin-top: 10px; // CH comment out
@@ -39,26 +39,20 @@
 	$iconWidth: 20px;
 	$leftMargin: 6px;
 	$rightPadding: 5px;
-
-	//padding-right: $rightPadding;
-	//@include test();
-	display: flex; //block;
-	flex-direction: column;
+	@include webkitVal(display, flex);
+	//display: flex;
+	@include webkitProp(flex-direction, column);
+	//flex-direction: column;
 	height: 100%;
 
 	.search-bar {
-		//$heightAdjust: 4px;
 		$textInputHeight: 19px; // This is equal to the default value, 19px
 		$iconEdgeM: 4px;
 		$iconD: $treeSearchInputBarH - ($iconEdgeM*2);
 		font-size: 0.8em;
-
-		//order: 1;
-
+		max-width: 250px;
 		position: relative;
 		width: 100%;
-		//height: $textInputHeight;
-		//margin-top: $heightAdjust;
 		.search-input,
 		.search-icon {
 		}
@@ -75,7 +69,7 @@
 		.menu-icon {
 			//@include test(#008800);
 			@include box-sizing(border-box);
-			color: $colorItemFg;
+			color: $colorInputIcon;
 			height: $iconD; width: $iconD;
 			line-height: $iconD;
 			position: absolute;
@@ -86,7 +80,7 @@
 		.clear-icon,
 		.menu-icon {
 			cursor: pointer;
-			transition: color .25s;
+			@include transition(color, .25s);
 		}
 
 
@@ -103,7 +97,7 @@
 		}
 
 		.search-icon {
-			color: $colorItemFg;
+			//color: $colorItemFg;
 			left: $interiorMarginSm;
 			transition: visibility .15s, opacity .15s, color .2s;
 			pointer-events: none;
@@ -123,7 +117,7 @@
 
 		// Make icon lighten when hovering over search bar
 		.search-input:hover + div.search-icon {
-			color: lighten($colorItemFg, 20%);
+			color: pullForward($colorInputIcon, 10%);
 		}
 
 		.clear-icon {
@@ -141,7 +135,7 @@
 			}
 
 			&:hover {
-				color: lighten($colorItemFg, 20%);
+				color: pullForward($colorInputIcon, 10%);
 			}
 		}
 
@@ -152,7 +146,7 @@
 			text-align: right;
 
 			&:hover {
-				color: lighten($colorItemFg, 20%);
+				color: pullForward($colorInputIcon, 10%);
 			}
 		}
 
@@ -197,7 +191,8 @@
 
 
 		.clear-filters-icon {
-			opacity: 0.4;
+			color: $colorInputIcon;
+			opacity: 1;
 			font-size: 0.8em;
 			position: absolute;
 			left: 1px;
@@ -229,86 +224,6 @@
 		height: auto;
 		max-height: 100%;
 		position: relative;
-
-		.results {
-
-			.search-result-item {
-				// Include transitions (for the highlights)
-				@include single-transition(background-color, 0.25s);
-
-				// Space the results from each other
-				margin-bottom: 2px;
-
-				// Make the highlights the right color and shape.
-				// Attempting to match the style in the tree, but
-				//   while having these be compact.
-				border-radius: 2px;
-				padding-top: 4px;
-				padding-bottom: 2px;
-
-				.label {
-					// Give some padding away from the left side
-					margin-left: $leftMargin;
-
-					.title-label {
-						display: inline-block;
-						position: absolute;
-
-						// Give some padding away from the left side
-						left: $leftMargin + 3px + $iconWidth;
-						// and the right side
-						right: $rightPadding;
-
-						// Size and position the text
-						font-size: .8em;
-						line-height: 17px;
-
-						// Hide overflow text
-						width: auto;
-						overflow: hidden;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-					}
-				}
-
-				// Change styling when it's selected
-				&.selected {
-					$c: #fff;
-					background: $colorKeySelectedBg;
-					color: $c;
-					.view-control {
-						color: $colorItemTreeIcon;
-					}
-					.label .type-icon {
-						color: #fff;
-					}
-				}
-                
-                .label .type-icon .l-icon-link {
-                    // Hide links for now. See GitHub issue #84.
-                    display: none;
-                    
-                    @include txtShdwSubtle(1);
-                    z-index: 2;
-                    @include ancillaryIcon(8px, $colorIconLink);
-                    margin-left: -25px;
-                }
-
-				// Change styling when it's being hovered over
-				&:not(.selected) {
-					&:hover {
-						background: lighten($colorBodyBg, 5%);
-						color: lighten($colorBodyFg, 20%);
-						.context-trigger {
-							display: block;
-						}
-						.icon {
-							color: $colorItemTreeIconHover;
-						}
-					}
-				}
-			}
-		}
 
 		.load-icon {
 			position: relative;

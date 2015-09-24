@@ -82,6 +82,12 @@ define(
                 }
             }
 
+            if (!this.validate(object, parentObject)) {
+                throw new Error(
+                    "Tried to move objects without validating first."
+                );
+            }
+
             return this.linkService
                 .perform(object, parentObject)
                 .then(relocate)

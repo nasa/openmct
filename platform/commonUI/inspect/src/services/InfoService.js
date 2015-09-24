@@ -34,11 +34,12 @@ define(
          * @memberof platform/commonUI/inspect
          * @constructor
          */
-        function InfoService($compile, $document, $window, $rootScope) {
+        function InfoService($compile, $document, $window, $rootScope, agentService) {
             this.$compile = $compile;
             this.$document = $document;
             this.$window = $window;
             this.$rootScope = $rootScope;
+            this.agentService = agentService;
         }
 
         /**
@@ -64,7 +65,7 @@ define(
                 goLeft = position[0] > (winDim[0] - bubbleSpaceLR),
                 goUp = position[1] > (winDim[1] / 2),
                 bubble;
-
+            
             // Pass model & container parameters into the scope
             scope.bubbleModel = content;
             scope.bubbleTemplate = templateKey;
@@ -77,15 +78,22 @@ define(
 
             // Position the bubble
             bubble.css('position', 'absolute');
-            if (goLeft) {
-                bubble.css('right', (winDim[0] - position[0] + OFFSET[0]) + 'px');
+            if (this.agentService.isPhone(navigator.userAgent)) {
+                bubble.css('right', '0px');
+                bubble.css('left', '0px');
+                bubble.css('top', 'auto');
+                bubble.css('bottom', '25px');
             } else {
-                bubble.css('left', position[0] + OFFSET[0] + 'px');
-            }
-            if (goUp) {
-                bubble.css('bottom', (winDim[1] - position[1] + OFFSET[1]) + 'px');
-            } else {
-                bubble.css('top', position[1] + OFFSET[1] + 'px');
+                if (goLeft) {
+                    bubble.css('right', (winDim[0] - position[0] + OFFSET[0]) + 'px');
+                } else {
+                    bubble.css('left', position[0] + OFFSET[0] + 'px');
+                }
+                if (goUp) {
+                    bubble.css('bottom', (winDim[1] - position[1] + OFFSET[1]) + 'px');
+                } else {
+                    bubble.css('top', position[1] + OFFSET[1] + 'px');
+                }
             }
 
             // Add the menu to the body

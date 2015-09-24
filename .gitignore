@@ -5,6 +5,7 @@
 *.DS_Store
 
 *.sass-cache
+*COMPILE.css
 
 # Intellij project configuration files
 *.idea

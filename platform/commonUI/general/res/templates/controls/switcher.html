@@ -21,7 +21,7 @@
 -->
 <span ng-controller="ViewSwitcherController">
     <div
-	    class="view-switcher menu-element btn btn-menu dropdown click-invoke"
+	    class="view-switcher menu-element s-menu"
 	    ng-if="view.length > 1"
 	    ng-controller="ClickAwayController as toggle"
 	    >
@@ -33,11 +33,9 @@
 	        ></span>
 
         <span class="ui-symbol icon type-icon">{{ngModel.selected.glyph}}</span>
-        <span class="name">{{ngModel.selected.name}}</span>
-        <span class='ui-symbol invoke-menu'>v</span>
+        <span class="title-label">{{ngModel.selected.name}}</span>
 
-
-        <div class="menu dropdown" ng-show="toggle.isActive()">
+        <div class="menu" ng-show="toggle.isActive()">
             <ul>
                 <li ng-repeat="option in view"
                     ng-click="ngModel.selected = option; toggle.setState(false)">

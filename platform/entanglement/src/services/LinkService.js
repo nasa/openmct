@@ -45,6 +45,9 @@ define(
             if (parentCandidate.getId() === object.getId()) {
                 return false;
             }
+            if (!parentCandidate.hasCapability('composition')) {
+                return false;
+            }
             if (parentCandidate.getModel().composition.indexOf(object.getId()) !== -1) {
                 return false;
             }
@@ -56,26 +59,18 @@ define(
         };
 
         LinkService.prototype.perform = function (object, parentObject) {
-            function findChild(children) {
-                var i;
-                for (i = 0; i < children.length; i += 1) {
-                    if (children[i].getId() === object.getId()) {
-                        return children[i];
-                    }
-                }
+            if (!this.validate(object, parentObject)) {
+                throw new Error(
+                    "Tried to link objects without validating first."
+                );
             }
 
-            return parentObject.useCapability('mutation', function (model) {
-                if (model.composition.indexOf(object.getId()) === -1) {
-                    model.composition.push(object.getId());
-                }
-            }).then(function () {
-                return parentObject.getCapability('persistence').persist();
-            }).then(function getObjectWithNewContext() {
-                return parentObject
-                    .useCapability('composition')
-                    .then(findChild);
-            });
+            return parentObject.getCapability('composition').add(object)
+                .then(function (objectInNewContext) {
+                    return parentObject.getCapability('persistence')
+                        .persist()
+                        .then(function () { return objectInNewContext; });
+                });
         };
 
         return LinkService;

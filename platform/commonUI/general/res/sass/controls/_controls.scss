@@ -100,22 +100,6 @@
 	}
 }
 
-.btn-bar {
-	//	position: relative;
-	.btn,
-	.btn-set,
-	.t-btn {
-		display: inline-block;
-		//		margin-left: $interiorMargin;
-	}
-	.btn,
-	.t-btn {
-		&:first-child {
-			//			margin-left: 0;
-		}
-	}
-}
-
 .l-composite-control {
 	vertical-align: middle;
 	&.l-checkbox {
@@ -153,55 +137,16 @@
 	font-size: 0.7rem;
 }
 
-.btn-set {
-	// Buttons that have a very tight conceptual grouping - no internal space between them.
-	display: inline-block;
-	position: relative;
-	.btn,
-	.t-btn {
-		@include border-radius(0);
-		border-left: 1px solid lighten($colorBodyBg, 20%);
-		margin-left: 0;
-		&:first-child {
-			border-left: none;
-			@include border-left-radius($controlCr);
-		}
-		&:last-child {
-			@include border-right-radius($controlCr);
-		}
-	}
-}
-
-.object-browse-bar .btn,
-.object-browse-bar .t-btn,
-.top-bar .buttons-main .btn,
-.top-bar .buttons-main .t-btn,
-.tool-bar .btn,
-.tool-bar .t-btn {
-	$h: $btnToolbarH;
-	display: inline-block;
-	font-size: $h * $btnFontSizeToH;
-	height: $h;
-	line-height: $h - 3;
-	.icon:not(.invoke-menu) {
-		//		position: relative;
-		//		top: -0.04em;
-		//font-size: 150%;
-		//vertical-align: middle;
-	}
-}
-
 label.checkbox.custom {
-	$bg: lighten($colorBodyBg, $ltGamma);
+	$bg: pullForward($colorBodyBg, 10%);
 	$d: $formRowCtrlsH;
-	//	@include vertical-align();
 	cursor: pointer;
 	display: inline-block;
 	line-height: $d;
 	margin-right: $interiorMargin * 4;
 	padding-left: $d + $interiorMargin;
 	position: relative;
-	vertical-align: top;
+	vertical-align: middle; // was top
 	em {
 		color: $colorBodyFg;
 		display: inline-block;
@@ -210,7 +155,8 @@ label.checkbox.custom {
 		&:before {
 			@include border-radius($basicCr * .75);
 			background: $bg;
-			border-bottom: 1px solid lighten($bg, 10%);
+			//border-bottom: 1px solid lighten($bg, 10%);
+			@include box-shadow(inset rgba(black, 0.4) 0 1px 2px);
 			box-sizing: border-box;
 			content: " ";
 			font-family: 'symbolsfont';
@@ -259,7 +205,7 @@ label.checkbox.custom {
 	}
 }
 
-.btn-menu label.checkbox.custom {
+.s-menu label.checkbox.custom {
 	margin-left: 5px;
 }
 
@@ -270,88 +216,9 @@ label.checkbox.custom {
 	}
 }
 
-.btn-menu {
-	$h: 20px;
-	$p: $interiorMarginSm * 2;
-	$c: $colorBodyFg;
-	@include btnSubtle($colorBodyBg);
-	/*	height: $h;
-		line-height: $h;
-		&.dropdown {
-			padding-left: $p;
-			padding-right: $p;
-		}*/
-
-	&:not(.disabled):hover {
-		color: lighten($c, 20%);
-	}
-
-	/*	&.context-available {
-			// An element like the invoke-menu triangle;
-			// Indicates that this element has a dropdown menu available;
-			// Currently unused
-			$c: $colorKey;
-			color: $c;
-			padding: 0 5px;
-			&:hover {
-				color: lighten($c, 10%);
-			}
-		}*/
-
-	span.l-click-area {
-		// In markup, this element should not enclose anything.
-		@extend .abs;
-	}
-
-	.type-icon {
-		//margin-right: $interiorMargin;
-	}
-
-	.name {
-		margin-left: $interiorMargin;
-	}
-	.menu {
-		//		margin-left: (-1 * $p);
-		position: absolute;
-		left: 0;
-		text-align: left;
-		.ui-symbol.icon {
-			width: 12px;
-		}
-	}
-}
-
-.top-bar .btn-menu {
-	$h: $btnStdH; //$ueTopBarBtnH; // 35px
-	$p: 10px;
-	$badgeM: $interiorMargin;
-	$badgeD: $h - ($badgeM * 2);
-	height: $h;
-	line-height: $h;
-	padding-right: 10px;
-	&.browse-btn {
-		margin-right: $interiorMargin;
-		padding-left: $badgeD + $badgeM * 2;
-		.badge {
-			@include border-radius($controlCr * 1.5);
-			display: block;
-			font-size: 1em;
-			line-height: $badgeD;
-			position: absolute;
-			top: $badgeM;
-			left: $badgeM;
-			bottom: $badgeM;
-			right: auto;
-			width: $badgeD;
-			height: auto;
-		}
-	}
-}
-
 .context-available {
 	$c: $colorKey;
 	color: $c;
-	//padding: 0 5px;
 	&:hover {
 		color: lighten($c, 10%);
 	}
@@ -363,35 +230,63 @@ label.checkbox.custom {
 
 /******************************************************** OBJECT-HEADER */
 .object-header {
-	display: inline-block;
+	//@include test();
 	font-size: 1em;
-	.label {
-		.title-label {
-			color: lighten($colorBodyFg, 40%);
+
+	//> .title-label,
+	//> .type-icon,
+	//> .context-available {
+	//	//@include tmpBorder(#6666ff);
+	//	//vertical-align: middle;
+	//}
+
+	> .type-icon {
+		color: $colorObjHdrIc;
+		font-size: 120%;
+		float: left;
+		margin-right: $interiorMargin;
+	}
+
+	.l-elem-wrapper {
+		//@include test(#66f, 0.2);
+		@include webkitProp(justify-content, flex-start);
+		mct-representation {
+			// Holds the context-available item
+			// Must have min-width to make flex work properly
+			// in Safari
+			min-width: 0.7em;
 		}
-		.type-icon {
-			font-size: 120%;
-			margin-right: $interiorMargin;
-			vertical-align: middle;
-		}
+	}
+
+	.action {
+		margin-right: $interiorMargin;
+	}
+
+	.title-label {
+		//@include test(green, 0.9);
+		color: $colorObjHdrTxt;
+		@include ellipsize();
+		//color: pushBack($colorBodyFg, 40%);
+		@include webkitProp(flex, '0 1 auto');
+		padding-right: 0.35em; // For context arrow. Done with em's so pad is relative to the scale of the text.
+		//position: relative;
+	}
+
+	.context-available {
+		font-size: 0.7em;
+		@include webkitProp(flex, '0 0 1');
+		//margin-right: $interiorMargin;
+	}
+
+	@include desktop {
 		.context-available {
+			@include trans-prop-nice(opacity, 0.25s);
 			opacity: 0;
-			font-size: 0.8em;
 		}
 		&:hover {
 			.context-available {
 				opacity: 1;
 			}
-		}
-	}
-}
-
-.top-bar,
-.object-browse-bar {
-	.object-header {
-		font-size: 1.1em;
-		span {
-			display: inline-block;
 		}
 	}
 }
@@ -449,24 +344,31 @@ label.checkbox.custom {
 
 /******************************************************** BROWSER ELEMENTS */
 
-::-webkit-scrollbar {
-	@include sliderTrack();
-	height: $scrollbarTrackSize;
-	width: $scrollbarTrackSize;
-}
-
-::-webkit-scrollbar-thumb {
-	$bg: lighten($colorBodyBg, 10%);
-	@include background-image(linear-gradient(lighten($bg, 10%), lighten($bg, 5%) 20px));
-	@include border-radius(1px);
-	@include box-sizing(border-box);
-	@include boxShdwSubtle();
-	border-top: 1px solid lighten($bg, 20%);
-	&:hover {
-		@include background-image(linear-gradient(lighten($bg, 20%), lighten($bg, 15%) 20px));
+@include desktop {
+	::-webkit-scrollbar {
+		@include border-radius(2px);
+		@include box-sizing(border-box);
+		@include box-shadow(inset $scrollbarTrackShdw);
+		background-color: $scrollbarTrackColorBg;
+		height: $scrollbarTrackSize;
+		width: $scrollbarTrackSize;
 	}
-}
 
-::-webkit-scrollbar-corner {
-	background: rgba(#000, 0.4);
+	::-webkit-scrollbar-thumb {
+		$bg: $scrollbarThumbColor;
+		$hc: $scrollbarThumbColorHov;
+		$gr: 5%;
+		@include background-image(linear-gradient(lighten($bg, $gr), $bg 20px));
+		@include border-radius(2px);
+		@include box-sizing(border-box);
+		//@include boxShdwSubtle();
+		//border-top: 1px solid lighten($bg, 20%);
+		&:hover {
+			@include background-image(linear-gradient(lighten($hc, $gr), $hc 20px));
+		}
+	}
+
+	::-webkit-scrollbar-corner {
+		background: $scrollbarTrackColorBg;
+	}
 }

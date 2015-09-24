@@ -1,52 +1,26 @@
-@mixin limit($c, $glyph) {
-	background: $c;
+@mixin limit($bg, $ic, $glyph) {
+	background: $bg !important;
+	//color: $fg !important;
 	&:before {
-		//@include pulse(500ms);
-		color: lighten($c, 30%);
+		//@include pulse(1000ms);
+		color: $ic;
 		content: $glyph;
 	}
 }
 
-/*.s-limit-upr,
-.s-limit-lwr {
-	$a: 0.5;
-	$l: 30%;
-	white-space: nowrap;
-	&:before {
-		display: inline-block;
-		font-family: symbolsfont;
-		font-size: 0.85em;
-		font-style: normal !important;
-		margin-right: $interiorMarginSm;
-		vertical-align: middle;
-	}
-}
-
-.s-limit-upr {
-	&.s-limit-yellow { @include limit($colorLimitYellow, "\0000ed"); }
-	&.s-limit-red { @include limit($colorLimitRed, "\0000eb"); }
-}
-
-.s-limit-lwr {
-	&.s-limit-yellow { @include limit($colorLimitYellow, "\0000ec"); }
-	&.s-limit-red { @include limit($colorLimitRed, "\0000ee"); }
-}*/
-
 [class*="s-limit"] {
-	$a: 0.5;
-	$l: 30%;
-	white-space: nowrap;
+	//white-space: nowrap;
 	&:before {
 		display: inline-block;
 		font-family: symbolsfont;
-		font-size: 0.85em;
+		font-size: 0.75em;
 		font-style: normal !important;
 		margin-right: $interiorMarginSm;
 		vertical-align: middle;
 	}
 }
 
-.s-limit-upr-red { @include limit($colorLimitRed, "\0000eb"); };
-.s-limit-upr-yellow { @include limit($colorLimitYellow, "\0000ed"); };
-.s-limit-lwr-yellow { @include limit($colorLimitYellow, "\0000ec"); };
-.s-limit-lwr-red { @include limit($colorLimitRed, "\0000ee"); };
+.s-limit-upr-red { @include limit($colorLimitRedBg, $colorLimitRedIc, "\0000eb"); };
+.s-limit-upr-yellow { @include limit($colorLimitYellowBg, $colorLimitYellowIc, "\0000ed"); };
+.s-limit-lwr-yellow { @include limit($colorLimitYellowBg, $colorLimitYellowIc, "\0000ec"); };
+.s-limit-lwr-red { @include limit($colorLimitRedBg, $colorLimitRedIc, "\0000ee"); };

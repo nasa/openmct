@@ -39,7 +39,7 @@ define(
                     return {
                         getValue: function (model) { return model[k]; },
                         setValue: function (model, v) { model[k] = v; },
-                        getDefinition: function () { return {}; }
+                        getDefinition: function () { return { control: 'textfield '}; }
                     };
                 });
 

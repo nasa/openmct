@@ -31,6 +31,7 @@ define(
                 mockDocument,
                 testWindow,
                 mockRootScope,
+                mockAgentService,
                 mockCompiledTemplate,
                 testScope,
                 mockBody,
@@ -42,6 +43,7 @@ define(
                 mockDocument = jasmine.createSpyObj('$document', ['find']);
                 testWindow = { innerWidth: 1000, innerHeight: 100 };
                 mockRootScope = jasmine.createSpyObj('$rootScope', ['$new']);
+                mockAgentService = jasmine.createSpyObj('agentService', ['isMobile', 'isPhone']);
                 mockCompiledTemplate = jasmine.createSpy('template');
                 testScope = {};
                 mockBody = jasmine.createSpyObj('body', ['append']);
@@ -58,7 +60,8 @@ define(
                     mockCompile,
                     mockDocument,
                     testWindow,
-                    mockRootScope
+                    mockRootScope,
+                    mockAgentService
                 );
             });
 
@@ -123,6 +126,18 @@ define(
                         'bottom',
                         (40 + InfoConstants.BUBBLE_OFFSET[1]) + 'px'
                     );
+                });
+                
+                it("when on phone device, positioning is always on bottom", function () {
+                    mockAgentService.isPhone.andReturn(true);
+                    service = new InfoService(
+                        mockCompile,
+                        mockDocument,
+                        testWindow,
+                        mockRootScope,
+                        mockAgentService
+                    );
+                    service.display('', '', {}, [0, 0]);
                 });
             });
 

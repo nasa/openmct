@@ -1,0 +1,12 @@
+{
+  "name": "Sonw",
+  "description": "Snow theme: light and cool",
+  "extensions": {
+    "stylesheets": [
+      {
+        "stylesheetUrl": "css/theme-snow.css",
+        "priority": 1000
+      }
+    ]
+  }
+}
