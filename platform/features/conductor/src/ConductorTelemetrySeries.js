@@ -38,13 +38,14 @@ define(
          * @implements {TelemetrySeries}
          */
         function ConductorTelemetrySeries(series, conductor) {
-            var max = series.getPointCount() - 1;
+            var max = series.getPointCount() - 1,
+                domain = conductor.activeDomain();
 
             function binSearch(min, max, value) {
                 var mid = Math.floor((min + max) / 2);
 
                 return min > max ? min :
-                        series.getDomainValue(mid) < value ?
+                        series.getDomainValue(mid, domain) < value ?
                                 binSearch(mid + 1, max, value) :
                                         binSearch(min, mid - 1, value);
             }
@@ -52,7 +53,7 @@ define(
             this.startIndex = binSearch(0, max, conductor.displayStart());
             this.endIndex = binSearch(0, max, conductor.displayEnd());
             this.series = series;
-            this.domain = conductor.activeDomain();
+            this.domain = domain;
         }
 
         ConductorTelemetrySeries.prototype.getPointCount = function () {
