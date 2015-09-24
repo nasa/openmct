@@ -107,8 +107,8 @@ $colorItemBgSelected: $colorKey;
 $colorTabBorder: pullForward($colorBodyBg, 10%);
 $colorTabBodyBg: darken($colorBodyBg, 10%);
 $colorTabBodyFg: lighten($colorTabBodyBg, 40%);
-$colorTabHeaderBg: lighten($colorBodyBg, 10%);
-$colorTabHeaderFg: lighten($colorTabHeaderBg, 40%);
+$colorTabHeaderBg: rgba(white, 0.1); // lighten($colorBodyBg, 10%);
+$colorTabHeaderFg: $colorBodyFg; //lighten($colorTabHeaderBg, 40%);
 $colorTabHeaderBorder: $colorBodyBg;
 
 // Plot

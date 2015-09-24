@@ -351,7 +351,43 @@ label.checkbox.custom {
 
 /******************************************************** DATETIME PICKER */
 .l-datetime-picker {
+	$r1H: 15px;
 	padding: $interiorMarginLg !important;
+	.l-month-year-pager {
+		$pagerW: 20px;
+		//@include test();
+		font-size: 0.8rem;
+		height: $r1H;
+		margin-bottom: $interiorMargin;
+		position: relative;
+		.pager,
+		.val {
+			//@include test(red);
+			@extend .abs;
+		}
+		.pager {
+			width: $pagerW;
+			@extend .ui-symbol;
+			&.prev {
+				right: auto;
+				&:before {
+					content: "\3c";
+				}
+			}
+			&.next {
+				left: auto;
+				text-align: right;
+				&:before {
+					content: "\3e";
+				}
+			}
+		}
+		.val {
+			text-align: center;
+			left: $pagerW + $interiorMargin;
+			right: $pagerW + $interiorMargin;
+		}
+	}
 }
 
 /******************************************************** BROWSER ELEMENTS */

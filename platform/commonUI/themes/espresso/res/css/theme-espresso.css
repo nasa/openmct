@@ -314,7 +314,7 @@ a.disabled {
   font-weight: normal;
   font-style: normal; }
 /* line 37, ../../../../general/res/sass/_global.scss */
-.ui-symbol {
+.ui-symbol, .l-datetime-picker .l-month-year-pager .pager {
   font-family: 'symbolsfont'; }
 
 /************************** HTML ENTITIES */
@@ -373,7 +373,8 @@ mct-container {
   display: block; }
 
 /* line 97, ../../../../general/res/sass/_global.scss */
-.abs, .s-menu-btn span.l-click-area {
+.abs, .l-datetime-picker .l-month-year-pager .pager,
+.l-datetime-picker .l-month-year-pager .val, .s-menu-btn span.l-click-area {
   position: absolute;
   top: 0;
   right: 0;
@@ -443,7 +444,8 @@ mct-container {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* line 26, ../../../../general/res/sass/_about.scss */
-.l-about.abs, .s-menu-btn span.l-about.l-click-area {
+.l-about.abs, .l-datetime-picker .l-month-year-pager .l-about.pager,
+.l-datetime-picker .l-month-year-pager .l-about.val, .s-menu-btn span.l-about.l-click-area {
   overflow: auto; }
 /* line 31, ../../../../general/res/sass/_about.scss */
 .l-about .l-logo-holder {
@@ -534,7 +536,8 @@ mct-container {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* line 24, ../../../../general/res/sass/_text.scss */
-.abs.l-standalone, .s-menu-btn span.l-standalone.l-click-area {
+.abs.l-standalone, .l-datetime-picker .l-month-year-pager .l-standalone.pager,
+.l-datetime-picker .l-month-year-pager .l-standalone.val, .s-menu-btn span.l-standalone.l-click-area {
   padding: 5% 20%; }
 
 /* line 29, ../../../../general/res/sass/_text.scss */
@@ -596,26 +599,26 @@ mct-container {
     border-right: 5px solid transparent; }
 
 /* line 32, ../../../../general/res/sass/_icons.scss */
-.ui-symbol.type-icon {
+.ui-symbol.type-icon, .l-datetime-picker .l-month-year-pager .type-icon.pager {
   color: #cccccc; }
 /* line 35, ../../../../general/res/sass/_icons.scss */
-.ui-symbol.icon {
+.ui-symbol.icon, .l-datetime-picker .l-month-year-pager .icon.pager {
   color: #0099cc; }
   /* line 37, ../../../../general/res/sass/_icons.scss */
-  .ui-symbol.icon.alert {
+  .ui-symbol.icon.alert, .l-datetime-picker .l-month-year-pager .icon.alert.pager {
     color: #ff3c00; }
     /* line 39, ../../../../general/res/sass/_icons.scss */
-    .ui-symbol.icon.alert:hover {
+    .ui-symbol.icon.alert:hover, .l-datetime-picker .l-month-year-pager .icon.alert.pager:hover {
       color: #ff8a66; }
   /* line 43, ../../../../general/res/sass/_icons.scss */
-  .ui-symbol.icon.major {
+  .ui-symbol.icon.major, .l-datetime-picker .l-month-year-pager .icon.major.pager {
     font-size: 1.65em; }
 /* line 47, ../../../../general/res/sass/_icons.scss */
-.ui-symbol.icon-calendar:after {
+.ui-symbol.icon-calendar:after, .l-datetime-picker .l-month-year-pager .icon-calendar.pager:after {
   content: "\e605"; }
 
 /* line 52, ../../../../general/res/sass/_icons.scss */
-.bar .ui-symbol {
+.bar .ui-symbol, .bar .l-datetime-picker .l-month-year-pager .pager, .l-datetime-picker .l-month-year-pager .bar .pager {
   display: inline-block; }
 
 /* line 56, ../../../../general/res/sass/_icons.scss */
@@ -1902,10 +1905,37 @@ label.checkbox.custom {
 /* line 353, ../../../../general/res/sass/controls/_controls.scss */
 .l-datetime-picker {
   padding: 10px !important; }
+  /* line 356, ../../../../general/res/sass/controls/_controls.scss */
+  .l-datetime-picker .l-month-year-pager {
+    font-size: 0.8rem;
+    height: 15px;
+    margin-bottom: 5px;
+    position: relative; }
+    /* line 368, ../../../../general/res/sass/controls/_controls.scss */
+    .l-datetime-picker .l-month-year-pager .pager {
+      width: 20px; }
+      /* line 371, ../../../../general/res/sass/controls/_controls.scss */
+      .l-datetime-picker .l-month-year-pager .pager.prev {
+        right: auto; }
+        /* line 373, ../../../../general/res/sass/controls/_controls.scss */
+        .l-datetime-picker .l-month-year-pager .pager.prev:before {
+          content: "\3c"; }
+      /* line 377, ../../../../general/res/sass/controls/_controls.scss */
+      .l-datetime-picker .l-month-year-pager .pager.next {
+        left: auto;
+        text-align: right; }
+        /* line 380, ../../../../general/res/sass/controls/_controls.scss */
+        .l-datetime-picker .l-month-year-pager .pager.next:before {
+          content: "\3e"; }
+    /* line 385, ../../../../general/res/sass/controls/_controls.scss */
+    .l-datetime-picker .l-month-year-pager .val {
+      text-align: center;
+      left: 25px;
+      right: 25px; }
 
 /******************************************************** BROWSER ELEMENTS */
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 360, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 396, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -1920,7 +1950,7 @@ label.checkbox.custom {
     height: 10px;
     width: 10px; }
 
-  /* line 369, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 405, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar-thumb {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -1934,7 +1964,7 @@ label.checkbox.custom {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box; }
-    /* line 378, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 414, ../../../../general/res/sass/controls/_controls.scss */
     ::-webkit-scrollbar-thumb:hover {
       background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzVlNWU1ZSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzUyNTI1MiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
@@ -1943,7 +1973,7 @@ label.checkbox.custom {
       background-image: -webkit-linear-gradient(#5e5e5e, #525252 20px);
       background-image: linear-gradient(#5e5e5e, #525252 20px); }
 
-  /* line 383, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 419, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar-corner {
     background: rgba(0, 0, 0, 0.4); } }
 /*****************************************************************************
@@ -2024,7 +2054,7 @@ label.checkbox.custom {
   left: 0;
   text-align: left; }
   /* line 57, ../../../../general/res/sass/controls/_menus.scss */
-  .s-menu-btn .menu .ui-symbol.icon {
+  .s-menu-btn .menu .ui-symbol.icon, .s-menu-btn .menu .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .s-menu-btn .menu .icon.pager {
     width: 12px; }
 
 /******************************************************** MENUS THEMSELVES */
@@ -2064,7 +2094,7 @@ label.checkbox.custom {
   display: block;
   position: absolute;
   z-index: 10; }
-  /* line 87, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 82, ../../../../general/res/sass/controls/_menus.scss */
   .menu ul {
     margin: 0;
     padding: 0; }
@@ -2073,7 +2103,7 @@ label.checkbox.custom {
       list-style-type: none;
       margin: 0;
       padding: 0; }
-    /* line 89, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 84, ../../../../general/res/sass/controls/_menus.scss */
     .menu ul li {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
@@ -2084,73 +2114,73 @@ label.checkbox.custom {
       padding: 3px 10px 3px 30px;
       position: relative;
       white-space: nowrap; }
-      /* line 97, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 92, ../../../../general/res/sass/controls/_menus.scss */
       .menu ul li:first-child {
         border: none; }
-      /* line 100, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 95, ../../../../general/res/sass/controls/_menus.scss */
       .menu ul li:hover {
         background: #878787;
         color: #fff; }
-        /* line 103, ../../../../general/res/sass/controls/_menus.scss */
+        /* line 98, ../../../../general/res/sass/controls/_menus.scss */
         .menu ul li:hover .icon {
           color: #fff; }
-      /* line 107, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 102, ../../../../general/res/sass/controls/_menus.scss */
       .menu ul li .type-icon {
         left: 10px; }
 
-/* line 114, ../../../../general/res/sass/controls/_menus.scss */
+/* line 109, ../../../../general/res/sass/controls/_menus.scss */
 .menu,
 .context-menu,
 .checkbox-menu,
 .super-menu {
   pointer-events: auto; }
-  /* line 120, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 115, ../../../../general/res/sass/controls/_menus.scss */
   .menu ul li a,
   .context-menu ul li a,
   .checkbox-menu ul li a,
   .super-menu ul li a {
     color: white; }
-  /* line 123, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 118, ../../../../general/res/sass/controls/_menus.scss */
   .menu ul li .icon,
   .context-menu ul li .icon,
   .checkbox-menu ul li .icon,
   .super-menu ul li .icon {
     color: #24c8ff; }
-  /* line 126, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 121, ../../../../general/res/sass/controls/_menus.scss */
   .menu ul li .type-icon,
   .context-menu ul li .type-icon,
   .checkbox-menu ul li .type-icon,
   .super-menu ul li .type-icon {
     left: 5px; }
 
-/* line 138, ../../../../general/res/sass/controls/_menus.scss */
+/* line 133, ../../../../general/res/sass/controls/_menus.scss */
 .checkbox-menu ul li {
   padding-left: 50px; }
-  /* line 140, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 135, ../../../../general/res/sass/controls/_menus.scss */
   .checkbox-menu ul li .checkbox {
     position: absolute;
     left: 5px;
     top: 0.53333rem; }
-    /* line 145, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 140, ../../../../general/res/sass/controls/_menus.scss */
     .checkbox-menu ul li .checkbox em {
       height: 0.7rem;
       width: 0.7rem; }
-      /* line 148, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 143, ../../../../general/res/sass/controls/_menus.scss */
       .checkbox-menu ul li .checkbox em:before {
         font-size: 7px !important;
         height: 0.7rem;
         width: 0.7rem;
         line-height: 0.7rem; }
-  /* line 156, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 151, ../../../../general/res/sass/controls/_menus.scss */
   .checkbox-menu ul li .type-icon {
     left: 25px; }
 
-/* line 162, ../../../../general/res/sass/controls/_menus.scss */
+/* line 157, ../../../../general/res/sass/controls/_menus.scss */
 .super-menu {
   display: block;
   width: 500px;
   height: 480px; }
-  /* line 170, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 165, ../../../../general/res/sass/controls/_menus.scss */
   .super-menu .contents {
     overflow: hidden;
     position: absolute;
@@ -2160,12 +2190,12 @@ label.checkbox.custom {
     left: 5px;
     width: auto;
     height: auto; }
-  /* line 173, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 168, ../../../../general/res/sass/controls/_menus.scss */
   .super-menu .pane {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box; }
-    /* line 175, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 170, ../../../../general/res/sass/controls/_menus.scss */
     .super-menu .pane.left {
       border-right: 1px solid #878787;
       left: 0;
@@ -2174,20 +2204,20 @@ label.checkbox.custom {
       width: 50%;
       overflow-x: hidden;
       overflow-y: auto; }
-      /* line 185, ../../../../general/res/sass/controls/_menus.scss */
+      /* line 180, ../../../../general/res/sass/controls/_menus.scss */
       .super-menu .pane.left ul li {
         -moz-border-radius: 3px;
         -webkit-border-radius: 3px;
         border-radius: 3px;
         padding-left: 30px;
         border-top: none; }
-    /* line 192, ../../../../general/res/sass/controls/_menus.scss */
+    /* line 187, ../../../../general/res/sass/controls/_menus.scss */
     .super-menu .pane.right {
       left: auto;
       right: 0;
       padding: 25px;
       width: 50%; }
-  /* line 202, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 197, ../../../../general/res/sass/controls/_menus.scss */
   .super-menu .menu-item-description .desc-area.icon {
     color: white;
     position: relative;
@@ -2197,52 +2227,52 @@ label.checkbox.custom {
     line-height: 150px;
     margin-bottom: 25px;
     text-align: center; }
-  /* line 213, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 208, ../../../../general/res/sass/controls/_menus.scss */
   .super-menu .menu-item-description .desc-area.title {
     color: white;
     font-size: 1.2em;
     margin-bottom: 0.5em; }
-  /* line 218, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 213, ../../../../general/res/sass/controls/_menus.scss */
   .super-menu .menu-item-description .desc-area.description {
     color: white;
     font-size: 0.8em;
     line-height: 1.5em; }
 
-/* line 227, ../../../../general/res/sass/controls/_menus.scss */
+/* line 222, ../../../../general/res/sass/controls/_menus.scss */
 .context-menu, .checkbox-menu {
   font-size: 0.80rem; }
 
-/* line 231, ../../../../general/res/sass/controls/_menus.scss */
+/* line 226, ../../../../general/res/sass/controls/_menus.scss */
 .context-menu-holder,
 .menu-holder {
   position: absolute;
   z-index: 70; }
-  /* line 235, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 230, ../../../../general/res/sass/controls/_menus.scss */
   .context-menu-holder .context-menu-wrapper,
   .menu-holder .context-menu-wrapper {
     position: absolute;
     height: 100%;
     width: 100%; }
-  /* line 240, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 235, ../../../../general/res/sass/controls/_menus.scss */
   .context-menu-holder.go-left .context-menu, .context-menu-holder.go-left .checkbox-menu, .context-menu-holder.go-left .menu,
   .menu-holder.go-left .context-menu,
   .menu-holder.go-left .checkbox-menu,
   .menu-holder.go-left .menu {
     right: 0; }
-  /* line 244, ../../../../general/res/sass/controls/_menus.scss */
+  /* line 239, ../../../../general/res/sass/controls/_menus.scss */
   .context-menu-holder.go-up .context-menu, .context-menu-holder.go-up .checkbox-menu, .context-menu-holder.go-up .menu,
   .menu-holder.go-up .context-menu,
   .menu-holder.go-up .checkbox-menu,
   .menu-holder.go-up .menu {
     bottom: 0; }
 
-/* line 250, ../../../../general/res/sass/controls/_menus.scss */
+/* line 245, ../../../../general/res/sass/controls/_menus.scss */
 .context-menu-holder {
   pointer-events: none;
   height: 200px;
   width: 170px; }
 
-/* line 256, ../../../../general/res/sass/controls/_menus.scss */
+/* line 251, ../../../../general/res/sass/controls/_menus.scss */
 .btn-bar.right .menu,
 .menus-to-left .menu {
   left: auto;
@@ -2302,8 +2332,10 @@ label.checkbox.custom {
       .l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .lbl {
         color: #666666; }
       /* line 44, ../../../../general/res/sass/controls/_time-controller.scss */
-      .l-time-controller .l-time-range-inputs-holder .l-time-range-input .ui-symbol.icon,
-      .l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .ui-symbol.icon {
+      .l-time-controller .l-time-range-inputs-holder .l-time-range-input .ui-symbol.icon, .l-time-controller .l-time-range-inputs-holder .l-time-range-input .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.pager,
+      .l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .ui-symbol.icon,
+      .l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .l-datetime-picker .l-month-year-pager .icon.pager,
+      .l-datetime-picker .l-month-year-pager .l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.pager {
         font-size: 11px;
         width: 11px; }
   /* line 51, ../../../../general/res/sass/controls/_time-controller.scss */
@@ -2928,8 +2960,10 @@ span.req {
   .t-filter input.t-filter-input:not(.ng-dirty) + .t-a-clear {
     display: none; }
 /* line 42, ../../../../general/res/sass/forms/_filter.scss */
-.filter .icon.ui-symbol,
-.t-filter .icon.ui-symbol {
+.filter .icon.ui-symbol, .filter .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .filter .icon.pager,
+.t-filter .icon.ui-symbol,
+.t-filter .l-datetime-picker .l-month-year-pager .icon.pager,
+.l-datetime-picker .l-month-year-pager .t-filter .icon.pager {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
@@ -2940,12 +2974,16 @@ span.req {
   padding: 0px 5px;
   vertical-align: middle; }
   /* line 50, ../../../../general/res/sass/forms/_filter.scss */
-  .filter .icon.ui-symbol:hover,
-  .t-filter .icon.ui-symbol:hover {
+  .filter .icon.ui-symbol:hover, .filter .l-datetime-picker .l-month-year-pager .icon.pager:hover, .l-datetime-picker .l-month-year-pager .filter .icon.pager:hover,
+  .t-filter .icon.ui-symbol:hover,
+  .t-filter .l-datetime-picker .l-month-year-pager .icon.pager:hover,
+  .l-datetime-picker .l-month-year-pager .t-filter .icon.pager:hover {
     background: rgba(255, 255, 255, 0.1); }
 /* line 54, ../../../../general/res/sass/forms/_filter.scss */
-.filter .s-a-clear.ui-symbol,
-.t-filter .s-a-clear.ui-symbol {
+.filter .s-a-clear.ui-symbol, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager,
+.t-filter .s-a-clear.ui-symbol,
+.t-filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager,
+.l-datetime-picker .l-month-year-pager .t-filter .s-a-clear.pager {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
@@ -2969,8 +3007,10 @@ span.req {
   text-align: center;
   z-index: 5; }
   /* line 74, ../../../../general/res/sass/forms/_filter.scss */
-  .filter .s-a-clear.ui-symbol:hover,
-  .t-filter .s-a-clear.ui-symbol:hover {
+  .filter .s-a-clear.ui-symbol:hover, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager:hover, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager:hover,
+  .t-filter .s-a-clear.ui-symbol:hover,
+  .t-filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager:hover,
+  .l-datetime-picker .l-month-year-pager .t-filter .s-a-clear.pager:hover {
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
     opacity: 0.6;
     background-color: #0099cc; }
@@ -3052,32 +3092,48 @@ span.req {
 .bar .icon.major {
   margin-right: 5px; }
 /* line 70, ../../../../general/res/sass/user-environ/_layout.scss */
-.bar.abs, .s-menu-btn span.bar.l-click-area {
+.bar.abs, .l-datetime-picker .l-month-year-pager .bar.pager,
+.l-datetime-picker .l-month-year-pager .bar.val, .s-menu-btn span.bar.l-click-area {
   text-wrap: none;
   white-space: nowrap; }
   /* line 73, ../../../../general/res/sass/user-environ/_layout.scss */
-  .bar.abs.left, .s-menu-btn span.bar.left.l-click-area,
+  .bar.abs.left, .l-datetime-picker .l-month-year-pager .bar.left.pager,
+  .l-datetime-picker .l-month-year-pager .bar.left.val, .s-menu-btn span.bar.left.l-click-area,
   .bar.abs .left,
+  .l-datetime-picker .l-month-year-pager .bar.pager .left,
+  .l-datetime-picker .l-month-year-pager .bar.val .left,
   .s-menu-btn span.bar.l-click-area .left {
     width: 45%;
     right: auto; }
   /* line 78, ../../../../general/res/sass/user-environ/_layout.scss */
-  .bar.abs.right, .s-menu-btn span.bar.right.l-click-area,
+  .bar.abs.right, .l-datetime-picker .l-month-year-pager .bar.right.pager,
+  .l-datetime-picker .l-month-year-pager .bar.right.val, .s-menu-btn span.bar.right.l-click-area,
   .bar.abs .right,
+  .l-datetime-picker .l-month-year-pager .bar.pager .right,
+  .l-datetime-picker .l-month-year-pager .bar.val .right,
   .s-menu-btn span.bar.l-click-area .right {
     width: 45%;
     left: auto;
     text-align: right; }
     /* line 83, ../../../../general/res/sass/user-environ/_layout.scss */
-    .bar.abs.right .icon.major, .s-menu-btn span.bar.right.l-click-area .icon.major,
+    .bar.abs.right .icon.major, .l-datetime-picker .l-month-year-pager .bar.right.pager .icon.major,
+    .l-datetime-picker .l-month-year-pager .bar.right.val .icon.major, .s-menu-btn span.bar.right.l-click-area .icon.major,
     .bar.abs .right .icon.major,
+    .l-datetime-picker .l-month-year-pager .bar.pager .right .icon.major,
+    .l-datetime-picker .l-month-year-pager .bar.val .right .icon.major,
     .s-menu-btn span.bar.l-click-area .right .icon.major {
       margin-left: 15px; }
   /* line 89, ../../../../general/res/sass/user-environ/_layout.scss */
-  .bar.abs .l-flex .left, .s-menu-btn span.bar.l-click-area .l-flex .left,
+  .bar.abs .l-flex .left, .l-datetime-picker .l-month-year-pager .bar.pager .l-flex .left,
+  .l-datetime-picker .l-month-year-pager .bar.val .l-flex .left, .s-menu-btn span.bar.l-click-area .l-flex .left,
   .bar.abs .l-flex .right,
-  .s-menu-btn span.bar.l-click-area .l-flex .right, .bar.abs.l-flex .left, .s-menu-btn span.bar.l-flex.l-click-area .left,
+  .l-datetime-picker .l-month-year-pager .bar.pager .l-flex .right,
+  .l-datetime-picker .l-month-year-pager .bar.val .l-flex .right,
+  .s-menu-btn span.bar.l-click-area .l-flex .right, .bar.abs.l-flex .left, .l-datetime-picker .l-month-year-pager .bar.l-flex.pager .left,
+  .l-datetime-picker .l-month-year-pager .bar.l-flex.val .left, .s-menu-btn span.bar.l-flex.l-click-area .left,
   .bar.abs.l-flex .right,
+  .l-datetime-picker .l-month-year-pager .bar.l-flex.pager .right,
+  .l-datetime-picker .l-month-year-pager .bar.l-flex.val .right,
   .s-menu-btn span.bar.l-flex.l-click-area .right {
     width: auto; }
 
@@ -3216,8 +3272,14 @@ span.req {
     overflow: auto;
     top: 64px; }
   /* line 251, ../../../../general/res/sass/user-environ/_layout.scss */
-  .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .s-menu-btn span.left.l-click-area, .s-menu-btn .pane.items .object-browse-bar span.left.l-click-area,
+  .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.pager, .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.pager,
+  .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.val,
+  .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.val, .pane.items .object-browse-bar .s-menu-btn span.left.l-click-area, .s-menu-btn .pane.items .object-browse-bar span.left.l-click-area,
   .pane.items .object-browse-bar .right.abs,
+  .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .right.pager,
+  .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .right.pager,
+  .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .right.val,
+  .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .right.val,
   .pane.items .object-browse-bar .s-menu-btn span.right.l-click-area,
   .s-menu-btn .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
@@ -3651,13 +3713,15 @@ span.req {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* line 23, ../../../../general/res/sass/search/_search.scss */
-.abs.search-holder, .s-menu-btn span.search-holder.l-click-area {
+.abs.search-holder, .l-datetime-picker .l-month-year-pager .search-holder.pager,
+.l-datetime-picker .l-month-year-pager .search-holder.val, .s-menu-btn span.search-holder.l-click-area {
   height: 25px;
   bottom: 0;
   top: 23px;
   z-index: 5; }
   /* line 27, ../../../../general/res/sass/search/_search.scss */
-  .abs.search-holder.active, .s-menu-btn span.search-holder.active.l-click-area {
+  .abs.search-holder.active, .l-datetime-picker .l-month-year-pager .search-holder.active.pager,
+  .l-datetime-picker .l-month-year-pager .search-holder.active.val, .s-menu-btn span.search-holder.active.l-click-area {
     height: auto;
     bottom: 0; }
 
@@ -4310,12 +4374,14 @@ ul.tree {
   .frame.child-frame.panel:hover {
     border-color: rgba(179, 179, 179, 0.1); }
 /* line 32, ../../../../general/res/sass/user-environ/_frame.scss */
-.frame > .object-header.abs, .s-menu-btn .frame > span.object-header.l-click-area {
+.frame > .object-header.abs, .l-datetime-picker .l-month-year-pager .frame > .object-header.pager,
+.l-datetime-picker .l-month-year-pager .frame > .object-header.val, .s-menu-btn .frame > span.object-header.l-click-area {
   font-size: 0.75em;
   height: 16px;
   line-height: 16px; }
 /* line 38, ../../../../general/res/sass/user-environ/_frame.scss */
-.frame > .object-holder.abs, .s-menu-btn .frame > span.object-holder.l-click-area {
+.frame > .object-holder.abs, .l-datetime-picker .l-month-year-pager .frame > .object-holder.pager,
+.l-datetime-picker .l-month-year-pager .frame > .object-holder.val, .s-menu-btn .frame > span.object-holder.l-click-area {
   top: 21px; }
 /* line 41, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame .contents {
@@ -4395,7 +4461,9 @@ ul.tree {
 .edit-mode .top-bar .buttons-main {
   white-space: nowrap; }
   /* line 52, ../../../../general/res/sass/user-environ/_top-bar.scss */
-  .edit-mode .top-bar .buttons-main.abs, .edit-mode .top-bar .s-menu-btn span.buttons-main.l-click-area, .s-menu-btn .edit-mode .top-bar span.buttons-main.l-click-area {
+  .edit-mode .top-bar .buttons-main.abs, .edit-mode .top-bar .l-datetime-picker .l-month-year-pager .buttons-main.pager, .l-datetime-picker .l-month-year-pager .edit-mode .top-bar .buttons-main.pager,
+  .edit-mode .top-bar .l-datetime-picker .l-month-year-pager .buttons-main.val,
+  .l-datetime-picker .l-month-year-pager .edit-mode .top-bar .buttons-main.val, .edit-mode .top-bar .s-menu-btn span.buttons-main.l-click-area, .s-menu-btn .edit-mode .top-bar span.buttons-main.l-click-area {
     bottom: auto;
     left: auto; }
 
@@ -4710,37 +4778,41 @@ table {
   table thead,
   table .thead {
     border-bottom: 1px solid #333; }
-  /* line 43, ../../../../general/res/sass/lists/_tabular.scss */
+  /* line 44, ../../../../general/res/sass/lists/_tabular.scss */
+  .tabular:not(.fixed-header) tr th,
+  table:not(.fixed-header) tr th {
+    background-color: rgba(255, 255, 255, 0.1); }
+  /* line 48, ../../../../general/res/sass/lists/_tabular.scss */
   .tabular tbody, .tabular .tbody,
   table tbody,
   table .tbody {
     display: table-row-group; }
-    /* line 46, ../../../../general/res/sass/lists/_tabular.scss */
+    /* line 51, ../../../../general/res/sass/lists/_tabular.scss */
     .tabular tbody tr:hover, .tabular tbody .tr:hover, .tabular .tbody tr:hover, .tabular .tbody .tr:hover,
     table tbody tr:hover,
     table tbody .tr:hover,
     table .tbody tr:hover,
     table .tbody .tr:hover {
       background: rgba(128, 128, 128, 0.1); }
-  /* line 51, ../../../../general/res/sass/lists/_tabular.scss */
+  /* line 56, ../../../../general/res/sass/lists/_tabular.scss */
   .tabular tr, .tabular .tr,
   table tr,
   table .tr {
     display: table-row; }
-    /* line 53, ../../../../general/res/sass/lists/_tabular.scss */
+    /* line 58, ../../../../general/res/sass/lists/_tabular.scss */
     .tabular tr:first-child .td, .tabular .tr:first-child .td,
     table tr:first-child .td,
     table .tr:first-child .td {
       border-top: none; }
-    /* line 57, ../../../../general/res/sass/lists/_tabular.scss */
+    /* line 62, ../../../../general/res/sass/lists/_tabular.scss */
     .tabular tr.group-header td, .tabular tr.group-header .td, .tabular .tr.group-header td, .tabular .tr.group-header .td,
     table tr.group-header td,
     table tr.group-header .td,
     table .tr.group-header td,
     table .tr.group-header .td {
-      background-color: #404040;
-      color: #a6a6a6; }
-    /* line 63, ../../../../general/res/sass/lists/_tabular.scss */
+      background-color: rgba(242, 242, 242, 0.1);
+      color: #8c8c8c; }
+    /* line 68, ../../../../general/res/sass/lists/_tabular.scss */
     .tabular tr th, .tabular tr .th, .tabular tr td, .tabular tr .td, .tabular .tr th, .tabular .tr .th, .tabular .tr td, .tabular .tr .td,
     table tr th,
     table tr .th,
@@ -4751,26 +4823,25 @@ table {
     table .tr td,
     table .tr .td {
       display: table-cell; }
-    /* line 66, ../../../../general/res/sass/lists/_tabular.scss */
+    /* line 71, ../../../../general/res/sass/lists/_tabular.scss */
     .tabular tr th, .tabular tr .th, .tabular .tr th, .tabular .tr .th,
     table tr th,
     table tr .th,
     table .tr th,
     table .tr .th {
-      background-color: #4d4d4d;
       border-left: 1px solid #333;
-      color: #b3b3b3;
+      color: #999;
       padding: 5px 5px;
       white-space: nowrap;
       vertical-align: middle; }
-      /* line 73, ../../../../general/res/sass/lists/_tabular.scss */
+      /* line 77, ../../../../general/res/sass/lists/_tabular.scss */
       .tabular tr th:first-child, .tabular tr .th:first-child, .tabular .tr th:first-child, .tabular .tr .th:first-child,
       table tr th:first-child,
       table tr .th:first-child,
       table .tr th:first-child,
       table .tr .th:first-child {
         border-left: none; }
-      /* line 77, ../../../../general/res/sass/lists/_tabular.scss */
+      /* line 81, ../../../../general/res/sass/lists/_tabular.scss */
       .tabular tr th.sort.sort:after, .tabular tr .th.sort.sort:after, .tabular .tr th.sort.sort:after, .tabular .tr .th.sort.sort:after,
       table tr th.sort.sort:after,
       table tr .th.sort.sort:after,
@@ -4782,21 +4853,21 @@ table {
         content: "\ed";
         display: inline-block;
         margin-left: 3px; }
-      /* line 85, ../../../../general/res/sass/lists/_tabular.scss */
+      /* line 89, ../../../../general/res/sass/lists/_tabular.scss */
       .tabular tr th.sort.sort.desc:after, .tabular tr .th.sort.sort.desc:after, .tabular .tr th.sort.sort.desc:after, .tabular .tr .th.sort.sort.desc:after,
       table tr th.sort.sort.desc:after,
       table tr .th.sort.sort.desc:after,
       table .tr th.sort.sort.desc:after,
       table .tr .th.sort.sort.desc:after {
         content: "\ec"; }
-      /* line 89, ../../../../general/res/sass/lists/_tabular.scss */
+      /* line 93, ../../../../general/res/sass/lists/_tabular.scss */
       .tabular tr th.sortable, .tabular tr .th.sortable, .tabular .tr th.sortable, .tabular .tr .th.sortable,
       table tr th.sortable,
       table tr .th.sortable,
       table .tr th.sortable,
       table .tr .th.sortable {
         cursor: pointer; }
-    /* line 93, ../../../../general/res/sass/lists/_tabular.scss */
+    /* line 97, ../../../../general/res/sass/lists/_tabular.scss */
     .tabular tr td, .tabular tr .td, .tabular .tr td, .tabular .tr .td,
     table tr td,
     table tr .td,
@@ -4808,21 +4879,21 @@ table {
       padding: 3px 5px;
       word-wrap: break-word;
       vertical-align: top; }
-      /* line 100, ../../../../general/res/sass/lists/_tabular.scss */
+      /* line 104, ../../../../general/res/sass/lists/_tabular.scss */
       .tabular tr td.numeric, .tabular tr .td.numeric, .tabular .tr td.numeric, .tabular .tr .td.numeric,
       table tr td.numeric,
       table tr .td.numeric,
       table .tr td.numeric,
       table .tr .td.numeric {
         text-align: right; }
-      /* line 103, ../../../../general/res/sass/lists/_tabular.scss */
+      /* line 107, ../../../../general/res/sass/lists/_tabular.scss */
       .tabular tr td.s-cell-type-value, .tabular tr .td.s-cell-type-value, .tabular .tr td.s-cell-type-value, .tabular .tr .td.s-cell-type-value,
       table tr td.s-cell-type-value,
       table tr .td.s-cell-type-value,
       table .tr td.s-cell-type-value,
       table .tr .td.s-cell-type-value {
         text-align: right; }
-        /* line 105, ../../../../general/res/sass/lists/_tabular.scss */
+        /* line 109, ../../../../general/res/sass/lists/_tabular.scss */
         .tabular tr td.s-cell-type-value .l-cell-contents, .tabular tr .td.s-cell-type-value .l-cell-contents, .tabular .tr td.s-cell-type-value .l-cell-contents, .tabular .tr .td.s-cell-type-value .l-cell-contents,
         table tr td.s-cell-type-value .l-cell-contents,
         table tr .td.s-cell-type-value .l-cell-contents,
@@ -4833,23 +4904,23 @@ table {
           border-radius: 2px;
           padding-left: 5px;
           padding-right: 5px; }
-  /* line 121, ../../../../general/res/sass/lists/_tabular.scss */
+  /* line 125, ../../../../general/res/sass/lists/_tabular.scss */
   .tabular.filterable tbody, .tabular.filterable .tbody,
   table.filterable tbody,
   table.filterable .tbody {
     top: 44px; }
-  /* line 124, ../../../../general/res/sass/lists/_tabular.scss */
+  /* line 128, ../../../../general/res/sass/lists/_tabular.scss */
   .tabular.filterable input[type="text"],
   table.filterable input[type="text"] {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     width: 100%; }
-  /* line 130, ../../../../general/res/sass/lists/_tabular.scss */
+  /* line 134, ../../../../general/res/sass/lists/_tabular.scss */
   .tabular.fixed-header,
   table.fixed-header {
     height: 100%; }
-    /* line 132, ../../../../general/res/sass/lists/_tabular.scss */
+    /* line 136, ../../../../general/res/sass/lists/_tabular.scss */
     .tabular.fixed-header thead, .tabular.fixed-header .thead,
     .tabular.fixed-header tbody tr, .tabular.fixed-header .tbody .tr,
     table.fixed-header thead,
@@ -4858,12 +4929,12 @@ table {
     table.fixed-header .tbody .tr {
       display: table;
       table-layout: fixed; }
-    /* line 137, ../../../../general/res/sass/lists/_tabular.scss */
+    /* line 141, ../../../../general/res/sass/lists/_tabular.scss */
     .tabular.fixed-header thead, .tabular.fixed-header .thead,
     table.fixed-header thead,
     table.fixed-header .thead {
       width: calc(100% - 10px); }
-      /* line 139, ../../../../general/res/sass/lists/_tabular.scss */
+      /* line 143, ../../../../general/res/sass/lists/_tabular.scss */
       .tabular.fixed-header thead:before, .tabular.fixed-header .thead:before,
       table.fixed-header thead:before,
       table.fixed-header .thead:before {
@@ -4873,8 +4944,8 @@ table {
         position: absolute;
         width: 100%;
         height: 22px;
-        background: rgba(255, 255, 255, 0.15); }
-    /* line 149, ../../../../general/res/sass/lists/_tabular.scss */
+        background-color: rgba(255, 255, 255, 0.1); }
+    /* line 153, ../../../../general/res/sass/lists/_tabular.scss */
     .tabular.fixed-header tbody, .tabular.fixed-header .tbody,
     table.fixed-header tbody,
     table.fixed-header .tbody {
@@ -4889,7 +4960,7 @@ table {
       top: 22px;
       display: block;
       overflow-y: scroll; }
-  /* line 157, ../../../../general/res/sass/lists/_tabular.scss */
+  /* line 161, ../../../../general/res/sass/lists/_tabular.scss */
   .tabular.t-event-messages td, .tabular.t-event-messages .td,
   table.t-event-messages td,
   table.t-event-messages .td {
@@ -5929,7 +6000,7 @@ table {
   left: 0;
   z-index: 1; }
   /* line 22, ../../../../general/res/sass/features/_time-display.scss */
-  .l-time-display.l-timer .l-elem.l-value .ui-symbol.direction {
+  .l-time-display.l-timer .l-elem.l-value .ui-symbol.direction, .l-time-display.l-timer .l-elem.l-value .l-datetime-picker .l-month-year-pager .direction.pager, .l-datetime-picker .l-month-year-pager .l-time-display.l-timer .l-elem.l-value .direction.pager {
     font-size: 0.8em; }
 /* line 26, ../../../../general/res/sass/features/_time-display.scss */
 .l-time-display.l-timer:hover .l-elem.l-value {
