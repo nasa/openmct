@@ -52,6 +52,7 @@ define(
             this.startIndex = binSearch(0, max, conductor.displayStart());
             this.endIndex = binSearch(0, max, conductor.displayEnd());
             this.series = series;
+            this.domain = conductor.activeDomain();
         }
 
         ConductorTelemetrySeries.prototype.getPointCount = function () {
@@ -59,6 +60,7 @@ define(
         };
 
         ConductorTelemetrySeries.prototype.getDomainValue = function (i, d) {
+            d = d || this.domain;
             return this.series.getDomainValue(i + this.startIndex, d);
         };
 
