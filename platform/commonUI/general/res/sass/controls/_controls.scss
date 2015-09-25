@@ -391,6 +391,13 @@ label.checkbox.custom {
 			right: $pagerW + $interiorMargin;
 		}
 	}
+	.l-calendar,
+	.l-time-selects {
+		border-top: 1px solid $colorInteriorBorder
+	}
+	.l-time-selects {
+		line-height: $formInputH;
+	}
 }
 
 /******************************************************** CALENDAR */

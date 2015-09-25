@@ -39,35 +39,28 @@
 					<div class="sub">{{cell.dayOfYear}}</div>
 				</li>
 			</ul>
-
-
-			<!--<table>
-				<tr>
-					<th ng-repeat="day in ['Su','Mo','Tu','We','Th','Fr','Sa']">
-						{{day}}
-					</th>
-				</tr>
-				<tr ng-repeat="row in table">
-					<td style="text-align: center;"
-					    ng-repeat="cell in row"
-					    ng-click="select(cell)"
-					    ng-class='{ disabled: !isSelectable(cell), selected: isSelected(cell) }'>
-						<div>{{cell.day}}</div>
-						<div style="font-size: 80%">{{cell.dayOfYear}}</div>
-					</td>
-				</tr>
-			</table>-->
 		</div>
 	</div>
-	<div class="l-time-selects"
-	     ng-repeat="key in ['hours', 'minutes', 'seconds']"
-	     ng-if="options[key]">
-		<div>{{nameFor(key)}}</div>
-		<div class='form-control select'>
-			<select size="1"
-			        ng-model="time[key]"
-			        ng-options="i for i in optionsFor(key)">
-			</select>
+	<div class="l-time-selects complex datetime"
+			ng-show="options">
+		<div class="field-hints">
+			<span class="hint time md"
+				  ng-repeat="key in ['hours', 'minutes', 'seconds']"
+				  ng-if="options[key]">
+				{{nameFor(key)}}
+			</span>
+		</div>
+		<div>
+			<span class="field control time md"
+				  ng-repeat="key in ['hours', 'minutes', 'seconds']"
+				  ng-if="options[key]">
+				<div class='form-control select'>
+					<select size="1"
+							ng-model="time[key]"
+							ng-options="i for i in optionsFor(key)">
+					</select>
+				</div>
+			</span>
 		</div>
 	</div>
 </div>
