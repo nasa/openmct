@@ -21,9 +21,6 @@
  *****************************************************************************/
 /*global define,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
-/**
- *  EventSpec. Created by vwoeltje on 11/6/14. Modified by shale on 06/23/2015.
- */
 define(
     ["../src/ConductorService"],
     function (ConductorService) {
@@ -38,7 +35,10 @@ define(
             beforeEach(function () {
                 mockNow = jasmine.createSpy('now');
                 mockNow.andReturn(TEST_NOW);
-                conductorService = new ConductorService(mockNow);
+                conductorService = new ConductorService(mockNow, [
+                    { key: "d1", name: "Domain #1" },
+                    { key: "d2", name: "Domain #2" }
+                ]);
             });
 
             it("initializes a time conductor around the current time", function () {

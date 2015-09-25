@@ -119,9 +119,9 @@ define(
                 if (!this.domains.some(matchesKey)) {
                     throw new Error("Unknown domain " + key);
                 }
-                this.domain = key;
+                this.activeDomain = key;
             }
-            return this.domain;
+            return this.activeDomain;
         };
 
         return TimeConductor;

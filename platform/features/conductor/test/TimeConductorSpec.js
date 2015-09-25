@@ -21,9 +21,6 @@
  *****************************************************************************/
 /*global define,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
-/**
- *  EventSpec. Created by vwoeltje on 11/6/14. Modified by shale on 06/23/2015.
- */
 define(
     ["../src/TimeConductor"],
     function (TimeConductor) {
@@ -32,12 +29,17 @@ define(
         describe("TimeConductor", function () {
             var testStart,
                 testEnd,
+                testDomains,
                 conductor;
 
             beforeEach(function () {
                 testStart = 42;
                 testEnd = 12321;
-                conductor = new TimeConductor(testStart, testEnd);
+                testDomains = [
+                    { key: "d1", name: "Domain #1" },
+                    { key: "d2", name: "Domain #2" }
+                ]
+                conductor = new TimeConductor(testStart, testEnd, testDomains);
             });
 
             it("provides accessors for query/display start/end times", function () {
@@ -56,6 +58,25 @@ define(
                 expect(conductor.queryEnd()).toEqual(2);
                 expect(conductor.displayStart()).toEqual(3);
                 expect(conductor.displayEnd()).toEqual(4);
+            });
+
+            it("exposes domain options", function () {
+                expect(conductor.domainOptions()).toEqual(testDomains);
+            });
+
+            it("exposes the current domain choice", function () {
+                expect(conductor.domain()).toEqual(testDomains[0].key);
+            });
+
+            it("allows the domain choice to be changed", function () {
+                conductor.domain(testDomains[1].key);
+                expect(conductor.domain()).toEqual(testDomains[1].key);
+            });
+
+            it("throws an error on attempts to set an invalid domain", function () {
+                expect(function () {
+                    conductor.domain("invalid-domain");
+                }).toThrow();
             });
 
         });

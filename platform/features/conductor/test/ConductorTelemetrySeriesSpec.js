@@ -22,8 +22,8 @@
 /*global define,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ["../src/ConductorTelemetrySeries"],
-    function (ConductorTelemetrySeries) {
+    ["../src/ConductorTelemetrySeries", "./TestTimeConductor"],
+    function (ConductorTelemetrySeries, TestTimeConductor) {
         "use strict";
 
         describe("ConductorTelemetrySeries", function () {
@@ -39,10 +39,7 @@ define(
                     'series',
                     [ 'getPointCount', 'getDomainValue', 'getRangeValue' ]
                 );
-                mockConductor = jasmine.createSpyObj(
-                    'conductor',
-                    [ 'queryStart', 'queryEnd', 'displayStart', 'displayEnd' ]
-                );
+                mockConductor = new TestTimeConductor();
 
                 mockSeries.getPointCount.andCallFake(function () {
                     return testArray.length;
