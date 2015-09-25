@@ -600,25 +600,8 @@ path relative to the bundle’s resource directory (​`res​` by defa
 
 ### Composite Services
 
-A special category of extensions recognized by the framework are ​`components`​; 
-these are parts of services intended to be fit together in a common pattern. 
-
-INSERT DIAGRAM HERE
-
-Components all implement the same interface, which is the interface expected for 
-services of the type that they create. Components fall into three types:
-
-* `provider​`: Provides an actual implementation of the service in question. 
-* `aggregator`​: Makes many implementations of the service in question appear as 
-one. 
-* `decorator​`: Modifies the inputs or outputs of another implementation of the 
-service. 
-
-When the framework layer encounters components, it assembles them into single 
-service instances that can be referred to elsewhere as single dependencies. All 
-providers are instantiated, and passed to the first available aggregator; 
-decorators are then layered on in priority order to create the final form of the 
-service.
+Composite services are described in the [relevant section](../architecture/Framework.md#Composite-Services) 
+of the framework guide.
 
 A component should include the following properties in its extension definition:
 
@@ -626,7 +609,7 @@ A component should include the following properties in its extension d
   fully­composed service will be registered with Angular under this name.
 * `type​`: One of `​provider`​, ​`aggregator​`, or `​decorator​` (as above) 
 
-In addition to any declared dependencies, aggregators and decorators both 
+In addition to any declared dependencies, _aggregators_ and _decorators_ both 
 receive one more argument (immediately following declared dependencies) that is 
 provided by the framework. For an aggregator, this will be an array of all 
 providers of the same service (that is, with matching `​provides`​ properties); 
@@ -1074,9 +1057,9 @@ The ​`representers​` extension category is used to add additional b
 `mct­representation​` directive. This extension category is intended primarily 
 for use internal to the platform. 
 
-Unlike _represent​ations​_, which describe specific ways to represent domain 
+Unlike _represent​ations​_, which describe specific ways to represent domain 
 objects, represent​ers ​are used to modify or augment the process of representing 
-domain objects in general. For example, support for the ​_gestures​_ extension 
+domain objects in general. For example, support for the  _gestures​_ extension 
 category is added by a representer.
 
 A representer needs only provide an implementation. When an ​`mct­representation` 
@@ -1117,647 +1100,651 @@ Definitions above.) 
 
 ## Templates 
 
-The ​templates​ extension category is used to expose Angular templates under 
-symbolic identifiers. These can then be utilized using the ​mct­include​ directive, which 
-behaves similarly to ​ng­include​, except that it uses these symbolic identifiers instead of 
-paths. 
-  A template’s extension definition should include the following properties: 
-   
- * key​: The machine­readable name which identifies this template, matched against the 
-  value given to the key attribute of the mct­include directive. 
- * templateUrl​: The path to the relevant Angular template. This path is relative to the 
-  bundle's resources directory. 
- 
-  Note that, when multiple templates are present with the same ​key​, the one with the 
-highest priority will be used from mct­include. This behavior can be used to override templates 
-exposed by the platform (to change the logo which appears in the bottom right, for instance.) 
- 
-  Templates do not have implementations. 
- 
-Types 
- 
-  The ​types​ extension category describes types of domain objects which may appear 
-within Open MCT Web. 
-  A type’s extension definition should have the following properties: 
- 
- * key​: The machine­readable identifier for this domain object type. Will be stored to and 
-  matched against the ​type​ property of domain object models. 
- * name​: The human­readable name for this domain object type. 
- * description​: A human­readable summary of this domain object type. 
- * glyph​: A single character to be rendered as an icon in Open MCT Web’s custom font 
-  set. 
- * model​: A domain object model, used as the initial state for created domain objects of 
-  this type (before any properties are specified.) 
- * features​: Optional; an array of strings describing features of this domain object type. 
-  Currently, only ​creation​ is recognized by the platform; this is used to determine that 
-  this type should appear in the Create menu. More generally, this is used to support the 
-  hasFeature(...)​ method of the ​type​ capability. 
- * properties​: An array describing individual properties of this domain object (as should 
-  appear in the Create or the Edit Properties dialog.) Each property is described by an 
-  object containing the following properties: 
-                                         34 
-    ○ control​: The key of the control (see mct­control and the controls extension 
-      category) to use for editing this property. 
-    ○ property​: A string which will be used as the name of the property in the domain 
-      object’s model that the value for this property should be stored under. If this value 
-      should be stored in an object nested within the domain object model, then 
-      property should be specified as an array of strings identifying these nested 
-      objects and, finally, the property itself. 
-    ○ ...other properties as appropriate for a control of this type (each property’s 
-      definition will also be passed in as the structure for its control.) See 
-      documentation of ​mct­form​ for more detail on these properties. 
- 
-  Types do not have implementations. 
- 
-Versions 
- 
-  The ​versions​ extension category is used to introduce line items in Open MCT Web’s 
-About dialog. These should have the following properties: 
- 
- * name​: The name of this line item, as should appear in the left­hand side of the list of 
-  version information in the About dialog. 
- * value​: The value which should appear to the right of the name in the About dialog. 
- 
-  To control the ordering of line items within the About dialog, use ​priority​. (See 
-section on Extension Definitions above.) 
-       
-  This extension category does not have implementations. 
- 
-Views 
- 
-  The ​views​ extension category is used to determine which options appear to the user as 
-available views of domain objects of specific types. A view’s extension definition has the same 
-properties as a representation (and views can be utilized via ​mct­representation​); 
-additionally: 
- 
- * name​: The human­readable name for this view type. 
- * description​: A human­readable summary of this view type. 
- * glyph​: A single character to be rendered as an icon in Open MCT Web’s custom font 
-  set. 
- * type​: Optional; if present, this representation is only applicable for domain object’s of 
-  this type. 
-                                         35 
- * needs​: Optional array of strings; if present, this representation is only applicable for 
-  domain objects which have the capabilities identified by these strings. 
- * delegation​: Optional boolean, intended to be used in conjunction with ​needs​;  if 
-  present, allow required capabilities to be satisfied by means of capability delegation. 
-  (See the ​delegation​ capability, in the Capabilities section.) 
- * toolbar​: Optional; a definition for the toolbar which may appear in a toolbar when 
-  using this view in Edit mode. This should be specified as a structure for ​mct­toolbar​, 
-  with additional properties available for each item in that toolbar: 
-    ○ property​: A property name. This will refer to a property in the view’s current 
-      selection; that property on the selected object will be modifiable as the 
-      ng­model​ of the displayed control in the toolbar. If the value of the property is a 
-      function, it will be used as a getter­setter (called with no arguments to use as a 
-      getter, called with a value to use as a setter.) 
-    ○ method​: A method to invoke (again, on the selected object) from the toolbar 
-      control. Useful particularly for buttons (which don’t edit a single property, 
-      necessarily.) 
- 
-View Scope 
- 
-  Views do not have implementations, but do get the same properties in scope that are 
-provided for ​representations​. 
- 
-  When a view is in Edit mode, this scope will additionally contain: 
- 
- * commit()​: A function which can be invoked to mark any changes to the view’s 
-  configuration​ as ready to persist. 
- * selection​: An object representing the current selection state. 
- 
-Selection State 
- 
-  A view’s selection state is, conceptually, a set of JavaScript objects. The presence of 
-methods/properties on these objects determine which toolbar controls are visible, and what 
-state they manage and/or behavior they invoke. 
-  This set may contain up to two different objects: The ​view proxy​, which is used to make 
-changes to the view as a whole, and the ​selected object​, which is used to represent some state 
-within the view. (Future versions of Open MCT Web may support multiple selected objects.) 
- 
-   
-        
-                                         36 
-  The ​selection​ object made available during Edit mode has the following methods: 
- 
- * proxy([object])​: Get (or set, if called with an argument) the current view proxy.  
- * select(object)​: Make this object the selected object. 
- * deselect()​: Clear the currently selected object. 
- * get()​: Get the currently selected object. Returns ​undefined​ if there is no currently 
-  selected object. 
- * selected(object)​: Check if the JavaScript object is currently in the selection set. 
-  Returns ​true​ if the object is either the currently selected object, or the current view 
-  proxy. 
- * all()​: Get an array of all objects in the selection state. Will include either or both of the 
-  view proxy and selected object. 
- 
+The ​`templates​` extension category is used to expose Angular templates under 
+symbolic identifiers. These can then be utilized using the `​mct­include​` 
+directive, which behaves similarly to `​ng­include​`, except that it uses these 
+symbolic identifiers instead of paths.
 
-       
-                                         37 
-Directives 
+A template’s extension definition should include the following properties:
+* `key​`: The machine­readable name which identifies this template, matched 
+against the value given to the key attribute of the mct­include directive.
+* `templateUrl​`: The path to the relevant Angular template. This path is 
+relative to the bundle's resources directory. 
+
+Note that, when multiple templates are present with the same ​key​, the one with 
+the highest priority will be used from mct­include. This behavior can be used to 
+override templates exposed by the platform (to change the logo which appears in 
+the bottom right, for instance.)
+
+Templates do not have implementations. 
+
+## Types 
+
+The ​types​ extension category describes types of domain objects which may appear 
+within Open MCT Web.
+
+A type’s extension definition should have the following properties:
+
+* `key​`: The machine­readable identifier for this domain object type. Will be 
+stored to and matched against the ​type​ property of domain object models.
+* `name​`: The human­readable name for this domain object type.
+* `description​`: A human­readable summary of this domain object type.
+* `glyph​`: A single character to be rendered as an icon in Open MCT Web’s custom 
+font set. 
+* `model`​: A domain object model, used as the initial state for created domain 
+objects of this type (before any properties are specified.)
+* `features​`: Optional; an array of strings describing features of this domain 
+object type. Currently, only ​creation​ is recognized by the platform; this is 
+used to determine that this type should appear in the Create menu. More 
+generally, this is used to support the hasFeature(...)​ method of the ​type​ 
+capability. 
+* `properties`​: An array describing individual properties of this domain object
+(as should appear in the Create or the Edit Properties dialog.) Each property is 
+described by an object containing the following properties:
+    * `control​`: The key of the control (see mct­control and the controls 
+    extension category) to use for editing this property. 
+    * `property​`: A string which will be used as the name of the property in the 
+    domain object’s model that the value for this property should be stored 
+    under. If this value should be stored in an object nested within the domain 
+    object model, then property should be specified as an array of strings 
+    identifying these nested objects and, finally, the property itself. 
+    * other properties as appropriate for a control of this type (each 
+    property’s definition will also be passed in as the structure for its 
+    control.) See documentation of ​mct­form​ for more detail on these properties.
+    
+Types do not have implementations. 
  
-  Open MCT Web defines several Angular directives that are intended for use both 
+## Versions 
+The ​versions​ extension category is used to introduce line items in Open MCT 
+Web’s About dialog. These should have the following properties: 
+
+* `name​`: The name of this line item, as should appear in the left­hand side of 
+the list of version information in the About dialog.
+* `value​`: The value which should appear to the right of the name in the About 
+dialog.
+
+To control the ordering of line items within the About dialog, use `​priority​`. 
+(See section on Extension Definitions above.) 
+
+This extension category does not have implementations. 
+ 
+## Views 
+
+The ​views​ extension category is used to determine which options appear to the 
+user as available views of domain objects of specific types. A view’s extension 
+definition has the same properties as a representation (and views can be 
+utilized via ​mct­representation​); additionally:
+
+* `name​`: The human­readable name for this view type.
+* description​: A human­readable summary of this view type.
+* `glyph​`: A single character to be rendered as an icon in Open MCT Web’s custom 
+font set.
+* `type`​: Optional; if present, this representation is only applicable for 
+domain object’s of this type.
+* `needs​`: Optional array of strings; if present, this representation is only 
+applicable for domain objects which have the capabilities identified by these 
+strings. 
+* `delegation​`: Optional boolean, intended to be used in conjunction with ​
+`needs​`;  if present, allow required capabilities to be satisfied by means of 
+capability delegation. (See the ​delegation​ capability, in the Capabilities 
+section.)
+* `toolbar​`: Optional; a definition for the toolbar which may appear in a 
+toolbar when using this view in Edit mode. This should be specified as a 
+structure for ​mct­toolbar​, with additional properties available for each item in 
+that toolbar: 
+    * `property​`: A property name. This will refer to a property in the view’s 
+    current selection; that property on the selected object will be modifiable 
+    as the `ng­model`​ of the displayed control in the toolbar. If the value of 
+    the property is a function, it will be used as a getter­setter (called with 
+    no arguments to use as a getter, called with a value to use as a setter.) 
+    * `method​`: A method to invoke (again, on the selected object) from the 
+    toolbar control. Useful particularly for buttons (which don’t edit a single 
+    property, necessarily.) 
+ 
+### View Scope 
+
+Views do not have implementations, but do get the same properties in scope that 
+are provided for `​representations​`. 
+
+When a view is in Edit mode, this scope will additionally contain:
+* `commit()`​: A function which can be invoked to mark any changes to the view’s 
+  configuration​ as ready to persist.
+* `selection​`: An object representing the current selection state. 
+
+#### Selection State 
+
+A view’s selection state is, conceptually, a set of JavaScript objects. The 
+presence of methods/properties on these objects determine which toolbar controls 
+are visible, and what state they manage and/or behavior they invoke. 
+
+This set may contain up to two different objects: The  _view proxy​_, which is 
+used to make changes to the view as a whole, and the _​selected object​_, which is 
+used to represent some state within the view. (Future versions of Open MCT Web 
+may support multiple selected objects.) 
+
+The ​`selection​` object made available during Edit mode has the following 
+methods: 
+
+* `proxy([object])`​: Get (or set, if called with an argument) the current view 
+proxy.  
+* `select(object)​`: Make this object the selected object. 
+* `deselect()`​: Clear the currently selected object. 
+* `get()​`: Get the currently selected object. Returns ​undefined​ if there is no 
+currently selected object.
+* `selected(object)`​: Check if the JavaScript object is currently in the 
+selection set. Returns ​true​ if the object is either the currently selected 
+object, or the current view proxy. 
+* `all()​`: Get an array of all objects in the selection state. Will include 
+either or both of the view proxy and selected object. 
+
+# Directives
+
+Open MCT Web defines several Angular directives that are intended for use both 
 internally within the platform, and by plugins. 
- 
-Before Unload 
- 
-  The ​mct­before­unload​ directive is used to listen for (and prompt for user 
-confirmation) of navigation changes in the browser. This includes reloading, following links out 
-of Open MCT Web, or changing routes. It is used to hook into both ​onbeforeunload​ event 
-handling as well as route changes from within Angular. 
-  This directive is useable as an attribute. Its value should be an Angular expression. 
-When an action that would trigger an unload and/or route change occurs, this Angular 
-expression is evaluated. Its result should be a message to display to the user to confirm their 
-navigation change; if this expression evaluates to a falsy value, no message will be displayed. 
- 
-Chart 
- 
-  The ​mct­chart​ directive is used to support drawing of simple charts. It is present to 
-support the Plot view, and its functionality is limited to the functionality that is relevant for that 
-view. 
-  This directive is used at the element level and takes one attribute, ​draw​, which is an 
-Angular expression which will should evaluate to a drawing object. This drawing object should 
-contain the following properties: 
-    * dimensions​: The size, in logical coordinates, of the chart area. A two­element 
-      array or numbers. 
-    * origin​: The position, in logical coordinates, of the lower­left corner of the chart 
-      area. A two­element array or numbers. 
-    * lines​: An array of lines (e.g. as a plot line) to draw, where each line is 
-      expressed as an object containing: 
-       ○ buffer​: A Float32Array containing points in the line, in logical 
-         coordinates, in sequential x,y pairs. 
-       ○ color​: The color of the line, as a four­element RGBA array, where each 
-         element is a number in the range of 0.0­1.0. 
-       ○ points​: The number of points in the line. 
-    * boxes​: An array of rectangles to draw in the chart area. Each is an object 
-      containing: 
-       ○ start​: The first corner of the rectangle, as a two­element array of 
-         numbers, in logical coordinates. 
-                                         38 
-       ○ end​: The opposite corner of the rectangle, as a two­element array of 
-         numbers, in logical coordinates. 
-       ○ color​: The color of the line, as a four­element RGBA array, where each 
-         element is a number in the range of 0.0­1.0. 
- 
-  While ​mct­chart​ is intended to support plots specifically, it does perform some useful 
-management of canvas objects (e.g. choosing between WebGL and Canvas 2D APIs for 
-drawing based on browser support) so its usage is recommended when its supported drawing 
-primitives are sufficient for other charting tasks. 
- 
-Container 
- 
-  The ​mct­container​ is similar to the ​mct­include​ directive insofar as it allows 
-templates to be referenced by symbolic keys instead of by URL. Unlike ​mct­include​, it 
-supports transclusion. 
-  Unlike ​mct­include​, ​mct­container​ accepts a ​key​ as a plain string attribute, 
-instead of as an Angular expression. 
-   
-Control 
- 
-  The ​mct­control​ directive is used to display user input elements. Several controls are 
-included with the platform to wrap default input types. This directive is primarily intended for 
-internal use by the ​mct­form​ and ​mct­toolbar​ directives. 
-  When using ​mct­control​, the attributes ​ng­model​, ​ng­disabled​, ​ng­required​, 
-and ​ng­pattern​ may also be used. These have the usual meaning (as they would for an input 
-element) except for ​ng­model​; when used, it will actually be ​ngModel[field]​ (see below) 
-that is two­way bound by this control. This allows ​mct­control​ elements to more easily 
-delegate to other ​mct­control​ instances, and also facilitates usage for generated forms. 
-  This directive supports the following additional attributes, all specified as Angular 
-expressions: 
- 
- * key​: A machine­readable identifier for the specific type of control to display. 
- * options​: A set of options to display in this control. 
- * structure​: In practice, contains the definition object which describes this form row or 
-  toolbar item. Used to pass additional control­specific parameters. 
- * field​: The field in the ​ngModel​ under which to read/store the property associated with 
-  this control. 
- 
-Drag 
- 
-                                         39 
-  The ​mct­drag​ directive is used to support drag­based gestures on HTML elements. 
-Note that this is not “drag” in the “drag­and­drop” sense, but “drag” in the more general “mouse 
-down, mouse move, mouse up” sense. 
-  This takes the form of three attributes: 
- 
- * mct­drag​: An Angular expression to evaluate during drag movement. 
- * mct­drag­down​: An Angular expression to evaluate when the drag starts. 
- * mct­drag­up​: An Angular expression to evaluate when the drag ends. 
- 
-  In each case, a variable ​delta​ will be provided to the expression; this is a two­element 
-array or the horizontal and vertical pixel offset of the current mouse position relative to the 
-mouse position where dragging began. 
-   
-Form 
- 
-  The ​mct­form​ directive is used to generate forms using a declarative structure, and to 
-gather back user input. It is applicable at the element level and supports the following attributes: 
- 
- * ng­model​: The object which should contain the full form input. Individual fields in this 
-  model are bound to individual controls; the names used for these fields are provided in 
-  the form structure (see below). 
- * structure​: The structure of the form; e.g. sections, rows, their names, and so forth. 
-  The value of this attribute should be an Angular expression. 
- * name​: The name in the containing scope under which to publish form "meta­state", e.g. 
-  $valid​, ​$dirty​, etc. This is as the behavior of ​ng­form​. Passed as plain text in the 
-  attribute. 
- 
 
-       
-                                         40 
-Form Structure 
+## Before Unload 
+
+The `​mct­before­unload​` directive is used to listen for (and prompt for user 
+confirmation) of navigation changes in the browser. This includes reloading, 
+following links out of Open MCT Web, or changing routes. It is used to hook into 
+both `​onbeforeunload​` event handling as well as route changes from within 
+Angular.
+
+This directive is useable as an attribute. Its value should be an Angular 
+expression. When an action that would trigger an unload and/or route change 
+occurs, this Angular expression is evaluated. Its result should be a message to 
+display to the user to confirm their navigation change; if this expression 
+evaluates to a falsy value, no message will be displayed. 
  
-   Forms in Open MCT Web have a common structure to permit consistent display. A form 
-is broken down into sections, which will be displayed in groups; each section is broken down 
-into rows, each of which provides a control for a single property. Input from this form is two­way 
-bound to the object passed via ​ng­model​. 
-   A form’s structure is represented by a JavaScript object in the following form: 
-{ 
-    "name": ... title to display for the form, as a string ..., 
-    "sections": [ 
-        { 
-            "name": ... title to display for the section ..., 
-            "rows": [ 
-                { 
-                    "name": ... title to display for this row ..., 
-                    "control": ... symbolic key for the control ..., 
-                    "key": ... field name in ng­model ... 
-                    "pattern": ... optional, reg exp to match against ... 
-                    "required": ... optional boolean ... 
-                    "options": [ 
-                        "name": ... name to display (e.g. in a select) ..., 
-                        "value": ... value to store in the model ... 
-                    ] 
-                }, 
-                ... and other rows ... 
-            ] 
-        }, 
-        ... and other sections ... 
-    ] 
-} 
+## Chart 
+
+The `​mct­chart​` directive is used to support drawing of simple charts. It is 
+present to support the Plot view, and its functionality is limited to the 
+functionality that is relevant for that view.
+
+This directive is used at the element level and takes one attribute, `​draw​`, 
+which is an Angular expression which will should evaluate to a drawing object. 
+This drawing object should contain the following properties:
+
+* `dimensions​`: The size, in logical coordinates, of the chart area. A 
+two­element array or numbers. 
+* `origin​`: The position, in logical coordinates, of the lower­left corner of 
+the chart area. A two­element array or numbers. 
+* `lines​`: An array of lines (e.g. as a plot line) to draw, where each line is 
+expressed as an object containing: 
+    * `buffer`​: A Float32Array containing points in the line, in logical 
+    coordinates, in sequential x,y pairs. 
+    * `color​`: The color of the line, as a four­element RGBA array, where 
+    each element is a number in the range of 0.0­1.0. 
+    * `points​`: The number of points in the line. 
+* `boxes`​: An array of rectangles to draw in the chart area. Each is an object 
+containing: 
+    * `start​`: The first corner of the rectangle, as a two­element array of 
+    numbers, in logical coordinates. 
+    * `end​`: The opposite corner of the rectangle, as a two­element array of 
+    numbers, in logical coordinates. color​: The color of the line, as a 
+    four­element RGBA array, where each element is a number in the range of 
+    0.0­1.0. 
+
+While ​`mct­chart​` is intended to support plots specifically, it does perform 
+some useful management of canvas objects (e.g. choosing between WebGL and Canvas 
+2D APIs for drawing based on browser support) so its usage is recommended when 
+its supported drawing primitives are sufficient for other charting tasks. 
  
-Note that ​pattern​ may be specified as a string, to simplify storing for structures as JSON 
-when necessary. The string should be given in a form appropriate to pass to a ​RegExp 
-constructor. 
- 
+## Container 
+
+The ​`mct­container​` is similar to the `​mct­include​` directive insofar as it allows 
+templates to be referenced by symbolic keys instead of by URL. Unlike 
+`​mct­include​`, it supports transclusion.
+
+Unlike `​mct­include​`, `​mct­container​` accepts a ​key​ as a plain string attribute, 
+instead of as an Angular expression.
+
+## Control
+
+The `​mct­control​` directive is used to display user input elements. Several 
+controls are included with the platform to wrap default input types. This 
+directive is primarily intended for internal use by the `​mct­form​` and 
+`​mct­toolbar​` directives. 
+
+When using `​mct­control​`, the attributes `​ng­model​`, `​ng­disabled​`, 
+`​ng­required​`, and `​ng­pattern​` may also be used. These have the usual meaning 
+(as they would for an input element) except for `​ng­model​`; when used, it will 
+actually be ​`ngModel[field]`​ (see below) that is two­way bound by this control. 
+This allows `​mct­control​` elements to more easily delegate to other 
+`​mct­control​` instances, and also facilitates usage for generated forms. 
+
+This directive supports the following additional attributes, all specified as 
+Angular expressions:
+
+* `key​`: A machine­readable identifier for the specific type of control to 
+display.
+* `options`​: A set of options to display in this control.
+* `structure​`: In practice, contains the definition object which describes this 
+form row or toolbar item. Used to pass additional control­specific parameters. 
+* `field​`: The field in the `​ngModel​` under which to read/store the property 
+associated with this control. 
+
+## Drag
+
+The ​`mct­drag​` directive is used to support drag­based gestures on HTML 
+elements. Note that this is not “drag” in the “drag­and­drop” sense, but “drag” 
+in the more general “mouse down, mouse move, mouse up” sense. 
+
+This takes the form of three attributes: 
+
+* `mct­drag​`: An Angular expression to evaluate during drag movement.
+* `mct­drag­down`​: An Angular expression to evaluate when the drag starts.
+* `mct­drag­up​`: An Angular expression to evaluate when the drag ends.
+
+In each case, a variable ​`delta​` will be provided to the expression; this is a 
+two­element array or the horizontal and vertical pixel offset of the current 
+mouse position relative to the mouse position where dragging began. 
+
+## Form 
+
+The ​`mct­form​` directive is used to generate forms using a declarative structure, 
+and to gather back user input. It is applicable at the element level and 
+supports the following attributes: 
+
+* `ng­model​`: The object which should contain the full form input. Individual 
+fields in this model are bound to individual controls; the names used for these 
+fields are provided in the form structure (see below).
+* `structure`​: The structure of the form; e.g. sections, rows, their names, and 
+so forth. The value of this attribute should be an Angular expression. 
+* `name​`: The name in the containing scope under which to publish form 
+"meta­state", e.g. `$valid​`, `​$dirty​`, etc. This is as the behavior of `​ng­form​`. 
+Passed as plain text in the attribute. 
+
+### Form Structure 
+
+Forms in Open MCT Web have a common structure to permit consistent display. A 
+form is broken down into sections, which will be displayed in groups; each 
+section is broken down into rows, each of which provides a control for a single 
+property. Input from this form is two­way bound to the object passed via 
+​`ng­model​`. 
+
+A form’s structure is represented by a JavaScript object in the following form:
  
-        
-                                              41 
-Form Controls 
- 
-  A few standard control types are included in the ​platform/forms​ bundle: 
- 
- * textfield​: An area to enter plain text. 
- * select​: A drop­down list of options. 
- * checkbox​: A box which may be checked/unchecked. 
- * color​: A color picker. 
- * button​: A button. 
- * datetime​: An input for UTC date/time entry; gives result as a UNIX timestamp, in 
-  milliseconds since start of 1970, UTC. 
- 
-Include 
- 
-  The ​mct­include​ directive is similar to ​ng­include​, except that it takes a symbolic 
-identifier for a template instead of a URL. Additionally, templates included via ​mct­include 
-will have an isolated scope. 
-  The directive should be used at the element level and supports the following attributes, 
-all of which are specified as Angular expressions: 
- 
- * key​: Machine­readable identifier for the template (of extension category ​templates​) to 
-  be displayed. 
- * ng­model​: Optional; will be passed into the template’s scope as ​ngModel​. Intended 
-  usage is for two­way bound user input. 
- * parameters​: Optional; will be passed into the template’s scope as ​parameters​. 
-  Intended usage is for template­specific display parameters. 
- 
+    { 
+        "name": ... title to display for the form, as a string ..., 
+        "sections": [
+        { 
+            "name": ... title to display for the section ..., 
+            "rows": [ 
+                { 
+                    "name": ... title to display for this row ...,
+                    "control": ... symbolic key for the control ..., 
+                    "key": ... field name in ng­model ... 
+                    "pattern": ... optional, reg exp to match against ... 
+                    "required": ... optional boolean ... 
+                    "options": [ 
+                        "name": ... name to display (e.g. in a select) ..., 
+                        "value": ... value to store in the model ... 
+                    ] 
+                    }, 
+                ... and other rows ... 
+            ] 
+        }, 
+        ... and other sections ... 
+        ] 
+    } 
 
-       
-                                         42 
-Representation 
- 
-  The ​mct­representation​ directive is used to include templates which specifically 
-represent domain objects. Usage is similar to ​mct­include​. 
-  The directive should be used at the element level and supports the following attributes, 
-all of which are specified as Angular expressions: 
- 
- * key​: Machine­readable identifier for the representation (of extension category 
-  representations​ or ​views​) to be displayed. 
- * mct­object​: The domain object being represented. 
- * ng­model​: Optional; will be passed into the template’s scope as ​ngModel​. Intended 
-  usage is for two­way bound user input. 
- * parameters​: Optional; will be passed into the template’s scope as ​parameters​. 
-  Intended usage is for template­specific display parameters. 
- 
-Resize 
- 
-  The ​mct­resize​ directive is used to monitor the size of an HTML element. It is 
-specified as an attribute whose value is an Angular expression that will be evaluated when the 
-size of the HTML element changes. This expression will be provided a single variable, ​bounds​, 
-which is an object containing two properties, ​width​ and ​height​, describing the size in pixels 
-of the element. 
-  When using this directive, an attribute ​mct­resize­interval​ may optionally be 
-provided. Its value is an Angular expression describing the number of milliseconds to wait 
-before next checking the size of the HTML element; this expression is evaluated when the 
-directive is linked and reevaluated whenever the size is checked. 
- 
-Scroll 
- 
-  The ​mct­scroll­x​ and ​mct­scroll­y​ directives are used to both monitor and 
-control the horizontal and vertical scroll bar state of an element, respectively. They are intended 
-to be used as attributes whose values are assignable Angular expressions which two­way bind 
-to the scroll bar state. 
- 
+Note that ​`pattern​` may be specified as a string, to simplify storing for 
+structures as JSON when necessary. The string should be given in a form 
+appropriate to pass to a ​`RegExp` constructor. 
 
-       
-                                         43 
-Toolbar 
- 
-   The ​mct­toolbar​ directive is used to generate toolbars using a declarative structure, 
-and to gather back user input. It is applicable at the element level and supports the following 
-attributes: 
- 
-  * ng­model​: The object which should contain the full toolbar input. Individual fields in this 
-   model are bound to individual controls; the names used for these fields are provided in 
-   the form structure (see below). 
-  * structure​: The structure of the toolbar; e.g. sections, rows, their names, and so forth. 
-   The value of this attribute should be an Angular expression. 
-  * name​: The name in the containing scope under which to publish form "meta­state", e.g. 
-   $valid​, ​$dirty​, etc. This is as the behavior of ​ng­form​. Passed as plain text in the 
-   attribute. 
- 
-   Toolbars support the same ​control​ options as forms.  
- 
-Toolbar Structure 
- 
-   A toolbar’s structure is defined similarly to forms, except instead of ​rows​ there are 
-items​. 
- 
-{ 
-    "name": ... title to display for the form, as a string ..., 
-    "sections": [ 
-        { 
-            "name": ... title to display for the section ..., 
-            "items": [ 
-                { 
-                    "name": ... title to display for this row ..., 
-                    "control": ... symbolic key for the control ..., 
-                    "key": ... field name in ng­model ... 
-                    "pattern": ... optional, reg exp to match against ... 
-                    "required": ... optional boolean ... 
-                    "options": [ 
-                        "name": ... name to display (e.g. in a select) ..., 
-                        "value": ... value to store in the model ... 
-                    ], 
-                    "disabled": ... true if control should be disabled ... 
-                    "size": ... size of the control (for textfields) ... 
-                    "click": ... function to invoke (for buttons) ... 
-                    "glyph": ... glyph to display (for buttons) ... 
-                    "text": ... text within control (for buttons) ... 
-                                              44 
-                }, 
-                ... and other rows ... 
-            ] 
-        }, 
-        ... and other sections ... 
-    ] 
-}
+### Form Controls 
+
+A few standard control types are included in the ​platform/forms​ bundle: 
+
+* `textfield​`: An area to enter plain text. 
+* `select​`: A drop­down list of options. 
+* `checkbox`​: A box which may be checked/unchecked. 
+* `color​`: A color picker. 
+* `button​`: A button. 
+* `datetime​`: An input for UTC date/time entry; gives result as a UNIX 
+timestamp, in milliseconds since start of 1970, UTC. 
+
+##Include 
+
+The ​`mct­include​` directive is similar to ​ng­include​, except that it takes a 
+symbolic identifier for a template instead of a URL. Additionally, templates 
+included via ​mct­include will have an isolated scope. 
+
+The directive should be used at the element level and supports the following 
+attributes, all of which are specified as Angular expressions: 
+
+* `key​`: Machine­readable identifier for the template (of extension category ​
+templates​) to be displayed. 
+* `ng­model`​: _Optional_; will be passed into the template’s scope as ​ngModel​. 
+Intended usage is for two­way bound user input.
+* `parameters​`: _Optional_; will be passed into the template’s scope as ​parameters​. 
+Intended usage is for template­specific display parameters. 
+
+## Representation 
+
+The `​mct­representation​` directive is used to include templates which 
+specifically represent domain objects. Usage is similar to `​mct­include​`. 
+
+The directive should be used at the element level and supports the following 
+attributes, all of which are specified as Angular expressions:
+
+* `key​`: Machine­readable identifier for the representation (of extension 
+category representations​ or ​views​) to be displayed. 
+* `mct­object​`: The domain object being represented. 
+* `ng­model​`: Optional; will be passed into the template’s scope as ​ngModel​. 
+Intended usage is for two­way bound user input. 
+* `parameters​`: Optional; will be passed into the template’s scope as ​
+parameters​. Intended usage is for template­specific display parameters. 
+
+## Resize 
+
+The `​mct­resize​` directive is used to monitor the size of an HTML element. It is 
+specified as an attribute whose value is an Angular expression that will be 
+evaluated when the size of the HTML element changes. This expression will be 
+provided a single variable, ​`bounds​`, which is an object containing two 
+properties, `​width​` and `​height​`, describing the size in pixels of the element.
+
+When using this directive, an attribute `​mct­resize­interval​` may optionally be 
+provided. Its value is an Angular expression describing the number of 
+milliseconds to wait before next checking the size of the HTML element; this 
+expression is evaluated when the directive is linked and reevaluated whenever 
+the size is checked.
+
+## Scroll 
+
+The ​`mct­scroll­x​` and `​mct­scroll­y​` directives are used to both monitor and 
+control the horizontal and vertical scroll bar state of an element, 
+respectively. They are intended to be used as attributes whose values are 
+assignable Angular expressions which two­way bind to the scroll bar state.
+
+## Toolbar
+
+The `​mct­toolbar​` directive is used to generate toolbars using a declarative 
+structure, and to gather back user input. It is applicable at the element level 
+and supports the following attributes: 
+
+* `ng­model​`: The object which should contain the full toolbar input. Individual 
+fields in this model are bound to individual controls; the names used for these 
+fields are provided in the form structure (see below). 
+* `structure​`: The structure of the toolbar; e.g. sections, rows, their names, and 
+so forth. The value of this attribute should be an Angular expression.
+* `name​`: The name in the containing scope under which to publish form 
+"meta­state", e.g. `$valid​`, `​$dirty​`, etc. This is as the behavior of 
+`​ng­form​`. Passed as plain text in the attribute. 
+
+Toolbars support the same ​control​ options as forms.  
+
+### Toolbar Structure 
+
+A toolbar’s structure is defined similarly to forms, except instead of ​rows​ 
+there are items​. 
+
+    { 
+        "name": ... title to display for the form, as a string ..., 
+        "sections": [ 
+            { 
+                "name": ... title to display for the section ..., 
+                "items": [ 
+                    { 
+                        "name": ... title to display for this row ..., 
+                        "control": ... symbolic key for the control ..., 
+                        "key": ... field name in ng­model ... 
+                        "pattern": ... optional, reg exp to match against ... 
+                        "required": ... optional boolean ... 
+                        "options": [ 
+                            "name": ... name to display (e.g. in a select) ..., 
+                            "value": ... value to store in the model ... 
+                        ], 
+                        "disabled": ... true if control should be disabled ... 
+                        "size": ... size of the control (for textfields) ... 
+                        "click": ... function to invoke (for buttons) ... 
+                        "glyph": ... glyph to display (for buttons) ... 
+                        "text": ... text within control (for buttons) ... 
+                    }, 
+                    ... and other rows ... 
+                ] 
+            }, 
+            ... and other sections ... 
+        ] 
+    }
 
 # Services 
 
-The Open MCT Web platform provides a variety of services which can be retrieved and 
-utilized via dependency injection. These services fall into two categories: 
- 
-  * Composite Services are defined by a set of ​components​ extensions; plugins may 
-   introduce additional components with matching interfaces to extend or augment the 
-   functionality of the composed service. (See the Framework section on Composite 
-   Services.) 
-  * Other services which are defined as standalone service objects; these can be utilized by 
-   plugins but are not intended to be modified or augmented. 
- 
-Composite Services 
- 
-   This section describes the composite services exposed by Open MCT Web, specifically 
-focusing on their interface and contract. 
-    
-   In many cases, the platform will include a provider for a service which consumes a 
-specific extension category; for instance, the ​actionService​ depends on ​actions[]​ and 
-will expose available actions based on the rules defined for that extension category.  
-   In these cases, it will usually be simpler to add a new extension of a given category (e.g. 
-of category ​actions​) even when the same behavior could be introduced by a service 
-component (e.g. an extension of category ​components​ where ​provides​ is ​actionService​, 
-and ​type​ is  ​provider​.)  
-   Occasionally, the extension category does not provide enough expressive power to 
-achieve a desired result. For instance, the Create menu is populated with ​create​ actions, 
-where one such action exists for each creatable type. Since the framework does not provide a 
-declarative means to introduce a new action per type declaratively, the platform implements this 
-explicitly in an ​actionService​ component of type ​provider​. Plugins may use a similar 
-approach when the normal extension mechanism is insufficient to achieve a desired result. 
- 
-Action Service 
- 
-                                              45 
-  The ​actionService​ provides ​Action​ instances which are applicable in specific 
-contexts. See Core API for additional notes on the interface for actions. 
-  The ​actionService​ has the following interface: 
-   
- * getActions(context)​: Returns an array of ​Action​ objects which are applicable in 
-  the specified action context.   
- 
- 
-Capability Service 
- 
-  The ​capabilityService​ provides constructors for capabilities which will be exposed 
-for a given domain object. 
-  The ​capabilityService​ has the following interface: 
- 
- * getCapabilities(model)​: Returns a an object containing key­value pairs, 
-  representing capabilities which should be exposed by the domain object with this model. 
-  Keys in this object are the capability keys (as used in a ​getCapability(...)​ call) 
-  and values are either: 
-    ○ Functions, in which case they will be used as constructors, which will receive the 
-      domain object instance to which the capability applies as their sole argument. 
-      The resulting object will be provided as the result of a domain object’s 
-      getCapability(...)​call. Note that these instances are cached by each 
-      object, but may be recreated when an object is mutated. 
-    ○ Other objects, which will be used directly as the result of a domain object’s 
-      getCapability(...)​ call. 
- 
- 
-Dialog Service 
- 
-  The ​dialogService​ provides a means for requesting user input via a modal dialog. It 
-has the following interface: 
- 
- * getUserInput(formStructure, formState)​: Prompt the user to fill out a form. 
-  The first argument describes the form’s structure (as will be passed to ​mct­form​) while 
-  the second argument contains the initial state of that form. This returns a ​Promise​ for 
-  the state of the form after the user has filled it in; this promise will be rejected if the user 
-  cancels input. 
- * getUserChoice(dialogStructure)​: Prompt the user to make a single choice from 
-  a set of options, which (in the platform implementation) will be expressed as buttons in 
-  the displayed dialog. Returns a ​Promise​ for the user’s choice, which will be rejected if 
-  the user cancels input. 
-                                         46 
- 
-Dialog Structure 
- 
-  The object passed as the ​dialogStructure​ to ​getUserChoice​ should have the 
-following properties: 
- 
- * title​: The title to display at the top of the dialog. 
- * hint​: Short message to display below the title. 
- * template​: Identifying ​key​ (as will be passed to ​mct­include​) for the template which 
-  will be used to populate the inner area of the dialog. 
- * model​: Model to pass in the ​ng­model​ attribute of ​mct­include​. 
- * parameters​: Parameters to pass in the ​parameters​ attribute of ​mct­include​. 
- * options​: An array of options describing each button at the bottom. Each option may 
-  have the following properties: 
-    ○ name​: Human­readable name to display in the button. 
-    ○ key​: Machine­readable key, to pass as the result of the resolved promise when 
-      clicked. 
-    ○ description​: Description to show in tooltip on hover. 
- 
- 
-Domain Object Service 
- 
-  The ​objectService​ provides domain object instances. It has the following interface: 
- 
- * getObjects(ids)​: For the provided array of domain object identifiers, returns a 
-  Promise​ for an object containing key­value pairs, where keys are domain object 
-  identifiers and values are corresponding ​DomainObject​ instances. Note that the result 
-  may contain a superset or subset of the objects requested. 
-   
- 
-Gesture Service 
- 
-  The ​gestureService​ is used to attach gestures (see extension category ​gestures​) 
-to representations. It has the following interface: 
- 
- * attachGestures(element, domainObject, keys)​: Attach gestures specified 
-  by the provided gesture ​keys​ (an array of strings) to this jqLite­wrapped HTML 
-  element​, which represents the specified ​domainObject​. Returns an object with a 
-  single method ​destroy()​, to be invoked when it is time to detach these gestures. 
- 
- 
-                                         47 
-Model Service 
- 
-  The ​modelService​ provides domain object models. It has the following interface: 
- 
- * getModels(ids)​: For the provided array of domain object identifiers, returns a 
-  Promise​ for an object containing key­value pairs, where keys are domain object 
-  identifiers and values are corresponding domain object models. Note that the result may 
-  contain a superset or subset of the models requested. 
-   
- 
-Persistence Service 
- 
-  The ​persistenceService​ provides the ability to load/store JavaScript objects 
-(presumably serializing/deserializing to JSON in the process.) This is used primarily to store 
-domain object models. It has the following interface: 
- 
- * listSpaces()​: Returns a ​Promise​ for an array of strings identifying the different 
-  persistence spaces this service supports. Spaces are intended to be used to distinguish 
-  between different underlying persistence stores, to allow these to live side by side. 
- * listObjects()​: Returns a Promise for an array of strings identifying all documents 
-  stored in this persistence service. 
- * createObject(space, key, value)​: Create a new document in the specified 
-  persistence ​space​, identified by the specified ​key​, the contents of which shall match 
-  the specified ​value​. Returns a promise that will be rejected if creation fails. 
- * readObject(space, key)​: Read an existing document in the specified persistence 
-  space​, identified by the specified ​key​. Returns a promise for the specified document; 
-  this promise will resolve to ​undefined​ if the document does not exist. 
- * updateObject(space, key, value)​: Update an existing document in the 
-  specified persistence ​space​, identified by the specified ​key​, such that its contents 
-  match the specified ​value​. Returns a promise that will be rejected if the update fails. 
- * deleteObject(space, key)​: Delete an existing document from the specified 
-  persistence ​space​, identified by the specified ​key​. Returns a promise which will be 
-  rejected if deletion fails. 
- 
- 
+The Open MCT Web platform provides a variety of services which can be retrieved 
+and utilized via dependency injection. These services fall into two categories: 
 
-       
-                                         48 
-Policy Service 
+* _Composite Services_ are defined by a set of ​components​ extensions; plugins may 
+introduce additional components with matching interfaces to extend or augment 
+the functionality of the composed service. (See the Framework section on 
+Composite Services.) 
+* _Other services_ which are defined as standalone service objects; these can be 
+utilized by plugins but are not intended to be modified or augmented. 
+
+## Composite Services
+
+This section describes the composite services exposed by Open MCT Web, 
+specifically focusing on their interface and contract. 
+    
+In many cases, the platform will include a provider for a service which consumes 
+a specific extension category; for instance, the `​actionService​` depends on 
+`​actions[]​` and will expose available actions based on the rules defined for 
+that extension category.  
+
+In these cases, it will usually be simpler to add a new extension of a given 
+category (e.g. of category ​`actions​`) even when the same behavior could be 
+introduced by a service component (e.g. an extension of category `​components​` 
+where `​provides​` is `​actionService​`, and `​type​` is `​provider​`.)  
+
+Occasionally, the extension category does not provide enough expressive power to 
+achieve a desired result. For instance, the Create menu is populated with 
+`​create​` actions, where one such action exists for each creatable type. Since 
+the framework does not provide a declarative means to introduce a new action per 
+type declaratively, the platform implements this explicitly in an `​actionService​` 
+component of type `​provider​`. Plugins may use a similar approach when the normal 
+extension mechanism is insufficient to achieve a desired result. 
  
-  The ​policyService​ may be used to determine whether or not certain behaviors are 
+### Action Service
+
+The ​`actionService​` provides `​Action​` instances which are applicable in specific 
+contexts. See Core API for additional notes on the interface for actions. The 
+`​actionService​` has the following interface: 
+   
+* `getActions(context)`​: Returns an array of ​Action​ objects which are applicable 
+in the specified action context.   
+
+### Capability Service 
+
+The ​capabilityService​ provides constructors for capabilities which will be 
+exposed for a given domain object. 
+
+The ​capabilityService​ has the following interface: 
+
+* `getCapabilities(model)`​: Returns a an object containing key­value pairs, 
+representing capabilities which should be exposed by the domain object with this 
+model. Keys in this object are the capability keys (as used in a 
+`​getCapability(...)`​ call) and values are either: 
+    * Functions, in which case they will be used as constructors, which will 
+    receive the domain object instance to which the capability applies as their 
+    sole argument.The resulting object will be provided as the result of a 
+    domain object’s `getCapability(...)` ​call. Note that these instances are cached 
+    by each object, but may be recreated when an object is mutated. 
+    * Other objects, which will be used directly as the result of a domain 
+    object’s `getCapability(...)​` call. 
+
+### Dialog Service 
+
+The `​dialogService​` provides a means for requesting user input via a modal 
+dialog. It has the following interface: 
+ 
+* `getUserInput(formStructure, formState)`​: Prompt the user to fill out a form. 
+The first argument describes the form’s structure (as will be passed to 
+​mct­form​) while the second argument contains the initial state of that form. 
+This returns a ​Promise​ for the state of the form after the user has filled it 
+in; this promise will be rejected if the user cancels input. 
+* `getUserChoice(dialogStructure)​`: Prompt the user to make a single choice from 
+a set of options, which (in the platform implementation) will be expressed as 
+buttons in the displayed dialog. Returns a ​Promise​ for the user’s choice, which 
+will be rejected if the user cancels input. 
+
+### Dialog Structure 
+
+The object passed as the ​dialogStructure​ to ​getUserChoice​ should have the 
+following properties:
+
+* `title​`: The title to display at the top of the dialog. 
+* `hint​`: Short message to display below the title. 
+* `template​`: Identifying ​key​ (as will be passed to ​mct­include​) for the 
+template which will be used to populate the inner area of the dialog. 
+* `model​`: Model to pass in the ​ng­model​ attribute of ​mct­include​. 
+* `parameters​`: Parameters to pass in the ​parameters​ attribute of ​mct­include​. 
+* `options​`: An array of options describing each button at the bottom. Each 
+option may have the following properties:
+    * `name`​: Human­readable name to display in the button. 
+    * `key`​: Machine­readable key, to pass as the result of the resolved promise 
+    when clicked. 
+    * `description​`: Description to show in tooltip on hover. 
+
+## Domain Object Service 
+
+The ​objectService​ provides domain object instances. It has the following 
+interface:
+
+* `getObjects(ids)`​: For the provided array of domain object identifiers, 
+returns a Promise​ for an object containing key­value pairs, where keys are 
+domain object identifiers and values are corresponding ​DomainObject​ instances. 
+Note that the result may contain a superset or subset of the objects requested. 
+
+## Gesture Service 
+
+The `​gestureService​` is used to attach gestures (see extension category 
+​gestures​) to representations. It has the following interface:
+
+* `attachGestures(element, domainObject, keys)`​: Attach gestures specified by 
+the provided gesture ​keys​ (an array of strings) to this jqLite­wrapped HTML 
+element​, which represents the specified ​domainObject​. Returns an object with a 
+single method `​destroy()`​, to be invoked when it is time to detach these 
+gestures. 
+
+## Model Service 
+
+The ​modelService​ provides domain object models. It has the following interface: 
+ 
+* `getModels(ids)`​: For the provided array of domain object identifiers, returns 
+a Promise​ for an object containing key­value pairs, where keys are domain object 
+identifiers and values are corresponding domain object models. Note that the 
+result may contain a superset or subset of the models requested. 
+
+## Persistence Service 
+
+The ​persistenceService​ provides the ability to load/store JavaScript objects 
+(presumably serializing/deserializing to JSON in the process.) This is used 
+primarily to store domain object models. It has the following interface: 
+ 
+* `listSpaces()`​: Returns a ​Promise​ for an array of strings identifying the 
+different persistence spaces this service supports. Spaces are intended to be 
+used to distinguish between different underlying persistence stores, to allow 
+these to live side by side. 
+* `listObjects()`​: Returns a Promise for an array of strings identifying all 
+documents stored in this persistence service. 
+* `createObject(space, key, value)`​: Create a new document in the specified 
+persistence ​space​, identified by the specified ​key​, the contents of which shall 
+match the specified ​value​. Returns a promise that will be rejected if creation 
+fails. 
+* `readObject(space, key)`​: Read an existing document in the specified 
+persistence space​, identified by the specified ​key​. Returns a promise for the 
+specified document; this promise will resolve to ​undefined​ if the document does 
+not exist. 
+* `updateObject(space, key, value)`​: Update an existing document in the 
+specified persistence ​space​, identified by the specified ​key​, such that its 
+contents match the specified ​value​. Returns a promise that will be rejected if 
+the update fails. 
+* `deleteObject(space, key)`​: Delete an existing document from the specified 
+persistence ​space​, identified by the specified ​key​. Returns a promise which will 
+be rejected if deletion fails. 
+
+## Policy Service 
+
+The ​policyService​ may be used to determine whether or not certain behaviors are 
 allowed within the application. It has the following interface: 
  
- * allow(category, candidate, context, [callback])​: Check if this decision 
-  should be allowed. Returns a boolean. Its arguments are interpreted as: 
-    ○ category​: A string identifying which kind of decision is being made. See the 
-      section on Policies for categories supported by the platform; plugins may define 
-      and utilize policies of additional categories, as well. 
-    ○ candidate​: An object representing the thing which shall or shall not be allowed. 
-      Usually, this will be an instance of an extension of the category defined above. 
-      This does need to be the case; additional policies which are not specific to any 
-      extension may also be defined and consulted using unique category identifiers. In 
-      this case, the type of the object delivered for the candidate may be unique to the 
-      policy type. 
-    ○ context​: An object representing the context in which the decision is occurring. 
-      Its contents are specific to each policy category. 
-    ○ callback​: Optional; a function to call if the policy decision is rejected. This 
-      function will be called with the message string (which may be undefined) of 
-      whichever individual policy caused the operation to fail. 
- 
- 
-Telemetry Service 
- 
-  The ​telemetryService​ is used to acquire telemetry data. See the section on 
-Telemetry in Core API for more information on how both the arguments and responses of this 
-service are structured. 
-  When acquiring telemetry for display, it is recommended that the ​telemetryHandler 
-service be used instead of this service. The ​telemetryHandler​ has additional support for 
-subscribing to and requesting telemetry data associated with domain objects or groups of 
-domain objects. See the Other Services section for more information. 
-  The ​telemetryService​ has the following interface: 
- 
- * requestTelemetry(requests)​: Issue a request for telemetry, matching the 
-  specified telemetry ​requests​. Returns a ​Promise​ for a telemetry response object.  
- * subscribe(callback, requests)​: Subscribe to real­time updates for telemetry, 
-  matching the specified ​requests​. The specified ​callback​ will be invoked with 
-  telemetry response objects as they become available. This method returns a function 
-  which can be invoked to terminate the subscription. 
- 
-                                         49 
-Type Service 
- 
-  The ​typeService​ exposes domain object types. It has the following interface: 
- 
- * listTypes()​: Returns all domain object types supported in the application, as an 
-  array of ​Type​ instances. 
- * getType(key)​: Returns the ​Type​ instance identified by the provided key, or 
-  undefined​ if no such type exists. 
- 
-View Service 
- 
-  The ​viewService​ exposes definitions for views of domain objects. It has the following 
-interface: 
- 
- * getViews(domainObject):​ Get an array of extension definitions of category ​views 
-  which are valid and applicable to the specified ​domainObject​. 
- 
-Other Services 
- 
-Drag and Drop 
- 
-  The ​dndService​ provides information about the content of an active drag­and­drop 
-gesture within the application. It is intended to complement the ​DataTransfer​ API of HTML5 
-drag­and­drop, by providing access to non­serialized JavaScript objects being dragged, as well 
-as by permitting inspection during drag (which is normally prohibited by browsers for security 
-reasons.) 
-  The ​dndService​ has the following methods: 
- 
- * setData(key, value)​: Set drag data associated with a given type, specified by the 
-  key​ argument. 
- * getData(key)​: Get drag data associated with a given type, specified by the ​key 
-  argument. 
- * removeData(key)​: Clear drag data associated with a given type, specified by the ​key 
-  argument. 
- 
+* `allow(category, candidate, context, [callback])`​: Check if this decision 
+should be allowed. Returns a boolean. Its arguments are interpreted as: 
+    * `category​`: A string identifying which kind of decision is being made. See 
+    the section on Policies for categories supported by the platform; plugins 
+    may define and utilize policies of additional categories, as well. 
+    * `candidate​`: An object representing the thing which shall or shall not be 
+    allowed. Usually, this will be an instance of an extension of the category 
+    defined above. This does need to be the case; additional policies which are 
+    not specific to any extension may also be defined and consulted using unique 
+    category identifiers. In this case, the type of the object delivered for the 
+    candidate may be unique to the policy type. 
+    * `context​`: An object representing the context in which the decision is 
+    occurring. Its contents are specific to each policy category. 
+    * `callback`​: Optional; a function to call if the policy decision is rejected. 
+    This function will be called with the message string (which may be 
+    undefined) of whichever individual policy caused the operation to fail. 
 
-       
-                                         50 
-Navigation 
+## Telemetry Service 
+
+The ​`telemetryService​` is used to acquire telemetry data. See the section on 
+Telemetry in Core API for more information on how both the arguments and 
+responses of this service are structured. 
+
+When acquiring telemetry for display, it is recommended that the 
+`​telemetryHandler` service be used instead of this service. The 
+`​telemetryHandler​` has additional support for subscribing to and requesting 
+telemetry data associated with domain objects or groups of domain objects. See 
+the [Other Services](#Other-Services) section for more information. 
+
+The `​telemetryService​` has the following interface:
+
+* `requestTelemetry(requests)`​: Issue a request for telemetry, matching the 
+specified telemetry ​requests​. Returns a _​Promise​_ for a telemetry response 
+object.
+* `subscribe(callback, requests)`​: Subscribe to real­time updates for telemetry, 
+matching the specified `​requests​`. The specified `​callback​` will be invoked with 
+telemetry response objects as they become available. This method returns a 
+function which can be invoked to terminate the subscription. 
+
+## Type Service 
+
+The `​typeService​` exposes domain object types. It has the following interface:
+
+* `listTypes()`​: Returns all domain object types supported in the application, 
+as an array of ​Type​ instances.
+* `getType(key)`​: Returns the `​Type​` instance identified by the provided key, or 
+undefined​ if no such type exists. 
+
+## View Service 
+
+The `​viewService​` exposes definitions for views of domain objects. It has the 
+following interface:
+ 
+* `getViews(domainObject)`:​ Get an array of extension definitions of category 
+`​views` which are valid and applicable to the specified `​domainObject​`. 
+ 
+## Other Services
+
+### Drag and Drop 
+
+The `​dndService​` provides information about the content of an active 
+drag­and­drop gesture within the application. It is intended to complement the 
+`​DataTransfer​` API of HTML5 drag­and­drop, by providing access to non­serialized 
+JavaScript objects being dragged, as well as by permitting inspection during 
+drag (which is normally prohibited by browsers for security reasons.) 
+
+The `​dndService​` has the following methods: 
+
+* `setData(key, value)`​: Set drag data associated with a given type, specified 
+by the `key​` argument. 
+* `getData(key)`​: Get drag data associated with a given type, specified by the ​
+`key` argument. 
+* `removeData(key)`​: Clear drag data associated with a given type, specified by 
+the ​`key` argument. 
+
+# Navigation 
  
   The ​navigationService​ provides information about the current navigation state of 
 the application; that is, which object is the user currently viewing? This service merely tracks this 
