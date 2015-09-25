@@ -138,9 +138,9 @@ define(
                 $scope.ngModel[$scope.field] = m.valueOf();
             }
 
-            $scope.isSelectable = function (cell) {
-                return cell.month === month;
-            };
+            $scope.isInCurrentMonth = function (cell) {
+			  	return cell.month === month;
+			}
 
             $scope.isSelected = function (cell) {
                 var date = $scope.date || {};

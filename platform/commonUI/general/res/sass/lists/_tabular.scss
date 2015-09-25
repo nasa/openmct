@@ -40,6 +40,11 @@ table {
 	thead, .thead {
 		border-bottom: 1px solid $colorTabHeaderBorder;
 	}
+
+	&:not(.fixed-header) tr th {
+		background-color: $colorTabHeaderBg;
+	}
+
 	tbody, .tbody {
 		display: table-row-group;
 		tr, .tr {
@@ -64,7 +69,6 @@ table {
 			display: table-cell;
 		}
 		th, .th {
-			background-color: $colorTabHeaderBg;
 			border-left: 1px solid $colorTabHeaderBorder;
 			color: $colorTabHeaderFg;
 			padding: $tabularTdPadLR $tabularTdPadLR;
@@ -143,7 +147,7 @@ table {
 				position: absolute;
 				width: 100%;
 				height: $tabularHeaderH;
-				background: rgba(#fff, 0.15);
+				background-color: $colorTabHeaderBg;
 			}
 		}
 		tbody, .tbody {

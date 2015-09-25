@@ -40,11 +40,11 @@
 
 /************************** HTML ENTITIES */
 a {
-	color: #ccc;
+	color: $colorA;
 	cursor: pointer;
 	text-decoration: none;
 	&:hover {
-		color: #fff;
+		color: $colorAHov;
 	}
 }
 

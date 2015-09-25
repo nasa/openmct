@@ -21,10 +21,13 @@
  *****************************************************************************/
 .select {
 	@include btnSubtle($colorSelectBg);
-	margin: 0 0 2px 2px; // Needed to avoid dropshadow from being clipped by parent containers
+    @if $shdwBtns != none {
+	    margin: 0 0 2px 0; // Needed to avoid dropshadow from being clipped by parent containers
+    }
 	padding: 0 $interiorMargin;
     overflow: hidden;
 	position: relative;
+    line-height: $formInputH;
 	select {
 		@include appearance(none);
 		@include box-sizing(border-box);
@@ -40,11 +43,8 @@
 	}
 	&:after {
 		@include contextArrow();
+		pointer-events: none;
 		color: rgba($colorSelectFg, percentToDecimal($contrastInvokeMenuPercent));
-		//content:"v";
-		//display: block;
-		//font-family: 'symbolsfont';
-		//pointer-events: none;
 		position: absolute;
 		right: $interiorMargin; top: 0;
 	}

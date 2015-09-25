@@ -205,7 +205,7 @@ label.checkbox.custom {
 	}
 }
 
-.s-menu label.checkbox.custom {
+.s-menu-btn label.checkbox.custom {
 	margin-left: 5px;
 }
 
@@ -299,18 +299,24 @@ label.checkbox.custom {
 	$slotH: 50%;
 	.slot {
 		//		@include border-radius($basicCr * .75);
-		@include sliderTrack();
-		height: $slotH;
+		//@include sliderTrack();
+		//height: $slotH;
 		width: auto;
 		position: absolute;
-		top: ($knobH - $slotH) / 2;
+		//top: ($knobH - $slotH) / 2;
+		top: 0;
 		right: 0;
-		bottom: auto;
+		bottom: 0;
 		left: 0;
 	}
 	.knob {
-		@include btnSubtle();
-		@include controlGrippy(rgba(black, 0.3), vertical, 1px, solid);
+		//@include btnSubtle();
+		//@include controlGrippy(rgba(black, 0.3), vertical, 1px, solid);
+		@include trans-prop-nice-fade(.25s);
+		background-color: $sliderColorKnob;
+		&:hover {
+			background-color: $sliderColorKnobHov;
+		}
 		cursor: ew-resize;
 		position: absolute;
 		height: $knobH;
@@ -319,25 +325,129 @@ label.checkbox.custom {
 		auto: 0;
 		bottom: auto;
 		left: auto;
-		&:before {
-			top: 1px;
-			bottom: 3px;
-			left: ($knobW / 2) - 1;
-		}
+		//&:before {
+		//	top: 1px;
+		//	bottom: 3px;
+		//	left: ($knobW / 2) - 1;
+		//}
 
 	}
 	.range {
-		background: rgba($colorKey, 0.6);
+		$tbOffset: 2px;
+		@include trans-prop-nice-fade(.25s);
+		background-color: $sliderColorRange;
 		cursor: ew-resize;
 		position: absolute;
-		top: 0;
+		top: 0; //$tbOffset;
 		right: auto;
-		bottom: 0;
+		bottom: $tbOffset;
 		left: auto;
 		height: auto;
 		width: auto;
 		&:hover {
-			background: rgba($colorKey, 0.7);
+			background-color: $sliderColorRangeHov;
+		}
+	}
+}
+
+/******************************************************** DATETIME PICKER */
+.l-datetime-picker {
+	$r1H: 15px;
+	@include user-select(none);
+	font-size: 0.8rem;
+	padding: $interiorMarginLg !important;
+	width: 230px;
+	.l-month-year-pager {
+		$pagerW: 20px;
+		//@include test();
+		font-size: 0.8rem;
+		height: $r1H;
+		margin-bottom: $interiorMargin;
+		position: relative;
+		.pager,
+		.val {
+			//@include test(red);
+			@extend .abs;
+		}
+		.pager {
+			width: $pagerW;
+			@extend .ui-symbol;
+			&.prev {
+				right: auto;
+				&:before {
+					content: "\3c";
+				}
+			}
+			&.next {
+				left: auto;
+				text-align: right;
+				&:before {
+					content: "\3e";
+				}
+			}
+		}
+		.val {
+			text-align: center;
+			left: $pagerW + $interiorMargin;
+			right: $pagerW + $interiorMargin;
+		}
+	}
+	.l-calendar,
+	.l-time-selects {
+		border-top: 1px solid $colorInteriorBorder
+	}
+	.l-time-selects {
+		line-height: $formInputH;
+	}
+}
+
+/******************************************************** CALENDAR */
+.l-calendar {
+	$colorMuted: pushBack($colorMenuFg, 30%);
+	ul.l-cal-row {
+		@include display-flex;
+		@include flex-flow(row nowrap);
+		margin-top: 1px;
+		&:first-child {
+			margin-top: 0;
+		}
+		li {
+			@include flex(1 0);
+			//@include test();
+			margin-left: 1px;
+			padding: $interiorMargin;
+			text-align: center;
+			&:first-child {
+				margin-left: 0;
+			}
+		}
+		&.l-header li {
+			color: $colorMuted;
+		}
+		&.l-body li {
+			@include trans-prop-nice(background-color, .25s);
+			cursor: pointer;
+			&.in-month {
+				background-color: $colorCalCellInMonthBg;
+			}
+			.sub {
+				color: $colorMuted;
+				font-size: 0.8em;
+			}
+			&.selected {
+				background: $colorCalCellSelectedBg;
+				color: $colorCalCellSelectedFg;
+				.sub {
+					color: inherit;
+				}
+			}
+			&:hover {
+				background-color: $colorCalCellHovBg;
+				color: $colorCalCellHovFg;
+				.sub {
+					color: inherit;
+				}
+			}
 		}
 	}
 }
