@@ -320,12 +320,12 @@ a.disabled {
 /************************** HTML ENTITIES */
 /* line 42, ../../../../general/res/sass/_global.scss */
 a {
-  color: #ccc;
+  color: #999;
   cursor: pointer;
   text-decoration: none; }
   /* line 46, ../../../../general/res/sass/_global.scss */
   a:hover {
-    color: #fff; }
+    color: #0099cc; }
 
 /* line 51, ../../../../general/res/sass/_global.scss */
 body, html {
@@ -1874,38 +1874,105 @@ label.checkbox.custom {
 /******************************************************** DATETIME PICKER */
 /* line 353, ../../../../general/res/sass/controls/_controls.scss */
 .l-datetime-picker {
-  padding: 10px !important; }
-  /* line 356, ../../../../general/res/sass/controls/_controls.scss */
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  font-size: 0.8rem;
+  padding: 10px !important;
+  width: 230px; }
+  /* line 359, ../../../../general/res/sass/controls/_controls.scss */
   .l-datetime-picker .l-month-year-pager {
     font-size: 0.8rem;
     height: 15px;
     margin-bottom: 5px;
     position: relative; }
-    /* line 368, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 371, ../../../../general/res/sass/controls/_controls.scss */
     .l-datetime-picker .l-month-year-pager .pager {
       width: 20px; }
-      /* line 371, ../../../../general/res/sass/controls/_controls.scss */
+      /* line 374, ../../../../general/res/sass/controls/_controls.scss */
       .l-datetime-picker .l-month-year-pager .pager.prev {
         right: auto; }
-        /* line 373, ../../../../general/res/sass/controls/_controls.scss */
+        /* line 376, ../../../../general/res/sass/controls/_controls.scss */
         .l-datetime-picker .l-month-year-pager .pager.prev:before {
           content: "\3c"; }
-      /* line 377, ../../../../general/res/sass/controls/_controls.scss */
+      /* line 380, ../../../../general/res/sass/controls/_controls.scss */
       .l-datetime-picker .l-month-year-pager .pager.next {
         left: auto;
         text-align: right; }
-        /* line 380, ../../../../general/res/sass/controls/_controls.scss */
+        /* line 383, ../../../../general/res/sass/controls/_controls.scss */
         .l-datetime-picker .l-month-year-pager .pager.next:before {
           content: "\3e"; }
-    /* line 385, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 388, ../../../../general/res/sass/controls/_controls.scss */
     .l-datetime-picker .l-month-year-pager .val {
       text-align: center;
       left: 25px;
       right: 25px; }
 
+/******************************************************** CALENDAR */
+/* line 399, ../../../../general/res/sass/controls/_controls.scss */
+.l-calendar ul.l-cal-row {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row nowrap;
+  flex-flow: row nowrap;
+  margin-top: 1px; }
+  /* line 403, ../../../../general/res/sass/controls/_controls.scss */
+  .l-calendar ul.l-cal-row:first-child {
+    margin-top: 0; }
+  /* line 406, ../../../../general/res/sass/controls/_controls.scss */
+  .l-calendar ul.l-cal-row li {
+    -webkit-flex: 1 0;
+    flex: 1 0;
+    margin-left: 1px;
+    padding: 5px;
+    text-align: center; }
+    /* line 412, ../../../../general/res/sass/controls/_controls.scss */
+    .l-calendar ul.l-cal-row li:first-child {
+      margin-left: 0; }
+  /* line 416, ../../../../general/res/sass/controls/_controls.scss */
+  .l-calendar ul.l-cal-row.l-header li {
+    color: #999999; }
+  /* line 419, ../../../../general/res/sass/controls/_controls.scss */
+  .l-calendar ul.l-cal-row.l-body li {
+    -moz-transition-property: background-color;
+    -o-transition-property: background-color;
+    -webkit-transition-property: background-color;
+    transition-property: background-color;
+    -moz-transition-duration: 0.25s;
+    -o-transition-duration: 0.25s;
+    -webkit-transition-duration: 0.25s;
+    transition-duration: 0.25s;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    cursor: pointer; }
+    /* line 422, ../../../../general/res/sass/controls/_controls.scss */
+    .l-calendar ul.l-cal-row.l-body li.in-month {
+      background-color: #f2f2f2; }
+    /* line 425, ../../../../general/res/sass/controls/_controls.scss */
+    .l-calendar ul.l-cal-row.l-body li .sub {
+      color: #999999;
+      font-size: 0.8em; }
+    /* line 429, ../../../../general/res/sass/controls/_controls.scss */
+    .l-calendar ul.l-cal-row.l-body li.selected {
+      background: #1ac6ff;
+      color: #fcfcfc; }
+      /* line 432, ../../../../general/res/sass/controls/_controls.scss */
+      .l-calendar ul.l-cal-row.l-body li.selected .sub {
+        color: inherit; }
+    /* line 436, ../../../../general/res/sass/controls/_controls.scss */
+    .l-calendar ul.l-cal-row.l-body li:hover {
+      background-color: #0099cc;
+      color: #fff; }
+      /* line 439, ../../../../general/res/sass/controls/_controls.scss */
+      .l-calendar ul.l-cal-row.l-body li:hover .sub {
+        color: inherit; }
+
 /******************************************************** BROWSER ELEMENTS */
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 396, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 450, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -1920,7 +1987,7 @@ label.checkbox.custom {
     height: 10px;
     width: 10px; }
 
-  /* line 405, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 459, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar-thumb {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzg5ODk4OSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzdkN2Q3ZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -1934,7 +2001,7 @@ label.checkbox.custom {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box; }
-    /* line 414, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 468, ../../../../general/res/sass/controls/_controls.scss */
     ::-webkit-scrollbar-thumb:hover {
       background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwYWNlNiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzAwOTljYyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
@@ -1943,7 +2010,7 @@ label.checkbox.custom {
       background-image: -webkit-linear-gradient(#00ace6, #0099cc 20px);
       background-image: linear-gradient(#00ace6, #0099cc 20px); }
 
-  /* line 419, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 473, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar-corner {
     background: rgba(0, 0, 0, 0.1); } }
 /*****************************************************************************

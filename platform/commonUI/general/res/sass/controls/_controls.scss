@@ -352,7 +352,10 @@ label.checkbox.custom {
 /******************************************************** DATETIME PICKER */
 .l-datetime-picker {
 	$r1H: 15px;
+	@include user-select(none);
+	font-size: 0.8rem;
 	padding: $interiorMarginLg !important;
+	width: 230px;
 	.l-month-year-pager {
 		$pagerW: 20px;
 		//@include test();
@@ -386,6 +389,57 @@ label.checkbox.custom {
 			text-align: center;
 			left: $pagerW + $interiorMargin;
 			right: $pagerW + $interiorMargin;
+		}
+	}
+}
+
+/******************************************************** CALENDAR */
+.l-calendar {
+	$colorMuted: pushBack($colorMenuFg, 30%);
+	ul.l-cal-row {
+		@include display-flex;
+		@include flex-flow(row nowrap);
+		margin-top: 1px;
+		&:first-child {
+			margin-top: 0;
+		}
+		li {
+			@include flex(1 0);
+			//@include test();
+			margin-left: 1px;
+			padding: $interiorMargin;
+			text-align: center;
+			&:first-child {
+				margin-left: 0;
+			}
+		}
+		&.l-header li {
+			color: $colorMuted;
+		}
+		&.l-body li {
+			@include trans-prop-nice(background-color, .25s);
+			cursor: pointer;
+			&.in-month {
+				background-color: $colorCalCellInMonthBg;
+			}
+			.sub {
+				color: $colorMuted;
+				font-size: 0.8em;
+			}
+			&.selected {
+				background: $colorCalCellSelectedBg;
+				color: $colorCalCellSelectedFg;
+				.sub {
+					color: inherit;
+				}
+			}
+			&:hover {
+				background-color: $colorCalCellHovBg;
+				color: $colorCalCellHovFg;
+				.sub {
+					color: inherit;
+				}
+			}
 		}
 	}
 }

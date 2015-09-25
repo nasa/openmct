@@ -28,7 +28,20 @@
 			<a class="pager next" ng-click="changeMonth(1)"></a>
 		</div>
 		<div class="l-calendar">
-			<table>
+			<ul class="l-cal-row l-header">
+				<li ng-repeat="day in ['Su','Mo','Tu','We','Th','Fr','Sa']">{{day}}</li>
+			</ul>
+			<ul class="l-cal-row l-body" ng-repeat="row in table">
+				<li ng-repeat="cell in row"
+					ng-click="select(cell)"
+					ng-class='{ "in-month": isInCurrentMonth(cell), selected: isSelected(cell) }'>
+					<div class="prime">{{cell.day}}</div>
+					<div class="sub">{{cell.dayOfYear}}</div>
+				</li>
+			</ul>
+
+
+			<!--<table>
 				<tr>
 					<th ng-repeat="day in ['Su','Mo','Tu','We','Th','Fr','Sa']">
 						{{day}}
@@ -38,15 +51,12 @@
 					<td style="text-align: center;"
 					    ng-repeat="cell in row"
 					    ng-click="select(cell)"
-					    ng-class='{
-	                                  disabled: !isSelectable(cell),
-	                                  test: isSelected(cell)
-	                                  }'>
+					    ng-class='{ disabled: !isSelectable(cell), selected: isSelected(cell) }'>
 						<div>{{cell.day}}</div>
 						<div style="font-size: 80%">{{cell.dayOfYear}}</div>
 					</td>
 				</tr>
-			</table>
+			</table>-->
 		</div>
 	</div>
 	<div class="l-time-selects"

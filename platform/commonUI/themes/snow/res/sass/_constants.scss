@@ -7,6 +7,8 @@ $colorKey: #0099cc;
 $colorKeySelectedBg: $colorKey;
 $colorKeyFg: #fff;
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
+$colorA: #999;
+$colorAHov: $colorKey;
 $contrastRatioPercent: 40%;
 $basicCr: 4px;
 $controlCr: $basicCr;
@@ -145,6 +147,13 @@ $colorGrippyInteriorHover: $colorBodyBg;
 
 // Mobile
 $colorMobilePaneLeft: darken($colorBodyBg, 2%);
+
+// Datetime Picker, Calendar
+$colorCalCellHovBg: $colorKey;
+$colorCalCellHovFg: $colorKeyFg;
+$colorCalCellSelectedBg: $colorItemTreeSelectedBg;
+$colorCalCellSelectedFg: $colorItemTreeSelectedFg;
+$colorCalCellInMonthBg: pullForward($colorMenuBg, 5%);
 
 // About Screen
 $colorAboutLink: #84b3ff;
