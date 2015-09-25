@@ -1,7 +1,7 @@
 @mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg, $hover: false) {
 	@include containerBase($bg, $fg);
 	@include background-image(linear-gradient(lighten($bg, 5%), $bg));
-	@include boxShdwSubtle();
+	@include boxShdw($shdwBtns);
 }
 
 	@mixin btnSubtle($bg: $colorBodyBg, $bgHov: none, $fg: $colorBodyFg, $ic: $colorBtnIcon) {
