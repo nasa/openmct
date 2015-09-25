@@ -835,9 +835,9 @@ initiated by the user. 
 An action’s implementation:
 
 * Should take a single `​context​` argument in its constructor. (See Action 
-Contexts, under Core API.) 
+Contexts, under Core API.)
 * Should provide a method ​`perform​`, which causes the behavior associated with 
-the action to occur. 
+the action to occur.
 * May provide a method `​getMetadata​`, which provides metadata associated with 
 the action. If omitted, one will be provided by the platform which includes 
 metadata from the action’s extension definition.
@@ -846,259 +846,278 @@ available as a property of the implementation’s constructor itself), 
 be used by the platform to filter out actions from contexts in which they are 
 inherently inapplicable.
   
-An action’s bundle definition (and/or `​getMetadata()`​ return value) may include: 
+An action’s bundle definition (and/or `​getMetadata()`​ return value) may include:
+ 
 * `category​`: A string or dearray of strings identifying which category or 
 categories an action falls into; used to determine when an action is displayed. 
 Categories supported by the platform include: 
     * `contextual​`: Actions in a context menu. 
-    * `view­control​`: Actions triggered by buttons in the top­right of Browse view. 
+    * `view­control​`: Actions triggered by buttons in the top­right of Browse 
+    view. 
 * `key​`: A machine­readable identifier for this action. 
 * `name​`: A human­readable name for this action (e.g. to show in a menu) 
 * `description​`: A human­readable summary of the behavior of this action. 
-* `glyph`​: A single character which will be rendered in Open MCT Web’s custom font 
-set as an icon for this action. 
-       
-                                         27 
-Capabilities 
- 
-  Capabilities are exposed by domain objects (e.g. via the g​ etCapability​ method) but 
-most commonly originate as extensions of this category. 
- 
-  Extension definitions for capabilities should include both an implementation, and a 
-property named ​key​ whose value should be a string used as a machine­readable identifier for 
-that capability, e.g. when passed as the argument to a domain object’s ​getCapability(key) 
-call.  
- 
-  A capability’s implementation should have methods specific to that capability; that is, 
-there is no common format for capability implementations, aside from support for ​invoke​ via 
-the ​useCapability​ shorthand. 
-  A capability’s implementation will take a single argument (in addition to any declared 
-dependencies), which is the domain object that will expose that capability. 
-  A capability’s implementation may also expose a static method ​appliesTo(model) 
-which should return a boolean value, and will be used by the platform to filter down capabilities 
-to those which should be exposed by specific domain objects, based on their domain object 
-models. 
- 
-Controls 
- 
-  Controls provide options for the ​mct­control​ directive. 
- 
-  Four standard control types are included in the forms bundle: 
-   
- * textfield​: An area to enter plain text. 
- * select​: A drop­down list of options. 
- * checkbox​: A box which may be checked/unchecked. 
- * color​: A color picker. 
- * button​: A button. 
- * datetime​: An input for UTC date/time entry; gives result as a UNIX timestamp, in 
-  milliseconds since start of 1970, UTC. 
- 
-  New controls may be added as extensions of the controls category. Extensions of this 
-category have two properties: 
- 
- * key​: The symbolic name for this control (matched against the control field in rows of the 
-  form structure). 
- * templateUrl​: The URL to the control's Angular template, relative to the resources 
-  directory of the bundle which exposes the extension. 
-                                         28 
- 
-Within the template for a control, the following variables will be included in scope: 
- 
- * ngModel​: The model where form input will be stored. Notably we also need to look at 
-  field​ (see below) to determine which field in the model should be modified. 
- * ngRequired​: True if input is required. 
- * ngPattern​: The pattern to match against (for text entry.) 
- * options​: The options for this control, as passed from the ​options​ property of an 
-  individual row definition. 
- * field​: Name of the field in ​ngModel​ which will hold the value for this control. 
- 
-Gestures 
- 
-  A gesture is a user action which can be taken upon a representation of a domain object. 
-Examples of gestures included in the platform are: 
-   
- * drag​: For representations that can be used to initiate drag­and­drop composition. 
- * drop​: For representations that can be drop targets for drag­and­drop composition. 
- * menu​: For representations that can be used to pop up a context menu. 
- 
-  Gesture definitions have a property ​key​ which is used as a machine­readable identifier 
-for the gesture (e.g. ​drag​, ​drop​, ​menu​ above.) 
- 
-  A gesture’s implementation is instantiated once per representation that uses the gesture. 
-This class will receive the jqLite­wrapped ​mct­representation​ element and the domain 
-object being represented as arguments, and should do any necessary "wiring" (e.g. listening for 
-events) during its constructor call. The gesture’s implementation may also expose an optional 
-destroy()​ method which will be called when the gesture should be removed, to avoid 
-memory leaks by way of unremoved listeners. 
- 
-Indicators 
- 
-  An indicator is an element that should appear in the status area at the bottom of a 
-running Open MCT Web client instance. 
- 
+* `glyph`​: A single character which will be rendered in Open MCT Web’s custom 
+font set as an icon for this action.
 
-       
-                                         29 
-Standard Indicators 
+## Capabilities
+
+Capabilities are exposed by domain objects (e.g. via the `g​etCapability​` method) 
+but most commonly originate as extensions of this category.
+
+Extension definitions for capabilities should include both an implementation, 
+and a property named ​key​ whose value should be a string used as a 
+machine­readable identifier for that capability, e.g. when passed as the 
+argument to a domain object’s `​getCapability(key)` call.
  
-  Indicators which wish to appear in the common form of an icon­text pair should provide 
-implementations with the following methods: 
+A capability’s implementation should have methods specific to that capability; 
+that is, there is no common format for capability implementations, aside from 
+support for ​invoke​ via the ​useCapability​ shorthand.
+
+A capability’s implementation will take a single argument (in addition to any 
+declared dependencies), which is the domain object that will expose that 
+capability.
+
+A capability’s implementation may also expose a static method ​`appliesTo(model)` 
+which should return a boolean value, and will be used by the platform to filter 
+down capabilities to those which should be exposed by specific domain objects, 
+based on their domain object models. 
  
- * getText()​: Provides the human­readable text that will be displayed for this indicator. 
- * getGlyph()​: Provides a single­character string that will be displayed as an icon in 
-  Open MCT Web’s custom font set. 
- * getDescription()​: Provides a human­readable summary of the current state of this 
-  indicator; will be displayed in a tooltip on hover. 
- * getClass()​: Get a CSS class that will be applied to this indicator. 
- * getTextClass()​: Get a CSS class that will be applied to this indicator’s text portion. 
- * getGlyphClass()​: Get a CSS class that will be applied to this indicator’s icon portion. 
- * configure()​: If present, a configuration icon will appear to the right of this indicator, 
-  and clicking it will invoke this method. 
+## Controls
+
+Controls provide options for the ​mct­control​ directive. 
  
-  Note that all methods are optional, and are called directly from an Angular template, so 
-they should be appropriate to run during digest cycles. 
+Six standard control types are included in the forms bundle:
+
+* `textfield​`: An area to enter plain text.
+* `select`​: A drop­down list of options.
+* `checkbox​`: A box which may be checked/unchecked.
+* `color​`: A color picker.
+* `button`​: A button.
+* `datetime`​: An input for UTC date/time entry; gives result as a UNIX 
+timestamp, in milliseconds since start of 1970, UTC. 
+
+New controls may be added as extensions of the controls category. Extensions of 
+this category have two properties: 
+
+* `key`​: The symbolic name for this control (matched against the control field 
+in rows of the form structure).
+* `templateUrl`​: The URL to the control's Angular template, relative to the 
+resources directory of the bundle which exposes the extension. 
+
+Within the template for a control, the following variables will be included in 
+scope:
+
+* `ngModel`​: The model where form input will be stored. Notably we also need to 
+look at field​ (see below) to determine which field in the model should be 
+modified. 
+* `ngRequired​`: True if input is required.
+* `ngPattern​`: The pattern to match against (for text entry.)
+* `options​`: The options for this control, as passed from the `​options​` property 
+of an individual row definition. 
+* `field​`: Name of the field in ​`ngModel​` which will hold the value for this 
+control. 
  
-Custom Indicators 
+## Gestures
+
+A gesture is a user action which can be taken upon a representation of a domain 
+object. 
+
+Examples of gestures included in the platform are:
+
+* `drag`​: For representations that can be used to initiate drag­and­drop 
+composition.
+* `drop​`: For representations that can be drop targets for drag­and­drop 
+composition. 
+* `menu`​: For representations that can be used to pop up a context menu. 
  
-  Indicators which wish to have an arbitrary appearance (instead of following the icon­text 
-convention commonly used) may specify a ​template​ property in their extension definition. The 
-value of this property will be used as the ​key​ for an ​mct­include​ directive (so should refer to 
-an extension of category ​templates​.) This template will be rendered to the status area. 
-Indicators of this variety do not need to provide an implementation. 
+Gesture definitions have a property ​`key​` which is used as a machine­readable 
+identifier for the gesture (e.g. `​drag​`, `​drop​`, `​menu​` above.) 
  
+A gesture’s implementation is instantiated once per representation that uses the 
+gesture. This class will receive the jqLite­wrapped ​`mct­representation​` element 
+and the domain object being represented as arguments, and should do any 
+necessary "wiring" (e.g. listening for events) during its constructor call. The 
+gesture’s implementation may also expose an optional destroy()​ method which will 
+be called when the gesture should be removed, to avoid memory leaks by way of 
+unremoved listeners.
+
+## Indicators 
+
+An indicator is an element that should appear in the status area at the bottom 
+of a running Open MCT Web client instance. 
+
+### Standard Indicators 
  
-Licenses 
+Indicators which wish to appear in the common form of an icon­text pair should 
+provide implementations with the following methods:
+
+* `getText()`​: Provides the human­readable text that will be displayed for this 
+indicator. 
+* `getGlyph()​`: Provides a single­character string that will be displayed as an 
+icon in Open MCT Web’s custom font set. 
+* `getDescription()`​: Provides a human­readable summary of the current state of 
+this indicator; will be displayed in a tooltip on hover. 
+* `getClass()`​: Get a CSS class that will be applied to this indicator. 
+* `getTextClass()`​: Get a CSS class that will be applied to this indicator’s 
+text portion. 
+* `getGlyphClass()​`: Get a CSS class that will be applied to this indicator’s 
+icon portion. 
+* `configure()`​: If present, a configuration icon will appear to the right of 
+this indicator, and clicking it will invoke this method. 
  
-  The extension category ​licenses​ can be used to add entries into the “Licensing 
+Note that all methods are optional, and are called directly from an Angular 
+template, so they should be appropriate to run during digest cycles. 
+ 
+### Custom Indicators 
+
+Indicators which wish to have an arbitrary appearance (instead of following the 
+icon­text convention commonly used) may specify a ​`template`​ property in their 
+extension definition. The value of this property will be used as the ​`key`​ for 
+an `​mct­include​` directive (so should refer to an extension of category 
+​templates​.) This template will be rendered to the status area. Indicators of 
+this variety do not need to provide an implementation. 
+
+## Licenses 
+
+The extension category ​`licenses​` can be used to add entries into the “Licensing 
 information” page, reachable from Open MCT Web’s About dialog. 
-  Licenses may have the following properties, all of which are strings: 
- 
- * name​: Human­readable name of the licensed component. (e.g. “AngularJS”.) 
- * version​: Human­readable version of the licensed component. (e.g. “1.2.26”.) 
- * description​: Human­readable summary of the component. 
- * author​: Name or names of entities to which authorship should be attributed. 
- * copyright​: Copyright text to display for this component. 
- * link​: URL to full license text. 
- 
-                                         30 
- 
-Policies 
- 
-  Policies are used to handle decisions made using Open MCT Web’s ​policyService​; 
-examples of these decisions are determining the applicability of certain actions, or checking 
-whether or not a domain object of one type can contain a domain object of a different type. See 
-the section on the Policies for an overview of Open MCT Web’s policy model. 
-  A policy’s extension definition should include: 
- 
- * category​: The machine­readable identifier for the type of policy decision being 
-  supported here. For a list of categories supported by the platform, see the section on 
-  Policies. Plugins may introduce and utilize additional policy categories not in that list. 
- * message​: Optional; a human­readable message describing the policy, intended for 
-  display in situations where this specific policy has disallowed something. 
- 
-  A policy’s implementation should include a single method, ​allow(candidate, 
-context)​. The specific types used for ​candidate​ and ​context​ vary by policy category; in 
-general, what is being asked is “is this candidate allowed in this context?” This method should 
-return a boolean value. 
-  Open MCT Web’s policy model requires consensus; a policy decision is allowed when 
-and only when all policies choose to allow it. As such, policies should generally be written to 
-reject a certain case, and allow (by returning true) anything else. 
- 
-Representations 
- 
-  A representation is an Angular template used to display a domain object. The 
-representations​ extension category is used to add options for the ​mct­representation 
-directive. 
- 
-  A representation definition should include the following properties: 
-   
- * key​: The machine­readable name which identifies the representation. 
- * templateUrl​: The path to the representation's Angular template. This path is relative 
-  to the bundle's resources directory. 
- * uses​: Optional; an array of capability names. Indicates that this representation intends 
-  to use those capabilities of a domain object (via a ​useCapability​ call), and expects to 
-  find the latest results of that ​useCapability​ call in the scope of the presented 
-  template (under the same name as the capability itself.) Note that, if ​useCapability 
-  returns a promise, this will be resolved before being placed in the representation’s 
-  scope. 
-                                         31 
- * gestures​: An array of keys identifying gestures (see the ​gestures​ extension 
-  category) which should be available upon this representation. Examples of gestures 
-  include ​drag​ (for representations that should act as draggable sources for drag­drop 
-  operations) and ​menu​ (for representations which should show a domain­object­specific 
-  context menu on right­click.) 
- 
-Representation Scope 
- 
-  While ​representations​ do not have implementations, per se, they do refer to 
-Angular templates which need to interact with information (e.g. the domain object being 
-represented) provided by the platform. This information is passed in through the template’s 
-scope, such that simple representations may be created by providing only templates. (More 
-complex representations will need controllers which are referenced from templates. See 
-https://docs.angularjs.org/guide/controller​ for more information on controllers in Angular.) 
- 
-  A representation’s scope will contain: 
- 
- * domainObject​: The represented domain object. 
- * model​: The domain object’s model. 
- * configuration​: An object containing configuration information for this representation 
-  (an empty object if there is no saved configuration.) The contents of this object are 
-  managed entirely by the view/representation which receives it. 
- * representation​: An empty object, useful as a “scratch pad” for representation state. 
- * ngModel​: An object passed through the ​ng­model​ attribute of the 
-  mct­representation​, if any. 
- * parameters​: An object passed through the ​parameters​ attribute of the 
-  mct­representation​, if any. 
- * Any capabilities requested by the ​uses​ property of the representation definition. 
- 
-Representers 
- 
-  The ​representers​ extension category is used to add additional behavior to the 
-mct­representation​ directive. This extension category is intended primarily for use internal 
-to the platform. 
-  Unlike represent​ations​, which describe specific ways to represent domain objects, 
-represent​ers ​are used to modify or augment the process of representing domain objects in 
-general. For example, support for the ​gestures​ extension category is added by a representer. 
-  A representer needs only provide an implementation. When an ​mct­representation 
-is linked (see ​https://docs.angularjs.org/guide/directive​) or when the domain object being 
-represented changes, a new representer of each declared type is instantiated. The constructor 
-arguments for a representer are the same as the arguments to the link function in an Angular 
-                                         32 
-directive: ​scope​, the Angular scope for this representation; ​element​, the jqLite­wrapped 
-mct­representation​ element, and ​attrs​, a set of key­value pairs of that element’s 
-attributes. Representers may wish to populate the scope, attach event listeners to the element, 
-etc. 
-  This implementation must provide a single method, ​destroy()​, which will be invoked 
-when the representer is no longer needed. 
- 
-Roots 
- 
-  The extension category ​roots​ is used to provide root­level domain object models. 
-Root­level domain objects appear at the top­level of the tree hierarchy. For example, the “My 
-Items” folder is added as an extension of this category. 
-  Extensions of this category should have the following properties: 
- 
- * id​: The machine­readable identifier for the domain object being exposed. 
- * model​: The model, as a JSON object, for the domain object being exposed. 
- 
-Stylesheets 
- 
-  The ​stylesheets​ extension category is used to add CSS files to style the application. 
-Extension definitions for this category should include one property: 
-   
- * stylesheetUrl​: Path and filename, including extension, for the stylesheet to include. 
-  This path is relative to the bundle’s resources folder (by default, ​res​) 
- 
-  To control the order of CSS files, use ​priority​ (see the section on Extension 
-Definitions above.) 
-   
- 
 
-       
-                                         33 
-Templates 
+Licenses may have the following properties, all of which are strings:
+
+* `name​`: Human­readable name of the licensed component. (e.g. “AngularJS”.)
+* `version`​: Human­readable version of the licensed component. (e.g. “1.2.26”.)
+* `description​`: Human­readable summary of the component.
+* `author​`: Name or names of entities to which authorship should be attributed.
+* `copyright​`: Copyright text to display for this component.
+* `link​`: URL to full license text. 
+
+## Policies 
+
+Policies are used to handle decisions made using Open MCT Web’s ​`policyService​`; 
+examples of these decisions are determining the applicability of certain 
+actions, or checking whether or not a domain object of one type can contain a 
+domain object of a different type. See the section on the Policies for an 
+overview of Open MCT Web’s policy model.
+
+A policy’s extension definition should include:
+
+* `category​`: The machine­readable identifier for the type of policy decision 
+being supported here. For a list of categories supported by the platform, see 
+the section on Policies. Plugins may introduce and utilize additional policy 
+categories not in that list. 
+* `message​`: Optional; a human­readable message describing the policy, intended 
+for display in situations where this specific policy has disallowed something. 
  
-  The ​templates​ extension category is used to expose Angular templates under 
+A policy’s implementation should include a single method, `​allow(candidate,
+context)`​. The specific types used for `​candidate​` and `​context​` vary by policy 
+category; in general, what is being asked is “is this candidate allowed in this 
+context?” This method should return a boolean value. 
+
+Open MCT Web’s policy model requires consensus; a policy decision is allowed 
+when and only when all policies choose to allow it. As such, policies should 
+generally be written to reject a certain case, and allow (by returning `true`) 
+anything else. 
+ 
+## Representations
+
+A representation is an Angular template used to display a domain object. The 
+`representations​` extension category is used to add options for the 
+`​mct­representation` directive. 
+ 
+A representation definition should include the following properties:
+
+* `key​`: The machine­readable name which identifies the representation. 
+* `templateUrl​`: The path to the representation's Angular template. This path is 
+relative to the bundle's resources directory. 
+* `uses​`: Optional; an array of capability names. Indicates that this 
+representation intends to use those capabilities of a domain object (via a 
+​`useCapability​` call), and expects to find the latest results of that 
+`​useCapability​` call in the scope of the presented template (under the same name 
+as the capability itself.) Note that, if `​useCapability` returns a promise, this 
+will be resolved before being placed in the representation’s scope. 
+* `gestures​`: An array of keys identifying gestures (see the `​gestures​` 
+extension category) which should be available upon this representation. Examples 
+of gestures include `​drag​` (for representations that should act as draggable 
+sources for drag­drop operations) and `​menu​` (for representations which should 
+show a domain­object­specific context menu on right­click.) 
+
+### Representation Scope
+
+While ​_representations​_ do not have implementations, per se, they do refer to 
+Angular templates which need to interact with information (e.g. the domain 
+object being represented) provided by the platform. This information is passed 
+in through the template’s scope, such that simple representations may be created 
+by providing only templates. (More complex representations will need controllers 
+which are referenced from templates. See [https://docs.angularjs.org/guide/controller​]()
+for more information on controllers in Angular.) 
+ 
+A representation’s scope will contain:
+* `domainObject​`: The represented domain object.
+* `model​`: The domain object’s model.
+* `configuration​`: An object containing configuration information for this 
+representation (an empty object if there is no saved configuration.) The 
+contents of this object are managed entirely by the view/representation which 
+receives it. 
+* `representation​`: An empty object, useful as a “scratch pad” for 
+representation state. 
+* `ngModel​`: An object passed through the ​ng­model​ attribute of the 
+mct­representation​, if any. 
+* `parameters`​: An object passed through the ​parameters​ attribute of the 
+mct­representation​, if any. 
+* Any capabilities requested by the ​uses​ property of the representation 
+definition.
+ 
+## Representers
+
+The ​`representers​` extension category is used to add additional behavior to the 
+`mct­representation​` directive. This extension category is intended primarily 
+for use internal to the platform. 
+
+Unlike _represent​ations​_, which describe specific ways to represent domain 
+objects, represent​ers ​are used to modify or augment the process of representing 
+domain objects in general. For example, support for the ​_gestures​_ extension 
+category is added by a representer.
+
+A representer needs only provide an implementation. When an ​`mct­representation` 
+is linked (see ​[https://docs.angularjs.org/guide/directive​]() or when the domain 
+object being represented changes, a new representer of each declared type is 
+instantiated. The constructor arguments for a representer are the same as the 
+arguments to the link function in an Angular directive: ​`scope​`, the Angular 
+scope for this representation; `​element​`, the jqLite­wrapped 
+`mct­representation​` element, and `​attrs​`, a set of key­value pairs of that 
+element’s attributes. Representers may wish to populate the scope, attach event 
+listeners to the element, etc.
+
+This implementation must provide a single method, `​destroy()`​, which will be 
+invoked when the representer is no longer needed. 
+
+## Roots
+
+The extension category ​`roots​` is used to provide root­level domain object 
+models. Root­level domain objects appear at the top­level of the tree hierarchy. 
+For example, the _My Items_ folder is added as an extension of this category. 
+
+Extensions of this category should have the following properties:
+* `id​`: The machine­readable identifier for the domaiwn object being exposed.
+* `model`​: The model, as a JSON object, for the domain object being exposed. 
+ 
+## Stylesheets 
+
+The ​stylesheets​ extension category is used to add CSS files to style the 
+application. Extension definitions for this category should include one 
+property:
+
+* `stylesheetUrl​`: Path and filename, including extension, for the stylesheet to 
+include. This path is relative to the bundle’s resources folder (by default, ​
+`res​`) 
+ 
+To control the order of CSS files, use ​priority​ (see the section on Extension 
+Definitions above.) 
+
+## Templates 
+
+The ​templates​ extension category is used to expose Angular templates under 
 symbolic identifiers. These can then be utilized using the ​mct­include​ directive, which 
 behaves similarly to ​ng­include​, except that it uses these symbolic identifiers instead of 
 paths. 
