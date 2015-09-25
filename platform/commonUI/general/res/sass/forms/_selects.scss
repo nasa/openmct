@@ -25,6 +25,7 @@
 	padding: 0 $interiorMargin;
     overflow: hidden;
 	position: relative;
+    line-height: $formInputH;
 	select {
 		@include appearance(none);
 		@include box-sizing(border-box);
