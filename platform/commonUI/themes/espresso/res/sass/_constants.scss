@@ -27,9 +27,11 @@ $sliderColorBase: $colorKey;
 $sliderColorRangeHolder: rgba(black, 0.1);
 $sliderColorRange: rgba($sliderColorBase, 0.3);
 $sliderColorRangeHov: rgba($sliderColorBase, 0.5);
-$sliderColorKnob: $sliderColorRange;
+$sliderColorKnob: rgba($sliderColorBase, 0.6);
 $sliderColorKnobHov: $sliderColorBase;
-$sliderKnobW: 5px;
+$sliderColorRangeValHovBg: rgba($sliderColorBase, 0.1);
+$sliderColorRangeValHovFg: $colorKeyFg;
+$sliderKnobW: 4px;
 
 // General Colors
 $colorAlt1: #ffc700;

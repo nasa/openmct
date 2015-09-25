@@ -333,13 +333,14 @@ label.checkbox.custom {
 
 	}
 	.range {
+		$tbOffset: 2px;
 		@include trans-prop-nice-fade(.25s);
 		background-color: $sliderColorRange;
 		cursor: ew-resize;
 		position: absolute;
-		top: 0;
+		top: 0; //$tbOffset;
 		right: auto;
-		bottom: 0;
+		bottom: $tbOffset;
 		left: auto;
 		height: auto;
 		width: auto;
