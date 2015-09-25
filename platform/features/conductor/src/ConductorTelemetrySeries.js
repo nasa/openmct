@@ -39,7 +39,7 @@ define(
          */
         function ConductorTelemetrySeries(series, conductor) {
             var max = series.getPointCount() - 1,
-                domain = conductor.activeDomain();
+                domain = conductor.domain();
 
             function binSearch(min, max, value) {
                 var mid = Math.floor((min + max) / 2);

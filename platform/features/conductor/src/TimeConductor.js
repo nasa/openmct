@@ -44,7 +44,7 @@ define(
             this.inner = { start: start, end: end };
             this.outer = { start: start, end: end };
             this.domains = domains;
-            this.domain = domains[0].key;
+            this.activeDomain = domains[0].key;
         }
 
         /**
@@ -110,7 +110,7 @@ define(
          * @param {string} [key] the key identifying the domain choice
          * @returns {TelemetryDomain} the active telemetry domain
          */
-        TimeConductor.prototype.activeDomain = function (key) {
+        TimeConductor.prototype.domain = function (key) {
             function matchesKey(domain) {
                 return domain.key === key;
             }

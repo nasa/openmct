@@ -72,7 +72,7 @@ define(
             var conductor = this.conductorService.getConductor(),
                 start = conductor.displayStart(),
                 end = conductor.displayEnd(),
-                domain = conductor.activeDomain();
+                domain = conductor.domain();
 
             function amendRequest(request) {
                 request = request || {};

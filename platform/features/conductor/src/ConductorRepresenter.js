@@ -73,7 +73,7 @@ define(
                 repScope.$broadcast('telemetry:query:bounds', bounds(
                     conductor.queryStart(),
                     conductor.queryEnd(),
-                    conductor.activeDomain()
+                    conductor.domain()
                 ));
             }
 
@@ -83,16 +83,16 @@ define(
                 repScope.$broadcast('telemetry:display:bounds', bounds(
                     conductor.displayStart(),
                     conductor.displayEnd(),
-                    conductor.activeDomain()
+                    conductor.domain()
                 ));
             }
 
             function updateDomain(value) {
-                conductor.activeDomain(value);
+                conductor.domain(value);
                 repScope.$broadcast('telemetry:display:bounds', bounds(
                     conductor.displayStart(),
                     conductor.displayEnd(),
-                    conductor.activeDomain()
+                    conductor.domain()
                 ));
             }
 
@@ -111,7 +111,7 @@ define(
             };
             conductorScope.ngModel.options =
                 conductor.domainOptions().map(makeOption);
-            conductorScope.ngModel.domain = conductor.activeDomain();
+            conductorScope.ngModel.domain = conductor.domain();
 
             conductorScope
                 .$watch('ngModel.conductor.outer.start', updateConductorOuter);
