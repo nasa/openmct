@@ -1,14 +1,21 @@
+@mixin toiLineHovEffects() {
+	//@include pulse(.25s);
+	&:before,
+	&:after {
+		background-color: $timeControllerToiLineColorHov;
+	}
+}
+
 .l-time-controller {
 	$minW: 400px;
-	$knobM: ($sliderKnobW + 1) * -1;
-	$rangeValOffset: $interiorMargin + $sliderKnobW;
-	$knobCr: $sliderKnobW;
-	//@if $sliderKnobW > 3 {
-	//	$knobCr: $sliderKnobW / 2;
-	//}
-	$timeRangeSliderLROffset: 130px + $sliderKnobW;
+	$knobHOffset: 0px;
+	$knobM: ($sliderKnobW + $knobHOffset) * -1;
+	$rangeValPad: $interiorMargin;
+	$rangeValOffset: $sliderKnobW;
+	//$knobCr: $sliderKnobW;
+	$timeRangeSliderLROffset: 130px + $sliderKnobW + $rangeValOffset;
 	$r1H: 33px;
-	$r2H: 20px;
+	$r2H: $sliderH;
 	$r3H: 20px;
 
 	.l-time-range-inputs-holder,
@@ -67,6 +74,42 @@
 			@include box-shadow(none);
 			background: none;
 			border: none;
+			.range {
+				.toi-line {
+					$myC: $timeControllerToiLineColor;
+					$myW: 8px;
+					@include transform(translateX(50%));
+					position: absolute;
+					//@include test();
+					top: 0; right: 0; bottom: 0px; left: auto;
+					width: $myW;
+					height: auto;
+					z-index: 2;
+					&:before,
+					&:after {
+						background-color: $myC;
+						content: "";
+						position: absolute;
+					}
+					&:before {
+						// Vert line
+						top: 0; right: auto; bottom: -10px; left: floor($myW/2) - 1;
+						width: 2px;
+						//top: 0; right: 3px; bottom: 0; left: 3px;
+					}
+					&:after {
+						// Circle element
+						@include border-radius($myW);
+						@include transform(translateY(-50%));
+						top: 50%; right: 0; bottom: auto; left: 0;
+						width: auto;
+						height: $myW;
+					}
+				}
+				&:hover .toi-line {
+					@include toiLineHovEffects;
+				}
+			}
 		}
 	}
 
@@ -99,10 +142,11 @@
 	}
 
 	.knob {
-		width: $sliderKnobW;
+		z-index: 2;
 		.range-value {
 			//@include test($sliderColorRange);
 			@include trans-prop-nice-fade(.25s);
+			padding: 0 $rangeValOffset;
 			position: absolute;
 			height: $r2H;
 			line-height: $r2H;
@@ -112,7 +156,7 @@
 			color: $sliderColorKnobHov;
 		}
 		&.knob-l {
-			@include border-bottom-left-radius($knobCr);
+			//@include border-bottom-left-radius($knobCr); // MOVED TO _CONTROLS.SCSS
 			margin-left: $knobM;
 			.range-value {
 				text-align: right;
@@ -120,10 +164,13 @@
 			}
 		}
 		&.knob-r {
-			@include border-bottom-right-radius($knobCr);
+			//@include border-bottom-right-radius($knobCr);
 			margin-right: $knobM;
 			.range-value {
 				left: $rangeValOffset;
+			}
+			&:hover + .range-holder .range .toi-line {
+				@include toiLineHovEffects;
 			}
 		}
 	}

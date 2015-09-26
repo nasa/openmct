@@ -48,7 +48,7 @@
 			    <span class="val">{{endOuterText}}</span>
 	            <a class="ui-symbol icon icon-calendar"></a>
 	            <mct-popup ng-if="t2.isActive()">
-		            <div mct-click-elsewhere="t2.setState(false)" class="xmenu-holder go-up">
+		            <div mct-click-elsewhere="t2.setState(false)">
 			            <mct-control key="'datetime-picker'"
 			                         ng-model="ngModel.outer"
 			                         field="'end'"
@@ -64,13 +64,6 @@
 		<div class="l-time-range-slider">
 			<div class="slider"
 			     mct-resize="spanWidth = bounds.width">
-				<div class="slot range-holder">
-					<div class="range"
-					     mct-drag-down="startMiddleDrag()"
-					     mct-drag="middleDrag(delta[0])"
-					     ng-style="{ left: startInnerPct, right: endInnerPct}">
-					</div>
-				</div>
 				<div class="knob knob-l"
 				     mct-drag-down="startLeftDrag()"
 				     mct-drag="leftDrag(delta[0])"
@@ -82,6 +75,14 @@
 				     mct-drag="rightDrag(delta[0])"
 				     ng-style="{ right: endInnerPct }">
 					<div class="range-value">{{endInnerText}}</div>
+				</div>
+				<div class="slot range-holder">
+					<div class="range"
+					     mct-drag-down="startMiddleDrag()"
+					     mct-drag="middleDrag(delta[0])"
+					     ng-style="{ left: startInnerPct, right: endInnerPct}">
+						<div class="toi-line"></div>
+					</div>
 				</div>
 			</div>
 		</div>

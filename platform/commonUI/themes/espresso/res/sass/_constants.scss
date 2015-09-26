@@ -31,7 +31,10 @@ $sliderColorKnob: rgba($sliderColorBase, 0.6);
 $sliderColorKnobHov: $sliderColorBase;
 $sliderColorRangeValHovBg: rgba($sliderColorBase, 0.1);
 $sliderColorRangeValHovFg: $colorKeyFg;
-$sliderKnobW: 4px;
+$sliderH: 20px;
+$sliderKnobW: $sliderH/2;
+$timeControllerToiLineColor: #00c2ff;
+$timeControllerToiLineColorHov: #fff;
 
 // General Colors
 $colorAlt1: #ffc700;
