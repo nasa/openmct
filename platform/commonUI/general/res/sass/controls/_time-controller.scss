@@ -18,6 +18,8 @@
 	$r2H: $sliderH;
 	$r3H: 20px;
 
+	//height: $r1H + $r2H + $r3H + ($interiorMargin * 2);
+
 	.l-time-range-inputs-holder,
 	.l-time-range-slider {
 		font-size: 0.8em;
@@ -37,6 +39,7 @@
 	.l-time-range-ticks {
 		//@include test(red, 0.1);
 		@include absPosDefault(0, visible);
+		left: $timeRangeSliderLROffset; right: $timeRangeSliderLROffset;
 	}
 
 	.l-time-range-inputs-holder {
@@ -59,12 +62,6 @@
 				width: 11px;
 			}
 		}
-	}
-
-	.l-time-range-slider,
-	.l-time-range-ticks {
-		left: $timeRangeSliderLROffset; right: $timeRangeSliderLROffset;
-
 	}
 
 	.l-time-range-slider-holder {
@@ -109,6 +106,15 @@
 				&:hover .toi-line {
 					@include toiLineHovEffects;
 				}
+			}
+		}
+		&:not(:active) {
+			//@include test(#ff00cc);
+			.knob,
+			.range {
+				@include transition-property(left, right);
+				@include transition-duration(500ms);
+				@include transition-timing-function(ease-in-out);
 			}
 		}
 	}

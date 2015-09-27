@@ -2370,11 +2370,11 @@ label.checkbox.custom {
   right: 0;
   width: auto; }
 
-/* line 21, ../../../../general/res/sass/controls/_time-controller.scss */
+/* line 23, ../../../../general/res/sass/controls/_time-controller.scss */
 .l-time-controller .l-time-range-inputs-holder,
 .l-time-controller .l-time-range-slider {
   font-size: 0.8em; }
-/* line 26, ../../../../general/res/sass/controls/_time-controller.scss */
+/* line 28, ../../../../general/res/sass/controls/_time-controller.scss */
 .l-time-controller .l-time-range-inputs-holder,
 .l-time-controller .l-time-range-slider-holder,
 .l-time-controller .l-time-range-ticks-holder {
@@ -2391,7 +2391,7 @@ label.checkbox.custom {
   box-sizing: border-box;
   min-width: 400px;
   top: auto; }
-/* line 36, ../../../../general/res/sass/controls/_time-controller.scss */
+/* line 38, ../../../../general/res/sass/controls/_time-controller.scss */
 .l-time-controller .l-time-range-slider,
 .l-time-controller .l-time-range-ticks {
   overflow: visible;
@@ -2401,49 +2401,46 @@ label.checkbox.custom {
   bottom: 0;
   left: 0;
   width: auto;
-  height: auto; }
-/* line 42, ../../../../general/res/sass/controls/_time-controller.scss */
+  height: auto;
+  left: 150px;
+  right: 150px; }
+/* line 45, ../../../../general/res/sass/controls/_time-controller.scss */
 .l-time-controller .l-time-range-inputs-holder {
   height: 33px;
   bottom: 46px;
   padding-top: 5px;
   border-top: 1px solid rgba(153, 153, 153, 0.1); }
-  /* line 47, ../../../../general/res/sass/controls/_time-controller.scss */
+  /* line 50, ../../../../general/res/sass/controls/_time-controller.scss */
   .l-time-controller .l-time-range-inputs-holder .type-icon {
     font-size: 120%;
     vertical-align: middle; }
-  /* line 51, ../../../../general/res/sass/controls/_time-controller.scss */
+  /* line 54, ../../../../general/res/sass/controls/_time-controller.scss */
   .l-time-controller .l-time-range-inputs-holder .l-time-range-input,
   .l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem {
     margin-right: 5px; }
-    /* line 54, ../../../../general/res/sass/controls/_time-controller.scss */
+    /* line 57, ../../../../general/res/sass/controls/_time-controller.scss */
     .l-time-controller .l-time-range-inputs-holder .l-time-range-input .lbl,
     .l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .lbl {
       color: #666666; }
-    /* line 57, ../../../../general/res/sass/controls/_time-controller.scss */
+    /* line 60, ../../../../general/res/sass/controls/_time-controller.scss */
     .l-time-controller .l-time-range-inputs-holder .l-time-range-input .ui-symbol.icon, .l-time-controller .l-time-range-inputs-holder .l-time-range-input .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.pager,
     .l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .ui-symbol.icon,
     .l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .l-datetime-picker .l-month-year-pager .icon.pager,
     .l-datetime-picker .l-month-year-pager .l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.pager {
       font-size: 11px;
       width: 11px; }
-/* line 64, ../../../../general/res/sass/controls/_time-controller.scss */
-.l-time-controller .l-time-range-slider,
-.l-time-controller .l-time-range-ticks {
-  left: 150px;
-  right: 150px; }
-/* line 70, ../../../../general/res/sass/controls/_time-controller.scss */
+/* line 67, ../../../../general/res/sass/controls/_time-controller.scss */
 .l-time-controller .l-time-range-slider-holder {
   height: 20px;
   bottom: 23px; }
-  /* line 73, ../../../../general/res/sass/controls/_time-controller.scss */
+  /* line 70, ../../../../general/res/sass/controls/_time-controller.scss */
   .l-time-controller .l-time-range-slider-holder .range-holder {
     -moz-box-shadow: none;
     -webkit-box-shadow: none;
     box-shadow: none;
     background: none;
     border: none; }
-    /* line 78, ../../../../general/res/sass/controls/_time-controller.scss */
+    /* line 75, ../../../../general/res/sass/controls/_time-controller.scss */
     .l-time-controller .l-time-range-slider-holder .range-holder .range .toi-line {
       -moz-transform: translateX(50%);
       -ms-transform: translateX(50%);
@@ -2457,19 +2454,19 @@ label.checkbox.custom {
       width: 8px;
       height: auto;
       z-index: 2; }
-      /* line 88, ../../../../general/res/sass/controls/_time-controller.scss */
+      /* line 85, ../../../../general/res/sass/controls/_time-controller.scss */
       .l-time-controller .l-time-range-slider-holder .range-holder .range .toi-line:before, .l-time-controller .l-time-range-slider-holder .range-holder .range .toi-line:after {
         background-color: #00c2ff;
         content: "";
         position: absolute; }
-      /* line 94, ../../../../general/res/sass/controls/_time-controller.scss */
+      /* line 91, ../../../../general/res/sass/controls/_time-controller.scss */
       .l-time-controller .l-time-range-slider-holder .range-holder .range .toi-line:before {
         top: 0;
         right: auto;
         bottom: -10px;
         left: 3px;
         width: 2px; }
-      /* line 100, ../../../../general/res/sass/controls/_time-controller.scss */
+      /* line 97, ../../../../general/res/sass/controls/_time-controller.scss */
       .l-time-controller .l-time-range-slider-holder .range-holder .range .toi-line:after {
         -moz-border-radius: 8px;
         -webkit-border-radius: 8px;
@@ -2487,13 +2484,28 @@ label.checkbox.custom {
     /* line 3, ../../../../general/res/sass/controls/_time-controller.scss */
     .l-time-controller .l-time-range-slider-holder .range-holder .range:hover .toi-line:before, .l-time-controller .l-time-range-slider-holder .range-holder .range:hover .toi-line:after {
       background-color: #fff; }
-/* line 116, ../../../../general/res/sass/controls/_time-controller.scss */
+  /* line 113, ../../../../general/res/sass/controls/_time-controller.scss */
+  .l-time-controller .l-time-range-slider-holder:not(:active) .knob,
+  .l-time-controller .l-time-range-slider-holder:not(:active) .range {
+    -moz-transition-property: left, right;
+    -o-transition-property: left, right;
+    -webkit-transition-property: left, right;
+    transition-property: left, right;
+    -moz-transition-duration: 500ms;
+    -o-transition-duration: 500ms;
+    -webkit-transition-duration: 500ms;
+    transition-duration: 500ms;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out; }
+/* line 122, ../../../../general/res/sass/controls/_time-controller.scss */
 .l-time-controller .l-time-range-ticks-holder {
   height: 20px; }
-  /* line 118, ../../../../general/res/sass/controls/_time-controller.scss */
+  /* line 124, ../../../../general/res/sass/controls/_time-controller.scss */
   .l-time-controller .l-time-range-ticks-holder .l-time-range-ticks {
     border-top: 1px solid rgba(255, 255, 255, 0.2); }
-    /* line 120, ../../../../general/res/sass/controls/_time-controller.scss */
+    /* line 126, ../../../../general/res/sass/controls/_time-controller.scss */
     .l-time-controller .l-time-range-ticks-holder .l-time-range-ticks .tick {
       background-color: rgba(255, 255, 255, 0.2);
       border: none;
@@ -2501,10 +2513,10 @@ label.checkbox.custom {
       width: 1px;
       margin-left: -1px;
       position: absolute; }
-      /* line 127, ../../../../general/res/sass/controls/_time-controller.scss */
+      /* line 133, ../../../../general/res/sass/controls/_time-controller.scss */
       .l-time-controller .l-time-range-ticks-holder .l-time-range-ticks .tick:first-child {
         margin-left: 0; }
-      /* line 130, ../../../../general/res/sass/controls/_time-controller.scss */
+      /* line 136, ../../../../general/res/sass/controls/_time-controller.scss */
       .l-time-controller .l-time-range-ticks-holder .l-time-range-ticks .tick .l-time-range-tick-label {
         transform: translateX(-50%);
         -webkit-transform: translateX(-50%);
@@ -2515,10 +2527,10 @@ label.checkbox.custom {
         top: 8px;
         white-space: nowrap;
         z-index: 2; }
-/* line 144, ../../../../general/res/sass/controls/_time-controller.scss */
+/* line 150, ../../../../general/res/sass/controls/_time-controller.scss */
 .l-time-controller .knob {
   z-index: 2; }
-  /* line 146, ../../../../general/res/sass/controls/_time-controller.scss */
+  /* line 152, ../../../../general/res/sass/controls/_time-controller.scss */
   .l-time-controller .knob .range-value {
     -moz-transition-property: visibility, opacity, background-color, border-color;
     -o-transition-property: visibility, opacity, background-color, border-color;
@@ -2537,27 +2549,27 @@ label.checkbox.custom {
     height: 20px;
     line-height: 20px;
     white-space: nowrap; }
-  /* line 155, ../../../../general/res/sass/controls/_time-controller.scss */
+  /* line 161, ../../../../general/res/sass/controls/_time-controller.scss */
   .l-time-controller .knob:hover .range-value {
     color: #0099cc; }
-  /* line 158, ../../../../general/res/sass/controls/_time-controller.scss */
+  /* line 164, ../../../../general/res/sass/controls/_time-controller.scss */
   .l-time-controller .knob.knob-l {
     margin-left: -10px; }
-    /* line 161, ../../../../general/res/sass/controls/_time-controller.scss */
+    /* line 167, ../../../../general/res/sass/controls/_time-controller.scss */
     .l-time-controller .knob.knob-l .range-value {
       text-align: right;
       right: 10px; }
-  /* line 166, ../../../../general/res/sass/controls/_time-controller.scss */
+  /* line 172, ../../../../general/res/sass/controls/_time-controller.scss */
   .l-time-controller .knob.knob-r {
     margin-right: -10px; }
-    /* line 169, ../../../../general/res/sass/controls/_time-controller.scss */
+    /* line 175, ../../../../general/res/sass/controls/_time-controller.scss */
     .l-time-controller .knob.knob-r .range-value {
       left: 10px; }
     /* line 3, ../../../../general/res/sass/controls/_time-controller.scss */
     .l-time-controller .knob.knob-r:hover + .range-holder .range .toi-line:before, .l-time-controller .knob.knob-r:hover + .range-holder .range .toi-line:after {
       background-color: #fff; }
 
-/* line 183, ../../../../general/res/sass/controls/_time-controller.scss */
+/* line 189, ../../../../general/res/sass/controls/_time-controller.scss */
 .s-time-range-val {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
