@@ -171,6 +171,7 @@ define(
 
             // Re-index items when they are mutated
             mutationTopic.listen(function (domainObject) {
+                indexed[domainObject.getId()] = false;
                 indexItems([domainObject]);
             });
         }
