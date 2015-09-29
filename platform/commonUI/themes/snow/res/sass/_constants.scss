@@ -31,8 +31,7 @@ $sliderColorKnob: rgba($sliderColorBase, 0.5);
 $sliderColorKnobHov: rgba($sliderColorBase, 0.7);
 $sliderColorRangeValHovBg: $sliderColorRange; //rgba($sliderColorBase, 0.1);
 $sliderColorRangeValHovFg: $colorBodyFg;
-$sliderH: 20px;
-$sliderKnobW: $sliderH/2;
+$sliderKnobW: nth($ueTimeControlH,2)/2;
 $timeControllerToiLineColor: $colorBodyFg;
 $timeControllerToiLineColorHov: #0052b5;
 

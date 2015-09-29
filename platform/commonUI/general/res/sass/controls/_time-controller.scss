@@ -6,6 +6,10 @@
 	}
 }
 
+.l-time-controller-visible {
+
+}
+
 .l-time-controller {
 	$minW: 400px;
 	$knobHOffset: 0px;
@@ -14,9 +18,9 @@
 	$rangeValOffset: $sliderKnobW;
 	//$knobCr: $sliderKnobW;
 	$timeRangeSliderLROffset: 130px + $sliderKnobW + $rangeValOffset;
-	$r1H: 33px;
-	$r2H: $sliderH;
-	$r3H: 20px;
+	$r1H: nth($ueTimeControlH,1);
+	$r2H: nth($ueTimeControlH,2);
+	$r3H: nth($ueTimeControlH,3);
 
 	//height: $r1H + $r2H + $r3H + ($interiorMargin * 2);
 
