@@ -31,6 +31,8 @@ define(
 
         var DEFAULT_MAX_RESULTS = 100,
             DEFAULT_TIMEOUT = 1000,
+            FLUSH_SIZE = 24,
+            FLUSH_INTERVAL = 25,
             stopTime;
 
         /**
@@ -39,7 +41,7 @@ define(
          *
          * @constructor
          * @param $q Angular's $q, for promise consolidation.
-         * @param $timeout Angular's $timeout, for delayed function execution.
+         * @param {Function} throttle a function to throttle function invocations
          * @param {ObjectService} objectService The service from which
          *        domain objects can be gotten.
          * @param {WorkerService} workerService The service which allows
@@ -47,11 +49,13 @@ define(
          * @param {GENERIC_SEARCH_ROOTS} ROOTS An array of the root
          *        domain objects' IDs.
          */
-        function GenericSearchProvider($q, $timeout, objectService, workerService, topic, ROOTS) {
+        function GenericSearchProvider($q, throttle, objectService, workerService, topic, ROOTS) {
             var indexed = {},
                 pendingQueries = {},
+                toIndex = {},
                 worker = workerService.run('genericSearchWorker'),
-                mutationTopic = topic("mutation");
+                mutationTopic = topic("mutation"),
+                scheduleFlush;
 
             this.worker = worker;
             this.pendingQueries = pendingQueries;
@@ -59,23 +63,30 @@ define(
             // pendingQueries is a dictionary with the key value pairs st
             // the key is the timestamp and the value is the promise
 
-            // Tell the web worker to add a domain object's model to its list of items.
-            function indexItem(domainObject) {
-                var message;
-
-                // undefined check
-                if (domainObject && domainObject.getModel) {
-                    // Using model instead of whole domain object because
-                    //   it's a JSON object.
-                    message = {
-                        request: 'index',
-                        model: domainObject.getModel(),
-                        id: domainObject.getId()
-                    };
-                    worker.postMessage(message);
-                }
+            function scheduleIdsForIndexing(ids) {
+                ids.forEach(function (id) {
+                    if (!indexed[id]) {
+                        indexed[id] = true;
+                        toIndex[id] = true;
+                    }
+                });
+                scheduleFlush();
             }
 
+            // Tell the web worker to add a domain object's model to its list of items.
+            function indexItem(domainObject) {
+                var model = domainObject.getModel();
+
+                worker.postMessage({
+                    request: 'index',
+                    model: model,
+                    id: domainObject.getId()
+                });
+
+                if (Array.isArray(model.composition)) {
+                    scheduleIdsForIndexing(model.composition);
+                }
+            }
 
             // Handles responses from the web worker. Namely, the results of
             // a search request.
@@ -112,67 +123,39 @@ define(
                 }
             }
 
-            // Helper function for getItems(). Indexes the tree.
-            function indexItems(nodes) {
-                nodes.forEach(function (node) {
-                    var id = node && node.getId && node.getId();
+            scheduleFlush = throttle(function flush() {
+                var ids = Object.keys(toIndex).slice(0, FLUSH_SIZE);
 
-                    // If we have already indexed this item, stop here
-                    if (indexed[id]) {
-                        return;
-                    }
-
-                    // Index each item with the web worker
-                    indexItem(node);
-                    indexed[id] = true;
-
-
-                    // If this node has children, index those
-                    if (node && node.hasCapability && node.hasCapability('composition')) {
-                        // Make sure that this is async, so doesn't block up page
-                        $timeout(function () {
-                            // Get the children...
-                            node.useCapability('composition').then(function (children) {
-                                $timeout(function () {
-                                    // ... then index the children
-                                    if (children.constructor === Array) {
-                                        indexItems(children);
-                                    } else {
-                                        indexItems([children]);
-                                    }
-                                }, 0);
-                            });
-                        }, 0);
-                    }
+                // Don't need to look these up next time
+                ids.forEach(function (id) {
+                    delete toIndex[id];
                 });
-            }
 
-            // Converts the filetree into a list
-            function getItems() {
-                // Aquire root objects
-                objectService.getObjects(ROOTS).then(function (objectsById) {
-                    var objects = [],
-                        id;
+                if (ids.length < 1) {
+                    return;
+                }
 
-                    // Get each of the domain objects in objectsById
-                    for (id in objectsById) {
-                        objects.push(objectsById[id]);
-                    }
+                objectService.getObjects(ids).then(function (objects) {
+                    ids.map(function (id) {
+                        return objects[id];
+                    }).filter(function (object) {
+                        return object;
+                    }).forEach(indexItem);
 
-                    // Index all of the roots' descendents
-                    indexItems(objects);
+                    scheduleFlush();
                 });
-            }
+            }, FLUSH_INTERVAL);
 
             worker.onmessage = handleResponse;
 
             // Index the tree's contents once at the beginning
-            getItems();
+            scheduleIdsForIndexing(ROOTS);
 
             // Re-index items when they are mutated
             mutationTopic.listen(function (domainObject) {
-                indexed[domainObject.getId()] = false;
-                indexItems([domainObject]);
+                var id = domainObject.getId();
+                indexed[id] = false;
+                scheduleIdsForIndexing([id]);
             });
         }
 

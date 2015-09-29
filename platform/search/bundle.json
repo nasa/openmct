@@ -47,7 +47,7 @@
                 "implementation": "services/GenericSearchProvider.js",
                 "depends": [
                     "$q",
-                    "$timeout",
+                    "throttle",
                     "objectService",
                     "workerService",
                     "topic",
