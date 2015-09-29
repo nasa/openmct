@@ -47,10 +47,11 @@ define(
          * @param {GENERIC_SEARCH_ROOTS} ROOTS An array of the root
          *        domain objects' IDs.
          */
-        function GenericSearchProvider($q, $timeout, objectService, workerService, ROOTS) {
+        function GenericSearchProvider($q, $timeout, objectService, workerService, topic, ROOTS) {
             var indexed = {},
                 pendingQueries = {},
-                worker = workerService.run('genericSearchWorker');
+                worker = workerService.run('genericSearchWorker'),
+                mutationTopic = topic("mutation");
 
             this.worker = worker;
             this.pendingQueries = pendingQueries;
@@ -113,23 +114,6 @@ define(
 
             // Helper function for getItems(). Indexes the tree.
             function indexItems(nodes) {
-                function handleMutation(model) {
-                    if (model && model.composition) {
-                        // If the node was mutated to have children, get the child domain objects
-                        objectService.getObjects(listener.composition).then(function (objectsById) {
-                            var objects = [],
-                                id;
-
-                            // Get each of the domain objects in objectsById
-                            for (id in objectsById) {
-                                objects.push(objectsById[id]);
-                            }
-
-                            indexItems(objects);
-                        });
-                    }
-                }
-
                 nodes.forEach(function (node) {
                     var id = node && node.getId && node.getId();
 
@@ -160,11 +144,6 @@ define(
                             });
                         }, 0);
                     }
-
-                    // Watch for changes to this item, in case it gets new children
-                    if (node && node.hasCapability && node.hasCapability('mutation')) {
-                        node.getCapability('mutation').listen(handleMutation);
-                    }
                 });
             }
 
@@ -189,6 +168,11 @@ define(
 
             // Index the tree's contents once at the beginning
             getItems();
+
+            // Re-index items when they are mutated
+            mutationTopic.listen(function (domainObject) {
+                indexItems([domainObject]);
+            });
         }
 
         /**
