@@ -1,0 +1,605 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/Users/akhenry/.nvm/versions/node/v4.1.1/bin/node',
+1 verbose cli   '/Users/akhenry/.nvm/versions/node/v4.1.1/bin/npm',
+1 verbose cli   'install' ]
+2 info using npm@2.14.4
+3 info using node@v4.1.1
+4 verbose readDependencies loading dependencies from /Users/akhenry/Code/openmctweb/openmctweb/package.json
+5 verbose install where, deps [ '/Users/akhenry/Code/openmctweb/openmctweb',
+5 verbose install   [ 'express',
+5 verbose install     'minimist',
+5 verbose install     'jasmine-core',
+5 verbose install     'jsdoc',
+5 verbose install     'jshint',
+5 verbose install     'karma',
+5 verbose install     'karma-chrome-launcher',
+5 verbose install     'karma-cli',
+5 verbose install     'karma-jasmine',
+5 verbose install     'karma-phantomjs-launcher',
+5 verbose install     'karma-requirejs',
+5 verbose install     'requirejs',
+5 verbose install     'marked',
+5 verbose install     'glob',
+5 verbose install     'split',
+5 verbose install     'mkdirp',
+5 verbose install     'nomnoml',
+5 verbose install     'canvas' ] ]
+6 verbose install where, peers [ '/Users/akhenry/Code/openmctweb/openmctweb', [] ]
+7 verbose installManyTop reading for lifecycle /Users/akhenry/Code/openmctweb/openmctweb/package.json
+8 info preinstall open-mct-web@0.7.2
+9 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/express/package.json
+10 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/glob/package.json
+11 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/jasmine-core/package.json
+12 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/jsdoc/package.json
+13 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/jshint/package.json
+14 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/karma/package.json
+15 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/karma-chrome-launcher/package.json
+16 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/karma-cli/package.json
+17 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/karma-jasmine/package.json
+18 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/karma-phantomjs-launcher/package.json
+19 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/karma-requirejs/package.json
+20 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/marked/package.json
+21 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/minimist/package.json
+22 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/mkdirp/package.json
+23 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/nomnoml/package.json
+24 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/requirejs/package.json
+25 verbose installManyTop reading scoped package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/split/package.json
+26 info package.json karma-phantomjs-launcher@0.1.4 No README data
+27 info package.json karma-cli@0.0.4 No license field.
+28 info package.json requirejs@2.1.20 No license field.
+29 verbose readDependencies loading dependencies from /Users/akhenry/Code/openmctweb/openmctweb/package.json
+30 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/express/package.json
+31 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/glob/package.json
+32 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/jasmine-core/package.json
+33 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/jsdoc/package.json
+34 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/jshint/package.json
+35 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/karma/package.json
+36 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/karma-chrome-launcher/package.json
+37 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/karma-cli/package.json
+38 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/karma-jasmine/package.json
+39 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/karma-phantomjs-launcher/package.json
+40 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/karma-requirejs/package.json
+41 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/marked/package.json
+42 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/minimist/package.json
+43 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/mkdirp/package.json
+44 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/nomnoml/package.json
+45 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/requirejs/package.json
+46 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/split/package.json
+47 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/.bin/jsdoc/package.json
+48 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/.bin/jshint/package.json
+49 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/.bin/karma/package.json
+50 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/.bin/marked/package.json
+51 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/.bin/mkdirp/package.json
+52 verbose targetResolver reading package data from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/.bin/r.js/package.json
+53 verbose already installed skipping karma-phantomjs-launcher@^0.1.4 /Users/akhenry/Code/openmctweb/openmctweb
+54 verbose already installed skipping karma-requirejs@^0.2.2 /Users/akhenry/Code/openmctweb/openmctweb
+55 verbose already installed skipping requirejs@^2.1.17 /Users/akhenry/Code/openmctweb/openmctweb
+56 verbose already installed skipping marked@^0.3.5 /Users/akhenry/Code/openmctweb/openmctweb
+57 verbose already installed skipping glob@>= 3.0.0 /Users/akhenry/Code/openmctweb/openmctweb
+58 verbose already installed skipping split@^1.0.0 /Users/akhenry/Code/openmctweb/openmctweb
+59 verbose already installed skipping mkdirp@^0.5.1 /Users/akhenry/Code/openmctweb/openmctweb
+60 verbose already installed skipping nomnoml@^0.0.3 /Users/akhenry/Code/openmctweb/openmctweb
+61 silly cache add args [ 'canvas@^1.2.7', null ]
+62 verbose cache add spec canvas@^1.2.7
+63 silly cache add parsed spec Result {
+63 silly cache add   raw: 'canvas@^1.2.7',
+63 silly cache add   scope: null,
+63 silly cache add   name: 'canvas',
+63 silly cache add   rawSpec: '^1.2.7',
+63 silly cache add   spec: '>=1.2.7 <2.0.0',
+63 silly cache add   type: 'range' }
+64 silly addNamed canvas@>=1.2.7 <2.0.0
+65 verbose addNamed ">=1.2.7 <2.0.0" is a valid semver range for canvas
+66 silly addNameRange { name: 'canvas', range: '>=1.2.7 <2.0.0', hasData: false }
+67 silly mapToRegistry name canvas
+68 silly mapToRegistry using default registry
+69 silly mapToRegistry registry https://registry.npmjs.org/
+70 silly mapToRegistry uri https://registry.npmjs.org/canvas
+71 verbose addNameRange registry:https://registry.npmjs.org/canvas not in flight; fetching
+72 verbose already installed skipping express@^4.13.1 /Users/akhenry/Code/openmctweb/openmctweb
+73 verbose request uri https://registry.npmjs.org/canvas
+74 verbose request no auth needed
+75 info attempt registry request try #1 at 12:06:03 PM
+76 verbose request id 90b5a3876d185e3c
+77 verbose etag "2CLU9W5YI8G9A3DFKVCS7J0EK"
+78 http request GET https://registry.npmjs.org/canvas
+79 verbose already installed skipping minimist@^1.1.1 /Users/akhenry/Code/openmctweb/openmctweb
+80 verbose already installed skipping jasmine-core@^2.3.0 /Users/akhenry/Code/openmctweb/openmctweb
+81 verbose already installed skipping jsdoc@^3.3.2 /Users/akhenry/Code/openmctweb/openmctweb
+82 verbose already installed skipping jshint@^2.7.0 /Users/akhenry/Code/openmctweb/openmctweb
+83 verbose already installed skipping karma@^0.12.31 /Users/akhenry/Code/openmctweb/openmctweb
+84 verbose already installed skipping karma-chrome-launcher@^0.1.8 /Users/akhenry/Code/openmctweb/openmctweb
+85 verbose already installed skipping karma-cli@0.0.4 /Users/akhenry/Code/openmctweb/openmctweb
+86 verbose already installed skipping karma-jasmine@^0.1.5 /Users/akhenry/Code/openmctweb/openmctweb
+87 http 304 https://registry.npmjs.org/canvas
+88 silly get cb [ 304,
+88 silly get   { date: 'Tue, 29 Sep 2015 19:06:04 GMT',
+88 silly get     via: '1.1 varnish',
+88 silly get     'cache-control': 'max-age=60',
+88 silly get     etag: '"2CLU9W5YI8G9A3DFKVCS7J0EK"',
+88 silly get     age: '48',
+88 silly get     connection: 'keep-alive',
+88 silly get     'x-served-by': 'cache-atl6227-ATL',
+88 silly get     'x-cache': 'HIT',
+88 silly get     'x-cache-hits': '1',
+88 silly get     'x-timer': 'S1443553564.269793,VS0,VE1',
+88 silly get     vary: 'Accept' } ]
+89 verbose etag https://registry.npmjs.org/canvas from cache
+90 verbose get saving canvas to /Users/akhenry/.npm/registry.npmjs.org/canvas/.cache.json
+91 silly addNameRange number 2 { name: 'canvas', range: '>=1.2.7 <2.0.0', hasData: true }
+92 silly addNameRange versions [ 'canvas',
+92 silly addNameRange   [ '0.0.1',
+92 silly addNameRange     '0.0.2',
+92 silly addNameRange     '0.0.3',
+92 silly addNameRange     '0.0.4',
+92 silly addNameRange     '0.0.5',
+92 silly addNameRange     '0.0.6',
+92 silly addNameRange     '0.0.7',
+92 silly addNameRange     '0.0.8',
+92 silly addNameRange     '0.1.0',
+92 silly addNameRange     '0.2.0',
+92 silly addNameRange     '0.2.1',
+92 silly addNameRange     '0.3.0',
+92 silly addNameRange     '0.3.1',
+92 silly addNameRange     '0.3.2',
+92 silly addNameRange     '0.3.3',
+92 silly addNameRange     '0.4.0',
+92 silly addNameRange     '0.4.1',
+92 silly addNameRange     '0.4.2',
+92 silly addNameRange     '0.4.3',
+92 silly addNameRange     '0.5.0',
+92 silly addNameRange     '0.5.1',
+92 silly addNameRange     '0.5.2',
+92 silly addNameRange     '0.5.3',
+92 silly addNameRange     '0.5.4',
+92 silly addNameRange     '0.6.0',
+92 silly addNameRange     '0.7.0',
+92 silly addNameRange     '0.7.1',
+92 silly addNameRange     '0.7.2',
+92 silly addNameRange     '0.7.3',
+92 silly addNameRange     '0.8.0',
+92 silly addNameRange     '0.8.1',
+92 silly addNameRange     '0.8.2',
+92 silly addNameRange     '0.8.3',
+92 silly addNameRange     '0.9.0',
+92 silly addNameRange     '0.10.0',
+92 silly addNameRange     '0.10.1',
+92 silly addNameRange     '0.10.2',
+92 silly addNameRange     '0.10.3',
+92 silly addNameRange     '0.11.0',
+92 silly addNameRange     '0.11.1',
+92 silly addNameRange     '0.11.2',
+92 silly addNameRange     '0.11.3',
+92 silly addNameRange     '0.12.0',
+92 silly addNameRange     '0.12.1',
+92 silly addNameRange     '0.13.0',
+92 silly addNameRange     '0.13.1',
+92 silly addNameRange     '1.0.0',
+92 silly addNameRange     '1.0.1',
+92 silly addNameRange     '1.0.2',
+92 silly addNameRange     '1.0.3',
+92 silly addNameRange     '1.0.4',
+92 silly addNameRange     '1.1.0',
+92 silly addNameRange     '1.1.1',
+92 silly addNameRange     '1.1.2',
+92 silly addNameRange     '1.1.3',
+92 silly addNameRange     '1.1.4',
+92 silly addNameRange     '1.1.5',
+92 silly addNameRange     '1.1.6',
+92 silly addNameRange     '1.2.0',
+92 silly addNameRange     '1.2.1',
+92 silly addNameRange     '1.2.2',
+92 silly addNameRange     '1.2.3',
+92 silly addNameRange     '1.2.4',
+92 silly addNameRange     '1.2.5',
+92 silly addNameRange     '1.2.6',
+92 silly addNameRange     '1.2.7',
+92 silly addNameRange     '1.2.8',
+92 silly addNameRange     '1.2.9' ] ]
+93 silly addNamed canvas@1.2.9
+94 verbose addNamed "1.2.9" is a plain semver version for canvas
+95 silly cache afterAdd canvas@1.2.9
+96 verbose afterAdd /Users/akhenry/.npm/canvas/1.2.9/package/package.json not in flight; writing
+97 verbose afterAdd /Users/akhenry/.npm/canvas/1.2.9/package/package.json written
+98 silly install resolved [ { name: 'canvas',
+98 silly install resolved     description: 'Canvas graphics API backed by Cairo',
+98 silly install resolved     version: '1.2.9',
+98 silly install resolved     author: { name: 'TJ Holowaychuk', email: 'tj@learnboost.com' },
+98 silly install resolved     contributors: [ [Object], [Object], [Object] ],
+98 silly install resolved     keywords:
+98 silly install resolved      [ 'canvas',
+98 silly install resolved        'graphic',
+98 silly install resolved        'graphics',
+98 silly install resolved        'pixman',
+98 silly install resolved        'cairo',
+98 silly install resolved        'image',
+98 silly install resolved        'images',
+98 silly install resolved        'pdf' ],
+98 silly install resolved     homepage: 'https://github.com/Automattic/node-canvas',
+98 silly install resolved     repository:
+98 silly install resolved      { type: 'git',
+98 silly install resolved        url: 'git://github.com/Automattic/node-canvas.git' },
+98 silly install resolved     scripts: { test: 'make test', install: 'node-gyp rebuild' },
+98 silly install resolved     dependencies: { nan: '^2.0.9' },
+98 silly install resolved     devDependencies:
+98 silly install resolved      { 'body-parser': '^1.13.3',
+98 silly install resolved        express: '^4.13.2',
+98 silly install resolved        jade: '^1.11.0',
+98 silly install resolved        mocha: '*' },
+98 silly install resolved     engines: { node: '>=0.8.0' },
+98 silly install resolved     main: './lib/canvas.js',
+98 silly install resolved     license: 'MIT',
+98 silly install resolved     gypfile: true,
+98 silly install resolved     gitHead: 'eb97ef838658ee7a9cafb44bb20f3253e044e42b',
+98 silly install resolved     bugs: { url: 'https://github.com/Automattic/node-canvas/issues' },
+98 silly install resolved     _id: 'canvas@1.2.9',
+98 silly install resolved     _shasum: '40f36e8f34bea2283c944511dfb575d168003061',
+98 silly install resolved     _from: 'canvas@>=1.2.7 <2.0.0',
+98 silly install resolved     _npmVersion: '2.12.1',
+98 silly install resolved     _nodeVersion: '0.12.7',
+98 silly install resolved     _npmUser: { name: 'linusu', email: 'linus@folkdatorn.se' },
+98 silly install resolved     maintainers: [ [Object], [Object], [Object], [Object], [Object], [Object] ],
+98 silly install resolved     dist:
+98 silly install resolved      { shasum: '40f36e8f34bea2283c944511dfb575d168003061',
+98 silly install resolved        tarball: 'http://registry.npmjs.org/canvas/-/canvas-1.2.9.tgz' },
+98 silly install resolved     directories: {},
+98 silly install resolved     _resolved: 'https://registry.npmjs.org/canvas/-/canvas-1.2.9.tgz',
+98 silly install resolved     readme: 'ERROR: No README data found!' } ]
+99 info install canvas@1.2.9 into /Users/akhenry/Code/openmctweb/openmctweb
+100 info installOne canvas@1.2.9
+101 verbose installOne of canvas to /Users/akhenry/Code/openmctweb/openmctweb not in flight; installing
+102 verbose lock using /Users/akhenry/.npm/_locks/canvas-3ca8f0170542eddb.lock for /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas
+103 silly install write writing canvas 1.2.9 to /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas
+104 verbose unbuild node_modules/canvas
+105 silly gentlyRm /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas is being purged from base /Users/akhenry/Code/openmctweb/openmctweb
+106 verbose gentlyRm don't care about contents; nuking /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas
+107 verbose tar unpack /Users/akhenry/.npm/canvas/1.2.9/package.tgz
+108 verbose tar unpacking to /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas
+109 silly gentlyRm /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas is being purged
+110 verbose gentlyRm don't care about contents; nuking /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas
+111 silly gunzTarPerm modes [ '755', '644' ]
+112 silly gunzTarPerm extractEntry package.json
+113 silly gunzTarPerm extractEntry .npmignore
+114 silly gunzTarPerm extractEntry index.js
+115 silly gunzTarPerm extractEntry History.md
+116 silly gunzTarPerm extractEntry Makefile
+117 silly gunzTarPerm extractEntry Readme.md
+118 silly gunzTarPerm extractEntry binding.gyp
+119 silly gunzTarPerm extractEntry .gitmodules
+120 silly gunzTarPerm extractEntry install
+121 silly gunzTarPerm extractEntry lib/bindings.js
+122 silly gunzTarPerm extractEntry lib/canvas.js
+123 silly gunzTarPerm extractEntry lib/context2d.js
+124 silly gunzTarPerm extractEntry lib/image.js
+125 silly gunzTarPerm extractEntry lib/jpegstream.js
+126 silly gunzTarPerm extractEntry lib/pngstream.js
+127 silly gunzTarPerm extractEntry .travis.yml
+128 silly gunzTarPerm extractEntry src/Image.cc
+129 silly gunzTarPerm extractEntry src/Canvas.cc
+130 silly gunzTarPerm extractEntry src/CanvasGradient.cc
+131 silly gunzTarPerm extractEntry src/CanvasGradient.h
+132 silly gunzTarPerm extractEntry src/CanvasPattern.cc
+133 silly gunzTarPerm extractEntry src/CanvasPattern.h
+134 silly gunzTarPerm extractEntry src/CanvasRenderingContext2d.cc
+135 silly gunzTarPerm extractEntry src/CanvasRenderingContext2d.h
+136 silly gunzTarPerm extractEntry src/FontFace.cc
+137 silly gunzTarPerm extractEntry src/FontFace.h
+138 silly gunzTarPerm extractEntry src/Canvas.h
+139 silly gunzTarPerm extractEntry src/Image.h
+140 silly gunzTarPerm extractEntry src/ImageData.cc
+141 silly gunzTarPerm extractEntry src/ImageData.h
+142 silly gunzTarPerm extractEntry src/JPEGStream.h
+143 silly gunzTarPerm extractEntry src/PNG.h
+144 silly gunzTarPerm extractEntry src/Point.h
+145 silly gunzTarPerm extractEntry src/closure.h
+146 silly gunzTarPerm extractEntry src/color.cc
+147 silly gunzTarPerm extractEntry src/color.h
+148 silly gunzTarPerm extractEntry src/init.cc
+149 silly gunzTarPerm extractEntry util/cairo_include.sh
+150 silly gunzTarPerm extractEntry util/has_cairo_freetype.sh
+151 silly gunzTarPerm extractEntry util/has_lib.sh
+152 silly gunzTarPerm extractEntry util/lib_lookup.sh
+153 verbose write writing to /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/package.json
+154 info preinstall canvas@1.2.9
+155 verbose readDependencies loading dependencies from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/package.json
+156 silly prepareForInstallMany adding nan@^2.0.9 from canvas dependencies
+157 verbose readDependencies loading dependencies from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/package.json
+158 silly cache add args [ 'nan@^2.0.9', null ]
+159 verbose cache add spec nan@^2.0.9
+160 silly cache add parsed spec Result {
+160 silly cache add   raw: 'nan@^2.0.9',
+160 silly cache add   scope: null,
+160 silly cache add   name: 'nan',
+160 silly cache add   rawSpec: '^2.0.9',
+160 silly cache add   spec: '>=2.0.9 <3.0.0',
+160 silly cache add   type: 'range' }
+161 silly addNamed nan@>=2.0.9 <3.0.0
+162 verbose addNamed ">=2.0.9 <3.0.0" is a valid semver range for nan
+163 silly addNameRange { name: 'nan', range: '>=2.0.9 <3.0.0', hasData: false }
+164 silly mapToRegistry name nan
+165 silly mapToRegistry using default registry
+166 silly mapToRegistry registry https://registry.npmjs.org/
+167 silly mapToRegistry uri https://registry.npmjs.org/nan
+168 verbose addNameRange registry:https://registry.npmjs.org/nan not in flight; fetching
+169 verbose request uri https://registry.npmjs.org/nan
+170 verbose request no auth needed
+171 info attempt registry request try #1 at 12:06:04 PM
+172 verbose etag "1L4RU1AM541YSVP1YQFXG1Y1J"
+173 http request GET https://registry.npmjs.org/nan
+174 http 304 https://registry.npmjs.org/nan
+175 silly get cb [ 304,
+175 silly get   { date: 'Tue, 29 Sep 2015 19:06:04 GMT',
+175 silly get     via: '1.1 varnish',
+175 silly get     'cache-control': 'max-age=60',
+175 silly get     etag: '"1L4RU1AM541YSVP1YQFXG1Y1J"',
+175 silly get     age: '34',
+175 silly get     connection: 'keep-alive',
+175 silly get     'x-served-by': 'cache-atl6225-ATL',
+175 silly get     'x-cache': 'HIT',
+175 silly get     'x-cache-hits': '2',
+175 silly get     'x-timer': 'S1443553564.715367,VS0,VE0',
+175 silly get     vary: 'Accept' } ]
+176 verbose etag https://registry.npmjs.org/nan from cache
+177 verbose get saving nan to /Users/akhenry/.npm/registry.npmjs.org/nan/.cache.json
+178 silly addNameRange number 2 { name: 'nan', range: '>=2.0.9 <3.0.0', hasData: true }
+179 silly addNameRange versions [ 'nan',
+179 silly addNameRange   [ '0.3.0-wip',
+179 silly addNameRange     '0.3.0-wip2',
+179 silly addNameRange     '0.3.0',
+179 silly addNameRange     '0.3.1',
+179 silly addNameRange     '0.3.2',
+179 silly addNameRange     '0.4.0',
+179 silly addNameRange     '0.4.1',
+179 silly addNameRange     '0.4.2',
+179 silly addNameRange     '0.4.3',
+179 silly addNameRange     '0.4.4',
+179 silly addNameRange     '0.5.0',
+179 silly addNameRange     '0.5.1',
+179 silly addNameRange     '0.5.2',
+179 silly addNameRange     '0.6.0',
+179 silly addNameRange     '0.7.0',
+179 silly addNameRange     '0.7.1',
+179 silly addNameRange     '0.8.0',
+179 silly addNameRange     '1.0.0',
+179 silly addNameRange     '1.1.0',
+179 silly addNameRange     '1.1.1',
+179 silly addNameRange     '1.1.2',
+179 silly addNameRange     '1.2.0',
+179 silly addNameRange     '1.3.0',
+179 silly addNameRange     '1.4.0',
+179 silly addNameRange     '1.4.1',
+179 silly addNameRange     '1.5.0',
+179 silly addNameRange     '1.4.2',
+179 silly addNameRange     '1.4.3',
+179 silly addNameRange     '1.5.1',
+179 silly addNameRange     '1.5.2',
+179 silly addNameRange     '1.6.0',
+179 silly addNameRange     '1.5.3',
+179 silly addNameRange     '1.6.1',
+179 silly addNameRange     '1.6.2',
+179 silly addNameRange     '1.7.0',
+179 silly addNameRange     '1.8.0',
+179 silly addNameRange     '1.8.1',
+179 silly addNameRange     '1.8.2',
+179 silly addNameRange     '1.8.3',
+179 silly addNameRange     '1.8.4',
+179 silly addNameRange     '1.9.0',
+179 silly addNameRange     '2.0.0',
+179 silly addNameRange     '2.0.1',
+179 silly addNameRange     '2.0.2',
+179 silly addNameRange     '2.0.3',
+179 silly addNameRange     '2.0.4',
+179 silly addNameRange     '2.0.5',
+179 silly addNameRange     '2.0.6',
+179 silly addNameRange     '2.0.7',
+179 silly addNameRange     '2.0.8',
+179 silly addNameRange     '2.0.9' ] ]
+180 silly addNamed nan@2.0.9
+181 verbose addNamed "2.0.9" is a plain semver version for nan
+182 silly cache afterAdd nan@2.0.9
+183 verbose afterAdd /Users/akhenry/.npm/nan/2.0.9/package/package.json not in flight; writing
+184 verbose afterAdd /Users/akhenry/.npm/nan/2.0.9/package/package.json written
+185 silly install resolved [ { name: 'nan',
+185 silly install resolved     version: '2.0.9',
+185 silly install resolved     description: 'Native Abstractions for Node.js: C++ header for Node 0.8 -> 4 compatibility',
+185 silly install resolved     main: 'include_dirs.js',
+185 silly install resolved     repository: { type: 'git', url: 'git://github.com/nodejs/nan.git' },
+185 silly install resolved     scripts:
+185 silly install resolved      { test: 'tap --gc test/js/*-test.js',
+185 silly install resolved        'rebuild-tests': 'pangyp rebuild --msvs_version=2013 --directory test',
+185 silly install resolved        docs: 'doc/.build.sh' },
+185 silly install resolved     contributors:
+185 silly install resolved      [ [Object],
+185 silly install resolved        [Object],
+185 silly install resolved        [Object],
+185 silly install resolved        [Object],
+185 silly install resolved        [Object],
+185 silly install resolved        [Object],
+185 silly install resolved        [Object] ],
+185 silly install resolved     devDependencies:
+185 silly install resolved      { bindings: '~1.2.1',
+185 silly install resolved        commander: '^2.8.1',
+185 silly install resolved        glob: '^5.0.14',
+185 silly install resolved        'node-gyp': '~2.0.2',
+185 silly install resolved        pangyp: '~2.2.0',
+185 silly install resolved        tap: '~0.7.1',
+185 silly install resolved        xtend: '~4.0.0' },
+185 silly install resolved     license: 'MIT',
+185 silly install resolved     bugs: { url: 'https://github.com/nodejs/nan/issues' },
+185 silly install resolved     homepage: 'https://github.com/nodejs/nan#readme',
+185 silly install resolved     _id: 'nan@2.0.9',
+185 silly install resolved     _shasum: 'd02a770f46778842cceb94e17cab31ffc7234a05',
+185 silly install resolved     _resolved: 'https://registry.npmjs.org/nan/-/nan-2.0.9.tgz',
+185 silly install resolved     _from: 'nan@>=2.0.9 <3.0.0',
+185 silly install resolved     _npmVersion: '2.14.2',
+185 silly install resolved     _nodeVersion: '4.0.0',
+185 silly install resolved     _npmUser: { name: 'kkoopa', email: 'bbyholm@abo.fi' },
+185 silly install resolved     maintainers: [ [Object], [Object] ],
+185 silly install resolved     dist:
+185 silly install resolved      { shasum: 'd02a770f46778842cceb94e17cab31ffc7234a05',
+185 silly install resolved        tarball: 'http://registry.npmjs.org/nan/-/nan-2.0.9.tgz' },
+185 silly install resolved     directories: {},
+185 silly install resolved     readme: 'ERROR: No README data found!' } ]
+186 info install nan@2.0.9 into /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas
+187 info installOne nan@2.0.9
+188 verbose installOne of nan to /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas not in flight; installing
+189 verbose lock using /Users/akhenry/.npm/_locks/nan-994f20ebbf17b310.lock for /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/node_modules/nan
+190 silly install write writing nan 2.0.9 to /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/node_modules/nan
+191 verbose unbuild node_modules/canvas/node_modules/nan
+192 silly gentlyRm /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/node_modules/nan is being purged from base /Users/akhenry/Code/openmctweb/openmctweb
+193 verbose gentlyRm don't care about contents; nuking /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/node_modules/nan
+194 verbose tar unpack /Users/akhenry/.npm/nan/2.0.9/package.tgz
+195 verbose tar unpacking to /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/node_modules/nan
+196 silly gentlyRm /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/node_modules/nan is being purged
+197 verbose gentlyRm don't care about contents; nuking /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/node_modules/nan
+198 silly gunzTarPerm modes [ '755', '644' ]
+199 silly gunzTarPerm extractEntry package.json
+200 silly gunzTarPerm modified mode [ 'package.json', 436, 420 ]
+201 silly gunzTarPerm extractEntry README.md
+202 silly gunzTarPerm modified mode [ 'README.md', 436, 420 ]
+203 silly gunzTarPerm extractEntry include_dirs.js
+204 silly gunzTarPerm modified mode [ 'include_dirs.js', 436, 420 ]
+205 silly gunzTarPerm extractEntry nan_converters.h
+206 silly gunzTarPerm modified mode [ 'nan_converters.h', 436, 420 ]
+207 silly gunzTarPerm extractEntry LICENSE.md
+208 silly gunzTarPerm modified mode [ 'LICENSE.md', 436, 420 ]
+209 silly gunzTarPerm extractEntry .dntrc
+210 silly gunzTarPerm modified mode [ '.dntrc', 436, 420 ]
+211 silly gunzTarPerm extractEntry appveyor.yml
+212 silly gunzTarPerm modified mode [ 'appveyor.yml', 436, 420 ]
+213 silly gunzTarPerm extractEntry doc/new.md
+214 silly gunzTarPerm modified mode [ 'doc/new.md', 436, 420 ]
+215 silly gunzTarPerm extractEntry doc/.build.sh
+216 silly gunzTarPerm modified mode [ 'doc/.build.sh', 509, 493 ]
+217 silly gunzTarPerm extractEntry doc/buffers.md
+218 silly gunzTarPerm modified mode [ 'doc/buffers.md', 436, 420 ]
+219 silly gunzTarPerm extractEntry doc/callback.md
+220 silly gunzTarPerm modified mode [ 'doc/callback.md', 436, 420 ]
+221 silly gunzTarPerm extractEntry doc/converters.md
+222 silly gunzTarPerm modified mode [ 'doc/converters.md', 436, 420 ]
+223 silly gunzTarPerm extractEntry doc/errors.md
+224 silly gunzTarPerm modified mode [ 'doc/errors.md', 436, 420 ]
+225 silly gunzTarPerm extractEntry doc/maybe_types.md
+226 silly gunzTarPerm modified mode [ 'doc/maybe_types.md', 436, 420 ]
+227 silly gunzTarPerm extractEntry doc/methods.md
+228 silly gunzTarPerm modified mode [ 'doc/methods.md', 436, 420 ]
+229 silly gunzTarPerm extractEntry doc/asyncworker.md
+230 silly gunzTarPerm modified mode [ 'doc/asyncworker.md', 436, 420 ]
+231 silly gunzTarPerm extractEntry doc/node_misc.md
+232 silly gunzTarPerm modified mode [ 'doc/node_misc.md', 436, 420 ]
+233 silly gunzTarPerm extractEntry doc/persistent.md
+234 silly gunzTarPerm modified mode [ 'doc/persistent.md', 436, 420 ]
+235 silly gunzTarPerm extractEntry doc/scopes.md
+236 silly gunzTarPerm modified mode [ 'doc/scopes.md', 436, 420 ]
+237 silly gunzTarPerm extractEntry doc/script.md
+238 silly gunzTarPerm modified mode [ 'doc/script.md', 436, 420 ]
+239 silly gunzTarPerm extractEntry doc/string_bytes.md
+240 silly gunzTarPerm modified mode [ 'doc/string_bytes.md', 436, 420 ]
+241 silly gunzTarPerm extractEntry doc/v8_internals.md
+242 silly gunzTarPerm modified mode [ 'doc/v8_internals.md', 436, 420 ]
+243 silly gunzTarPerm extractEntry doc/v8_misc.md
+244 silly gunzTarPerm modified mode [ 'doc/v8_misc.md', 436, 420 ]
+245 silly gunzTarPerm extractEntry nan.h
+246 silly gunzTarPerm modified mode [ 'nan.h', 436, 420 ]
+247 silly gunzTarPerm extractEntry nan_callbacks.h
+248 silly gunzTarPerm modified mode [ 'nan_callbacks.h', 436, 420 ]
+249 silly gunzTarPerm extractEntry nan_callbacks_12_inl.h
+250 silly gunzTarPerm modified mode [ 'nan_callbacks_12_inl.h', 436, 420 ]
+251 silly gunzTarPerm extractEntry nan_callbacks_pre_12_inl.h
+252 silly gunzTarPerm modified mode [ 'nan_callbacks_pre_12_inl.h', 436, 420 ]
+253 silly gunzTarPerm extractEntry nan_converters_43_inl.h
+254 silly gunzTarPerm modified mode [ 'nan_converters_43_inl.h', 436, 420 ]
+255 silly gunzTarPerm extractEntry nan_converters_pre_43_inl.h
+256 silly gunzTarPerm modified mode [ 'nan_converters_pre_43_inl.h', 436, 420 ]
+257 silly gunzTarPerm extractEntry nan_implementation_12_inl.h
+258 silly gunzTarPerm modified mode [ 'nan_implementation_12_inl.h', 436, 420 ]
+259 silly gunzTarPerm extractEntry nan_implementation_pre_12_inl.h
+260 silly gunzTarPerm modified mode [ 'nan_implementation_pre_12_inl.h', 436, 420 ]
+261 silly gunzTarPerm extractEntry nan_maybe_43_inl.h
+262 silly gunzTarPerm modified mode [ 'nan_maybe_43_inl.h', 436, 420 ]
+263 silly gunzTarPerm extractEntry nan_maybe_pre_43_inl.h
+264 silly gunzTarPerm modified mode [ 'nan_maybe_pre_43_inl.h', 436, 420 ]
+265 silly gunzTarPerm extractEntry nan_new.h
+266 silly gunzTarPerm modified mode [ 'nan_new.h', 436, 420 ]
+267 silly gunzTarPerm extractEntry nan_object_wrap.h
+268 silly gunzTarPerm modified mode [ 'nan_object_wrap.h', 436, 420 ]
+269 silly gunzTarPerm extractEntry nan_persistent_12_inl.h
+270 silly gunzTarPerm modified mode [ 'nan_persistent_12_inl.h', 436, 420 ]
+271 silly gunzTarPerm extractEntry nan_persistent_pre_12_inl.h
+272 silly gunzTarPerm modified mode [ 'nan_persistent_pre_12_inl.h', 436, 420 ]
+273 silly gunzTarPerm extractEntry nan_string_bytes.h
+274 silly gunzTarPerm modified mode [ 'nan_string_bytes.h', 436, 420 ]
+275 silly gunzTarPerm extractEntry nan_weak.h
+276 silly gunzTarPerm modified mode [ 'nan_weak.h', 436, 420 ]
+277 silly gunzTarPerm extractEntry CHANGELOG.md
+278 silly gunzTarPerm modified mode [ 'CHANGELOG.md', 436, 420 ]
+279 silly gunzTarPerm extractEntry tools/package.json
+280 silly gunzTarPerm modified mode [ 'tools/package.json', 436, 420 ]
+281 silly gunzTarPerm extractEntry tools/README.md
+282 silly gunzTarPerm modified mode [ 'tools/README.md', 436, 420 ]
+283 silly gunzTarPerm extractEntry tools/1to2.js
+284 silly gunzTarPerm modified mode [ 'tools/1to2.js', 509, 493 ]
+285 verbose write writing to /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/node_modules/nan/package.json
+286 info preinstall nan@2.0.9
+287 verbose readDependencies loading dependencies from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/node_modules/nan/package.json
+288 verbose readDependencies loading dependencies from /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/node_modules/nan/package.json
+289 silly install resolved []
+290 verbose about to build /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/node_modules/nan
+291 info build /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/node_modules/nan
+292 info linkStuff nan@2.0.9
+293 silly linkStuff nan@2.0.9 has /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/node_modules as its parent node_modules
+294 verbose linkBins nan@2.0.9
+295 verbose linkMans nan@2.0.9
+296 verbose rebuildBundles nan@2.0.9
+297 info install nan@2.0.9
+298 info postinstall nan@2.0.9
+299 verbose unlock done using /Users/akhenry/.npm/_locks/nan-994f20ebbf17b310.lock for /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas/node_modules/nan
+300 verbose about to build /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas
+301 info build /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas
+302 info linkStuff canvas@1.2.9
+303 silly linkStuff canvas@1.2.9 has /Users/akhenry/Code/openmctweb/openmctweb/node_modules as its parent node_modules
+304 verbose linkBins canvas@1.2.9
+305 verbose linkMans canvas@1.2.9
+306 verbose rebuildBundles canvas@1.2.9
+307 verbose rebuildBundles [ 'nan' ]
+308 info install canvas@1.2.9
+309 verbose unsafe-perm in lifecycle true
+310 info canvas@1.2.9 Failed to exec install script
+311 verbose unlock done using /Users/akhenry/.npm/_locks/canvas-3ca8f0170542eddb.lock for /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas
+312 verbose stack Error: canvas@1.2.9 install: `node-gyp rebuild`
+312 verbose stack Exit status 1
+312 verbose stack     at EventEmitter.<anonymous> (/Users/akhenry/.nvm/versions/node/v4.1.1/lib/node_modules/npm/lib/utils/lifecycle.js:214:16)
+312 verbose stack     at emitTwo (events.js:87:13)
+312 verbose stack     at EventEmitter.emit (events.js:172:7)
+312 verbose stack     at ChildProcess.<anonymous> (/Users/akhenry/.nvm/versions/node/v4.1.1/lib/node_modules/npm/lib/utils/spawn.js:24:14)
+312 verbose stack     at emitTwo (events.js:87:13)
+312 verbose stack     at ChildProcess.emit (events.js:172:7)
+312 verbose stack     at maybeClose (internal/child_process.js:817:16)
+312 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
+313 verbose pkgid canvas@1.2.9
+314 verbose cwd /Users/akhenry/Code/openmctweb/openmctweb
+315 error Darwin 14.3.0
+316 error argv "/Users/akhenry/.nvm/versions/node/v4.1.1/bin/node" "/Users/akhenry/.nvm/versions/node/v4.1.1/bin/npm" "install"
+317 error node v4.1.1
+318 error npm  v2.14.4
+319 error code ELIFECYCLE
+320 error canvas@1.2.9 install: `node-gyp rebuild`
+320 error Exit status 1
+321 error Failed at the canvas@1.2.9 install script 'node-gyp rebuild'.
+321 error This is most likely a problem with the canvas package,
+321 error not with npm itself.
+321 error Tell the author that this fails on your system:
+321 error     node-gyp rebuild
+321 error You can get their info via:
+321 error     npm owner ls canvas
+321 error There is likely additional logging output above.
+322 verbose exit [ 1, true ]
+323 verbose unbuild node_modules/canvas
+324 info preuninstall canvas@1.2.9
+325 info uninstall canvas@1.2.9
+326 verbose unbuild rmStuff canvas@1.2.9 from /Users/akhenry/Code/openmctweb/openmctweb/node_modules
+327 info postuninstall canvas@1.2.9
+328 silly gentlyRm /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas is being purged from base /Users/akhenry/Code/openmctweb/openmctweb
+329 verbose gentlyRm don't care about contents; nuking /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas
+330 silly vacuum-fs purging /Users/akhenry/Code/openmctweb/openmctweb/node_modules/canvas
+331 silly vacuum-fs quitting because other entries in /Users/akhenry/Code/openmctweb/openmctweb/node_modules

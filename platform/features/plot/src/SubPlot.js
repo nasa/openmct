@@ -159,10 +159,10 @@ define(
             var tickGenerator =
                 new PlotTickGenerator(this.panZoomStack, this.formatter);
 
-            this.domainTicks =
-                tickGenerator.generateDomainTicks(DOMAIN_TICKS);
-            this.rangeTicks =
-                tickGenerator.generateRangeTicks(RANGE_TICKS);
+                this.domainTicks =
+                    tickGenerator.generateDomainTicks(DOMAIN_TICKS);
+                this.rangeTicks =
+                    tickGenerator.generateRangeTicks(RANGE_TICKS);
         };
 
         SubPlot.prototype.updatePan = function () {
