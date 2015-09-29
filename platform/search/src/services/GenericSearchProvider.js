@@ -28,13 +28,13 @@ define(
     [],
     function () {
         "use strict";
-        
+
         var DEFAULT_MAX_RESULTS = 100,
             DEFAULT_TIMEOUT = 1000,
             stopTime;
-        
+
         /**
-         * A search service which searches through domain objects in 
+         * A search service which searches through domain objects in
          * the filetree without using external search implementations.
          *
          * @constructor
@@ -44,7 +44,7 @@ define(
          *        domain objects can be gotten.
          * @param {WorkerService} workerService The service which allows
          *        more easy creation of web workers.
-         * @param {GENERIC_SEARCH_ROOTS} ROOTS An array of the root 
+         * @param {GENERIC_SEARCH_ROOTS} ROOTS An array of the root
          *        domain objects' IDs.
          */
         function GenericSearchProvider($q, $timeout, objectService, workerService, ROOTS) {
@@ -57,11 +57,11 @@ define(
             this.$q = $q;
             // pendingQueries is a dictionary with the key value pairs st
             // the key is the timestamp and the value is the promise
-            
+
             // Tell the web worker to add a domain object's model to its list of items.
             function indexItem(domainObject) {
                 var message;
-                
+
                 // undefined check
                 if (domainObject && domainObject.getModel) {
                     // Using model instead of whole domain object because
@@ -74,15 +74,15 @@ define(
                     worker.postMessage(message);
                 }
             }
-            
 
-            // Handles responses from the web worker. Namely, the results of 
-            // a search request. 
+
+            // Handles responses from the web worker. Namely, the results of
+            // a search request.
             function handleResponse(event) {
                 var ids = [],
                     id;
-                
-                // If we have the results from a search 
+
+                // If we have the results from a search
                 if (event.data.request === 'search') {
                     // Convert the ids given from the web worker into domain objects
                     for (id in event.data.results) {
@@ -91,7 +91,7 @@ define(
                     objectService.getObjects(ids).then(function (objects) {
                         var searchResults = [],
                             id;
-                        
+
                         // Create searchResult objects
                         for (id in objects) {
                             searchResults.push({
@@ -100,8 +100,8 @@ define(
                                 score: event.data.results[id]
                             });
                         }
-                        
-                        // Resove the promise corresponding to this 
+
+                        // Resove the promise corresponding to this
                         pendingQueries[event.data.timestamp].resolve({
                             hits: searchResults,
                             total: event.data.total,
@@ -110,27 +110,44 @@ define(
                     });
                 }
             }
-            
+
             // Helper function for getItems(). Indexes the tree.
             function indexItems(nodes) {
+                function handleMutation(model) {
+                    if (model && model.composition) {
+                        // If the node was mutated to have children, get the child domain objects
+                        objectService.getObjects(listener.composition).then(function (objectsById) {
+                            var objects = [],
+                                id;
+
+                            // Get each of the domain objects in objectsById
+                            for (id in objectsById) {
+                                objects.push(objectsById[id]);
+                            }
+
+                            indexItems(objects);
+                        });
+                    }
+                }
+
                 nodes.forEach(function (node) {
                     var id = node && node.getId && node.getId();
-                    
+
                     // If we have already indexed this item, stop here
                     if (indexed[id]) {
                         return;
                     }
-                    
+
                     // Index each item with the web worker
                     indexItem(node);
                     indexed[id] = true;
-                    
-                    
+
+
                     // If this node has children, index those
                     if (node && node.hasCapability && node.hasCapability('composition')) {
                         // Make sure that this is async, so doesn't block up page
                         $timeout(function () {
-                            // Get the children... 
+                            // Get the children...
                             node.useCapability('composition').then(function (children) {
                                 $timeout(function () {
                                     // ... then index the children
@@ -143,41 +160,26 @@ define(
                             });
                         }, 0);
                     }
-                    
-                    // Watch for changes to this item, in case it gets new children 
-                    if (node && node.hasCapability && node.hasCapability('mutation')) {
-                        node.getCapability('mutation').listen(function (listener) {
-                            if (listener && listener.composition) {
-                                // If the node was mutated to have children, get the child domain objects
-                                objectService.getObjects(listener.composition).then(function (objectsById) {
-                                    var objects = [],
-                                        id;
 
-                                    // Get each of the domain objects in objectsById
-                                    for (id in objectsById) {
-                                        objects.push(objectsById[id]);
-                                    }
-                                    
-                                    indexItems(objects);
-                                });
-                            }
-                        });
+                    // Watch for changes to this item, in case it gets new children
+                    if (node && node.hasCapability && node.hasCapability('mutation')) {
+                        node.getCapability('mutation').listen(handleMutation);
                     }
                 });
             }
-            
+
             // Converts the filetree into a list
             function getItems() {
                 // Aquire root objects
                 objectService.getObjects(ROOTS).then(function (objectsById) {
                     var objects = [],
                         id;
-                    
+
                     // Get each of the domain objects in objectsById
                     for (id in objectsById) {
                         objects.push(objectsById[id]);
                     }
-                    
+
                     // Index all of the roots' descendents
                     indexItems(objects);
                 });
@@ -185,7 +187,7 @@ define(
 
             worker.onmessage = handleResponse;
 
-            // Index the tree's contents once at the beginning 
+            // Index the tree's contents once at the beginning
             getItems();
         }
 
