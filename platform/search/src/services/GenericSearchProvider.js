@@ -126,13 +126,23 @@ define(
                     indexItem(node);
                     indexed[id] = true;
 
+
                     // If this node has children, index those
                     if (node && node.hasCapability && node.hasCapability('composition')) {
                         // Make sure that this is async, so doesn't block up page
                         $timeout(function () {
                             // Get the children...
-                            node.useCapability('composition').then(indexItems);
-                        }, 0, false);
+                            node.useCapability('composition').then(function (children) {
+                                $timeout(function () {
+                                    // ... then index the children
+                                    if (children.constructor === Array) {
+                                        indexItems(children);
+                                    } else {
+                                        indexItems([children]);
+                                    }
+                                }, 0);
+                            });
+                        }, 0);
                     }
                 });
             }
