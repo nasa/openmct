@@ -1744,256 +1744,260 @@ by the `key​` argument. 
 * `removeData(key)`​: Clear drag data associated with a given type, specified by 
 the ​`key` argument. 
 
-# Navigation 
+### Navigation 
  
-  The ​navigationService​ provides information about the current navigation state of 
-the application; that is, which object is the user currently viewing? This service merely tracks this 
-state and notifies listeners; it does not take immediate action when navigation changes, 
-although its listeners might. 
-  The ​navigationService​ has the following methods: 
- 
- * getNavigation()​: Get the current navigation state. Returns a ​DomainObject​. 
- * setNavigation(domainObject)​: Set the current navigation state. Returns a 
-  DomainObject​. 
- * addListener(callback)​: Listen for changes in navigation state. The provided 
-  callback​ should be a ​Function​ which takes a single ​DomainObject​ as an 
-  argument. 
- * removeListener(callback)​: Stop listening for changes in navigation state. The 
-  provided ​callback​ should be a ​Function​ which has previously been passed to 
-  addListener​. 
- 
-Now 
- 
-  The service ​now​ is a function which acts as a simple wrapper for ​Date.now()​. It is 
-present mainly so that this functionality may be more easily mocked in tests for scripts which 
-use the current time. 
- 
-Telemetry Formatter 
- 
-  The ​telemetryFormatter​ is a utility for formatting domain and range values read 
-from a telemetry series. 
-  The ​telemetryFormatter​ has the following methods: 
- 
- * formatDomainValue(value)​: Format the provided domain value (which will be 
-  assumed to be a timestamp) for display; returns a string. 
- * formatRangeValue(value)​: Format the provided range value (a number) for 
-  display; returns a string. 
- 
+The ​`navigationService​` provides information about the current navigation state 
+of the application; that is, which object is the user currently viewing? This 
+service merely tracks this state and notifies listeners; it does not take 
+immediate action when navigation changes, although its listeners might. 
 
-       
-                                         51 
-Telemetry Handler 
- 
-  The ​telemetryHandler​ is a utility for retrieving telemetry data associated with 
-domain objects; it is particularly useful for dealing with cases where the ​telemetry​ capability 
-is delegated to contained objects (as occurs in Telemetry Panels.) 
-  The ​telemetryHandler​ has the following methods: 
- 
- * handle(domainObject, callback, [lossless])​: Subscribe to and issue 
-  future requests for telemetry associated with the provided ​domainObject​, invoking the 
-  provided ​callback​ function when streaming data becomes available. Returns a 
-  TelemetryHandle​ (see below.) 
- 
-Telemetry Handle 
- 
-  A ​TelemetryHandle​ has the following methods: 
- 
- * getTelemetryObjects()​: Get the domain objects (as a ​DomainObject[]​) that 
-  have a ​telemetry​ capability and are being handled here. Note that these are looked 
-  up asynchronously, so this method may return an empty array if the initial lookup is not 
-  yet completed. 
- * promiseTelemetryObjects()​: As ​getTelemetryObjects()​, but returns a 
-  Promise​ that will be fulfilled when the lookup is complete. 
- * unsubscribe()​: Unsubscribe to streaming telemetry updates associated with this 
-  handle. 
- * getDomainValue(domainObject)​: Get the most recent domain value received via a 
-  streaming update for the specified ​domainObject​. 
- * getRangeValue(domainObject)​: Get the most recent range value received via a 
-  streaming update for the specified ​domainObject​. 
- * getMetadata()​: Get metadata (as reported by the ​getMetadata()​ method of a 
-  telemetry​ capability) associated with telemetry­providing domain objects. Returns an 
-  array, which is in the same order as ​getTelemetryObjects()​. 
- * request(request, callback)​: Issue a new ​request​ for historical telemetry data. 
-  The provided ​callback​ will be invoked when new data becomes available, which may 
-  occur multiple times (e.g. if there are multiple domain objects.) It will be invoked with the 
-  DomainObject​ for which a new series is available, and the ​TelemetrySeries​ itself, 
-  in that order. 
- * getSeries(domainObject)​: Get the latest ​TelemetrySeries​ (as resulted from a 
-  previous ​request(...)​ call) available for this domain object. 
- 
-                                         52 
-Models 
- 
-  Domain object models in Open MCT Web are JavaScript objects describing the 
-persistent state of the domain objects they describe. Their contents include a mix of commonly 
-understood metadata attributes; attributes which are recognized by and/or determine the 
-applicability of specific extensions; and properties specific to given types. 
- 
-General Metadata 
- 
-  Some properties of domain object models have a ubiquitous meaning through Open 
+The `​navigationService​` has the following methods:
+
+* `getNavigation()`​: Get the current navigation state. Returns a ​`DomainObject​`. 
+* `setNavigation(domainObject)`​: Set the current navigation state. Returns a 
+`DomainObject​`. 
+* `addListener(callback)`​: Listen for changes in navigation state. The provided 
+`callback​` should be a `​Function​` which takes a single `​DomainObject​` as an 
+argument. 
+* `removeListener(callback)`​: Stop listening for changes in navigation state. 
+The provided `​callback​` should be a `​Function​` which has previously been passed 
+to addListener​.
+
+### Now 
+
+The service ​now​ is a function which acts as a simple wrapper for ​Date.now()​. It 
+is present mainly so that this functionality may be more easily mocked in tests 
+for scripts which use the current time. 
+
+### Telemetry Formatter 
+
+The `​telemetryFormatter​` is a utility for formatting domain and range values 
+read from a telemetry series. 
+
+The ​`telemetryFormatter​` has the following methods: 
+
+* `formatDomainValue(value)`​: Format the provided domain value (which will be 
+assumed to be a timestamp) for display; returns a string. 
+* `formatRangeValue(value)`​: Format the provided range value (a number) for 
+display; returns a string.
+
+### Telemetry Handler 
+
+The ​telemetryHandler​ is a utility for retrieving telemetry data associated with 
+domain objects; it is particularly useful for dealing with cases where the 
+​telemetry​ capability is delegated to contained objects (as occurs in Telemetry 
+Panels.) 
+
+The ​telemetryHandler​ has the following methods: 
+
+* `handle(domainObject, callback, [lossless])`​: Subscribe to and issue future 
+requests for telemetry associated with the provided ​domainObject​, invoking the 
+provided ​callback​ function when streaming data becomes available. Returns a 
+`TelemetryHandle`​ (see below.) 
+
+#### Telemetry Handle 
+
+A ​TelemetryHandle​ has the following methods: 
+
+* `getTelemetryObjects()`​: Get the domain objects (as a ​`DomainObject[]`​) that 
+have a ​telemetry​ capability and are being handled here. Note that these are 
+looked up asynchronously, so this method may return an empty array if the 
+initial lookup is not yet completed. 
+* `promiseTelemetryObjects()`​: As `​getTelemetryObjects()`​, but returns a Promise​ 
+that will be fulfilled when the lookup is complete. 
+* `unsubscribe()`​: Unsubscribe to streaming telemetry updates associated with 
+this handle. 
+* `getDomainValue(domainObject)`​: Get the most recent domain value received via 
+a streaming update for the specified `​domainObject​`. 
+* `getRangeValue(domainObject)`​: Get the most recent range value received via a 
+streaming update for the specified `​domainObject`​. 
+* `getMetadata()`​: Get metadata (as reported by the `​getMetadata()`​ method of a 
+telemetry​ capability) associated with telemetry­providing domain objects. 
+Returns an array, which is in the same order as ​getTelemetryObjects()​. 
+* `request(request, callback)`​: Issue a new ​request​ for historical telemetry 
+data. The provided ​callback​ will be invoked when new data becomes available, 
+which may occur multiple times (e.g. if there are multiple domain objects.) It 
+will be invoked with the DomainObject​ for which a new series is available, and 
+the ​TelemetrySeries​ itself, in that order. 
+* `getSeries(domainObject)`​: Get the latest `​TelemetrySeries​` (as resulted from 
+a previous ​`request(...)`​ call) available for this domain object.
+
+
+# Models
+Domain object models in Open MCT Web are JavaScript objects describing the 
+persistent state of the domain objects they describe. Their contents include a 
+mix of commonly understood metadata attributes; attributes which are recognized 
+by and/or determine the applicability of specific extensions; and properties 
+specific to given types. 
+
+## General Metadata 
+
+Some properties of domain object models have a ubiquitous meaning through Open 
 MCT Web and can be utilized directly: 
- 
- * name​: The human­readable name of the domain object. 
- 
-Extension-specific Properties 
- 
-  Other properties of domain object models have specific meaning imposed by other 
+
+* `name`​: The human­readable name of the domain object.
+
+## Extension-specific Properties 
+
+Other properties of domain object models have specific meaning imposed by other 
 extensions within the Open MCT Web platform. 
- 
-Capability-specific Properties 
- 
-  Some properties either trigger the presence/absence of certain capabilities, or are 
-managed by specific capabilities: 
- 
- * composition​: An array of domain object identifiers that represents the contents of this 
-  domain object (e.g. as will appear in the tree hierarchy.) Understood by the 
-  composition​ capability; the presence or absence of this property determines the 
-  presence or absence of that capability. 
- * modified​: The timestamp (in milliseconds since the UNIX epoch) of the last 
-  modification made to this domain object. Managed by the ​mutation​ capability. 
- * persisted​: The timestamp (in milliseconds since the UNIX epoch) of the last time 
-  when changes to this domain object were persisted. Managed by the ​persistence 
-  capability. 
- * relationships​: An object containing key­value pairs, where keys are symbolic 
-  identifiers for relationship types, and values are arrays of domain object identifiers. Used 
-  by the ​relationship​ capability; the presence or absence of this property determines 
-  the presence or absence of that capability. 
- * telemetry​: An object which serves as a template for telemetry requests associated 
-  with this domain object (e.g. specifying ​source​ and ​key​; see Telemetry Requests 
-                                         53 
-  under Core API.) Used by the ​telemetry​ capability; the presence or absence of this 
-  property determines the presence or absence of that capability. 
- * type​: A string identifying the type of this domain object. Used by the ​type​ capability. 
- 
-View Configurations 
- 
-  Persistent configurations for specific views of domain objects are stored in the domain 
-object model under the property ​configurations​. This is an object containing key­value 
-pairs, where keys identify the view, and values are objects containing view­specific (and 
-view­managed) configuration properties. 
- 
-Modifying Models 
- 
-  When interacting with a domain object’s model, it is possible to make modifications to it 
-directly. ​Don’t! ​These changes may not be properly detected by the platform, meaning that 
-other representations of the domain object may not be updated, changes may not be saved at 
-the expected times, and generally, that unexpected behavior may occur. 
-  Instead, use the ​mutation​ capability. 
- 
 
-       
-                                         54 
-Capabilities 
+### Capability-specific Properties 
+
+Some properties either trigger the presence/absence of certain capabilities, or 
+are managed by specific capabilities:
+
+* `composition​`: An array of domain object identifiers that represents the 
+contents of this domain object (e.g. as will appear in the tree hierarchy.) 
+Understood by the composition​ capability; the presence or absence of this 
+property determines the presence or absence of that capability. 
+* `modified​`: The timestamp (in milliseconds since the UNIX epoch) of the last 
+modification made to this domain object. Managed by the ​mutation​ capability. 
+* `persisted​`: The timestamp (in milliseconds since the UNIX epoch) of the last 
+time when changes to this domain object were persisted. Managed by the 
+​persistence capability. 
+* `relationships​`: An object containing key­value pairs, where keys are symbolic 
+identifiers for relationship types, and values are arrays of domain object 
+identifiers. Used by the ​relationship​ capability; the presence or absence of 
+this property determines the presence or absence of that capability. 
+* `telemetry​`: An object which serves as a template for telemetry requests 
+associated with this domain object (e.g. specifying ​`source`​ and ​`key​`; see 
+Telemetry Requests under Core API.) Used by the ​telemetry​ capability; the 
+presence or absence of this property determines the presence or absence of that 
+capability.
+* `type`​: A string identifying the type of this domain object. Used by the ​type​ 
+capability. 
  
-  Dynamic behavior associated with a domain object is expressed as capabilities. A 
-capability is a JavaScript object with an interface that is specific to the type of capability in use. 
-  Often, there is a relationship between capabilities and services. For instance, there is an 
-action​ capability and an ​actionService​, and there is a ​telemetry​ capability as well as a 
-telemetryService​. Typically, the pattern here is that the capability will utilize the service ​for 
-the specific domain object​.  
-  When interacting with domain objects, it is generally preferable to use a capability 
-instead of a service when the option is available. Capability interfaces are typically easier to use 
-and/or more powerful in these situations. Additionally, this usage provides a more robust 
-substitutability mechanism; for instance, one could configure a plugin such that it provided a 
-totally new implementation of a given capability which might not invoke the underlying service, 
-while user code which interacts with capabilities remains indifferent to this detail. 
+### View Configurations 
+
+Persistent configurations for specific views of domain objects are stored in the 
+domain object model under the property ​configurations​. This is an object 
+containing key­value pairs, where keys identify the view, and values are objects 
+containing view­specific (and view­managed) configuration properties. 
  
-Action 
+## Modifying Models 
+When interacting with a domain object’s model, it is possible to make 
+modifications to it directly. __​Don't!__ ​These changes may not be properly detected 
+by the platform, meaning that other representations of the domain object may not 
+be updated, changes may not be saved at the expected times, and generally, that 
+unexpected behavior may occur. Instead, use the `​mutation​` capability. 
+
+# Capabilities 
+
+Dynamic behavior associated with a domain object is expressed as capabilities. A 
+capability is a JavaScript object with an interface that is specific to the type 
+of capability in use. 
+
+Often, there is a relationship between capabilities and services. For instance, 
+there is an action​ capability and an ​actionService​, and there is a ​telemetry​ 
+capability as well as a `telemetryService​`. Typically, the pattern here is that 
+the capability will utilize the service ​for the specific domain object​.  
+
+When interacting with domain objects, it is generally preferable to use a 
+capability instead of a service when the option is available. Capability 
+interfaces are typically easier to use and/or more powerful in these situations. 
+Additionally, this usage provides a more robust substitutability mechanism; for 
+instance, one could configure a plugin such that it provided a totally new 
+implementation of a given capability which might not invoke the underlying 
+service, while user code which interacts with capabilities remains indifferent 
+to this detail. 
+ 
+## Action 
+
+The ​`action​` capability is present for all domain objects. It allows applicable 
+​`Action` instances to be retrieved and performed for specific domain objects. 
+
+For example: 
+    `domainObject.getCapability("action").perform("navigate"); `
+    ...will initiate a navigate action upon the domain object, if an action with 
+    key "navigate" is defined. 
    
-  The ​action​ capability is present for all domain objects. It allows applicable ​Action 
-instances to be retrieved and performed for specific domain objects. 
-  For example: 
-      domainObject.getCapability("action").perform("navigate"); 
-  ...will initiate a navigate action upon the domain object, if an action with key "navigate" is 
-defined. 
-   
-  This capability has the following interface: 
-   
- * getActions(context)​: Get the actions that are applicable in the specified action 
-  context​; the capability will fill in the ​domainObject​ field of this context if necessary. If 
-  context​ is specified as a string, they will instead be used as the ​key​ of the action 
-  context. Returns an array of ​Action​ instances. 
- * perform(context)​: Perform an action. This will find and perform the first matching 
-  action available for the specified action ​context​, filling in the ​domainObject​ field as 
-  necessary. If ​context​ is specified as a string, they will instead be used as the ​key​ of 
-  the action context. Returns a ​Promise​ for the result of the action that was performed, or 
-  undefined if no matching action was found. 
+This capability has the following interface: 
+* `getActions(context)`​: Get the actions that are applicable in the specified 
+action `context​`; the capability will fill in the `​domainObject​` field of this 
+context if necessary. If context​ is specified as a string, they will instead be 
+used as the ​`key`​ of the action context. Returns an array of ​`Action​` instances.
+* `perform(context)​`: Perform an action. This will find and perform the first 
+matching action available for the specified action ​context​, filling in the 
+`​domainObject​` field as necessary. If ​`context​` is specified as a string, they 
+will instead be used as the `​key​` of the action context. Returns a `​Promise​` for 
+the result of the action that was performed, or `undefined` if no matching action 
+was found. 
+
+## Composition 
  
-                                         55 
-Composition 
- 
-  The ​composition​ capability provides access to domain objects that are contained by 
-this domain object. While the ​composition​ property of a domain object’s model describes 
-these contents (by their identifiers), the ​composition​ capability provides a means to load the 
-corresponding ​DomainObject​ instances in the same order. The absence of this property in the 
+The `​composition​` capability provides access to domain objects that are 
+contained by this domain object. While the ​`composition​` property of a domain 
+object’s model describes these contents (by their identifiers), the ​
+`composition​` capability provides a means to load the corresponding 
+`​DomainObject​` instances in the same order. The absence of this property in the 
 model will result in the absence of this capability in the domain object. 
-  This capability has the following interface: 
- 
- * invoke()​: Returns a ​Promise​ for an array of ​DomainObject​ instances. 
 
-Delegation 
-   
-  The ​delegation​ capability is used to communicate the intent of a domain object to 
-delegate responsibilities, which would normally handled by other capabilities, to the domain 
-objects in its composition. 
-  This capability has the following interface: 
+This capability has the following interface: 
  
- * getDelegates(key)​: Returns a ​Promise​ for an array of ​DomainObject​ instances, 
-  to which this domain object wishes to delegate the capability with the specified ​key​. 
- * invoke(key)​: Alias of ​getDelegates(key)​. 
- * doesDelegate(key)​: Returns ​true​ if the domain object does delegate the capability 
-  with the specified ​key​.  
- 
-  The platform implementation of the ​delegation​ capability inspects the domain object’s 
-type definition for a property ​delegates​, whose value is an array of strings describing which 
-capabilities domain objects of that type wish to delegate. If this property is not present, the 
-delegation​ capability will not be present in domain objects of that type.  
- 
- 
+* `invoke()`​: Returns a `​Promise​` for an array of `​DomainObject​` instances.
 
-       
-                                         56 
-Editor 
+## Delegation 
+
+The ​delegation​ capability is used to communicate the intent of a domain object 
+to delegate responsibilities, which would normally handled by other 
+capabilities, to the domain objects in its composition. 
+
+This capability has the following interface: 
  
-  The ​editor​ capability is meant primarily for internal use by Edit mode, and helps to 
-manage the behavior associated with exiting Edit mode via Save or Cancel. Its interface is not 
-intended for general use. However, ​domainObject.hasCapability(‘editor’)​ is a 
-useful way of determining whether or not we are looking at an object in Edit mode. 
-   
+* `getDelegates(key)`​: Returns a ​Promise​ for an array of ​DomainObject​ instances, 
+to which this domain object wishes to delegate the capability with the specified ​
+key​. 
+* `invoke(key)`​: Alias of ​getDelegates(key)​. 
+* `doesDelegate(key)`​: Returns ​true​ if the domain object does delegate the 
+capability with the specified ​key​.  
+
+The platform implementation of the ​delegation​ capability inspects the domain 
+object’s type definition for a property ​delegates​, whose value is an array of 
+strings describing which capabilities domain objects of that type wish to 
+delegate. If this property is not present, the delegation​ capability will not be 
+present in domain objects of that type.  
+
+## Editor 
+
+The ​editor​ capability is meant primarily for internal use by Edit mode, and 
+helps to manage the behavior associated with exiting Edit mode via Save or 
+Cancel. Its interface is not intended for general use. However, 
+`​domainObject.hasCapability(‘editor’)`​ is a useful way of determining whether or 
+not we are looking at an object in Edit mode.
  
-Mutation 
+## Mutation 
+
+The ​`mutation​` capability provides a means by which the contents of a domain 
+object’s model can be modified. This capability is provided by the platform for 
+all domain objects, and has the following interface:
+
+* `mutate(mutator, [timestamp])`​: Modify the domain object’s model using the 
+specified `​mutator​` function. After changes are made, the ​`modified​` property of 
+the model will be updated with the specified ​`timestamp​`, if one was provided, 
+or with the current system time. 
+* `invoke(...)​`: Alias of ​`mutate​`.
+
+Changes to domain object models should only be made via the ​`mutation​` 
+capability; other platform behavior is likely to break (either by exhibiting 
+undesired behavior, or failing to exhibit desired behavior) if models are 
+modified by other means.
  
-  The ​mutation​ capability provides a means by which the contents of a domain object’s 
-model can be modified. This capability is provided by the platform for all domain objects, and 
-has the following interface: 
- 
- * mutate(mutator, [timestamp])​: Modify the domain object’s model using the 
-  specified ​mutator​ function. After changes are made, the ​modified​ property of the 
-  model will be updated with the specified ​timestamp​, if one was provided, or with the 
-  current system time. 
- * invoke(...)​: Alias of ​mutate​. 
- 
-  Changes to domain object models should only be made via the ​mutation​ capability; 
-other platform behavior is likely to break (either by exhibiting undesired behavior, or failing to 
-exhibit desired behavior) if models are modified by other means. 
- 
-Mutator Function 
- 
-  The ​mutator​ argument above is a function which will receive a cloned copy of the 
+### Mutator Function 
+
+The ​mutator​ argument above is a function which will receive a cloned copy of the 
 domain object’s model as a single argument. It may return: 
- 
- * A ​Promise​, in which case the resolved value of the promise will be used to determine 
-  which of the following forms is used. 
- * Boolean ​false​, in which case the mutation is cancelled. 
- * A JavaScript object, in which case this object will be used as the new model for this 
-  domain object. 
-                                         57 
- * No value (or, equivalently, ​undefined​), in which case the cloned copy (including any 
-  changes made in place by the mutator function) will be used as the new domain object 
-  model. 
- 
-Persistence 
+
+* A ​`Promise​`, in which case the resolved value of the promise will be used to 
+determine which of the following forms is used. 
+* Boolean ​`false​`, in which case the mutation is cancelled. 
+* A JavaScript object, in which case this object will be used as the new model 
+for this domain object.
+* No value (or, equivalently, `​undefined​`), in which case the cloned copy 
+(including any changes made in place by the mutator function) will be used as 
+the new domain object model. 
+
+## Persistence 
  
   The ​persistence​ capability provides a mean for interacting with the underlying 
 persistence service which stores this domain object’s model. It has the following interface: 
