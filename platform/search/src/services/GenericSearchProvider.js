@@ -41,6 +41,7 @@ define(
          *
          * @constructor
          * @param $q Angular's $q, for promise consolidation.
+         * @param $log Anglar's $log, for logging.
          * @param {Function} throttle a function to throttle function invocations
          * @param {ObjectService} objectService The service from which
          *        domain objects can be gotten.
@@ -49,12 +50,13 @@ define(
          * @param {GENERIC_SEARCH_ROOTS} ROOTS An array of the root
          *        domain objects' IDs.
          */
-        function GenericSearchProvider($q, throttle, objectService, workerService, topic, ROOTS) {
+        function GenericSearchProvider($q, $log, throttle, objectService, workerService, topic, ROOTS) {
             var indexed = {},
                 pendingQueries = {},
                 toIndex = {},
                 worker = workerService.run('genericSearchWorker'),
                 mutationTopic = topic("mutation"),
+                indexingStarted = Date.now(),
                 scheduleFlush;
 
             this.worker = worker;
@@ -132,6 +134,11 @@ define(
                 });
 
                 if (ids.length < 1) {
+                    $log.info([
+                        'GenericSearch finished indexing after ',
+                        ((Date.now() - indexingStarted) / 1000).toFixed(2),
+                        ' seconds.'
+                    ].join(''));
                     return;
                 }
 

@@ -47,6 +47,7 @@
                 "implementation": "services/GenericSearchProvider.js",
                 "depends": [
                     "$q",
+                    "$log",
                     "throttle",
                     "objectService",
                     "workerService",
