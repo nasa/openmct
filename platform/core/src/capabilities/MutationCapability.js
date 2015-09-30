@@ -171,7 +171,7 @@ define(
          * @memberof platform/core.MutationCapability#
          */
         MutationCapability.prototype.listen = function (listener) {
-            return this.mutationTopic.listen(listener);
+            return this.specificMutationTopic.listen(listener);
         };
 
         /**
