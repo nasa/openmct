@@ -1,4 +1,4 @@
-/*global define*/
+/*global define,requestAnimationFrame*/
 
 define(
     [],
@@ -14,7 +14,8 @@ define(
                 isLive = true,
                 extrema = {},
                 unsubscribes = [],
-                palette = new colorService.ColorPalette();
+                palette = new colorService.ColorPalette(),
+                pendingUpdate;
 
 
             function setToDefaultViewport() {
@@ -198,9 +199,16 @@ define(
             }
 
             function followDataIfLive() {
-                if (isLive) {
-                    $scope.viewport = viewportForExtrema();
+                if (pendingUpdate) {
+                    return;
                 }
+                requestAnimationFrame(function () {
+                    if (isLive) {
+                        $scope.viewport = viewportForExtrema();
+                    }
+                    pendingUpdate = false;
+                });
+                pendingUpdate = true;
             }
 
             $scope.$on('series:data:add', followDataIfLive);
