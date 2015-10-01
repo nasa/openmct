@@ -8,6 +8,11 @@
                 "key": "urlService",
                 "implementation": "services/UrlService.js",
                 "depends": [ "$location" ]
+            },
+            {
+                "key": "popupService",
+                "implementation": "services/PopupService.js",
+                "depends": [ "$window", "$document" ]
             }
         ],
         "runs": [
