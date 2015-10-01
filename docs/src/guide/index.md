@@ -13,10 +13,8 @@ May 12, 2015        | 0.1       |                         | Victor Woeltjen
 June 4, 2015        | 1.0       | Name Changes            | Victor Woeltjen
 September 23, 2015  | 1.1       | Conversion to MarkDown  | Andrew Henry
 
-# Contents  
-1.  [Introduction](#Introduction)  
-    1. [What is Open MCT Web?](#What-is-Open-MCT-Web-)
-    2. [Client-Server Relationship](#Client-Server-Relationship)
+# Table of Contents
+```generated_toc```
 
 # Introduction
 The purpose of this guide is to familiarize software developers with the Open
@@ -135,14 +133,19 @@ The framework’s role in the application is to manage connections between
 bundles. All application­specific behavior is provided by individual bundles, or
 as the result of their collaboration.
 
-ADD LINK TO DIAGRAM HERE
+The framework is described in more detail in the [Framework Overview](../architecture/Framework.md#Overview) of the 
+architecture guide.
 
 ### Tiers
 While all bundles in a running Open MCT Web instance are effectively peers, it
 is useful to think of them as a tiered architecture, where each tier adds more
 specificity to the application.
-
-ADD LINK TO DIAGRAM HERE
+```nomnoml
+#direction: down
+[Plugins (Features external to OpenMCTWeb) *Bundle]->[<frame>OpenMCTWeb |
+[Application (Plots, layouts, ElasticSearch wrapper) *Bundle]->[Platform (Core API, common UI, infrastructure) *Bundle]
+[Platform (Core API, common UI, infrastructure) *Bundle]->[Framework (RequireJS, AngularJS, bundle loader)]]
+```
 
 * __Framework__ : This tier is responsible for wiring together the set of
 configured components (called bundles) together to instantiate the running
@@ -187,30 +190,8 @@ as well as the framework layer’s role in mediating between these components.
 Once the framework layer has wired these software components together, however,
 the application’s logical architecture emerges.
 
-### Logical Architecture
-INSERT DIAGRAM HERE
-
-* __Templates__​: HTML templates written in Angular’s template syntax; see 
-the [Angular documentation on templates](https://docs.angularjs.org/guide/templates)​. 
-These describe the page as actually seen by the user. Conceptually, stylesheets 
-(controlling the look­and­feel of the rendered templates) belong in this 
-grouping as well. 
-* __Presentation__: ​Responsible for providing information to be displayed in 
-templates, and managing interactions with the information model. Provides the 
-logic and behavior of the user interface itself. 
-* __Information model__: ​Provides a common (within Open MCT Web) set of interfaces 
-for dealing with “things” ­ domain objects ­ within the system. User­facing 
-concerns in a Open MCT Web application are expressed as domain objects; examples 
-include folders (used to organize other domain objects), layouts (used to build 
-displays), or telemetry points (used as handles for streams of remote 
-measurements.) These domain objects expose a common set of interfaces to allow 
-reusable user interfaces to be built in the presentation and template tiers; the 
-specifics of these behaviors are then mapped to interactions with underlying 
-services. 
-* __Services__: ​A set of interfaces for dealing with back­end services.
-* __Back­end__​: External to the Open MCT Web client; the underlying persistence 
-stores, telemetry streams, and so forth which the Open MCT Web client is being 
-used to interact with.
+An overview of the logical architecture of the platform is given in the [Platform Architecture](../architecture/Platform.md#PlatformArchitecture) 
+section of the Platform guide
 
 ### Web Services
 
@@ -221,7 +202,25 @@ telemetry data or store user­created objects. This interaction is hand
 individual bundles using APIs which are supported in browser (such as 
 `XMLHttpRequest`​, typically wrapped by Angular’s '`$http​`.)
 
-INSERT DIAGRAM HERE
+```nomnoml
+#direction: right
+[Web Service #1] <- [Web Browser]
+[Web Service #2] <- [Web Browser]
+[Web Service #3] <- [Web Browser]
+[<package> Web Browser |
+  [<package> Open MCT Web |
+    [Plugin Bundle #1]-->[Core API]
+    [Core API]<--[Plugin Bundle #2]
+    [Platform Bundle #1]-->[Core API]
+    [Platform Bundle #2]-->[Core API]
+    [Platform Bundle #3]-->[Core API]
+    [Core API]<--[Platform Bundle #4]
+    [Core API]<--[Platform Bundle #5]
+    [Core API]<--[Plugin Bundle #3]
+  ]
+  [Open MCT Web] ->[Browser APIs]
+]
+```
 
 This architectural approach ensures a loose coupling between applications built 
 using Open MCT Web and the backends which support them. 
@@ -465,7 +464,7 @@ similar) followed by a dot, to avoid collisions. 
 The properties used in extension definitions are typically unique to each 
 category of extension; a few properties have standard interpretations by the 
 platform. 
- 
+
 * `implementation`​: Identifies a JavaScript source file (in the sources 
 folder) which implements this extension. This JavaScript file is expected to 
 contain an AMD module (see ​http://requirejs.org/docs/whyamd.html#amd​) which 
@@ -512,7 +511,7 @@ extension's priority may be specified as a ​`priority`​ property in
 definition; this may be a number, or a symbolic string. Extensions are 
 registered in reverse order (highest­priority first), and symbolic strings are 
 mapped to the numeric values as follows: 
- 
+
 * `fallback`​: Negative infinity. Used for extensions that are not intended for 
 use (that is, they are meant to be overridden) but are present as an option of 
 last resort. 
@@ -526,7 +525,7 @@ overridden. 
 used, but still may be overridden in principle. 
 * `mandatory`​: Positive infinity. Used when an extension should definitely not 
 be overridden. 
- 
+
 These symbolic names are chosen to support usage where many extensions may 
 satisfy a given need, but only one may be used; in this case, as a convention it 
 should be the lowest­ordered (highest­priority) extensions available. In other 
@@ -590,7 +589,7 @@ opposed to a constructor function.)
 Extensions of category `​routes`​ will be registered with Angular’s [route provider](https://docs.angularjs.org/api/ngRoute/provider/$routeProvider​). 
 Extensions of this category have no implementations, and need only two 
 properties in their definition: 
- 
+
 * `when​`: The value that will be passed as the path argument to ​
 `$routeProvider.when`​; specifically, the string that will appear in the trailing 
 part of the URL corresponding to this route. This property may be omitted, in 
@@ -734,7 +733,7 @@ range, and may have more than one.
 
 Telemetry series data in Open MCT Web is expressed via the following 
 `TelemetrySeries​` interface: 
- 
+
 * `getPointCount()`​: Returns the number of unique points/samples in this series. 
 * `getDomainValue(index, [domain])`:​ Get the domain value at the specified index​. 
 If a second ​domain​ argument is provided, this is taken as a string identifier 
@@ -749,7 +748,7 @@ Domain objects which have associated telemetry also expose metadata abo
 telemetry; this is retrievable via the `​getMetadata()`​ of the telemetry 
 capability. This will return a single JavaScript object containing the following 
 properties: 
- 
+
 * `source​`: The machine­readable identifier for the source of telemetry data for 
 this object. 
 * `key​`: The machine­readable identifier for the individual telemetry series. 
@@ -765,7 +764,8 @@ made using this capability. 
 
 ## Types 
 A domain object’s type is represented as a ​Type​ object, which has the following 
-interface: 
+interface:
+
 * `getKey()`​: Get the machine­readable identifier for this type. 
 * `getName()​`: Get the human­readable name for this type. 
 * `getDescription()`​: Get a human­readable summary of this type. 
@@ -828,9 +828,9 @@ metadata from the action’s extension definition.
 available as a property of the implementation’s constructor itself), which will 
 be used by the platform to filter out actions from contexts in which they are 
 inherently inapplicable.
-  
+
 An action’s bundle definition (and/or `​getMetadata()`​ return value) may include:
- 
+
 * `category​`: A string or dearray of strings identifying which category or 
 categories an action falls into; used to determine when an action is displayed. 
 Categories supported by the platform include: 
@@ -900,7 +900,7 @@ modified. 
 of an individual row definition. 
 * `field​`: Name of the field in ​`ngModel​` which will hold the value for this 
 control. 
- 
+
 ## Gestures
 
 A gesture is a user action which can be taken upon a representation of a domain 
@@ -951,7 +951,7 @@ this indicator, and clicking it will invoke this method. 
  
 Note that all methods are optional, and are called directly from an Angular 
 template, so they should be appropriate to run during digest cycles. 
- 
+
 ### Custom Indicators 
 
 Indicators which wish to have an arbitrary appearance (instead of following the 
@@ -1036,6 +1036,7 @@ which are referenced from templates. See [https://docs.angularjs.org/guide/
 for more information on controllers in Angular.) 
  
 A representation’s scope will contain:
+
 * `domainObject​`: The represented domain object.
 * `model​`: The domain object’s model.
 * `configuration​`: An object containing configuration information for this 
@@ -1082,9 +1083,10 @@ models. Root­level domain objects appear at the top­level of the tre
 For example, the _My Items_ folder is added as an extension of this category. 
 
 Extensions of this category should have the following properties:
+
 * `id​`: The machine­readable identifier for the domaiwn object being exposed.
 * `model`​: The model, as a JSON object, for the domain object being exposed. 
- 
+
 ## Stylesheets 
 
 The ​stylesheets​ extension category is used to add CSS files to style the 
@@ -1106,6 +1108,7 @@ directive, which behaves similarly to `​ng­include​`, except that i
 symbolic identifiers instead of paths.
 
 A template’s extension definition should include the following properties:
+
 * `key​`: The machine­readable name which identifies this template, matched 
 against the value given to the key attribute of the mct­include directive.
 * `templateUrl​`: The path to the relevant Angular template. This path is 
@@ -1199,14 +1202,15 @@ that toolbar: 
     no arguments to use as a getter, called with a value to use as a setter.) 
     * `method​`: A method to invoke (again, on the selected object) from the 
     toolbar control. Useful particularly for buttons (which don’t edit a single 
-    property, necessarily.) 
- 
+    property, necessarily.)
+
 ### View Scope 
 
 Views do not have implementations, but do get the same properties in scope that 
 are provided for `​representations​`. 
 
 When a view is in Edit mode, this scope will additionally contain:
+
 * `commit()`​: A function which can be invoked to mark any changes to the view’s 
   configuration​ as ready to persist.
 * `selection​`: An object representing the current selection state. 
@@ -1550,7 +1554,7 @@ extension mechanism is insufficient to achieve a desired result. 
 The ​`actionService​` provides `​Action​` instances which are applicable in specific 
 contexts. See Core API for additional notes on the interface for actions. The 
 `​actionService​` has the following interface: 
-   
+
 * `getActions(context)`​: Returns an array of ​Action​ objects which are applicable 
 in the specified action context.   
 
@@ -1577,7 +1581,7 @@ model. Keys in this object are the capability keys (as used in a 
 
 The `​dialogService​` provides a means for requesting user input via a modal 
 dialog. It has the following interface: 
- 
+
 * `getUserInput(formStructure, formState)`​: Prompt the user to fill out a form. 
 The first argument describes the form’s structure (as will be passed to 
 ​mct­form​) while the second argument contains the initial state of that form. 
@@ -1604,7 +1608,7 @@ option may have the following properties:
     * `name`​: Human­readable name to display in the button. 
     * `key`​: Machine­readable key, to pass as the result of the resolved promise 
     when clicked. 
-    * `description​`: Description to show in tooltip on hover. 
+    * `description​`: Description to show in tooltip on hover.
 
 ## Domain Object Service 
 
@@ -1630,7 +1634,7 @@ gestures. 
 ## Model Service 
 
 The ​modelService​ provides domain object models. It has the following interface: 
- 
+
 * `getModels(ids)`​: For the provided array of domain object identifiers, returns 
 a Promise​ for an object containing key­value pairs, where keys are domain object 
 identifiers and values are corresponding domain object models. Note that the 
@@ -1641,7 +1645,7 @@ result may contain a superset or subset of the models requested. 
 The ​persistenceService​ provides the ability to load/store JavaScript objects 
 (presumably serializing/deserializing to JSON in the process.) This is used 
 primarily to store domain object models. It has the following interface: 
- 
+
 * `listSpaces()`​: Returns a ​Promise​ for an array of strings identifying the 
 different persistence spaces this service supports. Spaces are intended to be 
 used to distinguish between different underlying persistence stores, to allow 
@@ -1925,7 +1929,7 @@ the result of the action that was performed, or `undefined` if no ma
 was found. 
 
 ## Composition 
- 
+
 The `​composition​` capability provides access to domain objects that are 
 contained by this domain object. While the ​`composition​` property of a domain 
 object’s model describes these contents (by their identifiers), the ​
@@ -1934,7 +1938,7 @@ object’s model describes these contents (by their identifiers), the �
 model will result in the absence of this capability in the domain object. 
 
 This capability has the following interface: 
- 
+
 * `invoke()`​: Returns a `​Promise​` for an array of `​DomainObject​` instances.
 
 ## Delegation 
@@ -1944,7 +1948,7 @@ to delegate responsibilities, which would normally handled by other 
 capabilities, to the domain objects in its composition. 
 
 This capability has the following interface: 
- 
+
 * `getDelegates(key)`​: Returns a ​Promise​ for an array of ​DomainObject​ instances, 
 to which this domain object wishes to delegate the capability with the specified ​
 key​. 
@@ -1997,317 +2001,316 @@ for this domain object.
 (including any changes made in place by the mutator function) will be used as 
 the new domain object model. 
 
-## Persistence 
- 
-  The ​persistence​ capability provides a mean for interacting with the underlying 
-persistence service which stores this domain object’s model. It has the following interface: 
- 
- * persist()​: Store the local version of this domain object, including any changes, to the 
-  persistence store. Returns a ​Promise​ for a boolean value, which will be true when the 
-  object was successfully persisted. 
- * refresh()​: Replace this domain object’s model with the most recent version from 
-  persistence. Returns a ​Promise​ which will resolve when the change has completed. 
- * getSpace()​: Return the string which identifies the persistence space which stores this 
-  domain object. 
- 
-Relationship 
- 
-  The ​relationship​ capability provides a means for accessing other domain objects 
-with which this domain object has some typed relationship. It has the following interface: 
- 
- * listRelationships()​: List all types of relationships exposed by this object. Returns 
-  an array of strings identifying the types of relationships. 
- * getRelatedObjects(relationship)​: Get all domain objects to which this domain 
-  object has the specified type of ​relationship​, which is a string identifier (as above.) 
-  Returns a ​Promise​ for an array of ​DomainObject​ instances. 
- 
-  The platform implementation of the ​relationship​ capability is present for domain 
-objects which has a ​relationships​ property in their model, whose value is an object 
-containing key­value pairs, where keys are strings identifying relationship types, and values are 
-arrays of domain object identifiers. 
- 
-                                         58 
-Telemetry 
- 
-  The ​telemetry​ capability provides a means for accessing telemetry data associated 
-with a domain object. It has the following interface: 
- 
- * requestData([request])​: Request telemetry data for this specific domain object, 
-  using telemetry request parameters from the specified ​request​ if provided. This 
-  capability will fill in telemetry request properties as­needed for this domain object. 
-  Returns a ​Promise​ for a ​TelemetrySeries​. 
- * subscribe(callback, [request])​:  Subscribe to telemetry data updates for this 
-  specific domain object, using telemetry request parameters from the specified ​request 
-  if provided. This capability will fill in telemetry request properties as­needed for this 
-  domain object. The specified ​callback​ will be invoked with ​TelemetrySeries 
-  instances as they arrive. Returns a function which can be invoked to terminate the 
-  subscription, or ​undefined​ if no subscription could be obtained. 
- * getMetadata()​: Get metadata associated with this domain object’s telemetry. 
-   
-  The platform implementation of the ​telemetry​ capability is present for domain objects 
-which has a ​telemetry​ property in their model and/or type definition; this object will serve as a 
-template for telemetry requests made using this object, and will also be returned by 
-getMetadata() ​above. 
- 
-Type 
-   
-  The ​type​ capability exposes information about the domain object’s type. It has the 
-same interface as ​Type​; see Core API. 
-   
-View 
- 
-  The ​view​ capability exposes views which are applicable to a given domain object. It has 
-the following interface: 
-   
- * invoke()​: Returns an array of extension definitions for views which are applicable for 
-  this domain object. 
-                                         59 
-Actions 
- 
-  Actions are reusable processes/behaviors performed by users within the system, 
-typically upon domain objects. 
-Action Categories 
- 
-  The platform understands the following action categories (specifiable as the ​category 
-parameter of an action’s extension definition.) 
- 
- * contextual​: Appears in context menus. 
- * view­control​: Appears in top­right area of view (as buttons) in Browse mode 
- 
-Platform Actions 
- 
-  The platform defines certain actions which can be utilized by way of a domain object’s 
-action​ capability. Unless otherwise specified, these act upon (and modify) the object 
-described by the ​domainObject​ property of the action’s context. 
- 
- * cancel​: Cancel the current editing action (invoked from Edit mode.) 
- * compose​: Place an object in another object’s composition. The object to be added 
-  should be provided as the ​selectedObject​ of the action context. 
- * edit​: Start editing an object (enter Edit mode.) 
- * fullscreen​: Enter full screen mode. 
- * navigate​: Make this object the focus of navigation (e.g. highlight it within the tree, 
-  display a view of it to the right.) 
- * properties​: Show the “Edit Properties” dialog. 
- * remove​: Remove this domain object from its parent’s composition. (The parent, in this 
-  case, is whichever other domain object exposed this object by way of its ​composition 
-  capability.) 
- * save​: Save changes (invoked from Edit mode.) 
- * window​: Open this object in a new window. 
- 
+## Persistence
 
-       
-                                         60 
-Policies 
- 
-  Policies are consulted to determine when certain behavior in Open MCT Web is allowed. 
-Policy questions are assigned to certain categories, which broadly describe the type of decision 
-being made; within each category, policies have a candidate (the thing which may or may not be 
-allowed) and, optionally, a context (describing, generally, the context in which the decision is 
-occurring.)  
-  The types of objects passed for “candidate” and “context” vary by category; these types 
-are documented below. 
-Policy Categories 
- 
-  The platform understands the following policy categories (specifiable as the ​category 
-parameter of an policy’s extension definition.) 
- 
- * action​: Determines whether or not a given action is allowable. The candidate 
-  argument here is an ​Action​; the context is its action context object. 
- * composition​: Determines whether or not domain objects of a given type are allowed 
-  to contain domain objects of another type. The candidate argument here is the 
-  container’s ​Type​; the context argument is the ​Type​ of the object to be contained. 
- * view​: Determines whether or not a view is applicable for a domain object. The 
-  candidate argument is the view’s extension definition; the context argument is the 
-  DomainObject​ to be viewed. 
- 
- 
- 
+The persistence capability provides a mean for interacting with the underlying 
+persistence service which stores this domain object’s model. It has the 
+following interface:
 
-       
-                                         61 
-Build, Test, Deploy 
- 
-  Open MCT Web is designed to support a broad variety of build and deployment options. 
-The sources can be deployed in the same directory structure used during development. A few 
-utilities are included to support development processes. 
- 
-Command-line Build 
- 
-  Open MCT Web includes a script for building via command line using Maven 3.0.4 
-(​https://maven.apache.org/​). 
-   
-  Invoking ​mvn clean install​ will: 
- 
- * Check code style using JSLint. The build will fail if JSLint raises any warnings. 
- * Run the test suite (see below.) The build will fail if any tests fail. 
- * Populate version info (e.g. commit hash, build time.) 
- * Produce a web archive (​.war​) artifact in the ​target​ directory. 
- 
-  The produced artifact contains a subset of the repository’s own folder hierarchy, omitting 
-tests and example bundles.  
-  Note that an internet connection is required to run this build, in order to download build 
-dependencies. 
- 
-Test Suite 
- 
-  Open MCT Web uses Jasmine (​http://jasmine.github.io/​) for automated testing. The file 
-test.html​, included at the top level of the source repository, can be run from the browser to 
-perform tests for all active bundles, as defined in ​bundle.json​. 
-  To define tests for a bundle: 
-   
- * Include a directory named ​test​ within that bundle. 
- * In the ​test​ directory, include a file named ​suite.json​. This will identify which scripts 
-  will be tested. 
- * The file ​suite.json​ must contain a JSON array of strings, where each string is the 
-  name of a script to be tested. These names should include any directory paths to the 
-  script after (but not including) the ​src​ folder, and should not include the file’s ​.js 
-  extension. (Note that while Open MCT Web’s framework allows a different name to be 
-  chosen for the ​src​ directory, the test runner does not: This directory must be named 
-  src​ for the test runner to find it.) 
-                                         62 
- * For each script to be tested, a corresponding test script should be located in the bundle’s 
-  test​ directory. This should include the suffix ​Spec​ at the end of the filename (but 
-  before the ​.js​ extension.) This test script should be an AMD module which uses the 
-  Jasmine API to declare its test behavior. It should declare an AMD dependency on the 
-  script to be tested, using a relative path. 
-   
-  For example, if writing tests for a bundle at ​example/foo​ with two scripts: 
- * example/foo/src/controllers/FooController.js 
- * example/foo/src/directives/FooDirective.js 
- 
-  First, these scripts should be identified in ​example/foo/test/suite.json​, e.g. with 
-contents: 
-  [ "controllers/FooController", "directives/FooDirective" ] 
- 
-  Then, scripts which describe these tests should be written. For example, test 
-example/foo/test/controllers/FooControllerSpec.js​ could look like: 
- 
-/*global define,Promise,describe,it,expect,beforeEach*/ 
- 
-define( 
-    ["../../src/controllers/FooController"], 
-    function (FooController) { 
-        "use strict"; 
- 
-        describe("The foo controller", function () { 
-            it("does something", function () { 
-                var controller = new FooController(); 
-                expect(controller.foo()).toEqual("foo"); 
-            }); 
-        }); 
-    } 
-); 
- 
-Code Coverage 
- 
-  In addition to running tests, the test runner will also capture code coverage information 
-using Blanket.JS (​http://blanketjs.org/​) and display this at the bottom of the screen. Currently, 
-only statement coverage is displayed. 
-       
-                                         63 
-Deployment 
- 
-  Open MCT Web is built to be flexible in terms of the deployment strategies it supports. In 
-order to run in the browser, Open MCT Web needs: 
- 
- 1. HTTP access to sources/resources for the framework, platform, and all active bundles. 
- 2. Access to any external services utilized by active bundles. (This means that external 
-  services need to support HTTP or some other web­accessible interface, like 
-  WebSockets.) 
- 
-  Any HTTP server capable of serving flat files is sufficient for the first point. The 
-command­line build also packages Open MCT Web into a ​.war​ file for easier deployment on 
-containers such as Apache Tomcat. 
-  The second point may be less flexible, as it depends upon the specific services to be 
-utilized by Open MCT Web. Because of this, it is often the set of external services (and the 
-manner in which they are exposed) that determine how to deploy Open MCT Web. 
- 
-  One important constraint to consider in this context is the browser’s same origin policy. If 
-external services are not on the same apparent host and port as the client (from the perspective 
-of the browser) then access may be disallowed. There are two workarounds if this occurs: 
- * Make the external service appear to be on the same host/port, either by actually 
-  deploying it there, or by proxying requests to it. 
- * Enable CORS (cross­origin resource sharing) on the external service. This is only 
-  possible if the external service can be configured to support CORS. Care should be 
-  exercised if choosing this option to ensure that the chosen configuration does not create 
-  a security vulnerability. 
- 
-  Examples of deployment strategies (and the conditions under which they make the most 
-sense) include: 
- 
- * If the external services that Open MCT Web will utilize are all running on Apache Tomcat 
-  (​https://tomcat.apache.org/​), then it makes sense to run Open MCT Web from the same 
-  Tomcat instance as a separate web application. The ​.war​ artifact produced by the 
-  command line build facilitates this deployment option. (See 
-  https://tomcat.apache.org/tomcat­8.0­doc/deployer­howto.html ​ for general information on 
-  deploying in Tomcat.) 
- * If a variety of external services will be running from a variety of hosts/ports, then it may 
-  make sense to use a web server that supports proxying, such as the Apache HTTP 
-  Server (​http://httpd.apache.org/​). In this configuration, the HTTP server would be 
-  configured to proxy (or reverse proxy) requests at specific paths to the various external 
-  services, while providing Open MCT Web as flat files from a different path. 
-                                         64 
- * If a single server component is being developed to handle all server­side needs of an 
-  Open MCT Web instance, it can make sense to serve Open MCT Web (as flat files) from 
-  the same component using an embedded HTTP server such as Nancy 
-  (​http://nancyfx.org/​). 
- * If no external services are needed (or if the “external services” will just be generating flat 
-  files to read) it makes sense to utilize a lightweight flat file HTTP server such as Lighttpd 
-  (​http://www.lighttpd.net/​). In this configuration, Open MCT Web sources/resources would 
-  be placed at one path, while the files generated by the external service are placed at 
-  another path. 
- * If all external services support CORS, it may make sense to have an HTTP server that is 
-  solely responsible for making Open MCT Web sources/resources available, and to have 
-  Open MCT Web contact these external services directly. Again, lightweight HTTP 
-  servers such as Lighttpd (​http://www.lighttpd.net/​) are useful in this circumstance. The 
-  downside of this option is that additional configuration effort is required, both to enable 
-  CORS on the external services, and to ensure that Open MCT Web can correctly locate 
-  these services. 
- 
-  Another important consideration is authentication. By design, Open MCT Web does not 
-handle user authentication. Instead, this should typically be treated as a deployment­time 
-concern, where authentication is handled by the HTTP server which provides Open MCT Web, 
-or an external access management system. 
- 
-Configuration 
- 
-  In most of the deployment options above, some level of configuration is likely to be 
-needed or desirable to make sure that bundles can reach the external services they need to 
-reach. Most commonly this means providing the path or URL to an external service. 
-  Configurable parameters within Open MCT Web are specified via constants (literally, as 
-extensions of the ​constants​ category) and accessed via dependency injection by the scripts 
-which need them. Reasonable defaults for these constants are provided in the bundle where 
-they are used. Plugins are encouraged to follow the same pattern. 
-  Constants may be specified in any bundle; if multiple constants are specified with the 
-same ​key​, the highest­priority one will be used. This allows default values to be overridden by 
-specifying constants with higher priority. 
-   
-  This permits at least three configuration approaches: 
- 
- * Modify the constants defined in their original bundles when deploying. This is generally 
-  undesirable due to the amount of manual work required and potential for error, but is 
-  viable if there are a small number of constants to change. 
- * Add a separate configuration bundle which overrides the values of these constants. This 
-  is particularly appropriate when multiple configurations (e.g. development, test, 
-                                         65 
-  production) need to be managed easily; these can be swapped quickly by changing the 
-  set of active bundles in ​bundles.json​. 
- * Deploy Open MCT Web and its external services in such a fashion that the default paths 
-  to reach external services are all correct. 
- 
-Configuration Constants 
- 
-  The following configuration constants are recognized by Open MCT Web bundles: 
- 
- * CouchDB adapter, ​platform/persistence/coucb 
-    ○ COUCHDB_PATH​: URL or path to the CouchDB database to be used for domain 
-      object persistence. Should not include a trailing slash. 
- * ElasticSearch adapter, ​platform/persistence/elastic 
-    ○ ELASTIC_ROOT​: URL or path to the ElasticSearch instance to be used for 
-      domain object persistence. Should not include a trailing slash. 
-    ○ ELASTIC_PATH​: Path relative to the ElasticSearch instance where domain 
-       object models should be persisted. Should take the form ​<index>/<type>​. 
-                                         66 
+* `persist()`: Store the local version of this domain object, including any 
+changes, to the persistence store. Returns a Promise for a boolean value, which 
+will be true when the object was successfully persisted.
+* `refresh()`: Replace this domain object’s model with the most recent version 
+from persistence. Returns a Promise which will resolve when the change has 
+completed.
+* `getSpace()`: Return the string which identifies the persistence space which 
+stores this domain object.
+
+## Relationship
+
+The relationship capability provides a means for accessing other domain objects 
+with which this domain object has some typed relationship. It has the following 
+interface:
+
+* `listRelationships()`: List all types of relationships exposed by this object. 
+Returns an array of strings identifying the types of relationships.
+* `getRelatedObjects(relationship)`: Get all domain objects to which this domain 
+object has the specified type of relationship, which is a string identifier 
+(as above.) Returns a `Promise` for an array of `DomainObject` instances.
+
+The platform implementation of the `relationship` capability is present for domain 
+objects which has a `relationships` property in their model, whose value is an 
+object containing key-value pairs, where keys are strings identifying 
+relationship types, and values are arrays of domain object identifiers.
+
+##Telemetry
+
+The telemetry capability provides a means for accessing telemetry data 
+associated with a domain object. It has the following interface:
+
+* `requestData([request])`: Request telemetry data for this specific domain 
+object, using telemetry request parameters from the specified request if 
+provided. This capability will fill in telemetry request properties as-needed 
+for this domain object. Returns a `Promise` for a `TelemetrySeries`.
+* `subscribe(callback, [request])`:  Subscribe to telemetry data updates for 
+this specific domain object, using telemetry request parameters from the 
+specified request if provided. This capability will fill in telemetry request 
+properties as-needed for this domain object. The specified callback will be 
+invoked with TelemetrySeries instances as they arrive. Returns a function which 
+can be invoked to terminate the subscription, or undefined if no subscription 
+could be obtained.
+* `getMetadata()`: Get metadata associated with this domain object’s telemetry.
+
+The platform implementation of the `telemetry` capability is present for domain 
+objects which has a `telemetry` property in their model and/or type definition; 
+this object will serve as a template for telemetry requests made using this 
+object, and will also be returned by `getMetadata()` above.
+
+## Type
+The `type` capability exposes information about the domain object’s type. It has 
+the same interface as `Type`; see Core API.
+
+## View
+
+The `view` capability exposes views which are applicable to a given domain 
+object. It has the following interface:
+
+* `invoke()`: Returns an array of extension definitions for views which are 
+applicable for this domain object.
+
+# Actions
+
+Actions are reusable processes/behaviors performed by users within the system, 
+typically upon domain objects.
+
+## Action Categories
+
+The platform understands the following action categories (specifiable as the 
+`category` parameter of an action’s extension definition.)
+
+* `contextual`: Appears in context menus.
+* `view-control`: Appears in top-right area of view (as buttons) in Browse mode
+
+## Platform Actions
+The platform defines certain actions which can be utilized by way of a domain 
+object’s `action` capability. Unless otherwise specified, these act upon (and 
+modify) the object described by the `domainObject` property of the action’s 
+context.
+
+* `cancel`: Cancel the current editing action (invoked from Edit mode.)
+* `compose`: Place an object in another object’s composition. The object to be 
+added should be provided as the `selectedObject` of the action context.
+* `edit`: Start editing an object (enter Edit mode.)
+* `fullscreen`: Enter full screen mode.
+* `navigate`: Make this object the focus of navigation (e.g. highlight it within 
+the tree, display a view of it to the right.)
+* `properties`: Show the “Edit Properties” dialog.
+* `remove`: Remove this domain object from its parent’s composition. (The 
+parent, in this case, is whichever other domain object exposed this object by 
+way of its `composition` capability.)
+* `save`: Save changes (invoked from Edit mode.)
+* `window`: Open this object in a new window.
+
+# Policies
+
+Policies are consulted to determine when certain behavior in Open MCT Web is 
+allowed. Policy questions are assigned to certain categories, which broadly 
+describe the type of decision being made; within each category, policies have a 
+candidate (the thing which may or may not be allowed) and, optionally, a context 
+(describing, generally, the context in which the decision is occurring.)
+
+The types of objects passed for “candidate” and “context” vary by category; 
+these types are documented below.
+
+## Policy Categories
+
+The platform understands the following policy categories (specifiable as the 
+`category` parameter of an policy’s extension definition.)
+
+* `action`: Determines whether or not a given action is allowable. The candidate 
+argument here is an Action; the context is its action context object.
+* `composition`: Determines whether or not domain objects of a given type are 
+allowed to contain domain objects of another type. The candidate argument here 
+is the container’s `Type`; the context argument is the `Type` of the object to be 
+contained.
+* `view`: Determines whether or not a view is applicable for a domain object. 
+The candidate argument is the view’s extension definition; the context argument 
+is the `DomainObject` to be viewed.
+
+# Build, Test, Deploy
+Open MCT Web is designed to support a broad variety of build and deployment 
+options. The sources can be deployed in the same directory structure used during 
+development. A few utilities are included to support development processes.
+
+## Command-line Build
+Open MCT Web includes a script for building via command line using Maven 3.0.4 
+[https://maven.apache.org/]().
+        
+Invoking mvn clean install will:
+
+* Check code style using JSLint. The build will fail if JSLint raises any warnings.
+* Run the test suite (see below.) The build will fail if any tests fail.
+* Populate version info (e.g. commit hash, build time.)
+* Produce a web archive (`.war`) artifact in the `target` directory.
+
+The produced artifact contains a subset of the repository’s own folder 
+hierarchy, omitting tests and example bundles.        
+
+Note that an internet connection is required to run this build, in order to 
+download build dependencies.
+
+## Test Suite
+
+Open MCT Web uses Jasmine [http://jasmine.github.io/]() for automated testing. 
+The file `test.html`, included at the top level of the source repository, can be 
+run from the browser to perform tests for all active bundles, as defined in 
+`bundle.json`.
+
+To define tests for a bundle:
+
+* Include a directory named `test` within that bundle.
+* In the `test` directory, include a file named `suite.json`. This will identify 
+which scripts will be tested.
+* The file `suite.json` must contain a JSON array of strings, where each string 
+is the name of a script to be tested. These names should include any directory 
+paths to the script after (but not including) the `src` folder, and should not 
+include the file’s `.js` extension. (Note that while Open MCT Web’s framework 
+allows a different name to be chosen for the src directory, the test runner 
+does not: This directory must be named `src` for the test runner to find it.)
+* For each script to be tested, a corresponding test script should be located in 
+the bundle’s `test` directory. This should include the suffix Spec at the end of 
+the filename (but before the `.js` extension.) This test script should be an AMD 
+module which uses the Jasmine API to declare its test behavior. It should 
+declare an AMD dependency on the script to be tested, using a relative path.
+
+For example, if writing tests for a bundle at example/foo with two scripts:
+* `example/foo/src/controllers/FooController.js`
+* `example/foo/src/directives/FooDirective.js`
+
+First, these scripts should be identified in `example/foo/test/suite.json`, e.g. 
+with contents:`[ "controllers/FooController", "directives/FooDirective" ]`
+
+Then, scripts which describe these tests should be written. For example, test 
+`example/foo/test/controllers/FooControllerSpec.js` could look like:
+
+    /*global define,Promise,describe,it,expect,beforeEach*/
+
+    define(
+        ["../../src/controllers/FooController"],
+        function (FooController) {
+            "use strict";
+    
+    
+            describe("The foo controller", function () {
+                it("does something", function () {
+                    var controller = new FooController();
+                    expect(controller.foo()).toEqual("foo");
+                });
+            });
+        }
+    );
 
 
+## Code Coverage
 
+In addition to running tests, the test runner will also capture code coverage 
+information using [Blanket.JS](http://blanketjs.org/) and display this at the 
+bottom of the screen. Currently, only statement coverage is displayed.
+
+## Deployment
+Open MCT Web is built to be flexible in terms of the deployment strategies it 
+supports. In order to run in the browser, Open MCT Web needs:
+
+1. HTTP access to sources/resources for the framework, platform, and all active 
+bundles.
+2. Access to any external services utilized by active bundles. (This means that 
+external services need to support HTTP or some other web-accessible interface, 
+like WebSockets.)
+
+Any HTTP server capable of serving flat files is sufficient for the first point. 
+The command-line build also packages Open MCT Web into a `.war` file for easier 
+deployment on containers such as Apache Tomcat.
+
+The second point may be less flexible, as it depends upon the specific services 
+to be utilized by Open MCT Web. Because of this, it is often the set of external 
+services (and the manner in which they are exposed) that determine how to deploy 
+Open MCT Web.
+
+One important constraint to consider in this context is the browser’s same 
+origin policy. If external services are not on the same apparent host and port 
+as the client (from the perspective of the browser) then access may be 
+disallowed. There are two workarounds if this occurs:
+
+* Make the external service appear to be on the same host/port, either by 
+actually deploying it there, or by proxying requests to it.
+* Enable CORS (cross-origin resource sharing) on the external service. This is 
+only possible if the external service can be configured to support CORS. Care 
+should be exercised if choosing this option to ensure that the chosen 
+configuration does not create a security vulnerability.
+
+Examples of deployment strategies (and the conditions under which they make the 
+most sense) include:
+
+* If the external services that Open MCT Web will utilize are all running on 
+Apache Tomcat [https://tomcat.apache.org/](), then it makes sense to run Open 
+MCT Web from the same Tomcat instance as a separate web application. The 
+`.war` artifact produced by the command line build facilitates this deployment 
+option. (See `https://tomcat.apache.org/tomcat-8.0-doc/deployer-howto.html` for 
+general information on deploying in Tomcat.)
+* If a variety of external services will be running from a variety of 
+hosts/ports, then it may make sense to use a web server that supports proxying, 
+such as the Apache HTTP Server [http://httpd.apache.org/](). In this 
+configuration, the HTTP server would be configured to proxy (or reverse proxy) 
+requests at specific paths to the various external services, while providing 
+Open MCT Web as flat files from a different path.
+* If a single server component is being developed to handle all server-side 
+needs of an Open MCT Web instance, it can make sense to serve Open MCT Web (as 
+flat files) from the same component using an embedded HTTP server such as Nancy 
+[http://nancyfx.org/]().
+* If no external services are needed (or if the “external services” will just 
+be generating flat files to read) it makes sense to utilize a lightweight flat 
+file HTTP server such as Lighttpd [http://www.lighttpd.net/](). In this 
+configuration, Open MCT Web sources/resources would be placed at one path, while 
+the files generated by the external service are placed at another path.
+* If all external services support CORS, it may make sense to have an HTTP 
+server that is solely responsible for making Open MCT Web sources/resources 
+available, and to have Open MCT Web contact these external services directly. 
+Again, lightweight HTTP servers such as Lighttpd [http://www.lighttpd.net/]() 
+are useful in this circumstance. The downside of this option is that additional 
+configuration effort is required, both to enable CORS on the external services, 
+and to ensure that Open MCT Web can correctly locate these services.
+
+Another important consideration is authentication. By design, Open MCT Web does 
+not handle user authentication. Instead, this should typically be treated as a 
+deployment-time concern, where authentication is handled by the HTTP server 
+which provides Open MCT Web, or an external access management system.
+
+### Configuration
+In most of the deployment options above, some level of configuration is likely 
+to be needed or desirable to make sure that bundles can reach the external 
+services they need to reach. Most commonly this means providing the path or URL 
+to an external service.
+
+Configurable parameters within Open MCT Web are specified via constants 
+(literally, as extensions of the `constants` category) and accessed via 
+dependency injection by the scripts which need them. Reasonable defaults for 
+these constants are provided in the bundle where they are used. Plugins are 
+encouraged to follow the same pattern.
+
+Constants may be specified in any bundle; if multiple constants are specified 
+with the same `key`, the highest-priority one will be used. This allows default 
+values to be overridden by specifying constants with higher priority.
+
+This permits at least three configuration approaches:
+
+* Modify the constants defined in their original bundles when deploying. This is 
+generally undesirable due to the amount of manual work required and potential 
+for error, but is viable if there are a small number of constants to change.
+* Add a separate configuration bundle which overrides the values of these 
+constants. This is particularly appropriate when multiple configurations (e.g. 
+development, test, production) need to be managed easily; these can be swapped 
+quickly by changing the set of active bundles in bundles.json.
+* Deploy Open MCT Web and its external services in such a fashion that the 
+default paths to reach external services are all correct.
+
+### Configuration Constants
+
+The following configuration constants are recognized by Open MCT Web bundles:
+* CouchDB adapter, `platform/persistence/couch`
+    * `COUCHDB_PATH`: URL or path to the CouchDB database to be used for domain 
+    object persistence. Should not include a trailing slash.
+* ElasticSearch adapter, platform/persistence/elastic
+    * `ELASTIC_ROOT`: URL or path to the ElasticSearch instance to be used for 
+    domain object persistence. Should not include a trailing slash.
+    * `ELASTIC_PATH`: Path relative to the ElasticSearch instance where domain 
+    object models should be persisted. Should take the form `<index>/<type>`.
