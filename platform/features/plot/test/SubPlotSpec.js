@@ -157,6 +157,15 @@ define(
                 );
             });
 
+            it ("indicates when there is domain data shown", function () {
+                expect(subplot.hasDomainData()).toEqual(true);
+            });
+
+            it ("indicates when there is no domain data shown", function () {
+                mockPanZoomStack.getDimensions.andReturn([0,0]);
+                expect(subplot.hasDomainData()).toEqual(false);
+            });
+            
             it("disallows marquee zoom when start and end Marquee is at the same position", function () {
                 expect(mockPanZoomStack.pushPanZoom).not.toHaveBeenCalled();
 
