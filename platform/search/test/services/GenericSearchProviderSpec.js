@@ -45,6 +45,8 @@ define(
                 mockTopic,
                 mockMutationTopic,
                 mockRoots = ['root1', 'root2'],
+                mockThrottledFn,
+                throttledCallCount,
                 provider,
                 mockProviderResults;
 
@@ -56,6 +58,18 @@ define(
                             .args[0](mockDomainObjects)
                     );
                 }
+            }
+
+            function resolveThrottledFn() {
+                if (mockThrottledFn.calls.length > throttledCallCount) {
+                    mockThrottle.mostRecentCall.args[0]();
+                    throttledCallCount = mockThrottledFn.calls.length;
+                }
+            }
+
+            function resolveAsyncTasks() {
+                resolveThrottledFn();
+                resolveObjectPromises();
             }
 
             beforeEach(function () {
@@ -75,6 +89,8 @@ define(
                 mockQ.defer.andReturn(mockDeferred);
 
                 mockThrottle = jasmine.createSpy("throttle");
+                mockThrottledFn = jasmine.createSpy("throttledFn");
+                throttledCallCount = 0;
 
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",
@@ -112,7 +128,13 @@ define(
                     mockDomainObjects[id] = (
                         jasmine.createSpyObj(
                             "domainObject",
-                            [ "getId", "getModel", "hasCapability", "getCapability", "useCapability" ]
+                            [
+                                "getId",
+                                "getModel",
+                                "hasCapability",
+                                "getCapability",
+                                "useCapability"
+                            ]
                         )
                     );
                     mockDomainObjects[id].getId.andReturn(id);
@@ -134,11 +156,8 @@ define(
                 mockTopic.andCallFake(function (key) {
                     return key === 'mutation' && mockMutationTopic;
                 });
-                mockThrottle.andCallFake(function (fn) {
-                    return fn;
-                });
+                mockThrottle.andReturn(mockThrottledFn);
                 mockObjectPromise.then.andReturn(mockChainedPromise);
-
 
                 provider = new GenericSearchProvider(
                     mockQ,
@@ -153,6 +172,8 @@ define(
 
             it("indexes tree on initialization", function () {
                 var i;
+
+                resolveThrottledFn();
 
                 expect(mockObjectService.getObjects).toHaveBeenCalled();
                 expect(mockObjectPromise.then).toHaveBeenCalled();
@@ -174,8 +195,8 @@ define(
                     composition: ['a']
                 });
 
-                resolveObjectPromises();
-                resolveObjectPromises();
+                resolveAsyncTasks();
+                resolveAsyncTasks();
 
                 expect(mockWorker.postMessage).toHaveBeenCalledWith({
                     request: 'index',
@@ -190,7 +211,7 @@ define(
                 mockMutationTopic.listen.mostRecentCall
                     .args[0](mockDomainObjects.a);
 
-                resolveObjectPromises();
+                resolveAsyncTasks();
 
                 expect(mockWorker.postMessage).toHaveBeenCalledWith({
                     request: 'index',
@@ -246,12 +267,25 @@ define(
             });
 
             it("warns when objects are unavailable", function () {
-                resolveObjectPromises();
+                resolveAsyncTasks();
                 expect(mockLog.warn).not.toHaveBeenCalled();
                 mockChainedPromise.then.mostRecentCall.args[0](
                     mockObjectPromise.then.mostRecentCall.args[1]()
                 );
                 expect(mockLog.warn).toHaveBeenCalled();
+            });
+
+            it("throttles the loading of objects to index", function () {
+                expect(mockObjectService.getObjects).not.toHaveBeenCalled();
+                resolveThrottledFn();
+                expect(mockObjectService.getObjects).toHaveBeenCalled();
+            });
+
+            it("logs when all objects have been processed", function () {
+                expect(mockLog.info).not.toHaveBeenCalled();
+                resolveAsyncTasks();
+                resolveThrottledFn();
+                expect(mockLog.info).toHaveBeenCalled();
             });
 
         });
