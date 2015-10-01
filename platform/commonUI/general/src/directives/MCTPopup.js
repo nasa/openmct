@@ -27,6 +27,24 @@ define(
 
         var TEMPLATE = "<div></div>";
 
+        /**
+         * The `mct-popup` directive may be used to display elements
+         * which "pop up" over other parts of the page. Typically, this is
+         * done in conjunction with an `ng-if` to control the visibility
+         * of the popup.
+         *
+         * Example of usage:
+         *
+         *     <mct-popup ng-if="someExpr">
+         *         <span>These are the contents of the popup!</span>
+         *     </mct-popup>
+         *
+         * @constructor
+         * @memberof platform/commonUI/general
+         * @param $window the window object (as injected by Angular)
+         * @param $document the jqLite-wrapped document
+         * @param $compile Angular's $compile service
+         */
         function MCTPopup($window, $document, $compile) {
             function link(scope, element, attrs, ctrl, transclude) {
                 var body = $document.find('body'),
