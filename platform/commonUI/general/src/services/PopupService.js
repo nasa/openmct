@@ -69,7 +69,8 @@ define(
          *
          * @param element the jqLite-wrapped DOM element to pop up
          * @param {number[]} position x,y position of the element, in
-         *        pixel coordinates.
+         *        pixel coordinates. Negative values are interpreted as
+         *        relative to the right or bottom of the window.
          * @param {PopupOptions} [options] additional options to control
          *        positioning of the popup
          * @returns {Function} a function that may be invoked to
@@ -90,6 +91,10 @@ define(
                 }
             }
 
+            function adjustNegatives(value, index) {
+                return value < 0 ? (value + winDim[index]) : value;
+            }
+
             // Defaults
             options = options || {};
             offset = [
@@ -97,9 +102,10 @@ define(
                 options.offsetY !== undefined ? options.offsetY : 0
             ];
             margin = [ options.marginX, options.marginY ].map(function (m, i) {
-                return m === undefined ? (winDim[i] / 2) :
-                        m < 0 ? (m + winDim[i]) : m;
-            });
+                return m === undefined ? (winDim[i] / 2) : m;
+            }).map(adjustNegatives);
+
+            position = position.map(adjustNegatives);
 
             // Position the element
             element.css('position', 'absolute');

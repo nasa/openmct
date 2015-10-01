@@ -12,7 +12,7 @@
             {
                 "key": "popupService",
                 "implementation": "services/PopupService.js",
-                "depends": [ "$window", "$document" ]
+                "depends": [ "$document", "$window" ]
             }
         ],
         "runs": [
