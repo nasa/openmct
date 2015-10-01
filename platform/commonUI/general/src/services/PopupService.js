@@ -22,7 +22,8 @@
 /*global define*/
 
 define(
-    function () {
+    ['./Popup'],
+    function (Popup) {
         "use strict";
 
         /**
@@ -73,14 +74,14 @@ define(
          *        relative to the right or bottom of the window.
          * @param {PopupOptions} [options] additional options to control
          *        positioning of the popup
-         * @returns {Function} a function that may be invoked to
-         *          dismiss the info bubble
+         * @returns {platform/commonUI/general.Popup} the popup
          */
         PopupService.prototype.display = function (element, position, options) {
             var $document = this.$document,
                 $window = this.$window,
                 body = $document.find('body'),
                 winDim = [ $window.innerWidth, $window.innerHeight ],
+                styles = { position: 'absolute' },
                 margin,
                 offset,
                 bubble;
@@ -107,32 +108,23 @@ define(
 
             position = position.map(adjustNegatives);
 
-            // Position the element
-            element.css('position', 'absolute');
-
             if (position[0] > margin[0]) {
-                element.css('right', (winDim[0] - position[0] + offset[0]) + 'px');
-                applyClassOption('left');
+                styles.right = (winDim[0] - position[0] + offset[0]) + 'px';
             } else {
-                element.css('left', position[0] + offset[0] + 'px');
-                applyClassOption('right');
+                styles.left =  (position[0] + offset[0]) + 'px';
             }
 
             if (position[1] > margin[1]) {
-                element.css('bottom', (winDim[1] - position[1] + offset[1]) + 'px');
-                applyClassOption('up');
+                styles.bottom = (winDim[1] - position[1] + offset[1]) + 'px';
             } else {
-                element.css('top', position[1] + offset[1] + 'px');
-                applyClassOption('down');
+                styles.top = (position[1] + offset[1]) + 'px';
             }
 
             // Add the menu to the body
             body.append(element);
 
             // Return a function to dismiss the bubble
-            return function () {
-                element.remove();
-            };
+            return new Popup(element, styles);
         };
 
         return PopupService;

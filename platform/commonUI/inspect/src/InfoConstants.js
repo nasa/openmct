@@ -32,17 +32,14 @@ define({
                 "bubble-title=\"{{bubbleTitle}}\" " +
                 "bubble-layout=\"{{bubbleLayout}}\" " +
                 "class=\"bubble-container\">" +
-                "<mct-include key=\"bubbleTemplate\" ng-model=\"bubbleModel\">" +
+                "<mct-include key=\"bubbleTemplate\" " +
+                "ng-model=\"bubbleModel\">" +
                 "</mct-include>" +
                 "</mct-container>",
     // Options and classes for bubble
     BUBBLE_OPTIONS: {
         offsetX: 0,
-        offsetY: -26,
-        leftClass: 'arw-left',
-        rightClass: 'arw-right',
-        topClass: 'arw-top',
-        bottomClss: 'arw-btm'
+        offsetY: -26
     },
     BUBBLE_MOBILE_POSITION: [ 0, -25 ],
     // Max width and margins allowed for bubbles; defined in /platform/commonUI/general/res/sass/_constants.scss

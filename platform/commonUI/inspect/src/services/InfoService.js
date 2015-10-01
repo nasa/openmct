@@ -60,7 +60,7 @@ define(
                 bubbleSpaceLR = InfoConstants.BUBBLE_MARGIN_LR +
                     InfoConstants.BUBBLE_MAX_WIDTH,
                 options,
-                dismissPopup,
+                popup,
                 bubble;
 
             // Pass model & container parameters into the scope
@@ -81,12 +81,18 @@ define(
                 options = {};
             }
 
-            dismissPopup =
-                this.popupService.display(bubble, position, options);
+            popup = this.popupService.display(bubble, position, options);
+
+            // Style the bubble according to how it was positioned
+            if (popup.goesLeft()) {
+                scope.bubbleLayout = 'arw-right';
+            } else if (popup.goesRight()) {
+                scope.bubbleLayout = 'arw-left';
+            }
 
             // Return a function to dismiss the info bubble
             return function dismiss() {
-                dismissPopup();
+                popup.dismiss();
                 scope.$destroy();
             };
         };
