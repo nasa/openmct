@@ -179,7 +179,7 @@ define(
          *     title: string,
          *     hint: string,
          *     progress: int,
-         *     progressMessage: string,
+         *     progressText: string,
          *     unknownProgress: boolean,
          *     actions: [{
          *         label: String,
