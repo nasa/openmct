@@ -66,7 +66,6 @@ define(
                 cachedObjects = [],
                 updater,
                 lastBounds,
-                throttledRequery,
                 handle;
 
             // Populate the scope with axis information (specifically, options
@@ -188,14 +187,9 @@ define(
             function changeDisplayBounds(event, bounds) {
                 self.pending = true;
                 releaseSubscription();
-                throttledRequery();
+                subscribe($scope.domainObject);
                 setBasePanZoom(bounds);
             }
-
-            // Reestablish/reissue request for telemetry
-            throttledRequery = throttle(function () {
-                subscribe($scope.domainObject);
-            }, 250);
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
             this.updateValues = updateValues;
