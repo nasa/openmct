@@ -77,7 +77,7 @@ define(
                 mockElement = jasmine.createSpyObj('element', ELEMENT_METHODS);
                 mockConductor = jasmine.createSpyObj(
                     'conductor',
-                    [ 'queryStart', 'queryEnd', 'displayStart', 'displayEnd' ]
+                    [ 'displayStart', 'displayEnd' ]
                 );
                 mockCompiledTemplate = jasmine.createSpy('template');
                 mockNewScope = jasmine.createSpyObj('newScope', SCOPE_METHODS);
@@ -127,15 +127,13 @@ define(
             });
 
             it("exposes conductor state in scope", function () {
-                mockConductor.queryStart.andReturn(42);
-                mockConductor.queryEnd.andReturn(12321);
                 mockConductor.displayStart.andReturn(1977);
                 mockConductor.displayEnd.andReturn(1984);
                 representer.represent(testViews[0], {});
 
                 expect(mockNewScope.conductor).toEqual({
                     inner: { start: 1977, end: 1984 },
-                    outer: { start: 42, end: 12321 }
+                    outer: { start: 1977, end: 1984 }
                 });
             });
 
@@ -154,12 +152,6 @@ define(
 
                 fireWatch(mockNewScope, 'conductor.inner.end', testState.inner.end);
                 expect(mockConductor.displayEnd).toHaveBeenCalledWith(1984);
-
-                fireWatch(mockNewScope, 'conductor.outer.start', testState.outer.start);
-                expect(mockConductor.queryStart).toHaveBeenCalledWith(-1977);
-
-                fireWatch(mockNewScope, 'conductor.outer.end', testState.outer.end);
-                expect(mockConductor.queryEnd).toHaveBeenCalledWith(12321);
             });
 
         });

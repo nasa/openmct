@@ -60,40 +60,24 @@ define(
             this.$compile = $compile;
         }
 
-        // Combine start/end times into a single object
-        function bounds(start, end) {
-            return { start: start, end: end };
-        }
-
         // Update the time conductor from the scope
         function wireScope(conductor, conductorScope, repScope) {
-            function updateConductorOuter() {
-                conductor.queryStart(conductorScope.conductor.outer.start);
-                conductor.queryEnd(conductorScope.conductor.outer.end);
-                repScope.$broadcast(
-                    'telemetry:query:bounds',
-                    bounds(conductor.queryStart(), conductor.queryEnd())
-                );
+            // Combine start/end times into a single object
+            function bounds(start, end) {
+                return {
+                    start: conductor.displayStart(),
+                    end: conductor.displayEnd()
+                };
             }
 
             function updateConductorInner() {
                 conductor.displayStart(conductorScope.conductor.inner.start);
                 conductor.displayEnd(conductorScope.conductor.inner.end);
-                repScope.$broadcast(
-                    'telemetry:display:bounds',
-                    bounds(conductor.displayStart(), conductor.displayEnd())
-                );
+                repScope.$broadcast('telemetry:display:bounds', bounds());
             }
 
-            conductorScope.conductor = {
-                outer: bounds(conductor.queryStart(), conductor.queryEnd()),
-                inner: bounds(conductor.displayStart(), conductor.displayEnd())
-            };
+            conductorScope.conductor = { outer: bounds(), inner: bounds() };
 
-            conductorScope
-                .$watch('conductor.outer.start', updateConductorOuter);
-            conductorScope
-                .$watch('conductor.outer.end', updateConductorOuter);
             conductorScope
                 .$watch('conductor.inner.start', updateConductorInner);
             conductorScope
@@ -103,8 +87,7 @@ define(
         }
 
         ConductorRepresenter.prototype.conductorScope = function (s) {
-            return (this.cScope = arguments.length > 0 ?
-                    s : this.cScope);
+            return (this.cScope = arguments.length > 0 ? s : this.cScope);
         };
 
         // Handle a specific representation of a specific domain object
