@@ -88,7 +88,7 @@ define(
                     $log.error("Could not display modal dialog");
                 }
             };
-        };
+        }
         return DialogLaunchController;
     }
 );
