@@ -27,6 +27,72 @@ define(
     function (PopupService) {
         'use strict';
 
+        describe("PopupService", function () {
+            var mockDocument,
+                testWindow,
+                mockBody,
+                mockElement,
+                popupService;
 
+            beforeEach(function () {
+                mockDocument = jasmine.createSpyObj('$document', [ 'find' ]);
+                testWindow = { innerWidth: 1000, innerHeight: 800 };
+                mockBody = jasmine.createSpyObj('body', [ 'append' ]);
+                mockElement = jasmine.createSpyObj('element', [
+                    'css',
+                    'remove'
+                ]);
+
+                mockDocument.find.andCallFake(function (query) {
+                    return query === 'body' && mockBody;
+                });
+
+                popupService = new PopupService(mockDocument, testWindow);
+            });
+
+            it("adds elements to the body of the document", function () {
+                popupService.display(mockElement, [ 0, 0 ]);
+                expect(mockBody.append).toHaveBeenCalledWith(mockElement);
+            });
+
+            describe("when positioned in appropriate quadrants", function () {
+                it("orients elements relative to the top-left", function () {
+                    popupService.display(mockElement, [ 25, 50 ]);
+                    expect(mockElement.css).toHaveBeenCalledWith({
+                        position: 'absolute',
+                        left: '25px',
+                        top: '50px'
+                    });
+                });
+
+                it("orients elements relative to the top-right", function () {
+                    popupService.display(mockElement, [ 800, 50 ]);
+                    expect(mockElement.css).toHaveBeenCalledWith({
+                        position: 'absolute',
+                        right: '200px',
+                        top: '50px'
+                    });
+                });
+
+                it("orients elements relative to the bottom-right", function () {
+                    popupService.display(mockElement, [ 800, 650 ]);
+                    expect(mockElement.css).toHaveBeenCalledWith({
+                        position: 'absolute',
+                        right: '200px',
+                        bottom: '150px'
+                    });
+                });
+
+                it("orients elements relative to the bottom-left", function () {
+                    popupService.display(mockElement, [ 120, 650 ]);
+                    expect(mockElement.css).toHaveBeenCalledWith({
+                        position: 'absolute',
+                        left: '120px',
+                        bottom: '150px'
+                    });
+                });
+            });
+
+        });
     }
 );

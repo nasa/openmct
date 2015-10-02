@@ -86,12 +86,6 @@ define(
                 offset,
                 bubble;
 
-            function applyClassOption(direction) {
-                if (options[direction + 'Class']) {
-                    element.addClass(options[direction + 'Class']);
-                }
-            }
-
             function adjustNegatives(value, index) {
                 return value < 0 ? (value + winDim[index]) : value;
             }
