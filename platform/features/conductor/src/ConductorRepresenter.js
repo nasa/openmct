@@ -76,6 +76,7 @@ define(
             var conductor = this.conductorService.getConductor(),
                 conductorScope = this.conductorScope(),
                 repScope = this.scope,
+                lastObservedBounds,
                 broadcastBounds;
 
             // Combine start/end times into a single object
@@ -86,14 +87,29 @@ define(
                 };
             }
 
+            function boundsAreStable(newlyObservedBounds) {
+                return !lastObservedBounds ||
+                    (lastObservedBounds.start === newlyObservedBounds.start &&
+                    lastObservedBounds.end === newlyObservedBounds.end);
+            }
+
             function updateConductorInner() {
                 conductor.displayStart(conductorScope.conductor.inner.start);
                 conductor.displayEnd(conductorScope.conductor.inner.end);
+                lastObservedBounds = lastObservedBounds || bounds();
                 broadcastBounds();
             }
 
             broadcastBounds = this.throttle(function () {
-                repScope.$broadcast('telemetry:display:bounds', bounds());
+                var newlyObservedBounds = bounds();
+
+                if (boundsAreStable(newlyObservedBounds)) {
+                    repScope.$broadcast('telemetry:display:bounds', bounds());
+                    lastObservedBounds = undefined;
+                } else {
+                    lastObservedBounds = newlyObservedBounds;
+                    broadcastBounds();
+                }
             }, THROTTLE_MS);
 
             conductorScope.conductor = { outer: bounds(), inner: bounds() };
