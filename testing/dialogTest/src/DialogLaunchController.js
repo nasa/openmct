@@ -84,8 +84,6 @@ define(
                     ]
                 };
 
-                dialogService.showB
-
                 if (!dialogService.showBlockingMessage(model)) {
                     $log.error("Could not display modal dialog");
                 }

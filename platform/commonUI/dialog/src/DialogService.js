@@ -171,7 +171,7 @@ define(
             } else {
                 return true;
             }
-        }
+        };
 
         /**
          * dialogModel: {
