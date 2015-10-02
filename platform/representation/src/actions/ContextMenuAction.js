@@ -84,8 +84,10 @@ define(
 
             // Remove the context menu
             function dismiss() {
-                popup.dismiss();
-                popup = undefined;
+                if (popup) {
+                    popup.dismiss();
+                    popup = undefined;
+                }
                 scope.$destroy();
                 body.off("mousedown", dismiss);
                 dismissExistingMenu = undefined;
