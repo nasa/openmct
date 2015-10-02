@@ -41,37 +41,22 @@ define(
          *
          * @constructor
          * @memberof platform/commonUI/general
-         * @param $window the window object (as injected by Angular)
-         * @param $document the jqLite-wrapped document
          * @param $compile Angular's $compile service
+         * @param {platform/commonUI/general.PopupService} popupService
          */
-        function MCTPopup($window, $document, $compile) {
+        function MCTPopup($compile, popupService) {
             function link(scope, element, attrs, ctrl, transclude) {
-                var body = $document.find('body'),
-                    popup = $compile(TEMPLATE)(scope),
-                    winDim = [$window.innerWidth, $window.innerHeight],
+                var div = $compile(TEMPLATE)(scope),
                     rect = element.parent()[0].getBoundingClientRect(),
                     position = [ rect.left, rect.top ],
-                    isLeft = position[0] <= (winDim[0] / 2),
-                    isTop = position[1] <= (winDim[1] / 2);
-
-                popup.css('position', 'absolute');
-                popup.css(
-                    isLeft ? 'left' : 'right',
-                    (isLeft ? position[0] : (winDim[0] - position[0])) + 'px'
-                );
-                popup.css(
-                    isTop ? 'top' : 'bottom',
-                    (isTop ? position[1] : (winDim[1] - position[1])) + 'px'
-                );
-                body.append(popup);
+                    popup = popupService.display(div, position);
 
                 transclude(function (clone) {
-                    popup.append(clone);
+                    div.append(clone);
                 });
 
                 scope.$on('$destroy', function () {
-                    popup.remove();
+                    popup.dismiss();
                 });
             }
 

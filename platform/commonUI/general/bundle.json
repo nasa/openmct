@@ -133,7 +133,7 @@
             {
                 "key": "mctPopup",
                 "implementation": "directives/MCTPopup.js",
-                "depends": [ "$window", "$document", "$compile", "$interval" ]
+                "depends": [ "$compile", "popupService" ]
             },
             {
                 "key": "mctScrollX",
