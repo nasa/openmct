@@ -42,7 +42,8 @@ define({
         offsetY: -26
     },
     BUBBLE_MOBILE_POSITION: [ 0, -25 ],
-    // Max width and margins allowed for bubbles; defined in /platform/commonUI/general/res/sass/_constants.scss
+    // Max width and margins allowed for bubbles;
+    // defined in /platform/commonUI/general/res/sass/_constants.scss
     BUBBLE_MARGIN_LR: 10,
     BUBBLE_MAX_WIDTH: 300
 });

@@ -57,19 +57,12 @@ define(
             var $compile = this.$compile,
                 $rootScope = this.$rootScope,
                 scope = $rootScope.$new(),
+                span = $compile('<span></span>')(scope),
                 bubbleSpaceLR = InfoConstants.BUBBLE_MARGIN_LR +
                     InfoConstants.BUBBLE_MAX_WIDTH,
                 options,
                 popup,
                 bubble;
-
-            // Pass model & container parameters into the scope
-            scope.bubbleModel = content;
-            scope.bubbleTemplate = templateKey;
-            scope.bubbleTitle = title;
-
-            // Create the context menu
-            bubble = $compile(BUBBLE_TEMPLATE)(scope);
 
             options = Object.create(OPTIONS);
             options.marginX = -bubbleSpaceLR;
@@ -81,13 +74,23 @@ define(
                 options = {};
             }
 
-            popup = this.popupService.display(bubble, position, options);
+            popup = this.popupService.display(span, position, options);
 
+            // Pass model & container parameters into the scope
+            scope.bubbleModel = content;
+            scope.bubbleTemplate = templateKey;
+            scope.bubbleTitle = title;
             // Style the bubble according to how it was positioned
             scope.bubbleLayout = [
-                popup.goesLeft() ? 'arw-right' : 'arw-left',
-                popup.goesUp() ? 'arw-btm' : 'arw-top'
+                popup.goesUp() ? 'arw-btm' : 'arw-top',
+                popup.goesLeft() ? 'arw-right' : 'arw-left'
             ].join(' ');
+            scope.bubbleLayout = 'arw-top arw-left';
+
+            // Create the info bubble, now that we know how to
+            // point the arrow...
+            bubble = $compile(BUBBLE_TEMPLATE)(scope);
+            span.append(bubble);
 
             // Return a function to dismiss the info bubble
             return function dismiss() {
