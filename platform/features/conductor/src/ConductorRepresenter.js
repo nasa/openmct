@@ -36,6 +36,7 @@ define(
                 "</mct-include>",
                 '</div>'
             ].join(''),
+            THROTTLE_MS = 200,
             GLOBAL_SHOWING = false;
 
         /**
@@ -45,6 +46,8 @@ define(
          * @implements {Representer}
          * @constructor
          * @memberof platform/features/conductor
+         * @param {Function} throttle a function used to reduce the frequency
+         *        of function invocations
          * @param {platform/features/conductor.ConductorService} conductorService
          *        service which provides the active time conductor
          * @param $compile Angular's $compile
@@ -52,7 +55,15 @@ define(
          * @param {Scope} the scope of the representation
          * @param element the jqLite-wrapped representation element
          */
-        function ConductorRepresenter(conductorService, $compile, views, scope, element) {
+        function ConductorRepresenter(
+            throttle,
+            conductorService,
+            $compile,
+            views,
+            scope,
+            element
+        ) {
+            this.throttle = throttle;
             this.scope = scope;
             this.conductorService = conductorService;
             this.element = element;
@@ -61,7 +72,12 @@ define(
         }
 
         // Update the time conductor from the scope
-        function wireScope(conductor, conductorScope, repScope) {
+        ConductorRepresenter.prototype.wireScope = function () {
+            var conductor = this.conductorService.getConductor(),
+                conductorScope = this.conductorScope(),
+                repScope = this.scope,
+                broadcastBounds;
+
             // Combine start/end times into a single object
             function bounds(start, end) {
                 return {
@@ -73,8 +89,12 @@ define(
             function updateConductorInner() {
                 conductor.displayStart(conductorScope.conductor.inner.start);
                 conductor.displayEnd(conductorScope.conductor.inner.end);
-                repScope.$broadcast('telemetry:display:bounds', bounds());
+                broadcastBounds();
             }
+
+            broadcastBounds = this.throttle(function () {
+                repScope.$broadcast('telemetry:display:bounds', bounds());
+            }, THROTTLE_MS);
 
             conductorScope.conductor = { outer: bounds(), inner: bounds() };
 
@@ -84,7 +104,7 @@ define(
                 .$watch('conductor.inner.end', updateConductorInner);
 
             repScope.$on('telemetry:view', updateConductorInner);
-        }
+        };
 
         ConductorRepresenter.prototype.conductorScope = function (s) {
             return (this.cScope = arguments.length > 0 ? s : this.cScope);
@@ -101,11 +121,7 @@ define(
 
                 // Create a new scope for the conductor
                 this.conductorScope(this.scope.$new());
-                wireScope(
-                    this.conductorService.getConductor(),
-                    this.conductorScope(),
-                    this.scope
-                );
+                this.wireScope();
                 this.conductorElement =
                     this.$compile(TEMPLATE)(this.conductorScope());
                 this.element.after(this.conductorElement[0]);
