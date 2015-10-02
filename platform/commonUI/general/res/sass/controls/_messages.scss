@@ -19,46 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.ue-bottom-bar {
-	background: $colorFooterBg;
-	color: lighten($colorBodyBg, 30%);
-	font-size: .7rem;
-	//line-height: $ueFooterH - 4px;
-	//line-height: $ueFooterH;   // New status bar design
-	.status-holder {
-		//@include border-radius($basicCr * 1.75);   // New status bar design
-		@include box-sizing(border-box);
-		//background: $colorFooterBg;
-        //border-bottom: 1px solid lighten($colorBodyBg, 10%);  // New status bar design
-		@include absPosDefault($interiorMargin);
-		@include ellipsize();
-		line-height: $ueFooterH - ($interiorMargin * 2);
-		right: 120px;
-		text-transform: uppercase;
-	}
-	.app-logo {
-		@include box-sizing(border-box);
-		@include absPosDefault($interiorMargin);
-		left: auto;
-		cursor: pointer;
-		//font-size: 0.8em;
-		//line-height: $ueFooterH - 10px;
-		//padding-top: 1px;
-		//text-transform: uppercase;
-		&.logo-openmctweb {
-			background: url($dirImgs + 'logo-openmctweb.svg') no-repeat center center;
-		}
-	}
-}
 
 .status.block {
-	//display: inline-block;
-	display: inline;  // New status bar design. Inline to support ellipsis overflow
-	margin-right: $interiorMarginLg;
+	//@include test();
+	cursor: help;
+	display: inline-block;
+	margin-right: $interiorMargin;
+	.status-indicator,
+	.label {
+		vertical-align: top;
+	}
 	.status-indicator {
-		//@include border-radius($controlCr * 0.9);
-		//@include box-shadow(inset rgba(black, 0.5) 0 0 3px);
-		//@include text-shadow(rgba(black, 0.3) 0 0 2px);
 		display: inline-block;
 		margin-right: $interiorMarginSm;
 		color: $colorKey;
@@ -67,6 +38,19 @@
 		}
 		&.caution {
 			color: #ffaa00;
+		}
+	}
+	.label {
+		// Max-width silliness is necessary for width transition
+		@include trans-prop-nice(max-width, .25s);
+		display: inline-block;
+		overflow: hidden;
+		max-width: 0px;
+	}
+	&:hover {
+		.label {
+			max-width: 150px;
+			width: auto;
 		}
 	}
 }

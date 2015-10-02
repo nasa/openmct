@@ -125,19 +125,35 @@
 		}
 	}
 
+	// from _bottom-bar.scss
 	.ue-bottom-bar {
-        //@include absPosDefault($bodyMargin);
 		@include absPosDefault(0);// New status bar design
 		top: auto;
 		height: $ueFooterH;
+		line-height: $ueFooterH - ($interiorMargin * 2);
+		background: $colorFooterBg;
+		color: lighten($colorBodyBg, 30%);
+		font-size: .7rem;
+
 		.status-holder {
-			//right: $ueAppLogoW + $bodyMargin; New status bar design
+			@include box-sizing(border-box);
+			@include absPosDefault($interiorMargin);
+			@include ellipsize();
+			//line-height: $ueFooterH - ($interiorMargin * 2);
+			right: 120px;
+			text-transform: uppercase;
 			z-index: 1;
 		}
 		.app-logo {
+			@include box-sizing(border-box);
+			@include absPosDefault($interiorMargin);
+			cursor: pointer;
 			left: auto;
 			width: $ueAppLogoW;
 			z-index: 2;
+			&.logo-openmctweb {
+				background: url($dirImgs + 'logo-openmctweb.svg') no-repeat center center;
+			}
 		}
 	}
 }
