@@ -84,11 +84,10 @@ define(
             popup = this.popupService.display(bubble, position, options);
 
             // Style the bubble according to how it was positioned
-            if (popup.goesLeft()) {
-                scope.bubbleLayout = 'arw-right';
-            } else if (popup.goesRight()) {
-                scope.bubbleLayout = 'arw-left';
-            }
+            scope.bubbleLayout = [
+                popup.goesLeft() ? 'arw-right' : 'arw-left',
+                popup.goesUp() ? 'arw-btm' : 'arw-top'
+            ].join(' ');
 
             // Return a function to dismiss the info bubble
             return function dismiss() {
