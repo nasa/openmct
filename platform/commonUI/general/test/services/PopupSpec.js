@@ -28,6 +28,45 @@ define(
         'use strict';
 
         describe("Popup", function () {
+            var mockElement,
+                testStyles,
+                popup;
+
+            beforeEach(function () {
+                mockElement =
+                    jasmine.createSpyObj('element', [ 'css', 'remove' ]);
+                testStyles = { left: '12px', top: '14px' };
+                popup = new Popup(mockElement, testStyles);
+            });
+
+            it("applies CSS styles when instantiated", function () {
+                expect(mockElement.css)
+                    .toHaveBeenCalledWith(testStyles);
+            });
+
+            it("reports the orientation of the popup", function () {
+                var otherStyles = {
+                        right: '12px',
+                        bottom: '14px'
+                    },
+                    otherPopup = new Popup(mockElement, otherStyles);
+
+                expect(popup.goesLeft()).toBeFalsy();
+                expect(popup.goesRight()).toBeTruthy();
+                expect(popup.goesUp()).toBeFalsy();
+                expect(popup.goesDown()).toBeTruthy();
+
+                expect(otherPopup.goesLeft()).toBeTruthy();
+                expect(otherPopup.goesRight()).toBeFalsy();
+                expect(otherPopup.goesUp()).toBeTruthy();
+                expect(otherPopup.goesDown()).toBeFalsy();
+            });
+
+            it("removes elements when dismissed", function () {
+                expect(mockElement.remove).not.toHaveBeenCalled();
+                popup.dismiss();
+                expect(mockElement.remove).toHaveBeenCalled();
+            });
 
         });
 
