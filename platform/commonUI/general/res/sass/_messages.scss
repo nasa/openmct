@@ -1,4 +1,4 @@
-/* Styles for messages */
+/* Styles for messages and message banners */
 
 .message {
 	&.block {
@@ -9,4 +9,25 @@
 		background-color: rgba($colorAlert,0.3);
 		color: lighten($colorAlert, 20%);
 	}
+}
+
+.l-message-banner {
+    @include ellipsize();
+    display: block;
+    position: absolute;
+    top: $interiorMargin; right: auto; bottom: $interiorMargin; left: 50%;
+    height: auto; width: auto;
+    //line-height: $ueFooterH;
+    max-width: 300px;
+    padding: 0 $interiorMarginLg;
+    @include transform(translateX(-50%));
+    .s-btn {
+        height: auto !important;
+    }
+}
+
+.s-message-banner {
+    @include border-radius($basicCr);
+    background-color: #999;
+    color: black;
 }

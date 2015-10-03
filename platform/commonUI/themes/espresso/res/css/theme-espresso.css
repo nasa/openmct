@@ -1153,7 +1153,7 @@ mct-container {
   top: 0;
   left: 0; }
 
-/* Styles for messages */
+/* Styles for messages and message banners */
 /* line 4, ../../../../general/res/sass/_messages.scss */
 .message.block {
   -moz-border-radius: 2px;
@@ -1164,6 +1164,37 @@ mct-container {
 .message.error {
   background-color: rgba(255, 60, 0, 0.3);
   color: #ff8a66; }
+
+/* line 14, ../../../../general/res/sass/_messages.scss */
+.l-message-banner {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  position: absolute;
+  top: 5px;
+  right: auto;
+  bottom: 5px;
+  left: 50%;
+  height: auto;
+  width: auto;
+  max-width: 300px;
+  padding: 0 10px;
+  -moz-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%); }
+  /* line 24, ../../../../general/res/sass/_messages.scss */
+  .l-message-banner .s-btn, .l-message-banner .s-menu {
+    height: auto !important; }
+
+/* line 29, ../../../../general/res/sass/_messages.scss */
+.s-message-banner {
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  background-color: #999;
+  color: black; }
 
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government

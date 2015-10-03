@@ -40,6 +40,10 @@
                 "templateUrl": "templates/indicator.html"
             },
             {
+                "key": "message-banner",
+                "templateUrl": "templates/message-banner.html"
+            },
+            {
               "key": "time-controller",
               "templateUrl": "templates/controls/time-controller.html"
             }
