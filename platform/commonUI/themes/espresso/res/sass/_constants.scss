@@ -58,6 +58,12 @@ $colorInputFg: pullForward($colorBodyFg, 20%);
 $colorFormText: rgba(#fff, 0.5);
 $colorInputIcon: pushBack($colorBodyFg, 15%);
 
+// Status colors, mainly used for messaging and item ancillary symbols
+$colorStatusDefault: #ccc;
+$colorStatusOk: #6cb773;
+$colorStatusCaution: #ffa864;
+$colorStatusAlert: $colorAlert;
+
 // Selects
 $colorSelectBg: $colorBtnBg;
 $colorSelectFg: $colorBtnFg;

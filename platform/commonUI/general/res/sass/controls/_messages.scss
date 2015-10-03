@@ -21,36 +21,44 @@
  *****************************************************************************/
 
 .status.block {
-	//@include test();
-	cursor: help;
+	color: $colorStatusDefault;
+	cursor: default;
 	display: inline-block;
 	margin-right: $interiorMargin;
 	.status-indicator,
-	.label {
+	.label,
+	.count {
+		//@include test(#00ff00);
+		display: inline-block;
 		vertical-align: top;
 	}
 	.status-indicator {
-		display: inline-block;
 		margin-right: $interiorMarginSm;
-		color: $colorKey;
-		&.ok {
-			color: #009900;
-		}
-		&.caution {
-			color: #ffaa00;
-		}
+	}
+	&.ok .status-indicator {
+		color: $colorStatusOk;
+	}
+	&.caution .status-indicator {
+		color: $colorStatusCaution;
 	}
 	.label {
 		// Max-width silliness is necessary for width transition
 		@include trans-prop-nice(max-width, .25s);
-		display: inline-block;
 		overflow: hidden;
 		max-width: 0px;
+	}
+	.count {
+		@include trans-prop-nice(opacity, .25s);
+		font-weight: bold;
+		opacity: 1;
 	}
 	&:hover {
 		.label {
 			max-width: 150px;
 			width: auto;
+		}
+		.count {
+			opacity: 0;
 		}
 	}
 }

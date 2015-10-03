@@ -2254,25 +2254,26 @@ label.checkbox.custom {
  *****************************************************************************/
 /* line 23, ../../../../general/res/sass/controls/_messages.scss */
 .status.block {
-  cursor: help;
+  color: #ccc;
+  cursor: default;
   display: inline-block;
   margin-right: 5px; }
-  /* line 29, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 28, ../../../../general/res/sass/controls/_messages.scss */
   .status.block .status-indicator,
-  .status.block .label {
-    vertical-align: top; }
-  /* line 34, ../../../../general/res/sass/controls/_messages.scss */
-  .status.block .status-indicator {
+  .status.block .label,
+  .status.block .count {
     display: inline-block;
-    margin-right: 3px;
-    color: #0099cc; }
-    /* line 38, ../../../../general/res/sass/controls/_messages.scss */
-    .status.block .status-indicator.ok {
-      color: #009900; }
-    /* line 41, ../../../../general/res/sass/controls/_messages.scss */
-    .status.block .status-indicator.caution {
-      color: #ffaa00; }
-  /* line 45, ../../../../general/res/sass/controls/_messages.scss */
+    vertical-align: top; }
+  /* line 35, ../../../../general/res/sass/controls/_messages.scss */
+  .status.block .status-indicator {
+    margin-right: 3px; }
+  /* line 38, ../../../../general/res/sass/controls/_messages.scss */
+  .status.block.ok .status-indicator {
+    color: #090; }
+  /* line 41, ../../../../general/res/sass/controls/_messages.scss */
+  .status.block.caution .status-indicator {
+    color: #fa0; }
+  /* line 44, ../../../../general/res/sass/controls/_messages.scss */
   .status.block .label {
     -moz-transition-property: max-width;
     -o-transition-property: max-width;
@@ -2286,13 +2287,31 @@ label.checkbox.custom {
     -o-transition-timing-function: ease-in-out;
     -webkit-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
-    display: inline-block;
     overflow: hidden;
     max-width: 0px; }
-  /* line 54, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 50, ../../../../general/res/sass/controls/_messages.scss */
+  .status.block .count {
+    -moz-transition-property: opacity;
+    -o-transition-property: opacity;
+    -webkit-transition-property: opacity;
+    transition-property: opacity;
+    -moz-transition-duration: 0.25s;
+    -o-transition-duration: 0.25s;
+    -webkit-transition-duration: 0.25s;
+    transition-duration: 0.25s;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    font-weight: bold;
+    opacity: 1; }
+  /* line 56, ../../../../general/res/sass/controls/_messages.scss */
   .status.block:hover .label {
     max-width: 150px;
     width: auto; }
+  /* line 60, ../../../../general/res/sass/controls/_messages.scss */
+  .status.block:hover .count {
+    opacity: 0; }
 
 /* line 1, ../../../../general/res/sass/controls/_time-controller.scss */
 .l-time-controller {

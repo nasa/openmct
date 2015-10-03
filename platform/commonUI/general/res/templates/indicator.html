@@ -19,20 +19,20 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
+<!-- DO NOT ADD SPACES BETWEEN THE SPANS - IT ADDS WHITE SPACE!! -->
 <div class='status block'
-     title="{{ngModel.getText() + ': ' + ngModel.getDescription()}}"
-     ng-click='ngModel.configure()'
-     ng-class='ngModel.getClass()'
-     ng-show="ngModel.getText().length > 0">
-    <span class="ui-symbol status-indicator"
-          ng-class='ngModel.getGlyphClass()'>
-        {{ngModel.getGlyph()}}
-    </span>
-	<span class="label"
-          ng-class='ngModel.getTextClass()'>
-        {{ngModel.getText()}}
-    </span>
-	<a href=''
+	 title="{{ngModel.getDescription()}}"
+	 ng-click='ngModel.configure()'
+	 ng-class='ngModel.getGlyphClass()'
+	 ng-show="ngModel.getText().length > 0">
+	<span class="ui-symbol status-indicator">
+		{{ngModel.getGlyph()}}
+	</span><span class="label"
+		  ng-class='ngModel.getTextClass()'>
+		{{ngModel.getText()}}
+	</span><span class="count">
+		<!-- Add count value here if this type of indicator has one or more messages associated with it -->
+	</span><a href=''
 	   class="ui-symbol"
 	   ng-if="ngModel.configure">
 		G

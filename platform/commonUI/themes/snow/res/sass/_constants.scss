@@ -60,6 +60,12 @@ $colorInputIcon: pushBack($colorBodyFg, 25%);
 $colorSelectBg: #ddd;
 $colorSelectFg: $colorBodyFg;
 
+// Status colors, mainly used for messaging and item ancillary symbols
+$colorStatusDefault: #ccc;
+$colorStatusOk: #090;
+$colorStatusCaution: #fa0;
+$colorStatusAlert: $colorAlert;
+
 // Limits and staleness colors//
 $colorTelemFresh: pullForward($colorBodyFg, 20%);
 $colorTelemStale: pushBack($colorBodyFg, 20%);
