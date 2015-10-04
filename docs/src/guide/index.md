@@ -13,9 +13,6 @@ May 12, 2015        | 0.1       |                         | Victor Woeltjen
 June 4, 2015        | 1.0       | Name Changes            | Victor Woeltjen
 September 23, 2015  | 1.1       | Conversion to MarkDown  | Andrew Henry
 
-# Table of Contents
-```generated_toc```
-
 # Introduction
 The purpose of this guide is to familiarize software developers with the Open
 MCT Web platform.
