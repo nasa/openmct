@@ -32,7 +32,7 @@ define(
         var DEFAULT_MAX_RESULTS = 100,
             DEFAULT_TIMEOUT = 1000,
             MAX_CONCURRENT_REQUESTS = 100,
-            FLUSH_INTERVAL = 180,
+            FLUSH_INTERVAL = 0,
             stopTime;
 
         /**
