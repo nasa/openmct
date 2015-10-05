@@ -26,14 +26,14 @@ define(
     function () {
         "use strict";
 
-        function DialogLaunchController($scope, dialogService, $timeout, $log, dialogSeverity) {
+        function DialogLaunchController($scope, dialogService, $timeout, $log, messageSeverity) {
             $scope.launchProgress = function () {
                 var model = {
                     title: "Progress dialog example",
                     progress: 0,
                     hint: "Calculating...",
                     unknownDuration: false,
-                    severity: dialogSeverity.INFO,
+                    severity: messageSeverity.INFO,
                     actions: [
                         {
                             label: "Cancel Operation",
@@ -72,7 +72,7 @@ define(
                 var model = {
                     title: "Error Message Title",
                     hint: "Something happened. It was not so good.",
-                    severity: dialogSeverity.ERROR,
+                    severity: messageSeverity.ERROR,
                     actions: [
                         {
                             label: "OK",

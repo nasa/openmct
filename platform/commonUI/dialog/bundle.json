@@ -2,10 +2,11 @@
     "extensions": {
         "constants": [
             {
-                "key": "dialogSeverity",
+                "key": "messageSeverity",
                 "value": {
                     "ERROR": "error",
-                    "INFO": "info"
+                    "INFO": "info",
+                    "SUCCESS": "success"
                 }
             }
         ],
