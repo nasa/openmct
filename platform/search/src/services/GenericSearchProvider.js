@@ -52,6 +52,7 @@ define(
          */
         function GenericSearchProvider($q, $log, throttle, objectService, workerService, topic, ROOTS) {
             var indexed = {},
+                pendingIndex = {},
                 pendingQueries = {},
                 toRequest = [],
                 worker = workerService.run('genericSearchWorker'),
@@ -68,8 +69,9 @@ define(
 
             function scheduleIdsForIndexing(ids) {
                 ids.forEach(function (id) {
-                    if (!indexed[id]) {
+                    if (!indexed[id] && !pendingIndex[id]) {
                         indexed[id] = true;
+                        pendingIndex[id] = true;
                         toRequest.push(id);
                     }
                 });
@@ -129,6 +131,7 @@ define(
             function requestAndIndex(id) {
                 pendingRequests += 1;
                 objectService.getObjects([id]).then(function (objects) {
+                    delete pendingIndex[id];
                     if (objects[id]) {
                         indexItem(objects[id]);
                     }
