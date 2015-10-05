@@ -127,9 +127,7 @@ define(
                 useTimestamp = arguments.length > 1;
 
             function notifyListeners(model) {
-                // Broadcast a general event...
                 generalTopic.notify(domainObject);
-                // ...and also notify listeners watching this specific object.
                 specificTopic.notify(model);
             }
 

@@ -61,7 +61,7 @@ define(
              * @memberof platform/core.Throttle#
              */
             return function (fn, delay, apply) {
-                var promise, // Promise for the result of throttled function
+                var promise,
                     args = [];
 
                 function invoke() {
