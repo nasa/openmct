@@ -53,7 +53,7 @@ define(
         function GenericSearchProvider($q, $log, throttle, objectService, workerService, topic, ROOTS) {
             var indexed = {},
                 pendingQueries = {},
-                toRequest = {},
+                toRequest = [],
                 worker = workerService.run('genericSearchWorker'),
                 mutationTopic = topic("mutation"),
                 indexingStarted = Date.now(),
@@ -70,7 +70,7 @@ define(
                 ids.forEach(function (id) {
                     if (!indexed[id]) {
                         indexed[id] = true;
-                        toRequest[id] = true;
+                        toRequest.push(id);
                     }
                 });
                 scheduleFlush();
@@ -127,7 +127,6 @@ define(
             }
 
             function requestAndIndex(id) {
-                delete toRequest[id];
                 pendingRequests += 1;
                 objectService.getObjects([id]).then(function (objects) {
                     if (objects[id]) {
@@ -145,15 +144,14 @@ define(
                 var batchSize =
                         Math.max(MAX_CONCURRENT_REQUESTS - pendingRequests, 0);
 
-                if (Object.keys(toRequest).length + pendingRequests < 1) {
+                if (toRequest.length + pendingRequests < 1) {
                     $log.info([
                         'GenericSearch finished indexing after ',
                         ((Date.now() - indexingStarted) / 1000).toFixed(2),
                         ' seconds.'
                     ].join(''));
                 } else {
-                    Object.keys(toRequest)
-                        .slice(0, batchSize)
+                    toRequest.splice(-batchSize, batchSize)
                         .forEach(requestAndIndex);
                 }
             }, FLUSH_INTERVAL);
