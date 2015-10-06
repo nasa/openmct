@@ -96,6 +96,11 @@
                 "key": "SelectorController",
                 "implementation": "controllers/SelectorController.js",
                 "depends": [ "objectService", "$scope" ]
+            },
+            {
+                "key": "BannerController",
+                "implementation": "controllers/BannerController.js",
+                "depends": ["$scope", "notificationService"]
             }
         ],
         "directives": [

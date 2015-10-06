@@ -1,5 +1,15 @@
 {
     "extensions": {
+        "constants": [
+            {
+                "key": "messageSeverity",
+                "value": {
+                    "ERROR": "error",
+                    "INFO": "info",
+                    "SUCCESS": "success"
+                }
+            }
+        ],
         "services": [
             {
                 "key": "dialogService",
@@ -24,6 +34,10 @@
             {
                 "key": "form-dialog",
                 "templateUrl": "templates/dialog.html"
+            },
+            {
+                "key": "blocking-message",
+                "templateUrl": "templates/blocking-message.html"
             }
         ],
         "containers": [

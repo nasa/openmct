@@ -1,0 +1,18 @@
+{
+    "extensions": {
+        "constants": [
+            {
+                "key": "DEFAULT_AUTO_DISMISS",
+                "value": 2000
+            }
+        ],
+        "services": [
+            {
+                "key": "notificationService",
+                "implementation": "NotificationService.js",
+                "depends": [ "$log", "$timeout", "messageSeverity",
+                    "DEFAULT_AUTO_DISMISS" ]
+            }
+        ]
+    }
+}
