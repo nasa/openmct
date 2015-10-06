@@ -19,34 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*.control {
-	// UNUSED?
-	&.view-control {
-		.icon {
-			display: inline-block;
-			margin: -1px 5px 1px 2px;
-			vertical-align: middle;
-			&.triangle-down {
-				margin: 2px 2px -2px 0px;
-			}
-		}
-
-		.label {
-			display: inline-block;
-			font-size: 11px;
-			vertical-align: middle;
-		}
-
-		.toggle {
-			@include border-radius(3px);
-			display: inline-block;
-			padding: 1px 6px 4px 4px;
-			&:hover {
-				background: rgba(white, 0.1);
-			}
-		}
-	}
-}*/
 
 .accordion {
 	$accordionHeadH: 18px;
@@ -289,6 +261,85 @@ label.checkbox.custom {
 			}
 		}
 	}
+}
+
+/******************************************************** PROGRESS BAR */
+@include keyframes(progress) {
+    100% { background-position: $progressBarStripeW center; }
+}
+
+@mixin bgProgressAnim($c: yellow, $a: 0.1, $d: 20px) {
+    @include background-image(linear-gradient(-90deg,
+        rgba($c, $a) 0%, transparent 50%,
+        transparent 50%, rgba($c, $a) 100%
+    ));
+    background-position: 0 center;
+    background-repeat: repeat-x;
+    background-size: $d 40%;
+}
+
+.l-progress-bar {
+    // Assume will be determinate by default
+	display: inline-block;
+	overflow: hidden;
+	position: relative;
+
+	.progress-amt-holder {
+        @include absPosDefault(1px);
+    }
+    .progress-amt,
+    .progress-amt:before,
+    .progress-amt:after {
+		@include absPosDefault();
+        display: block;
+        content: '';
+	}
+
+    .progress-amt {
+        right: auto; // Allow inline width to control }
+    }
+
+    &.indeterminate {
+        .progress-amt {
+            width: 100% !important;
+        }
+    }
+}
+
+.s-progress-bar {
+    @include border-radius($basicCr);
+    @include boxIncised(0.3, 4px);
+    background: $colorProgressBarOuter;
+    //border:1px solid $colorProgressBarOuter;
+	.progress-amt {
+		@include border-radius($basicCr);
+		@include boxShdw();
+		@include border-radius($basicCr - 1);
+        @include trans-prop-nice(width);
+        &:before {
+            background-color: $colorProgressBarAmt;
+        }
+        &:after {
+            // Sheen
+            @include background-image(linear-gradient(
+                    transparent 5%, rgba(#fff,0.25) 30%, transparent 100%
+            ));
+        }
+	}
+
+    &:not(.indeterminate) {
+        .progress-amt:before {
+            // Slower, more subtle anim for determinate progress
+            @include animation(progress .3s linear infinite);
+            @include bgProgressAnim(#fff, 0.2, $progressBarStripeW);
+        }
+    }
+
+    &.indeterminate .progress-amt:before {
+        // Faster, more visible anim for indeterminate progress
+        @include animation(progress .6s linear infinite);
+        @include bgProgressAnim(#fff, 0.4, $progressBarStripeW);
+    }
 }
 
 /******************************************************** SLIDERS */

@@ -29,8 +29,6 @@ $colorPausedBg: #c56f01;
 $colorPausedFg: #fff;
 $colorCreateBtn: $colorKey;
 $colorGridLines: rgba(#fff, 0.05);
-$colorFormLines: rgba(#fff, 0.1);
-$colorFormSectionHeader: rgba(#000, 0.2);
 $colorInvokeMenu: #fff;
 $colorObjHdrTxt: $colorBodyFg;
 $colorObjHdrIc: pullForward($colorObjHdrTxt, 20%);
@@ -42,10 +40,10 @@ $colorMenuIc: pullForward($colorKey, 17%);
 $colorMenuHovBg: pullForward($colorMenuBg, 10%);
 $colorMenuHovFg: #fff;
 $colorMenuHovIc: $colorMenuHovFg;
-$shdwMenu: none;
-$shdwMenuText: rgba(black, 0.1) 0 1px 2px;
 $colorCreateMenuLgIcon: $colorMenuFg;
 $colorCreateMenuText: $colorMenuFg;
+$shdwMenu: none;
+$shdwMenuText: rgba(black, 0.1) 0 1px 2px;
 
 // Form colors
 $colorCheck: $colorKey;
@@ -53,16 +51,22 @@ $colorFormRequired: $colorAlt1;
 $colorFormValid: #33cc33;
 $colorFormError: #cc0000;
 $colorFormInvalid: #ff3300;
+$colorFormLines: rgba(#fff, 0.1);
+$colorFormSectionHeader: rgba(#000, 0.2);
 $colorInputBg: rgba(#fff, 0.1);
 $colorInputFg: pullForward($colorBodyFg, 20%);
 $colorFormText: rgba(#fff, 0.5);
 $colorInputIcon: pushBack($colorBodyFg, 15%);
 
 // Status colors, mainly used for messaging and item ancillary symbols
+$colorStatusFg: #ccc;
 $colorStatusDefault: #ccc;
-$colorStatusOk: #6cb773;
+$colorStatusOk: #60e68e;
 $colorStatusCaution: #ffa864;
 $colorStatusAlert: $colorAlert;
+$colorProgressBarOuter: rgba(#000, 0.1);
+$colorProgressBarAmt: $colorKey;
+$progressBarStripeW: 20px;
 
 // Selects
 $colorSelectBg: $colorBtnBg;
