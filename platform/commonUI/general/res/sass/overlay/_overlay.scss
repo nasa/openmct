@@ -45,6 +45,7 @@
     .title {
 	    @include ellipsize();
         font-size: 1.2em;
+        line-height: 120%;
 	    margin-bottom: $interiorMargin;
     }
     
@@ -57,6 +58,15 @@
         bottom: $ovrFooterH + $interiorMargin * 2;
         left: 0; right: 0;
     }
+
+	.l-progress-bar {
+		$h: $progressBarHOverlay;
+        display: block;
+		height: $h;
+		line-height: $h;
+        margin: .5em 0;
+		width: 100%;
+	}
     
     .bottom-bar {
         top: auto; right: 0; bottom: 0; left: 0;

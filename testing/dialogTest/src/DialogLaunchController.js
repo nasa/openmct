@@ -27,11 +27,12 @@ define(
         "use strict";
 
         function DialogLaunchController($scope, dialogService, $timeout, $log, messageSeverity) {
-            $scope.launchProgress = function () {
+            $scope.launchProgress = function (knownProgress) {
                 var model = {
                     title: "Progress dialog example",
                     progress: 0,
                     hint: "Calculating...",
+                    unknownProgress: !knownProgress,
                     unknownDuration: false,
                     severity: messageSeverity.INFO,
                     actions: [
@@ -62,7 +63,9 @@ define(
                 if (dialogService.showBlockingMessage(model)) {
                     //Do processing here
                     model.hint = "Processing 100 objects...";
-                    $timeout(incrementProgress, 1000);
+                    if (knownProgress) {
+                        $timeout(incrementProgress, 1000);
+                    }
                 } else {
                     $log.error("Could not display modal dialog");
                 }

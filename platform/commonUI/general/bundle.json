@@ -44,6 +44,10 @@
                 "templateUrl": "templates/message-banner.html"
             },
             {
+                "key": "progress-bar",
+                "templateUrl": "templates/progress-bar.html"
+            },
+            {
               "key": "time-controller",
               "templateUrl": "templates/controls/time-controller.html"
             }

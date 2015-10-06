@@ -104,14 +104,14 @@
 	height: auto; width: auto;
 	line-height: $lh;
 	max-width: 300px;
-	padding: 0 $interiorMargin 0 $interiorMarginLg;
+	padding: 0 $interiorMargin 0 $interiorMargin;
 	@include transform(translateX(-50%));
 
 	a, span {
 		@include flex(0 1 auto);
 		margin-left: $interiorMargin;
 		&:first-child {
-			margin-left: 0;
+			//margin-left: 0;
 		}
 	}
 	a {

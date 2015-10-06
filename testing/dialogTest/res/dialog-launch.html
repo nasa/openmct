@@ -1,1 +1,5 @@
-<span ng-controller="DialogLaunchController"><input type="button" value="Launch progress" ng-click="launchProgress()" /></span>&nbsp;&nbsp;<span ng-controller="DialogLaunchController"><input type="button" value="Launch error" ng-click="launchError()" /></span>
+<span ng-controller="DialogLaunchController">
+    <input type="button" value="Known Progress" ng-click="launchProgress(true)" />&nbsp;&nbsp;
+    <input type="button" value="Unknown Progress" ng-click="launchProgress(false)" />&nbsp;&nbsp;
+    <input type="button" value="Error" ng-click="launchError()" />
+</span>

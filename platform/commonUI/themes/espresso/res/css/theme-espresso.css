@@ -2476,7 +2476,7 @@ label.checkbox.custom {
   width: auto;
   line-height: 18px;
   max-width: 300px;
-  padding: 0 5px 0 10px;
+  padding: 0 5px 0 5px;
   -moz-transform: translateX(-50%);
   -ms-transform: translateX(-50%);
   -webkit-transform: translateX(-50%);
@@ -2487,9 +2487,6 @@ label.checkbox.custom {
     -webkit-flex: 0 1 auto;
     flex: 0 1 auto;
     margin-left: 5px; }
-    /* line 113, ../../../../general/res/sass/controls/_messages.scss */
-    .l-message-banner a:first-child, .l-message-banner span:first-child {
-      margin-left: 0; }
   /* line 117, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner a {
     display: inline-block; }
@@ -4243,17 +4240,25 @@ span.req {
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 1.2em;
+  line-height: 120%;
   margin-bottom: 5px; }
-/* line 51, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 52, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .top-bar {
   height: 60px; }
-/* line 55, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 56, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .editor {
   top: 70px;
   bottom: 40px;
   left: 0;
   right: 0; }
-/* line 61, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 62, ../../../../general/res/sass/overlay/_overlay.scss */
+.overlay .l-progress-bar {
+  display: block;
+  height: 15px;
+  line-height: 15px;
+  margin: .5em 0;
+  width: 100%; }
+/* line 71, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .bottom-bar {
   top: auto;
   right: 0;
@@ -4262,14 +4267,14 @@ span.req {
   overflow: visible;
   height: 30px;
   text-align: right; }
-  /* line 67, ../../../../general/res/sass/overlay/_overlay.scss */
+  /* line 77, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .bottom-bar .s-btn, .overlay .bottom-bar .s-menu {
     font-size: 95%;
     height: 30px;
     line-height: 30px;
     margin-left: 5px;
     padding: 0 15px; }
-    /* line 69, ../../../../general/res/sass/overlay/_overlay.scss */
+    /* line 79, ../../../../general/res/sass/overlay/_overlay.scss */
     .overlay .bottom-bar .s-btn:not(.major), .overlay .bottom-bar .s-menu:not(.major) {
       background-color: gray;
       -moz-border-radius: 3px;
@@ -4308,14 +4313,14 @@ span.req {
           /* line 296, ../../../../general/res/sass/_mixins.scss */
           .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover > .icon {
             color: white; } }
-/* line 85, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 95, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .contents.l-dialog {
   top: 5px;
   right: 5px;
   bottom: 5px;
   left: 5px;
   overflow: auto; }
-  /* line 93, ../../../../general/res/sass/overlay/_overlay.scss */
+  /* line 103, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .contents.l-dialog .field.l-med input[type='text'] {
     width: 100%; }
 
