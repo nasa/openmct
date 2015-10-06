@@ -30,6 +30,14 @@
                 "category": "contextual",
                 "implementation": "actions/LinkAction.js",
                 "depends": ["locationService", "linkService"]
+            },
+            {
+                "key": "follow",
+                "name": "Go To Original",
+                "description": "Go to the original, un-linked instance of this object.",
+                "glyph": "\u00F4",
+                "category": "contextual",
+                "implementation": "actions/GoToOriginalAction.js"
             }
         ],
         "components": [
