@@ -7,6 +7,7 @@ define(
         '../ControlledPromise'
     ],
     function (LocationCapability, domainObjectFactory, ControlledPromise) {
+        'use strict';
 
         describe("LocationCapability", function () {
 
@@ -14,13 +15,16 @@ define(
                 var locationCapability,
                     persistencePromise,
                     mutationPromise,
+                    mockQ,
+                    mockInjector,
+                    mockObjectService,
                     domainObject;
 
                 beforeEach(function () {
                     domainObject = domainObjectFactory({
                         capabilities: {
                             context: {
-                                getParent: function() {
+                                getParent: function () {
                                     return domainObjectFactory({id: 'root'});
                                 }
                             },
@@ -34,6 +38,11 @@ define(
                             )
                         }
                     });
+
+                    mockQ = jasmine.createSpyObj("$q", ["when"]);
+                    mockInjector = jasmine.createSpyObj("$injector", ["get"]);
+                    mockObjectService =
+                        jasmine.createSpyObj("objectService", ["getObjects"]);
 
                     persistencePromise = new ControlledPromise();
                     domainObject.capabilities.persistence.persist.andReturn(
@@ -49,7 +58,11 @@ define(
                         }
                     );
 
-                    locationCapability = new LocationCapability(domainObject);
+                    locationCapability = new LocationCapability(
+                        mockQ,
+                        mockObjectService,
+                        domainObject
+                    );
                 });
 
                 it("returns contextual location", function () {

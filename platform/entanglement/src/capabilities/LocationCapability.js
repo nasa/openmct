@@ -12,10 +12,40 @@ define(
          *
          * @constructor
          */
-        function LocationCapability(domainObject) {
+        function LocationCapability($q, $injector, domainObject) {
             this.domainObject = domainObject;
+            this.$q = $q;
+            this.$injector = $injector;
             return this;
         }
+
+        /**
+         * Get an instance of this domain object in its original location.
+         *
+         * @returns {Promise.<DomainObject>} a promise for the original
+         *          instance of this domain object
+         */
+        LocationCapability.prototype.getOriginal = function () {
+            var id;
+
+            if (this.isOriginal()) {
+                return this.$q.when(this.domainObject);
+            }
+
+            id = this.domainObject.getId();
+
+            this.objectService =
+                this.objectService || this.$injector.get("objectService");
+
+            // Assume that an object will be correctly contextualized when
+            // loaded directly from the object service; this is true
+            // so long as LocatingObjectDecorator is present, and that
+            // decorator is also contained in this bundle.
+            return this.objectService.getObjects([id])
+                .then(function (objects) {
+                    return objects[id];
+                });
+        };
 
         /**
          * Set the primary location (the parent id) of the current domain
@@ -78,10 +108,6 @@ define(
             return !this.isLink();
         };
 
-        function createLocationCapability(domainObject) {
-            return new LocationCapability(domainObject);
-        }
-
-        return createLocationCapability;
+        return LocationCapability;
     }
 );
