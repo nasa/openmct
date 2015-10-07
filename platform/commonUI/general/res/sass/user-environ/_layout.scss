@@ -43,9 +43,9 @@
 	position: absolute;
 }
 
-.editor {
-	@include border-radius($basicCr * 1.5);
-}
+//.editor {
+//	@include border-radius($basicCr * 1.5);
+//}
 
 .contents {
     $myM: 0; //$interiorMargin;

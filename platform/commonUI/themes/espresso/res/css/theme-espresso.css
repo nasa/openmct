@@ -2483,7 +2483,7 @@ label.checkbox.custom {
   -ms-transform: translateX(-50%);
   -webkit-transform: translateX(-50%);
   transform: translateX(-50%);
-  z-index: 2; }
+  z-index: 10; }
   /* line 110, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner .banner-elem {
     -webkit-flex: 0 1 auto;
@@ -3329,12 +3329,6 @@ span.req {
 .edit-area,
 .editor {
   position: absolute; }
-
-/* line 46, ../../../../general/res/sass/user-environ/_layout.scss */
-.editor {
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px; }
 
 /* line 50, ../../../../general/res/sass/user-environ/_layout.scss */
 .contents {
@@ -4204,7 +4198,7 @@ span.req {
   bottom: auto;
   left: auto;
   z-index: 100; }
-/* line 33, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 36, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay > .holder {
   background-color: #4d4d4d;
   -moz-border-radius: 3px;
@@ -4228,18 +4222,28 @@ span.req {
   -webkit-border-radius: 6px;
   border-radius: 6px;
   color: #e6e6e6;
-  top: 15%;
-  right: 15%;
-  bottom: 15%;
-  left: 15%;
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  left: 50%;
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+  height: 70%;
+  width: 50%;
+  min-height: 300px;
+  max-height: 800px;
+  min-width: 450px;
+  max-width: 1000px;
   z-index: 101; }
-  /* line 40, ../../../../general/res/sass/overlay/_overlay.scss */
+  /* line 53, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay > .holder > .contents {
     top: 25px;
     right: 25px;
     bottom: 25px;
     left: 25px; }
-/* line 45, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 61, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .title {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4247,26 +4251,30 @@ span.req {
   font-size: 1.2em;
   line-height: 120%;
   margin-bottom: 5px; }
-/* line 52, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 68, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .hint {
   color: #b3b3b3; }
-/* line 56, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 72, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .top-bar {
   height: 60px; }
-/* line 60, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 76, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .editor {
   top: 70px;
   bottom: 40px;
   left: 0;
-  right: 0; }
-/* line 66, ../../../../general/res/sass/overlay/_overlay.scss */
+  right: 0;
+  overflow: auto; }
+  /* line 83, ../../../../general/res/sass/overlay/_overlay.scss */
+  .overlay .editor .field.l-med input[type='text'] {
+    width: 100%; }
+/* line 89, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .l-progress-bar {
   display: block;
   height: 15px;
   line-height: 15px;
   margin: .5em 0;
   width: 100%; }
-/* line 75, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 98, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .bottom-bar {
   top: auto;
   right: 0;
@@ -4275,14 +4283,14 @@ span.req {
   overflow: visible;
   height: 30px;
   text-align: right; }
-  /* line 81, ../../../../general/res/sass/overlay/_overlay.scss */
+  /* line 107, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .bottom-bar .s-btn, .overlay .bottom-bar .s-menu {
     font-size: 95%;
     height: 30px;
     line-height: 30px;
     margin-left: 5px;
     padding: 0 15px; }
-    /* line 83, ../../../../general/res/sass/overlay/_overlay.scss */
+    /* line 109, ../../../../general/res/sass/overlay/_overlay.scss */
     .overlay .bottom-bar .s-btn:not(.major), .overlay .bottom-bar .s-menu:not(.major) {
       background-color: gray;
       -moz-border-radius: 3px;
@@ -4321,23 +4329,32 @@ span.req {
           /* line 296, ../../../../general/res/sass/_mixins.scss */
           .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover > .icon {
             color: white; } }
-/* line 99, ../../../../general/res/sass/overlay/_overlay.scss */
-.overlay .contents.l-dialog {
-  top: 5px;
-  right: 5px;
-  bottom: 5px;
-  left: 5px;
-  overflow: auto; }
-  /* line 107, ../../../../general/res/sass/overlay/_overlay.scss */
-  .overlay .contents.l-dialog .field.l-med input[type='text'] {
-    width: 100%; }
+
+/* line 127, ../../../../general/res/sass/overlay/_overlay.scss */
+.t-dialog-sm .overlay > .holder {
+  min-height: 225px;
+  height: 225px; }
 
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 4, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
+  /* line 3, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
   .overlay .clk-icon.close {
-    top: 10px;
-    right: 10px; }
-  /* line 8, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
+    top: 20px;
+    right: 20px; }
+  /* line 7, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
+  .overlay > .holder {
+    height: 90%;
+    width: 90%; }
+    /* line 10, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
+    .overlay > .holder > .contents {
+      top: 20px;
+      right: 20px;
+      bottom: 20px;
+      left: 20px; }
+      /* line 17, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
+      .overlay > .holder > .contents .top-bar > .title {
+        margin-right: 1.2em; } }
+@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px) {
+  /* line 27, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
   .overlay > .holder {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
@@ -4345,35 +4362,49 @@ span.req {
     top: 0;
     right: 0;
     bottom: 0;
-    left: 0; }
-    /* line 14, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
-    .overlay > .holder > .contents {
-      top: 10px;
-      right: 10px;
-      bottom: 10px;
-      left: 10px; }
-      /* line 21, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
-      .overlay > .holder > .contents .top-bar > .title {
-        margin-right: 1.2em; }
-      /* line 26, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
-      .overlay > .holder > .contents .form.editor {
-        border: none; }
-        /* line 29, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
-        .overlay > .holder > .contents .form.editor .contents {
-          top: 0;
-          right: 0;
-          bottom: 0;
-          left: 0; } }
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 43, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
-  .overlay > .holder > .contents .form.editor .contents .form-row > .label,
-  .overlay > .holder > .contents .form.editor .contents .form-row > .controls {
-    display: block;
-    float: none;
-    width: 100%; }
-  /* line 51, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
-  .overlay > .holder > .contents .form.editor .contents .form-row > .label:after {
-    float: none; } }
+    left: 0;
+    height: auto;
+    width: auto;
+    min-width: 200px;
+    min-height: 200px;
+    max-height: 100%;
+    max-width: 100%;
+    overflow: auto;
+    -moz-transform: none;
+    -ms-transform: none;
+    -webkit-transform: none;
+    transform: none; }
+    /* line 42, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
+    .overlay > .holder .editor .form .form-row > .label,
+    .overlay > .holder .editor .form .form-row > .controls {
+      display: block;
+      float: none;
+      width: 100%; }
+    /* line 50, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
+    .overlay > .holder .editor .form .form-row > .label:after {
+      float: none; }
+    /* line 56, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
+    .overlay > .holder .contents .top-bar,
+    .overlay > .holder .contents .editor,
+    .overlay > .holder .contents .bottom-bar {
+      background-color: rgba(255, 165, 0, 0.2);
+      top: auto;
+      right: auto;
+      bottom: auto;
+      left: auto;
+      height: auto;
+      width: auto;
+      margin-bottom: 20px;
+      position: relative; }
+
+  /* line 66, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
+  .t-dialog-sm .overlay > .holder {
+    height: auto;
+    max-height: 100%; } }
+@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) {
+  /* line 74, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
+  .overlay > .holder .contents .bottom-bar {
+    text-align: center; } }
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
