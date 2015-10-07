@@ -107,12 +107,9 @@
 	padding: 0 $interiorMargin 0 $interiorMargin;
 	@include transform(translateX(-50%));
 
-	a, span {
+	.banner-elem {
 		@include flex(0 1 auto);
 		margin-left: $interiorMargin;
-		&:first-child {
-			//margin-left: 0;
-		}
 	}
 	a {
 		display: inline-block;
@@ -133,6 +130,7 @@
 		line-height: $h;
 		width: 100px;
 	}
+    .progress-info.progress-estimate { display: none; }
 	z-index: 2;
 }
 

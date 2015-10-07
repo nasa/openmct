@@ -329,16 +329,19 @@ label.checkbox.custom {
 
     &:not(.indeterminate) {
         .progress-amt:before {
-            // Slower, more subtle anim for determinate progress
-            @include animation(progress .3s linear infinite);
-            @include bgProgressAnim(#fff, 0.2, $progressBarStripeW);
+            // More subtle anim for determinate progress
+            @include animation(progress .4s linear infinite);
+            @include bgProgressAnim(#fff, 0.1, $progressBarStripeW);
         }
     }
 
-    &.indeterminate .progress-amt:before {
-        // Faster, more visible anim for indeterminate progress
-        @include animation(progress .6s linear infinite);
-        @include bgProgressAnim(#fff, 0.4, $progressBarStripeW);
+    &.indeterminate .progress-amt {
+        &:before {
+            // More visible std diag stripe anim for indeterminate progress
+            @include animation(progress .6s linear infinite);
+            @include bgDiagonalStripes(#fff, 0.2, $progressBarStripeW);
+        }
+        &:after { display: none; }
     }
 }
 

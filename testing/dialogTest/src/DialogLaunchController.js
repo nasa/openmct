@@ -29,9 +29,10 @@ define(
         function DialogLaunchController($scope, dialogService, $timeout, $log, messageSeverity) {
             $scope.launchProgress = function (knownProgress) {
                 var model = {
-                    title: "Progress dialog example",
+                    title: "Progress Dialog Example",
                     progress: 0,
-                    hint: "Calculating...",
+                    hint: "Do not navigate away from this page or close this browser tab while this operation is in progress.",
+                    actionText: "Calculating...",
                     unknownProgress: !knownProgress,
                     unknownDuration: false,
                     severity: messageSeverity.INFO,
@@ -62,7 +63,7 @@ define(
 
                 if (dialogService.showBlockingMessage(model)) {
                     //Do processing here
-                    model.hint = "Processing 100 objects...";
+                    model.actionText = "Processing 100 objects...";
                     if (knownProgress) {
                         $timeout(incrementProgress, 1000);
                     }
@@ -73,14 +74,21 @@ define(
 
             $scope.launchError = function () {
                 var model = {
-                    title: "Error Message Title",
-                    hint: "Something happened. It was not so good.",
+                    title: "Error Dialog Example",
+                    actionText: "Something happened, and it was not good.",
                     severity: messageSeverity.ERROR,
                     actions: [
                         {
-                            label: "OK",
+                            label: "Try Again",
                             action: function () {
-                                $log.debug("OK Pressed");
+                                $log.debug("Try Again Pressed");
+                                dialogService.dismiss();
+                            }
+                        },
+                        {
+                            label: "Cancel",
+                            action: function () {
+                                $log.debug("Cancel Pressed");
                                 dialogService.dismiss();
                             }
                         }

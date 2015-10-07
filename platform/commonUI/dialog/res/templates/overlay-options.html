@@ -24,13 +24,11 @@
         <div class="title">{{ngModel.dialog.title}}</div>
         <div class="hint">{{ngModel.dialog.hint}}</div>
     </div>
-    <div class="abs form outline editor">
-        <div class='abs contents l-dialog'>
-            <mct-include key="ngModel.dialog.template"
-                         parameters="ngModel.dialog.parameters"
-                         ng-model="ngModel.dialog.model">
-            </mct-include>
-        </div>
+    <div class='abs editor l-dialog'>
+        <mct-include key="ngModel.dialog.template"
+                     parameters="ngModel.dialog.parameters"
+                     ng-model="ngModel.dialog.model">
+        </mct-include>
     </div>
     <div class="abs bottom-bar">
         <a ng-repeat="option in ngModel.dialog.options"

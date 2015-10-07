@@ -20,7 +20,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -41,38 +41,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -1881,33 +1881,35 @@ label.checkbox.custom {
       background-image: linear-gradient(rgba(0, 0, 0, 0) 5%, rgba(255, 255, 255, 0.25) 30%, rgba(0, 0, 0, 0) 100%); }
   /* line 331, ../../../../general/res/sass/controls/_controls.scss */
   .s-progress-bar:not(.indeterminate) .progress-amt:before {
-    -moz-animation: progress 0.3s linear infinite;
-    -webkit-animation: progress 0.3s linear infinite;
-    animation: progress 0.3s linear infinite;
-    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjEuMCIgeTE9IjAuNSIgeDI9IjAuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwLjIiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjAiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMC4yIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
+    -moz-animation: progress 0.4s linear infinite;
+    -webkit-animation: progress 0.4s linear infinite;
+    animation: progress 0.4s linear infinite;
+    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjEuMCIgeTE9IjAuNSIgeDI9IjAuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwLjEiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjAiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMC4xIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
     background-size: 100%;
-    background-image: -moz-linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.2) 100%);
-    background-image: -webkit-linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.2) 100%);
-    background-image: linear-gradient(-90deg, rgba(255, 255, 255, 0.2) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.2) 100%);
+    background-image: -moz-linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.1) 100%);
+    background-image: -webkit-linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.1) 100%);
+    background-image: linear-gradient(-90deg, rgba(255, 255, 255, 0.1) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.1) 100%);
     background-position: 0 center;
     background-repeat: repeat-x;
     background-size: 20px 40%; }
-  /* line 338, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 339, ../../../../general/res/sass/controls/_controls.scss */
   .s-progress-bar.indeterminate .progress-amt:before {
     -moz-animation: progress 0.6s linear infinite;
     -webkit-animation: progress 0.6s linear infinite;
     animation: progress 0.6s linear infinite;
-    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjEuMCIgeTE9IjAuNSIgeDI9IjAuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwLjQiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjAiLz48c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMC40Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
+    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjEuMCIgeTE9IjEuMCIgeDI9IjAuMCIgeTI9IjAuMCI+PHN0b3Agb2Zmc2V0PSIyNSUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMC4yIi8+PHN0b3Agb2Zmc2V0PSIyNSUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMC4wIi8+PHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMC4wIi8+PHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMC4yIi8+PHN0b3Agb2Zmc2V0PSI3NSUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMC4yIi8+PHN0b3Agb2Zmc2V0PSI3NSUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMC4wIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuMCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
-    background-image: -moz-linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.4) 100%);
-    background-image: -webkit-linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.4) 100%);
-    background-image: linear-gradient(-90deg, rgba(255, 255, 255, 0.4) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.4) 100%);
-    background-position: 0 center;
-    background-repeat: repeat-x;
-    background-size: 20px 40%; }
+    background-image: -moz-linear-gradient(135deg, rgba(255, 255, 255, 0.2) 25%, rgba(0, 0, 0, 0) 25%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0) 100%);
+    background-image: -webkit-linear-gradient(135deg, rgba(255, 255, 255, 0.2) 25%, rgba(0, 0, 0, 0) 25%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0) 100%);
+    background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.2) 25%, rgba(0, 0, 0, 0) 25%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0) 100%);
+    background-repeat: repeat;
+    background-size: 20px 20px; }
+  /* line 344, ../../../../general/res/sass/controls/_controls.scss */
+  .s-progress-bar.indeterminate .progress-amt:after {
+    display: none; }
 
 /******************************************************** SLIDERS */
-/* line 351, ../../../../general/res/sass/controls/_controls.scss */
+/* line 354, ../../../../general/res/sass/controls/_controls.scss */
 .slider .slot {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -1926,7 +1928,7 @@ label.checkbox.custom {
   right: 0;
   bottom: auto;
   left: 0; }
-/* line 362, ../../../../general/res/sass/controls/_controls.scss */
+/* line 365, ../../../../general/res/sass/controls/_controls.scss */
 .slider .knob {
   background-color: #333;
   -moz-border-radius: 3px;
@@ -2012,12 +2014,12 @@ label.checkbox.custom {
     -webkit-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
     border-color: #0099cc; }
-  /* line 373, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 376, ../../../../general/res/sass/controls/_controls.scss */
   .slider .knob:before {
     top: 1px;
     bottom: 3px;
     left: 5px; }
-/* line 380, ../../../../general/res/sass/controls/_controls.scss */
+/* line 383, ../../../../general/res/sass/controls/_controls.scss */
 .slider .range {
   background: rgba(0, 153, 204, 0.6);
   cursor: ew-resize;
@@ -2028,13 +2030,13 @@ label.checkbox.custom {
   left: auto;
   height: auto;
   width: auto; }
-  /* line 390, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 393, ../../../../general/res/sass/controls/_controls.scss */
   .slider .range:hover {
     background: rgba(0, 153, 204, 0.7); }
 
 /******************************************************** BROWSER ELEMENTS */
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 399, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 402, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -2049,7 +2051,7 @@ label.checkbox.custom {
     height: 10px;
     width: 10px; }
 
-  /* line 408, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 411, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar-thumb {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -2063,7 +2065,7 @@ label.checkbox.custom {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box; }
-    /* line 417, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 420, ../../../../general/res/sass/controls/_controls.scss */
     ::-webkit-scrollbar-thumb:hover {
       background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzVlNWU1ZSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzUyNTI1MiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
@@ -2072,7 +2074,7 @@ label.checkbox.custom {
       background-image: -webkit-linear-gradient(#5e5e5e, #525252 20px);
       background-image: linear-gradient(#5e5e5e, #525252 20px); }
 
-  /* line 422, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 425, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar-corner {
     background: rgba(0, 0, 0, 0.4); } }
 /*****************************************************************************
@@ -2483,29 +2485,32 @@ label.checkbox.custom {
   transform: translateX(-50%);
   z-index: 2; }
   /* line 110, ../../../../general/res/sass/controls/_messages.scss */
-  .l-message-banner a, .l-message-banner span {
+  .l-message-banner .banner-elem {
     -webkit-flex: 0 1 auto;
     flex: 0 1 auto;
     margin-left: 5px; }
-  /* line 117, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 114, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner a {
     display: inline-block; }
-  /* line 120, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 117, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner .l-action {
     line-height: 15px;
     padding: 0 5px; }
-  /* line 124, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 121, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner .close {
     cursor: pointer;
     font-size: 7px;
     width: 8px; }
-  /* line 130, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 127, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner .l-progress-bar {
     height: 8px;
     line-height: 8px;
     width: 100px; }
+  /* line 133, ../../../../general/res/sass/controls/_messages.scss */
+  .l-message-banner .progress-info.progress-estimate {
+    display: none; }
 
-/* line 139, ../../../../general/res/sass/controls/_messages.scss */
+/* line 137, ../../../../general/res/sass/controls/_messages.scss */
 .s-message-banner,
 .s-message-banner .s-action {
   -moz-transition-property: background-color;
@@ -2521,7 +2526,7 @@ label.checkbox.custom {
   -webkit-transition-timing-function: ease-in-out;
   transition-timing-function: ease-in-out; }
 
-/* line 144, ../../../../general/res/sass/controls/_messages.scss */
+/* line 142, ../../../../general/res/sass/controls/_messages.scss */
 .s-message-banner {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
@@ -2538,21 +2543,21 @@ label.checkbox.custom {
     /* line 33, ../../../../general/res/sass/controls/_messages.scss */
     .s-message-banner .s-action:hover {
       background-color: gray; }
-  /* line 148, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 146, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner a {
     color: inherit; }
-  /* line 149, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 147, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner .s-action {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
     border-radius: 2px; }
-  /* line 152, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 150, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner .close {
     opacity: 0.5; }
-    /* line 154, ../../../../general/res/sass/controls/_messages.scss */
+    /* line 152, ../../../../general/res/sass/controls/_messages.scss */
     .s-message-banner .close:hover {
       opacity: 1; }
-  /* line 158, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 156, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner.ok {
     background-color: #189543;
     color: #ccc; }
@@ -2565,7 +2570,7 @@ label.checkbox.custom {
       /* line 33, ../../../../general/res/sass/controls/_messages.scss */
       .s-message-banner.ok .s-action:hover {
         background-color: #189543; }
-  /* line 161, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 159, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner.caution {
     background-color: #ca5900;
     color: #ccc; }
@@ -4243,22 +4248,25 @@ span.req {
   line-height: 120%;
   margin-bottom: 5px; }
 /* line 52, ../../../../general/res/sass/overlay/_overlay.scss */
+.overlay .hint {
+  color: #b3b3b3; }
+/* line 56, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .top-bar {
   height: 60px; }
-/* line 56, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 60, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .editor {
   top: 70px;
   bottom: 40px;
   left: 0;
   right: 0; }
-/* line 62, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 66, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .l-progress-bar {
   display: block;
   height: 15px;
   line-height: 15px;
   margin: .5em 0;
   width: 100%; }
-/* line 71, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 75, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .bottom-bar {
   top: auto;
   right: 0;
@@ -4267,14 +4275,14 @@ span.req {
   overflow: visible;
   height: 30px;
   text-align: right; }
-  /* line 77, ../../../../general/res/sass/overlay/_overlay.scss */
+  /* line 81, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .bottom-bar .s-btn, .overlay .bottom-bar .s-menu {
     font-size: 95%;
     height: 30px;
     line-height: 30px;
     margin-left: 5px;
     padding: 0 15px; }
-    /* line 79, ../../../../general/res/sass/overlay/_overlay.scss */
+    /* line 83, ../../../../general/res/sass/overlay/_overlay.scss */
     .overlay .bottom-bar .s-btn:not(.major), .overlay .bottom-bar .s-menu:not(.major) {
       background-color: gray;
       -moz-border-radius: 3px;
@@ -4313,14 +4321,14 @@ span.req {
           /* line 296, ../../../../general/res/sass/_mixins.scss */
           .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover > .icon {
             color: white; } }
-/* line 95, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 99, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .contents.l-dialog {
   top: 5px;
   right: 5px;
   bottom: 5px;
   left: 5px;
   overflow: auto; }
-  /* line 103, ../../../../general/res/sass/overlay/_overlay.scss */
+  /* line 107, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .contents.l-dialog .field.l-med input[type='text'] {
     width: 100%; }
 

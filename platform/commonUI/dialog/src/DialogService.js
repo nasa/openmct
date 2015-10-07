@@ -178,6 +178,7 @@ define(
          *     severity: string "error" | "info",
          *     title: string,
          *     hint: string,
+         *     actionText: string,
          *     progress: int,
          *     progressText: string,
          *     unknownProgress: boolean,
@@ -207,6 +208,8 @@ define(
          * These are defined in a bundle constant with key 'dialogSeverity'
          * @property {string} title the title to use for the dialog
          * @property {string} hint the 'hint' message to show below the title
+         * @property {string} actionText text that indicates a current action,
+         * shown above a progress bar to indicate what's happening.
          * @property {number} progress a percentage value (1-100)
          * indicating the completion of the blocking task
          * @property {string} progressText the message to show below a

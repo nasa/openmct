@@ -48,6 +48,10 @@
         line-height: 120%;
 	    margin-bottom: $interiorMargin;
     }
+
+    .hint {
+        color: pushBack($colorOvrFg, 20%);
+    }
     
     .top-bar {
         height: $ovrTopBarH;
