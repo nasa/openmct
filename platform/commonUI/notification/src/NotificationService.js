@@ -27,8 +27,8 @@
  * @namespace platform/commonUI/dialog
  */
 define(
-    [],
-    function () {
+    ["./MessageSeverity"],
+    function (MessageSeverity) {
         "use strict";
         /**
          * The notification service is responsible for informing the user of
@@ -36,28 +36,9 @@ define(
          * @memberof platform/commonUI/notification
          * @constructor
          */
-        function NotificationService($log, $timeout, messageSeverity, DEFAULT_AUTO_DISMISS) {
-            //maintain an array of notifications.
-            //expose a method for adding notifications.
-            //expose a method for dismissing notifications.
-            //expose a method for minimizing notifications.
-            //expose a method for getting the 'current' notification. How
-            //this is determined could be a little nuanced.
-            //Allow for auto-dismissal of success messages
-            //
-            //
-            //
-            //     Questions:
-            //     1) What happens when a newer, but lower priority
-            //        message arrives (eg. success). Just show it? It will
-            //        auto-dismissed, and the existing error message will be
-            //        exposed.
-            //
-
+        function NotificationService($timeout, DEFAULT_AUTO_DISMISS) {
             this.notifications = [];
-            this.$log = $log;
             this.$timeout = $timeout;
-            this.messageSeverity = messageSeverity;
             this.DEFAULT_AUTO_DISMISS = DEFAULT_AUTO_DISMISS;
 
             /**
@@ -71,7 +52,6 @@ define(
              * @type {{notification: undefined}}
              */
             this.active = {
-                notification: undefined
             };
         }
         /**
@@ -97,13 +77,17 @@ define(
             this.model = model;
         }
 
-        Notification.prototype.minimize = function () {
+        Notification.prototype.minimize = function (setValue) {
             if (typeof setValue !== undefined){
-                model.minimized = setValue;
+                this.model.minimized = setValue;
             } else {
-                return model.minimized;
+                return this.model.minimized;
             }
         };
+
+        NotificationService.prototype.getActiveNotification = function (){
+            return this.active.notification;
+        }
 
         /**
          * model = {
@@ -112,31 +96,125 @@ define(
          * @param model
          */
         NotificationService.prototype.notify = function (model) {
-            var notification = new Notification(model);
+            var notification = new Notification(model),
+                that=this;
             this.notifications.push(notification);
-            this.setActiveNotification(notification);
-        };
+            /*
+            Check if there is already an active (ie. visible) notification
+             */
+            if (!this.active.notification){
+                setActiveNotification.call(this, notification);
 
+            } else if (!this.active.timeout){
+                /*
+                 If there is already an active notification, time it out. If it's
+                 already got a timeout in progress (either because it has had
+                 timeout forced because of a queue of messages, or it had an
+                 autodismiss specified), leave it to run.
 
-
-        NotificationService.prototype.setActiveNotification = function () {
-            //If there is a message active, time it out, and then chain a
-            // new message to appear.
-            if (this.active.timeout){
-                this.active.timeout = this.active.timeout.then(function (){
-                    this.active.timeout = $timeout(function(){
-                        this.dismiss(this.active.notification);
-                    });
+                 This notifcation has been added to queue and will be
+                  serviced as soon as possible.
+                 */
+                this.active.timeout = this.$timeout(function () {
+                    that.dismissOrMinimize(that.active.notification);
                 });
             }
+
         };
 
-        NotificationService.prototype.dismiss = function (notification) {
-            var index = this.notifications.indexOf(notification);
-            if (index >= 0) {
-                this.notifications = this.notifications.splice(index, 1);
-                delete this.active.notification;
+        function setActiveNotification (notification) {
+            var that = this;
+            this.active.notification = notification;
+            /*
+            If autoDismiss has been specified, setup a timeout to
+            dismiss the dialog.
+
+            If there are other notifications pending in the queue, set this
+            one to auto-dismiss
+             */
+            if (notification.model.autoDismiss
+                || selectNextNotification.call(this)) {
+                var timeout = isNaN(notification.model.autoDismiss) ?
+                    this.DEFAULT_AUTO_DISMISS : notification.model.autoDismiss;
+
+                this.active.timeout = this.$timeout(function () {
+                    that.dismissOrMinimize(notification);
+                }, timeout);
             }
         }
+
+        function selectNextNotification () {
+            /*
+            Loop through the notifications queue and find the first one that
+            has not already been minimized (manually or otherwise).
+             */
+            for (var i=0; i< this.notifications.length; i++) {
+                var notification = this.notifications[i];
+
+                if (!notification.model.minimized
+                    && notification!= this.activeNotification) {
+
+                    return notification;
+                }
+            }
+        };
+
+        /**
+         * Minimize a notification. The notification will still be available
+         * from the notification list. Typically notifications with a
+         * severity of SUCCESS should not be minimized, but rather
+         * dismissed.
+         * @see dismiss
+         * @see dismissOrMinimize
+         * @param notification
+         */
+        NotificationService.prototype.minimize = function (notification) {
+            //Check this is a known notification
+            var index = this.notifications.indexOf(notification);
+            if (index >= 0) {
+                notification.minimize(true);
+                delete this.active.notification;
+                delete this.active.timeout;
+                setActiveNotification.call(this, selectNextNotification.call(this));
+            }
+        }
+
+        /**
+         * Completely remove a notification. This will dismiss it from the
+         * message banner and remove it from the list of notifications.
+         * Typically only notifications with a severity of SUCCESS should be
+         * dismissed. If you're not sure whether to dismiss or minimize a
+         * notification, use the dismissOrMinimize method.
+         * dismiss
+         * @see dismissOrMinimize
+         * @param notification The notification to dismiss
+         */
+        NotificationService.prototype.dismiss = function (notification) {
+            //Check this is a known notification
+            var index = this.notifications.indexOf(notification);
+            if (index >= 0) {
+                this.notifications.splice(index, 1);
+
+                delete this.active.notification;
+                delete this.active.timeout;
+
+                setActiveNotification.call(this, selectNextNotification.call(this));
+            }
+        }
+
+        /**
+         * Depending on the severity of the notification will selectively
+         * dismiss or minimize where appropriate.
+         * @see dismiss
+         * @see minimize
+         * @param notification
+         */
+        NotificationService.prototype.dismissOrMinimize = function (notification){
+            if (notification.model.severity > MessageSeverity.SUCCESS){
+                this.minimize(notification);
+            } else {
+                this.dismiss(notification);
+            }
+        };
         return NotificationService;
     });

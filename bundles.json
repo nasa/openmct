@@ -26,6 +26,7 @@
     "platform/policy",
     "platform/entanglement",
     "platform/search",
+    "platform/commonUI/notification",
 
     "example/imagery",
     "example/eventGenerator",
