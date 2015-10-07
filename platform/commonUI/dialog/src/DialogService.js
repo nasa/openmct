@@ -89,7 +89,8 @@ define(
                 // will handle actual insertion into the DOM
                 this.overlay = this.overlayService.createOverlay(
                     key,
-                    model
+                    model,
+                    "t-dialog"
                 );
 
                 // Track that a dialog is already visible, to
@@ -230,6 +231,7 @@ define(
          * progress, as well as a series of actions that
          * the user can take if necessary
          * @param {DialogModel} dialogModel defines options for the dialog
+         * @param {typeClass} string tells overlayService that this overlay should use appropriate CSS class
          * @returns {boolean}
          */
         DialogService.prototype.showBlockingMessage = function(dialogModel) {
@@ -238,7 +240,8 @@ define(
                 // will handle actual insertion into the DOM
                 this.overlay = this.overlayService.createOverlay(
                     "blocking-message",
-                    {dialog: dialogModel}
+                    {dialog: dialogModel},
+                    "t-dialog-sm"
                 );
                 this.dialogVisible = true;
                 return true;
