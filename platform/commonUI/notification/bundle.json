@@ -3,7 +3,7 @@
         "constants": [
             {
                 "key": "DEFAULT_AUTO_DISMISS",
-                "value": 2000
+                "value": 3000
             }
         ],
         "services": [

@@ -93,8 +93,7 @@ define(
              * A context in which to hold the active notification and a
              * handle to its timeout.
              */
-            this.active = {
-            };
+            this.active = {};
         }
 
         /**
@@ -113,7 +112,7 @@ define(
          */
         NotificationService.prototype.success = function (notification) {
             notification.autoDismiss = notification.autoDismiss || true;
-            NotificationService.prototype.notify(notification);
+            this.notify(notification);
         };
 
         /**
@@ -126,7 +125,12 @@ define(
         NotificationService.prototype.notify = function (notification) {
             /*var notification = new Notification(model),
                 that=this; */
-            var that = this;
+            var that = this,
+                timeout;
+
+            if (notification.autoDismiss === true){
+                notification.autoDismiss = this.DEFAULT_AUTO_DISMISS;
+            }
 
             this.notifications.push(notification);
             /*
@@ -145,9 +149,12 @@ define(
                  This notifcation has been added to queue and will be
                   serviced as soon as possible.
                  */
+                timeout = notification.autoDismiss ?
+                    notification.autoDismiss :
+                    this.DEFAULT_AUTO_DISMISS;
                 this.active.timeout = this.$timeout(function () {
                     that.dismissOrMinimize(that.active.notification);
-                });
+                }, timeout);
             }
 
         };
@@ -171,9 +178,9 @@ define(
                  */
                 if (notification && (notification.autoDismiss
                     || this.selectNextNotification())) {
-                    timeout = isNaN(notification.autoDismiss) ?
-                        this.DEFAULT_AUTO_DISMISS :
-                        notification.autoDismiss;
+                    timeout = notification.autoDismiss ?
+                        notification.autoDismiss :
+                        this.DEFAULT_AUTO_DISMISS;
 
                     this.active.timeout = this.$timeout(function () {
                         that.dismissOrMinimize(notification);
@@ -258,5 +265,7 @@ define(
                 this.dismiss(notification);
             }
         };
+
         return NotificationService;
-    });
+    }
+);

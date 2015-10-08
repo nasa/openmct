@@ -4,6 +4,10 @@
             {
                 "key": "dialogLaunchTemplate",
                 "templateUrl": "dialog-launch.html"
+            },
+            {
+                "key": "notificationLaunchTemplate",
+                "templateUrl": "notification-launch.html"
             }
         ],
         "controllers": [
@@ -17,11 +21,22 @@
                     "$log",
                     "messageSeverity"
                 ]
+            },
+            {
+                "key": "NotificationLaunchController",
+                "implementation": "NotificationLaunchController.js",
+                "depends": [
+                    "$scope",
+                    "notificationService"
+                ]
             }
         ],
         "indicators": [
             {
                 "implementation": "DialogLaunchIndicator.js"
+            },
+            {
+                "implementation": "NotificationLaunchIndicator.js"
             }
         ]
     }

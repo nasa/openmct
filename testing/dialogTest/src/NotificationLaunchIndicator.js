@@ -19,14 +19,32 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
+/*global define,window*/
 
 define(
     [],
     function () {
         "use strict";
-        function BannerController($scope, notificationService){
-            $scope.active = notificationService.active;
+
+        function NotificationLaunchIndicator() {
+
         }
-        return BannerController;
-    });
+
+        NotificationLaunchIndicator.template = 'notificationLaunchTemplate';
+
+        NotificationLaunchIndicator.prototype.getGlyph = function () {
+            return "i";
+        };
+        NotificationLaunchIndicator.prototype.getGlyphClass = function () {
+            return 'caution';
+        };
+        NotificationLaunchIndicator.prototype.getText = function () {
+            return "Launch notification";
+        };
+        NotificationLaunchIndicator.prototype.getDescription = function () {
+            return "Launch notification";
+        };
+
+        return NotificationLaunchIndicator;
+    }
+);

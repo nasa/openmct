@@ -25,8 +25,20 @@ define(
     [],
     function () {
         "use strict";
-        function BannerController($scope, notificationService){
-            $scope.active = notificationService.active;
+
+        function NotificationLaunchController($scope, notificationService) {
+            /**
+             *  <a ng-click="newSuccess()">Success</a> |
+                <a ng-click="newError()">Error</a> |
+             <a ng-click="newProgress()">Progress</a>
+             */
+            $scope.newSuccess = function(){
+
+                notificationService.success({
+                    title: "Success notification!"
+                })
+            };
         }
-        return BannerController;
-    });
+        return NotificationLaunchController;
+    }
+);
