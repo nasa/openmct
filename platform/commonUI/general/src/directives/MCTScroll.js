@@ -49,15 +49,20 @@ define(
                 var expr = attrs[attribute],
                     parsed = $parse(expr);
 
-                // Set the element's scroll to match the scope's state
-                function updateElement(value) {
-                    element[0][property] = value;
-                }
-
                 // Handle event; assign to scroll state to scope
                 function updateScope() {
                     parsed.assign(scope, element[0][property]);
                     scope.$apply(expr);
+                }
+
+                // Set the element's scroll to match the scope's state
+                function updateElement(value) {
+                    element[0][property] = value;
+                    // Some values may be out of range for the scroll bar,
+                    // so publish the real scroll value back into scope.
+                    if (element[0][property] !== value) {
+                        updateScope();
+                    }
                 }
 
                 // Initialize state in scope
