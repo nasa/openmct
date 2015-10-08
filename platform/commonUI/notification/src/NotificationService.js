@@ -199,7 +199,7 @@ define(
                 notification = this.notifications[i];
 
                 if (!notification.minimized
-                    && notification!= this.activeNotification) {
+                    && notification!== this.activeNotification) {
 
                     return notification;
                 }

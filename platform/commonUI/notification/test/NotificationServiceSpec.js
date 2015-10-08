@@ -168,15 +168,16 @@ define(
                 });
                 it("auto-minimizes errors when a number of them arrive in" +
                     " short succession ", function() {
-                    var activeNotification;
-                    var error2 = {
-                        title: "Second Mock Error Notification",
-                        severity: MessageSeverity.ERROR
-                    };
-                    var error3 = {
-                        title: "Third Mock Error Notification",
-                        severity: MessageSeverity.ERROR
-                    };
+                    var activeNotification,
+                        error2 = {
+                            title: "Second Mock Error Notification",
+                            severity: MessageSeverity.ERROR
+                        };
+                        error3 = {
+                            title: "Third Mock Error Notification",
+                            severity: MessageSeverity.ERROR
+                        };
+                    
                     //First pre-load with a success message
                     notificationService.notify(errorModel);
                     //Then notify of a third error
