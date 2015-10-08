@@ -5,6 +5,13 @@
                 "when": "/cli",
                 "templateUrl": "templates/cli.html"
             }
+        ],
+        "controllers": [
+            {
+                "key": "CLIController",
+                "implementation": "CLIController.js",
+                "depends": [ "$scope" ]
+            }
         ]
     }
 }
