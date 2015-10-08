@@ -8,8 +8,8 @@ define(function () {
 
         function print(str) {
             $scope.stdout.push(str);
+            $scope.stdoutScroll = Number.MAX_VALUE;
         }
-
 
         function summarize(domainObject) {
             var type = domainObject.getCapability("type"),
@@ -73,7 +73,10 @@ define(function () {
             var parts = input.split(" "),
                 targetObject;
 
-            if (parts.length === 1) {
+            if (input.length === 0) {
+                printObject(navigationService.getNavigation());
+                return;
+            } else if (parts.length === 1) {
                 targetObject = findTarget(parts[0]);
                 if (targetObject) {
                     listActions(targetObject);
@@ -101,6 +104,7 @@ define(function () {
 
         $scope.stdout = [];
         $scope.stdin = "";
+        $scope.stdoutScroll = 0;
 
         $scope.enter = function (input) {
             $scope.stdin = "";
