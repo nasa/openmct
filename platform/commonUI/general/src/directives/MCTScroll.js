@@ -61,7 +61,7 @@ define(
                     // Some values may be out of range for the scroll bar,
                     // so publish the real scroll value back into scope.
                     if (element[0][property] !== value) {
-                        updateScope();
+                        parsed.assign(scope, element[0][property]);
                     }
                 }
 
