@@ -53,9 +53,10 @@ define(
             // based on whether or not we are currently
             // full screen.
             var metadata = Object.create(FullscreenAction);
+            metadata.key = "fullscreen";
             metadata.glyph = screenfull.isFullscreen ? "_" : "z";
             metadata.description = screenfull.isFullscreen ?
-                EXIT_FULLSCREEN : ENTER_FULLSCREEN;
+                    EXIT_FULLSCREEN : ENTER_FULLSCREEN;
             metadata.group = "windowing";
             metadata.context = this.context;
             return metadata;
