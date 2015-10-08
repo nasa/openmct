@@ -176,7 +176,7 @@ define(
 
         /**
          * dialogModel: {
-         *     severity: string "error" | "info",
+         *     severity: string "error" | "info" | "alert",
          *     title: string,
          *     hint: string,
          *     actionText: string,
@@ -258,9 +258,9 @@ define(
                 // Add the overlay using the OverlayService, which
                 // will handle actual insertion into the DOM
                 this.overlay = this.overlayService.createOverlay(
-                    "message-list",
+                    "overlay-message-list",
                     {dialog: dialogModel},
-                    "t-dialog t-message-list"
+                    "t-dialog"
                 );
                 this.dialogVisible = true;
                 return true;

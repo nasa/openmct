@@ -600,10 +600,10 @@ mct-container {
   color: #0099cc; }
   /* line 34, ../../../../general/res/sass/_icons.scss */
   .ui-symbol.icon.alert {
-    color: #ff3c00; }
+    color: #ff533a; }
     /* line 36, ../../../../general/res/sass/_icons.scss */
     .ui-symbol.icon.alert:hover {
-      color: #ff8a66; }
+      color: #ffaca0; }
   /* line 40, ../../../../general/res/sass/_icons.scss */
   .ui-symbol.icon.major {
     font-size: 1.65em; }
@@ -637,7 +637,7 @@ mct-container {
   display: none !important; }
   /* line 76, ../../../../general/res/sass/_icons.scss */
   .l-icon-alert:before {
-    color: #ff3c00;
+    color: #ff533a;
     content: "!"; }
 
 /* line 13, ../../../../general/res/sass/_limits.scss */
@@ -827,9 +827,9 @@ mct-container {
 
 /* line 150, ../../../../general/res/sass/helpers/_bubbles.scss */
 .s-infobubble {
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
   -moz-box-shadow: rgba(0, 0, 0, 0.4) 0 1px 5px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0 1px 5px;
   box-shadow: rgba(0, 0, 0, 0.4) 0 1px 5px;
@@ -1198,9 +1198,9 @@ mct-container {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    -moz-border-radius: 1.5px;
-    -webkit-border-radius: 1.5px;
-    border-radius: 1.5px;
+    -moz-border-radius: 2.25px;
+    -webkit-border-radius: 2.25px;
+    border-radius: 2.25px;
     -moz-transition: background-color 0.25s;
     -o-transition: background-color 0.25s;
     -webkit-transition: background-color 0.25s;
@@ -1556,9 +1556,9 @@ mct-container {
     margin-top: 0; }
   /* line 29, ../../../../general/res/sass/controls/_controls.scss */
   .accordion .accordion-head {
-    -moz-border-radius: 1.5px;
-    -webkit-border-radius: 1.5px;
-    border-radius: 1.5px;
+    -moz-border-radius: 2.25px;
+    -webkit-border-radius: 2.25px;
+    border-radius: 2.25px;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
@@ -1651,9 +1651,9 @@ label.checkbox.custom {
     min-width: 14px; }
     /* line 127, ../../../../general/res/sass/controls/_controls.scss */
     label.checkbox.custom em:before {
-      -moz-border-radius: 1.5px;
-      -webkit-border-radius: 1.5px;
-      border-radius: 1.5px;
+      -moz-border-radius: 2.25px;
+      -webkit-border-radius: 2.25px;
+      border-radius: 2.25px;
       background: #4d4d4d;
       -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
       -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 2px;
@@ -1838,24 +1838,24 @@ label.checkbox.custom {
 
 /* line 309, ../../../../general/res/sass/controls/_controls.scss */
 .s-progress-bar {
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
   -moz-box-shadow: inset rgba(0, 0, 0, 0.3) 0 1px 4px;
   -webkit-box-shadow: inset rgba(0, 0, 0, 0.3) 0 1px 4px;
   box-shadow: inset rgba(0, 0, 0, 0.3) 0 1px 4px;
   background: rgba(0, 0, 0, 0.1); }
   /* line 314, ../../../../general/res/sass/controls/_controls.scss */
   .s-progress-bar .progress-amt {
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
     -moz-box-shadow: rgba(0, 0, 0, 0.4) 0 0 3px;
     -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0 0 3px;
     box-shadow: rgba(0, 0, 0, 0.4) 0 0 3px;
-    -moz-border-radius: 1px;
-    -webkit-border-radius: 1px;
-    border-radius: 1px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
     -moz-transition-property: width;
     -o-transition-property: width;
     -webkit-transition-property: width;
@@ -2165,9 +2165,9 @@ label.checkbox.custom {
   position: relative; }
   /* line 70, ../../../../general/res/sass/controls/_menus.scss */
   .menu-element .menu {
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
     background-color: #6e6e6e;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -2399,10 +2399,10 @@ label.checkbox.custom {
     margin-right: 3px; }
   /* line 54, ../../../../general/res/sass/controls/_messages.scss */
   .status.block.ok .status-indicator {
-    color: #60e68e; }
+    color: #44ba53; }
   /* line 57, ../../../../general/res/sass/controls/_messages.scss */
   .status.block.caution .status-indicator {
-    color: #ffa864; }
+    color: #ff8545; }
   /* line 60, ../../../../general/res/sass/controls/_messages.scss */
   .status.block .label {
     -moz-transition-property: max-width;
@@ -2446,14 +2446,14 @@ label.checkbox.custom {
 /* Styles for messages and message banners */
 /* line 84, ../../../../general/res/sass/controls/_messages.scss */
 .message.block {
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
   padding: 10px; }
 /* line 88, ../../../../general/res/sass/controls/_messages.scss */
 .message.error {
-  background-color: rgba(255, 60, 0, 0.3);
-  color: #ff8a66; }
+  background-color: rgba(255, 83, 58, 0.3);
+  color: #ffaca0; }
 
 /* line 94, ../../../../general/res/sass/controls/_messages.scss */
 .l-message-banner {
@@ -2548,9 +2548,9 @@ label.checkbox.custom {
     color: inherit; }
   /* line 147, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner .s-action {
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px; }
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px; }
   /* line 150, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner .close {
     opacity: 0.5; }
@@ -2559,40 +2559,145 @@ label.checkbox.custom {
       opacity: 1; }
   /* line 156, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner.ok {
-    background-color: #189543;
+    background-color: #1b4a21;
     color: #ccc; }
     /* line 28, ../../../../general/res/sass/controls/_messages.scss */
     .s-message-banner.ok:hover {
-      background-color: #1ec256; }
+      background-color: #296f32; }
     /* line 31, ../../../../general/res/sass/controls/_messages.scss */
     .s-message-banner.ok .s-action {
-      background-color: #11692f; }
+      background-color: #0d2510; }
       /* line 33, ../../../../general/res/sass/controls/_messages.scss */
       .s-message-banner.ok .s-action:hover {
-        background-color: #189543; }
+        background-color: #1b4a21; }
   /* line 159, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner.caution {
-    background-color: #ca5900;
+    background-color: #ab3b00;
     color: #ccc; }
     /* line 28, ../../../../general/res/sass/controls/_messages.scss */
     .s-message-banner.caution:hover {
-      background-color: #fd6f00; }
+      background-color: #de4c00; }
     /* line 31, ../../../../general/res/sass/controls/_messages.scss */
     .s-message-banner.caution .s-action {
-      background-color: #974200; }
+      background-color: #782900; }
       /* line 33, ../../../../general/res/sass/controls/_messages.scss */
       .s-message-banner.caution .s-action:hover {
-        background-color: #ca5900; }
+        background-color: #ab3b00; }
 
-/* line 168, ../../../../general/res/sass/controls/_messages.scss */
-.t-message .overlay .type-icon.message-type.abs, .t-message .overlay .s-menu span.type-icon.message-type.l-click-area, .s-menu .t-message .overlay span.type-icon.message-type.l-click-area {
+/* Paths:
+    t-dialog | t-dialog-sm > t-message-single | t-message-list > overlay > holder > contents > l-message >
+        message-type > (icon)
+        message-contents >
+        top-bar >
+            title
+            hint
+        editor >
+            (if displaying list of messages)
+            ul > li > l-message >
+                ... same as above
+        bottom-bar
+*/
+/* line 201, ../../../../general/res/sass/controls/_messages.scss */
+.l-message {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-direction: row;
+  flex-direction: row; }
+  /* line 204, ../../../../general/res/sass/controls/_messages.scss */
+  .l-message .type-icon.message-type {
+    -webkit-flex: 0 1 auto;
+    flex: 0 1 auto;
+    position: relative; }
+  /* line 209, ../../../../general/res/sass/controls/_messages.scss */
+  .l-message .message-contents {
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+    margin-left: 25px;
+    position: relative; }
+    /* line 215, ../../../../general/res/sass/controls/_messages.scss */
+    .l-message .message-contents .top-bar,
+    .l-message .message-contents .message-body {
+      margin-bottom: 20px; }
+
+/* line 165, ../../../../general/res/sass/controls/_messages.scss */
+.t-message-single .type-icon.message-type {
+  text-shadow: rgba(0, 0, 0, 0.4) 0 1px 2px;
+  color: #ccc;
   font-size: 80px;
-  opacity: 0.5;
-  right: auto;
+  padding-left: 1px;
   width: 80px; }
-/* line 175, ../../../../general/res/sass/controls/_messages.scss */
-.t-message .overlay .message-contents.abs, .t-message .overlay .s-menu span.message-contents.l-click-area, .s-menu .t-message .overlay span.message-contents.l-click-area {
-  left: 105px; }
+  /* line 167, ../../../../general/res/sass/controls/_messages.scss */
+  .t-message-single .type-icon.message-type:before {
+    content: "\e608"; }
+/* line 174, ../../../../general/res/sass/controls/_messages.scss */
+.t-message-single .message-severity-info .type-icon.message-type {
+  color: #44ba53; }
+  /* line 175, ../../../../general/res/sass/controls/_messages.scss */
+  .t-message-single .message-severity-info .type-icon.message-type:before {
+    content: "\e608"; }
+/* line 178, ../../../../general/res/sass/controls/_messages.scss */
+.t-message-single .message-severity-alert .type-icon.message-type {
+  color: #ff8545; }
+  /* line 179, ../../../../general/res/sass/controls/_messages.scss */
+  .t-message-single .message-severity-alert .type-icon.message-type:before {
+    content: "\e610"; }
+/* line 182, ../../../../general/res/sass/controls/_messages.scss */
+.t-message-single .message-severity-error .type-icon.message-type {
+  color: #ff533a; }
+  /* line 183, ../../../../general/res/sass/controls/_messages.scss */
+  .t-message-single .message-severity-error .type-icon.message-type:before {
+    content: "\21"; }
+
+/* line 165, ../../../../general/res/sass/controls/_messages.scss */
+.t-message-list .type-icon.message-type {
+  text-shadow: rgba(0, 0, 0, 0.4) 0 1px 2px;
+  color: #ccc;
+  font-size: 32px;
+  padding-left: 1px;
+  width: 32px; }
+  /* line 167, ../../../../general/res/sass/controls/_messages.scss */
+  .t-message-list .type-icon.message-type:before {
+    content: "\e608"; }
+/* line 174, ../../../../general/res/sass/controls/_messages.scss */
+.t-message-list .message-severity-info .type-icon.message-type {
+  color: #44ba53; }
+  /* line 175, ../../../../general/res/sass/controls/_messages.scss */
+  .t-message-list .message-severity-info .type-icon.message-type:before {
+    content: "\e608"; }
+/* line 178, ../../../../general/res/sass/controls/_messages.scss */
+.t-message-list .message-severity-alert .type-icon.message-type {
+  color: #ff8545; }
+  /* line 179, ../../../../general/res/sass/controls/_messages.scss */
+  .t-message-list .message-severity-alert .type-icon.message-type:before {
+    content: "\e610"; }
+/* line 182, ../../../../general/res/sass/controls/_messages.scss */
+.t-message-list .message-severity-error .type-icon.message-type {
+  color: #ff533a; }
+  /* line 183, ../../../../general/res/sass/controls/_messages.scss */
+  .t-message-list .message-severity-error .type-icon.message-type:before {
+    content: "\21"; }
+/* line 232, ../../../../general/res/sass/controls/_messages.scss */
+.t-message-list .message-contents .l-message {
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  background: rgba(230, 230, 230, 0.1);
+  margin-bottom: 5px;
+  margin-right: 10px;
+  padding: 10px; }
+  /* line 240, ../../../../general/res/sass/controls/_messages.scss */
+  .t-message-list .message-contents .l-message .message-contents {
+    font-size: 0.9em; }
+    /* line 242, ../../../../general/res/sass/controls/_messages.scss */
+    .t-message-list .message-contents .l-message .message-contents .message-action {
+      color: #b3b3b3; }
+    /* line 243, ../../../../general/res/sass/controls/_messages.scss */
+    .t-message-list .message-contents .l-message .message-contents .bottom-bar {
+      text-align: left; }
+  /* line 246, ../../../../general/res/sass/controls/_messages.scss */
+  .t-message-list .message-contents .l-message .top-bar,
+  .t-message-list .message-contents .l-message .message-body {
+    margin-bottom: 10px; }
 
 /* line 1, ../../../../general/res/sass/controls/_time-controller.scss */
 .l-time-controller {
@@ -2749,9 +2854,9 @@ label.checkbox.custom {
  *****************************************************************************/
 /* line 22, ../../../../general/res/sass/forms/_elems.scss */
 .section-header {
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
   background: rgba(0, 0, 0, 0.2);
   color: #cccccc;
   font-size: 0.8em;
@@ -2876,9 +2981,9 @@ label.form-control.checkbox input {
   vertical-align: top; }
   /* line 156, ../../../../general/res/sass/forms/_elems.scss */
   .l-result div.s-hint {
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
     background: rgba(255, 51, 0, 0.8);
     display: block;
     color: #ffad99;
@@ -4100,9 +4205,9 @@ span.req {
       visibility: visible; }
   /* line 178, ../../../../general/res/sass/search/_search.scss */
   .search .active-filter-display {
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
@@ -4195,152 +4300,166 @@ span.req {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 23, ../../../../general/res/sass/overlay/_overlay.scss */
-.overlay .blocker {
-  background: rgba(0, 0, 0, 0.7);
-  z-index: 100; }
-/* line 27, ../../../../general/res/sass/overlay/_overlay.scss */
-.overlay .clk-icon.close {
-  font-size: 0.8rem;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  bottom: auto;
-  left: auto;
-  z-index: 100; }
-/* line 36, ../../../../general/res/sass/overlay/_overlay.scss */
-.overlay > .holder {
-  background-color: #4d4d4d;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  color: #e6e6e6;
-  display: inline-block;
-  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-  background-size: 100%;
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #595959), color-stop(100%, #4d4d4d));
-  background-image: -moz-linear-gradient(#595959, #4d4d4d);
-  background-image: -webkit-linear-gradient(#595959, #4d4d4d);
-  background-image: linear-gradient(#595959, #4d4d4d);
-  -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-  box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-  -moz-border-radius: 6px;
-  -webkit-border-radius: 6px;
-  border-radius: 6px;
-  color: #e6e6e6;
-  top: 50%;
-  right: auto;
-  bottom: auto;
-  left: 50%;
-  -moz-transform: translateX(-50%) translateY(-50%);
-  -ms-transform: translateX(-50%) translateY(-50%);
-  -webkit-transform: translateX(-50%) translateY(-50%);
-  transform: translateX(-50%) translateY(-50%);
-  height: 70%;
-  width: 50%;
-  min-height: 300px;
-  max-height: 800px;
-  min-width: 600px;
-  max-width: 1000px;
-  z-index: 101; }
-  /* line 53, ../../../../general/res/sass/overlay/_overlay.scss */
-  .overlay > .holder > .contents {
-    top: 25px;
-    right: 25px;
-    bottom: 25px;
-    left: 25px; }
-/* line 62, ../../../../general/res/sass/overlay/_overlay.scss */
-.overlay .title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 1.2em;
-  line-height: 120%;
-  margin-bottom: 5px; }
-/* line 69, ../../../../general/res/sass/overlay/_overlay.scss */
-.overlay .hint {
-  color: #b3b3b3; }
-/* line 73, ../../../../general/res/sass/overlay/_overlay.scss */
-.overlay .top-bar {
-  height: 60px; }
-/* line 77, ../../../../general/res/sass/overlay/_overlay.scss */
-.overlay .editor {
-  top: 70px;
-  bottom: 40px;
-  left: 0;
-  right: 0;
-  overflow: auto; }
+/* line 22, ../../../../general/res/sass/overlay/_overlay.scss */
+.overlay {
+  font-size: 90%; }
+  /* line 24, ../../../../general/res/sass/overlay/_overlay.scss */
+  .overlay .blocker {
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 100; }
+  /* line 28, ../../../../general/res/sass/overlay/_overlay.scss */
+  .overlay .clk-icon.close {
+    font-size: 0.8rem;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    bottom: auto;
+    left: auto;
+    z-index: 100; }
+  /* line 37, ../../../../general/res/sass/overlay/_overlay.scss */
+  .overlay > .holder {
+    background-color: #4d4d4d;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #e6e6e6;
+    display: inline-block;
+    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+    background-size: 100%;
+    background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #595959), color-stop(100%, #4d4d4d));
+    background-image: -moz-linear-gradient(#595959, #4d4d4d);
+    background-image: -webkit-linear-gradient(#595959, #4d4d4d);
+    background-image: linear-gradient(#595959, #4d4d4d);
+    -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+    -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+    box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+    -moz-border-radius: 9px;
+    -webkit-border-radius: 9px;
+    border-radius: 9px;
+    color: #e6e6e6;
+    top: 50%;
+    right: auto;
+    bottom: auto;
+    left: 50%;
+    -moz-transform: translateX(-50%) translateY(-50%);
+    -ms-transform: translateX(-50%) translateY(-50%);
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    height: 70%;
+    width: 50%;
+    min-height: 300px;
+    max-height: 800px;
+    min-width: 600px;
+    max-width: 1000px;
+    z-index: 101; }
+    /* line 54, ../../../../general/res/sass/overlay/_overlay.scss */
+    .overlay > .holder > .contents {
+      top: 25px;
+      right: 25px;
+      bottom: 25px;
+      left: 25px; }
+  /* line 69, ../../../../general/res/sass/overlay/_overlay.scss */
+  .overlay .title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1.2em;
+    line-height: 120%;
+    margin-bottom: 5px; }
+  /* line 76, ../../../../general/res/sass/overlay/_overlay.scss */
+  .overlay .hint {
+    color: #b3b3b3; }
+  /* line 80, ../../../../general/res/sass/overlay/_overlay.scss */
+  .overlay .abs.top-bar, .overlay .s-menu span.top-bar.l-click-area, .s-menu .overlay span.top-bar.l-click-area {
+    height: 60px; }
   /* line 84, ../../../../general/res/sass/overlay/_overlay.scss */
-  .overlay .editor .field.l-med input[type='text'] {
+  .overlay .abs.editor, .overlay .s-menu span.editor.l-click-area, .s-menu .overlay span.editor.l-click-area,
+  .overlay .abs.message-body,
+  .overlay .s-menu span.message-body.l-click-area,
+  .s-menu .overlay span.message-body.l-click-area {
+    top: 70px;
+    bottom: 34px;
+    left: 0;
+    right: 0;
+    overflow: auto; }
+    /* line 92, ../../../../general/res/sass/overlay/_overlay.scss */
+    .overlay .abs.editor .field.l-med input[type='text'], .overlay .s-menu span.editor.l-click-area .field.l-med input[type='text'], .s-menu .overlay span.editor.l-click-area .field.l-med input[type='text'],
+    .overlay .abs.message-body .field.l-med input[type='text'],
+    .overlay .s-menu span.message-body.l-click-area .field.l-med input[type='text'],
+    .s-menu .overlay span.message-body.l-click-area .field.l-med input[type='text'] {
+      width: 100%; }
+  /* line 98, ../../../../general/res/sass/overlay/_overlay.scss */
+  .overlay .bottom-bar {
+    text-align: right; }
+    /* line 100, ../../../../general/res/sass/overlay/_overlay.scss */
+    .overlay .bottom-bar .s-btn, .overlay .bottom-bar .s-menu {
+      font-size: 95%;
+      height: 24px;
+      line-height: 24px;
+      margin-left: 5px;
+      padding: 0 15px; }
+      /* line 102, ../../../../general/res/sass/overlay/_overlay.scss */
+      .overlay .bottom-bar .s-btn:not(.major), .overlay .bottom-bar .s-menu:not(.major) {
+        background-color: gray;
+        -moz-border-radius: 3px;
+        -webkit-border-radius: 3px;
+        border-radius: 3px;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        color: #fff;
+        display: inline-block;
+        background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzhjOGM4YyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzgwODA4MCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+        background-size: 100%;
+        background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #8c8c8c), color-stop(100%, #808080));
+        background-image: -moz-linear-gradient(#8c8c8c, #808080);
+        background-image: -webkit-linear-gradient(#8c8c8c, #808080);
+        background-image: linear-gradient(#8c8c8c, #808080);
+        -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+        -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+        box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+        -moz-user-select: -moz-none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        user-select: none;
+        -moz-transition: background, 0.25s;
+        -o-transition: background, 0.25s;
+        -webkit-transition: background, 0.25s;
+        transition: background, 0.25s;
+        text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px; }
+        /* line 289, ../../../../general/res/sass/_mixins.scss */
+        .overlay .bottom-bar .s-btn:not(.major) .icon, .overlay .bottom-bar .s-menu:not(.major) .icon {
+          color: #fff; }
+        @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+          /* line 294, ../../../../general/res/sass/_mixins.scss */
+          .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover {
+            background: linear-gradient(#a6a6a6, #999999); }
+            /* line 296, ../../../../general/res/sass/_mixins.scss */
+            .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover > .icon {
+              color: white; } }
+      /* line 110, ../../../../general/res/sass/overlay/_overlay.scss */
+      .overlay .bottom-bar .s-btn:first-child, .overlay .bottom-bar .s-menu:first-child {
+        margin-left: 0; }
+  /* line 117, ../../../../general/res/sass/overlay/_overlay.scss */
+  .overlay .abs.bottom-bar, .overlay .s-menu span.bottom-bar.l-click-area, .s-menu .overlay span.bottom-bar.l-click-area {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: visible;
+    height: 24px; }
+  /* line 127, ../../../../general/res/sass/overlay/_overlay.scss */
+  .overlay .l-progress-bar {
+    display: block;
+    height: 15px;
+    line-height: 15px;
+    margin: .5em 0;
     width: 100%; }
-/* line 90, ../../../../general/res/sass/overlay/_overlay.scss */
-.overlay .l-progress-bar {
-  display: block;
-  height: 15px;
-  line-height: 15px;
-  margin: .5em 0;
-  width: 100%; }
-/* line 99, ../../../../general/res/sass/overlay/_overlay.scss */
-.overlay .bottom-bar {
-  top: auto;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  overflow: visible;
-  height: 30px;
-  text-align: right; }
-  /* line 108, ../../../../general/res/sass/overlay/_overlay.scss */
-  .overlay .bottom-bar .s-btn, .overlay .bottom-bar .s-menu {
-    font-size: 95%;
-    height: 30px;
-    line-height: 30px;
-    margin-left: 5px;
-    padding: 0 15px; }
-    /* line 110, ../../../../general/res/sass/overlay/_overlay.scss */
-    .overlay .bottom-bar .s-btn:not(.major), .overlay .bottom-bar .s-menu:not(.major) {
-      background-color: gray;
-      -moz-border-radius: 3px;
-      -webkit-border-radius: 3px;
-      border-radius: 3px;
-      -moz-box-sizing: border-box;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
-      color: #fff;
-      display: inline-block;
-      background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzhjOGM4YyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzgwODA4MCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
-      background-size: 100%;
-      background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #8c8c8c), color-stop(100%, #808080));
-      background-image: -moz-linear-gradient(#8c8c8c, #808080);
-      background-image: -webkit-linear-gradient(#8c8c8c, #808080);
-      background-image: linear-gradient(#8c8c8c, #808080);
-      -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-      -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-      box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
-      -moz-user-select: -moz-none;
-      -ms-user-select: none;
-      -webkit-user-select: none;
-      user-select: none;
-      -moz-transition: background, 0.25s;
-      -o-transition: background, 0.25s;
-      -webkit-transition: background, 0.25s;
-      transition: background, 0.25s;
-      text-shadow: rgba(0, 0, 0, 0.3) 0 1px 1px; }
-      /* line 289, ../../../../general/res/sass/_mixins.scss */
-      .overlay .bottom-bar .s-btn:not(.major) .icon, .overlay .bottom-bar .s-menu:not(.major) .icon {
-        color: #fff; }
-      @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-        /* line 294, ../../../../general/res/sass/_mixins.scss */
-        .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover {
-          background: linear-gradient(#a6a6a6, #999999); }
-          /* line 296, ../../../../general/res/sass/_mixins.scss */
-          .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover > .icon {
-            color: white; } }
 
-/* line 128, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 137, ../../../../general/res/sass/overlay/_overlay.scss */
 .t-dialog-sm .overlay > .holder {
   min-height: 275px;
   height: 275px; }
@@ -4393,7 +4512,7 @@ span.req {
     /* line 50, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
     .overlay > .holder .editor .form .form-row > .label:after {
       float: none; }
-    /* line 56, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
+    /* line 57, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
     .overlay > .holder .contents .top-bar,
     .overlay > .holder .contents .editor,
     .overlay > .holder .contents .bottom-bar {
@@ -4406,12 +4525,12 @@ span.req {
       margin-bottom: 20px;
       position: relative; }
 
-  /* line 66, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
+  /* line 68, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
   .t-dialog-sm .overlay > .holder {
     height: auto;
     max-height: 100%; } }
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) {
-  /* line 74, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
+  /* line 76, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
   .overlay > .holder .contents .bottom-bar {
     text-align: center; } }
 /*****************************************************************************
@@ -4462,9 +4581,9 @@ ul.tree {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  border-radius: 2px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
   -moz-transition: background-color 0.25s;
   -o-transition: background-color 0.25s;
   -webkit-transition: background-color 0.25s;
@@ -4524,7 +4643,7 @@ ul.tree {
       /* line 90, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item .label .type-icon .icon.l-icon-alert,
       .search-result-item .label .type-icon .icon.l-icon-alert {
-        color: #ff3c00;
+        color: #ff533a;
         font-size: 8px;
         line-height: 8px;
         height: 8px;

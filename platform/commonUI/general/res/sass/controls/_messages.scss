@@ -161,18 +161,92 @@
 	}
 }
 
-// Messages in overlays, as singleton or in list
-.t-message .overlay {
-    // Singleton message overlay context
-    $iconW: 80px;
-    .type-icon.message-type.abs {
-        //color: pushBack($colorOvrFg, 40%);
+@mixin messageBlock($iconW: 32px) {
+    .type-icon.message-type {
+        @include txtShdw($shdwStatusIc);
+        &:before { content:"\e608"; }
+        color: $colorStatusDefault;
         font-size: $iconW;
-        opacity: 0.5;
-        right: auto;
+        padding-left: 1px;
         width: $iconW;
     }
-    .message-contents.abs {
-        left: $iconW + $overlayMargin;
+
+    .message-severity-info .type-icon.message-type {
+        &:before { content:"\e608"; }
+        color: $colorStatusOk;
+    }
+    .message-severity-alert .type-icon.message-type {
+        &:before { content:"\e610"; }
+        color: $colorStatusCaution;
+    }
+    .message-severity-error .type-icon.message-type {
+        &:before { content:"\21"; }
+        color: $colorStatusAlert;
+    }
+}
+/* Paths:
+    t-dialog | t-dialog-sm > t-message-single | t-message-list > overlay > holder > contents > l-message >
+        message-type > (icon)
+        message-contents >
+        top-bar >
+            title
+            hint
+        editor >
+            (if displaying list of messages)
+            ul > li > l-message >
+                ... same as above
+        bottom-bar
+*/
+
+.l-message {
+    @include display-flex;
+    @include flex-direction(row);
+    .type-icon.message-type {
+        //@include test(red);
+        @include flex(0 1 auto);
+        position: relative;
+    }
+    .message-contents {
+        //@include test(blue);
+        @include flex(1 1 auto);
+        margin-left: $overlayMargin;
+        position: relative;
+
+        .top-bar,
+        .message-body {
+            margin-bottom: $interiorMarginLg * 2;
+        }
+    }
+}
+
+
+// Message as singleton
+.t-message-single {
+    @include messageBlock(80px);
+}
+
+// Messages in list
+.t-message-list {
+    @include messageBlock(32px);
+    .message-contents {
+        .l-message {
+            //border-bottom: 1px solid pullForward($colorOvrBg, 20%);
+            @include border-radius($controlCr);
+            background: rgba($colorOvrFg, 0.1);
+            margin-bottom: $interiorMargin;
+            margin-right: $interiorMarginLg;
+            padding: $interiorMarginLg;
+
+            .message-contents {
+                font-size: 0.9em;
+                .message-action { color: pushBack($colorOvrFg, 20%); }
+                .bottom-bar { text-align: left; }
+            }
+
+            .top-bar,
+            .message-body {
+                margin-bottom: $interiorMarginLg;
+            }
+        }
     }
 }

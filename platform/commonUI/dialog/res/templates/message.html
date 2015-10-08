@@ -1,22 +1,24 @@
-<div class="abs ui-symbol type-icon message-type">!</div>
-<div class="abs message-contents">
-    <div class="abs top-bar">
-        <div class="title">Title: {{ngModel.dialog.title}}</div>
-        <div class="hint" ng-hide="ngModel.dialog.hint === undefined">{{ngModel.dialog.hint}}</div>
-    </div>
-    <div class="abs editor">
-        <div class="message-action">
-            {{ngModel.dialog.actionText}}
+<div class="l-message message-severity-{{ngModel.dialog.severity}}">
+    <div class="ui-symbol type-icon message-type"></div>
+    <div class="message-contents">
+        <div class="top-bar">
+            <div class="title">{{ngModel.dialog.title}}</div>
+            <div class="hint" ng-hide="ngModel.dialog.hint === undefined">{{ngModel.dialog.hint}}</div>
         </div>
-        <mct-include key="'progress-bar'"
-                     ng-model="ngModel"
-                     ng-hide="ngModel.dialog.progress === undefined"></mct-include>
-    </div>
-    <div class="abs bottom-bar">
-        <a ng-repeat="dialogAction in ngModel.dialog.actions"
-           class="s-btn major"
-           ng-click="dialogAction.action()">
-            {{dialogAction.label}}
-        </a>
+        <div class="message-body">
+            <div class="message-action">
+                {{ngModel.dialog.actionText}} message-severity-{{ngModel.dialog.severity}}
+            </div>
+            <mct-include key="'progress-bar'"
+                         ng-model="ngModel"
+                         ng-hide="ngModel.dialog.progress === undefined"></mct-include>
+        </div>
+        <div class="bottom-bar">
+            <a ng-repeat="dialogAction in ngModel.dialog.actions"
+               class="s-btn major"
+               ng-click="dialogAction.action()">
+                {{dialogAction.label}}
+            </a>
+        </div>
     </div>
 </div>

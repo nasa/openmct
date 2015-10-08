@@ -23,7 +23,7 @@ $contrastInvokeMenuPercent: 40%;
 
 // General Colors
 $colorAlt1: #ff6600;
-$colorAlert: #ff3c00;
+$colorAlert: #ff533a;
 $colorIconLink: #49dedb;
 $colorPausedBg: #ff9900;
 $colorPausedFg: #fff;
@@ -61,13 +61,14 @@ $colorInputIcon: pushBack($colorBodyFg, 25%);
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #fff;
 $colorStatusDefault: #ccc;
-$colorStatusOk: #60e68e;
-$colorStatusCaution: #ffa864;
+$colorStatusOk: #44ba53;
+$colorStatusCaution: #ff8545;
 $colorStatusAlert: $colorAlert;
 $colorProgressBarOuter: rgba(#000, 0.1);
 $colorProgressBarAmt: #0a0;
 $progressBarHOverlay: 15px;
 $progressBarStripeW: 20px;
+$shdwStatusIc: rgba(white, 0.8) 0 0px 5px;
 
 // Selects
 $colorSelectBg: #ddd;

@@ -115,31 +115,71 @@ define(
                     ],
                     messages: []
                 };
+                
+                
+                function getExampleActionText() {
+                    var actionTexts = [
+                        "Adipiscing turpis mauris in enim elementu hac, enim aliquam etiam.",
+                        "Eros turpis, pulvinar turpis eros eu",
+                        "Lundium nascetur a, lectus montes ac, parturient in natoque, duis risus risus pulvinar pid rhoncus, habitasse auctor natoque!"
+                    ];
+                    return actionTexts[Math.floor(Math.random()*3)];
+                }
+                
+                function getExampleActions() {
+                    var actions = [
+                        {
+                            label: "Try Again",
+                            action: function () {
+                                $log.debug("Try Again pressed");
+                            }
+                        },
+                        {
+                            label: "Remove",
+                            action: function () {
+                                $log.debug("Remove pressed");
+                            }
+                        },
+                        {
+                            label: "Cancel",
+                            action: function () {
+                                $log.debug("Cancel pressed");
+                            }
+                        }
+                    ];
+
+                    // Randomly remove some actions off the top; leave at least one
+                    actions.splice(0,Math.floor(Math.random() * actions.length));
+
+                    return actions;
+                }
+
+                function getExampleSeverity() {
+                    var severities = [
+                        messageSeverity.INFO,
+                        messageSeverity.ALERT,
+                        messageSeverity.ERROR
+                    ];
+                    return severities[Math.floor(Math.random() * severities.length)];
+                }
 
                 function createMessage (messageNumber) {
                     var messageModel = {
-                        ngModel: {
-                            dialog: {
-                                title: "Message " + messageNumber,
-                                severity: messageSeverity.INFO,
-                                actions: [
-                                    {
-                                        label: "Cancel Duplication",
-                                        action: function () {
-                                            $log.debug("Cancel Duplication pressed");
-                                            $log.debug("Message should be dismissed");
-                                        }
-                                    }
-                                ]
+                            ngModel: {
+                                dialog: {
+                                    title: "Message Title " + messageNumber,
+                                    actionText: getExampleActionText(),
+                                    severity: getExampleSeverity(),
+                                    actions: getExampleActions()
+                                }
                             }
-                        }
                     };
                     return messageModel;
                 }
 
                 if (dialogService.showMessageList(model)) {
                     //Do processing here
-                    for (var i = 0; i < 4; i++) {
+                    for (var i = 0; i < 10; i++) {
                         model.messages.push(createMessage(i));
                     }
                 } else {

@@ -4,6 +4,7 @@
             {
                 "key": "messageSeverity",
                 "value": {
+                    "ALERT": "alert",
                     "ERROR": "error",
                     "INFO": "info",
                     "SUCCESS": "success"
@@ -44,8 +45,8 @@
                 "templateUrl": "templates/message.html"
             },
             {
-                "key": "message-list",
-                "templateUrl": "templates/message-list.html"
+                "key": "overlay-message-list",
+                "templateUrl": "templates/overlay-message-list.html"
             }
         ],
         "containers": [
