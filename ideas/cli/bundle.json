@@ -1,0 +1,10 @@
+{
+    "extensions": {
+        "routes": [
+            {
+                "when": "/cli",
+                "templateUrl": "templates/cli.html"
+            }
+        ]
+    }
+}
