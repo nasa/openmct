@@ -105,8 +105,14 @@
         "actions": [
             {
                 "key": "navigate",
+                "description": "Browse to this object.",
                 "implementation": "navigation/NavigateAction.js",
                 "depends": [ "navigationService", "$q" ]
+            },
+            {
+                "key": "back",
+                "implementation": "navigation/BackAction.js",
+                "description": "Navigate to the parent of this object."
             },
             {
                 "key": "window",
