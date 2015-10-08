@@ -20,8 +20,10 @@ define(function () {
 
         function summarize(domainObject) {
             var type = domainObject.getCapability("type"),
-                typeName = type ? type.getName() : "Object";
-            return "[" + typeName + "] " + domainObject.getModel().name;
+                typeName = type ? type.getName() : "Object",
+                location = domainObject.getCapability('location'),
+                suffix = (location && location.isLink()) ? " (link)" : "";
+            return "[" + typeName + "] " + domainObject.getModel().name + suffix;
         }
 
         function printComposition(domainObject) {
