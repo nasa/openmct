@@ -172,11 +172,11 @@ define(
                     var error2 = {
                         title: "Second Mock Error Notification",
                         severity: MessageSeverity.ERROR
-                    }
+                    };
                     var error3 = {
                         title: "Third Mock Error Notification",
                         severity: MessageSeverity.ERROR
-                    }
+                    };
                     //First pre-load with a success message
                     notificationService.notify(errorModel);
                     //Then notify of a third error
