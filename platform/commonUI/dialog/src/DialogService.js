@@ -176,7 +176,7 @@ define(
 
         /**
          * dialogModel: {
-         *     severity: string "error" | "info",
+         *     severity: string "error" | "info" | "alert",
          *     title: string,
          *     hint: string,
          *     actionText: string,
@@ -239,7 +239,7 @@ define(
                 // Add the overlay using the OverlayService, which
                 // will handle actual insertion into the DOM
                 this.overlay = this.overlayService.createOverlay(
-                    "blocking-message",
+                    "overlay-blocking-message",
                     {dialog: dialogModel},
                     "t-dialog-sm"
                 );
@@ -253,6 +253,24 @@ define(
 
         };
 
+        DialogService.prototype.showMessageList = function(dialogModel) {
+            if (this.canShowDialog(dialogModel)) {
+                // Add the overlay using the OverlayService, which
+                // will handle actual insertion into the DOM
+                this.overlay = this.overlayService.createOverlay(
+                    "overlay-message-list",
+                    {dialog: dialogModel},
+                    "t-dialog"
+                );
+                this.dialogVisible = true;
+                return true;
+            } else {
+                //Could not show a dialog, so return indication of this to
+                //client code.
+                return false;
+            }
+
+        };
 
         return DialogService;
     }

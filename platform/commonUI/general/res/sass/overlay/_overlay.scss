@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .overlay {
+    font-size: 90%;
     .blocker {
         background: $colorOvrBlocker;
         z-index: 100;
@@ -56,6 +57,12 @@
             right: $m;
             bottom: $m;
             left: $m;
+
+            //.top-bar,
+            //.editor,
+            //.bottom-bar {
+            //    @include absPosDefault();
+            //}
         }
     }
 
@@ -70,11 +77,12 @@
         color: pushBack($colorOvrFg, 20%);
     }
 
-    .top-bar {
+    .abs.top-bar {
         height: $ovrTopBarH;
     }
 
-    .editor {
+    .abs.editor,
+    .abs.message-body {
         top: $ovrTopBarH + ($interiorMargin * 2);
         bottom: $ovrFooterH + $interiorMargin * 2;
         left: 0;
@@ -87,23 +95,7 @@
         }
     }
 
-    .l-progress-bar {
-        $h: $progressBarHOverlay;
-        display: block;
-        height: $h;
-        line-height: $h;
-        margin: .5em 0;
-        width: 100%;
-    }
-
     .bottom-bar {
-        top: auto;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        overflow: visible;
-        //font-size: 1em;
-        height: $ovrFooterH;
         text-align: right;
         .s-btn {
             $bg: $colorOvrBtnBg;
@@ -115,13 +107,30 @@
             line-height: $ovrFooterH;
             margin-left: $interiorMargin;
             padding: 0 $interiorMargin * 3;
-            //&.major {
-            //   @extend .s-btn.major;
-            //   &:hover {
-            //       @extend .s-btn.major:hover;
-            //   }
-            //}
+            &:first-child {
+                margin-left: 0;
+            }
         }
+
+    }
+
+    .abs.bottom-bar {
+        top: auto;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: visible;
+        //font-size: 1em;
+        height: $ovrFooterH;
+    }
+
+    .l-progress-bar {
+        $h: $progressBarHOverlay;
+        display: block;
+        height: $h;
+        line-height: $h;
+        margin: .5em 0;
+        width: 100%;
     }
 }
 

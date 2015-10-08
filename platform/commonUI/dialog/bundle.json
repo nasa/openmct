@@ -4,6 +4,7 @@
             {
                 "key": "messageSeverity",
                 "value": {
+                    "ALERT": "alert",
                     "ERROR": "error",
                     "INFO": "info",
                     "SUCCESS": "success"
@@ -36,8 +37,16 @@
                 "templateUrl": "templates/dialog.html"
             },
             {
-                "key": "blocking-message",
-                "templateUrl": "templates/blocking-message.html"
+                "key": "overlay-blocking-message",
+                "templateUrl": "templates/overlay-blocking-message.html"
+            },
+            {
+                "key": "message",
+                "templateUrl": "templates/message.html"
+            },
+            {
+                "key": "overlay-message-list",
+                "templateUrl": "templates/overlay-message-list.html"
             }
         ],
         "containers": [

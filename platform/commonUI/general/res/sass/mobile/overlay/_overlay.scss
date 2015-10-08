@@ -52,15 +52,17 @@
                 }
             }
         }
-
-        .contents .top-bar,
-        .contents .editor,
-        .contents .bottom-bar {
-            //@include test(orange);
-            top: auto; right: auto; bottom: auto; left: auto;
-            height: auto; width: auto;
-            margin-bottom: $interiorMarginLg * 2;
-            position: relative;
+        
+        .contents {
+            .top-bar,
+            .editor,
+            .bottom-bar {
+                //@include test(orange);
+                top: auto; right: auto; bottom: auto; left: auto;
+                height: auto; width: auto;
+                margin-bottom: $interiorMarginLg * 2;
+                position: relative;
+            }
         }
     }
     .t-dialog-sm .overlay > .holder {
