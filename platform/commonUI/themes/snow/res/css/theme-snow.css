@@ -2385,7 +2385,7 @@ label.checkbox.custom {
     opacity: 1; }
   /* line 72, ../../../../general/res/sass/controls/_messages.scss */
   .status.block:hover .label {
-    max-width: 150px;
+    max-width: 450px;
     width: auto; }
   /* line 76, ../../../../general/res/sass/controls/_messages.scss */
   .status.block:hover .count {
@@ -4256,8 +4256,8 @@ span.req {
 
 /* line 128, ../../../../general/res/sass/overlay/_overlay.scss */
 .t-dialog-sm .overlay > .holder {
-  min-height: 300px;
-  height: 300px; }
+  min-height: 275px;
+  height: 275px; }
 
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
   /* line 3, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
