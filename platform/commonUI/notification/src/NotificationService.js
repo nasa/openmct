@@ -103,7 +103,7 @@ define(
          */
         NotificationService.prototype.getActiveNotification = function (){
             return this.active.notification;
-        }
+        };
 
         /**
          * A convenience method for success notifications. Notifications
@@ -114,7 +114,7 @@ define(
         NotificationService.prototype.success = function (notification) {
             notification.autoDismiss = notification.autoDismiss || true;
             NotificationService.prototype.notify(notification);
-        }
+        };
 
         /**
          * Notifies the user of an event. If there is a banner notification
@@ -239,7 +239,7 @@ define(
                 this.notifications.splice(index, 1);
                 this.setActiveNotification(this.selectNextNotification());
             }
-        }
+        };
 
         /**
          * Depending on the severity of the notification will selectively
