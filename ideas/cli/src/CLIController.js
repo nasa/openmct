@@ -11,6 +11,13 @@ define(function () {
             $scope.stdoutScroll = Number.MAX_VALUE;
         }
 
+        function pad(str, length) {
+            while (str.length < length) {
+                str += " ";
+            }
+            return str;
+        }
+
         function summarize(domainObject) {
             var type = domainObject.getCapability("type"),
                 typeName = type ? type.getName() : "Object";
@@ -18,7 +25,7 @@ define(function () {
         }
 
         function printComposition(domainObject) {
-            domainObject.useCapability("composition").then(function (c) {
+            return domainObject.useCapability("composition").then(function (c) {
                 currentComposition = c;
                 c.forEach(function (childObject, i) {
                     print(i + ") " + summarize(childObject));
@@ -26,13 +33,15 @@ define(function () {
             });
         }
 
-        function printObject(domainObject) {
+        function printObject(domainObject, callback) {
             // Exclude the root object; nobody wants to see that
             if (domainObject.hasCapability("context")) {
-                print("this = " + summarize(domainObject));
+                print(summarize(domainObject));
             }
             if (domainObject.hasCapability('composition')) {
-                printComposition(domainObject);
+                printComposition(domainObject).then(callback);
+            } else {
+                callback();
             }
         }
 
@@ -58,11 +67,17 @@ define(function () {
             }
         }
 
-        function listActions(domainObject) {
+        function listActions(domainObject, index) {
+            // Don't show actions for the root
+            if (!domainObject.hasCapability('context')) {
+                return;
+            }
+
             domainObject.getCapability('action').getActions().forEach(function (a) {
                 var metadata = a.getMetadata(),
-                    desc = metadata.description;
-                print(metadata.key + " " + (desc || ""));
+                    desc = metadata.description,
+                    suffix = index !== undefined ? (" " + index) : "";
+                print(pad(metadata.key + suffix, 32) + (desc || ""));
             });
         }
 
@@ -75,12 +90,23 @@ define(function () {
                 targetObject;
 
             if (input.length === 0) {
-                printObject(navigationService.getNavigation());
+                targetObject = navigationService.getNavigation();
+                if (targetObject) {
+                    printObject(targetObject, function () {
+                        print("");
+                        listActions(targetObject);
+                    });
+                }
                 return;
             } else if (parts.length === 1) {
+                if (isNaN(parseInt(parts[0], 10))) {
+                    targetObject = navigationService.getNavigation();
+                    performAction(targetObject, parts[0]);
+                    return;
+                }
                 targetObject = findTarget(parts[0]);
                 if (targetObject) {
-                    listActions(targetObject);
+                    listActions(targetObject, parts[0]);
                     return;
                 }
             } else if (parts.length === 2) {
