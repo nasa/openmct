@@ -5,6 +5,7 @@
     "platform/commonUI/about",
     "platform/commonUI/browse",
     "platform/commonUI/edit",
+    "platform/commonUI/notification",
     "platform/commonUI/dialog",
     "platform/commonUI/general",
     "platform/commonUI/inspect",
@@ -26,7 +27,6 @@
     "platform/policy",
     "platform/entanglement",
     "platform/search",
-    "platform/commonUI/notification",
 
     "example/imagery",
     "example/eventGenerator",

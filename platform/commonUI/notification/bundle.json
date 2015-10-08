@@ -10,8 +10,7 @@
             {
                 "key": "notificationService",
                 "implementation": "NotificationService.js",
-                "depends": [ "$log", "$timeout", "messageSeverity",
-                    "DEFAULT_AUTO_DISMISS" ]
+                "depends": [ "$timeout", "DEFAULT_AUTO_DISMISS" ]
             }
         ]
     }
