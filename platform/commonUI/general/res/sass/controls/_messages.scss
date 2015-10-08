@@ -20,6 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+@mixin statusBannerColors($bg, $fg: $colorStatusFg) {
+	$bgPb: 30%;
+	$bgPbD: 10%;
+	background-color: darken($bg, $bgPb);
+	color: $fg;
+	&:hover {
+		background-color: darken($bg, $bgPb - $bgPbD);
+	}
+	.s-action {
+		background-color: darken($bg, $bgPb + $bgPbD);
+		&:hover {
+			background-color: darken($bg, $bgPb);
+		}
+	}
+}
+
 .status.block {
 	color: $colorStatusDefault;
 	cursor: default;
@@ -54,11 +70,109 @@
 	}
 	&:hover {
 		.label {
-			max-width: 150px;
+			max-width: 450px;
 			width: auto;
 		}
 		.count {
 			opacity: 0;
 		}
 	}
+}
+
+/* Styles for messages and message banners */
+.message {
+	&.block {
+		@include border-radius($basicCr);
+		padding: $interiorMarginLg;
+	}
+	&.error {
+		background-color: rgba($colorAlert,0.3);
+		color: lighten($colorAlert, 20%);
+	}
+}
+
+.l-message-banner {
+	$m: $interiorMarginSm;
+	$lh: $ueFooterH - ($m*2) - 1;
+	@include box-sizing(border-box);
+	@include ellipsize();
+	@include display-flex;
+	@include flex-direction(row);
+	@include align-items(center);
+	position: absolute;
+	top: $m; right: auto; bottom: $m; left: 50%;
+	height: auto; width: auto;
+	line-height: $lh;
+	max-width: 300px;
+	padding: 0 $interiorMargin 0 $interiorMargin;
+	@include transform(translateX(-50%));
+
+	.banner-elem {
+		@include flex(0 1 auto);
+		margin-left: $interiorMargin;
+	}
+	a {
+		display: inline-block;
+	}
+	.l-action {
+		line-height: $lh - 3;
+		padding: 0 $interiorMargin;
+	}
+    .close {
+		//@include test(red, 0.7);
+		cursor: pointer;
+        font-size: 7px;
+		width: 8px;
+    }
+	.l-progress-bar {
+		$h: $lh - 10;
+		height: $h;
+		line-height: $h;
+		width: 100px;
+	}
+    .progress-info { display: none; }
+	z-index: 10;
+}
+
+.s-message-banner,
+.s-message-banner .s-action {
+	@include trans-prop-nice(background-color, .25s);
+}
+
+.s-message-banner {
+	@include border-radius($controlCr);
+	@include statusBannerColors($colorStatusDefault, $colorStatusFg);
+	cursor: pointer;
+	a { color: inherit; }
+	.s-action {
+		@include border-radius($basicCr);
+	}
+	.close {
+		opacity: 0.5;
+		&:hover {
+			opacity: 1;
+		}
+	}
+	&.ok {
+		@include statusBannerColors($colorStatusOk);
+	}
+	&.caution {
+		@include statusBannerColors($colorStatusCaution);
+	}
+}
+
+// Messages in overlays, as singleton or in list
+.t-message .overlay {
+    // Singleton message overlay context
+    $iconW: 80px;
+    .type-icon.message-type.abs {
+        //color: pushBack($colorOvrFg, 40%);
+        font-size: $iconW;
+        opacity: 0.5;
+        right: auto;
+        width: $iconW;
+    }
+    .message-contents.abs {
+        left: $iconW + $overlayMargin;
+    }
 }

@@ -20,79 +20,114 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .overlay {
-	.blocker {
-		background: $colorOvrBlocker;
-		z-index: 100;
-	}
+    .blocker {
+        background: $colorOvrBlocker;
+        z-index: 100;
+    }
     .clk-icon.close {
         font-size: 0.8rem;
         position: absolute;
-        top: $interiorMarginLg; right: $interiorMarginLg; bottom: auto; left: auto;
-	    z-index: 100;
+        top: $interiorMarginLg;
+        right: $interiorMarginLg;
+        bottom: auto;
+        left: auto;
+        z-index: 100;
     }
-	>.holder {
-		$i: 15%;
-		@include containerSubtle($colorOvrBg, $colorOvrFg);
-		@include border-radius($basicCr * 3);
-		color: $colorOvrFg;
-		top: $i; right: $i; bottom: $i; left: $i;
-		z-index: 101;
-        >.contents {
+    > .holder {
+        //$i: 15%;
+        @include containerSubtle($colorOvrBg, $colorOvrFg);
+        @include border-radius($basicCr * 3);
+        color: $colorOvrFg;
+        top: 50%;
+        right: auto;
+        bottom: auto;
+        left: 50%;
+        @include transform(translateX(-50%) translateY(-50%));
+        height: 70%;
+        width: 50%;
+        min-height: 300px;
+        max-height: 800px;
+        min-width: 600px;
+        max-width: 1000px;
+        z-index: 101;
+        > .contents {
             $m: $overlayMargin;
-            top: $m; right: $m; bottom: $m; left: $m;
+            top: $m;
+            right: $m;
+            bottom: $m;
+            left: $m;
         }
-	}
-    .title {
-	    @include ellipsize();
-        font-size: 1.2em;
-	    margin-bottom: $interiorMargin;
     }
-    
+
+    .title {
+        @include ellipsize();
+        font-size: 1.2em;
+        line-height: 120%;
+        margin-bottom: $interiorMargin;
+    }
+
+    .hint {
+        color: pushBack($colorOvrFg, 20%);
+    }
+
     .top-bar {
         height: $ovrTopBarH;
     }
-    
+
     .editor {
         top: $ovrTopBarH + ($interiorMargin * 2);
         bottom: $ovrFooterH + $interiorMargin * 2;
-        left: 0; right: 0;
+        left: 0;
+        right: 0;
+        overflow: auto;
+        .field.l-med {
+            input[type='text'] {
+                width: 100%;
+            }
+        }
     }
-    
+
+    .l-progress-bar {
+        $h: $progressBarHOverlay;
+        display: block;
+        height: $h;
+        line-height: $h;
+        margin: .5em 0;
+        width: 100%;
+    }
+
     .bottom-bar {
-        top: auto; right: 0; bottom: 0; left: 0;
-	    overflow: visible;
+        top: auto;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow: visible;
         //font-size: 1em;
         height: $ovrFooterH;
         text-align: right;
         .s-btn {
-	        $bg: $colorOvrBtnBg;
-	        &:not(.major) {
-	            @include btnSubtle($bg, pullForward($bg, 10%), $colorOvrBtnFg, $colorOvrBtnFg);
-	        }
-	        font-size: 95%;
-	        height: $ovrFooterH;
-	        line-height: $ovrFooterH;
+            $bg: $colorOvrBtnBg;
+            &:not(.major) {
+                @include btnSubtle($bg, pullForward($bg, 10%), $colorOvrBtnFg, $colorOvrBtnFg);
+            }
+            font-size: 95%;
+            height: $ovrFooterH;
+            line-height: $ovrFooterH;
             margin-left: $interiorMargin;
-	        padding: 0 $interiorMargin * 3;
-	        //&.major {
-		     //   @extend .s-btn.major;
-		     //   &:hover {
-			 //       @extend .s-btn.major:hover;
-		     //   }
-	        //}
+            padding: 0 $interiorMargin * 3;
+            //&.major {
+            //   @extend .s-btn.major;
+            //   &:hover {
+            //       @extend .s-btn.major:hover;
+            //   }
+            //}
         }
     }
-    .contents.l-dialog {
-	    $myM: $interiorMargin;
-	    top: $myM;
-	    right: $myM;
-	    bottom: $myM;
-	    left: $myM;
-        overflow: auto;
-	    .field.l-med {
-		    input[type='text'] {
-			    width: 100%;
-		    }
-	    }
-    }
+}
+
+.t-dialog-sm .overlay > .holder {
+    // Used for blocker and in-progress dialogs, modal alerts, etc.
+    //@include test(red);
+    min-height: 275px;
+    height: 275px;
 }

@@ -20,6 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <!-- DO NOT ADD SPACES BETWEEN THE SPANS - IT ADDS WHITE SPACE!! -->
+<!--<div ng-init="reps = [1,2,3]"></div>-->
 <div class='status block'
 	 title="{{ngModel.getDescription()}}"
 	 ng-click='ngModel.configure()'
@@ -31,7 +32,7 @@
 		  ng-class='ngModel.getTextClass()'>
 		{{ngModel.getText()}}
 	</span><span class="count">
-		<!-- Add count value here if this type of indicator has one or more messages associated with it -->
+		<!-- Add int count value here if this type of indicator has one or more messages associated with it -->
 	</span><a href=''
 	   class="ui-symbol"
 	   ng-if="ngModel.configure">

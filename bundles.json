@@ -30,5 +30,7 @@
 
     "example/imagery",
     "example/eventGenerator",
-    "example/generator"
+    "example/generator",
+
+    "testing/dialogTest"
 ]

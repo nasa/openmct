@@ -1,0 +1,28 @@
+{
+    "extensions": {
+        "templates": [
+            {
+                "key": "dialogLaunchTemplate",
+                "templateUrl": "dialog-launch.html"
+            }
+        ],
+        "controllers": [
+            {
+                "key": "DialogLaunchController",
+                "implementation": "DialogLaunchController.js",
+                "depends": [
+                    "$scope",
+                    "dialogService",
+                    "$timeout",
+                    "$log",
+                    "messageSeverity"
+                ]
+            }
+        ],
+        "indicators": [
+            {
+                "implementation": "DialogLaunchIndicator.js"
+            }
+        ]
+    }
+}

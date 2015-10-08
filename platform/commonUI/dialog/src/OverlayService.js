@@ -28,7 +28,7 @@ define(
 
         // Template to inject into the DOM to show the dialog; really just points to
         // the a specific template that can be included via mct-include
-        var TEMPLATE = '<mct-include ng-model="overlay" key="key"></mct-include>';
+        var TEMPLATE = '<mct-include ng-model="overlay" key="key" ng-class="typeClass"></mct-include>';
 
 
         /**
@@ -72,7 +72,7 @@ define(
          *        included overlay template (this will be passed
          *        in via ng-model)
          */
-        OverlayService.prototype.createOverlay = function (key, overlayModel) {
+        OverlayService.prototype.createOverlay = function (key, overlayModel, typeClass) {
             // Create a new scope for this overlay
             var scope = this.newScope(),
                 element;
@@ -87,9 +87,13 @@ define(
             // If no model is supplied, just fill in a default "cancel"
             overlayModel = overlayModel || { cancel: dismiss };
 
+            // If no typeClass is specified, set to default "t-dialog"
+            typeClass = typeClass || 't-dialog';
+
             // Populate the scope; will be passed directly to the template
             scope.overlay = overlayModel;
             scope.key = key;
+            scope.typeClass = typeClass;
 
             // Create the overlay element and add it to the document's body
             element = this.$compile(TEMPLATE)(scope);

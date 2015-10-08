@@ -84,27 +84,20 @@ define(
             model.confirm = confirm;
             model.cancel = cancel;
 
-            if (this.dialogVisible) {
-                // Only one dialog should be shown at a time.
-                // The application design should be such that
-                // we never even try to do this.
-                this.$log.warn([
-                    "Dialog already showing; ",
-                    "unable to show ",
-                    model.name
-                ].join(""));
-                deferred.reject();
-            } else {
+            if (this.canShowDialog(model)) {
                 // Add the overlay using the OverlayService, which
                 // will handle actual insertion into the DOM
                 this.overlay = this.overlayService.createOverlay(
                     key,
-                    model
+                    model,
+                    "t-dialog"
                 );
 
                 // Track that a dialog is already visible, to
                 // avoid spawning multiple dialogs at once.
                 this.dialogVisible = true;
+            } else {
+                deferred.reject();
             }
 
             return deferred.promise;
@@ -155,6 +148,109 @@ define(
                 "overlay-options",
                 { dialog: dialogModel }
             );
+        };
+
+        /**
+         * Tests if a dialog can be displayed. A modal dialog may only be
+         * displayed if one is not already visible.
+         * Will log a warning message if it can't display a dialog.
+         * @returns {boolean} true if dialog is currently visible, false
+         * otherwise
+         */
+        DialogService.prototype.canShowDialog = function(dialogModel){
+            if (this.dialogVisible){
+                // Only one dialog should be shown at a time.
+                // The application design should be such that
+                // we never even try to do this.
+                this.$log.warn([
+                    "Dialog already showing; ",
+                    "unable to show ",
+                    dialogModel.title
+                ].join(""));
+
+                return false;
+            } else {
+                return true;
+            }
+        };
+
+        /**
+         * dialogModel: {
+         *     severity: string "error" | "info",
+         *     title: string,
+         *     hint: string,
+         *     actionText: string,
+         *     progress: int,
+         *     progressText: string,
+         *     unknownProgress: boolean,
+         *     actions: [{
+         *         label: String,
+         *         action: function
+         *     }]
+         */
+
+        /**
+         * A user action that can be performed from a blocking dialog. These
+         * actions will be rendered as buttons within a blocking dialog.
+         *
+         * @typedef DialogAction
+         * @property {string} label a label to be displayed as the button
+         * text for this action
+         * @property {function} action a function to be called when the
+         * button is clicked
+         */
+
+        /**
+         * A description of the model options that may be passed to the
+         * showBlockingMessage method
+         *
+         * @typedef DialogModel
+         * @property {string} severity the severity level of this message.
+         * These are defined in a bundle constant with key 'dialogSeverity'
+         * @property {string} title the title to use for the dialog
+         * @property {string} hint the 'hint' message to show below the title
+         * @property {string} actionText text that indicates a current action,
+         * shown above a progress bar to indicate what's happening.
+         * @property {number} progress a percentage value (1-100)
+         * indicating the completion of the blocking task
+         * @property {string} progressText the message to show below a
+         * progress bar to indicate progress. For example, this might be
+         * used to indicate time remaining, or items still to process.
+         * @property {boolean} unknownProgress some tasks may be
+         * impossible to provide an estimate for. Providing a true value for
+         * this attribute will indicate to the user that the progress and
+         * duration cannot be estimated.
+         * @property {DialogAction[]} actions a list of actions that will
+         * be added to the dialog as buttons. These buttons are
+         */
+
+        /**
+         * Displays a blocking (modal) dialog. This dialog can be used for
+         * displaying messages that require the user's
+         * immediate attention. The message may include an indication of
+         * progress, as well as a series of actions that
+         * the user can take if necessary
+         * @param {DialogModel} dialogModel defines options for the dialog
+         * @param {typeClass} string tells overlayService that this overlay should use appropriate CSS class
+         * @returns {boolean}
+         */
+        DialogService.prototype.showBlockingMessage = function(dialogModel) {
+            if (this.canShowDialog(dialogModel)) {
+                // Add the overlay using the OverlayService, which
+                // will handle actual insertion into the DOM
+                this.overlay = this.overlayService.createOverlay(
+                    "blocking-message",
+                    {dialog: dialogModel},
+                    "t-dialog-sm"
+                );
+                this.dialogVisible = true;
+                return true;
+            } else {
+                //Could not show a dialog, so return indication of this to
+                //client code.
+                return false;
+            }
+
         };
 
 
