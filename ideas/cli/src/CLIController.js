@@ -27,7 +27,10 @@ define(function () {
         }
 
         function printObject(domainObject) {
-            print("this = " + summarize(domainObject));
+            // Exclude the root object; nobody wants to see that
+            if (domainObject.hasCapability("context")) {
+                print("this = " + summarize(domainObject));
+            }
             if (domainObject.hasCapability('composition')) {
                 printComposition(domainObject);
             }
@@ -58,7 +61,7 @@ define(function () {
         function listActions(domainObject) {
             domainObject.getCapability('action').getActions().forEach(function (a) {
                 var metadata = a.getMetadata();
-                print(metadata.key + " " + metadata.name + " " + metadata.description);
+                print(metadata.key + " " + metadata.description);
             });
         }
 
