@@ -60,8 +60,9 @@ define(function () {
 
         function listActions(domainObject) {
             domainObject.getCapability('action').getActions().forEach(function (a) {
-                var metadata = a.getMetadata();
-                print(metadata.key + " " + metadata.description);
+                var metadata = a.getMetadata(),
+                    desc = metadata.description;
+                print(metadata.key + " " + (desc || ""));
             });
         }
 
