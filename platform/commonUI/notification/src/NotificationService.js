@@ -159,7 +159,8 @@ define(
         NotificationService.prototype.setActiveNotification =
             function (notification) {
 
-                var that = this;
+                var that = this,
+                    timeout;
                 this.active.notification = notification;
                 /*
                 If autoDismiss has been specified, setup a timeout to
@@ -170,7 +171,7 @@ define(
                  */
                 if (notification && (notification.autoDismiss
                     || this.selectNextNotification())) {
-                    var timeout = isNaN(notification.autoDismiss) ?
+                    timeout = isNaN(notification.autoDismiss) ?
                         this.DEFAULT_AUTO_DISMISS :
                         notification.autoDismiss;
 
@@ -188,12 +189,13 @@ define(
          * @private
          */
         NotificationService.prototype.selectNextNotification = function () {
+            var notification;
             /*
             Loop through the notifications queue and find the first one that
             has not already been minimized (manually or otherwise).
              */
             for (var i=0; i< this.notifications.length; i++) {
-                var notification = this.notifications[i];
+                notification = this.notifications[i];
 
                 if (!notification.minimized
                     && notification!= this.activeNotification) {
