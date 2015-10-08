@@ -10,7 +10,7 @@
             {
                 "key": "CLIController",
                 "implementation": "CLIController.js",
-                "depends": [ "$scope" ]
+                "depends": [ "$scope", "navigationService", "objectService" ]
             }
         ]
     }
