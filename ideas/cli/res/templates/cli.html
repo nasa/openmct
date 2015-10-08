@@ -1,7 +1,10 @@
 <div class="abs holder-all browse-mode" ng-controller="CLIController">
     <div class="iw-container">
         <div class="iw-stdout" mct-scroll-y="stdoutScroll">
-            <span ng-repeat="line in stdout track by $index">{{line}}</span>
+            <span ng-repeat="line in stdout track by $index"
+                  class="{{line.cssClass}}"
+                  ng-bind="line.text">
+            </span>
         </div>
         <form ng-submit="enter(stdin)">
             <input type="text" class="iw-stdin" ng-model="stdin" cli-grabfocus>

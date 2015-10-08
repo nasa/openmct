@@ -6,8 +6,11 @@ define(function () {
         var unlistenToMutation,
             currentComposition = [];
 
-        function print(str) {
-            $scope.stdout.push(str);
+        function print(str, cssClass) {
+            $scope.stdout.push({
+                text: str,
+                cssClass: cssClass
+            });
             $scope.stdoutScroll = Number.MAX_VALUE;
         }
 
@@ -22,7 +25,8 @@ define(function () {
             var type = domainObject.getCapability("type"),
                 typeName = type ? type.getName() : "Object",
                 location = domainObject.getCapability('location'),
-                suffix = (location && location.isLink()) ? " (link)" : "";
+                isLink = (location && location.isLink()),
+                suffix = isLink ? " (link)" : "";
             return "[" + typeName + "] " + domainObject.getModel().name + suffix;
         }
 
@@ -138,7 +142,7 @@ define(function () {
         $scope.enter = function (input) {
             $scope.stdin = "";
             print("");
-            print(input);
+            print(input, "iw-user-input");
             print("");
 
             handleInput(input);

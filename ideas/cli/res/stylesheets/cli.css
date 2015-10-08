@@ -41,3 +41,7 @@
     min-height: 1em;
     white-space: pre;
 }
+
+.iw-stdout span.iw-user-input {
+    color: gray;
+}
