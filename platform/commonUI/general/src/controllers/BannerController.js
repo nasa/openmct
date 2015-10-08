@@ -28,4 +28,5 @@ define(
         function BannerController($scope, notificationService){
             $scope.activeNotification = notificationService.active.Notification;
         }
+        return BannerController;
     });
