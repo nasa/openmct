@@ -99,6 +99,53 @@ define(
                     $log.error("Could not display modal dialog");
                 }
             };
+
+            $scope.launchMessages = function () {
+                var model = {
+                    title: "Messages",
+                    severity: messageSeverity.MESSAGES,
+                    actions: [
+                        {
+                            label: "Done",
+                            action: function () {
+                                $log.debug("Done pressed");
+                                dialogService.dismiss();
+                            }
+                        }
+                    ],
+                    messages: []
+                };
+
+                function createMessage (messageNumber) {
+                    var messageModel = {
+                        ngModel: {
+                            dialog: {
+                                title: "Message " + messageNumber,
+                                severity: messageSeverity.INFO,
+                                actions: [
+                                    {
+                                        label: "Cancel Duplication",
+                                        action: function () {
+                                            $log.debug("Cancel Duplication pressed");
+                                            $log.debug("Message should be dismissed");
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    };
+                    return messageModel;
+                }
+
+                if (dialogService.showMessageList(model)) {
+                    //Do processing here
+                    for (var i = 0; i < 4; i++) {
+                        model.messages.push(createMessage(i));
+                    }
+                } else {
+                    $log.error("Could not display modal dialog");
+                }
+            };
         }
         return DialogLaunchController;
     }

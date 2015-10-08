@@ -36,8 +36,16 @@
                 "templateUrl": "templates/dialog.html"
             },
             {
-                "key": "blocking-message",
-                "templateUrl": "templates/blocking-message.html"
+                "key": "overlay-blocking-message",
+                "templateUrl": "templates/overlay-blocking-message.html"
+            },
+            {
+                "key": "message",
+                "templateUrl": "templates/message.html"
+            },
+            {
+                "key": "message-list",
+                "templateUrl": "templates/message-list.html"
             }
         ],
         "containers": [
