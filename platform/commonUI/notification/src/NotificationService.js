@@ -189,12 +189,13 @@ define(
          * @private
          */
         NotificationService.prototype.selectNextNotification = function () {
-            var notification;
+            var notification,
+                i=0;
             /*
             Loop through the notifications queue and find the first one that
             has not already been minimized (manually or otherwise).
              */
-            for (var i=0; i< this.notifications.length; i++) {
+            for (; i< this.notifications.length; i++) {
                 notification = this.notifications[i];
 
                 if (!notification.minimized
