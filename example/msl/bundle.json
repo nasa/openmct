@@ -43,7 +43,8 @@
         "services": [
             {
                 "key":"rems.adapter",
-                "implementation": "RemsTelemetryServerAdapter.js"
+                "implementation": "RemsTelemetryServerAdapter.js",
+                "depends": ["$q", "$http"]
             }
         ],
         "runs": [
@@ -58,6 +59,12 @@
                 "type": "provider",
                 "implementation": "RemsTelemetryModelProvider.js",
                 "depends": ["rems.adapter"]
+            },
+            {
+                "provides": "telemetryService",
+                "type": "provider",
+                "implementation": "RemsTelemetryProvider.js",
+                "depends": ["rems.adapter", "$q"]
             }
         ]
     }

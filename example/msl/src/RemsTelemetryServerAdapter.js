@@ -31,9 +31,15 @@ define(
          * could be adapted to provide data from remote source.
          * @constructor
          */
-        function RemsTelemetryServerAdapter(){
+        function RemsTelemetryServerAdapter($q, $http){
+            var histories = {};
+
             return {
-                "dictionary": RemsDataDictionary
+                dictionary: RemsDataDictionary,
+                history: function(id) {
+                    histories[id] = histories[id] || $q.defer();
+                    return histories[id].promise;
+                }
             };
         }
         return RemsTelemetryServerAdapter;

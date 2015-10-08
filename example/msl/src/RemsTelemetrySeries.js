@@ -19,40 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
-    function (){
+    function () {
         "use strict";
 
-        var TAXONOMY_ID = "msl:curiosity",
-            PREFIX = "msl_tlm:";
+        function ExampleTelemetySeries(data) {
+            return {
 
-        function RemsTelemetryInitializer(adapter, objectService) {
-            function makeId(element) {
-                return PREFIX + element.identifier;
             }
-
-            function initializeTaxonomy(dictionary) {
-                function getTaxonomyObject(domainObjects) {
-                    return domainObjects[TAXONOMY_ID];
-                }
-
-                function populateModel (taxonomyObject) {
-                    return taxonomyObject.useCapability(
-                        "mutation",
-                        function (model) {
-                            model.name = dictionary.name;
-                            model.composition = dictionary.instruments.map(makeId);
-                        }
-                    )
-                }
-
-                objectService.getObjects([TAXONOMY_ID])
-                    .then(getTaxonomyObject)
-                    .then(populateModel);
-            }
-            initializeTaxonomy(adapter.dictionary);
         }
-        return RemsTelemetryInitializer;
-    });
+
+        return ExampleTelemetrySeries;
+    }
+)
