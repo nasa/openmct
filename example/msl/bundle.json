@@ -1,0 +1,64 @@
+{
+    "name" : "Mars Science Laboratory Data Adapter",
+    "extensions" : {
+        "types": [
+            {
+                "name":"Mars Science Laboratory",
+                "key": "msl.curiosity",
+                "glyph": "o"
+            },
+            {
+                "name": "Instrument",
+                "key": "msl.instrument",
+                "glyph": "o",
+                "model": {"composition": []}
+            },
+            {
+                "name": "Measurement",
+                "key": "msl.measurement",
+                "glyph": "T",
+                "model": {"telemetry": {}},
+                "telemetry": {
+                    "source": "msl.source",
+                    "domains": [
+                        {
+                            "name": "Time",
+                            "key": "timestamp"
+                        }
+                    ]
+                }
+            }
+        ],
+        "roots": [
+            {
+                "id": "msl:curiosity",
+                "priority" : "preferred",
+                "model": {
+                    "type": "msl.curiosity",
+                    "name": "Mars Science Laboratory",
+                    "composition": []
+                }
+            }
+        ],
+        "services": [
+            {
+                "key":"rems.adapter",
+                "implementation": "RemsTelemetryServerAdapter.js"
+            }
+        ],
+        "runs": [
+            {
+                "implementation": "RemsTelemetryInitializer.js",
+                "depends": ["rems.adapter", "objectService"]
+            }
+        ],
+        "components": [
+            {
+                "provides": "modelService",
+                "type": "provider",
+                "implementation": "RemsTelemetryModelProvider.js",
+                "depends": ["rems.adapter"]
+            }
+        ]
+    }
+}

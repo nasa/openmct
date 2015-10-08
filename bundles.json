@@ -19,6 +19,7 @@
     "platform/features/plot",
     "platform/features/scrolling",
     "platform/features/events",
+    "platform/features/conductor",
     "platform/forms",
     "platform/identity",
     "platform/persistence/local",
@@ -29,5 +30,6 @@
 
     "example/imagery",
     "example/eventGenerator",
-    "example/generator"
+    "example/generator",
+    "example/msl"
 ]
