@@ -41,7 +41,7 @@ define(
             // Update the set of Create actions
             function refreshActions() {
                 $scope.createActions = $scope.action ?
-                        $scope.action.getActions('create') :
+                        $scope.action.getActions({ category: "creation" }) :
                         [];
             }
 

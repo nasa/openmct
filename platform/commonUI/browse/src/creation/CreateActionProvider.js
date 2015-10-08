@@ -63,7 +63,10 @@ define(
             // domain object to serve as the container for the
             // newly-created object (although the user may later
             // make a different selection)
-            if (key !== 'create' || !destination) {
+            if (!destination) {
+                return [];
+            }
+            if (context.category && context.category !== "creation") {
                 return [];
             }
 

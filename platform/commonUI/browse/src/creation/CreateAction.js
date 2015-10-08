@@ -53,11 +53,12 @@ define(
          */
         function CreateAction(type, parent, context, dialogService, creationService, policyService) {
             this.metadata = {
-                key: 'create',
+                key: 'create.' + type.getKey(),
                 glyph: type.getGlyph(),
                 name: type.getName(),
                 type: type.getKey(),
                 description: type.getDescription(),
+                category: [ 'creation' ],
                 context: context
             };
 
