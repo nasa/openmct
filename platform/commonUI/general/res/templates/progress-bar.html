@@ -4,6 +4,7 @@
         <span class="progress-amt" style="width: {{ngModel.dialog.progress}}%"></span>
     </span>
 </span>
-<div class="progress-info progress-estimate hint" ng-hide="ngModel.dialog.progressText === undefined">
+<div class="progress-info hint" ng-hide="ngModel.dialog.progressText === undefined">
+    <span class="progress-amt-text" ng-show="ngModel.dialog.progress > 0">{{ngModel.dialog.progress}}% complete. </span>
     {{ngModel.dialog.progressText}}
 </div>

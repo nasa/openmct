@@ -1,24 +1,24 @@
-<mct-container key="overlay" class="severity-{{ngModel.dialog.severity}}">
+<mct-container key="overlay" class="t-message severity-{{ngModel.dialog.severity}}">
+    <div class="abs ui-symbol type-icon message-type">!</div>
+    <div class="abs message-contents">
         <div class="abs top-bar">
             <div class="title">{{ngModel.dialog.title}}</div>
             <div class="hint" ng-hide="ngModel.dialog.hint === undefined">{{ngModel.dialog.hint}}</div>
         </div>
         <div class="abs editor">
-            <div class="progress-info progress-current-action">
+            <div class="message-action">
                 {{ngModel.dialog.actionText}}
             </div>
             <mct-include key="'progress-bar'"
                          ng-model="ngModel"
                          ng-hide="ngModel.dialog.progress === undefined"></mct-include>
-
-            <!--<div ng-hide="ngModel.dialog.progress === undefined" style="background-color: darkgray; width: 100%; height: 1em;"><div ng-show="ngModel.dialog.progress > 0" style="color: #2e2e2e; background-color: lightgray; text-align: center; min-width: 2em; width: {{ngModel.dialog.progress}}%">{{ngModel.dialog.progress}} %</div></div>-->
         </div>
-
         <div class="abs bottom-bar">
             <a ng-repeat="dialogAction in ngModel.dialog.actions"
-               class="s-btn lg"
+               class="s-btn major"
                ng-click="dialogAction.action()">
                 {{dialogAction.label}}
             </a>
         </div>
+    </div>
 </mct-container>

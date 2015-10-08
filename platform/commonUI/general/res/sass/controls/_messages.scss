@@ -130,7 +130,7 @@
 		line-height: $h;
 		width: 100px;
 	}
-    .progress-info.progress-estimate { display: none; }
+    .progress-info { display: none; }
 	z-index: 10;
 }
 
@@ -159,4 +159,20 @@
 	&.caution {
 		@include statusBannerColors($colorStatusCaution);
 	}
+}
+
+// Messages in overlays, as singleton or in list
+.t-message .overlay {
+    // Singleton message overlay context
+    $iconW: 80px;
+    .type-icon.message-type.abs {
+        //color: pushBack($colorOvrFg, 40%);
+        font-size: $iconW;
+        opacity: 0.5;
+        right: auto;
+        width: $iconW;
+    }
+    .message-contents.abs {
+        left: $iconW + $overlayMargin;
+    }
 }

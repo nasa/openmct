@@ -2455,7 +2455,7 @@ label.checkbox.custom {
     line-height: 8px;
     width: 100px; }
   /* line 133, ../../../../general/res/sass/controls/_messages.scss */
-  .l-message-banner .progress-info.progress-estimate {
+  .l-message-banner .progress-info {
     display: none; }
 
 /* line 137, ../../../../general/res/sass/controls/_messages.scss */
@@ -2531,6 +2531,16 @@ label.checkbox.custom {
       /* line 33, ../../../../general/res/sass/controls/_messages.scss */
       .s-message-banner.caution .s-action:hover {
         background-color: #ca5900; }
+
+/* line 168, ../../../../general/res/sass/controls/_messages.scss */
+.t-message .overlay .type-icon.message-type.abs, .t-message .overlay .s-menu span.type-icon.message-type.l-click-area, .s-menu .t-message .overlay span.type-icon.message-type.l-click-area {
+  font-size: 80px;
+  opacity: 0.5;
+  right: auto;
+  width: 80px; }
+/* line 175, ../../../../general/res/sass/controls/_messages.scss */
+.t-message .overlay .message-contents.abs, .t-message .overlay .s-menu span.message-contents.l-click-area, .s-menu .t-message .overlay span.message-contents.l-click-area {
+  left: 105px; }
 
 /* line 1, ../../../../general/res/sass/controls/_time-controller.scss */
 .l-time-controller {
@@ -4157,7 +4167,7 @@ span.req {
   width: 50%;
   min-height: 300px;
   max-height: 800px;
-  min-width: 450px;
+  min-width: 600px;
   max-width: 1000px;
   z-index: 101; }
   /* line 53, ../../../../general/res/sass/overlay/_overlay.scss */
@@ -4166,7 +4176,7 @@ span.req {
     right: 25px;
     bottom: 25px;
     left: 25px; }
-/* line 61, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 62, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .title {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -4174,30 +4184,30 @@ span.req {
   font-size: 1.2em;
   line-height: 120%;
   margin-bottom: 5px; }
-/* line 68, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 69, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .hint {
   color: #999999; }
-/* line 72, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 73, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .top-bar {
   height: 60px; }
-/* line 76, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 77, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .editor {
   top: 70px;
   bottom: 40px;
   left: 0;
   right: 0;
   overflow: auto; }
-  /* line 83, ../../../../general/res/sass/overlay/_overlay.scss */
+  /* line 84, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .editor .field.l-med input[type='text'] {
     width: 100%; }
-/* line 89, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 90, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .l-progress-bar {
   display: block;
   height: 15px;
   line-height: 15px;
   margin: .5em 0;
   width: 100%; }
-/* line 98, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 99, ../../../../general/res/sass/overlay/_overlay.scss */
 .overlay .bottom-bar {
   top: auto;
   right: 0;
@@ -4206,14 +4216,14 @@ span.req {
   overflow: visible;
   height: 30px;
   text-align: right; }
-  /* line 107, ../../../../general/res/sass/overlay/_overlay.scss */
+  /* line 108, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .bottom-bar .s-btn, .overlay .bottom-bar .s-menu {
     font-size: 95%;
     height: 30px;
     line-height: 30px;
     margin-left: 5px;
     padding: 0 15px; }
-    /* line 109, ../../../../general/res/sass/overlay/_overlay.scss */
+    /* line 110, ../../../../general/res/sass/overlay/_overlay.scss */
     .overlay .bottom-bar .s-btn:not(.major), .overlay .bottom-bar .s-menu:not(.major) {
       background-color: #969696;
       -moz-border-radius: 4px;
@@ -4244,10 +4254,10 @@ span.req {
           .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .s-menu:not(.major):not(.disabled):hover > .icon {
             color: white; } }
 
-/* line 127, ../../../../general/res/sass/overlay/_overlay.scss */
+/* line 128, ../../../../general/res/sass/overlay/_overlay.scss */
 .t-dialog-sm .overlay > .holder {
-  min-height: 225px;
-  height: 225px; }
+  min-height: 300px;
+  height: 300px; }
 
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
   /* line 3, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
@@ -4301,7 +4311,6 @@ span.req {
     .overlay > .holder .contents .top-bar,
     .overlay > .holder .contents .editor,
     .overlay > .holder .contents .bottom-bar {
-      background-color: rgba(255, 165, 0, 0.2);
       top: auto;
       right: auto;
       bottom: auto;
