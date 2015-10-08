@@ -1,0 +1,41 @@
+.iw-container {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    top: 0;
+    right: 0;
+}
+
+.iw-stdin {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 30px;
+    width: calc(100% - 8px);
+    margin: 4px;
+    font-family: monospace;
+    font-size: 16px;
+}
+
+.iw-stdout {
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    top: 12px;
+    bottom: 44px;
+    border: 1px #211 solid;
+    border-radius: 12px;
+    padding: 8px;
+    background: #302;
+    overflow: auto;
+}
+
+.iw-stdout span {
+    display: block;
+    font-family: monospace;
+    color: #FD9;
+    font-size: 16px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    min-height: 1em;
+}

@@ -12,6 +12,11 @@
                 "implementation": "CLIController.js",
                 "depends": [ "$scope", "navigationService", "objectService" ]
             }
+        ],
+        "stylesheets": [
+            {
+                "stylesheetUrl": "stylesheets/cli.css"
+            }
         ]
     }
 }

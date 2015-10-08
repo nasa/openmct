@@ -1,10 +1,12 @@
 <div class="abs holder-all browse-mode" ng-controller="CLIController">
-    <div class="iw-stdout">
-        <span ng-repeat="line in stdout track by $index">{{line}}</span>
+    <div class="iw-container">
+        <div class="iw-stdout">
+            <span ng-repeat="line in stdout track by $index">{{line}}</span>
+        </div>
+        <form ng-submit="enter(stdin)">
+            <input type="text" class="iw-stdin" ng-model="stdin" cli-grabfocus>
+        </form>
     </div>
-    <form ng-submit="enter(stdin)">
-        <input type="text" class="iw-stdin" ng-model="stdin" cli-grabfocus>
-    </form>
     <mct-include key="'bottombar'"></mct-include>
 </div>
 
