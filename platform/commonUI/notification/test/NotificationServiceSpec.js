@@ -30,24 +30,18 @@ define(
             var notificationService,
                 mockTimeout,
                 mockAutoDismiss,
-                successModel = {
-                    title: "Mock Success Notification",
-                    severity: MessageSeverity.SUCCESS
-                },
-                errorModel = {
-                    title: "Mock Error Notification",
-                    severity: MessageSeverity.ERROR
-                };
+                successModel,
+                errorModel;
 
         /**
          * 1) Calling .notify results in a new notification being created
-         * with the provided model and set to the active notification
+         * with the provided model and set to the active notification. DONE
          *
          * 2) Calling .notify with autoDismiss results in a SUCCESS notification
-         * becoming dismissed after timeout has elapsed
+         * becoming dismissed after timeout has elapsed DONE
          *
          * 3) Calling .notify with autoDismiss results in an ERROR notification
-         * being MINIMIZED after a timeout has elapsed
+         * being MINIMIZED after a timeout has elapsed DONE
          * 
          * 4) Calling .notify with an active success notification results in that
          * notification being auto-dismissed, and the new notification becoming
@@ -84,17 +78,49 @@ define(
                 mockAutoDismiss = 0;
                 notificationService = new NotificationService(
                     mockTimeout, mockAutoDismiss);
+                successModel = {
+                    title: "Mock Success Notification",
+                    severity: MessageSeverity.SUCCESS
+                };
+                errorModel = {
+                    title: "Mock Error Notification",
+                    severity: MessageSeverity.ERROR
+                };
             });
 
-            it("Calls the notification service with a new notification, making" +
+            it("gets a new success notification, making" +
                 " the notification active", function() {
                 var activeNotification;
                 notificationService.notify(successModel);
                 activeNotification = notificationService.getActiveNotification();
-                expect(activeNotification.model).toBe(successModel);
+                expect(activeNotification).toBe(successModel);
             });
 
-            describe(" called with multiple notifications", function(){
+            it("gets a new success notification with" +
+                " numerical auto-dismiss specified. ", function() {
+                var activeNotification;
+                successModel.autoDismiss = 1000;
+                notificationService.notify(successModel);
+                activeNotification = notificationService.getActiveNotification();
+                expect(activeNotification).toBe(successModel);
+                mockTimeout.mostRecentCall.args[0]();
+                activeNotification = notificationService.getActiveNotification();
+                expect(activeNotification).toBeUndefined();
+            });
+
+            it("gets a new notification with" +
+                " boolean auto-dismiss specified. ", function() {
+                var activeNotification;
+                successModel.autoDismiss = true;
+                notificationService.notify(successModel);
+                activeNotification = notificationService.getActiveNotification();
+                expect(activeNotification).toBe(successModel);
+                mockTimeout.mostRecentCall.args[0]();
+                activeNotification = notificationService.getActiveNotification();
+                expect(activeNotification).toBeUndefined();
+            });
+
+            describe(" gets called with multiple notifications", function(){
                 it("auto-dismisses the previously active notification, making" +
                     " the new notification active", function() {
                     var activeNotification;
@@ -103,14 +129,14 @@ define(
                     activeNotification =
                         notificationService.getActiveNotification();
                     //Initially expect the active notification to be success
-                    expect(activeNotification.model).toBe(successModel);
+                    expect(activeNotification).toBe(successModel);
                     //Then notify of an error
                     notificationService.notify(errorModel);
                     //But it should be auto-dismissed and replaced with the
                     // error notification
                     mockTimeout.mostRecentCall.args[0]();
                     activeNotification = notificationService.getActiveNotification();
-                    expect(activeNotification.model).toBe(errorModel);
+                    expect(activeNotification).toBe(errorModel);
                 });
                 it("auto-dismisses an active success notification, removing" +
                     " it completely", function() {
@@ -125,9 +151,9 @@ define(
                 });
                 it("auto-minimizes an active error notification", function() {
                     var activeNotification;
-                    //First pre-load with a success message
+                    //First pre-load with an error message
                     notificationService.notify(errorModel);
-                    //Then notify of an error
+                    //Then notify of success
                     notificationService.notify(successModel);
                     expect(notificationService.notifications.length).toEqual(2);
                     //Mock the auto-minimize
@@ -137,8 +163,42 @@ define(
                     expect(notificationService.notifications.length).toEqual(2);
                     activeNotification =
                         notificationService.getActiveNotification();
-                    expect(activeNotification.model).toBe(successModel);
+                    expect(activeNotification).toBe(successModel);
                     expect(errorModel.minimized).toEqual(true);
+                });
+                it("auto-minimizes errors when a number of them arrive in" +
+                    " short succession ", function() {
+                    var activeNotification;
+                    var error2 = {
+                        title: "Second Mock Error Notification",
+                        severity: MessageSeverity.ERROR
+                    }
+                    var error3 = {
+                        title: "Third Mock Error Notification",
+                        severity: MessageSeverity.ERROR
+                    }
+                    //First pre-load with a success message
+                    notificationService.notify(errorModel);
+                    //Then notify of a third error
+                    notificationService.notify(error2);
+                    notificationService.notify(error3);
+                    expect(notificationService.notifications.length).toEqual(3);
+                    //Mock the auto-minimize
+                    mockTimeout.mostRecentCall.args[0]();
+                    //Previous error message should be minimized, not
+                    // dismissed
+                    expect(notificationService.notifications.length).toEqual(3);
+                    activeNotification =
+                        notificationService.getActiveNotification();
+                    expect(activeNotification).toBe(error2);
+                    expect(errorModel.minimized).toEqual(true);
+
+                    //Mock the second auto-minimize
+                    mockTimeout.mostRecentCall.args[0]();
+                    activeNotification =
+                        notificationService.getActiveNotification();
+                    expect(activeNotification).toBe(error3);
+                    expect(error2.minimized).toEqual(true);
 
                 });
             });

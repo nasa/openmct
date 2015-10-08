@@ -23,13 +23,61 @@
 
 /**
  * This bundle implements the notification service, which can be used to
- * show banner notifications to the user.
+ * show banner notifications to the user. Banner notifications
+ * are used to inform users of events in a non-intrusive way. As
+ * much as possible, notifications share a model with blocking
+ * dialogs so that the same information can be provided in a dialog
+ * and then minimized to a banner notification if needed.
+ *
  * @namespace platform/commonUI/dialog
  */
 define(
     ["./MessageSeverity"],
     function (MessageSeverity) {
         "use strict";
+
+        /**
+         * A representation of a user action. Actions are provided to
+         * dialogs and notifications and are shown as buttons.
+         *
+         * @typedef {object} NotificationAction
+         * @property {string} label the label to appear on the button for
+         * this action
+         * @property {function} action a callback function to be invoked
+         * when the button is clicked
+        */
+
+        /**
+         * A representation of a banner notification. Banner notifications
+         * are used to inform users of events in a non-intrusive way. As
+         * much as possible, notifications share a model with blocking
+         * dialogs so that the same information can be provided in a dialog
+         * and then minimized to a banner notification if needed.
+         *
+         * @typedef {object} Notification
+         * @property {string} title The title of the message
+         * @property {number} progress The completion status of a task
+         * represented numerically
+         * @property {MessageSeverity} messageSeverity The importance of the
+         * message (eg. error, success)
+         * @property {boolean} unknownProgress a boolean indicating that the
+         * progress of the underlying task is unknown. This will result in a
+         * visually distinct progress bar.
+         * @property {boolean | number} autoDismiss If truthy, dialog will
+         * be automatically minimized or dismissed (depending on severity).
+         * Additionally, if the provided value is a number, it will be used
+         * as the delay period before being dismissed.
+         * @property {NotificationAction} primaryAction the default user
+         * response to
+         * this message. Will be represented as a button with the provided
+         * label and action. May be used by banner notifications to display
+         * only the most important option to users.
+         * @property {NotificationAction[]} additionalActions any additional
+         * actions
+         * that the user can take. Will be represented as additional buttons
+         * that may or may not be available from a banner.
+         */
+
         /**
          * The notification service is responsible for informing the user of
          * events via the use of banner notifications.
@@ -41,69 +89,51 @@ define(
             this.$timeout = $timeout;
             this.DEFAULT_AUTO_DISMISS = DEFAULT_AUTO_DISMISS;
 
-            /**
-             * Exposes the current "active" notification. This is a
-             * notification that is of current highest importance that has
-             * not been dismissed. The deinition of what is of highest
-             * importance might be a little nuanced and require tweaking.
-             * For example, if an important error message is visible and a
-             * success message is triggered, it may be desirable to
-             * temporarily show the success message and then auto-dismiss it.
-             * @type {{notification: undefined}}
+            /*
+             * A context in which to hold the active notification and a
+             * handle to its timeout.
              */
             this.active = {
             };
         }
-        /**
-        var model = {
-            title: string,
-            progress: number,
-            severity: MessageSeverity,
-            unknownProgress: boolean,
-            minimized: boolean,
-            autoDismiss: boolean | number,
-            actions: {
-                label: string,
-                action: function
-            }
-        }
-        */
 
         /**
-         * Possibly refactor this out to a provider?
-         * @constructor
+         * Returns the notification that is currently visible in the banner area
+         * @returns {Notification}
          */
-        function Notification (model) {
-            this.model = model;
-        }
-
-        Notification.prototype.minimize = function (setValue) {
-            if (typeof setValue !== undefined){
-                this.model.minimized = setValue;
-            } else {
-                return this.model.minimized;
-            }
-        };
-
         NotificationService.prototype.getActiveNotification = function (){
             return this.active.notification;
         }
 
         /**
-         * model = {
-         *
-         * }
-         * @param model
+         * A convenience method for success notifications. Notifications
+         * created via this method will be auto-dismissed after a default
+         * wait period
+         * @param {Notification} notification The notification to display
          */
-        NotificationService.prototype.notify = function (model) {
-            var notification = new Notification(model),
-                that=this;
+        NotificationService.prototype.success = function (notification) {
+            notification.autoDismiss = notification.autoDismiss || true;
+            NotificationService.prototype.notify(notification);
+        }
+
+        /**
+         * Notifies the user of an event. If there is a banner notification
+         * already active, then it will be dismissed or minimized automatically,
+         * and the provided notification displayed in its place.
+         *
+         * @param {Notification} notification The notification to display
+         */
+        NotificationService.prototype.notify = function (notification) {
+            /*var notification = new Notification(model),
+                that=this; */
+            var that = this;
+
             this.notifications.push(notification);
             /*
             Check if there is already an active (ie. visible) notification
              */
             if (!this.active.notification){
-                setActiveNotification.call(this, notification);
+                this.setActiveNotification(notification);
 
             } else if (!this.active.timeout){
                 /*
@@ -122,28 +152,42 @@ define(
 
         };
 
-        function setActiveNotification (notification) {
-            var that = this;
-            this.active.notification = notification;
-            /*
-            If autoDismiss has been specified, setup a timeout to
-            dismiss the dialog.
+        /**
+         * Used internally by the NotificationService
+         * @private
+         */
+        NotificationService.prototype.setActiveNotification =
+            function (notification) {
 
-            If there are other notifications pending in the queue, set this
-            one to auto-dismiss
-             */
-            if (notification.model.autoDismiss
-                || selectNextNotification.call(this)) {
-                var timeout = isNaN(notification.model.autoDismiss) ?
-                    this.DEFAULT_AUTO_DISMISS : notification.model.autoDismiss;
+                var that = this;
+                this.active.notification = notification;
+                /*
+                If autoDismiss has been specified, setup a timeout to
+                dismiss the dialog.
 
-                this.active.timeout = this.$timeout(function () {
-                    that.dismissOrMinimize(notification);
-                }, timeout);
-            }
-        }
+                If there are other notifications pending in the queue, set this
+                one to auto-dismiss
+                 */
+                if (notification && (notification.autoDismiss
+                    || this.selectNextNotification())) {
+                    var timeout = isNaN(notification.autoDismiss) ?
+                        this.DEFAULT_AUTO_DISMISS :
+                        notification.autoDismiss;
 
-        function selectNextNotification () {
+                    this.active.timeout = this.$timeout(function () {
+                        that.dismissOrMinimize(notification);
+                    }, timeout);
+                } else {
+                    delete this.active.timeout;
+                }
+        };
+
+        /**
+         * Used internally by the NotificationService
+         *
+         * @private
+         */
+        NotificationService.prototype.selectNextNotification = function () {
             /*
             Loop through the notifications queue and find the first one that
             has not already been minimized (manually or otherwise).
@@ -151,7 +195,7 @@ define(
             for (var i=0; i< this.notifications.length; i++) {
                 var notification = this.notifications[i];
 
-                if (!notification.model.minimized
+                if (!notification.minimized
                     && notification!= this.activeNotification) {
 
                     return notification;
@@ -162,8 +206,9 @@ define(
         /**
          * Minimize a notification. The notification will still be available
          * from the notification list. Typically notifications with a
-         * severity of SUCCESS should not be minimized, but rather
-         * dismissed.
+         * severity of 'success' should not be minimized, but rather
+         * dismissed. If you're not sure which is appropriate,
+         * use {@link NotificationService#dismissOrMinimize}
          * @see dismiss
          * @see dismissOrMinimize
          * @param notification
@@ -172,19 +217,17 @@ define(
             //Check this is a known notification
             var index = this.notifications.indexOf(notification);
             if (index >= 0) {
-                notification.minimize(true);
-                delete this.active.notification;
-                delete this.active.timeout;
-                setActiveNotification.call(this, selectNextNotification.call(this));
+                notification.minimized=true;
+                this.setActiveNotification(this.selectNextNotification());
             }
-        }
+        };
 
         /**
-         * Completely remove a notification. This will dismiss it from the
+         * Completely removes a notification. This will dismiss it from the
          * message banner and remove it from the list of notifications.
-         * Typically only notifications with a severity of SUCCESS should be
+         * Typically only notifications with a severity of success should be
          * dismissed. If you're not sure whether to dismiss or minimize a
-         * notification, use the dismissOrMinimize method.
+         * notification, use {@link NotificationService#dismissOrMinimize}.
          * dismiss
          * @see dismissOrMinimize
          * @param notification The notification to dismiss
@@ -194,11 +237,7 @@ define(
             var index = this.notifications.indexOf(notification);
             if (index >= 0) {
                 this.notifications.splice(index, 1);
-
-                delete this.active.notification;
-                delete this.active.timeout;
-
-                setActiveNotification.call(this, selectNextNotification.call(this));
+                this.setActiveNotification(this.selectNextNotification());
             }
         }
 
@@ -210,7 +249,7 @@ define(
          * @param notification
          */
         NotificationService.prototype.dismissOrMinimize = function (notification){
-            if (notification.model.severity > MessageSeverity.SUCCESS){
+            if (notification.severity > MessageSeverity.SUCCESS){
                 this.minimize(notification);
             } else {
                 this.dismiss(notification);
