@@ -34,6 +34,7 @@ define(
          */
         function TimeConductorController($scope, now) {
             var tickCount = 2,
+                innerMinimum = 1000, // 1 second
                 initialDragValue;
 
             function formatTimestamp(ts) {
@@ -139,7 +140,7 @@ define(
                 $scope.ngModel.inner.start = clamp(
                     initialDragValue + delta,
                     $scope.ngModel.outer.start,
-                    $scope.ngModel.inner.end
+                    $scope.ngModel.inner.end - innerMinimum
                 );
                 updateViewFromModel($scope.ngModel);
             }
@@ -148,7 +149,7 @@ define(
                 var delta = toMillis(pixels);
                 $scope.ngModel.inner.end = clamp(
                     initialDragValue + delta,
-                    $scope.ngModel.inner.start,
+                    $scope.ngModel.inner.start + innerMinimum,
                     $scope.ngModel.outer.end
                 );
                 updateViewFromModel($scope.ngModel);
