@@ -31,25 +31,55 @@ define(
 
         describe("The generic search provider ", function () {
             var mockQ,
-                mockTimeout,
+                mockLog,
+                mockThrottle,
                 mockDeferred,
                 mockObjectService,
                 mockObjectPromise,
+                mockChainedPromise,
                 mockDomainObjects,
                 mockCapability,
                 mockCapabilityPromise,
                 mockWorkerService,
                 mockWorker,
+                mockTopic,
+                mockMutationTopic,
                 mockRoots = ['root1', 'root2'],
+                mockThrottledFn,
+                throttledCallCount,
                 provider,
                 mockProviderResults;
 
-            beforeEach(function () {
+            function resolveObjectPromises() {
                 var i;
-                
+                for (i = 0; i < mockObjectPromise.then.calls.length; i += 1) {
+                    mockChainedPromise.then.calls[i].args[0](
+                        mockObjectPromise.then.calls[i]
+                            .args[0](mockDomainObjects)
+                    );
+                }
+            }
+
+            function resolveThrottledFn() {
+                if (mockThrottledFn.calls.length > throttledCallCount) {
+                    mockThrottle.mostRecentCall.args[0]();
+                    throttledCallCount = mockThrottledFn.calls.length;
+                }
+            }
+
+            function resolveAsyncTasks() {
+                resolveThrottledFn();
+                resolveObjectPromises();
+            }
+
+            beforeEach(function () {
                 mockQ = jasmine.createSpyObj(
                     "$q",
                     [ "defer" ]
+                );
+                mockLog = jasmine.createSpyObj(
+                    "$log",
+                    [ "error", "warn", "info", "debug" ]
                 );
                 mockDeferred = jasmine.createSpyObj(
                     "deferred",
@@ -57,9 +87,11 @@ define(
                 );
                 mockDeferred.promise = "mock promise";
                 mockQ.defer.andReturn(mockDeferred);
-                
-                mockTimeout = jasmine.createSpy("$timeout");
-                
+
+                mockThrottle = jasmine.createSpy("throttle");
+                mockThrottledFn = jasmine.createSpy("throttledFn");
+                throttledCallCount = 0;
+
                 mockObjectService = jasmine.createSpyObj(
                     "objectService",
                     [ "getObjects" ]
@@ -68,9 +100,14 @@ define(
                     "promise",
                     [ "then", "catch" ]
                 );
+                mockChainedPromise = jasmine.createSpyObj(
+                    "chainedPromise",
+                    [ "then" ]
+                );
                 mockObjectService.getObjects.andReturn(mockObjectPromise);
-                
-                
+
+                mockTopic = jasmine.createSpy('topic');
+
                 mockWorkerService = jasmine.createSpyObj(
                     "workerService",
                     [ "run" ]
@@ -80,68 +117,109 @@ define(
                     [ "postMessage" ]
                 );
                 mockWorkerService.run.andReturn(mockWorker);
-                
+
                 mockCapabilityPromise = jasmine.createSpyObj(
                     "promise",
                     [ "then", "catch" ]
                 );
-                
+
                 mockDomainObjects = {};
-                for (i = 0; i < 4; i += 1) {
-                    mockDomainObjects[i] = (
+                ['a', 'root1', 'root2'].forEach(function (id) {
+                    mockDomainObjects[id] = (
                         jasmine.createSpyObj(
                             "domainObject",
-                            [ "getId", "getModel", "hasCapability", "getCapability", "useCapability" ]
+                            [
+                                "getId",
+                                "getModel",
+                                "hasCapability",
+                                "getCapability",
+                                "useCapability"
+                            ]
                         )
                     );
-                    mockDomainObjects[i].getId.andReturn(i);
-                    mockDomainObjects[i].getCapability.andReturn(mockCapability);
-                    mockDomainObjects[i].useCapability.andReturn(mockCapabilityPromise);
-                }
-                // Give the first object children
-                mockDomainObjects[0].hasCapability.andReturn(true);
+                    mockDomainObjects[id].getId.andReturn(id);
+                    mockDomainObjects[id].getCapability.andReturn(mockCapability);
+                    mockDomainObjects[id].useCapability.andReturn(mockCapabilityPromise);
+                    mockDomainObjects[id].getModel.andReturn({});
+                });
+
                 mockCapability = jasmine.createSpyObj(
                     "capability",
                     [ "invoke", "listen" ]
                 );
                 mockCapability.invoke.andReturn(mockCapabilityPromise);
-                mockDomainObjects[0].getCapability.andReturn(mockCapability);
-                
-                provider = new GenericSearchProvider(mockQ, mockTimeout, mockObjectService, mockWorkerService, mockRoots);
+                mockDomainObjects.a.getCapability.andReturn(mockCapability);
+                mockMutationTopic = jasmine.createSpyObj(
+                    'mutationTopic',
+                    [ 'listen' ]
+                );
+                mockTopic.andCallFake(function (key) {
+                    return key === 'mutation' && mockMutationTopic;
+                });
+                mockThrottle.andReturn(mockThrottledFn);
+                mockObjectPromise.then.andReturn(mockChainedPromise);
+
+                provider = new GenericSearchProvider(
+                    mockQ,
+                    mockLog,
+                    mockThrottle,
+                    mockObjectService,
+                    mockWorkerService,
+                    mockTopic,
+                    mockRoots
+                );
             });
-            
+
             it("indexes tree on initialization", function () {
+                var i;
+
+                resolveThrottledFn();
+
                 expect(mockObjectService.getObjects).toHaveBeenCalled();
                 expect(mockObjectPromise.then).toHaveBeenCalled();
-                
-                // Call through the root-getting part 
-                mockObjectPromise.then.mostRecentCall.args[0](mockDomainObjects);
-                
-                // Call through the children-getting part 
-                mockTimeout.mostRecentCall.args[0]();
-                // Array argument indicates multiple children
-                mockCapabilityPromise.then.mostRecentCall.args[0]([]);
-                mockTimeout.mostRecentCall.args[0]();
-                // Call again, but for single child
-                mockCapabilityPromise.then.mostRecentCall.args[0]({});
-                mockTimeout.mostRecentCall.args[0]();
-                
-                expect(mockWorker.postMessage).toHaveBeenCalled();
+
+                // Call through the root-getting part
+                resolveObjectPromises();
+
+                mockRoots.forEach(function (id) {
+                    expect(mockWorker.postMessage).toHaveBeenCalledWith({
+                        request: 'index',
+                        model: mockDomainObjects[id].getModel(),
+                        id: id
+                    });
+                });
             });
-            
-            it("when indexing, listens for composition changes", function () {
-                var mockListener = {composition: {}};
-                
-                // Call indexItems
-                mockObjectPromise.then.mostRecentCall.args[0](mockDomainObjects);
-                
-                // Call through listening for changes
-                expect(mockCapability.listen).toHaveBeenCalled();
-                mockCapability.listen.mostRecentCall.args[0](mockListener);
-                expect(mockObjectService.getObjects).toHaveBeenCalled();
-                mockObjectPromise.then.mostRecentCall.args[0](mockDomainObjects);
+
+            it("indexes members of composition", function () {
+                mockDomainObjects.root1.getModel.andReturn({
+                    composition: ['a']
+                });
+
+                resolveAsyncTasks();
+                resolveAsyncTasks();
+
+                expect(mockWorker.postMessage).toHaveBeenCalledWith({
+                    request: 'index',
+                    model: mockDomainObjects.a.getModel(),
+                    id: 'a'
+                });
             });
-            
+
+            it("listens for changes to mutation", function () {
+                expect(mockMutationTopic.listen)
+                    .toHaveBeenCalledWith(jasmine.any(Function));
+                mockMutationTopic.listen.mostRecentCall
+                    .args[0](mockDomainObjects.a);
+
+                resolveAsyncTasks();
+
+                expect(mockWorker.postMessage).toHaveBeenCalledWith({
+                    request: 'index',
+                    model: mockDomainObjects.a.getModel(),
+                    id: mockDomainObjects.a.getId()
+                });
+            });
+
             it("sends search queries to the worker", function () {
                 var timestamp = Date.now();
                 provider.query(' test  "query" ', timestamp, 1, 2);
@@ -153,20 +231,20 @@ define(
                     timeout: 2
                 });
             });
-            
+
             it("gives an empty result for an empty query", function () {
                 var timestamp = Date.now(),
                     queryOutput;
-                
+
                 queryOutput = provider.query('', timestamp, 1, 2);
                 expect(queryOutput.hits).toEqual([]);
                 expect(queryOutput.total).toEqual(0);
-                
+
                 queryOutput = provider.query();
                 expect(queryOutput.hits).toEqual([]);
                 expect(queryOutput.total).toEqual(0);
             });
-            
+
             it("handles responses from the worker", function () {
                 var timestamp = Date.now(),
                     event = {
@@ -181,13 +259,35 @@ define(
                             timestamp: timestamp
                         }
                     };
-                
+
                 provider.query(' test  "query" ', timestamp);
                 mockWorker.onmessage(event);
                 mockObjectPromise.then.mostRecentCall.args[0](mockDomainObjects);
                 expect(mockDeferred.resolve).toHaveBeenCalled();
             });
-            
+
+            it("warns when objects are unavailable", function () {
+                resolveAsyncTasks();
+                expect(mockLog.warn).not.toHaveBeenCalled();
+                mockChainedPromise.then.mostRecentCall.args[0](
+                    mockObjectPromise.then.mostRecentCall.args[1]()
+                );
+                expect(mockLog.warn).toHaveBeenCalled();
+            });
+
+            it("throttles the loading of objects to index", function () {
+                expect(mockObjectService.getObjects).not.toHaveBeenCalled();
+                resolveThrottledFn();
+                expect(mockObjectService.getObjects).toHaveBeenCalled();
+            });
+
+            it("logs when all objects have been processed", function () {
+                expect(mockLog.info).not.toHaveBeenCalled();
+                resolveAsyncTasks();
+                resolveThrottledFn();
+                expect(mockLog.info).toHaveBeenCalled();
+            });
+
         });
     }
 );
