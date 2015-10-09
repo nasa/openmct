@@ -38,7 +38,7 @@ define(
                 testDomains = [
                     { key: "d1", name: "Domain #1" },
                     { key: "d2", name: "Domain #2" }
-                ]
+                ];
                 conductor = new TimeConductor(testStart, testEnd, testDomains);
             });
 
