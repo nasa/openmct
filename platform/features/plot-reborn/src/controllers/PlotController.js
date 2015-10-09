@@ -15,7 +15,8 @@ define(
                 extrema = {},
                 unsubscribes = [],
                 palette = new colorService.ColorPalette(),
-                pendingUpdate;
+                pendingUpdate,
+                selectedDomain;
 
 
             function setToDefaultViewport() {
@@ -84,7 +85,7 @@ define(
 
                     for (; i < len; i++) {
                         addPointToSeries(series, seriesIndex, {
-                            domain: telemSeries.getDomainValue(i),
+                            domain: telemSeries.getDomainValue(i, selectedDomain),
                             range: telemSeries.getRangeValue(i)
                         });
                     }
@@ -217,7 +218,13 @@ define(
             $scope.$on('user:viewport:change:end', onUserViewportChangeEnd);
             $scope.$on('user:viewport:change:start', onUserViewportChangeStart);
 
-            $scope.$on('telemetry:display:bounds', linkDomainObject);
+            $scope.$on(
+                'telemetry:display:bounds',
+                function (event, bounds) {
+                    selectedDomain = bounds.domain;
+                    linkDomainObject();
+                }
+            );
             $scope.$watch('domainObject', linkDomainObject);
 
             return {
