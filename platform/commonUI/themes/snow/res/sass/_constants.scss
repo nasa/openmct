@@ -25,13 +25,15 @@ $contrastInvokeMenuPercent: 40%;
 $shdwBtns: none;
 $sliderColorBase: $colorKey;
 $sliderColorRangeHolder: rgba(black, 0.07);
-$sliderColorRange: rgba($sliderColorBase, 0.3);
-$sliderColorRangeHov: rgba($sliderColorBase, 0.5);
-$sliderColorKnob: rgba($sliderColorBase, 0.6);
-$sliderColorKnobHov: $sliderColorBase;
+$sliderColorRange: rgba($sliderColorBase, 0.2);
+$sliderColorRangeHov: rgba($sliderColorBase, 0.4);
+$sliderColorKnob: rgba($sliderColorBase, 0.5);
+$sliderColorKnobHov: rgba($sliderColorBase, 0.7);
 $sliderColorRangeValHovBg: $sliderColorRange; //rgba($sliderColorBase, 0.1);
 $sliderColorRangeValHovFg: $colorBodyFg;
-$sliderKnobW: 4px;
+$sliderKnobW: nth($ueTimeControlH,2)/2;
+$timeControllerToiLineColor: $colorBodyFg;
+$timeControllerToiLineColorHov: #0052b5;
 
 // General Colors
 $colorAlt1: #ff6600;

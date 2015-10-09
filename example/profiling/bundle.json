@@ -4,6 +4,10 @@
             {
                 "implementation": "WatchIndicator.js",
                 "depends": ["$interval", "$rootScope"]
+            },
+            {
+                "implementation": "DigestIndicator.js",
+                "depends": ["$interval", "$rootScope"]
             }
         ]
     }

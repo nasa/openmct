@@ -28,13 +28,8 @@ define(
 
         var CONDUCTOR_HEIGHT = "100px",
             TEMPLATE = [
-                '<div style=',
-                '"position: absolute; bottom: 0; width: 100%; ',
-                'overflow: hidden; ',
-                'height: ' + CONDUCTOR_HEIGHT + '">',
-                "<mct-include key=\"'time-conductor'\" ng-model='ngModel'>",
-                "</mct-include>",
-                '</div>'
+                "<mct-include key=\"'time-conductor'\" ng-model='conductor'>",
+                "</mct-include>"
             ].join(''),
             THROTTLE_MS = 200,
             GLOBAL_SHOWING = false;
@@ -166,8 +161,7 @@ define(
                 this.conductorElement =
                     this.$compile(TEMPLATE)(this.conductorScope());
                 this.element.after(this.conductorElement[0]);
-                this.element.addClass('abs');
-                this.element.css('bottom', CONDUCTOR_HEIGHT);
+                this.element.addClass('l-controls-visible l-time-controller-visible');
                 GLOBAL_SHOWING = true;
             }
         };

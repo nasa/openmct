@@ -29,7 +29,8 @@ define(
     function () {
         "use strict";
 
-        var TOPIC_PREFIX = "mutation:";
+        var GENERAL_TOPIC = "mutation",
+            TOPIC_PREFIX = "mutation:";
 
         // Utility function to overwrite a destination object
         // with the contents of a source object.
@@ -78,7 +79,11 @@ define(
          * @implements {Capability}
          */
         function MutationCapability(topic, now, domainObject) {
-            this.mutationTopic = topic(TOPIC_PREFIX + domainObject.getId());
+            this.generalMutationTopic =
+                topic(GENERAL_TOPIC);
+            this.specificMutationTopic =
+                topic(TOPIC_PREFIX + domainObject.getId());
+
             this.now = now;
             this.domainObject = domainObject;
         }
@@ -115,10 +120,16 @@ define(
             // mutator function has a temporary copy to work with.
             var domainObject = this.domainObject,
                 now = this.now,
-                t = this.mutationTopic,
+                generalTopic = this.generalMutationTopic,
+                specificTopic = this.specificMutationTopic,
                 model = domainObject.getModel(),
                 clone = JSON.parse(JSON.stringify(model)),
                 useTimestamp = arguments.length > 1;
+
+            function notifyListeners(model) {
+                generalTopic.notify(domainObject);
+                specificTopic.notify(model);
+            }
 
             // Function to handle copying values to the actual
             function handleMutation(mutationResult) {
@@ -136,7 +147,7 @@ define(
                         copyValues(model, result);
                     }
                     model.modified = useTimestamp ? timestamp : now();
-                    t.notify(model);
+                    notifyListeners(model);
                 }
 
                 // Report the result of the mutation
@@ -158,7 +169,7 @@ define(
          * @memberof platform/core.MutationCapability#
          */
         MutationCapability.prototype.listen = function (listener) {
-            return this.mutationTopic.listen(listener);
+            return this.specificMutationTopic.listen(listener);
         };
 
         /**

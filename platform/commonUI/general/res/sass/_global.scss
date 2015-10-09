@@ -125,6 +125,14 @@ mct-container {
 	text-align: center;
 }
 
+.scrolling {
+	overflow: auto;
+}
+
+.vscroll {
+	overflow-y: auto;
+}
+
 .no-margin {
 	margin: 0;
 }

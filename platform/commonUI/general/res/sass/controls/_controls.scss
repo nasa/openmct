@@ -295,15 +295,11 @@ label.checkbox.custom {
 
 .slider {
 	$knobH: 100%; //14px;
-	$knobW: 12px;
-	$slotH: 50%;
 	.slot {
 		//		@include border-radius($basicCr * .75);
 		//@include sliderTrack();
-		//height: $slotH;
 		width: auto;
 		position: absolute;
-		//top: ($knobH - $slotH) / 2;
 		top: 0;
 		right: 0;
 		bottom: 0;
@@ -317,30 +313,30 @@ label.checkbox.custom {
 		&:hover {
 			background-color: $sliderColorKnobHov;
 		}
-		cursor: ew-resize;
 		position: absolute;
 		height: $knobH;
-		width: $knobW;
+		width: $sliderKnobW;
 		top: 0;
 		auto: 0;
 		bottom: auto;
 		left: auto;
-		//&:before {
-		//	top: 1px;
-		//	bottom: 3px;
-		//	left: ($knobW / 2) - 1;
-		//}
-
+	}
+	.knob-l {
+		@include border-left-radius($sliderKnobW);
+		cursor: w-resize;
+	}
+	.knob-r {
+		@include border-right-radius($sliderKnobW);
+		cursor: e-resize;
 	}
 	.range {
-		$tbOffset: 2px;
 		@include trans-prop-nice-fade(.25s);
 		background-color: $sliderColorRange;
 		cursor: ew-resize;
 		position: absolute;
 		top: 0; //$tbOffset;
 		right: auto;
-		bottom: $tbOffset;
+		bottom: 0;
 		left: auto;
 		height: auto;
 		width: auto;

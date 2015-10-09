@@ -1,15 +1,28 @@
+@mixin toiLineHovEffects() {
+	//@include pulse(.25s);
+	&:before,
+	&:after {
+		background-color: $timeControllerToiLineColorHov;
+	}
+}
+
+.l-time-controller-visible {
+
+}
+
 .l-time-controller {
 	$minW: 400px;
-	$knobM: ($sliderKnobW + 1) * -1;
-	$rangeValOffset: $interiorMargin + $sliderKnobW;
-	$knobCr: $sliderKnobW;
-	//@if $sliderKnobW > 3 {
-	//	$knobCr: $sliderKnobW / 2;
-	//}
-	$timeRangeSliderLROffset: 130px + $sliderKnobW;
-	$r1H: 33px;
-	$r2H: 20px;
-	$r3H: 20px;
+	$knobHOffset: 0px;
+	$knobM: ($sliderKnobW + $knobHOffset) * -1;
+	$rangeValPad: $interiorMargin;
+	$rangeValOffset: $sliderKnobW;
+	//$knobCr: $sliderKnobW;
+	$timeRangeSliderLROffset: 130px + $sliderKnobW + $rangeValOffset;
+	$r1H: nth($ueTimeControlH,1);
+	$r2H: nth($ueTimeControlH,2);
+	$r3H: nth($ueTimeControlH,3);
+
+	//height: $r1H + $r2H + $r3H + ($interiorMargin * 2);
 
 	.l-time-range-inputs-holder,
 	.l-time-range-slider {
@@ -30,6 +43,7 @@
 	.l-time-range-ticks {
 		//@include test(red, 0.1);
 		@include absPosDefault(0, visible);
+		left: $timeRangeSliderLROffset; right: $timeRangeSliderLROffset;
 	}
 
 	.l-time-range-inputs-holder {
@@ -54,12 +68,6 @@
 		}
 	}
 
-	.l-time-range-slider,
-	.l-time-range-ticks {
-		left: $timeRangeSliderLROffset; right: $timeRangeSliderLROffset;
-
-	}
-
 	.l-time-range-slider-holder {
 		//@include test(green);
 		height: $r2H; bottom: $r3H + ($interiorMarginSm * 1);
@@ -67,6 +75,51 @@
 			@include box-shadow(none);
 			background: none;
 			border: none;
+			.range {
+				.toi-line {
+					$myC: $timeControllerToiLineColor;
+					$myW: 8px;
+					@include transform(translateX(50%));
+					position: absolute;
+					//@include test();
+					top: 0; right: 0; bottom: 0px; left: auto;
+					width: $myW;
+					height: auto;
+					z-index: 2;
+					&:before,
+					&:after {
+						background-color: $myC;
+						content: "";
+						position: absolute;
+					}
+					&:before {
+						// Vert line
+						top: 0; right: auto; bottom: -10px; left: floor($myW/2) - 1;
+						width: 2px;
+						//top: 0; right: 3px; bottom: 0; left: 3px;
+					}
+					&:after {
+						// Circle element
+						@include border-radius($myW);
+						@include transform(translateY(-50%));
+						top: 50%; right: 0; bottom: auto; left: 0;
+						width: auto;
+						height: $myW;
+					}
+				}
+				&:hover .toi-line {
+					@include toiLineHovEffects;
+				}
+			}
+		}
+		&:not(:active) {
+			//@include test(#ff00cc);
+			.knob,
+			.range {
+				@include transition-property(left, right);
+				@include transition-duration(500ms);
+				@include transition-timing-function(ease-in-out);
+			}
 		}
 	}
 
@@ -99,10 +152,11 @@
 	}
 
 	.knob {
-		width: $sliderKnobW;
+		z-index: 2;
 		.range-value {
 			//@include test($sliderColorRange);
 			@include trans-prop-nice-fade(.25s);
+			padding: 0 $rangeValOffset;
 			position: absolute;
 			height: $r2H;
 			line-height: $r2H;
@@ -112,7 +166,7 @@
 			color: $sliderColorKnobHov;
 		}
 		&.knob-l {
-			@include border-bottom-left-radius($knobCr);
+			//@include border-bottom-left-radius($knobCr); // MOVED TO _CONTROLS.SCSS
 			margin-left: $knobM;
 			.range-value {
 				text-align: right;
@@ -120,10 +174,13 @@
 			}
 		}
 		&.knob-r {
-			@include border-bottom-right-radius($knobCr);
+			//@include border-bottom-right-radius($knobCr);
 			margin-right: $knobM;
 			.range-value {
 				left: $rangeValOffset;
+			}
+			&:hover + .range-holder .range .toi-line {
+				@include toiLineHovEffects;
 			}
 		}
 	}
