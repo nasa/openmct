@@ -3,16 +3,18 @@
          class="l-message-banner s-message-banner">
         <span class="banner-elem label">
             {{active.notification.title}}
-        </span><mct-include key="'progress-bar'"
-                            class="banner-elem"
-                            ng-model="ngModel"
-                            ng-hide-x="ngModel.dialog.progress === undefined">
-
-        </mct-include>
-        <a ng-hide="active.notification.progress === undefined"
-           class="banner-elem l-action s-action">
-            Try Again
+        </span>
+        <span ng-hide="active.notification.progress === undefined">
+            <mct-include key="'progress-bar'" class="banner-elem"
+                         ng-model="ngModel">
+            </mct-include>
+        </span>
+        <a ng-hide="active.notification.primaryAction === undefined"
+           class="banner-elem l-action s-action"
+           ng-click="active.notification.primaryAction.action">
+            {{active.notification.primaryAction.label}}
         </a>
-        <a class="banner-elem ui-symbol close">&#x78;</a>
+        <a class="banner-elem ui-symbol close" ng-click="dismiss(active.notification)">
+            &#x78;</a>
     </div>
 </div>

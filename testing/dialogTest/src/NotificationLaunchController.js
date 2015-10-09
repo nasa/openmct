@@ -22,8 +22,8 @@
 /*global define*/
 
 define(
-    [],
-    function () {
+    ['../../../platform/commonUI/notification/src/MessageSeverity'],
+    function (MessageSeverity) {
         "use strict";
 
         function NotificationLaunchController($scope, notificationService) {
@@ -38,6 +38,28 @@ define(
                     title: "Success notification!"
                 })
             };
+
+            $scope.newError = function(){
+
+                notificationService.notify({
+                    title: "Error notification!",
+                    severity: MessageSeverity.ERROR
+                })
+            };
+
+            $scope.newProgress = function(){
+
+                var notification = {
+                    title: "Progress notification!",
+                    severity: MessageSeverity.INFO,
+                    progress: 0,
+                    progressUnknown: true
+
+                };
+
+                notificationService.notify(notification)
+            };
+
         }
         return NotificationLaunchController;
     }

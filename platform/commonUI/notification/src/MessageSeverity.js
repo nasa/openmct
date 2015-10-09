@@ -5,6 +5,7 @@
 define(function(){
     return {
         SUCCESS: 0,
-        ERROR: 1
+        INFO: 1,
+        ERROR: 2
     };
 });

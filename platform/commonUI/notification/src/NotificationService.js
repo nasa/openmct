@@ -112,6 +112,7 @@ define(
          */
         NotificationService.prototype.success = function (notification) {
             notification.autoDismiss = notification.autoDismiss || true;
+            notification.severity = MessageSeverity.SUCCESS;
             this.notify(notification);
         };
 
@@ -206,7 +207,7 @@ define(
                 notification = this.notifications[i];
 
                 if (!notification.minimized
-                    && notification!== this.activeNotification) {
+                    && notification!== this.active.notification) {
 
                     return notification;
                 }

@@ -27,6 +27,9 @@ define(
         "use strict";
         function BannerController($scope, notificationService){
             $scope.active = notificationService.active;
+            $scope.dismiss = function(notification){
+                notificationService.dismissOrMinimize(notification);
+            }
         }
         return BannerController;
     });
