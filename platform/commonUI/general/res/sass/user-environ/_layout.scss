@@ -30,21 +30,21 @@
 }
 
 .holder-all {
-	$myM: 0; // $interiorMarginSm;
-	top: $myM;
-	right: $myM;
-	bottom: $myM;
-	left: $myM;
+    $myM: 0; // $interiorMarginSm;
+    top: $myM;
+    right: $myM;
+    bottom: $myM;
+    left: $myM;
 }
 
 .browse-area,
 .edit-area,
 .editor {
-	position: absolute;
+    position: absolute;
 }
 
 .editor {
-	@include border-radius($basicCr * 1.5);
+    @include border-radius($basicCr * 1.5);
 }
 
 .contents {
@@ -68,8 +68,8 @@
         margin-right: $interiorMargin;
     }
     &.abs {
-	    text-wrap: none;
-	    white-space: nowrap;
+        text-wrap: none;
+        white-space: nowrap;
         &.left,
         .left {
             width: 45%;
@@ -95,51 +95,51 @@
 }
 
 .user-environ {
-	.browse-area,
-	.edit-area,
-	.editor {
-		top: $bodyMargin + $ueTopBarH + ($interiorMargin);
-		right: $bodyMargin;
-		bottom: $ueFooterH + $bodyMargin;
-		left: $bodyMargin;
-	}
+    .browse-area,
+    .edit-area,
+    .editor {
+        top: $bodyMargin + $ueTopBarH + ($interiorMargin);
+        right: $bodyMargin;
+        bottom: $ueFooterH + $bodyMargin;
+        left: $bodyMargin;
+    }
 
-	.browse-area,
-	.edit-area {
-		> .contents {
-			left: 0;
-			right: 0;
-		}
-	}
+    .browse-area,
+    .edit-area {
+        > .contents {
+            left: 0;
+            right: 0;
+        }
+    }
 
-	.edit-area {
-		$tbH: $btnToolbarH + $interiorMargin;
-		top: $bodyMargin + $ueTopBarEditH + ($interiorMargin);
-		.tool-bar {
-			bottom: auto;
-			height: $tbH;
-			line-height: $btnToolbarH;
-		}
-		.work-area {
-			top: $tbH + $interiorMargin * 2;
-		}
-	}
+    .edit-area {
+        $tbH: $btnToolbarH + $interiorMargin;
+        top: $bodyMargin + $ueTopBarEditH + ($interiorMargin);
+        .tool-bar {
+            bottom: auto;
+            height: $tbH;
+            line-height: $btnToolbarH;
+        }
+        .work-area {
+            top: $tbH + $interiorMargin * 2;
+        }
+    }
 
-	.ue-bottom-bar {
+    .ue-bottom-bar {
         //@include absPosDefault($bodyMargin);
-		@include absPosDefault(0);// New status bar design
-		top: auto;
-		height: $ueFooterH;
-		.status-holder {
-			//right: $ueAppLogoW + $bodyMargin; New status bar design
-			z-index: 1;
-		}
-		.app-logo {
-			left: auto;
-			width: $ueAppLogoW;
-			z-index: 2;
-		}
-	}
+        @include absPosDefault(0); // New status bar design
+        top: auto;
+        height: $ueFooterH;
+        .status-holder {
+            //right: $ueAppLogoW + $bodyMargin; New status bar design
+            z-index: 1;
+        }
+        .app-logo {
+            left: auto;
+            width: $ueAppLogoW;
+            z-index: 2;
+        }
+    }
 }
 
 .cols {
@@ -225,89 +225,91 @@
     }
 }
 
-
-
 .pane {
     position: absolute;
     &.treeview.left {
-	    .create-btn-holder {
-		    bottom: auto; top: 0;
-		    height: $ueTopBarH;
-		    .wrapper.menu-element {
-			    position: absolute;
-			    bottom: $interiorMargin;
-		    }
-	    }
-	    .search-holder {
-		    top: $ueTopBarH + $interiorMarginLg;
-	    }
-	    .tree-holder {
-		    overflow: auto;
-			top: $ueTopBarH + $interiorMarginLg + $treeSearchInputBarH + $interiorMargin;
-	    }
+        .create-btn-holder {
+            bottom: auto;
+            top: 0;
+            height: $ueTopBarH;
+            .wrapper.menu-element {
+                position: absolute;
+                bottom: $interiorMargin;
+            }
+        }
+        .search-holder {
+            top: $ueTopBarH + $interiorMarginLg;
+        }
+        .tree-holder {
+            overflow: auto;
+            top: $ueTopBarH + $interiorMarginLg + $treeSearchInputBarH + $interiorMargin;
+        }
     }
     &.items {
         .object-browse-bar {
-	        .left.abs,
-	        .right.abs {
-		        top: auto;
-	        }
-            //.left.abs {
-            //    @include tmpBorder(green);
-            //}
-            //.right.abs {
-            //    @include tmpBorder(red);
-            //}
-        }
-        .object-holder {
-            top: $ueTopBarH + $interiorMarginLg;
+            .left.abs,
+            .right.abs {
+                top: auto;
+            }
         }
     }
-	.object-holder {
-		overflow: auto;
-	}
 }
 
 .split-layout {
-	&.horizontal {
-		// Slides up and down
-		>.pane {
-//			@include test();
-			margin-top: $interiorMargin;
-			&:first-child {
-				margin-top: 0;
-			}
-		}
-	}
-	&.vertical {
-		// Slides left and right
-		>.pane {
-//            @include test();
-			margin-left: $interiorMargin;
-			>.holder {
-				left: 0;
-				right: 0;
-			}
-			&:first-child {
-				margin-left: 0;
-				.holder {
-					right: $interiorMarginSm;
-				}
-			}
-		}
+    &.horizontal {
+        // Slides up and down
+        > .pane {
+            //			@include test();
+            margin-top: $interiorMargin;
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+    }
+    &.vertical {
+        // Slides left and right
+        > .pane {
+            //            @include test();
+            margin-left: $interiorMargin;
+            > .holder {
+                left: 0;
+                right: 0;
+            }
+            &:first-child {
+                margin-left: 0;
+                .holder {
+                    right: $interiorMarginSm;
+                }
+            }
+        }
 
-	}
+    }
+}
+
+.object-holder {
+    overflow: hidden; // Contained objects need to handle their own overflow now
+    top: $ueTopBarH + $interiorMarginLg;
+    > ng-include {
+        @include absPosDefault(0, auto);
+    }
+    &.l-controls-visible {
+        &.l-time-controller-visible {
+            > ng-include {
+                bottom: nth($ueTimeControlH,1) + nth($ueTimeControlH,2) +nth($ueTimeControlH,3) + ($interiorMargin * 3);
+            }
+        }
+    }
 }
 
 .object-browse-bar .s-btn,
 .top-bar .buttons-main .s-btn,
-.top-bar .s-menu,
+.top-bar .s-menu-btn,
 .tool-bar .s-btn,
-.tool-bar .s-menu {
-	$h: $btnToolbarH;
-	height: $h;
-	line-height: $h;
-	vertical-align: top;
+.tool-bar .s-menu-btn {
+    $h: $btnToolbarH;
+    height: $h;
+    line-height: $h;
+    vertical-align: top;
 }
 
 .object-browse-bar,
@@ -318,33 +320,29 @@
 }
 
 .object-browse-bar {
-	//@include test(blue);
-	@include absPosDefault(0, visible);
-	@include box-sizing(border-box);
-	height: $ueTopBarH;
-	line-height: $ueTopBarH;
-	white-space: nowrap;
+    //@include test(blue);
+    @include absPosDefault(0, visible);
+    @include box-sizing(border-box);
+    height: $ueTopBarH;
+    line-height: $ueTopBarH;
+    white-space: nowrap;
 
-	.left {
-		padding-right: $interiorMarginLg * 2;
-		.l-back {
-			display: inline-block;
-			float: left;
-			margin-right: $interiorMarginLg;
-		}
-	}
+    .left {
+        padding-right: $interiorMarginLg * 2;
+        .l-back {
+            display: inline-block;
+            float: left;
+            margin-right: $interiorMarginLg;
+        }
+    }
 }
 
 .l-flex {
-	@include webkitVal('display', 'flex');
-	@include webkitProp('flex-flow', 'row nowrap');
-	.left {
-		//@include test(red);
-		@include webkitProp(flex, '1 1 0');
-		padding-right: $interiorMarginLg;
-	}
-}
-
-.vscroll {
-    overflow-y: auto;
+    @include webkitVal('display', 'flex');
+    @include webkitProp('flex-flow', 'row nowrap');
+    .left {
+        //@include test(red);
+        @include webkitProp(flex, '1 1 0');
+        padding-right: $interiorMarginLg;
+    }
 }

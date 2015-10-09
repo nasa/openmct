@@ -19,39 +19,44 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+@mixin complexFieldHolder($myW) {
+	width: $myW + $interiorMargin;
+	input[type="text"] {
+		width: $myW;
+	}
+}
+
 .complex.datetime {
 	span {
 		display: inline-block;
 		margin-right: $interiorMargin;
 	}
-	
+
+/*
 	.field-hints,
 	.fields {
 	}
+
 	
 	.field-hints {
-		
+
 	}
-	
+	*/
+
 	.fields {
 		margin-top: $interiorMarginSm 0;
 		padding: $interiorMarginSm 0;
 	}
 	
 	.date {
-		$myW: 80px;
-		width: $myW + $interiorMargin;
-		input {
-			width: $myW;
-		}
-		
+		@include complexFieldHolder(80px);
+	}
+
+	.time.md {
+		@include complexFieldHolder(60px);
 	}
 	
 	.time.sm {
-		$myW: 40px;
-		width: $myW + $interiorMargin;
-		input {
-			width: $myW;
-		}
+		@include complexFieldHolder(40px);
 	}
 }

@@ -89,7 +89,7 @@ $plotDisplayArea: ($legendH + $interiorMargin, 0, $xBarH + $interiorMargin, $yBa
 	.gl-plot-label,
 	.l-plot-label {
 		//		@include test(yellow);
-		color: lighten($colorBodyFg, 20%);
+		color: $colorPlotLabelFg;
 		position: absolute;
 		text-align: center;
 //		text-transform: uppercase;

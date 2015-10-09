@@ -1,5 +1,6 @@
 @mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg) {
 	@include containerBase($bg, $fg);
+	@include boxShdw($shdwBtns);
 }
 
 @mixin btnSubtle($bg: $colorBtnBg, $bgHov: none, $fg: $colorBtnFg, $ic: $colorBtnIcon) {
