@@ -16,10 +16,10 @@
                 "implementation": "DialogLaunchController.js",
                 "depends": [
                     "$scope",
-                    "dialogService",
                     "$timeout",
                     "$log",
-                    "messageSeverity"
+                    "dialogService",
+                    "notificationService"
                 ]
             },
             {

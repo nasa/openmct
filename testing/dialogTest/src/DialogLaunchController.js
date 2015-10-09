@@ -22,11 +22,11 @@
 /*global define*/
 
 define(
-    [],
-    function () {
+    ['../../../platform/commonUI/notification/src/MessageSeverity'],
+    function (MessageSeverity) {
         "use strict";
 
-        function DialogLaunchController($scope, dialogService, $timeout, $log, messageSeverity) {
+        function DialogLaunchController($scope, $timeout, $log, dialogService, notificationService) {
             $scope.launchProgress = function (knownProgress) {
                 var model = {
                     title: "Progress Dialog Example",
@@ -35,7 +35,7 @@ define(
                     actionText: "Calculating...",
                     unknownProgress: !knownProgress,
                     unknownDuration: false,
-                    severity: messageSeverity.INFO,
+                    severity: MessageSeverity.INFO,
                     actions: [
                         {
                             label: "Cancel Operation",
@@ -76,7 +76,7 @@ define(
                 var model = {
                     title: "Error Dialog Example",
                     actionText: "Something happened, and it was not good.",
-                    severity: messageSeverity.ERROR,
+                    severity: MessageSeverity.ERROR,
                     actions: [
                         {
                             label: "Try Again",
@@ -103,7 +103,7 @@ define(
             $scope.launchMessages = function () {
                 var model = {
                     title: "Messages",
-                    severity: messageSeverity.MESSAGES,
+                    severity: MessageSeverity.INFO,
                     actions: [
                         {
                             label: "Done",
@@ -155,9 +155,9 @@ define(
 
                 function getExampleSeverity() {
                     var severities = [
-                        messageSeverity.INFO,
-                        messageSeverity.ALERT,
-                        messageSeverity.ERROR
+                        MessageSeverity.INFO,
+                        MessageSeverity.ALERT,
+                        MessageSeverity.ERROR
                     ];
                     return severities[Math.floor(Math.random() * severities.length)];
                 }
@@ -177,26 +177,16 @@ define(
                     element.remove();
                 }
 
-                for (var i = 0; i < 10; i++) {
-                    model.messages.push(createMessage(i));
-                }
+                //for (var i = 0; i < 10; i++) {
+                //    model.messages.push(createMessage(i));
+                //}
+                model.messages = notificationService.notifications;
                 dialogService.getDialogResponse('overlay-message-list', {
                     dialog: model,
                     cancel: function(){
                         dialogService.dismiss();
                     }
                 });
-
-/*
-                if (dialogService.showMessageList(model)) {
-                    //Do processing here
-                    for (var i = 0; i < 10; i++) {
-                        model.messages.push(createMessage(i));
-                    }
-                } else {
-                    $log.error("Could not display modal dialog");
-                }
-*/
             };
         }
         return DialogLaunchController;

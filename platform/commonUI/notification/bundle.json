@@ -6,6 +6,13 @@
                 "value": 3000
             }
         ],
+        "controllers": [
+            {
+                "key": "MessageController",
+                "implementation": "MessageController.js",
+                "depends": ["$scope"]
+            }
+        ],
         "services": [
             {
                 "key": "notificationService",

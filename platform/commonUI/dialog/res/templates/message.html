@@ -1,4 +1,9 @@
-<div class="l-message message-severity-{{ngModel.severity}}">
+<div ng-controller="MessageController"
+     class="l-message"
+     title="{{MessageSeverity}}"
+     ng-class="{'message-severity-info': ngModel.severity===MessageSeverity.INFO,
+     'message-severity-error': ngModel.severity===MessageSeverity.ERROR,
+     'message-severity-alert': ngModel.severity===MessageSeverity.ALERT}">
     <div class="ui-symbol type-icon message-type"></div>
     <div class="message-contents">
         <div class="top-bar">

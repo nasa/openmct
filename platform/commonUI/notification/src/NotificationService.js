@@ -112,7 +112,7 @@ define(
          */
         NotificationService.prototype.success = function (notification) {
             notification.autoDismiss = notification.autoDismiss || true;
-            notification.severity = MessageSeverity.SUCCESS;
+            notification.severity = MessageSeverity.INFO;
             this.notify(notification);
         };
 
@@ -260,7 +260,7 @@ define(
          * @param notification
          */
         NotificationService.prototype.dismissOrMinimize = function (notification){
-            if (notification.severity > MessageSeverity.SUCCESS){
+            if (notification.severity > MessageSeverity.INFO){
                 this.minimize(notification);
             } else {
                 this.dismiss(notification);

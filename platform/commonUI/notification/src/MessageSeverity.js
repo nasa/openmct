@@ -4,8 +4,8 @@
 /*global define*/
 define(function(){
     return {
-        SUCCESS: 0,
-        INFO: 1,
+        INFO: 0,
+        ALERT: 1,
         ERROR: 2
     };
 });

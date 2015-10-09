@@ -1,16 +1,5 @@
 {
     "extensions": {
-        "constants": [
-            {
-                "key": "messageSeverity",
-                "value": {
-                    "ALERT": "alert",
-                    "ERROR": "error",
-                    "INFO": "info",
-                    "SUCCESS": "success"
-                }
-            }
-        ],
         "services": [
             {
                 "key": "dialogService",
