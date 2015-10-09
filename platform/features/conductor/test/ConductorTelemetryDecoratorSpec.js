@@ -75,8 +75,6 @@ define(
                     return j * j * j;
                 });
 
-                mockConductor.queryStart.andReturn(-12321);
-                mockConductor.queryEnd.andReturn(-12321);
                 mockConductor.displayStart.andReturn(42);
                 mockConductor.displayEnd.andReturn(1977);
                 mockConductor.domain.andReturn("testDomain");
@@ -132,29 +130,29 @@ define(
                     expect(request.domain).toEqual(mockConductor.domain());
                 });
             });
-//
-//            it("adds display start/end times & domain selection to historical requests", function () {
-//                decorator.requestTelemetry([{ someKey: "some value" }]);
-//                expect(mockTelemetryService.requestTelemetry)
-//                    .toHaveBeenCalledWith([{
-//                        someKey: "some value",
-//                        start: mockConductor.displayStart(),
-//                        end: mockConductor.displayEnd(),
-//                        domain: jasmine.any(String)
-//                    }]);
-//            });
-//
-//            it("adds display start/end times & domain selection to subscription requests", function () {
-//                var mockCallback = jasmine.createSpy('callback');
-//                decorator.subscribe(mockCallback, [{ someKey: "some value" }]);
-//                expect(mockTelemetryService.subscribe)
-//                    .toHaveBeenCalledWith(jasmine.any(Function), [{
-//                        someKey: "some value",
-//                        start: mockConductor.displayStart(),
-//                        end: mockConductor.displayEnd(),
-//                        domain: jasmine.any(String)
-//                    }]);
-//            });
+
+            it("adds display start/end times & domain selection to historical requests", function () {
+                decorator.requestTelemetry([{ someKey: "some value" }]);
+                expect(mockTelemetryService.requestTelemetry)
+                    .toHaveBeenCalledWith([{
+                        someKey: "some value",
+                        start: mockConductor.displayStart(),
+                        end: mockConductor.displayEnd(),
+                        domain: jasmine.any(String)
+                    }]);
+            });
+
+            it("adds display start/end times & domain selection to subscription requests", function () {
+                var mockCallback = jasmine.createSpy('callback');
+                decorator.subscribe(mockCallback, [{ someKey: "some value" }]);
+                expect(mockTelemetryService.subscribe)
+                    .toHaveBeenCalledWith(jasmine.any(Function), [{
+                        someKey: "some value",
+                        start: mockConductor.displayStart(),
+                        end: mockConductor.displayEnd(),
+                        domain: jasmine.any(String)
+                    }]);
+            });
 
 
         });

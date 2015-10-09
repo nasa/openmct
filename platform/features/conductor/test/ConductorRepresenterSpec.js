@@ -129,11 +129,12 @@ define(
             it("exposes conductor state in scope", function () {
                 mockConductor.displayStart.andReturn(1977);
                 mockConductor.displayEnd.andReturn(1984);
+                mockConductor.domain.andReturn('d');
                 representer.represent(testViews[0], {});
 
                 expect(mockNewScope.ngModel.conductor).toEqual({
-                    inner: { start: 1977, end: 1984 },
-                    outer: { start: 1977, end: 1984 }
+                    inner: { start: 1977, end: 1984, domain: 'd' },
+                    outer: { start: 1977, end: 1984, domain: 'd' }
                 });
             });
 
@@ -163,7 +164,9 @@ define(
             });
 
             describe("when bounds are changing", function () {
-                var mockThrottledFn = jasmine.createSpy('throttledFn'),
+                var startWatch = "ngModel.conductor.inner.start",
+                    endWatch = "ngModel.conductor.inner.end",
+                    mockThrottledFn = jasmine.createSpy('throttledFn'),
                     testBounds;
 
                 function fireThrottledFn() {
@@ -174,7 +177,7 @@ define(
                     mockThrottle.andReturn(mockThrottledFn);
                     representer.represent(testViews[0], {});
                     testBounds = { start: 0, end: 1000 };
-                    mockNewScope.conductor.inner = testBounds;
+                    mockNewScope.ngModel.conductor.inner = testBounds;
                     mockConductor.displayStart.andCallFake(function () {
                         return testBounds.start;
                     });
@@ -186,14 +189,14 @@ define(
                 it("does not broadcast while bounds are changing", function () {
                     expect(mockScope.$broadcast).not.toHaveBeenCalled();
                     testBounds.start = 100;
-                    fireWatch(mockNewScope, 'conductor.inner.start', testBounds.start);
+                    fireWatch(mockNewScope, startWatch, testBounds.start);
                     testBounds.end = 500;
-                    fireWatch(mockNewScope, 'conductor.inner.end', testBounds.end);
+                    fireWatch(mockNewScope, endWatch, testBounds.end);
                     fireThrottledFn();
                     testBounds.start = 200;
-                    fireWatch(mockNewScope, 'conductor.inner.start', testBounds.start);
+                    fireWatch(mockNewScope, startWatch, testBounds.start);
                     testBounds.end = 400;
-                    fireWatch(mockNewScope, 'conductor.inner.end', testBounds.end);
+                    fireWatch(mockNewScope, endWatch, testBounds.end);
                     fireThrottledFn();
                     expect(mockScope.$broadcast).not.toHaveBeenCalled();
                 });
@@ -201,12 +204,12 @@ define(
                 it("does broadcast when bounds have stabilized", function () {
                     expect(mockScope.$broadcast).not.toHaveBeenCalled();
                     testBounds.start = 100;
-                    fireWatch(mockNewScope, 'conductor.inner.start', testBounds.start);
+                    fireWatch(mockNewScope, startWatch, testBounds.start);
                     testBounds.end = 500;
-                    fireWatch(mockNewScope, 'conductor.inner.end', testBounds.end);
+                    fireWatch(mockNewScope, endWatch, testBounds.end);
                     fireThrottledFn();
-                    fireWatch(mockNewScope, 'conductor.inner.start', testBounds.start);
-                    fireWatch(mockNewScope, 'conductor.inner.end', testBounds.end);
+                    fireWatch(mockNewScope, startWatch, testBounds.start);
+                    fireWatch(mockNewScope, endWatch, testBounds.end);
                     fireThrottledFn();
                     expect(mockScope.$broadcast).toHaveBeenCalled();
                 });

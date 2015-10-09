@@ -24,6 +24,8 @@
 define(
     ["../src/TimeConductor"],
     function (TimeConductor) {
+        'use strict';
+
         function TestTimeConductor() {
             var self = this;
 
