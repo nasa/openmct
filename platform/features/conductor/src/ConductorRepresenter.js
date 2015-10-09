@@ -28,7 +28,7 @@ define(
 
         var CONDUCTOR_HEIGHT = "100px",
             TEMPLATE = [
-                "<mct-include key=\"'time-conductor'\" ng-model='conductor'>",
+                "<mct-include key=\"'time-conductor'\" ng-model='ngModel'>",
                 "</mct-include>"
             ].join(''),
             THROTTLE_MS = 200,
@@ -90,8 +90,9 @@ define(
             }
 
             function updateConductorInner() {
-                conductor.displayStart(conductorScope.conductor.inner.start);
-                conductor.displayEnd(conductorScope.conductor.inner.end);
+                var innerBounds = conductorScope.ngModel.conductor.inner;
+                conductor.displayStart(innerBounds.start);
+                conductor.displayEnd(innerBounds.end);
                 lastObservedBounds = lastObservedBounds || bounds();
                 broadcastBounds();
             }
