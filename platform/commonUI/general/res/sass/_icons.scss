@@ -29,6 +29,9 @@
 }
 
 .ui-symbol {
+	&.type-icon {
+		color: $colorObjHdrIc;
+	}
 	&.icon {
 		color: $colorKey;
 		&.alert {
@@ -41,6 +44,9 @@
 			font-size: 1.65em;
 		}
 	}
+	&.icon-calendar:after {
+		content: "\e605";
+	}
 }
 
 .bar .ui-symbol {
@@ -52,7 +58,7 @@
 	display: inline-block;
 }
 
-.s-menu .invoke-menu,
+.s-menu-btn .invoke-menu,
 .icon.major .invoke-menu {
 	margin-left: $interiorMarginSm;
 }

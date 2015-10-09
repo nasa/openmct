@@ -26,7 +26,9 @@ define(
     function (moment) {
         "use strict";
 
-        var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
+        var
+				DATE_FORMAT = "YYYY-MM-DD HH:mm:ss",
+				TICK_SPACING_PX = 150;
 
         /**
          * @memberof platform/commonUI/general
@@ -59,8 +61,7 @@ define(
             }
 
             function updateSpanWidth(w) {
-                // Space about 100px apart
-                tickCount = Math.max(Math.floor(w / 100), 2);
+                tickCount = Math.max(Math.floor(w / TICK_SPACING_PX), 2);
                 updateTicks();
             }
 
