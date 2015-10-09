@@ -110,20 +110,62 @@ define(
                         end: DAY * 1001
                     });
                 });
+
+                it("enforces a minimum inner span", function () {
+                    mockScope.startRightDrag();
+                    mockScope.rightDrag(-9999999);
+                    expect(mockScope.ngModel.inner.end)
+                        .toBeGreaterThan(mockScope.ngModel.inner.start);
+                });
             });
 
+            describe("when outer bounds are changed", function () {
+                beforeEach(function () {
+                    mockScope.ngModel = {
+                        outer: {
+                            start: DAY * 1000,
+                            end: DAY * 1001
+                        },
+                        inner: {
+                            start: DAY * 1000 + HOUR * 3,
+                            end: DAY * 1001 - HOUR * 3
+                        }
+                    };
+                    mockScope.spanWidth = 1000;
+                    fireWatch("spanWidth", mockScope.spanWidth);
+                    fireWatchCollection("ngModel", mockScope.ngModel);
+                });
 
+                it("enforces a minimum outer span", function () {
+                    mockScope.ngModel.outer.end =
+                        mockScope.ngModel.outer.start - DAY * 100;
+                    fireWatch(
+                        "ngModel.outer.end",
+                        mockScope.ngModel.outer.end
+                    );
+                    expect(mockScope.ngModel.outer.end)
+                        .toBeGreaterThan(mockScope.ngModel.outer.start);
 
-            it("enforces a minimum inner span", function () {
+                    mockScope.ngModel.outer.start =
+                        mockScope.ngModel.outer.end + DAY * 100;
+                    fireWatch(
+                        "ngModel.outer.start",
+                        mockScope.ngModel.outer.start
+                    );
+                    expect(mockScope.ngModel.outer.end)
+                        .toBeGreaterThan(mockScope.ngModel.outer.start);
+                });
 
-            });
-
-            it("enforces a minimum outer span", function () {
-
-            });
-
-            it("enforces a minimum inner span when outer span changes", function () {
-
+                it("enforces a minimum inner span when outer span changes", function () {
+                    mockScope.ngModel.outer.end =
+                        mockScope.ngModel.outer.start - DAY * 100;
+                    fireWatch(
+                        "ngModel.outer.end",
+                        mockScope.ngModel.outer.end
+                    );
+                    expect(mockScope.ngModel.inner.end)
+                        .toBeGreaterThan(mockScope.ngModel.inner.start);
+                });
             });
 
         });
