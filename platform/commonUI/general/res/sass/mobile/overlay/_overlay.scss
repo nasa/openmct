@@ -54,9 +54,10 @@
         }
         
         .contents {
-            .top-bar,
-            .editor,
-            .bottom-bar {
+            .abs.top-bar,
+            .abs.editor,
+            .abs.message-body,
+            .abs.bottom-bar {
                 //@include test(orange);
                 top: auto; right: auto; bottom: auto; left: auto;
                 height: auto; width: auto;

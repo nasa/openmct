@@ -83,8 +83,8 @@
 
     .abs.editor,
     .abs.message-body {
-        top: $ovrTopBarH + ($interiorMargin * 2);
-        bottom: $ovrFooterH + $interiorMargin * 2;
+        top: $ovrTopBarH + $interiorMarginLg;
+        bottom: $ovrFooterH + $interiorMarginLg;
         left: 0;
         right: 0;
         overflow: auto;
@@ -137,6 +137,7 @@
 .t-dialog-sm .overlay > .holder {
     // Used for blocker and in-progress dialogs, modal alerts, etc.
     //@include test(red);
-    min-height: 275px;
-    height: 275px;
+    $h: 225px;
+    min-height: $h;
+    height: $h;
 }

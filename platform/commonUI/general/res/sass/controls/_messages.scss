@@ -167,8 +167,8 @@
         &:before { content:"\e608"; }
         color: $colorStatusDefault;
         font-size: $iconW;
-        padding-left: 1px;
-        width: $iconW;
+        padding: 1px;
+        width: $iconW + 2;
     }
 
     .message-severity-info .type-icon.message-type {
@@ -201,6 +201,7 @@
 .l-message {
     @include display-flex;
     @include flex-direction(row);
+    @include align-items(stretch);
     .type-icon.message-type {
         //@include test(red);
         @include flex(0 1 auto);
@@ -223,22 +224,41 @@
 // Message as singleton
 .t-message-single {
     @include messageBlock(80px);
+
+    @include desktop {
+        .l-message,
+        .bottom-bar {
+            @include absPosDefault();
+        }
+
+        .bottom-bar {
+            top: auto;
+            height: $ovrFooterH;
+        }
+    }
 }
 
 // Messages in list
 .t-message-list {
     @include messageBlock(32px);
+
     .message-contents {
         .l-message {
             //border-bottom: 1px solid pullForward($colorOvrBg, 20%);
             @include border-radius($controlCr);
             background: rgba($colorOvrFg, 0.1);
             margin-bottom: $interiorMargin;
-            margin-right: $interiorMarginLg;
             padding: $interiorMarginLg;
+
+            .message-contents,
+            .bottom-bar {
+                //@include test(green);
+                position: relative;
+            }
 
             .message-contents {
                 font-size: 0.9em;
+                margin-left: $interiorMarginLg;
                 .message-action { color: pushBack($colorOvrFg, 20%); }
                 .bottom-bar { text-align: left; }
             }
@@ -248,5 +268,9 @@
                 margin-bottom: $interiorMarginLg;
             }
         }
+    }
+
+    @include desktop {
+        .message-contents .l-message { margin-right: $interiorMarginLg; }
     }
 }

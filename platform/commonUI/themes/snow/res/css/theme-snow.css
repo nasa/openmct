@@ -2347,10 +2347,10 @@ label.checkbox.custom {
     margin-right: 3px; }
   /* line 54, ../../../../general/res/sass/controls/_messages.scss */
   .status.block.ok .status-indicator {
-    color: #44ba53; }
+    color: #60ba7b; }
   /* line 57, ../../../../general/res/sass/controls/_messages.scss */
   .status.block.caution .status-indicator {
-    color: #ff8545; }
+    color: #ffb66c; }
   /* line 60, ../../../../general/res/sass/controls/_messages.scss */
   .status.block .label {
     -moz-transition-property: max-width;
@@ -2507,30 +2507,30 @@ label.checkbox.custom {
       opacity: 1; }
   /* line 156, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner.ok {
-    background-color: #1b4a21;
+    background-color: #275a36;
     color: #fff; }
     /* line 28, ../../../../general/res/sass/controls/_messages.scss */
     .s-message-banner.ok:hover {
-      background-color: #296f32; }
+      background-color: #367e4c; }
     /* line 31, ../../../../general/res/sass/controls/_messages.scss */
     .s-message-banner.ok .s-action {
-      background-color: #0d2510; }
+      background-color: #183621; }
       /* line 33, ../../../../general/res/sass/controls/_messages.scss */
       .s-message-banner.ok .s-action:hover {
-        background-color: #1b4a21; }
+        background-color: #275a36; }
   /* line 159, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner.caution {
-    background-color: #ab3b00;
+    background-color: #d26a00;
     color: #fff; }
     /* line 28, ../../../../general/res/sass/controls/_messages.scss */
     .s-message-banner.caution:hover {
-      background-color: #de4c00; }
+      background-color: #ff8306; }
     /* line 31, ../../../../general/res/sass/controls/_messages.scss */
     .s-message-banner.caution .s-action {
-      background-color: #782900; }
+      background-color: #9f5000; }
       /* line 33, ../../../../general/res/sass/controls/_messages.scss */
       .s-message-banner.caution .s-action:hover {
-        background-color: #ab3b00; }
+        background-color: #d26a00; }
 
 /* Paths:
     t-dialog | t-dialog-sm > t-message-single | t-message-list > overlay > holder > contents > l-message >
@@ -2550,19 +2550,21 @@ label.checkbox.custom {
   display: -webkit-flex;
   display: flex;
   -webkit-flex-direction: row;
-  flex-direction: row; }
-  /* line 204, ../../../../general/res/sass/controls/_messages.scss */
+  flex-direction: row;
+  -webkit-align-items: stretch;
+  align-items: stretch; }
+  /* line 205, ../../../../general/res/sass/controls/_messages.scss */
   .l-message .type-icon.message-type {
     -webkit-flex: 0 1 auto;
     flex: 0 1 auto;
     position: relative; }
-  /* line 209, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 210, ../../../../general/res/sass/controls/_messages.scss */
   .l-message .message-contents {
     -webkit-flex: 1 1 auto;
     flex: 1 1 auto;
     margin-left: 25px;
     position: relative; }
-    /* line 215, ../../../../general/res/sass/controls/_messages.scss */
+    /* line 216, ../../../../general/res/sass/controls/_messages.scss */
     .l-message .message-contents .top-bar,
     .l-message .message-contents .message-body {
       margin-bottom: 20px; }
@@ -2572,80 +2574,104 @@ label.checkbox.custom {
   text-shadow: rgba(255, 255, 255, 0.8) 0 0px 5px;
   color: #ccc;
   font-size: 80px;
-  padding-left: 1px;
-  width: 80px; }
+  padding: 1px;
+  width: 82px; }
   /* line 167, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .type-icon.message-type:before {
     content: "\e608"; }
 /* line 174, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-single .message-severity-info .type-icon.message-type {
-  color: #44ba53; }
+  color: #60ba7b; }
   /* line 175, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .message-severity-info .type-icon.message-type:before {
     content: "\e608"; }
 /* line 178, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-single .message-severity-alert .type-icon.message-type {
-  color: #ff8545; }
+  color: #ffb66c; }
   /* line 179, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .message-severity-alert .type-icon.message-type:before {
     content: "\e610"; }
 /* line 182, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-single .message-severity-error .type-icon.message-type {
-  color: #ff533a; }
+  color: #c96b68; }
   /* line 183, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .message-severity-error .type-icon.message-type:before {
     content: "\21"; }
+@media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+  /* line 229, ../../../../general/res/sass/controls/_messages.scss */
+  .t-message-single .l-message,
+  .t-message-single .bottom-bar {
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    width: auto;
+    height: auto; }
+  /* line 234, ../../../../general/res/sass/controls/_messages.scss */
+  .t-message-single .bottom-bar {
+    top: auto;
+    height: 24px; } }
 
 /* line 165, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-list .type-icon.message-type {
   text-shadow: rgba(255, 255, 255, 0.8) 0 0px 5px;
   color: #ccc;
   font-size: 32px;
-  padding-left: 1px;
-  width: 32px; }
+  padding: 1px;
+  width: 34px; }
   /* line 167, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .type-icon.message-type:before {
     content: "\e608"; }
 /* line 174, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-list .message-severity-info .type-icon.message-type {
-  color: #44ba53; }
+  color: #60ba7b; }
   /* line 175, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-severity-info .type-icon.message-type:before {
     content: "\e608"; }
 /* line 178, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-list .message-severity-alert .type-icon.message-type {
-  color: #ff8545; }
+  color: #ffb66c; }
   /* line 179, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-severity-alert .type-icon.message-type:before {
     content: "\e610"; }
 /* line 182, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-list .message-severity-error .type-icon.message-type {
-  color: #ff533a; }
+  color: #c96b68; }
   /* line 183, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-severity-error .type-icon.message-type:before {
     content: "\21"; }
-/* line 232, ../../../../general/res/sass/controls/_messages.scss */
+/* line 246, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-list .message-contents .l-message {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
   background: rgba(102, 102, 102, 0.1);
   margin-bottom: 5px;
-  margin-right: 10px;
   padding: 10px; }
-  /* line 240, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 253, ../../../../general/res/sass/controls/_messages.scss */
+  .t-message-list .message-contents .l-message .message-contents,
+  .t-message-list .message-contents .l-message .bottom-bar {
+    position: relative; }
+  /* line 259, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-contents .l-message .message-contents {
-    font-size: 0.9em; }
-    /* line 242, ../../../../general/res/sass/controls/_messages.scss */
+    font-size: 0.9em;
+    margin-left: 10px; }
+    /* line 262, ../../../../general/res/sass/controls/_messages.scss */
     .t-message-list .message-contents .l-message .message-contents .message-action {
       color: #999999; }
-    /* line 243, ../../../../general/res/sass/controls/_messages.scss */
+    /* line 263, ../../../../general/res/sass/controls/_messages.scss */
     .t-message-list .message-contents .l-message .message-contents .bottom-bar {
       text-align: left; }
-  /* line 246, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 266, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-contents .l-message .top-bar,
   .t-message-list .message-contents .l-message .message-body {
     margin-bottom: 10px; }
+@media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+  /* line 274, ../../../../general/res/sass/controls/_messages.scss */
+  .t-message-list .message-contents .l-message {
+    margin-right: 10px; } }
 
 /* line 1, ../../../../general/res/sass/controls/_time-controller.scss */
 .l-time-controller {
@@ -4297,13 +4323,13 @@ span.req {
     color: #999999; }
   /* line 80, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .abs.top-bar, .overlay .s-menu span.top-bar.l-click-area, .s-menu .overlay span.top-bar.l-click-area {
-    height: 60px; }
+    height: 45px; }
   /* line 84, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .abs.editor, .overlay .s-menu span.editor.l-click-area, .s-menu .overlay span.editor.l-click-area,
   .overlay .abs.message-body,
   .overlay .s-menu span.message-body.l-click-area,
   .s-menu .overlay span.message-body.l-click-area {
-    top: 70px;
+    top: 55px;
     bottom: 34px;
     left: 0;
     right: 0;
@@ -4375,8 +4401,8 @@ span.req {
 
 /* line 137, ../../../../general/res/sass/overlay/_overlay.scss */
 .t-dialog-sm .overlay > .holder {
-  min-height: 275px;
-  height: 275px; }
+  min-height: 225px;
+  height: 225px; }
 
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
   /* line 3, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
@@ -4427,9 +4453,16 @@ span.req {
     .overlay > .holder .editor .form .form-row > .label:after {
       float: none; }
     /* line 57, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
-    .overlay > .holder .contents .top-bar,
-    .overlay > .holder .contents .editor,
-    .overlay > .holder .contents .bottom-bar {
+    .overlay > .holder .contents .abs.top-bar, .overlay > .holder .contents .s-menu span.top-bar.l-click-area, .s-menu .overlay > .holder .contents span.top-bar.l-click-area,
+    .overlay > .holder .contents .abs.editor,
+    .overlay > .holder .contents .s-menu span.editor.l-click-area,
+    .s-menu .overlay > .holder .contents span.editor.l-click-area,
+    .overlay > .holder .contents .abs.message-body,
+    .overlay > .holder .contents .s-menu span.message-body.l-click-area,
+    .s-menu .overlay > .holder .contents span.message-body.l-click-area,
+    .overlay > .holder .contents .abs.bottom-bar,
+    .overlay > .holder .contents .s-menu span.bottom-bar.l-click-area,
+    .s-menu .overlay > .holder .contents span.bottom-bar.l-click-area {
       top: auto;
       right: auto;
       bottom: auto;
@@ -4439,12 +4472,12 @@ span.req {
       margin-bottom: 20px;
       position: relative; }
 
-  /* line 68, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
+  /* line 69, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
   .t-dialog-sm .overlay > .holder {
     height: auto;
     max-height: 100%; } }
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) {
-  /* line 76, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
+  /* line 77, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
   .overlay > .holder .contents .bottom-bar {
     text-align: center; } }
 /*****************************************************************************
