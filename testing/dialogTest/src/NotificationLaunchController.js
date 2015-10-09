@@ -27,11 +27,6 @@ define(
         "use strict";
 
         function NotificationLaunchController($scope, notificationService) {
-            /**
-             *  <a ng-click="newSuccess()">Success</a> |
-                <a ng-click="newError()">Error</a> |
-             <a ng-click="newProgress()">Progress</a>
-             */
             $scope.newSuccess = function(){
 
                 notificationService.success({

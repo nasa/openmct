@@ -55,7 +55,7 @@ define(
             this.dialogVisible = false;
         };
 
-        DialogService.prototype.getDialogResponse = function (key, model, resultGetter) {
+        DialogService.prototype.getDialogResponse = function (key, model, resultGetter, typeClass) {
             // We will return this result as a promise, because user
             // input is asynchronous.
             var deferred = this.$q.defer(),
@@ -90,7 +90,7 @@ define(
                 this.overlay = this.overlayService.createOverlay(
                     key,
                     model,
-                    "t-dialog"
+                    typeClass || "t-dialog"
                 );
 
                 // Track that a dialog is already visible, to
@@ -235,54 +235,12 @@ define(
          * @returns {boolean}
          */
         DialogService.prototype.showBlockingMessage = function(dialogModel) {
-            if (this.canShowDialog(dialogModel)) {
-                // Add the overlay using the OverlayService, which
-                // will handle actual insertion into the DOM
-                this.overlay = this.overlayService.createOverlay(
-                    "overlay-blocking-message",
-                    { dialog: dialogModel },
-                    "t-dialog-sm"
-                );
-                this.dialogVisible = true;
+            if (this.canShowDialog) {
+                this.getDialogResponse("overlay-blocking-message", dialogModel, undefined, "t-dialog-sm");
                 return true;
             } else {
-                //Could not show a dialog, so return indication of this to
-                //client code.
                 return false;
             }
-
-        };
-
-        DialogService.prototype.showMessageList = function(dialogModel) {
-            var self = this;
-
-            // Cancel function; this will be passed in to the
-            // overlay-dialog template and associated with a
-            // Cancel or X button click
-            function cancel() {
-                //deferred.reject(); // Not sure what this does
-                self.dismiss();
-            }
-
-            if (this.canShowDialog(dialogModel)) {
-                // Add the overlay using the OverlayService, which
-                // will handle actual insertion into the DOM
-                this.overlay = this.overlayService.createOverlay(
-                    "overlay-message-list",
-                    {
-                        dialog: dialogModel,
-                        cancel: cancel
-                    },
-                    "t-dialog"
-                );
-                this.dialogVisible = true;
-                return true;
-            } else {
-                //Could not show a dialog, so return indication of this to
-                //client code.
-                return false;
-            }
-
         };
 
         return DialogService;

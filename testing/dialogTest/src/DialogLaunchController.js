@@ -164,14 +164,10 @@ define(
 
                 function createMessage (messageNumber) {
                     var messageModel = {
-                            ngModel: {
-                                dialog: {
-                                    title: "Message Title " + messageNumber,
-                                    actionText: getExampleActionText(),
-                                    severity: getExampleSeverity(),
-                                    actions: getExampleActions()
-                                }
-                            }
+                        title: "Message Title " + messageNumber,
+                        actionText: getExampleActionText(),
+                        severity: getExampleSeverity(),
+                        actions: getExampleActions()
                     };
                     return messageModel;
                 }
@@ -181,6 +177,17 @@ define(
                     element.remove();
                 }
 
+                for (var i = 0; i < 10; i++) {
+                    model.messages.push(createMessage(i));
+                }
+                dialogService.getDialogResponse('overlay-message-list', {
+                    dialog: model,
+                    cancel: function(){
+                        dialogService.dismiss();
+                    }
+                });
+
+/*
                 if (dialogService.showMessageList(model)) {
                     //Do processing here
                     for (var i = 0; i < 10; i++) {
@@ -189,6 +196,7 @@ define(
                 } else {
                     $log.error("Could not display modal dialog");
                 }
+*/
             };
         }
         return DialogLaunchController;

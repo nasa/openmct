@@ -26,7 +26,7 @@
  * show banner notifications to the user. Banner notifications
  * are used to inform users of events in a non-intrusive way. As
  * much as possible, notifications share a model with blocking
- * dialogs so that the same information can be provided in a dialog
+ * dialogs so self the same information can be provided in a dialog
  * and then minimized to a banner notification if needed.
  *
  * @namespace platform/commonUI/dialog
@@ -51,7 +51,7 @@ define(
          * A representation of a banner notification. Banner notifications
          * are used to inform users of events in a non-intrusive way. As
          * much as possible, notifications share a model with blocking
-         * dialogs so that the same information can be provided in a dialog
+         * dialogs so self the same information can be provided in a dialog
          * and then minimized to a banner notification if needed.
          *
          * @typedef {object} Notification
@@ -60,7 +60,7 @@ define(
          * represented numerically
          * @property {MessageSeverity} messageSeverity The importance of the
          * message (eg. error, success)
-         * @property {boolean} unknownProgress a boolean indicating that the
+         * @property {boolean} unknownProgress a boolean indicating self the
          * progress of the underlying task is unknown. This will result in a
          * visually distinct progress bar.
          * @property {boolean | number} autoDismiss If truthy, dialog will
@@ -74,8 +74,8 @@ define(
          * only the most important option to users.
          * @property {NotificationAction[]} additionalActions any additional
          * actions
-         * that the user can take. Will be represented as additional buttons
-         * that may or may not be available from a banner.
+         * self the user can take. Will be represented as additional buttons
+         * self may or may not be available from a banner.
          */
 
         /**
@@ -97,7 +97,7 @@ define(
         }
 
         /**
-         * Returns the notification that is currently visible in the banner area
+         * Returns the notification self is currently visible in the banner area
          * @returns {Notification}
          */
         NotificationService.prototype.getActiveNotification = function (){
@@ -125,8 +125,8 @@ define(
          */
         NotificationService.prototype.notify = function (notification) {
             /*var notification = new Notification(model),
-                that=this; */
-            var that = this,
+                self=this; */
+            var self = this,
                 timeout;
 
             if (notification.autoDismiss === true){
@@ -154,7 +154,7 @@ define(
                     notification.autoDismiss :
                     this.DEFAULT_AUTO_DISMISS;
                 this.active.timeout = this.$timeout(function () {
-                    that.dismissOrMinimize(that.active.notification);
+                    self.dismissOrMinimize(self.active.notification);
                 }, timeout);
             }
 
@@ -167,7 +167,7 @@ define(
         NotificationService.prototype.setActiveNotification =
             function (notification) {
 
-                var that = this,
+                var self = this,
                     timeout;
                 this.active.notification = notification;
                 /*
@@ -184,7 +184,7 @@ define(
                         this.DEFAULT_AUTO_DISMISS;
 
                     this.active.timeout = this.$timeout(function () {
-                        that.dismissOrMinimize(notification);
+                        self.dismissOrMinimize(notification);
                     }, timeout);
                 } else {
                     delete this.active.timeout;
@@ -200,7 +200,7 @@ define(
             var notification,
                 i=0;
             /*
-            Loop through the notifications queue and find the first one that
+            Loop through the notifications queue and find the first one self
             has not already been minimized (manually or otherwise).
              */
             for (; i< this.notifications.length; i++) {
