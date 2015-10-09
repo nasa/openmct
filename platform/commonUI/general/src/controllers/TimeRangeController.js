@@ -184,8 +184,10 @@ define(
 
                 ngModel.inner.start =
                     Math.max(ngModel.outer.start, ngModel.inner.start);
-                ngModel.inner.end =
-                    Math.max(ngModel.outer.start, ngModel.inner.end);
+                ngModel.inner.end = Math.max(
+                    ngModel.inner.start + innerMinimumSpan,
+                    ngModel.inner.end
+                );
 
                 $scope.startOuterText = formatTimestamp(t);
 
@@ -200,10 +202,12 @@ define(
                     ngModel.outer.start
                 );
 
-                ngModel.inner.start =
-                    Math.min(ngModel.outer.end, ngModel.inner.start);
                 ngModel.inner.end =
                     Math.min(ngModel.outer.end, ngModel.inner.end);
+                ngModel.inner.start = Math.min(
+                    ngModel.inner.end - innerMinimumSpan,
+                    ngModel.inner.start
+                );
 
                 $scope.endOuterText = formatTimestamp(t);
 
