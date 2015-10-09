@@ -110,27 +110,6 @@ define(
                     }]);
             });
 
-            it("prunes historical values to the displayable range", function () {
-                var packagedTelemetry;
-                decorator.requestTelemetry([{ source: "abc", key: "xyz" }]);
-                packagedTelemetry = mockPromise.then.mostRecentCall.args[0]({
-                    "abc": { "xyz": mockSeries }
-                });
-                expect(seriesIsInWindow(packagedTelemetry.abc.xyz))
-                    .toBeTruthy();
-            });
-
-            it("prunes subscribed values to the displayable range", function () {
-                var mockCallback = jasmine.createSpy('callback'),
-                    packagedTelemetry;
-                decorator.subscribe(mockCallback, [{ source: "abc", key: "xyz" }]);
-                mockTelemetryService.subscribe.mostRecentCall.args[0]({
-                    "abc": { "xyz": mockSeries }
-                });
-                packagedTelemetry = mockCallback.mostRecentCall.args[0];
-                expect(seriesIsInWindow(packagedTelemetry.abc.xyz))
-                    .toBeTruthy();
-            });
 
         });
     }

@@ -31,6 +31,7 @@ define(
                 "<mct-include key=\"'time-controller'\" ng-model='conductor'>",
                 "</mct-include>"
             ].join(''),
+            THROTTLE_MS = 200,
             GLOBAL_SHOWING = false;
 
         /**
@@ -40,6 +41,8 @@ define(
          * @implements {Representer}
          * @constructor
          * @memberof platform/features/conductor
+         * @param {Function} throttle a function used to reduce the frequency
+         *        of function invocations
          * @param {platform/features/conductor.ConductorService} conductorService
          *        service which provides the active time conductor
          * @param $compile Angular's $compile
@@ -47,7 +50,15 @@ define(
          * @param {Scope} the scope of the representation
          * @param element the jqLite-wrapped representation element
          */
-        function ConductorRepresenter(conductorService, $compile, views, scope, element) {
+        function ConductorRepresenter(
+            throttle,
+            conductorService,
+            $compile,
+            views,
+            scope,
+            element
+        ) {
+            this.throttle = throttle;
             this.scope = scope;
             this.conductorService = conductorService;
             this.element = element;
@@ -55,51 +66,59 @@ define(
             this.$compile = $compile;
         }
 
-        // Combine start/end times into a single object
-        function bounds(start, end) {
-            return { start: start, end: end };
-        }
-
         // Update the time conductor from the scope
-        function wireScope(conductor, conductorScope, repScope) {
-            function updateConductorOuter() {
-                conductor.queryStart(conductorScope.conductor.outer.start);
-                conductor.queryEnd(conductorScope.conductor.outer.end);
-                repScope.$broadcast(
-                    'telemetry:query:bounds',
-                    bounds(conductor.queryStart(), conductor.queryEnd())
-                );
+        ConductorRepresenter.prototype.wireScope = function () {
+            var conductor = this.conductorService.getConductor(),
+                conductorScope = this.conductorScope(),
+                repScope = this.scope,
+                lastObservedBounds,
+                broadcastBounds;
+
+            // Combine start/end times into a single object
+            function bounds(start, end) {
+                return {
+                    start: conductor.displayStart(),
+                    end: conductor.displayEnd()
+                };
+            }
+
+            function boundsAreStable(newlyObservedBounds) {
+                return !lastObservedBounds ||
+                    (lastObservedBounds.start === newlyObservedBounds.start &&
+                    lastObservedBounds.end === newlyObservedBounds.end);
             }
 
             function updateConductorInner() {
                 conductor.displayStart(conductorScope.conductor.inner.start);
                 conductor.displayEnd(conductorScope.conductor.inner.end);
-                repScope.$broadcast(
-                    'telemetry:display:bounds',
-                    bounds(conductor.displayStart(), conductor.displayEnd())
-                );
+                lastObservedBounds = lastObservedBounds || bounds();
+                broadcastBounds();
             }
 
-            conductorScope.conductor = {
-                outer: bounds(conductor.queryStart(), conductor.queryEnd()),
-                inner: bounds(conductor.displayStart(), conductor.displayEnd())
-            };
+            broadcastBounds = this.throttle(function () {
+                var newlyObservedBounds = bounds();
 
-            conductorScope
-                .$watch('conductor.outer.start', updateConductorOuter);
-            conductorScope
-                .$watch('conductor.outer.end', updateConductorOuter);
+                if (boundsAreStable(newlyObservedBounds)) {
+                    repScope.$broadcast('telemetry:display:bounds', bounds());
+                    lastObservedBounds = undefined;
+                } else {
+                    lastObservedBounds = newlyObservedBounds;
+                    broadcastBounds();
+                }
+            }, THROTTLE_MS);
+
+            conductorScope.conductor = { outer: bounds(), inner: bounds() };
+
             conductorScope
                 .$watch('conductor.inner.start', updateConductorInner);
             conductorScope
                 .$watch('conductor.inner.end', updateConductorInner);
 
             repScope.$on('telemetry:view', updateConductorInner);
-        }
+        };
 
         ConductorRepresenter.prototype.conductorScope = function (s) {
-            return (this.cScope = arguments.length > 0 ?
-                    s : this.cScope);
+            return (this.cScope = arguments.length > 0 ? s : this.cScope);
         };
 
         // Handle a specific representation of a specific domain object
@@ -113,11 +132,7 @@ define(
 
                 // Create a new scope for the conductor
                 this.conductorScope(this.scope.$new());
-                wireScope(
-                    this.conductorService.getConductor(),
-                    this.conductorScope(),
-                    this.scope
-                );
+                this.wireScope();
                 this.conductorElement =
                     this.$compile(TEMPLATE)(this.conductorScope());
                 this.element.after(this.conductorElement[0]);

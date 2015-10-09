@@ -29,15 +29,16 @@ define(
         var JQLITE_METHODS = [ "on", "off", "find", "parent", "css", "append" ];
 
         describe("The mct-popup directive", function () {
-            var testWindow,
-                mockDocument,
-                mockCompile,
+            var mockCompile,
+                mockPopupService,
+                mockPopup,
                 mockScope,
                 mockElement,
                 testAttrs,
                 mockBody,
                 mockTransclude,
                 mockParentEl,
+                mockNewElement,
                 testRect,
                 mctPopup;
 
@@ -50,12 +51,12 @@ define(
             }
 
             beforeEach(function () {
-                testWindow =
-                    { innerWidth: 600, innerHeight: 300 };
-                mockDocument =
-                    jasmine.createSpyObj("$document", JQLITE_METHODS);
                 mockCompile =
                     jasmine.createSpy("$compile");
+                mockPopupService =
+                    jasmine.createSpyObj("popupService", ["display"]);
+                mockPopup =
+                    jasmine.createSpyObj("popup", ["dismiss"]);
                 mockScope =
                     jasmine.createSpyObj("$scope", [ "$eval", "$apply", "$on" ]);
                 mockElement =
@@ -66,6 +67,8 @@ define(
                     jasmine.createSpy("transclude");
                 mockParentEl =
                     jasmine.createSpyObj("parent", ["getBoundingClientRect"]);
+                mockNewElement =
+                    jasmine.createSpyObj("newElement", JQLITE_METHODS);
 
                 testAttrs = {
                     mctClickElsewhere: "some Angular expression"
@@ -77,15 +80,17 @@ define(
                     height: 75
                 };
 
-                mockDocument.find.andReturn(mockBody);
-                mockCompile.andReturn(jasmine.createSpy());
-                mockCompile().andCallFake(function () {
-                    return jasmine.createSpyObj("newElement", JQLITE_METHODS);
+                mockCompile.andCallFake(function () {
+                    var mockFn = jasmine.createSpy();
+                    mockFn.andReturn(mockNewElement);
+                    return mockFn;
                 });
                 mockElement.parent.andReturn([mockParentEl]);
                 mockParentEl.getBoundingClientRect.andReturn(testRect);
+                mockPopupService.display.andReturn(mockPopup);
 
-                mctPopup = new MCTPopup(testWindow, mockDocument, mockCompile);
+                mctPopup = new MCTPopup(mockCompile, mockPopupService);
+
                 mctPopup.link(
                     mockScope,
                     mockElement,
@@ -99,6 +104,32 @@ define(
                 expect(mctPopup.restrict).toEqual("E");
             });
 
+            describe("creates an element which", function () {
+                it("displays as a popup", function () {
+                    expect(mockPopupService.display).toHaveBeenCalledWith(
+                        mockNewElement,
+                        [ testRect.left, testRect.top ]
+                    );
+                });
+
+                it("displays transcluded content", function () {
+                    var mockClone =
+                        jasmine.createSpyObj('clone', JQLITE_METHODS);
+                    mockTransclude.mostRecentCall.args[0](mockClone);
+                    expect(mockNewElement.append)
+                        .toHaveBeenCalledWith(mockClone);
+                });
+
+                it("is removed when its containing scope is destroyed", function () {
+                    expect(mockPopup.dismiss).not.toHaveBeenCalled();
+                    mockScope.$on.calls.forEach(function (call) {
+                        if (call.args[0] === '$destroy') {
+                            call.args[1]();
+                        }
+                    });
+                    expect(mockPopup.dismiss).toHaveBeenCalled();
+                });
+            });
 
         });
     }

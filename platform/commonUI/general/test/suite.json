@@ -17,6 +17,8 @@
     "directives/MCTPopup",
     "directives/MCTResize",
     "directives/MCTScroll",
+    "services/Popup",
+    "services/PopupService",
     "services/UrlService",
     "StyleSheetLoader"
 ]

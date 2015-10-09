@@ -41,34 +41,8 @@ define(
          * @param {number} end the initial end time
          */
         function TimeConductor(start, end) {
-            this.inner = { start: start, end: end };
-            this.outer = { start: start, end: end };
+            this.range = { start: start, end: end };
         }
-
-        /**
-         * Get or set (if called with an argument) the start time for queries.
-         * @param {number} [value] the start time to set
-         * @returns {number} the start time
-         */
-        TimeConductor.prototype.queryStart = function (value) {
-            if (arguments.length > 0) {
-                this.outer.start = value;
-            }
-            return this.outer.start;
-        };
-
-        /**
-         * Get or set (if called with an argument) the end time for queries.
-         * @param {number} [value] the end time to set
-         * @returns {number} the end time
-         */
-        TimeConductor.prototype.queryEnd = function (value) {
-            if (arguments.length > 0) {
-                this.outer.end = value;
-            }
-            return this.outer.end;
-        };
-
 
         /**
          * Get or set (if called with an argument) the start time for displays.
@@ -77,9 +51,9 @@ define(
          */
         TimeConductor.prototype.displayStart = function (value) {
             if (arguments.length > 0) {
-                this.inner.start = value;
+                this.range.start = value;
             }
-            return this.inner.start;
+            return this.range.start;
         };
 
         /**
@@ -89,9 +63,9 @@ define(
          */
         TimeConductor.prototype.displayEnd = function (value) {
             if (arguments.length > 0) {
-                this.inner.end = value;
+                this.range.end = value;
             }
-            return this.inner.end;
+            return this.range.end;
         };
 
         return TimeConductor;

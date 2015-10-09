@@ -45,13 +45,12 @@
                 "implementation": "services/InfoService.js",
                 "depends": [
                     "$compile",
-                    "$document",
-                    "$window",
                     "$rootScope",
+                    "popupService",
                     "agentService"
                 ]
             }
-        ],  
+        ],
         "constants": [
             {
                 "key": "INFO_HOVER_DELAY",

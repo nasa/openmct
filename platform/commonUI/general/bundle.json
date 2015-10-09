@@ -8,6 +8,11 @@
                 "key": "urlService",
                 "implementation": "services/UrlService.js",
                 "depends": [ "$location" ]
+            },
+            {
+                "key": "popupService",
+                "implementation": "services/PopupService.js",
+                "depends": [ "$document", "$window" ]
             }
         ],
         "runs": [
@@ -128,7 +133,7 @@
             {
                 "key": "mctPopup",
                 "implementation": "directives/MCTPopup.js",
-                "depends": [ "$window", "$document", "$compile", "$interval" ]
+                "depends": [ "$compile", "popupService" ]
             },
             {
                 "key": "mctScrollX",
