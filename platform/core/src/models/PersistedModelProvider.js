@@ -39,14 +39,16 @@ define(
          * @param {PersistenceService} persistenceService the service in which
          *        domain object models are persisted.
          * @param $q Angular's $q service, for working with promises
+         * @param {function} now a function which provides the current time
          * @param {string} space the name of the persistence space(s)
          *        from which models should be retrieved.
          * @param {string} spaces additional persistence spaces to use
          */
-        function PersistedModelProvider(persistenceService, $q, space, spaces) {
+        function PersistedModelProvider(persistenceService, $q, now, space, spaces) {
             this.persistenceService = persistenceService;
             this.$q = $q;
             this.spaces = [space].concat(spaces || []);
+            this.now = now;
         }
 
         // Take the most recently modified model, for cases where
@@ -61,7 +63,9 @@ define(
         PersistedModelProvider.prototype.getModels = function (ids) {
             var persistenceService = this.persistenceService,
                 $q = this.$q,
-                spaces = this.spaces;
+                spaces = this.spaces,
+                space = this.space,
+                now = this.now;
 
             // Load a single object model from any persistence spaces
             function loadModel(id) {
@@ -72,11 +76,24 @@ define(
                 });
             }
 
+            // Ensure that models read from persistence have some
+            // sensible timestamp indicating they've been persisted.
+            function addPersistedTimestamp(model) {
+                if (model && (model.persisted === undefined)) {
+                    model.persisted = model.modified !== undefined ?
+                            model.modified : now();
+                }
+
+                return model;
+            }
+
             // Package the result as id->model
             function packageResult(models) {
                 var result = {};
                 ids.forEach(function (id, index) {
-                    result[id] = models[index];
+                    if (models[index]) {
+                        result[id] = addPersistedTimestamp(models[index]);
+                    }
                 });
                 return result;
             }
