@@ -29,23 +29,25 @@ define(
     function () {
         "use strict";
 
-        var firstObservedTime = Math.floor(Date.now() / 1000);
+        var ONE_DAY = 60 * 60 * 24,
+            firstObservedTime = Math.floor(Date.now() / 1000) - ONE_DAY;
 
         /**
          *
          * @constructor
          */
         function SinewaveTelemetrySeries(request) {
-            var latestObservedTime = Math.floor(Date.now() / 1000),
+            var timeOffset = (request.domain === 'yesterday') ? ONE_DAY : 0,
+                latestTime = Math.floor(Date.now() / 1000) - timeOffset,
+                firstTime = firstObservedTime - timeOffset,
                 endTime = (request.end !== undefined) ?
-                        Math.floor(request.end / 1000) : latestObservedTime,
-                count =
-                    Math.min(endTime, latestObservedTime) - firstObservedTime,
-                period = request.period || 30,
+                        Math.floor(request.end / 1000) : latestTime,
+                count = Math.min(endTime, latestTime) - firstTime,
+                period = +request.period || 30,
                 generatorData = {},
-                offset = (request.start !== undefined) ?
-                        Math.floor(request.start / 1000) - firstObservedTime :
-                        0;
+                requestStart = (request.start === undefined) ? firstTime :
+                        Math.max(Math.floor(request.start / 1000), firstTime),
+                offset = requestStart - firstTime;
 
             if (request.size !== undefined) {
                 offset = Math.max(offset, count - request.size);
@@ -56,8 +58,8 @@ define(
             };
 
             generatorData.getDomainValue = function (i, domain) {
-                return (i + offset) * 1000 +
-                        (domain !== 'delta' ? (firstObservedTime * 1000) : 0);
+                return (i + offset) * 1000 + firstTime * 1000 -
+                    (domain === 'yesterday' ? ONE_DAY : 0);
             };
 
             generatorData.getRangeValue = function (i, range) {

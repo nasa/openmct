@@ -23,7 +23,23 @@
             {
                 "key": "conductorService",
                 "implementation": "ConductorService.js",
-                "depends": [ "now" ]
+                "depends": [ "now", "TIME_CONDUCTOR_DOMAINS" ]
+            }
+        ],
+        "templates": [
+            {
+                "key": "time-conductor",
+                "templateUrl": "templates/time-conductor.html"
+            }
+        ],
+        "constants": [
+            {
+                "key": "TIME_CONDUCTOR_DOMAINS",
+                "value": [
+                    { "key": "time", "name": "Time" },
+                    { "key": "yesterday", "name": "Yesterday" }
+                ],
+                "comment": "Placeholder; to be replaced by inspection of available domains."
             }
         ]
     }

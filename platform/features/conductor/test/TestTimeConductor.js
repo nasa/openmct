@@ -19,46 +19,32 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
+/*global define,describe,it,expect,beforeEach,waitsFor,jasmine,spyOn*/
 
 define(
-    ['./TimeConductor'],
+    ["../src/TimeConductor"],
     function (TimeConductor) {
         'use strict';
 
-        var ONE_DAY_IN_MS = 1000 * 60 * 60 * 24,
-            SIX_HOURS_IN_MS = ONE_DAY_IN_MS / 4;
+        function TestTimeConductor() {
+            var self = this;
 
-        /**
-         * Provides a single global instance of the time conductor, which
-         * controls both query ranges and displayed ranges for telemetry
-         * data.
-         *
-         * @constructor
-         * @memberof platform/features/conductor
-         * @param {Function} now a function which returns the current time
-         *        as a UNIX timestamp, in milliseconds
-         */
-        function ConductorService(now, domains) {
-            var initialEnd =
-                Math.ceil(now() /  SIX_HOURS_IN_MS) * SIX_HOURS_IN_MS;
+            TimeConductor.apply(this, [
+                402514200000,
+                444546000000,
+                [
+                    { key: "domain0", name: "Domain #1" },
+                    { key: "domain1", name: "Domain #2" }
+                ]
+            ]);
 
-            this.conductor = new TimeConductor(
-                initialEnd - ONE_DAY_IN_MS,
-                initialEnd,
-                domains
-            );
+            Object.keys(TimeConductor.prototype).forEach(function (method) {
+                spyOn(self, method).andCallThrough();
+            });
         }
 
-        /**
-         * Get the global instance of the time conductor.
-         * @returns {platform/features/conductor.TimeConductor} the
-         *         time conductor
-         */
-        ConductorService.prototype.getConductor = function () {
-            return this.conductor;
-        };
+        TestTimeConductor.prototype = TimeConductor.prototype;
 
-        return ConductorService;
+        return TestTimeConductor;
     }
 );

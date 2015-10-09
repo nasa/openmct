@@ -23,8 +23,8 @@
 
 
 define(
-    ["../src/ConductorTelemetryDecorator"],
-    function (ConductorTelemetryDecorator) {
+    ["../src/ConductorTelemetryDecorator", "./TestTimeConductor"],
+    function (ConductorTelemetryDecorator, TestTimeConductor) {
         "use strict";
 
         describe("ConductorTelemetryDecorator", function () {
@@ -54,10 +54,7 @@ define(
                     'conductorService',
                     ['getConductor']
                 );
-                mockConductor = jasmine.createSpyObj(
-                    'conductor',
-                    [ 'queryStart', 'queryEnd', 'displayStart', 'displayEnd' ]
-                );
+                mockConductor = new TestTimeConductor();
                 mockPromise = jasmine.createSpyObj(
                     'promise',
                     ['then']
@@ -78,10 +75,9 @@ define(
                     return j * j * j;
                 });
 
-                mockConductor.queryStart.andReturn(-12321);
-                mockConductor.queryEnd.andReturn(-12321);
                 mockConductor.displayStart.andReturn(42);
                 mockConductor.displayEnd.andReturn(1977);
+                mockConductor.domain.andReturn("testDomain");
 
                 decorator = new ConductorTelemetryDecorator(
                     mockConductorService,
@@ -89,24 +85,72 @@ define(
                 );
             });
 
-            it("adds display start/end times to historical requests", function () {
+
+            describe("decorates historical requests", function () {
+                var request;
+
+                beforeEach(function () {
+                    decorator.requestTelemetry([{ someKey: "some value" }]);
+                    request = mockTelemetryService.requestTelemetry
+                        .mostRecentCall.args[0][0];
+                });
+
+                it("with start times", function () {
+                    expect(request.start).toEqual(mockConductor.displayStart());
+                });
+
+                it("with end times", function () {
+                    expect(request.end).toEqual(mockConductor.displayEnd());
+                });
+
+                it("with domain selection", function () {
+                    expect(request.domain).toEqual(mockConductor.domain());
+                });
+            });
+
+            describe("decorates subscription requests", function () {
+                var request;
+
+                beforeEach(function () {
+                    var mockCallback = jasmine.createSpy('callback');
+                    decorator.subscribe(mockCallback, [{ someKey: "some value" }]);
+                    request = mockTelemetryService.subscribe
+                        .mostRecentCall.args[1][0];
+                });
+
+                it("with start times", function () {
+                    expect(request.start).toEqual(mockConductor.displayStart());
+                });
+
+                it("with end times", function () {
+                    expect(request.end).toEqual(mockConductor.displayEnd());
+                });
+
+                it("with domain selection", function () {
+                    expect(request.domain).toEqual(mockConductor.domain());
+                });
+            });
+
+            it("adds display start/end times & domain selection to historical requests", function () {
                 decorator.requestTelemetry([{ someKey: "some value" }]);
                 expect(mockTelemetryService.requestTelemetry)
                     .toHaveBeenCalledWith([{
                         someKey: "some value",
                         start: mockConductor.displayStart(),
-                        end: mockConductor.displayEnd()
+                        end: mockConductor.displayEnd(),
+                        domain: jasmine.any(String)
                     }]);
             });
 
-            it("adds display start/end times to subscription requests", function () {
+            it("adds display start/end times & domain selection to subscription requests", function () {
                 var mockCallback = jasmine.createSpy('callback');
                 decorator.subscribe(mockCallback, [{ someKey: "some value" }]);
                 expect(mockTelemetryService.subscribe)
                     .toHaveBeenCalledWith(jasmine.any(Function), [{
                         someKey: "some value",
                         start: mockConductor.displayStart(),
-                        end: mockConductor.displayEnd()
+                        end: mockConductor.displayEnd(),
+                        domain: jasmine.any(String)
                     }]);
             });
 

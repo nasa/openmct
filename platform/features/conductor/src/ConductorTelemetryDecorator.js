@@ -44,12 +44,14 @@ define(
         ConductorTelemetryDecorator.prototype.amendRequests = function (requests) {
             var conductor = this.conductorService.getConductor(),
                 start = conductor.displayStart(),
-                end = conductor.displayEnd();
+                end = conductor.displayEnd(),
+                domain = conductor.domain();
 
             function amendRequest(request) {
                 request = request || {};
                 request.start = start;
                 request.end = end;
+                request.domain = domain;
                 return request;
             }
 

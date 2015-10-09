@@ -28,7 +28,7 @@ define(
 
         var CONDUCTOR_HEIGHT = "100px",
             TEMPLATE = [
-                "<mct-include key=\"'time-controller'\" ng-model='conductor'>",
+                "<mct-include key=\"'time-conductor'\" ng-model='ngModel'>",
                 "</mct-include>"
             ].join(''),
             THROTTLE_MS = 200,
@@ -78,7 +78,8 @@ define(
             function bounds(start, end) {
                 return {
                     start: conductor.displayStart(),
-                    end: conductor.displayEnd()
+                    end: conductor.displayEnd(),
+                    domain: conductor.domain()
                 };
             }
 
@@ -89,10 +90,28 @@ define(
             }
 
             function updateConductorInner() {
-                conductor.displayStart(conductorScope.conductor.inner.start);
-                conductor.displayEnd(conductorScope.conductor.inner.end);
+                var innerBounds = conductorScope.ngModel.conductor.inner;
+                conductor.displayStart(innerBounds.start);
+                conductor.displayEnd(innerBounds.end);
                 lastObservedBounds = lastObservedBounds || bounds();
                 broadcastBounds();
+            }
+
+            function updateDomain(value) {
+                conductor.domain(value);
+                repScope.$broadcast('telemetry:display:bounds', bounds(
+                    conductor.displayStart(),
+                    conductor.displayEnd(),
+                    conductor.domain()
+                ));
+            }
+
+            // telemetry domain metadata -> option for a select control
+            function makeOption(domainOption) {
+                return {
+                    name: domainOption.name,
+                    value: domainOption.key
+                };
             }
 
             broadcastBounds = this.throttle(function () {
@@ -107,12 +126,19 @@ define(
                 }
             }, THROTTLE_MS);
 
-            conductorScope.conductor = { outer: bounds(), inner: bounds() };
+            conductorScope.ngModel = {};
+            conductorScope.ngModel.conductor =
+                { outer: bounds(), inner: bounds() };
+            conductorScope.ngModel.options =
+                conductor.domainOptions().map(makeOption);
+            conductorScope.ngModel.domain = conductor.domain();
 
             conductorScope
-                .$watch('conductor.inner.start', updateConductorInner);
+                .$watch('ngModel.conductor.inner.start', updateConductorInner);
             conductorScope
-                .$watch('conductor.inner.end', updateConductorInner);
+                .$watch('ngModel.conductor.inner.end', updateConductorInner);
+            conductorScope
+                .$watch('ngModel.domain', updateDomain);
 
             repScope.$on('telemetry:view', updateConductorInner);
         };
