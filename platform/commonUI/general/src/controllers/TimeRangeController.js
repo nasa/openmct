@@ -36,6 +36,8 @@ define(
          */
         function TimeConductorController($scope, now) {
             var tickCount = 2,
+                innerMinimumSpan = 1000, // 1 second
+                outerMinimumSpan = 1000 * 60 * 60, // 1 hour
                 initialDragValue;
 
             function formatTimestamp(ts) {
@@ -140,7 +142,7 @@ define(
                 $scope.ngModel.inner.start = clamp(
                     initialDragValue + delta,
                     $scope.ngModel.outer.start,
-                    $scope.ngModel.inner.end
+                    $scope.ngModel.inner.end - innerMinimumSpan
                 );
                 updateViewFromModel($scope.ngModel);
             }
@@ -149,7 +151,7 @@ define(
                 var delta = toMillis(pixels);
                 $scope.ngModel.inner.end = clamp(
                     initialDragValue + delta,
-                    $scope.ngModel.inner.start,
+                    $scope.ngModel.inner.start + innerMinimumSpan,
                     $scope.ngModel.outer.end
                 );
                 updateViewFromModel($scope.ngModel);
@@ -175,12 +177,18 @@ define(
 
             function updateOuterStart(t) {
                 var ngModel = $scope.ngModel;
-                ngModel.outer.end =
-                    Math.max(ngModel.outer.start, ngModel.outer.end);
+
+                ngModel.outer.end = Math.max(
+                    ngModel.outer.start + outerMinimumSpan,
+                    ngModel.outer.end
+                );
+
                 ngModel.inner.start =
                     Math.max(ngModel.outer.start, ngModel.inner.start);
-                ngModel.inner.end =
-                    Math.max(ngModel.outer.start, ngModel.inner.end);
+                ngModel.inner.end = Math.max(
+                    ngModel.inner.start + innerMinimumSpan,
+                    ngModel.inner.end
+                );
 
                 $scope.startOuterText = formatTimestamp(t);
 
@@ -189,12 +197,18 @@ define(
 
             function updateOuterEnd(t) {
                 var ngModel = $scope.ngModel;
-                ngModel.outer.start =
-                    Math.min(ngModel.outer.end, ngModel.outer.start);
-                ngModel.inner.start =
-                    Math.min(ngModel.outer.end, ngModel.inner.start);
+
+                ngModel.outer.start = Math.min(
+                    ngModel.outer.end - outerMinimumSpan,
+                    ngModel.outer.start
+                );
+
                 ngModel.inner.end =
                     Math.min(ngModel.outer.end, ngModel.inner.end);
+                ngModel.inner.start = Math.min(
+                    ngModel.inner.end - innerMinimumSpan,
+                    ngModel.inner.start
+                );
 
                 $scope.endOuterText = formatTimestamp(t);
 
