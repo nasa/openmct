@@ -139,8 +139,8 @@ define(
             }
 
             $scope.isInCurrentMonth = function (cell) {
-			  	return cell.month === month;
-			}
+                return cell.month === month;
+            };
 
             $scope.isSelected = function (cell) {
                 var date = $scope.date || {};
