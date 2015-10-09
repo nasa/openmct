@@ -132,6 +132,7 @@ define(
 
             function unlinkDomainObject() {
                 $scope.series = [];
+                extrema = {};
                 unsubscribes.forEach(function(unsubscribe) {
                     unsubscribe();
                 });
@@ -139,7 +140,8 @@ define(
             }
 
 
-            function linkDomainObject(domainObject) {
+            function linkDomainObject() {
+                var domainObject = $scope.domainObject;
                 unlinkDomainObject();
                 if (!domainObject || !domainObject.hasCapability) {
                     return;
@@ -215,6 +217,7 @@ define(
             $scope.$on('user:viewport:change:end', onUserViewportChangeEnd);
             $scope.$on('user:viewport:change:start', onUserViewportChangeStart);
 
+            $scope.$on('telemetry:display:bounds', linkDomainObject);
             $scope.$watch('domainObject', linkDomainObject);
 
             return {
