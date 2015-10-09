@@ -240,7 +240,7 @@ define(
                 // will handle actual insertion into the DOM
                 this.overlay = this.overlayService.createOverlay(
                     "overlay-blocking-message",
-                    {dialog: dialogModel},
+                    { dialog: dialogModel },
                     "t-dialog-sm"
                 );
                 this.dialogVisible = true;
@@ -254,12 +254,25 @@ define(
         };
 
         DialogService.prototype.showMessageList = function(dialogModel) {
+            var self = this;
+
+            // Cancel function; this will be passed in to the
+            // overlay-dialog template and associated with a
+            // Cancel or X button click
+            function cancel() {
+                //deferred.reject(); // Not sure what this does
+                self.dismiss();
+            }
+
             if (this.canShowDialog(dialogModel)) {
                 // Add the overlay using the OverlayService, which
                 // will handle actual insertion into the DOM
                 this.overlay = this.overlayService.createOverlay(
                     "overlay-message-list",
-                    {dialog: dialogModel},
+                    {
+                        dialog: dialogModel,
+                        cancel: cancel
+                    },
                     "t-dialog"
                 );
                 this.dialogVisible = true;

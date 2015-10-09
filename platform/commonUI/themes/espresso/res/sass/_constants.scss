@@ -61,9 +61,9 @@ $colorInputIcon: pushBack($colorBodyFg, 15%);
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #ccc;
 $colorStatusDefault: #ccc;
-$colorStatusOk: #44ba53;
-$colorStatusCaution: #ff8545;
-$colorStatusAlert: $colorAlert;
+$colorStatusOk: #62ba72;
+$colorStatusCaution: #ffa66d;
+$colorStatusAlert: #d4585c;
 $colorProgressBarOuter: rgba(#000, 0.1);
 $colorProgressBarAmt: $colorKey;
 $progressBarHOverlay: 15px;

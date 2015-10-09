@@ -115,8 +115,7 @@ define(
                     ],
                     messages: []
                 };
-                
-                
+
                 function getExampleActionText() {
                     var actionTexts = [
                         "Adipiscing turpis mauris in enim elementu hac, enim aliquam etiam.",
@@ -175,6 +174,11 @@ define(
                             }
                     };
                     return messageModel;
+                }
+
+                function dismiss() {
+                    scope.$destroy();
+                    element.remove();
                 }
 
                 if (dialogService.showMessageList(model)) {
