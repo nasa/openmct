@@ -43,40 +43,52 @@ define(
          * @constructor
          * @param $compile Angular's $compile service
          * @param $document the current document
-         * @param $window the active window
          * @param $rootScope Angular's root scope
-         * @param actionContexr the context in which the action
+         * @param {platform/commonUI/general.PopupService} popupService
+         * @param actionContext the context in which the action
          *                      should be performed
          * @implements {Action}
          */
-        function ContextMenuAction($compile, $document, $window, $rootScope, agentService, actionContext) {
+        function ContextMenuAction(
+            $compile,
+            $document,
+            $rootScope,
+            popupService,
+            agentService,
+            actionContext
+        ) {
             this.$compile = $compile;
             this.agentService = agentService;
             this.actionContext = actionContext;
+            this.popupService = popupService;
             this.getDocument = function () { return $document; };
-            this.getWindow = function () { return $window; };
             this.getRootScope = function () { return $rootScope; };
         }
 
         ContextMenuAction.prototype.perform = function () {
             var $compile = this.$compile,
                 $document = this.getDocument(),
-                $window = this.getWindow(),
                 $rootScope = this.getRootScope(),
                 actionContext = this.actionContext,
-                winDim = [$window.innerWidth, $window.innerHeight],
-                eventCoors = [actionContext.event.pageX, actionContext.event.pageY],
+                eventCoords = [
+                    actionContext.event.pageX,
+                    actionContext.event.pageY
+                ],
                 menuDim = GestureConstants.MCT_MENU_DIMENSIONS,
                 body = $document.find('body'),
                 scope = $rootScope.$new(),
-                goLeft = eventCoors[0] + menuDim[0] > winDim[0],
-                goUp = eventCoors[1] + menuDim[1] > winDim[1],
-                initiatingEvent = this.agentService.isMobile() ? 'touchstart' : 'mousedown',
-                menu;
+                initiatingEvent = this.agentService.isMobile() ?
+                        'touchstart' : 'mousedown',
+                menu,
+                popup;
 
             // Remove the context menu
             function dismiss() {
-                menu.remove();
+                if (popup) {
+                    popup.dismiss();
+                    popup = undefined;
+                }
+                scope.$destroy();
                 body.off("mousedown", dismiss);
                 dismissExistingMenu = undefined;
             }
@@ -91,21 +103,17 @@ define(
 
             // Set up the scope, including menu positioning
             scope.domainObject = actionContext.domainObject;
-            scope.menuStyle = {};
-            scope.menuStyle[goLeft ? "right" : "left"] =
-                (goLeft ? (winDim[0] - eventCoors[0]) : eventCoors[0]) + 'px';
-            scope.menuStyle[goUp ? "bottom" : "top"] =
-                (goUp ? (winDim[1] - eventCoors[1]) : eventCoors[1]) + 'px';
-            scope.menuClass = {
-                "go-left": goLeft,
-                "go-up": goUp,
-                "context-menu-holder": true
-            };
+            scope.menuClass = { "context-menu-holder": true };
             // Create the context menu
             menu = $compile(MENU_TEMPLATE)(scope);
 
-            // Add the menu to the body
-            body.append(menu);
+            popup = this.popupService.display(menu, eventCoords, {
+                marginX: -menuDim[0],
+                marginY: -menuDim[1]
+            });
+
+            scope.menuClass['go-left'] = popup.goesLeft();
+            scope.menuClass['go-up'] = popup.goesUp();
 
             // Stop propagation so that clicks or touches on the menu do not close the menu
             menu.on(initiatingEvent, function (event) {

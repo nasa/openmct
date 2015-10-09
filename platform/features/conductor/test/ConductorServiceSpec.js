@@ -43,9 +43,9 @@ define(
 
             it("initializes a time conductor around the current time", function () {
                 var conductor = conductorService.getConductor();
-                expect(conductor.queryStart() <= TEST_NOW).toBeTruthy();
-                expect(conductor.queryEnd() >= TEST_NOW).toBeTruthy();
-                expect(conductor.queryEnd() > conductor.queryStart())
+                expect(conductor.displayStart() <= TEST_NOW).toBeTruthy();
+                expect(conductor.displayEnd() >= TEST_NOW).toBeTruthy();
+                expect(conductor.displayEnd() > conductor.displayStart())
                     .toBeTruthy();
             });
 

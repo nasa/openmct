@@ -3,7 +3,12 @@
         "representers": [
             {
                 "implementation": "ConductorRepresenter.js",
-                "depends": [ "conductorService", "$compile", "views[]" ]
+                "depends": [
+                    "throttle",
+                    "conductorService",
+                    "$compile",
+                    "views[]"
+                ]
             }
         ],
         "components": [

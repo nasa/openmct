@@ -22,8 +22,7 @@
 /*global define*/
 
 define(
-    ['./ConductorTelemetrySeries'],
-    function (ConductorTelemetrySeries) {
+    function () {
         'use strict';
 
         /**
@@ -41,32 +40,6 @@ define(
             this.conductorService = conductorService;
             this.telemetryService = telemetryService;
         }
-
-        // Strip out any realtime data series that is outside of the conductor's
-        // bounds.
-        ConductorTelemetryDecorator.prototype.pruneNonDisplayable = function (packaged) {
-            var conductor = this.conductorService.getConductor(),
-                repackaged = {};
-
-            function filterSource(packagedBySource) {
-                var repackagedBySource = {};
-
-                Object.keys(packagedBySource).forEach(function (k) {
-                    repackagedBySource[k] = new ConductorTelemetrySeries(
-                        packagedBySource[k],
-                        conductor
-                    );
-                });
-
-                return repackagedBySource;
-            }
-
-            Object.keys(packaged).forEach(function (source) {
-                repackaged[source] = filterSource(packaged[source]);
-            });
-
-            return repackaged;
-        };
 
         ConductorTelemetryDecorator.prototype.amendRequests = function (requests) {
             var conductor = this.conductorService.getConductor(),
@@ -88,21 +61,14 @@ define(
         ConductorTelemetryDecorator.prototype.requestTelemetry = function (requests) {
             var self = this;
             return this.telemetryService
-                .requestTelemetry(this.amendRequests(requests))
-                .then(function (packaged) {
-                    return self.pruneNonDisplayable(packaged);
-                });
+                .requestTelemetry(this.amendRequests(requests));
         };
 
         ConductorTelemetryDecorator.prototype.subscribe = function (callback, requests) {
             var self = this;
 
-            function internalCallback(packagedSeries) {
-                return callback(self.pruneNonDisplayable(packagedSeries));
-            }
-
             return this.telemetryService
-                .subscribe(internalCallback, this.amendRequests(requests));
+                .subscribe(callback, this.amendRequests(requests));
         };
 
         return ConductorTelemetryDecorator;

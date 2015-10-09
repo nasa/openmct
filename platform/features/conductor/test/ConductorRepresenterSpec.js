@@ -44,7 +44,8 @@ define(
             ];
 
         describe("ConductorRepresenter", function () {
-            var mockConductorService,
+            var mockThrottle,
+                mockConductorService,
                 mockCompile,
                 testViews,
                 mockScope,
@@ -64,6 +65,7 @@ define(
             }
 
             beforeEach(function () {
+                mockThrottle = jasmine.createSpy('throttle');
                 mockConductorService = jasmine.createSpyObj(
                     'conductorService',
                     ['getConductor']
@@ -82,8 +84,12 @@ define(
                 mockCompile.andReturn(mockCompiledTemplate);
                 mockCompiledTemplate.andReturn(mockNewElement);
                 mockScope.$new.andReturn(mockNewScope);
+                mockThrottle.andCallFake(function (fn) {
+                    return fn;
+                });
 
                 representer = new ConductorRepresenter(
+                    mockThrottle,
                     mockConductorService,
                     mockCompile,
                     testViews,
@@ -121,15 +127,13 @@ define(
             });
 
             it("exposes conductor state in scope", function () {
-                mockConductor.queryStart.andReturn(42);
-                mockConductor.queryEnd.andReturn(12321);
                 mockConductor.displayStart.andReturn(1977);
                 mockConductor.displayEnd.andReturn(1984);
                 representer.represent(testViews[0], {});
 
                 expect(mockNewScope.ngModel.conductor).toEqual({
                     inner: { start: 1977, end: 1984 },
-                    outer: { start: 42, end: 12321 }
+                    outer: { start: 1977, end: 1984 }
                 });
             });
 
@@ -156,20 +160,56 @@ define(
                     testState.inner.end
                 );
                 expect(mockConductor.displayEnd).toHaveBeenCalledWith(1984);
+            });
 
-                fireWatch(
-                    mockNewScope,
-                    'ngModel.conductor.outer.start',
-                    testState.outer.start
-                );
-                expect(mockConductor.queryStart).toHaveBeenCalledWith(-1977);
+            describe("when bounds are changing", function () {
+                var mockThrottledFn = jasmine.createSpy('throttledFn'),
+                    testBounds;
 
-                fireWatch(
-                    mockNewScope,
-                    'ngModel.conductor.outer.end',
-                    testState.outer.end
-                );
-                expect(mockConductor.queryEnd).toHaveBeenCalledWith(12321);
+                function fireThrottledFn() {
+                    mockThrottle.mostRecentCall.args[0]();
+                }
+
+                beforeEach(function () {
+                    mockThrottle.andReturn(mockThrottledFn);
+                    representer.represent(testViews[0], {});
+                    testBounds = { start: 0, end: 1000 };
+                    mockNewScope.conductor.inner = testBounds;
+                    mockConductor.displayStart.andCallFake(function () {
+                        return testBounds.start;
+                    });
+                    mockConductor.displayEnd.andCallFake(function () {
+                        return testBounds.end;
+                    });
+                });
+
+                it("does not broadcast while bounds are changing", function () {
+                    expect(mockScope.$broadcast).not.toHaveBeenCalled();
+                    testBounds.start = 100;
+                    fireWatch(mockNewScope, 'conductor.inner.start', testBounds.start);
+                    testBounds.end = 500;
+                    fireWatch(mockNewScope, 'conductor.inner.end', testBounds.end);
+                    fireThrottledFn();
+                    testBounds.start = 200;
+                    fireWatch(mockNewScope, 'conductor.inner.start', testBounds.start);
+                    testBounds.end = 400;
+                    fireWatch(mockNewScope, 'conductor.inner.end', testBounds.end);
+                    fireThrottledFn();
+                    expect(mockScope.$broadcast).not.toHaveBeenCalled();
+                });
+
+                it("does broadcast when bounds have stabilized", function () {
+                    expect(mockScope.$broadcast).not.toHaveBeenCalled();
+                    testBounds.start = 100;
+                    fireWatch(mockNewScope, 'conductor.inner.start', testBounds.start);
+                    testBounds.end = 500;
+                    fireWatch(mockNewScope, 'conductor.inner.end', testBounds.end);
+                    fireThrottledFn();
+                    fireWatch(mockNewScope, 'conductor.inner.start', testBounds.start);
+                    fireWatch(mockNewScope, 'conductor.inner.end', testBounds.end);
+                    fireThrottledFn();
+                    expect(mockScope.$broadcast).toHaveBeenCalled();
+                });
             });
 
             it("exposes domain selection in scope", function () {
