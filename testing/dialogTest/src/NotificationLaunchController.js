@@ -26,10 +26,11 @@ define(
     function (MessageSeverity) {
         "use strict";
 
-        function NotificationLaunchController($scope, notificationService) {
+        function NotificationLaunchController($scope, $timeout, notificationService) {
+            var messageCounter = 1;
             $scope.newSuccess = function(){
 
-                notificationService.success({
+                notificationService.info({
                     title: "Success notification!"
                 })
             };
@@ -37,9 +38,14 @@ define(
             $scope.newError = function(){
 
                 notificationService.notify({
-                    title: "Error notification!",
-                    severity: MessageSeverity.ERROR
-                })
+                    title: "Error notification " + messageCounter++ + "!",
+                    severity: MessageSeverity.ERROR,
+                    primaryAction: {
+                        label: 'Retry',
+                        action: function() {
+                            console.log('Retry clicked');
+                        }
+                    }});
             };
 
             $scope.newProgress = function(){
@@ -52,7 +58,17 @@ define(
 
                 };
 
-                notificationService.notify(notification)
+                function incrementProgress(notification) {
+                    notification.progress = Math.min(100, Math.floor(notification.progress + Math.random() * 30));
+                    notification.progressText = ["Estimated time remaining:" +
+                    " about ", 60 - Math.floor((notification.progress / 100) * 60), " seconds"].join(" ");
+                    if (notification.progress < 100) {
+                        $timeout(function(){incrementProgress(notification)}, 1000);
+                    }
+                }
+
+                notificationService.notify(notification);
+                incrementProgress(notification);
             };
 
         }

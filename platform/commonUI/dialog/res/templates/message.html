@@ -12,7 +12,7 @@
         </div>
         <div class="message-body">
             <div class="message-action">
-                {{ngModel.actionText}} message-severity-{{ngModel.severity}}
+                {{ngModel.actionText}}
             </div>
             <mct-include key="'progress-bar'"
                          ng-model="ngModel"
@@ -24,6 +24,13 @@
                ng-click="dialogAction.action()">
                 {{dialogAction.label}}
             </a>
+            <a class="s-btn major"
+               ng-if="ngModel.primaryAction"
+               ng-click="ngModel.primaryAction.action()">
+                {{ngModel.primaryAction.label}}
+            </a>
+
         </div>
+
     </div>
 </div>

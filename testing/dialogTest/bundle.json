@@ -27,6 +27,7 @@
                 "implementation": "NotificationLaunchController.js",
                 "depends": [
                     "$scope",
+                    "$timeout",
                     "notificationService"
                 ]
             }

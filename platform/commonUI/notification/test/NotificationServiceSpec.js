@@ -43,7 +43,7 @@ define(
          * 3) Calling .notify with autoDismiss results in an ERROR notification
          * being MINIMIZED after a timeout has elapsed DONE
          * 
-         * 4) Calling .notify with an active success notification results in that
+         * 4) Calling .notify with an active info notification results in that
          * notification being auto-dismissed, and the new notification becoming
          * active. DONE
          * 
@@ -80,7 +80,7 @@ define(
                     mockTimeout, mockAutoDismiss);
                 successModel = {
                     title: "Mock Success Notification",
-                    severity: MessageSeverity.SUCCESS
+                    severity: MessageSeverity.INFO
                 };
                 errorModel = {
                     title: "Mock Error Notification",
@@ -124,11 +124,11 @@ define(
                 it("auto-dismisses the previously active notification, making" +
                     " the new notification active", function() {
                     var activeNotification;
-                    //First pre-load with a success message
+                    //First pre-load with a info message
                     notificationService.notify(successModel);
                     activeNotification =
                         notificationService.getActiveNotification();
-                    //Initially expect the active notification to be success
+                    //Initially expect the active notification to be info
                     expect(activeNotification).toBe(successModel);
                     //Then notify of an error
                     notificationService.notify(errorModel);
@@ -140,20 +140,20 @@ define(
                 });
                 it("auto-dismisses an active success notification, removing" +
                     " it completely", function() {
-                    //First pre-load with a success message
+                    //First pre-load with a info message
                     notificationService.notify(successModel);
                     //Then notify of an error
                     notificationService.notify(errorModel);
                     expect(notificationService.notifications.length).toEqual(2);
                     mockTimeout.mostRecentCall.args[0]();
-                    //Previous success message should be completely dismissed
+                    //Previous info message should be completely dismissed
                     expect(notificationService.notifications.length).toEqual(1);
                 });
                 it("auto-minimizes an active error notification", function() {
                     var activeNotification;
                     //First pre-load with an error message
                     notificationService.notify(errorModel);
-                    //Then notify of success
+                    //Then notify of info
                     notificationService.notify(successModel);
                     expect(notificationService.notifications.length).toEqual(2);
                     //Mock the auto-minimize
@@ -178,7 +178,7 @@ define(
                             severity: MessageSeverity.ERROR
                         };
 
-                    //First pre-load with a success message
+                    //First pre-load with a info message
                     notificationService.notify(errorModel);
                     //Then notify of a third error
                     notificationService.notify(error2);

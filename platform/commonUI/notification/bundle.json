@@ -4,6 +4,10 @@
             {
                 "key": "DEFAULT_AUTO_DISMISS",
                 "value": 3000
+            },
+            {
+                "key": "FORCE_AUTO_DISMISS",
+                "value": 1000
             }
         ],
         "controllers": [
@@ -17,7 +21,8 @@
             {
                 "key": "notificationService",
                 "implementation": "NotificationService.js",
-                "depends": [ "$timeout", "DEFAULT_AUTO_DISMISS" ]
+                "depends": [ "$timeout", "DEFAULT_AUTO_DISMISS",
+                    "FORCE_AUTO_DISMISS" ]
             }
         ]
     }

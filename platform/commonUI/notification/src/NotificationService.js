@@ -59,7 +59,7 @@ define(
          * @property {number} progress The completion status of a task
          * represented numerically
          * @property {MessageSeverity} messageSeverity The importance of the
-         * message (eg. error, success)
+         * message (eg. error, info)
          * @property {boolean} unknownProgress a boolean indicating self the
          * progress of the underlying task is unknown. This will result in a
          * visually distinct progress bar.
@@ -84,10 +84,11 @@ define(
          * @memberof platform/commonUI/notification
          * @constructor
          */
-        function NotificationService($timeout, DEFAULT_AUTO_DISMISS) {
+        function NotificationService($timeout, DEFAULT_AUTO_DISMISS, FORCE_AUTO_DISMISS) {
             this.notifications = [];
             this.$timeout = $timeout;
             this.DEFAULT_AUTO_DISMISS = DEFAULT_AUTO_DISMISS;
+            this.FORCE_AUTO_DISMISS = FORCE_AUTO_DISMISS;
 
             /*
              * A context in which to hold the active notification and a
@@ -105,12 +106,12 @@ define(
         };
 
         /**
-         * A convenience method for success notifications. Notifications
+         * A convenience method for info notifications. Notifications
          * created via this method will be auto-dismissed after a default
          * wait period
          * @param {Notification} notification The notification to display
          */
-        NotificationService.prototype.success = function (notification) {
+        NotificationService.prototype.info = function (notification) {
             notification.autoDismiss = notification.autoDismiss || true;
             notification.severity = MessageSeverity.INFO;
             this.notify(notification);
@@ -145,17 +146,15 @@ define(
                  If there is already an active notification, time it out. If it's
                  already got a timeout in progress (either because it has had
                  timeout forced because of a queue of messages, or it had an
-                 autodismiss specified), leave it to run.
+                 autodismiss specified), leave it to run. Otherwise force a
+                  timeout.
 
                  This notifcation has been added to queue and will be
                   serviced as soon as possible.
                  */
-                timeout = notification.autoDismiss ?
-                    notification.autoDismiss :
-                    this.DEFAULT_AUTO_DISMISS;
                 this.active.timeout = this.$timeout(function () {
                     self.dismissOrMinimize(self.active.notification);
-                }, timeout);
+                }, this.FORCE_AUTO_DISMISS);
             }
 
         };
@@ -217,7 +216,7 @@ define(
         /**
          * Minimize a notification. The notification will still be available
          * from the notification list. Typically notifications with a
-         * severity of 'success' should not be minimized, but rather
+         * severity of 'info' should not be minimized, but rather
          * dismissed. If you're not sure which is appropriate,
          * use {@link NotificationService#dismissOrMinimize}
          * @see dismiss
@@ -236,7 +235,7 @@ define(
         /**
          * Completely removes a notification. This will dismiss it from the
          * message banner and remove it from the list of notifications.
-         * Typically only notifications with a severity of success should be
+         * Typically only notifications with a severity of info should be
          * dismissed. If you're not sure whether to dismiss or minimize a
          * notification, use {@link NotificationService#dismissOrMinimize}.
          * dismiss

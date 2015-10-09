@@ -25,10 +25,16 @@ define(
     [],
     function () {
         "use strict";
-        function BannerController($scope, notificationService){
+        function BannerController($scope, notificationService, dialogService) {
             $scope.active = notificationService.active;
-            $scope.dismiss = function(notification){
+            $scope.dismiss = function(notification) {
                 notificationService.dismissOrMinimize(notification);
+            };
+            $scope.maximize = function(notification) {
+                notification.cancel = function(){
+                    dialogService.dismiss();
+                }
+                dialogService.showBlockingMessage(notification);
             }
         }
         return BannerController;

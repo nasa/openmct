@@ -202,7 +202,9 @@ define(
 
         /**
          * A description of the model options that may be passed to the
-         * showBlockingMessage method
+         * showBlockingMessage method. Note that the DialogModel desribed
+         * here is shared with the Notifications framework.
+         * @see NotificationService
          *
          * @typedef DialogModel
          * @property {string} severity the severity level of this message.
@@ -220,8 +222,13 @@ define(
          * impossible to provide an estimate for. Providing a true value for
          * this attribute will indicate to the user that the progress and
          * duration cannot be estimated.
+         * @property {DialogAction} primaryAction an action that will
+         * be added to the dialog as a button. The primary action can be
+         * used as the suggested course of action for the user. Making it
+         * distinct from other actions allows it to be styled differently,
+         * and treated preferentially in banner mode.
          * @property {DialogAction[]} actions a list of actions that will
-         * be added to the dialog as buttons. These buttons are
+         * be added to the dialog as buttons.
          */
 
         /**
@@ -235,8 +242,17 @@ define(
          * @returns {boolean}
          */
         DialogService.prototype.showBlockingMessage = function(dialogModel) {
-            if (this.canShowDialog) {
-                this.getDialogResponse("overlay-blocking-message", dialogModel, undefined, "t-dialog-sm");
+            if (this.canShowDialog(dialogModel)) {
+                // Add the overlay using the OverlayService, which
+                // will handle actual insertion into the DOM
+                this.overlay = this.overlayService.createOverlay(
+                    "overlay-blocking-message",
+                    dialogModel,
+                    "t-dialog-sm"
+                );
+                // Track that a dialog is already visible, to
+                // avoid spawning multiple dialogs at once.
+                this.dialogVisible = true;
                 return true;
             } else {
                 return false;

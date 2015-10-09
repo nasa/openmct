@@ -104,7 +104,7 @@
             {
                 "key": "BannerController",
                 "implementation": "controllers/BannerController.js",
-                "depends": ["$scope", "notificationService"]
+                "depends": ["$scope", "notificationService", "dialogService"]
             }
         ],
         "directives": [
