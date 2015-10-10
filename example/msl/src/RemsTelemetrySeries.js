@@ -24,12 +24,20 @@ define(
     function () {
         "use strict";
 
-        function ExampleTelemetySeries(data) {
+        function RemsTelemetrySeries(data) {
             return {
-
+                getPointCount: function(){
+                    return 100;
+                },
+                getDomainValue: function(index) {
+                    return index + 45 * 365 * 24 * 60 * 60 * 1000;
+                },
+                getRangeValue: function(index){
+                    return index * 10;
+                }
             }
         }
 
-        return ExampleTelemetrySeries;
+        return RemsTelemetrySeries;
     }
 )
