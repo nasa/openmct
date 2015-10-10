@@ -1,0 +1,7 @@
+<span ng-show="notifications.length > 0" class="status block caution" ng-controller="NotificationIndicatorController">
+    <span class="ui-symbol status-indicator">&#x21;</span>
+    <span class="label">
+        <a ng-click="showNotificationsList()">{{notifications.length}} Notifications</a>
+    </span>
+    <span class="count">{{notifications.length}}</span>
+</span>

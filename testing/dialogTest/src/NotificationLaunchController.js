@@ -35,17 +35,65 @@ define(
                 })
             };
 
+            function getExampleActionText() {
+                var actionTexts = [
+                    "Adipiscing turpis mauris in enim elementu hac, enim aliquam etiam.",
+                    "Eros turpis, pulvinar turpis eros eu",
+                    "Lundium nascetur a, lectus montes ac, parturient in natoque, duis risus risus pulvinar pid rhoncus, habitasse auctor natoque!"
+                ];
+                return actionTexts[Math.floor(Math.random()*3)];
+            }
+
+            function getExampleActions() {
+                var actions = [
+                    {
+                        label: "Try Again",
+                        action: function () {
+                            $log.debug("Try Again pressed");
+                        }
+                    },
+                    {
+                        label: "Remove",
+                        action: function () {
+                            $log.debug("Remove pressed");
+                        }
+                    },
+                    {
+                        label: "Cancel",
+                        action: function () {
+                            $log.debug("Cancel pressed");
+                        }
+                    }
+                ];
+
+                // Randomly remove some actions off the top; leave at least one
+                actions.splice(0,Math.floor(Math.random() * actions.length));
+
+                return actions;
+            }
+
+            function getExampleSeverity() {
+                var severities = [
+                    MessageSeverity.INFO,
+                    MessageSeverity.ALERT,
+                    MessageSeverity.ERROR
+                ];
+                return severities[Math.floor(Math.random() * severities.length)];
+            }
+            
             $scope.newError = function(){
 
                 notificationService.notify({
                     title: "Error notification " + messageCounter++ + "!",
+                    hint: "An error has occurred",
                     severity: MessageSeverity.ERROR,
                     primaryAction: {
                         label: 'Retry',
                         action: function() {
                             console.log('Retry clicked');
                         }
-                    }});
+                    },
+                    actions: getExampleActions});
             };
 
             $scope.newProgress = function(){
@@ -54,7 +102,7 @@ define(
                     title: "Progress notification!",
                     severity: MessageSeverity.INFO,
                     progress: 0,
-                    progressUnknown: true
+                    unknownProgress: false
 
                 };
 

@@ -6,13 +6,7 @@
             </div>
         </div>
         <div class="abs message-body">
-            <mct-include ng-repeat="msg in ngModel.dialog.messages" key="'message'" ng-model="msg"></mct-include>
-<!--            <ul>
-                <li ng-repeat="msg in ngModel.dialog.messages">
-                    &lt;!&ndash;Message: {{msg.title}}&ndash;&gt;
-
-                </li>
-            </ul>-->
+            <mct-include ng-repeat="msg in ngModel.dialog.messages | orderBy: '-'" key="'message'" ng-model="msg"></mct-include>
         </div>
         <div class="abs bottom-bar">
             <a ng-repeat="dialogAction in ngModel.dialog.actions"

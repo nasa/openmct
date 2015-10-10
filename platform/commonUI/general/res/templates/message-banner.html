@@ -3,7 +3,7 @@
     <span class="banner-elem label">
         {{active.notification.title}}
     </span>
-    <span ng-hide="active.notification.progress === undefined">
+    <span ng-show="active.notification.progress !== undefined || active.notification.unknownProgress">
         <mct-include key="'progress-bar'" class="banner-elem"
                      ng-model="active.notification">
         </mct-include>

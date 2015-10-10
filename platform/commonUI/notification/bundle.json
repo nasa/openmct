@@ -10,11 +10,27 @@
                 "value": 1000
             }
         ],
+        "templates": [
+            {
+                "key":"notificationIndicatorTemplate",
+                "templateUrl": "notification-indicator.html"
+            }
+        ],
         "controllers": [
             {
                 "key": "MessageController",
                 "implementation": "MessageController.js",
                 "depends": ["$scope"]
+            },
+            {
+                "key": "NotificationIndicatorController",
+                "implementation": "NotificationIndicatorController.js",
+                "depends": ["$scope", "notificationService", "dialogService"]
+            }
+        ],
+        "indicators": [
+            {
+                "implementation": "NotificationIndicator.js"
             }
         ],
         "services": [

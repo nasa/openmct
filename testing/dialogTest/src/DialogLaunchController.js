@@ -108,7 +108,6 @@ define(
                         {
                             label: "Done",
                             action: function () {
-                                $log.debug("Done pressed");
                                 dialogService.dismiss();
                             }
                         }
@@ -173,19 +172,13 @@ define(
                 }
 
                 function dismiss() {
-                    scope.$destroy();
-                    element.remove();
+                    dialogService.dismiss();
                 }
-
-                //for (var i = 0; i < 10; i++) {
-                //    model.messages.push(createMessage(i));
-                //}
+                
                 model.messages = notificationService.notifications;
                 dialogService.getDialogResponse('overlay-message-list', {
                     dialog: model,
-                    cancel: function(){
-                        dialogService.dismiss();
-                    }
+                    cancel: dismiss
                 });
             };
         }
