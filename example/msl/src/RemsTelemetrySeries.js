@@ -27,13 +27,13 @@ define(
         function RemsTelemetrySeries(data) {
             return {
                 getPointCount: function(){
-                    return 100;
+                    return data.length;
                 },
                 getDomainValue: function(index) {
-                    return index + 45 * 365 * 24 * 60 * 60 * 1000;
+                    return data[index].date;
                 },
                 getRangeValue: function(index){
-                    return index * 10;
+                    return data[index].value;
                 }
             }
         }

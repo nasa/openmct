@@ -39,7 +39,7 @@ define(
                             "type": "float"
                         },
                         {
-                            "name": "Max. Air Temperatyre",
+                            "name": "Max. Air Temperature",
                             "identifier": "rems.max_temp",
                             "units": "degrees",
                             "type": "float"

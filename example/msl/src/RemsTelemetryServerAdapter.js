@@ -25,20 +25,43 @@ define(
     ["./RemsDataDictionary"],
     function (RemsDataDictionary) {
         "use strict";
-
+        
+        var TERRESTRIAL_DATE = "terrestrial_date", 
+            NO_DATA = "--",
+            PREFIX = "rems.";
+        
         /**
          * For now just returns a hard-coded data dictionary, but in future
          * could be adapted to provide data from remote source.
          * @constructor
          */
-        function RemsTelemetryServerAdapter($q, $http){
-            var histories = {};
-
+        function RemsTelemetryServerAdapter($q, $http, REMS_WS_URL){
+            var histories = {},
+                deferred;
+            function requestHistory (id) {
+                $http.get(REMS_WS_URL).then(
+                    function(response){
+                        /**
+                         * All history is fetched in one go, cache it all to save round trips to the server on subsequent requests
+                         */
+                        response.data.soles.forEach(function(solData){
+                           for (var prop in solData){
+                               var propName = PREFIX + prop;
+                               histories[propName] = histories[propName] || [];
+                               histories[propName].push({date: Date.parse(solData[TERRESTRIAL_DATE]), value: solData[prop]=== NO_DATA ? undefined : solData[prop]});
+                           } 
+                        });
+                        deferred.resolve(histories[id]);
+                    }, function (error){
+                        deferred.reject(error);
+                    });
+            }
             return {
                 dictionary: RemsDataDictionary,
                 history: function(id) {
-                    histories[id] = histories[id] || $q.defer();
-                    return histories[id].promise;
+                    deferred = deferred || $q.defer();
+                    requestHistory(id);
+                    return deferred.promise;
                 }
             };
         }

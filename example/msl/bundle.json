@@ -19,7 +19,7 @@
                 "glyph": "T",
                 "model": {"telemetry": {}},
                 "telemetry": {
-                    "source": "msl.source",
+                    "source": "rems.source",
                     "domains": [
                         {
                             "name": "Time",
@@ -27,6 +27,12 @@
                         }
                     ]
                 }
+            }
+        ],
+        "constants": [
+            {
+                "key": "REMS_WS_URL",
+                "value": "http://cab.inta-csic.es/rems/wp-content/plugins/marsweather-widget/api.php"
             }
         ],
         "roots": [
@@ -44,7 +50,7 @@
             {
                 "key":"rems.adapter",
                 "implementation": "RemsTelemetryServerAdapter.js",
-                "depends": ["$q", "$http"]
+                "depends": ["$q", "$http", "REMS_WS_URL"]
             }
         ],
         "runs": [
