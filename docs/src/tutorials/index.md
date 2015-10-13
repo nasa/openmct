@@ -250,8 +250,9 @@ functionality, so we don’t see anything different, but if we run with logging
 enabled ([http://localhost:8080/?log=info]()) and check the browser console, we 
 should see:
 
-`Resolving extensions for bundle tutorials/todo(To-do Plugin)...which shows that 
-our plugin has loaded.`
+`Resolving extensions for bundle tutorials/todo(To-do Plugin)`
+
+...which shows that our plugin has loaded.
 
 ### Step 2. Add a Domain Object Type
 
@@ -337,16 +338,16 @@ __tutorials/todo/res/templates/todo.html__
 
 A summary of what’s included:
 
-At the top, we have some buttons that we will later wire in to allow the user to 
-filter down to either complete or incomplete tasks.
-After that, we have a list of tasks. The scope variable model is the model of 
-the domain object being viewed; this contains all of the persistent state 
+* At the top, we have some buttons that we will later wire in to allow the user 
+to filter down to either complete or incomplete tasks.
+* After that, we have a list of tasks. The scope variable `model` is the model 
+of the domain object being viewed; this contains all of the persistent state 
 associated with that object. This model is effectively just a JSON document, so 
 we can choose what goes into it (so long as we take care not to collide with 
 platform-defined properties; see the Open MCT Web Developer Guide.) Here, we 
-assume that all tasks will be stored in a property tasks, and that each will be 
-an object containing a description (the readable summary of the task) and a 
-boolean completed flag.
+assume that all tasks will be stored in a property `tasks`, and that each will be 
+an object containing a `description` (the readable summary of the task) and a 
+boolean `completed` flag.
 
 To expose this view in Open MCT Web, we need to declare it in our bundle 
 definition:
@@ -377,21 +378,22 @@ definition:
     }
 __tutorials/todo/bundle.json__
 
-Here, we’ve added another extension, this time belonging to category views. It 
+Here, we’ve added another extension, this time belonging to category `views`. It 
 contains the following properties:
 
-Its key is its machine-readable name; we’ve given it the same name here as the 
-domain object type, but could have chosen any unique name. The type property 
-tells Open MCT Web that this view is only applicable to domain objects of that 
-type. This means that we’ll see this view for To-do Lists that we create, but 
-not for other domain objects (such as Folders.)
+* Its `key` is its machine-readable name; we’ve given it the same name here as 
+the domain object type, but could have chosen any unique name. 
 
-The glyph and name properties describe the icon and human-readable name for this 
-view to display in the UI where needed (if multiple views are available for 
-To-do Lists, the user will be able to choose one.)
+* The `type` property tells Open MCT Web that this view is only applicable to 
+domain objects of that type. This means that we’ll see this view for To-do Lists 
+that we create, but not for other domain objects (such as Folders.)
 
-Finally, the templateUrl points to the Angular template we wrote; this path is 
-relative to the bundle’s res folder.
+* The `glyph` and `name` properties describe the icon and human-readable name 
+for this view to display in the UI where needed (if multiple views are available 
+for To-do Lists, the user will be able to choose one.)
+
+* Finally, the `templateUrl` points to the Angular template we wrote; this path is 
+relative to the bundle’s `res` folder.
 
 This template looks like it should display tasks, but we don’t have any way for 
 the user to create these yet. As a temporary workaround to test the view, we 
@@ -500,17 +502,17 @@ __tutorials/todo/src/controllers/TodoController.js__
 Here, we’ve defined three new functions and placed them in our `$scope`, which 
 will make them available from the template:
 
-`setVisibility` changes which tasks are meant to be visible. The first argument 
+* `setVisibility` changes which tasks are meant to be visible. The first argument 
 is a boolean, which, if true, means we want to show everything; the second 
 argument is the completion state we want to show (which is only relevant if the 
 first argument is falsy.)
 
-`toggleCompletion` changes whether or not a task is complete. We make the change 
-via the domain object’s mutation capability, and then persist the change via its 
-persistence capability. See the Open MCT Web Developer Guide for more 
-information on these capabilities.
+* `toggleCompletion` changes whether or not a task is complete. We make the 
+change via the domain object’s `mutation` capability, and then persist the 
+change via its `persistence` capability. See the Open MCT Web Developer Guide 
+for more information on these capabilities.
 
-`showTask` is meant to be used to help decide if a task should be shown, based 
+* `showTask` is meant to be used to help decide if a task should be shown, based 
 on the current visibility settings. It is true when we have decided to show 
 everything, or when the completion state matches the state we’ve chosen. (Note 
 the use of the double-not !! to coerce the completed flag to a boolean, for 
@@ -601,12 +603,14 @@ In this extension definition we have:
 * A `key`, which again is a machine-readable identifier. This is the name that 
 templates will reference.
 * An `implementation`, which refers to an AMD module. The path is relative to the 
-src directory within the bundle.
+`src` directory within the bundle.
 * The `depends` property declares the dependencies of this controller. Here, we 
 want Angular to inject `$scope`, the current Angular scope (which, going back 
 to our controller, is expected as our first argument.)
 
-If we reload the browser now, our To-do List looks much the same, but now we are able to filter down the visible list, and the changes we make will stick around if we go to My Items and come back.
+If we reload the browser now, our To-do List looks much the same, but now we are 
+able to filter down the visible list, and the changes we make will stick around 
+if we go to My Items and come back.
 
 
 ### Step 5. Support Editing
@@ -703,8 +707,8 @@ __tutorials/todo/bundle.json__
 What we’ve stated here is that the To-Do List’s view will have a toolbar which 
 contains two sections (which will be visually separated by a divider), each of 
 which contains one button. The first is a button labelled “Add Task” that will 
-invoke an addTask method; the second is a button with a glyph (which will appear 
-as a trash can in Open MCT Web’s custom font set) which will invoke a removeTask 
+invoke an `addTask` method; the second is a button with a glyph (which will appear 
+as a trash can in Open MCT Web’s custom font set) which will invoke a `removeTask` 
 method. For more information on forms and tool bars in Open MCT Web, see the 
 Open MCT Web Developer Guide.
 
