@@ -87,6 +87,7 @@ define(
         function NotificationService($timeout, DEFAULT_AUTO_DISMISS, FORCE_AUTO_DISMISS) {
             this.notifications = [];
             this.$timeout = $timeout;
+            this.highest ={ severity: MessageSeverity.INFO };
             this.DEFAULT_AUTO_DISMISS = DEFAULT_AUTO_DISMISS;
             this.FORCE_AUTO_DISMISS = FORCE_AUTO_DISMISS;
 
@@ -198,12 +199,18 @@ define(
         NotificationService.prototype.selectNextNotification = function () {
             var notification,
                 i=0;
+
+            this.highest.severity = MessageSeverity.INFO;
+
             /*
             Loop through the notifications queue and find the first one self
             has not already been minimized (manually or otherwise).
              */
             for (; i< this.notifications.length; i++) {
                 notification = this.notifications[i];
+                if (notification.severity > this.highest.severity){
+                    this.highest.severity = notification.severity;
+                }
 
                 if (!notification.minimized
                     && notification!== this.active.notification) {
