@@ -22,7 +22,7 @@ In this section, we will cover the steps necessary to get a minimal Open MCT Web
 developer environment up and running. Once we have this, we will be able to 
 proceed with writing plugins as described in this tutorial.
 
-## Prerequisites
+### Prerequisites
 
 This tutorial assumes you have the following software installed. Version numbers 
 record what was used in writing this tutorial; the same steps should work with 
@@ -37,7 +37,7 @@ Open MCT Web can be run without any of these tools, provided suitable
 alternatives are taken; see the [Open MCT Web Developer Guide](../guide/index.md) 
 for a more general overview of how to run and deploy a Open MCT Web application.
 
-## Check out Open MCT Web Sources
+### Check out Open MCT Web Sources
 
 First step is to check out Open MCT Web from the source repository. 
 
@@ -55,7 +55,7 @@ At this point, it will also be useful to branch off of Open MCT Web v0.6.2
 	git branch <my branch name> open-v0.6.2
 	git checkout <my branch name>
 
-## Configuring Persistence
+### Configuring Persistence
 
 In its default configuration, Open MCT Web will try to use ElasticSearch 
 (expected to be deployed at /elastic on the same HTTP server running Open MCT 
@@ -69,7 +69,7 @@ To change this configuration, edit bundles.json (at the top level of the Open
 MCT Web repository) and replace platform/persistence/elastic with 
 example/persistence.
 
-### Before
+#### Before
 
     [
         "platform/framework",
@@ -95,7 +95,7 @@ example/persistence.
     ]
 __bundles.json__
 
-### After
+#### After
 
     [
         "platform/framework",
