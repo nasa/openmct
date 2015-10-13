@@ -16,6 +16,13 @@ October 6, 2015 | 2.2     | Conversion to markdown            | Andrew Henry
 
 # Introduction
 
+## This document
+This document contains a number of code examples in formatted code blocks. In 
+many cases these code blocks are repeated in order to highlight code that has 
+been added or removed as part of the tutorial. In these cases, any lines added 
+will be indicated with a '+' at the start of the line. Any lines removed will 
+be indicated with a '-'.
+
 ## Setting Up Open MCT Web
 
 In this section, we will cover the steps necessary to get a minimal Open MCT Web 
