@@ -11,6 +11,9 @@
             <div class="hint" ng-hide="ngModel.hint === undefined">{{ngModel.hint}}</div>
         </div>
         <div class="message-body">
+            <div class="message-action">
+                {{ngModel.actionText}}
+            </div>
             <mct-include key="'progress-bar'"
                          ng-model="ngModel"
                          ng-show="ngModel.progress !== undefined || ngModel.unknownProgress"></mct-include>

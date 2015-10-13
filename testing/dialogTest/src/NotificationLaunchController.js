@@ -93,7 +93,7 @@ define(
                             console.log('Retry clicked');
                         }
                     },
-                    actions: getExampleActions});
+                    actions: getExampleActions()});
             };
 
             $scope.newProgress = function(){
@@ -102,6 +102,7 @@ define(
                     title: "Progress notification!",
                     severity: MessageSeverity.INFO,
                     progress: 0,
+                    actionText: getExampleActionText(),
                     unknownProgress: false
 
                 };
