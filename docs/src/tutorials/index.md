@@ -170,8 +170,8 @@ will be. The syntax of this file is described in more detail in the Open MCT Web
 Developer Guide.
 
 We will create this file in the directory tutorials/todo (we can hereafter refer 
-to this plugin as tutorials/todo as well.) We will start with an “empty bundle” 
-- one which exposes no extensions - which looks like:
+to this plugin as tutorials/todo as well.) We will start with an “empty bundle”, 
+one which exposes no extensions - which looks like:
 
     {
         "name": "To-do Plugin",
