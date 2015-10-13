@@ -720,7 +720,7 @@ all the applicable controls, which means no controls at all.
 
 To support selection, we will need to make some changes to our controller:
 
-    + define(function () {
+    define(function () {
     +    // Form to display when adding new tasks
     +    var NEW_TASK_FORM = {
     +        name: "Add a Task",
@@ -734,7 +734,7 @@ To support selection, we will need to make some changes to our controller:
     +        }]
     +    };
     
-        function TodoController($scope, dialogService) {
+    +   function TodoController($scope, dialogService) {
             var showAll = true,
                 showCompleted;
     
@@ -745,21 +745,23 @@ To support selection, we will need to make some changes to our controller:
                 return persistence && persistence.persist();
             }
     
-            // Remove a task
-            function removeTaskAtIndex(taskIndex) {
-                $scope.domainObject.useCapability('mutation', function (model) {
-                    model.tasks.splice(taskIndex, 1);
-                });
-                persist();
-            }
+    +       // Remove a task
+    +       function removeTaskAtIndex(taskIndex) {
+    +           $scope.domainObject.useCapability('mutation', function 
+    +       (model) {
+    +               model.tasks.splice(taskIndex, 1);
+    +           });
+    +           persist();
+    +       }
     
-            // Add a task
-            function addNewTask(task) {
-                $scope.domainObject.useCapability('mutation', function (model) {
-                    model.tasks.push(task);
-                });
-                persist();
-            }
+    +       // Add a task
+    +       function addNewTask(task) {
+    +           $scope.domainObject.useCapability('mutation', function 
+    +           (model) {
+    +               model.tasks.push(task);
+    +           });
+    +           persist();
+    +       }
     
             // Change which tasks are visible
             $scope.setVisibility = function (all, completed) {
@@ -782,25 +784,25 @@ To support selection, we will need to make some changes to our controller:
             };
     
             // Handle selection state in edit mode
-            if ($scope.selection) {
-                // Expose the ability to select tasks
-                $scope.selectTask = function (taskIndex) {
-                    $scope.selection.select({
-                        removeTask: function () {
-                            removeTaskAtIndex(taskIndex);
-                            $scope.selection.deselect();
-                        }
-                    });
-                };
+    +       if ($scope.selection) {
+    +           // Expose the ability to select tasks
+    +           $scope.selectTask = function (taskIndex) {
+    +               $scope.selection.select({
+    +                   removeTask: function () {
+    +                       removeTaskAtIndex(taskIndex);
+    +                       $scope.selection.deselect();
+    +                   }
+    +               });
+    +           };
     
-                // Expose a view-level selection proxy
-                $scope.selection.proxy({
-                    addTask: function () {
-                        dialogService.getUserInput(NEW_TASK_FORM, {})
-                            .then(addNewTask);
-                    }
-                });
-            }
+    +           // Expose a view-level selection proxy
+    +           $scope.selection.proxy({
+    +               addTask: function () {
+    +                   dialogService.getUserInput(NEW_TASK_FORM, {})
+    +                       .then(addNewTask);
+    +               }
+    +           });
+    +       }
         }
     
         return TodoController;
@@ -996,10 +998,10 @@ states in the controller:
                 showCompleted = completed;
             };
     
-            // Check if current visibility settings match
-            $scope.checkVisibility = function (all, completed) {
-                return showAll ? all : (completed === showCompleted);
-            };
+    +       // Check if current visibility settings match
+    +       $scope.checkVisibility = function (all, completed) {
+    +           return showAll ? all : (completed === showCompleted);
+    +       };
     
             // Toggle the completion state of a task
             $scope.toggleCompletion = function (taskIndex) {
@@ -1024,14 +1026,15 @@ states in the controller:
                             removeTaskAtIndex(taskIndex);
                             $scope.selection.deselect();
                         },
-                        taskIndex: taskIndex
+    +                   taskIndex: taskIndex
                     });
                 };
     
-                // Expose a check for current selection state
-                $scope.isSelected = function (taskIndex) {
-                    return ($scope.selection.get() || {}).taskIndex === taskIndex;
-                };
+    +           // Expose a check for current selection state
+    +           $scope.isSelected = function (taskIndex) {
+    +               return ($scope.selection.get() || {}).taskIndex === 
+    +               taskIndex;
+    +           };
     
                 // Expose a view-level selection proxy
                 $scope.selection.proxy({
@@ -1503,15 +1506,15 @@ __tutorials/bargraph/res/templates/bargraph.html__
 Summarizing these changes:
 
 * Utilize the exposed `low`, `middle`, and `high` values to populate our labels 
-along the vertical axis. Additionally, use the toPercent function to position 
+along the vertical axis. Additionally, use the `toPercent` function to position 
 these from the bottom.
 * Replace our three hard-coded bars with a repeater that looks at the 
 `telemetryObjects` exposed by the controller and adds one bar each.
-* Position the dashed tick-line using the middle value and the `toPercent` 
-function, lining it up with its `label` to the left.
+* Position the dashed tick-line using the `middle` value and the `toPercent` 
+function, lining it up with its label to the left.
 * At the bottom, repeat a set of labels for the telemetry-providing domain 
 objects, with matching alignment to the bars above. We use an existing 
-representation, label, to make this easier.
+representation, `label`, to make this easier.
 
 Finally, we expose our controller from our bundle definition. Note that the 
 depends declaration includes both `$scope` as well as the `telemetryHandler` 
@@ -1583,10 +1586,10 @@ telemetry-providing domain object, as percentages.
     +           var value = handle.getRangeValue(telemetryObject);
     +           return $scope.toPercent(Math.min($scope.middle, value));
     +       }
-            $scope.getTop = function (telemetryObject) {
-                var value = handle.getRangeValue(telemetryObject);
-                return 100 - $scope.toPercent(Math.max($scope.middle, value));
-            }   	 
+    +       $scope.getTop = function (telemetryObject) {
+    +           var value = handle.getRangeValue(telemetryObject);
+    +           return 100 - $scope.toPercent(Math.max($scope.middle, value));
+    +       }   	 
     
             // Use the telemetryHandler to get telemetry objects here
             handle = telemetryHandler.handle($scope.domainObject, function () {
@@ -1816,7 +1819,7 @@ A summary of these changes:
 * First, read `low`, `middle`, and `high` from the view configuration instead of 
 initializing them to explicit values. This is placed into its own function, 
 since it will be called a lot.
-* The function 'setDefault' is included; it will be used to set the default 
+* The function `setDefault` is included; it will be used to set the default 
 values for `low`, `middle`, and `high` in the view configuration, but only if 
 they aren’t present.
 * The tool bar will treat properties in a view proxy as getter-setters if 
@@ -2218,10 +2221,10 @@ __bundles.json__
 
 ...we will be able to reload Open MCT Web and see that it is present:
 
-![](images/telemetry-1.png)
+![Telemetry](images/telemetry-1.png)
 
 Now, we have somewhere in the UI to put the contents of our telemetry 
-dictionary.
+dictionary. 
 
 ### Step 2. Expose the Telemetry Dictionary
 
@@ -2590,7 +2593,8 @@ Now if we run Open MCT Web (assuming our example telemetry server is also
 running) and expand our top-level node completely, we see the contents of our 
 dictionary:
 
-[](images/telemetry-2.png)
+![Telemetry 2](images/telemetry-2.png)
+
 
 Note that “My Spacecraft” has changed its name to “Example Spacecraft”, which 
 is the name it had in the dictionary.
@@ -2742,8 +2746,8 @@ during Step 2. (Or, they might come from somewhere else entirely, if we have
 other telemetry-providing domain objects in our system; that is something we 
 check for using the `source` property.)
 
-Finally, note that we also have a subscribe method, to satisfy the interface of 
-telemetryService, but this subscribe method currently does nothing.
+Finally, note that we also have a `subscribe` method, to satisfy the interface of 
+`telemetryService`, but this `subscribe` method currently does nothing.
 
 This script uses an `ExampleTelemetrySeries` class, which looks like:
 
@@ -2775,7 +2779,7 @@ __tutorials/telemetry/src/ExampleTelemetrySeries.js__
 This takes the array of telemetry values (as returned by the server) and wraps 
 it with the interface expected by the platform (the methods shown.)
 
-Finally, we expose this telemetryService provider declaratively:
+Finally, we expose this `telemetryService` provider declaratively:
 
     {
         "name": "Example Telemetry Adapter",
@@ -3029,14 +3033,14 @@ __tutorials/telemetry/src/ExampleTelemetryProvider.js__
 
 A quick summary of these changes:
 
-First, we maintain current subscribers (callbacks) in an object containing 
+* First, we maintain current subscribers (callbacks) in an object containing 
 key-value pairs, where keys are request key properties, and values are callback 
 arrays.
-We listen to new data coming in from the server adapter, and invoke any 
+* We listen to new data coming in from the server adapter, and invoke any 
 relevant callbacks when this happens. We package the data in the same manner 
 that historical telemetry is packaged (even though in this case we are 
 providing single-element series objects.)
-Finally, in our `subscribe` method we add callbacks to the lists of active 
+* Finally, in our `subscribe` method we add callbacks to the lists of active 
 subscribers. This method is expected to return a function which terminates the 
 subscription when called, so we do some work to remove subscribers in this 
 situations. When our subscriber count for a given measurement drops to zero, 
