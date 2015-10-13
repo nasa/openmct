@@ -34,31 +34,31 @@ define(
                     "measurements": [
                         {
                             "name": "Min. Air Temperature",
-                            "identifier": "rems.min_temp",
+                            "identifier": "min_temp",
                             "units": "degrees",
                             "type": "float"
                         },
                         {
                             "name": "Max. Air Temperature",
-                            "identifier": "rems.max_temp",
+                            "identifier": "max_temp",
                             "units": "degrees",
                             "type": "float"
                         },
                         {
                             "name": "Atmospheric Pressure",
-                            "identifier": "rems.pressure",
+                            "identifier": "pressure",
                             "units": "pascals",
                             "type": "float"
                         },
                         {
                             "name": "Min. Ground Temperature",
-                            "identifier": "rems.min_gts_temp",
+                            "identifier": "min_gts_temp",
                             "units": "degrees",
                             "type": "float"
                         },
                         {
                             "name": "Max. Ground Temperature",
-                            "identifier": "rems.max_gts_temp",
+                            "identifier": "max_gts_temp",
                             "units": "degrees",
                             "type": "float"
                         }

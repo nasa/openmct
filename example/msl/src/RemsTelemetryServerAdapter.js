@@ -27,8 +27,7 @@ define(
         "use strict";
         
         var TERRESTRIAL_DATE = "terrestrial_date", 
-            NO_DATA = "--",
-            PREFIX = "rems.";
+            NO_DATA = "--";
         
         /**
          * For now just returns a hard-coded data dictionary, but in future
@@ -37,31 +36,37 @@ define(
          */
         function RemsTelemetryServerAdapter($q, $http, REMS_WS_URL){
             var histories = {},
-                deferred;
+                deferreds = {};
             function requestHistory (id) {
                 $http.get(REMS_WS_URL).then(
                     function(response){
                         /**
                          * All history is fetched in one go, cache it all to save round trips to the server on subsequent requests
                          */
+                        var lastGoodValue=0;
                         response.data.soles.forEach(function(solData){
                            for (var prop in solData){
-                               var propName = PREFIX + prop;
-                               histories[propName] = histories[propName] || [];
-                               histories[propName].push({date: Date.parse(solData[TERRESTRIAL_DATE]), value: solData[prop]=== NO_DATA ? undefined : solData[prop]});
+                               histories[prop] = histories[prop] || [];
+                               var value = isNaN(solData[prop]) ? lastGoodValue : (lastGoodValue = solData[prop]);
+                               histories[prop].unshift({date: Date.parse(solData[TERRESTRIAL_DATE]), value: value});
                            } 
                         });
-                        deferred.resolve(histories[id]);
+                        
+                        deferreds[id].resolve({id: id, values: histories[id]});
                     }, function (error){
-                        deferred.reject(error);
+                        deferreds[id].reject(error);
                     });
             }
             return {
                 dictionary: RemsDataDictionary,
                 history: function(id) {
-                    deferred = deferred || $q.defer();
-                    requestHistory(id);
-                    return deferred.promise;
+                    deferreds[id] = deferreds[id] || $q.defer();
+                    if (histories[id]) {
+                        deferreds[id].resolve({id: id, values: histories[id]});
+                    } else {
+                        requestHistory(id);
+                    }
+                    return deferreds[id].promise;
                 }
             };
         }

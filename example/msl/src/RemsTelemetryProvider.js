@@ -43,7 +43,7 @@ define (
 
                     function addToPackage(history) {
                         packaged[SOURCE][history.id] =
-                            new RemsTelemetrySeries(history.value);
+                            new RemsTelemetrySeries(history.values);
                     }
 
                     function handleRequest(request) {
