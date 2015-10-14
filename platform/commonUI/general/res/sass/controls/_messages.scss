@@ -51,11 +51,17 @@
 	.status-indicator {
 		margin-right: $interiorMarginSm;
 	}
-	&.ok .status-indicator {
-		color: $colorStatusOk;
+	&.ok .status-indicator,
+    &.info .status-indicator {
+		color: $colorStatusInfo;
 	}
+    &.alert .status-indicator,
+	&.warning .status-indicator,
 	&.caution .status-indicator {
-		color: $colorStatusCaution;
+		color: $colorStatusAlert;
+	}
+	&.error .status-indicator {
+		color: $colorStatusError;
 	}
 	.label {
 		// Max-width silliness is necessary for width transition
@@ -107,6 +113,22 @@
 	padding: 0 $interiorMargin 0 $interiorMargin;
 	@include transform(translateX(-50%));
 
+	&.minimized {
+        @include transition-property(left, opacity);
+        @include transition-duration(0.3s);
+        @include transition-timing-function(ease-in-out);
+		left: 0;
+        opacity: 0;
+	}
+
+    &.new {
+        left: 50%;
+        opacity: 1;
+        &:not(.info) {
+            @include pulse(100ms, 10);
+        }
+    }
+
 	.banner-elem {
 		@include flex(0 1 auto);
 		margin-left: $interiorMargin;
@@ -134,9 +156,10 @@
 	z-index: 10;
 }
 
-.s-message-banner,
-.s-message-banner .s-action {
-	@include trans-prop-nice(background-color, .25s);
+.s-message-banner {
+    //@include transition-property(left, opacity);
+    //@include transition-duration(0.35s);
+    //@include transition-timing-function(ease-in-out);
 }
 
 .s-message-banner {
@@ -146,6 +169,7 @@
 	a { color: inherit; }
 	.s-action {
 		@include border-radius($basicCr);
+        @include trans-prop-nice(background-color);
 	}
 	.close {
 		opacity: 0.5;
@@ -153,12 +177,18 @@
 			opacity: 1;
 		}
 	}
-	&.ok {
-		@include statusBannerColors($colorStatusOk);
+	&.ok,
+    &.info {
+		@include statusBannerColors($colorStatusInfo);
 	}
-	&.caution {
-		@include statusBannerColors($colorStatusCaution);
+	&.caution,
+    &.warning,
+    &.alert {
+		@include statusBannerColors($colorStatusAlert);
 	}
+    &.error {
+        @include statusBannerColors($colorStatusError);
+    }
 }
 
 @mixin messageBlock($iconW: 32px) {
@@ -173,15 +203,15 @@
 
     .message-severity-info .type-icon.message-type {
         &:before { content:"\e608"; }
-        color: $colorStatusOk;
+        color: $colorStatusInfo;
     }
     .message-severity-alert .type-icon.message-type {
         &:before { content:"\e610"; }
-        color: $colorStatusCaution;
+        color: $colorStatusAlert;
     }
     .message-severity-error .type-icon.message-type {
         &:before { content:"\21"; }
-        color: $colorStatusAlert;
+        color: $colorStatusError;
     }
 }
 /* Paths:
