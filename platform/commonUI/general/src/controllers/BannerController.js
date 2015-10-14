@@ -37,10 +37,12 @@ define(
                 notificationService.dismissOrMinimize(notification);
             };
             $scope.maximize = function(notification) {
-                notification.cancel = function(){
-                    dialogService.dismiss();
+                if (notification.severity > MessageSeverity.INFO){
+                    notification.cancel = function(){
+                        dialogService.dismiss();
+                    }
+                    dialogService.showBlockingMessage(notification);
                 }
-                dialogService.showBlockingMessage(notification);
             }
         }
         return BannerController;
