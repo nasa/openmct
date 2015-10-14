@@ -22,11 +22,12 @@
 /*global define*/
 
 define(
-    [],
-    function () {
+    ['../../../notification/src/MessageSeverity'],
+    function (MessageSeverity) {
         "use strict";
         function BannerController($scope, notificationService, dialogService) {
             $scope.active = notificationService.active;
+            $scope.MessageSeverity = MessageSeverity;
             $scope.dismiss = function(notification) {
                 notificationService.dismissOrMinimize(notification);
             };

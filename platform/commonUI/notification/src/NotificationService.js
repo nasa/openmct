@@ -26,7 +26,7 @@
  * show banner notifications to the user. Banner notifications
  * are used to inform users of events in a non-intrusive way. As
  * much as possible, notifications share a model with blocking
- * dialogs so self the same information can be provided in a dialog
+ * dialogs so that the same information can be provided in a dialog
  * and then minimized to a banner notification if needed.
  *
  * @namespace platform/commonUI/dialog
@@ -51,16 +51,16 @@ define(
          * A representation of a banner notification. Banner notifications
          * are used to inform users of events in a non-intrusive way. As
          * much as possible, notifications share a model with blocking
-         * dialogs so self the same information can be provided in a dialog
+         * dialogs so that the same information can be provided in a dialog
          * and then minimized to a banner notification if needed.
          *
          * @typedef {object} Notification
          * @property {string} title The title of the message
+         * @property {MessageSeverity} severity The importance of the
+         * message (eg. error, info)
          * @property {number} progress The completion status of a task
          * represented numerically
-         * @property {MessageSeverity} messageSeverity The importance of the
-         * message (eg. error, info)
-         * @property {boolean} unknownProgress a boolean indicating self the
+         * @property {boolean} unknownProgress a boolean indicating that the
          * progress of the underlying task is unknown. This will result in a
          * visually distinct progress bar.
          * @property {boolean | number} autoDismiss If truthy, dialog will
@@ -72,24 +72,28 @@ define(
          * this message. Will be represented as a button with the provided
          * label and action. May be used by banner notifications to display
          * only the most important option to users.
-         * @property {NotificationAction[]} additionalActions any additional
-         * actions
-         * self the user can take. Will be represented as additional buttons
-         * self may or may not be available from a banner.
+         * @property {NotificationAction[]} actions any additional
+         * actions the user can take. Will be represented as additional buttons
+         * that may or may not be available from a banner.
          */
 
         /**
          * The notification service is responsible for informing the user of
          * events via the use of banner notifications.
-         * @memberof platform/commonUI/notification
+         * @param $timeout the Angular $timeout service
+         * @param DEFAULT_AUTO_DISMISS The period of time that an
+         * auto-dismissed message will be displayed for.
+         * @param MINIMIZE_TIMEOUT When notifications are minimized, a brief
+         * animation is shown. This animation requires some time to execute,
+         * so a timeout is required before the notification is hidden
          * @constructor
          */
-        function NotificationService($timeout, DEFAULT_AUTO_DISMISS, FORCE_AUTO_DISMISS) {
+        function NotificationService($timeout, DEFAULT_AUTO_DISMISS, MINIMIZE_TIMEOUT) {
             this.notifications = [];
             this.$timeout = $timeout;
             this.highest ={ severity: MessageSeverity.INFO };
             this.DEFAULT_AUTO_DISMISS = DEFAULT_AUTO_DISMISS;
-            this.FORCE_AUTO_DISMISS = FORCE_AUTO_DISMISS;
+            this.MINIMIZE_TIMEOUT = MINIMIZE_TIMEOUT;
 
             /*
              * A context in which to hold the active notification and a
@@ -99,7 +103,7 @@ define(
         }
 
         /**
-         * Returns the notification self is currently visible in the banner area
+         * Returns the notification that is currently visible in the banner area
          * @returns {Notification}
          */
         NotificationService.prototype.getActiveNotification = function (){
@@ -126,13 +130,14 @@ define(
          * @param {Notification} notification The notification to display
          */
         NotificationService.prototype.notify = function (notification) {
-            /*var notification = new Notification(model),
-                self=this; */
-            var self = this,
-                timeout;
+            var self = this;
 
             if (notification.autoDismiss === true){
                 notification.autoDismiss = this.DEFAULT_AUTO_DISMISS;
+            }
+
+            if (notification.severity > this.highest.severity){
+                this.highest.severity = notification.severity;
             }
 
             this.notifications.push(notification);
@@ -155,7 +160,7 @@ define(
                  */
                 this.active.timeout = this.$timeout(function () {
                     self.dismissOrMinimize(self.active.notification);
-                }, this.FORCE_AUTO_DISMISS);
+                }, this.DEFAULT_AUTO_DISMISS);
             }
 
         };
@@ -200,17 +205,12 @@ define(
             var notification,
                 i=0;
 
-            this.highest.severity = MessageSeverity.INFO;
-
             /*
-            Loop through the notifications queue and find the first one self
+            Loop through the notifications queue and find the first one that
             has not already been minimized (manually or otherwise).
              */
             for (; i< this.notifications.length; i++) {
                 notification = this.notifications[i];
-                if (notification.severity > this.highest.severity){
-                    this.highest.severity = notification.severity;
-                }
 
                 if (!notification.minimized
                     && notification!== this.active.notification) {
@@ -232,10 +232,15 @@ define(
          */
         NotificationService.prototype.minimize = function (notification) {
             //Check this is a known notification
-            var index = this.notifications.indexOf(notification);
+            var index = this.notifications.indexOf(notification),
+                self = this;
             if (index >= 0) {
                 notification.minimized=true;
-                this.setActiveNotification(this.selectNextNotification());
+                //Add a brief timeout before showing the next notification
+                // in order to allow the minimize animation to run through.
+                this.$timeout(function() {
+                    self.setActiveNotification(self.selectNextNotification());
+                }, this.MINIMIZE_TIMEOUT);
             }
         };
 
@@ -266,11 +271,16 @@ define(
          * @param notification
          */
         NotificationService.prototype.dismissOrMinimize = function (notification){
-            if (notification.severity > MessageSeverity.INFO){
+
+            //For now minimize everything, and have discussion around which
+            //kind of messages should or should not be in the minimized
+            //notifications list
+            /*if (notification.severity > MessageSeverity.INFO){
                 this.minimize(notification);
             } else {
                 this.dismiss(notification);
-            }
+            }*/
+            this.minimize(notification);
         };
 
         return NotificationService;

@@ -175,21 +175,6 @@ define(
         };
 
         /**
-         * dialogModel: {
-         *     severity: string "error" | "info" | "alert",
-         *     title: string,
-         *     hint: string,
-         *     actionText: string,
-         *     progress: int,
-         *     progressText: string,
-         *     unknownProgress: boolean,
-         *     actions: [{
-         *         label: String,
-         *         action: function
-         *     }]
-         */
-
-        /**
          * A user action that can be performed from a blocking dialog. These
          * actions will be rendered as buttons within a blocking dialog.
          *
@@ -207,9 +192,9 @@ define(
          * @see NotificationService
          *
          * @typedef DialogModel
+         * @property {string} title the title to use for the dialog
          * @property {string} severity the severity level of this message.
          * These are defined in a bundle constant with key 'dialogSeverity'
-         * @property {string} title the title to use for the dialog
          * @property {string} hint the 'hint' message to show below the title
          * @property {string} actionText text that indicates a current action,
          * shown above a progress bar to indicate what's happening.

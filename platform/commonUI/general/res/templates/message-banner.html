@@ -1,7 +1,10 @@
 <div ng-controller="BannerController" ng-show="active.notification"
      class="l-message-banner s-message-banner" ng-class="{
-     'error': highest.severity===MessageSeverity.ERROR,
-     'alert': highest.severity===MessageSeverity.ALERT }"
+     'info': active.notification.severity===MessageSeverity.INFO,
+     'alert': active.notification.severity===MessageSeverity.ALERT,
+     'error': active.notification.severity===MessageSeverity.ERROR,
+     'minimized': active.notification.minimized,
+     'new': !active.notification.minimized}"
      ng-click="maximize(active.notification)">
     <span class="banner-elem label">
         {{active.notification.title}}

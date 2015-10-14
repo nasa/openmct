@@ -99,8 +99,8 @@ define(
             $scope.newAlert = function(){
 
                 notificationService.notify({
-                    title: "Error notification " + messageCounter++ + "!",
-                    hint: "An error has occurred",
+                    title: "Alert notification " + (messageCounter++) + "!",
+                    hint: "This is an alert message",
                     severity: MessageSeverity.ALERT,
                     primaryAction: {
                         label: 'Retry',
