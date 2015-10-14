@@ -116,7 +116,8 @@ define(
                         dialog: dialogModel,
                         confirm: jasmine.any(Function),
                         cancel: jasmine.any(Function)
-                    }
+                    },
+                    't-dialog'
                 );
             });
 
