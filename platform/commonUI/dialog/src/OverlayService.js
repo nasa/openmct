@@ -71,6 +71,9 @@ define(
          * @param {object} overlayModel the model to pass to the
          *        included overlay template (this will be passed
          *        in via ng-model)
+         * @param {string} typeClass the element class to use in rendering
+         *        the overlay. Can be specified to provide custom styling of
+         *        overlays
          */
         OverlayService.prototype.createOverlay = function (key, overlayModel, typeClass) {
             // Create a new scope for this overlay
@@ -87,13 +90,10 @@ define(
             // If no model is supplied, just fill in a default "cancel"
             overlayModel = overlayModel || { cancel: dismiss };
 
-            // If no typeClass is specified, set to default "t-dialog"
-            typeClass = typeClass || 't-dialog';
-
             // Populate the scope; will be passed directly to the template
             scope.overlay = overlayModel;
             scope.key = key;
-            scope.typeClass = typeClass;
+            scope.typeClass = typeClass || 't-dialog';
 
             // Create the overlay element and add it to the document's body
             element = this.$compile(TEMPLATE)(scope);

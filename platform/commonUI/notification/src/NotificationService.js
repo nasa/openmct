@@ -176,18 +176,14 @@ define(
                     timeout;
                 this.active.notification = notification;
                 /*
-                If autoDismiss has been specified, setup a timeout to
-                dismiss the dialog.
-
-                If there are other notifications pending in the queue, set this
-                one to auto-dismiss
+                If autoDismiss has been specified, OR there are other
+                 notifications queued for display, setup a timeout to
+                  dismiss the dialog.
                  */
-                if (notification && (notification.autoDismiss
+                if (notification && (notification.autoDismiss !== false
                     || this.selectNextNotification())) {
-                    timeout = notification.autoDismiss ?
-                        notification.autoDismiss :
-                        this.DEFAULT_AUTO_DISMISS;
 
+                    timeout = notification.autoDismiss || this.DEFAULT_AUTO_DISMISS;
                     this.active.timeout = this.$timeout(function () {
                         self.dismissOrMinimize(notification);
                     }, timeout);

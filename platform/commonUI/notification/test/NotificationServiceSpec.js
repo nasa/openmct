@@ -30,6 +30,7 @@ define(
             var notificationService,
                 mockTimeout,
                 mockAutoDismiss,
+                mockMinimizeTimeout,
                 successModel,
                 errorModel;
 
@@ -75,9 +76,9 @@ define(
 
             beforeEach(function(){
                 mockTimeout = jasmine.createSpy("$timeout");
-                mockAutoDismiss = 0;
+                mockAutoDismiss = mockMinimizeTimeout = 1000;
                 notificationService = new NotificationService(
-                    mockTimeout, mockAutoDismiss);
+                    mockTimeout, mockAutoDismiss, mockMinimizeTimeout);
                 successModel = {
                     title: "Mock Success Notification",
                     severity: MessageSeverity.INFO
@@ -104,6 +105,8 @@ define(
                 activeNotification = notificationService.getActiveNotification();
                 expect(activeNotification).toBe(successModel);
                 mockTimeout.mostRecentCall.args[0]();
+                expect(mockTimeout.calls.length).toBe(2);
+                mockTimeout.mostRecentCall.args[0]();
                 activeNotification = notificationService.getActiveNotification();
                 expect(activeNotification).toBeUndefined();
             });
@@ -115,6 +118,8 @@ define(
                 notificationService.notify(successModel);
                 activeNotification = notificationService.getActiveNotification();
                 expect(activeNotification).toBe(successModel);
+                mockTimeout.mostRecentCall.args[0]();
+                expect(mockTimeout.calls.length).toBe(2);
                 mockTimeout.mostRecentCall.args[0]();
                 activeNotification = notificationService.getActiveNotification();
                 expect(activeNotification).toBeUndefined();
@@ -135,9 +140,15 @@ define(
                     //But it should be auto-dismissed and replaced with the
                     // error notification
                     mockTimeout.mostRecentCall.args[0]();
+                    //Two timeouts, one is to force minimization after
+                    // displaying the message for a minimum period, the
+                    // second is to allow minimization animation to take place.
+                    mockTimeout.mostRecentCall.args[0]();
                     activeNotification = notificationService.getActiveNotification();
                     expect(activeNotification).toBe(errorModel);
                 });
+                /* Test is temporarily invalid as info messages are being
+                 minimized
                 it("auto-dismisses an active success notification, removing" +
                     " it completely", function() {
                     //First pre-load with a info message
@@ -146,9 +157,13 @@ define(
                     notificationService.notify(errorModel);
                     expect(notificationService.notifications.length).toEqual(2);
                     mockTimeout.mostRecentCall.args[0]();
+                    //Two timeouts, one is to force minimization after
+                    // displaying the message for a minimum period, the
+                    // second is to allow minimization animation to take place.
+                    mockTimeout.mostRecentCall.args[0]();
                     //Previous info message should be completely dismissed
                     expect(notificationService.notifications.length).toEqual(1);
-                });
+                });*/
                 it("auto-minimizes an active error notification", function() {
                     var activeNotification;
                     //First pre-load with an error message
@@ -157,6 +172,10 @@ define(
                     notificationService.notify(successModel);
                     expect(notificationService.notifications.length).toEqual(2);
                     //Mock the auto-minimize
+                    mockTimeout.mostRecentCall.args[0]();
+                    //Two timeouts, one is to force minimization after
+                    // displaying the message for a minimum period, the
+                    // second is to allow minimization animation to take place.
                     mockTimeout.mostRecentCall.args[0]();
                     //Previous error message should be minimized, not
                     // dismissed
@@ -186,6 +205,10 @@ define(
                     expect(notificationService.notifications.length).toEqual(3);
                     //Mock the auto-minimize
                     mockTimeout.mostRecentCall.args[0]();
+                    //Two timeouts, one is to force minimization after
+                    // displaying the message for a minimum period, the
+                    // second is to allow minimization animation to take place.
+                    mockTimeout.mostRecentCall.args[0]();
                     //Previous error message should be minimized, not
                     // dismissed
                     expect(notificationService.notifications.length).toEqual(3);
@@ -195,6 +218,10 @@ define(
                     expect(errorModel.minimized).toEqual(true);
 
                     //Mock the second auto-minimize
+                    mockTimeout.mostRecentCall.args[0]();
+                    //Two timeouts, one is to force minimization after
+                    // displaying the message for a minimum period, the
+                    // second is to allow minimization animation to take place.
                     mockTimeout.mostRecentCall.args[0]();
                     activeNotification =
                         notificationService.getActiveNotification();
