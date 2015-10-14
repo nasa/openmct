@@ -34,7 +34,8 @@
         ],
         "indicators": [
             {
-                "implementation": "NotificationIndicator.js"
+                "implementation": "NotificationIndicator.js",
+                "priority": "fallback"
             }
         ],
         "services": [

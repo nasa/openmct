@@ -16,9 +16,9 @@
     </span>
     <a ng-hide="active.notification.primaryAction === undefined"
        class="banner-elem l-action s-action"
-       ng-click="active.notification.primaryAction.action()">
+       ng-click="action(active.notification.primaryAction.action, $event)">
         {{active.notification.primaryAction.label}}
     </a>
-    <a class="banner-elem ui-symbol close" ng-click="dismiss(active.notification)">
+    <a class="banner-elem ui-symbol close" ng-click="dismiss(active.notification, $event)">
         &#x78;</a>
 </div>

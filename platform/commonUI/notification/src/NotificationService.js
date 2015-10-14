@@ -180,7 +180,7 @@ define(
                  notifications queued for display, setup a timeout to
                   dismiss the dialog.
                  */
-                if (notification && (notification.autoDismiss !== false
+                if (notification && (notification.autoDismiss
                     || this.selectNextNotification())) {
 
                     timeout = notification.autoDismiss || this.DEFAULT_AUTO_DISMISS;

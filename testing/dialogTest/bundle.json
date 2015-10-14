@@ -34,10 +34,12 @@
         ],
         "indicators": [
             {
-                "implementation": "DialogLaunchIndicator.js"
+                "implementation": "DialogLaunchIndicator.js",
+                "priority": "fallback"
             },
             {
-                "implementation": "NotificationLaunchIndicator.js"
+                "implementation": "NotificationLaunchIndicator.js",
+                "priority": "fallback"
             }
         ]
     }

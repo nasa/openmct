@@ -28,7 +28,12 @@ define(
         function BannerController($scope, notificationService, dialogService) {
             $scope.active = notificationService.active;
             $scope.MessageSeverity = MessageSeverity;
-            $scope.dismiss = function(notification) {
+            $scope.action = function (action, $event){
+                $event.stopPropagation();
+                return action();
+            }
+            $scope.dismiss = function(notification, $event) {
+                $event.stopPropagation();
                 notificationService.dismissOrMinimize(notification);
             };
             $scope.maximize = function(notification) {
