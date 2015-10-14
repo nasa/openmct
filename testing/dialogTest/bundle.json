@@ -28,6 +28,7 @@
                 "depends": [
                     "$scope",
                     "$timeout",
+                    "$log",
                     "notificationService"
                 ]
             }

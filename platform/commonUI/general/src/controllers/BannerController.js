@@ -31,7 +31,7 @@ define(
             $scope.action = function (action, $event){
                 $event.stopPropagation();
                 return action();
-            }
+            };
             $scope.dismiss = function(notification, $event) {
                 $event.stopPropagation();
                 notificationService.dismissOrMinimize(notification);
@@ -40,10 +40,10 @@ define(
                 if (notification.severity > MessageSeverity.INFO){
                     notification.cancel = function(){
                         dialogService.dismiss();
-                    }
+                    };
                     dialogService.showBlockingMessage(notification);
                 }
-            }
+            };
         }
         return BannerController;
     });

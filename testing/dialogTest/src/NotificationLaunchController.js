@@ -26,13 +26,13 @@ define(
     function (MessageSeverity) {
         "use strict";
 
-        function NotificationLaunchController($scope, $timeout, notificationService) {
+        function NotificationLaunchController($scope, $timeout, $log, notificationService) {
             var messageCounter = 1;
             $scope.newSuccess = function(){
 
                 notificationService.info({
                     title: "Success notification!"
-                })
+                });
             };
 
             function getExampleActionText() {
@@ -90,7 +90,7 @@ define(
                     primaryAction: {
                         label: 'Retry',
                         action: function() {
-                            console.log('Retry clicked');
+                            $log.info('Retry clicked');
                         }
                     },
                     actions: getExampleActions()});
@@ -105,7 +105,7 @@ define(
                     primaryAction: {
                         label: 'Retry',
                         action: function() {
-                            console.log('Retry clicked');
+                            $log.info('Retry clicked');
                         }
                     },
                     actions: getExampleActions()});
@@ -127,7 +127,7 @@ define(
                     notification.progressText = ["Estimated time remaining:" +
                     " about ", 60 - Math.floor((notification.progress / 100) * 60), " seconds"].join(" ");
                     if (notification.progress < 100) {
-                        $timeout(function(){incrementProgress(notification)}, 1000);
+                        $timeout(function(){incrementProgress(notification);}, 1000);
                     }
                 }
 
