@@ -26,9 +26,8 @@ define(
     function () {
         "use strict";
 
-        var CONDUCTOR_HEIGHT = "100px",
-            TEMPLATE = [
-                "<mct-include key=\"'time-conductor'\" ng-model='ngModel'>",
+        var TEMPLATE = [
+                "<mct-include key=\"'time-conductor'\" ng-model='ngModel' class='l-time-controller'>",
                 "</mct-include>"
             ].join(''),
             THROTTLE_MS = 200,

@@ -10,8 +10,8 @@
 
 }
 
-.l-time-controller {
-	$minW: 400px;
+mct-include.l-time-controller {
+	$minW: 500px;
 	$knobHOffset: 0px;
 	$knobM: ($sliderKnobW + $knobHOffset) * -1;
 	$rangeValPad: $interiorMargin;
@@ -22,11 +22,17 @@
 	$r2H: nth($ueTimeControlH,2);
 	$r3H: nth($ueTimeControlH,3);
 
-	//height: $r1H + $r2H + $r3H + ($interiorMargin * 2);
+    @include absPosDefault();
+    //@include test();
+    display: block;
+    top: auto;
+	height: $r1H + $r2H + $r3H + ($interiorMargin * 2);
+    min-width: $minW;
+    font-size: 0.8rem;
 
 	.l-time-range-inputs-holder,
 	.l-time-range-slider {
-		font-size: 0.8em;
+		//font-size: 0.8em;
 	}
 
 	.l-time-range-inputs-holder,
@@ -36,7 +42,6 @@
 		//@include test();
 		@include absPosDefault(0, visible);
 		@include box-sizing(border-box);
-		min-width: $minW;
 		top: auto;
 	}
 	.l-time-range-slider,
@@ -141,7 +146,7 @@
 					@include webkitProp(transform, translateX(-50%));
 					color: $colorPlotLabelFg;
 					display: inline-block;
-					font-size: 0.7em;
+					font-size: 0.9em;
 					position: absolute;
 					top: 8px;
 					white-space: nowrap;
