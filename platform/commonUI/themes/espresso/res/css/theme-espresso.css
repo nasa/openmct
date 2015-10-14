@@ -20,7 +20,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -41,38 +41,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -2398,12 +2398,15 @@ label.checkbox.custom {
   .status.block .status-indicator {
     margin-right: 3px; }
   /* line 54, ../../../../general/res/sass/controls/_messages.scss */
-  .status.block.ok .status-indicator {
+  .status.block.ok .status-indicator, .status.block.info .status-indicator {
     color: #62ba72; }
-  /* line 57, ../../../../general/res/sass/controls/_messages.scss */
-  .status.block.caution .status-indicator {
+  /* line 58, ../../../../general/res/sass/controls/_messages.scss */
+  .status.block.alert .status-indicator, .status.block.warning .status-indicator, .status.block.caution .status-indicator {
     color: #ffa66d; }
-  /* line 60, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 63, ../../../../general/res/sass/controls/_messages.scss */
+  .status.block.error .status-indicator {
+    color: #d4585c; }
+  /* line 66, ../../../../general/res/sass/controls/_messages.scss */
   .status.block .label {
     -moz-transition-property: max-width;
     -o-transition-property: max-width;
@@ -2419,7 +2422,7 @@ label.checkbox.custom {
     transition-timing-function: ease-in-out;
     overflow: hidden;
     max-width: 0px; }
-  /* line 66, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 72, ../../../../general/res/sass/controls/_messages.scss */
   .status.block .count {
     -moz-transition-property: opacity;
     -o-transition-property: opacity;
@@ -2435,27 +2438,27 @@ label.checkbox.custom {
     transition-timing-function: ease-in-out;
     font-weight: bold;
     opacity: 1; }
-  /* line 72, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 78, ../../../../general/res/sass/controls/_messages.scss */
   .status.block:hover .label {
     max-width: 450px;
     width: auto; }
-  /* line 76, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 82, ../../../../general/res/sass/controls/_messages.scss */
   .status.block:hover .count {
     opacity: 0; }
 
 /* Styles for messages and message banners */
-/* line 84, ../../../../general/res/sass/controls/_messages.scss */
+/* line 90, ../../../../general/res/sass/controls/_messages.scss */
 .message.block {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
   padding: 10px; }
-/* line 88, ../../../../general/res/sass/controls/_messages.scss */
+/* line 94, ../../../../general/res/sass/controls/_messages.scss */
 .message.error {
   background-color: rgba(255, 83, 58, 0.3);
   color: #ffaca0; }
 
-/* line 94, ../../../../general/res/sass/controls/_messages.scss */
+/* line 100, ../../../../general/res/sass/controls/_messages.scss */
 .l-message-banner {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -2484,49 +2487,70 @@ label.checkbox.custom {
   -webkit-transform: translateX(-50%);
   transform: translateX(-50%);
   z-index: 10; }
-  /* line 110, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 116, ../../../../general/res/sass/controls/_messages.scss */
+  .l-message-banner.minimized {
+    -moz-transition-property: left, opacity;
+    -o-transition-property: left, opacity;
+    -webkit-transition-property: left, opacity;
+    transition-property: left, opacity;
+    -moz-transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    -webkit-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    left: 0;
+    opacity: 0; }
+  /* line 124, ../../../../general/res/sass/controls/_messages.scss */
+  .l-message-banner.new {
+    left: 50%;
+    opacity: 1; }
+    /* line 127, ../../../../general/res/sass/controls/_messages.scss */
+    .l-message-banner.new:not(.info) {
+      -moz-animation-name: pulse;
+      -webkit-animation-name: pulse;
+      animation-name: pulse;
+      -moz-animation-duration: 100ms;
+      -webkit-animation-duration: 100ms;
+      animation-duration: 100ms;
+      -moz-animation-direction: alternate;
+      -webkit-animation-direction: alternate;
+      animation-direction: alternate;
+      -moz-animation-iteration-count: 10;
+      -webkit-animation-iteration-count: 10;
+      animation-iteration-count: 10;
+      -moz-animation-timing-function: ease-in-out;
+      -webkit-animation-timing-function: ease-in-out;
+      animation-timing-function: ease-in-out; }
+  /* line 132, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner .banner-elem {
     -webkit-flex: 0 1 auto;
     flex: 0 1 auto;
     margin-left: 5px; }
-  /* line 114, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 136, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner a {
     display: inline-block; }
-  /* line 117, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 139, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner .l-action {
     line-height: 15px;
     padding: 0 5px; }
-  /* line 121, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 143, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner .close {
     cursor: pointer;
     font-size: 7px;
     width: 8px; }
-  /* line 127, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 149, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner .l-progress-bar {
     height: 8px;
     line-height: 8px;
     width: 100px; }
-  /* line 133, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 155, ../../../../general/res/sass/controls/_messages.scss */
   .l-message-banner .progress-info {
     display: none; }
 
-/* line 137, ../../../../general/res/sass/controls/_messages.scss */
-.s-message-banner,
-.s-message-banner .s-action {
-  -moz-transition-property: background-color;
-  -o-transition-property: background-color;
-  -webkit-transition-property: background-color;
-  transition-property: background-color;
-  -moz-transition-duration: 0.25s;
-  -o-transition-duration: 0.25s;
-  -webkit-transition-duration: 0.25s;
-  transition-duration: 0.25s;
-  -moz-transition-timing-function: ease-in-out;
-  -o-transition-timing-function: ease-in-out;
-  -webkit-transition-timing-function: ease-in-out;
-  transition-timing-function: ease-in-out; }
-
-/* line 142, ../../../../general/res/sass/controls/_messages.scss */
+/* line 165, ../../../../general/res/sass/controls/_messages.scss */
 .s-message-banner {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
@@ -2543,46 +2567,71 @@ label.checkbox.custom {
     /* line 33, ../../../../general/res/sass/controls/_messages.scss */
     .s-message-banner .s-action:hover {
       background-color: gray; }
-  /* line 146, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 169, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner a {
     color: inherit; }
-  /* line 147, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 170, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner .s-action {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
-    border-radius: 3px; }
-  /* line 150, ../../../../general/res/sass/controls/_messages.scss */
+    border-radius: 3px;
+    -moz-transition-property: background-color;
+    -o-transition-property: background-color;
+    -webkit-transition-property: background-color;
+    transition-property: background-color;
+    -moz-transition-duration: 500ms;
+    -o-transition-duration: 500ms;
+    -webkit-transition-duration: 500ms;
+    transition-duration: 500ms;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out; }
+  /* line 174, ../../../../general/res/sass/controls/_messages.scss */
   .s-message-banner .close {
     opacity: 0.5; }
-    /* line 152, ../../../../general/res/sass/controls/_messages.scss */
+    /* line 176, ../../../../general/res/sass/controls/_messages.scss */
     .s-message-banner .close:hover {
       opacity: 1; }
-  /* line 156, ../../../../general/res/sass/controls/_messages.scss */
-  .s-message-banner.ok {
+  /* line 180, ../../../../general/res/sass/controls/_messages.scss */
+  .s-message-banner.ok, .s-message-banner.info {
     background-color: #285b31;
     color: #ccc; }
     /* line 28, ../../../../general/res/sass/controls/_messages.scss */
-    .s-message-banner.ok:hover {
+    .s-message-banner.ok:hover, .s-message-banner.info:hover {
       background-color: #387e44; }
     /* line 31, ../../../../general/res/sass/controls/_messages.scss */
-    .s-message-banner.ok .s-action {
+    .s-message-banner.ok .s-action, .s-message-banner.info .s-action {
       background-color: #18381e; }
       /* line 33, ../../../../general/res/sass/controls/_messages.scss */
-      .s-message-banner.ok .s-action:hover {
+      .s-message-banner.ok .s-action:hover, .s-message-banner.info .s-action:hover {
         background-color: #285b31; }
-  /* line 159, ../../../../general/res/sass/controls/_messages.scss */
-  .s-message-banner.caution {
+  /* line 184, ../../../../general/res/sass/controls/_messages.scss */
+  .s-message-banner.caution, .s-message-banner.warning, .s-message-banner.alert {
     background-color: #d35200;
     color: #ccc; }
     /* line 28, ../../../../general/res/sass/controls/_messages.scss */
-    .s-message-banner.caution:hover {
+    .s-message-banner.caution:hover, .s-message-banner.warning:hover, .s-message-banner.alert:hover {
       background-color: #ff6807; }
     /* line 31, ../../../../general/res/sass/controls/_messages.scss */
-    .s-message-banner.caution .s-action {
+    .s-message-banner.caution .s-action, .s-message-banner.warning .s-action, .s-message-banner.alert .s-action {
       background-color: #a03e00; }
       /* line 33, ../../../../general/res/sass/controls/_messages.scss */
-      .s-message-banner.caution .s-action:hover {
+      .s-message-banner.caution .s-action:hover, .s-message-banner.warning .s-action:hover, .s-message-banner.alert .s-action:hover {
         background-color: #d35200; }
+  /* line 189, ../../../../general/res/sass/controls/_messages.scss */
+  .s-message-banner.error {
+    background-color: #751e21;
+    color: #ccc; }
+    /* line 28, ../../../../general/res/sass/controls/_messages.scss */
+    .s-message-banner.error:hover {
+      background-color: #9d292c; }
+    /* line 31, ../../../../general/res/sass/controls/_messages.scss */
+    .s-message-banner.error .s-action {
+      background-color: #4c1415; }
+      /* line 33, ../../../../general/res/sass/controls/_messages.scss */
+      .s-message-banner.error .s-action:hover {
+        background-color: #751e21; }
 
 /* Paths:
     t-dialog | t-dialog-sm > t-message-single | t-message-list > overlay > holder > contents > l-message >
@@ -2597,7 +2646,7 @@ label.checkbox.custom {
                 ... same as above
         bottom-bar
 */
-/* line 201, ../../../../general/res/sass/controls/_messages.scss */
+/* line 231, ../../../../general/res/sass/controls/_messages.scss */
 .l-message {
   display: -webkit-flex;
   display: flex;
@@ -2605,52 +2654,52 @@ label.checkbox.custom {
   flex-direction: row;
   -webkit-align-items: stretch;
   align-items: stretch; }
-  /* line 205, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 235, ../../../../general/res/sass/controls/_messages.scss */
   .l-message .type-icon.message-type {
     -webkit-flex: 0 1 auto;
     flex: 0 1 auto;
     position: relative; }
-  /* line 210, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 240, ../../../../general/res/sass/controls/_messages.scss */
   .l-message .message-contents {
     -webkit-flex: 1 1 auto;
     flex: 1 1 auto;
     margin-left: 25px;
     position: relative; }
-    /* line 216, ../../../../general/res/sass/controls/_messages.scss */
+    /* line 246, ../../../../general/res/sass/controls/_messages.scss */
     .l-message .message-contents .top-bar,
     .l-message .message-contents .message-body {
       margin-bottom: 20px; }
 
-/* line 165, ../../../../general/res/sass/controls/_messages.scss */
+/* line 195, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-single .type-icon.message-type {
   text-shadow: rgba(0, 0, 0, 0.4) 0 1px 2px;
   color: #ccc;
   font-size: 80px;
   padding: 1px;
   width: 82px; }
-  /* line 167, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 197, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .type-icon.message-type:before {
     content: "\e608"; }
-/* line 174, ../../../../general/res/sass/controls/_messages.scss */
+/* line 204, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-single .message-severity-info .type-icon.message-type {
   color: #62ba72; }
-  /* line 175, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 205, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .message-severity-info .type-icon.message-type:before {
     content: "\e608"; }
-/* line 178, ../../../../general/res/sass/controls/_messages.scss */
+/* line 208, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-single .message-severity-alert .type-icon.message-type {
   color: #ffa66d; }
-  /* line 179, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 209, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .message-severity-alert .type-icon.message-type:before {
     content: "\e610"; }
-/* line 182, ../../../../general/res/sass/controls/_messages.scss */
+/* line 212, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-single .message-severity-error .type-icon.message-type {
   color: #d4585c; }
-  /* line 183, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 213, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .message-severity-error .type-icon.message-type:before {
     content: "\21"; }
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 229, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 259, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .l-message,
   .t-message-single .bottom-bar {
     overflow: hidden;
@@ -2661,40 +2710,40 @@ label.checkbox.custom {
     left: 0px;
     width: auto;
     height: auto; }
-  /* line 234, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 264, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .bottom-bar {
     top: auto;
     height: 24px; } }
 
-/* line 165, ../../../../general/res/sass/controls/_messages.scss */
+/* line 195, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-list .type-icon.message-type {
   text-shadow: rgba(0, 0, 0, 0.4) 0 1px 2px;
   color: #ccc;
   font-size: 32px;
   padding: 1px;
   width: 34px; }
-  /* line 167, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 197, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .type-icon.message-type:before {
     content: "\e608"; }
-/* line 174, ../../../../general/res/sass/controls/_messages.scss */
+/* line 204, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-list .message-severity-info .type-icon.message-type {
   color: #62ba72; }
-  /* line 175, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 205, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-severity-info .type-icon.message-type:before {
     content: "\e608"; }
-/* line 178, ../../../../general/res/sass/controls/_messages.scss */
+/* line 208, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-list .message-severity-alert .type-icon.message-type {
   color: #ffa66d; }
-  /* line 179, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 209, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-severity-alert .type-icon.message-type:before {
     content: "\e610"; }
-/* line 182, ../../../../general/res/sass/controls/_messages.scss */
+/* line 212, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-list .message-severity-error .type-icon.message-type {
   color: #d4585c; }
-  /* line 183, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 213, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-severity-error .type-icon.message-type:before {
     content: "\21"; }
-/* line 246, ../../../../general/res/sass/controls/_messages.scss */
+/* line 276, ../../../../general/res/sass/controls/_messages.scss */
 .t-message-list .message-contents .l-message {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
@@ -2702,26 +2751,26 @@ label.checkbox.custom {
   background: rgba(230, 230, 230, 0.1);
   margin-bottom: 5px;
   padding: 10px; }
-  /* line 253, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 283, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-contents .l-message .message-contents,
   .t-message-list .message-contents .l-message .bottom-bar {
     position: relative; }
-  /* line 259, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 289, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-contents .l-message .message-contents {
     font-size: 0.9em;
     margin-left: 10px; }
-    /* line 262, ../../../../general/res/sass/controls/_messages.scss */
+    /* line 292, ../../../../general/res/sass/controls/_messages.scss */
     .t-message-list .message-contents .l-message .message-contents .message-action {
       color: #b3b3b3; }
-    /* line 263, ../../../../general/res/sass/controls/_messages.scss */
+    /* line 293, ../../../../general/res/sass/controls/_messages.scss */
     .t-message-list .message-contents .l-message .message-contents .bottom-bar {
       text-align: left; }
-  /* line 266, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 296, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-contents .l-message .top-bar,
   .t-message-list .message-contents .l-message .message-body {
     margin-bottom: 10px; }
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 274, ../../../../general/res/sass/controls/_messages.scss */
+  /* line 304, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-contents .l-message {
     margin-right: 10px; } }
 
