@@ -28,6 +28,9 @@ define(
 
         function NotificationIndicatorController($scope, notificationService, dialogService) {
             $scope.notifications = notificationService.notifications;
+            $scope.highest = notificationService.highest;
+            $scope.MessageSeverity = MessageSeverity;
+
             $scope.showNotificationsList = function(){
 
                 var model = {

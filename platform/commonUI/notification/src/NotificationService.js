@@ -254,8 +254,8 @@ define(
             var index = this.notifications.indexOf(notification);
             if (index >= 0) {
                 this.notifications.splice(index, 1);
-                this.setActiveNotification(this.selectNextNotification());
             }
+            this.setActiveNotification(this.selectNextNotification());
         };
 
         /**

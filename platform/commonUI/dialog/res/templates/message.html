@@ -1,7 +1,8 @@
 <div ng-controller="MessageController"
      class="l-message"
      title="{{MessageSeverity}}"
-     ng-class="{'message-severity-info': ngModel.severity===MessageSeverity.INFO,
+     ng-class="{
+     'message-severity-info': ngModel.severity===MessageSeverity.INFO,
      'message-severity-error': ngModel.severity===MessageSeverity.ERROR,
      'message-severity-alert': ngModel.severity===MessageSeverity.ALERT}">
     <div class="ui-symbol type-icon message-type"></div>

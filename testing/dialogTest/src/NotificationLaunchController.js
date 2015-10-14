@@ -96,6 +96,21 @@ define(
                     actions: getExampleActions()});
             };
 
+            $scope.newAlert = function(){
+
+                notificationService.notify({
+                    title: "Error notification " + messageCounter++ + "!",
+                    hint: "An error has occurred",
+                    severity: MessageSeverity.ALERT,
+                    primaryAction: {
+                        label: 'Retry',
+                        action: function() {
+                            console.log('Retry clicked');
+                        }
+                    },
+                    actions: getExampleActions()});
+            };
+
             $scope.newProgress = function(){
 
                 var notification = {

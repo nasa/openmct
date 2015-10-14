@@ -1,8 +1,12 @@
-<span ng-show="notifications.length > 0" class="status block caution"
+<span ng-show="notifications.length > 0" class="status block"
+      ng-class="{
+     'error': highest.severity===MessageSeverity.ERROR,
+     'alert': highest.severity===MessageSeverity.ALERT }"
       ng-controller="NotificationIndicatorController">
-    <span class="ui-symbol status-indicator">&#x21;</span>
+    <span class="ui-symbol status-indicator">&#xe610;</span>
     <span class="label">
-        <a ng-click="showNotificationsList()">{{notifications.length}} Notifications</a>
+        <a ng-click="showNotificationsList()">{{notifications.length}}
+            Notifications {{highest.severity}}</a>
     </span>
     <span class="count">{{notifications.length}}</span>
 </span>
