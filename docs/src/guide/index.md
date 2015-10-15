@@ -1561,19 +1561,21 @@ extension mechanism is insufficient to achieve a desired result.
  
 ### Action Service
 
-The `actionService` provides `Action` instances which are applicable in specific 
-contexts. See Core API for additional notes on the interface for actions. The 
-`actionService` has the following interface: 
+The [Action Service](../architecture/platform#action-service) (`actionService`) 
+provides `Action` instances which are applicable in specific contexts. See Core 
+API for additional notes on the interface for actions. The `actionService` has 
+the following interface: 
 
 * `getActions(context)`: Returns an array of Action objects which are applicable 
 in the specified action context.   
 
 ### Capability Service 
 
-The capabilityServic e provides constructors for capabilities which will be 
-exposed for a given domain object. 
+The [Capability Service](../architecture/platform#capability-service) (`capabilityService`) 
+provides constructors for capabilities which will be exposed for a given domain 
+object. 
 
-Th e capabilityService has the following interface: 
+The capabilityService has the following interface: 
 
 * `getCapabilities(model)`: Returns a an object containing key-value pairs, 
 representing capabilities which should be exposed by the domain object with this 
@@ -1620,20 +1622,20 @@ option may have the following properties:
     when clicked. 
     * `description`: Description to show in tooltip on hover.
 
-## Domain Object Service 
+### Domain Object Service 
 
-The objectService provides domain object instances. It has the following 
-interface:
+The [Object Service](../architecture/platform.md#object-service) (`objectService`)
+provides domain object instances. It has the following interface:
 
 * `getObjects(ids)`: For the provided array of domain object identifiers, 
 returns a Promise for an object containing key-value pairs, where keys are 
 domain object identifiers and values are corresponding DomainObject instances. 
 Note that the result may contain a superset or subset of the objects requested. 
 
-## Gesture Service 
+### Gesture Service 
 
-The `gestureService` is used to attach gestures (see extension category 
- gestures ) to representations. It has the following interface:
+The `gestureService` is used to attach gestures (see extension category gestures) 
+to representations. It has the following interface:
 
 * `attachGestures(element, domainObject, keys)`: Attach gestures specified by 
 the provided gesture keys  (an array of strings) to this jqLite-wrapped HTML 
@@ -1641,18 +1643,20 @@ element , which represents the specified domainObject . Returns an object with a
 single method `destroy()`, to be invoked when it is time to detach these 
 gestures. 
 
-## Model Service 
+### Model Service 
 
-The modelService provides domain object models. It has the following interface: 
+The [Model Service](../architecture/platform.md#model-service) (`modelService`) 
+provides domain object models. It has the following interface: 
 
 * `getModels(ids)`: For the provided array of domain object identifiers, returns 
 a Promise for an object containing key-value pairs, where keys are domain object 
 identifiers and values are corresponding domain object models. Note that the 
 result may contain a superset or subset of the models requested. 
 
-## Persistence Service 
+### Persistence Service 
 
-The persistenceService provides the ability to load/store JavaScript objects 
+The [Persistence Service](../architecture/platform.md#persistence-service) (`persistenceService`)
+provides the ability to load/store JavaScript objects 
 (presumably serializing/deserializing to JSON in the process.) This is used 
 primarily to store domain object models. It has the following interface: 
 
@@ -1678,16 +1682,18 @@ the update fails.
 persistence space , identified by the specified key . Returns a promise which will 
 be rejected if deletion fails. 
 
-## Policy Service 
+### Policy Service 
 
-The policyService may be used to determine whether or not certain behaviors are 
+The [Policy Service](../architecture/platform.md#policy-service) (`policyService`) 
+may be used to determine whether or not certain behaviors are 
 allowed within the application. It has the following interface: 
  
 * `allow(category, candidate, context, [callback])`: Check if this decision 
 should be allowed. Returns a boolean. Its arguments are interpreted as: 
     * `category`: A string identifying which kind of decision is being made. See 
-    the [section on Categories](#PolicyCategories) for categories supported by the platform; plugins 
-    may define and utilize policies of additional categories, as well. 
+    the [section on Categories](#PolicyCategories) for categories supported by 
+    the platform; plugins may define and utilize policies of additional 
+    categories, as well. 
     * `candidate`: An object representing the thing which shall or shall not be 
     allowed. Usually, this will be an instance of an extension of the category 
     defined above. This does need to be the case; additional policies which are 
@@ -1700,9 +1706,10 @@ should be allowed. Returns a boolean. Its arguments are interpreted as:
     This function will be called with the message string (which may be 
     undefined) of whichever individual policy caused the operation to fail. 
 
-## Telemetry Service 
+### Telemetry Service 
 
-The `telemetryService` is used to acquire telemetry data. See the section on 
+The [Telemetry Service](../architecture/platform.md#telemetry-service) (`telemetryService`)
+is used to acquire telemetry data. See the section on 
 Telemetry in Core API for more information on how both the arguments and 
 responses of this service are structured. 
 
@@ -1722,19 +1729,20 @@ matching the specified `requests`. The specified `callback` will be invoked with
 telemetry response objects as they become available. This method returns a 
 function which can be invoked to terminate the subscription. 
 
-## Type Service 
+### Type Service 
 
-The `typeService` exposes domain object types. It has the following interface:
+The [Type Service](../architecture/platform.md#type-service) (`typeService`) exposes 
+domain object types. It has the following interface:
 
 * `listTypes()`: Returns all domain object types supported in the application, 
 as an array of `Type` instances.
 * `getType(key)`: Returns the `Type` instance identified by the provided key, or 
 undefined if no such type exists. 
 
-## View Service 
+### View Service 
 
-The `viewService` exposes definitions for views of domain objects. It has the 
-following interface:
+The [View Service](../architecture/platform.md#view-service) (`viewService`) exposes 
+definitions for views of domain objects. It has the following interface:
  
 * `getViews(domainObject)`:  Get an array of extension definitions of category 
 `views` which are valid and applicable to the specified `domainObject`. 
