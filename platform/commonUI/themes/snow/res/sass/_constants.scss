@@ -36,7 +36,7 @@ $timeControllerToiLineColor: $colorBodyFg;
 $timeControllerToiLineColorHov: #0052b5;
 
 // General Colors
-$colorAlt1: #ff6600;
+$colorAlt1: #776ba2;
 $colorAlert: #ff3c00;
 $colorIconLink: #49dedb;
 $colorPausedBg: #ff9900;
@@ -162,3 +162,7 @@ $colorCalCellInMonthBg: pullForward($colorMenuBg, 5%);
 
 // About Screen
 $colorAboutLink: #84b3ff;
+
+// Loading
+$colorLoadingFg: $colorAlt1;
+$colorLoadingBg: rgba($colorLoadingFg, 0.1);

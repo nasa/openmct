@@ -112,6 +112,7 @@ ul.tree {
 		}
 	}
 
+    /*
 	&.loading {
 		pointer-events: none;
 		.label {
@@ -124,6 +125,7 @@ ul.tree {
 			margin-left: 14px;
 		}
 	}
+    */
 
 	&.selected {
 		background: $colorItemTreeSelectedBg;

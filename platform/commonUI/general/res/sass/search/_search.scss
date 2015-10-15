@@ -227,7 +227,8 @@
 
 		.load-icon {
 			position: relative;
-			&.loading {
+
+/*			&.loading {
 				pointer-events: none;
 				margin-left: $leftMargin;
 
@@ -248,7 +249,7 @@
 
 			&:not(.loading) {
 				cursor: pointer;
-			}
+			}*/
 		}
 
 		.load-more-button {

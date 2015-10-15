@@ -20,7 +20,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -41,38 +41,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -1059,27 +1059,22 @@ mct-container {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@-webkit-keyframes rotation {
-  from {
-    -webkit-transform: rotate(0deg); }
-  to {
-    -webkit-transform: rotate(359deg); } }
 @-moz-keyframes rotation {
-  from {
-    -moz-transform: rotate(0deg); }
-  to {
-    -moz-transform: rotate(359deg); } }
-@-o-keyframes rotation {
-  from {
-    -o-transform: rotate(0deg); }
-  to {
-    -o-transform: rotate(359deg); } }
-@keyframes rotation {
-  from {
+  0% {
     transform: rotate(0deg); }
-  to {
+  100% {
     transform: rotate(359deg); } }
-/* line 42, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+@-webkit-keyframes rotation {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(359deg); } }
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(359deg); } }
+/* line 63, ../../../../general/res/sass/helpers/_wait-spinner.scss */
 .t-wait-spinner,
 .wait-spinner {
   display: block;
@@ -1092,6 +1087,8 @@ mct-container {
   border-top-color: #0099cc;
   border-style: solid;
   border-width: 0.5em;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
   border-radius: 100%;
   top: 50%;
   left: 50%;
@@ -1102,7 +1099,7 @@ mct-container {
   margin-top: -5%;
   margin-left: -5%;
   z-index: 2; }
-  /* line 53, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 74, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .t-wait-spinner.inline,
   .wait-spinner.inline {
     display: inline-block !important;
@@ -1110,26 +1107,26 @@ mct-container {
     position: relative !important;
     vertical-align: middle; }
 
-/* line 61, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+/* line 82, ../../../../general/res/sass/helpers/_wait-spinner.scss */
 .l-wait-spinner-holder {
   pointer-events: none;
   position: absolute; }
-  /* line 65, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 86, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .l-wait-spinner-holder.align-left .t-wait-spinner {
     left: 0;
     margin-left: 0; }
-  /* line 70, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 91, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .l-wait-spinner-holder.full-size {
     display: inline-block;
     height: 100%;
     width: 100%; }
-    /* line 73, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+    /* line 94, ../../../../general/res/sass/helpers/_wait-spinner.scss */
     .l-wait-spinner-holder.full-size .t-wait-spinner {
       top: 0;
       margin-top: 0;
       padding: 30%; }
 
-/* line 82, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+/* line 103, ../../../../general/res/sass/helpers/_wait-spinner.scss */
 .treeview .wait-spinner {
   display: block;
   position: absolute;
@@ -1141,6 +1138,8 @@ mct-container {
   border-top-color: #0099cc;
   border-style: solid;
   border-width: 0.25em;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
   border-radius: 100%;
   height: 10px;
   width: 10px;
@@ -1149,7 +1148,7 @@ mct-container {
   top: 2px;
   left: 0; }
 
-/* line 91, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+/* line 112, ../../../../general/res/sass/helpers/_wait-spinner.scss */
 .wait-spinner.sm {
   display: block;
   position: absolute;
@@ -1161,6 +1160,8 @@ mct-container {
   border-top-color: #0099cc;
   border-style: solid;
   border-width: 0.25em;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
   border-radius: 100%;
   height: 13px;
   width: 13px;
@@ -1169,6 +1170,77 @@ mct-container {
   padding: 0 !important;
   top: 0;
   left: 0; }
+
+/* line 122, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+.loading {
+  pointer-events: none; }
+  /* line 125, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  .loading:before, .loading:after {
+    content: ''; }
+  /* line 129, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  .loading:before {
+    -moz-animation-name: rotateCentered;
+    -webkit-animation-name: rotateCentered;
+    animation-name: rotateCentered;
+    -moz-animation-duration: 0.5s;
+    -webkit-animation-duration: 0.5s;
+    animation-duration: 0.5s;
+    -moz-animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -moz-animation-timing-function: linear;
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+    border-color: rgba(255, 199, 0, 0.25);
+    border-top-color: #ffc700;
+    border-style: solid;
+    border-width: 5px;
+    -moz-border-radius: 100%;
+    -webkit-border-radius: 100%;
+    border-radius: 100%;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    height: 0;
+    width: 0;
+    padding: 7%;
+    left: 50%;
+    top: 50%;
+    z-index: 10; }
+@-moz-keyframes rotateCentered {
+  0% {
+    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+  100% {
+    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
+@-webkit-keyframes rotateCentered {
+  0% {
+    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+  100% {
+    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
+@keyframes rotateCentered {
+  0% {
+    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+  100% {
+    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
+  /* line 133, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  .loading:after {
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    width: auto;
+    height: auto;
+    background: rgba(153, 153, 153, 0.2);
+    display: block;
+    z-index: 9; }
+  /* line 139, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  .loading.tree-item:before {
+    padding: 0.375rem;
+    border-width: 2px; }
 
 /* Styles for messages */
 /* line 4, ../../../../general/res/sass/_messages.scss */
@@ -3525,7 +3597,7 @@ span.req {
   .object-holder.l-controls-visible.l-time-controller-visible {
     bottom: 88px; }
 
-/* line 305, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 302, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .s-btn, .object-browse-bar .s-menu-btn,
 .top-bar .buttons-main .s-btn,
 .top-bar .buttons-main .s-menu-btn,
@@ -3537,12 +3609,12 @@ span.req {
   line-height: 25px;
   vertical-align: top; }
 
-/* line 318, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 315, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .view-switcher,
 .top-bar .view-switcher {
   margin-right: 20px; }
 
-/* line 323, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 320, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar {
   overflow: visible;
   position: absolute;
@@ -3558,22 +3630,22 @@ span.req {
   height: 24px;
   line-height: 24px;
   white-space: nowrap; }
-  /* line 331, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 328, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-browse-bar .left {
     padding-right: 20px; }
-    /* line 333, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 330, ../../../../general/res/sass/user-environ/_layout.scss */
     .object-browse-bar .left .l-back {
       display: inline-block;
       float: left;
       margin-right: 10px; }
 
-/* line 341, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 338, ../../../../general/res/sass/user-environ/_layout.scss */
 .l-flex {
   display: flex;
   display: -webkit-flex;
   flex-flow: row nowrap;
   -webkit-flex-flow: row nowrap; }
-  /* line 344, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 341, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-flex .left {
     flex: 1 1 0;
     -webkit-flex: 1 1 0;
@@ -4072,25 +4144,30 @@ span.req {
     position: relative; }
     /* line 228, ../../../../general/res/sass/search/_search.scss */
     .search .search-scroll .load-icon {
-      position: relative; }
-      /* line 230, ../../../../general/res/sass/search/_search.scss */
-      .search .search-scroll .load-icon.loading {
-        pointer-events: none;
-        margin-left: 6px; }
-        /* line 234, ../../../../general/res/sass/search/_search.scss */
-        .search .search-scroll .load-icon.loading .title-label {
-          font-style: italic;
-          font-size: .9em;
-          opacity: 0.5;
-          margin-left: 26px;
-          line-height: 24px; }
-        /* line 244, ../../../../general/res/sass/search/_search.scss */
-        .search .search-scroll .load-icon.loading .wait-spinner {
-          margin-left: 6px; }
-      /* line 249, ../../../../general/res/sass/search/_search.scss */
-      .search .search-scroll .load-icon:not(.loading) {
-        cursor: pointer; }
-    /* line 254, ../../../../general/res/sass/search/_search.scss */
+      position: relative;
+      /*			&.loading {
+      				pointer-events: none;
+      				margin-left: $leftMargin;
+      
+      				.title-label {
+      					// Text styling
+      					font-style: italic;
+      					font-size: .9em;
+      					opacity: 0.5;
+      
+      					// Text positioning
+      					margin-left: $iconWidth + $leftMargin;
+      					line-height: 24px;
+      				}
+      				.wait-spinner {
+      					margin-left: $leftMargin;
+      				}
+      			}
+      
+      			&:not(.loading) {
+      				cursor: pointer;
+      			}*/ }
+    /* line 255, ../../../../general/res/sass/search/_search.scss */
     .search .search-scroll .load-more-button {
       margin-top: 5px 0;
       font-size: 0.8em;
@@ -4361,7 +4438,21 @@ ul.tree {
   height: 1.5rem;
   line-height: 1.5rem;
   margin-bottom: 3px;
-  position: relative; }
+  position: relative;
+    /*
+	&.loading {
+		pointer-events: none;
+		.label {
+			opacity: 0.5;
+			.title-label {
+				font-style: italic;
+			}
+		}
+		.wait-spinner {
+			margin-left: 14px;
+		}
+	}
+    */ }
   /* line 48, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .view-control,
   .search-result-item .view-control {
@@ -4444,63 +4535,47 @@ ul.tree {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap; }
-  /* line 115, ../../../../general/res/sass/tree/_tree.scss */
-  .tree-item.loading,
-  .search-result-item.loading {
-    pointer-events: none; }
-    /* line 117, ../../../../general/res/sass/tree/_tree.scss */
-    .tree-item.loading .label,
-    .search-result-item.loading .label {
-      opacity: 0.5; }
-      /* line 119, ../../../../general/res/sass/tree/_tree.scss */
-      .tree-item.loading .label .title-label,
-      .search-result-item.loading .label .title-label {
-        font-style: italic; }
-    /* line 123, ../../../../general/res/sass/tree/_tree.scss */
-    .tree-item.loading .wait-spinner,
-    .search-result-item.loading .wait-spinner {
-      margin-left: 14px; }
-  /* line 128, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 130, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item.selected,
   .search-result-item.selected {
     background: #006080;
     color: #cccccc; }
-    /* line 131, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 133, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .view-control,
     .search-result-item.selected .view-control {
       color: rgba(255, 255, 255, 0.3); }
-    /* line 134, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 136, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .label .type-icon,
     .search-result-item.selected .label .type-icon {
       color: #cccccc; }
   @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-    /* line 142, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 144, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item:not(.selected):hover,
     .search-result-item:not(.selected):hover {
       background: rgba(153, 153, 153, 0.1);
       color: #cccccc; }
-      /* line 148, ../../../../general/res/sass/tree/_tree.scss */
+      /* line 150, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item:not(.selected):hover .icon,
       .search-result-item:not(.selected):hover .icon {
         color: #33ccff; } }
-  /* line 155, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 157, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item:not(.loading),
   .search-result-item:not(.loading) {
     cursor: pointer; }
-  /* line 159, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 161, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .context-trigger,
   .search-result-item .context-trigger {
     top: -1px;
     position: absolute;
     right: 3px; }
-    /* line 165, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 167, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .context-trigger .invoke-menu,
     .search-result-item .context-trigger .invoke-menu {
       font-size: 0.75em;
       height: 0.9rem;
       line-height: 0.9rem; }
 
-/* line 174, ../../../../general/res/sass/tree/_tree.scss */
+/* line 176, ../../../../general/res/sass/tree/_tree.scss */
 .tree-item .label {
   left: 15px; }
 
