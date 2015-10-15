@@ -171,21 +171,23 @@ __bundles.json__
 ### Run a Web Server
 
 The next step is to run a web server so that you can view the Open MCT Web 
-client (including the plugins you add to it) in browser. The HTTP server option 
-that is recommended here, for simplicity, is http-server, 
-[https://www.npmjs.com/package/http-server](). 
+client (including the plugins you add to it) in browser. Any web server can 
+be used for hosting OpenMCTWeb, and a trivial web server is provided in this 
+package for the purposes of running the tutorials. The provided web server 
+should not be used in a production environment
+  
+To run the tutorial web server
 
-To run:
-
-    npm install http-server -g
-    http-server <path to Open MCT Web repository>
+    node app.js
 
 ### Viewing in Browser
 
 Once running, you should be able to view Open MCT Web from your browser at 
-[http://localhost:8080/](). [Google Chrome](https://www.google.com/chrome/) is 
-recommended for these tutorials, as Chrome is Open MCT Web’s “test-to” browser.
-The browser cache can sometimes interfere with development (masking changes by 
+[http://localhost:8080/]() (assuming the web server is running on port 8080, 
+and OpenMCTWeb is installed at the server's root path). 
+[Google Chrome](https://www.google.com/chrome/) is recommended for these 
+tutorials, as Chrome is Open MCT Web’s “test-to” browser. The browser cache 
+can sometimes interfere with development (masking changes by 
 using older versions of sources); to avoid this, it is easiest to run Chrome 
 with Developer Tools expanded, and “Disable cache” selected from the Network 
 tab, as shown below.
