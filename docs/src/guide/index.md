@@ -13,11 +13,149 @@ May 12, 2015        | 0.1       |                         | Victor Woeltjen
 June 4, 2015        | 1.0       | Name Changes            | Victor Woeltjen
 October 4, 2015     | 1.1       | Conversion to MarkDown  | Andrew Henry
 
+# Contents
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Introduction](#introduction)
+  - [What is Open MCT Web](#what-is-open-mct-web)
+  - [Client-Server Relationship](#client-server-relationship)
+  - [Developing with Open MCT Web](#developing-with-open-mct-web)
+    - [Technologies](#technologies)
+    - [Forking](#forking)
+- [Overview](#overview)
+  - [Framework Overview](#framework-overview)
+    - [Tiers](#tiers)
+  - [Platform Overview](#platform-overview)
+    - [Web Services](#web-services)
+    - [Glossary](#glossary)
+- [Framework](#framework)
+  - [Bundles](#bundles)
+    - [Configuring Active Bundles](#configuring-active-bundles)
+    - [Bundle Definition](#bundle-definition)
+    - [Bundle Directory Structure](#bundle-directory-structure)
+  - [Extensions](#extensions)
+    - [General Extensions](#general-extensions)
+    - [Extension Definitions](#extension-definitions)
+      - [Partial Construction](#partial-construction)
+      - [Priority](#priority)
+    - [Angular Built-ins](#angular-built-ins)
+      - [Angular Directives](#angular-directives)
+      - [Angular Controllers](#angular-controllers)
+      - [Angular Services](#angular-services)
+      - [Angular Constants](#angular-constants)
+      - [Angular Runs](#angular-runs)
+      - [Angular Routes](#angular-routes)
+    - [Composite Services](#composite-services)
+- [Core API](#core-api)
+  - [Domain Objects](#domain-objects)
+  - [Domain Object Actions](#domain-object-actions)
+    - [Action Contexts](#action-contexts)
+  - [Telemetry](#telemetry)
+    - [Telemetry Requests](#telemetry-requests)
+    - [Telemetry Responses](#telemetry-responses)
+    - [Telemetry Series](#telemetry-series)
+    - [Telemetry Metadata](#telemetry-metadata)
+  - [Types](#types)
+    - [Type Features](#type-features)
+    - [Type Properties](#type-properties)
+- [Extension Categories](#extension-categories)
+  - [Actions Category](#actions-category)
+  - [Capabilities Category](#capabilities-category)
+  - [Controls Category](#controls-category)
+  - [Gestures Category](#gestures-category)
+  - [Indicators Category](#indicators-category)
+    - [Standard Indicators](#standard-indicators)
+    - [Custom Indicators](#custom-indicators)
+  - [Licenses Category](#licenses-category)
+  - [Policies Category](#policies-category)
+  - [Representations Category](#representations-category)
+    - [Representation Scope](#representation-scope)
+  - [Representers Category](#representers-category)
+  - [Roots Category](#roots-category)
+  - [Stylesheets Category](#stylesheets-category)
+  - [Templates Category](#templates-category)
+  - [Types Category](#types-category)
+  - [Versions Category](#versions-category)
+  - [Views Category](#views-category)
+    - [View Scope](#view-scope)
+      - [Selection State](#selection-state)
+- [Directives](#directives)
+  - [Before Unload](#before-unload)
+  - [Chart](#chart)
+  - [Container](#container)
+  - [Control](#control)
+  - [Drag](#drag)
+  - [Form](#form)
+    - [Form Structure](#form-structure)
+    - [Form Controls](#form-controls)
+  - [Include](#include)
+  - [Representation](#representation)
+  - [Resize](#resize)
+  - [Scroll](#scroll)
+  - [Toolbar](#toolbar)
+    - [Toolbar Structure](#toolbar-structure)
+- [Services](#services)
+  - [Composite Type Services](#composite-type-services)
+    - [Action Service](#action-service)
+    - [Capability Service](#capability-service)
+    - [Dialog Service](#dialog-service)
+    - [Dialog Structure](#dialog-structure)
+    - [Domain Object Service](#domain-object-service)
+    - [Gesture Service](#gesture-service)
+    - [Model Service](#model-service)
+    - [Persistence Service](#persistence-service)
+    - [Policy Service](#policy-service)
+    - [Telemetry Service](#telemetry-service)
+    - [Type Service](#type-service)
+    - [View Service](#view-service)
+  - [Other Services](#other-services)
+    - [Drag and Drop](#drag-and-drop)
+    - [Navigation](#navigation)
+    - [Now](#now)
+    - [Telemetry Formatter](#telemetry-formatter)
+    - [Telemetry Handler](#telemetry-handler)
+      - [Telemetry Handle](#telemetry-handle)
+- [Models](#models)
+  - [General Metadata](#general-metadata)
+  - [Extension-specific Properties](#extension-specific-properties)
+    - [Capability-specific Properties](#capability-specific-properties)
+    - [View Configurations](#view-configurations)
+  - [Modifying Models](#modifying-models)
+- [Capabilities](#capabilities)
+  - [Action Capability](#action-capability)
+  - [Composition Capability](#composition-capability)
+  - [Delegation Capability](#delegation-capability)
+  - [Editor Capability](#editor-capability)
+  - [Mutation Capability](#mutation-capability)
+    - [Mutator Function](#mutator-function)
+  - [Persistence Capability](#persistence-capability)
+  - [Relationship Capability](#relationship-capability)
+  - [Telemetry Capability](#telemetry-capability)
+  - [Type Capability](#type-capability)
+  - [View Capability](#view-capability)
+- [Actions](#actions)
+  - [Action Categories](#action-categories)
+  - [Platform Actions](#platform-actions)
+- [Policies](#policies)
+  - [Policy Categories](#policy-categories)
+- [Build-Test-Deploy](#build-test-deploy)
+  - [Command-line Build](#command-line-build)
+  - [Test Suite](#test-suite)
+  - [Code Coverage](#code-coverage)
+  - [Deployment](#deployment)
+    - [Configuration](#configuration)
+    - [Configuration Constants](#configuration-constants)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Introduction
 The purpose of this guide is to familiarize software developers with the Open
 MCT Web platform.
 
-## What is Open MCT Web?
+## What is Open MCT Web
 Open MCT Web is a platform for building user interface and display tools,
 developed at the NASA Ames Research Center in collaboration with teams at the
 Jet Propulsion Laboratory. It is written in HTML5, CSS3, and JavaScript, using 
@@ -676,7 +814,7 @@ If the provided capability has no invoke method, the return value here functions
 as `getCapability` including returning `undefined` if the capability is not 
 exposed.
 
-## Actions
+## Domain Object Actions
 
 An `Action` is behavior that can be performed upon/using a `DomainObject`. An 
 Action has the following interface:
@@ -820,7 +958,7 @@ specific types; it does not contain a catalog of the extension instances of
 these categories provided by the platform. Relevant summaries there are provided 
 in subsequent sections.
  
-## Actions
+## Actions Category
 
 An action is a thing that can be done to or using a domain object, typically as 
 initiated by the user. 
@@ -853,7 +991,7 @@ Categories supported by the platform include:
 * `glyph`: A single character which will be rendered in Open MCT Web's custom 
 font set as an icon for this action.
 
-## Capabilities
+## Capabilities Category
 
 Capabilities are exposed by domain objects (e.g. via the `getCapability` method) 
 but most commonly originate as extensions of this category.
@@ -876,7 +1014,7 @@ which should return a boolean value, and will be used by the platform to filter
 down capabilities to those which should be exposed by specific domain objects, 
 based on their domain object models. 
  
-## Controls
+## Controls Category
 
 Controls provide options for the `mct-control` directive. 
  
@@ -911,7 +1049,7 @@ of an individual row definition.
 * `field`: Name of the field in `ngModel` which will hold the value for this 
 control. 
 
-## Gestures
+## Gestures Category
 
 A _gesture_ is a user action which can be taken upon a representation of a 
 domain object. 
@@ -935,7 +1073,7 @@ gesture's implementation may also expose an optional `destroy()`  method which
 will be called when the gesture should be removed, to avoid memory leaks by way 
 of unremoved listeners.
 
-## Indicators 
+## Indicators Category
 
 An indicator is an element that should appear in the status area at the bottom 
 of a running Open MCT Web client instance. 
@@ -971,7 +1109,7 @@ an `mct-include` directive (so should refer to an extension of category
  templates .) This template will be rendered to the status area. Indicators of 
 this variety do not need to provide an implementation. 
 
-## Licenses 
+## Licenses Category
 
 The extension category `licenses` can be used to add entries into the 'Licensing 
 information' page, reachable from Open MCT Web's About dialog. 
@@ -985,7 +1123,7 @@ Licenses may have the following properties, all of which are strings:
 * `copyright`: Copyright text to display for this component.
 * `link`: URL to full license text. 
 
-## Policies 
+## Policies Category
 
 Policies are used to handle decisions made using Open MCT Web's `policyService`; 
 examples of these decisions are determining the applicability of certain 
@@ -1012,7 +1150,7 @@ when and only when all policies choose to allow it. As such, policies should
 generally be written to reject a certain case, and allow (by returning `true`) 
 anything else. 
  
-## Representations
+## Representations Category
 
 A representation is an Angular template used to display a domain object. The 
 `representations` extension category is used to add options for the 
@@ -1062,7 +1200,7 @@ representation state.
 * Any capabilities requested by the uses property of the representation 
 definition.
  
-## Representers
+## Representers Category
 
 The `representers` extension category is used to add additional behavior to the 
 `mct-representation` directive. This extension category is intended primarily 
@@ -1086,7 +1224,7 @@ event listeners to the element, etc.
 This implementation must provide a single method, `destroy()`, which will be 
 invoked when the representer is no longer needed. 
 
-## Roots
+## Roots Category
 
 The extension category `roots` is used to provide root-level domain object 
 models. Root-level domain objects appear at the top-level of the tree hierarchy. 
@@ -1097,7 +1235,7 @@ Extensions of this category should have the following properties:
 * `id`: The machine-readable identifier for the domaiwn object being exposed.
 * `model`: The model, as a JSON object, for the domain object being exposed. 
 
-## Stylesheets 
+## Stylesheets Category
 
 The stylesheets extension category is used to add CSS files to style the 
 application. Extension definitions for this category should include one 
@@ -1110,7 +1248,7 @@ include. This path is relative to the bundle's resources folder (by default,
 To control the order of CSS files, use priority  (see the section on Extension 
 Definitions above.) 
 
-## Templates 
+## Templates Category
 
 The `templates` extension category is used to expose Angular templates under 
 symbolic identifiers. These can then be utilized using the `mct-include` 
@@ -1131,7 +1269,7 @@ in the bottom right, for instance.)
 
 Templates do not have implementations. 
 
-## Types 
+## Types Category
 
 The types extension category describes types of domain objects which may 
 appear within Open MCT Web.
@@ -1168,7 +1306,7 @@ property is described by an object containing the following properties:
     
 Types do not have implementations. 
  
-## Versions 
+## Versions Category
 The versions extension category is used to introduce line items in Open MCT 
 Web's About dialog. These should have the following properties: 
 
@@ -1182,7 +1320,7 @@ To control the ordering of line items within the About dialog, use `priority`.
 
 This extension category does not have implementations. 
  
-## Views 
+## Views Category
 
 The views extension category is used to determine which options appear to the 
 user as available views of domain objects of specific types. A view's extension 
@@ -1536,7 +1674,7 @@ Composite Services.)
 * _Other services_ which are defined as standalone service objects; these can be 
 utilized by plugins but are not intended to be modified or augmented. 
 
-## Composite Services
+## Composite Type Services
 
 This section describes the composite services exposed by Open MCT Web, 
 specifically focusing on their interface and contract. 
@@ -1924,7 +2062,7 @@ implementation of a given capability which might not invoke the underlying
 service, while user code which interacts with capabilities remains indifferent 
 to this detail. 
  
-## Action 
+## Action Capability
 
 The `action` capability is present for all domain objects. It allows applicable 
 `Action` instances to be retrieved and performed for specific domain objects. 
@@ -1946,7 +2084,7 @@ will instead be used as the `key` of the action context. Returns a `Promise` for
 the result of the action that was performed, or `undefined` if no matching action 
 was found. 
 
-## Composition 
+## Composition Capability
 
 The `composition` capability provides access to domain objects that are 
 contained by this domain object. While the `composition` property of a domain 
@@ -1959,7 +2097,7 @@ This capability has the following interface:
 
 * `invoke()`: Returns a `Promise` for an array of `DomainObject` instances.
 
-## Delegation 
+## Delegation Capability
 
 The delegation capability is used to communicate the intent of a domain object 
 to delegate responsibilities, which would normally handled by other 
@@ -1980,7 +2118,7 @@ strings describing which capabilities domain objects of that type wish to
 delegate. If this property is not present, the delegation capability will not be 
 present in domain objects of that type.  
 
-## Editor 
+## Editor Capability
 
 The editor capability is meant primarily for internal use by Edit mode, and 
 helps to manage the behavior associated with exiting _Edit_ mode via _Save_ or 
@@ -1988,7 +2126,7 @@ _Cancel_. Its interface is not intended for general use. However,
 `domainObject.hasCapability(editor)` is a useful way of determining whether or 
 not we are looking at an object in _Edit_ mode.
  
-## Mutation 
+## Mutation Capability
 
 The `mutation` capability provides a means by which the contents of a domain 
 object's model can be modified. This capability is provided by the platform for 
@@ -2005,7 +2143,7 @@ capability; other platform behavior is likely to break (either by exhibiting
 undesired behavior, or failing to exhibit desired behavior) if models are 
 modified by other means.
  
-### Mutator Function 
+### Mutator Function
 
 The mutator argument above is a function which will receive a cloned copy of the 
 domain object's model as a single argument. It may return: 
@@ -2019,7 +2157,7 @@ for this domain object.
 (including any changes made in place by the mutator function) will be used as 
 the new domain object model. 
 
-## Persistence
+## Persistence Capability
 
 The persistence capability provides a mean for interacting with the underlying 
 persistence service which stores this domain object's model. It has the 
@@ -2034,7 +2172,7 @@ completed.
 * `getSpace()`: Return the string which identifies the persistence space which 
 stores this domain object.
 
-## Relationship
+## Relationship Capability
 
 The relationship capability provides a means for accessing other domain objects 
 with which this domain object has some typed relationship. It has the following 
@@ -2051,7 +2189,7 @@ objects which has a `relationships` property in their model, whose value is an
 object containing key-value pairs, where keys are strings identifying 
 relationship types, and values are arrays of domain object identifiers.
 
-## Telemetry
+## Telemetry Capability
 
 The telemetry capability provides a means for accessing telemetry data 
 associated with a domain object. It has the following interface:
@@ -2074,11 +2212,11 @@ objects which has a `telemetry` property in their model and/or type definition;
 this object will serve as a template for telemetry requests made using this 
 object, and will also be returned by `getMetadata()` above.
 
-## Type
+## Type Capability
 The `type` capability exposes information about the domain object's type. It has 
 the same interface as `Type`; see Core API.
 
-## View
+## View Capability
 
 The `view` capability exposes views which are applicable to a given domain 
 object. It has the following interface:
@@ -2145,7 +2283,7 @@ contained.
 The candidate argument is the view's extension definition; the context argument 
 is the `DomainObject` to be viewed.
 
-# Build, Test, Deploy
+# Build-Test-Deploy
 Open MCT Web is designed to support a broad variety of build and deployment 
 options. The sources can be deployed in the same directory structure used during 
 development. A few utilities are included to support development processes.

@@ -14,6 +14,46 @@ July 28, 2015    | 2.0     | Telemetry adapter tutorial        | Victor Woeltjen
 July 31, 2015    | 2.1     | Clarify telemetry adapter details | Victor Woeltjen
 October 14, 2015 | 2.2     | Conversion to markdown            | Andrew Henry
 
+# Contents
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+
+- [Introduction](#introduction)
+  - [This document](#this-document)
+  - [Setting Up Open MCT Web](#setting-up-open-mct-web)
+    - [Prerequisites](#prerequisites)
+    - [Check out Open MCT Web Sources](#check-out-open-mct-web-sources)
+    - [Configuring Persistence](#configuring-persistence)
+      - [Bundle Before](#bundle-before)
+      - [Bundle After](#bundle-after)
+    - [Run a Web Server](#run-a-web-server)
+    - [Viewing in Browser](#viewing-in-browser)
+- [Tutorials](#tutorials)
+  - [To-do List](#to-do-list)
+    - [Step 1-Create the Plugin](#step-1-create-the-plugin)
+      - [Before](#before)
+      - [After](#after)
+    - [Step 2-Add a Domain Object Type](#step-2-add-a-domain-object-type)
+    - [Step 3-Add a View](#step-3-add-a-view)
+    - [Step 4-Add a Controller](#step-4-add-a-controller)
+    - [Step 5-Support Editing](#step-5-support-editing)
+    - [Step 6-Customizing Look and Feel](#step-6-customizing-look-and-feel)
+  - [Bar Graph](#bar-graph)
+    - [Step 1-Define the View](#step-1-define-the-view)
+    - [Step 2-Add a Controller](#step-2-add-a-controller)
+    - [Step 3-Using Telemetry Data](#step-3-using-telemetry-data)
+    - [Step 4-View Configuration](#step-4-view-configuration)
+  - [Telemetry Adapter](#telemetry-adapter)
+    - [Step 0-Expose Your Telemetry](#step-0-expose-your-telemetry)
+    - [Step 1-Add a Top-level Object](#step-1-add-a-top-level-object)
+    - [Step 2-Expose the Telemetry Dictionary](#step-2-expose-the-telemetry-dictionary)
+    - [Step 3-Historical Telemetry](#step-3-historical-telemetry)
+    - [Step 4-Real-time Telemetry](#step-4-real-time-telemetry)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Introduction
 
 ## This document
@@ -76,7 +116,7 @@ To change this configuration, edit bundles.json (at the top level of the Open
 MCT Web repository) and replace platform/persistence/elastic with 
 example/persistence.
 
-#### Before
+#### Bundle Before
 
     [
         "platform/framework",
@@ -102,7 +142,7 @@ example/persistence.
     ]
 __bundles.json__
 
-#### After
+#### Bundle After
 
     [
         "platform/framework",
@@ -167,7 +207,7 @@ The goal of this tutorial is to add a new application feature to Open MCT Web:
 To-do lists. Users should be able to create and manage these to track items that 
 they need to do. This is modelled after the to-do lists at [http://todomvc.com/]().
 
-### Step 1. Create the Plugin
+### Step 1-Create the Plugin
 
 The first step to adding a new feature to Open MCT Web is to create the plugin 
 which will expose that feature. A plugin in Open MCT Web is represented by what 
@@ -254,7 +294,7 @@ should see:
 
 ...which shows that our plugin has loaded.
 
-### Step 2. Add a Domain Object Type
+### Step 2-Add a Domain Object Type
 
 Features in a Open MCT Web application are most commonly expressed as domain 
 objects and/or views thereof. A domain object is some thing that is relevant to 
@@ -311,7 +351,7 @@ At this point, our to-do list doesn’t do much of anything; we can create them
 and give them names, but they don’t have any specific functionality attached, 
 because we haven’t defined any yet.
 
-### Step 3. Add a View
+### Step 3-Add a View
 
 In order to allow a to-do list to be used, we need to define and display its 
 contents. In Open MCT Web, the pattern that the user expects is that they’ll 
@@ -447,7 +487,7 @@ the domain object - if we click over to My Items and come back to our
 To-Do List, for instance, we’ll see that those check boxes have returned to 
 their initial state.
 
-### Step 4. Add a Controller
+### Step 4-Add a Controller
 
 We need to do some scripting to add dynamic behavior to that view. In 
 particular, we want to:
@@ -613,7 +653,7 @@ able to filter down the visible list, and the changes we make will stick around
 if we go to My Items and come back.
 
 
-### Step 5. Support Editing
+### Step 5-Support Editing
 
 We now have a somewhat-functional view of our To-Do List, but we’re still 
 missing some important functionality: Adding and removing tasks!
@@ -938,7 +978,7 @@ button appear, which we can then click on to remove that task:
 As always in Edit mode, the user will be able to Save or Cancel any changes they have made. 
 In terms of functionality, our To-Do List can do all the things we want, but the appearance is still lacking. In particular, we can’t distinguish our current filter choice or our current selection state.
 
-### Step 6. Customizing Look and Feel
+### Step 6-Customizing Look and Feel
 
 In this section, our goal is to:
 
@@ -1227,7 +1267,7 @@ It is recommended that the reader completes (or is familiar with) the To-Do
 List tutorial before completing this tutorial, as certain concepts discussed 
 there will be addressed in more brevity here.
 
-### Step 1. Define the View
+### Step 1-Define the View
 
 Since the goal is to introduce a new view and expose it from a plugin, we will 
 want to create a new bundle which declares an extension of category `views`. 
@@ -1405,7 +1445,7 @@ _Sine Wave Generator_) as well as for _Telemetry Panel_ objects:
 This means that our remaining work will be to populate and position these 
 elements based on the actual contents of the domain object.
 
-### Step 2. Add a Controller
+### Step 2-Add a Controller
 
 Our next step will be to begin dynamically populating this template’s contents. 
 Specifically, our goals for this step will be to:
@@ -1556,7 +1596,7 @@ this Telemetry Panel containing four Sine Wave Generators.
 
 ![Bar Plot](images/bar-plot-2.png)
 
-### Step 3. Using Telemetry Data
+### Step 3-Using Telemetry Data
 
 Now that our bar graph is labeled correctly, it’s time to start putting data 
 into the view.
@@ -1660,7 +1700,7 @@ When we reload Open MCT Web, our bar graph view now looks like:
 
 ![Bar Plot](images/bar-plot-3.png)
 
-### Step 4. View Configuration
+### Step 4-View Configuration
 
 The default minimum and maximum values we’ve provided happen to make sense for 
 sine waves, but what about other values? We want to provide the user with a 
@@ -1849,7 +1889,7 @@ A summary of the steps we will take:
 * Support subscription/unsubscription to real-time streaming data.
 * Support historical retrieval of telemetry data.
 
-### Step 0. Expose Your Telemetry
+### Step 0-Expose Your Telemetry
 
 As a precondition to integrating telemetry data into Open MCT Web, this 
 information needs to be available over web-based interfaces. In practice, 
@@ -2129,7 +2169,7 @@ like [https://www.npmjs.com/package/wscat]():
 Now that the example server’s interface is reasonably well-understood, a plugin 
 can be written to adapt Open MCT Web to utilize it.
 
-### Step 1. Add a Top-level Object
+### Step 1-Add a Top-level Object
 
 Since Open MCT Web uses an “object-first” approach to accessing data, before 
 we’ll be able to do anything with this new data source, we’ll need to have a 
@@ -2226,7 +2266,7 @@ __bundles.json__
 Now, we have somewhere in the UI to put the contents of our telemetry 
 dictionary. 
 
-### Step 2. Expose the Telemetry Dictionary
+### Step 2-Expose the Telemetry Dictionary
 
 In order to expose the telemetry dictionary, we first need to read it from the 
 server. Our first step will be to add a service that will handle interactions 
@@ -2599,7 +2639,7 @@ dictionary:
 Note that “My Spacecraft” has changed its name to “Example Spacecraft”, which 
 is the name it had in the dictionary.
 
-### Step 3. Historical Telemetry
+### Step 3-Historical Telemetry
 
 After Step 2, we are able to see our dictionary in the user interface and click 
 around our different measurements, but we don’t see any data. We need to give 
@@ -2870,7 +2910,7 @@ We can now visualize our data, but it doesn’t update over time - we know the
 server is continually producing new data, but we have to click away and come 
 back to see it. We can fix this by adding support for telemetry subscriptions.
 
-### Step 4. Real-time Telemetry
+### Step 4-Real-time Telemetry
 
 Finally, we want to utilize the server’s ability to subscribe to telemetry 
 from Open MCT Web. To do this, first we want to expose some new methods for 

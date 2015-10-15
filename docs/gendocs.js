@@ -117,6 +117,22 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
         };
         return transform;
     }
+    
+    function strip() {
+        var patternsToStrip = [
+            "^<!--"
+        ] 
+        var transform = new stream.Transform({ objectMode: true });
+        transform._transform = function (chunk, encoding, done) {
+            //If chunk does not match pattern, keep it, else discard (by not 
+            // pushing into stream)
+            if (!chunk.trim().match(patternsToStrip.join("|"))){
+                this.push(chunk);
+            }
+            done();
+        }
+        return transform;
+    }
 
     // Custom renderer for marked; converts relative links from md to html,
     // and makes headings linkable.
@@ -167,6 +183,7 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
                 fs.createReadStream(file, { encoding: 'utf8' })
                     .pipe(split())
                     .pipe(nomnomlifier(destPath, prefix))
+                    .pipe(strip())
                     .pipe(gfmifier())
                     .pipe(fs.createWriteStream(destination, {
                         encoding: 'utf8'
