@@ -120,9 +120,8 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
     
     function strip() {
         var patternsToStrip = [
-            "^<!--"
-        ] 
-        var transform = new stream.Transform({ objectMode: true });
+            "^<!--"],
+            transform = new stream.Transform({ objectMode: true });
         transform._transform = function (chunk, encoding, done) {
             //If chunk does not match pattern, keep it, else discard (by not 
             // pushing into stream)
@@ -130,7 +129,7 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
                 this.push(chunk);
             }
             done();
-        }
+        };
         return transform;
     }
 
