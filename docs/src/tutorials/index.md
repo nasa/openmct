@@ -1,18 +1,18 @@
-Open MCT Web Tutorials
+# Open MCT Web Tutorials
 
 Victor Woeltjen
 victor.woeltjen@nasa.gov
 
-October 6, 2015
+October 14, 2015
 Document Version 2.2
 
-Date            | Version | Summary of Changes                | Author
---------------- | ------- | --------------------------------- | --------------- 
-May 12, 2015    | 0       | Initial Draft                     | Victor Woeltjen
-June 4, 2015    | 1.0     | Name changes                      | Victor Woeltjen
-July 28, 2015   | 2.0     | Telemetry adapter tutorial        | Victor Woeltjen
-July 31, 2015   | 2.1     | Clarify telemetry adapter details | Victor Woeltjen
-October 6, 2015 | 2.2     | Conversion to markdown            | Andrew Henry
+Date             | Version | Summary of Changes                | Author
+---------------- | ------- | --------------------------------- | --------------- 
+May 12, 2015     | 0       | Initial Draft                     | Victor Woeltjen
+June 4, 2015     | 1.0     | Name changes                      | Victor Woeltjen
+July 28, 2015    | 2.0     | Telemetry adapter tutorial        | Victor Woeltjen
+July 31, 2015    | 2.1     | Clarify telemetry adapter details | Victor Woeltjen
+October 14, 2015 | 2.2     | Conversion to markdown            | Andrew Henry
 
 # Introduction
 
