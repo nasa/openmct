@@ -179,13 +179,17 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
     glob(options['in'] + "/**/*.@(html|css|png)", {}, function (err, files) {
         files.forEach(function (file) {
             var destination = file.replace(options['in'], options.out),
-                destPath = path.dirname(destination);
-
+                destPath = path.dirname(destination),
+                streamOptions = {};
+            if (file.match(/png$/)){
+                streamOptions.encoding = 'binary';
+            } else {
+                streamOptions.encoding = 'utf8';
+            }
+            
             mkdirp(destPath, function (err) {
-                fs.createReadStream(file, { encoding: 'utf8' })
-                    .pipe(fs.createWriteStream(destination, {
-                        encoding: 'utf8'
-                    }));
+                fs.createReadStream(file, streamOptions)
+                    .pipe(fs.createWriteStream(destination, streamOptions));
             });
         });
     });
