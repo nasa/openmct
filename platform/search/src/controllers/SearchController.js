@@ -26,146 +26,157 @@
  */
 define(function () {
     "use strict";
-    
+
     var INITIAL_LOAD_NUMBER = 20,
         LOAD_INCREMENT = 20;
-    
+
+    /**
+     * Controller for search in Tree View.
+     *
+     * Filtering is currently buggy; it filters after receiving results from
+     * search providers, the downside of this is that it requires search
+     * providers to provide objects for all possible results, which is
+     * potentially a hit to persistence, thus can be very very slow.
+     *
+     * Ideally, filtering should be handled before loading objects from the persistence
+     * store, the downside to this is that filters must be applied to object
+     * models, not object instances.
+     *
+     * @constructor
+     * @param $scope
+     * @param searchService
+     */
     function SearchController($scope, searchService) {
-        // numResults is the amount of results to display. Will get increased. 
-        // fullResults holds the most recent complete searchService response object
-        var numResults = INITIAL_LOAD_NUMBER,
-            fullResults = {hits: []};
-        
-        // Scope variables are: 
-        //  Variables used only in SearchController:
-        //   results, an array of searchResult objects
-        //   loading, whether search() is loading 
-        //   ngModel.input, the text of the search query
-        //   ngModel.search, a boolean of whether to display search or the tree
-        //  Variables used also in SearchMenuController:
-        //   ngModel.filter, the function filter defined below 
-        //   ngModel.types, an array of type objects
-        //   ngModel.checked, a dictionary of which type filter options are checked 
-        //   ngModel.checkAll, a boolean of whether to search all types
-        //   ngModel.filtersString, a string list of what filters on the results are active
-        $scope.results = [];
-        $scope.loading = false;
-        
-        
-        // Filters searchResult objects by type. Allows types that are 
-        //   checked. (ngModel.checked['typekey'] === true)
-        // If hits is not provided, will use fullResults.hits
-        function filter(hits) {
-            var newResults = [],
-                i = 0;
-            
-            if (!hits) {
-                hits = fullResults.hits;
-            }
-            
-            // If checkAll is checked, search everything no matter what the other
-            //  checkboxes' statuses are. Otherwise filter the search by types. 
-            if ($scope.ngModel.checkAll) {
-                newResults = fullResults.hits.slice(0, numResults);
-            } else {
-                while (newResults.length < numResults && i < hits.length) {
-                    // If this is of an acceptable type, add it to the list
-                    if ($scope.ngModel.checked[hits[i].object.getModel().type]) {
-                        newResults.push(fullResults.hits[i]);
-                    }
-                    i += 1;
-                }
-            }
-            
-            $scope.results = newResults;
-            return newResults;
-        }
-        
-        // Make function accessible from SearchMenuController
-        $scope.ngModel.filter = filter;
-        
-        // For documentation, see search below
-        function search(maxResults) {
-            var inputText = $scope.ngModel.input;
-            
-            if (inputText !== '' && inputText !== undefined) {
-                // We are starting to load.
-                $scope.loading = true;
-                
-                // Update whether the file tree should be displayed 
-                // Hide tree only when starting search 
-                $scope.ngModel.search = true;
-            }
-            
-            if (!maxResults) {
-                // Reset 'load more'
-                numResults = INITIAL_LOAD_NUMBER;
-            }
-            
-            // Send the query
-            searchService.query(inputText, maxResults).then(function (result) {
-                // Store all the results before splicing off the front, so that 
-                //  we can load more to display later.
-                fullResults = result;
-                $scope.results = filter(result.hits);
-                
-                // Update whether the file tree should be displayed 
-                // Reveal tree only when finishing search
-                if (inputText === '' || inputText === undefined) {
-                    $scope.ngModel.search = false;
-                }
-                
-                // Now we are done loading.
-                $scope.loading = false;
-            });
-        }
-        
-        return {
-            /**
-             * Search the filetree. Assumes that any search text will 
-             *   be in ngModel.input
-             *
-             * @param maxResults (optional) The maximum number of results 
-             *   that this function should return. If not provided, search
-             *   service default will be used. 
-             */
-            search: search,
-            
-            /**
-             * Checks to see if there are more search results to display. If the answer is
-             *   unclear, this function will err toward saying that there are more results. 
-             */
-            areMore: function () {
-                var i;
-                
-                // Check to see if any of the not displayed results are of an allowed type
-                for (i = numResults; i < fullResults.hits.length; i += 1) {
-                    if ($scope.ngModel.checkAll || $scope.ngModel.checked[fullResults.hits[i].object.getModel().type]) {
-                        return true;
-                    }
-                }
-                
-                // If none of the ones at hand are correct, there still may be more if we 
-                //   re-search with a larger maxResults 
-                return fullResults.hits.length < fullResults.total;
-            },
-            
-            /**
-             * Increases the number of search results to display, and then 
-             *   loads them, adding to the displayed results. 
-             */
-            loadMore: function () {
-                numResults += LOAD_INCREMENT;
-                
-                if (numResults > fullResults.hits.length && fullResults.hits.length < fullResults.total) {
-                    // Resend the query if we are out of items to display, but there are more to get
-                    search(numResults);
-                } else {
-                    // Otherwise just take from what we already have
-                    $scope.results = filter(fullResults.hits);
-                }
-            }
+        var controller = this;
+        this.$scope = $scope;
+        this.searchService = searchService;
+        this.numberToDisplay = INITIAL_LOAD_NUMBER;
+        this.fullResults = [];
+        this.filteredResults = [];
+        this.$scope.results = [];
+        this.$scope.loading = false;
+        this.pendingQuery = undefined;
+        this.$scope.ngModel.filter = function () {
+            return controller.onFilterChange.apply(controller, arguments);
         };
     }
+
+    /**
+     * Returns true if there are more results than currently displayed for the
+     * for the current query and filters.
+     */
+    SearchController.prototype.areMore = function () {
+        return this.$scope.results.length < this.filteredResults.length;
+    };
+
+    /**
+     * Display more results for the currently displayed query and filters.
+     */
+    SearchController.prototype.loadMore = function () {
+        this.numberToDisplay += LOAD_INCREMENT;
+        this.updateResults();
+    };
+
+    /**
+     * Search for the query string specified in scope.
+     */
+    SearchController.prototype.search = function () {
+        var inputText = this.$scope.ngModel.input,
+            controller = this;
+
+        this.clearResults();
+
+        if (inputText) {
+            this.$scope.loading = true;
+            this.$scope.ngModel.search = true;
+        } else {
+            this.pendingQuery = undefined;
+            this.$scope.ngModel.search = false;
+            this.$scope.loading = false;
+            return;
+        }
+
+        if (this.pendingQuery === inputText) {
+            return; // don't issue multiple queries for the same term.
+        }
+
+        this.pendingQuery = inputText;
+
+        this
+            .searchService
+            .query(inputText, 60) // TODO: allow filter in search service.
+            .then(function (results) {
+                if (controller.pendingQuery !== inputText) {
+                    return; // another query in progress, so skip this one.
+                }
+                controller.onSearchComplete(results);
+            });
+    };
+
+    /**
+     * Refilter results and update visible results when filters have changed.
+     */
+    SearchController.prototype.onFilterChange = function () {
+        this.filter();
+        this.updateVisibleResults();
+    };
+
+    /**
+     * Filter `fullResults` based on currenly active filters, storing the result
+     * in `filteredResults`.
+     *
+     * @private
+     */
+    SearchController.prototype.filter = function () {
+        var includeTypes = this.$scope.ngModel.checked;
+
+        if (this.$scope.ngModel.checkAll) {
+            this.filteredResults = this.fullResults;
+            return;
+        }
+
+        this.filteredResults = this.fullResults.filter(function (hit) {
+            return includeTypes[hit.object.getModel().type];
+        });
+    };
+
+
+    /**
+     * Clear the search results.
+     *
+     * @private
+     */
+    SearchController.prototype.clearResults = function () {
+        this.$scope.results = [];
+        this.fullResults = [];
+        this.filteredResults = [];
+        this.numberToDisplay = INITIAL_LOAD_NUMBER;
+    };
+
+
+
+    /**
+     * Update search results from given `results`.
+     *
+     * @private
+     */
+    SearchController.prototype.onSearchComplete = function (results) {
+        this.fullResults = results.hits;
+        this.filter();
+        this.updateVisibleResults();
+        this.$scope.loading = false;
+        this.pendingQuery = undefined;
+    };
+
+    /**
+     * Update visible results from filtered results.
+     *
+     * @private
+     */
+    SearchController.prototype.updateVisibleResults = function () {
+        this.$scope.results =
+            this.filteredResults.slice(0, this.numberToDisplay);
+    };
+
     return SearchController;
 });
