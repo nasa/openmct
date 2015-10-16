@@ -96,36 +96,33 @@ define(
             // Handles responses from the web worker. Namely, the results of
             // a search request.
             function handleResponse(event) {
-                var ids = [],
-                    id;
+                if (event.data.request !== 'search') {
+                    return; // no idea how to handle anything else.
+                }
 
-                // If we have the results from a search
-                if (event.data.request === 'search') {
-                    // Convert the ids given from the web worker into domain objects
-                    for (id in event.data.results) {
-                        ids.push(id);
-                    }
-                    objectService.getObjects(ids).then(function (objects) {
-                        var searchResults = [],
-                            id;
+                var workerResults = event.data.results,
+                    ids = Object.keys(workerResults);
 
-                        // Create searchResult objects
-                        for (id in objects) {
-                            searchResults.push({
-                                object: objects[id],
-                                id: id,
-                                score: event.data.results[id]
+                objectService
+                    .getObjects(ids)
+                    .then(function (objects) {
+                        var searchResults = Object
+                            .keys(objects)
+                            .map(function (id) {
+                                return {
+                                    object: objects[id],
+                                    id: id,
+                                    score: workerResults[id].matchCount
+                                };
                             });
-                        }
 
                         // Resove the promise corresponding to this
                         pendingQueries[event.data.timestamp].resolve({
                             hits: searchResults,
-                            total: event.data.total,
+                            total: searchResults.length,
                             timedOut: event.data.timedOut
                         });
                     });
-                }
             }
 
             function requestAndIndex(id) {
@@ -212,7 +209,7 @@ define(
                 var message = {
                     request: 'search',
                     input: searchInput,
-                    maxNumber: maxResults,
+                    maxResults: maxResults,
                     timestamp: timestamp,
                     timeout: timeout
                 };
