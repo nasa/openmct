@@ -79,8 +79,8 @@
                 request: 'search',
                 results: {},
                 total: 0,
-                timestamp: data.timestamp,
-                timedOut: false
+                timedOut: false,
+                queryId: data.queryId
             },
             matches = {};
 
@@ -144,11 +144,7 @@
 
         message.total = results.length;
         message.results = results
-            .slice(0, data.maxResults)
-            .reduce(function arrayToObject(obj, match) {
-                obj[match.item.id] = match;
-                return obj;
-            }, {});
+            .slice(0, data.maxResults);
 
         return message;
     }

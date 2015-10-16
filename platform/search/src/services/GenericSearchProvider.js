@@ -24,226 +24,258 @@
 /**
  * Module defining GenericSearchProvider. Created by shale on 07/16/2015.
  */
-define(
-    [],
-    function () {
-        "use strict";
+define([
 
-        var DEFAULT_MAX_RESULTS = 100,
-            DEFAULT_TIMEOUT = 1000,
-            MAX_CONCURRENT_REQUESTS = 100,
-            FLUSH_INTERVAL = 0,
-            stopTime;
+], function (
 
-        /**
-         * A search service which searches through domain objects in
-         * the filetree without using external search implementations.
-         *
-         * @constructor
-         * @param $q Angular's $q, for promise consolidation.
-         * @param $log Anglar's $log, for logging.
-         * @param {Function} throttle a function to throttle function invocations
-         * @param {ObjectService} objectService The service from which
-         *        domain objects can be gotten.
-         * @param {WorkerService} workerService The service which allows
-         *        more easy creation of web workers.
-         * @param {GENERIC_SEARCH_ROOTS} ROOTS An array of the root
-         *        domain objects' IDs.
-         */
-        function GenericSearchProvider($q, $log, throttle, objectService, workerService, topic, ROOTS) {
-            var indexed = {},
-                pendingIndex = {},
-                pendingQueries = {},
-                toRequest = [],
-                worker = workerService.run('genericSearchWorker'),
-                mutationTopic = topic("mutation"),
-                indexingStarted = Date.now(),
-                pendingRequests = 0,
-                scheduleFlush;
+) {
+    "use strict";
 
-            this.worker = worker;
-            this.pendingQueries = pendingQueries;
-            this.$q = $q;
-            // pendingQueries is a dictionary with the key value pairs st
-            // the key is the timestamp and the value is the promise
+    var DEFAULT_MAX_RESULTS = 100,
+        MAX_CONCURRENT_REQUESTS = 100;
 
-            function scheduleIdsForIndexing(ids) {
-                ids.forEach(function (id) {
-                    if (!indexed[id] && !pendingIndex[id]) {
-                        indexed[id] = true;
-                        pendingIndex[id] = true;
-                        toRequest.push(id);
-                    }
-                });
-                scheduleFlush();
-            }
+    /**
+     * A search service which searches through domain objects in
+     * the filetree without using external search implementations.
+     *
+     * @constructor
+     * @param $q Angular's $q, for promise consolidation.
+     * @param $log Anglar's $log, for logging.
+     * @param {ModelService} modelService the model service.
+     * @param {WorkerService} workerService the workerService.
+     * @param {TopicService} topic the topic service.
+     * @param {Array} ROOTS An array of object Ids to begin indexing.
+     */
+    function GenericSearchProvider($q, $log, modelService, workerService, topic, ROOTS) {
+        var provider = this;
+        this.$q = $q;
+        this.$log = $log;
+        this.modelService = modelService;
 
-            // Tell the web worker to add a domain object's model to its list of items.
-            function indexItem(domainObject) {
-                var model = domainObject.getModel();
+        this.indexedIds = {};
+        this.idsToIndex = [];
+        this.pendingIndex = {};
+        this.pendingRequests = 0;
 
-                worker.postMessage({
-                    request: 'index',
-                    model: model,
-                    id: domainObject.getId()
-                });
+        this.pendingQueries = {};
 
-                if (Array.isArray(model.composition)) {
-                    scheduleIdsForIndexing(model.composition);
-                }
-            }
+        this.worker = this.startWorker(workerService);
 
-            // Handles responses from the web worker. Namely, the results of
-            // a search request.
-            function handleResponse(event) {
-                if (event.data.request !== 'search') {
-                    return; // no idea how to handle anything else.
-                }
+        ROOTS.forEach(function indexRoot(rootId) {
+            provider.scheduleForIndexing(rootId);
+        });
+    }
 
-                var workerResults = event.data.results,
-                    ids = Object.keys(workerResults);
-
-                objectService
-                    .getObjects(ids)
-                    .then(function (objects) {
-                        var searchResults = Object
-                            .keys(objects)
-                            .map(function (id) {
-                                return {
-                                    object: objects[id],
-                                    id: id,
-                                    score: workerResults[id].matchCount
-                                };
-                            });
-
-                        // Resove the promise corresponding to this
-                        pendingQueries[event.data.timestamp].resolve({
-                            hits: searchResults,
-                            total: searchResults.length,
-                            timedOut: event.data.timedOut
-                        });
-                    });
-            }
-
-            function requestAndIndex(id) {
-                pendingRequests += 1;
-                objectService.getObjects([id]).then(function (objects) {
-                    delete pendingIndex[id];
-                    if (objects[id]) {
-                        indexItem(objects[id]);
-                    }
-                }, function () {
-                    $log.warn("Failed to index domain object " + id);
-                }).then(function () {
-                    pendingRequests -= 1;
-                    scheduleFlush();
-                });
-            }
-
-            scheduleFlush = throttle(function flush() {
-                var batchSize =
-                        Math.max(MAX_CONCURRENT_REQUESTS - pendingRequests, 0);
-
-                if (toRequest.length + pendingRequests < 1) {
-                    $log.info([
-                        'GenericSearch finished indexing after ',
-                        ((Date.now() - indexingStarted) / 1000).toFixed(2),
-                        ' seconds.'
-                    ].join(''));
-                } else {
-                    toRequest.splice(-batchSize, batchSize)
-                        .forEach(requestAndIndex);
-                }
-            }, FLUSH_INTERVAL);
-
-            worker.onmessage = handleResponse;
-
-            // Index the tree's contents once at the beginning
-            scheduleIdsForIndexing(ROOTS);
-
-            // Re-index items when they are mutated
-            mutationTopic.listen(function (domainObject) {
-                var id = domainObject.getId();
-                indexed[id] = false;
-                scheduleIdsForIndexing([id]);
-            });
+    /**
+     * Query the search provider for results.
+     *
+     * @param {String} input the string to search by.
+     * @param {Number} timestamp part of the SearchProvider interface, ignored.
+     * @param {Number} maxResults max number of results to return.
+     * @returns {Promise} a promise for a modelResults object.
+     */
+    GenericSearchProvider.prototype.query = function (
+        input,
+        timestamp,
+        maxResults
+    ) {
+        if (!maxResults) {
+            maxResults = DEFAULT_MAX_RESULTS;
         }
 
-        /**
-         * Searches through the filetree for domain objects which match
-         *   the search term. This function is to be used as a fallback
-         *   in the case where other search services are not avaliable.
-         *   Returns a promise for a result object that has the format
-         *   {hits: searchResult[], total: number, timedOut: boolean}
-         *   where a searchResult has the format
-         *   {id: string, object: domainObject, score: number}
-         *
-         * Notes:
-         *   * The order of the results is not guarenteed.
-         *   * A domain object qualifies as a match for a search input if
-         *     the object's name property contains any of the search terms
-         *     (which are generated by splitting the input at spaces).
-         *   * Scores are higher for matches that have more of the terms
-         *     as substrings.
-         *
-         * @param input The text input that is the query.
-         * @param timestamp The time at which this function was called.
-         *   This timestamp is used as a unique identifier for this
-         *   query and the corresponding results.
-         * @param maxResults (optional) The maximum number of results
-         *   that this function should return.
-         * @param timeout (optional) The time after which the search should
-         *   stop calculations and return partial results.
-         */
-        GenericSearchProvider.prototype.query = function query(input, timestamp, maxResults, timeout) {
-            var terms = [],
-                searchResults = [],
-                pendingQueries = this.pendingQueries,
-                worker = this.worker,
-                defer = this.$q.defer();
+        var queryId = this.dispatchSearch(input, maxResults),
+            pendingQuery = this.$q.defer();
 
-            // Tell the worker to search for items it has that match this searchInput.
-            // Takes the searchInput, as well as a max number of results (will return
-            //   less than that if there are fewer matches).
-            function workerSearch(searchInput, maxResults, timestamp, timeout) {
-                var message = {
-                    request: 'search',
-                    input: searchInput,
-                    maxResults: maxResults,
-                    timestamp: timestamp,
-                    timeout: timeout
-                };
-                worker.postMessage(message);
-            }
+        this.pendingQueries[queryId] = pendingQuery;
 
-            // If the input is nonempty, do a search
-            if (input !== '' && input !== undefined) {
+        return pendingQuery.promise;
+    };
 
-                // Allow us to access this promise later to resolve it later
-                pendingQueries[timestamp] = defer;
+    /**
+     * Creates a search worker and attaches handlers.
+     *
+     * @private
+     * @param workerService
+     * @returns worker the created search worker.
+     */
+    GenericSearchProvider.prototype.startWorker = function (workerService) {
+        var worker = workerService.run('genericSearchWorker'),
+            provider = this;
 
-                // Check to see if the user provided a maximum
-                //   number of results to display
-                if (!maxResults) {
-                    // Else, we provide a default value
-                    maxResults = DEFAULT_MAX_RESULTS;
-                }
-                // Similarly, check if timeout was provided
-                if (!timeout) {
-                    timeout = DEFAULT_TIMEOUT;
-                }
-
-                // Send the query to the worker
-                workerSearch(input, maxResults, timestamp, timeout);
-
-                return defer.promise;
-            } else {
-                // Otherwise return an empty result
-                return { hits: [], total: 0 };
-            }
+        worker.onmessage = function (messageEvent) {
+            provider.onWorkerMessage(messageEvent);
         };
 
+        return worker;
+    };
 
-        return GenericSearchProvider;
-    }
-);
+    /**
+     * Listen to the mutation topic and re-index objects when they are
+     * mutated.
+     *
+     * @private
+     * @param topic the topicService.
+     */
+    GenericSearchProvider.prototype.indexOnMutation = function (topic) {
+        var mutationTopic = topic('mutation'),
+            provider = this;
+
+        mutationTopic.listen(function (mutatedObject) {
+            var id = mutatedObject.getId();
+            provider.indexed[id] = false;
+            provider.scheduleForIndexing(id);
+        });
+    };
+
+    /**
+     * Schedule an id to be indexed at a later date.  If there are less
+     * pending requests then allowed, will kick off an indexing request.
+     *
+     * @private
+     * @param {String} id to be indexed.
+     */
+    GenericSearchProvider.prototype.scheduleForIndexing = function (id) {
+        if (!this.indexedIds[id] && !this.pendingIndex[id]) {
+            this.indexedIds[id] = true;
+            this.pendingIndex[id] = true;
+            this.idsToIndex.push(id);
+        }
+        this.keepIndexing();
+    };
+
+    /**
+     * If there are less pending requests than concurrent requests, keep
+     * firing requests.
+     *
+     * @private
+     */
+    GenericSearchProvider.prototype.keepIndexing = function () {
+        if (this.pendingRequests < MAX_CONCURRENT_REQUESTS) {
+           this.beginIndexRequest();
+        }
+    };
+
+    /**
+     * Pass an id and model to the worker to be indexed.  If the model has
+     * composition, schedule those ids for later indexing.
+     *
+     * @private
+     * @param id a model id
+     * @param model a model
+     */
+    GenericSearchProvider.prototype.index = function (id, model) {
+        var provider = this;
+
+        this.worker.postMessage({
+            request: 'index',
+            model: model,
+            id: id
+        });
+
+        if (Array.isArray(model.composition)) {
+            model.composition.forEach(function (id) {
+                provider.scheduleForIndexing(id);
+            });
+        }
+    };
+
+    /**
+     * Pulls an id from the indexing queue, loads it from the model service,
+     * and indexes it.  Upon completion, tells the provider to keep
+     * indexing.
+     *
+     * @private
+     */
+    GenericSearchProvider.prototype.beginIndexRequest = function () {
+        var idToIndex = this.idsToIndex.shift(),
+            provider = this;
+
+        if (!idToIndex) {
+            return;
+        }
+
+        this.pendingRequests += 1;
+        this.modelService
+            .getModels([idToIndex])
+            .then(function (models) {
+                delete provider.pendingIndex[idToIndex];
+                if (models[idToIndex]) {
+                    provider.index(idToIndex, models[idToIndex]);
+                }
+            }, function () {
+                provider
+                    .$log
+                    .warn('Failed to index domain object ' + idToIndex);
+            })
+            .then(function () {
+                provider.keepIndexing();
+            });
+    };
+
+    /**
+     * Handle messages from the worker.  Only really knows how to handle search
+     * results, which are parsed, transformed into a modelResult object, which
+     * is used to resolve the corresponding promise.
+     * @private
+     */
+    GenericSearchProvider.prototype.onWorkerMessage = function (event) {
+        if (event.data.request !== 'search') {
+            return;
+        }
+
+        var pendingQuery = this.pendingQueries[event.data.queryId],
+            modelResults = {
+                timedOut: event.data.timedOut,
+                total: event.data.total
+            };
+
+        modelResults.hits = event.data.results.map(function (hit) {
+            return {
+                id: hit.item.id,
+                model: hit.item.model,
+                score: hit.matchCount
+            };
+        });
+
+
+        pendingQuery.resolve(modelResults);
+        delete this.pendingQueries[event.data.queryId];
+    };
+
+    /**
+     * @private
+     * @returns {Number} a unique, unusued query Id.
+     */
+    GenericSearchProvider.prototype.makeQueryId = function () {
+        var queryId = Math.ceil(Math.random() * 100000);
+        while (this.pendingQueries[queryId]) {
+            queryId = Math.ceil(Math.random() * 100000);
+        }
+        return queryId;
+    };
+
+    /**
+     * Dispatch a search query to the worker and return a queryId.
+     *
+     * @private
+     * @returns {Number} a unique query Id for the query.
+     */
+    GenericSearchProvider.prototype.dispatchSearch = function (
+        searchInput,
+        maxResults
+    ) {
+        var queryId = this.makeQueryId();
+
+        this.worker.postMessage({
+            request: 'search',
+            input: searchInput,
+            maxResults: maxResults,
+            queryId: queryId
+        });
+
+        return queryId;
+    };
+
+
+    return GenericSearchProvider;
+});
