@@ -59,7 +59,7 @@
                 "provides": "searchService",
                 "type": "aggregator",
                 "implementation": "services/SearchAggregator.js",
-                "depends": [ "$q" ]
+                "depends": [ "$q", "objectService" ]
             }
         ],
         "workers": [
