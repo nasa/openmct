@@ -31,8 +31,7 @@ define([
 ) {
     "use strict";
 
-    var DEFAULT_TIMEOUT =  1000,
-        DEFAULT_MAX_RESULTS = 100;
+    var DEFAULT_MAX_RESULTS = 100;
 
     /**
      * Aggregates multiple search providers as a singular search provider.
@@ -57,7 +56,7 @@ define([
     /**
      * Sends a query to each of the providers. Returns a promise for
      *   a result object that has the format
-     *   {hits: searchResult[], total: number, timedOut: boolean}
+     *   {hits: searchResult[], total: number}
      *   where a searchResult has the format
      *   {id: string, object: domainObject, score: number}
      *
@@ -87,9 +86,7 @@ define([
         resultPromises = this.providers.map(function (provider) {
             return provider.query(
                 inputText,
-                timestamp,
-                maxResults,
-                DEFAULT_TIMEOUT
+                maxResults
             );
         });
 
@@ -98,16 +95,13 @@ define([
             .then(function (providerResults) {
                 var modelResults = {
                         hits: [],
-                        totals: 0,
-                        timedOut: false
+                        totals: 0
                     };
 
                 providerResults.forEach(function (providerResult) {
                     modelResults.hits =
                         modelResults.hits.concat(providerResult.hits);
                     modelResults.totals += providerResult.totals;
-                    modelResults.timedOut =
-                        modelResults.timedOut || providerResult.timedOut;
                 });
 
                 aggregator.orderByScore(modelResults);
@@ -195,8 +189,7 @@ define([
             .then(function (objects) {
 
                 var objectResults = {
-                    totals: modelResults.totals,
-                    timedOut: modelResults.timedOut
+                    totals: modelResults.totals
                 };
 
                 objectResults.hits = modelResults

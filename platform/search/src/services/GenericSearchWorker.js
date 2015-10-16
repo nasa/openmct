@@ -61,13 +61,12 @@
 
     /**
      * Gets search results from the indexedItems based on provided search
-     *   input. Returns matching results from indexedItems, as well as the
-     *   timestamp that was passed to it.
+     *   input. Returns matching results from indexedItems
      *
      * @param data An object which contains:
      *           * input: The original string which we are searching with
      *           * maxResults: The maximum number of search results desired
-     *           * timestamp: The time identifier from when the query was made
+     *           * queryId: an id identifying this query, will be returned.
      */
     function search(data) {
         // This results dictionary will have domain object ID keys which
@@ -79,7 +78,6 @@
                 request: 'search',
                 results: {},
                 total: 0,
-                timedOut: false,
                 queryId: data.queryId
             },
             matches = {};

@@ -70,13 +70,11 @@ define([
      * Query the search provider for results.
      *
      * @param {String} input the string to search by.
-     * @param {Number} timestamp part of the SearchProvider interface, ignored.
      * @param {Number} maxResults max number of results to return.
      * @returns {Promise} a promise for a modelResults object.
      */
     GenericSearchProvider.prototype.query = function (
         input,
-        timestamp,
         maxResults
     ) {
         if (!maxResults) {
@@ -225,7 +223,6 @@ define([
 
         var pendingQuery = this.pendingQueries[event.data.queryId],
             modelResults = {
-                timedOut: event.data.timedOut,
                 total: event.data.total
             };
 

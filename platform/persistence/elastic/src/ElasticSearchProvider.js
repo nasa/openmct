@@ -142,7 +142,6 @@ define([
         return {
             hits: searchResults,
             total: response.data.hits.total,
-            timedOut: response.data.timed_out
         };
     };
 
