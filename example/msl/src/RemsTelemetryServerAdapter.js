@@ -64,6 +64,7 @@ define(
                     if (histories[id]) {
                         deferreds[id].resolve({id: id, values: histories[id]});
                     } else {
+                        histories = {};
                         requestHistory(id);
                     }
                     return deferreds[id].promise;
