@@ -76,7 +76,6 @@ define([
     ) {
 
         var aggregator = this,
-            timestamp = Date.now(),
             resultPromises;
 
         if (!maxResults) {
@@ -95,18 +94,18 @@ define([
             .then(function (providerResults) {
                 var modelResults = {
                         hits: [],
-                        totals: 0
+                        total: 0
                     };
 
                 providerResults.forEach(function (providerResult) {
                     modelResults.hits =
                         modelResults.hits.concat(providerResult.hits);
-                    modelResults.totals += providerResult.totals;
+                    modelResults.total += providerResult.total;
                 });
 
-                aggregator.orderByScore(modelResults);
-                aggregator.applyFilter(modelResults, filter);
-                aggregator.removeDuplicates(modelResults);
+                modelResults = aggregator.orderByScore(modelResults);
+                modelResults = aggregator.applyFilter(modelResults, filter);
+                modelResults = aggregator.removeDuplicates(modelResults);
 
                 return aggregator.asObjectResults(modelResults);
             });
@@ -144,15 +143,15 @@ define([
             return filter(hit.model);
         });
 
-        finalLength = modelResults.hits;
+        finalLength = modelResults.hits.length;
         removedByFilter = initialLength - finalLength;
-        modelResults.totals -= removedByFilter;
+        modelResults.total -= removedByFilter;
 
         return modelResults;
     };
 
     /**
-     * Remove duplicate hits in a modelResults object, and decrement `totals`
+     * Remove duplicate hits in a modelResults object, and decrement `total`
      * each time a duplicate is removed.
      */
     SearchAggregator.prototype.removeDuplicates = function (modelResults) {
@@ -162,7 +161,7 @@ define([
             .hits
             .filter(function alreadyInResults(hit) {
                 if (includedIds[hit.id]) {
-                    modelResults.totals -= 1;
+                    modelResults.total -= 1;
                     return false;
                 }
                 includedIds[hit.id] = true;
@@ -189,7 +188,7 @@ define([
             .then(function (objects) {
 
                 var objectResults = {
-                    totals: modelResults.totals
+                    total: modelResults.total
                 };
 
                 objectResults.hits = modelResults
