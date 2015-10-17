@@ -24,270 +24,29 @@
 /**
  *  SearchSpec. Created by shale on 07/31/2015.
  */
-define(
-    ["../../src/services/GenericSearchProvider"],
-    function (GenericSearchProvider) {
-        "use strict";
+define([
+    "../../src/services/GenericSearchProvider"
+], function (GenericSearchProvider) {
+    "use strict";
 
-        describe("The generic search provider ", function () {
-            var mockQ,
-                mockLog,
-                mockThrottle,
-                mockDeferred,
-                mockObjectService,
-                mockObjectPromise,
-                mockChainedPromise,
-                mockDomainObjects,
-                mockCapability,
-                mockCapabilityPromise,
-                mockWorkerService,
-                mockWorker,
-                mockTopic,
-                mockMutationTopic,
-                mockRoots = ['root1', 'root2'],
-                mockThrottledFn,
-                throttledCallCount,
-                provider,
-                mockProviderResults;
+    describe('GenericSearchProvider', function () {
+        var $q,
+            $log,
+            modelService,
+            workerService,
+            topic,
+            ROOTS;
 
-            function resolveObjectPromises() {
-                var i;
-                for (i = 0; i < mockObjectPromise.then.calls.length; i += 1) {
-                    mockChainedPromise.then.calls[i].args[0](
-                        mockObjectPromise.then.calls[i]
-                            .args[0](mockDomainObjects)
-                    );
-                }
-            }
+        beforeEach(function () {
+            $q = jasmine.createSpyObj(
+                '$q',
+                ['defer']
+            );
+            // TODO: continue
 
-            function resolveThrottledFn() {
-                if (mockThrottledFn.calls.length > throttledCallCount) {
-                    mockThrottle.mostRecentCall.args[0]();
-                    throttledCallCount = mockThrottledFn.calls.length;
-                }
-            }
-
-            function resolveAsyncTasks() {
-                resolveThrottledFn();
-                resolveObjectPromises();
-            }
-
-            beforeEach(function () {
-                mockQ = jasmine.createSpyObj(
-                    "$q",
-                    [ "defer" ]
-                );
-                mockLog = jasmine.createSpyObj(
-                    "$log",
-                    [ "error", "warn", "info", "debug" ]
-                );
-                mockDeferred = jasmine.createSpyObj(
-                    "deferred",
-                    [ "resolve", "reject"]
-                );
-                mockDeferred.promise = "mock promise";
-                mockQ.defer.andReturn(mockDeferred);
-
-                mockThrottle = jasmine.createSpy("throttle");
-                mockThrottledFn = jasmine.createSpy("throttledFn");
-                throttledCallCount = 0;
-
-                mockObjectService = jasmine.createSpyObj(
-                    "objectService",
-                    [ "getObjects" ]
-                );
-                mockObjectPromise = jasmine.createSpyObj(
-                    "promise",
-                    [ "then", "catch" ]
-                );
-                mockChainedPromise = jasmine.createSpyObj(
-                    "chainedPromise",
-                    [ "then" ]
-                );
-                mockObjectService.getObjects.andReturn(mockObjectPromise);
-
-                mockTopic = jasmine.createSpy('topic');
-
-                mockWorkerService = jasmine.createSpyObj(
-                    "workerService",
-                    [ "run" ]
-                );
-                mockWorker = jasmine.createSpyObj(
-                    "worker",
-                    [ "postMessage" ]
-                );
-                mockWorkerService.run.andReturn(mockWorker);
-
-                mockCapabilityPromise = jasmine.createSpyObj(
-                    "promise",
-                    [ "then", "catch" ]
-                );
-
-                mockDomainObjects = {};
-                ['a', 'root1', 'root2'].forEach(function (id) {
-                    mockDomainObjects[id] = (
-                        jasmine.createSpyObj(
-                            "domainObject",
-                            [
-                                "getId",
-                                "getModel",
-                                "hasCapability",
-                                "getCapability",
-                                "useCapability"
-                            ]
-                        )
-                    );
-                    mockDomainObjects[id].getId.andReturn(id);
-                    mockDomainObjects[id].getCapability.andReturn(mockCapability);
-                    mockDomainObjects[id].useCapability.andReturn(mockCapabilityPromise);
-                    mockDomainObjects[id].getModel.andReturn({});
-                });
-
-                mockCapability = jasmine.createSpyObj(
-                    "capability",
-                    [ "invoke", "listen" ]
-                );
-                mockCapability.invoke.andReturn(mockCapabilityPromise);
-                mockDomainObjects.a.getCapability.andReturn(mockCapability);
-                mockMutationTopic = jasmine.createSpyObj(
-                    'mutationTopic',
-                    [ 'listen' ]
-                );
-                mockTopic.andCallFake(function (key) {
-                    return key === 'mutation' && mockMutationTopic;
-                });
-                mockThrottle.andReturn(mockThrottledFn);
-                mockObjectPromise.then.andReturn(mockChainedPromise);
-
-                provider = new GenericSearchProvider(
-                    mockQ,
-                    mockLog,
-                    mockThrottle,
-                    mockObjectService,
-                    mockWorkerService,
-                    mockTopic,
-                    mockRoots
-                );
-            });
-
-            it("indexes tree on initialization", function () {
-                var i;
-
-                resolveThrottledFn();
-
-                expect(mockObjectService.getObjects).toHaveBeenCalled();
-                expect(mockObjectPromise.then).toHaveBeenCalled();
-
-                // Call through the root-getting part
-                resolveObjectPromises();
-
-                mockRoots.forEach(function (id) {
-                    expect(mockWorker.postMessage).toHaveBeenCalledWith({
-                        request: 'index',
-                        model: mockDomainObjects[id].getModel(),
-                        id: id
-                    });
-                });
-            });
-
-            it("indexes members of composition", function () {
-                mockDomainObjects.root1.getModel.andReturn({
-                    composition: ['a']
-                });
-
-                resolveAsyncTasks();
-                resolveAsyncTasks();
-
-                expect(mockWorker.postMessage).toHaveBeenCalledWith({
-                    request: 'index',
-                    model: mockDomainObjects.a.getModel(),
-                    id: 'a'
-                });
-            });
-
-            it("listens for changes to mutation", function () {
-                expect(mockMutationTopic.listen)
-                    .toHaveBeenCalledWith(jasmine.any(Function));
-                mockMutationTopic.listen.mostRecentCall
-                    .args[0](mockDomainObjects.a);
-
-                resolveAsyncTasks();
-
-                expect(mockWorker.postMessage).toHaveBeenCalledWith({
-                    request: 'index',
-                    model: mockDomainObjects.a.getModel(),
-                    id: mockDomainObjects.a.getId()
-                });
-            });
-
-            it("sends search queries to the worker", function () {
-                var timestamp = Date.now();
-                provider.query(' test  "query" ', timestamp, 1, 2);
-                expect(mockWorker.postMessage).toHaveBeenCalledWith({
-                    request: "search",
-                    input: ' test  "query" ',
-                    timestamp: timestamp,
-                    maxNumber: 1,
-                    timeout: 2
-                });
-            });
-
-            it("gives an empty result for an empty query", function () {
-                var timestamp = Date.now(),
-                    queryOutput;
-
-                queryOutput = provider.query('', timestamp, 1, 2);
-                expect(queryOutput.hits).toEqual([]);
-                expect(queryOutput.total).toEqual(0);
-
-                queryOutput = provider.query();
-                expect(queryOutput.hits).toEqual([]);
-                expect(queryOutput.total).toEqual(0);
-            });
-
-            it("handles responses from the worker", function () {
-                var timestamp = Date.now(),
-                    event = {
-                        data: {
-                            request: "search",
-                            results: {
-                                1: 1,
-                                2: 2
-                            },
-                            total: 2,
-                            timedOut: false,
-                            timestamp: timestamp
-                        }
-                    };
-
-                provider.query(' test  "query" ', timestamp);
-                mockWorker.onmessage(event);
-                mockObjectPromise.then.mostRecentCall.args[0](mockDomainObjects);
-                expect(mockDeferred.resolve).toHaveBeenCalled();
-            });
-
-            it("warns when objects are unavailable", function () {
-                resolveAsyncTasks();
-                expect(mockLog.warn).not.toHaveBeenCalled();
-                mockChainedPromise.then.mostRecentCall.args[0](
-                    mockObjectPromise.then.mostRecentCall.args[1]()
-                );
-                expect(mockLog.warn).toHaveBeenCalled();
-            });
-
-            it("throttles the loading of objects to index", function () {
-                expect(mockObjectService.getObjects).not.toHaveBeenCalled();
-                resolveThrottledFn();
-                expect(mockObjectService.getObjects).toHaveBeenCalled();
-            });
-
-            it("logs when all objects have been processed", function () {
-                expect(mockLog.info).not.toHaveBeenCalled();
-                resolveAsyncTasks();
-                resolveThrottledFn();
-                expect(mockLog.info).toHaveBeenCalled();
-            });
 
         });
-    }
-);
+
+    });
+
+});

@@ -33,7 +33,7 @@ define(
             // If this test fails, make sure this path is correct
             var worker = new Worker(require.toUrl('platform/search/src/services/GenericSearchWorker.js')),
                 numObjects = 5;
-            
+
             beforeEach(function () {
                 var i;
                 for (i = 0; i < numObjects; i += 1) {
@@ -50,77 +50,77 @@ define(
                     );
                 }
             });
-            
+
             it("searches can reach all objects", function () {
                 var flag = false,
                     workerOutput,
                     resultsLength = 0;
-                
+
                 // Search something that should return all objects
                 runs(function () {
                     worker.postMessage(
                         {
                             request: "search",
                             input: "object",
-                            maxNumber: 100,
+                            maxResults: 100,
                             timestamp: Date.now(),
                             timeout: 1000
                         }
                     );
                 });
-                
+
                 worker.onmessage = function (event) {
                     var id;
-                    
+
                     workerOutput = event.data;
                     for (id in workerOutput.results) {
                         resultsLength += 1;
                     }
                     flag = true;
                 };
-                
+
                 waitsFor(function () {
                     return flag;
                 }, "The worker should be searching", 1000);
-                
+
                 runs(function () {
                     expect(workerOutput).toBeDefined();
                     expect(resultsLength).toEqual(numObjects);
                 });
             });
-            
+
             it("searches return only matches", function () {
                 var flag = false,
                     workerOutput,
                     resultsLength = 0;
-                
+
                 // Search something that should return 1 object
                 runs(function () {
                     worker.postMessage(
                         {
                             request: "search",
                             input: "2",
-                            maxNumber: 100,
+                            maxResults: 100,
                             timestamp: Date.now(),
                             timeout: 1000
                         }
                     );
                 });
-                
+
                 worker.onmessage = function (event) {
                     var id;
-                    
+
                     workerOutput = event.data;
                     for (id in workerOutput.results) {
                         resultsLength += 1;
                     }
                     flag = true;
                 };
-                
+
                 waitsFor(function () {
                     return flag;
                 }, "The worker should be searching", 1000);
-                
+
                 runs(function () {
                     expect(workerOutput).toBeDefined();
                     expect(resultsLength).toEqual(1);
