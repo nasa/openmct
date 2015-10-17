@@ -206,6 +206,7 @@ define([
                     .warn('Failed to index domain object ' + idToIndex);
             })
             .then(function () {
+                provider.pendingRequests -=1;
                 provider.keepIndexing();
             });
     };
