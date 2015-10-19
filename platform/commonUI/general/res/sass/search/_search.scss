@@ -214,8 +214,6 @@
 
 	.search-scroll {
 		order: 3;
-
-		//padding-right: $rightPadding;
 		margin-top: 4px;
 
 		// Adjustable scrolling size
@@ -227,29 +225,6 @@
 
 		.load-icon {
 			position: relative;
-
-/*			&.loading {
-				pointer-events: none;
-				margin-left: $leftMargin;
-
-				.title-label {
-					// Text styling
-					font-style: italic;
-					font-size: .9em;
-					opacity: 0.5;
-
-					// Text positioning
-					margin-left: $iconWidth + $leftMargin;
-					line-height: 24px;
-				}
-				.wait-spinner {
-					margin-left: $leftMargin;
-				}
-			}
-
-			&:not(.loading) {
-				cursor: pointer;
-			}*/
 		}
 
 		.load-more-button {

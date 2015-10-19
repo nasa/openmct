@@ -83,7 +83,6 @@ ul.tree {
 			.icon {
 				&.l-icon-link,
 				&.l-icon-alert {
-					//@include txtShdw($shdwItemTreeIcon);
 					position: absolute;
 					z-index: 2;
 				}
@@ -105,27 +104,11 @@ ul.tree {
 			@include absPosDefault();
 			display: block;
 			left: $runningItemW + ($interiorMargin * 3);
-			//right: $treeContextTriggerW + $interiorMargin;
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}
 	}
-
-    /*
-	&.loading {
-		pointer-events: none;
-		.label {
-			opacity: 0.5;
-			.title-label {
-				font-style: italic;
-			}
-		}
-		.wait-spinner {
-			margin-left: 14px;
-		}
-	}
-    */
 
 	&.selected {
 		background: $colorItemTreeSelectedBg;
@@ -144,9 +127,6 @@ ul.tree {
 			&:hover {
 				background: rgba($colorBodyFg, 0.1); //lighten($colorBodyBg, 5%);
 				color: pullForward($colorBodyFg, 20%);
-				//.context-trigger {
-				//	display: block;
-				//}
 				.icon {
 					color: $colorItemTreeIconHover;
 				}
@@ -160,7 +140,6 @@ ul.tree {
 
 	.context-trigger {
 		$h: 0.9rem;
-		//display: none;
 		top: -1px;
 		position: absolute;
 		right: $interiorMarginSm;
