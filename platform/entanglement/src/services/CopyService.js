@@ -23,7 +23,8 @@
 /*global define */
 
 define(
-    function () {
+    ["../../../commonUI/browse/lib/uuid"],
+    function (uuid) {
         "use strict";
 
         /**
@@ -53,8 +54,61 @@ define(
                 object.getCapability('type')
             );
         };
+        
+        /**
+         * Will build a graph of an object and all of its composed objects in memory
+         * @private
+         * @param domainObject
+         */
+        function buildCopyGraph(domainObject, parent) {
+            var clonedModels = [];
+            
+            function clone(object) {
+                return JSON.parse(JSON.stringify(object));
+            }
+            
+            function copy(object, parent) {
+                var modelClone = clone(object.getModel());
+                modelClone.composition = [];
+                if (domainObject.hasCapability('composition')) {
+                    return domainObject.useCapability('composition').then(function(composees){
+                        return composees.reduce(function(promise, composee){
+                            return promise.then(function(){
+                                return copy(composee, object).then(function(composeeClone){
+                                    /*
+                                    TODO: Use the composition capability for this. Just not sure how to contextualize the as-yet non-existent modelClone object.
+                                     */
+                                    return modelClone.composition.push(composeeClone.id);
+                                });
+                            });
+                        }, $q.when(undefined)).then(function (){
+                            modelClone.id = uuid();
+                            clonedModels.push(modelClone);
+                            return modelClone;
+                        });
+                    });
+                } else {
+                    return Q.when(modelClone);
+                }
+            };
+            return copy(domainObject, parent).then(function(){
+                return clonedModels;
+            });
+        }
 
-        CopyService.prototype.perform = function (domainObject, parent) {
+        function newPerform (domainObject, parent) {
+            return buildCopyGraph.then(function(clonedModels){
+                return clonedModels.reduce(function(promise, clonedModel){
+                    /*
+                    TODO: Persist the clone. We need to bypass the creation service on this because it wants to create the composition along the way, which we want to avoid. The composition has already been done directly in the model.
+                     */
+                }, this.q.when(undefined));
+            })
+        }
+
+        CopyService.prototype.perform = oldPerform;
+        
+        function oldPerform (domainObject, parent) {
             var model = JSON.parse(JSON.stringify(domainObject.getModel())),
                 $q = this.$q,
                 self = this;
@@ -73,6 +127,36 @@ define(
             if (domainObject.hasCapability('composition')) {
                 model.composition = [];
             }
+
+            /*
+             * 1) Traverse to leaf of object tree
+             * 2) Copy object and persist
+             * 3) Go up to parent
+             * 4) Update parent in memory with new composition
+             * 4) If parent has more children
+             * 5)     Visit next child
+             * 6)     Go to 2)
+             * 7) else
+             * 8)      Persist parent
+             */
+            
+            /*
+             * copy(object, parent) {
+             * 1)    objectClone = clone(object);  // Clone object
+             * 2)    objectClone.composition = []; // Reset the clone's composition
+             * 3)    composees = object.composition;
+             * 3)    composees.reduce(function (promise, composee) { // For each child in original composition
+             * 4)        return promise.then(function () {
+             * 5)            return copy(composee, object).then(function(clonedComposee){
+             * 6)               objectClone.composition.push(clonedComposee);
+             * 7)               return objectClone;
+             * 8)            ); // Copy the child
+             * 9)        };
+             * 10)    })
+             * 11)   objectClone.id = newId();
+             * 12)   return persist(objectClone);
+             * }
+             */
 
             return this.creationService
                 .createObject(model, parent)
