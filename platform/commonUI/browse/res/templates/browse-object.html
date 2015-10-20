@@ -51,11 +51,11 @@
     </div>
 
     <div class="l-object-wrapper"
-         ng-class="{ active:editMode, 'not-active':!editMode }">
+         ng-class="{ active:editMode }">
         <div class="l-object-wrapper-inner l-flex flex-col">
             <!-- Toolbar and Save/Cancel buttons -->
             <div class="l-edit-controls flex-elem l-flex flex-row"
-                 ng-if="editMode">
+                 ng-class="{ active:editMode }">
                 <mct-toolbar name="mctToolbar"
                              structure="toolbar.structure"
                              ng-model="toolbar.state"

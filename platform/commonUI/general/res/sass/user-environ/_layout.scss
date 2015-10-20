@@ -288,7 +288,7 @@
 }
 
 .object-holder {
-    @include trans-prop-nice-resize(0.3s);
+    @include trans-prop-nice-resize(0.25s);
     overflow: hidden; // Contained objects need to handle their own overflow now
     > ng-include {
         @include absPosDefault(0, auto);
@@ -318,13 +318,19 @@
 .l-object-wrapper-inner {
     @extend .abs;
     @include display-flex(column nowrap);
-    @include trans-prop-nice-resize(0.5s);
+    @include trans-prop-nice-resize(0.25s);
 }
 
 .l-edit-controls {
-    border-bottom: 1px solid $colorInteriorBorder;
-    height: $ueEditToolBarH + $interiorMargin;
-    line-height: $ueEditToolBarH;
+    @include trans-prop-nice-resize(0.25s);
+    height: 0;
+    opacity: 0;
+    &.active {
+        border-bottom: 1px solid $colorInteriorBorder;
+        height: $ueEditToolBarH + $interiorMargin;
+        line-height: $ueEditToolBarH;
+        opacity: 1;
+    }
 }
 
 .object-browse-bar .s-btn,
@@ -367,19 +373,19 @@
     @include display-flex;
     &.flex-row {
         @include flex-flow(row nowrap);
-        .flex-elem {
-            margin-left: $interiorMargin;
-            &:first-child {
-                margin-left: 0;
+        .flex-elem.active {
+            margin-right: $interiorMargin;
+            &:last-child {
+                margin-right: 0;
             }
         }
     }
     &.flex-col {
         @include flex-flow(column nowrap);
-        .flex-elem {
-            margin-top: $interiorMarginLg;
-            &:first-child {
-                margin-top: 0;
+        .flex-elem.active {
+            margin-bottom: $interiorMarginLg;
+            &:last-child {
+                margin-bottom: 0;
             }
         }
     }

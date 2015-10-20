@@ -62,7 +62,7 @@
 }
 
 @mixin trans-prop-nice-resize($t: 0.5s, $tf: ease-in-out) {
-    @include transition-property(height, width, top, right, bottom, left);
+    @include transition-property(height, width, top, right, bottom, left, opacity);
     @include transition-duration($t);
     @include transition-timing-function($tf);
 }

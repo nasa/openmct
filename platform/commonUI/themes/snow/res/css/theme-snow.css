@@ -3549,14 +3549,14 @@ span.req {
 
 /* line 290, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-holder {
-  -moz-transition-property: height, width, top, right, bottom, left;
-  -o-transition-property: height, width, top, right, bottom, left;
-  -webkit-transition-property: height, width, top, right, bottom, left;
-  transition-property: height, width, top, right, bottom, left;
-  -moz-transition-duration: 0.3s;
-  -o-transition-duration: 0.3s;
-  -webkit-transition-duration: 0.3s;
-  transition-duration: 0.3s;
+  -moz-transition-property: height, width, top, right, bottom, left, opacity;
+  -o-transition-property: height, width, top, right, bottom, left, opacity;
+  -webkit-transition-property: height, width, top, right, bottom, left, opacity;
+  transition-property: height, width, top, right, bottom, left, opacity;
+  -moz-transition-duration: 0.25s;
+  -o-transition-duration: 0.25s;
+  -webkit-transition-duration: 0.25s;
+  transition-duration: 0.25s;
   -moz-transition-timing-function: ease-in-out;
   -o-transition-timing-function: ease-in-out;
   -webkit-transition-timing-function: ease-in-out;
@@ -3628,14 +3628,14 @@ span.req {
 .l-object-wrapper-inner {
   display: -webkit-column nowrap;
   display: column nowrap;
-  -moz-transition-property: height, width, top, right, bottom, left;
-  -o-transition-property: height, width, top, right, bottom, left;
-  -webkit-transition-property: height, width, top, right, bottom, left;
-  transition-property: height, width, top, right, bottom, left;
-  -moz-transition-duration: 0.5s;
-  -o-transition-duration: 0.5s;
-  -webkit-transition-duration: 0.5s;
-  transition-duration: 0.5s;
+  -moz-transition-property: height, width, top, right, bottom, left, opacity;
+  -o-transition-property: height, width, top, right, bottom, left, opacity;
+  -webkit-transition-property: height, width, top, right, bottom, left, opacity;
+  transition-property: height, width, top, right, bottom, left, opacity;
+  -moz-transition-duration: 0.25s;
+  -o-transition-duration: 0.25s;
+  -webkit-transition-duration: 0.25s;
+  transition-duration: 0.25s;
   -moz-transition-timing-function: ease-in-out;
   -o-transition-timing-function: ease-in-out;
   -webkit-transition-timing-function: ease-in-out;
@@ -3643,11 +3643,28 @@ span.req {
 
 /* line 324, ../../../../general/res/sass/user-environ/_layout.scss */
 .l-edit-controls {
-  border-bottom: 1px solid rgba(102, 102, 102, 0.2);
-  height: 30px;
-  line-height: 25px; }
+  -moz-transition-property: height, width, top, right, bottom, left, opacity;
+  -o-transition-property: height, width, top, right, bottom, left, opacity;
+  -webkit-transition-property: height, width, top, right, bottom, left, opacity;
+  transition-property: height, width, top, right, bottom, left, opacity;
+  -moz-transition-duration: 0.25s;
+  -o-transition-duration: 0.25s;
+  -webkit-transition-duration: 0.25s;
+  transition-duration: 0.25s;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  height: 0;
+  opacity: 0; }
+  /* line 328, ../../../../general/res/sass/user-environ/_layout.scss */
+  .l-edit-controls.active {
+    border-bottom: 1px solid rgba(102, 102, 102, 0.2);
+    height: 30px;
+    line-height: 25px;
+    opacity: 1; }
 
-/* line 330, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 336, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .s-btn, .object-browse-bar .s-menu-btn,
 .top-bar .buttons-main .s-btn,
 .top-bar .buttons-main .s-menu-btn,
@@ -3659,12 +3676,12 @@ span.req {
   line-height: 25px;
   vertical-align: top; }
 
-/* line 343, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 349, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .view-switcher,
 .top-bar .view-switcher {
   margin-right: 20px; }
 
-/* line 348, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 354, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar {
   overflow: visible;
   position: absolute;
@@ -3680,49 +3697,49 @@ span.req {
   height: 24px;
   line-height: 24px;
   white-space: nowrap; }
-  /* line 356, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 362, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-browse-bar .left {
     padding-right: 20px; }
-    /* line 358, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 364, ../../../../general/res/sass/user-environ/_layout.scss */
     .object-browse-bar .left .l-back {
       display: inline-block;
       float: left;
       margin-right: 10px; }
 
-/* line 366, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 372, ../../../../general/res/sass/user-environ/_layout.scss */
 .l-flex {
   display: -webkit-flex;
   display: flex; }
-  /* line 368, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 374, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-flex.flex-row {
     -webkit-flex-flow: row nowrap;
     flex-flow: row nowrap; }
-    /* line 370, ../../../../general/res/sass/user-environ/_layout.scss */
-    .l-flex.flex-row .flex-elem {
-      margin-left: 5px; }
-      /* line 372, ../../../../general/res/sass/user-environ/_layout.scss */
-      .l-flex.flex-row .flex-elem:first-child {
-        margin-left: 0; }
-  /* line 377, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 376, ../../../../general/res/sass/user-environ/_layout.scss */
+    .l-flex.flex-row .flex-elem.active {
+      margin-right: 5px; }
+      /* line 378, ../../../../general/res/sass/user-environ/_layout.scss */
+      .l-flex.flex-row .flex-elem.active:last-child {
+        margin-right: 0; }
+  /* line 383, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-flex.flex-col {
     -webkit-flex-flow: column nowrap;
     flex-flow: column nowrap; }
-    /* line 379, ../../../../general/res/sass/user-environ/_layout.scss */
-    .l-flex.flex-col .flex-elem {
-      margin-top: 10px; }
-      /* line 381, ../../../../general/res/sass/user-environ/_layout.scss */
-      .l-flex.flex-col .flex-elem:first-child {
-        margin-top: 0; }
-  /* line 386, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 385, ../../../../general/res/sass/user-environ/_layout.scss */
+    .l-flex.flex-col .flex-elem.active {
+      margin-bottom: 10px; }
+      /* line 387, ../../../../general/res/sass/user-environ/_layout.scss */
+      .l-flex.flex-col .flex-elem.active:last-child {
+        margin-bottom: 0; }
+  /* line 392, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-flex .flex-elem {
     -webkit-flex: 0 1;
     flex: 0 1;
     position: relative; }
-    /* line 390, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 396, ../../../../general/res/sass/user-environ/_layout.scss */
     .l-flex .flex-elem.grow {
       -webkit-flex: 1 1;
       flex: 1 1; }
-  /* line 394, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 400, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-flex .left {
     -webkit-flex: 1 1 0;
     flex: 1 1 0;
