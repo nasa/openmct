@@ -66,6 +66,14 @@ $pad: $interiorMargin * $baseRatio;
     &.pause-play {
 
     }
+    &.t-save:before {
+        content:'\e612';
+        font-family: symbolsfont;
+    }
+    &.t-cancel:before {
+        content:'\78';
+        font-family: symbolsfont;
+    }
 
     &.pause-play {
         .icon:before {

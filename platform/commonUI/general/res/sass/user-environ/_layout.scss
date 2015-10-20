@@ -116,6 +116,7 @@
         $tbH: $btnToolbarH + $interiorMargin;
         top: $bodyMargin + $ueTopBarEditH + ($interiorMargin);
         .tool-bar {
+            border-bottom: 1px solid $colorInteriorBorder;
             bottom: auto;
             height: $tbH;
             line-height: $btnToolbarH;
@@ -303,9 +304,8 @@
     @extend .abs;
     top: $ueTopBarH + $interiorMarginLg;
     &.active {
-        @include pulseBorder($colorKey, 100ms, 6);
-        //@include pulse(250ms, 5);
-        @include border-radius($controlCr * 1.5);
+        @include pulseBorder($colorKey, 150ms, 6);
+        @include border-radius($controlCr);
         border-color: $colorKey;
         border-width:2px;
         border-style: dotted;
@@ -318,7 +318,13 @@
 .l-object-wrapper-inner {
     @extend .abs;
     @include display-flex(column nowrap);
-    @include trans-prop-nice-resize(0.3s);
+    @include trans-prop-nice-resize(0.5s);
+}
+
+.l-edit-controls {
+    border-bottom: 1px solid $colorInteriorBorder;
+    height: $ueEditToolBarH + $interiorMargin;
+    line-height: $ueEditToolBarH;
 }
 
 .object-browse-bar .s-btn,
