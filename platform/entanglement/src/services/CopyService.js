@@ -62,6 +62,13 @@ define(
          * @param domainObject
          */
         CopyService.prototype.buildCopyGraph = function(domainObject, parent) {
+            /* TODO: Use contextualized objects here.
+                Parent should be fully contextualized, and either the
+                original parent or a contextualized clone. The subsequent
+                composition changes can then be performed regardless of
+                whether it is the top level composition of the original
+                parent being updated, or of one of the cloned children. */
+
             var clones = [],
                 $q = this.$q,
                 self = this;
@@ -70,15 +77,16 @@ define(
                 return JSON.parse(JSON.stringify(object));
             }
             
-            function copy(object, parent) {
-                var modelClone = clone(object.getModel());
+            function copy(originalObject, originalParent) {
+                var modelClone = clone(originalObject.getModel());
                 modelClone.composition = [];
+                modelClone.id = uuid();
 
-                if (object.hasCapability('composition')) {
-                    return object.useCapability('composition').then(function(composees){
+                if (originalObject.hasCapability('composition')) {
+                    return originalObject.useCapability('composition').then(function(composees){
                         return composees.reduce(function(promise, composee){
                             return promise.then(function(){
-                                return copy(composee, object).then(function(composeeClone){
+                                return copy(composee, originalObject).then(function(composeeClone){
                                     /*
                                     TODO: Use the composition capability for this. Just not sure how to contextualize the as-yet non-existent modelClone object.
                                      */
@@ -87,12 +95,14 @@ define(
                                 });
                             });
                         }, $q.when(undefined)).then(function (){
-                            modelClone.id = uuid();
-                            clones.push({persistence: parent.getCapability('persistence'), model: modelClone});
+                            /* Todo: Move this outside of promise and avoid
+                             duplication below */
+                            clones.push({persistence: originalParent.getCapability('persistence'), model: modelClone});
                             return modelClone;
                         });
                     });
                 } else {
+                    clones.push({persistence: originalParent.getCapability('persistence'), model: modelClone});
                     return $q.when(modelClone);
                 }
             };
@@ -106,15 +116,20 @@ define(
                 self = this;
             if (this.validate(domainObject, parent)) {
                 return this.buildCopyGraph(domainObject, parent).then(function(clones){
-                    return clones.reduce(function(promise, clone){
-                        /*
-                         TODO: Persist the clone. We need to bypass the creation service on this because it wants to create the composition along the way, which we want to avoid. The composition has already been done directly in the model.
-                         */
-                        return promise.then(function(){
+                    return $q.all(clones.map(function(clone){
                             return self.persistenceService.createObject(clone.persistence.getSpace(), clone.model.id, clone.model);
-                        });
-                    }, $q.when(undefined));
-                })
+                    })).then(function(){ return clones});
+                }).then(function(clones) {
+                    var parentClone = clones[clones.length-1];
+                    parentClone.model.location = parent.getId()
+                    return $q.when(
+                        parent.hasCapability('composition') &&
+                        parent.getCapability('composition').add(parentClone.model.id)
+                            .then(
+                                function(){
+                                    parent.getCapability("persistence").persist()
+                                }));
+                });
             } else {
                 throw new Error(
                     "Tried to copy objects without validating first."
