@@ -49,6 +49,13 @@ define([
             aggregator = new SearchAggregator($q, objectService, providers);
         });
 
+        it("has a fudge factor", function () {
+            expect(aggregator.FUDGE_FACTOR).toBe(5);
+        });
+
+        it("has default max results", function () {
+            expect(aggregator.DEFAULT_MAX_RESULTS).toBe(100);
+        });
 
         it("can order model results by score", function () {
             var modelResults = {
@@ -170,7 +177,11 @@ define([
             providers.push(provider);
 
             aggregator.query('find me', 123, 'filter');
-            expect(provider.query).toHaveBeenCalledWith('find me', 123);
+            expect(provider.query)
+                .toHaveBeenCalledWith(
+                    'find me',
+                    123 * aggregator.FUDGE_FACTOR
+                );
             expect($q.all).toHaveBeenCalledWith(['i prooomise!']);
         });
 
@@ -181,7 +192,10 @@ define([
                 );
             providers.push(provider);
             aggregator.query('find me');
-            expect(provider.query).toHaveBeenCalledWith('find me', 100);
+            expect(provider.query).toHaveBeenCalledWith(
+                'find me',
+                aggregator.DEFAULT_MAX_RESULTS * aggregator.FUDGE_FACTOR
+            );
         });
 
         it('can combine responses from multiple providers', function () {

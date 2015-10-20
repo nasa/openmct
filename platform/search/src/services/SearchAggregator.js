@@ -31,8 +31,6 @@ define([
 ) {
     "use strict";
 
-    var DEFAULT_MAX_RESULTS = 100;
-
     /**
      * Aggregates multiple search providers as a singular search provider.
      * Search providers are expected to implement a `query` method which returns
@@ -52,6 +50,23 @@ define([
         this.objectService = objectService;
         this.providers = providers;
     }
+
+    /**
+     * If max results is not specified in query, use this as default.
+     */
+    SearchAggregator.prototype.DEFAULT_MAX_RESULTS = 100;
+
+    /**
+     * Because filtering isn't implemented inside each provider, the fudge
+     * factor is a multiplier on the number of results returned-- more results
+     * than requested will be fetched, and then will be fetched.  This helps
+     * provide more predictable pagination when large numbers of matches exist
+     * but very few matches match filters.
+     *
+     * If a provider level filter implementation is implemented in the future,
+     * remove this.
+     */
+    SearchAggregator.prototype.FUDGE_FACTOR = 5;
 
     /**
      * Sends a query to each of the providers. Returns a promise for
@@ -79,13 +94,13 @@ define([
             resultPromises;
 
         if (!maxResults) {
-            maxResults = DEFAULT_MAX_RESULTS;
+            maxResults = this.DEFAULT_MAX_RESULTS;
         }
 
         resultPromises = this.providers.map(function (provider) {
             return provider.query(
                 inputText,
-                maxResults
+                maxResults * aggregator.FUDGE_FACTOR
             );
         });
 
