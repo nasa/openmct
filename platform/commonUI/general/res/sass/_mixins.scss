@@ -61,6 +61,12 @@
     }
 }
 
+@mixin trans-prop-nice-resize($t: 0.5s, $tf: ease-in-out) {
+    @include transition-property(height, width, top, right, bottom, left);
+    @include transition-duration($t);
+    @include transition-timing-function($tf);
+}
+
 @mixin trans-prop-nice-resize-h($t: 0.5s) {
     @include transition-property(height, bottom, top);
     @include transition-duration($t);

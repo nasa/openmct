@@ -19,6 +19,13 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
+<div ng-init="
+    editActive = false;
+"></div>
+<a class="s-btn"
+   style="opacity: 0.9; position:absolute; z-index: 100"
+   ng-class="{ major:!editActive }"
+   ng-click="editActive = !editActive">Set activeEdit to {{!editActive}}</a>
 <span ng-controller="BrowseObjectController">
     <div class="object-browse-bar bar l-flex">
         <div class="items-select left">
@@ -42,8 +49,27 @@
         </div>
     </div>
 
-    <mct-representation key="representation.selected.key"
-                        mct-object="representation.selected.key && domainObject"
-                        class="abs object-holder">
-    </mct-representation>
+    <div class="l-object-wrapper"
+         ng-class="{ active:editActive }">
+        <div class="l-object-wrapper-inner l-flex flex-col">
+            <!-- Toolbar and Save/Cancel buttons -->
+            <div class="l-edit-controls flex-elem l-flex flex-row"
+                 ng-if="editActive">
+                <mct-toolbar name="mctToolbar"
+                             structure="toolbar.structure"
+                             ng-model="toolbar.state"
+                             class="flex-elem grow">
+                </mct-toolbar>
+                <mct-representation key="'edit-action-buttons'"
+                                    mct-object="domainObject"
+                                    class='flex-elem conclude-editing'>
+                </mct-representation>
+
+            </div>
+            <mct-representation key="representation.selected.key"
+                                mct-object="representation.selected.key && domainObject"
+                                class="flex-elem grow object-holder">
+            </mct-representation>
+        </div>
+    </div>
 </span>

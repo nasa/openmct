@@ -287,8 +287,8 @@
 }
 
 .object-holder {
+    @include trans-prop-nice-resize(0.3s);
     overflow: hidden; // Contained objects need to handle their own overflow now
-    top: $ueTopBarH + $interiorMarginLg;
     > ng-include {
         @include absPosDefault(0, auto);
     }
@@ -297,6 +297,28 @@
             bottom: nth($ueTimeControlH,1) + nth($ueTimeControlH,2) +nth($ueTimeControlH,3) + ($interiorMargin * 3);
         }
     }
+}
+
+.l-object-wrapper {
+    @extend .abs;
+    top: $ueTopBarH + $interiorMarginLg;
+    &.active {
+        @include pulseBorder($colorKey, 100ms, 6);
+        //@include pulse(250ms, 5);
+        @include border-radius($controlCr * 1.5);
+        border-color: $colorKey;
+        border-width:2px;
+        border-style: dotted;
+        .l-object-wrapper-inner {
+            $m: 3px;
+            top: $m; right: $m; bottom: $m; left: $m;
+        }
+    }
+}
+.l-object-wrapper-inner {
+    @extend .abs;
+    @include display-flex(column nowrap);
+    @include trans-prop-nice-resize(0.3s);
 }
 
 .object-browse-bar .s-btn,
@@ -336,11 +358,35 @@
 }
 
 .l-flex {
-    @include webkitVal('display', 'flex');
-    @include webkitProp('flex-flow', 'row nowrap');
+    @include display-flex;
+    &.flex-row {
+        @include flex-flow(row nowrap);
+        .flex-elem {
+            margin-left: $interiorMargin;
+            &:first-child {
+                margin-left: 0;
+            }
+        }
+    }
+    &.flex-col {
+        @include flex-flow(column nowrap);
+        .flex-elem {
+            margin-top: $interiorMarginLg;
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+    }
+    .flex-elem {
+        //@include test(purple);
+        @include flex(0 1);
+        position: relative;
+        &.grow {
+            @include flex(1 1);
+        }
+    }
     .left {
-        //@include test(red);
-        @include webkitProp(flex, '1 1 0');
+        @include flex(1 1 0);
         padding-right: $interiorMarginLg;
     }
 }
