@@ -31,8 +31,7 @@ define([
 ) {
     "use strict";
 
-    var DEFAULT_MAX_RESULTS = 100,
-        ID_PROPERTY = '_id',
+    var ID_PROPERTY = '_id',
         SOURCE_PROPERTY = '_source',
         SCORE_PROPERTY = '_score';
 
@@ -42,14 +41,11 @@ define([
      *
      * @constructor
      * @param $http Angular's $http service, for working with urls.
-     * @param {ObjectService} objectService the service from which
-     *        domain objects can be gotten.
      * @param ROOT the constant `ELASTIC_ROOT` which allows us to
      *        interact with ElasticSearch.
      */
-    function ElasticSearchProvider($http, objectService, ROOT) {
+    function ElasticSearchProvider($http, ROOT) {
         this.$http = $http;
-        this.objectService = objectService;
         this.root = ROOT;
     }
 
@@ -64,10 +60,6 @@ define([
         var searchUrl = this.root + '/_search/',
             params = {},
             provider = this;
-
-        if (!maxResults) {
-            maxResults = DEFAULT_MAX_RESULTS;
-        }
 
         searchTerm = this.cleanTerm(searchTerm);
         searchTerm = this.fuzzyMatchUnquotedTerms(searchTerm);
@@ -102,7 +94,7 @@ define([
      * @returns {string} search terms cleaned of excess whitespace.
      */
     ElasticSearchProvider.prototype.cleanTerm = function (term) {
-        return term.trim().replace(/ +/, ' ');
+        return term.trim().replace(/ +/g, ' ');
     };
 
     /**
@@ -121,7 +113,8 @@ define([
 
         return query
             .replace(matcher, '~ ')
-            .replace('"~', '"');
+            .replace(/$/, '~')
+            .replace(/"~+/, '"');
     };
 
     /**
