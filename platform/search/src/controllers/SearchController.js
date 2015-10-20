@@ -27,9 +27,6 @@
 define(function () {
     "use strict";
 
-    var INITIAL_LOAD_NUMBER = 20,
-        LOAD_INCREMENT = 20;
-
     /**
      * Controller for search in Tree View.
      *
@@ -50,9 +47,8 @@ define(function () {
         var controller = this;
         this.$scope = $scope;
         this.searchService = searchService;
-        this.numberToDisplay = INITIAL_LOAD_NUMBER;
-        this.fullResults = [];
-        this.filteredResults = [];
+        this.numberToDisplay = this.RESULTS_PER_PAGE;
+        this.availabileResults = 0;
         this.$scope.results = [];
         this.$scope.loading = false;
         this.pendingQuery = undefined;
@@ -61,28 +57,30 @@ define(function () {
         };
     }
 
+    SearchController.prototype.RESULTS_PER_PAGE = 20;
+
     /**
      * Returns true if there are more results than currently displayed for the
      * for the current query and filters.
      */
     SearchController.prototype.areMore = function () {
-        return this.$scope.results.length < this.filteredResults.length;
+        return this.$scope.results.length < this.availableResults;
     };
 
     /**
      * Display more results for the currently displayed query and filters.
      */
     SearchController.prototype.loadMore = function () {
-        this.numberToDisplay += LOAD_INCREMENT;
-        this.updateResults();
+        this.numberToDisplay += this.RESULTS_PER_PAGE;
+        this.dispatchSearch();
     };
 
     /**
-     * Search for the query string specified in scope.
+     * Reset search results, then search for the query string specified in
+     * scope.
      */
     SearchController.prototype.search = function () {
-        var inputText = this.$scope.ngModel.input,
-            controller = this;
+        var inputText = this.$scope.ngModel.input;
 
         this.clearResults();
 
@@ -96,50 +94,63 @@ define(function () {
             return;
         }
 
-        if (this.pendingQuery === inputText) {
+        this.dispatchSearch();
+    };
+
+    /**
+     * Dispatch a search to the search service if it hasn't already been
+     * dispatched.
+     *
+     * @private
+     */
+    SearchController.prototype.dispatchSearch = function () {
+        var inputText = this.$scope.ngModel.input,
+            controller = this,
+            queryId = inputText + this.numberToDisplay;
+
+        if (this.pendingQuery === queryId) {
             return; // don't issue multiple queries for the same term.
         }
 
-        this.pendingQuery = inputText;
+        this.pendingQuery = queryId;
 
         this
             .searchService
-            .query(inputText, 60) // TODO: allow filter in search service.
+            .query(inputText, this.numberToDisplay, this.filterPredicate())
             .then(function (results) {
-                if (controller.pendingQuery !== inputText) {
+                if (controller.pendingQuery !== queryId) {
                     return; // another query in progress, so skip this one.
                 }
                 controller.onSearchComplete(results);
             });
     };
 
+    SearchController.prototype.filter = SearchController.prototype.onFilterChange;
+
     /**
      * Refilter results and update visible results when filters have changed.
      */
     SearchController.prototype.onFilterChange = function () {
-        this.filter();
-        this.updateVisibleResults();
+        this.pendingQuery = undefined;
+        this.search();
     };
 
     /**
-     * Filter `fullResults` based on currenly active filters, storing the result
-     * in `filteredResults`.
+     * Returns a predicate function that can be used to filter object models.
      *
      * @private
      */
-    SearchController.prototype.filter = function () {
-        var includeTypes = this.$scope.ngModel.checked;
-
+    SearchController.prototype.filterPredicate = function () {
         if (this.$scope.ngModel.checkAll) {
-            this.filteredResults = this.fullResults;
-            return;
+            return function () {
+                return true;
+            };
         }
-
-        this.filteredResults = this.fullResults.filter(function (hit) {
-            return includeTypes[hit.object.getModel().type];
-        });
+        var includeTypes = this.$scope.ngModel.checked;
+        return function (model) {
+            return !!includeTypes[model.type];
+        };
     };
-
 
     /**
      * Clear the search results.
@@ -148,11 +159,9 @@ define(function () {
      */
     SearchController.prototype.clearResults = function () {
         this.$scope.results = [];
-        this.fullResults = [];
-        this.filteredResults = [];
-        this.numberToDisplay = INITIAL_LOAD_NUMBER;
+        this.availableResults = 0;
+        this.numberToDisplay = this.RESULTS_PER_PAGE;
     };
-
 
 
     /**
@@ -161,21 +170,10 @@ define(function () {
      * @private
      */
     SearchController.prototype.onSearchComplete = function (results) {
-        this.fullResults = results.hits;
-        this.filter();
-        this.updateVisibleResults();
+        this.availableResults = results.total;
+        this.$scope.results = results.hits;
         this.$scope.loading = false;
         this.pendingQuery = undefined;
-    };
-
-    /**
-     * Update visible results from filtered results.
-     *
-     * @private
-     */
-    SearchController.prototype.updateVisibleResults = function () {
-        this.$scope.results =
-            this.filteredResults.slice(0, this.numberToDisplay);
     };
 
     return SearchController;
