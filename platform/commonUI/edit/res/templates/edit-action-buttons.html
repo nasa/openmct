@@ -21,10 +21,10 @@
 -->
 <span ng-controller="EditActionController">
     <span ng-repeat="currentAction in editActions">
-        <a class='s-btn'
+        <a class='s-btn t-{{currentAction.getMetadata().key}}'
+           title='{{currentAction.getMetadata().name}}'
            ng-click="currentAction.perform()"
-           ng-class="{ major: $index === 0, subtle: $index !== 0 }">
-            {{currentAction.getMetadata().name}}
+           ng-class="{ major: $index === 0 }">
         </a>
     </span>
 </span>

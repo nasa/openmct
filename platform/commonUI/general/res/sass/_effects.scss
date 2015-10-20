@@ -75,7 +75,7 @@ a.disabled {
 	@include animation-duration($dur);
 	@include animation-direction(alternate);
 	@include animation-iteration-count($iteration);
-	@include animation-timing-function(linear);
+	@include animation-timing-function(ease);
 }
 
 .pulse {

@@ -304,7 +304,7 @@
     @extend .abs;
     top: $ueTopBarH + $interiorMarginLg;
     &.active {
-        @include pulseBorder($colorKey, 150ms, 6);
+        @include pulseBorder($colorKey, 150ms, 8);
         @include border-radius($controlCr);
         border-color: $colorKey;
         border-width:2px;
@@ -325,6 +325,7 @@
     @include trans-prop-nice-resize(0.25s);
     height: 0;
     opacity: 0;
+    overflow: hidden;
     &.active {
         border-bottom: 1px solid $colorInteriorBorder;
         height: $ueEditToolBarH + $interiorMargin;

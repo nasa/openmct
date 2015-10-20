@@ -3643,12 +3643,12 @@ span.req {
     -moz-animation-direction: alternate;
     -webkit-animation-direction: alternate;
     animation-direction: alternate;
-    -moz-animation-iteration-count: 6;
-    -webkit-animation-iteration-count: 6;
-    animation-iteration-count: 6;
-    -moz-animation-timing-function: linear;
-    -webkit-animation-timing-function: linear;
-    animation-timing-function: linear;
+    -moz-animation-iteration-count: 8;
+    -webkit-animation-iteration-count: 8;
+    animation-iteration-count: 8;
+    -moz-animation-timing-function: ease;
+    -webkit-animation-timing-function: ease;
+    animation-timing-function: ease;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     border-radius: 3px;
@@ -3709,15 +3709,16 @@ span.req {
   -webkit-transition-timing-function: ease-in-out;
   transition-timing-function: ease-in-out;
   height: 0;
-  opacity: 0; }
-  /* line 328, ../../../../general/res/sass/user-environ/_layout.scss */
+  opacity: 0;
+  overflow: hidden; }
+  /* line 329, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-edit-controls.active {
     border-bottom: 1px solid rgba(153, 153, 153, 0.1);
     height: 30px;
     line-height: 25px;
     opacity: 1; }
 
-/* line 336, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 337, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .s-btn, .object-browse-bar .s-menu-btn,
 .top-bar .buttons-main .s-btn,
 .top-bar .buttons-main .s-menu-btn,
@@ -3729,12 +3730,12 @@ span.req {
   line-height: 25px;
   vertical-align: top; }
 
-/* line 349, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 350, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .view-switcher,
 .top-bar .view-switcher {
   margin-right: 20px; }
 
-/* line 354, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 355, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar {
   overflow: visible;
   position: absolute;
@@ -3750,49 +3751,49 @@ span.req {
   height: 24px;
   line-height: 24px;
   white-space: nowrap; }
-  /* line 362, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 363, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-browse-bar .left {
     padding-right: 20px; }
-    /* line 364, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 365, ../../../../general/res/sass/user-environ/_layout.scss */
     .object-browse-bar .left .l-back {
       display: inline-block;
       float: left;
       margin-right: 10px; }
 
-/* line 372, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 373, ../../../../general/res/sass/user-environ/_layout.scss */
 .l-flex {
   display: -webkit-flex;
   display: flex; }
-  /* line 374, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 375, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-flex.flex-row {
     -webkit-flex-flow: row nowrap;
     flex-flow: row nowrap; }
-    /* line 376, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 377, ../../../../general/res/sass/user-environ/_layout.scss */
     .l-flex.flex-row .flex-elem.active {
       margin-right: 5px; }
-      /* line 378, ../../../../general/res/sass/user-environ/_layout.scss */
+      /* line 379, ../../../../general/res/sass/user-environ/_layout.scss */
       .l-flex.flex-row .flex-elem.active:last-child {
         margin-right: 0; }
-  /* line 383, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 384, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-flex.flex-col {
     -webkit-flex-flow: column nowrap;
     flex-flow: column nowrap; }
-    /* line 385, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 386, ../../../../general/res/sass/user-environ/_layout.scss */
     .l-flex.flex-col .flex-elem.active {
       margin-bottom: 10px; }
-      /* line 387, ../../../../general/res/sass/user-environ/_layout.scss */
+      /* line 388, ../../../../general/res/sass/user-environ/_layout.scss */
       .l-flex.flex-col .flex-elem.active:last-child {
         margin-bottom: 0; }
-  /* line 392, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 393, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-flex .flex-elem {
     -webkit-flex: 0 1;
     flex: 0 1;
     position: relative; }
-    /* line 396, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 397, ../../../../general/res/sass/user-environ/_layout.scss */
     .l-flex .flex-elem.grow {
       -webkit-flex: 1 1;
       flex: 1 1; }
-  /* line 400, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 401, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-flex .left {
     -webkit-flex: 1 1 0;
     flex: 1 1 0;
