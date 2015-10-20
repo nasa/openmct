@@ -35,10 +35,11 @@ define(
          * @memberof platform/entanglement
          * @implements {platform/entanglement.AbstractComposeService}
          */
-        function CopyService($q, creationService, policyService) {
+        function CopyService($q, creationService, policyService, persistenceService) {
             this.$q = $q;
             this.creationService = creationService;
             this.policyService = policyService;
+            this.persistenceService = persistenceService;
         }
 
         CopyService.prototype.validate = function (object, parentCandidate) {
@@ -61,15 +62,18 @@ define(
          * @param domainObject
          */
         function buildCopyGraph(domainObject, parent) {
-            var clonedModels = [];
+            var clones = [],
+                $q = this.$q;
             
             function clone(object) {
                 return JSON.parse(JSON.stringify(object));
             }
             
             function copy(object, parent) {
+                var self = this;
                 var modelClone = clone(object.getModel());
                 modelClone.composition = [];
+
                 if (domainObject.hasCapability('composition')) {
                     return domainObject.useCapability('composition').then(function(composees){
                         return composees.reduce(function(promise, composee){
@@ -83,27 +87,37 @@ define(
                             });
                         }, $q.when(undefined)).then(function (){
                             modelClone.id = uuid();
-                            clonedModels.push(modelClone);
+                            clones.push({persistence: parent.getCapability('persistence'), model: modelClone});
                             return modelClone;
                         });
                     });
                 } else {
-                    return Q.when(modelClone);
+                    return $q.when(modelClone);
                 }
             };
             return copy(domainObject, parent).then(function(){
-                return clonedModels;
+                return clones;
             });
         }
 
         function newPerform (domainObject, parent) {
-            return buildCopyGraph.then(function(clonedModels){
-                return clonedModels.reduce(function(promise, clonedModel){
-                    /*
-                    TODO: Persist the clone. We need to bypass the creation service on this because it wants to create the composition along the way, which we want to avoid. The composition has already been done directly in the model.
-                     */
-                }, this.q.when(undefined));
-            })
+            var $q = this.$q;
+            if (this.validate(domainObject, parent)) {
+                return buildCopyGraph(domainObject, parent).then(function(clones){
+                    return clones.reduce(function(promise, clone){
+                        /*
+                         TODO: Persist the clone. We need to bypass the creation service on this because it wants to create the composition along the way, which we want to avoid. The composition has already been done directly in the model.
+                         */
+                        promise.then(function(){
+                            return this.persistenceService.createObject(clone.persistence.getSpace(), clone.model.id, clone.model);
+                        });
+                    }, $q.when(undefined));
+                })
+            } else {
+                throw new Error(
+                    "Tried to copy objects without validating first."
+                );
+            }
         }
 
         CopyService.prototype.perform = oldPerform;
