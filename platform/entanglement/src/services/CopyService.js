@@ -61,27 +61,28 @@ define(
          * @private
          * @param domainObject
          */
-        function buildCopyGraph(domainObject, parent) {
+        CopyService.prototype.buildCopyGraph = function(domainObject, parent) {
             var clones = [],
-                $q = this.$q;
+                $q = this.$q,
+                self = this;
             
             function clone(object) {
                 return JSON.parse(JSON.stringify(object));
             }
             
             function copy(object, parent) {
-                var self = this;
                 var modelClone = clone(object.getModel());
                 modelClone.composition = [];
 
-                if (domainObject.hasCapability('composition')) {
-                    return domainObject.useCapability('composition').then(function(composees){
+                if (object.hasCapability('composition')) {
+                    return object.useCapability('composition').then(function(composees){
                         return composees.reduce(function(promise, composee){
                             return promise.then(function(){
                                 return copy(composee, object).then(function(composeeClone){
                                     /*
                                     TODO: Use the composition capability for this. Just not sure how to contextualize the as-yet non-existent modelClone object.
                                      */
+                                    composeeClone.location = modelClone.id;
                                     return modelClone.composition.push(composeeClone.id);
                                 });
                             });
@@ -101,15 +102,16 @@ define(
         }
 
         function newPerform (domainObject, parent) {
-            var $q = this.$q;
+            var $q = this.$q,
+                self = this;
             if (this.validate(domainObject, parent)) {
-                return buildCopyGraph(domainObject, parent).then(function(clones){
+                return this.buildCopyGraph(domainObject, parent).then(function(clones){
                     return clones.reduce(function(promise, clone){
                         /*
                          TODO: Persist the clone. We need to bypass the creation service on this because it wants to create the composition along the way, which we want to avoid. The composition has already been done directly in the model.
                          */
-                        promise.then(function(){
-                            return this.persistenceService.createObject(clone.persistence.getSpace(), clone.model.id, clone.model);
+                        return promise.then(function(){
+                            return self.persistenceService.createObject(clone.persistence.getSpace(), clone.model.id, clone.model);
                         });
                     }, $q.when(undefined));
                 })
@@ -120,7 +122,7 @@ define(
             }
         }
 
-        CopyService.prototype.perform = oldPerform;
+        CopyService.prototype.perform = newPerform;
         
         function oldPerform (domainObject, parent) {
             var model = JSON.parse(JSON.stringify(domainObject.getModel())),
