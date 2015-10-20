@@ -19,7 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
+/*global define,describe,it,expect,beforeEach,jasmine,Promise,spyOn,waitsFor,
+         runs*/
 
 /**
  *  SearchSpec. Created by shale on 07/31/2015.
@@ -126,12 +127,12 @@ define([
             });
 
             it('tracks ids to index', function () {
-                expect(provider.indexedIds['a']).not.toBeDefined();
-                expect(provider.pendingIndex['a']).not.toBeDefined();
+                expect(provider.indexedIds.a).not.toBeDefined();
+                expect(provider.pendingIndex.a).not.toBeDefined();
                 expect(provider.idsToIndex).not.toContain('a');
                 provider.scheduleForIndexing('a');
-                expect(provider.indexedIds['a']).toBeDefined();
-                expect(provider.pendingIndex['a']).toBeDefined();
+                expect(provider.indexedIds.a).toBeDefined();
+                expect(provider.pendingIndex.a).toBeDefined();
                 expect(provider.idsToIndex).toContain('a');
             });
 
@@ -214,7 +215,7 @@ define([
                 provider.beginIndexRequest();
                 waitsFor(function () {
                     return provider.pendingRequests === 0;
-                })
+                });
                 runs(function () {
                     expect(provider.index)
                         .toHaveBeenCalledWith('abc', models.abc);
@@ -224,7 +225,7 @@ define([
             it('does not error if no objects queued', function () {
                 provider.idsToIndex = [];
                 expect(function () {
-                    provider.beginIndexRequest()
+                    provider.beginIndexRequest();
                 }).not.toThrow();
             });
         });

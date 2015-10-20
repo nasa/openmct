@@ -45,7 +45,7 @@ define([
                 'objectService',
                 ['getObjects']
             );
-            providers = [],
+            providers = [];
             aggregator = new SearchAggregator($q, objectService, providers);
         });
 

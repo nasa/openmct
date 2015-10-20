@@ -31,7 +31,10 @@ define([
 ) {
     "use strict";
 
-    var DEFAULT_MAX_RESULTS = 100;
+    var DEFAULT_MAX_RESULTS = 100,
+        ID_PROPERTY = '_id',
+        SOURCE_PROPERTY = '_source',
+        SCORE_PROPERTY = '_score';
 
     /**
      * A search service which searches through domain objects in
@@ -133,15 +136,15 @@ define([
         var results = response.data.hits.hits,
             searchResults = results.map(function (result) {
                 return {
-                    id: result['_id'],
-                    model: result['_source'],
-                    score: result['_score']
+                    id: result[ID_PROPERTY],
+                    model: result[SOURCE_PROPERTY],
+                    score: result[SCORE_PROPERTY]
                 };
             });
 
         return {
             hits: searchResults,
-            total: response.data.hits.total,
+            total: response.data.hits.total
         };
     };
 
