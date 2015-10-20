@@ -133,15 +133,6 @@ define([
             expect(mockScope.loading).toBeFalsy();
         });
 
-
-        xit('displays only some results when there are many', function () {
-            expect(mockPromise.then).toHaveBeenCalledWith(jasmine.any(Function));
-            mockPromise.then.mostRecentCall.args[0]({hits: bigArray(100)});
-
-            expect(mockScope.results).toBeDefined();
-            expect(mockScope.results.length).toBeLessThan(100);
-        });
-
         it('detects when there are more results', function () {
             mockPromise.then.mostRecentCall.args[0]({
                 hits: bigArray(controller.RESULTS_PER_PAGE),
@@ -149,7 +140,7 @@ define([
             });
 
             expect(mockScope.results.length).toBe(controller.RESULTS_PER_PAGE);
-            expect(controller.areMore()).toBeTruthy;
+            expect(controller.areMore()).toBeTruthy();
 
             controller.loadMore();
 
@@ -168,50 +159,6 @@ define([
                 .toBe(controller.RESULTS_PER_PAGE + 5);
 
             expect(controller.areMore()).toBe(false);
-        });
-
-        xit('can load more results', function () {
-            var oldSize;
-
-            expect(mockPromise.then).toHaveBeenCalled();
-            mockPromise.then.mostRecentCall.args[0]({
-                hits: bigArray(INITIAL_LOAD_NUMBER + LOAD_INCREMENT + 1),
-                total: INITIAL_LOAD_NUMBER + LOAD_INCREMENT + 1
-            });
-            // These hits and total lengths are the case where the controller
-            //   DOES NOT have to re-search to load more results
-            oldSize = mockScope.results.length;
-
-            expect(controller.areMore()).toBeTruthy();
-
-            controller.loadMore();
-            expect(mockScope.results.length).toBeGreaterThan(oldSize);
-        });
-
-        xit('can re-search to load more results', function () {
-            var oldSize,
-                oldCallCount;
-
-            expect(mockPromise.then).toHaveBeenCalled();
-            mockPromise.then.mostRecentCall.args[0]({
-                hits: bigArray(INITIAL_LOAD_NUMBER + LOAD_INCREMENT - 1),
-                total: INITIAL_LOAD_NUMBER + LOAD_INCREMENT + 1
-            });
-            // These hits and total lengths are the case where the controller
-            //   DOES have to re-search to load more results
-            oldSize = mockScope.results.length;
-            oldCallCount = mockPromise.then.callCount;
-            expect(controller.areMore()).toBeTruthy();
-
-            controller.loadMore();
-            expect(mockPromise.then).toHaveBeenCalled();
-            // Make sure that a NEW call to search has been made
-            expect(oldCallCount).toBeLessThan(mockPromise.then.callCount);
-            mockPromise.then.mostRecentCall.args[0]({
-                hits: bigArray(INITIAL_LOAD_NUMBER + LOAD_INCREMENT + 1),
-                total: INITIAL_LOAD_NUMBER + LOAD_INCREMENT + 1
-            });
-            expect(mockScope.results.length).toBeGreaterThan(oldSize);
         });
 
         it('sets the ngModel.search flag', function () {
