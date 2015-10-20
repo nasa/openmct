@@ -31,9 +31,6 @@ define([
 ) {
     "use strict";
 
-    var DEFAULT_MAX_RESULTS = 100,
-        MAX_CONCURRENT_REQUESTS = 100;
-
     /**
      * A search service which searches through domain objects in
      * the filetree without using external search implementations.
@@ -60,11 +57,17 @@ define([
         this.pendingQueries = {};
 
         this.worker = this.startWorker(workerService);
+        this.indexOnMutation(topic);
 
         ROOTS.forEach(function indexRoot(rootId) {
             provider.scheduleForIndexing(rootId);
         });
     }
+
+    /**
+     * Maximum number of concurrent index requests to allow.
+     */
+    GenericSearchProvider.prototype.MAX_CONCURRENT_REQUESTS = 100;
 
     /**
      * Query the search provider for results.
@@ -77,9 +80,6 @@ define([
         input,
         maxResults
     ) {
-        if (!maxResults) {
-            maxResults = DEFAULT_MAX_RESULTS;
-        }
 
         var queryId = this.dispatchSearch(input, maxResults),
             pendingQuery = this.$q.defer();
@@ -100,9 +100,9 @@ define([
         var worker = workerService.run('genericSearchWorker'),
             provider = this;
 
-        worker.onmessage = function (messageEvent) {
+        worker.addEventListener('message', function (messageEvent) {
             provider.onWorkerMessage(messageEvent);
-        };
+        });
 
         return worker;
     };
@@ -148,7 +148,7 @@ define([
      * @private
      */
     GenericSearchProvider.prototype.keepIndexing = function () {
-        if (this.pendingRequests < MAX_CONCURRENT_REQUESTS) {
+        if (this.pendingRequests < this.MAX_CONCURRENT_REQUESTS) {
            this.beginIndexRequest();
         }
     };
@@ -206,7 +206,7 @@ define([
                     .warn('Failed to index domain object ' + idToIndex);
             })
             .then(function () {
-                provider.pendingRequests -=1;
+                provider.pendingRequests -= 1;
                 provider.keepIndexing();
             });
     };

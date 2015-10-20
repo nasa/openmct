@@ -26,27 +26,290 @@
  */
 define([
     "../../src/services/GenericSearchProvider"
-], function (GenericSearchProvider) {
+], function (
+    GenericSearchProvider
+) {
     "use strict";
 
     describe('GenericSearchProvider', function () {
         var $q,
             $log,
             modelService,
+            models,
             workerService,
+            worker,
             topic,
-            ROOTS;
+            mutationTopic,
+            ROOTS,
+            provider;
 
         beforeEach(function () {
             $q = jasmine.createSpyObj(
                 '$q',
                 ['defer']
             );
-            // TODO: continue
+            $log = jasmine.createSpyObj(
+                '$log',
+                ['warn']
+            );
+            models = {};
+            modelService = jasmine.createSpyObj(
+                'modelService',
+                ['getModels']
+            );
+            modelService.getModels.andReturn(Promise.resolve(models));
+            workerService = jasmine.createSpyObj(
+                'workerService',
+                ['run']
+            );
+            worker = jasmine.createSpyObj(
+                'worker',
+                [
+                    'postMessage',
+                    'addEventListener'
+                ]
+            );
+            workerService.run.andReturn(worker);
+            topic = jasmine.createSpy('topic');
+            mutationTopic = jasmine.createSpyObj(
+                'mutationTopic',
+                ['listen']
+            );
+            topic.andReturn(mutationTopic);
+            ROOTS = [
+                'mine'
+            ];
 
+            spyOn(GenericSearchProvider.prototype, 'scheduleForIndexing');
+
+            provider = new GenericSearchProvider(
+                $q,
+                $log,
+                modelService,
+                workerService,
+                topic,
+                ROOTS
+            );
+        });
+
+        it('listens for general mutation', function () {
+            expect(topic).toHaveBeenCalledWith('mutation');
+            expect(mutationTopic.listen)
+                .toHaveBeenCalledWith(jasmine.any(Function));
+        });
+
+        it('starts indexing roots', function () {
+            expect(provider.scheduleForIndexing).toHaveBeenCalledWith('mine');
+        });
+
+        it('runs a worker', function () {
+            expect(workerService.run)
+                .toHaveBeenCalledWith('genericSearchWorker');
+        });
+
+        it('listens for messages from worker', function () {
+            expect(worker.addEventListener)
+                .toHaveBeenCalledWith('message', jasmine.any(Function));
+            spyOn(provider, 'onWorkerMessage');
+            worker.addEventListener.mostRecentCall.args[1]('mymessage');
+            expect(provider.onWorkerMessage).toHaveBeenCalledWith('mymessage');
+        });
+
+        it('has a maximum number of concurrent requests', function () {
+            expect(provider.MAX_CONCURRENT_REQUESTS).toBe(100);
+        });
+
+        describe('scheduleForIndexing', function () {
+            beforeEach(function () {
+                provider.scheduleForIndexing.andCallThrough();
+                spyOn(provider, 'keepIndexing');
+            });
+
+            it('tracks ids to index', function () {
+                expect(provider.indexedIds['a']).not.toBeDefined();
+                expect(provider.pendingIndex['a']).not.toBeDefined();
+                expect(provider.idsToIndex).not.toContain('a');
+                provider.scheduleForIndexing('a');
+                expect(provider.indexedIds['a']).toBeDefined();
+                expect(provider.pendingIndex['a']).toBeDefined();
+                expect(provider.idsToIndex).toContain('a');
+            });
+
+            it('calls keep indexing', function () {
+                provider.scheduleForIndexing('a');
+                expect(provider.keepIndexing).toHaveBeenCalled();
+            });
+        });
+
+        describe('keepIndexing', function () {
+            it('kicks off an index request when not at maximum', function () {
+                spyOn(provider, 'beginIndexRequest');
+                provider.pendingRequests = 0;
+                provider.MAX_CONCURRENT_REQUESTS = 10;
+                provider.keepIndexing();
+                expect(provider.beginIndexRequest).toHaveBeenCalled();
+            });
+
+            it('does not index when at capacity', function () {
+                spyOn(provider, 'beginIndexRequest');
+                provider.pendingRequests = 10;
+                provider.MAX_CONCURRENT_REQUESTS = 10;
+                provider.keepIndexing();
+                expect(provider.beginIndexRequest).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('index', function () {
+            it('sends index message to worker', function () {
+                var id = 'anId',
+                    model = {};
+
+                provider.index(id, model);
+                expect(worker.postMessage).toHaveBeenCalledWith({
+                    request: 'index',
+                    id: id,
+                    model: model
+                });
+            });
+
+            it('schedules composed ids for indexing', function () {
+                var id = 'anId',
+                    model = {composition: ['abc', 'def']};
+
+                provider.index(id, model);
+                expect(provider.scheduleForIndexing)
+                    .toHaveBeenCalledWith('abc');
+                expect(provider.scheduleForIndexing)
+                    .toHaveBeenCalledWith('def');
+            });
+        });
+
+        describe('beginIndexRequest', function () {
+
+            beforeEach(function () {
+                provider.pendingRequests = 0;
+                provider.pendingIds = {'abc': true};
+                provider.idsToIndex = ['abc'];
+                models.abc = {};
+                spyOn(provider, 'index');
+            });
+
+            it('removes items from queue', function () {
+                provider.beginIndexRequest();
+                expect(provider.idsToIndex.length).toBe(0);
+            });
+
+            it('tracks number of pending requests', function () {
+                provider.beginIndexRequest();
+                expect(provider.pendingRequests).toBe(1);
+                waitsFor(function () {
+                    return provider.pendingRequests === 0;
+                });
+                runs(function () {
+                    expect(provider.pendingRequests).toBe(0);
+                });
+            });
+
+            it('indexes objects', function () {
+                provider.beginIndexRequest();
+                waitsFor(function () {
+                    return provider.pendingRequests === 0;
+                })
+                runs(function () {
+                    expect(provider.index)
+                        .toHaveBeenCalledWith('abc', models.abc);
+                });
+            });
+
+            it('does not error if no objects queued', function () {
+                provider.idsToIndex = [];
+                expect(function () {
+                    provider.beginIndexRequest()
+                }).not.toThrow();
+            });
+        });
+
+
+        it('can dispatch searches to worker', function () {
+            spyOn(provider, 'makeQueryId').andReturn(428);
+            expect(provider.dispatchSearch('searchTerm', 100))
+                .toBe(428);
+
+            expect(worker.postMessage).toHaveBeenCalledWith({
+                request: 'search',
+                input: 'searchTerm',
+                maxResults: 100,
+                queryId: 428
+            });
+        });
+
+        it('can generate queryIds', function () {
+            expect(provider.makeQueryId()).toEqual(jasmine.any(Number));
+        });
+
+        it('can query for terms', function () {
+            var deferred = {promise: {}};
+            spyOn(provider, 'dispatchSearch').andReturn(303);
+            $q.defer.andReturn(deferred);
+
+            expect(provider.query('someTerm', 100)).toBe(deferred.promise);
+            expect(provider.pendingQueries[303]).toBe(deferred);
+        });
+
+        describe('onWorkerMessage', function () {
+            var pendingQuery;
+            beforeEach(function () {
+                pendingQuery = jasmine.createSpyObj(
+                    'pendingQuery',
+                    ['resolve']
+                );
+                provider.pendingQueries[143] = pendingQuery;
+            });
+
+            it('resolves pending searches', function () {
+                provider.onWorkerMessage({
+                    data: {
+                        request: 'search',
+                        total: 2,
+                        results: [
+                            {
+                                item: {
+                                    id: 'abc',
+                                    model: {id: 'abc'}
+                                },
+                                matchCount: 4
+                            },
+                            {
+                                item: {
+                                    id: 'def',
+                                    model: {id: 'def'}
+                                },
+                                matchCount: 2
+                            }
+                        ],
+                        queryId: 143
+                    }
+                });
+
+                expect(pendingQuery.resolve)
+                    .toHaveBeenCalledWith({
+                        total: 2,
+                        hits: [{
+                            id: 'abc',
+                            model: {id: 'abc'},
+                            score: 4
+                        }, {
+                            id: 'def',
+                            model: {id: 'def'},
+                            score: 2
+                        }]
+                    });
+
+                    expect(provider.pendingQueries[143]).not.toBeDefined();
+
+            });
 
         });
 
     });
-
 });
