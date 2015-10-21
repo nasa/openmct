@@ -20,14 +20,13 @@
  at runtime from the About dialog for additional information.
 -->
 <div ng-init="
-    editMode = false;
     editBtns = [{ cssclass: 'save',title: 'Save' },{ cssclass: 'cancel',title: 'Discard Changes' }];
 "></div>
-<a class="s-btn"
-   style="opacity: 0.9; position:absolute; right: 250px; z-index: 100"
-   ng-class="{ major:!editMode }"
-   ng-click="editMode = !editMode">Set EditMode to {{!editMode}}</a>
 <span ng-controller="BrowseObjectController">
+    <a class="s-btn"
+       style="opacity: 0.9; position:absolute; right: 250px; z-index: 100"
+       ng-class="{ major:!editMode }"
+       ng-click="editMode = !editMode">Set EditMode to {{!editMode}}</a>
     <div class="object-browse-bar bar l-flex">
         <div class="items-select left">
             <mct-representation key="'back-arrow'"
