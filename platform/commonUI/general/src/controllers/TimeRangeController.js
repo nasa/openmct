@@ -26,9 +26,8 @@ define(
     function (moment) {
         "use strict";
 
-        var
-				DATE_FORMAT = "YYYY-MM-DD HH:mm:ss",
-				TICK_SPACING_PX = 150;
+        var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss",
+            TICK_SPACING_PX = 150;
 
         /**
          * @memberof platform/commonUI/general
@@ -99,8 +98,8 @@ define(
                 ngModel.inner = ngModel.inner || copyBounds(ngModel.outer);
 
                 // First, dates for the date pickers for outer bounds
-                $scope.startOuterDate = new Date(ngModel.outer.start);
-                $scope.endOuterDate = new Date(ngModel.outer.end);
+                $scope.boundsModel.start = formatTimestamp(ngModel.outer.start);
+                $scope.boundsModel.end = formatTimestamp(ngModel.outer.end);
 
                 // Then various updates for the inner span
                 updateViewForInnerSpanFromModel(ngModel);
@@ -210,6 +209,7 @@ define(
 
             $scope.state = false;
             $scope.ticks = [];
+            $scope.boundsModel = {};
 
             // Initialize scope to defaults
             updateViewFromModel($scope.ngModel);
