@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
+/*global define,setTimeout*/
 
 /**
  * Module defining GenericSearchProvider. Created by shale on 07/16/2015.
@@ -62,6 +62,8 @@ define([
         ROOTS.forEach(function indexRoot(rootId) {
             provider.scheduleForIndexing(rootId);
         });
+
+
     }
 
     /**
@@ -148,8 +150,10 @@ define([
      * @private
      */
     GenericSearchProvider.prototype.keepIndexing = function () {
-        if (this.pendingRequests < this.MAX_CONCURRENT_REQUESTS) {
-           this.beginIndexRequest();
+        while (this.pendingRequests < this.MAX_CONCURRENT_REQUESTS &&
+            this.idsToIndex.length
+            ) {
+            this.beginIndexRequest();
         }
     };
 
@@ -188,10 +192,6 @@ define([
         var idToIndex = this.idsToIndex.shift(),
             provider = this;
 
-        if (!idToIndex) {
-            return;
-        }
-
         this.pendingRequests += 1;
         this.modelService
             .getModels([idToIndex])
@@ -206,8 +206,10 @@ define([
                     .warn('Failed to index domain object ' + idToIndex);
             })
             .then(function () {
-                provider.pendingRequests -= 1;
-                provider.keepIndexing();
+                setTimeout(function () {
+                    provider.pendingRequests -= 1;
+                    provider.keepIndexing();
+                }, 0);
             });
     };
 
@@ -234,7 +236,6 @@ define([
                 score: hit.matchCount
             };
         });
-
 
         pendingQuery.resolve(modelResults);
         delete this.pendingQueries[event.data.queryId];

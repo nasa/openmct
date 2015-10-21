@@ -143,17 +143,38 @@ define([
         });
 
         describe('keepIndexing', function () {
-            it('kicks off an index request when not at maximum', function () {
-                spyOn(provider, 'beginIndexRequest');
-                provider.pendingRequests = 0;
+            it('calls beginIndexRequest until at maximum', function () {
+                spyOn(provider, 'beginIndexRequest').andCallThrough();
+                provider.pendingRequests = 9;
+                provider.idsToIndex = ['a', 'b', 'c'];
                 provider.MAX_CONCURRENT_REQUESTS = 10;
                 provider.keepIndexing();
                 expect(provider.beginIndexRequest).toHaveBeenCalled();
+                expect(provider.beginIndexRequest.calls.length).toBe(1);
+            });
+
+            it('calls beginIndexRequest for all ids to index', function () {
+                spyOn(provider, 'beginIndexRequest').andCallThrough();
+                provider.pendingRequests = 0;
+                provider.idsToIndex = ['a', 'b', 'c'];
+                provider.MAX_CONCURRENT_REQUESTS = 10;
+                provider.keepIndexing();
+                expect(provider.beginIndexRequest).toHaveBeenCalled();
+                expect(provider.beginIndexRequest.calls.length).toBe(3);
             });
 
             it('does not index when at capacity', function () {
                 spyOn(provider, 'beginIndexRequest');
                 provider.pendingRequests = 10;
+                provider.idsToIndex.push('a');
+                provider.MAX_CONCURRENT_REQUESTS = 10;
+                provider.keepIndexing();
+                expect(provider.beginIndexRequest).not.toHaveBeenCalled();
+            });
+
+            it('does not index when no ids to index', function () {
+                spyOn(provider, 'beginIndexRequest');
+                provider.pendingRequests = 0;
                 provider.MAX_CONCURRENT_REQUESTS = 10;
                 provider.keepIndexing();
                 expect(provider.beginIndexRequest).not.toHaveBeenCalled();
@@ -222,12 +243,6 @@ define([
                 });
             });
 
-            it('does not error if no objects queued', function () {
-                provider.idsToIndex = [];
-                expect(function () {
-                    provider.beginIndexRequest();
-                }).not.toThrow();
-            });
         });
 
 
