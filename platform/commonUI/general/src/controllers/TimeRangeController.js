@@ -186,6 +186,8 @@ define(
             function updateOuterStart(t) {
                 var ngModel = $scope.ngModel;
 
+                ngModel.outer.start = t;
+
                 ngModel.outer.end = Math.max(
                     ngModel.outer.start + outerMinimumSpan,
                     ngModel.outer.end
@@ -198,13 +200,13 @@ define(
                     ngModel.inner.end
                 );
 
-                $scope.startOuterText = formatTimestamp(t);
-
                 updateViewForInnerSpanFromModel(ngModel);
             }
 
             function updateOuterEnd(t) {
                 var ngModel = $scope.ngModel;
+
+                ngModel.outer.end = t;
 
                 ngModel.outer.start = Math.min(
                     ngModel.outer.end - outerMinimumSpan,
@@ -217,8 +219,6 @@ define(
                     ngModel.inner.end - innerMinimumSpan,
                     ngModel.inner.start
                 );
-
-                $scope.endOuterText = formatTimestamp(t);
 
                 updateViewForInnerSpanFromModel(ngModel);
             }
