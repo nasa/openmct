@@ -247,7 +247,9 @@ define(
                 try {
                     updateOuterStart(parseTimestamp(value));
                     updateBoundsTextForProperty($scope.ngModel, 'end');
+                    $scope.boundsModel.startValid = true;
                 } catch (e) {
+                    $scope.boundsModel.startValid = false;
                     return;
                 }
             }
@@ -256,7 +258,9 @@ define(
                 try {
                     updateOuterEnd(parseTimestamp(value));
                     updateBoundsTextForProperty($scope.ngModel, 'start');
+                    $scope.boundsModel.endValid = true;
                 } catch (e) {
+                    $scope.boundsModel.endValid = false;
                     return;
                 }
             }

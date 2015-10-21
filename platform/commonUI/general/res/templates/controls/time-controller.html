@@ -25,7 +25,10 @@
         <span class="l-time-range-input" ng-controller="ToggleController as t1">
             <!--<span class="lbl">Start</span>-->
             <span class="s-btn time-range-start">
-                <input type="text" ng-model="boundsModel.start"></input>
+                <input type="text"
+                       ng-model="boundsModel.start"
+                       ng-class="{ error: !boundsModel.startValid }">
+                </input>
                 <a class="ui-symbol icon icon-calendar" ng-click="t1.toggle()"></a>
                 <mct-popup ng-if="t1.isActive()">
                     <div mct-click-elsewhere="t1.setState(false)">
@@ -44,7 +47,10 @@
         <span class="l-time-range-input" ng-controller="ToggleController as t2">
             <!--<span class="lbl">End</span>-->
             <span class="s-btn l-time-range-input">
-                <input type="text" ng-model="boundsModel.end"></input>
+                <input type="text"
+                       ng-model="boundsModel.end"
+                       ng-class="{ error: !boundsModel.endValid }">
+                </input>
                 <a class="ui-symbol icon icon-calendar" ng-click="t2.toggle()">
                 </a>
                 <mct-popup ng-if="t2.isActive()">
