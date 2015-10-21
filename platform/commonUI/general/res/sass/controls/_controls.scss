@@ -115,7 +115,7 @@
 	@include box-sizing(border-box);
 	border-left: 1px solid $colorInteriorBorder;
 	display: inline-block;
-	padding: 0 $interiorMargin;
+	padding: 0 0 0 $interiorMargin;
 	position: relative;
 	&:first-child {
 		border-left: none;

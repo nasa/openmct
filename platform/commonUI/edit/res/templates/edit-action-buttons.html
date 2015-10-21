@@ -25,6 +25,7 @@
            title='{{currentAction.getMetadata().name}}'
            ng-click="currentAction.perform()"
            ng-class="{ major: $index === 0 }">
+            <span class="title-label">{{currentAction.getMetadata().name}}</span>
         </a>
     </span>
 </span>

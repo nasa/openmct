@@ -66,7 +66,7 @@ a.disabled {
 	@include animation-timing-function(ease-in-out);
 }
 
-@mixin pulseBorder($c: red, $dur: 500ms, $iteration: infinite) {
+@mixin pulseBorder($c: red, $dur: 500ms, $iteration: infinite, $delay: 0s) {
 	@include keyframes(pulseBorder) {
 		0%   { border-color: transparent; }
 		100% { border-color: $c; }
@@ -76,6 +76,7 @@ a.disabled {
 	@include animation-direction(alternate);
 	@include animation-iteration-count($iteration);
 	@include animation-timing-function(ease);
+    @include animation-delay($delay);
 }
 
 .pulse {

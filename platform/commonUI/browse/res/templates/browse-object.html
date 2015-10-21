@@ -20,8 +20,13 @@
  at runtime from the About dialog for additional information.
 -->
 <div ng-init="
-    editBtns = [{ cssclass: 'save',title: 'Save Changes' },{ cssclass: 'cancel',title: 'Discard Changes' }];
+    editMode = false;
+    editBtns = [{ cssclass: 'save',title: 'Save' },{ cssclass: 'cancel',title: 'Discard Changes' }];
 "></div>
+<a class="s-btn"
+   style="opacity: 0.9; position:absolute; right: 250px; z-index: 100"
+   ng-class="{ major:!editMode }"
+   ng-click="editMode = !editMode">Set EditMode to {{!editMode}}</a>
 <span ng-controller="BrowseObjectController">
     <div class="object-browse-bar bar l-flex">
         <div class="items-select left">
@@ -45,44 +50,63 @@
         </div>
     </div>
 
-    <div class="l-object-wrapper edit-main"
-         ng-class="{ active:editMode }">
-        <div style="text-align: right;">
-        <mct-representation key="'edit-action-buttons'"
-                            mct-object="domainObject"
-                            class='flex-elem conclude-editing'></div>
-        </mct-representation>
+    <div class="l-object-wrapper"
+         ng-class="{ active:editMode, 'edit-main':editMode}">
         <div class="l-object-wrapper-inner l-flex flex-col">
             <!-- Toolbar and Save/Cancel buttons -->
-            <div class="l-edit-controls flex-elem l-flex flex-row"
+            <div class="l-edit-controls flex-elem l-flex flex-row flex-align-end"
                  ng-class="{ active:editMode }">
-                
-                <!--<mct-toolbar name="mctToolbar"
+
+
+
+
+<!--                <mct-toolbar name="mctToolbar"
                              structure="toolbar.structure"
                              ng-model="toolbar.state"
                              class="flex-elem grow">
-                </mct-toolbar> -->
+                </mct-toolbar>-->
                 <!-- from toolbar.html -->
-                <!--<mct-toolbar-x class="flex-elem grow">
+                <mct-toolbar-x class="flex-elem grow ellipsis">
                     <form novalidate>
-                        <div class="tool-bar btn-bar contents abs">
+                        <div class="tool-bar btn-bar">
                             <span class="l-control-group">
-                            <span class="s-menu-btn">Foo</span>
-                            <span class="s-menu-btn">Bar</span>
+                                <span class="s-menu-btn">Foo</span>
+                                <span class="s-menu-btn">Bar</span>
                             </span>
+                            <span class="l-control-group">
+                                <span class="s-menu-btn">Foo</span>
+                                <span class="s-menu-btn">Bar</span>
+                                <span class="s-menu-btn">Foo</span>
+                                <span class="s-menu-btn">Lorem</span>
+                            </span>
+                            <span class="l-control-group">
+                                <span class="s-menu-btn">Foo</span>
+                                <span class="s-menu-btn">Bar</span>
+                                <span class="s-menu-btn">Lorem</span>
+                            </span>
+                            <span class="s-menu-btn">Lorem</span>
                         </div>
                     </form>
-                </mct-toolbar-x> -->
+                </mct-toolbar-x>
 
+
+
+
+<!--                <mct-representation key="'edit-action-buttons'"
+                                    mct-object="domainObject"
+                                    class='flex-elem conclude-editing'>
+                </mct-representation>-->
                 <!-- from edit-action-buttons.html -->
-               <!--<span>
+                <span class='flex-elem conclude-editing'>
                     <span ng-repeat="btn in editBtns">
                         <a class='s-btn t-{{btn.cssclass}}'
                            title='{{btn.title}}'
                            ng-click="currentAction.perform()"
-                           ng-class="{ major: $index === 0 }"></a>
+                           ng-class="{ major: $index === 0 }">
+                            <span class="title-label">{{btn.title}}</span>
+                        </a>
                     </span>
-                </span>-->
+                </span>
 
             </div>
             <mct-representation key="representation.selected.key"
