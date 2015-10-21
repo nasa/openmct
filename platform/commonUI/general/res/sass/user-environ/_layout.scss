@@ -304,17 +304,21 @@
     @extend .abs;
     top: $ueTopBarH + $interiorMarginLg;
     &.active {
-        @include pulseBorder($colorKey, 150ms, 8);
+        @include pulseBorder($colorKey, 150ms, 8, 0.5s);
         @include border-radius($controlCr);
         border-color: $colorKey;
-        border-width:2px;
+        border-width: 2px;
         border-style: dotted;
         .l-object-wrapper-inner {
             $m: 3px;
-            top: $m; right: $m; bottom: $m; left: $m;
+            top: $m;
+            right: $m;
+            bottom: $m;
+            left: $m;
         }
     }
 }
+
 .l-object-wrapper-inner {
     @extend .abs;
     @include display-flex(column nowrap);
@@ -374,15 +378,21 @@
     @include display-flex;
     &.flex-row {
         @include flex-flow(row nowrap);
-        .flex-elem.active {
+        //@include align-items(center);
+        .flex-elem {
+            white-space: nowrap;
             margin-right: $interiorMargin;
             &:last-child {
                 margin-right: 0;
+            }
+            &.flex-align-end {
+                @include justify-content(flex-end);
             }
         }
     }
     &.flex-col {
         @include flex-flow(column nowrap);
+        //@include align-items(stretch);
         .flex-elem.active {
             margin-bottom: $interiorMarginLg;
             &:last-child {
@@ -392,10 +402,10 @@
     }
     .flex-elem {
         //@include test(purple);
-        @include flex(0 1);
+        @include flex(0 1 auto);
         position: relative;
         &.grow {
-            @include flex(1 1);
+            @include flex(1 1 auto);
         }
     }
     .left {
