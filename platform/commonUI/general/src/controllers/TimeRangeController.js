@@ -101,6 +101,25 @@ define(
                 return { start: bounds.start, end: bounds.end };
             }
 
+            function updateBoundsTextForProperty(ngModel, property) {
+                try {
+                    if (!$scope.boundsModel[property] ||
+                            parseTimestamp($scope.boundsModel[property]) !==
+                                ngModel.outer[property]) {
+                        $scope.boundsModel[property] =
+                            formatTimestamp(ngModel.outer[property]);
+                    }
+                } catch (e) {
+                    // User-entered text is invalid, so leave it be
+                    // until they fix it.
+                }
+            }
+
+            function updateBoundsText(ngModel) {
+                updateBoundsTextForProperty(ngModel, 'start');
+                updateBoundsTextForProperty(ngModel, 'end');
+            }
+
             function updateViewFromModel(ngModel) {
                 var t = now();
 
@@ -109,8 +128,7 @@ define(
                 ngModel.inner = ngModel.inner || copyBounds(ngModel.outer);
 
                 // First, dates for the date pickers for outer bounds
-                $scope.boundsModel.start = formatTimestamp(ngModel.outer.start);
-                $scope.boundsModel.end = formatTimestamp(ngModel.outer.end);
+                updateBoundsText(ngModel);
 
                 // Then various updates for the inner span
                 updateViewForInnerSpanFromModel(ngModel);
@@ -201,6 +219,7 @@ define(
                 );
 
                 updateViewForInnerSpanFromModel(ngModel);
+                updateTicks();
             }
 
             function updateOuterEnd(t) {
@@ -221,11 +240,13 @@ define(
                 );
 
                 updateViewForInnerSpanFromModel(ngModel);
+                updateTicks();
             }
 
             function updateStartFromText(value) {
                 try {
                     updateOuterStart(parseTimestamp(value));
+                    updateBoundsTextForProperty($scope.ngModel, 'end');
                 } catch (e) {
                     return;
                 }
@@ -234,9 +255,20 @@ define(
             function updateEndFromText(value) {
                 try {
                     updateOuterEnd(parseTimestamp(value));
+                    updateBoundsTextForProperty($scope.ngModel, 'start');
                 } catch (e) {
                     return;
                 }
+            }
+
+            function updateStartFromPicker(value) {
+                updateOuterStart(value);
+                updateBoundsText($scope.ngModel);
+            }
+
+            function updateEndFromPicker(value) {
+                updateOuterEnd(value);
+                updateBoundsText($scope.ngModel);
             }
 
             $scope.startLeftDrag = startLeftDrag;
@@ -255,8 +287,8 @@ define(
 
             $scope.$watchCollection("ngModel", updateViewFromModel);
             $scope.$watch("spanWidth", updateSpanWidth);
-            $scope.$watch("ngModel.outer.start", updateOuterStart);
-            $scope.$watch("ngModel.outer.end", updateOuterEnd);
+            $scope.$watch("ngModel.outer.start", updateStartFromPicker);
+            $scope.$watch("ngModel.outer.end", updateEndFromPicker);
             $scope.$watch("boundsModel.start", updateStartFromText);
             $scope.$watch("boundsModel.end", updateEndFromText);
         }
