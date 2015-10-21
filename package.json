@@ -22,8 +22,7 @@
     "split": "^1.0.0",
     "mkdirp": "^0.5.1",
     "nomnoml": "^0.0.3",
-    "canvas": "^1.2.7",
-    "doctoc": "0.15.0"
+    "canvas": "^1.2.7"
   },
   "scripts": {
     "start": "node app.js",
@@ -31,9 +30,8 @@
     "jshint": "jshint platform example || exit 0",
     "watch": "karma start",
     "jsdoc": "jsdoc -c jsdoc.json -r -d target/docs/api",
-    "doctoc": "doctoc docs/src",
     "otherdoc": "node docs/gendocs.js --in docs/src --out target/docs",
-    "docs": "npm run jsdoc ; npm run doctoc; npm run otherdoc"
+    "docs": "npm run jsdoc ; npm run otherdoc"
   },
   "repository": {
     "type": "git",
