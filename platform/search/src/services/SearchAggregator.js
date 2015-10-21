@@ -59,9 +59,9 @@ define([
     /**
      * Because filtering isn't implemented inside each provider, the fudge
      * factor is a multiplier on the number of results returned-- more results
-     * than requested will be fetched, and then will be fetched.  This helps
-     * provide more predictable pagination when large numbers of matches exist
-     * but very few matches match filters.
+     * than requested will be fetched, and then will be filtered.  This helps
+     * provide more predictable pagination when large numbers of results are
+     * returned but very few results match filters.
      *
      * If a provider level filter implementation is implemented in the future,
      * remove this.
