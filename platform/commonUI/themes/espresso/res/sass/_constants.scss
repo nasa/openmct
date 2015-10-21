@@ -164,3 +164,7 @@ $colorCalCellInMonthBg: pushBack($colorMenuBg, 5%);
 
 // About Screen
 $colorAboutLink: #84b3ff;
+
+// Loading
+$colorLoadingBg: rgba($colorBodyFg, 0.2);
+$colorLoadingFg: $colorAlt1;

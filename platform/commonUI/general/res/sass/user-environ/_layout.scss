@@ -294,9 +294,7 @@
     }
     &.l-controls-visible {
         &.l-time-controller-visible {
-            > ng-include {
-                bottom: nth($ueTimeControlH,1) + nth($ueTimeControlH,2) +nth($ueTimeControlH,3) + ($interiorMargin * 3);
-            }
+            bottom: nth($ueTimeControlH,1) + nth($ueTimeControlH,2) +nth($ueTimeControlH,3) + ($interiorMargin * 3);
         }
     }
 }

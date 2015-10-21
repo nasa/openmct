@@ -1059,27 +1059,22 @@ mct-container {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@-webkit-keyframes rotation {
-  from {
-    -webkit-transform: rotate(0deg); }
-  to {
-    -webkit-transform: rotate(359deg); } }
 @-moz-keyframes rotation {
-  from {
-    -moz-transform: rotate(0deg); }
-  to {
-    -moz-transform: rotate(359deg); } }
-@-o-keyframes rotation {
-  from {
-    -o-transform: rotate(0deg); }
-  to {
-    -o-transform: rotate(359deg); } }
-@keyframes rotation {
-  from {
+  0% {
     transform: rotate(0deg); }
-  to {
+  100% {
     transform: rotate(359deg); } }
-/* line 42, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+@-webkit-keyframes rotation {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(359deg); } }
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(359deg); } }
+/* line 63, ../../../../general/res/sass/helpers/_wait-spinner.scss */
 .t-wait-spinner,
 .wait-spinner {
   display: block;
@@ -1092,6 +1087,8 @@ mct-container {
   border-top-color: #0099cc;
   border-style: solid;
   border-width: 0.5em;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
   border-radius: 100%;
   top: 50%;
   left: 50%;
@@ -1102,7 +1099,7 @@ mct-container {
   margin-top: -5%;
   margin-left: -5%;
   z-index: 2; }
-  /* line 53, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 74, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .t-wait-spinner.inline,
   .wait-spinner.inline {
     display: inline-block !important;
@@ -1110,26 +1107,26 @@ mct-container {
     position: relative !important;
     vertical-align: middle; }
 
-/* line 61, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+/* line 82, ../../../../general/res/sass/helpers/_wait-spinner.scss */
 .l-wait-spinner-holder {
   pointer-events: none;
   position: absolute; }
-  /* line 65, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 86, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .l-wait-spinner-holder.align-left .t-wait-spinner {
     left: 0;
     margin-left: 0; }
-  /* line 70, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  /* line 91, ../../../../general/res/sass/helpers/_wait-spinner.scss */
   .l-wait-spinner-holder.full-size {
     display: inline-block;
     height: 100%;
     width: 100%; }
-    /* line 73, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+    /* line 94, ../../../../general/res/sass/helpers/_wait-spinner.scss */
     .l-wait-spinner-holder.full-size .t-wait-spinner {
       top: 0;
       margin-top: 0;
       padding: 30%; }
 
-/* line 82, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+/* line 103, ../../../../general/res/sass/helpers/_wait-spinner.scss */
 .treeview .wait-spinner {
   display: block;
   position: absolute;
@@ -1141,6 +1138,8 @@ mct-container {
   border-top-color: #0099cc;
   border-style: solid;
   border-width: 0.25em;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
   border-radius: 100%;
   height: 10px;
   width: 10px;
@@ -1149,7 +1148,7 @@ mct-container {
   top: 2px;
   left: 0; }
 
-/* line 91, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+/* line 112, ../../../../general/res/sass/helpers/_wait-spinner.scss */
 .wait-spinner.sm {
   display: block;
   position: absolute;
@@ -1161,6 +1160,8 @@ mct-container {
   border-top-color: #0099cc;
   border-style: solid;
   border-width: 0.25em;
+  -moz-border-radius: 100%;
+  -webkit-border-radius: 100%;
   border-radius: 100%;
   height: 13px;
   width: 13px;
@@ -1169,6 +1170,77 @@ mct-container {
   padding: 0 !important;
   top: 0;
   left: 0; }
+
+/* line 122, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+.loading {
+  pointer-events: none; }
+  /* line 125, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  .loading:before, .loading:after {
+    content: ''; }
+  /* line 129, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  .loading:before {
+    -moz-animation-name: rotateCentered;
+    -webkit-animation-name: rotateCentered;
+    animation-name: rotateCentered;
+    -moz-animation-duration: 0.5s;
+    -webkit-animation-duration: 0.5s;
+    animation-duration: 0.5s;
+    -moz-animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -moz-animation-timing-function: linear;
+    -webkit-animation-timing-function: linear;
+    animation-timing-function: linear;
+    border-color: rgba(255, 199, 0, 0.25);
+    border-top-color: #ffc700;
+    border-style: solid;
+    border-width: 5px;
+    -moz-border-radius: 100%;
+    -webkit-border-radius: 100%;
+    border-radius: 100%;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    height: 0;
+    width: 0;
+    padding: 7%;
+    left: 50%;
+    top: 50%;
+    z-index: 10; }
+@-moz-keyframes rotateCentered {
+  0% {
+    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+  100% {
+    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
+@-webkit-keyframes rotateCentered {
+  0% {
+    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+  100% {
+    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
+@keyframes rotateCentered {
+  0% {
+    transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+  100% {
+    transform: translateX(-50%) translateY(-50%) rotate(359deg); } }
+  /* line 133, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  .loading:after {
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    width: auto;
+    height: auto;
+    background: rgba(153, 153, 153, 0.2);
+    display: block;
+    z-index: 9; }
+  /* line 139, ../../../../general/res/sass/helpers/_wait-spinner.scss */
+  .loading.tree-item:before {
+    padding: 0.375rem;
+    border-width: 2px; }
 
 /* Styles for messages */
 /* line 4, ../../../../general/res/sass/_messages.scss */
@@ -1938,7 +2010,6 @@ label.checkbox.custom {
   width: 230px; }
   /* line 356, ../../../../general/res/sass/controls/_controls.scss */
   .l-datetime-picker .l-month-year-pager {
-    font-size: 0.8rem;
     height: 15px;
     margin-bottom: 5px;
     position: relative; }
@@ -2378,206 +2449,216 @@ label.checkbox.custom {
   right: 0;
   width: auto; }
 
-/* line 27, ../../../../general/res/sass/controls/_time-controller.scss */
-.l-time-controller .l-time-range-inputs-holder,
-.l-time-controller .l-time-range-slider {
-  font-size: 0.8em; }
-/* line 32, ../../../../general/res/sass/controls/_time-controller.scss */
-.l-time-controller .l-time-range-inputs-holder,
-.l-time-controller .l-time-range-slider-holder,
-.l-time-controller .l-time-range-ticks-holder {
-  overflow: visible;
+/* line 13, ../../../../general/res/sass/controls/_time-controller.scss */
+mct-include.l-time-controller {
+  overflow: hidden;
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
   width: auto;
   height: auto;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  min-width: 400px;
-  top: auto; }
-/* line 42, ../../../../general/res/sass/controls/_time-controller.scss */
-.l-time-controller .l-time-range-slider,
-.l-time-controller .l-time-range-ticks {
-  overflow: visible;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: auto;
-  height: auto;
-  left: 150px;
-  right: 150px; }
-/* line 49, ../../../../general/res/sass/controls/_time-controller.scss */
-.l-time-controller .l-time-range-inputs-holder {
-  height: 33px;
-  bottom: 46px;
-  padding-top: 5px;
-  border-top: 1px solid rgba(153, 153, 153, 0.1); }
-  /* line 54, ../../../../general/res/sass/controls/_time-controller.scss */
-  .l-time-controller .l-time-range-inputs-holder .type-icon {
-    font-size: 120%;
-    vertical-align: middle; }
-  /* line 58, ../../../../general/res/sass/controls/_time-controller.scss */
-  .l-time-controller .l-time-range-inputs-holder .l-time-range-input,
-  .l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem {
-    margin-right: 5px; }
-    /* line 61, ../../../../general/res/sass/controls/_time-controller.scss */
-    .l-time-controller .l-time-range-inputs-holder .l-time-range-input .lbl,
-    .l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .lbl {
-      color: #666666; }
-    /* line 64, ../../../../general/res/sass/controls/_time-controller.scss */
-    .l-time-controller .l-time-range-inputs-holder .l-time-range-input .ui-symbol.icon, .l-time-controller .l-time-range-inputs-holder .l-time-range-input .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.pager,
-    .l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .ui-symbol.icon,
-    .l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .l-datetime-picker .l-month-year-pager .icon.pager,
-    .l-datetime-picker .l-month-year-pager .l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.pager {
-      font-size: 11px;
-      width: 11px; }
-/* line 71, ../../../../general/res/sass/controls/_time-controller.scss */
-.l-time-controller .l-time-range-slider-holder {
-  height: 20px;
-  bottom: 23px; }
-  /* line 74, ../../../../general/res/sass/controls/_time-controller.scss */
-  .l-time-controller .l-time-range-slider-holder .range-holder {
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
-    box-shadow: none;
-    background: none;
-    border: none; }
-    /* line 79, ../../../../general/res/sass/controls/_time-controller.scss */
-    .l-time-controller .l-time-range-slider-holder .range-holder .range .toi-line {
-      -moz-transform: translateX(50%);
-      -ms-transform: translateX(50%);
-      -webkit-transform: translateX(50%);
-      transform: translateX(50%);
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0px;
-      left: auto;
-      width: 8px;
-      height: auto;
-      z-index: 2; }
-      /* line 89, ../../../../general/res/sass/controls/_time-controller.scss */
-      .l-time-controller .l-time-range-slider-holder .range-holder .range .toi-line:before, .l-time-controller .l-time-range-slider-holder .range-holder .range .toi-line:after {
-        background-color: #00c2ff;
-        content: "";
-        position: absolute; }
-      /* line 95, ../../../../general/res/sass/controls/_time-controller.scss */
-      .l-time-controller .l-time-range-slider-holder .range-holder .range .toi-line:before {
-        top: 0;
-        right: auto;
-        bottom: -10px;
-        left: 3px;
-        width: 2px; }
-      /* line 101, ../../../../general/res/sass/controls/_time-controller.scss */
-      .l-time-controller .l-time-range-slider-holder .range-holder .range .toi-line:after {
-        -moz-border-radius: 8px;
-        -webkit-border-radius: 8px;
-        border-radius: 8px;
-        -moz-transform: translateY(-50%);
-        -ms-transform: translateY(-50%);
-        -webkit-transform: translateY(-50%);
-        transform: translateY(-50%);
-        top: 50%;
-        right: 0;
-        bottom: auto;
-        left: 0;
-        width: auto;
-        height: 8px; }
-    /* line 3, ../../../../general/res/sass/controls/_time-controller.scss */
-    .l-time-controller .l-time-range-slider-holder .range-holder .range:hover .toi-line:before, .l-time-controller .l-time-range-slider-holder .range-holder .range:hover .toi-line:after {
-      background-color: #fff; }
-  /* line 117, ../../../../general/res/sass/controls/_time-controller.scss */
-  .l-time-controller .l-time-range-slider-holder:not(:active) .knob,
-  .l-time-controller .l-time-range-slider-holder:not(:active) .range {
-    -moz-transition-property: left, right;
-    -o-transition-property: left, right;
-    -webkit-transition-property: left, right;
-    transition-property: left, right;
-    -moz-transition-duration: 500ms;
-    -o-transition-duration: 500ms;
-    -webkit-transition-duration: 500ms;
-    transition-duration: 500ms;
-    -moz-transition-timing-function: ease-in-out;
-    -o-transition-timing-function: ease-in-out;
-    -webkit-transition-timing-function: ease-in-out;
-    transition-timing-function: ease-in-out; }
-/* line 126, ../../../../general/res/sass/controls/_time-controller.scss */
-.l-time-controller .l-time-range-ticks-holder {
-  height: 20px; }
-  /* line 128, ../../../../general/res/sass/controls/_time-controller.scss */
-  .l-time-controller .l-time-range-ticks-holder .l-time-range-ticks {
-    border-top: 1px solid rgba(255, 255, 255, 0.2); }
-    /* line 130, ../../../../general/res/sass/controls/_time-controller.scss */
-    .l-time-controller .l-time-range-ticks-holder .l-time-range-ticks .tick {
-      background-color: rgba(255, 255, 255, 0.2);
-      border: none;
-      height: 5px;
-      width: 1px;
-      margin-left: -1px;
-      position: absolute; }
-      /* line 137, ../../../../general/res/sass/controls/_time-controller.scss */
-      .l-time-controller .l-time-range-ticks-holder .l-time-range-ticks .tick:first-child {
-        margin-left: 0; }
-      /* line 140, ../../../../general/res/sass/controls/_time-controller.scss */
-      .l-time-controller .l-time-range-ticks-holder .l-time-range-ticks .tick .l-time-range-tick-label {
-        transform: translateX(-50%);
-        -webkit-transform: translateX(-50%);
-        color: #666666;
-        display: inline-block;
-        font-size: 0.7em;
-        position: absolute;
-        top: 8px;
-        white-space: nowrap;
-        z-index: 2; }
-/* line 154, ../../../../general/res/sass/controls/_time-controller.scss */
-.l-time-controller .knob {
-  z-index: 2; }
-  /* line 156, ../../../../general/res/sass/controls/_time-controller.scss */
-  .l-time-controller .knob .range-value {
-    -moz-transition-property: visibility, opacity, background-color, border-color;
-    -o-transition-property: visibility, opacity, background-color, border-color;
-    -webkit-transition-property: visibility, opacity, background-color, border-color;
-    transition-property: visibility, opacity, background-color, border-color;
-    -moz-transition-duration: 0.25s;
-    -o-transition-duration: 0.25s;
-    -webkit-transition-duration: 0.25s;
-    transition-duration: 0.25s;
-    -moz-transition-timing-function: ease-in-out;
-    -o-transition-timing-function: ease-in-out;
-    -webkit-transition-timing-function: ease-in-out;
-    transition-timing-function: ease-in-out;
-    padding: 0 10px;
+  display: block;
+  top: auto;
+  height: 83px;
+  min-width: 500px;
+  font-size: 0.8rem; }
+  /* line 38, ../../../../general/res/sass/controls/_time-controller.scss */
+  mct-include.l-time-controller .l-time-range-inputs-holder,
+  mct-include.l-time-controller .l-time-range-slider-holder,
+  mct-include.l-time-controller .l-time-range-ticks-holder {
+    overflow: visible;
     position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    height: auto;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    top: auto; }
+  /* line 47, ../../../../general/res/sass/controls/_time-controller.scss */
+  mct-include.l-time-controller .l-time-range-slider,
+  mct-include.l-time-controller .l-time-range-ticks {
+    overflow: visible;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    height: auto;
+    left: 150px;
+    right: 150px; }
+  /* line 54, ../../../../general/res/sass/controls/_time-controller.scss */
+  mct-include.l-time-controller .l-time-range-inputs-holder {
+    height: 33px;
+    bottom: 46px;
+    padding-top: 5px;
+    border-top: 1px solid rgba(153, 153, 153, 0.1); }
+    /* line 59, ../../../../general/res/sass/controls/_time-controller.scss */
+    mct-include.l-time-controller .l-time-range-inputs-holder .type-icon {
+      font-size: 120%;
+      vertical-align: middle; }
+    /* line 63, ../../../../general/res/sass/controls/_time-controller.scss */
+    mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input,
+    mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem {
+      margin-right: 5px; }
+      /* line 66, ../../../../general/res/sass/controls/_time-controller.scss */
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .lbl,
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .lbl {
+        color: #666666; }
+      /* line 69, ../../../../general/res/sass/controls/_time-controller.scss */
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .ui-symbol.icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.pager,
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .ui-symbol.icon,
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .l-datetime-picker .l-month-year-pager .icon.pager,
+      .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.pager {
+        font-size: 11px;
+        width: 11px; }
+  /* line 76, ../../../../general/res/sass/controls/_time-controller.scss */
+  mct-include.l-time-controller .l-time-range-slider-holder {
     height: 20px;
-    line-height: 20px;
-    white-space: nowrap; }
-  /* line 165, ../../../../general/res/sass/controls/_time-controller.scss */
-  .l-time-controller .knob:hover .range-value {
-    color: #0099cc; }
-  /* line 168, ../../../../general/res/sass/controls/_time-controller.scss */
-  .l-time-controller .knob.knob-l {
-    margin-left: -10px; }
-    /* line 171, ../../../../general/res/sass/controls/_time-controller.scss */
-    .l-time-controller .knob.knob-l .range-value {
-      text-align: right;
-      right: 10px; }
-  /* line 176, ../../../../general/res/sass/controls/_time-controller.scss */
-  .l-time-controller .knob.knob-r {
-    margin-right: -10px; }
-    /* line 179, ../../../../general/res/sass/controls/_time-controller.scss */
-    .l-time-controller .knob.knob-r .range-value {
-      left: 10px; }
-    /* line 3, ../../../../general/res/sass/controls/_time-controller.scss */
-    .l-time-controller .knob.knob-r:hover + .range-holder .range .toi-line:before, .l-time-controller .knob.knob-r:hover + .range-holder .range .toi-line:after {
-      background-color: #fff; }
+    bottom: 23px; }
+    /* line 79, ../../../../general/res/sass/controls/_time-controller.scss */
+    mct-include.l-time-controller .l-time-range-slider-holder .range-holder {
+      -moz-box-shadow: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
+      background: none;
+      border: none; }
+      /* line 84, ../../../../general/res/sass/controls/_time-controller.scss */
+      mct-include.l-time-controller .l-time-range-slider-holder .range-holder .range .toi-line {
+        -moz-transform: translateX(50%);
+        -ms-transform: translateX(50%);
+        -webkit-transform: translateX(50%);
+        transform: translateX(50%);
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0px;
+        left: auto;
+        width: 8px;
+        height: auto;
+        z-index: 2; }
+        /* line 94, ../../../../general/res/sass/controls/_time-controller.scss */
+        mct-include.l-time-controller .l-time-range-slider-holder .range-holder .range .toi-line:before, mct-include.l-time-controller .l-time-range-slider-holder .range-holder .range .toi-line:after {
+          background-color: #00c2ff;
+          content: "";
+          position: absolute; }
+        /* line 100, ../../../../general/res/sass/controls/_time-controller.scss */
+        mct-include.l-time-controller .l-time-range-slider-holder .range-holder .range .toi-line:before {
+          top: 0;
+          right: auto;
+          bottom: -10px;
+          left: 3px;
+          width: 2px; }
+        /* line 106, ../../../../general/res/sass/controls/_time-controller.scss */
+        mct-include.l-time-controller .l-time-range-slider-holder .range-holder .range .toi-line:after {
+          -moz-border-radius: 8px;
+          -webkit-border-radius: 8px;
+          border-radius: 8px;
+          -moz-transform: translateY(-50%);
+          -ms-transform: translateY(-50%);
+          -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+          top: 50%;
+          right: 0;
+          bottom: auto;
+          left: 0;
+          width: auto;
+          height: 8px; }
+      /* line 3, ../../../../general/res/sass/controls/_time-controller.scss */
+      mct-include.l-time-controller .l-time-range-slider-holder .range-holder .range:hover .toi-line:before, mct-include.l-time-controller .l-time-range-slider-holder .range-holder .range:hover .toi-line:after {
+        background-color: #fff; }
+    /* line 122, ../../../../general/res/sass/controls/_time-controller.scss */
+    mct-include.l-time-controller .l-time-range-slider-holder:not(:active) .knob,
+    mct-include.l-time-controller .l-time-range-slider-holder:not(:active) .range {
+      -moz-transition-property: left, right;
+      -o-transition-property: left, right;
+      -webkit-transition-property: left, right;
+      transition-property: left, right;
+      -moz-transition-duration: 500ms;
+      -o-transition-duration: 500ms;
+      -webkit-transition-duration: 500ms;
+      transition-duration: 500ms;
+      -moz-transition-timing-function: ease-in-out;
+      -o-transition-timing-function: ease-in-out;
+      -webkit-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out; }
+  /* line 131, ../../../../general/res/sass/controls/_time-controller.scss */
+  mct-include.l-time-controller .l-time-range-ticks-holder {
+    height: 20px; }
+    /* line 133, ../../../../general/res/sass/controls/_time-controller.scss */
+    mct-include.l-time-controller .l-time-range-ticks-holder .l-time-range-ticks {
+      border-top: 1px solid rgba(255, 255, 255, 0.2); }
+      /* line 135, ../../../../general/res/sass/controls/_time-controller.scss */
+      mct-include.l-time-controller .l-time-range-ticks-holder .l-time-range-ticks .tick {
+        background-color: rgba(255, 255, 255, 0.2);
+        border: none;
+        height: 5px;
+        width: 1px;
+        margin-left: -1px;
+        position: absolute; }
+        /* line 142, ../../../../general/res/sass/controls/_time-controller.scss */
+        mct-include.l-time-controller .l-time-range-ticks-holder .l-time-range-ticks .tick:first-child {
+          margin-left: 0; }
+        /* line 145, ../../../../general/res/sass/controls/_time-controller.scss */
+        mct-include.l-time-controller .l-time-range-ticks-holder .l-time-range-ticks .tick .l-time-range-tick-label {
+          transform: translateX(-50%);
+          -webkit-transform: translateX(-50%);
+          color: #666666;
+          display: inline-block;
+          font-size: 0.9em;
+          position: absolute;
+          top: 8px;
+          white-space: nowrap;
+          z-index: 2; }
+  /* line 159, ../../../../general/res/sass/controls/_time-controller.scss */
+  mct-include.l-time-controller .knob {
+    z-index: 2; }
+    /* line 161, ../../../../general/res/sass/controls/_time-controller.scss */
+    mct-include.l-time-controller .knob .range-value {
+      -moz-transition-property: visibility, opacity, background-color, border-color;
+      -o-transition-property: visibility, opacity, background-color, border-color;
+      -webkit-transition-property: visibility, opacity, background-color, border-color;
+      transition-property: visibility, opacity, background-color, border-color;
+      -moz-transition-duration: 0.25s;
+      -o-transition-duration: 0.25s;
+      -webkit-transition-duration: 0.25s;
+      transition-duration: 0.25s;
+      -moz-transition-timing-function: ease-in-out;
+      -o-transition-timing-function: ease-in-out;
+      -webkit-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out;
+      padding: 0 10px;
+      position: absolute;
+      height: 20px;
+      line-height: 20px;
+      white-space: nowrap; }
+    /* line 170, ../../../../general/res/sass/controls/_time-controller.scss */
+    mct-include.l-time-controller .knob:hover .range-value {
+      color: #0099cc; }
+    /* line 173, ../../../../general/res/sass/controls/_time-controller.scss */
+    mct-include.l-time-controller .knob.knob-l {
+      margin-left: -10px; }
+      /* line 176, ../../../../general/res/sass/controls/_time-controller.scss */
+      mct-include.l-time-controller .knob.knob-l .range-value {
+        text-align: right;
+        right: 10px; }
+    /* line 181, ../../../../general/res/sass/controls/_time-controller.scss */
+    mct-include.l-time-controller .knob.knob-r {
+      margin-right: -10px; }
+      /* line 184, ../../../../general/res/sass/controls/_time-controller.scss */
+      mct-include.l-time-controller .knob.knob-r .range-value {
+        left: 10px; }
+      /* line 3, ../../../../general/res/sass/controls/_time-controller.scss */
+      mct-include.l-time-controller .knob.knob-r:hover + .range-holder .range .toi-line:before, mct-include.l-time-controller .knob.knob-r:hover + .range-holder .range .toi-line:after {
+        background-color: #fff; }
 
-/* line 193, ../../../../general/res/sass/controls/_time-controller.scss */
+/* line 198, ../../../../general/res/sass/controls/_time-controller.scss */
 .s-time-range-val {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
@@ -3512,11 +3593,11 @@ span.req {
     left: 0;
     width: auto;
     height: auto; }
-  /* line 297, ../../../../general/res/sass/user-environ/_layout.scss */
-  .object-holder.l-controls-visible.l-time-controller-visible > ng-include {
+  /* line 296, ../../../../general/res/sass/user-environ/_layout.scss */
+  .object-holder.l-controls-visible.l-time-controller-visible {
     bottom: 88px; }
 
-/* line 304, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 302, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .s-btn, .object-browse-bar .s-menu-btn,
 .top-bar .buttons-main .s-btn,
 .top-bar .buttons-main .s-menu-btn,
@@ -3528,12 +3609,12 @@ span.req {
   line-height: 25px;
   vertical-align: top; }
 
-/* line 317, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 315, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .view-switcher,
 .top-bar .view-switcher {
   margin-right: 20px; }
 
-/* line 322, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 320, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar {
   overflow: visible;
   position: absolute;
@@ -3549,22 +3630,22 @@ span.req {
   height: 24px;
   line-height: 24px;
   white-space: nowrap; }
-  /* line 330, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 328, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-browse-bar .left {
     padding-right: 20px; }
-    /* line 332, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 330, ../../../../general/res/sass/user-environ/_layout.scss */
     .object-browse-bar .left .l-back {
       display: inline-block;
       float: left;
       margin-right: 10px; }
 
-/* line 340, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 338, ../../../../general/res/sass/user-environ/_layout.scss */
 .l-flex {
   display: flex;
   display: -webkit-flex;
   flex-flow: row nowrap;
   -webkit-flex-flow: row nowrap; }
-  /* line 343, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 341, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-flex .left {
     flex: 1 1 0;
     -webkit-flex: 1 1 0;
@@ -4063,25 +4144,30 @@ span.req {
     position: relative; }
     /* line 228, ../../../../general/res/sass/search/_search.scss */
     .search .search-scroll .load-icon {
-      position: relative; }
-      /* line 230, ../../../../general/res/sass/search/_search.scss */
-      .search .search-scroll .load-icon.loading {
-        pointer-events: none;
-        margin-left: 6px; }
-        /* line 234, ../../../../general/res/sass/search/_search.scss */
-        .search .search-scroll .load-icon.loading .title-label {
-          font-style: italic;
-          font-size: .9em;
-          opacity: 0.5;
-          margin-left: 26px;
-          line-height: 24px; }
-        /* line 244, ../../../../general/res/sass/search/_search.scss */
-        .search .search-scroll .load-icon.loading .wait-spinner {
-          margin-left: 6px; }
-      /* line 249, ../../../../general/res/sass/search/_search.scss */
-      .search .search-scroll .load-icon:not(.loading) {
-        cursor: pointer; }
-    /* line 254, ../../../../general/res/sass/search/_search.scss */
+      position: relative;
+      /*			&.loading {
+      				pointer-events: none;
+      				margin-left: $leftMargin;
+      
+      				.title-label {
+      					// Text styling
+      					font-style: italic;
+      					font-size: .9em;
+      					opacity: 0.5;
+      
+      					// Text positioning
+      					margin-left: $iconWidth + $leftMargin;
+      					line-height: 24px;
+      				}
+      				.wait-spinner {
+      					margin-left: $leftMargin;
+      				}
+      			}
+      
+      			&:not(.loading) {
+      				cursor: pointer;
+      			}*/ }
+    /* line 255, ../../../../general/res/sass/search/_search.scss */
     .search .search-scroll .load-more-button {
       margin-top: 5px 0;
       font-size: 0.8em;
@@ -4352,7 +4438,21 @@ ul.tree {
   height: 1.5rem;
   line-height: 1.5rem;
   margin-bottom: 3px;
-  position: relative; }
+  position: relative;
+    /*
+	&.loading {
+		pointer-events: none;
+		.label {
+			opacity: 0.5;
+			.title-label {
+				font-style: italic;
+			}
+		}
+		.wait-spinner {
+			margin-left: 14px;
+		}
+	}
+    */ }
   /* line 48, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .view-control,
   .search-result-item .view-control {
@@ -4435,63 +4535,47 @@ ul.tree {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap; }
-  /* line 115, ../../../../general/res/sass/tree/_tree.scss */
-  .tree-item.loading,
-  .search-result-item.loading {
-    pointer-events: none; }
-    /* line 117, ../../../../general/res/sass/tree/_tree.scss */
-    .tree-item.loading .label,
-    .search-result-item.loading .label {
-      opacity: 0.5; }
-      /* line 119, ../../../../general/res/sass/tree/_tree.scss */
-      .tree-item.loading .label .title-label,
-      .search-result-item.loading .label .title-label {
-        font-style: italic; }
-    /* line 123, ../../../../general/res/sass/tree/_tree.scss */
-    .tree-item.loading .wait-spinner,
-    .search-result-item.loading .wait-spinner {
-      margin-left: 14px; }
-  /* line 128, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 130, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item.selected,
   .search-result-item.selected {
     background: #006080;
     color: #cccccc; }
-    /* line 131, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 133, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .view-control,
     .search-result-item.selected .view-control {
       color: rgba(255, 255, 255, 0.3); }
-    /* line 134, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 136, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .label .type-icon,
     .search-result-item.selected .label .type-icon {
       color: #cccccc; }
   @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-    /* line 142, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 144, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item:not(.selected):hover,
     .search-result-item:not(.selected):hover {
       background: rgba(153, 153, 153, 0.1);
       color: #cccccc; }
-      /* line 148, ../../../../general/res/sass/tree/_tree.scss */
+      /* line 150, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item:not(.selected):hover .icon,
       .search-result-item:not(.selected):hover .icon {
         color: #33ccff; } }
-  /* line 155, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 157, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item:not(.loading),
   .search-result-item:not(.loading) {
     cursor: pointer; }
-  /* line 159, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 161, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .context-trigger,
   .search-result-item .context-trigger {
     top: -1px;
     position: absolute;
     right: 3px; }
-    /* line 165, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 167, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .context-trigger .invoke-menu,
     .search-result-item .context-trigger .invoke-menu {
       font-size: 0.75em;
       height: 0.9rem;
       line-height: 0.9rem; }
 
-/* line 174, ../../../../general/res/sass/tree/_tree.scss */
+/* line 176, ../../../../general/res/sass/tree/_tree.scss */
 .tree-item .label {
   left: 15px; }
 

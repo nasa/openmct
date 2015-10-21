@@ -19,16 +19,14 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<!-- MINE -->
-<div class="l-time-controller" ng-controller="TimeRangeController">
+<div ng-controller="TimeRangeController">
     <div class="l-time-range-inputs-holder">
         <span class="l-time-range-inputs-elem ui-symbol type-icon">&#x43;</span>
         <span class="l-time-range-input" ng-controller="ToggleController as t1">
             <!--<span class="lbl">Start</span>-->
             <span class="s-btn time-range-start">
                 <input type="text" ng-model="boundsModel.start"></input>
-                <a class="ui-symbol icon icon-calendar" ng-click="t1.toggle()">
-                </a>
+                <a class="ui-symbol icon icon-calendar" ng-click="t1.toggle()"></a>
                 <mct-popup ng-if="t1.isActive()">
                     <div mct-click-elsewhere="t1.setState(false)">
                         <mct-control key="'datetime-picker'"

@@ -53,7 +53,8 @@ define(
 
             for (i = 0; i < count; i += 1) {
                 result.push({
-                    label: format(i * step + start)
+                    //If data to show, display label for each tick line, otherwise show lines but suppress labels.
+                    label: span > 0 ? format(i * step + start) : ''
                 });
             }
 
