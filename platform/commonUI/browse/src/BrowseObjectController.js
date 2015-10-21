@@ -72,7 +72,7 @@ define(
                 if (editMode){
                     $scope.domainObject = domainObject && new EditableDomainObject(domainObject, $q);
                 } else {
-                    $scope.domainObject = (domainObject.getDomainObject && domainObject.getDomainObject) || domainObject;
+                    $scope.domainObject = (domainObject.getDomainObject && domainObject.getDomainObject()) || domainObject;
                 }
             }
             
