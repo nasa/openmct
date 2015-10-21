@@ -14,46 +14,6 @@ July 28, 2015    | 2.0     | Telemetry adapter tutorial        | Victor Woeltjen
 July 31, 2015    | 2.1     | Clarify telemetry adapter details | Victor Woeltjen
 October 14, 2015 | 2.2     | Conversion to markdown            | Andrew Henry
 
-# Contents
-
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
-
-- [Introduction](#introduction)
-  - [This document](#this-document)
-  - [Setting Up Open MCT Web](#setting-up-open-mct-web)
-    - [Prerequisites](#prerequisites)
-    - [Check out Open MCT Web Sources](#check-out-open-mct-web-sources)
-    - [Configuring Persistence](#configuring-persistence)
-      - [Bundle Before](#bundle-before)
-      - [Bundle After](#bundle-after)
-    - [Run a Web Server](#run-a-web-server)
-    - [Viewing in Browser](#viewing-in-browser)
-- [Tutorials](#tutorials)
-  - [To-do List](#to-do-list)
-    - [Step 1-Create the Plugin](#step-1-create-the-plugin)
-      - [Before](#before)
-      - [After](#after)
-    - [Step 2-Add a Domain Object Type](#step-2-add-a-domain-object-type)
-    - [Step 3-Add a View](#step-3-add-a-view)
-    - [Step 4-Add a Controller](#step-4-add-a-controller)
-    - [Step 5-Support Editing](#step-5-support-editing)
-    - [Step 6-Customizing Look and Feel](#step-6-customizing-look-and-feel)
-  - [Bar Graph](#bar-graph)
-    - [Step 1-Define the View](#step-1-define-the-view)
-    - [Step 2-Add a Controller](#step-2-add-a-controller)
-    - [Step 3-Using Telemetry Data](#step-3-using-telemetry-data)
-    - [Step 4-View Configuration](#step-4-view-configuration)
-  - [Telemetry Adapter](#telemetry-adapter)
-    - [Step 0-Expose Your Telemetry](#step-0-expose-your-telemetry)
-    - [Step 1-Add a Top-level Object](#step-1-add-a-top-level-object)
-    - [Step 2-Expose the Telemetry Dictionary](#step-2-expose-the-telemetry-dictionary)
-    - [Step 3-Historical Telemetry](#step-3-historical-telemetry)
-    - [Step 4-Real-time Telemetry](#step-4-real-time-telemetry)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # Introduction
 
 ## This document

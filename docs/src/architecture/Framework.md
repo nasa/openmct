@@ -1,15 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
-
-- [Overview](#overview)
-  - [Application Initialization](#application-initialization)
-  - [Architectural Paradigm](#architectural-paradigm)
-  - [Extension Categories](#extension-categories)
-  - [Composite Services](#composite-services)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # Overview
 
 The framework layer's most basic responsibility is allowing individual

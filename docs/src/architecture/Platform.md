@@ -1,28 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
-
-- [Overview](#overview)
-  - [Platform Architecture](#platform-architecture)
-  - [Application Start-up](#application-start-up)
-- [Presentation Layer](#presentation-layer)
-  - [Angular built-ins](#angular-built-ins)
-  - [Domain object representation](#domain-object-representation)
-- [Information Model](#information-model)
-  - [Capabilities and Services](#capabilities-and-services)
-- [Service Infrastructure](#service-infrastructure)
-  - [Object Service](#object-service)
-  - [Model Service](#model-service)
-  - [Capability Service](#capability-service)
-  - [Telemetry Service](#telemetry-service)
-  - [Persistence Service](#persistence-service)
-  - [Action Service](#action-service)
-  - [View Service](#view-service)
-  - [Policy Service](#policy-service)
-  - [Type Service](#type-service)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
 # Overview
 
 The Open MCT Web platform utilizes the [framework layer](Framework.md)
