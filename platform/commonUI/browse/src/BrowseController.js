@@ -74,15 +74,17 @@ define(
             // Callback for updating the in-scope reference to the object
             // that is currently navigated-to.
             function setNavigation(domainObject) {
-                var navigatedDomainObject = domainObject;
-                
-                $scope.navigatedObject = navigatedDomainObject;
+
+                var wrappedObject = domainObject;
+
+                $scope.navigatedObject = wrappedObject;
                 $scope.treeModel.selectedObject = domainObject;
                 navigationService.setNavigation(domainObject);
                 updateRoute(domainObject);
             }
 
             function navigateTo(domainObject) {
+
                 // Check if an object has been navigated-to already...
                 // If not, or if an ID path has been explicitly set in the URL,
                 // navigate to the URL-specified object.
@@ -158,8 +160,6 @@ define(
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);
             });
-            
-            $scope.editMode = false;
             
         }
 

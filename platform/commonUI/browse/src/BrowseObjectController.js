@@ -49,6 +49,8 @@ define(
                     ((domainObject && domainObject.useCapability('view')) || [])
                         .forEach(selectViewIfMatching);
                 }
+                $scope.editMode = domainObject.getDomainObject ? true : false;
+                console.log("edit mode set to " + $scope.editMode);
             }
 
             function updateQueryParam(viewKey) {
@@ -66,23 +68,15 @@ define(
                     });
                 }
             }
-            
-            function toggleEditMode(editMode){
-                var domainObject = $scope.domainObject;
-                if (editMode){
-                    $scope.domainObject = domainObject && new EditableDomainObject(domainObject, $q);
-                } else {
-                    $scope.domainObject = (domainObject.getDomainObject && domainObject.getDomainObject()) || domainObject;
-                }
-            }
-            
-            $scope.$watch('editMode', toggleEditMode);
+
             $scope.$watch('domainObject', setViewForDomainObject);
             $scope.$watch('representation.selected.key', updateQueryParam);
 
-            $scope.$on(GestureConstants.MCT_DROP_EVENT, function() {
+/*            $scope.$on(GestureConstants.MCT_DROP_EVENT, function() {
+                console.log("Edit mode changed");
                 $scope.editMode = true;
-            });
+            }); */
+            console.log("Controller loaded");
 
         }
 
