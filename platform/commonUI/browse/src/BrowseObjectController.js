@@ -22,8 +22,9 @@
 /*global define,Promise*/
 
 define(
-    [],
-    function () {
+    ['../../../representation/src/gestures/GestureConstants', 
+        '../../edit/src/objects/EditableDomainObject'],
+    function (GestureConstants, EditableDomainObject) {
         "use strict";
 
         /**
@@ -32,8 +33,9 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function BrowseObjectController($scope, $location, $route) {
+        function BrowseObjectController($scope, $location, $route, $q) {
             function setViewForDomainObject(domainObject) {
+                
                 var locationViewKey = $location.search().view;
 
                 function selectViewIfMatching(view) {
@@ -64,9 +66,24 @@ define(
                     });
                 }
             }
-
+            
+            function toggleEditMode(editMode){
+                var domainObject = $scope.domainObject;
+                if (editMode){
+                    $scope.domainObject = domainObject && new EditableDomainObject(domainObject, $q);
+                } else {
+                    $scope.domainObject = (domainObject.getDomainObject && domainObject.getDomainObject) || domainObject;
+                }
+            }
+            
+            $scope.$watch('editMode', toggleEditMode);
             $scope.$watch('domainObject', setViewForDomainObject);
             $scope.$watch('representation.selected.key', updateQueryParam);
+
+            $scope.$on(GestureConstants.MCT_DROP_EVENT, function() {
+                $scope.editMode = true;
+            });
+
         }
 
         return BrowseObjectController;

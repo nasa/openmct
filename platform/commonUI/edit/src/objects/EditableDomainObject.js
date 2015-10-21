@@ -101,6 +101,10 @@ define(
                             new Factory(capability, editableObject, domainObject, cache) :
                             capability;
                 };
+                
+                editableObject.getDomainObject = function() {
+                    return domainObject;
+                }
 
                 return editableObject;
             }

@@ -98,7 +98,7 @@ define(
                 // If currently in edit mode allow drag and drop gestures to the
                 // domain object. An exception to this is folders which have drop
                 // gestures in browse mode.
-                if (domainObjectType === 'folder' || domainObject.hasCapability('editor')) {
+                //if (domainObjectType === 'folder' || domainObject.hasCapability('editor')) {
                 
                     // Handle the drop; add the dropped identifier to the
                     // destination domain object's composition, and persist
@@ -108,7 +108,7 @@ define(
                             broadcastDrop(id, event);
                         });
                     }
-                }
+                //}
                 // TODO: Alert user if drag and drop is not allowed
             }
 

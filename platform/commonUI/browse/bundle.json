@@ -20,6 +20,7 @@
                     "$scope",
                     "$route",
                     "$location",
+                    "$q",
                     "objectService",
                     "navigationService",
                     "urlService"
@@ -34,7 +35,7 @@
             {
                 "key": "BrowseObjectController",
                 "implementation": "BrowseObjectController.js",
-                "depends": [ "$scope", "$location", "$route" ]
+                "depends": [ "$scope", "$location", "$route", "$q" ]
             },
             {
                 "key": "CreateMenuController",
@@ -62,6 +63,7 @@
             {
                 "key": "browse-object",
                 "templateUrl": "templates/browse-object.html",
+                "gestures": ["drop"],
                 "uses": [ "view" ]
             },
             {

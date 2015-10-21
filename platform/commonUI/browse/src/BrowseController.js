@@ -26,8 +26,11 @@
  * @namespace platform/commonUI/browse
  */
 define(
-    [],
-    function () {
+    [
+        '../../../representation/src/gestures/GestureConstants',
+        '../../edit/src/objects/EditableDomainObject'
+    ],
+    function (GestureConstants, EditableDomainObject) {
         "use strict";
 
         var ROOT_ID = "ROOT",
@@ -43,7 +46,7 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function BrowseController($scope, $route, $location, objectService, navigationService, urlService) {
+        function BrowseController($scope, $route, $location, $q, objectService, navigationService, urlService) {
             var path = [ROOT_ID].concat(
                 ($route.current.params.ids || DEFAULT_PATH).split("/")
             );
@@ -71,7 +74,9 @@ define(
             // Callback for updating the in-scope reference to the object
             // that is currently navigated-to.
             function setNavigation(domainObject) {
-                $scope.navigatedObject = domainObject;
+                var navigatedDomainObject = domainObject;
+                
+                $scope.navigatedObject = navigatedDomainObject;
                 $scope.treeModel.selectedObject = domainObject;
                 navigationService.setNavigation(domainObject);
                 updateRoute(domainObject);
@@ -148,12 +153,14 @@ define(
 
             // Also listen for changes which come from the tree
             $scope.$watch("treeModel.selectedObject", setNavigation);
-
+            
             // Clean up when the scope is destroyed
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);
             });
-
+            
+            $scope.editMode = false;
+            
         }
 
         return BrowseController;
