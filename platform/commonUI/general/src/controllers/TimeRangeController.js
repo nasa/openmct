@@ -43,6 +43,15 @@ define(
                 return moment.utc(ts).format(DATE_FORMAT);
             }
 
+            function parseTimestamp(text) {
+                var m = moment.utc(text, DATE_FORMAT);
+                if (m.isValid()) {
+                    return m.valueOf();
+                } else {
+                    throw new Error("Could not parse " + text);
+                }
+            }
+
             // From 0.0-1.0 to "0%"-"1%"
             function toPercent(p) {
                 return (100 * p) + "%";
@@ -214,6 +223,22 @@ define(
                 updateViewForInnerSpanFromModel(ngModel);
             }
 
+            function updateStartFromText(value) {
+                try {
+                    updateOuterStart(parseTimestamp(value));
+                } catch (e) {
+                    return;
+                }
+            }
+
+            function updateEndFromText(value) {
+                try {
+                    updateOuterEnd(parseTimestamp(value));
+                } catch (e) {
+                    return;
+                }
+            }
+
             $scope.startLeftDrag = startLeftDrag;
             $scope.startRightDrag = startRightDrag;
             $scope.startMiddleDrag = startMiddleDrag;
@@ -232,6 +257,8 @@ define(
             $scope.$watch("spanWidth", updateSpanWidth);
             $scope.$watch("ngModel.outer.start", updateOuterStart);
             $scope.$watch("ngModel.outer.end", updateOuterEnd);
+            $scope.$watch("boundsModel.start", updateStartFromText);
+            $scope.$watch("boundsModel.end", updateEndFromText);
         }
 
         return TimeConductorController;
