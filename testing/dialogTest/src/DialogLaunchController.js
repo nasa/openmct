@@ -26,7 +26,23 @@ define(
     function (MessageSeverity) {
         "use strict";
 
+        /**
+         * A controller for the dialog launch view. This view allows manual
+         * launching of dialogs for demonstration and testing purposes. It
+         * also demonstrates the use of the DialogService.
+         * @param $scope
+         * @param $timeout
+         * @param $log
+         * @param dialogService
+         * @param notificationService
+         * @constructor
+         */
         function DialogLaunchController($scope, $timeout, $log, dialogService, notificationService) {
+
+            /*
+            Demonstrates launching a progress dialog and updating it
+             periodically with the progress of an ongoing process.
+             */
             $scope.launchProgress = function (knownProgress) {
                 var model = {
                     title: "Progress Dialog Example",
@@ -72,6 +88,10 @@ define(
                 }
             };
 
+
+            /*
+             Demonstrates launching an error dialog
+             */
             $scope.launchError = function () {
                 var model = {
                     title: "Error Dialog Example",
@@ -100,87 +120,32 @@ define(
                 }
             };
 
-            $scope.launchMessages = function () {
+            /*
+             Demonstrates launching an error dialog
+             */
+            $scope.launchInfo = function () {
                 var model = {
-                    title: "Messages",
+                    title: "Info Dialog Example",
+                    actionText: "This is an example of a blocking info" +
+                    " dialog. This dialog can be used to draw the user's" +
+                    " attention to an event.",
                     severity: MessageSeverity.INFO,
                     actions: [
                         {
-                            label: "Done",
+                            label: "OK",
                             action: function () {
+                                $log.debug("OK Pressed");
                                 dialogService.dismiss();
                             }
-                        }
-                    ],
-                    messages: []
+                        },
+                    ]
                 };
 
-                function getExampleActionText() {
-                    var actionTexts = [
-                        "Adipiscing turpis mauris in enim elementu hac, enim aliquam etiam.",
-                        "Eros turpis, pulvinar turpis eros eu",
-                        "Lundium nascetur a, lectus montes ac, parturient in natoque, duis risus risus pulvinar pid rhoncus, habitasse auctor natoque!"
-                    ];
-                    return actionTexts[Math.floor(Math.random()*3)];
+                if (!dialogService.showBlockingMessage(model)) {
+                    $log.error("Could not display modal dialog");
                 }
-                
-                function getExampleActions() {
-                    var actions = [
-                        {
-                            label: "Try Again",
-                            action: function () {
-                                $log.debug("Try Again pressed");
-                            }
-                        },
-                        {
-                            label: "Remove",
-                            action: function () {
-                                $log.debug("Remove pressed");
-                            }
-                        },
-                        {
-                            label: "Cancel",
-                            action: function () {
-                                $log.debug("Cancel pressed");
-                            }
-                        }
-                    ];
-
-                    // Randomly remove some actions off the top; leave at least one
-                    actions.splice(0,Math.floor(Math.random() * actions.length));
-
-                    return actions;
-                }
-
-                function getExampleSeverity() {
-                    var severities = [
-                        MessageSeverity.INFO,
-                        MessageSeverity.ALERT,
-                        MessageSeverity.ERROR
-                    ];
-                    return severities[Math.floor(Math.random() * severities.length)];
-                }
-
-                function createMessage (messageNumber) {
-                    var messageModel = {
-                        title: "Message Title " + messageNumber,
-                        actionText: getExampleActionText(),
-                        severity: getExampleSeverity(),
-                        actions: getExampleActions()
-                    };
-                    return messageModel;
-                }
-
-                function dismiss() {
-                    dialogService.dismiss();
-                }
-                
-                model.messages = notificationService.notifications;
-                dialogService.getDialogResponse('overlay-message-list', {
-                    dialog: model,
-                    cancel: dismiss
-                });
             };
+
         }
         return DialogLaunchController;
     }

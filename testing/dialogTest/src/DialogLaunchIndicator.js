@@ -26,6 +26,12 @@ define(
     function () {
         "use strict";
 
+        /**
+         * A tool for manually invoking dialogs. When included this
+         * indicator will allow for dialogs of different types to be
+         * launched for demonstration and testing purposes.
+         * @constructor
+         */
         function DialogLaunchIndicator() {
 
         }

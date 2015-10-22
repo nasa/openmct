@@ -26,14 +26,21 @@ define(
     function (MessageSeverity) {
         "use strict";
 
+        /**
+         * Allows launching of notification messages for the purposes of
+         * demonstration and testing. Also demonstrates use of
+         * the NotificationService. Notifications are non-blocking messages that
+         * appear at the bottom of the screen to inform the user of events
+         * in a non-intrusive way. For more information see the
+         * {@link NotificationService}
+         * @param $scope
+         * @param $timeout
+         * @param $log
+         * @param notificationService
+         * @constructor
+         */
         function NotificationLaunchController($scope, $timeout, $log, notificationService) {
             var messageCounter = 1;
-            $scope.newSuccess = function(){
-
-                notificationService.info({
-                    title: "Success notification!"
-                });
-            };
 
             function getExampleActionText() {
                 var actionTexts = [
@@ -80,11 +87,14 @@ define(
                 ];
                 return severities[Math.floor(Math.random() * severities.length)];
             }
-            
+
+            /**
+             * Launch a new notification with a severity level of 'Error'.
+             */
             $scope.newError = function(){
 
                 notificationService.notify({
-                    title: "Error notification " + messageCounter++ + "!",
+                    title: "Example error notification " + messageCounter++,
                     hint: "An error has occurred",
                     severity: MessageSeverity.ERROR,
                     primaryAction: {
@@ -95,11 +105,13 @@ define(
                     },
                     actions: getExampleActions()});
             };
-
+            /**
+             * Launch a new notification with a severity of 'Alert'.
+             */
             $scope.newAlert = function(){
 
                 notificationService.notify({
-                    title: "Alert notification " + (messageCounter++) + "!",
+                    title: "Alert notification " + (messageCounter++),
                     hint: "This is an alert message",
                     severity: MessageSeverity.ALERT,
                     primaryAction: {
@@ -111,17 +123,25 @@ define(
                     actions: getExampleActions()});
             };
 
+
+            /**
+             * Launch a new notification with a progress bar that is updated
+             * periodically, tracking an ongoing process.
+             */
             $scope.newProgress = function(){
 
                 var notification = {
-                    title: "Progress notification!",
+                    title: "Progress notification example",
                     severity: MessageSeverity.INFO,
                     progress: 0,
                     actionText: getExampleActionText(),
                     unknownProgress: false
-
                 };
 
+                /**
+                 * Simulate an ongoing process and update the progress bar.
+                 * @param notification
+                 */
                 function incrementProgress(notification) {
                     notification.progress = Math.min(100, Math.floor(notification.progress + Math.random() * 30));
                     notification.progressText = ["Estimated time remaining:" +
@@ -133,6 +153,16 @@ define(
 
                 notificationService.notify(notification);
                 incrementProgress(notification);
+            };
+
+            /**
+             * Launch a new notification with severity level of INFO.
+             */
+            $scope.newInfo = function(){
+
+                notificationService.info({
+                    title: "Example Info notification " + messageCounter++
+                });
             };
 
         }
