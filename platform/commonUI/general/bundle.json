@@ -15,19 +15,6 @@
                 "depends": [ "$document", "$window" ]
             }
         ],
-        "components": [
-            {
-                "type": "aggregator",
-                "provides": "dateService",
-                "implementation": "services/DateAggregator.js"
-            },
-            {
-                "type": "provider",
-                "provides": "dateService",
-                "implementation": "services/UTCDateProvider.js",
-                "priority": "fallback"
-            }
-        ],
         "runs": [
             {
                 "implementation": "StyleSheetLoader.js",
