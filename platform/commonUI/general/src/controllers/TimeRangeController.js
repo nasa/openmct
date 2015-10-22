@@ -34,24 +34,20 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function TimeRangeController($scope, dateService, now) {
+        function TimeRangeController($scope, timeService, now) {
             var tickCount = 2,
                 innerMinimumSpan = 1000, // 1 second
                 outerMinimumSpan = 1000 * 60 * 60, // 1 hour
-                initialDragValue;
-
-            function timeSystemKey() {
-                return ($scope.parameters || {}).system;
-            }
+                initialDragValue,
+                timeSystem = timeService.system(); // Start with default
 
             function formatTimestamp(ts) {
-                return dateService.format(ts, timeSystemKey());
+                return timeSystem.format(ts);
             }
 
             function parseTimestamp(text) {
-                var key = timeSystemKey();
-                if (dateService.validate(text, key)) {
-                    return dateService.parse(text, key);
+                if (timeSystem.validate(text)) {
+                    return timeSystem.parse(text);
                 } else {
                     throw new Error("Could not parse " + text);
                 }
@@ -270,6 +266,30 @@ define(
                 }
             }
 
+            function reinitializeBounds(now, increment) {
+                var end = Math.ceil(now / increment) * increment,
+                    start = end - increment;
+                $scope.ngModel.outer.start = start;
+                $scope.ngModel.outer.end = end;
+                $scope.ngModel.inner.start = start;
+                $scope.ngModel.inner.end = end;
+                $scope.boundsModel = {};
+                updateViewFromModel();
+            }
+
+            function updateTimeSystem(key) {
+                timeSystem = timeService.system(key) || timeService.system();
+
+                // One second / one hour in UTC; should be
+                // similarly useful in other time systems.
+                innerMinimumSpan = timeSystem.increment(-3);
+                outerMinimumSpan = timeSystem.increment(-1);
+                reinitializeBounds(
+                    timeSystem.now(),
+                    timeSystem.increment()
+                );
+            }
+
             function updateStartFromPicker(value) {
                 updateOuterStart(value);
                 updateBoundsText($scope.ngModel);
@@ -300,6 +320,7 @@ define(
             $scope.$watch("ngModel.outer.end", updateEndFromPicker);
             $scope.$watch("boundsModel.start", updateStartFromText);
             $scope.$watch("boundsModel.end", updateEndFromText);
+            $scope.$watch("parameters.system", updateTimeSystem);
         }
 
         return TimeRangeController;

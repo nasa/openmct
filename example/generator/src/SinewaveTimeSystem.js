@@ -44,11 +44,11 @@ define([
     };
 
     SinewaveTimeSystem.prototype.now = function () {
-        return new SinewaveTelemetrySeries().getPointCount();
+        return new SinewaveTelemetrySeries({}).getPointCount();
     };
 
     SinewaveTimeSystem.prototype.increment = function (scale) {
-        return Math.pow(10, (scale || 0) + 1);
+        return Math.max(Math.pow(10, (scale || 0) + 1), 1);
     };
 
     return SinewaveTimeSystem;
