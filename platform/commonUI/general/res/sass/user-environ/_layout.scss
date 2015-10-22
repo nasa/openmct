@@ -205,10 +205,17 @@
 
 .browse-mode {
     .split-layout {
-        .split-pane-component.pane.left {
-            min-width: 150px;
-            max-width: 800px;
-            width: $ueBrowseLeftPaneW;
+        .split-pane-component.pane {
+            &.treeview.left {
+                min-width: 150px;
+                max-width: 800px;
+                width: $ueBrowseLeftPaneTreeW;
+            }
+            &.t-inspector.right {
+                min-width: 150px;
+                max-width: 800px;
+                width: $ueBrowseRightPaneInspectW;
+            }
         }
     }
 }

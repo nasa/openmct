@@ -153,12 +153,6 @@ define(
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);
             });
-
-            // Models for panes
-            $scope.paneModelTree = {};
-            $scope.paneModelInspect = {};
-
-
         }
 
         return BrowseController;

@@ -41,9 +41,22 @@
             </mct-representation>
         </div>
     </div>
+    <mct-split-pane class='t-object-and-inspector contents abs' anchor='right'>
+        <div class='split-pane-component t-object pane left'>
+            <mct-representation key="representation.selected.key"
+                                mct-object="representation.selected.key && domainObject"
+                                class="abs object-holder">
+            </mct-representation>
+            <a class="ui-symbol icon mobile-hide"
+               style="position: absolute; z-index: 1000; right: 0;"
+               ng-click="ngModel.toggle()">F</a>
+        </div><!--/ t-object -->
 
-    <mct-representation key="representation.selected.key"
-                        mct-object="representation.selected.key && domainObject"
-                        class="abs object-holder">
-    </mct-representation>
+        <mct-splitter class="mobile-hide" ng-class="{ hidden: !ngModel.visible()}"></mct-splitter>
+
+        <div class='split-pane-component t-inspector pane right mobile-hide'
+            ng-class="{ hidden:!ngModel.visible() }">
+            Inspector goes here
+        </div>
+    </mct-split-pane><!--/ t-object-and-inspector -->
 </span>

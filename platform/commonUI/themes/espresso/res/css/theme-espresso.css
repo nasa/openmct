@@ -3513,40 +3513,45 @@ span.req {
     *zoom: 1;
     padding: 5px 0; }
 
-/* line 208, ../../../../general/res/sass/user-environ/_layout.scss */
-.browse-mode .split-layout .split-pane-component.pane.left {
+/* line 209, ../../../../general/res/sass/user-environ/_layout.scss */
+.browse-mode .split-layout .split-pane-component.pane.treeview.left {
   min-width: 150px;
   max-width: 800px;
   width: 25%; }
+/* line 214, ../../../../general/res/sass/user-environ/_layout.scss */
+.browse-mode .split-layout .split-pane-component.pane.t-inspector.right {
+  min-width: 150px;
+  max-width: 800px;
+  width: 10%; }
 
-/* line 218, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 225, ../../../../general/res/sass/user-environ/_layout.scss */
 .edit-mode .split-layout .split-pane-component.pane.right {
   width: 15%; }
-  /* line 220, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 227, ../../../../general/res/sass/user-environ/_layout.scss */
   .edit-mode .split-layout .split-pane-component.pane.right .pane.bottom {
     min-height: 50px;
     height: 30%; }
 
-/* line 228, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 235, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane {
   position: absolute; }
-  /* line 231, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 238, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .create-btn-holder {
     bottom: auto;
     top: 0;
     height: 24px; }
-    /* line 235, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 242, ../../../../general/res/sass/user-environ/_layout.scss */
     .pane.treeview.left .create-btn-holder .wrapper.menu-element {
       position: absolute;
       bottom: 5px; }
-  /* line 240, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 247, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .search-holder {
     top: 34px; }
-  /* line 243, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 250, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .tree-holder {
     overflow: auto;
     top: 64px; }
-  /* line 250, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 257, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.pager, .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.pager,
   .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.val,
   .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.val, .pane.items .object-browse-bar .s-menu-btn span.left.l-click-area, .s-menu-btn .pane.items .object-browse-bar span.left.l-click-area,
@@ -3559,31 +3564,31 @@ span.req {
   .s-menu-btn .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
 
-/* line 261, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 268, ../../../../general/res/sass/user-environ/_layout.scss */
 .split-layout.horizontal > .pane {
   margin-top: 5px; }
-  /* line 264, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 271, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane:first-child {
     margin-top: 0; }
-/* line 271, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 278, ../../../../general/res/sass/user-environ/_layout.scss */
 .split-layout.vertical > .pane {
   margin-left: 5px; }
-  /* line 274, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 281, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane > .holder {
     left: 0;
     right: 0; }
-  /* line 278, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 285, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane:first-child {
     margin-left: 0; }
-    /* line 280, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 287, ../../../../general/res/sass/user-environ/_layout.scss */
     .split-layout.vertical > .pane:first-child .holder {
       right: 3px; }
 
-/* line 289, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 296, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-holder {
   overflow: hidden;
   top: 34px; }
-  /* line 292, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 299, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-holder > ng-include {
     overflow: auto;
     position: absolute;
@@ -3593,11 +3598,11 @@ span.req {
     left: 0;
     width: auto;
     height: auto; }
-  /* line 296, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 303, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-holder.l-controls-visible.l-time-controller-visible {
     bottom: 88px; }
 
-/* line 302, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 309, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .s-btn, .object-browse-bar .s-menu-btn,
 .top-bar .buttons-main .s-btn,
 .top-bar .buttons-main .s-menu-btn,
@@ -3609,12 +3614,12 @@ span.req {
   line-height: 25px;
   vertical-align: top; }
 
-/* line 315, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 322, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .view-switcher,
 .top-bar .view-switcher {
   margin-right: 20px; }
 
-/* line 320, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 327, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar {
   overflow: visible;
   position: absolute;
@@ -3630,41 +3635,41 @@ span.req {
   height: 24px;
   line-height: 24px;
   white-space: nowrap; }
-  /* line 328, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 335, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-browse-bar .left {
     padding-right: 20px; }
-    /* line 330, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 337, ../../../../general/res/sass/user-environ/_layout.scss */
     .object-browse-bar .left .l-back {
       display: inline-block;
       float: left;
       margin-right: 10px; }
 
-/* line 338, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 345, ../../../../general/res/sass/user-environ/_layout.scss */
 .l-flex {
   display: flex;
   display: -webkit-flex;
   flex-flow: row nowrap;
   -webkit-flex-flow: row nowrap; }
-  /* line 341, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 348, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-flex .left {
     flex: 1 1 0;
     -webkit-flex: 1 1 0;
     padding-right: 10px; }
 
-/* line 352, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 359, ../../../../general/res/sass/user-environ/_layout.scss */
 .browse-hidetree {
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   -webkit-user-select: none;
   user-select: none; }
-  /* line 356, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 363, ../../../../general/res/sass/user-environ/_layout.scss */
   .browse-hidetree .pane.left.treeview {
     opacity: 0; }
-  /* line 365, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 372, ../../../../general/res/sass/user-environ/_layout.scss */
   .browse-hidetree .pane.right-repr {
     left: 0 !important; }
 
-/* line 379, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 386, ../../../../general/res/sass/user-environ/_layout.scss */
 .browse-showtree .pane.left.treeview {
   -moz-transition-property: opacity;
   -o-transition-property: opacity;

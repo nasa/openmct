@@ -23,9 +23,10 @@
 <div class="abs holder-all browse-mode" ng-controller="BrowseController">
     <mct-include key="'topbar-browse'"></mct-include>
     <div class="holder browse-area s-browse-area abs browse-wrapper"
-         ng-controller="PaneController as treePane"
-         ng-class="treePane.visible() ? 'browse-showtree' : 'browse-hidetree'">
-        <mct-split-pane class='contents abs' anchor='left'>
+         ng-controller="PaneController as modelPaneTree"
+         ng-class="modelPaneTree.visible() ? 'browse-showtree' : 'browse-hidetree'">
+        <mct-split-pane class='contents abs'
+                        anchor='left'>
             <div class='split-pane-component treeview pane left'>
                 <div class="holder abs l-mobile">
                     <mct-representation key="'create-button'"
@@ -50,17 +51,18 @@
                 </div>
             </div>
 
-            <mct-splitter class="mobile-hide"></mct-splitter>
+            <mct-splitter class="mobile-hide" ng-class="{ hidden: !modelPaneTree.visible()}"></mct-splitter>
 
             <div class='split-pane-component items pane right-repr'>
-                <div class='holder abs l-mobile' id='content-area'>
+                <a class="ui-symbol icon mobile-menu-icon"
+                   style="position: absolute; z-index: 1000"
+                   ng-click="modelPaneTree.toggle()">m</a>
+                <div class='holder abs l-mobile' id='content-area' ng-controller="PaneController as modelPaneInspect">
                     <mct-representation mct-object="navigatedObject"
-                                        key="'browse-object'">
+                                        key="'browse-object'"
+                                        ng-model="modelPaneInspect">
                     </mct-representation>
                 </div>
-                <a class="ui-symbol icon mobile-menu-icon"
-                     style="position: absolute; z-index: 1000"
-                     ng-click="treePane.toggle()">m</a>
             </div>
         </mct-split-pane>
     </div>
