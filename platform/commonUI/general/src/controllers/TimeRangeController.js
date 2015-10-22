@@ -30,23 +30,28 @@ define(
             TICK_SPACING_PX = 150;
 
         /**
+         * Controller used by the `time-controller` template.
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function TimeConductorController($scope, now) {
+        function TimeRangeController($scope, dateService, now) {
             var tickCount = 2,
                 innerMinimumSpan = 1000, // 1 second
                 outerMinimumSpan = 1000 * 60 * 60, // 1 hour
                 initialDragValue;
 
+            function timeSystemKey() {
+                return ($scope.parameters || {}).domain;
+            }
+
             function formatTimestamp(ts) {
-                return moment.utc(ts).format(DATE_FORMAT);
+                return dateService.format(ts, timeSystemKey());
             }
 
             function parseTimestamp(text) {
-                var m = moment.utc(text, DATE_FORMAT);
-                if (m.isValid()) {
-                    return m.valueOf();
+                var key = timeSystemKey();
+                if (dateService.validate(text, key)) {
+                    return dateService.parse(text, key);
                 } else {
                     throw new Error("Could not parse " + text);
                 }
@@ -297,6 +302,6 @@ define(
             $scope.$watch("boundsModel.end", updateEndFromText);
         }
 
-        return TimeConductorController;
+        return TimeRangeController;
     }
 );

@@ -33,6 +33,7 @@ define(
 
         describe("The TimeRangeController", function () {
             var mockScope,
+                mockDateService,
                 mockNow,
                 controller;
 
@@ -57,8 +58,26 @@ define(
                     "$scope",
                     [ "$apply", "$watch", "$watchCollection" ]
                 );
+                mockDateService = jasmine.createSpyObj(
+                    "dateService",
+                    [ "validate", "format", "parse" ]
+                );
+                mockDateService.validate.andCallFake(function (text) {
+                    return moment.utc(text).isValid();
+                });
+                mockDateService.parse.andCallFake(function (text) {
+                    return moment.utc(text).valueOf();
+                });
+                mockDateService.format.andCallFake(function (value) {
+                    return moment.utc(value).format("YYYY-MM-DD HH:mm:ss");
+                });
                 mockNow = jasmine.createSpy('now');
-                controller = new TimeRangeController(mockScope, mockNow);
+
+                controller = new TimeRangeController(
+                    mockScope,
+                    mockDateService,
+                    mockNow
+                );
             });
 
             it("watches the model that was passed in", function () {
