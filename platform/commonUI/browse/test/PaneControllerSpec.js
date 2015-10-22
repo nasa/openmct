@@ -22,11 +22,11 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ["../src/BrowseTreeController"],
-    function (BrowseTreeController) {
+    ["../src/PaneController"],
+    function (PaneController) {
         'use strict';
 
-        describe("The BrowseTreeController", function () {
+        describe("The PaneController", function () {
             var mockScope,
                 mockAgentService,
                 mockDomainObjects,
@@ -35,7 +35,7 @@ define(
             // We want to reinstantiate for each test case
             // because device state can influence constructor-time behavior
             function instantiateController() {
-                return new BrowseTreeController(
+                return new PaneController(
                     mockScope,
                     mockAgentService
                 );

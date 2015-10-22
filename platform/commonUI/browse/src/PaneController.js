@@ -63,6 +63,7 @@ define(
          */
         BrowseTreeController.prototype.toggle = function () {
             this.state = !this.state;
+            console.log('tree toggled: ' + this.state);
         };
 
         /**

@@ -154,6 +154,11 @@ define(
                 navigationService.removeListener(setNavigation);
             });
 
+            // Models for panes
+            $scope.paneModelTree = {};
+            $scope.paneModelInspect = {};
+
+
         }
 
         return BrowseController;

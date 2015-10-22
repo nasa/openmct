@@ -23,8 +23,8 @@
 <div class="abs holder-all browse-mode" ng-controller="BrowseController">
     <mct-include key="'topbar-browse'"></mct-include>
     <div class="holder browse-area s-browse-area abs browse-wrapper"
-         ng-controller="BrowseTreeController as tree"
-         ng-class="tree.visible() ? 'browse-showtree' : 'browse-hidetree'">
+         ng-controller="PaneController as treePane"
+         ng-class="treePane.visible() ? 'browse-showtree' : 'browse-hidetree'">
         <mct-split-pane class='contents abs' anchor='left'>
             <div class='split-pane-component treeview pane left'>
                 <div class="holder abs l-mobile">
@@ -58,9 +58,9 @@
                                         key="'browse-object'">
                     </mct-representation>
                 </div>
-                <div class="key-properties ui-symbol icon mobile-menu-icon desktop-hide"
-                     mct-device="mobile"
-                     ng-click="tree.toggle()">m</div>
+                <a class="ui-symbol icon mobile-menu-icon"
+                     style="position: absolute; z-index: 1000"
+                     ng-click="treePane.toggle()">m</a>
             </div>
         </mct-split-pane>
     </div>

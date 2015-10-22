@@ -26,8 +26,8 @@
                 ]
             },
             {
-                "key": "BrowseTreeController",
-                "implementation": "BrowseTreeController.js",
+                "key": "PaneController",
+                "implementation": "PaneController.js",
                 "priority": "preferred",
                 "depends": [ "$scope", "agentService" ]
             },
