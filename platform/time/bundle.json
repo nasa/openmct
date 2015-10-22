@@ -1,0 +1,18 @@
+{
+    "name": "Time services bundle",
+    "description": "Defines interfaces and provides default implementations for handling different time systems.",
+    "extensions": {
+        "components": [
+            {
+                "provides": "timeService",
+                "type": "aggregator",
+                "implementation": "TimeAggregator.js"
+            },
+            {
+                "provides": "timeService",
+                "type": "provider",
+                "implementation": "UTCTimeProvider.js"
+            }
+        ]
+    }
+}
