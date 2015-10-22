@@ -17,6 +17,7 @@
     "directives/MCTPopup",
     "directives/MCTResize",
     "directives/MCTScroll",
+    "services/DateAggregator",
     "services/Popup",
     "services/PopupService",
     "services/UrlService",
