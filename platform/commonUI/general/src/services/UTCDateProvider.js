@@ -28,6 +28,14 @@ define([
 ) {
     "use strict";
 
+    var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss",
+        DATE_FORMATS = [
+            DATE_FORMAT,
+            "YYYY-MM-DD HH:mm:ss",
+            "YYYY-MM-DD HH:mm",
+            "YYYY-MM-DD"
+        ];
+
     /**
      * Composites multiple DateService implementations such that
      * they can be used as one.
@@ -39,12 +47,17 @@ define([
     }
 
     UTCDateProvider.prototype.validate = function (text, key) {
+        return key === undefined && moment.utc(text, DATE_FORMATS).isValid();
     };
 
     UTCDateProvider.prototype.format = function (value, key) {
+        return key === undefined ?
+                moment.utc(value).format(DATE_FORMAT) :
+                undefined;
     };
 
     UTCDateProvider.prototype.parse = function (text, key) {
+        return key === undefined && moment.utc(text, DATE_FORMATS).valueOf();
     };
 
     return UTCDateProvider;
