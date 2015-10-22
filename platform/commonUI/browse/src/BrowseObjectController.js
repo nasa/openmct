@@ -33,7 +33,8 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function BrowseObjectController($scope, $location, $route, $q) {
+        function BrowseObjectController($scope, $location, $route, $q, navigationService) {
+            var navigatedObject;
             function setViewForDomainObject(domainObject) {
                 
                 var locationViewKey = $location.search().view;
@@ -50,7 +51,7 @@ define(
                         .forEach(selectViewIfMatching);
                 }
                 $scope.editMode = domainObject.getDomainObject ? true : false;
-                console.log("edit mode set to " + $scope.editMode);
+                navigatedObject = domainObject;
             }
 
             function updateQueryParam(viewKey) {
@@ -72,11 +73,13 @@ define(
             $scope.$watch('domainObject', setViewForDomainObject);
             $scope.$watch('representation.selected.key', updateQueryParam);
 
-/*            $scope.$on(GestureConstants.MCT_DROP_EVENT, function() {
-                console.log("Edit mode changed");
-                $scope.editMode = true;
-            }); */
-            console.log("Controller loaded");
+            $scope.cancelEditing = function() {
+                navigationService.setNavigation($scope.domainObject.getDomainObject());
+            }
+
+            $scope.doAction = function (action){
+                $scope[action] && $scope[action]();
+            }
 
         }
 

@@ -35,7 +35,8 @@
             {
                 "key": "BrowseObjectController",
                 "implementation": "BrowseObjectController.js",
-                "depends": [ "$scope", "$location", "$route", "$q" ]
+                "depends": [ "$scope", "$location", "$route", "$q",
+                    "navigationService" ]
             },
             {
                 "key": "CreateMenuController",
