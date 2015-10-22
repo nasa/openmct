@@ -22,7 +22,9 @@
 /*global define*/
 
 define([
+    './SinewaveTimeSystem'
 ], function (
+    SinewaveTimeSystem
 ) {
     "use strict";
 
@@ -32,24 +34,19 @@ define([
      * not necessarily be formatted as UTC dates.
      * @memberof example/generator
      * @constructor
-     * @implements {DateService}
+     * @implements {TimeService}
      */
-    function SinewaveDateProvider() {
+    function SinewaveTimeProvider() {
+        this.indexTimeSystem = new SinewaveTimeSystem();
     }
 
-    SinewaveDateProvider.prototype.validate = function (text, key) {
-        return key === 'generator.index' && /^#\d+$/.test(text);
+    SinewaveTimeProvider.prototype.systems = function () {
+        return [ 'generator.index' ];
     };
 
-    SinewaveDateProvider.prototype.format = function (value, key) {
-        return key === 'generator.index' ?
-                ('#' + Math.floor(value)) :
-                undefined;
+    SinewaveTimeProvider.prototype.system = function (key) {
+        return key === 'generator.index' ? this.indexTimeSystem : undefined;
     };
 
-    SinewaveDateProvider.prototype.parse = function (text, key) {
-        return key === 'generator.index' && parseInt(key.substring(1), 10);
-    };
-
-    return SinewaveDateProvider;
+    return SinewaveTimeProvider;
 });

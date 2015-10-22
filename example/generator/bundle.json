@@ -10,9 +10,9 @@
                 "depends": [ "$q", "$timeout" ]
             },
             {
-                "implementation": "SinewaveDateProvider.js",
+                "implementation": "SinewaveTimeProvider.js",
                 "type": "provider",
-                "provides": "dateService"
+                "provides": "timeService"
             }
         ],
         "capabilities": [
