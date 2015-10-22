@@ -22,8 +22,8 @@
 /*global define*/
 
 define(
-    ['../../../notification/src/MessageSeverity'],
-    function (MessageSeverity) {
+    [],
+    function () {
         "use strict";
 
         /**
@@ -41,7 +41,6 @@ define(
          */
         function BannerController($scope, notificationService, dialogService) {
             $scope.active = notificationService.active;
-            $scope.MessageSeverity = MessageSeverity;
 
             $scope.action = function (action, $event){
                 /*
@@ -56,7 +55,7 @@ define(
                 notificationService.dismissOrMinimize(notification);
             };
             $scope.maximize = function(notification) {
-                if (notification.severity > MessageSeverity.INFO){
+                if (notification.severity != "info"){
                     notification.cancel = function(){
                         dialogService.dismiss();
                     };

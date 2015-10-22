@@ -22,8 +22,8 @@
 /*global define,describe,it,expect,beforeEach,waitsFor,jasmine */
 
 define(
-    ['../src/NotificationService','../src/MessageSeverity'],
-    function (NotificationService, MessageSeverity) {
+    ['../src/NotificationService'],
+    function (NotificationService) {
         "use strict";
 
         describe("The notification service ", function () {
@@ -34,46 +34,6 @@ define(
                 successModel,
                 errorModel;
 
-        /**
-         * 1) Calling .notify results in a new notification being created
-         * with the provided model and set to the active notification. DONE
-         *
-         * 2) Calling .notify with autoDismiss results in a SUCCESS notification
-         * becoming dismissed after timeout has elapsed DONE
-         *
-         * 3) Calling .notify with autoDismiss results in an ERROR notification
-         * being MINIMIZED after a timeout has elapsed DONE
-         * 
-         * 4) Calling .notify with an active info notification results in that
-         * notification being auto-dismissed, and the new notification becoming
-         * active. DONE
-         * 
-         * 5) Calling .notify with an active error notification results in that
-         * notification being auto-minimized and the new notification becoming
-         * active. DONE
-         *
-         * 6) Calling .notify with an active error notification, AND a
-         * queued error notification results in the active notification
-         * being auto-dismissed, the next message in the queue becoming
-         * active, then auto-dismissed, and then the provided notification
-         * becoming active.
-         */
-
-        /**
-         var model = {
-            title: string,
-            progress: number,
-            severity: MessageSeverity,
-            unknownProgress: boolean,
-            minimized: boolean,
-            autoDismiss: boolean | number,
-            actions: {
-                label: string,
-                action: function
-            }
-        }
-         */
-
             beforeEach(function(){
                 mockTimeout = jasmine.createSpy("$timeout");
                 mockAutoDismiss = mockMinimizeTimeout = 1000;
@@ -81,11 +41,11 @@ define(
                     mockTimeout, mockAutoDismiss, mockMinimizeTimeout);
                 successModel = {
                     title: "Mock Success Notification",
-                    severity: MessageSeverity.INFO
+                    severity: "info"
                 };
                 errorModel = {
                     title: "Mock Error Notification",
-                    severity: MessageSeverity.ERROR
+                    severity: "error"
                 };
             });
 
@@ -147,23 +107,6 @@ define(
                     activeNotification = notificationService.getActiveNotification();
                     expect(activeNotification).toBe(errorModel);
                 });
-                /* Test is temporarily invalid as info messages are being
-                 minimized
-                it("auto-dismisses an active success notification, removing" +
-                    " it completely", function() {
-                    //First pre-load with a info message
-                    notificationService.notify(successModel);
-                    //Then notify of an error
-                    notificationService.notify(errorModel);
-                    expect(notificationService.notifications.length).toEqual(2);
-                    mockTimeout.mostRecentCall.args[0]();
-                    //Two timeouts, one is to force minimization after
-                    // displaying the message for a minimum period, the
-                    // second is to allow minimization animation to take place.
-                    mockTimeout.mostRecentCall.args[0]();
-                    //Previous info message should be completely dismissed
-                    expect(notificationService.notifications.length).toEqual(1);
-                });*/
                 it("auto-minimizes an active error notification", function() {
                     var activeNotification;
                     //First pre-load with an error message
@@ -190,11 +133,11 @@ define(
                     var activeNotification,
                         error2 = {
                             title: "Second Mock Error Notification",
-                            severity: MessageSeverity.ERROR
+                            severity: "error"
                         },
                         error3 = {
                             title: "Third Mock Error Notification",
-                            severity: MessageSeverity.ERROR
+                            severity: "error"
                         };
 
                     //First pre-load with a info message

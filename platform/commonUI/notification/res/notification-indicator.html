@@ -1,8 +1,5 @@
 <span ng-show="notifications.length > 0" class="status block"
-      ng-class="{
-     'info': highest.severity===MessageSeverity.INFO,
-     'error': highest.severity===MessageSeverity.ERROR,
-     'alert': highest.severity===MessageSeverity.ALERT }"
+      ng-class="highest.severity"
       ng-controller="NotificationIndicatorController">
     <span class="ui-symbol status-indicator">&#xe610;</span>
     <span class="label">

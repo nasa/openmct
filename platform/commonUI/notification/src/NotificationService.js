@@ -32,8 +32,8 @@
  * @namespace platform/commonUI/dialog
  */
 define(
-    ["./MessageSeverity"],
-    function (MessageSeverity) {
+    [],
+    function () {
         "use strict";
 
         /**
@@ -56,8 +56,9 @@ define(
          *
          * @typedef {object} Notification
          * @property {string} title The title of the message
-         * @property {MessageSeverity} severity The importance of the
-         * message (eg. error, info)
+         * @property {string} severity The importance of the
+         * message (one of 'info', 'alert', or 'error' where info < alert <
+         * error)
          * @property {number} progress The completion status of a task
          * represented numerically
          * @property {boolean} unknownProgress a boolean indicating that the
@@ -91,7 +92,7 @@ define(
         function NotificationService($timeout, DEFAULT_AUTO_DISMISS, MINIMIZE_TIMEOUT) {
             this.notifications = [];
             this.$timeout = $timeout;
-            this.highest ={ severity: MessageSeverity.INFO };
+            this.highest ={ severity: "info" };
             this.DEFAULT_AUTO_DISMISS = DEFAULT_AUTO_DISMISS;
             this.MINIMIZE_TIMEOUT = MINIMIZE_TIMEOUT;
 
@@ -118,7 +119,7 @@ define(
          */
         NotificationService.prototype.info = function (notification) {
             notification.autoDismiss = notification.autoDismiss || true;
-            notification.severity = MessageSeverity.INFO;
+            notification.severity = "info";
             this.notify(notification);
         };
 
@@ -130,13 +131,18 @@ define(
          * @param {Notification} notification The notification to display
          */
         NotificationService.prototype.notify = function (notification) {
-            var self = this;
-
+            var self = this,
+                ordinality = {
+                    "info": 1,
+                    "alert": 2,
+                    "error": 3
+                };
+            notification.severity = notification.severity || "info"
             if (notification.autoDismiss === true){
                 notification.autoDismiss = this.DEFAULT_AUTO_DISMISS;
             }
 
-            if (notification.severity > this.highest.severity){
+            if (ordinality[notification.severity.toLowerCase()] > ordinality[this.highest.severity.toLowerCase()]){
                 this.highest.severity = notification.severity;
             }
 
@@ -271,11 +277,6 @@ define(
             //For now minimize everything, and have discussion around which
             //kind of messages should or should not be in the minimized
             //notifications list
-            /*if (notification.severity > MessageSeverity.INFO){
-                this.minimize(notification);
-            } else {
-                this.dismiss(notification);
-            }*/
             this.minimize(notification);
         };
 

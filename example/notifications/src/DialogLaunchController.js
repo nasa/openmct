@@ -22,8 +22,8 @@
 /*global define*/
 
 define(
-    ['../../../platform/commonUI/notification/src/MessageSeverity'],
-    function (MessageSeverity) {
+    [],
+    function () {
         "use strict";
 
         /**
@@ -51,7 +51,7 @@ define(
                     actionText: "Calculating...",
                     unknownProgress: !knownProgress,
                     unknownDuration: false,
-                    severity: MessageSeverity.INFO,
+                    severity: "info",
                     options: [
                         {
                             label: "Cancel Operation",
@@ -96,7 +96,7 @@ define(
                 var model = {
                     title: "Error Dialog Example",
                     actionText: "Something happened, and it was not good.",
-                    severity: MessageSeverity.ERROR,
+                    severity: "error",
                     options: [
                         {
                             label: "Try Again",
@@ -129,7 +129,7 @@ define(
                     actionText: "This is an example of a blocking info" +
                     " dialog. This dialog can be used to draw the user's" +
                     " attention to an event.",
-                    severity: MessageSeverity.INFO,
+                    severity: "info",
                     options: [
                         {
                             label: "OK",

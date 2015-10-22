@@ -22,8 +22,8 @@
 /*global define*/
 
 define(
-    ['../../../platform/commonUI/notification/src/MessageSeverity'],
-    function (MessageSeverity) {
+    [],
+    function () {
         "use strict";
 
         /**
@@ -81,9 +81,9 @@ define(
 
             function getExampleSeverity() {
                 var severities = [
-                    MessageSeverity.INFO,
-                    MessageSeverity.ALERT,
-                    MessageSeverity.ERROR
+                    "info",
+                    "alert",
+                    "error"
                 ];
                 return severities[Math.floor(Math.random() * severities.length)];
             }
@@ -96,7 +96,7 @@ define(
                 notificationService.notify({
                     title: "Example error notification " + messageCounter++,
                     hint: "An error has occurred",
-                    severity: MessageSeverity.ERROR,
+                    severity: "error",
                     primaryOption: {
                         label: 'Retry',
                         callback: function() {
@@ -113,7 +113,7 @@ define(
                 notificationService.notify({
                     title: "Alert notification " + (messageCounter++),
                     hint: "This is an alert message",
-                    severity: MessageSeverity.ALERT,
+                    severity: "alert",
                     primaryOption: {
                         label: 'Retry',
                         callback: function() {
@@ -132,7 +132,7 @@ define(
 
                 var notification = {
                     title: "Progress notification example",
-                    severity: MessageSeverity.INFO,
+                    severity: "info",
                     progress: 0,
                     actionText: getExampleActionText(),
                     unknownProgress: false

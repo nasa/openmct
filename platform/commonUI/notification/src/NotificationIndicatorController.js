@@ -22,8 +22,8 @@
 /*global define*/
 
 define(
-    ['./MessageSeverity'],
-    function (MessageSeverity) {
+    [],
+    function () {
         "use strict";
 
         /**
@@ -40,7 +40,6 @@ define(
         function NotificationIndicatorController($scope, notificationService, dialogService) {
             $scope.notifications = notificationService.notifications;
             $scope.highest = notificationService.highest;
-            $scope.MessageSeverity = MessageSeverity;
 
             /**
              * Launch a dialog showing a list of current notifications.
@@ -48,8 +47,7 @@ define(
             $scope.showNotificationsList = function(){
 
                 var model = {
-                    title: "Messages",
-                    severity: MessageSeverity.INFO
+                    title: "Messages"
                 };
 
                 model.messages = notificationService.notifications;
