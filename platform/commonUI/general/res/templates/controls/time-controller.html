@@ -29,7 +29,10 @@
                        ng-model="boundsModel.start"
                        ng-class="{ error: !boundsModel.startValid }">
                 </input>
-                <a class="ui-symbol icon icon-calendar" ng-click="t1.toggle()"></a>
+                <a class="ui-symbol icon icon-calendar"
+                   ng-if="parameters.domain === undefined"
+                   ng-click="t1.toggle()">
+                </a>
                 <mct-popup ng-if="t1.isActive()">
                     <div mct-click-elsewhere="t1.setState(false)">
                         <mct-control key="'datetime-picker'"
@@ -51,7 +54,9 @@
                        ng-model="boundsModel.end"
                        ng-class="{ error: !boundsModel.endValid }">
                 </input>
-                <a class="ui-symbol icon icon-calendar" ng-click="t2.toggle()">
+                <a class="ui-symbol icon icon-calendar"
+                   ng-if="parameters.domain === undefined"
+                   ng-click="t2.toggle()">
                 </a>
                 <mct-popup ng-if="t2.isActive()">
                     <div mct-click-elsewhere="t2.setState(false)">
