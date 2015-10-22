@@ -18,6 +18,7 @@
     "directives/MCTResize",
     "directives/MCTScroll",
     "services/DateAggregator",
+    "services/UTCDateProvider",
     "services/Popup",
     "services/PopupService",
     "services/UrlService",
