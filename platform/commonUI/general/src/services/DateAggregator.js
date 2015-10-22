@@ -31,7 +31,9 @@ define([
      * Formats dates for display and parses dates from user input,
      * varying by a chosen time system.
      *
-     * Time systems are typically domain keys from telemetry metadata.
+     * Time systems are typically specified as `system` properties
+     * of domains in {@link TelemetryDomainMetadata}.
+     *
      * If omitted/left undefined, the time system is presumed to be UTC time,
      * with its numeric interpretation being milliseconds since the
      * start of 1970.

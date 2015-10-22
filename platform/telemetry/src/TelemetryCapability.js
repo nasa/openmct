@@ -37,6 +37,64 @@ define(
             };
 
         /**
+         * Provides metadata about telemetry associated with a
+         * given domain object.
+         *
+         * @typedef TelemetryMetadata
+         * @property {string} source the machine-readable identifier for
+         *           the source of telemetry data for this object; used by
+         *           {@link TelemetryService} implementations to determine
+         *           whether or not they provide data for this object.
+         * @property {string} key the machine-readable identifier for
+         *           telemetry data associated with this specific object,
+         *           within that `source`.
+         * @property {TelemetryDomainMetadata[]} domains supported domain
+         *           options for telemetry data associated with this object,
+         *           to use in interpreting a {@link TelemetrySeries}
+         * @property {TelemetryRangeMetadata[]} ranges supported range
+         *           options for telemetry data associated with this object,
+         *           to use in interpreting a {@link TelemetrySeries}
+         */
+
+        /**
+         * Provides metadata about range options within a telemetry series.
+         * Range options describe distinct properties within any given datum
+         * of a telemetry series; for instance, a telemetry series containing
+         * both raw and uncalibrated values may provide separate ranges for
+         * each.
+         *
+         * @typedef TelemetryRangeMetadata
+         * @property {string} key machine-readable identifier for this range
+         * @property {string} name human-readable name for this range
+         * @property {string} [units] human-readable units for this range
+         * @property {string} [format] data format for this range; usually,
+         *                    one of `number`, or `string`. If `undefined`,
+         *                    should presume to be a `number`. Custom formats
+         *                    may be indicated here.
+         */
+
+        /**
+         * Provides metadata about domain options within a telemetry series.
+         * Domain options describe distinct properties within any given datum
+         * of a telemtry series; for instance, a telemetry series containing
+         * both spacecraft event time and earth received times may provide
+         * separate domains for each.
+         *
+         * Domains are typically used to represent timestamps in a telemetry
+         * series, but more generally may express any property which will
+         * have unique values for each datum in a series. It is this property
+         * which makes domains distinct from ranges, as it makes these values
+         * appropriate and meaningful for use to sort and bound a series.
+         *
+         * @typedef TelemetryDomainMetadata
+         * @property {string} key machine-readable identifier for this range
+         * @property {string} name human-readable name for this range
+         * @property {string} [system] machine-readable identifier for the
+         *                    time/date system associated with this domain;
+         *                    used by {@link DateService}
+         */
+
+        /**
          * A telemetry capability provides a means of requesting telemetry
          * for a specific object, and for unwrapping the response (to get
          * at the specific data which is appropriate to the domain object.)
