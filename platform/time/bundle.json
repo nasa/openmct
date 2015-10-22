@@ -11,7 +11,8 @@
             {
                 "provides": "timeService",
                 "type": "provider",
-                "implementation": "UTCTimeProvider.js"
+                "implementation": "UTCTimeProvider.js",
+                "depends": [ "now" ]
             }
         ]
     }
