@@ -36,9 +36,9 @@
             {
                 "key": "TIME_CONDUCTOR_DOMAINS",
                 "value": [
-                    { "key": "time", "name": "Time" },
-                    { "key": "yesterday", "name": "Yesterday" }
+                    { "key": "time", "name": "Time" }
                 ],
+                "priority": "fallback",
                 "comment": "Placeholder; to be replaced by inspection of available domains."
             }
         ]

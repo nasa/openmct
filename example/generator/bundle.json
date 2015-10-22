@@ -73,6 +73,18 @@
                     }
                 ]
             }
+        ],
+        "constants": [
+            {
+                "key": "TIME_CONDUCTOR_DOMAINS",
+                "value": [
+                    { "key": "time", "name": "Time" },
+                    { "key": "yesterday", "name": "Yesterday" },
+                    { "key": "index", "name": "Index", "system": "generator.index" }
+                ],
+                "priority": -1,
+                "comment": "Placeholder; to be replaced by inspection of available domains."
+            }
         ]
     }
 }

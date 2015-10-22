@@ -27,7 +27,10 @@ define(
         "use strict";
 
         var TEMPLATE = [
-                "<mct-include key=\"'time-conductor'\" ng-model='ngModel' class='l-time-controller'>",
+                "<mct-include key=\"'time-conductor'\" ",
+                "ng-model='ngModel' ",
+                "parameters='parameters' ",
+                "class='l-time-controller'>",
                 "</mct-include>"
             ].join(''),
             THROTTLE_MS = 200,
@@ -74,11 +77,12 @@ define(
                 broadcastBounds;
 
             // Combine start/end times into a single object
-            function bounds(start, end) {
+            function bounds() {
+                var domain = conductor.domain();
                 return {
                     start: conductor.displayStart(),
                     end: conductor.displayEnd(),
-                    domain: conductor.domain()
+                    domain: domain && domain.key
                 };
             }
 
@@ -97,12 +101,10 @@ define(
             }
 
             function updateDomain(value) {
-                conductor.domain(value);
-                repScope.$broadcast('telemetry:display:bounds', bounds(
-                    conductor.displayStart(),
-                    conductor.displayEnd(),
-                    conductor.domain()
-                ));
+                var newDomain = conductor.domain(value);
+                conductorScope.parameters.system =
+                    newDomain && newDomain.system;
+                repScope.$broadcast('telemetry:display:bounds', bounds());
             }
 
             // telemetry domain metadata -> option for a select control
@@ -130,7 +132,8 @@ define(
                 { outer: bounds(), inner: bounds() };
             conductorScope.ngModel.options =
                 conductor.domainOptions().map(makeOption);
-            conductorScope.ngModel.domain = conductor.domain();
+            conductorScope.ngModel.domain = (conductor.domain() || {}).key;
+            conductorScope.parameters = {};
 
             conductorScope
                 .$watch('ngModel.conductor.inner.start', updateConductorInner);

@@ -51,7 +51,7 @@ define(
                 request = request || {};
                 request.start = start;
                 request.end = end;
-                request.domain = domain;
+                request.domain = domain && domain.key;
                 return request;
             }
 

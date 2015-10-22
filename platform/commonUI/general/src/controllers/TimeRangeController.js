@@ -41,7 +41,7 @@ define(
                 initialDragValue;
 
             function timeSystemKey() {
-                return ($scope.parameters || {}).domain;
+                return ($scope.parameters || {}).system;
             }
 
             function formatTimestamp(ts) {
@@ -57,7 +57,7 @@ define(
                 }
             }
 
-            // From 0.0-1.0 to "0%"-"1%"
+            // From 0.0-1.0 to "0%"-"100%"
             function toPercent(p) {
                 return (100 * p) + "%";
             }
