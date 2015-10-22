@@ -178,7 +178,7 @@ define(
          * A user action that can be performed from a blocking dialog. These
          * actions will be rendered as buttons within a blocking dialog.
          *
-         * @typedef DialogAction
+         * @typedef DialogOption
          * @property {string} label a label to be displayed as the button
          * text for this action
          * @property {function} action a function to be called when the
@@ -207,12 +207,12 @@ define(
          * impossible to provide an estimate for. Providing a true value for
          * this attribute will indicate to the user that the progress and
          * duration cannot be estimated.
-         * @property {DialogAction} primaryAction an action that will
+         * @property {DialogOption} primaryOption an action that will
          * be added to the dialog as a button. The primary action can be
          * used as the suggested course of action for the user. Making it
          * distinct from other actions allows it to be styled differently,
          * and treated preferentially in banner mode.
-         * @property {DialogAction[]} actions a list of actions that will
+         * @property {DialogOption[]} options a list of actions that will
          * be added to the dialog as buttons.
          */
 

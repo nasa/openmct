@@ -37,13 +37,13 @@ define(
         "use strict";
 
         /**
-         * A representation of a user action. Actions are provided to
+         * A representation of a user action. Options are provided to
          * dialogs and notifications and are shown as buttons.
          *
-         * @typedef {object} NotificationAction
+         * @typedef {object} NotificationOption
          * @property {string} label the label to appear on the button for
          * this action
-         * @property {function} action a callback function to be invoked
+         * @property {function} callback a callback function to be invoked
          * when the button is clicked
         */
 
@@ -67,12 +67,12 @@ define(
          * be automatically minimized or dismissed (depending on severity).
          * Additionally, if the provided value is a number, it will be used
          * as the delay period before being dismissed.
-         * @property {NotificationAction} primaryAction the default user
+         * @property {NotificationOption} primaryOption the default user
          * response to
          * this message. Will be represented as a button with the provided
          * label and action. May be used by banner notifications to display
          * only the most important option to users.
-         * @property {NotificationAction[]} actions any additional
+         * @property {NotificationOption[]} options any additional
          * actions the user can take. Will be represented as additional buttons
          * that may or may not be available from a banner.
          */

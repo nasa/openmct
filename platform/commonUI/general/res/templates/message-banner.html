@@ -14,10 +14,10 @@
                      ng-model="active.notification">
         </mct-include>
     </span>
-    <a ng-hide="active.notification.primaryAction === undefined"
+    <a ng-hide="active.notification.primaryOption === undefined"
        class="banner-elem l-action s-action"
-       ng-click="action(active.notification.primaryAction.action, $event)">
-        {{active.notification.primaryAction.label}}
+       ng-click="action(active.notification.primaryOption.callback, $event)">
+        {{active.notification.primaryOption.label}}
     </a>
     <a class="banner-elem ui-symbol close" ng-click="dismiss(active.notification, $event)">
         &#x78;</a>

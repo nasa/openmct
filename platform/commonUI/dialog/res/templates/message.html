@@ -19,15 +19,15 @@
                          ng-show="ngModel.progress !== undefined || ngModel.unknownProgress"></mct-include>
         </div>
         <div class="bottom-bar">
-            <a ng-repeat="dialogAction in ngModel.actions"
+            <a ng-repeat="dialogOption in ngModel.options"
                class="s-btn major"
-               ng-click="dialogAction.action()">
-                {{dialogAction.label}}
+               ng-click="dialogOption.callback()">
+                {{dialogOption.label}}
             </a>
             <a class="s-btn major"
-               ng-if="ngModel.primaryAction"
-               ng-click="ngModel.primaryAction.action()">
-                {{ngModel.primaryAction.label}}
+               ng-if="ngModel.primaryOption"
+               ng-click="ngModel.primaryOption.callback()">
+                {{ngModel.primaryOption.label}}
             </a>
 
         </div>

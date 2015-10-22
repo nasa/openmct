@@ -52,17 +52,17 @@ define(
                     unknownProgress: !knownProgress,
                     unknownDuration: false,
                     severity: MessageSeverity.INFO,
-                    actions: [
+                    options: [
                         {
                             label: "Cancel Operation",
-                            action: function () {
+                            callback: function () {
                                 $log.debug("Operation cancelled");
                                 dialogService.dismiss();
                             }
                         },
                         {
                             label: "Do something else...",
-                            action: function () {
+                            callback: function () {
                                 $log.debug("Something else pressed");
                             }
                         }
@@ -97,17 +97,17 @@ define(
                     title: "Error Dialog Example",
                     actionText: "Something happened, and it was not good.",
                     severity: MessageSeverity.ERROR,
-                    actions: [
+                    options: [
                         {
                             label: "Try Again",
-                            action: function () {
+                            callback: function () {
                                 $log.debug("Try Again Pressed");
                                 dialogService.dismiss();
                             }
                         },
                         {
                             label: "Cancel",
-                            action: function () {
+                            callback: function () {
                                 $log.debug("Cancel Pressed");
                                 dialogService.dismiss();
                             }
@@ -130,10 +130,10 @@ define(
                     " dialog. This dialog can be used to draw the user's" +
                     " attention to an event.",
                     severity: MessageSeverity.INFO,
-                    actions: [
+                    options: [
                         {
                             label: "OK",
-                            action: function () {
+                            callback: function () {
                                 $log.debug("OK Pressed");
                                 dialogService.dismiss();
                             }

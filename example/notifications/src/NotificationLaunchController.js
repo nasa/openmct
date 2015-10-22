@@ -55,19 +55,19 @@ define(
                 var actions = [
                     {
                         label: "Try Again",
-                        action: function () {
+                        callback: function () {
                             $log.debug("Try Again pressed");
                         }
                     },
                     {
                         label: "Remove",
-                        action: function () {
+                        callback: function () {
                             $log.debug("Remove pressed");
                         }
                     },
                     {
                         label: "Cancel",
-                        action: function () {
+                        callback: function () {
                             $log.debug("Cancel pressed");
                         }
                     }
@@ -97,13 +97,13 @@ define(
                     title: "Example error notification " + messageCounter++,
                     hint: "An error has occurred",
                     severity: MessageSeverity.ERROR,
-                    primaryAction: {
+                    primaryOption: {
                         label: 'Retry',
-                        action: function() {
+                        callback: function() {
                             $log.info('Retry clicked');
                         }
                     },
-                    actions: getExampleActions()});
+                    options: getExampleActions()});
             };
             /**
              * Launch a new notification with a severity of 'Alert'.
@@ -114,13 +114,13 @@ define(
                     title: "Alert notification " + (messageCounter++),
                     hint: "This is an alert message",
                     severity: MessageSeverity.ALERT,
-                    primaryAction: {
+                    primaryOption: {
                         label: 'Retry',
-                        action: function() {
+                        callback: function() {
                             $log.info('Retry clicked');
                         }
                     },
-                    actions: getExampleActions()});
+                    options: getExampleActions()});
             };
 
 
