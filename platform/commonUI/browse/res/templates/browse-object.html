@@ -20,13 +20,14 @@
  at runtime from the About dialog for additional information.
 -->
 <div ng-init="
-    editBtns = [{ cssclass: 'save',title: 'Save' },{ cssclass: 'cancel',title: 'Discard Changes' }];
+    editBtns = [{ cssclass: 'save',title: 'Save' },{ cssclass: 'cancel',title: 'Discard Changes', action:'cancelEditing' }];
 "></div>
-<span ng-controller="BrowseObjectController">
-    <a class="s-btn"
+<span ng-controller="BrowseObjectController"
+      mct-before-unload="getUnloadWarning()">
+    <!--<a class="s-btn"
        style="opacity: 0.9; position:absolute; right: 250px; z-index: 100"
        ng-class="{ major:!editMode }"
-       ng-click="editMode = !editMode">Set EditMode to {{!editMode}}</a>
+       ng-click="editMode = !editMode">Set EditMode to {{!editMode}}</a> -->
     <div class="object-browse-bar bar l-flex">
         <div class="items-select left">
             <mct-representation key="'back-arrow'"
@@ -100,7 +101,7 @@
                     <span ng-repeat="btn in editBtns">
                         <a class='s-btn t-{{btn.cssclass}}'
                            title='{{btn.title}}'
-                           ng-click="currentAction.perform()"
+                           ng-click="doAction(btn.action)"
                            ng-class="{ major: $index === 0 }">
                             <span class="title-label">{{btn.title}}</span>
                         </a>

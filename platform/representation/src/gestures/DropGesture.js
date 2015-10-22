@@ -25,8 +25,9 @@
  * Module defining DropGesture. Created by vwoeltje on 11/17/14.
  */
 define(
-    ['./GestureConstants'],
-    function (GestureConstants) {
+    ['./GestureConstants',
+     '../../../commonUI/edit/src/objects/EditableDomainObject'],
+    function (GestureConstants, EditableDomainObject) {
         "use strict";
 
         /**
@@ -40,8 +41,9 @@ define(
          * @param {DomainObject} domainObject the domain object whose
          *        composition should be modified as a result of the drop.
          */
-        function DropGesture(dndService, $q, element, domainObject) {
-            var actionCapability = domainObject.getCapability('action'),
+        function DropGesture(dndService, $q, navigationService, element, domainObject) {
+            var editableDomainObject = domainObject instanceof EditableDomainObject ? domainObject : new EditableDomainObject(domainObject, $q),
+                actionCapability = editableDomainObject.getCapability('action'),
                 action; // Action for the drop, when it occurs
             
             function broadcastDrop(id, event) {
@@ -93,8 +95,8 @@ define(
             function drop(e) {
                 var event = (e || {}).originalEvent || e,
                     id = event.dataTransfer.getData(GestureConstants.MCT_DRAG_TYPE),
-                    domainObjectType = domainObject.getModel().type;
-                
+                    domainObjectType = editableDomainObject.getModel().type;
+
                 // If currently in edit mode allow drag and drop gestures to the
                 // domain object. An exception to this is folders which have drop
                 // gestures in browse mode.
@@ -105,6 +107,7 @@ define(
                     // the change.
                     if (id) {
                         $q.when(action && action.perform()).then(function (result) {
+                            navigationService.setNavigation(editableDomainObject);
                             broadcastDrop(id, event);
                         });
                     }
