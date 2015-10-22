@@ -43,6 +43,13 @@
                 "key": "overlay",
                 "templateUrl": "templates/overlay.html"
             }
+        ],
+        "controllers": [
+            {
+                "key": "MessageController",
+                "implementation": "MessageController.js",
+                "depends": ["$scope"]
+            }
         ]
     }
 }

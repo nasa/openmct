@@ -22,10 +22,23 @@
 /*global define*/
 
 define(
-    ['./MessageSeverity'],
+    ['../../notification/src/MessageSeverity'],
     function (MessageSeverity) {
         "use strict";
 
+        /**
+         * A controller for the message view which used to represent a
+         * message to the user in the dialogs and notifications systems. The
+         * message view (../res/templates/message.html) is included
+         * from the blocking message dialog
+         * (../res/templates/overlay-blocking-message.html),
+         * and the message list (../res/templates/overlay-message-list.html)
+         * shown from the notifications indicator
+         * @param $scope
+         * @constructor
+         * @see DialogService#showBlockingMessage
+         * @see NotificationService
+         */
         function MessageController($scope) {
             $scope.MessageSeverity = MessageSeverity;
         }
