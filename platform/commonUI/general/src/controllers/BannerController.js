@@ -55,7 +55,7 @@ define(
                 notificationService.dismissOrMinimize(notification);
             };
             $scope.maximize = function(notification) {
-                if (notification.severity != "info"){
+                if (notification.severity !== "info"){
                     notification.cancel = function(){
                         dialogService.dismiss();
                     };

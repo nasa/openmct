@@ -130,15 +130,13 @@ define(
                     " dialog. This dialog can be used to draw the user's" +
                     " attention to an event.",
                     severity: "info",
-                    options: [
-                        {
+                    primaryOption: {
                             label: "OK",
                             callback: function () {
                                 $log.debug("OK Pressed");
                                 dialogService.dismiss();
                             }
-                        },
-                    ]
+                        }
                 };
 
                 if (!dialogService.showBlockingMessage(model)) {

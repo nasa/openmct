@@ -137,7 +137,7 @@ define(
                     "alert": 2,
                     "error": 3
                 };
-            notification.severity = notification.severity || "info"
+            notification.severity = notification.severity || "info";
             if (notification.autoDismiss === true){
                 notification.autoDismiss = this.DEFAULT_AUTO_DISMISS;
             }
