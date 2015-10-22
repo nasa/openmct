@@ -49,6 +49,11 @@ define(
                         Math.max(Math.floor(request.start / 1000), firstTime),
                 offset = requestStart - firstTime;
 
+            if (request.domain === 'index') {
+                offset = Math.floor(request.start || 0);
+                count = Math.ceil(request.end || endTime);
+            }
+
             if (request.size !== undefined) {
                 offset = Math.max(offset, count - request.size);
             }
@@ -59,7 +64,7 @@ define(
 
             generatorData.getDomainValue = function (i, domain) {
                 if (domain === 'index') {
-                    return i;
+                    return i + offset;
                 }
                 return (i + offset) * 1000 + firstTime * 1000 -
                     (domain === 'yesterday' ? ONE_DAY : 0);
