@@ -1,3 +1,6 @@
+test:
+  override:
+    - exit 0
 deployment:
   production:
     branch: master
