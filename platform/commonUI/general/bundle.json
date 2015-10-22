@@ -66,7 +66,7 @@
             {
                 "key": "TimeRangeController",
                 "implementation": "controllers/TimeRangeController.js",
-                "depends": [ "$scope", "timeService", "now" ]
+                "depends": [ "$scope", "timeService" ]
             },
             {
                 "key": "DateTimePickerController",

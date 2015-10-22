@@ -34,7 +34,7 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function TimeRangeController($scope, timeService, now) {
+        function TimeRangeController($scope, timeService) {
             var tickCount = 2,
                 innerMinimumSpan = 1000, // 1 second
                 outerMinimumSpan = 1000 * 60 * 60, // 1 hour
@@ -91,7 +91,7 @@ define(
             }
 
             function defaultBounds() {
-                var t = now();
+                var t = timeSystem.now();
                 return {
                     start: t - 24 * 3600 * 1000, // One day
                     end: t
@@ -122,8 +122,6 @@ define(
             }
 
             function updateViewFromModel(ngModel) {
-                var t = now();
-
                 ngModel = ngModel || {};
                 ngModel.outer = ngModel.outer || defaultBounds();
                 ngModel.inner = ngModel.inner || copyBounds(ngModel.outer);
@@ -274,7 +272,7 @@ define(
                 $scope.ngModel.inner.start = start;
                 $scope.ngModel.inner.end = end;
                 $scope.boundsModel = {};
-                updateViewFromModel();
+                updateViewFromModel($scope.ngModel);
             }
 
             function updateTimeSystem(key) {
