@@ -109,6 +109,9 @@ define(
                                 ngModel.outer[property]) {
                         $scope.boundsModel[property] =
                             formatTimestamp(ngModel.outer[property]);
+                        // Never want to flag machine-generated text
+                        // as invalid here.
+                        $scope.boundsModel[property + 'Valid'] = true;
                     }
                 } catch (e) {
                     // User-entered text is invalid, so leave it be
