@@ -8,6 +8,11 @@
                 "type": "provider",
                 "provides": "telemetryService",
                 "depends": [ "$q", "$timeout" ]
+            },
+            {
+                "implementation": "SinewaveDateProvider.js",
+                "type": "provider",
+                "provides": "dateService"
             }
         ],
         "capabilities": [
@@ -38,6 +43,11 @@
                         {
                             "key": "yesterday",
                             "name": "Yesterday"
+                        },
+                        {
+                            "key": "index",
+                            "name": "Index",
+                            "system": "generator.index"
                         }
                     ],
                     "ranges": [

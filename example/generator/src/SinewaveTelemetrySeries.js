@@ -58,6 +58,9 @@ define(
             };
 
             generatorData.getDomainValue = function (i, domain) {
+                if (domain === 'index') {
+                    return i;
+                }
                 return (i + offset) * 1000 + firstTime * 1000 -
                     (domain === 'yesterday' ? ONE_DAY : 0);
             };
