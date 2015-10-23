@@ -60,3 +60,4 @@ define(
         return NotificationIndicatorController;
     }
 );
+
