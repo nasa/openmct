@@ -278,8 +278,8 @@
                 "depends": [ "$scope", "resources[]" ]
             },
             {
-                "key": "WARPDateTimeController",
-                "implementation": "controllers/WARPDateTimeController.js",
+                "key": "TimelineDateTimeController",
+                "implementation": "controllers/TimelineDateTimeController.js",
                 "depends": [ "$scope" ]
             },
             {
