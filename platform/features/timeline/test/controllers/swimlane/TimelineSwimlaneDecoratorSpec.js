@@ -61,13 +61,13 @@ define(
             it("adds a 'modes' getter-setter to activities", function () {
                 expect(mockSwimlane.modes).toEqual(jasmine.any(Function));
                 expect(mockCapabilities.type.instanceOf)
-                    .toHaveBeenCalledWith('warp.activity');
+                    .toHaveBeenCalledWith('activity');
             });
 
             it("adds a 'link' getter-setter to activities", function () {
                 expect(mockSwimlane.link).toEqual(jasmine.any(Function));
                 expect(mockCapabilities.type.instanceOf)
-                    .toHaveBeenCalledWith('warp.activity');
+                    .toHaveBeenCalledWith('activity');
             });
 
             it("gets modes from the domain object model", function () {

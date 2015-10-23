@@ -50,13 +50,13 @@ define(
             });
 
             it("provides three handles for activities", function () {
-                testType = "warp.activity";
+                testType = "activity";
                 expect(factory.handles(mockDomainObject).length)
                     .toEqual(3);
             });
 
             it("provides two handles for timelines", function () {
-                testType = "warp.timeline";
+                testType = "timeline";
                 expect(factory.handles(mockDomainObject).length)
                     .toEqual(2);
             });

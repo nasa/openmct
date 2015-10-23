@@ -27,7 +27,7 @@ define(
                 );
 
                 testModel = {
-                    type: "warp.activity",
+                    type: "activity",
                     resources: {
                         abc: 100,
                         xyz: 42
@@ -45,7 +45,7 @@ define(
 
             it("is applicable to timelines", function () {
                 expect(GraphCapability.appliesTo({
-                    type: "warp.timeline"
+                    type: "timeline"
                 })).toBeTruthy();
             });
 
@@ -82,7 +82,7 @@ define(
             it("provides a battery graph for timelines with capacity", function () {
                 var mockCallback = jasmine.createSpy('callback');
                 testModel.capacity = 1000;
-                testModel.type = "warp.timeline";
+                testModel.type = "timeline";
                 mockDomainObject.useCapability.andReturn(asPromise([
                     { key: "power", start: 0, end: 15 }
                 ]));

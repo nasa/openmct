@@ -78,7 +78,7 @@ define(
                 mockCallback = jasmine.createSpy('callback');
 
                 testModel = {
-                    type: "warp.activity",
+                    type: "activity",
                     resources: {
                         abc: 100,
                         xyz: 42
@@ -107,7 +107,7 @@ define(
 
             it("is applicable to timelines", function () {
                 expect(UtilizationCapability.appliesTo({
-                    type: "warp.timeline"
+                    type: "timeline"
                 })).toBeTruthy();
             });
 

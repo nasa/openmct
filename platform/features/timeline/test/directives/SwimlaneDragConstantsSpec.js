@@ -7,7 +7,7 @@ define(
 
         describe("Timeline swimlane drag constants", function () {
             it("define a custom type for swimlane drag-drop", function () {
-                expect(SwimlaneDragConstants.WARP_SWIMLANE_DRAG_TYPE)
+                expect(SwimlaneDragConstants.TIMELINE_SWIMLANE_DRAG_TYPE)
                     .toEqual(jasmine.any(String));
             });
         });

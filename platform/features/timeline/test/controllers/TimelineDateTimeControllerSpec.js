@@ -2,8 +2,8 @@
 /*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
-    ["../../src/controllers/WARPDateTimeController"],
-    function (WARPDateTimeController) {
+    ["../../src/controllers/TimelineDateTimeController"],
+    function (TimelineDateTimeController) {
         "use strict";
 
         describe("The date-time controller for timeline creation", function () {
@@ -14,7 +14,7 @@ define(
                 mockScope = jasmine.createSpyObj('$scope', ['$watchCollection']);
                 mockScope.field = 'testField';
                 mockScope.ngModel = { testField: { timestamp: 0, epoch: "SET" } };
-                controller = new WARPDateTimeController(mockScope);
+                controller = new TimelineDateTimeController(mockScope);
             });
 
 

@@ -44,7 +44,7 @@ define(
 
             it("applies only to activity objects", function () {
                 expect(ActivityTimespanCapability.appliesTo({
-                    type: 'warp.activity'
+                    type: 'activity'
                 })).toBeTruthy();
                 expect(ActivityTimespanCapability.appliesTo({
                     type: 'folder'

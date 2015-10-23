@@ -21,7 +21,7 @@
     "controllers/TimelineTableController",
     "controllers/TimelineTickController",
     "controllers/TimelineZoomController",
-    "controllers/WARPDateTimeController",
+    "controllers/TimelineDateTimeController",
 
     "controllers/drag/TimelineDragHandler",
     "controllers/drag/TimelineDragHandleFactory",
@@ -43,8 +43,8 @@
     "controllers/swimlane/TimelineSwimlanePopulator",
 
     "directives/SwimlaneDragConstants",
-    "directives/WARPSwimlaneDrag",
-    "directives/WARPSwimlaneDrop",
+    "directives/MCTSwimlaneDrag",
+    "directives/MCTSwimlaneDrop",
 
     "services/ObjectLoader"
 ]

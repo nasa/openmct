@@ -45,13 +45,13 @@ define(
 
             it("applies to subsystem modes", function () {
                 expect(CostCapability.appliesTo({
-                    type: "warp.mode"
+                    type: "mode"
                 })).toBeTruthy();
                 expect(CostCapability.appliesTo({
-                    type: "warp.activity"
+                    type: "activity"
                 })).toBeFalsy();
                 expect(CostCapability.appliesTo({
-                    type: "warp.other"
+                    type: "other"
                 })).toBeFalsy();
             });
 

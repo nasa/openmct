@@ -1,11 +1,11 @@
 /*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
-    ['../../src/directives/WARPSwimlaneDrag', '../../src/directives/SwimlaneDragConstants'],
-    function (WARPSwimlaneDrag, SwimlaneDragConstants) {
+    ['../../src/directives/MCTSwimlaneDrag', '../../src/directives/SwimlaneDragConstants'],
+    function (MCTSwimlaneDrag, SwimlaneDragConstants) {
         "use strict";
 
-        describe("The warp-swimlane-drag directive", function () {
+        describe("The mct-swimlane-drag directive", function () {
             var mockDndService,
                 mockScope,
                 mockElement,
@@ -26,14 +26,14 @@ define(
                 );
                 mockScope = jasmine.createSpyObj('$scope', ['$eval']);
                 mockElement = jasmine.createSpyObj('element', ['on']);
-                testAttrs = { warpSwimlaneDrag: "someTestExpr" };
+                testAttrs = { mctSwimlaneDrag: "someTestExpr" };
 
                 // Simulate evaluation of expressions in scope
                 mockScope.$eval.andCallFake(function (expr) {
                     return scopeExprs[expr];
                 });
 
-                directive = new WARPSwimlaneDrag(mockDndService);
+                directive = new MCTSwimlaneDrag(mockDndService);
 
                 // Run the link function, then capture the event handlers
                 // for testing.
@@ -56,7 +56,7 @@ define(
                 handlers.dragstart();
                 // Should have exposed the swimlane
                 expect(mockDndService.setData).toHaveBeenCalledWith(
-                    SwimlaneDragConstants.WARP_SWIMLANE_DRAG_TYPE,
+                    SwimlaneDragConstants.TIMELINE_SWIMLANE_DRAG_TYPE,
                     "some swimlane"
                 );
             });
@@ -68,7 +68,7 @@ define(
                 handlers.dragend();
                 // Should have exposed the swimlane
                 expect(mockDndService.removeData).toHaveBeenCalledWith(
-                    SwimlaneDragConstants.WARP_SWIMLANE_DRAG_TYPE
+                    SwimlaneDragConstants.TIMELINE_SWIMLANE_DRAG_TYPE
                 );
             });
         });

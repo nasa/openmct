@@ -1,14 +1,14 @@
 /*global define,describe,it,expect,beforeEach,waitsFor,jasmine,window,afterEach*/
 
 define(
-    ['../../src/directives/WARPSwimlaneDrop'],
-    function (WARPSwimlaneDrop) {
+    ['../../src/directives/MCTSwimlaneDrop'],
+    function (MCTSwimlaneDrop) {
         "use strict";
 
         var TEST_HEIGHT = 100,
             TEST_TOP = 600;
 
-        describe("The warp-swimlane-drop directive", function () {
+        describe("The mct-swimlane-drop directive", function () {
             var mockDndService,
                 mockScope,
                 mockElement,
@@ -36,7 +36,7 @@ define(
                 );
                 mockScope = jasmine.createSpyObj('$scope', ['$eval']);
                 mockElement = jasmine.createSpyObj('element', ['on']);
-                testAttrs = { warpSwimlaneDrop: "mockSwimlane" };
+                testAttrs = { mctSwimlaneDrop: "mockSwimlane" };
                 mockSwimlane = jasmine.createSpyObj(
                     "swimlane",
                     [ "allowDropIn", "allowDropAfter", "drop", "highlight", "highlightBottom" ]
@@ -72,7 +72,7 @@ define(
                 testEvent.dataTransfer.getData.andReturn('abc');
                 mockDndService.getData.andReturn({ domainObject: 'someDomainObject' });
 
-                directive = new WARPSwimlaneDrop(mockDndService);
+                directive = new MCTSwimlaneDrop(mockDndService);
 
                 // Run the link function, then capture the event handlers
                 // for testing.

@@ -84,7 +84,7 @@ define(
 
             it("applies only to timeline objects", function () {
                 expect(TimelineTimespanCapability.appliesTo({
-                    type: 'warp.timeline'
+                    type: 'timeline'
                 })).toBeTruthy();
                 expect(TimelineTimespanCapability.appliesTo({
                     type: 'folder'
