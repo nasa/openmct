@@ -48,7 +48,8 @@
                                 class="abs object-holder">
             </mct-representation>
             <a class="mini-tab anchor-right mobile-hide toggle-pane toggle-inspect"
-               ng-click="ngModel.toggle()"></a>
+               ng-click="ngModel.toggle()"
+                ng-class="{ collapsed : !ngModel.visible() }"></a>
         </div><!--/ t-object -->
 
         <mct-splitter class="mobile-hide" ng-class="{ hidden: !ngModel.visible()}"></mct-splitter>

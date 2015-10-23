@@ -265,12 +265,18 @@
                 &:after {
                     content: 'F';
                 }
+                &.collapsed {
+                    left: -1 * $bodyMargin;
+                }
             }
             &.toggle-inspect.anchor-right {
                 $xpos: $paneOffset + $interiorMargin;
                 right: $xpos;
                 &:after {
                     content: '\e608';
+                }
+                &.collapsed {
+                    right: -1 * $interiorMargin;
                 }
             }
         }
@@ -379,7 +385,7 @@
 // When the tree is hidden, these are the
 // classes used for the left menu and the
 // right representation.
-.browse-hidetree {
+.pane-tree-hidden {
     @include user-select(none);
     // Sets the left tree menu when the tree is hidden.
     .pane.left.treeview {
@@ -391,7 +397,7 @@
     }
 }
 
-.browse-showtree {
+.pane-tree-showing {
     // Sets the left tree menu when the tree is shown.
     .pane.left.treeview {
         @include trans-prop-nice(opacity, .4s);

@@ -24,7 +24,7 @@
     <mct-include key="'topbar-browse'"></mct-include>
     <div class="holder browse-area s-browse-area abs browse-wrapper"
          ng-controller="PaneController as modelPaneTree"
-         ng-class="modelPaneTree.visible() ? 'browse-showtree' : 'browse-hidetree'">
+         ng-class="modelPaneTree.visible() ? 'pane-tree-showing' : 'pane-tree-hidden'">
         <mct-split-pane class='contents abs'
                         anchor='left'>
             <div class='split-pane-component treeview pane left'>
@@ -54,7 +54,7 @@
             <mct-splitter class="mobile-hide" ng-class="{ hidden: !modelPaneTree.visible()}"></mct-splitter>
 
             <div class='split-pane-component items pane right-repr'>
-                <a class="mini-tab anchor-left toggle-pane toggle-tree" ng-click="modelPaneTree.toggle()"></a>
+                <a class="mini-tab anchor-left toggle-pane toggle-tree" ng-click="modelPaneTree.toggle()" ng-class="{ collapsed : !modelPaneTree.visible() }"></a>
                 <div class='holder abs l-mobile' id='content-area' ng-controller="PaneController as modelPaneInspect">
                     <mct-representation mct-object="navigatedObject"
                                         key="'browse-object'"

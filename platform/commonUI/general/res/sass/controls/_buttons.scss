@@ -109,6 +109,12 @@ $pad: $interiorMargin * $baseRatio;
         //@include test(green);
         $iconD: 12px;
         $arwD: 7px;
+        $arwOffsetX: 1px;
+        $arwAnimOffsetX: 3px;
+        $arwToLeftAnimX: -1 * $arwAnimOffsetX;
+        $arwToRightAnimX: $arwAnimOffsetX;
+        $arwToLeftX: ($arwOffsetX + $arwD) * -1;
+        $arwToRightX: $iconD + $arwOffsetX;
         $c: pullForward($colorBodyBg, 15%);
         color: $c;
         cursor: pointer;
@@ -148,21 +154,41 @@ $pad: $interiorMargin * $baseRatio;
 
         &.anchor-left {
             // < []
-            $xpos: (1px + $arwD) * -1;
+            $xpos: $arwToLeftX;
             &:before {
                 content:'\3c';
                 left: $xpos;
             }
-            &:hover:before { left: $xpos - 3; }
+            &:hover:before { left: $xpos + $arwToLeftAnimX; }
+            &.collapsed {
+                $xpos: $arwToRightX;
+                &:before {
+                    content:'\3e';
+                    left: $xpos;
+                }
+                &:hover:before { left: $xpos + $arwToRightAnimX; }
+            }
         }
         &.anchor-right {
             // [] >
-            $xpos: $iconD + 2px;
+            $xpos: $arwToRightX;
             &:before {
                 content:'\3e';
                 left: $xpos;
             }
-            &:hover:before { left: $xpos + 3; }
+            &:hover:before { left: $xpos + $arwToRightAnimX; }
+            &.collapsed {
+                $xpos: $arwToLeftX;
+                &:before {
+                    content:'\3c';
+                    left: $xpos;
+                }
+                &:hover:before { left: $xpos + $arwToLeftAnimX; }
+            }
+        }
+
+        &.collapsed {
+            // State when the pane this element controls has been collapsed
         }
     }
 }
