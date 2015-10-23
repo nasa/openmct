@@ -214,6 +214,7 @@
             &.t-inspect.right {
                 min-width: 100px;
                 max-width: 800px;
+                padding-left: 15px; // Allow room for mini-tab element
                 width: $ueBrowseRightPaneInspectW;
             }
         }
@@ -233,6 +234,7 @@
 }
 
 .pane {
+    @include box-sizing(border-box);
     position: absolute;
 
     .pane-header {

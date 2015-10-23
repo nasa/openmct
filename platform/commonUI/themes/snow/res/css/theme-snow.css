@@ -603,29 +603,29 @@ mct-container {
     border-right: 5px solid transparent; }
 
 /* line 31, ../../../../general/res/sass/_icons.scss */
-.ui-symbol, .s-icon-btn, .mini-tab, .l-datetime-picker .l-month-year-pager .pager {
+.ui-symbol, .s-icon-btn, .mini-tab, .mini-tab-icon, .l-datetime-picker .l-month-year-pager .pager {
   font-family: 'symbolsfont'; }
   /* line 33, ../../../../general/res/sass/_icons.scss */
-  .ui-symbol.type-icon, .type-icon.s-icon-btn, .type-icon.mini-tab, .l-datetime-picker .l-month-year-pager .type-icon.pager {
+  .ui-symbol.type-icon, .type-icon.s-icon-btn, .type-icon.mini-tab, .type-icon.mini-tab-icon, .l-datetime-picker .l-month-year-pager .type-icon.pager {
     color: #b3b3b3; }
   /* line 36, ../../../../general/res/sass/_icons.scss */
-  .ui-symbol.icon, .icon.s-icon-btn, .icon.mini-tab, .l-datetime-picker .l-month-year-pager .icon.pager {
+  .ui-symbol.icon, .icon.s-icon-btn, .icon.mini-tab, .icon.mini-tab-icon, .l-datetime-picker .l-month-year-pager .icon.pager {
     color: #0099cc; }
     /* line 38, ../../../../general/res/sass/_icons.scss */
-    .ui-symbol.icon.alert, .icon.alert.s-icon-btn, .icon.alert.mini-tab, .l-datetime-picker .l-month-year-pager .icon.alert.pager {
+    .ui-symbol.icon.alert, .icon.alert.s-icon-btn, .icon.alert.mini-tab, .icon.alert.mini-tab-icon, .l-datetime-picker .l-month-year-pager .icon.alert.pager {
       color: #ff3c00; }
       /* line 40, ../../../../general/res/sass/_icons.scss */
-      .ui-symbol.icon.alert:hover, .icon.alert.s-icon-btn:hover, .icon.alert.mini-tab:hover, .l-datetime-picker .l-month-year-pager .icon.alert.pager:hover {
+      .ui-symbol.icon.alert:hover, .icon.alert.s-icon-btn:hover, .icon.alert.mini-tab:hover, .icon.alert.mini-tab-icon:hover, .l-datetime-picker .l-month-year-pager .icon.alert.pager:hover {
         color: #ff8a66; }
     /* line 44, ../../../../general/res/sass/_icons.scss */
-    .ui-symbol.icon.major, .icon.major.s-icon-btn, .icon.major.mini-tab, .l-datetime-picker .l-month-year-pager .icon.major.pager {
+    .ui-symbol.icon.major, .icon.major.s-icon-btn, .icon.major.mini-tab, .icon.major.mini-tab-icon, .l-datetime-picker .l-month-year-pager .icon.major.pager {
       font-size: 1.65em; }
   /* line 48, ../../../../general/res/sass/_icons.scss */
-  .ui-symbol.icon-calendar:after, .icon-calendar.s-icon-btn:after, .icon-calendar.mini-tab:after, .l-datetime-picker .l-month-year-pager .icon-calendar.pager:after {
+  .ui-symbol.icon-calendar:after, .icon-calendar.s-icon-btn:after, .icon-calendar.mini-tab:after, .icon-calendar.mini-tab-icon:after, .l-datetime-picker .l-month-year-pager .icon-calendar.pager:after {
     content: "\e605"; }
 
 /* line 53, ../../../../general/res/sass/_icons.scss */
-.bar .ui-symbol, .bar .s-icon-btn, .bar .mini-tab, .bar .l-datetime-picker .l-month-year-pager .pager, .l-datetime-picker .l-month-year-pager .bar .pager {
+.bar .ui-symbol, .bar .s-icon-btn, .bar .mini-tab, .bar .mini-tab-icon, .bar .l-datetime-picker .l-month-year-pager .pager, .l-datetime-picker .l-month-year-pager .bar .pager {
   display: inline-block; }
 
 /* line 57, ../../../../general/res/sass/_icons.scss */
@@ -1255,27 +1255,27 @@ mct-container {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 /* Styles for the Inspector pane */
-/* line 26, ../../../../general/res/sass/_inspector.scss */
+/* line 24, ../../../../general/res/sass/_inspector.scss */
 .l-inspect,
 .l-inspect table tr td {
   font-size: 0.7rem; }
 
-/* line 31, ../../../../general/res/sass/_inspector.scss */
+/* line 29, ../../../../general/res/sass/_inspector.scss */
 .l-inspect {
   color: #666; }
-  /* line 33, ../../../../general/res/sass/_inspector.scss */
+  /* line 31, ../../../../general/res/sass/_inspector.scss */
   .l-inspect .pane-header {
     color: #999999;
     font-size: 0.8rem; }
-  /* line 38, ../../../../general/res/sass/_inspector.scss */
+  /* line 36, ../../../../general/res/sass/_inspector.scss */
   .l-inspect ul li,
   .l-inspect em {
     display: block;
     position: relative; }
-  /* line 44, ../../../../general/res/sass/_inspector.scss */
+  /* line 42, ../../../../general/res/sass/_inspector.scss */
   .l-inspect ul li {
     margin-bottom: 20px; }
-  /* line 48, ../../../../general/res/sass/_inspector.scss */
+  /* line 46, ../../../../general/res/sass/_inspector.scss */
   .l-inspect em {
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
@@ -1285,40 +1285,40 @@ mct-container {
     margin-bottom: 5px;
     padding: 5px 5px;
     text-transform: uppercase; }
-  /* line 58, ../../../../general/res/sass/_inspector.scss */
+  /* line 56, ../../../../general/res/sass/_inspector.scss */
   .l-inspect table tr td {
     border: none;
     border-top: 1px solid rgba(102, 102, 102, 0.2) !important;
     padding: 2px 0;
     vertical-align: top; }
-    /* line 63, ../../../../general/res/sass/_inspector.scss */
+    /* line 61, ../../../../general/res/sass/_inspector.scss */
     .l-inspect table tr td.label {
       color: #999999 !important;
       padding-right: 5px !important;
       white-space: nowrap; }
-    /* line 68, ../../../../general/res/sass/_inspector.scss */
+    /* line 66, ../../../../general/res/sass/_inspector.scss */
     .l-inspect table tr td.value {
       word-break: break-all; }
-  /* line 73, ../../../../general/res/sass/_inspector.scss */
+  /* line 71, ../../../../general/res/sass/_inspector.scss */
   .l-inspect table tr:first-child td {
     border-top: none !important; }
-  /* line 78, ../../../../general/res/sass/_inspector.scss */
+  /* line 76, ../../../../general/res/sass/_inspector.scss */
   .l-inspect .inspector-location {
     line-height: 180%; }
-    /* line 80, ../../../../general/res/sass/_inspector.scss */
+    /* line 78, ../../../../general/res/sass/_inspector.scss */
     .l-inspect .inspector-location .location-item {
       cursor: pointer;
       display: inline;
       position: relative;
       padding: 2px 4px; }
-      /* line 85, ../../../../general/res/sass/_inspector.scss */
+      /* line 83, ../../../../general/res/sass/_inspector.scss */
       .l-inspect .inspector-location .location-item:hover {
         background: rgba(102, 102, 102, 0.1);
         color: #333333; }
-        /* line 88, ../../../../general/res/sass/_inspector.scss */
+        /* line 86, ../../../../general/res/sass/_inspector.scss */
         .l-inspect .inspector-location .location-item:hover .icon {
           color: #0099cc; }
-    /* line 93, ../../../../general/res/sass/_inspector.scss */
+    /* line 91, ../../../../general/res/sass/_inspector.scss */
     .l-inspect .inspector-location:not(.first):before {
       color: #8c8c8c;
       content: '\3e';
@@ -1619,45 +1619,152 @@ mct-container {
     .mini-tab:after {
       width: 100%;
       height: 100%; }
-    /* line 158, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 157, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-left:before {
       content: '\3c';
       left: -7px; }
-    /* line 162, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 161, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-left:hover:before {
       left: -9px; }
-    /* line 165, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 164, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-left.collapsed:before {
       content: '\3e';
       left: 12px; }
-    /* line 169, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 168, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-left.collapsed:hover:before {
       left: 14px; }
-    /* line 175, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 174, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-right:before {
       content: '\3e';
       left: 12px; }
-    /* line 179, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 178, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-right:hover:before {
       left: 14px; }
-    /* line 182, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 181, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-right.collapsed:before {
       content: '\3c';
       left: -7px; }
-    /* line 186, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 185, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-right.collapsed:hover:before {
       left: -9px; } }
 
-/* line 196, ../../../../general/res/sass/controls/_buttons.scss */
+@media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+  /* line 195, ../../../../general/res/sass/controls/_buttons.scss */
+  .mini-tab-icon {
+    -moz-transition-property: left;
+    -o-transition-property: left;
+    -webkit-transition-property: left;
+    transition-property: left;
+    -moz-transition-duration: 150ms;
+    -o-transition-duration: 150ms;
+    -webkit-transition-duration: 150ms;
+    transition-duration: 150ms;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    -moz-transition-delay: 0;
+    -o-transition-delay: 0;
+    -webkit-transition-delay: 0;
+    transition-delay: 0;
+    color: #d6d6d6;
+    cursor: pointer;
+    display: block;
+    position: absolute;
+    font-size: 12px;
+    line-height: 12px;
+    height: 12px;
+    width: 12px; }
+    /* line 218, ../../../../general/res/sass/controls/_buttons.scss */
+    .mini-tab-icon:hover {
+      color: #a3a3a3; }
+      /* line 220, ../../../../general/res/sass/controls/_buttons.scss */
+      .mini-tab-icon:hover:after {
+        color: #0099cc; }
+    /* line 225, ../../../../general/res/sass/controls/_buttons.scss */
+    .mini-tab-icon:before, .mini-tab-icon:after {
+      -moz-transition-property: color;
+      -o-transition-property: color;
+      -webkit-transition-property: color;
+      transition-property: color;
+      -moz-transition-duration: 200ms;
+      -o-transition-duration: 200ms;
+      -webkit-transition-duration: 200ms;
+      transition-duration: 200ms;
+      -moz-transition-timing-function: ease-in-out;
+      -o-transition-timing-function: ease-in-out;
+      -webkit-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out;
+      -moz-transition-delay: 0;
+      -o-transition-delay: 0;
+      -webkit-transition-delay: 0;
+      transition-delay: 0;
+      display: block;
+      position: absolute; }
+    /* line 232, ../../../../general/res/sass/controls/_buttons.scss */
+    .mini-tab-icon:before {
+      -moz-transition-property: left;
+      -o-transition-property: left;
+      -webkit-transition-property: left;
+      transition-property: left;
+      -moz-transition-duration: 150ms;
+      -o-transition-duration: 150ms;
+      -webkit-transition-duration: 150ms;
+      transition-duration: 150ms;
+      -moz-transition-timing-function: ease-in-out;
+      -o-transition-timing-function: ease-in-out;
+      -webkit-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out;
+      -moz-transition-delay: 0;
+      -o-transition-delay: 0;
+      -webkit-transition-delay: 0;
+      transition-delay: 0;
+      font-size: 7px;
+      height: 100%;
+      width: 7px; }
+    /* line 239, ../../../../general/res/sass/controls/_buttons.scss */
+    .mini-tab-icon:after {
+      width: 100%;
+      height: 100%; }
+    /* line 249, ../../../../general/res/sass/controls/_buttons.scss */
+    .mini-tab-icon.anchor-left:before {
+      content: '\3c';
+      left: -7px; }
+    /* line 253, ../../../../general/res/sass/controls/_buttons.scss */
+    .mini-tab-icon.anchor-left:hover:before {
+      left: -9px; }
+    /* line 256, ../../../../general/res/sass/controls/_buttons.scss */
+    .mini-tab-icon.anchor-left.collapsed:before {
+      content: '\3e';
+      left: 12px; }
+    /* line 260, ../../../../general/res/sass/controls/_buttons.scss */
+    .mini-tab-icon.anchor-left.collapsed:hover:before {
+      left: 14px; }
+    /* line 266, ../../../../general/res/sass/controls/_buttons.scss */
+    .mini-tab-icon.anchor-right:before {
+      content: '\3e';
+      left: 12px; }
+    /* line 270, ../../../../general/res/sass/controls/_buttons.scss */
+    .mini-tab-icon.anchor-right:hover:before {
+      left: 14px; }
+    /* line 273, ../../../../general/res/sass/controls/_buttons.scss */
+    .mini-tab-icon.anchor-right.collapsed:before {
+      content: '\3c';
+      left: -7px; }
+    /* line 277, ../../../../general/res/sass/controls/_buttons.scss */
+    .mini-tab-icon.anchor-right.collapsed:hover:before {
+      left: -9px; } }
+
+/* line 287, ../../../../general/res/sass/controls/_buttons.scss */
 .l-btn-set {
   font-size: 0; }
-  /* line 202, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 293, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .s-btn, .l-btn-set .s-menu-btn {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
     border-radius: 0;
     margin-left: 1px; }
-  /* line 208, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 299, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .first .s-btn, .l-btn-set .first .s-menu-btn {
     -moz-border-radius-topleft: 4px;
     -webkit-border-top-left-radius: 4px;
@@ -1666,7 +1773,7 @@ mct-container {
     -webkit-border-bottom-left-radius: 4px;
     border-bottom-left-radius: 4px;
     margin-left: 0; }
-  /* line 215, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 306, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .last .s-btn, .l-btn-set .last .s-menu-btn {
     -moz-border-radius-topright: 4px;
     -webkit-border-top-right-radius: 4px;
@@ -1675,7 +1782,7 @@ mct-container {
     -webkit-border-bottom-right-radius: 4px;
     border-bottom-right-radius: 4px; }
 
-/* line 222, ../../../../general/res/sass/controls/_buttons.scss */
+/* line 313, ../../../../general/res/sass/controls/_buttons.scss */
 .paused:not(.s-btn):not(.s-menu-btn) {
   border-color: #ff9900 !important;
   color: #ff9900 !important; }
@@ -2379,7 +2486,7 @@ label.checkbox.custom {
   left: 0;
   text-align: left; }
   /* line 57, ../../../../general/res/sass/controls/_menus.scss */
-  .s-menu-btn .menu .ui-symbol.icon, .s-menu-btn .menu .icon.s-icon-btn, .s-menu-btn .menu .icon.mini-tab, .s-menu-btn .menu .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .s-menu-btn .menu .icon.pager {
+  .s-menu-btn .menu .ui-symbol.icon, .s-menu-btn .menu .icon.s-icon-btn, .s-menu-btn .menu .icon.mini-tab, .s-menu-btn .menu .icon.mini-tab-icon, .s-menu-btn .menu .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .s-menu-btn .menu .icon.pager {
     width: 12px; }
 
 /******************************************************** MENUS THEMSELVES */
@@ -2661,10 +2768,11 @@ mct-include.l-time-controller {
       mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .lbl {
         color: #999999; }
       /* line 69, ../../../../general/res/sass/controls/_time-controller.scss */
-      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .ui-symbol.icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.s-icon-btn, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.mini-tab, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.pager,
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .ui-symbol.icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.s-icon-btn, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.mini-tab, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.mini-tab-icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.pager,
       mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .ui-symbol.icon,
       mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.s-icon-btn,
       mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.mini-tab,
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.mini-tab-icon,
       mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .l-datetime-picker .l-month-year-pager .icon.pager,
       .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.pager {
         font-size: 11px;
@@ -3373,10 +3481,11 @@ span.req {
   .t-filter input.t-filter-input:not(.ng-dirty) + .t-a-clear {
     display: none; }
 /* line 42, ../../../../general/res/sass/forms/_filter.scss */
-.filter .icon.ui-symbol, .filter .icon.s-icon-btn, .filter .icon.mini-tab, .filter .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .filter .icon.pager,
+.filter .icon.ui-symbol, .filter .icon.s-icon-btn, .filter .icon.mini-tab, .filter .icon.mini-tab-icon, .filter .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .filter .icon.pager,
 .t-filter .icon.ui-symbol,
 .t-filter .icon.s-icon-btn,
 .t-filter .icon.mini-tab,
+.t-filter .icon.mini-tab-icon,
 .t-filter .l-datetime-picker .l-month-year-pager .icon.pager,
 .l-datetime-picker .l-month-year-pager .t-filter .icon.pager {
   -moz-border-radius: 4px;
@@ -3389,18 +3498,20 @@ span.req {
   padding: 0px 5px;
   vertical-align: middle; }
   /* line 50, ../../../../general/res/sass/forms/_filter.scss */
-  .filter .icon.ui-symbol:hover, .filter .icon.s-icon-btn:hover, .filter .icon.mini-tab:hover, .filter .l-datetime-picker .l-month-year-pager .icon.pager:hover, .l-datetime-picker .l-month-year-pager .filter .icon.pager:hover,
+  .filter .icon.ui-symbol:hover, .filter .icon.s-icon-btn:hover, .filter .icon.mini-tab:hover, .filter .icon.mini-tab-icon:hover, .filter .l-datetime-picker .l-month-year-pager .icon.pager:hover, .l-datetime-picker .l-month-year-pager .filter .icon.pager:hover,
   .t-filter .icon.ui-symbol:hover,
   .t-filter .icon.s-icon-btn:hover,
   .t-filter .icon.mini-tab:hover,
+  .t-filter .icon.mini-tab-icon:hover,
   .t-filter .l-datetime-picker .l-month-year-pager .icon.pager:hover,
   .l-datetime-picker .l-month-year-pager .t-filter .icon.pager:hover {
     background: rgba(255, 255, 255, 0.1); }
 /* line 54, ../../../../general/res/sass/forms/_filter.scss */
-.filter .s-a-clear.ui-symbol, .filter .s-a-clear.s-icon-btn, .filter .s-a-clear.mini-tab, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager,
+.filter .s-a-clear.ui-symbol, .filter .s-a-clear.s-icon-btn, .filter .s-a-clear.mini-tab, .filter .s-a-clear.mini-tab-icon, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager,
 .t-filter .s-a-clear.ui-symbol,
 .t-filter .s-a-clear.s-icon-btn,
 .t-filter .s-a-clear.mini-tab,
+.t-filter .s-a-clear.mini-tab-icon,
 .t-filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager,
 .l-datetime-picker .l-month-year-pager .t-filter .s-a-clear.pager {
   -moz-border-radius: 4px;
@@ -3426,10 +3537,11 @@ span.req {
   text-align: center;
   z-index: 5; }
   /* line 74, ../../../../general/res/sass/forms/_filter.scss */
-  .filter .s-a-clear.ui-symbol:hover, .filter .s-a-clear.s-icon-btn:hover, .filter .s-a-clear.mini-tab:hover, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager:hover, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager:hover,
+  .filter .s-a-clear.ui-symbol:hover, .filter .s-a-clear.s-icon-btn:hover, .filter .s-a-clear.mini-tab:hover, .filter .s-a-clear.mini-tab-icon:hover, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager:hover, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager:hover,
   .t-filter .s-a-clear.ui-symbol:hover,
   .t-filter .s-a-clear.s-icon-btn:hover,
   .t-filter .s-a-clear.mini-tab:hover,
+  .t-filter .s-a-clear.mini-tab-icon:hover,
   .t-filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager:hover,
   .l-datetime-picker .l-month-year-pager .t-filter .s-a-clear.pager:hover {
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
@@ -3668,67 +3780,71 @@ span.req {
 .browse-mode .split-layout .split-pane-component.pane.t-inspect.right {
   min-width: 100px;
   max-width: 800px;
+  padding-left: 15px;
   width: 20%; }
 
-/* line 225, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 226, ../../../../general/res/sass/user-environ/_layout.scss */
 .edit-mode .split-layout .split-pane-component.pane.right {
   width: 15%; }
-  /* line 227, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 228, ../../../../general/res/sass/user-environ/_layout.scss */
   .edit-mode .split-layout .split-pane-component.pane.right .pane.bottom {
     min-height: 50px;
     height: 30%; }
 
-/* line 235, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 236, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
   position: absolute; }
-  /* line 238, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 240, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .pane-header {
     text-transform: uppercase;
     height: 24px;
     line-height: 24px;
     margin-bottom: 5px; }
-  /* line 246, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 248, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .create-btn-holder {
     bottom: auto;
     top: 0;
     height: 24px; }
-    /* line 250, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 252, ../../../../general/res/sass/user-environ/_layout.scss */
     .pane.treeview.left .create-btn-holder .wrapper.menu-element {
       position: absolute;
       bottom: 5px; }
-  /* line 255, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 257, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .search-holder {
     top: 34px; }
-  /* line 258, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 260, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .tree-holder {
     overflow: auto;
     top: 64px; }
-  /* line 264, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 266, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .mini-tab.toggle-pane {
     z-index: 2; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 264, ../../../../general/res/sass/user-environ/_layout.scss */
+      /* line 266, ../../../../general/res/sass/user-environ/_layout.scss */
       .pane .mini-tab.toggle-pane {
         top: 5px; }
-        /* line 270, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 272, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab.toggle-pane.toggle-tree.anchor-left {
           left: -30px; }
-          /* line 273, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 275, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab.toggle-pane.toggle-tree.anchor-left:after {
             content: 'F'; }
-          /* line 276, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 278, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab.toggle-pane.toggle-tree.anchor-left.collapsed {
             left: -25px; }
-        /* line 280, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 282, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab.toggle-pane.toggle-inspect.anchor-right {
           right: -25px; }
-          /* line 283, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 285, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab.toggle-pane.toggle-inspect.anchor-right:after {
             content: '\e608'; }
-          /* line 286, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 288, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab.toggle-pane.toggle-inspect.anchor-right.collapsed {
             right: -20px; } }
-  /* line 295, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 297, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.pager, .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.pager,
   .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.val,
   .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.val, .pane.items .object-browse-bar .s-menu-btn span.left.l-click-area, .s-menu-btn .pane.items .object-browse-bar span.left.l-click-area,
@@ -3741,31 +3857,31 @@ span.req {
   .s-menu-btn .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
 
-/* line 306, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 308, ../../../../general/res/sass/user-environ/_layout.scss */
 .split-layout.horizontal > .pane {
   margin-top: 5px; }
-  /* line 309, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 311, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane:first-child {
     margin-top: 0; }
-/* line 316, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 318, ../../../../general/res/sass/user-environ/_layout.scss */
 .split-layout.vertical > .pane {
   margin-left: 5px; }
-  /* line 319, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 321, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane > .holder {
     left: 0;
     right: 0; }
-  /* line 323, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 325, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane:first-child {
     margin-left: 0; }
-    /* line 325, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 327, ../../../../general/res/sass/user-environ/_layout.scss */
     .split-layout.vertical > .pane:first-child .holder {
       right: 3px; }
 
-/* line 333, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 335, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-holder {
   overflow: hidden;
   top: 34px; }
-  /* line 336, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 338, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-holder > ng-include {
     overflow: auto;
     position: absolute;
@@ -3775,11 +3891,11 @@ span.req {
     left: 0;
     width: auto;
     height: auto; }
-  /* line 340, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 342, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-holder.l-controls-visible.l-time-controller-visible {
     bottom: 88px; }
 
-/* line 346, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 348, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .s-btn, .object-browse-bar .s-menu-btn,
 .top-bar .buttons-main .s-btn,
 .top-bar .buttons-main .s-menu-btn,
@@ -3791,12 +3907,12 @@ span.req {
   line-height: 25px;
   vertical-align: top; }
 
-/* line 359, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 361, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .view-switcher,
 .top-bar .view-switcher {
   margin-right: 20px; }
 
-/* line 364, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 366, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar {
   overflow: visible;
   position: absolute;
@@ -3812,36 +3928,36 @@ span.req {
   height: 24px;
   line-height: 24px;
   white-space: nowrap; }
-  /* line 372, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 374, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-browse-bar .left {
     padding-right: 20px; }
-    /* line 374, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 376, ../../../../general/res/sass/user-environ/_layout.scss */
     .object-browse-bar .left .l-back {
       display: inline-block;
       float: left;
       margin-right: 10px; }
 
-/* line 382, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 384, ../../../../general/res/sass/user-environ/_layout.scss */
 .l-flex {
   display: flex;
   display: -webkit-flex;
   flex-flow: row nowrap;
   -webkit-flex-flow: row nowrap; }
-  /* line 385, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 387, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-flex .left {
     flex: 1 1 0;
     -webkit-flex: 1 1 0;
     padding-right: 10px; }
 
-/* line 397, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 399, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-hidden .pane.left.treeview,
 .pane-tree-hidden .splitter-treeview {
   opacity: 0; }
-/* line 402, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 404, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-hidden .pane.right.items {
   left: 15px !important; }
 
-/* line 409, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 411, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-showing .pane.left.treeview,
 .pane-tree-showing .splitter-treeview {
   -moz-transition-property: opacity, background-color, border-color, color;
@@ -3862,7 +3978,7 @@ span.req {
   transition-delay: 250ms;
   opacity: 1; }
 
-/* line 418, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 420, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-showing .l-object-and-inspector .pane.right,
 .pane-inspect-showing .l-object-and-inspector .splitter-inspect {
   -moz-transition-property: opacity, background-color, border-color, color;
@@ -3883,16 +3999,16 @@ span.req {
   transition-delay: 250ms;
   opacity: 1; }
 
-/* line 427, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 429, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-hidden .l-object-and-inspector .pane.right,
 .pane-inspect-hidden .l-object-and-inspector .splitter-inspect {
   opacity: 0; }
-/* line 431, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 433, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-hidden .l-object-and-inspector .pane.left {
   right: 15px !important; }
 
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 438, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 440, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane:not(.resizing) {
     -moz-transition-property: width, left, right;
     -o-transition-property: width, left, right;
@@ -6462,7 +6578,7 @@ table {
   left: 0;
   z-index: 1; }
   /* line 22, ../../../../general/res/sass/features/_time-display.scss */
-  .l-time-display.l-timer .l-elem.l-value .ui-symbol.direction, .l-time-display.l-timer .l-elem.l-value .direction.s-icon-btn, .l-time-display.l-timer .l-elem.l-value .direction.mini-tab, .l-time-display.l-timer .l-elem.l-value .l-datetime-picker .l-month-year-pager .direction.pager, .l-datetime-picker .l-month-year-pager .l-time-display.l-timer .l-elem.l-value .direction.pager {
+  .l-time-display.l-timer .l-elem.l-value .ui-symbol.direction, .l-time-display.l-timer .l-elem.l-value .direction.s-icon-btn, .l-time-display.l-timer .l-elem.l-value .direction.mini-tab, .l-time-display.l-timer .l-elem.l-value .direction.mini-tab-icon, .l-time-display.l-timer .l-elem.l-value .l-datetime-picker .l-month-year-pager .direction.pager, .l-datetime-picker .l-month-year-pager .l-time-display.l-timer .l-elem.l-value .direction.pager {
     font-size: 0.8em; }
 /* line 26, ../../../../general/res/sass/features/_time-display.scss */
 .l-time-display.l-timer:hover .l-elem.l-value {
