@@ -6,14 +6,14 @@ define(
         "use strict";
 
         /**
-         * Defines the `warp-swimlane-drop` directive. When a drop occurs
+         * Defines the `mct-swimlane-drop` directive. When a drop occurs
          * on an element with this attribute, the swimlane targeted by the drop
          * (identified by the value of this attribute, as an Angular expression)
          * will receive the dropped domain object (at which point it can handle
          * the drop, typically by inserting/reordering.)
          * @param {DndService} dndService drag-and-drop service
          */
-        function WARPSwimlaneDrop(dndService) {
+        function MCTSwimlaneDrop(dndService) {
 
             // Handle dragover events
             function dragOver(e, element, swimlane) {
@@ -60,7 +60,7 @@ define(
                         SwimlaneDragConstants.MCT_DRAG_TYPE
                     ),
                     draggedSwimlane = dndService.getData(
-                        SwimlaneDragConstants.WARP_SWIMLANE_DRAG_TYPE
+                        SwimlaneDragConstants.TIMELINE_SWIMLANE_DRAG_TYPE
                     );
 
                 if (id) {
@@ -76,7 +76,7 @@ define(
             function link(scope, element, attrs) {
                 // Lookup swimlane by evaluating this attribute
                 function swimlane() {
-                    return scope.$eval(attrs.warpSwimlaneDrop);
+                    return scope.$eval(attrs.mctSwimlaneDrop);
                 }
                 // Handle dragover
                 element.on('dragover', function (e) {
@@ -101,6 +101,6 @@ define(
             };
         }
 
-        return WARPSwimlaneDrop;
+        return MCTSwimlaneDrop;
     }
 );

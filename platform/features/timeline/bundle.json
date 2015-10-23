@@ -335,12 +335,12 @@
         "directives": [
             {
                 "key": "mctSwimlaneDrop",
-                "implementation": "directives/WARPSwimlaneDrop.js",
+                "implementation": "directives/MCTSwimlaneDrop.js",
                 "depends": [ "dndService" ]
             },
             {
                 "key": "mctSwimlaneDrag",
-                "implementation": "directives/WARPSwimlaneDrag.js",
+                "implementation": "directives/MCTSwimlaneDrag.js",
                 "depends": [ "dndService" ]
             }
         ],

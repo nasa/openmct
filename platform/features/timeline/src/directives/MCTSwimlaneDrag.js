@@ -6,14 +6,14 @@ define(
         "use strict";
 
         /**
-         * Defines the `warp-swimlane-drag` directive. When a drag is initiated
+         * Defines the `mct-swimlane-drag` directive. When a drag is initiated
          * form an element with this attribute, the swimlane being dragged
          * (identified by the value of this attribute, as an Angular expression)
          * will be exported to the `dndService` as part of the active drag-drop
          * state.
          * @param {DndService} dndService drag-and-drop service
          */
-        function WARPSwimlaneDrag(dndService) {
+        function MCTSwimlaneDrag(dndService) {
             function link(scope, element, attrs) {
                 // Look up the swimlane from the provided expression
                 function swimlane() {
@@ -42,6 +42,6 @@ define(
             };
         }
 
-        return WARPSwimlaneDrag;
+        return MCTSwimlaneDrag;
     }
 );
