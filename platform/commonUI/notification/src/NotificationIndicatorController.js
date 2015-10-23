@@ -45,14 +45,11 @@ define(
              * Launch a dialog showing a list of current notifications.
              */
             $scope.showNotificationsList = function(){
-
-                var model = {
-                    title: "Messages"
-                };
-
-                model.messages = notificationService.notifications;
                 dialogService.getDialogResponse('overlay-message-list', {
-                    dialog: model,
+                    dialog: {
+                        title: "Messages",
+                        messages: notificationService.notifications
+                    },
                     cancel: function(){
                         dialogService.dismiss();
                     }

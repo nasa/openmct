@@ -26,24 +26,9 @@ define(
     function () {
         "use strict";
 
-        function NotificationIndicator() {
-
-        }
+        function NotificationIndicator() {}
 
         NotificationIndicator.template = 'notificationIndicatorTemplate';
-
-        NotificationIndicator.prototype.getGlyph = function () {
-            return "A";
-        };
-        NotificationIndicator.prototype.getGlyphClass = function () {
-            return 'caution';
-        };
-        NotificationIndicator.prototype.getText = function () {
-            return "Notifications";
-        };
-        NotificationIndicator.prototype.getDescription = function () {
-            return "Notifications";
-        };
 
         return NotificationIndicator;
     }
