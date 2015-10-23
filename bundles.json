@@ -19,7 +19,6 @@
     "platform/features/pages",
     "platform/features/plot",
     "platform/features/scrolling",
-    "platform/features/timeline",
     "platform/features/events",
     "platform/forms",
     "platform/identity",
