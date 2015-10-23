@@ -1,72 +1,155 @@
-.l-time-controller {
-	$inputTxtW: 90px;
-	$knobW: 9px;
-	$r1H: 20px;
-	$r2H: 30px;
-	$r3H: 10px;
+@mixin toiLineHovEffects() {
+	//@include pulse(.25s);
+	&:before,
+	&:after {
+		background-color: $timeControllerToiLineColorHov;
+	}
+}
 
-	position: relative;
-	margin: $interiorMarginLg 0;
-	min-width: 400px;
+.l-time-controller-visible {
+
+}
+
+mct-include.l-time-controller {
+	$minW: 500px;
+	$knobHOffset: 0px;
+	$knobM: ($sliderKnobW + $knobHOffset) * -1;
+	$rangeValPad: $interiorMargin;
+	$rangeValOffset: $sliderKnobW;
+	//$knobCr: $sliderKnobW;
+	$timeRangeSliderLROffset: 130px + $sliderKnobW + $rangeValOffset;
+	$r1H: nth($ueTimeControlH,1);
+	$r2H: nth($ueTimeControlH,2);
+	$r3H: nth($ueTimeControlH,3);
+
+    @include absPosDefault();
+    //@include test();
+    display: block;
+    top: auto;
+	height: $r1H + $r2H + $r3H + ($interiorMargin * 2);
+    min-width: $minW;
+    font-size: 0.8rem;
 
 	.l-time-range-inputs-holder,
 	.l-time-range-slider {
-		font-size: 0.8em;
+		//font-size: 0.8em;
 	}
 
 	.l-time-range-inputs-holder,
 	.l-time-range-slider-holder,
 	.l-time-range-ticks-holder
 	{
-		margin-bottom: $interiorMargin;
-		position: relative;
+		//@include test();
+		@include absPosDefault(0, visible);
+		@include box-sizing(border-box);
+		top: auto;
 	}
 	.l-time-range-slider,
 	.l-time-range-ticks {
 		//@include test(red, 0.1);
 		@include absPosDefault(0, visible);
+		left: $timeRangeSliderLROffset; right: $timeRangeSliderLROffset;
 	}
 
 	.l-time-range-inputs-holder {
-		height: $r1H;
-	}
-
-	.l-time-range-slider,
-	.l-time-range-ticks {
-		left: $inputTxtW; right: $inputTxtW;
-
+		//@include test(red);
+		height: $r1H; bottom: $r2H + $r3H + ($interiorMarginSm * 2);
+		padding-top: $interiorMargin;
+		border-top: 1px solid $colorInteriorBorder;
+		.type-icon {
+			font-size: 120%;
+			vertical-align: middle;
+		}
+		.l-time-range-input,
+		.l-time-range-inputs-elem {
+			margin-right: $interiorMargin;
+			.lbl {
+				color: $colorPlotLabelFg;
+			}
+			.ui-symbol.icon {
+				font-size: 11px;
+				width: 11px;
+			}
+		}
 	}
 
 	.l-time-range-slider-holder {
-		height: $r2H;
+		//@include test(green);
+		height: $r2H; bottom: $r3H + ($interiorMarginSm * 1);
 		.range-holder {
 			@include box-shadow(none);
 			background: none;
 			border: none;
-			height: 75%;
+			.range {
+				.toi-line {
+					$myC: $timeControllerToiLineColor;
+					$myW: 8px;
+					@include transform(translateX(50%));
+					position: absolute;
+					//@include test();
+					top: 0; right: 0; bottom: 0px; left: auto;
+					width: $myW;
+					height: auto;
+					z-index: 2;
+					&:before,
+					&:after {
+						background-color: $myC;
+						content: "";
+						position: absolute;
+					}
+					&:before {
+						// Vert line
+						top: 0; right: auto; bottom: -10px; left: floor($myW/2) - 1;
+						width: 2px;
+						//top: 0; right: 3px; bottom: 0; left: 3px;
+					}
+					&:after {
+						// Circle element
+						@include border-radius($myW);
+						@include transform(translateY(-50%));
+						top: 50%; right: 0; bottom: auto; left: 0;
+						width: auto;
+						height: $myW;
+					}
+				}
+				&:hover .toi-line {
+					@include toiLineHovEffects;
+				}
+			}
+		}
+		&:not(:active) {
+			//@include test(#ff00cc);
+			.knob,
+			.range {
+				@include transition-property(left, right);
+				@include transition-duration(500ms);
+				@include transition-timing-function(ease-in-out);
+			}
 		}
 	}
 
 	.l-time-range-ticks-holder {
 		height: $r3H;
 		.l-time-range-ticks {
-			border-top: 1px solid $colorInteriorBorder;
+			border-top: 1px solid $colorTick;
 			.tick {
-				background-color: $colorInteriorBorder;
+				background-color: $colorTick;
 				border:none;
+				height: 5px;
 				width: 1px;
 				margin-left: -1px;
+				position: absolute;
 				&:first-child {
 					margin-left: 0;
 				}
 				.l-time-range-tick-label {
-					color: lighten($colorInteriorBorder, 20%);
-					font-size: 0.7em;
+					@include webkitProp(transform, translateX(-50%));
+					color: $colorPlotLabelFg;
+					display: inline-block;
+					font-size: 0.9em;
 					position: absolute;
-					margin-left: -0.5 * $tickLblW;
-					text-align: center;
-					top: $r3H;
-					width: $tickLblW;
+					top: 8px;
+					white-space: nowrap;
 					z-index: 2;
 				}
 			}
@@ -74,31 +157,47 @@
 	}
 
 	.knob {
-		width: $knobW;
+		z-index: 2;
 		.range-value {
-			$w: 75px;
-			//@include test();
+			//@include test($sliderColorRange);
+			@include trans-prop-nice-fade(.25s);
+			padding: 0 $rangeValOffset;
 			position: absolute;
-			top: 50%;
-			margin-top: -7px; // Label is 13px high
+			height: $r2H;
+			line-height: $r2H;
 			white-space: nowrap;
-			width: $w;
 		}
 		&:hover .range-value {
-			color: $colorKey;
+			color: $sliderColorKnobHov;
 		}
 		&.knob-l {
-			margin-left: $knobW / -2;
+			//@include border-bottom-left-radius($knobCr); // MOVED TO _CONTROLS.SCSS
+			margin-left: $knobM;
 			.range-value {
 				text-align: right;
-				right: $knobW + $interiorMargin;
+				right: $rangeValOffset;
 			}
 		}
 		&.knob-r {
-			margin-right: $knobW / -2;
+			//@include border-bottom-right-radius($knobCr);
+			margin-right: $knobM;
 			.range-value {
-				left: $knobW + $interiorMargin;
+				left: $rangeValOffset;
+			}
+			&:hover + .range-holder .range .toi-line {
+				@include toiLineHovEffects;
 			}
 		}
 	}
+}
+
+//.slot.range-holder {
+//	background-color: $sliderColorRangeHolder;
+//}
+
+.s-time-range-val {
+	//@include test();
+	@include border-radius($controlCr);
+	background-color: $colorInputBg;
+	padding: 1px 1px 0 $interiorMargin;
 }

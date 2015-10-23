@@ -35,6 +35,7 @@ define(
                 SPACE = "space0",
                 spaces = [ "space1" ],
                 modTimes,
+                mockNow,
                 provider;
 
             function mockPromise(value) {
@@ -55,19 +56,33 @@ define(
             beforeEach(function () {
                 modTimes = {};
                 mockQ = { when: mockPromise, all: mockAll };
-                mockPersistenceService = {
-                    readObject: function (space, id) {
+                mockPersistenceService = jasmine.createSpyObj(
+                    'persistenceService',
+                    [
+                        'createObject',
+                        'readObject',
+                        'updateObject',
+                        'deleteObject',
+                        'listSpaces',
+                        'listObjects'
+                    ]
+                );
+                mockNow = jasmine.createSpy("now");
+
+                mockPersistenceService.readObject
+                    .andCallFake(function (space, id) {
                         return mockPromise({
                             space: space,
                             id: id,
-                            modified: (modTimes[space] || {})[id]
+                            modified: (modTimes[space] || {})[id],
+                            persisted: 0
                         });
-                    }
-                };
+                    });
 
                 provider = new PersistedModelProvider(
                     mockPersistenceService,
                     mockQ,
+                    mockNow,
                     SPACE,
                     spaces
                 );
@@ -81,11 +96,12 @@ define(
                 });
 
                 expect(models).toEqual({
-                    a: { space: SPACE, id: "a" },
-                    x: { space: SPACE, id: "x" },
-                    zz: { space: SPACE, id: "zz" }
+                    a: { space: SPACE, id: "a", persisted: 0 },
+                    x: { space: SPACE, id: "x", persisted: 0 },
+                    zz: { space: SPACE, id: "zz", persisted: 0 }
                 });
             });
+
 
             it("reads object models from multiple spaces", function () {
                 var models;
@@ -99,9 +115,36 @@ define(
                 });
 
                 expect(models).toEqual({
-                    a: { space: SPACE, id: "a" },
-                    x: { space: 'space1', id: "x", modified: 12321 },
-                    zz: { space: SPACE, id: "zz" }
+                    a: { space: SPACE, id: "a", persisted: 0 },
+                    x: { space: 'space1', id: "x", modified: 12321, persisted: 0 },
+                    zz: { space: SPACE, id: "zz", persisted: 0 }
+                });
+            });
+
+
+            it("ensures that persisted timestamps are present", function () {
+                var mockCallback = jasmine.createSpy("callback"),
+                    testModels = {
+                        a: { modified: 123, persisted: 1984, name: "A" },
+                        b: { persisted: 1977, name: "B" },
+                        c: { modified: 42, name: "C" },
+                        d: { name: "D" }
+                    };
+
+                mockPersistenceService.readObject.andCallFake(
+                    function (space, id) {
+                        return mockPromise(testModels[id]);
+                    }
+                );
+                mockNow.andReturn(12321);
+
+                provider.getModels(Object.keys(testModels)).then(mockCallback);
+
+                expect(mockCallback).toHaveBeenCalledWith({
+                    a: { modified: 123, persisted: 1984, name: "A" },
+                    b: { persisted: 1977, name: "B" },
+                    c: { modified: 42, persisted: 42, name: "C" },
+                    d: { persisted: 12321, name: "D" }
                 });
             });
 

@@ -22,9 +22,14 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ["../../src/controllers/TimeRangeController"],
-    function (TimeRangeController) {
+    ["../../src/controllers/TimeRangeController", "moment"],
+    function (TimeRangeController, moment) {
         "use strict";
+
+        var SEC = 1000,
+            MIN = 60 * SEC,
+            HOUR = 60 * MIN,
+            DAY = 24 * HOUR;
 
         describe("The TimeRangeController", function () {
             var mockScope,
@@ -60,6 +65,171 @@ define(
                 expect(mockScope.$watchCollection)
                     .toHaveBeenCalledWith("ngModel", jasmine.any(Function));
             });
+
+            describe("when dragged", function () {
+                beforeEach(function () {
+                    mockScope.ngModel = {
+                        outer: {
+                            start: DAY * 1000,
+                            end: DAY * 1001
+                        },
+                        inner: {
+                            start: DAY * 1000 + HOUR * 3,
+                            end: DAY * 1001 - HOUR * 3
+                        }
+                    };
+                    mockScope.spanWidth = 1000;
+                    fireWatch("spanWidth", mockScope.spanWidth);
+                    fireWatchCollection("ngModel", mockScope.ngModel);
+                });
+
+                it("updates the start time for left drags", function () {
+                    mockScope.startLeftDrag();
+                    mockScope.leftDrag(250);
+                    expect(mockScope.ngModel.inner.start)
+                        .toEqual(DAY * 1000 + HOUR * 9);
+                });
+
+                it("updates the end time for right drags", function () {
+                    mockScope.startRightDrag();
+                    mockScope.rightDrag(-250);
+                    expect(mockScope.ngModel.inner.end)
+                        .toEqual(DAY * 1000 + HOUR * 15);
+                });
+
+                it("updates both start and end for middle drags", function () {
+                    mockScope.startMiddleDrag();
+                    mockScope.middleDrag(-125);
+                    expect(mockScope.ngModel.inner).toEqual({
+                        start: DAY * 1000,
+                        end: DAY * 1000 + HOUR * 18
+                    });
+                    mockScope.middleDrag(250);
+                    expect(mockScope.ngModel.inner).toEqual({
+                        start: DAY * 1000 + HOUR * 6,
+                        end: DAY * 1001
+                    });
+                });
+
+                it("enforces a minimum inner span", function () {
+                    mockScope.startRightDrag();
+                    mockScope.rightDrag(-9999999);
+                    expect(mockScope.ngModel.inner.end)
+                        .toBeGreaterThan(mockScope.ngModel.inner.start);
+                });
+            });
+
+            describe("when outer bounds are changed", function () {
+                beforeEach(function () {
+                    mockScope.ngModel = {
+                        outer: {
+                            start: DAY * 1000,
+                            end: DAY * 1001
+                        },
+                        inner: {
+                            start: DAY * 1000 + HOUR * 3,
+                            end: DAY * 1001 - HOUR * 3
+                        }
+                    };
+                    mockScope.spanWidth = 1000;
+                    fireWatch("spanWidth", mockScope.spanWidth);
+                    fireWatchCollection("ngModel", mockScope.ngModel);
+                });
+
+                it("enforces a minimum outer span", function () {
+                    mockScope.ngModel.outer.end =
+                        mockScope.ngModel.outer.start - DAY * 100;
+                    fireWatch(
+                        "ngModel.outer.end",
+                        mockScope.ngModel.outer.end
+                    );
+                    expect(mockScope.ngModel.outer.end)
+                        .toBeGreaterThan(mockScope.ngModel.outer.start);
+
+                    mockScope.ngModel.outer.start =
+                        mockScope.ngModel.outer.end + DAY * 100;
+                    fireWatch(
+                        "ngModel.outer.start",
+                        mockScope.ngModel.outer.start
+                    );
+                    expect(mockScope.ngModel.outer.end)
+                        .toBeGreaterThan(mockScope.ngModel.outer.start);
+                });
+
+                it("enforces a minimum inner span when outer span changes", function () {
+                    mockScope.ngModel.outer.end =
+                        mockScope.ngModel.outer.start - DAY * 100;
+                    fireWatch(
+                        "ngModel.outer.end",
+                        mockScope.ngModel.outer.end
+                    );
+                    expect(mockScope.ngModel.inner.end)
+                        .toBeGreaterThan(mockScope.ngModel.inner.start);
+                });
+
+                describe("by typing", function () {
+                    it("updates models", function () {
+                        var newStart = "1977-05-25 17:30:00",
+                            newEnd = "2015-12-18 03:30:00";
+
+                        mockScope.boundsModel.start = newStart;
+                        fireWatch("boundsModel.start", newStart);
+                        expect(mockScope.ngModel.outer.start)
+                            .toEqual(moment.utc(newStart).valueOf());
+                        expect(mockScope.boundsModel.startValid)
+                            .toBeTruthy();
+
+                        mockScope.boundsModel.end = newEnd;
+                        fireWatch("boundsModel.end", newEnd);
+                        expect(mockScope.ngModel.outer.end)
+                            .toEqual(moment.utc(newEnd).valueOf());
+                        expect(mockScope.boundsModel.endValid)
+                            .toBeTruthy();
+                    });
+
+                    it("displays error state", function () {
+                        var newStart = "Not a date",
+                            newEnd = "Definitely not a date",
+                            oldStart = mockScope.ngModel.outer.start,
+                            oldEnd = mockScope.ngModel.outer.end;
+
+                        mockScope.boundsModel.start = newStart;
+                        fireWatch("boundsModel.start", newStart);
+                        expect(mockScope.ngModel.outer.start)
+                            .toEqual(oldStart);
+                        expect(mockScope.boundsModel.startValid)
+                            .toBeFalsy();
+
+                        mockScope.boundsModel.end = newEnd;
+                        fireWatch("boundsModel.end", newEnd);
+                        expect(mockScope.ngModel.outer.end)
+                            .toEqual(oldEnd);
+                        expect(mockScope.boundsModel.endValid)
+                            .toBeFalsy();
+                    });
+
+                    it("does not modify user input", function () {
+                        // Don't want the controller "fixing" bad or
+                        // irregularly-formatted input out from under
+                        // the user's fingertips.
+                        var newStart = "Not a date",
+                            newEnd = "2015-3-3 01:02:04",
+                            oldStart = mockScope.ngModel.outer.start,
+                            oldEnd = mockScope.ngModel.outer.end;
+
+                        mockScope.boundsModel.start = newStart;
+                        fireWatch("boundsModel.start", newStart);
+                        expect(mockScope.boundsModel.start)
+                            .toEqual(newStart);
+
+                        mockScope.boundsModel.end = newEnd;
+                        fireWatch("boundsModel.end", newEnd);
+                        expect(mockScope.boundsModel.end)
+                            .toEqual(newEnd);
+                    });
+                });
+            });
+
 
 
         });

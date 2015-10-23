@@ -21,12 +21,9 @@
  *****************************************************************************/
 /*global define,describe,it,expect,beforeEach,waitsFor,afterEach,jasmine*/
 
-/**
- *  EventSpec. Created by vwoeltje on 11/6/14. Modified by shale on 06/23/2015.
- */
 define(
-    ["../src/ConductorRepresenter"],
-    function (ConductorRepresenter) {
+    ["../src/ConductorRepresenter", "./TestTimeConductor"],
+    function (ConductorRepresenter, TestTimeConductor) {
         "use strict";
 
         var SCOPE_METHODS = [
@@ -77,10 +74,7 @@ define(
                 testViews = [ { someKey: "some value" } ];
                 mockScope = jasmine.createSpyObj('scope', SCOPE_METHODS);
                 mockElement = jasmine.createSpyObj('element', ELEMENT_METHODS);
-                mockConductor = jasmine.createSpyObj(
-                    'conductor',
-                    [ 'displayStart', 'displayEnd' ]
-                );
+                mockConductor = new TestTimeConductor();
                 mockCompiledTemplate = jasmine.createSpy('template');
                 mockNewScope = jasmine.createSpyObj('newScope', SCOPE_METHODS);
                 mockNewElement = jasmine.createSpyObj('newElement', ELEMENT_METHODS);
@@ -135,11 +129,12 @@ define(
             it("exposes conductor state in scope", function () {
                 mockConductor.displayStart.andReturn(1977);
                 mockConductor.displayEnd.andReturn(1984);
+                mockConductor.domain.andReturn('d');
                 representer.represent(testViews[0], {});
 
-                expect(mockNewScope.conductor).toEqual({
-                    inner: { start: 1977, end: 1984 },
-                    outer: { start: 1977, end: 1984 }
+                expect(mockNewScope.ngModel.conductor).toEqual({
+                    inner: { start: 1977, end: 1984, domain: 'd' },
+                    outer: { start: 1977, end: 1984, domain: 'd' }
                 });
             });
 
@@ -151,17 +146,27 @@ define(
 
                 representer.represent(testViews[0], {});
 
-                mockNewScope.conductor = testState;
+                mockNewScope.ngModel.conductor = testState;
 
-                fireWatch(mockNewScope, 'conductor.inner.start', testState.inner.start);
+                fireWatch(
+                    mockNewScope,
+                    'ngModel.conductor.inner.start',
+                    testState.inner.start
+                );
                 expect(mockConductor.displayStart).toHaveBeenCalledWith(42);
 
-                fireWatch(mockNewScope, 'conductor.inner.end', testState.inner.end);
+                fireWatch(
+                    mockNewScope,
+                    'ngModel.conductor.inner.end',
+                    testState.inner.end
+                );
                 expect(mockConductor.displayEnd).toHaveBeenCalledWith(1984);
             });
 
             describe("when bounds are changing", function () {
-                var mockThrottledFn = jasmine.createSpy('throttledFn'),
+                var startWatch = "ngModel.conductor.inner.start",
+                    endWatch = "ngModel.conductor.inner.end",
+                    mockThrottledFn = jasmine.createSpy('throttledFn'),
                     testBounds;
 
                 function fireThrottledFn() {
@@ -172,7 +177,7 @@ define(
                     mockThrottle.andReturn(mockThrottledFn);
                     representer.represent(testViews[0], {});
                     testBounds = { start: 0, end: 1000 };
-                    mockNewScope.conductor.inner = testBounds;
+                    mockNewScope.ngModel.conductor.inner = testBounds;
                     mockConductor.displayStart.andCallFake(function () {
                         return testBounds.start;
                     });
@@ -184,14 +189,14 @@ define(
                 it("does not broadcast while bounds are changing", function () {
                     expect(mockScope.$broadcast).not.toHaveBeenCalled();
                     testBounds.start = 100;
-                    fireWatch(mockNewScope, 'conductor.inner.start', testBounds.start);
+                    fireWatch(mockNewScope, startWatch, testBounds.start);
                     testBounds.end = 500;
-                    fireWatch(mockNewScope, 'conductor.inner.end', testBounds.end);
+                    fireWatch(mockNewScope, endWatch, testBounds.end);
                     fireThrottledFn();
                     testBounds.start = 200;
-                    fireWatch(mockNewScope, 'conductor.inner.start', testBounds.start);
+                    fireWatch(mockNewScope, startWatch, testBounds.start);
                     testBounds.end = 400;
-                    fireWatch(mockNewScope, 'conductor.inner.end', testBounds.end);
+                    fireWatch(mockNewScope, endWatch, testBounds.end);
                     fireThrottledFn();
                     expect(mockScope.$broadcast).not.toHaveBeenCalled();
                 });
@@ -199,15 +204,54 @@ define(
                 it("does broadcast when bounds have stabilized", function () {
                     expect(mockScope.$broadcast).not.toHaveBeenCalled();
                     testBounds.start = 100;
-                    fireWatch(mockNewScope, 'conductor.inner.start', testBounds.start);
+                    fireWatch(mockNewScope, startWatch, testBounds.start);
                     testBounds.end = 500;
-                    fireWatch(mockNewScope, 'conductor.inner.end', testBounds.end);
+                    fireWatch(mockNewScope, endWatch, testBounds.end);
                     fireThrottledFn();
-                    fireWatch(mockNewScope, 'conductor.inner.start', testBounds.start);
-                    fireWatch(mockNewScope, 'conductor.inner.end', testBounds.end);
+                    fireWatch(mockNewScope, startWatch, testBounds.start);
+                    fireWatch(mockNewScope, endWatch, testBounds.end);
                     fireThrottledFn();
                     expect(mockScope.$broadcast).toHaveBeenCalled();
                 });
+            });
+
+            it("exposes domain selection in scope", function () {
+                representer.represent(testViews[0], null);
+
+                expect(mockNewScope.ngModel.domain)
+                    .toEqual(mockConductor.domain());
+            });
+
+            it("exposes domain options in scope", function () {
+                representer.represent(testViews[0], null);
+
+                mockConductor.domainOptions().forEach(function (option, i) {
+                    expect(mockNewScope.ngModel.options[i].value)
+                        .toEqual(option.key);
+                    expect(mockNewScope.ngModel.options[i].name)
+                        .toEqual(option.name);
+                });
+            });
+
+            it("updates domain selection from scope", function () {
+                var choice;
+                representer.represent(testViews[0], null);
+
+                // Choose a domain that isn't currently selected
+                mockNewScope.ngModel.options.forEach(function (option) {
+                    if (option.value !== mockNewScope.ngModel.domain) {
+                        choice = option.value;
+                    }
+                });
+
+                expect(mockConductor.domain)
+                    .not.toHaveBeenCalledWith(choice);
+
+                mockNewScope.ngModel.domain = choice;
+                fireWatch(mockNewScope, "ngModel.domain", choice);
+
+                expect(mockConductor.domain)
+                    .toHaveBeenCalledWith(choice);
             });
 
         });

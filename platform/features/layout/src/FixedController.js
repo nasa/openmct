@@ -105,11 +105,13 @@ define(
                         index
                     );
 
-                setDisplayedValue(
-                    telemetryObject,
-                    telemetrySeries.getRangeValue(index),
-                    limit && datum && limit.evaluate(datum)
-                );
+                if (index >= 0) {
+                    setDisplayedValue(
+                        telemetryObject,
+                        telemetrySeries.getRangeValue(index),
+                        limit && datum && limit.evaluate(datum)
+                    );
+                }
             }
 
             // Update the displayed value for this object

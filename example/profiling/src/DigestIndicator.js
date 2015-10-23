@@ -22,43 +22,56 @@
 /*global define*/
 
 define(
-    ['./TimeConductor'],
-    function (TimeConductor) {
-        'use strict';
-
-        var ONE_DAY_IN_MS = 1000 * 60 * 60 * 24,
-            SIX_HOURS_IN_MS = ONE_DAY_IN_MS / 4;
+    [],
+    function () {
+        "use strict";
 
         /**
-         * Provides a single global instance of the time conductor, which
-         * controls both query ranges and displayed ranges for telemetry
-         * data.
-         *
+         * Displays the number of digests that have occurred since the
+         * indicator was first instantiated.
          * @constructor
-         * @memberof platform/features/conductor
-         * @param {Function} now a function which returns the current time
-         *        as a UNIX timestamp, in milliseconds
+         * @param $interval Angular's $interval
+         * @implements {Indicator}
          */
-        function ConductorService(now, domains) {
-            var initialEnd =
-                Math.ceil(now() /  SIX_HOURS_IN_MS) * SIX_HOURS_IN_MS;
+        function DigestIndicator($interval, $rootScope) {
+            var digests = 0,
+                displayed = 0,
+                start = Date.now();
 
-            this.conductor = new TimeConductor(
-                initialEnd - ONE_DAY_IN_MS,
-                initialEnd,
-                domains
-            );
+            function update() {
+                var secs = (Date.now() - start) / 1000;
+                displayed = Math.round(digests / secs);
+            }
+
+            function increment() {
+                digests += 1;
+            }
+
+            $rootScope.$watch(increment);
+
+            // Update state every second
+            $interval(update, 1000);
+
+            // Provide initial state, too
+            update();
+
+            return {
+                getGlyph: function () {
+                    return ".";
+                },
+                getGlyphClass: function () {
+                    return undefined;
+                },
+                getText: function () {
+                    return displayed + " digests/sec";
+                },
+                getDescription: function () {
+                    return "";
+                }
+            };
         }
 
-        /**
-         * Get the global instance of the time conductor.
-         * @returns {platform/features/conductor.TimeConductor} the
-         *         time conductor
-         */
-        ConductorService.prototype.getConductor = function () {
-            return this.conductor;
-        };
+        return DigestIndicator;
 
-        return ConductorService;
     }
 );
