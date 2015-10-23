@@ -252,36 +252,30 @@
             top: $ueTopBarH + $interiorMarginLg + $treeSearchInputBarH + $interiorMargin;
         }
     }
+
     .mini-tab.toggle-pane {
         $h: $ueTopBarH;
         $paneOffset: $interiorMarginLg * -3;
-        //font-size: 0.7rem;
-        //position: absolute;
-        //height: $h;
-        //line-height: $h;
-        top: 5px;
         z-index: 2;
-        &.toggle-tree.anchor-left {
-            //@include test(green);
-            left: $paneOffset;
-/*            &:hover {
-                left: $paneOffset - 2;
-            }*/
-            &:after {
-                content:'F';
+        @include desktop {
+            top: 5px;
+            &.toggle-tree.anchor-left {
+                //@include test(green);
+                left: $paneOffset;
+                &:after {
+                    content: 'F';
+                }
             }
-        }
-        &.toggle-inspect.anchor-right {
-            $xpos:  $paneOffset + $interiorMargin;
-            right: $xpos;
-/*            &:hover {
-                right: $xpos - 2;
-            }*/
-            &:after {
-                content:'F'; //\e612
+            &.toggle-inspect.anchor-right {
+                $xpos: $paneOffset + $interiorMargin;
+                right: $xpos;
+                &:after {
+                    content: '\e608';
+                }
             }
         }
     }
+
     &.items {
         .object-browse-bar {
             .left.abs,

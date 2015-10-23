@@ -179,11 +179,6 @@
         top: 5px;
         width: 1px;
     }
-    //}
-    //&:not(.disabled):hover:before {
-    //    @include trans-prop-nice("border-color", 25ms);
-    //    border-color: $colorGrippyInteriorHover;
-    //}
 }
 
 @mixin boxIncised($sVal: 0.6, $inset: 5px) {

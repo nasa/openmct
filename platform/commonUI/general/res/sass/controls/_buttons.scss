@@ -104,64 +104,66 @@ $pad: $interiorMargin * $baseRatio;
 .mini-tab {
     // Meant to be used as pane hide/show control elements in concert with mct-splitter
     @extend .ui-symbol;
-    @include trans-prop-nice(left, 150ms);
-    //@include test(green);
-    $iconD: 12px;
-    $arwD: 7px;
-    $c: pullForward($colorBodyBg, 15%);
-    color: $c;
-    cursor: pointer;
-    display: block;
-    position: absolute;
-    font-size: $iconD;
-    line-height: $iconD;
-    height: $iconD; width: $iconD;
-
-    &:hover {
-        color: pullForward($c, 20%);
-        &:after {
-            color: $colorKey;
-        }
-    }
-
-    &:before,
-    &:after {
-        @include trans-prop-nice(color, 200ms);
-        display: block;
-        position: absolute;
-    }
-
-    &:before {
-        // Always the arrow icon
+    @include desktop {
         @include trans-prop-nice(left, 150ms);
         //@include test(green);
-        font-size: $arwD;
-        height: 100%; width: $arwD;
-    }
-    &:after {
-        // Representative icon
-        //@include test(red);
-        width: 100%;
-        height: 100%;
-    }
+        $iconD: 12px;
+        $arwD: 7px;
+        $c: pullForward($colorBodyBg, 15%);
+        color: $c;
+        cursor: pointer;
+        display: block;
+        position: absolute;
+        font-size: $iconD;
+        line-height: $iconD;
+        height: $iconD; width: $iconD;
 
-    &.anchor-left {
-        // < []
-        $xpos: (1px + $arwD) * -1;
-        &:before {
-            content:'\3c';
-            left: $xpos;
+        &:hover {
+            color: pullForward($c, 20%);
+            &:after {
+                color: $colorKey;
+            }
         }
-        &:hover:before { left: $xpos - 3; }
-    }
-    &.anchor-right {
-        // [] >
-        $xpos: $iconD + 2px;
-        &:before {
-            content:'\3e';
-            left: $xpos;
+
+        &:before,
+        &:after {
+            @include trans-prop-nice(color, 200ms);
+            display: block;
+            position: absolute;
         }
-        &:hover:before { left: $xpos + 3; }
+
+        &:before {
+            // Always the arrow icon
+            @include trans-prop-nice(left, 150ms);
+            //@include test(green);
+            font-size: $arwD;
+            height: 100%; width: $arwD;
+        }
+        &:after {
+            // Representative icon
+            //@include test(red);
+            width: 100%;
+            height: 100%;
+        }
+
+        &.anchor-left {
+            // < []
+            $xpos: (1px + $arwD) * -1;
+            &:before {
+                content:'\3c';
+                left: $xpos;
+            }
+            &:hover:before { left: $xpos - 3; }
+        }
+        &.anchor-right {
+            // [] >
+            $xpos: $iconD + 2px;
+            &:before {
+                content:'\3e';
+                left: $xpos;
+            }
+            &:hover:before { left: $xpos + 3; }
+        }
     }
 }
 
