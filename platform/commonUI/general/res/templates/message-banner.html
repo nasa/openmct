@@ -1,20 +1,20 @@
 <div ng-controller="BannerController" ng-show="active.notification"
-     class="l-message-banner s-message-banner {{active.notification.severity}}" ng-class="{
-     'minimized': active.notification.minimized,
-     'new': !active.notification.minimized}"
+     class="l-message-banner s-message-banner {{active.notification.model.severity}}" ng-class="{
+     'minimized': active.notification.model.minimized,
+     'new': !active.notification.model.minimized}"
      ng-click="maximize(active.notification)">
     <span class="banner-elem label">
-        {{active.notification.title}}
+        {{active.notification.model.title}}
     </span>
-    <span ng-show="active.notification.progress !== undefined || active.notification.unknownProgress">
+    <span ng-show="active.notification.model.progress !== undefined || active.notification.model.unknownProgress">
         <mct-include key="'progress-bar'" class="banner-elem"
-                     ng-model="active.notification">
+                     ng-model="active.notification.model">
         </mct-include>
     </span>
-    <a ng-hide="active.notification.primaryOption === undefined"
+    <a ng-hide="active.notification.model.primaryOption === undefined"
        class="banner-elem l-action s-action"
-       ng-click="action(active.notification.primaryOption.callback, $event)">
-        {{active.notification.primaryOption.label}}
+       ng-click="action(active.notification.model.primaryOption.callback, $event)">
+        {{active.notification.model.primaryOption.label}}
     </a>
     <a class="banner-elem ui-symbol close" ng-click="dismiss(active.notification, $event)">
         &#x78;</a>

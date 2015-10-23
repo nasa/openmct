@@ -52,14 +52,15 @@ define(
             };
             $scope.dismiss = function(notification, $event) {
                 $event.stopPropagation();
-                notificationService.dismissOrMinimize(notification);
+                notification.dismissOrMinimize();
             };
             $scope.maximize = function(notification) {
-                if (notification.severity !== "info"){
-                    notification.cancel = function(){
+                if (notification.model.severity !== "info"){
+
+                    notification.model.cancel = function(){
                         dialogService.dismiss();
                     };
-                    dialogService.showBlockingMessage(notification);
+                    dialogService.showBlockingMessage(notification.model);
                 }
             };
         }

@@ -48,7 +48,11 @@ define(
                 dialogService.getDialogResponse('overlay-message-list', {
                     dialog: {
                         title: "Messages",
-                        messages: notificationService.notifications
+                        //Launch the message list dialog with the models
+                        // from the notifications
+                        messages: notificationService.notifications && notificationService.notifications.map(function(notification){
+                            return notification.model;
+                        })
                     },
                     cancel: function(){
                         dialogService.dismiss();

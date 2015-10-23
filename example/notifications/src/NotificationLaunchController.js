@@ -130,7 +130,7 @@ define(
              */
             $scope.newProgress = function(){
 
-                var notification = {
+                var notificationModel = {
                     title: "Progress notification example",
                     severity: "info",
                     progress: 0,
@@ -142,17 +142,18 @@ define(
                  * Simulate an ongoing process and update the progress bar.
                  * @param notification
                  */
-                function incrementProgress(notification) {
-                    notification.progress = Math.min(100, Math.floor(notification.progress + Math.random() * 30));
-                    notification.progressText = ["Estimated time remaining:" +
-                    " about ", 60 - Math.floor((notification.progress / 100) * 60), " seconds"].join(" ");
-                    if (notification.progress < 100) {
-                        $timeout(function(){incrementProgress(notification);}, 1000);
+                function incrementProgress(notificationModel) {
+                    notificationModel.progress = Math.min(100, Math.floor(notificationModel.progress + Math.random() * 30));
+                    notificationModel.progressText = ["Estimated time" +
+                    " remaining:" +
+                    " about ", 60 - Math.floor((notificationModel.progress / 100) * 60), " seconds"].join(" ");
+                    if (notificationModel.progress < 100) {
+                        $timeout(function(){incrementProgress(notificationModel);}, 1000);
                     }
                 }
 
-                notificationService.notify(notification);
-                incrementProgress(notification);
+                notificationService.notify(notificationModel);
+                incrementProgress(notificationModel);
             };
 
             /**
