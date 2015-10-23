@@ -59,15 +59,15 @@ define(
             });
 
             it("applies only to timers without a target time", function () {
-                testModel.type = 'warp.timer';
+                testModel.type = 'timer';
                 testModel.timestamp = 12000;
                 expect(StartTimerAction.appliesTo(testContext)).toBeFalsy();
 
-                testModel.type = 'warp.timer';
+                testModel.type = 'timer';
                 testModel.timestamp = undefined;
                 expect(StartTimerAction.appliesTo(testContext)).toBeTruthy();
 
-                testModel.type = 'warp.clock';
+                testModel.type = 'clock';
                 testModel.timestamp = 12000;
                 expect(StartTimerAction.appliesTo(testContext)).toBeFalsy();
             });
