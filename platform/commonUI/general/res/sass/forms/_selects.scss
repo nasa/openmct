@@ -19,32 +19,32 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.form-control.select {
-	@include btnSubtle($colorBodyBg);
-	cursor: pointer;
-	display: inline-block;
-	margin: 0 0 2px 2px; // Needed to avoid dropshadow from being clipped by parent containers
+.select {
+	@include btnSubtle($colorSelectBg);
+    @if $shdwBtns != none {
+	    margin: 0 0 2px 0; // Needed to avoid dropshadow from being clipped by parent containers
+    }
+	padding: 0 $interiorMargin;
     overflow: hidden;
 	position: relative;
+    line-height: $formInputH;
 	select {
 		@include appearance(none);
 		@include box-sizing(border-box);
 		background: none;
-		color: $colorBodyFg;
-		border: none !important;
+		color: $colorSelectFg;
 		cursor: pointer;
-		padding: 4px 25px 2px 5px;
+		border: none !important;
+		padding: 4px 25px 2px 0px;
         width: 120%;
         option {
             margin: $interiorMargin 0; // Firefox
         }
 	}
 	&:after {
-		color: $colorKey;
-		content:"v";
-		display: block;
-		font-family: 'symbolsfont';
+		@include contextArrow();
 		pointer-events: none;
+		color: rgba($colorSelectFg, percentToDecimal($contrastInvokeMenuPercent));
 		position: absolute;
 		right: $interiorMargin; top: 0;
 	}

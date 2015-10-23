@@ -238,6 +238,9 @@ Commit messages should:
 * Contain a reference to a relevant issue number in the body of the commit.
   * This is important for traceability; while branch names also provide this,
     you cannot tell from looking at a commit what branch it was authored on.
+  * This may be omitted if the relevant issue is otherwise obvious from the
+    commit history (that is, if using `git log` from the relevant commit
+    directly leads to a similar issue reference) to minimize clutter.
 * Describe the change that was made, and any useful rationale therefore.
   * Comments in code should explain what things do, commit messages describe
     how they came to be done that way.

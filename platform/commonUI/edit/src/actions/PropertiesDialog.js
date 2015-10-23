@@ -54,6 +54,9 @@ define(
                         var row = Object.create(property.getDefinition());
                         row.key = index;
                         return row;
+                    }).filter(function (row) {
+                        // Only show properties which are editable
+                        return row.control;
                     })
                 }]
             };

@@ -37,7 +37,7 @@
 	}
 
 	h1, h2, h3 {
-		color: #fff;
+		color: pullForward($colorBodyFg, 20%);
 		font-weight: normal !important;
 		margin-bottom: 1em;
 	}

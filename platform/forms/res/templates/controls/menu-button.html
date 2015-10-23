@@ -19,7 +19,7 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="t-btn l-btn s-btn s-icon-btn s-very-subtle btn-menu menu-element dropdown click-invoke"
+<div class="s-menu-btn menu-element"
      ng-controller="ClickAwayController as toggle">
 
     <span class="l-click-area" ng-click="toggle.toggle()"></span>
@@ -28,12 +28,8 @@
     <span class="title-label" ng-if="structure.text">
         {{structure.text}}
     </span>
-    <span class='ui-symbol invoke-menu'
-          ng-if="!structure.text">
-        v
-    </span>
 
-    <div class="menu dropdown" ng-show="toggle.isActive()">
+    <div class="menu" ng-show="toggle.isActive()">
         <ul>
             <li ng-click="structure.click(option.key); toggle.setState(false)" ng-repeat="option in structure.options">
                 <a href="">

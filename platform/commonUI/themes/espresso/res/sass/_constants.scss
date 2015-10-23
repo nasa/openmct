@@ -1,0 +1,170 @@
+// Global
+$colorBodyBg: #333;
+$colorBodyFg: #999;
+$colorGenBg: #222;
+$colorFooterBg: #000;
+$colorKey: #0099cc;
+$colorKeySelectedBg: #005177;
+$colorKeyFg: #fff;
+$colorInteriorBorder: rgba($colorBodyFg, 0.1);
+$colorA: #ccc;
+$colorAHov: #fff;
+$contrastRatioPercent: 7%;
+$basicCr: 2px;
+$controlCr: 3px;
+$smallCr: 2px;
+
+// Buttons and Controls
+$colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent); //
+$colorBtnFg: $colorBodyFg;
+$colorBtnMajorBg: $colorKey;
+$colorBtnMajorFg: $colorKeyFg;
+$colorBtnIcon: $colorKey;
+$colorInvokeMenu: #fff;
+$contrastInvokeMenuPercent: 20%;
+$shdwBtns: rgba(black, 0.2) 0 1px 2px;
+$sliderColorBase: $colorKey;
+$sliderColorRangeHolder: rgba(black, 0.1);
+$sliderColorRange: rgba($sliderColorBase, 0.3);
+$sliderColorRangeHov: rgba($sliderColorBase, 0.5);
+$sliderColorKnob: rgba($sliderColorBase, 0.6);
+$sliderColorKnobHov: $sliderColorBase;
+$sliderColorRangeValHovBg: rgba($sliderColorBase, 0.1);
+$sliderColorRangeValHovFg: $colorKeyFg;
+$sliderKnobW: nth($ueTimeControlH,2)/2;
+$timeControllerToiLineColor: #00c2ff;
+$timeControllerToiLineColorHov: #fff;
+
+// General Colors
+$colorAlt1: #ffc700;
+$colorAlert: #ff3c00;
+$colorIconLink: #49dedb;
+$colorPausedBg: #c56f01;
+$colorPausedFg: #fff;
+$colorCreateBtn: $colorKey;
+$colorGridLines: rgba(#fff, 0.05);
+$colorFormLines: rgba(#fff, 0.1);
+$colorFormSectionHeader: rgba(#000, 0.2);
+$colorInvokeMenu: #fff;
+$colorObjHdrTxt: $colorBodyFg;
+$colorObjHdrIc: pullForward($colorObjHdrTxt, 20%);
+$colorTick: rgba(white, 0.2);
+
+// Menu colors
+$colorMenuBg: pullForward($colorBodyBg, 23%);
+$colorMenuFg: pullForward($colorMenuBg, 70%);
+$colorMenuIc: pullForward($colorKey, 17%);
+$colorMenuHovBg: pullForward($colorMenuBg, 10%);
+$colorMenuHovFg: #fff;
+$colorMenuHovIc: $colorMenuHovFg;
+$shdwMenu: none;
+$shdwMenuText: rgba(black, 0.1) 0 1px 2px;
+$colorCreateMenuLgIcon: $colorMenuFg;
+$colorCreateMenuText: $colorMenuFg;
+
+// Form colors
+$colorCheck: $colorKey;
+$colorFormRequired: $colorAlt1;
+$colorFormValid: #33cc33;
+$colorFormError: #cc0000;
+$colorFormInvalid: #ff3300;
+$colorInputBg: rgba(#fff, 0.1);
+$colorInputFg: pullForward($colorBodyFg, 20%);
+$colorFormText: rgba(#fff, 0.5);
+$colorInputIcon: pushBack($colorBodyFg, 15%);
+
+// Selects
+$colorSelectBg: $colorBtnBg;
+$colorSelectFg: $colorBtnFg;
+
+// Limits and staleness colors
+$colorTelemFresh: pullForward($colorBodyFg, 20%);
+$colorTelemStale: pushBack($colorBodyFg, 20%);
+$styleTelemStale: italic;
+$colorLimitYellowBg: rgba(#ffaa00, 0.3);
+$colorLimitYellowIc: #ffaa00;
+$colorLimitRedBg: rgba(red, 0.3);
+$colorLimitRedIc: red;
+
+// Bubble colors
+$colorInfoBubbleFg: #666;
+$colorInfoBubbleBg: #ddd;
+$colorThumbsBubbleFg: pullForward($colorBodyFg, 10%);
+$colorThumbsBubbleBg: pullForward($colorBodyBg, 10%);
+
+// Overlay
+$colorOvrBlocker: rgba(black, 0.7);
+$colorOvrBg: pullForward($colorBodyBg, 10%);
+$colorOvrFg: pullForward($colorBodyFg, 30%);
+$colorOvrBtnBg: pullForward($colorOvrBg, 20%);
+$colorOvrBtnFg: #fff;
+
+// Items
+$colorItemBg: lighten($colorBodyBg, 5%);
+$colorItemBgHov: pullForward($colorItemBg, 15%);
+$colorItemFg: lighten($colorItemBg, 50%);
+$colorItemFgDetails: lighten($colorItemBg, 30%);
+$colorItemIc: $colorKey; //pullForward($colorItemFg, 20%);
+$colorItemSubIcons: $colorItemFgDetails;
+$colorItemOpenIcon: $colorItemFgDetails;
+$shdwItemText: rgba(black, 0.1) 0 1px 2px;
+$colorItemBgSelected: $colorKey;
+
+// Tabular
+$colorTabBorder: pullForward($colorBodyBg, 10%);
+$colorTabBodyBg: darken($colorBodyBg, 10%);
+$colorTabBodyFg: lighten($colorTabBodyBg, 40%);
+$colorTabHeaderBg: rgba(white, 0.1); // lighten($colorBodyBg, 10%);
+$colorTabHeaderFg: $colorBodyFg; //lighten($colorTabHeaderBg, 40%);
+$colorTabHeaderBorder: $colorBodyBg;
+
+// Plot
+$colorPlotBg: rgba(black, 0.1);
+$colorPlotFg: $colorBodyFg;
+$colorPlotHash: $colorTick;
+$stylePlotHash: dashed;
+$colorPlotAreaBorder: $colorInteriorBorder;
+$colorPlotLabelFg: pushBack($colorPlotFg, 20%);
+
+// Tree
+$colorItemTreeIcon: $colorKey;
+$colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
+$colorItemTreeFg: $colorBodyFg;
+$colorItemTreeSelectedBg: pushBack($colorKey, 15%);
+$colorItemTreeSelectedFg: pullForward($colorBodyFg, 20%);
+$colorItemTreeVC: rgba(#fff, 0.3);
+$colorItemTreeSelectedVC: $colorItemTreeVC;
+$colorItemTreeVCHover: $colorAlt1;
+$shdwItemTreeIcon: 0.6;
+
+// Scrollbar
+$scrollbarTrackSize: 10px;
+$scrollbarTrackColorBg: rgba(#000, 0.4);
+$scrollbarThumbColor: lighten($colorBodyBg, 10%);
+$scrollbarThumbColorHov: lighten($scrollbarThumbColor, 2%);
+$scrollbarTrackShdw: rgba(#000, 0.7) 0 1px 5px;
+
+// Splitter
+$splitterShdw: rgba(black, 0.4) 0 0 3px;
+$colorSplitterInterior: $colorBodyBg;
+$colorSplitterHover: none;
+$splitterW: 5px;
+$splitterEndCr: 1px;
+$colorGrippyInteriorHover: $colorKey;
+
+// Mobile
+$colorMobilePaneLeft: darken($colorBodyBg, 5%);
+
+// Datetime Picker
+$colorCalCellHovBg: $colorKey;
+$colorCalCellHovFg: $colorKeyFg;
+$colorCalCellSelectedBg: $colorItemTreeSelectedBg;
+$colorCalCellSelectedFg: $colorItemTreeSelectedFg;
+$colorCalCellInMonthBg: pushBack($colorMenuBg, 5%);
+
+// About Screen
+$colorAboutLink: #84b3ff;
+
+// Loading
+$colorLoadingBg: rgba($colorBodyFg, 0.2);
+$colorLoadingFg: $colorAlt1;

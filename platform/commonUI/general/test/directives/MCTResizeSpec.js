@@ -35,7 +35,7 @@ define(
 
             beforeEach(function () {
                 mockTimeout = jasmine.createSpy("$timeout");
-                mockScope = jasmine.createSpyObj("$scope", ["$eval", "$on"]);
+                mockScope = jasmine.createSpyObj("$scope", ["$eval", "$on", "$apply"]);
 
                 testElement = { offsetWidth: 100, offsetHeight: 200 };
                 testAttrs = { mctResize: "some-expr" };
@@ -52,7 +52,8 @@ define(
                 mctResize.link(mockScope, [testElement], testAttrs);
                 expect(mockTimeout).toHaveBeenCalledWith(
                     jasmine.any(Function),
-                    jasmine.any(Number)
+                    jasmine.any(Number),
+                    false
                 );
                 expect(mockScope.$eval).toHaveBeenCalledWith(
                     testAttrs.mctResize,
@@ -108,6 +109,35 @@ define(
 
                 // Should NOT have scheduled another timeout
                 expect(mockTimeout.calls.length).toEqual(2);
+            });
+
+            it("triggers a digest cycle when size changes", function () {
+                var applyCount;
+                mctResize.link(mockScope, [testElement], testAttrs);
+                applyCount = mockScope.$apply.calls.length;
+
+                // Change the element's apparent size
+                testElement.offsetWidth = 300;
+                testElement.offsetHeight = 350;
+
+                // Fire the timeout
+                mockTimeout.mostRecentCall.args[0]();
+
+                // No more apply calls
+                expect(mockScope.$apply.calls.length)
+                    .toBeGreaterThan(applyCount);
+            });
+
+            it("does not trigger a digest cycle when size does not change", function () {
+                var applyCount;
+                mctResize.link(mockScope, [testElement], testAttrs);
+                applyCount = mockScope.$apply.calls.length;
+
+                // Fire the timeout
+                mockTimeout.mostRecentCall.args[0]();
+
+                // No more apply calls
+                expect(mockScope.$apply.calls.length).toEqual(applyCount);
             });
 
         });

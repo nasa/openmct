@@ -59,7 +59,7 @@
 	line-height: 120%;
 
 	a {
-		color: #84b3ff;
+		color: $colorAboutLink;
 	}
 	.s-description,
 	.s-info {
@@ -89,7 +89,7 @@
 				border-top: none;
 			}
 			em {
-				color: darken($colorBodyFg, 20%);
+				color: pushBack($colorBodyFg, 20%);
 //				margin-left: 2em;
 				&:first-child {
 //					margin-left: 0;

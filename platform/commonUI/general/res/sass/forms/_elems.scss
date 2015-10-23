@@ -20,54 +20,57 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .section-header {
-	@include border-radius(3px);
-	background: rgba(white, 0.1);
+	@include border-radius($basicCr);
+	background: $colorFormSectionHeader;
+	$c: lighten($colorBodyFg, 20%);
+	//border-bottom: 1px solid rgba(#fff, 0.3);
+	color: $c;
 	font-size: 0.8em;
-	margin-top: $interiorMargin;
-	padding: $interiorMargin;
-	&:first-child {
-		margin-top: 0;
-	}
+	padding: $formTBPad $formLRPad;
+	text-transform: uppercase;
 }
 
 .form {
 //	@include test(orange);
+	color: $colorFormText;
 	.form-section {
 		position: relative;
+		margin-bottom: $interiorMarginLg * 2;
 	}
 
 	.form-row {
+		$m: $interiorMargin;
 		@include box-sizing(border-box);
 		@include clearfix;
-		border-top: 1px solid $colorInteriorBorder;
-		margin-top: $interiorMargin;
-		padding: $interiorMargin;
+		border-top: 1px solid $colorFormLines;
+		margin-top: $m;
+		padding: $formTBPad 0;
 		position: relative;
 		&.first {
 			border-top: none;
 		}
 
-		.label,
-		.controls {
-//			@include test(orange);
+		>.label,
+		>.controls {
 			@include box-sizing(border-box);
 			@include clearfix;
-			box-sizing: border-box;
-			font-size: 0.75rem;
+			font-size: 0.8rem;
 			line-height: $formInputH;
             min-height: $formInputH;
 		}
 
 		>.label {
 			// Only style this way for immediate children of .form-row; prevents problems when .label is used in .controls section of a form
+			//@include test(orange, 0.05);
 			float: left;
+			min-width: 120px;
             position: relative;
 			white-space: nowrap;
 			width: $formLabelW;
 		}
 
 		.value {
-			color: lighten($colorBodyFg, 20%);
+			color: $colorInputFg; //lighten($colorBodyFg, 20%);
 		}
 
 		.controls {
@@ -109,18 +112,18 @@
 
 		.selector-list {
 			// Used in create overlay to display tree view
+			@include nice-input($colorInputBg, $colorInputFg);
 			$h: 150px;
-			@include border-radius($basicCr);
-			@include box-sizing(border-box);
-			background: rgba(black, 0.2);
-			padding: $interiorMargin;
+			//@include border-radius($basicCr);
+			//@include box-sizing(border-box);
+			//background: rgba(black, 0.2);
+			//padding: $interiorMargin;
 			position: relative;
 			height: $h;
-			overflow: auto;
 //			max-width: 50%;
-			.wrapper {
+			>.wrapper {
 				$p: $interiorMargin;
-				overflow-y: auto;
+				overflow: auto;
 				position: absolute;
 				top: $p;
 				right: $p;
@@ -157,4 +160,24 @@ label.form-control.checkbox {
 		color: lighten($colorFormInvalid, 30%);
 		padding: $interiorMargin;
 	}
+}
+
+input[type="text"] {
+	@include nice-input($colorInputBg, $colorInputFg);
+	&.filter {
+		&.ng-dirty {
+			//            background: red;
+		}
+	}
+	&.numeric {
+		text-align: right;
+	}
+}
+
+textarea {
+	@include nice-textarea($colorInputBg, $colorInputFg);
+	//	font-size: 0.9em;
+	position: absolute;
+	height: 100%;
+	width: 100%;
 }

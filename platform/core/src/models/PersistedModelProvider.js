@@ -39,30 +39,61 @@ define(
          * @param {PersistenceService} persistenceService the service in which
          *        domain object models are persisted.
          * @param $q Angular's $q service, for working with promises
-         * @param {string} SPACE the name of the persistence space from which
-         *        models should be retrieved.
+         * @param {function} now a function which provides the current time
+         * @param {string} space the name of the persistence space(s)
+         *        from which models should be retrieved.
+         * @param {string} spaces additional persistence spaces to use
          */
-        function PersistedModelProvider(persistenceService, $q, space) {
+        function PersistedModelProvider(persistenceService, $q, now, space, spaces) {
             this.persistenceService = persistenceService;
             this.$q = $q;
-            this.space = space;
+            this.spaces = [space].concat(spaces || []);
+            this.now = now;
+        }
+
+        // Take the most recently modified model, for cases where
+        // multiple persistence spaces return models.
+        function takeMostRecent(modelA, modelB) {
+            return (!modelB || modelB.modified === undefined) ? modelA :
+                    (!modelA || modelA.modified === undefined) ? modelB :
+                            modelB.modified > modelA.modified ? modelB :
+                                    modelA;
         }
 
         PersistedModelProvider.prototype.getModels = function (ids) {
             var persistenceService = this.persistenceService,
                 $q = this.$q,
-                space = this.space;
+                spaces = this.spaces,
+                space = this.space,
+                now = this.now;
 
-            // Load a single object model from persistence
+            // Load a single object model from any persistence spaces
             function loadModel(id) {
-                return persistenceService.readObject(space, id);
+                return $q.all(spaces.map(function (space) {
+                    return persistenceService.readObject(space, id);
+                })).then(function (models) {
+                    return models.reduce(takeMostRecent);
+                });
+            }
+
+            // Ensure that models read from persistence have some
+            // sensible timestamp indicating they've been persisted.
+            function addPersistedTimestamp(model) {
+                if (model && (model.persisted === undefined)) {
+                    model.persisted = model.modified !== undefined ?
+                            model.modified : now();
+                }
+
+                return model;
             }
 
             // Package the result as id->model
             function packageResult(models) {
                 var result = {};
                 ids.forEach(function (id, index) {
-                    result[id] = models[index];
+                    if (models[index]) {
+                        result[id] = addPersistedTimestamp(models[index]);
+                    }
                 });
                 return result;
             }

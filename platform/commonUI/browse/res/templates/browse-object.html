@@ -20,28 +20,30 @@
  at runtime from the About dialog for additional information.
 -->
 <span ng-controller="BrowseObjectController">
-    <div class="object-browse-bar bar abs">
-        <div class="items-select left abs">
+    <div class="object-browse-bar bar l-flex">
+        <div class="items-select left">
+            <mct-representation key="'back-arrow'"
+                                mct-object="domainObject"
+                                class="l-back"></mct-representation>
             <mct-representation key="'object-header'" mct-object="domainObject">
             </mct-representation>
         </div>
-
-        <div class="btn-bar right abs">
-            <mct-representation key="'action-group'"
-                                mct-object="domainObject"
-                                parameters="{ category: 'view-control' }">
-            </mct-representation>
-
+        <div class="btn-bar right">
             <mct-representation key="'switcher'"
                                 mct-object="domainObject"
                                 ng-model="representation">
             </mct-representation>
+            <!-- Temporarily, on mobile, the action buttons are hidden-->
+            <mct-representation key="'action-group'"
+                                mct-object="domainObject"
+                                parameters="{ category: 'view-control' }"
+                                class="mobile-hide">
+            </mct-representation>
         </div>
     </div>
 
-    <div class='object-holder abs vscroll'>
-        <mct-representation key="representation.selected.key"
-                            mct-object="representation.selected.key && domainObject">
-        </mct-representation>
-    </div>
+    <mct-representation key="representation.selected.key"
+                        mct-object="representation.selected.key && domainObject"
+                        class="abs object-holder">
+    </mct-representation>
 </span>

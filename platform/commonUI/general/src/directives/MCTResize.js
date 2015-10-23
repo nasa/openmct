@@ -58,6 +58,7 @@ define(
             // Link; start listening for changes to an element's size
             function link(scope, element, attrs) {
                 var lastBounds,
+                    linking = true,
                     active = true;
 
                 // Determine how long to wait before the next update
@@ -74,6 +75,9 @@ define(
                             lastBounds.width !== bounds.width ||
                             lastBounds.height !== bounds.height) {
                         scope.$eval(attrs.mctResize, { bounds: bounds });
+                        if (!linking) { // Avoid apply-in-a-digest
+                            scope.$apply();
+                        }
                         lastBounds = bounds;
                     }
                 }
@@ -86,7 +90,7 @@ define(
                         height: element[0].offsetHeight
                     });
                     if (active) {
-                        $timeout(onInterval, currentInterval());
+                        $timeout(onInterval, currentInterval(), false);
                     }
                 }
 
@@ -100,6 +104,9 @@ define(
 
                 // Handle the initial callback
                 onInterval();
+
+                // Trigger scope.$apply on subsequent changes
+                linking = false;
             }
 
             return {

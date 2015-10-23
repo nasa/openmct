@@ -6,8 +6,13 @@
         "services": [
             {
                 "key": "urlService",
-                "implementation": "/services/UrlService.js",
+                "implementation": "services/UrlService.js",
                 "depends": [ "$location" ]
+            },
+            {
+                "key": "popupService",
+                "implementation": "services/PopupService.js",
+                "depends": [ "$document", "$window" ]
             }
         ],
         "runs": [
@@ -20,18 +25,6 @@
             {
                 "stylesheetUrl": "css/normalize.min.css",
                 "priority": "mandatory"
-            },
-            {
-                "stylesheetUrl": "css/theme-espresso.css",
-                "priority": 1000
-            },
-            {
-                "stylesheetUrl": "css/items.css",
-                "priority": 901
-            },
-            {
-                "stylesheetUrl": "css/tree.css",
-                "priority": 900
             }
         ],
         "templates": [
@@ -57,6 +50,16 @@
             }
         ],
         "controllers": [
+            {
+                "key": "TimeRangeController",
+                "implementation": "controllers/TimeRangeController.js",
+                "depends": [ "$scope", "now" ]
+            },
+            {
+                "key": "DateTimePickerController",
+                "implementation": "controllers/DateTimePickerController.js",
+                "depends": [ "$scope", "now" ]
+            },
             {
                 "key": "TreeNodeController",
                 "implementation": "controllers/TreeNodeController.js",
@@ -118,9 +121,19 @@
                 "depends": [ "$document" ]
             },
             {
+                "key": "mctClickElsewhere",
+                "implementation": "directives/MCTClickElsewhere.js",
+                "depends": [ "$document" ]
+            },
+            {
                 "key": "mctResize",
                 "implementation": "directives/MCTResize.js",
                 "depends": [ "$timeout" ]
+            },
+            {
+                "key": "mctPopup",
+                "implementation": "directives/MCTPopup.js",
+                "depends": [ "$compile", "popupService" ]
             },
             {
                 "key": "mctScrollX",
@@ -225,6 +238,10 @@
             {
                 "key": "selector",
                 "templateUrl": "templates/controls/selector.html"
+            },
+            {
+                "key": "datetime-picker",
+                "templateUrl": "templates/controls/datetime-picker.html"
             }
         ],
         "licenses": [

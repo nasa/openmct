@@ -1,0 +1,20 @@
+@mixin containerSubtle($bg: $colorBodyBg, $fg: $colorBodyFg) {
+	@include containerBase($bg, $fg);
+	@include boxShdw($shdwBtns);
+}
+
+@mixin btnSubtle($bg: $colorBtnBg, $bgHov: none, $fg: $colorBtnFg, $ic: $colorBtnIcon) {
+	@include containerSubtle($bg, $fg);
+	@include btnBase($bg, $bgHov, $fg, $ic);
+	@include text-shadow($shdwItemText);
+}
+
+@function pullForward($c: $colorBodyBg, $p: 20%) {
+    // For dark interfaces, lighter things come forward - opposite for light interfaces
+    @return darken($c, $p);
+}
+
+@function pushBack($c: $colorBodyBg, $p: 20%) {
+    // For dark interfaces, darker things move back - opposite for light interfaces
+    @return lighten($c, $p);
+}

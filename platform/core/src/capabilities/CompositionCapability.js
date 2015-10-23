@@ -25,8 +25,7 @@
  * Module defining CompositionCapability. Created by vwoeltje on 11/7/14.
  */
 define(
-    ["./ContextualDomainObject"],
-    function (ContextualDomainObject) {
+    function () {
         "use strict";
 
         /**
@@ -41,14 +40,75 @@ define(
          * @constructor
          * @implements {Capability}
          */
-        function CompositionCapability($injector, domainObject) {
+        function CompositionCapability($injector, contextualize, domainObject) {
             // Get a reference to the object service from $injector
             this.injectObjectService = function () {
                 this.objectService = $injector.get("objectService");
             };
 
+            this.contextualize = contextualize;
             this.domainObject = domainObject;
         }
+
+        /**
+         * Add a domain object to the composition of the field.
+         * This mutates but does not persist the modified object.
+         *
+         * If no index is given, this is added to the end of the composition.
+         *
+         * @param {DomainObject|string} domainObject the domain object to add,
+         *        or simply its identifier
+         * @param {number} [index] the index at which to add the object
+         * @returns {Promise.<DomainObject>} a promise for the added object
+         *          in its new context
+         */
+        CompositionCapability.prototype.add = function (domainObject, index) {
+            var self = this,
+                id = typeof domainObject === 'string' ?
+                        domainObject : domainObject.getId(),
+                model = self.domainObject.getModel(),
+                composition = model.composition,
+                oldIndex = composition.indexOf(id);
+
+            // Find the object with the above id, used to contextualize
+            function findObject(objects) {
+                var i;
+                for (i = 0; i < objects.length; i += 1) {
+                    if (objects[i].getId() === id) {
+                        return objects[i];
+                    }
+                }
+            }
+
+            function contextualize(mutationResult) {
+                return mutationResult && self.invoke().then(findObject);
+            }
+
+            function addIdToModel(model) {
+                // Pick a specific index if needed.
+                index = isNaN(index) ? composition.length : index;
+                // Also, don't put past the end of the array
+                index = Math.min(composition.length, index);
+
+                // Remove the existing instance of the id
+                if (oldIndex !== -1) {
+                    model.composition.splice(oldIndex, 1);
+                }
+
+                // ...and add it back at the appropriate index.
+                model.composition.splice(index, 0, id);
+            }
+
+            // If no index has been specified already and the id is already
+            // present, nothing to do. If the id is already at that index,
+            // also nothing to do, so cancel mutation.
+            if ((isNaN(index) && oldIndex !== -1) || (index === oldIndex)) {
+                return contextualize(true);
+            }
+
+            return this.domainObject.useCapability('mutation', addIdToModel)
+                    .then(contextualize);
+        };
 
         /**
          * Request the composition of this object.
@@ -58,19 +118,17 @@ define(
         CompositionCapability.prototype.invoke = function () {
             var domainObject = this.domainObject,
                 model = domainObject.getModel(),
+                contextualize = this.contextualize,
                 ids;
 
             // Then filter out non-existent objects,
             // and wrap others (such that they expose a
             // "context" capability)
-            function contextualize(objects) {
+            function contextualizeObjects(objects) {
                 return ids.filter(function (id) {
                     return objects[id];
                 }).map(function (id) {
-                    return new ContextualDomainObject(
-                        objects[id],
-                        domainObject
-                    );
+                    return contextualize(objects[id], domainObject);
                 });
             }
 
@@ -86,7 +144,7 @@ define(
                 this.lastModified = model.modified;
                 // Load from the underlying object service
                 this.lastPromise = this.objectService.getObjects(ids)
-                    .then(contextualize);
+                    .then(contextualizeObjects);
             }
 
             return this.lastPromise;

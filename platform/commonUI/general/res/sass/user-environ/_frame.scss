@@ -20,25 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 .frame {
-	$ohH: 20px;
+	$ohH: $btnFrameH;
 	$bc: $colorInteriorBorder;
 	&.child-frame.panel {
 		background: $colorBodyBg;
 		border: 1px solid $bc;
 		&:hover {
 			border-color: lighten($bc, 10%);
-			//z-index: 2;
-		}
-		.contents {
-//			overflow: hidden;
 		}
 	}
 	>.object-header.abs {
+		//@include test(red);
 		font-size: 0.75em;
 		height: $ohH;
+		line-height: $ohH;
 	}
 	>.object-holder.abs {
-		top: $ohH + $interiorMarginSm;
+		top: $ohH + $interiorMargin;
 	}
 	.contents {
 		$myM: $interiorMargin;
@@ -48,21 +46,38 @@
 		left: $myM;
 	}
 	&.frame-template {
-		// Hide the view switcher by default when it's in an element that's in a frame context
-		// Frame template is used because we need to target the lowest nested frame
+		.s-btn,
+		.s-menu-btn {
+			height: $ohH;
+			line-height: $ohH;
+			padding: 0 $interiorMargin;
+			> span {
+				font-size: 0.65rem;
+			}
+		}
+
+		.s-menu-btn:after {
+			font-size: 8px;
+		}
+
 		.view-switcher {
-			opacity: 0;
 			z-index: 10;
 		}
-		&:hover .view-switcher {
-			// Show the view switcher on frame hover
-			//display: inline-block !important;
-			opacity: 1;
+		// Hide the view switcher by default when it's in an element that's in a frame context
+		// Frame template is used because we need to target the lowest nested frame
+		@include desktop {
+			.view-switcher {
+				opacity: 0;
+			}
+			&:hover .view-switcher {
+				// Show the view switcher on frame hover
+				opacity: 1;
+			}
 		}
 	}
 	.view-switcher {
 		// Hide the name when the view switcher is in a frame context
-		.name {
+		.title-label {
 			display: none;
 		}
 	}

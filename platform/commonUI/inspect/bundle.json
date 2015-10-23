@@ -24,8 +24,18 @@
                 "implementation": "gestures/InfoGesture.js",
                 "depends": [
                     "$timeout",
+                    "agentService",
                     "infoService",
                     "INFO_HOVER_DELAY"
+                ]
+            },
+            {
+                "key": "infobutton",
+                "implementation": "gestures/InfoButtonGesture.js",
+                "depends": [
+                    "$document",
+                    "agentService",
+                    "infoService"
                 ]
             }
         ],
@@ -35,9 +45,9 @@
                 "implementation": "services/InfoService.js",
                 "depends": [
                     "$compile",
-                    "$document",
-                    "$window",
-                    "$rootScope"
+                    "$rootScope",
+                    "popupService",
+                    "agentService"
                 ]
             }
         ],
@@ -45,6 +55,13 @@
             {
                 "key": "INFO_HOVER_DELAY",
                 "value": 2000
+            }
+        ],
+        "representations": [
+            {
+                "key": "info-button",
+                "templateUrl": "templates/info-button.html",
+                "gestures": [ "infobutton" ]
             }
         ]
     }

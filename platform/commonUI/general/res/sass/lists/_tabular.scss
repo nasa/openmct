@@ -29,30 +29,27 @@ table {
 	@include box-sizing(border-box);
 	border-spacing: 0;
 	border-collapse: collapse;
-	color: #fff;
 	display: table;
 	font-size: 0.75rem;
 	position: relative;
-	//height: 100%; MOVED
 	width: 100%;
 	thead, .thead,
 	tbody tr, .tbody .tr {
-		//display: table; MOVED
 		width: 100%;
-		//table-layout: fixed; MOVED
 	}
 	thead, .thead {
-		border-bottom: 1px solid $tabularColorHeaderBorder;
+		border-bottom: 1px solid $colorTabHeaderBorder;
 	}
+
+	&:not(.fixed-header) tr th {
+		background-color: $colorTabHeaderBg;
+	}
+
 	tbody, .tbody {
-		//@include absPosDefault(0); MOVED
-		//top: $tabularHeaderH; MOVED
-		//display: block; MOVED
-		//overflow-y: scroll; MOVED
 		display: table-row-group;
 		tr, .tr {
 			&:hover {
-				background: rgba(white, 0.1);
+				background: rgba($colorTabBodyFg, 0.1);
 			}
 		}
 	}
@@ -64,17 +61,16 @@ table {
 		&.group-header {
 			td, .td {
 				$d: 5%;
-				background-color: darken($tabularColorHeaderBg, $d);
-				color: darken($tabularColorHeaderFg, $d);
+				background-color: pushBack($colorTabHeaderBg, $d);
+				color: pushBack($colorTabHeaderFg, $d);
 			}
 		}
 		th, .th, td, .td {
 			display: table-cell;
 		}
 		th, .th {
-			background-color: $tabularColorHeaderBg;
-			border-left: 1px solid $tabularColorHeaderBorder;
-			color: $tabularColorHeaderFg;
+			border-left: 1px solid $colorTabHeaderBorder;
+			color: $colorTabHeaderFg;
 			padding: $tabularTdPadLR $tabularTdPadLR;
 			white-space: nowrap;
 			vertical-align: middle; // This is crucial to hiding f**king 4px height injected by browser by default
@@ -99,7 +95,7 @@ table {
 			}
 		}
 		td, .td {
-			border-bottom: 1px solid $tabularColorBorder;
+			border-bottom: 1px solid $colorTabBorder;
 			min-width: 20px;
 			color: $colorTelemFresh;
 			padding: $tabularTdPadTB $tabularTdPadLR;
@@ -151,7 +147,7 @@ table {
 				position: absolute;
 				width: 100%;
 				height: $tabularHeaderH;
-				background: rgba(#fff, 0.15);
+				background-color: $colorTabHeaderBg;
 			}
 		}
 		tbody, .tbody {

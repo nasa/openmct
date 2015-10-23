@@ -25,7 +25,7 @@
         All fields marked <span class="ui-symbol req">*</span> are required.
     </div>
 </div>
-<div class="abs form outline editor">
+<div class="abs form editor">
     <div class='abs contents l-dialog'>
         <mct-form ng-model="ngModel.value"
                   structure="ngModel.structure"
@@ -34,13 +34,13 @@
     </div>
 </div>
 <div class="abs bottom-bar">
-    <a class='btn lg major'
-       href=''
+    <a class='s-btn major'
        ng-class="{ disabled: !createForm.$valid }"
        ng-click="ngModel.confirm()">
         OK
     </a>
-    <a class='btn lg subtle' href='' ng-click="ngModel.cancel()">
+    <a class='s-btn'
+       ng-click="ngModel.cancel()">
         Cancel
     </a>
 </div>

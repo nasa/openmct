@@ -63,7 +63,13 @@
                 "provides": "modelService",
                 "type": "provider",
                 "implementation": "models/PersistedModelProvider.js",
-                "depends": [ "persistenceService", "$q", "PERSISTENCE_SPACE" ]
+                "depends": [
+                    "persistenceService",
+                    "$q",
+                    "now",
+                    "PERSISTENCE_SPACE",
+                    "ADDITIONAL_PERSISTENCE_SPACES"
+                ]
             },
             {
                 "provides": "modelService",
@@ -117,12 +123,6 @@
                         "pattern": "\\S+",
                         "required": true,
                         "cssclass": "l-med"
-                    },
-                    {
-                        "control": "checkbox",
-                        "name": "Display title by default",
-                        "key": "displayTitle",
-                        "property": [ "display", "title" ]
                     }
                 ]
             },
@@ -142,14 +142,18 @@
             {
                 "key": "unknown",
                 "name": "Unknown Type",
-                "glyph": "?"
+                "glyph": "\u003f"
+            },
+            {
+                "name": "Unknown Type",
+                "glyph": "\u003f"
             }
         ],
         "capabilities": [
             {
                 "key": "composition",
                 "implementation": "capabilities/CompositionCapability.js",
-                "depends": [ "$injector" ]
+                "depends": [ "$injector", "contextualize" ]
             },
             {
                 "key": "relationship",
@@ -204,6 +208,11 @@
             {
                 "key": "topic",
                 "implementation": "services/Topic.js"
+            },
+            {
+                "key": "contextualize",
+                "implementation": "services/Contextualize.js",
+                "depends": [ "$log" ]
             }
         ],
         "roots": [
@@ -214,6 +223,17 @@
                     "type": "folder",
                     "composition": []
                 }
+            }
+        ],
+        "constants": [
+            {
+                "key": "PERSISTENCE_SPACE",
+                "value": "mct"
+            },
+            {
+                "key": "ADDITIONAL_PERSISTENCE_SPACES",
+                "value": [],
+                "description": "An array of additional persistence spaces to load models from."
             }
         ]
     }

@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,describe,it,expect,beforeEach,jasmine*/
 
 
 /**
@@ -41,12 +41,14 @@ define(
                 mockMenu,
                 mockDocument,
                 mockBody,
-                mockWindow,
+                mockPopupService,
                 mockRootScope,
+                mockAgentService,
                 mockScope,
                 mockElement,
                 mockDomainObject,
                 mockEvent,
+                mockPopup,
                 mockActionContext,
                 action;
 
@@ -56,34 +58,47 @@ define(
                 mockMenu = jasmine.createSpyObj("menu", JQLITE_FUNCTIONS);
                 mockDocument = jasmine.createSpyObj("$document", JQLITE_FUNCTIONS);
                 mockBody = jasmine.createSpyObj("body", JQLITE_FUNCTIONS);
-                mockWindow = { innerWidth: MENU_DIMENSIONS[0] * 4, innerHeight: MENU_DIMENSIONS[1] * 4 };
+                mockPopupService =
+                    jasmine.createSpyObj("popupService", ["display"]);
+                mockPopup = jasmine.createSpyObj("popup", [
+                    "dismiss",
+                    "goesLeft",
+                    "goesUp"
+                ]);
                 mockRootScope = jasmine.createSpyObj("$rootScope", ["$new"]);
-                mockScope = {};
+                mockAgentService = jasmine.createSpyObj("agentService", ["isMobile"]);
+                mockScope = jasmine.createSpyObj("scope", ["$destroy"]);
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
-                mockEvent = jasmine.createSpyObj("event", ["preventDefault"]);
-                mockEvent.pageX = 0;
-                mockEvent.pageY = 0;
+                mockEvent = jasmine.createSpyObj("event", ["preventDefault", "stopPropagation"]);
+                mockEvent.pageX = 123;
+                mockEvent.pageY = 321;
 
                 mockCompile.andReturn(mockCompiledTemplate);
                 mockCompiledTemplate.andReturn(mockMenu);
                 mockDocument.find.andReturn(mockBody);
                 mockRootScope.$new.andReturn(mockScope);
+                mockPopupService.display.andReturn(mockPopup);
 
                 mockActionContext = {key: 'menu', domainObject: mockDomainObject, event: mockEvent};
 
                 action = new ContextMenuAction(
                     mockCompile,
                     mockDocument,
-                    mockWindow,
                     mockRootScope,
+                    mockPopupService,
+                    mockAgentService,
                     mockActionContext
                 );
             });
 
-            it(" adds a menu to the DOM when perform is called", function () {
+            it("displays a popup when performed", function () {
                 action.perform();
-                expect(mockBody.append).toHaveBeenCalledWith(mockMenu);
+                expect(mockPopupService.display).toHaveBeenCalledWith(
+                    mockMenu,
+                    [ mockEvent.pageX, mockEvent.pageY ],
+                    jasmine.any(Object)
+                );
             });
 
             it("prevents the default context menu behavior", function () {
@@ -91,29 +106,22 @@ define(
                 expect(mockEvent.preventDefault).toHaveBeenCalled();
             });
 
-            it("positions menus where clicked", function () {
-                mockEvent.pageX = 10;
-                mockEvent.pageY = 5;
-                action.perform();
-                expect(mockScope.menuStyle.left).toEqual("10px");
-                expect(mockScope.menuStyle.top).toEqual("5px");
-                expect(mockScope.menuStyle.right).toBeUndefined();
-                expect(mockScope.menuStyle.bottom).toBeUndefined();
-                expect(mockScope.menuClass['go-up']).toBeFalsy();
-                expect(mockScope.menuClass['go-left']).toBeFalsy();
+            it("adds classes to menus based on position", function () {
+                var booleans = [ false, true ];
+
+                booleans.forEach(function (goLeft) {
+                    booleans.forEach(function (goUp) {
+                        mockPopup.goesLeft.andReturn(goLeft);
+                        mockPopup.goesUp.andReturn(goUp);
+                        action.perform();
+                        expect(!!mockScope.menuClass['go-up'])
+                            .toEqual(goUp);
+                        expect(!!mockScope.menuClass['go-left'])
+                            .toEqual(goLeft);
+                    });
+                });
             });
 
-            it("repositions menus near the screen edge", function () {
-                mockEvent.pageX = mockWindow.innerWidth - 10;
-                mockEvent.pageY = mockWindow.innerHeight - 5;
-                action.perform();
-                expect(mockScope.menuStyle.right).toEqual("10px");
-                expect(mockScope.menuStyle.bottom).toEqual("5px");
-                expect(mockScope.menuStyle.left).toBeUndefined();
-                expect(mockScope.menuStyle.top).toBeUndefined();
-                expect(mockScope.menuClass['go-up']).toBeTruthy();
-                expect(mockScope.menuClass['go-left']).toBeTruthy();
-            });
 
             it("removes a menu when body is clicked", function () {
                 // Show the menu
@@ -130,7 +138,7 @@ define(
                 });
 
                 // Menu should have been removed
-                expect(mockMenu.remove).toHaveBeenCalled();
+                expect(mockPopup.dismiss).toHaveBeenCalled();
 
                 // Listener should have been detached from body
                 expect(mockBody.off).toHaveBeenCalledWith(
@@ -146,7 +154,7 @@ define(
                 // Verify precondition
                 expect(mockMenu.remove).not.toHaveBeenCalled();
 
-                // Find and fire body's mousedown listener
+                // Find and fire menu's click listener
                 mockMenu.on.calls.forEach(function (call) {
                     if (call.args[0] === 'click') {
                         call.args[1]();
@@ -154,7 +162,45 @@ define(
                 });
 
                 // Menu should have been removed
-                expect(mockMenu.remove).toHaveBeenCalled();
+                expect(mockPopup.dismiss).toHaveBeenCalled();
+            });
+
+            it("keeps a menu when menu is clicked", function () {
+                // Show the menu
+                action.perform();
+                // Find and fire body's mousedown listener
+                mockMenu.on.calls.forEach(function (call) {
+                    if (call.args[0] === 'mousedown') {
+                        call.args[1](mockEvent);
+                    }
+                });
+
+                // Menu should have been removed
+                expect(mockPopup.dismiss).not.toHaveBeenCalled();
+
+                // Listener should have been detached from body
+                expect(mockBody.off).not.toHaveBeenCalled();
+            });
+
+            it("keeps a menu when menu is clicked on mobile", function () {
+                mockAgentService.isMobile.andReturn(true);
+                action = new ContextMenuAction(
+                    mockCompile,
+                    mockDocument,
+                    mockRootScope,
+                    mockPopupService,
+                    mockAgentService,
+                    mockActionContext
+                );
+                action.perform();
+
+                mockMenu.on.calls.forEach(function (call) {
+                    if (call.args[0] === 'touchstart') {
+                        call.args[1](mockEvent);
+                    }
+                });
+
+                expect(mockPopup.dismiss).not.toHaveBeenCalled();
             });
         });
     }

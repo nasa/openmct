@@ -29,10 +29,11 @@
 }
 
 .ui-symbol {
-	$c: $colorKey;
+	&.type-icon {
+		color: $colorObjHdrIc;
+	}
 	&.icon {
-		color: $c;
-		@include txtShdwSubtle();
+		color: $colorKey;
 		&.alert {
 			color: $colorAlert;
 			&:hover {
@@ -43,9 +44,12 @@
 			font-size: 1.65em;
 		}
 	}
+	&.icon-calendar:after {
+		content: "\e605";
+	}
 }
 
-.bar .icon {
+.bar .ui-symbol {
 	display: inline-block;
 }
 
@@ -54,7 +58,7 @@
 	display: inline-block;
 }
 
-.btn-menu .invoke-menu,
+.s-menu-btn .invoke-menu,
 .icon.major .invoke-menu {
 	margin-left: $interiorMarginSm;
 }
@@ -65,9 +69,9 @@
 	position: absolute;
 }
 
-.tree-item .type-icon {
-	font-size: 16px; // 16px is crisp size
-}
+//.tree-item .type-icon {
+//	font-size: 16px; // 16px is crisp size
+//}
 
 .l-icon-link:before {
 	content: "\f4";

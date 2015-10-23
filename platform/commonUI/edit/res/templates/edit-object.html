@@ -30,12 +30,11 @@
                          structure="toolbar.structure"
                          ng-model="toolbar.state">
             </mct-toolbar>
-            <div class='holder abs object-holder work-area'>
-                <mct-representation key="representation.selected.key"
-                                    toolbar="toolbar"
-                                    mct-object="representation.selected.key && domainObject">
-                </mct-representation>
-            </div>
+            <mct-representation key="representation.selected.key"
+                                toolbar="toolbar"
+                                mct-object="representation.selected.key && domainObject"
+                                class="holder abs object-holder work-area">
+            </mct-representation>
         </div>
         <mct-splitter></mct-splitter>
         <div
