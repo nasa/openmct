@@ -107,6 +107,11 @@
                 "key": "SelectorController",
                 "implementation": "controllers/SelectorController.js",
                 "depends": [ "objectService", "$scope" ]
+            },
+            {
+                "key": "ObjectInspectorController",
+                "implementation": "controllers/ObjectInspectorController.js",
+                "depends": [ "$scope", "objectService" ]
             }
         ],
         "directives": [
@@ -232,6 +237,10 @@
                 "key": "switcher",
                 "templateUrl": "templates/controls/switcher.html",
                 "uses": [ "view" ]
+            },
+            {
+                "key": "object-inspector",
+                "templateUrl": "templates/object-inspector.html"
             }
         ],
         "controls": [

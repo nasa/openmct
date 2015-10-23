@@ -71,7 +71,10 @@
                         <mct-splitter class="splitter-inspect mobile-hide"></mct-splitter>
 
                         <div class="split-pane-component t-inspect pane right mobile-hide">
-                            <!--Inspector goes here-->
+                            <mct-representation key="'object-inspector'"
+                                                mct-object="domainObject"
+                                                ng-model="treeModel">
+                            </mct-representation>
                         </div>
                     </mct-split-pane>
                 </div>
