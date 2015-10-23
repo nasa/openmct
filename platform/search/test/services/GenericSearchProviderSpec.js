@@ -99,6 +99,14 @@ define([
                 .toHaveBeenCalledWith(jasmine.any(Function));
         });
 
+        it('reschedules indexing when mutation occurs', function () {
+            var mockDomainObject =
+                jasmine.createSpyObj('domainObj', ['getId']);
+            mockDomainObject.getId.andReturn("some-id");
+            mutationTopic.listen.mostRecentCall.args[0](mockDomainObject);
+            expect(provider.scheduleForIndexing).toHaveBeenCalledWith('some-id');
+        });
+
         it('starts indexing roots', function () {
             expect(provider.scheduleForIndexing).toHaveBeenCalledWith('mine');
         });
