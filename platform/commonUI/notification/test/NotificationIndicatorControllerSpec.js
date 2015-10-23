@@ -34,13 +34,10 @@ define(
             beforeEach(function(){
                 mockNotificationService = jasmine.createSpy("notificationService");
                 mockScope = jasmine.createSpy("$scope");
-                mockDialogService = {
-                    getDialogResponse: function(template, model){},
-                    dismiss: function(){}
-                }
-
-                spyOn(mockDialogService, 'getDialogResponse');
-                spyOn(mockDialogService, 'dismiss');
+                mockDialogService = jasmine.createSpyObj(
+                    "dialogService",
+                    ["getDialogResponse","dismiss"]
+                );
             });
 
             it("exposes the highest notification severity to the template", function() {
