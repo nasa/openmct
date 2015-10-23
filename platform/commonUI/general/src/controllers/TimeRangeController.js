@@ -26,9 +26,8 @@ define(
     function (moment) {
         "use strict";
 
-        var
-				DATE_FORMAT = "YYYY-MM-DD HH:mm:ss",
-				TICK_SPACING_PX = 150;
+        var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss",
+            TICK_SPACING_PX = 150;
 
         /**
          * @memberof platform/commonUI/general
@@ -42,6 +41,15 @@ define(
 
             function formatTimestamp(ts) {
                 return moment.utc(ts).format(DATE_FORMAT);
+            }
+
+            function parseTimestamp(text) {
+                var m = moment.utc(text, DATE_FORMAT);
+                if (m.isValid()) {
+                    return m.valueOf();
+                } else {
+                    throw new Error("Could not parse " + text);
+                }
             }
 
             // From 0.0-1.0 to "0%"-"1%"
@@ -93,6 +101,25 @@ define(
                 return { start: bounds.start, end: bounds.end };
             }
 
+            function updateBoundsTextForProperty(ngModel, property) {
+                try {
+                    if (!$scope.boundsModel[property] ||
+                            parseTimestamp($scope.boundsModel[property]) !==
+                                ngModel.outer[property]) {
+                        $scope.boundsModel[property] =
+                            formatTimestamp(ngModel.outer[property]);
+                    }
+                } catch (e) {
+                    // User-entered text is invalid, so leave it be
+                    // until they fix it.
+                }
+            }
+
+            function updateBoundsText(ngModel) {
+                updateBoundsTextForProperty(ngModel, 'start');
+                updateBoundsTextForProperty(ngModel, 'end');
+            }
+
             function updateViewFromModel(ngModel) {
                 var t = now();
 
@@ -101,8 +128,7 @@ define(
                 ngModel.inner = ngModel.inner || copyBounds(ngModel.outer);
 
                 // First, dates for the date pickers for outer bounds
-                $scope.startOuterDate = new Date(ngModel.outer.start);
-                $scope.endOuterDate = new Date(ngModel.outer.end);
+                updateBoundsText(ngModel);
 
                 // Then various updates for the inner span
                 updateViewForInnerSpanFromModel(ngModel);
@@ -178,6 +204,8 @@ define(
             function updateOuterStart(t) {
                 var ngModel = $scope.ngModel;
 
+                ngModel.outer.start = t;
+
                 ngModel.outer.end = Math.max(
                     ngModel.outer.start + outerMinimumSpan,
                     ngModel.outer.end
@@ -190,13 +218,14 @@ define(
                     ngModel.inner.end
                 );
 
-                $scope.startOuterText = formatTimestamp(t);
-
                 updateViewForInnerSpanFromModel(ngModel);
+                updateTicks();
             }
 
             function updateOuterEnd(t) {
                 var ngModel = $scope.ngModel;
+
+                ngModel.outer.end = t;
 
                 ngModel.outer.start = Math.min(
                     ngModel.outer.end - outerMinimumSpan,
@@ -210,9 +239,40 @@ define(
                     ngModel.inner.start
                 );
 
-                $scope.endOuterText = formatTimestamp(t);
-
                 updateViewForInnerSpanFromModel(ngModel);
+                updateTicks();
+            }
+
+            function updateStartFromText(value) {
+                try {
+                    updateOuterStart(parseTimestamp(value));
+                    updateBoundsTextForProperty($scope.ngModel, 'end');
+                    $scope.boundsModel.startValid = true;
+                } catch (e) {
+                    $scope.boundsModel.startValid = false;
+                    return;
+                }
+            }
+
+            function updateEndFromText(value) {
+                try {
+                    updateOuterEnd(parseTimestamp(value));
+                    updateBoundsTextForProperty($scope.ngModel, 'start');
+                    $scope.boundsModel.endValid = true;
+                } catch (e) {
+                    $scope.boundsModel.endValid = false;
+                    return;
+                }
+            }
+
+            function updateStartFromPicker(value) {
+                updateOuterStart(value);
+                updateBoundsText($scope.ngModel);
+            }
+
+            function updateEndFromPicker(value) {
+                updateOuterEnd(value);
+                updateBoundsText($scope.ngModel);
             }
 
             $scope.startLeftDrag = startLeftDrag;
@@ -224,14 +284,17 @@ define(
 
             $scope.state = false;
             $scope.ticks = [];
+            $scope.boundsModel = {};
 
             // Initialize scope to defaults
             updateViewFromModel($scope.ngModel);
 
             $scope.$watchCollection("ngModel", updateViewFromModel);
             $scope.$watch("spanWidth", updateSpanWidth);
-            $scope.$watch("ngModel.outer.start", updateOuterStart);
-            $scope.$watch("ngModel.outer.end", updateOuterEnd);
+            $scope.$watch("ngModel.outer.start", updateStartFromPicker);
+            $scope.$watch("ngModel.outer.end", updateEndFromPicker);
+            $scope.$watch("boundsModel.start", updateStartFromText);
+            $scope.$watch("boundsModel.end", updateEndFromText);
         }
 
         return TimeConductorController;
