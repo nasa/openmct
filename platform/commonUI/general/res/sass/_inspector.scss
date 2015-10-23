@@ -19,17 +19,55 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* Classes to be used for lists of properties and values */
+/* Styles for the Inspector pane */
 
-.properties {
-    .s-row {
-        border-top: 1px solid $colorInteriorBorder;
-        font-size: 0.8em;
-        &:first-child {
+//.pane.right.t-inspect { @include test(green, 0.3); } // TEMP!
+
+.t-inspector,
+.t-inspector table tr td {
+    font-size: 0.7rem;
+}
+
+.t-inspector {
+    ul li,
+    em {
+        display: block;
+        position: relative;
+    }
+
+    ul li {
+        line-height: 130%;
+        margin-bottom: $interiorMarginLg * 2;
+    }
+    
+    em {
+        @include border-radius($basicCr);
+        background-color: $colorInspectorSectionHeaderBg;
+        color: $colorInspectorSectionHeaderFg;
+        margin-bottom: $interiorMargin;
+        padding: $formTBPad $formLRPad;
+        text-transform: uppercase;
+    }
+
+    table tr {
+        td {
             border: none;
+            border-top: 1px solid $colorInteriorBorder !important;
+            padding: 2px 0;
+            vertical-align: top;
+            &.label {
+                color: $colorInspectorPropName !important;
+                padding-right: $interiorMargin !important;
+                white-space: nowrap;
+            }
+            &.value {
+                //word-wrap: break-word; // Doesn't work in <td>?
+                word-break: break-all;
+            }
         }
-        .s-value {
-            color: #fff;
+
+        &:first-child td {
+            border-top: none !important;
         }
     }
 }

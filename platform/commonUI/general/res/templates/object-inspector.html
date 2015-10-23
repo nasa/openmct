@@ -21,14 +21,17 @@
 -->
 <span ng-controller="ObjectInspectorController as controller">
     <ul>
-        <li ng-repeat="data in metadata">
-            <em>{{ data.name }}</em>
-            {{ data.value }}
+        <li>
+            <em>Properties</em>
+            <table>
+                <tr ng-repeat="data in metadata">
+                    <td class="label">{{ data.name }}</td>
+                    <td class="value">{{ data.value }}</td>
+                </tr>
+            </table>
         </li>
         <li ng-if="contextutalParents.length > 0">
-            <em title="The location of this linked object.">
-                Location
-            </em>
+            <em title="The location of this linked object.">Location</em>
             <span class="inspector-location"
                   ng-repeat="parent in contextutalParents">
                 <mct-representation key="'label'"
@@ -39,9 +42,7 @@
             </span>
         </li>
         <li ng-if="primaryParents.length > 0">
-            <em title="The location of the object that this was linked from.">
-                Original Location
-            </em>
+            <em title="The location of the original object that this was linked from.">Original Location</em>
             <span class="inspector-location"
                   ng-repeat="parent in primaryParents">
                 <mct-representation key="'label'"

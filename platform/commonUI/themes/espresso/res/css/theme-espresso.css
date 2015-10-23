@@ -1257,17 +1257,48 @@ mct-container {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* Classes to be used for lists of properties and values */
-/* line 25, ../../../../general/res/sass/_properties.scss */
-.properties .s-row {
-  border-top: 1px solid rgba(153, 153, 153, 0.1);
-  font-size: 0.8em; }
-  /* line 28, ../../../../general/res/sass/_properties.scss */
-  .properties .s-row:first-child {
-    border: none; }
-  /* line 31, ../../../../general/res/sass/_properties.scss */
-  .properties .s-row .s-value {
-    color: #fff; }
+/* Styles for the Inspector pane */
+/* line 26, ../../../../general/res/sass/_inspector.scss */
+.t-inspector,
+.t-inspector table tr td {
+  font-size: 0.7rem; }
+
+/* line 32, ../../../../general/res/sass/_inspector.scss */
+.t-inspector ul li,
+.t-inspector em {
+  display: block;
+  position: relative; }
+/* line 38, ../../../../general/res/sass/_inspector.scss */
+.t-inspector ul li {
+  line-height: 130%;
+  margin-bottom: 20px; }
+/* line 43, ../../../../general/res/sass/_inspector.scss */
+.t-inspector em {
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  background-color: #404040;
+  color: #999999;
+  margin-bottom: 5px;
+  padding: 5px 5px;
+  text-transform: uppercase; }
+/* line 53, ../../../../general/res/sass/_inspector.scss */
+.t-inspector table tr td {
+  border: none;
+  border-top: 1px solid rgba(153, 153, 153, 0.1) !important;
+  padding: 2px 0;
+  vertical-align: top; }
+  /* line 58, ../../../../general/res/sass/_inspector.scss */
+  .t-inspector table tr td.label {
+    color: #666666 !important;
+    padding-right: 5px !important;
+    white-space: nowrap; }
+  /* line 63, ../../../../general/res/sass/_inspector.scss */
+  .t-inspector table tr td.value {
+    word-break: break-all; }
+/* line 69, ../../../../general/res/sass/_inspector.scss */
+.t-inspector table tr:first-child td {
+  border-top: none !important; }
 
 /********************************* CONTROLS */
 /* line 1, ../../../../general/res/sass/controls/_breadcrumb.scss */
@@ -3877,12 +3908,8 @@ span.req {
 .pane-inspect-hidden .l-object-and-inspector .pane.left {
   right: 15px !important; }
 
-/* line 430, ../../../../general/res/sass/user-environ/_layout.scss */
-.pane.right.t-inspect {
-  background-color: rgba(255, 165, 0, 0.3) !important; }
-
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 435, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 431, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane:not(.resizing) {
     -moz-transition-property: width, left, right;
     -o-transition-property: width, left, right;

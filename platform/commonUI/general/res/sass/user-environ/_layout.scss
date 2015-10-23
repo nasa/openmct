@@ -427,10 +427,6 @@
     }
 }
 
-.pane.right.t-inspect {
-    @include test(orange, 0.3); // TEMP!
-}
-
 @include desktop {
     .pane:not(.resizing) {
         @include trans-prop-nice-resize-w(250ms);

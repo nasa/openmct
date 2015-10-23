@@ -73,6 +73,13 @@ $colorInputFg: pullForward($colorBodyFg, 20%);
 $colorFormText: rgba(#fff, 0.5);
 $colorInputIcon: pushBack($colorBodyFg, 15%);
 
+// Inspector - TO-DO: Add to snow theme
+$colorInspectorFg: $colorBodyFg;
+$colorInspectorPropName: pushBack($colorBodyFg, 20%);
+$colorInspectorPropVal: $colorInspectorFg;
+$colorInspectorSectionHeaderBg: pullForward($colorBodyBg, 5%);
+$colorInspectorSectionHeaderFg: pullForward($colorBodyBg, 40%);
+
 // Selects
 $colorSelectBg: $colorBtnBg;
 $colorSelectFg: $colorBtnFg;
