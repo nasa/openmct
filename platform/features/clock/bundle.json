@@ -4,6 +4,11 @@
     "configuration": {
         "paths": {
             "moment-duration-format": "moment-duration-format"
+        },
+        "shim": {
+            "moment-duration-format": {
+                "deps": [ "moment" ]
+            }
         }
     },
     "extensions": {
