@@ -9,7 +9,7 @@ define(
          * Controller which support the Values view of Activity Modes.
          * @constructor
          * @param {Array} resources definitions for extensions of
-         *        category `warp.resources`
+         *        category `resources`
          */
         function ActivityModeValuesController(resources) {
             var metadata = {};

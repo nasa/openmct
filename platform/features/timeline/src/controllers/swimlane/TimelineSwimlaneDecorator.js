@@ -63,7 +63,7 @@ define(
             }
 
             // Activities should have the Activity Modes and Activity Link dialog
-            if (type && type.instanceOf("warp.activity") && mutator && persister) {
+            if (type && type.instanceOf("activity") && mutator && persister) {
                 swimlane.modes = modes;
                 swimlane.link = link;
             }

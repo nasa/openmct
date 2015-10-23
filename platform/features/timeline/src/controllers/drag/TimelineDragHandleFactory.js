@@ -43,7 +43,7 @@ define(
                     }
 
                     // Instantiate smaller set of handles for timelines
-                    return (type && type.instanceOf('warp.timeline') ?
+                    return (type && type.instanceOf('timeline') ?
                             TIMELINE_HANDLES : DEFAULT_HANDLES)
                                     .map(instantiate);
                 }
