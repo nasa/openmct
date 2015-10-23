@@ -212,7 +212,7 @@
                 width: $ueBrowseLeftPaneTreeW;
             }
             &.t-inspect.right {
-                min-width: 150px;
+                min-width: 100px;
                 max-width: 800px;
                 width: $ueBrowseRightPaneInspectW;
             }
@@ -234,6 +234,14 @@
 
 .pane {
     position: absolute;
+
+    .pane-header {
+        text-transform: uppercase;
+        height: $ueTopBarH;
+        line-height: $ueTopBarH;
+        margin-bottom: $interiorMargin;
+    }
+
     &.treeview.left {
         .create-btn-holder {
             bottom: auto;
@@ -381,7 +389,6 @@
     }
 }
 
-// MOVED from mobile/_layout.scss
 // When the tree is hidden, these are the
 // classes used for the left menu and the
 // right representation.

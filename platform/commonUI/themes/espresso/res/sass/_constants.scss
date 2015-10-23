@@ -73,7 +73,7 @@ $colorInputFg: pullForward($colorBodyFg, 20%);
 $colorFormText: rgba(#fff, 0.5);
 $colorInputIcon: pushBack($colorBodyFg, 15%);
 
-// Inspector - TO-DO: Add to snow theme
+// Inspector
 $colorInspectorFg: $colorBodyFg;
 $colorInspectorPropName: pushBack($colorBodyFg, 20%);
 $colorInspectorPropVal: $colorInspectorFg;
@@ -134,6 +134,8 @@ $colorPlotAreaBorder: $colorInteriorBorder;
 $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
 
 // Tree
+$colorItemTreeHoverBg: rgba($colorBodyFg, 0.1);
+$colorItemTreeHoverFg: pullForward($colorBodyFg, 20%);
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
 $colorItemTreeFg: $colorBodyFg;

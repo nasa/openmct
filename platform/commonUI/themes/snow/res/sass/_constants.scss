@@ -75,6 +75,13 @@ $colorInputIcon: pushBack($colorBodyFg, 25%);
 $colorSelectBg: #ddd;
 $colorSelectFg: $colorBodyFg;
 
+// Inspector
+$colorInspectorFg: $colorBodyFg;
+$colorInspectorPropName: pushBack($colorBodyFg, 20%);
+$colorInspectorPropVal: $colorInspectorFg;
+$colorInspectorSectionHeaderBg: pullForward($colorBodyBg, 5%);
+$colorInspectorSectionHeaderFg: pullForward($colorBodyBg, 40%);
+
 // Limits and staleness colors//
 $colorTelemFresh: pullForward($colorBodyFg, 20%);
 $colorTelemStale: pushBack($colorBodyFg, 20%);
@@ -110,6 +117,7 @@ $colorItemBgSelected: $colorKey;
 
 // Tabular
 $colorTabBorder: pullForward($colorBodyBg, 10%);
+$colorItemTreeHoverFg: pullForward($colorBodyFg, 20%);
 $colorTabBodyBg: $colorBodyBg;
 $colorTabBodyFg: pullForward($colorBodyFg, 20%);
 $colorTabHeaderBg: pullForward($colorBodyBg, 10%);
@@ -125,6 +133,7 @@ $colorPlotAreaBorder: $colorInteriorBorder;
 $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
 
 // Tree
+$colorItemTreeHoverBg: rgba($colorBodyFg, 0.1);
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: $colorItemTreeIcon; //pushBack($colorItemTreeIcon, 20%);
 $colorItemTreeVCHover: $colorKey;

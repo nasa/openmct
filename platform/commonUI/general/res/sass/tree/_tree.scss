@@ -125,8 +125,8 @@ ul.tree {
 		// NOTE: [Mobile] Removed Hover on Mobile
 		@include desktop {
 			&:hover {
-				background: rgba($colorBodyFg, 0.1); //lighten($colorBodyBg, 5%);
-				color: pullForward($colorBodyFg, 20%);
+				background: $colorItemTreeHoverBg;
+				color: $colorItemTreeHoverFg;
 				.icon {
 					color: $colorItemTreeIconHover;
 				}

@@ -19,7 +19,8 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<span ng-controller="ObjectInspectorController as controller">
+<span class="l-inspect" ng-controller="ObjectInspectorController as controller">
+    <div class="pane-header">Inspection</div>
     <ul>
         <li>
             <em>Properties</em>
@@ -33,22 +34,26 @@
         <li ng-if="contextutalParents.length > 0">
             <em title="The location of this linked object.">Location</em>
             <span class="inspector-location"
-                  ng-repeat="parent in contextutalParents">
+                  ng-repeat="parent in contextutalParents"
+                  ng-class="{ first:$index === 0 }">
                 <mct-representation key="'label'"
                                     mct-object="parent"
                                     ng-model="ngModel"
-                                    ng-click="ngModel.selectedObject = parent">
+                                    ng-click="ngModel.selectedObject = parent"
+                                    class="location-item">
                 </mct-representation>
             </span>
         </li>
         <li ng-if="primaryParents.length > 0">
             <em title="The location of the original object that this was linked from.">Original Location</em>
             <span class="inspector-location"
-                  ng-repeat="parent in primaryParents">
+                  ng-repeat="parent in primaryParents"
+                  ng-class="{ first:$index === 0 }">
                 <mct-representation key="'label'"
                                     mct-object="parent"
                                     ng-model="ngModel"
-                                    ng-click="ngModel.selectedObject = parent">
+                                    ng-click="ngModel.selectedObject = parent"
+                                    class="location-item">
                 </mct-representation>
             </span>
         </li>

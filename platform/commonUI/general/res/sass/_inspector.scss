@@ -23,12 +23,18 @@
 
 //.pane.right.t-inspect { @include test(green, 0.3); } // TEMP!
 
-.t-inspector,
-.t-inspector table tr td {
+.l-inspect,
+.l-inspect table tr td {
     font-size: 0.7rem;
 }
 
-.t-inspector {
+.l-inspect {
+    color: $colorInspectorFg;
+    .pane-header {
+        color: pushBack($colorInspectorFg, 20%);
+        font-size: 0.8rem;
+    }
+
     ul li,
     em {
         display: block;
@@ -36,7 +42,6 @@
     }
 
     ul li {
-        line-height: 130%;
         margin-bottom: $interiorMarginLg * 2;
     }
     
@@ -61,13 +66,37 @@
                 white-space: nowrap;
             }
             &.value {
-                //word-wrap: break-word; // Doesn't work in <td>?
                 word-break: break-all;
             }
         }
 
         &:first-child td {
             border-top: none !important;
+        }
+    }
+    
+    .inspector-location {
+        line-height: 180%;
+        .location-item {
+            cursor: pointer;
+            display: inline;
+            position: relative;
+            padding: 2px 4px;
+            &:hover {
+                background: $colorItemTreeHoverBg;
+                color: $colorItemTreeHoverFg;
+                .icon {
+                    color: $colorItemTreeIconHover;
+                }
+            }
+        }
+        &:not(.first):before {
+            color: pushBack($colorInspectorFg, 15%);
+            content: '\3e';
+            display: inline-block;
+            font-family: symbolsfont;
+            font-size:7px;
+            width: 4px;
         }
     }
 }
