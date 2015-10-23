@@ -158,7 +158,7 @@ define(
                     service.setActiveNotification(service.selectNextNotification());
                 }, service.MINIMIZE_TIMEOUT);
             }
-        };
+        }
 
         /*
          * Completely removes a notification. This will dismiss it from the
@@ -189,7 +189,7 @@ define(
                 service.notifications.splice(index, 1);
             }
             service.setActiveNotification(service.selectNextNotification());
-        };
+        }
 
         /*
          * Depending on the severity of the notification will selectively
@@ -201,7 +201,7 @@ define(
             //kind of messages should or should not be in the minimized
             //notifications list
             notification.minimize();
-        };
+        }
 
         /**
          * Returns the notification that is currently visible in the banner area
@@ -249,15 +249,15 @@ define(
             notification = {
                 model: notificationModel,
                 minimize: function() {
-                    minimize(self, notification)
+                    minimize(self, notification);
                 },
                 dismiss: function(){
-                    dismiss(self, notification)
+                    dismiss(self, notification);
                 },
                 dismissOrMinimize: function(){
-                    dismissOrMinimize(notification)
+                    dismissOrMinimize(notification);
                 }
-            },
+            };
 
             notificationModel.severity = notificationModel.severity || "info";
             if (notificationModel.autoDismiss === true){
