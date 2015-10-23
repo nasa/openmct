@@ -37,21 +37,41 @@ define(
         function RemsTelemetryServerAdapter($q, $http, REMS_WS_URL){
             var histories = {},
                 deferreds = {};
+            
+            function statisticalRejection(values){
+                //First, calculate mean
+                var mean = values.reduce(function(accumulator, value){
+                    return accumulator += parseInt(value.value);
+                }, 0) / values.length;
+                var variance = values.reduce(function(accumulator, value){
+                    return accumulator+= Math.pow(parseInt(value.value) - mean, 2);
+                }, 0) / values.length;
+                var stddev = Math.sqrt(variance);
+                return values.filter(function(value){
+                    return mean - stddev  < parseInt(value.value) && parseInt(value.value) < mean + stddev;
+                })
+            }
+            
             function requestHistory (id) {
                 $http.get(REMS_WS_URL).then(
                     function(response){
+                        histories = {};
                         /**
                          * All history is fetched in one go, cache it all to save round trips to the server on subsequent requests
                          */
-                        var lastGoodValue=0;
                         response.data.soles.forEach(function(solData){
                            for (var prop in solData){
                                histories[prop] = histories[prop] || [];
-                               var value = isNaN(solData[prop]) ? lastGoodValue : (lastGoodValue = solData[prop]);
-                               histories[prop].unshift({date: Date.parse(solData[TERRESTRIAL_DATE]), value: value});
+                               if (!isNaN(solData[prop])) {
+                                   //var value = isNaN(solData[prop]) ? lastGoodValue : (lastGoodValue = solData[prop]);
+                                   histories[prop].unshift({
+                                       date: Date.parse(solData[TERRESTRIAL_DATE]),
+                                       value: solData[prop]
+                                   });
+                               }
                            } 
                         });
-                        
+                        //deferreds[id].resolve({id: id, values: statisticalRejection(histories[id])});
                         deferreds[id].resolve({id: id, values: histories[id]});
                     }, function (error){
                         deferreds[id].reject(error);

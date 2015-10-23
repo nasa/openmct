@@ -30,7 +30,7 @@ define(
                 float: "number",
                 integer: "number",
                 string: "string"
-            };
+            }
 
         function RemsTelemetryModelProvider(adapter){
 
@@ -54,7 +54,7 @@ define(
                             key: measurement.identifier,
                             ranges: [{
                                 key: "value",
-                                name: "Value",
+                                name: measurement.units,
                                 units: measurement.units,
                                 format: format
                             }]
