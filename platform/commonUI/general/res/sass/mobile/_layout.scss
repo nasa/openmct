@@ -94,11 +94,14 @@
         }
     }
 
-    .mobile-menu-icon {
+    .toggle-tree {
         font-size: 110%;
         position: absolute;
         top: $bodyMargin + 2;
         left: $bodyMargin;
+        &:before {
+            content:'m' !important;
+        }
     }
 
     .object-browse-bar {

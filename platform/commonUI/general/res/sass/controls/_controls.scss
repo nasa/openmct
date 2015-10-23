@@ -306,8 +306,6 @@ label.checkbox.custom {
 		left: 0;
 	}
 	.knob {
-		//@include btnSubtle();
-		//@include controlGrippy(rgba(black, 0.3), vertical, 1px, solid);
 		@include trans-prop-nice-fade(.25s);
 		background-color: $sliderColorKnob;
 		&:hover {

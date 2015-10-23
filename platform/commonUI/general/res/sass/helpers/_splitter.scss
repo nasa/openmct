@@ -26,14 +26,16 @@
 		background-color: $b;
 		@include border-radius($splitterEndCr);
 		@include boxShdw($splitterShdw);
-		overflow: hidden;
+		//overflow: hidden;
 		position: absolute;
 		z-index: 1;
-		//@if $colorSplitterHover != 'none' {
-			&:hover {
-				background-color: $colorSplitterHover;
-			}
-		//}
+        &:hover {
+            background-color: $colorSplitterHover;
+            &:after {
+                //@include trans-prop-nice("border-color", 25ms);
+                border-color: $colorGrippyInteriorHover !important;
+            }
+        }
 	}
 	&.horizontal {
 		// Slides vertically up and down, splitting the element horizontally
@@ -49,7 +51,9 @@
 			}
 		}
 		>.splitter {
-			@include controlGrippy($colorSplitterInterior, horizontal);
+            &:after {
+                @include controlGrippy($colorSplitterInterior, horizontal);
+            }
 			cursor: row-resize;
 			left: 0; right: 0;
 			width: auto;
@@ -69,16 +73,18 @@
 			}
 		}
 		>.splitter {
-			@include controlGrippy($colorBodyBg, vertical);
 			bottom: 0;
 			cursor: col-resize;
 			width: $splitterW;
+            &:after {
+                @include controlGrippy($colorBodyBg, vertical);
+            }
 		}
 	}
 }
 
 .browse-area .splitter {
-	top: $ueTopBarH + $interiorMarginLg;
+	top: 0; //$ueTopBarH + $interiorMarginLg;
 }
 
 .edit-area .splitter {

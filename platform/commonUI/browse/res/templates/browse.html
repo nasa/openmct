@@ -54,9 +54,7 @@
             <mct-splitter class="mobile-hide" ng-class="{ hidden: !modelPaneTree.visible()}"></mct-splitter>
 
             <div class='split-pane-component items pane right-repr'>
-                <a class="ui-symbol icon mobile-menu-icon"
-                   style="position: absolute; z-index: 1000"
-                   ng-click="modelPaneTree.toggle()">m</a>
+                <a class="mini-tab anchor-left toggle-pane toggle-tree" ng-click="modelPaneTree.toggle()"></a>
                 <div class='holder abs l-mobile' id='content-area' ng-controller="PaneController as modelPaneInspect">
                     <mct-representation mct-object="navigatedObject"
                                         key="'browse-object'"

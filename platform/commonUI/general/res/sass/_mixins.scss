@@ -156,32 +156,34 @@
 }
 
 @mixin controlGrippy($b, $direction: horizontal, $w: 1px, $style: dotted) {
-    &:before {
-        @include trans-prop-nice("border-color", 0.75s);
-        content: '';
-        display: block;
-        height: auto;
-        pointer-events: none;
-        position: absolute;
-        z-index: 2;
+    //&:before {
+    @include trans-prop-nice("border-color", 25ms);
+    content: '';
+    display: block;
+    //height: auto;
+    pointer-events: none;
+    position: absolute;
+    z-index: 2;
 
-        @if $direction == "horizontal" {
-            border-top: $w $style darken($b, 15%);
-            top: 2px;
-            left: 5px;
-            right: 5px;
+    @if $direction == "horizontal" {
+        border-top: $w $style darken($b, 15%);
+        top: 2px;
+        left: 5px;
+        right: 5px;
+        height: 1px;
 
-        } @else if $direction == "vertical" {
-            border-left: $w $style darken($b, 15%);
-            left: 2px;
-            bottom: 5px;
-            top: 5px;
-        }
+    } @else if $direction == "vertical" {
+        border-left: $w $style darken($b, 15%);
+        left: 2px;
+        bottom: 5px;
+        top: 5px;
+        width: 1px;
     }
-    &:not(.disabled):hover:before {
-        @include trans-prop-nice("border-color", 25ms);
-        border-color: $colorGrippyInteriorHover;
-    }
+    //}
+    //&:not(.disabled):hover:before {
+    //    @include trans-prop-nice("border-color", 25ms);
+    //    border-color: $colorGrippyInteriorHover;
+    //}
 }
 
 @mixin boxIncised($sVal: 0.6, $inset: 5px) {
