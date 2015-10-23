@@ -51,11 +51,13 @@
                 </div>
             </div>
 
-            <mct-splitter class="mobile-hide" ng-class="{ hidden: !modelPaneTree.visible()}"></mct-splitter>
+            <mct-splitter class="splitter-treeview mobile-hide"></mct-splitter>
 
-            <div class='split-pane-component items pane right-repr'>
+            <div class='split-pane-component items pane right'>
                 <a class="mini-tab anchor-left toggle-pane toggle-tree" ng-click="modelPaneTree.toggle()" ng-class="{ collapsed : !modelPaneTree.visible() }"></a>
-                <div class='holder abs l-mobile' id='content-area' ng-controller="PaneController as modelPaneInspect">
+                <div class='holder abs l-mobile' id='content-area'
+                     ng-controller="PaneController as modelPaneInspect"
+                     ng-class="modelPaneInspect.visible() ? 'pane-inspect-showing' : 'pane-inspect-hidden'">
                     <mct-representation mct-object="navigatedObject"
                                         key="'browse-object'"
                                         ng-model="modelPaneInspect">

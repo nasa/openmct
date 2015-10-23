@@ -954,6 +954,10 @@ mct-container {
       -o-transition-timing-function: ease-in-out;
       -webkit-transition-timing-function: ease-in-out;
       transition-timing-function: ease-in-out;
+      -moz-transition-delay: 0;
+      -o-transition-delay: 0;
+      -webkit-transition-delay: 0;
+      transition-delay: 0;
       content: '';
       display: block;
       pointer-events: none;
@@ -993,6 +997,10 @@ mct-container {
     -o-transition-timing-function: ease-in-out;
     -webkit-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
+    -moz-transition-delay: 0;
+    -o-transition-delay: 0;
+    -webkit-transition-delay: 0;
+    transition-delay: 0;
     content: '';
     display: block;
     pointer-events: none;
@@ -1380,14 +1388,14 @@ mct-container {
     -webkit-transition: background, 0.25s;
     transition: background, 0.25s;
     text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px; }
-    /* line 269, ../../../../general/res/sass/_mixins.scss */
+    /* line 274, ../../../../general/res/sass/_mixins.scss */
     .s-btn.major .icon, .major.s-menu-btn .icon {
       color: #fff; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 274, ../../../../general/res/sass/_mixins.scss */
+      /* line 279, ../../../../general/res/sass/_mixins.scss */
       .s-btn.major:not(.disabled):hover, .major.s-menu-btn:not(.disabled):hover {
         background: linear-gradient(#1ac6ff, #00bfff); }
-        /* line 276, ../../../../general/res/sass/_mixins.scss */
+        /* line 281, ../../../../general/res/sass/_mixins.scss */
         .s-btn.major:not(.disabled):hover > .icon, .major.s-menu-btn:not(.disabled):hover > .icon {
           color: white; } }
   /* line 66, ../../../../general/res/sass/controls/_buttons.scss */
@@ -1419,14 +1427,14 @@ mct-container {
     -webkit-transition: background, 0.25s;
     transition: background, 0.25s;
     text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px; }
-    /* line 269, ../../../../general/res/sass/_mixins.scss */
+    /* line 274, ../../../../general/res/sass/_mixins.scss */
     .s-btn:not(.major) .icon, .s-menu-btn:not(.major) .icon {
       color: #0099cc; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 274, ../../../../general/res/sass/_mixins.scss */
+      /* line 279, ../../../../general/res/sass/_mixins.scss */
       .s-btn:not(.major):not(.disabled):hover, .s-menu-btn:not(.major):not(.disabled):hover {
         background: linear-gradient(#6b6b6b, #5e5e5e); }
-        /* line 276, ../../../../general/res/sass/_mixins.scss */
+        /* line 281, ../../../../general/res/sass/_mixins.scss */
         .s-btn:not(.major):not(.disabled):hover > .icon, .s-menu-btn:not(.major):not(.disabled):hover > .icon {
           color: #33ccff; } }
   /* line 75, ../../../../general/res/sass/controls/_buttons.scss */
@@ -1461,14 +1469,14 @@ mct-container {
     -webkit-transition: background, 0.25s;
     transition: background, 0.25s;
     text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px; }
-    /* line 269, ../../../../general/res/sass/_mixins.scss */
+    /* line 274, ../../../../general/res/sass/_mixins.scss */
     .s-btn.pause-play.paused .icon, .pause-play.paused.s-menu-btn .icon {
       color: #fff; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 274, ../../../../general/res/sass/_mixins.scss */
+      /* line 279, ../../../../general/res/sass/_mixins.scss */
       .s-btn.pause-play.paused:not(.disabled):hover, .pause-play.paused.s-menu-btn:not(.disabled):hover {
         background: linear-gradient(#fe9815, #f88c01); }
-        /* line 276, ../../../../general/res/sass/_mixins.scss */
+        /* line 281, ../../../../general/res/sass/_mixins.scss */
         .s-btn.pause-play.paused:not(.disabled):hover > .icon, .pause-play.paused.s-menu-btn:not(.disabled):hover > .icon {
           color: white; } }
     /* line 80, ../../../../general/res/sass/controls/_buttons.scss */
@@ -1517,6 +1525,10 @@ mct-container {
     -o-transition-timing-function: ease-in-out;
     -webkit-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
+    -moz-transition-delay: 0;
+    -o-transition-delay: 0;
+    -webkit-transition-delay: 0;
+    transition-delay: 0;
     color: #595959;
     cursor: pointer;
     display: block;
@@ -1545,6 +1557,10 @@ mct-container {
       -o-transition-timing-function: ease-in-out;
       -webkit-transition-timing-function: ease-in-out;
       transition-timing-function: ease-in-out;
+      -moz-transition-delay: 0;
+      -o-transition-delay: 0;
+      -webkit-transition-delay: 0;
+      transition-delay: 0;
       display: block;
       position: absolute; }
     /* line 141, ../../../../general/res/sass/controls/_buttons.scss */
@@ -1561,6 +1577,10 @@ mct-container {
       -o-transition-timing-function: ease-in-out;
       -webkit-transition-timing-function: ease-in-out;
       transition-timing-function: ease-in-out;
+      -moz-transition-delay: 0;
+      -o-transition-delay: 0;
+      -webkit-transition-delay: 0;
+      transition-delay: 0;
       font-size: 7px;
       height: 100%;
       width: 7px; }
@@ -1571,31 +1591,31 @@ mct-container {
     /* line 158, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-left:before {
       content: '\3c';
-      left: -8px; }
+      left: -7px; }
     /* line 162, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-left:hover:before {
-      left: -11px; }
+      left: -9px; }
     /* line 165, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-left.collapsed:before {
       content: '\3e';
-      left: 13px; }
+      left: 12px; }
     /* line 169, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-left.collapsed:hover:before {
-      left: 16px; }
+      left: 14px; }
     /* line 175, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-right:before {
       content: '\3e';
-      left: 13px; }
+      left: 12px; }
     /* line 179, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-right:hover:before {
-      left: 16px; }
+      left: 14px; }
     /* line 182, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-right.collapsed:before {
       content: '\3c';
-      left: -8px; }
+      left: -7px; }
     /* line 186, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-right.collapsed:hover:before {
-      left: -11px; } }
+      left: -9px; } }
 
 /* line 196, ../../../../general/res/sass/controls/_buttons.scss */
 .l-btn-set {
@@ -1668,10 +1688,10 @@ mct-container {
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
       text-shadow: rgba(0, 0, 0, 0.8) 0 1px 2px;
-      -moz-transition-property: visibility, opacity, background-color, border-color;
-      -o-transition-property: visibility, opacity, background-color, border-color;
-      -webkit-transition-property: visibility, opacity, background-color, border-color;
-      transition-property: visibility, opacity, background-color, border-color;
+      -moz-transition-property: opacity, background-color, border-color, color;
+      -o-transition-property: opacity, background-color, border-color, color;
+      -webkit-transition-property: opacity, background-color, border-color, color;
+      transition-property: opacity, background-color, border-color, color;
       -moz-transition-duration: 0.25s;
       -o-transition-duration: 0.25s;
       -webkit-transition-duration: 0.25s;
@@ -1680,6 +1700,10 @@ mct-container {
       -o-transition-timing-function: ease-in-out;
       -webkit-transition-timing-function: ease-in-out;
       transition-timing-function: ease-in-out;
+      -moz-transition-delay: 0;
+      -o-transition-delay: 0;
+      -webkit-transition-delay: 0;
+      transition-delay: 0;
       border: 1px solid transparent;
       color: #fff;
       display: block;
@@ -1932,10 +1956,10 @@ label.checkbox.custom {
 
 /* line 227, ../../../../general/res/sass/controls/_controls.scss */
 .view-switcher {
-  -moz-transition-property: visibility, opacity, background-color, border-color;
-  -o-transition-property: visibility, opacity, background-color, border-color;
-  -webkit-transition-property: visibility, opacity, background-color, border-color;
-  transition-property: visibility, opacity, background-color, border-color;
+  -moz-transition-property: opacity, background-color, border-color, color;
+  -o-transition-property: opacity, background-color, border-color, color;
+  -webkit-transition-property: opacity, background-color, border-color, color;
+  transition-property: opacity, background-color, border-color, color;
   -moz-transition-duration: 100ms;
   -o-transition-duration: 100ms;
   -webkit-transition-duration: 100ms;
@@ -1943,7 +1967,11 @@ label.checkbox.custom {
   -moz-transition-timing-function: ease-in-out;
   -o-transition-timing-function: ease-in-out;
   -webkit-transition-timing-function: ease-in-out;
-  transition-timing-function: ease-in-out; }
+  transition-timing-function: ease-in-out;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  -webkit-transition-delay: 0;
+  transition-delay: 0; }
 
 /******************************************************** OBJECT-HEADER */
 /* line 232, ../../../../general/res/sass/controls/_controls.scss */
@@ -1994,6 +2022,10 @@ label.checkbox.custom {
       -o-transition-timing-function: ease-in-out;
       -webkit-transition-timing-function: ease-in-out;
       transition-timing-function: ease-in-out;
+      -moz-transition-delay: 0;
+      -o-transition-delay: 0;
+      -webkit-transition-delay: 0;
+      transition-delay: 0;
       opacity: 0; }
     /* line 287, ../../../../general/res/sass/controls/_controls.scss */
     .object-header:hover .context-available {
@@ -2010,10 +2042,10 @@ label.checkbox.custom {
   left: 0; }
 /* line 308, ../../../../general/res/sass/controls/_controls.scss */
 .slider .knob {
-  -moz-transition-property: visibility, opacity, background-color, border-color;
-  -o-transition-property: visibility, opacity, background-color, border-color;
-  -webkit-transition-property: visibility, opacity, background-color, border-color;
-  transition-property: visibility, opacity, background-color, border-color;
+  -moz-transition-property: opacity, background-color, border-color, color;
+  -o-transition-property: opacity, background-color, border-color, color;
+  -webkit-transition-property: opacity, background-color, border-color, color;
+  transition-property: opacity, background-color, border-color, color;
   -moz-transition-duration: 0.25s;
   -o-transition-duration: 0.25s;
   -webkit-transition-duration: 0.25s;
@@ -2022,6 +2054,10 @@ label.checkbox.custom {
   -o-transition-timing-function: ease-in-out;
   -webkit-transition-timing-function: ease-in-out;
   transition-timing-function: ease-in-out;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  -webkit-transition-delay: 0;
+  transition-delay: 0;
   background-color: rgba(0, 153, 204, 0.6);
   position: absolute;
   height: 100%;
@@ -2053,10 +2089,10 @@ label.checkbox.custom {
   cursor: e-resize; }
 /* line 330, ../../../../general/res/sass/controls/_controls.scss */
 .slider .range {
-  -moz-transition-property: visibility, opacity, background-color, border-color;
-  -o-transition-property: visibility, opacity, background-color, border-color;
-  -webkit-transition-property: visibility, opacity, background-color, border-color;
-  transition-property: visibility, opacity, background-color, border-color;
+  -moz-transition-property: opacity, background-color, border-color, color;
+  -o-transition-property: opacity, background-color, border-color, color;
+  -webkit-transition-property: opacity, background-color, border-color, color;
+  transition-property: opacity, background-color, border-color, color;
   -moz-transition-duration: 0.25s;
   -o-transition-duration: 0.25s;
   -webkit-transition-duration: 0.25s;
@@ -2065,6 +2101,10 @@ label.checkbox.custom {
   -o-transition-timing-function: ease-in-out;
   -webkit-transition-timing-function: ease-in-out;
   transition-timing-function: ease-in-out;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  -webkit-transition-delay: 0;
+  transition-delay: 0;
   background-color: rgba(0, 153, 204, 0.3);
   cursor: ew-resize;
   position: absolute;
@@ -2160,6 +2200,10 @@ label.checkbox.custom {
     -o-transition-timing-function: ease-in-out;
     -webkit-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
+    -moz-transition-delay: 0;
+    -o-transition-delay: 0;
+    -webkit-transition-delay: 0;
+    transition-delay: 0;
     cursor: pointer; }
     /* line 424, ../../../../general/res/sass/controls/_controls.scss */
     .l-calendar ul.l-cal-row.l-body li.in-month {
@@ -2348,7 +2392,7 @@ label.checkbox.custom {
   .menu ul {
     margin: 0;
     padding: 0; }
-    /* line 326, ../../../../general/res/sass/_mixins.scss */
+    /* line 331, ../../../../general/res/sass/_mixins.scss */
     .menu ul li {
       list-style-type: none;
       margin: 0;
@@ -2703,10 +2747,10 @@ mct-include.l-time-controller {
     z-index: 2; }
     /* line 161, ../../../../general/res/sass/controls/_time-controller.scss */
     mct-include.l-time-controller .knob .range-value {
-      -moz-transition-property: visibility, opacity, background-color, border-color;
-      -o-transition-property: visibility, opacity, background-color, border-color;
-      -webkit-transition-property: visibility, opacity, background-color, border-color;
-      transition-property: visibility, opacity, background-color, border-color;
+      -moz-transition-property: opacity, background-color, border-color, color;
+      -o-transition-property: opacity, background-color, border-color, color;
+      -webkit-transition-property: opacity, background-color, border-color, color;
+      transition-property: opacity, background-color, border-color, color;
       -moz-transition-duration: 0.25s;
       -o-transition-duration: 0.25s;
       -webkit-transition-duration: 0.25s;
@@ -2715,6 +2759,10 @@ mct-include.l-time-controller {
       -o-transition-timing-function: ease-in-out;
       -webkit-transition-timing-function: ease-in-out;
       transition-timing-function: ease-in-out;
+      -moz-transition-delay: 0;
+      -o-transition-delay: 0;
+      -webkit-transition-delay: 0;
+      transition-delay: 0;
       padding: 0 10px;
       position: absolute;
       height: 20px;
@@ -2902,7 +2950,7 @@ mct-include.l-time-controller {
       padding: 0 3px;
       position: relative;
       height: 150px; }
-      /* line 293, ../../../../general/res/sass/_mixins.scss */
+      /* line 298, ../../../../general/res/sass/_mixins.scss */
       .form .form-row .selector-list.error {
         background: rgba(255, 0, 0, 0.5); }
       /* line 124, ../../../../general/res/sass/forms/_elems.scss */
@@ -2959,7 +3007,7 @@ input[type="text"] {
   color: #cccccc;
   outline: none;
   padding: 0 3px; }
-  /* line 293, ../../../../general/res/sass/_mixins.scss */
+  /* line 298, ../../../../general/res/sass/_mixins.scss */
   input[type="text"].error {
     background: rgba(255, 0, 0, 0.5); }
   /* line 172, ../../../../general/res/sass/forms/_elems.scss */
@@ -2987,7 +3035,7 @@ textarea {
   position: absolute;
   height: 100%;
   width: 100%; }
-  /* line 293, ../../../../general/res/sass/_mixins.scss */
+  /* line 298, ../../../../general/res/sass/_mixins.scss */
   textarea.error {
     background: rgba(255, 0, 0, 0.5); }
 
@@ -3046,14 +3094,14 @@ textarea {
   overflow: hidden;
   position: relative;
   line-height: 22px; }
-  /* line 269, ../../../../general/res/sass/_mixins.scss */
+  /* line 274, ../../../../general/res/sass/_mixins.scss */
   .select .icon {
     color: #0099cc; }
   @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-    /* line 274, ../../../../general/res/sass/_mixins.scss */
+    /* line 279, ../../../../general/res/sass/_mixins.scss */
     .select:not(.disabled):hover {
       background: linear-gradient(#6b6b6b, #5e5e5e); }
-      /* line 276, ../../../../general/res/sass/_mixins.scss */
+      /* line 281, ../../../../general/res/sass/_mixins.scss */
       .select:not(.disabled):hover > .icon {
         color: #33ccff; } }
   /* line 31, ../../../../general/res/sass/forms/_selects.scss */
@@ -3135,7 +3183,7 @@ textarea {
   max-height: 400px;
   overflow: auto;
   padding: 5px; }
-  /* line 293, ../../../../general/res/sass/_mixins.scss */
+  /* line 298, ../../../../general/res/sass/_mixins.scss */
   .channel-selector .treeview.error {
     background: rgba(255, 0, 0, 0.5); }
 /* line 36, ../../../../general/res/sass/forms/_channel-selector.scss */
@@ -3301,7 +3349,7 @@ span.req {
   padding: 0 3px;
   background: #3b3b3b;
   border-bottom: 1px solid #4d4d4d; }
-  /* line 293, ../../../../general/res/sass/_mixins.scss */
+  /* line 298, ../../../../general/res/sass/_mixins.scss */
   .filter input.filter.error,
   .filter input.t-filter-input.error,
   .t-filter input.filter.error,
@@ -3609,7 +3657,7 @@ span.req {
   max-width: 800px;
   width: 25%; }
 /* line 214, ../../../../general/res/sass/user-environ/_layout.scss */
-.browse-mode .split-layout .split-pane-component.pane.t-inspector.right {
+.browse-mode .split-layout .split-pane-component.pane.t-inspect.right {
   min-width: 150px;
   max-width: 800px;
   width: 10%; }
@@ -3623,65 +3671,50 @@ span.req {
     height: 30%; }
 
 /* line 235, ../../../../general/res/sass/user-environ/_layout.scss */
-.pane:not(.resizing) {
-  -moz-transition-property: width, left, right;
-  -o-transition-property: width, left, right;
-  -webkit-transition-property: width, left, right;
-  transition-property: width, left, right;
-  -moz-transition-duration: 250ms;
-  -o-transition-duration: 250ms;
-  -webkit-transition-duration: 250ms;
-  transition-duration: 250ms;
-  -moz-transition-timing-function: ease-in-out;
-  -o-transition-timing-function: ease-in-out;
-  -webkit-transition-timing-function: ease-in-out;
-  transition-timing-function: ease-in-out; }
-
-/* line 240, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane {
   position: absolute; }
-  /* line 243, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 238, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .create-btn-holder {
     bottom: auto;
     top: 0;
     height: 24px; }
-    /* line 247, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 242, ../../../../general/res/sass/user-environ/_layout.scss */
     .pane.treeview.left .create-btn-holder .wrapper.menu-element {
       position: absolute;
       bottom: 5px; }
-  /* line 252, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 247, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .search-holder {
     top: 34px; }
-  /* line 255, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 250, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .tree-holder {
     overflow: auto;
     top: 64px; }
-  /* line 261, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 256, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .mini-tab.toggle-pane {
     z-index: 2; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 261, ../../../../general/res/sass/user-environ/_layout.scss */
+      /* line 256, ../../../../general/res/sass/user-environ/_layout.scss */
       .pane .mini-tab.toggle-pane {
         top: 5px; }
-        /* line 267, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 262, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab.toggle-pane.toggle-tree.anchor-left {
           left: -30px; }
-          /* line 270, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 265, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab.toggle-pane.toggle-tree.anchor-left:after {
             content: 'F'; }
-          /* line 273, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 268, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab.toggle-pane.toggle-tree.anchor-left.collapsed {
-            left: -10px; }
-        /* line 277, ../../../../general/res/sass/user-environ/_layout.scss */
+            left: -25px; }
+        /* line 272, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab.toggle-pane.toggle-inspect.anchor-right {
           right: -25px; }
-          /* line 280, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 275, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab.toggle-pane.toggle-inspect.anchor-right:after {
             content: '\e608'; }
-          /* line 283, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 278, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab.toggle-pane.toggle-inspect.anchor-right.collapsed {
-            right: -5px; } }
-  /* line 292, ../../../../general/res/sass/user-environ/_layout.scss */
+            right: -20px; } }
+  /* line 287, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.pager, .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.pager,
   .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.val,
   .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.val, .pane.items .object-browse-bar .s-menu-btn span.left.l-click-area, .s-menu-btn .pane.items .object-browse-bar span.left.l-click-area,
@@ -3694,31 +3727,31 @@ span.req {
   .s-menu-btn .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
 
-/* line 303, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 298, ../../../../general/res/sass/user-environ/_layout.scss */
 .split-layout.horizontal > .pane {
   margin-top: 5px; }
-  /* line 306, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 301, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane:first-child {
     margin-top: 0; }
-/* line 313, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 308, ../../../../general/res/sass/user-environ/_layout.scss */
 .split-layout.vertical > .pane {
   margin-left: 5px; }
-  /* line 316, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 311, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane > .holder {
     left: 0;
     right: 0; }
-  /* line 320, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 315, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout.vertical > .pane:first-child {
     margin-left: 0; }
-    /* line 322, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 317, ../../../../general/res/sass/user-environ/_layout.scss */
     .split-layout.vertical > .pane:first-child .holder {
       right: 3px; }
 
-/* line 330, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 325, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-holder {
   overflow: hidden;
   top: 34px; }
-  /* line 333, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 328, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-holder > ng-include {
     overflow: auto;
     position: absolute;
@@ -3728,11 +3761,11 @@ span.req {
     left: 0;
     width: auto;
     height: auto; }
-  /* line 337, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 332, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-holder.l-controls-visible.l-time-controller-visible {
     bottom: 88px; }
 
-/* line 343, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 338, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .s-btn, .object-browse-bar .s-menu-btn,
 .top-bar .buttons-main .s-btn,
 .top-bar .buttons-main .s-menu-btn,
@@ -3744,12 +3777,12 @@ span.req {
   line-height: 25px;
   vertical-align: top; }
 
-/* line 356, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 351, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .view-switcher,
 .top-bar .view-switcher {
   margin-right: 20px; }
 
-/* line 361, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 356, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar {
   overflow: visible;
   position: absolute;
@@ -3765,56 +3798,108 @@ span.req {
   height: 24px;
   line-height: 24px;
   white-space: nowrap; }
-  /* line 369, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 364, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-browse-bar .left {
     padding-right: 20px; }
-    /* line 371, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 366, ../../../../general/res/sass/user-environ/_layout.scss */
     .object-browse-bar .left .l-back {
       display: inline-block;
       float: left;
       margin-right: 10px; }
 
-/* line 379, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 374, ../../../../general/res/sass/user-environ/_layout.scss */
 .l-flex {
   display: flex;
   display: -webkit-flex;
   flex-flow: row nowrap;
   -webkit-flex-flow: row nowrap; }
-  /* line 382, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 377, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-flex .left {
     flex: 1 1 0;
     -webkit-flex: 1 1 0;
     padding-right: 10px; }
 
-/* line 393, ../../../../general/res/sass/user-environ/_layout.scss */
-.pane-tree-hidden {
-  -moz-user-select: -moz-none;
-  -ms-user-select: none;
-  -webkit-user-select: none;
-  user-select: none; }
-  /* line 396, ../../../../general/res/sass/user-environ/_layout.scss */
-  .pane-tree-hidden .pane.left.treeview {
-    opacity: 0; }
-  /* line 400, ../../../../general/res/sass/user-environ/_layout.scss */
-  .pane-tree-hidden .pane.right-repr {
-    left: 0 !important; }
+/* line 390, ../../../../general/res/sass/user-environ/_layout.scss */
+.pane-tree-hidden .pane.left.treeview,
+.pane-tree-hidden .splitter-treeview {
+  opacity: 0; }
+/* line 395, ../../../../general/res/sass/user-environ/_layout.scss */
+.pane-tree-hidden .pane.right.items {
+  left: 15px !important; }
 
-/* line 407, ../../../../general/res/sass/user-environ/_layout.scss */
-.pane-tree-showing .pane.left.treeview {
-  -moz-transition-property: opacity;
-  -o-transition-property: opacity;
-  -webkit-transition-property: opacity;
-  transition-property: opacity;
-  -moz-transition-duration: 0.4s;
-  -o-transition-duration: 0.4s;
-  -webkit-transition-duration: 0.4s;
-  transition-duration: 0.4s;
+/* line 402, ../../../../general/res/sass/user-environ/_layout.scss */
+.pane-tree-showing .pane.left.treeview,
+.pane-tree-showing .splitter-treeview {
+  -moz-transition-property: opacity, background-color, border-color, color;
+  -o-transition-property: opacity, background-color, border-color, color;
+  -webkit-transition-property: opacity, background-color, border-color, color;
+  transition-property: opacity, background-color, border-color, color;
+  -moz-transition-duration: 250ms;
+  -o-transition-duration: 250ms;
+  -webkit-transition-duration: 250ms;
+  transition-duration: 250ms;
   -moz-transition-timing-function: ease-in-out;
   -o-transition-timing-function: ease-in-out;
   -webkit-transition-timing-function: ease-in-out;
   transition-timing-function: ease-in-out;
+  -moz-transition-delay: 250ms;
+  -o-transition-delay: 250ms;
+  -webkit-transition-delay: 250ms;
+  transition-delay: 250ms;
   opacity: 1; }
 
+/* line 411, ../../../../general/res/sass/user-environ/_layout.scss */
+.pane-inspect-showing .l-object-and-inspector .pane.right,
+.pane-inspect-showing .l-object-and-inspector .splitter-inspect {
+  -moz-transition-property: opacity, background-color, border-color, color;
+  -o-transition-property: opacity, background-color, border-color, color;
+  -webkit-transition-property: opacity, background-color, border-color, color;
+  transition-property: opacity, background-color, border-color, color;
+  -moz-transition-duration: 250ms;
+  -o-transition-duration: 250ms;
+  -webkit-transition-duration: 250ms;
+  transition-duration: 250ms;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -moz-transition-delay: 250ms;
+  -o-transition-delay: 250ms;
+  -webkit-transition-delay: 250ms;
+  transition-delay: 250ms;
+  opacity: 1; }
+
+/* line 420, ../../../../general/res/sass/user-environ/_layout.scss */
+.pane-inspect-hidden .l-object-and-inspector .pane.right,
+.pane-inspect-hidden .l-object-and-inspector .splitter-inspect {
+  opacity: 0; }
+/* line 424, ../../../../general/res/sass/user-environ/_layout.scss */
+.pane-inspect-hidden .l-object-and-inspector .pane.left {
+  right: 15px !important; }
+
+/* line 430, ../../../../general/res/sass/user-environ/_layout.scss */
+.pane.right.t-inspect {
+  background-color: rgba(255, 165, 0, 0.3) !important; }
+
+@media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+  /* line 435, ../../../../general/res/sass/user-environ/_layout.scss */
+  .pane:not(.resizing) {
+    -moz-transition-property: width, left, right;
+    -o-transition-property: width, left, right;
+    -webkit-transition-property: width, left, right;
+    transition-property: width, left, right;
+    -moz-transition-duration: 250ms;
+    -o-transition-duration: 250ms;
+    -webkit-transition-duration: 250ms;
+    transition-duration: 250ms;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    -moz-transition-delay: 0;
+    -o-transition-delay: 0;
+    -webkit-transition-delay: 0;
+    transition-delay: 0; } }
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -3850,7 +3935,7 @@ span.req {
     background-color: #262626; }
 
   /* line 35, ../../../../general/res/sass/mobile/_layout.scss */
-  .pane.right-repr {
+  .pane.right.items {
     -moz-transition-duration: 0.35s;
     -o-transition-duration: 0.35s;
     -webkit-transition-duration: 0.35s;
@@ -3859,7 +3944,7 @@ span.req {
     backface-visibility: hidden;
     margin-left: 0 !important; }
     /* line 39, ../../../../general/res/sass/mobile/_layout.scss */
-    .pane.right-repr #content-area {
+    .pane.right.items #content-area {
       -moz-transition-duration: 0.35s;
       -o-transition-duration: 0.35s;
       -webkit-transition-duration: 0.35s;
@@ -3901,7 +3986,7 @@ span.req {
     right: auto !important;
     width: 40% !important; }
   /* line 88, ../../../../general/res/sass/mobile/_layout.scss */
-  .pane-tree-showing .pane.right-repr {
+  .pane-tree-showing .pane.right.items {
     left: 40% !important; }
 
   /* line 93, ../../../../general/res/sass/mobile/_layout.scss */
@@ -3959,6 +4044,10 @@ span.req {
     -o-transition-timing-function: ease-in-out;
     -webkit-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
+    -moz-transition-delay: 0;
+    -o-transition-delay: 0;
+    -webkit-transition-delay: 0;
+    transition-delay: 0;
     opacity: 0; }
 
   /* line 138, ../../../../general/res/sass/mobile/_layout.scss */
@@ -3976,18 +4065,24 @@ span.req {
     -o-transition-timing-function: ease-in-out;
     -webkit-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
+    -moz-transition-delay: 0;
+    -o-transition-delay: 0;
+    -webkit-transition-delay: 0;
+    transition-delay: 0;
     opacity: 1; } }
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) {
   /* line 147, ../../../../general/res/sass/mobile/_layout.scss */
   .pane-tree-showing .pane.left.treeview {
     width: 90% !important; }
   /* line 150, ../../../../general/res/sass/mobile/_layout.scss */
-  .pane-tree-showing .pane.right-repr {
+  .pane-tree-showing .pane.right.items {
     left: 0 !important;
-    transform: translateX(90%);
-    -webkit-transform: translateX(90%); }
+    -moz-transform: translateX(90%);
+    -ms-transform: translateX(90%);
+    -webkit-transform: translateX(90%);
+    transform: translateX(90%); }
     /* line 153, ../../../../general/res/sass/mobile/_layout.scss */
-    .pane-tree-showing .pane.right-repr #content-area {
+    .pane-tree-showing .pane.right.items #content-area {
       opacity: 0; } }
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
   /* line 161, ../../../../general/res/sass/mobile/_layout.scss */
@@ -4431,14 +4526,14 @@ span.req {
       -webkit-transition: background, 0.25s;
       transition: background, 0.25s;
       text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px; }
-      /* line 269, ../../../../general/res/sass/_mixins.scss */
+      /* line 274, ../../../../general/res/sass/_mixins.scss */
       .overlay .bottom-bar .s-btn:not(.major) .icon, .overlay .bottom-bar .s-menu-btn:not(.major) .icon {
         color: #fff; }
       @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-        /* line 274, ../../../../general/res/sass/_mixins.scss */
+        /* line 279, ../../../../general/res/sass/_mixins.scss */
         .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover, .overlay .bottom-bar .s-menu-btn:not(.major):not(.disabled):hover {
           background: linear-gradient(#a6a6a6, #999999); }
-          /* line 276, ../../../../general/res/sass/_mixins.scss */
+          /* line 281, ../../../../general/res/sass/_mixins.scss */
           .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .s-menu-btn:not(.major):not(.disabled):hover > .icon {
             color: white; } }
 /* line 85, ../../../../general/res/sass/overlay/_overlay.scss */
@@ -4523,7 +4618,7 @@ ul.tree {
   -ms-user-select: none;
   -webkit-user-select: none;
   user-select: none; }
-  /* line 326, ../../../../general/res/sass/_mixins.scss */
+  /* line 331, ../../../../general/res/sass/_mixins.scss */
   ul.tree li {
     list-style-type: none;
     margin: 0;
@@ -5791,14 +5886,14 @@ table {
     margin-bottom: 3px;
     margin-right: 3px;
     position: relative; }
-    /* line 269, ../../../../general/res/sass/_mixins.scss */
+    /* line 274, ../../../../general/res/sass/_mixins.scss */
     .items-holder .item.grid-item .icon {
       color: #0099cc; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 274, ../../../../general/res/sass/_mixins.scss */
+      /* line 279, ../../../../general/res/sass/_mixins.scss */
       .items-holder .item.grid-item:not(.disabled):hover {
         background: linear-gradient(#666666, #595959); }
-        /* line 276, ../../../../general/res/sass/_mixins.scss */
+        /* line 281, ../../../../general/res/sass/_mixins.scss */
         .items-holder .item.grid-item:not(.disabled):hover > .icon {
           color: #33ccff; } }
     /* line 45, ../../../../general/res/sass/items/_item.scss */
@@ -5881,6 +5976,10 @@ table {
         -o-transition-timing-function: ease-in-out;
         -webkit-transition-timing-function: ease-in-out;
         transition-timing-function: ease-in-out;
+        -moz-transition-delay: 0;
+        -o-transition-delay: 0;
+        -webkit-transition-delay: 0;
+        transition-delay: 0;
         opacity: 0;
         color: #8c8c8c;
         font-size: 3em;
@@ -5933,14 +6032,14 @@ table {
       transition: background, 0.25s;
       text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px;
       color: #80dfff; }
-      /* line 269, ../../../../general/res/sass/_mixins.scss */
+      /* line 274, ../../../../general/res/sass/_mixins.scss */
       .items-holder .item.grid-item.selected .icon {
         color: #0099cc; }
       @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-        /* line 274, ../../../../general/res/sass/_mixins.scss */
+        /* line 279, ../../../../general/res/sass/_mixins.scss */
         .items-holder .item.grid-item.selected:not(.disabled):hover {
           background: linear-gradient(#1ac6ff, #00bfff); }
-          /* line 276, ../../../../general/res/sass/_mixins.scss */
+          /* line 281, ../../../../general/res/sass/_mixins.scss */
           .items-holder .item.grid-item.selected:not(.disabled):hover > .icon {
             color: #33ccff; } }
       /* line 137, ../../../../general/res/sass/items/_item.scss */
@@ -6085,10 +6184,10 @@ table {
   font-size: 0.75rem; }
   /* line 32, ../../../../general/res/sass/_autoflow.scss */
   .autoflow:hover .l-autoflow-header .s-btn.change-column-width, .autoflow:hover .l-autoflow-header .change-column-width.s-menu-btn {
-    -moz-transition-property: visibility, opacity, background-color, border-color;
-    -o-transition-property: visibility, opacity, background-color, border-color;
-    -webkit-transition-property: visibility, opacity, background-color, border-color;
-    transition-property: visibility, opacity, background-color, border-color;
+    -moz-transition-property: opacity, background-color, border-color, color;
+    -o-transition-property: opacity, background-color, border-color, color;
+    -webkit-transition-property: opacity, background-color, border-color, color;
+    transition-property: opacity, background-color, border-color, color;
     -moz-transition-duration: 50ms;
     -o-transition-duration: 50ms;
     -webkit-transition-duration: 50ms;
@@ -6097,6 +6196,10 @@ table {
     -o-transition-timing-function: ease-in-out;
     -webkit-transition-timing-function: ease-in-out;
     transition-timing-function: ease-in-out;
+    -moz-transition-delay: 0;
+    -o-transition-delay: 0;
+    -webkit-transition-delay: 0;
+    transition-delay: 0;
     opacity: 1; }
   /* line 40, ../../../../general/res/sass/_autoflow.scss */
   .autoflow .l-autoflow-header {
@@ -6109,10 +6212,10 @@ table {
       vertical-align: middle; }
     /* line 48, ../../../../general/res/sass/_autoflow.scss */
     .autoflow .l-autoflow-header .s-btn.change-column-width, .autoflow .l-autoflow-header .change-column-width.s-menu-btn {
-      -moz-transition-property: visibility, opacity, background-color, border-color;
-      -o-transition-property: visibility, opacity, background-color, border-color;
-      -webkit-transition-property: visibility, opacity, background-color, border-color;
-      transition-property: visibility, opacity, background-color, border-color;
+      -moz-transition-property: opacity, background-color, border-color, color;
+      -o-transition-property: opacity, background-color, border-color, color;
+      -webkit-transition-property: opacity, background-color, border-color, color;
+      transition-property: opacity, background-color, border-color, color;
       -moz-transition-duration: 500ms;
       -o-transition-duration: 500ms;
       -webkit-transition-duration: 500ms;
@@ -6121,6 +6224,10 @@ table {
       -o-transition-timing-function: ease-in-out;
       -webkit-transition-timing-function: ease-in-out;
       transition-timing-function: ease-in-out;
+      -moz-transition-delay: 0;
+      -o-transition-delay: 0;
+      -webkit-transition-delay: 0;
+      transition-delay: 0;
       opacity: 0; }
     /* line 52, ../../../../general/res/sass/_autoflow.scss */
     .autoflow .l-autoflow-header .l-filter {
@@ -6381,6 +6488,10 @@ table {
   -o-transition-timing-function: ease-in-out;
   -webkit-transition-timing-function: ease-in-out;
   transition-timing-function: ease-in-out;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  -webkit-transition-delay: 0;
+  transition-delay: 0;
   position: absolute;
   left: 0;
   z-index: 1; }
@@ -6395,10 +6506,10 @@ table {
   color: #fff; }
 /* line 38, ../../../../general/res/sass/features/_time-display.scss */
 .l-time-display .l-btn.control {
-  -moz-transition-property: visibility, opacity, background-color, border-color;
-  -o-transition-property: visibility, opacity, background-color, border-color;
-  -webkit-transition-property: visibility, opacity, background-color, border-color;
-  transition-property: visibility, opacity, background-color, border-color;
+  -moz-transition-property: opacity, background-color, border-color, color;
+  -o-transition-property: opacity, background-color, border-color, color;
+  -webkit-transition-property: opacity, background-color, border-color, color;
+  transition-property: opacity, background-color, border-color, color;
   -moz-transition-duration: 200ms;
   -o-transition-duration: 200ms;
   -webkit-transition-duration: 200ms;
@@ -6407,6 +6518,10 @@ table {
   -o-transition-timing-function: ease-in-out;
   -webkit-transition-timing-function: ease-in-out;
   transition-timing-function: ease-in-out;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  -webkit-transition-delay: 0;
+  transition-delay: 0;
   opacity: 0;
   font-size: 0.65em;
   vertical-align: top; }

@@ -32,7 +32,7 @@
         background-color: $colorMobilePaneLeft;
     }
 
-    .pane.right-repr {
+    .pane.right.items {
         //@include test();
         @include slMenuTransitions;
         margin-left: 0 !important;
@@ -85,7 +85,7 @@
             width: $proporMenuWithView !important;
         }
         // Sets the right representation when the tree is shown.
-        .pane.right-repr {
+        .pane.right.items {
             left: $proporMenuWithView !important;
         }
     }
@@ -147,9 +147,9 @@
         .pane.left.treeview {
             width: $proporMenuOnly !important;
         }
-        .pane.right-repr {
+        .pane.right.items {
             left: 0 !important;
-	        @include webkitProp(transform, translateX($proporMenuOnly));
+            @include transform(translateX($proporMenuOnly));
             #content-area {
                 opacity: 0;
             }

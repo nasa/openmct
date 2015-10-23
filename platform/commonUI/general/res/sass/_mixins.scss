@@ -41,36 +41,41 @@
     width: $d;
 }
 
-@mixin trans-prop-nice($props, $t: 500ms) {
+@mixin trans-prop-nice($prop, $t: 500ms, $delay: 0) {
+    // This only works for a single property right now
     @if $t == 0 {
         @include transition-property(none);
     } @else {
-        @include transition-property($props);
+        @include transition-property($prop);
         @include transition-duration($t);
         @include transition-timing-function(ease-in-out);
+        @include transition-delay($delay);
     }
 }
 
-@mixin trans-prop-nice-fade($t: 0.5s) {
+@mixin trans-prop-nice-fade($t: 500ms, $delay: 0) {
     @if $t == 0 {
         @include transition-property(none);
     } @else {
-        @include transition-property(visibility, opacity, background-color, border-color);
+        @include transition-property(opacity, background-color, border-color, color);
         @include transition-duration($t);
         @include transition-timing-function(ease-in-out);
+        @include transition-delay($delay);
     }
 }
 
-@mixin trans-prop-nice-resize-h($t: 0.5s) {
+@mixin trans-prop-nice-resize-h($t: 500ms, $delay: 0) {
     @include transition-property(height, bottom, top);
     @include transition-duration($t);
     @include transition-timing-function(ease-in-out);
+    @include transition-delay($delay);
 }
 
-@mixin trans-prop-nice-resize-w($t: 0.5s) {
+@mixin trans-prop-nice-resize-w($t: 500ms, $delay: 0) {
     @include transition-property(width, left, right);
     @include transition-duration($t);
     @include transition-timing-function(ease-in-out);
+    @include transition-delay($delay);
 }
 
 @mixin triangle-right($size, $color) {

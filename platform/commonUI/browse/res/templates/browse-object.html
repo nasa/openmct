@@ -49,13 +49,12 @@
             </mct-representation>
             <a class="mini-tab anchor-right mobile-hide toggle-pane toggle-inspect"
                ng-click="ngModel.toggle()"
-                ng-class="{ collapsed : !ngModel.visible() }"></a>
+               ng-class="{ collapsed : !ngModel.visible() }"></a>
         </div><!--/ t-object -->
 
-        <mct-splitter class="mobile-hide" ng-class="{ hidden: !ngModel.visible()}"></mct-splitter>
+        <mct-splitter class="splitter-inspect mobile-hide"></mct-splitter>
 
-        <div class='split-pane-component t-inspector pane right mobile-hide'
-            ng-class="{ hidden:!ngModel.visible() }">
+        <div class="split-pane-component t-inspect pane right mobile-hide">
             <!--Inspector goes here-->
         </div>
     </mct-split-pane><!--/ t-object-and-inspector -->

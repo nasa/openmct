@@ -211,7 +211,7 @@
                 max-width: 800px;
                 width: $ueBrowseLeftPaneTreeW;
             }
-            &.t-inspector.right {
+            &.t-inspect.right {
                 min-width: 150px;
                 max-width: 800px;
                 width: $ueBrowseRightPaneInspectW;
@@ -230,11 +230,6 @@
             }
         }
     }
-}
-
-.pane:not(.resizing) {
-    // Add transition CSS
-    @include trans-prop-nice-resize-w(250ms);
 }
 
 .pane {
@@ -271,7 +266,7 @@
                     content: 'F';
                 }
                 &.collapsed {
-                    left: -1 * $bodyMargin;
+                    left: (-1 * $bodyMargin) - $ueCollapsedEdgeMargin;
                 }
             }
             &.toggle-inspect.anchor-right {
@@ -281,7 +276,7 @@
                     content: '\e608';
                 }
                 &.collapsed {
-                    right: -1 * $interiorMargin;
+                    right: -1 * $interiorMargin  - $ueCollapsedEdgeMargin;
                 }
             }
         }
@@ -391,21 +386,53 @@
 // classes used for the left menu and the
 // right representation.
 .pane-tree-hidden {
-    @include user-select(none);
     // Sets the left tree menu when the tree is hidden.
-    .pane.left.treeview {
+    .pane.left.treeview,
+    .splitter-treeview {
         opacity: 0;
     }
-    // Sets the right represenation when the tree is hidden.
-    .pane.right-repr {
-        left: 0 !important;
+    // Sets the right representation when the tree is hidden.
+    .pane.right.items {
+        left: $ueCollapsedEdgeMargin !important;
     }
 }
 
 .pane-tree-showing {
     // Sets the left tree menu when the tree is shown.
-    .pane.left.treeview {
-        @include trans-prop-nice(opacity, .4s);
+    .pane.left.treeview,
+    .splitter-treeview {
+        @include trans-prop-nice-fade(250ms, 250ms);
         opacity: 1;
+    }
+}
+
+.pane-inspect-showing {
+    .l-object-and-inspector {
+        .pane.right,
+        .splitter-inspect {
+            @include trans-prop-nice-fade(250ms, 250ms);
+            opacity: 1;
+        }
+    }
+}
+.pane-inspect-hidden {
+    .l-object-and-inspector {
+        .pane.right,
+        .splitter-inspect {
+            opacity: 0;
+        }
+        .pane.left {
+            right: $ueCollapsedEdgeMargin !important;
+        }
+    }
+}
+
+.pane.right.t-inspect {
+    @include test(orange, 0.3); // TEMP!
+}
+
+@include desktop {
+    .pane:not(.resizing) {
+        @include trans-prop-nice-resize-w(250ms);
     }
 }
