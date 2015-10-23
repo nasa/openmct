@@ -16,7 +16,7 @@ A timeline's model looks like:
 
 ```
 {
-    "type": "warp.timeline",
+    "type": "timeline",
     "start": {
         "timestamp": <number> (milliseconds since epoch),
         "epoch": <string> (currently, always "SET")
@@ -35,7 +35,7 @@ An activity's model looks like:
 
 ```
 {
-    "type": "warp.activity",
+    "type": "activity",
     "start": {
         "timestamp": <number> (milliseconds since epoch),
         "epoch": <string> (currently, always "SET")
@@ -61,7 +61,7 @@ An activity mode's model looks like:
 
 ```
 {
-    "type": "warp.mode",
+    "type": "mode",
     "resources": {
         "comms": <number> (communications utilization, in Kbps)
         "power": <number> (power utilization, in watts)
