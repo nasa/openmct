@@ -25,7 +25,7 @@
  * Module defining CreateService. Created by vwoeltje on 11/10/14.
  */
 define(
-    ["../../lib/uuid"],
+    ["uuid"],
     function (uuid) {
         "use strict";
 
