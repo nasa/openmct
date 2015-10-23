@@ -20,42 +20,29 @@
  at runtime from the About dialog for additional information.
 -->
 <span ng-controller="BrowseObjectController">
-    <mct-split-pane class='l-object-and-inspector contents abs' anchor='right'>
-        <div class='split-pane-component t-object pane left'>
-            <div class="object-browse-bar bar l-flex">
-                <div class="items-select left">
-                    <mct-representation key="'back-arrow'"
-                                        mct-object="domainObject"
-                                        class="l-back"></mct-representation>
-                    <mct-representation key="'object-header'" mct-object="domainObject">
-                    </mct-representation>
-                </div>
-                <div class="btn-bar right">
-                    <mct-representation key="'switcher'"
-                                        mct-object="domainObject"
-                                        ng-model="representation">
-                    </mct-representation>
-                    <!-- Temporarily, on mobile, the action buttons are hidden-->
-                    <mct-representation key="'action-group'"
-                                        mct-object="domainObject"
-                                        parameters="{ category: 'view-control' }"
-                                        class="mobile-hide">
-                    </mct-representation>
-                </div>
-            </div>
-            <mct-representation key="representation.selected.key"
-                                mct-object="representation.selected.key && domainObject"
-                                class="abs object-holder">
+    <div class="object-browse-bar bar l-flex">
+        <div class="items-select left">
+            <mct-representation key="'back-arrow'"
+                                mct-object="domainObject"
+                                class="l-back"></mct-representation>
+            <mct-representation key="'object-header'" mct-object="domainObject">
             </mct-representation>
-            <a class="mini-tab anchor-right mobile-hide toggle-pane toggle-inspect"
-               ng-click="ngModel.toggle()"
-               ng-class="{ collapsed : !ngModel.visible() }"></a>
-        </div><!--/ t-object -->
-
-        <mct-splitter class="splitter-inspect mobile-hide"></mct-splitter>
-
-        <div class="split-pane-component t-inspect pane right mobile-hide">
-            <!--Inspector goes here-->
         </div>
-    </mct-split-pane><!--/ t-object-and-inspector -->
+        <div class="btn-bar right">
+            <mct-representation key="'switcher'"
+                                mct-object="domainObject"
+                                ng-model="representation">
+            </mct-representation>
+            <!-- Temporarily, on mobile, the action buttons are hidden-->
+            <mct-representation key="'action-group'"
+                                mct-object="domainObject"
+                                parameters="{ category: 'view-control' }"
+                                class="mobile-hide">
+            </mct-representation>
+        </div>
+    </div>
+    <mct-representation key="representation.selected.key"
+                        mct-object="representation.selected.key && domainObject"
+                        class="abs object-holder">
+    </mct-representation>
 </span>

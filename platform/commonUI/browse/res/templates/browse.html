@@ -58,10 +58,22 @@
                 <div class='holder abs l-mobile' id='content-area'
                      ng-controller="PaneController as modelPaneInspect"
                      ng-class="modelPaneInspect.visible() ? 'pane-inspect-showing' : 'pane-inspect-hidden'">
-                    <mct-representation mct-object="navigatedObject"
-                                        key="'browse-object'"
-                                        ng-model="modelPaneInspect">
-                    </mct-representation>
+                    <mct-split-pane class='l-object-and-inspector contents abs' anchor='right'>
+                        <div class='split-pane-component t-object pane left'>
+                            <a class="mini-tab anchor-right mobile-hide toggle-pane toggle-inspect"
+                               ng-click="modelPaneInspect.toggle()"
+                               ng-class="{ collapsed : !modelPaneInspect.visible() }"></a>
+                            <mct-representation mct-object="navigatedObject"
+                                                key="'browse-object'">
+                            </mct-representation>
+                        </div>
+
+                        <mct-splitter class="splitter-inspect mobile-hide"></mct-splitter>
+
+                        <div class="split-pane-component t-inspect pane right mobile-hide">
+                            <!--Inspector goes here-->
+                        </div>
+                    </mct-split-pane>
                 </div>
             </div>
         </mct-split-pane>
