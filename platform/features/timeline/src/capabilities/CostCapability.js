@@ -17,7 +17,7 @@ define(
                  * Get a list of resource types which have associated
                  * costs for this object. Returned values are machine-readable
                  * keys, and should be paired with external metadata for
-                 * presentation (see category of extension `warp.resources`).
+                 * presentation (see category of extension `resources`).
                  * @returns {string[]} resource types
                  */
                 resources: function () {
@@ -48,7 +48,7 @@ define(
 
         // Only applies to subsystem modes.
         CostCapability.appliesTo = function (model) {
-            return (model || {}).type === 'warp.mode';
+            return (model || {}).type === 'mode';
         };
 
         return CostCapability;

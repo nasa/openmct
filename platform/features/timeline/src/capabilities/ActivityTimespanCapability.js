@@ -6,7 +6,7 @@ define(
         'use strict';
 
         /**
-         * Implements the `warp.timespan` capability for Activity objects.
+         * Implements the `timespan` capability for Activity objects.
          *
          * @constructor
          * @param $q Angular's $q, for promise-handling
@@ -33,7 +33,7 @@ define(
 
         // Only applies to timeline objects
         ActivityTimespanCapability.appliesTo = function (model) {
-            return model && (model.type === 'warp.activity');
+            return model && (model.type === 'activity');
         };
 
         return ActivityTimespanCapability;

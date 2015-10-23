@@ -59,7 +59,7 @@ define(
 
         // Only applies to timeline objects
         TimelineTimespanCapability.appliesTo = function (model) {
-            return model && (model.type === 'warp.timeline');
+            return model && (model.type === 'timeline');
         };
 
         return TimelineTimespanCapability;

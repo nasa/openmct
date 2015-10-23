@@ -33,7 +33,7 @@ define(
                 });
 
                 // Add battery state of charge
-                if (domainObject.getModel().type === 'warp.timeline' &&
+                if (domainObject.getModel().type === 'timeline' &&
                         result.power &&
                             domainObject.getModel().capacity > 0) {
 
@@ -68,8 +68,8 @@ define(
         // Only applies to timeline objects
         GraphCapability.appliesTo = function (model) {
             return model &&
-                ((model.type === 'warp.timeline') ||
-                        (model.type === 'warp.activity'));
+                ((model.type === 'timeline') ||
+                        (model.type === 'activity'));
         };
 
         return GraphCapability;

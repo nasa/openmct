@@ -189,8 +189,8 @@ define(
         // Only applies to timelines and activities
         UtilizationCapability.appliesTo = function (model) {
             return model &&
-                ((model.type === 'warp.timeline') ||
-                        (model.type === 'warp.activity'));
+                ((model.type === 'timeline') ||
+                        (model.type === 'activity'));
         };
 
         return UtilizationCapability;
