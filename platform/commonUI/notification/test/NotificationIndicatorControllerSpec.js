@@ -71,7 +71,7 @@ define(
                 //Invoke the cancel callback
                 mockDialogService.getDialogResponse.mostRecentCall.args[1].cancel();
                 expect(mockDialogService.dismiss).toHaveBeenCalled();
-            })
+            });
 
         });
     });
