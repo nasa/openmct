@@ -29,7 +29,8 @@ define(
         // Pixel width to allocate for the splitter itself
         var SPLITTER_TEMPLATE = "<div class='abs'" +
                 "mct-drag-down=\"splitter.startMove()\" " +
-                "mct-drag=\"splitter.move(delta)\"></div>",
+                "mct-drag=\"splitter.move(delta)\" " +
+                "mct-drag-up=\"splitter.endMove()\"></div>",
             OFFSETS_BY_EDGE = {
                 left: "offsetLeft",
                 right: "offsetRight",
@@ -53,6 +54,7 @@ define(
                     startMove: function () {
                         var splitter = element[0];
                         initialPosition = mctSplitPane.position();
+                        mctSplitPane.action('startMove');
                     },
                     // Handle user changes to splitter position
                     move: function (delta) {
@@ -63,6 +65,10 @@ define(
 
                         // Update the position of this splitter
                         mctSplitPane.position(initialPosition + pixelDelta);
+                    },
+                    // Grab the event when the user is done moving the splitter and pass it on
+                    endMove: function() {
+                        mctSplitPane.action('endMove');
                     }
                 };
             }

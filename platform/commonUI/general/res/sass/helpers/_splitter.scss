@@ -36,6 +36,9 @@
                 border-color: $colorGrippyInteriorHover !important;
             }
         }
+        &:active {
+            background-color: pullForward($b, 5%);
+        }
 	}
 	&.horizontal {
 		// Slides vertically up and down, splitting the element horizontally

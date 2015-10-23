@@ -232,6 +232,11 @@
     }
 }
 
+.pane:not(.resizing) {
+    // Add transition CSS
+    @include trans-prop-nice-resize-w(250ms);
+}
+
 .pane {
     position: absolute;
     &.treeview.left {
