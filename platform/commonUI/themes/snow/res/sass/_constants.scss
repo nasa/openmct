@@ -152,12 +152,13 @@ $scrollbarThumbColor: darken($colorBodyBg, 50%);//
 $scrollbarThumbColorHov: $colorKey;
 
 // Splitter
+$splitterD: 15px;
+$splitterHandleInset: 6px;
+$colorSplitterBg: pullForward($colorBodyBg, 10%);
 $splitterShdw: none;
-$colorSplitterInterior: $colorBodyBg;
-$colorSplitterHover: $colorKey;
-$splitterW: 5px;
-$splitterEndCr: $splitterW;
-$colorGrippyInteriorHover: $colorBodyBg;
+$splitterEndCr: none;
+$colorSplitterHover: none;
+$colorSplitterActive: $colorKey;
 
 // Mobile
 $colorMobilePaneLeft: darken($colorBodyBg, 2%);

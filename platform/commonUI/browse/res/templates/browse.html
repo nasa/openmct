@@ -53,7 +53,7 @@
 
             <mct-splitter class="splitter-treeview mobile-hide"></mct-splitter>
 
-            <div class='split-pane-component items pane right'>
+            <div class='split-pane-component items pane primary-pane right'>
                 <a class="mini-tab anchor-left toggle-pane toggle-tree"
                    title="Click to {{ modelPaneTree.visible()? 'hide' : 'show' }} the tree pane"
                    ng-click="modelPaneTree.toggle()"
@@ -62,7 +62,7 @@
                      ng-controller="PaneController as modelPaneInspect"
                      ng-class="modelPaneInspect.visible() ? 'pane-inspect-showing' : 'pane-inspect-hidden'">
                     <mct-split-pane class='l-object-and-inspector contents abs' anchor='right'>
-                        <div class='split-pane-component t-object pane left'>
+                        <div class='split-pane-component t-object pane primary-pane left'>
                             <a class="mini-tab anchor-right mobile-hide toggle-pane toggle-inspect"
                                title="Click to {{ modelPaneInspect.visible()? 'hide' : 'show' }} the Inspection pane"
                                ng-click="modelPaneInspect.toggle()"

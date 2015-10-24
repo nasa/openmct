@@ -19,71 +19,87 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.split-layout {
-	$b: pullForward($colorBodyBg, $contrastRatioPercent);
 
-	.splitter {
-		background-color: $b;
-		@include border-radius($splitterEndCr);
-		@include boxShdw($splitterShdw);
-		//overflow: hidden;
-		position: absolute;
-		z-index: 1;
+.splitter {
+    // Redo the splitter.
+    // New look is a simple line.
+    // Main width is used to provide a good click area, and is always transparent
+    // :after will be a positioned and colored element that is the handle
+    display: block;
+    position: absolute;
+    z-index: 1;
+    &:after {
+        // The handle
+        content:"";
+        pointer-events: none;
+        @include absPosDefault(0);
+        background: $colorSplitterBg;
+        display: block;
+
+        @if $splitterEndCr != 'none' {
+            @include border-radius($splitterEndCr);
+        }
+    }
+    &:active {
+        &:after {
+            background: $colorSplitterActive;
+        }
+    }
+
+    @if $colorSplitterHover != 'none' {
         &:hover {
-            background-color: $colorSplitterHover;
-            &:after {
-                //@include trans-prop-nice("border-color", 25ms);
-                border-color: $colorGrippyInteriorHover !important;
-            }
+            background: $colorSplitterHover;
         }
-        &:active {
-            background-color: pullForward($b, 5%);
-        }
-	}
-	&.horizontal {
-		// Slides vertically up and down, splitting the element horizontally
+    }
+}
+
+.split-layout {
+    &.horizontal {
+        // Slides vertically up and down, splitting the element horizontally
         overflow: hidden; // Suppress overall scroll; each internal pane handles its own overflow
-		.pane {
-			left: 0;
-			right: 0;
-			&.top {
-				bottom: auto;
-			}
-			&.bottom {
-				top: auto;
-			}
-		}
-		>.splitter {
-            &:after {
-                @include controlGrippy($colorSplitterInterior, horizontal);
+        .pane {
+            left: 0;
+            right: 0;
+            &.top {
+                bottom: auto;
             }
-			cursor: row-resize;
-			left: 0; right: 0;
-			width: auto;
-			height: $splitterW;
-		}
-	}
-	&.vertical {
-		// Slides horizontally left to right, splitting the element vertically
-		.pane {
-			top: 0;
-			bottom: 0;
-			&.left {
-				right: auto;
-			}
-			&.right {
-				left: auto;
-			}
-		}
-		>.splitter {
-			bottom: 0;
-			cursor: col-resize;
-			width: $splitterW;
-            &:after {
-                @include controlGrippy($colorBodyBg, vertical);
+            &.bottom {
+                top: auto;
             }
-		}
-	}
+        }
+        >.splitter {
+            cursor: row-resize;
+            left: 0;
+            right: 0;
+            height: $splitterD;
+            &:after {
+                top: $splitterHandleInset; bottom: $splitterHandleInset;
+            }
+        }
+    }
+
+    &.vertical {
+        // Slides horizontally left to right, splitting the element vertically
+        .pane {
+            top: 0;
+            bottom: 0;
+            &.left {
+                right: auto;
+            }
+            &.right {
+                left: auto;
+            }
+        }
+        >.splitter {
+            cursor: col-resize;
+            top: 0;
+            bottom: 0;
+            width: $splitterD;
+            &:after {
+                left: $splitterHandleInset; right: $splitterHandleInset;
+            }
+        }
+    }
 }
 
 .browse-area .splitter {

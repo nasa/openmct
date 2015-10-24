@@ -244,6 +244,11 @@
         margin-bottom: $interiorMargin;
     }
 
+    .primary-pane {
+        // Need to lift up this pane to ensure that 'collapsed' panes don't block user interactions
+        z-index: 5;
+    }
+
     &.treeview.left {
         .create-btn-holder {
             bottom: auto;
@@ -264,7 +269,8 @@
     }
 
     .mini-tab.toggle-pane {
-        $paneOffset: -1 * ($uePaneMiniTabW + $interiorMargin + $splitterW);
+        //@include test(blue, 0.6);
+        $paneOffset: -2 * $splitterD;
         $paneCollapsedOffset: $bodyMargin + $ueCollapsedPaneEdgeM;
         z-index: 2;
         @include desktop {
@@ -406,7 +412,7 @@
     // Sets the left tree menu when the tree is shown.
     .pane.left.treeview,
     .splitter-treeview {
-        @include trans-prop-nice-fade(250ms, 250ms);
+        @include trans-prop-nice(opacity, $dur: 250ms, $delay: 250ms);
         opacity: 1;
     }
 }
@@ -415,7 +421,7 @@
     .l-object-and-inspector {
         .pane.right,
         .splitter-inspect {
-            @include trans-prop-nice-fade(250ms, 250ms);
+            @include trans-prop-nice(opacity, $dur: 250ms, $delay: 250ms);
             opacity: 1;
         }
     }

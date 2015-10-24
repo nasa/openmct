@@ -41,39 +41,39 @@
     width: $d;
 }
 
-@mixin trans-prop-nice($prop, $t: 500ms, $delay: 0) {
-    // This only works for a single property right now
-    @if $t == 0 {
+@mixin trans-prop-nice($props, $dur: 500ms, $delay: 0) {
+    // Multiple $props must be in parans like this: (left, right)
+    @if $dur == 0 {
         @include transition-property(none);
     } @else {
-        @include transition-property($prop);
-        @include transition-duration($t);
+        @include transition-property($props);
+        @include transition-duration($dur);
         @include transition-timing-function(ease-in-out);
         @include transition-delay($delay);
     }
 }
 
-@mixin trans-prop-nice-fade($t: 500ms, $delay: 0) {
-    @if $t == 0 {
+@mixin trans-prop-nice-fade($dur: 500ms, $delay: 0) {
+    @if $dur == 0 {
         @include transition-property(none);
     } @else {
         @include transition-property(opacity, background-color, border-color, color);
-        @include transition-duration($t);
+        @include transition-duration($dur);
         @include transition-timing-function(ease-in-out);
         @include transition-delay($delay);
     }
 }
 
-@mixin trans-prop-nice-resize-h($t: 500ms, $delay: 0) {
+@mixin trans-prop-nice-resize-h($dur: 500ms, $delay: 0) {
     @include transition-property(height, bottom, top);
-    @include transition-duration($t);
+    @include transition-duration($dur);
     @include transition-timing-function(ease-in-out);
     @include transition-delay($delay);
 }
 
-@mixin trans-prop-nice-resize-w($t: 500ms, $delay: 0) {
+@mixin trans-prop-nice-resize-w($dur: 500ms, $delay: 0) {
     @include transition-property(width, left, right);
-    @include transition-duration($t);
+    @include transition-duration($dur);
     @include transition-timing-function(ease-in-out);
     @include transition-delay($delay);
 }
@@ -162,7 +162,7 @@
 
 @mixin controlGrippy($b, $direction: horizontal, $w: 1px, $style: dotted) {
     //&:before {
-    @include trans-prop-nice("border-color", 25ms);
+    //@include trans-prop-nice("border-color", 25ms);
     content: '';
     display: block;
     //height: auto;

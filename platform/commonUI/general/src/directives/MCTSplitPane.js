@@ -135,7 +135,7 @@ define(
                     splitter.css(anchor.edge, (firstSize + splitterSize) + 'px');
                     splitter.css(anchor.opposite, "auto");
 
-                    last.css(anchor.edge, (firstSize + splitterSize * 3) + 'px');
+                    last.css(anchor.edge, (firstSize + splitterSize * 2) + 'px');
                     last.css(anchor.opposite, "0px");
 
                     position = firstSize + splitterSize;
