@@ -1,4 +1,9 @@
 {
+    "configuration": {
+        "paths": {
+            "uuid": "uuid"
+        }
+    },
     "extensions": {
         "routes": [
             {
