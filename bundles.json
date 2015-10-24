@@ -30,6 +30,5 @@
 
     "example/imagery",
     "example/eventGenerator",
-    "example/generator",
-    "example/notifications"
+    "example/generator"
 ]
