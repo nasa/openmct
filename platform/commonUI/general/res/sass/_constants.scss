@@ -44,10 +44,12 @@ $ueAppLogoW: 105px;
 $ueEditToolBarH: 25px;
 $ueBrowseLeftPaneTreeW: 25%;
 $ueBrowseRightPaneInspectW: 20%;
+$ueCollapsedPaneEdgeM: 10px;
+$uePaneMiniTabH: $ueTopBarH;
+$uePaneMiniTabW: $ueCollapsedPaneEdgeM + $interiorMargin;
 $ueEditLeftPaneW: 75%;
 $treeSearchInputBarH: 25px;
 $ueTimeControlH: (33px, 20px, 20px);
-$ueCollapsedEdgeMargin: 15px;
 // Overlay
 $ovrTopBarH: 60px;
 $ovrFooterH: 30px;

@@ -212,9 +212,9 @@
                 width: $ueBrowseLeftPaneTreeW;
             }
             &.t-inspect.right {
-                min-width: 100px;
-                max-width: 800px;
-                padding-left: 15px; // Allow room for mini-tab element
+                min-width: 200px;
+                max-width: 600px;
+                padding-left: $ueCollapsedPaneEdgeM; // Allow room for mini-tab element
                 width: $ueBrowseRightPaneInspectW;
             }
         }
@@ -264,29 +264,26 @@
     }
 
     .mini-tab.toggle-pane {
-        $h: $ueTopBarH;
-        $paneOffset: $interiorMarginLg * -3;
+        $paneOffset: -1 * ($uePaneMiniTabW + $interiorMargin + $splitterW);
+        $paneCollapsedOffset: $bodyMargin + $ueCollapsedPaneEdgeM;
         z-index: 2;
         @include desktop {
-            top: 5px;
             &.toggle-tree.anchor-left {
                 //@include test(green);
-                left: $paneOffset;
-                &:after {
-                    content: 'F';
-                }
+                left: 0; //$ox;
+                @include transform(translateX($paneOffset));
+                &:after { content: 'F'; }
                 &.collapsed {
-                    left: (-1 * $bodyMargin) - $ueCollapsedEdgeMargin;
+                    @include transform(translateX(-1 * $paneCollapsedOffset));
                 }
             }
             &.toggle-inspect.anchor-right {
-                $xpos: $paneOffset + $interiorMargin;
-                right: $xpos;
-                &:after {
-                    content: '\e608';
-                }
+                $oCx: -1 * $paneCollapsedOffset;
+                right: 0; //$ox;
+                @include transform(translateX(-1 * $paneOffset));
+                &:after { content: '\e608'; }
                 &.collapsed {
-                    right: -1 * $interiorMargin  - $ueCollapsedEdgeMargin;
+                    @include transform(translateX($paneCollapsedOffset));
                 }
             }
         }
@@ -316,8 +313,7 @@
     &.vertical {
         // Slides left and right
         > .pane {
-            //            @include test();
-            margin-left: $interiorMargin;
+            //margin-left: $interiorMargin; // This spacing is now handled by MCTSplitPane.js
             > .holder {
                 left: 0;
                 right: 0;
@@ -402,7 +398,7 @@
     }
     // Sets the right representation when the tree is hidden.
     .pane.right.items {
-        left: $ueCollapsedEdgeMargin !important;
+        left: $ueCollapsedPaneEdgeM !important;
     }
 }
 
@@ -431,7 +427,7 @@
             opacity: 0;
         }
         .pane.left {
-            right: $ueCollapsedEdgeMargin !important;
+            right: $ueCollapsedPaneEdgeM !important;
         }
     }
 }
