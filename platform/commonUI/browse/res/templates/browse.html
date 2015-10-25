@@ -22,10 +22,10 @@
 
 <div class="abs holder-all browse-mode" ng-controller="BrowseController">
     <mct-include key="'topbar-browse'"></mct-include>
-    <div class="holder browse-area s-browse-area abs browse-wrapper"
+    <div class="abs holder holder-main browse-area s-browse-area browse-wrapper"
          ng-controller="PaneController as modelPaneTree"
          ng-class="modelPaneTree.visible() ? 'pane-tree-showing' : 'pane-tree-hidden'">
-        <mct-split-pane class='contents abs'
+        <mct-split-pane class='abs contents'
                         anchor='left'>
             <div class='split-pane-component treeview pane left'>
                 <div class="holder abs l-mobile">
@@ -58,9 +58,11 @@
                    title="Click to {{ modelPaneTree.visible()? 'hide' : 'show' }} the tree pane"
                    ng-click="modelPaneTree.toggle()"
                    ng-class="{ collapsed : !modelPaneTree.visible() }"></a>
-                <div class='holder abs l-mobile' id='content-area'
+
+                <div class='holder holder-object-and-inspector abs l-mobile' id='content-area'
                      ng-controller="PaneController as modelPaneInspect"
                      ng-class="modelPaneInspect.visible() ? 'pane-inspect-showing' : 'pane-inspect-hidden'">
+
                     <mct-split-pane class='l-object-and-inspector contents abs' anchor='right'>
                         <div class='split-pane-component t-object pane primary-pane left'>
                             <a class="mini-tab anchor-right mobile-hide toggle-pane toggle-inspect"

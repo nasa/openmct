@@ -246,7 +246,7 @@
 
     .primary-pane {
         // Need to lift up this pane to ensure that 'collapsed' panes don't block user interactions
-        z-index: 5;
+        z-index: 2;
     }
 
     &.treeview.left {
@@ -272,7 +272,7 @@
         //@include test(blue, 0.6);
         $paneOffset: -2 * $splitterD;
         $paneCollapsedOffset: $bodyMargin + $ueCollapsedPaneEdgeM;
-        z-index: 2;
+        z-index: 5;
         @include desktop {
             &.toggle-tree.anchor-left {
                 //@include test(green);
@@ -403,9 +403,6 @@
         opacity: 0;
     }
     // Sets the right representation when the tree is hidden.
-    .pane.right.items {
-        left: $ueCollapsedPaneEdgeM !important;
-    }
 }
 
 .pane-tree-showing {
@@ -432,13 +429,17 @@
         .splitter-inspect {
             opacity: 0;
         }
-        .pane.left {
-            right: $ueCollapsedPaneEdgeM !important;
-        }
     }
 }
 
 @include desktop {
+    .pane-tree-hidden {
+        .pane.right.primary-pane { left: $ueCollapsedPaneEdgeM !important; }
+    }
+    .pane-inspect-hidden .l-object-and-inspector {
+        .pane.left { right: $ueCollapsedPaneEdgeM !important; }
+    }
+
     .pane:not(.resizing) {
         @include trans-prop-nice-resize-w(250ms);
     }

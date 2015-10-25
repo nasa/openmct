@@ -922,6 +922,9 @@ mct-container {
   /* line 44, ../../../../general/res/sass/helpers/_splitter.scss */
   .splitter:active:after {
     background: #0099cc; }
+  /* line 50, ../../../../general/res/sass/helpers/_splitter.scss */
+  .splitter:hover {
+    background: rgba(255, 0, 0, 0.2); }
 
 /* line 57, ../../../../general/res/sass/helpers/_splitter.scss */
 .split-layout.horizontal {
@@ -941,11 +944,11 @@ mct-container {
     cursor: row-resize;
     left: 0;
     right: 0;
-    height: 12px; }
+    height: 19px; }
     /* line 75, ../../../../general/res/sass/helpers/_splitter.scss */
     .split-layout.horizontal > .splitter:after {
-      top: 3px;
-      bottom: 3px; }
+      top: 8px;
+      bottom: 8px; }
 /* line 83, ../../../../general/res/sass/helpers/_splitter.scss */
 .split-layout.vertical .pane {
   top: 0;
@@ -961,11 +964,11 @@ mct-container {
   cursor: col-resize;
   top: 0;
   bottom: 0;
-  width: 12px; }
+  width: 19px; }
   /* line 98, ../../../../general/res/sass/helpers/_splitter.scss */
   .split-layout.vertical > .splitter:after {
-    left: 3px;
-    right: 3px; }
+    left: 8px;
+    right: 8px; }
 
 /* line 105, ../../../../general/res/sass/helpers/_splitter.scss */
 .browse-area .splitter {
@@ -3870,7 +3873,7 @@ span.req {
     margin-bottom: 5px; }
   /* line 247, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .primary-pane {
-    z-index: 5; }
+    z-index: 2; }
   /* line 253, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .create-btn-holder {
     bottom: auto;
@@ -3889,15 +3892,15 @@ span.req {
     top: 64px; }
   /* line 271, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .mini-tab.toggle-pane {
-    z-index: 2; }
+    z-index: 5; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
       /* line 277, ../../../../general/res/sass/user-environ/_layout.scss */
       .pane .mini-tab.toggle-pane.toggle-tree.anchor-left {
         left: 0;
-        -moz-transform: translateX(-24px);
-        -ms-transform: translateX(-24px);
-        -webkit-transform: translateX(-24px);
-        transform: translateX(-24px); }
+        -moz-transform: translateX(-38px);
+        -ms-transform: translateX(-38px);
+        -webkit-transform: translateX(-38px);
+        transform: translateX(-38px); }
         /* line 281, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab.toggle-pane.toggle-tree.anchor-left:after {
           content: 'F'; }
@@ -3910,10 +3913,10 @@ span.req {
       /* line 286, ../../../../general/res/sass/user-environ/_layout.scss */
       .pane .mini-tab.toggle-pane.toggle-inspect.anchor-right {
         right: 0;
-        -moz-transform: translateX(24px);
-        -ms-transform: translateX(24px);
-        -webkit-transform: translateX(24px);
-        transform: translateX(24px); }
+        -moz-transform: translateX(38px);
+        -ms-transform: translateX(38px);
+        -webkit-transform: translateX(38px);
+        transform: translateX(38px); }
         /* line 290, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab.toggle-pane.toggle-inspect.anchor-right:after {
           content: '\e608'; }
@@ -4029,11 +4032,8 @@ span.req {
 .pane-tree-hidden .pane.left.treeview,
 .pane-tree-hidden .splitter-treeview {
   opacity: 0; }
-/* line 406, ../../../../general/res/sass/user-environ/_layout.scss */
-.pane-tree-hidden .pane.right.items {
-  left: 10px !important; }
 
-/* line 413, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 410, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-showing .pane.left.treeview,
 .pane-tree-showing .splitter-treeview {
   -moz-transition-property: opacity;
@@ -4054,7 +4054,7 @@ span.req {
   transition-delay: 250ms;
   opacity: 1; }
 
-/* line 422, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 419, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-showing .l-object-and-inspector .pane.right,
 .pane-inspect-showing .l-object-and-inspector .splitter-inspect {
   -moz-transition-property: opacity;
@@ -4075,16 +4075,21 @@ span.req {
   transition-delay: 250ms;
   opacity: 1; }
 
-/* line 431, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 428, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-hidden .l-object-and-inspector .pane.right,
 .pane-inspect-hidden .l-object-and-inspector .splitter-inspect {
   opacity: 0; }
-/* line 435, ../../../../general/res/sass/user-environ/_layout.scss */
-.pane-inspect-hidden .l-object-and-inspector .pane.left {
-  right: 10px !important; }
 
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 442, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 437, ../../../../general/res/sass/user-environ/_layout.scss */
+  .pane-tree-hidden .pane.right.primary-pane {
+    left: 10px !important; }
+
+  /* line 440, ../../../../general/res/sass/user-environ/_layout.scss */
+  .pane-inspect-hidden .l-object-and-inspector .pane.left {
+    right: 10px !important; }
+
+  /* line 443, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane:not(.resizing) {
     -moz-transition-property: width, left, right;
     -o-transition-property: width, left, right;
@@ -4200,38 +4205,39 @@ span.req {
     left: 10px; }
     /* line 99, ../../../../general/res/sass/mobile/_layout.scss */
     .toggle-tree:after {
-      content: 'm' !important; }
+      content: 'm' !important;
+      font-family: symbolsfont; }
 
-  /* line 104, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 105, ../../../../general/res/sass/mobile/_layout.scss */
   .object-browse-bar {
     left: 30px !important; }
-    /* line 107, ../../../../general/res/sass/mobile/_layout.scss */
+    /* line 108, ../../../../general/res/sass/mobile/_layout.scss */
     .object-browse-bar .context-available {
       opacity: 1 !important; }
-    /* line 110, ../../../../general/res/sass/mobile/_layout.scss */
+    /* line 111, ../../../../general/res/sass/mobile/_layout.scss */
     .object-browse-bar .view-switcher {
       margin-right: 0 !important; }
-      /* line 112, ../../../../general/res/sass/mobile/_layout.scss */
+      /* line 113, ../../../../general/res/sass/mobile/_layout.scss */
       .object-browse-bar .view-switcher .title-label {
         display: none; }
 
-  /* line 119, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 120, ../../../../general/res/sass/mobile/_layout.scss */
   .tree-holder {
     overflow-x: hidden !important; }
 
-  /* line 123, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 124, ../../../../general/res/sass/mobile/_layout.scss */
   .mobile-disable-select {
     -moz-user-select: -moz-none;
     -ms-user-select: none;
     -webkit-user-select: none;
     user-select: none; }
 
-  /* line 128, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 129, ../../../../general/res/sass/mobile/_layout.scss */
   .mobile-hide,
   .mobile-hide-important {
     display: none !important; }
 
-  /* line 133, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 134, ../../../../general/res/sass/mobile/_layout.scss */
   .mobile-back-hide {
     pointer-events: none;
     -moz-transition-property: opacity;
@@ -4252,7 +4258,7 @@ span.req {
     transition-delay: 0;
     opacity: 0; }
 
-  /* line 138, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 139, ../../../../general/res/sass/mobile/_layout.scss */
   .mobile-back-unhide {
     pointer-events: all;
     -moz-transition-property: opacity;
@@ -4273,21 +4279,21 @@ span.req {
     transition-delay: 0;
     opacity: 1; } }
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) {
-  /* line 147, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 148, ../../../../general/res/sass/mobile/_layout.scss */
   .pane-tree-showing .pane.left.treeview {
     width: 90% !important; }
-  /* line 150, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 151, ../../../../general/res/sass/mobile/_layout.scss */
   .pane-tree-showing .pane.right.items {
     left: 0 !important;
     -moz-transform: translateX(90%);
     -ms-transform: translateX(90%);
     -webkit-transform: translateX(90%);
     transform: translateX(90%); }
-    /* line 153, ../../../../general/res/sass/mobile/_layout.scss */
+    /* line 154, ../../../../general/res/sass/mobile/_layout.scss */
     .pane-tree-showing .pane.right.items #content-area {
       opacity: 0; } }
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 161, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 162, ../../../../general/res/sass/mobile/_layout.scss */
   .desktop-hide {
     display: none; } }
 /*****************************************************************************
