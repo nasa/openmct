@@ -25,6 +25,8 @@
     // New look is a simple line.
     // Main width is used to provide a good click area, and is always transparent
     // :after will be a positioned and colored element that is the handle
+
+    //@include test(red);
     display: block;
     position: absolute;
     z-index: 1;
@@ -40,9 +42,14 @@
             @include border-radius($splitterEndCr);
         }
     }
+    &:not(:active) {
+        &:after {
+            @include trans-prop-nice(background-color, 250ms);
+        }
+    }
     &:active {
         &:after {
-            background: $colorSplitterActive;
+            background-color: $colorSplitterActive;
         }
     }
 

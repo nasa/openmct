@@ -206,6 +206,7 @@
 .browse-mode {
     .split-layout {
         .split-pane-component.pane {
+            //@include test(green);
             &.treeview.left {
                 min-width: 150px;
                 max-width: 800px;
@@ -269,15 +270,15 @@
     }
 
     .mini-tab.toggle-pane {
-        //@include test(blue, 0.6);
-        $paneOffset: -2 * $splitterD;
+        //@include test(blue, 0.3);
+        $paneExpandedOffset: $splitterD + $uePaneMiniTabW - $splitterHandleInset;
         $paneCollapsedOffset: $bodyMargin + $ueCollapsedPaneEdgeM;
         z-index: 5;
         @include desktop {
             &.toggle-tree.anchor-left {
                 //@include test(green);
                 left: 0; //$ox;
-                @include transform(translateX($paneOffset));
+                @include transform(translateX(-1 * $paneExpandedOffset));
                 &:after { content: 'F'; }
                 &.collapsed {
                     @include transform(translateX(-1 * $paneCollapsedOffset));
@@ -286,7 +287,7 @@
             &.toggle-inspect.anchor-right {
                 $oCx: -1 * $paneCollapsedOffset;
                 right: 0; //$ox;
-                @include transform(translateX(-1 * $paneOffset));
+                @include transform(translateX($paneExpandedOffset));
                 &:after { content: '\e608'; }
                 &.collapsed {
                     @include transform(translateX($paneCollapsedOffset));

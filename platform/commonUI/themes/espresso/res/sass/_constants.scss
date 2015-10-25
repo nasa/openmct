@@ -160,7 +160,7 @@ $splitterHandleInset: ($splitterD - $splitterHandleD) * 0.5; // Space to either 
 $colorSplitterBg: pullForward($colorBodyBg, 10%);
 $splitterShdw: rgba(black, 0.4) 0 0 3px;
 $splitterEndCr: none;
-$colorSplitterHover: rgba(red, 0.2);
+$colorSplitterHover: none; //rgba(red, 0.2);
 $colorSplitterActive: $colorKey;
 
 // Mobile

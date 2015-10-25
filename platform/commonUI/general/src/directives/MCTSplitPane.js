@@ -132,10 +132,10 @@ define(
                     // Get actual size (to obey min-width etc.)
                     firstSize = getSize(first[0]);
                     first.css(anchor.dimension, firstSize + 'px');
-                    splitter.css(anchor.edge, (firstSize + splitterSize) + 'px');
+                    splitter.css(anchor.edge, firstSize + 'px');
                     splitter.css(anchor.opposite, "auto");
 
-                    last.css(anchor.edge, (firstSize + splitterSize * 2) + 'px');
+                    last.css(anchor.edge, (firstSize + splitterSize) + 'px');
                     last.css(anchor.opposite, "0px");
 
                     position = firstSize + splitterSize;
