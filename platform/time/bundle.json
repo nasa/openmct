@@ -4,15 +4,10 @@
     "extensions": {
         "components": [
             {
-                "provides": "timeService",
-                "type": "aggregator",
-                "implementation": "TimeAggregator.js"
-            },
-            {
-                "provides": "timeService",
+                "provides": "formatService",
                 "type": "provider",
-                "implementation": "UTCTimeProvider.js",
-                "depends": [ "now" ]
+                "implementation": "FormatProvider.js",
+                "depends": "formats[]"
             }
         ],
         "formats": [
