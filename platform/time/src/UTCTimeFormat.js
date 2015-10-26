@@ -34,52 +34,23 @@ define([
             "YYYY-MM-DD HH:mm:ss",
             "YYYY-MM-DD HH:mm",
             "YYYY-MM-DD"
-        ],
-        SECOND = 1000,
-        MINUTE = 60 * SECOND,
-        HOUR = 60 * MINUTE,
-        DAY = 24 * HOUR,
-        WEEK = 7 * DAY,
-        MONTH_APPROX = 30 * DAY,
-        YEAR = 365 * DAY,
-        INCREMENTS = [
-            SECOND,
-            MINUTE,
-            HOUR,
-            DAY,
-            WEEK,
-            MONTH_APPROX,
-            YEAR
-        ],
-        DEFAULT_INCREMENT = 3;
+        ];
 
 
-    function UTCTimeSystem(now) {
-        this.nowFn = now;
+    function UTCTimeFormat() {
     }
 
-    UTCTimeSystem.prototype.format = function (value) {
+    UTCTimeFormat.prototype.format = function (value) {
         return moment.utc(value).format(DATE_FORMAT);
     };
 
-    UTCTimeSystem.prototype.parse = function (text) {
+    UTCTimeFormat.prototype.parse = function (text) {
         return moment.utc(text, DATE_FORMATS).valueOf();
     };
 
-    UTCTimeSystem.prototype.validate = function (text) {
+    UTCTimeFormat.prototype.validate = function (text) {
         return moment.utc(text, DATE_FORMATS).isValid();
     };
 
-    UTCTimeSystem.prototype.now = function () {
-        return this.nowFn();
-    };
-
-    UTCTimeSystem.prototype.increment = function (scale) {
-        var index = (scale || 0) + DEFAULT_INCREMENT;
-        index = Math.max(index, 0);
-        index = Math.min(index, INCREMENTS.length - 1);
-        return INCREMENTS[index];
-    };
-
-    return UTCTimeSystem;
+    return UTCTimeFormat;
 });
