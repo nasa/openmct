@@ -27,18 +27,18 @@ define(
         "use strict";
 
         var BUBBLE_TEMPLATE = InfoConstants.BUBBLE_TEMPLATE,
-            OFFSET = InfoConstants.BUBBLE_OFFSET;
+            MOBILE_POSITION = InfoConstants.BUBBLE_MOBILE_POSITION,
+            OPTIONS = InfoConstants.BUBBLE_OPTIONS;
 
         /**
          * Displays informative content ("info bubbles") for the user.
          * @memberof platform/commonUI/inspect
          * @constructor
          */
-        function InfoService($compile, $document, $window, $rootScope, agentService) {
+        function InfoService($compile, $rootScope, popupService, agentService) {
             this.$compile = $compile;
-            this.$document = $document;
-            this.$window = $window;
             this.$rootScope = $rootScope;
+            this.popupService = popupService;
             this.agentService = agentService;
         }
 
@@ -55,53 +55,47 @@ define(
          */
         InfoService.prototype.display = function (templateKey, title, content, position) {
             var $compile = this.$compile,
-                $document = this.$document,
-                $window = this.$window,
                 $rootScope = this.$rootScope,
-                body = $document.find('body'),
                 scope = $rootScope.$new(),
-                winDim = [$window.innerWidth, $window.innerHeight],
-                bubbleSpaceLR = InfoConstants.BUBBLE_MARGIN_LR + InfoConstants.BUBBLE_MAX_WIDTH,
-                goLeft = position[0] > (winDim[0] - bubbleSpaceLR),
-                goUp = position[1] > (winDim[1] / 2),
+                span = $compile('<span></span>')(scope),
+                bubbleSpaceLR = InfoConstants.BUBBLE_MARGIN_LR +
+                    InfoConstants.BUBBLE_MAX_WIDTH,
+                options,
+                popup,
                 bubble;
-            
+
+            options = Object.create(OPTIONS);
+            options.marginX = -bubbleSpaceLR;
+
+            // On a phone, bubble takes up more screen real estate,
+            // so position it differently (toward the bottom)
+            if (this.agentService.isPhone(navigator.userAgent)) {
+                position = MOBILE_POSITION;
+                options = {};
+            }
+
+            popup = this.popupService.display(span, position, options);
+
             // Pass model & container parameters into the scope
             scope.bubbleModel = content;
             scope.bubbleTemplate = templateKey;
-            scope.bubbleLayout = (goUp ? 'arw-btm' : 'arw-top') + ' ' +
-                (goLeft ? 'arw-right' : 'arw-left');
             scope.bubbleTitle = title;
+            // Style the bubble according to how it was positioned
+            scope.bubbleLayout = [
+                popup.goesUp() ? 'arw-btm' : 'arw-top',
+                popup.goesLeft() ? 'arw-right' : 'arw-left'
+            ].join(' ');
+            scope.bubbleLayout = 'arw-top arw-left';
 
-            // Create the context menu
+            // Create the info bubble, now that we know how to
+            // point the arrow...
             bubble = $compile(BUBBLE_TEMPLATE)(scope);
+            span.append(bubble);
 
-            // Position the bubble
-            bubble.css('position', 'absolute');
-            if (this.agentService.isPhone(navigator.userAgent)) {
-                bubble.css('right', '0px');
-                bubble.css('left', '0px');
-                bubble.css('top', 'auto');
-                bubble.css('bottom', '25px');
-            } else {
-                if (goLeft) {
-                    bubble.css('right', (winDim[0] - position[0] + OFFSET[0]) + 'px');
-                } else {
-                    bubble.css('left', position[0] + OFFSET[0] + 'px');
-                }
-                if (goUp) {
-                    bubble.css('bottom', (winDim[1] - position[1] + OFFSET[1]) + 'px');
-                } else {
-                    bubble.css('top', position[1] + OFFSET[1] + 'px');
-                }
-            }
-
-            // Add the menu to the body
-            body.append(bubble);
-
-            // Return a function to dismiss the bubble
-            return function () {
-                bubble.remove();
+            // Return a function to dismiss the info bubble
+            return function dismiss() {
+                popup.dismiss();
+                scope.$destroy();
             };
         };
 

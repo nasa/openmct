@@ -28,117 +28,85 @@ define(
 
         describe("The info service", function () {
             var mockCompile,
-                mockDocument,
-                testWindow,
                 mockRootScope,
+                mockPopupService,
                 mockAgentService,
-                mockCompiledTemplate,
-                testScope,
-                mockBody,
-                mockElement,
+                mockScope,
+                mockElements,
+                mockPopup,
                 service;
 
             beforeEach(function () {
                 mockCompile = jasmine.createSpy('$compile');
-                mockDocument = jasmine.createSpyObj('$document', ['find']);
-                testWindow = { innerWidth: 1000, innerHeight: 100 };
                 mockRootScope = jasmine.createSpyObj('$rootScope', ['$new']);
                 mockAgentService = jasmine.createSpyObj('agentService', ['isMobile', 'isPhone']);
-                mockCompiledTemplate = jasmine.createSpy('template');
-                testScope = {};
-                mockBody = jasmine.createSpyObj('body', ['append']);
-                mockElement = jasmine.createSpyObj('element', ['css', 'remove']);
+                mockPopupService = jasmine.createSpyObj(
+                    'popupService',
+                    ['display']
+                );
+                mockPopup = jasmine.createSpyObj('popup', [
+                    'dismiss',
+                    'goesLeft',
+                    'goesRight',
+                    'goesUp',
+                    'goesDown'
+                ]);
 
-                mockDocument.find.andCallFake(function (tag) {
-                    return tag === 'body' ? mockBody : undefined;
+                mockScope = jasmine.createSpyObj("scope", ["$destroy"]);
+                mockElements = [];
+
+                mockPopupService.display.andReturn(mockPopup);
+                mockCompile.andCallFake(function () {
+                    var mockCompiledTemplate = jasmine.createSpy('template'),
+                        mockElement = jasmine.createSpyObj('element', [
+                            'css',
+                            'remove',
+                            'append'
+                        ]);
+                    mockCompiledTemplate.andReturn(mockElement);
+                    mockElements.push(mockElement);
+                    return mockCompiledTemplate;
                 });
-                mockCompile.andReturn(mockCompiledTemplate);
-                mockCompiledTemplate.andReturn(mockElement);
-                mockRootScope.$new.andReturn(testScope);
+                mockRootScope.$new.andReturn(mockScope);
 
                 service = new InfoService(
                     mockCompile,
-                    mockDocument,
-                    testWindow,
                     mockRootScope,
+                    mockPopupService,
                     mockAgentService
                 );
             });
 
-            it("creates elements and appends them to the body to display", function () {
-                service.display('', '', {}, [0, 0]);
-                expect(mockBody.append).toHaveBeenCalledWith(mockElement);
+            it("creates elements and displays them as popups", function () {
+                service.display('', '', {}, [123, 456]);
+                expect(mockPopupService.display).toHaveBeenCalledWith(
+                    mockElements[0],
+                    [ 123, 456 ],
+                    jasmine.any(Object)
+                );
             });
 
             it("provides a function to remove displayed info bubbles", function () {
                 var fn = service.display('', '', {}, [0, 0]);
-                expect(mockElement.remove).not.toHaveBeenCalled();
+                expect(mockPopup.dismiss).not.toHaveBeenCalled();
                 fn();
-                expect(mockElement.remove).toHaveBeenCalled();
+                expect(mockPopup.dismiss).toHaveBeenCalled();
             });
 
-            describe("depending on mouse position", function () {
-                // Positioning should vary based on quadrant in window,
-                // which is 1000 x 100 in this test case.
-                it("displays from the top-left in the top-left quadrant", function () {
-                    service.display('', '', {}, [250, 25]);
-                    expect(mockElement.css).toHaveBeenCalledWith(
-                        'left',
-                        (250 + InfoConstants.BUBBLE_OFFSET[0]) + 'px'
-                    );
-                    expect(mockElement.css).toHaveBeenCalledWith(
-                        'top',
-                        (25 + InfoConstants.BUBBLE_OFFSET[1]) + 'px'
-                    );
-                });
-
-                it("displays from the top-right in the top-right quadrant", function () {
-                    service.display('', '', {}, [700, 25]);
-                    expect(mockElement.css).toHaveBeenCalledWith(
-                        'right',
-                        (300 + InfoConstants.BUBBLE_OFFSET[0]) + 'px'
-                    );
-                    expect(mockElement.css).toHaveBeenCalledWith(
-                        'top',
-                        (25 + InfoConstants.BUBBLE_OFFSET[1]) + 'px'
-                    );
-                });
-
-                it("displays from the bottom-left in the bottom-left quadrant", function () {
-                    service.display('', '', {}, [250, 70]);
-                    expect(mockElement.css).toHaveBeenCalledWith(
-                        'left',
-                        (250 + InfoConstants.BUBBLE_OFFSET[0]) + 'px'
-                    );
-                    expect(mockElement.css).toHaveBeenCalledWith(
-                        'bottom',
-                        (30 + InfoConstants.BUBBLE_OFFSET[1]) + 'px'
-                    );
-                });
-
-                it("displays from the bottom-right in the bottom-right quadrant", function () {
-                    service.display('', '', {}, [800, 60]);
-                    expect(mockElement.css).toHaveBeenCalledWith(
-                        'right',
-                        (200 + InfoConstants.BUBBLE_OFFSET[0]) + 'px'
-                    );
-                    expect(mockElement.css).toHaveBeenCalledWith(
-                        'bottom',
-                        (40 + InfoConstants.BUBBLE_OFFSET[1]) + 'px'
-                    );
-                });
-                
-                it("when on phone device, positioning is always on bottom", function () {
-                    mockAgentService.isPhone.andReturn(true);
-                    service = new InfoService(
-                        mockCompile,
-                        mockDocument,
-                        testWindow,
-                        mockRootScope,
-                        mockAgentService
-                    );
-                    service.display('', '', {}, [0, 0]);
-                });
+            it("when on phone device, positions at  bottom", function () {
+                mockAgentService.isPhone.andReturn(true);
+                service = new InfoService(
+                    mockCompile,
+                    mockRootScope,
+                    mockPopupService,
+                    mockAgentService
+                );
+                service.display('', '', {}, [123, 456]);
+                expect(mockPopupService.display).toHaveBeenCalledWith(
+                    mockElements[0],
+                    [ 0, -25 ],
+                    jasmine.any(Object)
+                );
             });
 
         });

@@ -141,10 +141,10 @@ define(
         PlotUpdater.prototype.initializeDomainOffset = function (values) {
             this.domainOffset =
                 ((this.domainOffset === undefined) && (values.length > 0)) ?
-                    (values.reduce(function (a, b) {
-                        return (a || 0) + (b || 0);
-                    }, 0) / values.length) :
-                    this.domainOffset;
+                        (values.reduce(function (a, b) {
+                            return (a || 0) + (b || 0);
+                        }, 0) / values.length) :
+                        this.domainOffset;
         };
 
         // Expand range slightly so points near edges are visible
@@ -159,7 +159,10 @@ define(
 
         // Update dimensions and origin based on extrema of plots
         PlotUpdater.prototype.updateBounds = function () {
-            var bufferArray = this.bufferArray;
+            var bufferArray = this.bufferArray,
+                priorDomainOrigin = this.origin[0],
+                priorDomainDimensions = this.dimensions[0];
+
             if (bufferArray.length > 0) {
                 this.domainExtrema = bufferArray.map(function (lineBuffer) {
                     return lineBuffer.getDomainExtrema();
@@ -177,6 +180,18 @@ define(
 
                 // Enforce some minimum visible area
                 this.expandRange();
+
+                // Suppress domain changes when pinned
+                if (this.hasSpecificDomainBounds) {
+                    this.origin[0] = priorDomainOrigin;
+                    this.dimensions[0] = priorDomainDimensions;
+                    if (this.following) {
+                        this.origin[0] = Math.max(
+                            this.domainExtrema[1] - this.dimensions[0],
+                            this.origin[0]
+                        );
+                    }
+                }
 
                 // ...then enforce a fixed duration if needed
                 if (this.fixedDuration !== undefined) {
@@ -279,6 +294,21 @@ define(
          */
         PlotUpdater.prototype.getLineBuffers = function () {
             return this.bufferArray;
+        };
+
+        /**
+         * Set the start and end boundaries (usually time) for the
+         * domain axis of this updater.
+         */
+        PlotUpdater.prototype.setDomainBounds = function (start, end) {
+            this.fixedDuration = end - start;
+            this.origin[0] = start;
+            this.dimensions[0] = this.fixedDuration;
+
+            // Suppress follow behavior if we have windowed in on the past
+            this.hasSpecificDomainBounds = true;
+            this.following =
+                !this.domainExtrema || (end >= this.domainExtrema[1]);
         };
 
         /**

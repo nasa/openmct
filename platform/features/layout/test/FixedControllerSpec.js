@@ -30,10 +30,10 @@ define(
             var mockScope,
                 mockQ,
                 mockDialogService,
-                mockSubscriber,
+                mockHandler,
                 mockFormatter,
                 mockDomainObject,
-                mockSubscription,
+                mockHandle,
                 mockEvent,
                 testGrid,
                 testModel,
@@ -78,9 +78,9 @@ define(
                     '$scope',
                     [ "$on", "$watch", "commit" ]
                 );
-                mockSubscriber = jasmine.createSpyObj(
-                    'telemetrySubscriber',
-                    [ 'subscribe' ]
+                mockHandler = jasmine.createSpyObj(
+                    'telemetryHandler',
+                    [ 'handle' ]
                 );
                 mockQ = jasmine.createSpyObj('$q', ['when']);
                 mockDialogService = jasmine.createSpyObj(
@@ -95,9 +95,16 @@ define(
                     'domainObject',
                     [ 'getId', 'getModel', 'getCapability' ]
                 );
-                mockSubscription = jasmine.createSpyObj(
+                mockHandle = jasmine.createSpyObj(
                     'subscription',
-                    [ 'unsubscribe', 'getTelemetryObjects', 'getRangeValue', 'getDatum' ]
+                    [
+                        'unsubscribe',
+                        'getDomainValue',
+                        'getTelemetryObjects',
+                        'getRangeValue',
+                        'getDatum',
+                        'request'
+                    ]
                 );
                 mockEvent = jasmine.createSpyObj(
                     'event',
@@ -116,13 +123,14 @@ define(
                     { type: "fixed.telemetry", id: 'c', x: 1, y: 1 }
                 ]};
 
-                mockSubscriber.subscribe.andReturn(mockSubscription);
-                mockSubscription.getTelemetryObjects.andReturn(
+                mockHandler.handle.andReturn(mockHandle);
+                mockHandle.getTelemetryObjects.andReturn(
                     testModel.composition.map(makeMockDomainObject)
                 );
-                mockSubscription.getRangeValue.andCallFake(function (o) {
+                mockHandle.getRangeValue.andCallFake(function (o) {
                     return testValues[o.getId()];
                 });
+                mockHandle.getDomainValue.andReturn(12321);
                 mockFormatter.formatRangeValue.andCallFake(function (v) {
                     return "Formatted " + v;
                 });
@@ -137,7 +145,7 @@ define(
                     mockScope,
                     mockQ,
                     mockDialogService,
-                    mockSubscriber,
+                    mockHandler,
                     mockFormatter
                 );
             });
@@ -145,7 +153,7 @@ define(
             it("subscribes when a domain object is available", function () {
                 mockScope.domainObject = mockDomainObject;
                 findWatch("domainObject")(mockDomainObject);
-                expect(mockSubscriber.subscribe).toHaveBeenCalledWith(
+                expect(mockHandler.handle).toHaveBeenCalledWith(
                     mockDomainObject,
                     jasmine.any(Function)
                 );
@@ -156,13 +164,13 @@ define(
 
                 // First pass - should simply should subscribe
                 findWatch("domainObject")(mockDomainObject);
-                expect(mockSubscription.unsubscribe).not.toHaveBeenCalled();
-                expect(mockSubscriber.subscribe.calls.length).toEqual(1);
+                expect(mockHandle.unsubscribe).not.toHaveBeenCalled();
+                expect(mockHandler.handle.calls.length).toEqual(1);
 
                 // Object changes - should unsubscribe then resubscribe
                 findWatch("domainObject")(mockDomainObject);
-                expect(mockSubscription.unsubscribe).toHaveBeenCalled();
-                expect(mockSubscriber.subscribe.calls.length).toEqual(2);
+                expect(mockHandle.unsubscribe).toHaveBeenCalled();
+                expect(mockHandler.handle.calls.length).toEqual(2);
             });
 
             it("exposes visible elements based on configuration", function () {
@@ -255,7 +263,7 @@ define(
                 findWatch("model.composition")(mockScope.model.composition);
 
                 // Invoke the subscription callback
-                mockSubscriber.subscribe.mostRecentCall.args[1]();
+                mockHandler.handle.mostRecentCall.args[1]();
 
                 // Get elements that controller is now exposing
                 elements = controller.getElements();
@@ -333,11 +341,11 @@ define(
                 // Make an object available
                 findWatch('domainObject')(mockDomainObject);
                 // Also verify precondition
-                expect(mockSubscription.unsubscribe).not.toHaveBeenCalled();
+                expect(mockHandle.unsubscribe).not.toHaveBeenCalled();
                 // Destroy the scope
                 findOn('$destroy')();
                 // Should have unsubscribed
-                expect(mockSubscription.unsubscribe).toHaveBeenCalled();
+                expect(mockHandle.unsubscribe).toHaveBeenCalled();
             });
 
             it("exposes its grid size", function () {

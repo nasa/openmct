@@ -123,25 +123,6 @@ define(
                         telemetryCapability.getMetadata();
             }
 
-            // From a telemetry series, retrieve a single data point
-            // containing all fields for domains/ranges
-            function makeDatum(domainObject, series, index) {
-                var metadata = lookupMetadata(domainObject),
-                    result = {};
-
-                (metadata.domains || []).forEach(function (domain) {
-                    result[domain.key] =
-                        series.getDomainValue(index, domain.key);
-                });
-
-                (metadata.ranges || []).forEach(function (range) {
-                    result[range.key] =
-                        series.getRangeValue(index, range.key);
-                });
-
-                return result;
-            }
-
             // Update the latest telemetry data for a specific
             // domain object. This will notify listeners.
             function update(domainObject, series) {
@@ -160,7 +141,7 @@ define(
                     pool.put(domainObject.getId(), {
                         domain: series.getDomainValue(count - 1),
                         range: series.getRangeValue(count - 1),
-                        datum: makeDatum(domainObject, series, count - 1)
+                        datum: self.makeDatum(domainObject, series, count - 1)
                     });
                 }
             }
@@ -188,6 +169,11 @@ define(
             function cacheObjectReferences(objects) {
                 self.telemetryObjects = objects;
                 self.metadatas = objects.map(lookupMetadata);
+
+                self.metadataById = {};
+                objects.forEach(function (obj, i) {
+                    self.metadataById[obj.getId()] = self.metadatas[i];
+                });
                 // Fire callback, as this will be the first time that
                 // telemetry objects are available, or these objects
                 // will have changed.
@@ -241,6 +227,34 @@ define(
             this.unlistenToMutation = addMutationListener();
         }
 
+
+        /**
+         * From a telemetry series, retrieve a single data point
+         * containing all fields for domains/ranges
+         * @private
+         */
+        TelemetrySubscription.prototype.makeDatum = function (domainObject, series, index) {
+            var id = domainObject && domainObject.getId(),
+                metadata = (id && this.metadataById[id]) || {},
+                result = {};
+
+            (metadata.domains || []).forEach(function (domain) {
+                result[domain.key] =
+                    series.getDomainValue(index, domain.key);
+            });
+
+            (metadata.ranges || []).forEach(function (range) {
+                result[range.key] =
+                    series.getRangeValue(index, range.key);
+            });
+
+            return result;
+        };
+
+        /**
+         * Terminate all underlying subscriptions.
+         * @private
+         */
         TelemetrySubscription.prototype.unsubscribeAll = function () {
             var $q = this.$q;
             return this.unsubscribePromise.then(function (unsubscribes) {

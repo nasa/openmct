@@ -8,6 +8,11 @@
                 "key": "urlService",
                 "implementation": "services/UrlService.js",
                 "depends": [ "$location" ]
+            },
+            {
+                "key": "popupService",
+                "implementation": "services/PopupService.js",
+                "depends": [ "$document", "$window" ]
             }
         ],
         "runs": [
@@ -53,6 +58,16 @@
             }
         ],
         "controllers": [
+            {
+                "key": "TimeRangeController",
+                "implementation": "controllers/TimeRangeController.js",
+                "depends": [ "$scope", "now" ]
+            },
+            {
+                "key": "DateTimePickerController",
+                "implementation": "controllers/DateTimePickerController.js",
+                "depends": [ "$scope", "now" ]
+            },
             {
                 "key": "TreeNodeController",
                 "implementation": "controllers/TreeNodeController.js",
@@ -119,9 +134,19 @@
                 "depends": [ "$document" ]
             },
             {
+                "key": "mctClickElsewhere",
+                "implementation": "directives/MCTClickElsewhere.js",
+                "depends": [ "$document" ]
+            },
+            {
                 "key": "mctResize",
                 "implementation": "directives/MCTResize.js",
                 "depends": [ "$timeout" ]
+            },
+            {
+                "key": "mctPopup",
+                "implementation": "directives/MCTPopup.js",
+                "depends": [ "$compile", "popupService" ]
             },
             {
                 "key": "mctScrollX",
@@ -226,6 +251,10 @@
             {
                 "key": "selector",
                 "templateUrl": "templates/controls/selector.html"
+            },
+            {
+                "key": "datetime-picker",
+                "templateUrl": "templates/controls/datetime-picker.html"
             }
         ],
         "licenses": [

@@ -40,11 +40,11 @@
 
 /************************** HTML ENTITIES */
 a {
-	color: #ccc;
+	color: $colorA;
 	cursor: pointer;
 	text-decoration: none;
 	&:hover {
-		color: #fff;
+		color: $colorAHov;
 	}
 }
 
@@ -123,6 +123,14 @@ mct-container {
 
 .centered {
 	text-align: center;
+}
+
+.scrolling {
+	overflow: auto;
+}
+
+.vscroll {
+	overflow-y: auto;
 }
 
 .no-margin {

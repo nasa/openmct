@@ -45,11 +45,19 @@ define(
                 };
             }
 
+            function fireEvent(name, args) {
+                mockScope.$on.calls.forEach(function (call) {
+                    if (call.args[0] === name) {
+                        call.args[1].apply(null, args || []);
+                    }
+                });
+            }
+
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
                     "$scope",
-                    [ "$watch", "$on" ]
+                    [ "$watch", "$on", "$emit" ]
                 );
                 mockFormatter = jasmine.createSpyObj(
                     "formatter",
@@ -87,6 +95,7 @@ define(
                 mockHandle.getMetadata.andReturn([{}]);
                 mockHandle.getDomainValue.andReturn(123);
                 mockHandle.getRangeValue.andReturn(42);
+                mockScope.domainObject = mockDomainObject;
 
                 controller = new PlotController(
                     mockScope,
@@ -212,7 +221,12 @@ define(
             });
 
             it("indicates if a request is pending", function () {
-                // Placeholder; need to support requesting telemetry
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                expect(controller.isRequestPending()).toBeTruthy();
+                mockHandle.request.mostRecentCall.args[1](
+                    mockDomainObject,
+                    mockSeries
+                );
                 expect(controller.isRequestPending()).toBeFalsy();
             });
 
@@ -233,9 +247,19 @@ define(
                 // Also verify precondition
                 expect(mockHandle.unsubscribe).not.toHaveBeenCalled();
                 // Destroy the scope
-                mockScope.$on.mostRecentCall.args[1]();
+                fireEvent("$destroy");
                 // Should have unsubscribed
                 expect(mockHandle.unsubscribe).toHaveBeenCalled();
+            });
+
+            it("requeries when displayable bounds change", function () {
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                expect(mockHandle.request.calls.length).toEqual(1);
+                fireEvent("telemetry:display:bounds", [
+                    {},
+                    { start: 10, end: 100 }
+                ]);
+                expect(mockHandle.request.calls.length).toEqual(2);
             });
         });
     }

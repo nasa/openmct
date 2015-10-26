@@ -136,6 +136,14 @@ define(
                     }
                 }
 
+                // Destroy (deallocate any resources associated with) any
+                // active representers.
+                function destroyRepresenters() {
+                    activeRepresenters.forEach(function (activeRepresenter) {
+                        activeRepresenter.destroy();
+                    });
+                }
+
                 // General-purpose refresh mechanism; should set up the scope
                 // as appropriate for current representation key and
                 // domain object.
@@ -152,10 +160,8 @@ define(
                     // via the "inclusion" field
                     $scope.inclusion = representation && getPath(representation);
 
-                    // Any existing gestures are no longer valid; release them.
-                    activeRepresenters.forEach(function (activeRepresenter) {
-                        activeRepresenter.destroy();
-                    });
+                    // Any existing representers are no longer valid; release them.
+                    destroyRepresenters();
 
                     // Log if a key was given, but no matching representation
                     // was found.
@@ -208,6 +214,10 @@ define(
                 // same domain object; these changes should be tracked in the
                 // model's "modified" field, by the mutation capability.
                 $scope.$watch("domainObject.getModel().modified", refreshCapabilities);
+
+                // Make sure any resources allocated by representers also get
+                // released.
+                $scope.$on("$destroy", destroyRepresenters);
 
                 // Do one initial refresh, so that we don't need another
                 // digest iteration just to populate the scope. Failure to

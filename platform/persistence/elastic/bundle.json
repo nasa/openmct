@@ -13,7 +13,7 @@
                 "provides": "searchService",
                 "type": "provider",
                 "implementation": "ElasticSearchProvider.js",
-                "depends": [ "$http", "objectService", "ELASTIC_ROOT" ]
+                "depends": [ "$http", "ELASTIC_ROOT" ]
             }
         ],
         "constants": [
