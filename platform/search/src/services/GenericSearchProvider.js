@@ -122,7 +122,7 @@ define([
 
         mutationTopic.listen(function (mutatedObject) {
             var id = mutatedObject.getId();
-            provider.indexed[id] = false;
+            provider.indexedIds[id] = false;
             provider.scheduleForIndexing(id);
         });
     };
