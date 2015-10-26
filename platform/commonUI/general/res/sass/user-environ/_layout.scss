@@ -443,6 +443,9 @@
         @include trans-prop-nice(opacity, $dur: 250ms, $delay: 250ms);
         opacity: 1;
     }
+    .create-and-search-holder {
+        @include trans-prop-nice(top, $dur: 250ms, $delay: 200ms);
+    }
 }
 
 .pane-inspect-showing {
