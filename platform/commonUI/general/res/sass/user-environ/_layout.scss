@@ -438,12 +438,10 @@
     // Sets the left tree menu when the tree is shown.
     //.pane.left.treeview,
     .tree-holder,
-    .splitter-treeview {
+    .splitter-treeview,
+    .search-holder .search {
         @include trans-prop-nice(opacity, $dur: 250ms, $delay: 250ms);
         opacity: 1;
-    }
-    .pane.left {
-
     }
 }
 
