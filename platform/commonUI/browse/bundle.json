@@ -29,7 +29,7 @@
                 "key": "PaneController",
                 "implementation": "PaneController.js",
                 "priority": "preferred",
-                "depends": [ "$scope", "agentService" ]
+                "depends": [ "$scope", "agentService","$window" ]
             },
             {
                 "key": "BrowseObjectController",
