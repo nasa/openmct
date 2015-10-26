@@ -26,7 +26,7 @@ define(
     function (moment) {
         "use strict";
 
-        var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss",
+        var DEFAULT_FORMAT = "utc",
             TICK_SPACING_PX = 150;
 
         /**
@@ -34,20 +34,20 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function TimeRangeController($scope, timeService) {
+        function TimeRangeController($scope, formatService, now) {
             var tickCount = 2,
                 innerMinimumSpan = 1000, // 1 second
                 outerMinimumSpan = 1000 * 60 * 60, // 1 hour
                 initialDragValue,
-                timeSystem = timeService.system(); // Start with default
+                formatter = formatService.getFormat(DEFAULT_FORMAT);
 
             function formatTimestamp(ts) {
-                return timeSystem.format(ts);
+                return formatter.format(ts);
             }
 
             function parseTimestamp(text) {
-                if (timeSystem.validate(text)) {
-                    return timeSystem.parse(text);
+                if (formatter.validate(text)) {
+                    return formatter.parse(text);
                 } else {
                     throw new Error("Could not parse " + text);
                 }
@@ -91,7 +91,7 @@ define(
             }
 
             function defaultBounds() {
-                var t = timeSystem.now();
+                var t = now();
                 return {
                     start: t - 24 * 3600 * 1000, // One day
                     end: t
@@ -278,17 +278,9 @@ define(
                 updateViewFromModel($scope.ngModel);
             }
 
-            function updateTimeSystem(key) {
-                timeSystem = timeService.system(key) || timeService.system();
-
-                // One second / one hour in UTC; should be
-                // similarly useful in other time systems.
-                innerMinimumSpan = timeSystem.increment(-3);
-                outerMinimumSpan = timeSystem.increment(-1);
-                reinitializeBounds(
-                    timeSystem.now(),
-                    timeSystem.increment()
-                );
+            function updateFormat(key) {
+                formatter = formatService.getFormat(key) ||
+                        formatService.getFormat(DEFAULT_FORMAT);
             }
 
             function updateStartFromPicker(value) {
@@ -321,7 +313,7 @@ define(
             $scope.$watch("ngModel.outer.end", updateEndFromPicker);
             $scope.$watch("boundsModel.start", updateStartFromText);
             $scope.$watch("boundsModel.end", updateEndFromText);
-            $scope.$watch("parameters.system", updateTimeSystem);
+            $scope.$watch("parameters.format", updateFormat);
         }
 
         return TimeRangeController;
