@@ -35,6 +35,8 @@
 	}
 	&.icon {
 		color: $colorKey;
+        //position: relative;
+        font-size: inherit;
 		&.alert {
 			color: $colorAlert;
 			&:hover {
@@ -48,6 +50,19 @@
 	&.icon-calendar:after {
 		content: "\e605";
 	}
+    &.l-icon-link {
+        color: $colorIconLink;
+        height: auto;
+        line-height: 100%;
+        position: absolute;
+        font-size: 0.4em !important;
+        left: 0px;
+        bottom: 5%;
+        z-index: 2;
+        &:before {
+            content: "\f4";
+        }
+    }
 }
 
 .bar .ui-symbol {
@@ -68,14 +83,6 @@
 .tree-item .type-icon,
 .super-menu.menu .type-icon {
 	position: absolute;
-}
-
-//.tree-item .type-icon {
-//	font-size: 16px; // 16px is crisp size
-//}
-
-.l-icon-link:before {
-	content: "\f4";
 }
 
 .l-icon-alert {

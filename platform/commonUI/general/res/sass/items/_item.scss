@@ -88,7 +88,7 @@
 	            z-index: 1;
                 .item-type {
                     //@include trans-prop-nice("color", $transTime);
-                    @include absPosDefault($iconMargin, false);
+                    @include absPosDefault($iconMargin, hidden);
                     //@include test(red);
                     //color: $colorItemIc;
                     text-align: center;
@@ -97,16 +97,6 @@
                     bottom: auto;
                     height: $iconD;
                     top: $iconMargin - 10;
-                    .l-icon-link {
-                        color: $colorIconLink;
-                        height: auto;
-                        line-height: 100%;
-                        position: absolute;
-                        font-size: 0.3em;
-                        left: 0px;
-                        bottom: 10px;
-                        z-index: 2;
-                    }
                 }
                 .item-open {
                     @include trans-prop-nice("opacity", $transTime);

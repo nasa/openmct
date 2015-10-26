@@ -610,48 +610,58 @@ mct-container {
     color: #b3b3b3; }
   /* line 36, ../../../../general/res/sass/_icons.scss */
   .ui-symbol.icon, .icon.s-icon-btn, .icon.mini-tab-icon, .l-datetime-picker .l-month-year-pager .icon.pager {
-    color: #0099cc; }
-    /* line 38, ../../../../general/res/sass/_icons.scss */
+    color: #0099cc;
+    font-size: inherit; }
+    /* line 40, ../../../../general/res/sass/_icons.scss */
     .ui-symbol.icon.alert, .icon.alert.s-icon-btn, .icon.alert.mini-tab-icon, .l-datetime-picker .l-month-year-pager .icon.alert.pager {
       color: #ff3c00; }
-      /* line 40, ../../../../general/res/sass/_icons.scss */
+      /* line 42, ../../../../general/res/sass/_icons.scss */
       .ui-symbol.icon.alert:hover, .icon.alert.s-icon-btn:hover, .icon.alert.mini-tab-icon:hover, .l-datetime-picker .l-month-year-pager .icon.alert.pager:hover {
         color: #ff8a66; }
-    /* line 44, ../../../../general/res/sass/_icons.scss */
+    /* line 46, ../../../../general/res/sass/_icons.scss */
     .ui-symbol.icon.major, .icon.major.s-icon-btn, .icon.major.mini-tab-icon, .l-datetime-picker .l-month-year-pager .icon.major.pager {
       font-size: 1.65em; }
-  /* line 48, ../../../../general/res/sass/_icons.scss */
+  /* line 50, ../../../../general/res/sass/_icons.scss */
   .ui-symbol.icon-calendar:after, .icon-calendar.s-icon-btn:after, .icon-calendar.mini-tab-icon:after, .l-datetime-picker .l-month-year-pager .icon-calendar.pager:after {
     content: "\e605"; }
+  /* line 53, ../../../../general/res/sass/_icons.scss */
+  .ui-symbol.l-icon-link, .l-icon-link.s-icon-btn, .l-icon-link.mini-tab-icon, .l-datetime-picker .l-month-year-pager .l-icon-link.pager {
+    color: #49dedb;
+    height: auto;
+    line-height: 100%;
+    position: absolute;
+    font-size: 0.4em !important;
+    left: 0px;
+    bottom: 5%;
+    z-index: 2; }
+    /* line 62, ../../../../general/res/sass/_icons.scss */
+    .ui-symbol.l-icon-link:before, .l-icon-link.s-icon-btn:before, .l-icon-link.mini-tab-icon:before, .l-datetime-picker .l-month-year-pager .l-icon-link.pager:before {
+      content: "\f4"; }
 
-/* line 53, ../../../../general/res/sass/_icons.scss */
+/* line 68, ../../../../general/res/sass/_icons.scss */
 .bar .ui-symbol, .bar .s-icon-btn, .bar .mini-tab-icon, .bar .l-datetime-picker .l-month-year-pager .pager, .l-datetime-picker .l-month-year-pager .bar .pager {
   display: inline-block; }
 
-/* line 57, ../../../../general/res/sass/_icons.scss */
+/* line 72, ../../../../general/res/sass/_icons.scss */
 .invoke-menu {
   text-shadow: none;
   display: inline-block; }
 
-/* line 62, ../../../../general/res/sass/_icons.scss */
+/* line 77, ../../../../general/res/sass/_icons.scss */
 .s-menu-btn .invoke-menu,
 .icon.major .invoke-menu {
   margin-left: 3px; }
 
-/* line 67, ../../../../general/res/sass/_icons.scss */
+/* line 82, ../../../../general/res/sass/_icons.scss */
 .menu .type-icon,
 .tree-item .type-icon,
 .super-menu.menu .type-icon {
   position: absolute; }
 
-/* line 77, ../../../../general/res/sass/_icons.scss */
-.l-icon-link:before {
-  content: "\f4"; }
-
-/* line 81, ../../../../general/res/sass/_icons.scss */
+/* line 88, ../../../../general/res/sass/_icons.scss */
 .l-icon-alert {
   display: none !important; }
-  /* line 83, ../../../../general/res/sass/_icons.scss */
+  /* line 90, ../../../../general/res/sass/_icons.scss */
   .l-icon-alert:before {
     color: #ff3c00;
     content: "!"; }
@@ -6128,7 +6138,7 @@ table {
       z-index: 1; }
       /* line 89, ../../../../general/res/sass/items/_item.scss */
       .items-holder .item.grid-item .item-main .item-type {
-        overflow: false;
+        overflow: hidden;
         position: absolute;
         top: 40px;
         right: 40px;
@@ -6142,17 +6152,7 @@ table {
         bottom: auto;
         height: 102px;
         top: 30px; }
-        /* line 100, ../../../../general/res/sass/items/_item.scss */
-        .items-holder .item.grid-item .item-main .item-type .l-icon-link {
-          color: #49dedb;
-          height: auto;
-          line-height: 100%;
-          position: absolute;
-          font-size: 0.3em;
-          left: 0px;
-          bottom: 10px;
-          z-index: 2; }
-      /* line 111, ../../../../general/res/sass/items/_item.scss */
+      /* line 101, ../../../../general/res/sass/items/_item.scss */
       .items-holder .item.grid-item .item-main .item-open {
         -moz-transition-property: "opacity";
         -o-transition-property: "opacity";
@@ -6177,14 +6177,14 @@ table {
         width: 50px;
         pointer-events: none;
         text-align: right; }
-    /* line 121, ../../../../general/res/sass/items/_item.scss */
+    /* line 111, ../../../../general/res/sass/items/_item.scss */
     .items-holder .item.grid-item .title {
       text-shadow: none;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       color: #666; }
-    /* line 126, ../../../../general/res/sass/items/_item.scss */
+    /* line 116, ../../../../general/res/sass/items/_item.scss */
     .items-holder .item.grid-item .details {
       text-shadow: none;
       overflow: hidden;
@@ -6192,7 +6192,7 @@ table {
       white-space: nowrap;
       color: #8c8c8c;
       font-size: 0.8em; }
-    /* line 132, ../../../../general/res/sass/items/_item.scss */
+    /* line 122, ../../../../general/res/sass/items/_item.scss */
     .items-holder .item.grid-item.selected {
       background-color: #0099cc;
       -moz-border-radius: 4px;
@@ -6216,16 +6216,16 @@ table {
       /* line 274, ../../../../general/res/sass/_mixins.scss */
       .items-holder .item.grid-item.selected .icon {
         color: #eee; }
-      /* line 137, ../../../../general/res/sass/items/_item.scss */
+      /* line 127, ../../../../general/res/sass/items/_item.scss */
       .items-holder .item.grid-item.selected .item-type, .items-holder .item.grid-item.selected .top-bar .icon:not(.alert) {
         color: #80dfff; }
-      /* line 138, ../../../../general/res/sass/items/_item.scss */
+      /* line 128, ../../../../general/res/sass/items/_item.scss */
       .items-holder .item.grid-item.selected .item-main .item-open {
         color: #80dfff; }
-      /* line 139, ../../../../general/res/sass/items/_item.scss */
+      /* line 129, ../../../../general/res/sass/items/_item.scss */
       .items-holder .item.grid-item.selected .title {
         color: white; }
-      /* line 141, ../../../../general/res/sass/items/_item.scss */
+      /* line 131, ../../../../general/res/sass/items/_item.scss */
       .items-holder .item.grid-item.selected:hover .item-main .item-type {
         color: white !important; }
 
