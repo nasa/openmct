@@ -16,6 +16,12 @@
                 "implementation": "SinewaveLimitCapability.js"
             }
         ],
+        "format": [
+            {
+                "key": "example.delta",
+                "implementation": "SinewaveDeltaFormat.js"
+            }
+        ],
         "types": [
             {
                 "key": "generator",
@@ -38,6 +44,11 @@
                         {
                             "key": "yesterday",
                             "name": "Yesterday"
+                        },
+                        {
+                            "key": "delta",
+                            "name": "Delta",
+                            "format": "example.delta"
                         }
                     ],
                     "ranges": [
