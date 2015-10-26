@@ -251,14 +251,17 @@
     }
 
     &.treeview.left {
-        .create-btn-holder {
-            bottom: auto;
-            top: 0;
-            height: $ueTopBarH;
-            .wrapper.menu-element {
-                position: absolute;
-                bottom: $interiorMargin;
-            }
+        //.create-btn-holder {
+        //    //bottom: auto;
+        //    //top: 0;
+        //    height: $ueTopBarH;
+        //    .wrapper.menu-element {
+        //        position: absolute;
+        //        bottom: $interiorMargin;
+        //    }
+        //}
+        .create-and-search-holder {
+
         }
         .search-holder {
             top: $ueTopBarH + $interiorMarginLg;
@@ -291,6 +294,11 @@
                 &:after { content: '\e608'; }
                 &.collapsed {
                     @include transform(translateX($paneCollapsedOffset));
+                }
+            }
+            &.toggle-search.anchor-left {
+                &:after {
+                    content:"M"
                 }
             }
         }
@@ -399,19 +407,43 @@
 // right representation.
 .pane-tree-hidden {
     // Sets the left tree menu when the tree is hidden.
-    .pane.left.treeview,
-    .splitter-treeview {
+    //.pane.left.treeview,
+    .tree-holder,
+    .splitter-treeview,
+    .search-holder .search {
         opacity: 0;
     }
-    // Sets the right representation when the tree is hidden.
+    .create-and-search-holder {
+        @include trans-prop-nice((top, left), 250ms);
+        top: $ueTopBarH + $interiorMargin !important;
+        left: -1 * $bodyMargin !important;
+        .create-btn {
+            @include border-left-radius(0);
+            @include trans-prop-nice((width), 250ms);
+            width: $uePaneMiniTabW !important;
+            text-align: center !important;
+            padding: 0;
+            .title-label,
+            &:after {
+                display: none;
+            }
+            &:before {
+                font-size: 9px;
+            }
+        }
+    }
 }
 
 .pane-tree-showing {
     // Sets the left tree menu when the tree is shown.
-    .pane.left.treeview,
+    //.pane.left.treeview,
+    .tree-holder,
     .splitter-treeview {
         @include trans-prop-nice(opacity, $dur: 250ms, $delay: 250ms);
         opacity: 1;
+    }
+    .pane.left {
+
     }
 }
 

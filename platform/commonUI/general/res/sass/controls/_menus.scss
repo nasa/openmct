@@ -43,6 +43,11 @@
 	}
 
 	&.create-btn {
+		&:before {
+			content:'\2b';
+			display: inline;
+			font-family: symbolsfont;
+		}
 		.title-label {
 			font-size: 1rem;
 		}
