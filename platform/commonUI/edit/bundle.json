@@ -67,7 +67,7 @@
                 "implementation": "actions/SaveAction.js",
                 "name": "Save",
                 "description": "Save changes made to these objects.",
-                "depends": [ "$location", "urlService" ],
+                "depends": [ "$location", "urlService", "navigationService" ],
                 "priority": "mandatory"
             },
             {
@@ -76,7 +76,7 @@
                 "implementation": "actions/CancelAction.js",
                 "name": "Cancel",
                 "description": "Discard changes made to these objects.",
-                "depends": [ "$location", "urlService" ]
+                "depends": [ "$location", "urlService", "navigationService" ]
             }
         ],
         "policies": [

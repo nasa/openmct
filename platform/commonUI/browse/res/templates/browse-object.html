@@ -22,8 +22,7 @@
 <div ng-init="
     editBtns = [{ cssclass: 'save',title: 'Save' },{ cssclass: 'cancel',title: 'Discard Changes', action:'cancelEditing' }];
 "></div>
-<span ng-controller="BrowseObjectController"
-      mct-before-unload="getUnloadWarning()">
+<span ng-controller="BrowseObjectController">
     <!--<a class="s-btn"
        style="opacity: 0.9; position:absolute; right: 250px; z-index: 100"
        ng-class="{ major:!editMode }"
@@ -92,12 +91,12 @@
 
 
 
-<!--                <mct-representation key="'edit-action-buttons'"
+                <mct-representation key="'edit-action-buttons'"
                                     mct-object="domainObject"
                                     class='flex-elem conclude-editing'>
-                </mct-representation>-->
+                </mct-representation>
                 <!-- from edit-action-buttons.html -->
-                <span class='flex-elem conclude-editing'>
+<!--                <span class='flex-elem conclude-editing'>
                     <span ng-repeat="btn in editBtns">
                         <a class='s-btn t-{{btn.cssclass}}'
                            title='{{btn.title}}'
@@ -105,7 +104,7 @@
                            ng-class="{ major: $index === 0 }">
                             <span class="title-label">{{btn.title}}</span>
                         </a>
-                    </span>
+                    </span> -->
                 </span>
 
             </div>

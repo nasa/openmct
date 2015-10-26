@@ -42,8 +42,8 @@ define(
          *        composition should be modified as a result of the drop.
          */
         function DropGesture(dndService, $q, navigationService, element, domainObject) {
-            var editableDomainObject = domainObject instanceof EditableDomainObject ? domainObject : new EditableDomainObject(domainObject, $q),
-                actionCapability = editableDomainObject.getCapability('action'),
+            var actionCapability = domainObject.getCapability('action'),
+                editableDomainObject,
                 action; // Action for the drop, when it occurs
             
             function broadcastDrop(id, event) {
@@ -70,6 +70,11 @@ define(
             }
 
             function dragOver(e) {
+                //Refresh domain object on each dragOver to catch external
+                // updates to the model
+                editableDomainObject = domainObject instanceof EditableDomainObject ? domainObject : new EditableDomainObject(domainObject, $q);
+                actionCapability = editableDomainObject.getCapability('action');
+
                 var event = (e || {}).originalEvent || e,
                     selectedObject = dndService.getData(
                         GestureConstants.MCT_EXTENDED_DRAG_TYPE

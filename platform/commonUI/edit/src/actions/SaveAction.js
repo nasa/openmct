@@ -34,10 +34,11 @@ define(
          * @implements {Action}
          * @memberof platform/commonUI/edit
          */
-        function SaveAction($location, urlService, context) {
+        function SaveAction($location, urlService, navigationService, context) {
             this.domainObject = (context || {}).domainObject;
             this.$location = $location;
             this.urlService = urlService;
+            this.navigationService = navigationService;
         }
 
         /**
@@ -50,7 +51,8 @@ define(
         SaveAction.prototype.perform = function () {
             var domainObject = this.domainObject,
                 $location = this.$location,
-                urlService = this.urlService;
+                urlService = this.urlService,
+                self = this;
 
             // Invoke any save behavior introduced by the editor capability;
             // this is introduced by EditableDomainObject which is
@@ -61,12 +63,14 @@ define(
             }
 
             // Discard the current root view (which will be the editing
-            // UI, which will have been pushed atop the Browise UI.)
+            // UI, which will have been pushed atop the Browse UI.)
             function returnToBrowse() {
-                return $location.path(urlService.urlForLocation(
+
+                return self.navigationService.setNavigation(self.domainObject.getDomainObject());
+                /*return $location.path(urlService.urlForLocation(
                     "browse",
                     domainObject
-                ));
+                ));*/
             }
 
             return doSave().then(returnToBrowse);
