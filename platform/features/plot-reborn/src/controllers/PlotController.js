@@ -94,12 +94,13 @@ define(
             }
 
             function startRealTimeFeed(series, seriesIndex, telemetryCapability) {
-                var updater = addTelemetrySeriesToPlotSeries(
-                    series,
-                    seriesIndex
-                );
-                unsubscribes.push(telemetryCapability.subscribe(updater));
-                return;
+                return function () {
+                    var updater = addTelemetrySeriesToPlotSeries(
+                        series,
+                        seriesIndex
+                    );
+                    unsubscribes.push(telemetryCapability.subscribe(updater));
+                };
             }
 
             function subscribeToDomainObject(domainObject) {
@@ -118,7 +119,8 @@ define(
                 $scope.series.push(series);
                 seriesIndex = $scope.series.indexOf(series);
 
-                return telemetryCapability.requestData({})
+                return telemetryCapability
+                    .requestData({})
                     .then(addTelemetrySeriesToPlotSeries(
                         series,
                         seriesIndex
