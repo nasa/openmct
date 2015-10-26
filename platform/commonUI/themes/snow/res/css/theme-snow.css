@@ -3819,7 +3819,7 @@ span.req {
 .browse-mode .split-layout .split-pane-component.pane.t-inspect.right {
   min-width: 200px;
   max-width: 600px;
-  padding-left: 10px;
+  padding-left: 15px;
   width: 20%; }
 
 /* line 227, ../../../../general/res/sass/user-environ/_layout.scss */
@@ -3868,10 +3868,10 @@ span.req {
           content: 'F'; }
         /* line 286, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab.toggle-pane.toggle-tree.anchor-left.collapsed {
-          -moz-transform: translateX(-20px);
-          -ms-transform: translateX(-20px);
-          -webkit-transform: translateX(-20px);
-          transform: translateX(-20px); }
+          -moz-transform: translateX(-25px);
+          -ms-transform: translateX(-25px);
+          -webkit-transform: translateX(-25px);
+          transform: translateX(-25px); }
       /* line 290, ../../../../general/res/sass/user-environ/_layout.scss */
       .pane .mini-tab.toggle-pane.toggle-inspect.anchor-right {
         right: 0;
@@ -3884,10 +3884,10 @@ span.req {
           content: '\e608'; }
         /* line 295, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab.toggle-pane.toggle-inspect.anchor-right.collapsed {
-          -moz-transform: translateX(20px);
-          -ms-transform: translateX(20px);
-          -webkit-transform: translateX(20px);
-          transform: translateX(20px); }
+          -moz-transform: translateX(25px);
+          -ms-transform: translateX(25px);
+          -webkit-transform: translateX(25px);
+          transform: translateX(25px); }
       /* line 300, ../../../../general/res/sass/user-environ/_layout.scss */
       .pane .mini-tab.toggle-pane.toggle-search.anchor-left:after {
         content: "M"; } }
@@ -4121,11 +4121,11 @@ span.req {
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
   /* line 471, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane-tree-hidden .pane.right.primary-pane {
-    left: 10px !important; }
+    left: 15px !important; }
 
   /* line 474, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane-inspect-hidden .l-object-and-inspector .pane.left {
-    right: 10px !important; }
+    right: 15px !important; }
 
   /* line 477, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane:not(.resizing) {
