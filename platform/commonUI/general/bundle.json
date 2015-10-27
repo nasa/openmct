@@ -62,7 +62,7 @@
             },
             {
                 "key": "DateTimeFieldController",
-                "implementation": "controllers/DateTimePickerController.js",
+                "implementation": "controllers/DateTimeFieldController.js",
                 "depends": [ "$scope", "formatService" ]
             },
             {
