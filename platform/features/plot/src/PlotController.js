@@ -83,10 +83,9 @@ define(
             // Populate the scope with axis information (specifically, options
             // available for each axis.)
             function setupAxes(metadatas) {
-                $scope.axes = [
-                    new PlotAxis("domain", metadatas, AXIS_DEFAULTS[0]),
-                    new PlotAxis("range", metadatas, AXIS_DEFAULTS[1])
-                ];
+                $scope.axes.forEach(function (axis) {
+                    axis.updateMetadata(metadatas);
+                });
             }
 
             // Trigger an update of a specific subplot;
@@ -142,6 +141,7 @@ define(
                 self.pending = false;
                 if (handle) {
                     setupModes(handle.getTelemetryObjects());
+                    setupAxes(handle.getMetadata());
                 }
                 if (updater) {
                     updater.update();
@@ -167,6 +167,15 @@ define(
                     handle.request({}, addHistoricalData);
                 }
             }
+
+            // Requery for data entirely
+            function replot() {
+                if (handle) {
+                    recreateUpdater();
+                    requestTelemetry();
+                }
+            }
+
 
             // Create a new subscription; telemetrySubscriber gets
             // to do the meaningful work here.
@@ -197,11 +206,15 @@ define(
 
             // Respond to a display bounds change (requery for data)
             function changeDisplayBounds(event, bounds) {
+                var domainAxis = $scope.axes[0];
+                domainAxis.chooseOption(bounds.domain);
+                plotTelemetryFormatter
+                    .setDomainFormat(domainAxis.active.format);
+
                 self.pending = true;
                 releaseSubscription();
                 subscribe($scope.domainObject);
                 setBasePanZoom(bounds);
-                $scope.axes[0].choose(bounds.domain);
             }
 
             function updateDomainFormat(format) {
@@ -218,6 +231,17 @@ define(
             });
 
             self.pending = true;
+
+            // Initialize axes; will get repopulated when telemetry
+            // metadata becomes available.
+            $scope.axes = [
+                new PlotAxis("domain", [], AXIS_DEFAULTS[0]),
+                new PlotAxis("range", [], AXIS_DEFAULTS[1])
+            ];
+
+            // Request new data whenever domain selection changes;
+            // ordering and bounding of data may change.
+            $scope.$watch("axes[0].active.key", replot);
 
             // Subscribe to telemetry when a domain object becomes available
             $scope.$watch('domainObject', subscribe);
