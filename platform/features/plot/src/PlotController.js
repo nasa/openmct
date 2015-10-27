@@ -233,8 +233,8 @@ define(
             // Initialize axes; will get repopulated when telemetry
             // metadata becomes available.
             $scope.axes = [
-                new PlotAxis("domain", [], AXIS_DEFAULTS[0]),
-                new PlotAxis("range", [], AXIS_DEFAULTS[1])
+                new PlotAxis("domains", [], AXIS_DEFAULTS[0]),
+                new PlotAxis("ranges", [], AXIS_DEFAULTS[1])
             ];
 
             // Subscribe to telemetry when a domain object becomes available

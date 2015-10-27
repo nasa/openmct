@@ -87,7 +87,7 @@ define(
             }
 
             metadatas.forEach(function (m) {
-                (m[axisType + 's'] || []).forEach(function (option) {
+                (m[axisType] || []).forEach(function (option) {
                     var key = option.key;
                     if (!optionKeys[key] && !newOptions[key]) {
                         toAdd.push(option);
