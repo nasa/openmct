@@ -102,8 +102,8 @@ define(
 
             function updateDomain(value) {
                 var newDomain = conductor.domain(value);
-                conductorScope.parameters.system =
-                    newDomain && newDomain.system;
+                conductorScope.parameters.format =
+                    newDomain && newDomain.format;
                 repScope.$broadcast('telemetry:display:bounds', bounds());
             }
 
