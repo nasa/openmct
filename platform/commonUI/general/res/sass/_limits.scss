@@ -1,14 +1,15 @@
-@mixin limit($bg, $ic, $glyph) {
-	background: $bg !important;
-	//color: $fg !important;
-	&:before {
-		//@include pulse(1000ms);
-		color: $ic;
-		content: $glyph;
-	}
+@mixin limitGlyph($iconColor, $glyph: $glyphLimit) {
+    &:before {
+        color: $iconColor;
+        content: $glyph;
+        font-family: symbolsfont;
+        display: inline;
+        margin-right: $interiorMarginSm;
+    }
+
 }
 
-[class*="s-limit"] {
+/*[class*="s-limit"] {
 	//white-space: nowrap;
 	&:before {
 		display: inline-block;
@@ -18,9 +19,31 @@
 		margin-right: $interiorMarginSm;
 		vertical-align: middle;
 	}
+}*/
+
+.s-limit-red { background: $colorLimitRedBg !important; }
+.s-limit-yellow { background: $colorLimitYellowBg !important; }
+
+// Handle limit when applied to a tr
+tr[class*="s-limit"] {
+    &.s-limit-red td:first-child {
+        @include limitGlyph($colorLimitRedIc);
+    }
+    &.s-limit-yellow td:first-child {
+        @include limitGlyph($colorLimitYellowIc);
+    }
+    &.s-limit-upr td:first-child:before { content:$glyphLimitUpr; }
+    &.s-limit-lwr td:first-child:before { content:$glyphLimitLwr; }
 }
 
-.s-limit-upr-red { @include limit($colorLimitRedBg, $colorLimitRedIc, "\0000eb"); };
-.s-limit-upr-yellow { @include limit($colorLimitYellowBg, $colorLimitYellowIc, "\0000ed"); };
-.s-limit-lwr-yellow { @include limit($colorLimitYellowBg, $colorLimitYellowIc, "\0000ec"); };
-.s-limit-lwr-red { @include limit($colorLimitRedBg, $colorLimitRedIc, "\0000ee"); };
+// Handle limit when applied directly to a non-tr element
+:not(tr)[class*="s-limit"] {
+    &.s-limit-red {
+        @include limitGlyph($colorLimitRedIc);
+    }
+    &.s-limit-yellow {
+        @include limitGlyph($colorLimitYellowIc);
+    }
+    &.s-limit-upr:before { content:$glyphLimitUpr; }
+    &.s-limit-lwr:before { content:$glyphLimitLwr; }
+}
