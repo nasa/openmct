@@ -42,7 +42,7 @@ define([
         this.formatMap = formatMap;
     }
 
-    FormatProvider.getFormat = function (key) {
+    FormatProvider.prototype.getFormat = function (key) {
         return this.formatMap[key];
     };
 
