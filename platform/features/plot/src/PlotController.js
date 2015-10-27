@@ -149,11 +149,11 @@ define(
                 if (handle) {
                     setupModes(handle.getTelemetryObjects());
                     setupAxes(handle.getMetadata());
+                    getUpdater().update();
+                    self.modeOptions.getModeHandler().plotTelemetry(updater);
+                    self.limitTracker.update();
+                    self.update();
                 }
-                getUpdater().update();
-                self.modeOptions.getModeHandler().plotTelemetry(updater);
-                self.limitTracker.update();
-                self.update();
             }
 
             // Display new historical data as it becomes available
