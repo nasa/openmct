@@ -22,6 +22,17 @@
                 "implementation": "SinewaveDeltaFormat.js"
             }
         ],
+        "constants": [
+            {
+                "key": "TIME_CONDUCTOR_DOMAINS",
+                "value": [
+                    { "key": "time", "name": "Time" },
+                    { "key": "yesterday", "name": "Yesterday" },
+                    { "key": "delta", "name": "Delta" }
+                ],
+                "priority": -1
+            }
+        ],
         "types": [
             {
                 "key": "generator",
