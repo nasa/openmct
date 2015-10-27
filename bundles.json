@@ -6,6 +6,7 @@
     "platform/commonUI/browse",
     "platform/commonUI/edit",
     "platform/commonUI/dialog",
+    "platform/commonUI/formatting",
     "platform/commonUI/general",
     "platform/commonUI/inspect",
     "platform/commonUI/mobile",
@@ -26,7 +27,6 @@
     "platform/policy",
     "platform/entanglement",
     "platform/search",
-    "platform/time",
 
     "example/imagery",
     "example/eventGenerator",
