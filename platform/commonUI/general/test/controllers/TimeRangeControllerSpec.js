@@ -191,6 +191,13 @@ define(
 
             });
 
+            it("watches for changes in format selection", function () {
+                expect(mockFormatService.getFormat)
+                    .not.toHaveBeenCalledWith('test-format');
+                fireWatch("parameters.format", 'test-format');
+                expect(mockFormatService.getFormat)
+                    .toHaveBeenCalledWith('test-format');
+            });
 
 
         });
