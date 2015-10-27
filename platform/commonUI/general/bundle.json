@@ -61,6 +61,11 @@
                 "depends": [ "$scope", "now" ]
             },
             {
+                "key": "DateTimeFieldController",
+                "implementation": "controllers/DateTimePickerController.js",
+                "depends": [ "$scope", "formatService" ]
+            },
+            {
                 "key": "TreeNodeController",
                 "implementation": "controllers/TreeNodeController.js",
                 "depends": [ "$scope", "$timeout" ]
@@ -242,6 +247,10 @@
             {
                 "key": "datetime-picker",
                 "templateUrl": "templates/controls/datetime-picker.html"
+            },
+            {
+                "key": "datetime-field",
+                "templateUrl": "templates/controls/datetime-field.html"
             }
         ],
         "licenses": [
