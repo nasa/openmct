@@ -30,7 +30,7 @@ define(
         "use strict";
 
         var ONE_DAY = 60 * 60 * 24,
-            firstObservedTime = SinewaveConstants.START_TIME;
+            firstObservedTime = Math.floor(SinewaveConstants.START_TIME / 1000);
 
         /**
          *
