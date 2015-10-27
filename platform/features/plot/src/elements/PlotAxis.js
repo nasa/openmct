@@ -80,6 +80,16 @@ define(
             this.options = options;
         }
 
+        PlotAxis.prototype.choose = function (key) {
+            var i;
+            for (i = 0; i < this.options.length; i += 1) {
+                if (this.options[i].key === key) {
+                    this.active = this.options[i];
+                    return;
+                }
+            }
+        };
+
         return PlotAxis;
 
     }

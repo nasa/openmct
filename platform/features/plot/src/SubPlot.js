@@ -121,9 +121,9 @@ define(
             // Utility, for map/forEach loops. Index 0 is domain,
             // index 1 is range.
             function formatValue(v, i) {
-                return (i ?
-                    formatter.formatRangeValue :
-                    formatter.formatDomainValue)(v);
+                return i ?
+                    formatter.formatRangeValue(v) :
+                    formatter.formatDomainValue(v);
             }
 
             this.hoverCoordinates = this.mousePosition &&

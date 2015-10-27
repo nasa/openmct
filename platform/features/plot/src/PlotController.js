@@ -31,10 +31,19 @@ define(
         "./elements/PlotPalette",
         "./elements/PlotAxis",
         "./elements/PlotLimitTracker",
+        "./elements/PlotTelemetryFormatter",
         "./modes/PlotModeOptions",
         "./SubPlotFactory"
     ],
-    function (PlotUpdater, PlotPalette, PlotAxis, PlotLimitTracker, PlotModeOptions, SubPlotFactory) {
+    function (
+        PlotUpdater,
+        PlotPalette,
+        PlotAxis,
+        PlotLimitTracker,
+        PlotTelemetryFormatter,
+        PlotModeOptions,
+        SubPlotFactory
+    ) {
         "use strict";
 
         var AXIS_DEFAULTS = [
@@ -62,7 +71,10 @@ define(
             PLOT_FIXED_DURATION
         ) {
             var self = this,
-                subPlotFactory = new SubPlotFactory(telemetryFormatter),
+                plotTelemetryFormatter =
+                    new PlotTelemetryFormatter(telemetryFormatter),
+                subPlotFactory =
+                    new SubPlotFactory(plotTelemetryFormatter),
                 cachedObjects = [],
                 updater,
                 lastBounds,
@@ -189,6 +201,11 @@ define(
                 releaseSubscription();
                 subscribe($scope.domainObject);
                 setBasePanZoom(bounds);
+                $scope.axes[0].choose(bounds.domain);
+            }
+
+            function updateDomainFormat(format) {
+                plotTelemetryFormatter.setDomainFormat(format);
             }
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
@@ -204,6 +221,9 @@ define(
 
             // Subscribe to telemetry when a domain object becomes available
             $scope.$watch('domainObject', subscribe);
+
+            // Reformat timestamps when needed
+            $scope.$watch('axes[0].active.format', updateDomainFormat);
 
             // Respond to external bounds changes
             $scope.$on("telemetry:display:bounds", changeDisplayBounds);
