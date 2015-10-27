@@ -136,6 +136,13 @@ define(
                 }
             }
 
+            function getUpdater() {
+                if (!updater) {
+                    recreateUpdater();
+                }
+                return updater;
+            }
+
             // Handle new telemetry data in this plot
             function updateValues() {
                 self.pending = false;
@@ -143,27 +150,23 @@ define(
                     setupModes(handle.getTelemetryObjects());
                     setupAxes(handle.getMetadata());
                 }
-                if (updater) {
-                    updater.update();
-                    self.modeOptions.getModeHandler().plotTelemetry(updater);
-                }
-                if (self.limitTracker) {
-                    self.limitTracker.update();
-                }
+                getUpdater().update();
+                self.modeOptions.getModeHandler().plotTelemetry(updater);
+                self.limitTracker.update();
                 self.update();
             }
 
             // Display new historical data as it becomes available
             function addHistoricalData(domainObject, series) {
                 self.pending = false;
-                updater.addHistorical(domainObject, series);
+                getUpdater().addHistorical(domainObject, series);
                 self.modeOptions.getModeHandler().plotTelemetry(updater);
                 self.update();
             }
 
             // Issue a new request for historical telemetry
             function requestTelemetry() {
-                if (handle && updater) {
+                if (handle) {
                     handle.request({}, addHistoricalData);
                 }
             }
@@ -171,7 +174,7 @@ define(
             // Requery for data entirely
             function replot() {
                 if (handle) {
-                    recreateUpdater();
+                    updater = undefined;
                     requestTelemetry();
                 }
             }
@@ -187,12 +190,7 @@ define(
                     updateValues,
                     true // Lossless
                 );
-                if (handle) {
-                    setupModes(handle.getTelemetryObjects());
-                    setupAxes(handle.getMetadata());
-                    recreateUpdater();
-                    requestTelemetry();
-                }
+                replot();
             }
 
             // Release the current subscription (called when scope is destroyed)
