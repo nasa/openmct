@@ -176,7 +176,6 @@ define(
                 }
             }
 
-
             // Create a new subscription; telemetrySubscriber gets
             // to do the meaningful work here.
             function subscribe(domainObject) {
@@ -207,6 +206,7 @@ define(
             // Respond to a display bounds change (requery for data)
             function changeDisplayBounds(event, bounds) {
                 var domainAxis = $scope.axes[0];
+
                 domainAxis.chooseOption(bounds.domain);
                 plotTelemetryFormatter
                     .setDomainFormat(domainAxis.active.format);
@@ -239,15 +239,8 @@ define(
                 new PlotAxis("range", [], AXIS_DEFAULTS[1])
             ];
 
-            // Request new data whenever domain selection changes;
-            // ordering and bounding of data may change.
-            $scope.$watch("axes[0].active.key", replot);
-
             // Subscribe to telemetry when a domain object becomes available
             $scope.$watch('domainObject', subscribe);
-
-            // Reformat timestamps when needed
-            $scope.$watch('axes[0].active.format', updateDomainFormat);
 
             // Respond to external bounds changes
             $scope.$on("telemetry:display:bounds", changeDisplayBounds);
