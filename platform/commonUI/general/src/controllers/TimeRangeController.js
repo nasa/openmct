@@ -267,20 +267,15 @@ define(
                 }
             }
 
-            function reinitializeBounds(now, increment) {
-                var end = Math.ceil(now / increment) * increment,
-                    start = end - increment;
-                $scope.ngModel.outer.start = start;
-                $scope.ngModel.outer.end = end;
-                $scope.ngModel.inner.start = start;
-                $scope.ngModel.inner.end = end;
-                $scope.boundsModel = {};
-                updateViewFromModel($scope.ngModel);
-            }
-
             function updateFormat(key) {
                 formatter = formatService.getFormat(key) ||
                         formatService.getFormat(DEFAULT_FORMAT);
+
+                // Assume that start/end are still valid, but clear
+                // the displayed text for bounds, since this will
+                // now be formatted differently.
+                $scope.boundsModel = {};
+                updateViewFromModel($scope.ngModel);
             }
 
             function updateStartFromPicker(value) {
