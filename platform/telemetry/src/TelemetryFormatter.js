@@ -22,14 +22,13 @@
 /*global define,moment*/
 
 define(
-    ['moment'],
-    function (moment) {
+    [],
+    function () {
         "use strict";
 
         // Date format to use for domain values; in particular,
         // use day-of-year instead of month/day
-        var DATE_FORMAT = "YYYY-DDD HH:mm:ss",
-            VALUE_FORMAT_DIGITS = 3;
+        var VALUE_FORMAT_DIGITS = 3;
 
         /**
          * The TelemetryFormatter is responsible for formatting (as text
@@ -38,21 +37,23 @@ define(
          * @memberof platform/telemetry
          * @constructor
          */
-        function TelemetryFormatter() {
+        function TelemetryFormatter(formatService) {
+            this.formatService = formatService;
         }
 
         /**
          * Format a domain value.
-         * @param {number} v the domain value; a timestamp
+         * @param {number} v the domain value; usually, a timestamp
          *        in milliseconds since start of 1970
-         * @param {string} [key] the key which identifies the
-         *        domain; if unspecified or unknown, this will
-         *        be treated as a standard timestamp.
+         * @param {string} [key] a key which identifies the format
+         *        to use
          * @returns {string} a textual representation of the
          *        data and time, suitable for display.
          */
         TelemetryFormatter.prototype.formatDomainValue = function (v, key) {
-            return isNaN(v) ? "" : moment.utc(v).format(DATE_FORMAT);
+            var formatter = this.formatService.getFormat(key) ||
+                    this.formatService.getFormat('utc');
+            return isNaN(v) ? "" : formatter.format(v);
         };
 
         /**

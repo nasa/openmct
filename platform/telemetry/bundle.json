@@ -37,7 +37,8 @@
         "services": [
             {
                 "key": "telemetryFormatter",
-                "implementation": "TelemetryFormatter.js"
+                "implementation": "TelemetryFormatter.js",
+                "depends": [ "formatService" ]
             },
             {
                 "key": "telemetrySubscriber",
