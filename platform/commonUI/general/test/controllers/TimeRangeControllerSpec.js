@@ -33,8 +33,9 @@ define(
 
         describe("The TimeRangeController", function () {
             var mockScope,
-                mockDateService,
+                mockFormatService,
                 mockNow,
+                mockFormat,
                 controller;
 
             function fireWatch(expr, value) {
@@ -58,24 +59,26 @@ define(
                     "$scope",
                     [ "$apply", "$watch", "$watchCollection" ]
                 );
-                mockDateService = jasmine.createSpyObj(
-                    "dateService",
+                mockFormatService = jasmine.createSpyObj(
+                    "formatService",
+                    [ "getFormat" ]
+                );
+                mockFormat = jasmine.createSpyObj(
+                    "format",
                     [ "validate", "format", "parse" ]
                 );
-                mockDateService.validate.andCallFake(function (text) {
-                    return moment.utc(text).isValid();
-                });
-                mockDateService.parse.andCallFake(function (text) {
-                    return moment.utc(text).valueOf();
-                });
-                mockDateService.format.andCallFake(function (value) {
+
+                mockFormatService.getFormat.andReturn(mockFormat);
+
+                mockFormat.format.andCallFake(function (value) {
                     return moment.utc(value).format("YYYY-MM-DD HH:mm:ss");
                 });
+
                 mockNow = jasmine.createSpy('now');
 
                 controller = new TimeRangeController(
                     mockScope,
-                    mockDateService,
+                    mockFormatService,
                     mockNow
                 );
             });
@@ -186,67 +189,6 @@ define(
                         .toBeGreaterThan(mockScope.ngModel.inner.start);
                 });
 
-                describe("by typing", function () {
-                    it("updates models", function () {
-                        var newStart = "1977-05-25 17:30:00",
-                            newEnd = "2015-12-18 03:30:00";
-
-                        mockScope.boundsModel.start = newStart;
-                        fireWatch("boundsModel.start", newStart);
-                        expect(mockScope.ngModel.outer.start)
-                            .toEqual(moment.utc(newStart).valueOf());
-                        expect(mockScope.boundsModel.startValid)
-                            .toBeTruthy();
-
-                        mockScope.boundsModel.end = newEnd;
-                        fireWatch("boundsModel.end", newEnd);
-                        expect(mockScope.ngModel.outer.end)
-                            .toEqual(moment.utc(newEnd).valueOf());
-                        expect(mockScope.boundsModel.endValid)
-                            .toBeTruthy();
-                    });
-
-                    it("displays error state", function () {
-                        var newStart = "Not a date",
-                            newEnd = "Definitely not a date",
-                            oldStart = mockScope.ngModel.outer.start,
-                            oldEnd = mockScope.ngModel.outer.end;
-
-                        mockScope.boundsModel.start = newStart;
-                        fireWatch("boundsModel.start", newStart);
-                        expect(mockScope.ngModel.outer.start)
-                            .toEqual(oldStart);
-                        expect(mockScope.boundsModel.startValid)
-                            .toBeFalsy();
-
-                        mockScope.boundsModel.end = newEnd;
-                        fireWatch("boundsModel.end", newEnd);
-                        expect(mockScope.ngModel.outer.end)
-                            .toEqual(oldEnd);
-                        expect(mockScope.boundsModel.endValid)
-                            .toBeFalsy();
-                    });
-
-                    it("does not modify user input", function () {
-                        // Don't want the controller "fixing" bad or
-                        // irregularly-formatted input out from under
-                        // the user's fingertips.
-                        var newStart = "Not a date",
-                            newEnd = "2015-3-3 01:02:04",
-                            oldStart = mockScope.ngModel.outer.start,
-                            oldEnd = mockScope.ngModel.outer.end;
-
-                        mockScope.boundsModel.start = newStart;
-                        fireWatch("boundsModel.start", newStart);
-                        expect(mockScope.boundsModel.start)
-                            .toEqual(newStart);
-
-                        mockScope.boundsModel.end = newEnd;
-                        fireWatch("boundsModel.end", newEnd);
-                        expect(mockScope.boundsModel.end)
-                            .toEqual(newEnd);
-                    });
-                });
             });
 
 

@@ -45,14 +45,6 @@ define(
                 return formatter.format(ts);
             }
 
-            function parseTimestamp(text) {
-                if (formatter.validate(text)) {
-                    return formatter.parse(text);
-                } else {
-                    throw new Error("Could not parse " + text);
-                }
-            }
-
             // From 0.0-1.0 to "0%"-"100%"
             function toPercent(p) {
                 return (100 * p) + "%";
