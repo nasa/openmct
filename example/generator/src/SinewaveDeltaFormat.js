@@ -27,7 +27,7 @@ define(
         "use strict";
 
         var START_TIME = SinewaveConstants.START_TIME,
-            NUMBER_REGEX = /^\d+$/,
+            FORMAT_REGEX = /^-?\d+:\d+:\d+$/,
             SECOND = 1000,
             MINUTE = SECOND * 60,
             HOUR = MINUTE * 60;
@@ -50,19 +50,17 @@ define(
         };
 
         SinewaveDeltaFormat.prototype.validate = function (text) {
-            var parts = text.split(":");
-            return parts.length === 3 && parts.every(function (part) {
-                return NUMBER_REGEX.test(part);
-            });
+            return FORMAT_REGEX.test(text);
         };
 
         SinewaveDeltaFormat.prototype.parse = function (text) {
-            var parts = text.split(":");
+            var negative = text[0] === "-",
+                parts = text.replace("-", "").split(":");
             return [ HOUR, MINUTE, SECOND ].map(function (sz, i) {
                 return parseInt(parts[i], 10) * sz;
             }).reduce(function (a, b) {
                 return a + b;
-            }, SinewaveConstants.START_TIME);
+            }, 0) * (negative ? -1 : 1) + START_TIME;
         };
 
         return SinewaveDeltaFormat;
