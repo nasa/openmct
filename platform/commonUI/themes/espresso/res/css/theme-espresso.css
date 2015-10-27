@@ -20,7 +20,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -41,38 +41,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -147,6 +147,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /************************** CONTROLS */
 /************************** PATHS */
 /************************** TIMINGS */
+/************************** LIMITS */
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -657,46 +658,70 @@ mct-container {
     color: #ff3c00;
     content: "!"; }
 
-/* line 13, ../../../../general/res/sass/_limits.scss */
-[class*="s-limit"]:before {
-  display: inline-block;
-  font-family: symbolsfont;
-  font-size: 0.75em;
-  font-style: normal !important;
-  margin-right: 3px;
-  vertical-align: middle; }
-
-/* line 23, ../../../../general/res/sass/_limits.scss */
-.s-limit-upr-red {
-  background: rgba(255, 0, 0, 0.3) !important; }
-  /* line 4, ../../../../general/res/sass/_limits.scss */
-  .s-limit-upr-red:before {
-    color: red;
-    content: "ë"; }
-
-/* line 24, ../../../../general/res/sass/_limits.scss */
-.s-limit-upr-yellow {
-  background: rgba(255, 170, 0, 0.3) !important; }
-  /* line 4, ../../../../general/res/sass/_limits.scss */
-  .s-limit-upr-yellow:before {
-    color: #ffaa00;
-    content: "í"; }
-
+/*[class*="s-limit"] {
+	//white-space: nowrap;
+	&:before {
+		display: inline-block;
+		font-family: symbolsfont;
+		font-size: 0.75em;
+		font-style: normal !important;
+		margin-right: $interiorMarginSm;
+		vertical-align: middle;
+	}
+}*/
 /* line 25, ../../../../general/res/sass/_limits.scss */
-.s-limit-lwr-yellow {
-  background: rgba(255, 170, 0, 0.3) !important; }
-  /* line 4, ../../../../general/res/sass/_limits.scss */
-  .s-limit-lwr-yellow:before {
-    color: #ffaa00;
-    content: "ì"; }
+.s-limit-red {
+  background: rgba(255, 0, 0, 0.3) !important; }
 
 /* line 26, ../../../../general/res/sass/_limits.scss */
-.s-limit-lwr-red {
-  background: rgba(255, 0, 0, 0.3) !important; }
-  /* line 4, ../../../../general/res/sass/_limits.scss */
-  .s-limit-lwr-red:before {
-    color: red;
-    content: "î"; }
+.s-limit-yellow {
+  background: rgba(255, 170, 0, 0.3) !important; }
+
+/* line 2, ../../../../general/res/sass/_limits.scss */
+tr[class*="s-limit"].s-limit-red td:first-child:before {
+  color: red;
+  content: "";
+  font-family: symbolsfont;
+  font-size: 0.8em;
+  display: inline;
+  margin-right: 3px; }
+/* line 2, ../../../../general/res/sass/_limits.scss */
+tr[class*="s-limit"].s-limit-yellow td:first-child:before {
+  color: #ffaa00;
+  content: "";
+  font-family: symbolsfont;
+  font-size: 0.8em;
+  display: inline;
+  margin-right: 3px; }
+/* line 36, ../../../../general/res/sass/_limits.scss */
+tr[class*="s-limit"].s-limit-upr td:first-child:before {
+  content: "ë"; }
+/* line 37, ../../../../general/res/sass/_limits.scss */
+tr[class*="s-limit"].s-limit-lwr td:first-child:before {
+  content: "î"; }
+
+/* line 2, ../../../../general/res/sass/_limits.scss */
+:not(tr)[class*="s-limit"].s-limit-red:before {
+  color: red;
+  content: "";
+  font-family: symbolsfont;
+  font-size: 0.8em;
+  display: inline;
+  margin-right: 3px; }
+/* line 2, ../../../../general/res/sass/_limits.scss */
+:not(tr)[class*="s-limit"].s-limit-yellow:before {
+  color: #ffaa00;
+  content: "";
+  font-family: symbolsfont;
+  font-size: 0.8em;
+  display: inline;
+  margin-right: 3px; }
+/* line 48, ../../../../general/res/sass/_limits.scss */
+:not(tr)[class*="s-limit"].s-limit-upr:before {
+  content: "ë"; }
+/* line 49, ../../../../general/res/sass/_limits.scss */
+:not(tr)[class*="s-limit"].s-limit-lwr:before {
+  content: "î"; }
 
 /* line 1, ../../../../general/res/sass/_data-status.scss */
 .s-stale {
@@ -4142,32 +4167,10 @@ span.req {
     height: auto;
     max-height: 100%;
     position: relative; }
-    /* line 228, ../../../../general/res/sass/search/_search.scss */
+    /* line 226, ../../../../general/res/sass/search/_search.scss */
     .search .search-scroll .load-icon {
-      position: relative;
-      /*			&.loading {
-      				pointer-events: none;
-      				margin-left: $leftMargin;
-      
-      				.title-label {
-      					// Text styling
-      					font-style: italic;
-      					font-size: .9em;
-      					opacity: 0.5;
-      
-      					// Text positioning
-      					margin-left: $iconWidth + $leftMargin;
-      					line-height: 24px;
-      				}
-      				.wait-spinner {
-      					margin-left: $leftMargin;
-      				}
-      			}
-      
-      			&:not(.loading) {
-      				cursor: pointer;
-      			}*/ }
-    /* line 255, ../../../../general/res/sass/search/_search.scss */
+      position: relative; }
+    /* line 230, ../../../../general/res/sass/search/_search.scss */
     .search .search-scroll .load-more-button {
       margin-top: 5px 0;
       font-size: 0.8em;
@@ -4438,21 +4441,7 @@ ul.tree {
   height: 1.5rem;
   line-height: 1.5rem;
   margin-bottom: 3px;
-  position: relative;
-    /*
-	&.loading {
-		pointer-events: none;
-		.label {
-			opacity: 0.5;
-			.title-label {
-				font-style: italic;
-			}
-		}
-		.wait-spinner {
-			margin-left: 14px;
-		}
-	}
-    */ }
+  position: relative; }
   /* line 48, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .view-control,
   .search-result-item .view-control {
@@ -4499,7 +4488,7 @@ ul.tree {
       .search-result-item .label .type-icon .icon.l-icon-alert {
         position: absolute;
         z-index: 2; }
-      /* line 90, ../../../../general/res/sass/tree/_tree.scss */
+      /* line 89, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item .label .type-icon .icon.l-icon-alert,
       .search-result-item .label .type-icon .icon.l-icon-alert {
         color: #ff3c00;
@@ -4509,7 +4498,7 @@ ul.tree {
         width: 8px;
         top: 1px;
         right: -2px; }
-      /* line 96, ../../../../general/res/sass/tree/_tree.scss */
+      /* line 95, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item .label .type-icon .icon.l-icon-link,
       .search-result-item .label .type-icon .icon.l-icon-link {
         color: #49dedb;
@@ -4519,7 +4508,7 @@ ul.tree {
         width: 8px;
         left: -3px;
         bottom: 0px; }
-    /* line 104, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 103, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .label .title-label,
     .search-result-item .label .title-label {
       overflow: hidden;
@@ -4535,47 +4524,47 @@ ul.tree {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap; }
-  /* line 130, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 113, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item.selected,
   .search-result-item.selected {
     background: #006080;
     color: #cccccc; }
-    /* line 133, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 116, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .view-control,
     .search-result-item.selected .view-control {
       color: rgba(255, 255, 255, 0.3); }
-    /* line 136, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 119, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item.selected .label .type-icon,
     .search-result-item.selected .label .type-icon {
       color: #cccccc; }
   @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-    /* line 144, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 127, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item:not(.selected):hover,
     .search-result-item:not(.selected):hover {
       background: rgba(153, 153, 153, 0.1);
       color: #cccccc; }
-      /* line 150, ../../../../general/res/sass/tree/_tree.scss */
+      /* line 130, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item:not(.selected):hover .icon,
       .search-result-item:not(.selected):hover .icon {
         color: #33ccff; } }
-  /* line 157, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 137, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item:not(.loading),
   .search-result-item:not(.loading) {
     cursor: pointer; }
-  /* line 161, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 141, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .context-trigger,
   .search-result-item .context-trigger {
     top: -1px;
     position: absolute;
     right: 3px; }
-    /* line 167, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 146, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .context-trigger .invoke-menu,
     .search-result-item .context-trigger .invoke-menu {
       font-size: 0.75em;
       height: 0.9rem;
       line-height: 0.9rem; }
 
-/* line 176, ../../../../general/res/sass/tree/_tree.scss */
+/* line 155, ../../../../general/res/sass/tree/_tree.scss */
 .tree-item .label {
   left: 15px; }
 

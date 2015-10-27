@@ -106,3 +106,8 @@ $dirImgs: $dirCommonRes + 'images/';
 
 /************************** TIMINGS */
 $controlFadeMs: 100ms;
+
+/************************** LIMITS */
+$glyphLimit: '\e603';
+$glyphLimitUpr: '\0000eb';
+$glyphLimitLwr: '\0000ee';
