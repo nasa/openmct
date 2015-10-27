@@ -3,23 +3,12 @@
         color: $iconColor;
         content: $glyph;
         font-family: symbolsfont;
+        font-size: 0.8em;
         display: inline;
         margin-right: $interiorMarginSm;
     }
 
 }
-
-/*[class*="s-limit"] {
-	//white-space: nowrap;
-	&:before {
-		display: inline-block;
-		font-family: symbolsfont;
-		font-size: 0.75em;
-		font-style: normal !important;
-		margin-right: $interiorMarginSm;
-		vertical-align: middle;
-	}
-}*/
 
 .s-limit-red { background: $colorLimitRedBg !important; }
 .s-limit-yellow { background: $colorLimitYellowBg !important; }
@@ -37,6 +26,7 @@ tr[class*="s-limit"] {
 }
 
 // Handle limit when applied directly to a non-tr element
+// Assume this is applied to the element that displays the limit value
 :not(tr)[class*="s-limit"] {
     &.s-limit-red {
         @include limitGlyph($colorLimitRedIc);
