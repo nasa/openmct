@@ -19,275 +19,321 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
+/*global define,describe,it,expect,beforeEach,jasmine,Promise,spyOn,waitsFor,
+         runs*/
 
 /**
  *  SearchSpec. Created by shale on 07/31/2015.
  */
-define(
-    ["../../src/services/GenericSearchProvider"],
-    function (GenericSearchProvider) {
-        "use strict";
+define([
+    "../../src/services/GenericSearchProvider"
+], function (
+    GenericSearchProvider
+) {
+    "use strict";
 
-        describe("The generic search provider ", function () {
-            var mockQ,
-                mockLog,
-                mockThrottle,
-                mockDeferred,
-                mockObjectService,
-                mockObjectPromise,
-                mockChainedPromise,
-                mockDomainObjects,
-                mockCapability,
-                mockCapabilityPromise,
-                mockWorkerService,
-                mockWorker,
-                mockTopic,
-                mockMutationTopic,
-                mockRoots = ['root1', 'root2'],
-                mockThrottledFn,
-                throttledCallCount,
-                provider,
-                mockProviderResults;
+    describe('GenericSearchProvider', function () {
+        var $q,
+            $log,
+            modelService,
+            models,
+            workerService,
+            worker,
+            topic,
+            mutationTopic,
+            ROOTS,
+            provider;
 
-            function resolveObjectPromises() {
-                var i;
-                for (i = 0; i < mockObjectPromise.then.calls.length; i += 1) {
-                    mockChainedPromise.then.calls[i].args[0](
-                        mockObjectPromise.then.calls[i]
-                            .args[0](mockDomainObjects)
-                    );
-                }
-            }
+        beforeEach(function () {
+            $q = jasmine.createSpyObj(
+                '$q',
+                ['defer']
+            );
+            $log = jasmine.createSpyObj(
+                '$log',
+                ['warn']
+            );
+            models = {};
+            modelService = jasmine.createSpyObj(
+                'modelService',
+                ['getModels']
+            );
+            modelService.getModels.andReturn(Promise.resolve(models));
+            workerService = jasmine.createSpyObj(
+                'workerService',
+                ['run']
+            );
+            worker = jasmine.createSpyObj(
+                'worker',
+                [
+                    'postMessage',
+                    'addEventListener'
+                ]
+            );
+            workerService.run.andReturn(worker);
+            topic = jasmine.createSpy('topic');
+            mutationTopic = jasmine.createSpyObj(
+                'mutationTopic',
+                ['listen']
+            );
+            topic.andReturn(mutationTopic);
+            ROOTS = [
+                'mine'
+            ];
 
-            function resolveThrottledFn() {
-                if (mockThrottledFn.calls.length > throttledCallCount) {
-                    mockThrottle.mostRecentCall.args[0]();
-                    throttledCallCount = mockThrottledFn.calls.length;
-                }
-            }
+            spyOn(GenericSearchProvider.prototype, 'scheduleForIndexing');
 
-            function resolveAsyncTasks() {
-                resolveThrottledFn();
-                resolveObjectPromises();
-            }
+            provider = new GenericSearchProvider(
+                $q,
+                $log,
+                modelService,
+                workerService,
+                topic,
+                ROOTS
+            );
+        });
+
+        it('listens for general mutation', function () {
+            expect(topic).toHaveBeenCalledWith('mutation');
+            expect(mutationTopic.listen)
+                .toHaveBeenCalledWith(jasmine.any(Function));
+        });
+
+        it('reschedules indexing when mutation occurs', function () {
+            var mockDomainObject =
+                jasmine.createSpyObj('domainObj', ['getId']);
+            mockDomainObject.getId.andReturn("some-id");
+            mutationTopic.listen.mostRecentCall.args[0](mockDomainObject);
+            expect(provider.scheduleForIndexing).toHaveBeenCalledWith('some-id');
+        });
+
+        it('starts indexing roots', function () {
+            expect(provider.scheduleForIndexing).toHaveBeenCalledWith('mine');
+        });
+
+        it('runs a worker', function () {
+            expect(workerService.run)
+                .toHaveBeenCalledWith('genericSearchWorker');
+        });
+
+        it('listens for messages from worker', function () {
+            expect(worker.addEventListener)
+                .toHaveBeenCalledWith('message', jasmine.any(Function));
+            spyOn(provider, 'onWorkerMessage');
+            worker.addEventListener.mostRecentCall.args[1]('mymessage');
+            expect(provider.onWorkerMessage).toHaveBeenCalledWith('mymessage');
+        });
+
+        it('has a maximum number of concurrent requests', function () {
+            expect(provider.MAX_CONCURRENT_REQUESTS).toBe(100);
+        });
+
+        describe('scheduleForIndexing', function () {
+            beforeEach(function () {
+                provider.scheduleForIndexing.andCallThrough();
+                spyOn(provider, 'keepIndexing');
+            });
+
+            it('tracks ids to index', function () {
+                expect(provider.indexedIds.a).not.toBeDefined();
+                expect(provider.pendingIndex.a).not.toBeDefined();
+                expect(provider.idsToIndex).not.toContain('a');
+                provider.scheduleForIndexing('a');
+                expect(provider.indexedIds.a).toBeDefined();
+                expect(provider.pendingIndex.a).toBeDefined();
+                expect(provider.idsToIndex).toContain('a');
+            });
+
+            it('calls keep indexing', function () {
+                provider.scheduleForIndexing('a');
+                expect(provider.keepIndexing).toHaveBeenCalled();
+            });
+        });
+
+        describe('keepIndexing', function () {
+            it('calls beginIndexRequest until at maximum', function () {
+                spyOn(provider, 'beginIndexRequest').andCallThrough();
+                provider.pendingRequests = 9;
+                provider.idsToIndex = ['a', 'b', 'c'];
+                provider.MAX_CONCURRENT_REQUESTS = 10;
+                provider.keepIndexing();
+                expect(provider.beginIndexRequest).toHaveBeenCalled();
+                expect(provider.beginIndexRequest.calls.length).toBe(1);
+            });
+
+            it('calls beginIndexRequest for all ids to index', function () {
+                spyOn(provider, 'beginIndexRequest').andCallThrough();
+                provider.pendingRequests = 0;
+                provider.idsToIndex = ['a', 'b', 'c'];
+                provider.MAX_CONCURRENT_REQUESTS = 10;
+                provider.keepIndexing();
+                expect(provider.beginIndexRequest).toHaveBeenCalled();
+                expect(provider.beginIndexRequest.calls.length).toBe(3);
+            });
+
+            it('does not index when at capacity', function () {
+                spyOn(provider, 'beginIndexRequest');
+                provider.pendingRequests = 10;
+                provider.idsToIndex.push('a');
+                provider.MAX_CONCURRENT_REQUESTS = 10;
+                provider.keepIndexing();
+                expect(provider.beginIndexRequest).not.toHaveBeenCalled();
+            });
+
+            it('does not index when no ids to index', function () {
+                spyOn(provider, 'beginIndexRequest');
+                provider.pendingRequests = 0;
+                provider.MAX_CONCURRENT_REQUESTS = 10;
+                provider.keepIndexing();
+                expect(provider.beginIndexRequest).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('index', function () {
+            it('sends index message to worker', function () {
+                var id = 'anId',
+                    model = {};
+
+                provider.index(id, model);
+                expect(worker.postMessage).toHaveBeenCalledWith({
+                    request: 'index',
+                    id: id,
+                    model: model
+                });
+            });
+
+            it('schedules composed ids for indexing', function () {
+                var id = 'anId',
+                    model = {composition: ['abc', 'def']};
+
+                provider.index(id, model);
+                expect(provider.scheduleForIndexing)
+                    .toHaveBeenCalledWith('abc');
+                expect(provider.scheduleForIndexing)
+                    .toHaveBeenCalledWith('def');
+            });
+        });
+
+        describe('beginIndexRequest', function () {
 
             beforeEach(function () {
-                mockQ = jasmine.createSpyObj(
-                    "$q",
-                    [ "defer" ]
-                );
-                mockLog = jasmine.createSpyObj(
-                    "$log",
-                    [ "error", "warn", "info", "debug" ]
-                );
-                mockDeferred = jasmine.createSpyObj(
-                    "deferred",
-                    [ "resolve", "reject"]
-                );
-                mockDeferred.promise = "mock promise";
-                mockQ.defer.andReturn(mockDeferred);
-
-                mockThrottle = jasmine.createSpy("throttle");
-                mockThrottledFn = jasmine.createSpy("throttledFn");
-                throttledCallCount = 0;
-
-                mockObjectService = jasmine.createSpyObj(
-                    "objectService",
-                    [ "getObjects" ]
-                );
-                mockObjectPromise = jasmine.createSpyObj(
-                    "promise",
-                    [ "then", "catch" ]
-                );
-                mockChainedPromise = jasmine.createSpyObj(
-                    "chainedPromise",
-                    [ "then" ]
-                );
-                mockObjectService.getObjects.andReturn(mockObjectPromise);
-
-                mockTopic = jasmine.createSpy('topic');
-
-                mockWorkerService = jasmine.createSpyObj(
-                    "workerService",
-                    [ "run" ]
-                );
-                mockWorker = jasmine.createSpyObj(
-                    "worker",
-                    [ "postMessage" ]
-                );
-                mockWorkerService.run.andReturn(mockWorker);
-
-                mockCapabilityPromise = jasmine.createSpyObj(
-                    "promise",
-                    [ "then", "catch" ]
-                );
-
-                mockDomainObjects = {};
-                ['a', 'root1', 'root2'].forEach(function (id) {
-                    mockDomainObjects[id] = (
-                        jasmine.createSpyObj(
-                            "domainObject",
-                            [
-                                "getId",
-                                "getModel",
-                                "hasCapability",
-                                "getCapability",
-                                "useCapability"
-                            ]
-                        )
-                    );
-                    mockDomainObjects[id].getId.andReturn(id);
-                    mockDomainObjects[id].getCapability.andReturn(mockCapability);
-                    mockDomainObjects[id].useCapability.andReturn(mockCapabilityPromise);
-                    mockDomainObjects[id].getModel.andReturn({});
-                });
-
-                mockCapability = jasmine.createSpyObj(
-                    "capability",
-                    [ "invoke", "listen" ]
-                );
-                mockCapability.invoke.andReturn(mockCapabilityPromise);
-                mockDomainObjects.a.getCapability.andReturn(mockCapability);
-                mockMutationTopic = jasmine.createSpyObj(
-                    'mutationTopic',
-                    [ 'listen' ]
-                );
-                mockTopic.andCallFake(function (key) {
-                    return key === 'mutation' && mockMutationTopic;
-                });
-                mockThrottle.andReturn(mockThrottledFn);
-                mockObjectPromise.then.andReturn(mockChainedPromise);
-
-                provider = new GenericSearchProvider(
-                    mockQ,
-                    mockLog,
-                    mockThrottle,
-                    mockObjectService,
-                    mockWorkerService,
-                    mockTopic,
-                    mockRoots
-                );
+                provider.pendingRequests = 0;
+                provider.pendingIds = {'abc': true};
+                provider.idsToIndex = ['abc'];
+                models.abc = {};
+                spyOn(provider, 'index');
             });
 
-            it("indexes tree on initialization", function () {
-                var i;
+            it('removes items from queue', function () {
+                provider.beginIndexRequest();
+                expect(provider.idsToIndex.length).toBe(0);
+            });
 
-                resolveThrottledFn();
-
-                expect(mockObjectService.getObjects).toHaveBeenCalled();
-                expect(mockObjectPromise.then).toHaveBeenCalled();
-
-                // Call through the root-getting part
-                resolveObjectPromises();
-
-                mockRoots.forEach(function (id) {
-                    expect(mockWorker.postMessage).toHaveBeenCalledWith({
-                        request: 'index',
-                        model: mockDomainObjects[id].getModel(),
-                        id: id
-                    });
+            it('tracks number of pending requests', function () {
+                provider.beginIndexRequest();
+                expect(provider.pendingRequests).toBe(1);
+                waitsFor(function () {
+                    return provider.pendingRequests === 0;
+                });
+                runs(function () {
+                    expect(provider.pendingRequests).toBe(0);
                 });
             });
 
-            it("indexes members of composition", function () {
-                mockDomainObjects.root1.getModel.andReturn({
-                    composition: ['a']
+            it('indexes objects', function () {
+                provider.beginIndexRequest();
+                waitsFor(function () {
+                    return provider.pendingRequests === 0;
                 });
-
-                resolveAsyncTasks();
-                resolveAsyncTasks();
-
-                expect(mockWorker.postMessage).toHaveBeenCalledWith({
-                    request: 'index',
-                    model: mockDomainObjects.a.getModel(),
-                    id: 'a'
+                runs(function () {
+                    expect(provider.index)
+                        .toHaveBeenCalledWith('abc', models.abc);
                 });
-            });
-
-            it("listens for changes to mutation", function () {
-                expect(mockMutationTopic.listen)
-                    .toHaveBeenCalledWith(jasmine.any(Function));
-                mockMutationTopic.listen.mostRecentCall
-                    .args[0](mockDomainObjects.a);
-
-                resolveAsyncTasks();
-
-                expect(mockWorker.postMessage).toHaveBeenCalledWith({
-                    request: 'index',
-                    model: mockDomainObjects.a.getModel(),
-                    id: mockDomainObjects.a.getId()
-                });
-            });
-
-            it("sends search queries to the worker", function () {
-                var timestamp = Date.now();
-                provider.query(' test  "query" ', timestamp, 1, 2);
-                expect(mockWorker.postMessage).toHaveBeenCalledWith({
-                    request: "search",
-                    input: ' test  "query" ',
-                    timestamp: timestamp,
-                    maxNumber: 1,
-                    timeout: 2
-                });
-            });
-
-            it("gives an empty result for an empty query", function () {
-                var timestamp = Date.now(),
-                    queryOutput;
-
-                queryOutput = provider.query('', timestamp, 1, 2);
-                expect(queryOutput.hits).toEqual([]);
-                expect(queryOutput.total).toEqual(0);
-
-                queryOutput = provider.query();
-                expect(queryOutput.hits).toEqual([]);
-                expect(queryOutput.total).toEqual(0);
-            });
-
-            it("handles responses from the worker", function () {
-                var timestamp = Date.now(),
-                    event = {
-                        data: {
-                            request: "search",
-                            results: {
-                                1: 1,
-                                2: 2
-                            },
-                            total: 2,
-                            timedOut: false,
-                            timestamp: timestamp
-                        }
-                    };
-
-                provider.query(' test  "query" ', timestamp);
-                mockWorker.onmessage(event);
-                mockObjectPromise.then.mostRecentCall.args[0](mockDomainObjects);
-                expect(mockDeferred.resolve).toHaveBeenCalled();
-            });
-
-            it("warns when objects are unavailable", function () {
-                resolveAsyncTasks();
-                expect(mockLog.warn).not.toHaveBeenCalled();
-                mockChainedPromise.then.mostRecentCall.args[0](
-                    mockObjectPromise.then.mostRecentCall.args[1]()
-                );
-                expect(mockLog.warn).toHaveBeenCalled();
-            });
-
-            it("throttles the loading of objects to index", function () {
-                expect(mockObjectService.getObjects).not.toHaveBeenCalled();
-                resolveThrottledFn();
-                expect(mockObjectService.getObjects).toHaveBeenCalled();
-            });
-
-            it("logs when all objects have been processed", function () {
-                expect(mockLog.info).not.toHaveBeenCalled();
-                resolveAsyncTasks();
-                resolveThrottledFn();
-                expect(mockLog.info).toHaveBeenCalled();
             });
 
         });
-    }
-);
+
+
+        it('can dispatch searches to worker', function () {
+            spyOn(provider, 'makeQueryId').andReturn(428);
+            expect(provider.dispatchSearch('searchTerm', 100))
+                .toBe(428);
+
+            expect(worker.postMessage).toHaveBeenCalledWith({
+                request: 'search',
+                input: 'searchTerm',
+                maxResults: 100,
+                queryId: 428
+            });
+        });
+
+        it('can generate queryIds', function () {
+            expect(provider.makeQueryId()).toEqual(jasmine.any(Number));
+        });
+
+        it('can query for terms', function () {
+            var deferred = {promise: {}};
+            spyOn(provider, 'dispatchSearch').andReturn(303);
+            $q.defer.andReturn(deferred);
+
+            expect(provider.query('someTerm', 100)).toBe(deferred.promise);
+            expect(provider.pendingQueries[303]).toBe(deferred);
+        });
+
+        describe('onWorkerMessage', function () {
+            var pendingQuery;
+            beforeEach(function () {
+                pendingQuery = jasmine.createSpyObj(
+                    'pendingQuery',
+                    ['resolve']
+                );
+                provider.pendingQueries[143] = pendingQuery;
+            });
+
+            it('resolves pending searches', function () {
+                provider.onWorkerMessage({
+                    data: {
+                        request: 'search',
+                        total: 2,
+                        results: [
+                            {
+                                item: {
+                                    id: 'abc',
+                                    model: {id: 'abc'}
+                                },
+                                matchCount: 4
+                            },
+                            {
+                                item: {
+                                    id: 'def',
+                                    model: {id: 'def'}
+                                },
+                                matchCount: 2
+                            }
+                        ],
+                        queryId: 143
+                    }
+                });
+
+                expect(pendingQuery.resolve)
+                    .toHaveBeenCalledWith({
+                        total: 2,
+                        hits: [{
+                            id: 'abc',
+                            model: {id: 'abc'},
+                            score: 4
+                        }, {
+                            id: 'def',
+                            model: {id: 'def'},
+                            score: 2
+                        }]
+                    });
+
+                    expect(provider.pendingQueries[143]).not.toBeDefined();
+
+            });
+
+        });
+
+    });
+});
