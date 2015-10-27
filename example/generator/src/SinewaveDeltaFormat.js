@@ -40,11 +40,13 @@ define(
         }
 
         SinewaveDeltaFormat.prototype.format = function (value) {
-            var delta = value - START_TIME,
+            var delta = Math.abs(value - START_TIME),
+                negative = value < START_TIME,
                 seconds = Math.floor(delta / SECOND) % 60,
                 minutes = Math.floor(delta / MINUTE) % 60,
                 hours = Math.floor(delta / HOUR);
-            return [ hours, minutes, seconds ].map(twoDigit).join(":");
+            return (negative ? "-" : "") +
+                [ hours, minutes, seconds ].map(twoDigit).join(":");
         };
 
         SinewaveDeltaFormat.prototype.validate = function (text) {
@@ -60,7 +62,7 @@ define(
                 return parseInt(parts[i], 10) * sz;
             }).reduce(function (a, b) {
                 return a + b;
-            }, 0);
+            }, SinewaveConstants.START_TIME);
         };
 
         return SinewaveDeltaFormat;
