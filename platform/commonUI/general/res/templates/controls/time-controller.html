@@ -30,7 +30,7 @@
                        ng-class="{ error: !boundsModel.startValid }">
                 </input>
                 <a class="ui-symbol icon icon-calendar"
-                   ng-if="parameters.system === undefined"
+                   ng-if="parameters.format === 'utc' || !parameters.format"
                    ng-click="t1.toggle()">
                 </a>
                 <mct-popup ng-if="t1.isActive()">
@@ -55,7 +55,7 @@
                        ng-class="{ error: !boundsModel.endValid }">
                 </input>
                 <a class="ui-symbol icon icon-calendar"
-                   ng-if="parameters.system === undefined"
+                   ng-if="parameters.format === 'utc' || !parameters.format"
                    ng-click="t2.toggle()">
                 </a>
                 <mct-popup ng-if="t2.isActive()">
