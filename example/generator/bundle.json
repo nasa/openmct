@@ -16,7 +16,7 @@
                 "implementation": "SinewaveLimitCapability.js"
             }
         ],
-        "format": [
+        "formats": [
             {
                 "key": "example.delta",
                 "implementation": "SinewaveDeltaFormat.js"
@@ -28,7 +28,7 @@
                 "value": [
                     { "key": "time", "name": "Time" },
                     { "key": "yesterday", "name": "Yesterday" },
-                    { "key": "delta", "name": "Delta" }
+                    { "key": "delta", "name": "Delta", "format": "example.delta" }
                 ],
                 "priority": -1
             }
