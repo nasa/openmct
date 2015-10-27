@@ -92,7 +92,7 @@ define(
                     if (!optionKeys[key] && !newOptions[key]) {
                         toAdd.push(option);
                     }
-                    newOptions[option.key] = true;
+                    newOptions[key] = true;
                 });
             });
 
