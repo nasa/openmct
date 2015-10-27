@@ -102,42 +102,15 @@ define(
                 return { start: bounds.start, end: bounds.end };
             }
 
-            function updateBoundsTextForProperty(ngModel, property) {
-                try {
-                    if (!$scope.boundsModel[property] ||
-                            parseTimestamp($scope.boundsModel[property]) !==
-                                ngModel.outer[property]) {
-                        $scope.boundsModel[property] =
-                            formatTimestamp(ngModel.outer[property]);
-                        // Never want to flag machine-generated text
-                        // as invalid here.
-                        $scope.boundsModel[property + 'Valid'] = true;
-                    }
-                } catch (e) {
-                    // User-entered text is invalid, so leave it be
-                    // until they fix it.
-                }
-            }
-
-            function updateBoundsText(ngModel) {
-                updateBoundsTextForProperty(ngModel, 'start');
-                updateBoundsTextForProperty(ngModel, 'end');
-            }
-
             function updateViewFromModel(ngModel) {
                 ngModel = ngModel || {};
                 ngModel.outer = ngModel.outer || defaultBounds();
                 ngModel.inner = ngModel.inner || copyBounds(ngModel.outer);
 
-                // First, dates for the date pickers for outer bounds
-                updateBoundsText(ngModel);
-
-                // Then various updates for the inner span
-                updateViewForInnerSpanFromModel(ngModel);
-
                 // Stick it back is scope (in case we just set defaults)
                 $scope.ngModel = ngModel;
 
+                updateViewForInnerSpanFromModel(ngModel);
                 updateTicks();
             }
 
@@ -157,7 +130,8 @@ define(
             }
 
             function toMillis(pixels) {
-                var span = $scope.ngModel.outer.end - $scope.ngModel.outer.start;
+                var span =
+                    $scope.ngModel.outer.end - $scope.ngModel.outer.start;
                 return (pixels / $scope.spanWidth) * span;
             }
 
@@ -245,47 +219,12 @@ define(
                 updateTicks();
             }
 
-            function updateStartFromText(value) {
-                try {
-                    updateOuterStart(parseTimestamp(value));
-                    updateBoundsTextForProperty($scope.ngModel, 'end');
-                    $scope.boundsModel.startValid = true;
-                } catch (e) {
-                    $scope.boundsModel.startValid = false;
-                    return;
-                }
-            }
-
-            function updateEndFromText(value) {
-                try {
-                    updateOuterEnd(parseTimestamp(value));
-                    updateBoundsTextForProperty($scope.ngModel, 'start');
-                    $scope.boundsModel.endValid = true;
-                } catch (e) {
-                    $scope.boundsModel.endValid = false;
-                    return;
-                }
-            }
-
             function updateFormat(key) {
                 formatter = formatService.getFormat(key) ||
                         formatService.getFormat(DEFAULT_FORMAT);
 
-                // Assume that start/end are still valid, but clear
-                // the displayed text for bounds, since this will
-                // now be formatted differently.
-                $scope.boundsModel = {};
-                updateViewFromModel($scope.ngModel);
-            }
-
-            function updateStartFromPicker(value) {
-                updateOuterStart(value);
-                updateBoundsText($scope.ngModel);
-            }
-
-            function updateEndFromPicker(value) {
-                updateOuterEnd(value);
-                updateBoundsText($scope.ngModel);
+                updateViewForInnerSpanFromModel($scope.ngModel);
+                updateTicks();
             }
 
             $scope.startLeftDrag = startLeftDrag;
@@ -295,19 +234,15 @@ define(
             $scope.rightDrag = rightDrag;
             $scope.middleDrag = middleDrag;
 
-            $scope.state = false;
             $scope.ticks = [];
-            $scope.boundsModel = {};
 
             // Initialize scope to defaults
             updateViewFromModel($scope.ngModel);
 
             $scope.$watchCollection("ngModel", updateViewFromModel);
             $scope.$watch("spanWidth", updateSpanWidth);
-            $scope.$watch("ngModel.outer.start", updateStartFromPicker);
-            $scope.$watch("ngModel.outer.end", updateEndFromPicker);
-            $scope.$watch("boundsModel.start", updateStartFromText);
-            $scope.$watch("boundsModel.end", updateEndFromText);
+            $scope.$watch("ngModel.outer.start", updateOuterStart);
+            $scope.$watch("ngModel.outer.end", updateOuterEnd);
             $scope.$watch("parameters.format", updateFormat);
         }
 
