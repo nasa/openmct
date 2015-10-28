@@ -22,12 +22,35 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ['../src/UTCTimeFormat'],
-    function (UTCTimeFormat) {
+    ['../src/UTCTimeFormat', 'moment'],
+    function (UTCTimeFormat, moment) {
         'use strict';
 
         describe("The UTCTimeFormat", function () {
+            var format;
 
+            beforeEach(function () {
+                format = new UTCTimeFormat();
+            });
+
+            it("formats UTC timestamps", function () {
+                var timestamp = 12345670000,
+                    formatted = format.format(timestamp);
+                expect(formatted).toEqual(jasmine.any(String));
+                expect(moment.utc(formatted).valueOf()).toEqual(timestamp);
+            });
+
+            it("validates time inputs", function () {
+                expect(format.validate("1977-05-25 11:21:22")).toBeTruthy();
+                expect(format.validate("garbage text")).toBeFalsy();
+            });
+
+            it("parses valid input", function () {
+                var text = "1977-05-25 11:21:22",
+                    parsed = format.parse(text);
+                expect(parsed).toEqual(jasmine.any(Number));
+                expect(parsed).toEqual(moment.utc(text).valueOf());
+            });
         });
     }
 );
