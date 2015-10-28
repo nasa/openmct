@@ -149,7 +149,10 @@ define(
                             broadcastDrop(id, event);
                         } else {
                             $q.when(action && action.perform()).then(function (result) {
-                                navigationService.setNavigation(editableDomainObject);
+                                //Don't go into edit mode for folders
+                                if (domainObjectType!=='folder') {
+                                    navigationService.setNavigation(editableDomainObject);
+                                }
                                 broadcastDrop(id, event);
                             });
                         }
