@@ -28,6 +28,41 @@ define([
 ) {
     "use strict";
 
+    /**
+     * An object used to convert between numeric values and text values,
+     * typically used to display these values to the user and to convert
+     * user input to a numeric format, particularly for time formats.
+     * @interface {Format}
+     */
+
+    /**
+     * Parse text (typically user input) to a numeric value.
+     * Behavior is undefined when the text cannot be parsed;
+     * `validate` should be called first if the text may be invalid.
+     * @method parse
+     * @memberof Format#
+     * @param {string} text the text to parse
+     * @returns {number} the parsed numeric value
+     */
+
+    /**
+     * Determine whether or not some text (typically user input) can
+     * be parsed to a numeric value by this format.
+     * @method validate
+     * @memberof Format#
+     * @param {string} text the text to parse
+     * @returns {boolean} true if the text can be parsed
+     */
+
+    /**
+     * Convert a numeric value to a text value for display using
+     * this format.
+     * @method format
+     * @memberof Format#
+     * @param {number} value the numeric value to format
+     * @returns {string} the text representation of the value
+     */
+
     function FormatProvider(formats) {
         var formatMap = {};
 
