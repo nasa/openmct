@@ -26,8 +26,9 @@
  */
 define(
     ['./GestureConstants',
-     '../../../commonUI/edit/src/objects/EditableDomainObject'],
-    function (GestureConstants, EditableDomainObject) {
+     '../../../commonUI/edit/src/objects/EditableDomainObject',
+     '../../../commonUI/browse/lib/uuid'],
+    function (GestureConstants, EditableDomainObject, uuid) {
         "use strict";
 
         /**
@@ -41,7 +42,7 @@ define(
          * @param {DomainObject} domainObject the domain object whose
          *        composition should be modified as a result of the drop.
          */
-        function DropGesture(dndService, $q, navigationService, element, domainObject) {
+        function DropGesture(dndService, $q, navigationService, objectService, element, domainObject) {
             var actionCapability = domainObject.getCapability('action'),
                 editableDomainObject,
                 action; // Action for the drop, when it occurs
@@ -86,8 +87,9 @@ define(
                         key: 'compose',
                         selectedObject: selectedObject
                     })[0];
-
-                    if (action) {
+                    //TODO: Fix this. Define an action for creating new
+                    // virtual panel
+                    if (action || selectedObject.getModel().type === 'generator') {
                         event.dataTransfer.dropEffect = 'move';
 
                         // Indicate that we will accept the drag
@@ -97,10 +99,33 @@ define(
                 }
             }
 
+            /*
+             composition: Array[0]
+             location: "mine"
+             name: "Test Telemetry Panel"
+             persisted: 1445975352374
+             type: "telemetry.panel"
+             */
+
+            function createVirtualPanel(base, overlayId){
+                var model = {
+                        name: 'New telemetry panel',
+                        type: 'telemetry.panel',
+                        composition: [base.getId(), overlayId],
+                        location: base.getModel().location
+                    },
+                    id = uuid();
+                //ObjectService is wrapped by a decorator which is obscuring
+                // the newObject method.
+                return objectService.objectService.newObject(id, model);
+
+            }
+
             function drop(e) {
                 var event = (e || {}).originalEvent || e,
                     id = event.dataTransfer.getData(GestureConstants.MCT_DRAG_TYPE),
-                    domainObjectType = editableDomainObject.getModel().type;
+                    domainObjectType = editableDomainObject.getModel().type,
+                    virtualObj;
 
                 // If currently in edit mode allow drag and drop gestures to the
                 // domain object. An exception to this is folders which have drop
@@ -111,10 +136,16 @@ define(
                     // destination domain object's composition, and persist
                     // the change.
                     if (id) {
-                        $q.when(action && action.perform()).then(function (result) {
-                            navigationService.setNavigation(editableDomainObject);
+                        if (domainObjectType === 'generator'){
+                            virtualObj = new EditableDomainObject(createVirtualPanel(domainObject, id));
+                            navigationService.setNavigation(virtualObj);
                             broadcastDrop(id, event);
-                        });
+                        } else {
+                            $q.when(action && action.perform()).then(function (result) {
+                                navigationService.setNavigation(editableDomainObject);
+                                broadcastDrop(id, event);
+                            });
+                        }
                     }
                 //}
                 // TODO: Alert user if drag and drop is not allowed

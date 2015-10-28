@@ -67,7 +67,9 @@
                 "implementation": "actions/SaveAction.js",
                 "name": "Save",
                 "description": "Save changes made to these objects.",
-                "depends": [ "$location", "urlService", "navigationService" ],
+                "depends": [ "$q", "$location", "$injector",  "urlService",
+                    "navigationService", "policyService", "dialogService",
+                    "creationService" ],
                 "priority": "mandatory"
             },
             {

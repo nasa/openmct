@@ -23,7 +23,8 @@
 
 
 define(
-    function () {
+    ['../../../browse/src/creation/createWizard'],
+    function (CreateWizard) {
         'use strict';
 
         /**
@@ -34,11 +35,26 @@ define(
          * @implements {Action}
          * @memberof platform/commonUI/edit
          */
-        function SaveAction($location, urlService, navigationService, context) {
+        function SaveAction($q, $location, $injector, urlService, navigationService, policyService, dialogService, creationService, context) {
             this.domainObject = (context || {}).domainObject;
             this.$location = $location;
+            this.injectObjectService = function(){
+                this.objectService = $injector.get("objectService");
+            }
             this.urlService = urlService;
             this.navigationService = navigationService;
+            this.policyService = policyService;
+            this.dialogService = dialogService;
+            this.creationService = creationService;
+            this.$q = $q;
+        }
+
+        SaveAction.prototype.getObjectService = function(){
+            // Lazily acquire object service (avoids cyclical dependency)
+            if (!this.objectService) {
+                this.injectObjectService();
+            }
+            return this.objectService;
         }
 
         /**
@@ -54,23 +70,66 @@ define(
                 urlService = this.urlService,
                 self = this;
 
+            function doWizardSave(domainObject, parent) {
+                var context = domainObject.getCapability("context");
+                var wizard = new CreateWizard(domainObject.useCapability('type'), parent, self.policyService);
+
+                // Create and persist the new object, based on user
+                // input.
+                function persistResult(formValue) {
+                    var parent = wizard.getLocation(formValue),
+                        newModel = wizard.createModel(formValue);
+                    return self.creationService.createObject(newModel, parent);
+                }
+
+                function doNothing() {
+                    // Create cancelled, do nothing
+                    return false;
+                }
+
+                /**
+                 * Add the composees of the 'virtual' object to the
+                 * persisted object
+                 * @param object
+                 * @returns {*}
+                 */
+                function composeObject(object){
+                    return object && self.$q.when(object.hasCapability('composition') && domainObject.hasCapability('composition'))
+                    .then(function(){
+                        return domainObject.useCapability('composition')
+                        .then(function(composees){
+                            return self.$q.all(composees.map(function(composee){
+                                return object.getCapability('composition').add(composee);
+                            }));
+                        });
+                    });
+                }
+
+                return self.dialogService.getUserInput(
+                    wizard.getFormStructure(),
+                    wizard.getInitialFormValue()
+                ).then(persistResult, doNothing).then(composeObject);
+            }
+
             // Invoke any save behavior introduced by the editor capability;
             // this is introduced by EditableDomainObject which is
             // used to insulate underlying objects from changes made
             // during editing.
             function doSave() {
-                return domainObject.getCapability("editor").save();
+                //WARNING: HACK
+                //This is a new 'virtual panel' that has not been persisted
+                // yet.
+                if (domainObject.getModel().type === 'telemetry.panel' && !domainObject.getModel().persisted){
+                    return self.getObjectService().getObjects([domainObject.getModel().location]).then(function(objs){ doWizardSave(domainObject, objs[domainObject.getModel().location])});
+                } else {
+                    return domainObject.getCapability("editor").save();
+                }
             }
 
             // Discard the current root view (which will be the editing
             // UI, which will have been pushed atop the Browse UI.)
             function returnToBrowse() {
-
                 return self.navigationService.setNavigation(self.domainObject.getDomainObject());
-                /*return $location.path(urlService.urlForLocation(
-                    "browse",
-                    domainObject
-                ));*/
             }
 
             return doSave().then(returnToBrowse);

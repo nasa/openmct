@@ -70,6 +70,25 @@ define(
             this.$q = $q;
         }
 
+        // Assemble the results from the model service and the
+        // capability service into one value, suitable to return
+        // from this service. Note that ids are matched to capabilities
+        // by index.
+        function assembleResult(ids, models, capabilities) {
+            var result = {};
+            ids.forEach(function (id, index) {
+                if (models[id]) {
+                    // Create the domain object
+                    result[id] = new DomainObjectImpl(
+                        id,
+                        models[id],
+                        capabilities[index]
+                    );
+                }
+            });
+            return result;
+        }
+
         DomainObjectProvider.prototype.getObjects = function getObjects(ids) {
             var modelService = this.modelService,
                 capabilityService = this.capabilityService,
@@ -87,25 +106,6 @@ define(
                 };
             }
 
-            // Assemble the results from the model service and the
-            // capability service into one value, suitable to return
-            // from this service. Note that ids are matched to capabilities
-            // by index.
-            function assembleResult(ids, models, capabilities) {
-                var result = {};
-                ids.forEach(function (id, index) {
-                    if (models[id]) {
-                        // Create the domain object
-                        result[id] = new DomainObjectImpl(
-                            id,
-                            models[id],
-                            capabilities[index]
-                        );
-                    }
-                });
-                return result;
-            }
-
             return modelService.getModels(ids).then(function (models) {
                 return $q.all(
                     ids.map(capabilityResolver(models))
@@ -114,6 +114,16 @@ define(
                     });
             });
         };
+
+        /**
+         * Given a model, return a fully constituted domain object that has
+         * not been persisted
+         * @param model
+         */
+        DomainObjectProvider.prototype.newObject = function newObject(id, model){
+            var capabilities = this.capabilityService.getCapabilities(model);
+            return new DomainObjectImpl(id, model, capabilities);
+        }
 
         return DomainObjectProvider;
     }
