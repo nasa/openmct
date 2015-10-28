@@ -26,7 +26,35 @@ define(
     function (FormatProvider) {
         'use strict';
 
+        var KEYS = [ 'a', 'b', 'c' ];
+
         describe("The FormatProvider", function () {
+            var mockFormats,
+                mockFormatInstances,
+                provider;
+
+            beforeEach(function () {
+                mockFormatInstances = KEYS.map(function (k) {
+                    return jasmine.createSpyObj(
+                        'format-' + k,
+                        [ 'parse', 'validate', 'format' ]
+                    );
+                });
+                // Return constructors
+                mockFormats = KEYS.map(function (k, i) {
+                    function MockFormat() { return mockFormatInstances[i]; }
+                    MockFormat.key = k;
+                    return MockFormat;
+                });
+                provider = new FormatProvider(mockFormats);
+            });
+
+            it("looks up formats by key", function () {
+                KEYS.forEach(function (k, i) {
+                    expect(provider.getFormat(k))
+                        .toEqual(mockFormatInstances[i]);
+                });
+            });
 
         });
     }
