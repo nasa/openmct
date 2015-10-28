@@ -84,6 +84,9 @@ define(
                 // Use the included controller to populate scope
                 link: link,
 
+                // May hide the element, so let other directives act first
+                priority: -1000,
+
                 // Two-way bind key, ngModel, and parameters
                 scope: { key: "=", ngModel: "=", parameters: "=" }
             };

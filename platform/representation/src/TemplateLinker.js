@@ -83,11 +83,12 @@ define(
 
             function populateElement(template) {
                 template(scope, function (innerClone) {
+                    element.empty();
                     element.append(innerClone);
                 });
             }
 
-            function applyTemplate(template) {
+            function applyTemplate(template, templateUrl) {
                 if (template) {
                     populateElement(template);
                 } else {
@@ -99,7 +100,12 @@ define(
                 if (templateUrl !== activeTemplateUrl) {
                     if (templateUrl) {
                         addElement();
-                        self.load(templateUrl).then(applyTemplate);
+                        self.load(templateUrl).then(function (template) {
+                            // Avoid race conditions
+                            if (templateUrl === activeTemplateUrl) {
+                                applyTemplate(template);
+                            }
+                        });
                     } else {
                         removeElement();
                     }

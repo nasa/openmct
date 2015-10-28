@@ -236,6 +236,9 @@ define(
                 // Handle Angular's linking step
                 link: link,
 
+                // May hide the element, so let other directives act first
+                priority: -1000,
+
                 // Two-way bind key and parameters, get the represented domain
                 // object as "mct-object"
                 scope: {
