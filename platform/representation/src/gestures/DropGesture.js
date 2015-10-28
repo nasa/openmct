@@ -106,14 +106,6 @@ define(
                 }
             }
 
-            /*
-             composition: Array[0]
-             location: "mine"
-             name: "Test Telemetry Panel"
-             persisted: 1445975352374
-             type: "telemetry.panel"
-             */
-
             function createVirtualPanel(base, overlayId){
                 var model = {
                         name: 'New telemetry panel',
