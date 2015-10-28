@@ -48,8 +48,7 @@
                 "depends": [
                     "$q",
                     "$log",
-                    "throttle",
-                    "objectService",
+                    "modelService",
                     "workerService",
                     "topic",
                     "GENERIC_SEARCH_ROOTS"
@@ -59,7 +58,7 @@
                 "provides": "searchService",
                 "type": "aggregator",
                 "implementation": "services/SearchAggregator.js",
-                "depends": [ "$q" ]
+                "depends": [ "$q", "objectService" ]
             }
         ],
         "workers": [

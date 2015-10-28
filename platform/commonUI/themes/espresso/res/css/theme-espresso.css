@@ -147,6 +147,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /************************** CONTROLS */
 /************************** PATHS */
 /************************** TIMINGS */
+/************************** LIMITS */
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -667,45 +668,58 @@ mct-container {
     content: "!"; }
 
 /* line 13, ../../../../general/res/sass/_limits.scss */
-[class*="s-limit"]:before {
-  display: inline-block;
+.s-limit-red {
+  background: rgba(255, 0, 0, 0.3) !important; }
+
+/* line 14, ../../../../general/res/sass/_limits.scss */
+.s-limit-yellow {
+  background: rgba(255, 170, 0, 0.3) !important; }
+
+/* line 2, ../../../../general/res/sass/_limits.scss */
+tr[class*="s-limit"].s-limit-red td:first-child:before {
+  color: red;
+  content: "";
   font-family: symbolsfont;
-  font-size: 0.75em;
-  font-style: normal !important;
-  margin-right: 3px;
-  vertical-align: middle; }
-
-/* line 23, ../../../../general/res/sass/_limits.scss */
-.s-limit-upr-red {
-  background: rgba(255, 0, 0, 0.3) !important; }
-  /* line 4, ../../../../general/res/sass/_limits.scss */
-  .s-limit-upr-red:before {
-    color: red;
-    content: "ë"; }
-
+  font-size: 0.8em;
+  display: inline;
+  margin-right: 3px; }
+/* line 2, ../../../../general/res/sass/_limits.scss */
+tr[class*="s-limit"].s-limit-yellow td:first-child:before {
+  color: #ffaa00;
+  content: "";
+  font-family: symbolsfont;
+  font-size: 0.8em;
+  display: inline;
+  margin-right: 3px; }
 /* line 24, ../../../../general/res/sass/_limits.scss */
-.s-limit-upr-yellow {
-  background: rgba(255, 170, 0, 0.3) !important; }
-  /* line 4, ../../../../general/res/sass/_limits.scss */
-  .s-limit-upr-yellow:before {
-    color: #ffaa00;
-    content: "í"; }
-
+tr[class*="s-limit"].s-limit-upr td:first-child:before {
+  content: "ë"; }
 /* line 25, ../../../../general/res/sass/_limits.scss */
-.s-limit-lwr-yellow {
-  background: rgba(255, 170, 0, 0.3) !important; }
-  /* line 4, ../../../../general/res/sass/_limits.scss */
-  .s-limit-lwr-yellow:before {
-    color: #ffaa00;
-    content: "ì"; }
+tr[class*="s-limit"].s-limit-lwr td:first-child:before {
+  content: "î"; }
 
-/* line 26, ../../../../general/res/sass/_limits.scss */
-.s-limit-lwr-red {
-  background: rgba(255, 0, 0, 0.3) !important; }
-  /* line 4, ../../../../general/res/sass/_limits.scss */
-  .s-limit-lwr-red:before {
-    color: red;
-    content: "î"; }
+/* line 2, ../../../../general/res/sass/_limits.scss */
+:not(tr)[class*="s-limit"].s-limit-red:before {
+  color: red;
+  content: "";
+  font-family: symbolsfont;
+  font-size: 0.8em;
+  display: inline;
+  margin-right: 3px; }
+/* line 2, ../../../../general/res/sass/_limits.scss */
+:not(tr)[class*="s-limit"].s-limit-yellow:before {
+  color: #ffaa00;
+  content: "";
+  font-family: symbolsfont;
+  font-size: 0.8em;
+  display: inline;
+  margin-right: 3px; }
+/* line 37, ../../../../general/res/sass/_limits.scss */
+:not(tr)[class*="s-limit"].s-limit-upr:before {
+  content: "ë"; }
+/* line 38, ../../../../general/res/sass/_limits.scss */
+:not(tr)[class*="s-limit"].s-limit-lwr:before {
+  content: "î"; }
 
 /* line 1, ../../../../general/res/sass/_data-status.scss */
 .s-stale {
@@ -4275,13 +4289,45 @@ span.req {
 
   /* line 65, ../../../../general/res/sass/mobile/_layout.scss */
   .pane-tree-hidden .pane.left.treeview {
-    right: 100% !important;
-    width: auto !important;
-    overflow-y: hidden;
-    overflow-x: hidden; }
+    -moz-transition-property: opacity;
+    -o-transition-property: opacity;
+    -webkit-transition-property: opacity;
+    transition-property: opacity;
+    -moz-transition-duration: 150ms;
+    -o-transition-duration: 150ms;
+    -webkit-transition-duration: 150ms;
+    transition-duration: 150ms;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    -moz-transition-delay: 0;
+    -o-transition-delay: 0;
+    -webkit-transition-delay: 0;
+    transition-delay: 0;
+    opacity: 0 !important; }
+  /* line 73, ../../../../general/res/sass/mobile/_layout.scss */
+  .pane-tree-hidden .pane.right.items {
+    left: 0 !important; }
 
-  /* line 82, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 87, ../../../../general/res/sass/mobile/_layout.scss */
   .pane-tree-showing .pane.left.treeview {
+    -moz-transition-property: opacity;
+    -o-transition-property: opacity;
+    -webkit-transition-property: opacity;
+    transition-property: opacity;
+    -moz-transition-duration: 250ms;
+    -o-transition-duration: 250ms;
+    -webkit-transition-duration: 250ms;
+    transition-duration: 250ms;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    -moz-transition-delay: 250ms;
+    -o-transition-delay: 250ms;
+    -webkit-transition-delay: 250ms;
+    transition-delay: 250ms;
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuMCIgeTE9IjAuNSIgeDI9IjEuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSI5OCUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMC4wIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuMyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
     background-image: -moz-linear-gradient(0deg, rgba(0, 0, 0, 0) 98%, rgba(0, 0, 0, 0.3) 100%);
@@ -4289,52 +4335,52 @@ span.req {
     background-image: linear-gradient(90deg, rgba(0, 0, 0, 0) 98%, rgba(0, 0, 0, 0.3) 100%);
     right: auto !important;
     width: 40% !important; }
-  /* line 88, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 94, ../../../../general/res/sass/mobile/_layout.scss */
   .pane-tree-showing .pane.right.items {
     left: 40% !important; }
 
-  /* line 93, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 99, ../../../../general/res/sass/mobile/_layout.scss */
   .toggle-tree {
     color: #0099cc !important;
     font-size: 110%;
     position: absolute;
     top: 12px;
     left: 10px; }
-    /* line 99, ../../../../general/res/sass/mobile/_layout.scss */
+    /* line 105, ../../../../general/res/sass/mobile/_layout.scss */
     .toggle-tree:after {
       content: 'm' !important;
       font-family: symbolsfont; }
 
-  /* line 105, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 111, ../../../../general/res/sass/mobile/_layout.scss */
   .object-browse-bar {
     left: 30px !important; }
-    /* line 108, ../../../../general/res/sass/mobile/_layout.scss */
+    /* line 114, ../../../../general/res/sass/mobile/_layout.scss */
     .object-browse-bar .context-available {
       opacity: 1 !important; }
-    /* line 111, ../../../../general/res/sass/mobile/_layout.scss */
+    /* line 117, ../../../../general/res/sass/mobile/_layout.scss */
     .object-browse-bar .view-switcher {
       margin-right: 0 !important; }
-      /* line 113, ../../../../general/res/sass/mobile/_layout.scss */
+      /* line 119, ../../../../general/res/sass/mobile/_layout.scss */
       .object-browse-bar .view-switcher .title-label {
         display: none; }
 
-  /* line 120, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 126, ../../../../general/res/sass/mobile/_layout.scss */
   .tree-holder {
     overflow-x: hidden !important; }
 
-  /* line 124, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 130, ../../../../general/res/sass/mobile/_layout.scss */
   .mobile-disable-select {
     -moz-user-select: -moz-none;
     -ms-user-select: none;
     -webkit-user-select: none;
     user-select: none; }
 
-  /* line 129, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 135, ../../../../general/res/sass/mobile/_layout.scss */
   .mobile-hide,
   .mobile-hide-important {
     display: none !important; }
 
-  /* line 134, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 140, ../../../../general/res/sass/mobile/_layout.scss */
   .mobile-back-hide {
     pointer-events: none;
     -moz-transition-property: opacity;
@@ -4355,7 +4401,7 @@ span.req {
     transition-delay: 0;
     opacity: 0; }
 
-  /* line 139, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 145, ../../../../general/res/sass/mobile/_layout.scss */
   .mobile-back-unhide {
     pointer-events: all;
     -moz-transition-property: opacity;
@@ -4376,21 +4422,21 @@ span.req {
     transition-delay: 0;
     opacity: 1; } }
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) {
-  /* line 148, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 154, ../../../../general/res/sass/mobile/_layout.scss */
   .pane-tree-showing .pane.left.treeview {
     width: 90% !important; }
-  /* line 151, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 157, ../../../../general/res/sass/mobile/_layout.scss */
   .pane-tree-showing .pane.right.items {
     left: 0 !important;
     -moz-transform: translateX(90%);
     -ms-transform: translateX(90%);
     -webkit-transform: translateX(90%);
     transform: translateX(90%); }
-    /* line 154, ../../../../general/res/sass/mobile/_layout.scss */
+    /* line 160, ../../../../general/res/sass/mobile/_layout.scss */
     .pane-tree-showing .pane.right.items #content-area {
       opacity: 0; } }
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 162, ../../../../general/res/sass/mobile/_layout.scss */
+  /* line 168, ../../../../general/res/sass/mobile/_layout.scss */
   .desktop-hide {
     display: none; } }
 /*****************************************************************************

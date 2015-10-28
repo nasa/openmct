@@ -22,7 +22,7 @@
     "platform/forms",
     "platform/identity",
     "platform/persistence/local",
-    "platform/persistence/queue",
+    "platform/persistence/elastic",
     "platform/policy",
     "platform/entanglement",
     "platform/search",
