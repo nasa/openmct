@@ -4,7 +4,7 @@
             {
                 "key": "mctInclude",
                 "implementation": "MCTInclude.js",
-                "depends": [ "templates[]", "$sce", "$http", "$compile" ]
+                "depends": [ "templates[]", "templateLinker" ]
             },
             {
                 "key": "mctRepresentation",
@@ -48,6 +48,12 @@
                 "key": "dndService",
                 "implementation": "services/DndService.js",
                 "depends": [ "$log" ]
+            },
+            {
+                "key": "templateLinker",
+                "implementation": "TemplateLinker.js",
+                "depends": [ "$http", "$compile", "$log" ],
+                "comment": "For internal use by mct-include and mct-representation."
             }
         ],
         "actions": [

@@ -54,59 +54,31 @@ define(
          * @param {TemplateDefinition[]} templates an array of
          *        template extensions
          */
-        function MCTInclude(templates, $sce, $http, $compile, $log) {
+        function MCTInclude(templates, templateLinker) {
             var templateMap = {};
 
-            function loadTemplate(path) {
-                return $http.get(path).then(function (response) {
-                    return $compile(response.data);
-                });
-            }
+            function link(scope, element, attrs, ctrl, transclude) {
+                var changeTemplates = templateLinker.link(
+                    scope,
+                    element,
+                    transclude
+                );
 
-            function addTemplate(key, $scope, element) {
-                // Pass the template URL to ng-include via scope.
-                //$scope.inclusion = templateMap[$scope.key];
-                // ...and add the template to the DOM.
-                templateMap[key].then(function (template) {
-                    template($scope, function (innerClone) {
-                        element.append(innerClone);
-                    });
-                }, function () {
-                    $log.warn("Could not load template " + key);
-                    delete templateMap[key];
-                });
-            }
-
-            function link($scope, element, attrs, ctrl, transclude) {
-                var originalElement = element,
-                    activeElement = element;
-
-                $scope.$watch('key', function (key) {
-                    if (templateMap[key]) {
-                        transclude(function (clone) {
-                            activeElement.replaceWith(clone);
-                            activeElement = clone;
-                            activeElement.empty();
-                            addTemplate(key, $scope, activeElement);
-                        });
-                    } else if (activeElement !== originalElement) {
-                        // If the key is unknown, remove it from DOM entirely.
-                        activeElement.replaceWith(originalElement);
-                        activeElement = originalElement;
-                    }
+                scope.$watch('key', function (key) {
+                    changeTemplates(templateMap[key]);
                 });
             }
 
             // Prepopulate templateMap for easy look up by key
             templates.forEach(function (template) {
                 var key = template.key,
-                    path = $sce.trustAsResourceUrl([
+                    path = [
                         template.bundle.path,
                         template.bundle.resources,
                         template.templateUrl
-                    ].join("/"));
+                    ].join("/");
                 // First found should win (priority ordering)
-                templateMap[key] = templateMap[key] || loadTemplate(path);
+                templateMap[key] = templateMap[key] || path;
             });
 
             return {
