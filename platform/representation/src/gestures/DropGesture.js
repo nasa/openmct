@@ -80,7 +80,8 @@ define(
             function dragOver(e) {
                 //Refresh domain object on each dragOver to catch external
                 // updates to the model
-                editableDomainObject = domainObject instanceof EditableDomainObject ? domainObject : new EditableDomainObject(domainObject, $q);
+                //Don't use EditableDomainObject for folders, allow immediate persistence
+                editableDomainObject = domainObject instanceof EditableDomainObject || domainObject.getModel().type==='folder' ? domainObject : new EditableDomainObject(domainObject, $q);
                 actionCapability = editableDomainObject.getCapability('action');
 
                 var event = (e || {}).originalEvent || e,
