@@ -155,6 +155,14 @@ define(
                         uses = ((representation || {}).uses || []),
                         canRepresent = !!(path && domainObject);
 
+                    // Create an empty object named "representation", for this
+                    // representation to store local variables into.
+                    $scope.representation = {};
+
+                    // Change templates (passing in undefined to clear
+                    // if we don't have enough info to show a template.)
+                    changeTemplate(canRepresent ? path : undefined);
+
                     // Any existing representers are no longer valid; release them.
                     destroyRepresenters();
 
@@ -168,14 +176,6 @@ define(
                     toClear.forEach(function (property) {
                         delete $scope[property];
                     });
-
-                    // Create an empty object named "representation", for this
-                    // representation to store local variables into.
-                    $scope.representation = {};
-
-                    // Change templates (passing in undefined to clear
-                    // if we don't have enough info to show a template.)
-                    changeTemplate(canRepresent ? path : undefined);
 
                     // Populate scope with fields associated with the current
                     // domain object (if one has been passed in)
