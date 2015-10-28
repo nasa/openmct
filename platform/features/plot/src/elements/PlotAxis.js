@@ -74,7 +74,8 @@ define(
 
         /**
          * Update axis options to reflect current metadata.
-         * @memberof platform/features/plot.PlotAxis
+         * @param {TelemetryMetadata[]} metadata objects describing
+         *        applicable telemetry
          */
         PlotAxis.prototype.updateMetadata = function (metadatas) {
             var axisType = this.axisType,
@@ -114,6 +115,12 @@ define(
             }
         };
 
+        /**
+         * Change the domain/range selection for this axis. If the
+         * provided `key` is not recognized as an option, no change
+         * will occur.
+         * @param {string} key the identifier for the domain/range
+         */
         PlotAxis.prototype.chooseOption = function (key) {
             var self = this;
             this.options.forEach(function (option) {

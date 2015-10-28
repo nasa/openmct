@@ -26,14 +26,33 @@ define(
     function () {
         'use strict';
 
+        /**
+         * Wraps a `TelemetryFormatter` to provide formats for domain and
+         * range values; provides a single place to track domain/range
+         * formats within a plot, allowing other plot elements to simply
+         * request that values be formatted.
+         * @constructor
+         * @memberof platform/features/plot
+         * @implements {platform/telemetry.TelemetryFormatter}
+         * @param {TelemetryFormatter} telemetryFormatter the formatter
+         *        to wrap.
+         */
         function PlotTelemetryFormatter(telemetryFormatter) {
             this.telemetryFormatter = telemetryFormatter;
         }
 
+        /**
+         * Specify the format to use for domain values.
+         * @param {string} key the format's identifier
+         */
         PlotTelemetryFormatter.prototype.setDomainFormat = function (key) {
             this.domainFormat = key;
         };
 
+        /**
+         * Specify the format to use for range values.
+         * @param {string} key the format's identifier
+         */
         PlotTelemetryFormatter.prototype.setRangeFormat = function (key) {
             this.rangeFormat = key;
         };
