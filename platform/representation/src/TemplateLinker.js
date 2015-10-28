@@ -63,6 +63,7 @@ define(
         TemplateLinker.prototype.link = function (scope, element, transclude) {
             var originalElement = element,
                 activeElement = element,
+                activeTemplateUrl,
                 self = this;
 
             function removeElement() {
@@ -91,13 +92,18 @@ define(
                 }
             }
 
-            return function (templateUrl) {
-                if (templateUrl) {
-                    self.load(templateUrl).then(applyTemplate);
-                } else {
-                    removeElement();
+            function changeTemplate(templateUrl) {
+                if (templateUrl !== activeTemplateUrl) {
+                    if (templateUrl) {
+                        self.load(templateUrl).then(applyTemplate);
+                    } else {
+                        removeElement();
+                    }
+                    activeTemplateUrl = templateUrl;
                 }
-            };
+            }
+
+            return changeTemplate;
         };
 
         return TemplateLinker;

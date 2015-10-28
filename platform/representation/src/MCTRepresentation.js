@@ -55,7 +55,7 @@ define(
          *        representation extensions
          * @param {ViewDefinition[]} views an array of view extensions
          */
-        function MCTRepresentation(representations, views, representers, $q, $sce, $log) {
+        function MCTRepresentation(representations, views, representers, $q, templateLinker, $log) {
             var representationMap = {},
                 gestureMap = {};
 
@@ -72,11 +72,11 @@ define(
 
             // Get a path to a representation
             function getPath(representation) {
-                return $sce.trustAsResourceUrl([
+                return [
                     representation.bundle.path,
                     representation.bundle.resources,
                     representation.templateUrl
-                ].join("/"));
+                ].join("/");
             }
 
             // Look up a matching representation for this domain object
@@ -94,12 +94,17 @@ define(
                 }
             }
 
-            function link($scope, element, attrs) {
+            function link($scope, element, attrs, ctrl, transclude) {
                 var activeRepresenters = representers.map(function (Representer) {
                         return new Representer($scope, element, attrs);
                     }),
                     toClear = [], // Properties to clear out of scope on change
-                    counter = 0;
+                    counter = 0,
+                    changeTemplate = templateLinker.link(
+                        $scope,
+                        element,
+                        transclude
+                    );
 
                 // Populate scope with any capabilities indicated by the
                 // representation's extension definition
@@ -158,7 +163,7 @@ define(
 
                     // Look up the actual template path, pass it to ng-include
                     // via the "inclusion" field
-                    $scope.inclusion = representation && getPath(representation);
+                    changeTemplate(representation && getPath(representation));
 
                     // Any existing representers are no longer valid; release them.
                     destroyRepresenters();
@@ -227,15 +232,17 @@ define(
             }
 
             return {
+                transclude: 'element',
+
+                priority: 601,
+
+                terminal: true,
+
                 // Only applicable at the element level
                 restrict: "E",
 
                 // Handle Angular's linking step
                 link: link,
-
-                // Use ng-include as a template; "inclusion" will be the real
-                // template path
-                template: '<ng-include src="inclusion"></ng-include>',
 
                 // Two-way bind key and parameters, get the represented domain
                 // object as "mct-object"
