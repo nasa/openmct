@@ -41,8 +41,8 @@ define(
             });
 
             it("validates time inputs", function () {
-                expect(format.validate("1977-05-25 11:21:22")).toBeTruthy();
-                expect(format.validate("garbage text")).toBeFalsy();
+                expect(format.validate("1977-05-25 11:21:22")).toBe(true);
+                expect(format.validate("garbage text")).toBe(false);
             });
 
             it("parses valid input", function () {
