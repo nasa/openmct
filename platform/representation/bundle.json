@@ -4,7 +4,7 @@
             {
                 "key": "mctInclude",
                 "implementation": "MCTInclude.js",
-                "depends": [ "templates[]", "$sce" ]
+                "depends": [ "templates[]", "$sce", "$http", "$compile" ]
             },
             {
                 "key": "mctRepresentation",

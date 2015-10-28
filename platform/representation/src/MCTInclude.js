@@ -54,8 +54,48 @@ define(
          * @param {TemplateDefinition[]} templates an array of
          *        template extensions
          */
-        function MCTInclude(templates, $sce) {
+        function MCTInclude(templates, $sce, $http, $compile, $log) {
             var templateMap = {};
+
+            function loadTemplate(path) {
+                return $http.get(path).then(function (response) {
+                    return $compile(response.data);
+                });
+            }
+
+            function addTemplate(key, $scope, element) {
+                // Pass the template URL to ng-include via scope.
+                //$scope.inclusion = templateMap[$scope.key];
+                // ...and add the template to the DOM.
+                templateMap[key].then(function (template) {
+                    template($scope, function (innerClone) {
+                        element.append(innerClone);
+                    });
+                }, function () {
+                    $log.warn("Could not load template " + key);
+                    delete templateMap[key];
+                });
+            }
+
+            function link($scope, element, attrs, ctrl, transclude) {
+                var originalElement = element,
+                    activeElement = element;
+
+                $scope.$watch('key', function (key) {
+                    if (templateMap[key]) {
+                        transclude(function (clone) {
+                            activeElement.replaceWith(clone);
+                            activeElement = clone;
+                            activeElement.empty();
+                            addTemplate(key, $scope, activeElement);
+                        });
+                    } else if (activeElement !== originalElement) {
+                        // If the key is unknown, remove it from DOM entirely.
+                        activeElement.replaceWith(originalElement);
+                        activeElement = originalElement;
+                    }
+                });
+            }
 
             // Prepopulate templateMap for easy look up by key
             templates.forEach(function (template) {
@@ -66,29 +106,8 @@ define(
                         template.templateUrl
                     ].join("/"));
                 // First found should win (priority ordering)
-                templateMap[key] = templateMap[key] || path;
+                templateMap[key] = templateMap[key] || loadTemplate(path);
             });
-
-            function link($scope, element, attrs, ctrl, transclude) {
-                var originalElement = element,
-                    activeElement = element;
-
-                $scope.$watch('key', function (key) {
-                    if (templateMap[key]) {
-                        // Pass the template URL to ng-include via scope.
-                        $scope.inclusion = templateMap[$scope.key];
-                        // ...and add the template to the DOM.
-                        transclude(function (clone) {
-                            activeElement.replaceWith(clone);
-                            activeElement = clone;
-                        });
-                    } else if (activeElement !== originalElement) {
-                        // If the key is unknown, remove it from DOM entirely.
-                        activeElement.replaceWith(originalElement);
-                        activeElement = originalElement;
-                    }
-                });
-            }
 
             return {
                 transclude: 'element',
@@ -102,10 +121,6 @@ define(
 
                 // Use the included controller to populate scope
                 link: link,
-
-                // Use ng-include as a template; "inclusion" will be the real
-                // template path
-                template: '<ng-include src="inclusion"></ng-include>',
 
                 // Two-way bind key, ngModel, and parameters
                 scope: { key: "=", ngModel: "=", parameters: "=" }
