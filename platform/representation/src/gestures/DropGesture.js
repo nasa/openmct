@@ -69,6 +69,13 @@ define(
                     );
                 }
             }
+            
+            function shouldCreateVirtualPanel(domainObject){
+                //
+                return domainObject.useCapability('view').filter(function (view){
+                            return view.key==='plot' && domainObject.getModel().type!== 'telemetry.panel'
+                        }).length > 0;
+            }
 
             function dragOver(e) {
                 //Refresh domain object on each dragOver to catch external
@@ -89,7 +96,7 @@ define(
                     })[0];
                     //TODO: Fix this. Define an action for creating new
                     // virtual panel
-                    if (action || selectedObject.getModel().type === 'generator') {
+                    if (action || shouldCreateVirtualPanel(domainObject)) {
                         event.dataTransfer.dropEffect = 'move';
 
                         // Indicate that we will accept the drag
@@ -136,7 +143,7 @@ define(
                     // destination domain object's composition, and persist
                     // the change.
                     if (id) {
-                        if (domainObjectType === 'generator'){
+                        if (shouldCreateVirtualPanel(domainObject)){
                             virtualObj = new EditableDomainObject(createVirtualPanel(domainObject, id));
                             navigationService.setNavigation(virtualObj);
                             broadcastDrop(id, event);
