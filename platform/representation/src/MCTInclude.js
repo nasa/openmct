@@ -69,19 +69,39 @@ define(
                 templateMap[key] = templateMap[key] || path;
             });
 
-            function controller($scope) {
+            function link($scope, element, attrs, ctrl, transclude) {
+                var originalElement = element,
+                    activeElement = element;
+
                 $scope.$watch('key', function (key) {
-                    // Pass the template URL to ng-include via scope.
-                    $scope.inclusion = templateMap[$scope.key];
+                    if (templateMap[key]) {
+                        // Pass the template URL to ng-include via scope.
+                        $scope.inclusion = templateMap[$scope.key];
+                        // ...and add the template to the DOM.
+                        transclude(function (clone) {
+                            activeElement.replaceWith(clone);
+                            activeElement = clone;
+                        });
+                    } else if (activeElement !== originalElement) {
+                        // If the key is unknown, remove it from DOM entirely.
+                        activeElement.replaceWith(originalElement);
+                        activeElement = originalElement;
+                    }
                 });
             }
 
             return {
+                transclude: 'element',
+
+                priority: 601,
+
+                terminal: true,
+
                 // Only show at the element level
                 restrict: "E",
 
                 // Use the included controller to populate scope
-                controller: controller,
+                link: link,
 
                 // Use ng-include as a template; "inclusion" will be the real
                 // template path
