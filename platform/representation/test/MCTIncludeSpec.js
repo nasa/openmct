@@ -31,8 +31,19 @@ define(
 
         describe("The mct-include directive", function () {
             var testTemplates,
-                mockSce,
+                mockLinker,
+                mockScope,
+                mockElement,
+                mockChangeTemplate,
                 mctInclude;
+
+            function fireWatch(expr, value) {
+                mockScope.$watch.calls.forEach(function (call) {
+                    if (call.args[0] === expr) {
+                        call.args[1](value);
+                    }
+                });
+            }
 
             beforeEach(function () {
                 testTemplates = [
@@ -47,41 +58,36 @@ define(
                         templateUrl: "z/template.html"
                     }
                 ];
-                mockSce = jasmine.createSpyObj(
-                    '$sce',
-                    ['trustAsResourceUrl']
-                );
-                mockSce.trustAsResourceUrl.andCallFake(function (url) {
-                    return url;
-                });
-                mctInclude = new MCTInclude(testTemplates, mockSce);
-            });
-
-            it("has a built-in template, with ng-include src=inclusion", function () {
-                // Not rigorous, but should detect many cases when template is broken.
-                expect(mctInclude.template.indexOf("ng-include")).not.toEqual(-1);
-                expect(mctInclude.template.indexOf("inclusion")).not.toEqual(-1);
+                mockLinker = jasmine.createSpyObj('templateLinker', ['link']);
+                mockScope = jasmine.createSpyObj('$scope', ['$watch', '$on']);
+                mockElement = jasmine.createSpyObj('element', ['empty']);
+                mockChangeTemplate = jasmine.createSpy('changeTemplate');
+                mockLinker.link.andReturn(mockChangeTemplate);
+                mctInclude = new MCTInclude(testTemplates, mockLinker);
+                mctInclude.link(mockScope, mockElement, {});
             });
 
             it("is restricted to elements", function () {
                 expect(mctInclude.restrict).toEqual("E");
             });
 
-            it("reads a template location from a scope's key variable", function () {
-                var scope = { key: "abc" };
-                mctInclude.controller(scope);
-                expect(scope.inclusion).toEqual("a/b/c/template.html");
-
-                scope = { key: "xyz" };
-                mctInclude.controller(scope);
-                expect(scope.inclusion).toEqual("x/y/z/template.html");
+            it("exposes templates via the templateLinker", function () {
+                expect(mockLinker.link)
+                    .toHaveBeenCalledWith(mockScope, mockElement);
             });
 
-            it("trusts template URLs", function () {
-                mctInclude.controller({ key: "xyz" });
-                expect(mockSce.trustAsResourceUrl)
+            it("reads a template location from a scope's key variable", function () {
+                mockScope.key = 'abc';
+                fireWatch('key', mockScope.key);
+                expect(mockChangeTemplate)
+                    .toHaveBeenCalledWith("a/b/c/template.html");
+
+                mockScope.key = 'xyz';
+                fireWatch('key', mockScope.key);
+                expect(mockChangeTemplate)
                     .toHaveBeenCalledWith("x/y/z/template.html");
             });
+
 
         });
     }
