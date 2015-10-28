@@ -1,0 +1,14 @@
+<div ng-controller="TTC">
+    <div style="border: 5px white solid">
+        <div>mct-include</div>
+        <input type="text" ng-model="ikey">
+        <mct-include key="ikey"></mct-include>
+    </div>
+
+    <div style="border: 5px pink solid">
+        <div>mct-representation</div>
+        <input type="text" ng-model="rkey">
+        <input type="text" ng-model="rid">
+        <mct-representation key="rkey" mct-object="obj"></mct-representation>
+    </div>
+</div>
