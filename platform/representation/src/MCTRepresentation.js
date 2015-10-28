@@ -100,11 +100,7 @@ define(
                     }),
                     toClear = [], // Properties to clear out of scope on change
                     counter = 0,
-                    changeTemplate = templateLinker.link(
-                        $scope,
-                        element,
-                        transclude
-                    );
+                    changeTemplate = templateLinker.link($scope, element);
 
                 // Populate scope with any capabilities indicated by the
                 // representation's extension definition
@@ -155,15 +151,9 @@ define(
                 function refresh() {
                     var domainObject = $scope.domainObject,
                         representation = lookup($scope.key, domainObject),
-                        uses = ((representation || {}).uses || []);
-
-                    // Create an empty object named "representation", for this
-                    // representation to store local variables into.
-                    $scope.representation = {};
-
-                    // Look up the actual template path, pass it to ng-include
-                    // via the "inclusion" field
-                    changeTemplate(representation && getPath(representation));
+                        path = representation && getPath(representation),
+                        uses = ((representation || {}).uses || []),
+                        canRepresent = !!(path && domainObject);
 
                     // Any existing representers are no longer valid; release them.
                     destroyRepresenters();
@@ -179,9 +169,17 @@ define(
                         delete $scope[property];
                     });
 
+                    // Create an empty object named "representation", for this
+                    // representation to store local variables into.
+                    $scope.representation = {};
+
+                    // Change templates (passing in undefined to clear
+                    // if we don't have enough info to show a template.)
+                    changeTemplate(canRepresent ? path : undefined);
+
                     // Populate scope with fields associated with the current
                     // domain object (if one has been passed in)
-                    if (domainObject) {
+                    if (canRepresent) {
                         // Track how many representations we've made in this scope,
                         // to ensure that the correct representations are matched to
                         // the correct object/key pairs.
@@ -232,12 +230,6 @@ define(
             }
 
             return {
-                transclude: 'element',
-
-                priority: 601,
-
-                terminal: true,
-
                 // Only applicable at the element level
                 restrict: "E",
 

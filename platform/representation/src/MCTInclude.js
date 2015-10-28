@@ -57,15 +57,11 @@ define(
         function MCTInclude(templates, templateLinker) {
             var templateMap = {};
 
-            function link(scope, element, attrs, ctrl, transclude) {
-                var changeTemplates = templateLinker.link(
-                    scope,
-                    element,
-                    transclude
-                );
+            function link(scope, element) {
+                var changeTemplate = templateLinker.link(scope, element);
 
                 scope.$watch('key', function (key) {
-                    changeTemplates(templateMap[key]);
+                    changeTemplate(templateMap[key]);
                 });
             }
 
@@ -82,12 +78,6 @@ define(
             });
 
             return {
-                transclude: 'element',
-
-                priority: 601,
-
-                terminal: true,
-
                 // Only show at the element level
                 restrict: "E",
 

@@ -60,33 +60,31 @@ define(
          * @returns {Function} a function which can be called with a template
          *          URL to switch templates, or `undefined` to remove.
          */
-        TemplateLinker.prototype.link = function (scope, element, transclude) {
-            var originalElement = element,
-                activeElement = element,
+        TemplateLinker.prototype.link = function (scope, element) {
+            var activeElement = element,
                 activeTemplateUrl,
+                comment = this.$compile('<!-- hidden mct element -->')(scope),
                 self = this;
 
             function removeElement() {
-                if (activeElement !== originalElement) {
-                    activeElement.replaceWith(originalElement);
-                    activeElement = originalElement;
+                if (activeElement !== comment) {
+                    activeElement.replaceWith(comment);
+                    activeElement = comment;
                 }
             }
 
-            function replaceElement(clone, template) {
-                activeElement.replaceWith(clone);
-                activeElement = clone;
+            function replaceElement(template) {
+                activeElement.replaceWith(element);
+                activeElement = element;
                 activeElement.empty();
                 template(scope, function (innerClone) {
-                    clone.append(innerClone);
+                    element.append(innerClone);
                 });
             }
 
             function applyTemplate(template) {
                 if (template) {
-                    transclude(function (clone) {
-                        replaceElement(clone, template);
-                    });
+                    replaceElement(template);
                 } else {
                     removeElement();
                 }
@@ -102,6 +100,8 @@ define(
                     activeTemplateUrl = templateUrl;
                 }
             }
+
+            removeElement();
 
             return changeTemplate;
         };
