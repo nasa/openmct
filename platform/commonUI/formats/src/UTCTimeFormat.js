@@ -37,6 +37,14 @@ define([
         ];
 
 
+    /**
+     * Formatter for UTC timestamps. Interprets numeric values as
+     * milliseconds since the start of 1970.
+     *
+     * @implements {Format}
+     * @constructor
+     * @memberof platform/commonUI/formats
+     */
     function UTCTimeFormat() {
     }
 

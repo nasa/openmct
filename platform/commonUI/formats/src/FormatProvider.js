@@ -63,6 +63,28 @@ define([
      * @returns {string} the text representation of the value
      */
 
+    /**
+     * Provides access to `Format` objects which can be used to
+     * convert values between human-readable text and numeric
+     * representations.
+     * @interface FormatService
+     */
+
+    /**
+     * Look up a format by its symbolic identifier.
+     * @param {string} key the identifier for this format
+     * @returns {Format} the format, or `undefined` if no such format
+     *                   is known.
+     */
+
+    /**
+     * Provides formats from the `formats` extension category.
+     * @constructor
+     * @implements {FormatService}
+     * @memberof platform/commonUI/formats
+     * @param {Array.<function(new : Format)>} format constructors,
+     *        from the `formats` extension category.
+     */
     function FormatProvider(formats) {
         var formatMap = {};
 
