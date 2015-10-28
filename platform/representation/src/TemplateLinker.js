@@ -73,10 +73,15 @@ define(
                 }
             }
 
-            function replaceElement(template) {
-                activeElement.replaceWith(element);
-                activeElement = element;
-                activeElement.empty();
+            function addElement() {
+                if (activeElement !== element) {
+                    activeElement.replaceWith(element);
+                    activeElement = element;
+                    activeElement.empty();
+                }
+            }
+
+            function populateElement(template) {
                 template(scope, function (innerClone) {
                     element.append(innerClone);
                 });
@@ -84,7 +89,7 @@ define(
 
             function applyTemplate(template) {
                 if (template) {
-                    replaceElement(template);
+                    populateElement(template);
                 } else {
                     removeElement();
                 }
@@ -93,6 +98,7 @@ define(
             function changeTemplate(templateUrl) {
                 if (templateUrl !== activeTemplateUrl) {
                     if (templateUrl) {
+                        addElement();
                         self.load(templateUrl).then(applyTemplate);
                     } else {
                         removeElement();
