@@ -70,8 +70,10 @@ define(
             });
 
             function controller($scope) {
-                // Pass the template URL to ng-include via scope.
-                $scope.inclusion = templateMap[$scope.key];
+                $scope.$watch('key', function (key) {
+                    // Pass the template URL to ng-include via scope.
+                    $scope.inclusion = templateMap[$scope.key];
+                });
             }
 
             return {
