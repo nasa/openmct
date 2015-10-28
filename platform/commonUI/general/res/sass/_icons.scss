@@ -50,19 +50,6 @@
 	&.icon-calendar:after {
 		content: "\e605";
 	}
-    &.l-icon-link {
-        color: $colorIconLink;
-        height: auto;
-        line-height: 100%;
-        position: absolute;
-        font-size: 0.4em !important;
-        left: 0px;
-        bottom: 5%;
-        z-index: 2;
-        &:before {
-            content: "\f4";
-        }
-    }
 }
 
 .bar .ui-symbol {
@@ -91,4 +78,26 @@
 		color: $colorAlert;
 		content: "!";
 	}
+}
+
+// NEW!!
+.t-item-icon {
+	// Used in grid-item.html, tree-item, inspector location, more?
+	@extend .ui-symbol;
+    @extend .icon;
+    display: inline-block;
+    position: relative;
+    &.l-icon-link {
+        &:before {
+            color: $colorIconLink;
+            height: 30%; width: auto;
+            line-height: normal;
+            position: absolute;
+            font-size: 0.35em;
+            left: 0px;
+            bottom: 10%;
+            z-index: 2;
+            content: "\f4";
+        }
+    }
 }

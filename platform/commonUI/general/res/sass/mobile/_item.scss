@@ -49,18 +49,11 @@
                     
                 }
                 .item-main {
-                    .item-type {
-                        //@include test(blue);
+                    .item-type,
+                    .t-item-icon {
                         font-size: $mobileListIconSize;
-                        right: auto;
-                        bottom: auto;
-                        left: 0;
-                        line-height: 100%;
-                        text-align: left;
-                        width: $mobileListIconSize;
-                        .l-icon-link {
-                            bottom: 0;
-                        }
+                        left: $interiorMarginLg + $interiorMargin;
+                        line-height: normal;
                     }
                     .item-open {
                         display: block;
