@@ -63,10 +63,15 @@
         // Sets the left tree menu when the tree
         // is hidden.
         .pane.left.treeview {
-            right: 100% !important;
-            width: auto !important;
-            overflow-y: hidden;
-            overflow-x: hidden;
+            @include trans-prop-nice(opacity, 150ms);
+            //right: 100% !important;
+            //width: auto !important;
+            //overflow-y: hidden;
+            //overflow-x: hidden;
+            opacity: 0 !important;
+        }
+        .pane.right.items {
+            left: 0 !important;
         }
     }
     
@@ -80,6 +85,7 @@
 
         // Sets the left tree menu when the tree is shown.
         .pane.left.treeview {
+            @include trans-prop-nice(opacity, 250ms, $delay: 250ms);
             @include background-image(linear-gradient(90deg, rgba(black, 0) 98%, rgba(black, 0.3) 100%));
             right: auto !important;
             width: $proporMenuWithView !important;
