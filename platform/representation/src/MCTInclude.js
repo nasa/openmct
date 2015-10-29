@@ -58,10 +58,14 @@ define(
             var templateMap = {};
 
             function link(scope, element) {
-                var changeTemplate = templateLinker.link(scope, element);
+                var changeTemplate = templateLinker.link(
+                    scope,
+                    element,
+                    scope.key && templateMap[scope.key]
+                );
 
                 scope.$watch('key', function (key) {
-                    changeTemplate(templateMap[key]);
+                    changeTemplate(key && templateMap[key]);
                 });
             }
 

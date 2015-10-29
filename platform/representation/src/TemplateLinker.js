@@ -72,7 +72,7 @@ define(
          * @returns {Function} a function which can be called with a template
          *          URL to switch templates, or `undefined` to remove.
          */
-        TemplateLinker.prototype.link = function (scope, element) {
+        TemplateLinker.prototype.link = function (scope, element, templateUrl) {
             var activeElement = element,
                 activeTemplateUrl,
                 comment = this.$compile('<!-- hidden mct element -->')(scope),
@@ -125,7 +125,11 @@ define(
                 }
             }
 
-            removeElement();
+            if (templateUrl) {
+                changeTemplate(templateUrl);
+            } else {
+                removeElement();
+            }
 
             return changeTemplate;
         };
