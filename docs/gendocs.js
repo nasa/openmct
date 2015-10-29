@@ -187,7 +187,7 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
                 destPath = path.dirname(destination),
                 streamOptions = {};
             if (file.match(/png$/)){
-                streamOptions.encoding = 'binary';
+                streamOptions.encoding = null;
             } else {
                 streamOptions.encoding = 'utf8';
             }
