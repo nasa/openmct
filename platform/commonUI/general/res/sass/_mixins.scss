@@ -258,6 +258,12 @@
 	@return percentage($d);
 }
 
+@function splitterHandleInset($splitterD: 21px, $splitterHandleD: 1px) {
+    // Space to either side of the handle
+    @return ($splitterD - $splitterHandleD) * 0.5;
+}
+
+
 /*********************************************** CONTROLS, FORM ELEMENTS */
 
 @mixin containerBase($bg: $colorBodyBg, $fg: $colorBodyFg) {

@@ -77,7 +77,7 @@
         line-height: 180%;
         .location-item {
             cursor: pointer;
-            display: inline;
+            display: inline-block;
             position: relative;
             padding: 2px 4px;
             &:hover {

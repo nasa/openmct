@@ -152,8 +152,8 @@ $scrollbarThumbColor: darken($colorBodyBg, 50%);//
 $scrollbarThumbColorHov: $colorKey;
 
 // Splitter
-$splitterD: 15px;
-$splitterHandleInset: 6px;
+$splitterD: 24px;
+$splitterHandleD: 2px;
 $colorSplitterBg: pullForward($colorBodyBg, 10%);
 $splitterShdw: none;
 $splitterEndCr: none;

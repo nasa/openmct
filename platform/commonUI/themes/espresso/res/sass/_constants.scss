@@ -154,9 +154,8 @@ $scrollbarThumbColorHov: lighten($scrollbarThumbColor, 2%);
 $scrollbarTrackShdw: rgba(#000, 0.7) 0 1px 5px;
 
 // Splitter
-$splitterD: 19px; // splitterD and HandleD should both be odd, or even
-$splitterHandleD: 3px;
-$splitterHandleInset: ($splitterD - $splitterHandleD) * 0.5; // Space to either side of the handle
+$splitterD: 24px; // splitterD and HandleD should both be odd, or even
+$splitterHandleD: 2px;
 $colorSplitterBg: pullForward($colorBodyBg, 10%);
 $splitterShdw: rgba(black, 0.4) 0 0 3px;
 $splitterEndCr: none;

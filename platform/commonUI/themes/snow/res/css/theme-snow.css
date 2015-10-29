@@ -332,6 +332,7 @@ body, html {
   color: #666;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 100%;
+  font-weight: 200;
   height: 100%;
   width: 100%;
   overflow: hidden; }
@@ -979,55 +980,55 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
   .splitter:active:after {
     background-color: #0099cc; }
 
-/* line 64, ../../../../general/res/sass/helpers/_splitter.scss */
+/* line 65, ../../../../general/res/sass/helpers/_splitter.scss */
 .split-layout.horizontal {
   overflow: hidden; }
-  /* line 67, ../../../../general/res/sass/helpers/_splitter.scss */
+  /* line 68, ../../../../general/res/sass/helpers/_splitter.scss */
   .split-layout.horizontal .pane {
     left: 0;
     right: 0; }
-    /* line 70, ../../../../general/res/sass/helpers/_splitter.scss */
+    /* line 71, ../../../../general/res/sass/helpers/_splitter.scss */
     .split-layout.horizontal .pane.top {
       bottom: auto; }
-    /* line 73, ../../../../general/res/sass/helpers/_splitter.scss */
+    /* line 74, ../../../../general/res/sass/helpers/_splitter.scss */
     .split-layout.horizontal .pane.bottom {
       top: auto; }
-  /* line 77, ../../../../general/res/sass/helpers/_splitter.scss */
+  /* line 78, ../../../../general/res/sass/helpers/_splitter.scss */
   .split-layout.horizontal > .splitter {
     cursor: row-resize;
     left: 0;
     right: 0;
-    height: 15px; }
-    /* line 82, ../../../../general/res/sass/helpers/_splitter.scss */
+    height: 24px; }
+    /* line 83, ../../../../general/res/sass/helpers/_splitter.scss */
     .split-layout.horizontal > .splitter:after {
-      top: 6px;
-      bottom: 6px; }
-/* line 90, ../../../../general/res/sass/helpers/_splitter.scss */
+      top: 11px;
+      bottom: 11px; }
+/* line 91, ../../../../general/res/sass/helpers/_splitter.scss */
 .split-layout.vertical .pane {
   top: 0;
   bottom: 0; }
-  /* line 93, ../../../../general/res/sass/helpers/_splitter.scss */
+  /* line 94, ../../../../general/res/sass/helpers/_splitter.scss */
   .split-layout.vertical .pane.left {
     right: auto; }
-  /* line 96, ../../../../general/res/sass/helpers/_splitter.scss */
+  /* line 97, ../../../../general/res/sass/helpers/_splitter.scss */
   .split-layout.vertical .pane.right {
     left: auto; }
-/* line 100, ../../../../general/res/sass/helpers/_splitter.scss */
+/* line 101, ../../../../general/res/sass/helpers/_splitter.scss */
 .split-layout.vertical > .splitter {
   cursor: col-resize;
   top: 0;
   bottom: 0;
-  width: 15px; }
-  /* line 105, ../../../../general/res/sass/helpers/_splitter.scss */
+  width: 24px; }
+  /* line 106, ../../../../general/res/sass/helpers/_splitter.scss */
   .split-layout.vertical > .splitter:after {
-    left: 6px;
-    right: 6px; }
+    left: 11px;
+    right: 11px; }
 
-/* line 112, ../../../../general/res/sass/helpers/_splitter.scss */
+/* line 113, ../../../../general/res/sass/helpers/_splitter.scss */
 .browse-area .splitter {
   top: 0; }
 
-/* line 116, ../../../../general/res/sass/helpers/_splitter.scss */
+/* line 117, ../../../../general/res/sass/helpers/_splitter.scss */
 .edit-area .splitter {
   top: 0; }
 
@@ -1322,7 +1323,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     /* line 78, ../../../../general/res/sass/_inspector.scss */
     .l-inspect .inspector-location .location-item {
       cursor: pointer;
-      display: inline;
+      display: inline-block;
       position: relative;
       padding: 2px 4px; }
       /* line 83, ../../../../general/res/sass/_inspector.scss */
@@ -1451,14 +1452,14 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     -webkit-transition: background, 0.25s;
     transition: background, 0.25s;
     text-shadow: none; }
-    /* line 274, ../../../../general/res/sass/_mixins.scss */
+    /* line 280, ../../../../general/res/sass/_mixins.scss */
     .s-btn.major .icon, .major.s-menu-btn .icon, .s-btn.major .t-item-icon, .major.s-menu-btn .t-item-icon {
       color: #fff; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 279, ../../../../general/res/sass/_mixins.scss */
+      /* line 285, ../../../../general/res/sass/_mixins.scss */
       .s-btn.major:not(.disabled):hover, .major.s-menu-btn:not(.disabled):hover {
         background: deepskyblue; }
-        /* line 281, ../../../../general/res/sass/_mixins.scss */
+        /* line 287, ../../../../general/res/sass/_mixins.scss */
         .s-btn.major:not(.disabled):hover > .icon, .major.s-menu-btn:not(.disabled):hover > .icon, .s-btn.major:not(.disabled):hover > .t-item-icon, .major.s-menu-btn:not(.disabled):hover > .t-item-icon {
           color: white; } }
   /* line 66, ../../../../general/res/sass/controls/_buttons.scss */
@@ -1481,14 +1482,14 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     -webkit-transition: background, 0.25s;
     transition: background, 0.25s;
     text-shadow: none; }
-    /* line 274, ../../../../general/res/sass/_mixins.scss */
+    /* line 280, ../../../../general/res/sass/_mixins.scss */
     .s-btn:not(.major) .icon, .s-menu-btn:not(.major) .icon, .s-btn:not(.major) .t-item-icon, .s-menu-btn:not(.major) .t-item-icon {
       color: #eee; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 279, ../../../../general/res/sass/_mixins.scss */
+      /* line 285, ../../../../general/res/sass/_mixins.scss */
       .s-btn:not(.major):not(.disabled):hover, .s-menu-btn:not(.major):not(.disabled):hover {
         background: #0099cc; }
-        /* line 281, ../../../../general/res/sass/_mixins.scss */
+        /* line 287, ../../../../general/res/sass/_mixins.scss */
         .s-btn:not(.major):not(.disabled):hover > .icon, .s-menu-btn:not(.major):not(.disabled):hover > .icon, .s-btn:not(.major):not(.disabled):hover > .t-item-icon, .s-menu-btn:not(.major):not(.disabled):hover > .t-item-icon {
           color: white; } }
   /* line 75, ../../../../general/res/sass/controls/_buttons.scss */
@@ -1514,14 +1515,14 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     -webkit-transition: background, 0.25s;
     transition: background, 0.25s;
     text-shadow: none; }
-    /* line 274, ../../../../general/res/sass/_mixins.scss */
+    /* line 280, ../../../../general/res/sass/_mixins.scss */
     .s-btn.pause-play.paused .icon, .pause-play.paused.s-menu-btn .icon, .s-btn.pause-play.paused .t-item-icon, .pause-play.paused.s-menu-btn .t-item-icon {
       color: #fff; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 279, ../../../../general/res/sass/_mixins.scss */
+      /* line 285, ../../../../general/res/sass/_mixins.scss */
       .s-btn.pause-play.paused:not(.disabled):hover, .pause-play.paused.s-menu-btn:not(.disabled):hover {
         background: #ffad33; }
-        /* line 281, ../../../../general/res/sass/_mixins.scss */
+        /* line 287, ../../../../general/res/sass/_mixins.scss */
         .s-btn.pause-play.paused:not(.disabled):hover > .icon, .pause-play.paused.s-menu-btn:not(.disabled):hover > .icon, .s-btn.pause-play.paused:not(.disabled):hover > .t-item-icon, .pause-play.paused.s-menu-btn:not(.disabled):hover > .t-item-icon {
           color: white; } }
     /* line 80, ../../../../general/res/sass/controls/_buttons.scss */
@@ -1612,14 +1613,14 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
       -webkit-transition: background, 0.25s;
       transition: background, 0.25s;
       text-shadow: none; }
-      /* line 274, ../../../../general/res/sass/_mixins.scss */
+      /* line 280, ../../../../general/res/sass/_mixins.scss */
       .mini-tab.collapsed .icon, .mini-tab.collapsed .t-item-icon {
         color: #eee; } }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px) and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 800px) and (min-device-height: 1025px) and (min-device-width: 1025px) and (min-device-height: 800px), screen and (min-device-width: 1025px) and (min-device-height: 800px) and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 279, ../../../../general/res/sass/_mixins.scss */
+      /* line 285, ../../../../general/res/sass/_mixins.scss */
       .mini-tab.collapsed:not(.disabled):hover {
         background: #0099cc; }
-        /* line 281, ../../../../general/res/sass/_mixins.scss */
+        /* line 287, ../../../../general/res/sass/_mixins.scss */
         .mini-tab.collapsed:not(.disabled):hover > .icon, .mini-tab.collapsed:not(.disabled):hover > .t-item-icon {
           color: white; } }
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
@@ -2596,7 +2597,7 @@ label.checkbox.custom {
   .menu ul {
     margin: 0;
     padding: 0; }
-    /* line 331, ../../../../general/res/sass/_mixins.scss */
+    /* line 337, ../../../../general/res/sass/_mixins.scss */
     .menu ul li {
       list-style-type: none;
       margin: 0;
@@ -2606,7 +2607,7 @@ label.checkbox.custom {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
-      border-top: 1px solid white;
+      border-top: 1px solid #e6e6e6;
       color: #666666;
       line-height: 1.5rem;
       padding: 3px 10px 3px 30px;
@@ -3162,7 +3163,7 @@ mct-include.l-time-controller {
       padding: 0 3px;
       position: relative;
       height: 150px; }
-      /* line 298, ../../../../general/res/sass/_mixins.scss */
+      /* line 304, ../../../../general/res/sass/_mixins.scss */
       .form .form-row .selector-list.error {
         background: rgba(255, 0, 0, 0.5); }
       /* line 124, ../../../../general/res/sass/forms/_elems.scss */
@@ -3219,7 +3220,7 @@ input[type="text"] {
   color: #666;
   outline: none;
   padding: 0 3px; }
-  /* line 298, ../../../../general/res/sass/_mixins.scss */
+  /* line 304, ../../../../general/res/sass/_mixins.scss */
   input[type="text"].error {
     background: rgba(255, 0, 0, 0.5); }
   /* line 172, ../../../../general/res/sass/forms/_elems.scss */
@@ -3247,7 +3248,7 @@ textarea {
   position: absolute;
   height: 100%;
   width: 100%; }
-  /* line 298, ../../../../general/res/sass/_mixins.scss */
+  /* line 304, ../../../../general/res/sass/_mixins.scss */
   textarea.error {
     background: rgba(255, 0, 0, 0.5); }
 
@@ -3296,7 +3297,7 @@ textarea {
   overflow: hidden;
   position: relative;
   line-height: 22px; }
-  /* line 274, ../../../../general/res/sass/_mixins.scss */
+  /* line 280, ../../../../general/res/sass/_mixins.scss */
   .select .icon, .select .t-item-icon {
     color: #eee; }
   /* line 31, ../../../../general/res/sass/forms/_selects.scss */
@@ -3378,7 +3379,7 @@ textarea {
   max-height: 400px;
   overflow: auto;
   padding: 5px; }
-  /* line 298, ../../../../general/res/sass/_mixins.scss */
+  /* line 304, ../../../../general/res/sass/_mixins.scss */
   .channel-selector .treeview.error {
     background: rgba(255, 0, 0, 0.5); }
 /* line 36, ../../../../general/res/sass/forms/_channel-selector.scss */
@@ -3544,7 +3545,7 @@ span.req {
   padding: 0 3px;
   background: white;
   border-bottom: 1px solid white; }
-  /* line 298, ../../../../general/res/sass/_mixins.scss */
+  /* line 304, ../../../../general/res/sass/_mixins.scss */
   .filter input.filter.error,
   .filter input.t-filter-input.error,
   .t-filter input.filter.error,
@@ -3872,7 +3873,6 @@ span.req {
 .browse-mode .split-layout .split-pane-component.pane.t-inspect.right {
   min-width: 200px;
   max-width: 600px;
-  padding-left: 15px;
   width: 20%; }
 
 /* line 227, ../../../../general/res/sass/user-environ/_layout.scss */
@@ -3912,10 +3912,10 @@ span.req {
       /* line 281, ../../../../general/res/sass/user-environ/_layout.scss */
       .pane .mini-tab.toggle-pane.toggle-tree.anchor-left {
         left: 0;
-        -moz-transform: translateX(-24px);
-        -ms-transform: translateX(-24px);
-        -webkit-transform: translateX(-24px);
-        transform: translateX(-24px); }
+        -moz-transform: translateX(-28px);
+        -ms-transform: translateX(-28px);
+        -webkit-transform: translateX(-28px);
+        transform: translateX(-28px); }
         /* line 285, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab.toggle-pane.toggle-tree.anchor-left:after {
           content: 'F'; }
@@ -3928,10 +3928,10 @@ span.req {
       /* line 290, ../../../../general/res/sass/user-environ/_layout.scss */
       .pane .mini-tab.toggle-pane.toggle-inspect.anchor-right {
         right: 0;
-        -moz-transform: translateX(24px);
-        -ms-transform: translateX(24px);
-        -webkit-transform: translateX(24px);
-        transform: translateX(24px); }
+        -moz-transform: translateX(28px);
+        -ms-transform: translateX(28px);
+        -webkit-transform: translateX(28px);
+        transform: translateX(28px); }
         /* line 294, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab.toggle-pane.toggle-inspect.anchor-right:after {
           content: '\e608'; }
@@ -4839,14 +4839,14 @@ span.req {
       -webkit-transition: background, 0.25s;
       transition: background, 0.25s;
       text-shadow: none; }
-      /* line 274, ../../../../general/res/sass/_mixins.scss */
+      /* line 280, ../../../../general/res/sass/_mixins.scss */
       .overlay .bottom-bar .s-btn:not(.major) .icon, .overlay .bottom-bar .s-menu-btn:not(.major) .icon, .overlay .bottom-bar .s-btn:not(.major) .t-item-icon, .overlay .bottom-bar .s-menu-btn:not(.major) .t-item-icon {
         color: #fff; }
       @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-        /* line 279, ../../../../general/res/sass/_mixins.scss */
+        /* line 285, ../../../../general/res/sass/_mixins.scss */
         .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover, .overlay .bottom-bar .s-menu-btn:not(.major):not(.disabled):hover {
           background: #7d7d7d; }
-          /* line 281, ../../../../general/res/sass/_mixins.scss */
+          /* line 287, ../../../../general/res/sass/_mixins.scss */
           .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .s-menu-btn:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover > .t-item-icon, .overlay .bottom-bar .s-menu-btn:not(.major):not(.disabled):hover > .t-item-icon {
             color: white; } }
 /* line 85, ../../../../general/res/sass/overlay/_overlay.scss */
@@ -4931,7 +4931,7 @@ ul.tree {
   -ms-user-select: none;
   -webkit-user-select: none;
   user-select: none; }
-  /* line 331, ../../../../general/res/sass/_mixins.scss */
+  /* line 337, ../../../../general/res/sass/_mixins.scss */
   ul.tree li {
     list-style-type: none;
     margin: 0;
@@ -6232,14 +6232,14 @@ table {
     margin-bottom: 3px;
     margin-right: 3px;
     position: relative; }
-    /* line 274, ../../../../general/res/sass/_mixins.scss */
+    /* line 280, ../../../../general/res/sass/_mixins.scss */
     .items-holder .item.grid-item .icon, .items-holder .item.grid-item .t-item-icon {
       color: #0099cc; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 279, ../../../../general/res/sass/_mixins.scss */
+      /* line 285, ../../../../general/res/sass/_mixins.scss */
       .items-holder .item.grid-item:not(.disabled):hover {
         background: #d0d0d0; }
-        /* line 281, ../../../../general/res/sass/_mixins.scss */
+        /* line 287, ../../../../general/res/sass/_mixins.scss */
         .items-holder .item.grid-item:not(.disabled):hover > .icon, .items-holder .item.grid-item:not(.disabled):hover > .t-item-icon {
           color: #33ccff; } }
     /* line 45, ../../../../general/res/sass/items/_item.scss */
@@ -6354,7 +6354,7 @@ table {
       transition: background, 0.25s;
       text-shadow: none;
       color: #80dfff; }
-      /* line 274, ../../../../general/res/sass/_mixins.scss */
+      /* line 280, ../../../../general/res/sass/_mixins.scss */
       .items-holder .item.grid-item.selected .icon, .items-holder .item.grid-item.selected .t-item-icon {
         color: #eee; }
       /* line 126, ../../../../general/res/sass/items/_item.scss */

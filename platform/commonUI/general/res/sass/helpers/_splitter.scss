@@ -61,6 +61,7 @@
 }
 
 .split-layout {
+    $inset: splitterHandleInset($splitterD,$splitterHandleD);
     &.horizontal {
         // Slides vertically up and down, splitting the element horizontally
         overflow: hidden; // Suppress overall scroll; each internal pane handles its own overflow
@@ -80,7 +81,7 @@
             right: 0;
             height: $splitterD;
             &:after {
-                top: $splitterHandleInset; bottom: $splitterHandleInset;
+                top: $inset; bottom: $inset;
             }
         }
     }
@@ -103,7 +104,7 @@
             bottom: 0;
             width: $splitterD;
             &:after {
-                left: $splitterHandleInset; right: $splitterHandleInset;
+                left: $inset; right: $inset;
             }
         }
     }

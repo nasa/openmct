@@ -215,7 +215,7 @@
             &.t-inspect.right {
                 min-width: 200px;
                 max-width: 600px;
-                padding-left: $ueCollapsedPaneEdgeM; // Allow room for mini-tab element
+                //padding-left: $ueCollapsedPaneEdgeM; // Allow room for mini-tab element
                 width: $ueBrowseRightPaneInspectW;
             }
         }
@@ -274,7 +274,7 @@
 
     .mini-tab.toggle-pane {
         //@include test(blue, 0.3);
-        $paneExpandedOffset: $splitterD + $uePaneMiniTabW - $splitterHandleInset;
+        $paneExpandedOffset: $splitterD + $uePaneMiniTabW - splitterHandleInset($splitterD, $splitterHandleD);
         $paneCollapsedOffset: $bodyMargin + $ueCollapsedPaneEdgeM;
         z-index: 5;
         @include desktop {
