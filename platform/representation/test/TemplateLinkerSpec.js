@@ -27,7 +27,7 @@ define(
     function (TemplateLinker) {
         'use strict';
 
-        var JQLITE_METHODS = [ 'replaceWith', 'empty' ];
+        var JQLITE_METHODS = [ 'replaceWith', 'empty', 'append' ];
 
         describe("TemplateLinker", function () {
             var mockHttp,
@@ -127,7 +127,7 @@ define(
                         );
                     });
 
-                    it("replaces comments with the compiled element", function () {
+                    it("replaces comments with specified element", function () {
                         mockChainPromise.then.mostRecentCall.args[0](
                             mockHttpPromise.then.mostRecentCall.args[0]({
                                 data: testTemplate
@@ -135,6 +135,69 @@ define(
                         );
                         expect(commentElement.replaceWith)
                             .toHaveBeenCalledWith(mockElement);
+                    });
+
+                    it("appends rendered content to the specified element", function () {
+                        mockChainPromise.then.mostRecentCall.args[0](
+                            mockHttpPromise.then.mostRecentCall.args[0]({
+                                data: testTemplate
+                            })
+                        );
+                        mockTemplates[testTemplate].mostRecentCall.args[1](
+                            mockElements[testTemplate]
+                        );
+                        expect(mockElement.append)
+                            .toHaveBeenCalledWith(mockElements[testTemplate]);
+                    });
+
+                    it("clears templates when called with undefined", function () {
+                        expect(mockElement.replaceWith.callCount)
+                            .toEqual(1);
+                        mockChainPromise.then.mostRecentCall.args[0](
+                            mockHttpPromise.then.mostRecentCall.args[0]({
+                                data: testTemplate
+                            })
+                        );
+                        changeTemplate(undefined);
+                        expect(mockElement.replaceWith.callCount)
+                            .toEqual(2);
+                        expect(mockElement.replaceWith.mostRecentCall.args[0])
+                            .toEqual(commentElement);
+                    });
+
+                    it("logs no warnings", function () {
+                        mockChainPromise.then.mostRecentCall.args[0](
+                            mockHttpPromise.then.mostRecentCall.args[0]({
+                                data: testTemplate
+                            })
+                        );
+                        mockTemplates[testTemplate].mostRecentCall.args[1](
+                            mockElements[testTemplate]
+                        );
+                        expect(mockLog.warn).not.toHaveBeenCalled();
+                    });
+
+                    describe("which cannot be found", function () {
+                        beforeEach(function () {
+                            mockChainPromise.then.mostRecentCall.args[0](
+                                // Reject the http promise
+                                mockHttpPromise.then.mostRecentCall.args[1]()
+                            );
+                        });
+
+                        it("removes the element from the DOM", function () {
+                            expect(mockElement.replaceWith.callCount)
+                                .toEqual(2);
+                            expect(
+                                mockElement.replaceWith.mostRecentCall.args[0]
+                            ).toEqual(commentElement);
+                        });
+
+                        it("logs a warning", function () {
+                            expect(mockLog.warn)
+                                .toHaveBeenCalledWith(jasmine.any(String));
+                        });
+
                     });
                 });
 
