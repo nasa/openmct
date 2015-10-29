@@ -27,12 +27,17 @@ define(
         "use strict";
 
         /**
-         * Pre-fetches templates and allows them to be
+         * The `templateLinker` service is intended for internal use by
+         * the `mct-include` and `mct-representation` directives. It is
+         * used to support common behavior of directives; specifically,
+         * loading templates and inserting them into a specified element,
+         * and/or removing that element from the DOM when there is no
+         * template to populate it with.
          *
-         * @param {string[]} URLs to all templates which should be loadable
          * @param $http Angular's `$http` service
          * @param {Function} $compile Angular's `$compile` service
          * @param $log Angular's `$log` service
+         * @private
          */
         function TemplateLinker($http, $compile, $log) {
             this.templateMap = {};
@@ -57,6 +62,13 @@ define(
         };
 
         /**
+         * Populate the given element with templates, within the given scope;
+         * intended to support the `link` function of the supported directives.
+         *
+         * @param {Scope} scope the Angular scope to use when rendering
+         *        templates
+         * @param element the jqLite-wrapped element into which templates
+         *        should be inserted
          * @returns {Function} a function which can be called with a template
          *          URL to switch templates, or `undefined` to remove.
          */
