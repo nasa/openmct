@@ -1,3 +1,4 @@
 [
-    "NotificationService"
+    "NotificationService",
+    "NotificationIndicatorController"
 ]

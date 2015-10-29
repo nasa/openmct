@@ -22,34 +22,38 @@
 /*global define*/
 
 define(
-    ['./MessageSeverity'],
-    function (MessageSeverity) {
+    [],
+    function () {
         "use strict";
 
+        /**
+         * Provides an indicator that is visible when there are
+         * banner notifications that have been minimized. Will also indicate
+         * the number of notifications. Notifications can be viewed by
+         * clicking on the indicator to launch a dialog showing a list of
+         * notifications.
+         * @param $scope
+         * @param notificationService
+         * @param dialogService
+         * @constructor
+         */
         function NotificationIndicatorController($scope, notificationService, dialogService) {
             $scope.notifications = notificationService.notifications;
             $scope.highest = notificationService.highest;
-            $scope.MessageSeverity = MessageSeverity;
 
+            /**
+             * Launch a dialog showing a list of current notifications.
+             */
             $scope.showNotificationsList = function(){
-
-                var model = {
-                    title: "Messages",
-                    severity: MessageSeverity.INFO,
-                    actions: [
-                        {
-                            label: "Done",
-                            action: function () {
-                                dialogService.dismiss();
-                            }
-                        }
-                    ],
-                    messages: []
-                };
-
-                model.messages = notificationService.notifications;
                 dialogService.getDialogResponse('overlay-message-list', {
-                    dialog: model,
+                    dialog: {
+                        title: "Messages",
+                        //Launch the message list dialog with the models
+                        // from the notifications
+                        messages: notificationService.notifications && notificationService.notifications.map(function(notification){
+                            return notification.model;
+                        })
+                    },
                     cancel: function(){
                         dialogService.dismiss();
                     }
@@ -60,3 +64,4 @@ define(
         return NotificationIndicatorController;
     }
 );
+

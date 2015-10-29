@@ -44,14 +44,12 @@ define(
             
             function progress(phase, totalObjects, processed){
                 if (phase.toLowerCase() === 'preparing'){
-                    console.log('preparing');
                     dialogService.showBlockingMessage({
                         title: "Preparing to copy objects",
                         unknownProgress: true,
                         severity: "info",
                     });
                 } else if (phase.toLowerCase() === "copying") {
-                    console.log('copying');
                     dialogService.dismiss();
                     if (!notification) {
                         notification = notificationService.notify(notificationModel);

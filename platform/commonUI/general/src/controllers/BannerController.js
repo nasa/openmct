@@ -22,26 +22,45 @@
 /*global define*/
 
 define(
-    ['../../../notification/src/MessageSeverity'],
-    function (MessageSeverity) {
+    [],
+    function () {
         "use strict";
+
+        /**
+         * A controller for banner notifications. Banner notifications are a
+         * non-blocking way of drawing the user's attention to an event such
+         * as system errors, or the progress or successful completion of an
+         * ongoing task. This controller provides scoped functions for
+         * dismissing and 'maximizing' notifications. See {@link NotificationService}
+         * for more details on Notifications.
+         *
+         * @param $scope
+         * @param notificationService
+         * @param dialogService
+         * @constructor
+         */
         function BannerController($scope, notificationService, dialogService) {
             $scope.active = notificationService.active;
-            $scope.MessageSeverity = MessageSeverity;
+
             $scope.action = function (action, $event){
+                /*
+                 Prevents default 'maximize' behaviour when clicking on
+                  notification button
+                 */
                 $event.stopPropagation();
                 return action();
             };
             $scope.dismiss = function(notification, $event) {
                 $event.stopPropagation();
-                notificationService.dismissOrMinimize(notification);
+                notification.dismissOrMinimize();
             };
             $scope.maximize = function(notification) {
-                if (notification.severity > MessageSeverity.INFO){
-                    notification.cancel = function(){
+                if (notification.model.severity !== "info"){
+
+                    notification.model.cancel = function(){
                         dialogService.dismiss();
                     };
-                    dialogService.showBlockingMessage(notification);
+                    dialogService.showBlockingMessage(notification.model);
                 }
             };
         }

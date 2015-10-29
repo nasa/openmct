@@ -19,16 +19,38 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
+/*global define,window*/
 
 define(
-    ['./MessageSeverity'],
-    function (MessageSeverity) {
+    [],
+    function () {
         "use strict";
 
-        function MessageController($scope) {
-            $scope.MessageSeverity = MessageSeverity;
+        /**
+         * A tool for manually invoking dialogs. When included this
+         * indicator will allow for dialogs of different types to be
+         * launched for demonstration and testing purposes.
+         * @constructor
+         */
+        function DialogLaunchIndicator() {
+
         }
-        return MessageController;
+
+        DialogLaunchIndicator.template = 'dialogLaunchTemplate';
+
+        DialogLaunchIndicator.prototype.getGlyph = function () {
+            return "i";
+        };
+        DialogLaunchIndicator.prototype.getGlyphClass = function () {
+            return 'caution';
+        };
+        DialogLaunchIndicator.prototype.getText = function () {
+            return "Launch test dialog";
+        };
+        DialogLaunchIndicator.prototype.getDescription = function () {
+            return "Launch test dialog";
+        };
+
+        return DialogLaunchIndicator;
     }
 );

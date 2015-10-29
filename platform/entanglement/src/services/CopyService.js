@@ -113,14 +113,14 @@ define(
 
         function newPerform (domainObject, parent, progress) {
             var $q = this.$q,
+                processed = 0,
                 self = this;
             if (this.validate(domainObject, parent)) {
                 progress("preparing");
                 return this.buildCopyGraph(domainObject, parent)
                     .then(function(clones){
                         return $q.all(clones.map(function(clone, index){
-                            progress("copying", clones.length, index);
-                            return self.persistenceService.createObject(clone.persistence.getSpace(), clone.model.id, clone.model);
+                            return self.persistenceService.createObject(clone.persistence.getSpace(), clone.model.id, clone.model).then(function(){progress("copying", clones.length, processed++);});
                         })).then(function(){ return clones});
                     })
                     .then(function(clones) {

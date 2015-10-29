@@ -29,21 +29,21 @@
  * dialogs so that the same information can be provided in a dialog
  * and then minimized to a banner notification if needed.
  *
- * @namespace platform/commonUI/dialog
+ * @namespace platform/commonUI/notification
  */
 define(
-    ["./MessageSeverity"],
-    function (MessageSeverity) {
+    [],
+    function () {
         "use strict";
 
         /**
-         * A representation of a user action. Actions are provided to
+         * A representation of a user action. Options are provided to
          * dialogs and notifications and are shown as buttons.
          *
-         * @typedef {object} NotificationAction
+         * @typedef {object} NotificationOption
          * @property {string} label the label to appear on the button for
          * this action
-         * @property {function} action a callback function to be invoked
+         * @property {function} callback a callback function to be invoked
          * when the button is clicked
         */
 
@@ -54,10 +54,10 @@ define(
          * dialogs so that the same information can be provided in a dialog
          * and then minimized to a banner notification if needed.
          *
-         * @typedef {object} Notification
+         * @typedef {object} NotificationModel
          * @property {string} title The title of the message
-         * @property {MessageSeverity} severity The importance of the
-         * message (eg. error, info)
+         * @property {string} severity The importance of the message (one of
+         * 'info', 'alert', or 'error' where info < alert <error)
          * @property {number} progress The completion status of a task
          * represented numerically
          * @property {boolean} unknownProgress a boolean indicating that the
@@ -67,31 +67,55 @@ define(
          * be automatically minimized or dismissed (depending on severity).
          * Additionally, if the provided value is a number, it will be used
          * as the delay period before being dismissed.
-         * @property {NotificationAction} primaryAction the default user
+         * @property {NotificationOption} primaryOption the default user
          * response to
          * this message. Will be represented as a button with the provided
          * label and action. May be used by banner notifications to display
          * only the most important option to users.
-         * @property {NotificationAction[]} actions any additional
+         * @property {NotificationOption[]} options any additional
          * actions the user can take. Will be represented as additional buttons
          * that may or may not be available from a banner.
          */
 
         /**
+         * A wrapper object that is returned as a handle to a newly created
+         * notification. Wraps the notifications model and decorates with
+         * functions to dismiss or minimize the notification.
+         *
+         * @typedef {object} Notification
+         * @property {function} dismiss This method is added to the object
+         * returned by {@link NotificationService#notify} and can be used to
+         * dismiss this notification. Dismissing a notification will remove
+         * it completely and it will not appear in the notification indicator
+         * @property {function} minimize This method is added to the object
+         * returned by {@link NotificationService#notify} and can be used to
+         * minimize this notification. Minimizing a notification will send
+         * it to the notification indicator
+         * @property {function} dismissOrMinimize This method is added to the
+         * object returned by {@link NotificationService#notify}. It will
+         * hide the notification by either dismissing or minimizing it,
+         * depending on severity. Typically this is the method that should
+         * be used for dismissing a notification. If more control is
+         * required, then the minimize or dismiss functions can be called
+         * individually.
+         */
+
+        /**
          * The notification service is responsible for informing the user of
          * events via the use of banner notifications.
+         * @memberof platform/commonUI/notification
+         * @constructor
          * @param $timeout the Angular $timeout service
          * @param DEFAULT_AUTO_DISMISS The period of time that an
          * auto-dismissed message will be displayed for.
          * @param MINIMIZE_TIMEOUT When notifications are minimized, a brief
          * animation is shown. This animation requires some time to execute,
          * so a timeout is required before the notification is hidden
-         * @constructor
          */
         function NotificationService($timeout, DEFAULT_AUTO_DISMISS, MINIMIZE_TIMEOUT) {
             this.notifications = [];
             this.$timeout = $timeout;
-            this.highest ={ severity: MessageSeverity.INFO };
+            this.highest ={ severity: "info" };
             this.DEFAULT_AUTO_DISMISS = DEFAULT_AUTO_DISMISS;
             this.MINIMIZE_TIMEOUT = MINIMIZE_TIMEOUT;
 
@@ -100,6 +124,83 @@ define(
              * handle to its timeout.
              */
             this.active = {};
+        }
+
+        /*
+         * Minimize a notification. The notification will still be available
+         * from the notification list. Typically notifications with a
+         * severity of 'info' should not be minimized, but rather
+         * dismissed. If you're not sure which is appropriate,
+         * use {@link Notification#dismissOrMinimize}
+         */
+        function minimize (service, notification) {
+            //Check this is a known notification
+            var index = service.notifications.indexOf(notification);
+
+            if (service.active.timeout){
+                /*
+                 Method can be called manually (clicking dismiss) or
+                 automatically from an auto-timeout. this.active.timeout
+                 acts as a semaphore to prevent race conditions. Cancel any
+                 timeout in progress (for the case where a manual dismiss
+                 has shortcut an active auto-dismiss), and clear the
+                 semaphore.
+                 */
+                service.$timeout.cancel(service.active.timeout);
+                delete service.active.timeout;
+            }
+
+            if (index >= 0) {
+                notification.model.minimized=true;
+                //Add a brief timeout before showing the next notification
+                // in order to allow the minimize animation to run through.
+                service.$timeout(function() {
+                    service.setActiveNotification(service.selectNextNotification());
+                }, service.MINIMIZE_TIMEOUT);
+            }
+        }
+
+        /*
+         * Completely removes a notification. This will dismiss it from the
+         * message banner and remove it from the list of notifications.
+         * Typically only notifications with a severity of info should be
+         * dismissed. If you're not sure whether to dismiss or minimize a
+         * notification, use {@link Notification#dismissOrMinimize}.
+         * dismiss
+         */
+        function dismiss (service, notification) {
+            //Check this is a known notification
+            var index = service.notifications.indexOf(notification);
+
+            if (service.active.timeout){
+                /* Method can be called manually (clicking dismiss) or
+                 * automatically from an auto-timeout. this.active.timeout
+                 * acts as a semaphore to prevent race conditions. Cancel any
+                 * timeout in progress (for the case where a manual dismiss
+                 * has shortcut an active auto-dismiss), and clear the
+                 * semaphore.
+                 */
+
+                service.$timeout.cancel(service.active.timeout);
+                delete service.active.timeout;
+            }
+
+            if (index >= 0) {
+                service.notifications.splice(index, 1);
+            }
+            service.setActiveNotification(service.selectNextNotification());
+        }
+
+        /*
+         * Depending on the severity of the notification will selectively
+         * dismiss or minimize where appropriate.
+         */
+        function dismissOrMinimize (notification){
+
+            //For now minimize everything, and have discussion around which
+            //kind of messages should or should not be in the minimized
+            //notifications list
+            notification.minimize();
         }
 
         /**
@@ -114,12 +215,15 @@ define(
          * A convenience method for info notifications. Notifications
          * created via this method will be auto-dismissed after a default
          * wait period
-         * @param {Notification} notification The notification to display
+         * @param {NotificationModel} notificationModel Options describing the
+         * notification to display
+         * @returns {Notification} the provided notification decorated with
+         * functions to dismiss or minimize
          */
-        NotificationService.prototype.info = function (notification) {
-            notification.autoDismiss = notification.autoDismiss || true;
-            notification.severity = MessageSeverity.INFO;
-            this.notify(notification);
+        NotificationService.prototype.info = function (notificationModel) {
+            notificationModel.autoDismiss = notificationModel.autoDismiss || true;
+            notificationModel.severity = "info";
+            return this.notify(notificationModel);
         };
 
         /**
@@ -127,20 +231,45 @@ define(
          * already active, then it will be dismissed or minimized automatically,
          * and the provided notification displayed in its place.
          *
-         * @param {Notification} notification The notification to display
+         * @param {NotificationModel} notificationModel The notification to
+         * display
+         * @returns {Notification} the provided notification decorated with
+         * functions to {@link Notification#dismiss} or {@link Notification#minimize}
          */
-        NotificationService.prototype.notify = function (notification) {
-            var self = this;
+        NotificationService.prototype.notify = function (notificationModel) {
+            var self = this,
+                notification,
+                ordinality = {
+                    "info": 1,
+                    "alert": 2,
+                    "error": 3
+                },
+                activeNotification = self.active.notification;
 
-            if (notification.autoDismiss === true){
-                notification.autoDismiss = this.DEFAULT_AUTO_DISMISS;
+            notification = {
+                model: notificationModel,
+                minimize: function() {
+                    minimize(self, notification);
+                },
+                dismiss: function(){
+                    dismiss(self, notification);
+                },
+                dismissOrMinimize: function(){
+                    dismissOrMinimize(notification);
+                }
+            };
+
+            notificationModel.severity = notificationModel.severity || "info";
+            if (notificationModel.autoDismiss === true){
+                notificationModel.autoDismiss = this.DEFAULT_AUTO_DISMISS;
             }
 
-            if (notification.severity > this.highest.severity){
-                this.highest.severity = notification.severity;
+            if (ordinality[notificationModel.severity.toLowerCase()] > ordinality[this.highest.severity.toLowerCase()]){
+                this.highest.severity = notificationModel.severity;
             }
 
             this.notifications.push(notification);
+
             /*
             Check if there is already an active (ie. visible) notification
              */
@@ -159,9 +288,11 @@ define(
                   serviced as soon as possible.
                  */
                 this.active.timeout = this.$timeout(function () {
-                    self.dismissOrMinimize(self.active.notification);
+                    activeNotification.dismissOrMinimize();
                 }, this.DEFAULT_AUTO_DISMISS);
             }
+
+            return notification;
 
         };
 
@@ -180,12 +311,12 @@ define(
                  notifications queued for display, setup a timeout to
                   dismiss the dialog.
                  */
-                if (notification && (notification.autoDismiss
+                if (notification && (notification.model.autoDismiss
                     || this.selectNextNotification())) {
 
-                    timeout = notification.autoDismiss || this.DEFAULT_AUTO_DISMISS;
+                    timeout = notification.model.autoDismiss || this.DEFAULT_AUTO_DISMISS;
                     this.active.timeout = this.$timeout(function () {
-                        self.dismissOrMinimize(notification);
+                        notification.dismissOrMinimize();
                     }, timeout);
                 } else {
                     delete this.active.timeout;
@@ -208,75 +339,12 @@ define(
             for (; i< this.notifications.length; i++) {
                 notification = this.notifications[i];
 
-                if (!notification.minimized
+                if (!notification.model.minimized
                     && notification!== this.active.notification) {
 
                     return notification;
                 }
             }
-        };
-
-        /**
-         * Minimize a notification. The notification will still be available
-         * from the notification list. Typically notifications with a
-         * severity of 'info' should not be minimized, but rather
-         * dismissed. If you're not sure which is appropriate,
-         * use {@link NotificationService#dismissOrMinimize}
-         * @see dismiss
-         * @see dismissOrMinimize
-         * @param notification
-         */
-        NotificationService.prototype.minimize = function (notification) {
-            //Check this is a known notification
-            var index = this.notifications.indexOf(notification),
-                self = this;
-            if (index >= 0) {
-                notification.minimized=true;
-                //Add a brief timeout before showing the next notification
-                // in order to allow the minimize animation to run through.
-                this.$timeout(function() {
-                    self.setActiveNotification(self.selectNextNotification());
-                }, this.MINIMIZE_TIMEOUT);
-            }
-        };
-
-        /**
-         * Completely removes a notification. This will dismiss it from the
-         * message banner and remove it from the list of notifications.
-         * Typically only notifications with a severity of info should be
-         * dismissed. If you're not sure whether to dismiss or minimize a
-         * notification, use {@link NotificationService#dismissOrMinimize}.
-         * dismiss
-         * @see dismissOrMinimize
-         * @param notification The notification to dismiss
-         */
-        NotificationService.prototype.dismiss = function (notification) {
-            //Check this is a known notification
-            var index = this.notifications.indexOf(notification);
-            if (index >= 0) {
-                this.notifications.splice(index, 1);
-            }
-            this.setActiveNotification(this.selectNextNotification());
-        };
-
-        /**
-         * Depending on the severity of the notification will selectively
-         * dismiss or minimize where appropriate.
-         * @see dismiss
-         * @see minimize
-         * @param notification
-         */
-        NotificationService.prototype.dismissOrMinimize = function (notification){
-
-            //For now minimize everything, and have discussion around which
-            //kind of messages should or should not be in the minimized
-            //notifications list
-            /*if (notification.severity > MessageSeverity.INFO){
-                this.minimize(notification);
-            } else {
-                this.dismiss(notification);
-            }*/
-            this.minimize(notification);
         };
 
         return NotificationService;
