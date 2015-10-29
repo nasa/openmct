@@ -349,10 +349,7 @@
     /* This doesn't work on an element inside an element with absolute positioning that has height: auto */
     //position: relative;
     top: 50%;
-	@include webkitProp(transform, translateY(-50%));
-    //-webkit-transform: translateY(-50%);
-    //-ms-transform: translateY(-50%);
-    //transform: translateY(-50%);
+    @include transform(translateY(-50%));
 }
 
 @mixin verticalCenterBlock($holderH, $itemH) {

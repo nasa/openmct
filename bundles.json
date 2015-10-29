@@ -9,7 +9,7 @@
     "platform/commonUI/general",
     "platform/commonUI/inspect",
     "platform/commonUI/mobile",
-    "platform/commonUI/themes/espresso",
+    "platform/commonUI/themes/snow",
     "platform/containment",
     "platform/execution",
     "platform/telemetry",

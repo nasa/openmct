@@ -66,25 +66,27 @@ ul.tree {
 		line-height: $menuLineH;
 
         .t-item-icon {
-            $d: $treeTypeIconH; // 16px is crisp size
             @include txtShdwSubtle($shdwItemTreeIcon);
-            font-size: $d;
+            font-size: $treeTypeIconH;
             color: $colorItemTreeIcon;
             position: absolute;
-            left: $interiorMargin; right: auto; width: $d;
+            left: $interiorMargin;
+            top: 50%;
+            width: $treeTypeIconH;
+            @include transform(translateY(-50%));
         }
 
 		.type-icon {
 			//@include absPosDefault(0, false);
-			$d: $treeTypeIconH; // 16px is crisp size
+			$d: $treeTypeIconH;
 			@include txtShdwSubtle($shdwItemTreeIcon);
-			font-size: $d;
+			font-size: $treeTypeIconH;
 			color: $colorItemTreeIcon;
 			left: $interiorMargin;
 			position: absolute;
-			@include verticalCenterBlock($menuLineHPx, $d);
+			@include verticalCenterBlock($menuLineHPx, $treeTypeIconHPx);
 			line-height: 100%;
-			right: auto; width: $d;
+			right: auto; width: $treeTypeIconH;
 
 			.icon {
 				&.l-icon-link,
@@ -123,7 +125,7 @@ ul.tree {
 		.view-control {
 			color: $colorItemTreeSelectedVC;
 		}
-		.label .type-icon {
+		.t-object-label .t-item-icon {
 			color: $colorItemTreeSelectedFg; //$colorItemTreeIconHover;
 		}
 	}
@@ -134,7 +136,7 @@ ul.tree {
 			&:hover {
 				background: $colorItemTreeHoverBg;
 				color: $colorItemTreeHoverFg;
-				.icon {
+				.t-item-icon {
 					color: $colorItemTreeIconHover;
 				}
 			}
