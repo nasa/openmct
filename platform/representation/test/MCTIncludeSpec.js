@@ -73,7 +73,7 @@ define(
 
             it("exposes templates via the templateLinker", function () {
                 expect(mockLinker.link)
-                    .toHaveBeenCalledWith(mockScope, mockElement);
+                    .toHaveBeenCalledWith(mockScope, mockElement, undefined);
             });
 
             it("reads a template location from a scope's key variable", function () {
