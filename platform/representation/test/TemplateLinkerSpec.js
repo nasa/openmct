@@ -37,6 +37,8 @@ define(
                 mockElement,
                 mockTemplates,
                 mockElements,
+                mockHttpPromise,
+                mockChainPromise,
                 linker;
 
             beforeEach(function () {
@@ -45,9 +47,13 @@ define(
                 mockLog = jasmine.createSpyObj('$log', ['error', 'warn']);
                 mockScope = jasmine.createSpyObj('$scope', ['$on']);
                 mockElement = jasmine.createSpyObj('element', JQLITE_METHODS);
+                mockHttpPromise = jasmine.createSpyObj('promise1', ['then']);
+                mockChainPromise = jasmine.createSpyObj('promise2', ['then']);
                 mockTemplates = {};
                 mockElements = {};
 
+                mockHttp.get.andReturn(mockHttpPromise);
+                mockHttpPromise.then.andReturn(mockChainPromise);
                 mockCompile.andCallFake(function (html) {
                     mockTemplates[html] = jasmine.createSpy('template');
                     mockElements[html] =
@@ -89,6 +95,49 @@ define(
                     expect(mockElement.replaceWith)
                         .toHaveBeenCalledWith(commentElement);
                 });
+
+                it("provides a function to change templates", function () {
+                    expect(changeTemplate).toEqual(jasmine.any(Function));
+                });
+
+                describe("and then changing templates", function () {
+                    var testUrl,
+                        testTemplate;
+
+                    beforeEach(function () {
+                        testUrl = "some/url/template.html";
+                        testTemplate = "<div>Some template!</div>";
+                        changeTemplate(testUrl);
+                    });
+
+                    it("loads templates using $http", function () {
+                        expect(mockHttp.get).toHaveBeenCalledWith(testUrl);
+                    });
+
+                    it("compiles loaded templates with linked scope", function () {
+                        var chainValue;
+                        chainValue = mockHttpPromise.then.mostRecentCall.args[0]({
+                            data: testTemplate
+                        });
+                        expect(mockCompile).toHaveBeenCalledWith(testTemplate);
+                        mockChainPromise.then.mostRecentCall.args[0](chainValue);
+                        expect(mockTemplates[testTemplate]).toHaveBeenCalledWith(
+                            mockScope,
+                            jasmine.any(Function)
+                        );
+                    });
+
+                    it("replaces comments with the compiled element", function () {
+                        mockChainPromise.then.mostRecentCall.args[0](
+                            mockHttpPromise.then.mostRecentCall.args[0]({
+                                data: testTemplate
+                            })
+                        );
+                        expect(commentElement.replaceWith)
+                            .toHaveBeenCalledWith(mockElement);
+                    });
+                });
+
             });
         });
     }
