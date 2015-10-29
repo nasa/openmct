@@ -35,43 +35,57 @@ define(
          * @memberof platform/entanglement
          */
         function CopyAction(locationService, copyService, dialogService, notificationService, context) {
-            var notification,
+            this.dialogService = dialogService;
+            this.notificationService = notificationService;
+            AbstractComposeAction.call(this, locationService, copyService, context, "Duplicate", "to a location");
+        }
+
+        CopyAction.prototype = Object.create(AbstractComposeAction.prototype);
+
+        CopyAction.prototype.perform = function() {
+            var self = this,
+                notification,
                 notificationModel = {
                     title: "Copying objects",
                     unknownProgress: false,
                     severity: "info",
                 };
-            
+
             function progress(phase, totalObjects, processed){
                 if (phase.toLowerCase() === 'preparing'){
-                    dialogService.showBlockingMessage({
+                    self.dialogService.showBlockingMessage({
                         title: "Preparing to copy objects",
                         unknownProgress: true,
                         severity: "info",
                     });
                 } else if (phase.toLowerCase() === "copying") {
-                    dialogService.dismiss();
+                    self.dialogService.dismiss();
                     if (!notification) {
-                        notification = notificationService.notify(notificationModel);
+                        notification = self.notificationService.notify(notificationModel);
                     }
                     notificationModel.progress = (processed / totalObjects) * 100;
-                    notificationModel.title = ["Copying ", processed, "of ", totalObjects, "objects"].join(" ");
-                    if (processed >= totalObjects){
+                    notificationModel.title = ["Copied ", processed, "of ", totalObjects, "objects"].join(" ");
+                    if (processed === totalObjects){
                         notification.dismiss();
+                        self.notificationService.info(["Successfully copied ", totalObjects, " items."].join(""));
                     }
                 }
             }
-            
-            return new AbstractComposeAction(
-                locationService,
-                copyService,
-                context,
-                "Duplicate",
-                "to a location",
-                progress
-            );
-        }
 
+            AbstractComposeAction.prototype.perform.call(this, progress)
+                .then(function(){
+                    self.notificationService.info("Copying complete.");
+                    },
+                    function (error){
+                        //log error
+                        //Show more general error message
+                        self.notificationService.notify({
+                            title: "Error copying objects.",
+                            severity: "error",
+                            hint: error.message
+                        });
+                    });
+                };
         return CopyAction;
     }
 );

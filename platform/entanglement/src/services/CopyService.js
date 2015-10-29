@@ -55,134 +55,136 @@ define(
                 object.getCapability('type')
             );
         };
-        
-        /**
-         * Will build a graph of an object and all of its composed objects in memory
-         * @private
-         * @param domainObject
-         */
-        CopyService.prototype.buildCopyGraph = function(domainObject, parent) {
-            /* TODO: Use contextualized objects here.
-                Parent should be fully contextualized, and either the
-                original parent or a contextualized clone. The subsequent
-                composition changes can then be performed regardless of
-                whether it is the top level composition of the original
-                parent being updated, or of one of the cloned children. */
 
+        /**
+         * Will build a graph of an object and all of its child objects in
+         * memory
+         * @param domainObject The original object to be copied
+         * @param parent The parent of the original object to be copied
+         * @returns {Promise} resolved with an array of clones of the models
+         * of the object tree being copied. Copying is done in a bottom-up
+         * fashion, so that the last member in the array is a clone of the model
+         * object being copied. The clones are all full composed with
+         * references to their own children.
+         */
+        CopyService.prototype.buildCopyPlan = function(domainObject, parent) {
             var clones = [],
                 $q = this.$q,
                 self = this;
             
-            function clone(object) {
+            function makeClone(object) {
                 return JSON.parse(JSON.stringify(object));
             }
-            
+
+            /**
+             * A recursive function that will perform a bottom-up copy of
+             * the object tree with originalObject at the root. Recurses to
+             * the farthest leaf, then works its way back up again,
+             * cloning objects, and composing them with their child clones
+             * as it goes
+             * @param originalObject
+             * @param originalParent
+             * @returns {*}
+             */
             function copy(originalObject, originalParent) {
-                var modelClone = clone(originalObject.getModel());
+                //Make a clone of the model of the object to be copied
+                var modelClone = makeClone(originalObject.getModel());
                 modelClone.composition = [];
                 modelClone.id = uuid();
-
-                if (originalObject.hasCapability('composition')) {
-                    return originalObject.useCapability('composition').then(function(composees){
-                        return composees.reduce(function(promise, composee){
+                return $q.when(originalObject.useCapability('composition')).then(function(composees){
+                    return (composees || []).reduce(function(promise, composee){
+                            //If the object is composed of other
+                            // objects, chain a promise..
                             return promise.then(function(){
+                                // ...to recursively copy it (and its children)
                                 return copy(composee, originalObject).then(function(composeeClone){
-                                    /*
-                                    TODO: Use the composition capability for this. Just not sure how to contextualize the as-yet non-existent modelClone object.
-                                     */
+                                    //Once copied, associate each cloned
+                                    // composee with its parent clone
                                     composeeClone.location = modelClone.id;
                                     return modelClone.composition.push(composeeClone.id);
                                 });
+                            });}, $q.when(undefined)
+                    ).then(function (){
+                            //Add the clone to the list of clones that will
+                            //be returned by this function
+                            clones.push({
+                                model: modelClone,
+                                persistenceSpace: originalParent.getCapability('persistence')
                             });
-                        }, $q.when(undefined)).then(function (){
-                            /* Todo: Move this outside of promise and avoid
-                             duplication below */
-                            clones.push({persistence: originalParent.getCapability('persistence'), model: modelClone});
                             return modelClone;
                         });
-                    });
-                } else {
-                    clones.push({persistence: originalParent.getCapability('persistence'), model: modelClone});
-                    return $q.when(modelClone);
-                }
+                });
+
             };
             return copy(domainObject, parent).then(function(){
                 return clones;
             });
         }
 
-        function newPerform (domainObject, parent, progress) {
+        /**
+         * Will persist a list of {@link objectClones}.
+         * @private
+         * @param progress
+         * @returns {Function} a function that will perform the persistence
+         * with a progress callback curried into it.
+         */
+        CopyService.prototype.persistObjects = function(progress) {
+            var persisted = 0,
+                self = this;
+            return function(objectClones) {
+                return self.$q.all(objectClones.map(function(clone, index){
+                    return self.persistenceService.createObject(clone.persistenceSpace, clone.model.id, clone.model)
+                        .then(function(){
+                            progress("copying", objectClones.length, ++persisted);
+                        });
+                })).then(function(){ return objectClones});
+            }
+        }
+
+        /**
+         * Will add a list of clones to the specified parent's composition
+         * @private
+         * @param parent
+         * @param progress
+         * @returns {Function}
+         */
+        CopyService.prototype.addClonesToParent = function(parent, progress) {
+            var self = this;
+            return function(clones) {
+                var parentClone = clones[clones.length-1];
+                parentClone.model.location = parent.getId()
+                return self.$q.when(
+                    parent.hasCapability('composition') &&
+                    parent.getCapability('composition').add(parentClone.model.id)
+                        .then(function(){
+                            parent.getCapability("persistence").persist()
+                        }));
+            }
+        }
+
+        /**
+         * Creates a duplicate of the object tree starting at domainObject to
+         * the new parent specified.
+         * @param domainObject
+         * @param parent
+         * @param progress
+         * @returns a promise that will be completed when the duplication is
+         * successful, otherwise an error is thrown.
+         */
+        CopyService.prototype.perform = function (domainObject, parent, progress) {
             var $q = this.$q,
-                processed = 0,
                 self = this;
             if (this.validate(domainObject, parent)) {
                 progress("preparing");
-                return this.buildCopyGraph(domainObject, parent)
-                    .then(function(clones){
-                        return $q.all(clones.map(function(clone, index){
-                            return self.persistenceService.createObject(clone.persistence.getSpace(), clone.model.id, clone.model).then(function(){progress("copying", clones.length, processed++);});
-                        })).then(function(){ return clones});
-                    })
-                    .then(function(clones) {
-                        var parentClone = clones[clones.length-1];
-                        parentClone.model.location = parent.getId()
-                        return $q.when(
-                            parent.hasCapability('composition') &&
-                            parent.getCapability('composition').add(parentClone.model.id)
-                            .then(function(){
-                                progress("copying", clones.length, clones.length);
-                                parent.getCapability("persistence").persist()
-                            }));
-                });
+                return this.buildCopyPlan(domainObject, parent)
+                    .then(self.persistObjects(progress))
+                    .then(self.addClonesToParent(parent, progress));
             } else {
                 throw new Error(
                     "Tried to copy objects without validating first."
                 );
             }
         }
-
-        CopyService.prototype.perform = newPerform;
-        
-        function oldPerform (domainObject, parent) {
-            var model = JSON.parse(JSON.stringify(domainObject.getModel())),
-                $q = this.$q,
-                self = this;
-
-            // Wrapper for the recursive step
-            function duplicateObject(domainObject, parent) {
-                return self.perform(domainObject, parent);
-            }
-
-            if (!this.validate(domainObject, parent)) {
-                throw new Error(
-                    "Tried to copy objects without validating first."
-                );
-            }
-
-            if (domainObject.hasCapability('composition')) {
-                model.composition = [];
-            }
-
-            return this.creationService
-                .createObject(model, parent)
-                .then(function (newObject) {
-                    if (!domainObject.hasCapability('composition')) {
-                        return;
-                    }
-
-                    return domainObject
-                        .useCapability('composition')
-                        .then(function (composees) {
-                            // Duplicate composition serially to prevent
-                            // write conflicts.
-                            return composees.reduce(function (promise, composee) {
-                                return promise.then(function () {
-                                    return duplicateObject(composee, newObject);
-                                });
-                            }, $q.when(undefined));
-                        });
-                });
-        };
 
         return CopyService;
     }
