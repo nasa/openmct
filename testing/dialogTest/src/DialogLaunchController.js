@@ -34,7 +34,6 @@ define(
                     hint: "Do not navigate away from this page or close this browser tab while this operation is in progress.",
                     actionText: "Calculating...",
                     unknownProgress: !knownProgress,
-                    unknownDuration: false,
                     severity: MessageSeverity.INFO,
                     actions: [
                         {

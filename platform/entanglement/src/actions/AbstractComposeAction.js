@@ -71,7 +71,7 @@ define(
          * @param {string} [suffix] a string to display in the dialog title;
          *        default is "to a new location"
          */
-        function AbstractComposeAction(locationService, composeService, context, verb, suffix) {
+        function AbstractComposeAction(locationService, composeService, context, verb, suffix, progressCallback) {
             if (context.selectedObject) {
                 this.newParent = context.domainObject;
                 this.object = context.selectedObject;
@@ -87,6 +87,7 @@ define(
             this.composeService = composeService;
             this.verb = verb || "Compose";
             this.suffix = suffix || "to a new location";
+            this.progressCallback = progressCallback;
         }
 
         AbstractComposeAction.prototype.perform = function () {
@@ -97,6 +98,7 @@ define(
                 composeService = this.composeService,
                 currentParent = this.currentParent,
                 newParent = this.newParent,
+                progressCallback = this.progressCallback,
                 object = this.object;
 
             if (newParent) {
@@ -118,7 +120,7 @@ define(
                 validateLocation,
                 currentParent
             ).then(function (newParent) {
-                return composeService.perform(object, newParent);
+                return composeService.perform(object, newParent, progressCallback);
             });
         };
 

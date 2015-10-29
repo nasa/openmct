@@ -111,24 +111,28 @@ define(
             });
         }
 
-        function newPerform (domainObject, parent) {
+        function newPerform (domainObject, parent, progress) {
             var $q = this.$q,
                 self = this;
             if (this.validate(domainObject, parent)) {
-                return this.buildCopyGraph(domainObject, parent).then(function(clones){
-                    return $q.all(clones.map(function(clone){
+                progress("preparing");
+                return this.buildCopyGraph(domainObject, parent)
+                    .then(function(clones){
+                        return $q.all(clones.map(function(clone, index){
+                            progress("copying", clones.length, index);
                             return self.persistenceService.createObject(clone.persistence.getSpace(), clone.model.id, clone.model);
-                    })).then(function(){ return clones});
-                }).then(function(clones) {
-                    var parentClone = clones[clones.length-1];
-                    parentClone.model.location = parent.getId()
-                    return $q.when(
-                        parent.hasCapability('composition') &&
-                        parent.getCapability('composition').add(parentClone.model.id)
-                            .then(
-                                function(){
-                                    parent.getCapability("persistence").persist()
-                                }));
+                        })).then(function(){ return clones});
+                    })
+                    .then(function(clones) {
+                        var parentClone = clones[clones.length-1];
+                        parentClone.model.location = parent.getId()
+                        return $q.when(
+                            parent.hasCapability('composition') &&
+                            parent.getCapability('composition').add(parentClone.model.id)
+                            .then(function(){
+                                progress("copying", clones.length, clones.length);
+                                parent.getCapability("persistence").persist()
+                            }));
                 });
             } else {
                 throw new Error(
@@ -158,36 +162,6 @@ define(
             if (domainObject.hasCapability('composition')) {
                 model.composition = [];
             }
-
-            /*
-             * 1) Traverse to leaf of object tree
-             * 2) Copy object and persist
-             * 3) Go up to parent
-             * 4) Update parent in memory with new composition
-             * 4) If parent has more children
-             * 5)     Visit next child
-             * 6)     Go to 2)
-             * 7) else
-             * 8)      Persist parent
-             */
-            
-            /*
-             * copy(object, parent) {
-             * 1)    objectClone = clone(object);  // Clone object
-             * 2)    objectClone.composition = []; // Reset the clone's composition
-             * 3)    composees = object.composition;
-             * 3)    composees.reduce(function (promise, composee) { // For each child in original composition
-             * 4)        return promise.then(function () {
-             * 5)            return copy(composee, object).then(function(clonedComposee){
-             * 6)               objectClone.composition.push(clonedComposee);
-             * 7)               return objectClone;
-             * 8)            ); // Copy the child
-             * 9)        };
-             * 10)    })
-             * 11)   objectClone.id = newId();
-             * 12)   return persist(objectClone);
-             * }
-             */
 
             return this.creationService
                 .createObject(model, parent)

@@ -34,13 +34,43 @@ define(
          * @constructor
          * @memberof platform/entanglement
          */
-        function CopyAction(locationService, copyService, context) {
+        function CopyAction(locationService, copyService, dialogService, notificationService, context) {
+            var notification,
+                notificationModel = {
+                    title: "Copying objects",
+                    unknownProgress: false,
+                    severity: "info",
+                };
+            
+            function progress(phase, totalObjects, processed){
+                if (phase.toLowerCase() === 'preparing'){
+                    console.log('preparing');
+                    dialogService.showBlockingMessage({
+                        title: "Preparing to copy objects",
+                        unknownProgress: true,
+                        severity: "info",
+                    });
+                } else if (phase.toLowerCase() === "copying") {
+                    console.log('copying');
+                    dialogService.dismiss();
+                    if (!notification) {
+                        notification = notificationService.notify(notificationModel);
+                    }
+                    notificationModel.progress = (processed / totalObjects) * 100;
+                    notificationModel.title = ["Copying ", processed, "of ", totalObjects, "objects"].join(" ");
+                    if (processed >= totalObjects){
+                        notification.dismiss();
+                    }
+                }
+            }
+            
             return new AbstractComposeAction(
                 locationService,
                 copyService,
                 context,
                 "Duplicate",
-                "to a location"
+                "to a location",
+                progress
             );
         }
 
