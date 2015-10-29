@@ -94,7 +94,7 @@
             content: "\f4";
             height: auto; width: auto;
             position: absolute;
-            left: 0; top: 0; right: 0; bottom: 0;
+            left: 0; top: 0; right: 0; bottom: 10%;
             @include transform-origin(bottom, left);
             @include transform(scale(0.3));
             z-index: 2;

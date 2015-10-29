@@ -670,7 +670,7 @@ mct-container {
     left: 0;
     top: 0;
     right: 0;
-    bottom: 0;
+    bottom: 10%;
     -moz-transform-origin: bottom left;
     -ms-transform-origin: bottom left;
     -webkit-transform-origin: bottom left;
