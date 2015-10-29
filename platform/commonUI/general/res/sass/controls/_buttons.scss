@@ -128,6 +128,7 @@ $pad: $interiorMargin * $baseRatio;
         position: absolute;
         line-height: $iconH;
         height: $iconH; width: $iconW;
+        text-align: center;
 
         &:hover {
             //background-color: $cBg;
@@ -148,6 +149,7 @@ $pad: $interiorMargin * $baseRatio;
 
         &:before,
         &:after {
+            //@include test();
             @include trans-prop-nice((left, right, opacity), 250ms);
             display: block;
             height: 100%;
@@ -171,13 +173,10 @@ $pad: $interiorMargin * $baseRatio;
             // |<
             text-align: right;
             &:before {
-                content:'\3c';
+                content:'\e613'; // Collapse left icon
                 right: $iconInnerLR;
             }
-            //&:after {
-            //    right: auto; left: $iconInnerLR;
-            //}
-            &:hover:before { right: $arwAnimOffsetX; }
+            //&:hover:before { right: $arwAnimOffsetX; }
             &.collapsed {
                 @include border-left-radius(0);
                 text-align: left;
@@ -190,15 +189,12 @@ $pad: $interiorMargin * $baseRatio;
         }
         &.anchor-right {
             // >|
+            text-align: left;
             &:before {
-                text-align: left;
-                content:'\3e';
+                content:'\e614'; // Collapse right icon
                 left: $iconInnerLR;
             }
-            //&:after {
-            //    right: $iconInnerLR; left: auto;
-            //}
-            &:hover:before { left: $arwAnimOffsetX; }
+            //&:hover:before { left: $arwAnimOffsetX; }
             &.collapsed {
                 @include border-right-radius(0);
                 &:before {

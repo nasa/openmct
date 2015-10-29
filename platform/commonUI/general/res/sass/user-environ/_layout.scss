@@ -282,7 +282,7 @@
                 //@include test(green);
                 left: 0; //$ox;
                 @include transform(translateX(-1 * $paneExpandedOffset));
-                &:after { content: 'F'; }
+                &:after { content: 'F'; } // Folder icon
                 &.collapsed {
                     @include transform(translateX(-1 * $paneCollapsedOffset));
                 }
@@ -291,7 +291,7 @@
                 $oCx: -1 * $paneCollapsedOffset;
                 right: 0; //$ox;
                 @include transform(translateX($paneExpandedOffset));
-                &:after { content: '\e608'; }
+                &:after { content: '\e608'; } // Info "i" icon
                 &.collapsed {
                     @include transform(translateX($paneCollapsedOffset));
                 }
@@ -442,6 +442,9 @@
     .search-holder .search {
         @include trans-prop-nice(opacity, $dur: 250ms, $delay: 250ms);
         opacity: 1;
+    }
+    .splitter-treeview {
+        top: $interiorMarginLg + $ueTopBarH !important;
     }
     .create-and-search-holder {
         @include trans-prop-nice(top, $dur: 250ms, $delay: 200ms);
