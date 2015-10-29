@@ -202,6 +202,40 @@ define(
                 });
 
             });
+
+            describe("when an initial template URL is provided", function () {
+                var testUrl;
+
+                beforeEach(function () {
+                    testUrl = "some/test/url.html";
+                    linker.link(mockScope, mockElement, testUrl);
+                });
+
+                it("does not remove the element initially", function () {
+                    expect(mockElement.replaceWith)
+                        .not.toHaveBeenCalled();
+                });
+
+                it("loads the specified template", function () {
+                    expect(mockHttp.get).toHaveBeenCalledWith(testUrl);
+                });
+            });
+
+            it("does not issue multiple requests for the same URL", function () {
+                var testUrls = ['a', 'b', 'c', 'd'].map(function (k) {
+                        return k + "/some/template.html";
+                    });
+
+                testUrls.forEach(function (testUrl, i) {
+                    expect(mockHttp.get.callCount).toEqual(i);
+                    linker.link(mockScope, mockElement, testUrl);
+                    expect(mockHttp.get.callCount).toEqual(i + 1);
+                    linker.link(mockScope, mockElement, testUrl);
+                    expect(mockHttp.get.callCount).toEqual(i + 1);
+                    linker.link(mockScope, mockElement)(testUrl);
+                    expect(mockHttp.get.callCount).toEqual(i + 1);
+                });
+            });
         });
     }
 );
