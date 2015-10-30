@@ -132,6 +132,7 @@ define(
 
             function changeTemplate(templateUrl) {
                 if (templateUrl) {
+                    destroyScope();
                     addElement();
                     self.load(templateUrl).then(function (template) {
                         // Avoid race conditions
