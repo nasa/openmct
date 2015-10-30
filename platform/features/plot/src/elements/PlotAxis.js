@@ -46,21 +46,9 @@ define(
          *
          */
         function PlotAxis(axisType, metadatas, defaultValue) {
-            var keys = {},
-                options = [];
-
-            // Look through all metadata objects and assemble a list
-            // of all possible domain or range options
-            function buildOptionsForMetadata(m) {
-                (m[axisType] || []).forEach(function (option) {
-                    if (!keys[option.key]) {
-                        keys[option.key] = true;
-                        options.push(option);
-                    }
-                });
-            }
-
-            (metadatas || []).forEach(buildOptionsForMetadata);
+            this.axisType = axisType;
+            this.defaultValue = defaultValue;
+            this.optionKeys = {};
 
             /**
              * The currently chosen option for this axis. An
@@ -68,7 +56,7 @@ define(
              * directly form the plot template.
              * @memberof platform/features/plot.PlotAxis#
              */
-            this.active = options[0] || defaultValue;
+            this.active = defaultValue;
 
             /**
              * The set of options applicable for this axis;
@@ -77,8 +65,70 @@ define(
              * human-readable names respectively)
              * @memberof platform/features/plot.PlotAxis#
              */
-            this.options = options;
+            this.options = [];
+
+            // Initialize options from metadata objects
+            this.updateMetadata(metadatas);
         }
+
+
+        /**
+         * Update axis options to reflect current metadata.
+         * @param {TelemetryMetadata[]} metadata objects describing
+         *        applicable telemetry
+         */
+        PlotAxis.prototype.updateMetadata = function (metadatas) {
+            var axisType = this.axisType,
+                optionKeys = this.optionKeys,
+                newOptions = {},
+                toAdd = [];
+
+            function isValid(option) {
+                return option && optionKeys[option.key];
+            }
+
+            metadatas.forEach(function (m) {
+                (m[axisType] || []).forEach(function (option) {
+                    var key = option.key;
+                    if (!optionKeys[key] && !newOptions[key]) {
+                        toAdd.push(option);
+                    }
+                    newOptions[key] = true;
+                });
+            });
+
+            optionKeys = this.optionKeys = newOptions;
+
+            // General approach here is to avoid changing object
+            // instances unless something has really changed, since
+            // Angular is watching; don't want to trigger extra digests.
+            if (!this.options.every(isValid)) {
+                this.options = this.options.filter(isValid);
+            }
+
+            if (toAdd.length > 0) {
+                this.options = this.options.concat(toAdd);
+            }
+
+            if (!isValid(this.active)) {
+                this.active = this.options[0] || this.defaultValue;
+            }
+        };
+
+        /**
+         * Change the domain/range selection for this axis. If the
+         * provided `key` is not recognized as an option, no change
+         * will occur.
+         * @param {string} key the identifier for the domain/range
+         */
+        PlotAxis.prototype.chooseOption = function (key) {
+            var self = this;
+            this.options.forEach(function (option) {
+                if (option.key === key) {
+                    self.active = option;
+                }
+            });
+        };
 
         return PlotAxis;
 

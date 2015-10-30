@@ -53,12 +53,17 @@
             {
                 "key": "TimeRangeController",
                 "implementation": "controllers/TimeRangeController.js",
-                "depends": [ "$scope", "now" ]
+                "depends": [ "$scope", "formatService", "DEFAULT_TIME_FORMAT", "now" ]
             },
             {
                 "key": "DateTimePickerController",
                 "implementation": "controllers/DateTimePickerController.js",
                 "depends": [ "$scope", "now" ]
+            },
+            {
+                "key": "DateTimeFieldController",
+                "implementation": "controllers/DateTimeFieldController.js",
+                "depends": [ "$scope", "formatService", "DEFAULT_TIME_FORMAT" ]
             },
             {
                 "key": "TreeNodeController",
@@ -242,6 +247,10 @@
             {
                 "key": "datetime-picker",
                 "templateUrl": "templates/controls/datetime-picker.html"
+            },
+            {
+                "key": "datetime-field",
+                "templateUrl": "templates/controls/datetime-field.html"
             }
         ],
         "licenses": [
