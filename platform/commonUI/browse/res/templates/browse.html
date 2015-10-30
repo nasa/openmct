@@ -28,6 +28,11 @@
         <mct-split-pane class='abs contents'
                         anchor='left'>
             <div class='split-pane-component treeview pane left'>
+                <!--<a class="mini-tab-icon anchor-left toggle-pane toggle-search mobile-hide"
+                   title="Enable search"
+                   ng-click="modelPaneTree.toggle()"
+                   ng-class="{ collapsed : !modelPaneTree.visible() }"
+                   ng-style="{ opacity: modelPaneTree.visible()? 0:1 }"></a>-->
                 <div class="holder holder-create-and-search abs l-mobile">
                     <mct-representation key="'create-button'"
                                         mct-object="navigatedObject"
@@ -35,11 +40,6 @@
                     </mct-representation>
                     <div class='holder search-holder abs'
                          ng-class="{active: treeModel.search}">
-                        <a class="mini-tab anchor-left toggle-pane toggle-search mobile-hide"
-                           title="Enable search"
-                           ng-click="modelPaneTree.toggle()"
-                           ng-class="{ collapsed : !modelPaneTree.visible() }"
-                           ng-style="{ opacity: modelPaneTree.visible()? 0:1 }"></a>
                         <mct-representation key="'search'"
                                      mct-object="domainObject"
                                      ng-model="treeModel">
@@ -47,7 +47,7 @@
                     </div>
                     <div class='tree-holder abs mobile-tree-holder'
                          ng-hide="treeModel.search">
-                        <mct-representation key="'tree'"s
+                        <mct-representation key="'tree'"
                                             mct-object="domainObject"
                                             parameters="tree"
                                             ng-model="treeModel">
@@ -59,8 +59,8 @@
             <mct-splitter class="splitter-treeview mobile-hide"></mct-splitter>
 
             <div class='split-pane-component items pane primary-pane right'>
-                <a class="mini-tab anchor-left toggle-pane toggle-tree"
-                   title="Click to {{ modelPaneTree.visible()? 'hide' : 'show' }} the tree pane"
+                <a class="mini-tab-icon anchor-left toggle-pane toggle-tree"
+                   title="{{ modelPaneTree.visible()? 'Hide' : 'Show' }} this pane"
                    ng-click="modelPaneTree.toggle()"
                    ng-class="{ collapsed : !modelPaneTree.visible() }"></a>
 
@@ -70,10 +70,6 @@
 
                     <mct-split-pane class='l-object-and-inspector contents abs' anchor='right'>
                         <div class='split-pane-component t-object pane primary-pane left'>
-                            <a class="mini-tab anchor-right mobile-hide toggle-pane toggle-inspect"
-                               title="{{ modelPaneInspect.visible()? 'Hide' : 'Show' }} the Inspection pane"
-                               ng-click="modelPaneInspect.toggle()"
-                               ng-class="{ collapsed : !modelPaneInspect.visible() }"></a>
                             <mct-representation mct-object="navigatedObject"
                                                 key="'browse-object'"
                                                 class="abs holder holder-object">
@@ -87,6 +83,10 @@
                                                 mct-object="domainObject"
                                                 ng-model="treeModel">
                             </mct-representation>
+                            <a class="mini-tab-icon anchor-right mobile-hide toggle-pane toggle-inspect"
+                               title="{{ modelPaneInspect.visible()? 'Hide' : 'Show' }} the Inspection pane"
+                               ng-click="modelPaneInspect.toggle()"
+                               ng-class="{ collapsed : !modelPaneInspect.visible() }"></a>
                         </div>
                     </mct-split-pane>
                 </div>

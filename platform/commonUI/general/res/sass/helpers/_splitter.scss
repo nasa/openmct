@@ -44,7 +44,7 @@
     }
     &:not(:active) {
         &:after {
-            @include trans-prop-nice(background-color, 250ms);
+            @include trans-prop-nice(background-color, 150ms);
         }
     }
     &:active {
@@ -55,7 +55,10 @@
 
     @if $colorSplitterHover != 'none' {
         &:hover {
-            background: $colorSplitterHover;
+            &:after {
+                @include trans-prop-nice(background-color, 150ms);
+                background-color: $colorSplitterHover;
+            }
         }
     }
 }

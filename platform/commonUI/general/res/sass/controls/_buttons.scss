@@ -208,6 +208,38 @@ $pad: $interiorMargin * $baseRatio;
     }
 }
 
+.mini-tab-icon {
+    // Meant to be used as pane hide/show control elements in concert with mct-splitter
+    //@extend .ui-symbol;
+    @include desktop {
+        $d: $uePaneMiniTabW;
+        //@include trans-prop-nice(transform, 150ms);
+        color: pullForward($colorBodyBg, 15%);
+        cursor: pointer;
+        display: block;
+        font-family: symbolsfont;
+        font-size: $d;
+        position: absolute;
+        height: $d; width: $d;
+        line-height: $d;
+
+        &:before,
+        &:after {
+            position: absolute;
+            display: inherit;
+        }
+
+        &:before {
+            content: '\78'; // X icon
+        }
+
+        &:hover {
+            color: $colorKey;
+            @include transform(scale(1.2));
+        }
+    }
+}
+
 .l-btn-set {
     // Buttons that have a very tight conceptual grouping - no internal space between them.
     // Structure: .btn-set > mct-representation class=first|last > .s-btn
