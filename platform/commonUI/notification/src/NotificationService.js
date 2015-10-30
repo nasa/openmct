@@ -52,7 +52,7 @@ define(
          * are used to inform users of events in a non-intrusive way. As
          * much as possible, notifications share a model with blocking
          * dialogs so that the same information can be provided in a dialog
-         * and then minimized to a banner notification if needed.
+         * and then minimized to a banner notification if needed, or vice-versa.
          *
          * @typedef {object} NotificationModel
          * @property {string} title The title of the message
@@ -75,6 +75,7 @@ define(
          * @property {NotificationOption[]} options any additional
          * actions the user can take. Will be represented as additional buttons
          * that may or may not be available from a banner.
+         * @see DialogModel
          */
 
         /**
@@ -220,7 +221,8 @@ define(
          * @returns {Notification} the provided notification decorated with
          * functions to dismiss or minimize
          */
-        NotificationService.prototype.info = function (notificationModel) {
+        NotificationService.prototype.info = function (model) {
+            var notificationModel = typeof model === "string" ? {title: model} : model
             notificationModel.autoDismiss = notificationModel.autoDismiss || true;
             notificationModel.severity = "info";
             return this.notify(notificationModel);
