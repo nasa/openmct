@@ -34,7 +34,9 @@ define(
          * and/or removing that element from the DOM when there is no
          * template to populate it with.
          *
-         * @param $http Angular's `$http` service
+         * @param {Function} $templateRequest Angular's `$templateRequest`
+         *        service
+         * @param $sce Angular's `$sce` service
          * @param {Function} $compile Angular's `$compile` service
          * @param $log Angular's `$log` service
          * @private
