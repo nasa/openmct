@@ -78,11 +78,10 @@ define(
 
             // Combine start/end times into a single object
             function bounds() {
-                var domain = conductor.domain();
                 return {
                     start: conductor.displayStart(),
                     end: conductor.displayEnd(),
-                    domain: domain && domain.key
+                    domain: conductor.domain().key
                 };
             }
 
@@ -132,7 +131,7 @@ define(
                 { outer: bounds(), inner: bounds() };
             conductorScope.ngModel.options =
                 conductor.domainOptions().map(makeOption);
-            conductorScope.ngModel.domain = (conductor.domain() || {}).key;
+            conductorScope.ngModel.domain = conductor.domain().key;
             conductorScope.parameters = {};
 
             conductorScope
