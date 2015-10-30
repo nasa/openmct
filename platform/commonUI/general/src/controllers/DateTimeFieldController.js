@@ -44,13 +44,6 @@ define(
         function DateTimeFieldController($scope, formatService, defaultFormat) {
             var formatter = formatService.getFormat(defaultFormat);
 
-            function setFormat(format) {
-                formatter = formatService.getFormat(format || defaultFormat);
-                if (!formatter) {
-                    throw new Error(UNRECOGNIZED_FORMAT_ERROR);
-                }
-            }
-
             function updateFromModel(value) {
                 // Only reformat if the value is different from user
                 // input (to avoid reformatting valid input while typing.)
@@ -67,6 +60,14 @@ define(
                     $scope.ngModel[$scope.field] =
                         formatter.parse(textValue);
                 }
+            }
+
+            function setFormat(format) {
+                formatter = formatService.getFormat(format || defaultFormat);
+                if (!formatter) {
+                    throw new Error(UNRECOGNIZED_FORMAT_ERROR);
+                }
+                updateFromModel($scope.ngModel[$scope.field]);
             }
 
             $scope.$watch('structure.format', setFormat);
