@@ -137,6 +137,13 @@ define(
                     .toHaveBeenCalledWith(mockScope.structure.format);
             });
 
+            it("throws an error for unknown formats", function () {
+                mockFormatService.getFormat.andReturn(undefined);
+                expect(function () {
+                    fireWatch("structure.format", "some-format");
+                }).toThrow();
+            });
+
             describe("using the obtained format", function () {
                 var testValue = 1234321,
                     testText = "some text";

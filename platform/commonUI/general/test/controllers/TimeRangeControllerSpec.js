@@ -34,6 +34,7 @@ define(
         describe("The TimeRangeController", function () {
             var mockScope,
                 mockFormatService,
+                testDefaultFormat,
                 mockNow,
                 mockFormat,
                 controller;
@@ -63,6 +64,7 @@ define(
                     "formatService",
                     [ "getFormat" ]
                 );
+                testDefaultFormat = 'utc';
                 mockFormat = jasmine.createSpyObj(
                     "format",
                     [ "validate", "format", "parse" ]
@@ -79,6 +81,7 @@ define(
                 controller = new TimeRangeController(
                     mockScope,
                     mockFormatService,
+                    testDefaultFormat,
                     mockNow
                 );
             });
@@ -199,6 +202,12 @@ define(
                     .toHaveBeenCalledWith('test-format');
             });
 
+            it("throws an error for unknown formats", function () {
+                mockFormatService.getFormat.andReturn(undefined);
+                expect(function () {
+                    fireWatch("parameters.format", "some-format");
+                }).toThrow();
+            });
 
         });
     }
