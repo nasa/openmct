@@ -40,6 +40,11 @@ define(
          * {@see FormatService}
          * @constructor
          * @memberof platform/commonUI/general
+         * @param $scope the Angular scope for this controller
+         * @param {FormatService} formatService the service to user to format
+         *        domain values
+         * @param {string} defaultFormat the format to request when no
+         *        format has been otherwise specified
          */
         function DateTimeFieldController($scope, formatService, defaultFormat) {
             var formatter = formatService.getFormat(defaultFormat);

@@ -36,6 +36,11 @@ define(
          * the range (usually value) of a data series.
          * @memberof platform/telemetry
          * @constructor
+         * @param {FormatService} formatService the service to user to format
+         *        domain values
+         * @param {string} defaultFormatKey the format to request when no
+         *        format has been otherwise specified
+         * @param $log Angular's `$log`, to log warnings
          */
         function TelemetryFormatter(formatService, defaultFormatKey, $log) {
             this.formatService = formatService;

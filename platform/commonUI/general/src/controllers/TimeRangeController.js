@@ -35,6 +35,12 @@ define(
          * Controller used by the `time-controller` template.
          * @memberof platform/commonUI/general
          * @constructor
+         * @param $scope the Angular scope for this controller
+         * @param {FormatService} formatService the service to user to format
+         *        domain values
+         * @param {string} defaultFormat the format to request when no
+         *        format has been otherwise specified
+         * @param {Function} now a function to return current system time
          */
         function TimeRangeController($scope, formatService, defaultFormat, now) {
             var tickCount = 2,
