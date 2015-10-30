@@ -31,7 +31,6 @@ define([
     var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss",
         DATE_FORMATS = [
             DATE_FORMAT,
-            "YYYY-MM-DD HH:mm:ss",
             "YYYY-MM-DD HH:mm",
             "YYYY-MM-DD"
         ];
