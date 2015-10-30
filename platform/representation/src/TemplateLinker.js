@@ -46,6 +46,14 @@ define(
             this.$log = $log;
         }
 
+        /**
+         * Load a template from the given URL. This request will be handled
+         * via `$templateRequest` to ensure caching et cetera.
+         * @param {string} the URL for the template
+         * @returns {Promise.<string>} a promise for the HTML content of
+         *          the template
+         * @private
+         */
         TemplateLinker.prototype.load = function (templateUrl) {
             return this.$templateRequest(
                 this.$sce.trustAsResourceUrl(templateUrl),
