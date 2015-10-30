@@ -26,20 +26,22 @@ define(
     function (moment) {
         "use strict";
 
-        var DEFAULT_FORMAT = "utc",
-            TICK_SPACING_PX = 150;
+        var TICK_SPACING_PX = 150,
+            UNRECOGNIZED_FORMAT_ERROR =
+                "Unrecognized format for time range control.";
+
 
         /**
          * Controller used by the `time-controller` template.
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function TimeRangeController($scope, formatService, now) {
+        function TimeRangeController($scope, formatService, defaultFormat, now) {
             var tickCount = 2,
                 innerMinimumSpan = 1000, // 1 second
                 outerMinimumSpan = 1000 * 60 * 60, // 1 hour
                 initialDragValue,
-                formatter = formatService.getFormat(DEFAULT_FORMAT);
+                formatter = formatService.getFormat(defaultFormat);
 
             function formatTimestamp(ts) {
                 return formatter.format(ts);
@@ -212,8 +214,11 @@ define(
             }
 
             function updateFormat(key) {
-                formatter = formatService.getFormat(key) ||
-                        formatService.getFormat(DEFAULT_FORMAT);
+                formatter = formatService.getFormat(key || defaultFormat);
+
+                if (!formatter) {
+                    throw new Error(UNRECOGNIZED_FORMAT_ERROR);
+                }
 
                 updateViewForInnerSpanFromModel($scope.ngModel);
                 updateTicks();

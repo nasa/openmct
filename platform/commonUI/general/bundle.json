@@ -53,7 +53,7 @@
             {
                 "key": "TimeRangeController",
                 "implementation": "controllers/TimeRangeController.js",
-                "depends": [ "$scope", "formatService", "now" ]
+                "depends": [ "$scope", "formatService", "DEFAULT_TIME_FORMAT", "now" ]
             },
             {
                 "key": "DateTimePickerController",
@@ -63,7 +63,7 @@
             {
                 "key": "DateTimeFieldController",
                 "implementation": "controllers/DateTimeFieldController.js",
-                "depends": [ "$scope", "formatService" ]
+                "depends": [ "$scope", "formatService", "DEFAULT_TIME_FORMAT" ]
             },
             {
                 "key": "TreeNodeController",

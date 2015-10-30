@@ -26,7 +26,8 @@ define(
     function () {
         'use strict';
 
-        var DEFAULT_FORMAT = 'utc';
+        var UNRECOGNIZED_FORMAT_ERROR =
+            "Unrecognized format for date-time field.";
 
         /**
          * Controller to support the date-time entry field.
@@ -40,12 +41,14 @@ define(
          * @constructor
          * @memberof platform/commonUI/general
          */
-        function DateTimeFieldController($scope, formatService) {
-            var formatter = formatService.getFormat(DEFAULT_FORMAT);
+        function DateTimeFieldController($scope, formatService, defaultFormat) {
+            var formatter = formatService.getFormat(defaultFormat);
 
             function setFormat(format) {
-                formatter = formatService.getFormat(format) ||
-                        formatService.getFormat(DEFAULT_FORMAT);
+                formatter = formatService.getFormat(format || defaultFormat);
+                if (!formatter) {
+                    throw new Error(UNRECOGNIZED_FORMAT_ERROR);
+                }
             }
 
             function updateFromModel(value) {
