@@ -173,7 +173,7 @@ $pad: $interiorMargin * $baseRatio;
             // |<
             text-align: right;
             &:before {
-                content:'\e613'; // Collapse left icon
+                content:'\3c'; // Collapse left icon e613
                 right: $iconInnerLR;
             }
             //&:hover:before { right: $arwAnimOffsetX; }
@@ -191,7 +191,7 @@ $pad: $interiorMargin * $baseRatio;
             // >|
             text-align: left;
             &:before {
-                content:'\e614'; // Collapse right icon
+                content:'\3e'; // Collapse right icon e614
                 left: $iconInnerLR;
             }
             //&:hover:before { left: $arwAnimOffsetX; }

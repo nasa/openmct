@@ -27,6 +27,8 @@
 }
 
 .l-inspect {
+    background: pullForward($colorBodyBg, 3%);
+    @extend .abs;
     color: $colorInspectorFg;
     .pane-header {
         color: pushBack($colorInspectorFg, 20%);

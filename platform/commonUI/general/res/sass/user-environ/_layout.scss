@@ -29,13 +29,13 @@
     }
 }
 
-.holder-all {
+/*.holder-all {
     $myM: 0; // $interiorMarginSm;
     top: $myM;
     right: $myM;
     bottom: $myM;
     left: $myM;
-}
+}*/
 
 .browse-area,
 .edit-area,
@@ -95,13 +95,11 @@
 }
 
 .user-environ {
+
     .browse-area,
     .edit-area,
     .editor {
-        top: $bodyMargin + $ueTopBarH + ($interiorMargin);
-        right: $bodyMargin;
-        bottom: $ueFooterH + $bodyMargin;
-        left: $bodyMargin;
+        top: 0; left: 0; right: 0; bottom: $ueFooterH;
     }
 
     .browse-area,
@@ -260,7 +258,7 @@
         //        bottom: $interiorMargin;
         //    }
         //}
-        .create-and-search-holder {
+        .holder-create-and-search{
 
         }
         .search-holder {
@@ -275,25 +273,25 @@
     .mini-tab.toggle-pane {
         //@include test(blue, 0.3);
         $paneExpandedOffset: $splitterD + $uePaneMiniTabW - splitterHandleInset($splitterD, $splitterHandleD);
-        $paneCollapsedOffset: $bodyMargin + $ueCollapsedPaneEdgeM;
         z-index: 5;
         @include desktop {
+            top: $interiorMarginLg;
             &.toggle-tree.anchor-left {
                 //@include test(green);
                 left: 0; //$ox;
                 @include transform(translateX(-1 * $paneExpandedOffset));
                 &:after { content: 'F'; } // Folder icon
                 &.collapsed {
-                    @include transform(translateX(-1 * $paneCollapsedOffset));
+                    @include transform(translateX(-1 * $ueCollapsedPaneEdgeM));
                 }
             }
             &.toggle-inspect.anchor-right {
-                $oCx: -1 * $paneCollapsedOffset;
+                $oCx: -1 * $ueCollapsedPaneEdgeM;
                 right: 0; //$ox;
                 @include transform(translateX($paneExpandedOffset));
                 &:after { content: '\e608'; } // Info "i" icon
                 &.collapsed {
-                    @include transform(translateX($paneCollapsedOffset));
+                    @include transform(translateX($ueCollapsedPaneEdgeM));
                 }
             }
             &.toggle-search.anchor-left {
@@ -325,17 +323,43 @@
             }
         }
     }
-    &.vertical {
+   /* &.vertical {
         // Slides left and right
-        > .pane {
-            //margin-left: $interiorMargin; // This spacing is now handled by MCTSplitPane.js
+        > .pane.left {
             > .holder {
-                left: 0;
-                right: 0;
+                left: $bodyMargin;
             }
-            &:first-child {
-                margin-left: 0;
+        }
+        > .pane.right {
+            > .holder {
+                right: $bodyMargin;
             }
+        }
+    }*/
+
+    // Specific elements margins
+    .holder.holder-create-and-search {
+        top: $bodyMargin;
+        right: 0;
+        bottom: $bodyMargin;
+        left: $bodyMargin;
+    }
+
+    .holder.holder-object-and-inspector {
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        .holder-object {
+            top: $bodyMargin;
+            bottom: $bodyMargin;
+        }
+        .holder-inspector-elements {
+            top: $bodyMargin;
+            bottom: $bodyMargin;
+            left: $bodyMargin + $interiorMarginLg;
+            right: $bodyMargin;
+
         }
     }
 }
@@ -410,9 +434,9 @@
     .search-holder .search {
         opacity: 0;
     }
-    .create-and-search-holder {
+    .holder-create-and-search{
         @include trans-prop-nice((top, left), 250ms);
-        top: $ueTopBarH + $interiorMargin !important;
+        top: $ueTopBarH + $interiorMargin;
         left: -1 * $bodyMargin !important;
         .create-btn {
             @include border-left-radius(0);
@@ -443,7 +467,7 @@
     .splitter-treeview {
         top: $interiorMarginLg + $ueTopBarH !important;
     }
-    .create-and-search-holder {
+    .holder-create-and-search{
         @include trans-prop-nice(top, $dur: 250ms, $delay: 200ms);
     }
 }

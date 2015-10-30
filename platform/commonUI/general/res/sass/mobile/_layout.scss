@@ -42,18 +42,19 @@
         }
     }
 
-    .user-environ .browse-area,
+/*    .user-environ .browse-area,
     .user-environ .edit-area,
     .user-environ .editor {
         top: 0; left: 0; right: 0; bottom: $ueFooterH;
     }
 
-    .holder.l-mobile {
+    .holder.holder-object-and-inspector,
+    .holder.holder-create-and-search {
         top: $bodyMargin !important;
         right: $bodyMargin !important;
         bottom: $bodyMargin !important;
         left: $bodyMargin !important;
-    }
+    }*/
 
 
 // When the tree is hidden, these are the

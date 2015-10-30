@@ -28,7 +28,7 @@
         <mct-split-pane class='abs contents'
                         anchor='left'>
             <div class='split-pane-component treeview pane left'>
-                <div class="holder create-and-search-holder abs l-mobile">
+                <div class="holder holder-create-and-search abs l-mobile">
                     <mct-representation key="'create-button'"
                                         mct-object="navigatedObject"
                                         mct-device="desktop">
@@ -75,11 +75,12 @@
                                ng-click="modelPaneInspect.toggle()"
                                ng-class="{ collapsed : !modelPaneInspect.visible() }"></a>
                             <mct-representation mct-object="navigatedObject"
-                                                key="'browse-object'">
+                                                key="'browse-object'"
+                                                class="abs holder holder-object">
                             </mct-representation>
                         </div>
 
-                        <mct-splitter class="splitter-inspect mobile-hide"></mct-splitter>
+                        <mct-splitter class="splitter-inspect mobile-hide flush-right edge-shdw"></mct-splitter>
 
                         <div class="split-pane-component t-inspect pane right mobile-hide">
                             <mct-representation key="'object-inspector'"

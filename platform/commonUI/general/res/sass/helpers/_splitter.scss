@@ -49,7 +49,7 @@
     }
     &:active {
         &:after {
-            background-color: $colorSplitterActive;
+            background-color: $colorSplitterActive !important;
         }
     }
 
@@ -102,18 +102,30 @@
             cursor: col-resize;
             top: 0;
             bottom: 0;
-            width: $splitterD;
-            &:after {
-                left: $inset; right: $inset;
+            &:not(.flush-right) {
+                width: $splitterD;
+                &:after {
+                    left: $inset; right: $inset;
+                }
+            }
+            &.flush-right {
+                width: ceil($splitterD / 2);
+                &:after {
+                    background-color: transparent;
+                    left: auto; right: 0; width: $splitterHandleD;
+                }
+                &.edge-shdw {
+                    @include background-image(linear-gradient(90deg, rgba(black, 0) 40%, rgba(black, 0.05) 100%));
+                }
             }
         }
     }
 }
 
-.browse-area .splitter {
+/*.browse-area .splitter {
 	top: 0; //$ueTopBarH + $interiorMarginLg;
 }
 
 .edit-area .splitter {
 	top: 0;
-}
+}*/
