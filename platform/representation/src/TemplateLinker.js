@@ -39,26 +39,18 @@ define(
          * @param $log Angular's `$log` service
          * @private
          */
-        function TemplateLinker($http, $compile, $log) {
-            this.templateMap = {};
-            this.$http = $http;
+        function TemplateLinker($templateRequest, $sce, $compile, $log) {
+            this.$templateRequest = $templateRequest;
+            this.$sce = $sce;
             this.$compile = $compile;
             this.$log = $log;
         }
 
         TemplateLinker.prototype.load = function (templateUrl) {
-            var $http = this.$http,
-                $compile = this.$compile,
-                $log = this.$log,
-                templateMap = this.templateMap;
-
-            return (templateMap[templateUrl] = templateMap[templateUrl] ||
-                $http.get(templateUrl).then(function (response) {
-                    return $compile(response.data);
-                }, function () {
-                    $log.warn("Couldn't load template at " + templateUrl);
-                    templateMap[templateUrl] = undefined;
-                }));
+            return this.$templateRequest(
+                this.$sce.trustAsResourceUrl(templateUrl),
+                false
+            );
         };
 
         /**
@@ -108,18 +100,13 @@ define(
             }
 
             function populateElement(template) {
-                template(scope, function (innerClone) {
-                    element.empty();
-                    element.append(innerClone);
-                });
+                element.empty();
+                element.append(self.$compile(template)(scope));
             }
 
-            function applyTemplate(template, templateUrl) {
-                if (template) {
-                    populateElement(template);
-                } else {
-                    removeElement();
-                }
+            function badTemplate(templateUrl) {
+                self.$log.warn("Couldn't load template at " + templateUrl);
+                removeElement();
             }
 
             function changeTemplate(templateUrl) {
@@ -129,8 +116,10 @@ define(
                         self.load(templateUrl).then(function (template) {
                             // Avoid race conditions
                             if (templateUrl === activeTemplateUrl) {
-                                applyTemplate(template);
+                                populateElement(template);
                             }
+                        }, function () {
+                            badTemplate(templateUrl);
                         });
                     } else {
                         removeElement();

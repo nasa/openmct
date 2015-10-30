@@ -52,7 +52,7 @@
             {
                 "key": "templateLinker",
                 "implementation": "TemplateLinker.js",
-                "depends": [ "$http", "$compile", "$log" ],
+                "depends": [ "$templateRequest", "$sce", "$compile", "$log" ],
                 "comment": "For internal use by mct-include and mct-representation."
             }
         ],

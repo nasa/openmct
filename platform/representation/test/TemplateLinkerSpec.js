@@ -30,30 +30,29 @@ define(
         var JQLITE_METHODS = [ 'replaceWith', 'empty', 'append' ];
 
         describe("TemplateLinker", function () {
-            var mockHttp,
+            var mockTemplateRequest,
+                mockSce,
                 mockCompile,
                 mockLog,
                 mockScope,
                 mockElement,
                 mockTemplates,
                 mockElements,
-                mockHttpPromise,
-                mockChainPromise,
+                mockPromise,
                 linker;
 
             beforeEach(function () {
-                mockHttp = jasmine.createSpyObj('$http', ['get']);
+                mockTemplateRequest = jasmine.createSpy('$templateRequest');
+                mockSce = jasmine.createSpyObj('$sce', ['trustAsResourceUrl']);
                 mockCompile = jasmine.createSpy('$compile');
                 mockLog = jasmine.createSpyObj('$log', ['error', 'warn']);
                 mockScope = jasmine.createSpyObj('$scope', ['$on']);
                 mockElement = jasmine.createSpyObj('element', JQLITE_METHODS);
-                mockHttpPromise = jasmine.createSpyObj('promise1', ['then']);
-                mockChainPromise = jasmine.createSpyObj('promise2', ['then']);
+                mockPromise = jasmine.createSpyObj('promise', ['then']);
                 mockTemplates = {};
                 mockElements = {};
 
-                mockHttp.get.andReturn(mockHttpPromise);
-                mockHttpPromise.then.andReturn(mockChainPromise);
+                mockTemplateRequest.andReturn(mockPromise);
                 mockCompile.andCallFake(function (html) {
                     mockTemplates[html] = jasmine.createSpy('template');
                     mockElements[html] =
@@ -61,9 +60,13 @@ define(
                     mockTemplates[html].andReturn(mockElements[html]);
                     return mockTemplates[html];
                 });
+                mockSce.trustAsResourceUrl.andCallFake(function (url) {
+                    return { trusted: url };
+                });
 
                 linker = new TemplateLinker(
-                    mockHttp,
+                    mockTemplateRequest,
+                    mockSce,
                     mockCompile,
                     mockLog
                 );
@@ -118,44 +121,28 @@ define(
                         testUrl = "some/url/template.html";
                         testTemplate = "<div>Some template!</div>";
                         changeTemplate(testUrl);
+                        mockPromise.then.mostRecentCall
+                            .args[0](testTemplate);
                     });
 
-                    it("loads templates using $http", function () {
-                        expect(mockHttp.get).toHaveBeenCalledWith(testUrl);
+                    it("loads templates using $templateRequest", function () {
+                        expect(mockTemplateRequest).toHaveBeenCalledWith({
+                            trusted: testUrl
+                        }, false);
                     });
 
                     it("compiles loaded templates with linked scope", function () {
-                        var chainValue;
-                        chainValue = mockHttpPromise.then.mostRecentCall.args[0]({
-                            data: testTemplate
-                        });
                         expect(mockCompile).toHaveBeenCalledWith(testTemplate);
-                        mockChainPromise.then.mostRecentCall.args[0](chainValue);
-                        expect(mockTemplates[testTemplate]).toHaveBeenCalledWith(
-                            mockScope,
-                            jasmine.any(Function)
-                        );
+                        expect(mockTemplates[testTemplate])
+                            .toHaveBeenCalledWith(mockScope);
                     });
 
                     it("replaces comments with specified element", function () {
-                        mockChainPromise.then.mostRecentCall.args[0](
-                            mockHttpPromise.then.mostRecentCall.args[0]({
-                                data: testTemplate
-                            })
-                        );
                         expect(commentElement.replaceWith)
                             .toHaveBeenCalledWith(mockElement);
                     });
 
                     it("appends rendered content to the specified element", function () {
-                        mockChainPromise.then.mostRecentCall.args[0](
-                            mockHttpPromise.then.mostRecentCall.args[0]({
-                                data: testTemplate
-                            })
-                        );
-                        mockTemplates[testTemplate].mostRecentCall.args[1](
-                            mockElements[testTemplate]
-                        );
                         expect(mockElement.append)
                             .toHaveBeenCalledWith(mockElements[testTemplate]);
                     });
@@ -163,11 +150,6 @@ define(
                     it("clears templates when called with undefined", function () {
                         expect(mockElement.replaceWith.callCount)
                             .toEqual(1);
-                        mockChainPromise.then.mostRecentCall.args[0](
-                            mockHttpPromise.then.mostRecentCall.args[0]({
-                                data: testTemplate
-                            })
-                        );
                         changeTemplate(undefined);
                         expect(mockElement.replaceWith.callCount)
                             .toEqual(2);
@@ -175,24 +157,15 @@ define(
                             .toEqual(commentElement);
                     });
 
-                    it("logs no warnings", function () {
-                        mockChainPromise.then.mostRecentCall.args[0](
-                            mockHttpPromise.then.mostRecentCall.args[0]({
-                                data: testTemplate
-                            })
-                        );
-                        mockTemplates[testTemplate].mostRecentCall.args[1](
-                            mockElements[testTemplate]
-                        );
+                    it("logs no warnings for nominal changes", function () {
                         expect(mockLog.warn).not.toHaveBeenCalled();
                     });
 
                     describe("which cannot be found", function () {
                         beforeEach(function () {
-                            mockChainPromise.then.mostRecentCall.args[0](
-                                // Reject the http promise
-                                mockHttpPromise.then.mostRecentCall.args[1]()
-                            );
+                            changeTemplate("some/bad/url");
+                            // Reject the template promise
+                            mockPromise.then.mostRecentCall.args[1]();
                         });
 
                         it("removes the element from the DOM", function () {
@@ -227,25 +200,12 @@ define(
                 });
 
                 it("loads the specified template", function () {
-                    expect(mockHttp.get).toHaveBeenCalledWith(testUrl);
+                    expect(mockTemplateRequest).toHaveBeenCalledWith({
+                        trusted: testUrl
+                    }, false);
                 });
             });
 
-            it("does not issue multiple requests for the same URL", function () {
-                var testUrls = ['a', 'b', 'c', 'd'].map(function (k) {
-                        return k + "/some/template.html";
-                    });
-
-                testUrls.forEach(function (testUrl, i) {
-                    expect(mockHttp.get.callCount).toEqual(i);
-                    linker.link(mockScope, mockElement, testUrl);
-                    expect(mockHttp.get.callCount).toEqual(i + 1);
-                    linker.link(mockScope, mockElement, testUrl);
-                    expect(mockHttp.get.callCount).toEqual(i + 1);
-                    linker.link(mockScope, mockElement)(testUrl);
-                    expect(mockHttp.get.callCount).toEqual(i + 1);
-                });
-            });
         });
     }
 );
