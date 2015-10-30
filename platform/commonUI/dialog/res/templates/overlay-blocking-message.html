@@ -19,24 +19,7 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="abs top-bar">
-    <div class="title">{{ngModel.title}}</div>
-    <div class="hint">All fields marked <span class="ui-symbol req">*</span> are required.</div>
-</div>
-<div class='abs editor'>
-    <mct-form ng-model="ngModel.value"
-              structure="ngModel.structure"
-              name="createForm">
-    </mct-form>
-</div>
-<div class="abs bottom-bar">
-    <a class='s-btn major'
-       ng-class="{ disabled: !createForm.$valid }"
-       ng-click="ngModel.confirm()">
-        OK
-    </a>
-    <a class='s-btn'
-       ng-click="ngModel.cancel()">
-        Cancel
-    </a>
-</div>
+<mct-container key="overlay" class="t-message-single">
+    <mct-include key="'message'" ng-model="ngModel">
+    </mct-include>
+</mct-container>
