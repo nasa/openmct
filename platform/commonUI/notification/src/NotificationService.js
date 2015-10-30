@@ -223,7 +223,7 @@ define(
          * functions to dismiss or minimize
          */
         NotificationService.prototype.info = function (message) {
-            var notificationModel = typeof message === "string" ? {title: message} : message
+            var notificationModel = typeof message === "string" ? {title: message} : message;
             notificationModel.autoDismiss = notificationModel.autoDismiss || true;
             notificationModel.severity = "info";
             return this.notify(notificationModel);
@@ -240,7 +240,7 @@ define(
          * functions to dismiss or minimize
          */
         NotificationService.prototype.alert = function (message) {
-            var notificationModel = typeof message === "string" ? {title: message} : message
+            var notificationModel = typeof message === "string" ? {title: message} : message;
             notificationModel.severity = "alert";
             return this.notify(notificationModel);
         };
@@ -256,7 +256,7 @@ define(
          * functions to dismiss or minimize
          */
         NotificationService.prototype.error = function (message) {
-            var notificationModel = typeof message === "string" ? {title: message} : message
+            var notificationModel = typeof message === "string" ? {title: message} : message;
             notificationModel.severity = "error";
             return this.notify(notificationModel);
         };
