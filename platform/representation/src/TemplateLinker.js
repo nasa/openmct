@@ -92,10 +92,19 @@ define(
             var activeElement = element,
                 activeTemplateUrl,
                 comment = this.$compile('<!-- hidden mct element -->')(scope),
+                activeScope,
                 self = this;
+
+            function destroyScope() {
+                if (activeScope) {
+                    activeScope.$destroy();
+                    activeScope = undefined;
+                }
+            }
 
             function removeElement() {
                 if (activeElement !== comment) {
+                    destroyScope();
                     activeElement.replaceWith(comment);
                     activeElement = comment;
                 }
@@ -110,8 +119,10 @@ define(
             }
 
             function populateElement(template) {
+                destroyScope();
+                activeScope = scope.$new(false);
                 element.empty();
-                element.append(self.$compile(template)(scope));
+                element.append(self.$compile(template)(activeScope));
             }
 
             function badTemplate(templateUrl) {
