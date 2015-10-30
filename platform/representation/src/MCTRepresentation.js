@@ -72,11 +72,7 @@ define(
 
             // Get a path to a representation
             function getPath(representation) {
-                return [
-                    representation.bundle.path,
-                    representation.bundle.resources,
-                    representation.templateUrl
-                ].join("/");
+                return templateLinker.getPath(representation);
             }
 
             // Look up a matching representation for this domain object

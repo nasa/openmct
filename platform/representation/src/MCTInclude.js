@@ -71,14 +71,10 @@ define(
 
             // Prepopulate templateMap for easy look up by key
             templates.forEach(function (template) {
-                var key = template.key,
-                    path = [
-                        template.bundle.path,
-                        template.bundle.resources,
-                        template.templateUrl
-                    ].join("/");
+                var key = template.key;
                 // First found should win (priority ordering)
-                templateMap[key] = templateMap[key] || path;
+                templateMap[key] =
+                    templateMap[key] || templateLinker.getPath(template);
             });
 
             return {

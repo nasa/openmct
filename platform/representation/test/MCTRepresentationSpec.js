@@ -36,6 +36,7 @@ define(
         describe("The mct-representation directive", function () {
             var testRepresentations,
                 testViews,
+                testUrls,
                 mockRepresenters,
                 mockQ,
                 mockLinker,
@@ -64,6 +65,8 @@ define(
             }
 
             beforeEach(function () {
+                testUrls = {};
+
                 testRepresentations = [
                     {
                         key: "abc",
@@ -94,6 +97,11 @@ define(
 
                 testModel = { someKey: "some value" };
 
+                testUrls = {};
+                testViews.concat(testRepresentations).forEach(function (t, i) {
+                    testUrls[t.key] = "some URL " + String(i);
+                });
+
                 mockRepresenters = ["A", "B"].map(function (name) {
                     var constructor = jasmine.createSpy("Representer" + name),
                         representer = jasmine.createSpyObj(
@@ -105,7 +113,10 @@ define(
                 });
 
                 mockQ = { when: mockPromise };
-                mockLinker = jasmine.createSpyObj('templateLinker', ['link']);
+                mockLinker = jasmine.createSpyObj(
+                    'templateLinker',
+                    ['link', 'getPath']
+                );
                 mockChangeTemplate = jasmine.createSpy('changeTemplate');
                 mockLog = jasmine.createSpyObj("$log", LOG_FUNCTIONS);
 
@@ -115,6 +126,9 @@ define(
 
                 mockDomainObject.getModel.andReturn(testModel);
                 mockLinker.link.andReturn(mockChangeTemplate);
+                mockLinker.getPath.andCallFake(function (ext) {
+                    return testUrls[ext.key];
+                });
 
                 mctRepresentation = new MCTRepresentation(
                     testRepresentations,
@@ -160,7 +174,7 @@ define(
                 fireWatch('domainObject', mockDomainObject);
 
                 expect(mockChangeTemplate)
-                    .toHaveBeenCalledWith("a/b/c/template.html");
+                    .toHaveBeenCalledWith(testUrls.abc);
             });
 
             it("recognizes keys for views", function () {
@@ -172,7 +186,7 @@ define(
                 fireWatch('domainObject', mockDomainObject);
 
                 expect(mockChangeTemplate)
-                    .toHaveBeenCalledWith("x/y/z/template.html");
+                    .toHaveBeenCalledWith(testUrls.xyz);
             });
 
             it("does not load templates until there is an object", function () {

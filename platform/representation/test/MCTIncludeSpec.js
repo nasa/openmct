@@ -31,6 +31,7 @@ define(
 
         describe("The mct-include directive", function () {
             var testTemplates,
+                testUrls,
                 mockLinker,
                 mockScope,
                 mockElement,
@@ -58,11 +59,21 @@ define(
                         templateUrl: "z/template.html"
                     }
                 ];
-                mockLinker = jasmine.createSpyObj('templateLinker', ['link']);
+                testUrls = {};
+                testTemplates.forEach(function (t, i) {
+                    testUrls[t.key] = "some URL " + String(i);
+                });
+                mockLinker = jasmine.createSpyObj(
+                    'templateLinker',
+                    ['link', 'getPath']
+                );
                 mockScope = jasmine.createSpyObj('$scope', ['$watch', '$on']);
                 mockElement = jasmine.createSpyObj('element', ['empty']);
                 mockChangeTemplate = jasmine.createSpy('changeTemplate');
                 mockLinker.link.andReturn(mockChangeTemplate);
+                mockLinker.getPath.andCallFake(function (template) {
+                    return testUrls[template.key];
+                });
                 mctInclude = new MCTInclude(testTemplates, mockLinker);
                 mctInclude.link(mockScope, mockElement, {});
             });
@@ -80,14 +91,13 @@ define(
                 mockScope.key = 'abc';
                 fireWatch('key', mockScope.key);
                 expect(mockChangeTemplate)
-                    .toHaveBeenCalledWith("a/b/c/template.html");
+                    .toHaveBeenCalledWith(testUrls.abc);
 
                 mockScope.key = 'xyz';
                 fireWatch('key', mockScope.key);
                 expect(mockChangeTemplate)
-                    .toHaveBeenCalledWith("x/y/z/template.html");
+                    .toHaveBeenCalledWith(testUrls.xyz);
             });
-
 
         });
     }

@@ -69,6 +69,16 @@ define(
                 );
             });
 
+            it("resolves extension paths", function () {
+                expect(linker.getPath({
+                    bundle: {
+                        path: 'a',
+                        resources: 'b'
+                    },
+                    templateUrl: 'c/d.html'
+                })).toEqual('a/b/c/d.html');
+            });
+
             describe("when linking elements", function () {
                 var changeTemplate,
                     commentElement;

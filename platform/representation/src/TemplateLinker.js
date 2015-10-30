@@ -62,6 +62,20 @@ define(
         };
 
         /**
+         * Get a path to a template from an extension definition fo
+         * a template, representation, or view.
+         * @param {TemplateDefinition} extensionDefinition the definition
+         *        of the template/representation/view to resolve
+         */
+        TemplateLinker.prototype.getPath = function (extensionDefinition) {
+            return [
+                extensionDefinition.bundle.path,
+                extensionDefinition.bundle.resources,
+                extensionDefinition.templateUrl
+            ].join('/');
+        };
+
+        /**
          * Populate the given element with templates, within the given scope;
          * intended to support the `link` function of the supported directives.
          *
