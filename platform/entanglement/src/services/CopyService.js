@@ -114,7 +114,6 @@ define(
                             return modelClone;
                         });
                 });
-
             };
             return copy(domainObject, parent).then(function(){
                 return clones;
@@ -137,7 +136,7 @@ define(
                 return self.$q.all(objectClones.map(function(clone, index){
                     return self.persistenceService.createObject(clone.persistenceSpace, clone.model.id, clone.model)
                         .then(function(){
-                            progress("copying", objectClones.length, ++persisted);
+                            progress && progress("copying", objectClones.length, ++persisted);
                         });
                 })).then(function(){ return objectClones});
             }
@@ -177,7 +176,7 @@ define(
             var $q = this.$q,
                 self = this;
             if (this.validate(domainObject, parent)) {
-                progress("preparing");
+                progress && progress("preparing");
                 return this.buildCopyPlan(domainObject, parent)
                     .then(self.persistObjects(progress))
                     .then(self.addClonesToParent(parent, progress));

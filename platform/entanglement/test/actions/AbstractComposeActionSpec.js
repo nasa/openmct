@@ -140,7 +140,7 @@ define(
                             .args[0](newParent);
 
                         expect(composeService.perform)
-                            .toHaveBeenCalledWith(selectedObject, newParent);
+                            .toHaveBeenCalledWith(selectedObject, newParent, undefined);
                     });
                 });
             });

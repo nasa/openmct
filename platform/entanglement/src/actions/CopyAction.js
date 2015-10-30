@@ -66,15 +66,12 @@ define(
                     }
                     notificationModel.progress = (processed / totalObjects) * 100;
                     notificationModel.title = ["Copied ", processed, "of ", totalObjects, "objects"].join(" ");
-                    if (processed === totalObjects){
-                        notification.dismiss();
-                        self.notificationService.info(["Successfully copied ", totalObjects, " items."].join(""));
-                    }
                 }
             }
 
             AbstractComposeAction.prototype.perform.call(this, progress)
                 .then(function(){
+                    notification.dismiss();
                     self.notificationService.info("Copying complete.");
                     })
                 .catch(function (error){
