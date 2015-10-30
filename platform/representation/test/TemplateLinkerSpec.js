@@ -27,7 +27,8 @@ define(
     function (TemplateLinker) {
         'use strict';
 
-        var JQLITE_METHODS = [ 'replaceWith', 'empty', 'append' ];
+        var JQLITE_METHODS = [ 'replaceWith', 'empty', 'append' ],
+            SCOPE_METHODS = [ '$on', '$new', '$destroy' ];
 
         describe("TemplateLinker", function () {
             var mockTemplateRequest,
@@ -38,6 +39,7 @@ define(
                 mockElement,
                 mockTemplates,
                 mockElements,
+                mockNewScope,
                 mockPromise,
                 linker;
 
@@ -46,7 +48,8 @@ define(
                 mockSce = jasmine.createSpyObj('$sce', ['trustAsResourceUrl']);
                 mockCompile = jasmine.createSpy('$compile');
                 mockLog = jasmine.createSpyObj('$log', ['error', 'warn']);
-                mockScope = jasmine.createSpyObj('$scope', ['$on']);
+                mockScope = jasmine.createSpyObj('$scope', SCOPE_METHODS);
+                mockNewScope = jasmine.createSpyObj('$scope', SCOPE_METHODS);
                 mockElement = jasmine.createSpyObj('element', JQLITE_METHODS);
                 mockPromise = jasmine.createSpyObj('promise', ['then']);
                 mockTemplates = {};
@@ -63,6 +66,7 @@ define(
                 mockSce.trustAsResourceUrl.andCallFake(function (url) {
                     return { trusted: url };
                 });
+                mockScope.$new.andReturn(mockNewScope);
 
                 linker = new TemplateLinker(
                     mockTemplateRequest,
@@ -131,10 +135,10 @@ define(
                         }, false);
                     });
 
-                    it("compiles loaded templates with linked scope", function () {
+                    it("compiles loaded templates with a new scope", function () {
                         expect(mockCompile).toHaveBeenCalledWith(testTemplate);
                         expect(mockTemplates[testTemplate])
-                            .toHaveBeenCalledWith(mockScope);
+                            .toHaveBeenCalledWith(mockNewScope);
                     });
 
                     it("replaces comments with specified element", function () {
