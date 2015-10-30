@@ -7,7 +7,7 @@
                 "provides": "formatService",
                 "type": "provider",
                 "implementation": "FormatProvider.js",
-                "depends": [ "formats[]" ]
+                "depends": [ "formats[]", "$log" ]
             }
         ],
         "formats": [
