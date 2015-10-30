@@ -122,7 +122,9 @@ define(
         }
 
         /**
-         * Will persist a list of {@link objectClones}.
+         * Will persist a list of {@link objectClones}. It will persist all
+         * simultaneously, irrespective of order in the list. This may
+         * result in automatic request batching by the browser.
          * @private
          * @param progress
          * @returns {Function} a function that will perform the persistence

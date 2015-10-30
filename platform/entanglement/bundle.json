@@ -20,7 +20,8 @@
                 "glyph": "+",
                 "category": "contextual",
                 "implementation": "actions/CopyAction.js",
-                "depends": ["locationService", "copyService", "dialogService", "notificationService"]
+                "depends": ["$log", "locationService", "copyService",
+                    "dialogService", "notificationService"]
             },
             {
                 "key": "link",

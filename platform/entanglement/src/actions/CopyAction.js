@@ -34,9 +34,10 @@ define(
          * @constructor
          * @memberof platform/entanglement
          */
-        function CopyAction(locationService, copyService, dialogService, notificationService, context) {
+        function CopyAction($log, locationService, copyService, dialogService, notificationService, context) {
             this.dialogService = dialogService;
             this.notificationService = notificationService;
+            this.$log = $log;
             AbstractComposeAction.call(this, locationService, copyService, context, "Duplicate", "to a location");
         }
 
@@ -75,9 +76,9 @@ define(
             AbstractComposeAction.prototype.perform.call(this, progress)
                 .then(function(){
                     self.notificationService.info("Copying complete.");
-                    },
-                    function (error){
-                        //log error
+                    })
+                .catch(function (error){
+                        self.$log.error("Error copying objects. ", error);
                         //Show more general error message
                         self.notificationService.notify({
                             title: "Error copying objects.",
