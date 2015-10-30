@@ -36,7 +36,7 @@
             {
                 "key": "TIME_CONDUCTOR_DOMAINS",
                 "value": [
-                    { "key": "time", "name": "Time" }
+                    { "key": "time", "name": "UTC", "format": "utc" }
                 ],
                 "priority": "fallback",
                 "comment": "Placeholder; to be replaced by inspection of available domains."
