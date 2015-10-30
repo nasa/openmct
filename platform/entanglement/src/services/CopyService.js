@@ -89,7 +89,8 @@ define(
             function copy(originalObject, originalParent) {
                 //Make a clone of the model of the object to be copied
                 var modelClone = makeClone(originalObject.getModel());
-                modelClone.composition = [];
+                delete modelClone.composition;
+                delete modelClone.location;
                 modelClone.id = uuid();
                 return $q.when(originalObject.useCapability('composition')).then(function(composees){
                     return (composees || []).reduce(function(promise, composee){
@@ -101,6 +102,7 @@ define(
                                     //Once copied, associate each cloned
                                     // composee with its parent clone
                                     composeeClone.location = modelClone.id;
+                                    modelClone.composition = modelClone.composition || [];
                                     return modelClone.composition.push(composeeClone.id);
                                 });
                             });}, $q.when(undefined)
@@ -153,13 +155,15 @@ define(
             var self = this;
             return function(clones) {
                 var parentClone = clones[clones.length-1];
-                parentClone.model.location = parent.getId()
-                return self.$q.when(
-                    parent.hasCapability('composition') &&
-                    parent.getCapability('composition').add(parentClone.model.id)
-                        .then(function(){
-                            parent.getCapability("persistence").persist()
-                        }));
+                if (!parent.hasCapability('composition')){
+                    self.$q.reject();
+                }
+                parentClone.model.location = parent.getId();
+                
+                return self.persistenceService
+                    .updateObject(parentClone.persistenceSpace, parentClone.model.id, parentClone.model)
+                    .then(function(){return parent.getCapability('composition').add(parentClone.model.id)})
+                    .then(function(){return parent.getCapability("persistence").persist()});
             }
         }
 
@@ -173,13 +177,12 @@ define(
          * successful, otherwise an error is thrown.
          */
         CopyService.prototype.perform = function (domainObject, parent, progress) {
-            var $q = this.$q,
-                self = this;
+            var $q = this.$q;
             if (this.validate(domainObject, parent)) {
                 progress && progress("preparing");
                 return this.buildCopyPlan(domainObject, parent)
-                    .then(self.persistObjects(progress))
-                    .then(self.addClonesToParent(parent, progress));
+                        .then(this.persistObjects(progress))
+                        .then(this.addClonesToParent(parent, progress));
             } else {
                 throw new Error(
                     "Tried to copy objects without validating first."
