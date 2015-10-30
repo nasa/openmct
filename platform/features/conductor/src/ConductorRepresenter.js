@@ -140,8 +140,6 @@ define(
                 .$watch('ngModel.conductor.inner.end', updateConductorInner);
             conductorScope
                 .$watch('ngModel.domain', updateDomain);
-
-            repScope.$on('telemetry:view', broadcastBounds);
         };
 
         ConductorRepresenter.prototype.conductorScope = function (s) {
