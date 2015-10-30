@@ -37,8 +37,10 @@ define(
          * @memberof platform/telemetry
          * @constructor
          */
-        function TelemetryFormatter(formatService) {
+        function TelemetryFormatter(formatService, defaultFormatKey, $log) {
             this.formatService = formatService;
+            this.defaultFormat = formatService.getFormat(defaultFormatKey);
+            this.$log = $log;
         }
 
         /**
@@ -51,9 +53,11 @@ define(
          *        data and time, suitable for display.
          */
         TelemetryFormatter.prototype.formatDomainValue = function (v, key) {
-            var formatter = this.formatService.getFormat(key) ||
-                    this.formatService.getFormat('utc');
-            return isNaN(v) ? "" : formatter.format(v);
+            var formatter = (key === undefined) ?
+                    this.defaultFormat :
+                    this.formatService.getFormat(key);
+
+            return isNaN(v) ? "" : formatter ? formatter.format(v) : String(v);
         };
 
         /**

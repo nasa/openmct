@@ -38,7 +38,7 @@
             {
                 "key": "telemetryFormatter",
                 "implementation": "TelemetryFormatter.js",
-                "depends": [ "formatService" ]
+                "depends": [ "formatService", "DEFAULT_TIME_FORMAT", "$log" ]
             },
             {
                 "key": "telemetrySubscriber",

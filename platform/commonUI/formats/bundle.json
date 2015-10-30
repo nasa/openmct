@@ -15,6 +15,12 @@
                 "key": "utc",
                 "implementation": "UTCTimeFormat.js"
             }
+        ],
+        "constants": [
+            {
+                "key": "DEFAULT_TIME_FORMAT",
+                "value": "utc"
+            }
         ]
     }
 }
