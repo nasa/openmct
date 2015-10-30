@@ -131,22 +131,20 @@ define(
             }
 
             function changeTemplate(templateUrl) {
-                if (templateUrl !== activeTemplateUrl) {
-                    if (templateUrl) {
-                        addElement();
-                        self.load(templateUrl).then(function (template) {
-                            // Avoid race conditions
-                            if (templateUrl === activeTemplateUrl) {
-                                populateElement(template);
-                            }
-                        }, function () {
-                            badTemplate(templateUrl);
-                        });
-                    } else {
-                        removeElement();
-                    }
-                    activeTemplateUrl = templateUrl;
+                if (templateUrl) {
+                    addElement();
+                    self.load(templateUrl).then(function (template) {
+                        // Avoid race conditions
+                        if (templateUrl === activeTemplateUrl) {
+                            populateElement(template);
+                        }
+                    }, function () {
+                        badTemplate(templateUrl);
+                    });
+                } else {
+                    removeElement();
                 }
+                activeTemplateUrl = templateUrl;
             }
 
             if (templateUrl) {
