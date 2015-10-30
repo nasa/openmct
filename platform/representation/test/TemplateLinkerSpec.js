@@ -27,7 +27,7 @@ define(
     function (TemplateLinker) {
         'use strict';
 
-        var JQLITE_METHODS = [ 'replaceWith', 'empty', 'append' ],
+        var JQLITE_METHODS = [ 'replaceWith', 'empty', 'html', 'contents' ],
             SCOPE_METHODS = [ '$on', '$new', '$destroy' ];
 
         describe("TemplateLinker", function () {
@@ -39,6 +39,7 @@ define(
                 mockElement,
                 mockTemplates,
                 mockElements,
+                mockContents,
                 mockNewScope,
                 mockPromise,
                 linker;
@@ -54,9 +55,12 @@ define(
                 mockPromise = jasmine.createSpyObj('promise', ['then']);
                 mockTemplates = {};
                 mockElements = {};
+                mockContents = {};
 
                 mockTemplateRequest.andReturn(mockPromise);
-                mockCompile.andCallFake(function (html) {
+                mockCompile.andCallFake(function (toCompile) {
+                    var html = typeof toCompile === 'string' ?
+                            toCompile : toCompile.testHtml;
                     mockTemplates[html] = jasmine.createSpy('template');
                     mockElements[html] =
                         jasmine.createSpyObj('templateEl', JQLITE_METHODS);
@@ -67,6 +71,16 @@ define(
                     return { trusted: url };
                 });
                 mockScope.$new.andReturn(mockNewScope);
+                mockElement.html.andCallFake(function (html) {
+                    mockContents[html] =
+                        jasmine.createSpyObj('contentsEl', JQLITE_METHODS);
+                    mockContents[html].testHtml = html;
+                });
+                mockElement.contents.andCallFake(function () {
+                    return mockContents[
+                        mockElement.html.mostRecentCall.args[0]
+                    ];
+                });
 
                 linker = new TemplateLinker(
                     mockTemplateRequest,
@@ -135,8 +149,9 @@ define(
                         }, false);
                     });
 
-                    it("compiles loaded templates with a new scope", function () {
-                        expect(mockCompile).toHaveBeenCalledWith(testTemplate);
+                    it("compiles element contents with a new scope", function () {
+                        expect(mockCompile)
+                            .toHaveBeenCalledWith(mockContents[testTemplate]);
                         expect(mockTemplates[testTemplate])
                             .toHaveBeenCalledWith(mockNewScope);
                     });
@@ -146,9 +161,9 @@ define(
                             .toHaveBeenCalledWith(mockElement);
                     });
 
-                    it("appends rendered content to the specified element", function () {
-                        expect(mockElement.append)
-                            .toHaveBeenCalledWith(mockElements[testTemplate]);
+                    it("inserts HTML content into the specified element", function () {
+                        expect(mockElement.html)
+                            .toHaveBeenCalledWith(testTemplate);
                     });
 
                     it("clears templates when called with undefined", function () {

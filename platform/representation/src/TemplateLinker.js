@@ -121,8 +121,8 @@ define(
             function populateElement(template) {
                 destroyScope();
                 activeScope = scope.$new(false);
-                element.empty();
-                element.append(self.$compile(template)(activeScope));
+                element.html(template);
+                self.$compile(element.contents())(activeScope);
             }
 
             function badTemplate(templateUrl) {
