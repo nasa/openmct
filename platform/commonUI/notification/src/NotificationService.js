@@ -216,15 +216,48 @@ define(
          * A convenience method for info notifications. Notifications
          * created via this method will be auto-dismissed after a default
          * wait period
-         * @param {NotificationModel} notificationModel Options describing the
-         * notification to display
+         * @param {NotificationModel | string} message either a string for
+         * the title of the notification message, or a {@link NotificationModel}
+         * defining the options notification to display
          * @returns {Notification} the provided notification decorated with
          * functions to dismiss or minimize
          */
-        NotificationService.prototype.info = function (model) {
+        NotificationService.prototype.info = function (notification) {
             var notificationModel = typeof model === "string" ? {title: model} : model
             notificationModel.autoDismiss = notificationModel.autoDismiss || true;
             notificationModel.severity = "info";
+            return this.notify(notificationModel);
+        };
+
+        /**
+         * A convenience method for alert notifications. Notifications
+         * created via this method will will have severity of "alert" enforced
+         * @param {NotificationModel | string} message either a string for
+         * the title of the alert message with default options, or a
+         * {@link NotificationModel} defining the options notification to
+         * display
+         * @returns {Notification} the provided notification decorated with
+         * functions to dismiss or minimize
+         */
+        NotificationService.prototype.alert = function (model) {
+            var notificationModel = typeof model === "string" ? {title: model} : model
+            notificationModel.severity = "alert";
+            return this.notify(notificationModel);
+        };
+
+        /**
+         * A convenience method for error notifications. Notifications
+         * created via this method will will have severity of "error" enforced
+         * @param {NotificationModel | string} message either a string for
+         * the title of the error message with default options, or a
+         * {@link NotificationModel} defining the options notification to
+         * display
+         * @returns {Notification} the provided notification decorated with
+         * functions to dismiss or minimize
+         */
+        NotificationService.prototype.error = function (model) {
+            var notificationModel = typeof model === "string" ? {title: model} : model
+            notificationModel.severity = "error";
             return this.notify(notificationModel);
         };
 
