@@ -57,6 +57,16 @@ define(
                 expect(activeNotification.model).toBe(successModel);
             });
 
+            it("allows specification of an info notification given just a" +
+                " title, making the notification active", function() {
+                var activeNotification,
+                    notificationTitle = "Test info notification";
+                notificationService.info(notificationTitle);
+                activeNotification = notificationService.getActiveNotification();
+                expect(activeNotification.model.title).toBe(notificationTitle);
+                expect(activeNotification.model.severity).toBe("info");
+            });
+
             it("gets a new success notification with" +
                 " numerical auto-dismiss specified. ", function() {
                 var activeNotification;
