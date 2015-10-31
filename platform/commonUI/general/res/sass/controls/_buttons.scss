@@ -222,6 +222,8 @@ $pad: $interiorMargin * $baseRatio;
         position: absolute;
         height: $d; width: $d;
         line-height: $d;
+        overflow: hidden;
+        word-break: break-all;
 
         &:before,
         &:after {
@@ -235,7 +237,7 @@ $pad: $interiorMargin * $baseRatio;
 
         &:hover {
             color: $colorKey;
-            @include transform(scale(1.2));
+            //@include transform(scale(1.2));
         }
     }
 }
