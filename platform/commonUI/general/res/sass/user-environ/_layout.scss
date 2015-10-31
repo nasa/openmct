@@ -316,11 +316,6 @@
                     right: $interiorMargin;
                 }
             }
-/*            &.toggle-search.anchor-left {
-                &:before {
-                    content:"M"
-                }
-            }*/
         }
     }
 
@@ -510,6 +505,9 @@
 }
 
 @include desktop {
+    .pane.treeview.left .tree-holder {
+        padding-right: $interiorMargin;
+    }
     .pane-tree-hidden {
         .pane.right.primary-pane { left: $ueCollapsedPaneEdgeM !important; }
     }
