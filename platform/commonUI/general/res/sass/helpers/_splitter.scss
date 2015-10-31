@@ -42,22 +42,20 @@
             @include border-radius($splitterEndCr);
         }
     }
-    &:not(:active) {
-        &:after {
-            @include trans-prop-nice(background-color, 150ms);
-        }
-    }
     &:active {
+        //@include test();
         &:after {
             background-color: $colorSplitterActive !important;
         }
     }
 
     @if $colorSplitterHover != 'none' {
-        &:hover {
-            &:after {
-                @include trans-prop-nice(background-color, 150ms);
-                background-color: $colorSplitterHover;
+        &:not(:active) {
+            &:hover {
+                &:after {
+                    background-color: $colorSplitterHover !important;
+                    @include trans-prop-nice(background-color, 150ms);
+                }
             }
         }
     }

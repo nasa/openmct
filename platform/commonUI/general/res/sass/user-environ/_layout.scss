@@ -95,9 +95,7 @@
 }
 
 .user-environ {
-
     .browse-area,
-    .edit-area,
     .editor {
         top: 0; left: 0; right: 0; bottom: $ueFooterH;
     }
@@ -113,13 +111,17 @@
     .edit-area {
         $tbH: $btnToolbarH + $interiorMargin;
         top: $bodyMargin + $ueTopBarEditH + ($interiorMargin);
+        left: $bodyMargin;
+        right: $bodyMargin;
+        bottom: $bodyMargin + $ueFooterH;
         .tool-bar {
             bottom: auto;
             height: $tbH;
             line-height: $btnToolbarH;
         }
-        .work-area {
+        .object-holder.work-area {
             top: $tbH + $interiorMargin * 2;
+            overflow: auto;
         }
     }
 
