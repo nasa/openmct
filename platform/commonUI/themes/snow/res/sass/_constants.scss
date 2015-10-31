@@ -76,11 +76,12 @@ $colorSelectBg: #ddd;
 $colorSelectFg: $colorBodyFg;
 
 // Inspector
+$colorInspectorBg: pullForward($colorBodyBg, 5%);
 $colorInspectorFg: $colorBodyFg;
 $colorInspectorPropName: pushBack($colorBodyFg, 20%);
-$colorInspectorPropVal: $colorInspectorFg;
-$colorInspectorSectionHeaderBg: pullForward($colorBodyBg, 5%);
-$colorInspectorSectionHeaderFg: pullForward($colorBodyBg, 40%);
+$colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
+$colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
+$colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Limits and staleness colors//
 $colorTelemFresh: pullForward($colorBodyFg, 20%);

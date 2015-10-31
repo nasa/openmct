@@ -74,11 +74,12 @@ $colorFormText: rgba(#fff, 0.5);
 $colorInputIcon: pushBack($colorBodyFg, 15%);
 
 // Inspector
+$colorInspectorBg: pullForward($colorBodyBg, 3%);
 $colorInspectorFg: $colorBodyFg;
-$colorInspectorPropName: pushBack($colorBodyFg, 20%);
-$colorInspectorPropVal: $colorInspectorFg;
-$colorInspectorSectionHeaderBg: pullForward($colorBodyBg, 5%);
-$colorInspectorSectionHeaderFg: pullForward($colorBodyBg, 40%);
+$colorInspectorPropName: pushBack($colorBodyFg, 15%);
+$colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
+$colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
+$colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Selects
 $colorSelectBg: $colorBtnBg;

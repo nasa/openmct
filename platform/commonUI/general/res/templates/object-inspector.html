@@ -25,18 +25,18 @@
     <ul>
         <li>
             <em>Properties</em>
-            <table>
-                <tr ng-repeat="data in metadata">
-                    <td class="label">{{ data.name }}</td>
-                    <td class="value">{{ data.value }}</td>
-                </tr>
-            </table>
+            <div class="inspector-properties"
+                 ng-repeat="data in metadata"
+                 ng-class="{ first:$index === 0 }">
+                <div class="label">{{ data.name }}</div>
+                <div class="value">{{ data.value }}</div>
+            </div>
         </li>
         <li ng-if="contextutalParents.length > 0">
             <em title="The location of this linked object.">Location</em>
             <span class="inspector-location"
                   ng-repeat="parent in contextutalParents"
-                  ng-class="{ first:$index === 0 }">
+                  ng-class="{ last:($index + 1) === contextualParents.length }">
                 <mct-representation key="'label'"
                                     mct-object="parent"
                                     ng-model="ngModel"
@@ -49,7 +49,7 @@
             <em title="The location of the original object that this was linked from.">Original Location</em>
             <span class="inspector-location"
                   ng-repeat="parent in primaryParents"
-                  ng-class="{ first:$index === 0 }">
+                  ng-class="{ last:($index + 1) === primaryParents.length }">
                 <mct-representation key="'label'"
                                     mct-object="parent"
                                     ng-model="ngModel"

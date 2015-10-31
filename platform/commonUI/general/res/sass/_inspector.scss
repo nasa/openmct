@@ -27,9 +27,10 @@
 }
 
 .l-inspect {
-    background: pullForward($colorBodyBg, 3%);
     @extend .abs;
+    background: $colorInspectorBg;
     color: $colorInspectorFg;
+    line-height: 140%;
     .pane-header {
         color: pushBack($colorInspectorFg, 20%);
         font-size: 0.8rem;
@@ -42,7 +43,7 @@
     }
 
     ul li {
-        margin-bottom: $interiorMarginLg * 2;
+        margin-bottom: $interiorMarginLg;
     }
     
     em {
@@ -54,29 +55,23 @@
         text-transform: uppercase;
     }
 
-    table tr {
-        td {
-            border: none;
-            border-top: 1px solid $colorInteriorBorder !important;
-            padding: 2px 0;
-            vertical-align: top;
-            &.label {
-                color: $colorInspectorPropName !important;
-                padding-right: $interiorMargin !important;
-                white-space: nowrap;
-            }
-            &.value {
-                word-break: break-all;
-            }
+    .inspector-properties {
+        &:not(.first) {
+            border-top: 1px solid $colorInspectorSectionHeaderBg;
         }
-
-        &:first-child td {
-            border-top: none !important;
+        padding: $interiorMarginSm 0;
+        .label {
+            color: $colorInspectorPropName;
+            text-transform: uppercase;
+        }
+        .value {
+            color: $colorInspectorPropVal;
+            word-break: break-all;
         }
     }
-    
+
     .inspector-location {
-        line-height: 180%;
+        //line-height: 180%;
         .location-item {
             cursor: pointer;
             display: inline-block;
@@ -90,12 +85,14 @@
                 }
             }
         }
-        &:not(.first):before {
+        &:not(.last) .t-object-label .t-title-label:after {
             color: pushBack($colorInspectorFg, 15%);
             content: '\3e';
             display: inline-block;
             font-family: symbolsfont;
-            font-size:7px;
+            font-size: 8px;
+            line-height: inherit;
+            margin-left: $interiorMarginSm;
             width: 4px;
         }
     }
