@@ -40,12 +40,10 @@ define(
          *        domain values
          * @param {string} defaultFormatKey the format to request when no
          *        format has been otherwise specified
-         * @param $log Angular's `$log`, to log warnings
          */
-        function TelemetryFormatter(formatService, defaultFormatKey, $log) {
+        function TelemetryFormatter(formatService, defaultFormatKey) {
             this.formatService = formatService;
             this.defaultFormat = formatService.getFormat(defaultFormatKey);
-            this.$log = $log;
         }
 
         /**
@@ -62,7 +60,7 @@ define(
                     this.defaultFormat :
                     this.formatService.getFormat(key);
 
-            return isNaN(v) ? "" : formatter ? formatter.format(v) : String(v);
+            return isNaN(v) ? "" : formatter.format(v);
         };
 
         /**

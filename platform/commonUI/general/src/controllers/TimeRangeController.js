@@ -26,9 +26,7 @@ define(
     function (moment) {
         "use strict";
 
-        var TICK_SPACING_PX = 150,
-            UNRECOGNIZED_FORMAT_ERROR =
-                "Unrecognized format for time range control.";
+        var TICK_SPACING_PX = 150;
 
 
         /**
@@ -221,11 +219,6 @@ define(
 
             function updateFormat(key) {
                 formatter = formatService.getFormat(key || defaultFormat);
-
-                if (!formatter) {
-                    throw new Error(UNRECOGNIZED_FORMAT_ERROR);
-                }
-
                 updateViewForInnerSpanFromModel($scope.ngModel);
                 updateTicks();
             }

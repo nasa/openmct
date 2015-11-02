@@ -26,9 +26,6 @@ define(
     function () {
         'use strict';
 
-        var UNRECOGNIZED_FORMAT_ERROR =
-            "Unrecognized format for date-time field.";
-
         /**
          * Controller to support the date-time entry field.
          *
@@ -69,9 +66,6 @@ define(
 
             function setFormat(format) {
                 formatter = formatService.getFormat(format || defaultFormat);
-                if (!formatter) {
-                    throw new Error(UNRECOGNIZED_FORMAT_ERROR);
-                }
                 updateFromModel($scope.ngModel[$scope.field]);
             }
 
