@@ -85,7 +85,7 @@ define([
      * @param {Array.<function(new : Format)>} format constructors,
      *        from the `formats` extension category.
      */
-    function FormatProvider(formats, $log) {
+    function FormatProvider(formats) {
         var formatMap = {};
 
         function addToMap(Format) {
@@ -97,13 +97,12 @@ define([
 
         formats.forEach(addToMap);
         this.formatMap = formatMap;
-        this.$log = $log;
     }
 
     FormatProvider.prototype.getFormat = function (key) {
         var format = this.formatMap[key];
         if (!format) {
-            this.$log.warn("No format found for " + key);
+            throw new Error("FormatProvider: No format found for " + key);
         }
         return format;
     };
