@@ -88,10 +88,13 @@ define(
              */
             function copy(originalObject, originalParent) {
                 //Make a clone of the model of the object to be copied
-                var modelClone = makeClone(originalObject.getModel());
-                delete modelClone.composition;
-                delete modelClone.location;
-                modelClone.id = uuid();
+                var modelClone = {
+                        id: uuid(),
+                        model: makeClone(originalObject.getModel()),
+                        persistenceSpace: originalParent.getCapability('persistence')
+                    }
+                delete modelClone.model.composition;
+                delete modelClone.model.location;
                 return $q.when(originalObject.useCapability('composition')).then(function(composees){
                     return (composees || []).reduce(function(promise, composee){
                             //If the object is composed of other
@@ -101,18 +104,15 @@ define(
                                 return copy(composee, originalObject).then(function(composeeClone){
                                     //Once copied, associate each cloned
                                     // composee with its parent clone
-                                    composeeClone.location = modelClone.id;
-                                    modelClone.composition = modelClone.composition || [];
-                                    return modelClone.composition.push(composeeClone.id);
+                                    composeeClone.model.location = modelClone.id;
+                                    modelClone.model.composition = modelClone.model.composition || [];
+                                    return modelClone.model.composition.push(composeeClone.id);
                                 });
                             });}, $q.when(undefined)
                     ).then(function (){
                             //Add the clone to the list of clones that will
                             //be returned by this function
-                            clones.push({
-                                model: modelClone,
-                                persistenceSpace: originalParent.getCapability('persistence')
-                            });
+                            clones.push(modelClone);
                             return modelClone;
                         });
                 });
@@ -136,11 +136,13 @@ define(
                 self = this;
             return function(objectClones) {
                 return self.$q.all(objectClones.map(function(clone, index){
-                    return self.persistenceService.createObject(clone.persistenceSpace, clone.model.id, clone.model)
+                    return self.persistenceService.createObject(clone.persistenceSpace, clone.id, clone.model)
                         .then(function(){
                             progress && progress("copying", objectClones.length, ++persisted);
                         });
-                })).then(function(){ return objectClones});
+                })).then(function(qall){ 
+                    return objectClones
+                });
             }
         }
 
@@ -161,8 +163,8 @@ define(
                 parentClone.model.location = parent.getId();
                 
                 return self.persistenceService
-                    .updateObject(parentClone.persistenceSpace, parentClone.model.id, parentClone.model)
-                    .then(function(){return parent.getCapability('composition').add(parentClone.model.id)})
+                    .updateObject(parentClone.persistenceSpace, parentClone.id, parentClone.model)
+                    .then(function(){return parent.getCapability('composition').add(parentClone.id)})
                     .then(function(){return parent.getCapability("persistence").persist()});
             }
         }

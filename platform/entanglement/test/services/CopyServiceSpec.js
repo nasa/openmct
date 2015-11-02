@@ -125,10 +125,12 @@ define(
                     creationService,
                     createObjectPromise,
                     copyService,
+                    mockPersistenceService,
                     object,
                     newParent,
                     copyResult,
-                    copyFinished;
+                    copyFinished,
+                    persistObjectPromise;
 
                 beforeEach(function () {
                     creationService = jasmine.createSpyObj(
@@ -138,6 +140,13 @@ define(
                     createObjectPromise = synchronousPromise(undefined);
                     creationService.createObject.andReturn(createObjectPromise);
                     policyService.allow.andReturn(true);
+                    
+                    mockPersistenceService = jasmine.createSpyObj(
+                        'persistenceService',
+                        ['createObject']
+                    );
+                    persistObjectPromise = synchronousPromise(undefined);
+                    mockPersistenceService.createObject.andReturn(persistObjectPromise);
                 });
 
                 describe("on domain object without composition", function () {
@@ -156,26 +165,32 @@ define(
                                 composition: []
                             }
                         });
-                        copyService = new CopyService(null, creationService, policyService);
+                        mockQ = jasmine.createSpyObj('mockQ', ['when', 'all', 'reject']);
+                        mockQ.when.andCallFake(synchronousPromise);
+                        mockQ.all.andCallFake(synchronousPromise);
+                        copyService = new CopyService(mockQ, creationService, policyService, mockPersistenceService);
                         copyResult = copyService.perform(object, newParent);
                         copyFinished = jasmine.createSpy('copyFinished');
                         copyResult.then(copyFinished);
                     });
 
-                    it("uses creation service", function () {
+                    /**
+                     * Test invalidated. Copy service no longer uses creation service.
+                     */
+                    /*it("uses creation service", function () {
                         expect(creationService.createObject)
                             .toHaveBeenCalledWith(jasmine.any(Object), newParent);
 
                         expect(createObjectPromise.then)
                             .toHaveBeenCalledWith(jasmine.any(Function));
-                    });
+                    });*/
 
                     it("deep clones object model", function () {
-                        var newModel = creationService
+                        //var newModel = creationService
+                        var newModel = mockPersistenceService
                             .createObject
                             .mostRecentCall
-                            .args[0];
-
+                            .args[2];
                         expect(newModel).toEqual(object.model);
                         expect(newModel).not.toBe(object.model);
                     });
