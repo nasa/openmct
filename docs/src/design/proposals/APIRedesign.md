@@ -928,6 +928,8 @@ Should also consider:
 * Merge `subscribe` functionality into `request`; that is, handle
   real-time data as just another thing that triggers the `request`
   callback.
+* Add a useful API to telemetry metadata, allowing things like
+  formats to be retrieved directly from there.
 
 As a consequence of this, `request` would need to return an object
 representing the active request. This would need to be able to
