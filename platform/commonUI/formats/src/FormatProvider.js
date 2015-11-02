@@ -72,9 +72,11 @@ define([
 
     /**
      * Look up a format by its symbolic identifier.
+     * @method getFormat
+     * @memberof FormatService#
      * @param {string} key the identifier for this format
-     * @returns {Format} the format, or `undefined` if no such format
-     *                   is known.
+     * @returns {Format} the format
+     * @throws {Error} errors when the requested format is unrecognized
      */
 
     /**
