@@ -310,7 +310,7 @@
             &.toggle-inspect.anchor-right {
                 right: $bodyMargin;
                 &:after {
-                    content: '\e608';  // Info "i" icon
+                    content: '\e615';  // e615: Crosshair icon; was e608: Info "i" icon
                 }
                 &.collapsed {
                     right: $interiorMargin;

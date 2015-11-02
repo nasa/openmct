@@ -34,6 +34,14 @@
     .pane-header {
         color: pushBack($colorInspectorFg, 20%);
         font-size: 0.8rem;
+        &:before {
+            color: pushBack($colorInspectorFg, 10%);
+            content:'\e615'; // e615 Crosshair symbol
+            display: inline;
+            font-family: symbolsfont;
+            margin-right: $interiorMarginSm;
+            vertical-align: bottom;
+        }
     }
 
     ul li,
