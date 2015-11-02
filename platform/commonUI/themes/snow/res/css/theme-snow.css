@@ -1289,7 +1289,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
       content: '\e615';
       display: inline;
       font-family: symbolsfont;
-      margin-right: 3px;
+      margin-right: 5px;
       vertical-align: bottom; }
   /* line 47, ../../../../general/res/sass/_inspector.scss */
   .l-inspect ul li,
