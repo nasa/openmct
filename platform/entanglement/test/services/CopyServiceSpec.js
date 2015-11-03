@@ -243,7 +243,7 @@ define(
 
                     beforeEach(function () {
                         mockQ = jasmine.createSpyObj('mockQ', ['when', 'all', 'reject']);
-                        //mockQ.when.andCallFake(synchronousPromise);
+                        mockQ.when.andCallFake(synchronousPromise);
                         mockQ.all.andCallFake(function (promises) {
                             var result = {};
                             Object.keys(promises).forEach(function (k) {
@@ -272,7 +272,7 @@ define(
 
                         compositionCapability
                             .invoke
-                            .andReturn(compositionPromise);
+                            .andReturn(synchronousPromise([childObject]));
 
                         object = domainObjectFactory({
                             name: 'object',
@@ -306,10 +306,10 @@ define(
 
                         createObjectPromise = synchronousPromise(newObject);
                         creationService.createObject.andReturn(createObjectPromise);
-                        copyService = new CopyService(mockQ, creationService, policyService);
+                        copyService = new CopyService(mockQ, creationService, policyService, mockPersistenceService);
                         console.log("Before perform");
-                        compositionPromise.then.andReturn(synchronousPromise([childObject]));
-                        mockQ.when.andReturn(compositionPromise);
+                        //compositionPromise.then.andReturn(synchronousPromise([childObject]));
+                        //mockQ.when.andReturn(compositionPromise);
                         copyResult = copyService.perform(object, newParent);
                         console.log("After perform");
                         //compositionPromise.then.mostRecentCall.args[0]([childObject]);
@@ -330,8 +330,9 @@ define(
                     });*/
 
                     it("uses persistence service", function () {
+                        //Need a better way of testing duplication here.
                         expect(mockPersistenceService.createObject)
-                            .toHaveBeenCalledWith(persistenceCapability, jasmine.any(String), newParent);
+                            .toHaveBeenCalledWith(persistenceCapability, jasmine.any(String), jasmine.any(Object));
 
                         expect(createObjectPromise.then)
                             .toHaveBeenCalledWith(jasmine.any(Function));
