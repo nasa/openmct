@@ -110,11 +110,11 @@ define(
                                 });
                             });}, $q.when(undefined)
                     ).then(function (){
-                            //Add the clone to the list of clones that will
-                            //be returned by this function
-                            clones.push(modelClone);
-                            return modelClone;
-                        });
+                        //Add the clone to the list of clones that will
+                        //be returned by this function
+                        clones.push(modelClone);
+                        return modelClone;
+                    });
                 });
             };
             return copy(domainObject, parent).then(function(){
@@ -158,7 +158,7 @@ define(
             return function(clones) {
                 var parentClone = clones[clones.length-1];
                 if (!parent.hasCapability('composition')){
-                    self.$q.reject();
+                    return self.$q.reject();
                 }
                 parentClone.model.location = parent.getId();
                 

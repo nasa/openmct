@@ -31,6 +31,10 @@ define(
         "use strict";
 
         function synchronousPromise(value) {
+            if (value && value.then) {
+                return value;
+            }
+
             var promise = {
                 then: function (callback) {
                     return synchronousPromise(callback(value));
@@ -143,10 +147,11 @@ define(
                     
                     mockPersistenceService = jasmine.createSpyObj(
                         'persistenceService',
-                        ['createObject']
+                        ['createObject', 'updateObject']
                     );
                     persistObjectPromise = synchronousPromise(undefined);
                     mockPersistenceService.createObject.andReturn(persistObjectPromise);
+                    mockPersistenceService.updateObject.andReturn(persistObjectPromise);
                 });
 
                 describe("on domain object without composition", function () {
@@ -167,7 +172,15 @@ define(
                         });
                         mockQ = jasmine.createSpyObj('mockQ', ['when', 'all', 'reject']);
                         mockQ.when.andCallFake(synchronousPromise);
-                        mockQ.all.andCallFake(synchronousPromise);
+                        //mockQ.all.andCallFake(synchronousPromise);
+                        mockQ.all.andCallFake(function (promises) {
+                            var result = {};
+                            Object.keys(promises).forEach(function (k) {
+                                promises[k].then(function (v) { result[k] = v; });
+                            });
+                            return synchronousPromise(result);
+                        });
+
                         copyService = new CopyService(mockQ, creationService, policyService, mockPersistenceService);
                         copyResult = copyService.perform(object, newParent);
                         copyFinished = jasmine.createSpy('copyFinished');
@@ -209,8 +222,16 @@ define(
                         compositionPromise;
 
                     beforeEach(function () {
-                        mockQ = jasmine.createSpyObj('mockQ', ['when']);
+                        mockQ = jasmine.createSpyObj('mockQ', ['when', 'all', 'reject']);
                         mockQ.when.andCallFake(synchronousPromise);
+                        mockQ.all.andCallFake(function (promises) {
+                            var result = {};
+                            Object.keys(promises).forEach(function (k) {
+                                promises[k].then(function (v) { result[k] = v; });
+                            });
+                            return synchronousPromise(result);
+                        });
+
                         childObject = domainObjectFactory({
                             name: 'childObject',
                             id: 'def',
@@ -220,15 +241,19 @@ define(
                         });
                         compositionCapability = jasmine.createSpyObj(
                             'compositionCapability',
-                            ['invoke']
+                            ['invoke', 'add']
                         );
                         compositionPromise = jasmine.createSpyObj(
                             'compositionPromise',
                             ['then']
                         );
+
+                        compositionPromise.then.andCallFake(synchronousPromise);
+
                         compositionCapability
                             .invoke
                             .andReturn(compositionPromise);
+
                         object = domainObjectFactory({
                             name: 'object',
                             id: 'abc',
@@ -263,23 +288,40 @@ define(
                         creationService.createObject.andReturn(createObjectPromise);
                         copyService = new CopyService(mockQ, creationService, policyService);
                         copyResult = copyService.perform(object, newParent);
+                        compositionPromise.then.mostRecentCall.args[0]([childObject]);
                         copyFinished = jasmine.createSpy('copyFinished');
                         copyResult.then(copyFinished);
                     });
 
-                    it("uses creation service", function () {
+                    /**
+                     * Test no longer valid due to creation service not
+                     * being used
+                     */
+                    /*it("uses creation service", function () {
                         expect(creationService.createObject)
                             .toHaveBeenCalledWith(jasmine.any(Object), newParent);
+
+                        expect(createObjectPromise.then)
+                            .toHaveBeenCalledWith(jasmine.any(Function));
+                    });*/
+
+                    it("uses persistence service", function () {
+                        expect(mockPersistenceService.createObject)
+                            .toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(String), newParent);
 
                         expect(createObjectPromise.then)
                             .toHaveBeenCalledWith(jasmine.any(Function));
                     });
 
                     it("clears model composition", function () {
-                        var newModel = creationService
+                        /*var newModel = creationService
                             .createObject
                             .mostRecentCall
-                            .args[0];
+                            .args[0];*/
+                        var newModel = mockPersistenceService
+                            .createObject
+                            .mostRecentCall
+                            .args[2];
 
                         expect(newModel.composition.length).toBe(0);
                         expect(newModel.name).toBe('some object');
@@ -329,6 +371,10 @@ define(
                         expect(perform).toThrow();
                     });
                 });
+                /**
+                 * Additional tests:
+                 * - Created and persisted dates
+                 */
 
             });
         });
