@@ -1,8 +1,6 @@
-$dirImgs: '../images/'; //Relative to warp.css
-/*$interiorMargin: 5px;
-$interiorMarginLg: $interiorMargin * 2;
-$interiorMarginSm: 3px;*/
-$logoAspect: .17;
+@mixin activityBg($bg, $gamma: 10) {
+    @include background-image(linear-gradient(lighten($bg, $gamma), $bg));
+}
 
 // Timeline constants
 $activityBarH: 17px;

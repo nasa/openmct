@@ -1,0 +1,652 @@
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/************************** FEATURES */
+/************************** VERY INFLUENTIAL GLOBAL DIMENSIONS */
+/************************** RATIOS */
+/************************** LAYOUT */
+/************************** CONTROLS */
+/************************** PATHS */
+/************************** TIMINGS */
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*********************************************** CONTROLS, FORM ELEMENTS */
+/* line 1, ../sass/_activities.scss */
+.l-timeline-gantt {
+  position: absolute;
+  top: 2px;
+  bottom: 2px; }
+  /* line 5, ../sass/_activities.scss */
+  .l-timeline-gantt .bar {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: 17px;
+    line-height: 19px;
+    padding: 0 5px; }
+    /* line 11, ../sass/_activities.scss */
+    .l-timeline-gantt .bar span {
+      display: inline; }
+      /* line 15, ../sass/_activities.scss */
+      .l-timeline-gantt .bar span.s-activity-type.timeline:before {
+        content: "S"; }
+      /* line 20, ../sass/_activities.scss */
+      .l-timeline-gantt .bar span.s-activity-type.activity:before {
+        content: "A"; }
+      /* line 25, ../sass/_activities.scss */
+      .l-timeline-gantt .bar span.s-title {
+        text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px; }
+      /* line 30, ../sass/_activities.scss */
+      .l-timeline-gantt .bar span.duration {
+        left: auto;
+        opacity: 0.75;
+        right: 0;
+        text-align: right;
+        width: 60px; }
+      /* line 37, ../sass/_activities.scss */
+      .l-timeline-gantt .bar span.handle {
+        top: 0;
+        bottom: 0;
+        height: auto;
+        width: 15px; }
+        /* line 43, ../sass/_activities.scss */
+        .l-timeline-gantt .bar span.handle.left {
+          right: auto; }
+        /* line 46, ../sass/_activities.scss */
+        .l-timeline-gantt .bar span.handle.middle {
+          right: 15px;
+          left: 15px;
+          width: auto; }
+        /* line 51, ../sass/_activities.scss */
+        .l-timeline-gantt .bar span.handle.right {
+          right: 0;
+          left: auto; }
+
+/* line 62, ../sass/_activities.scss */
+.s-timeline-gantt .bar {
+  color: #fff;
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzc3NzdiYiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzU1NTVhYSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+  background-size: 100%;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #7777bb), color-stop(100%, #5555aa));
+  background-image: -moz-linear-gradient(#7777bb, #5555aa);
+  background-image: -webkit-linear-gradient(#7777bb, #5555aa);
+  background-image: linear-gradient(#7777bb, #5555aa);
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  -moz-box-shadow: rgba(0, 0, 0, 0.4) 0 1px 3px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0 1px 3px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0 1px 3px; }
+  /* line 69, ../sass/_activities.scss */
+  .s-timeline-gantt .bar.expanded {
+    -moz-border-radius-topleft: 3px;
+    -webkit-border-top-left-radius: 3px;
+    border-top-left-radius: 3px;
+    -moz-border-radius-topright: 3px;
+    -webkit-border-top-right-radius: 3px;
+    border-top-right-radius: 3px;
+    -moz-border-radius-bottomleft: 0;
+    -webkit-border-bottom-left-radius: 0;
+    border-bottom-left-radius: 0;
+    -moz-border-radius-bottomright: 0;
+    -webkit-border-bottom-right-radius: 0;
+    border-bottom-right-radius: 0; }
+  /* line 73, ../sass/_activities.scss */
+  .s-timeline-gantt .bar.leaf {
+    -moz-border-radius-topleft: 0;
+    -webkit-border-top-left-radius: 0;
+    border-top-left-radius: 0;
+    -moz-border-radius-topright: 0;
+    -webkit-border-top-right-radius: 0;
+    border-top-right-radius: 0;
+    -moz-border-radius-bottomleft: 3px;
+    -webkit-border-bottom-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    -moz-border-radius-bottomright: 3px;
+    -webkit-border-bottom-right-radius: 3px;
+    border-bottom-right-radius: 3px; }
+  /* line 77, ../sass/_activities.scss */
+  .s-timeline-gantt .bar .s-toggle {
+    color: #0099cc; }
+
+/* line 85, ../sass/_activities.scss */
+.edit-mode .s-timeline-gantt .bar:hover {
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzk5OTljYyIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzc3NzdiYiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+  background-size: 100%;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #9999cc), color-stop(100%, #7777bb));
+  background-image: -moz-linear-gradient(#9999cc, #7777bb);
+  background-image: -webkit-linear-gradient(#9999cc, #7777bb);
+  background-image: linear-gradient(#9999cc, #7777bb); }
+/* line 90, ../sass/_activities.scss */
+.edit-mode .s-timeline-gantt .handle {
+  cursor: col-resize; }
+  /* line 95, ../sass/_activities.scss */
+  .edit-mode .s-timeline-gantt .handle.mid {
+    cursor: ew-resize; }
+
+/* line 2, ../sass/_timelines.scss */
+.l-timeline-holder {
+  overflow: hidden;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  width: auto;
+  height: auto; }
+  /* line 6, ../sass/_timelines.scss */
+  .l-timeline-holder .l-timeline-pane {
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    width: auto;
+    height: auto; }
+    /* line 9, ../sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane .l-width-control {
+      position: relative; }
+    /* line 13, ../sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane .l-swimlanes-holder {
+      overflow: hidden;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      width: auto;
+      height: auto;
+      top: 31px; }
+    /* line 20, ../sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.s-timeline-tabular .t-pane-v {
+      overflow: hidden;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      width: auto;
+      height: auto; }
+      /* line 23, ../sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.s-timeline-tabular .t-pane-v.l-tabular-l {
+        right: auto;
+        width: 266px; }
+      /* line 28, ../sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.s-timeline-tabular .t-pane-v.l-tabular-r {
+        overflow-x: auto;
+        overflow-y: hidden;
+        left: 266px; }
+        /* line 32, ../sass/_timelines.scss */
+        .l-timeline-holder .l-timeline-pane.t-pane-h.s-timeline-tabular .t-pane-v.l-tabular-r .l-width {
+          overflow: visible;
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          width: auto;
+          height: auto;
+          min-width: 590px;
+          width: 100%; }
+    /* line 42, ../sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-gantt .l-swimlanes-holder {
+      overflow-x: hidden;
+      overflow-y: scroll; }
+    /* line 47, ../sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-legend {
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      padding: 5px 0;
+      white-space: nowrap; }
+      /* line 54, ../sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-legend .l-legend-items {
+        overflow: hidden;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        width: auto;
+        height: auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+        top: 25px;
+        color: #737373; }
+      /* line 61, ../sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-legend .legend-item {
+        display: block;
+        margin-bottom: 3px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap; }
+        /* line 69, ../sass/_timelines.scss */
+        .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-legend .legend-item .color-swatch {
+          vertical-align: baseline; }
+        /* line 72, ../sass/_timelines.scss */
+        .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-legend .legend-item .title-label {
+          vertical-align: baseline; }
+    /* line 81, ../sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graphs-holder {
+      overflow: hidden;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      width: auto;
+      height: auto;
+      bottom: 10px; }
+      /* line 86, ../sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graphs-holder .l-graphs {
+        overflow: hidden;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        width: auto;
+        height: auto;
+        overflow-x: hidden;
+        overflow-y: scroll; }
+      /* line 91, ../sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graphs-holder .l-graph-labels-holder {
+        overflow: hidden;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        width: auto;
+        height: auto;
+        overflow: hidden;
+        right: auto;
+        width: 400px; }
+    /* line 100, ../sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-scroll-control {
+      overflow: hidden;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      width: auto;
+      height: auto;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      top: auto;
+      right: 10px;
+      height: 10px; }
+      /* line 106, ../sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-scroll-control .l-width-control {
+        height: 10px; }
+    /* line 111, ../sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph,
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph-labels {
+      height: 80px;
+      margin-bottom: 3px;
+      position: relative; }
+    /* line 118, ../sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: rgba(255, 255, 255, 0.4);
+      top: 5px;
+      left: 5px;
+      position: absolute; }
+    /* line 125, ../sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph {
+      background: rgba(0, 0, 0, 0.3);
+      width: 100%; }
+      /* line 129, ../sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph .l-graph-area canvas {
+        width: 100%;
+        height: 100%; }
+    /* line 136, ../sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph-labels {
+      z-index: 10; }
+    /* line 140, ../sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph-area {
+      overflow: hidden;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      width: auto;
+      height: auto;
+      top: 20px;
+      bottom: 5px; }
+      /* line 143, ../sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph-area .l-labels-holder {
+        overflow: hidden;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        width: auto;
+        height: auto;
+        left: 5px; }
+        /* line 146, ../sass/_timelines.scss */
+        .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph-area .l-labels-holder .tick-label.tick-label-y {
+          text-align: left; }
+    /* line 154, ../sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.l-pane-l {
+      right: auto;
+      min-width: 50px;
+      max-width: 90%;
+      width: 30%; }
+    /* line 162, ../sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.l-pane-r {
+      left: 0; }
+      /* line 166, ../sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.l-pane-r:hover .l-hover-btns-holder {
+        -moz-transition-property: visibility, opacity, background-color, border-color;
+        -o-transition-property: visibility, opacity, background-color, border-color;
+        -webkit-transition-property: visibility, opacity, background-color, border-color;
+        transition-property: visibility, opacity, background-color, border-color;
+        -moz-transition-duration: 100ms;
+        -o-transition-duration: 100ms;
+        -webkit-transition-duration: 100ms;
+        transition-duration: 100ms;
+        -moz-transition-timing-function: ease-in-out;
+        -o-transition-timing-function: ease-in-out;
+        -webkit-transition-timing-function: ease-in-out;
+        transition-timing-function: ease-in-out;
+        opacity: 1; }
+    /* line 173, ../sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.l-pane-top {
+      bottom: 30%; }
+    /* line 177, ../sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.l-pane-btm {
+      top: auto;
+      min-height: 20px;
+      max-height: 80%;
+      height: 30%; }
+  /* line 186, ../sass/_timelines.scss */
+  .l-timeline-holder .l-swimlane {
+    height: 21px;
+    position: relative; }
+  /* line 192, ../sass/_timelines.scss */
+  .l-timeline-holder .s-timeline-tabular .l-header,
+  .l-timeline-holder .s-timeline-gantt .l-header {
+    overflow: visible;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    height: auto;
+    bottom: auto;
+    height: 30px; }
+    /* line 198, ../sass/_timelines.scss */
+    .l-timeline-holder .s-timeline-tabular .l-header .l-header-elem,
+    .l-timeline-holder .s-timeline-gantt .l-header .l-header-elem {
+      overflow: visible;
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      bottom: 5px;
+      left: 5px;
+      width: auto;
+      height: auto;
+      display: block; }
+      /* line 203, ../sass/_timelines.scss */
+      .l-timeline-holder .s-timeline-tabular .l-header .l-header-elem.l-labels .l-label,
+      .l-timeline-holder .s-timeline-gantt .l-header .l-header-elem.l-labels .l-label {
+        position: absolute;
+        width: 140px;
+        margin-left: -70px;
+        text-align: center; }
+  /* line 213, ../sass/_timelines.scss */
+  .l-timeline-holder .l-hover-btns-holder {
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    width: auto;
+    height: auto;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -moz-transition-property: visibility, opacity, background-color, border-color;
+    -o-transition-property: visibility, opacity, background-color, border-color;
+    -webkit-transition-property: visibility, opacity, background-color, border-color;
+    transition-property: visibility, opacity, background-color, border-color;
+    -moz-transition-duration: 500ms;
+    -o-transition-duration: 500ms;
+    -webkit-transition-duration: 500ms;
+    transition-duration: 500ms;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    opacity: 0;
+    height: 30px;
+    width: 100px;
+    left: auto;
+    padding: 5px;
+    text-align: right;
+    z-index: 10; }
+  /* line 226, ../sass/_timelines.scss */
+  .l-timeline-holder .l-cols {
+    overflow: visible;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    height: auto;
+    text-wrap: none;
+    white-space: nowrap; }
+    /* line 231, ../sass/_timelines.scss */
+    .l-timeline-holder .l-cols .l-col {
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+      height: 100%;
+      padding: 0 5px;
+      position: relative;
+      text-wrap: none;
+      white-space: nowrap; }
+      /* line 242, ../sass/_timelines.scss */
+      .l-timeline-holder .l-cols .l-col.l-col-icon {
+        width: 16px;
+        text-align: center;
+        padding: 0; }
+        /* line 246, ../sass/_timelines.scss */
+        .l-timeline-holder .l-cols .l-col.l-col-icon .ui-symbol {
+          color: #0099cc; }
+      /* line 251, ../sass/_timelines.scss */
+      .l-timeline-holder .l-cols .l-col.l-plot-resource {
+        border-left: none !important;
+        cursor: pointer;
+        padding-left: 0; }
+      /* line 260, ../sass/_timelines.scss */
+      .l-timeline-holder .l-cols .l-col.l-title {
+        width: 250px; }
+      /* line 264, ../sass/_timelines.scss */
+      .l-timeline-holder .l-cols .l-col.l-start, .l-timeline-holder .l-cols .l-col.l-end, .l-timeline-holder .l-cols .l-col.l-duration {
+        width: 110px; }
+      /* line 274, ../sass/_timelines.scss */
+      .l-timeline-holder .l-cols .l-col.l-activity-modes {
+        display: none;
+        width: 250px; }
+  /* line 283, ../sass/_timelines.scss */
+  .l-timeline-holder .s-timeline-tabular .l-header .l-cols {
+    top: 5px;
+    bottom: 5px; }
+    /* line 285, ../sass/_timelines.scss */
+    .l-timeline-holder .s-timeline-tabular .l-header .l-cols .l-col {
+      border-left: 1px solid rgba(255, 255, 255, 0.1); }
+  /* line 293, ../sass/_timelines.scss */
+  .l-timeline-holder .s-timeline-tabular .l-pane-l .l-cols {
+    left: 5px; }
+    /* line 295, ../sass/_timelines.scss */
+    .l-timeline-holder .s-timeline-tabular .l-pane-l .l-cols .s-label .ui-symbol.icon {
+      color: #8594ff; }
+  /* line 308, ../sass/_timelines.scss */
+  .l-timeline-holder .splitter {
+    top: 0; }
+  /* line 314, ../sass/_timelines.scss */
+  .l-timeline-holder .l-ticks,
+  .l-timeline-holder .l-subticks {
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    width: auto;
+    height: auto;
+    top: auto;
+    bottom: 3px; }
+  /* line 320, ../sass/_timelines.scss */
+  .l-timeline-holder .l-ticks {
+    height: 10px; }
+  /* line 324, ../sass/_timelines.scss */
+  .l-timeline-holder .l-subticks {
+    height: 5px; }
+
+/* line 330, ../sass/_timelines.scss */
+.s-timeline {
+  font-size: 0.75rem; }
+  /* line 332, ../sass/_timelines.scss */
+  .s-timeline .s-header {
+    background-color: #404040; }
+  /* line 335, ../sass/_timelines.scss */
+  .s-timeline .s-swimlane {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    line-height: 20px;
+    /*    &:hover {
+    		background: rgba(white, 0.1);
+    	}*/ }
+    /* line 345, ../sass/_timelines.scss */
+    .s-timeline .s-swimlane.exceeded {
+      background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjEuMCIgeTE9IjEuMCIgeDI9IjAuMCIgeTI9IjAuMCI+PHN0b3Agb2Zmc2V0PSIyNSUiIHN0b3AtY29sb3I9IiNmZmZmZmYiIHN0b3Atb3BhY2l0eT0iMC4wNSIvPjxzdG9wIG9mZnNldD0iMjUlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuMCIvPjxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuMCIvPjxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjZmZmZmZmIiBzdG9wLW9wYWNpdHk9IjAuMDUiLz48c3RvcCBvZmZzZXQ9Ijc1JSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwLjA1Ii8+PHN0b3Agb2Zmc2V0PSI3NSUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMC4wIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuMCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+      background-size: 100%;
+      background-image: -moz-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 25%, rgba(0, 0, 0, 0) 25%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.05) 75%, rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0) 100%);
+      background-image: -webkit-linear-gradient(135deg, rgba(255, 255, 255, 0.05) 25%, rgba(0, 0, 0, 0) 25%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.05) 75%, rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0) 100%);
+      background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 25%, rgba(0, 0, 0, 0) 25%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.05) 75%, rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0) 100%);
+      background-repeat: repeat;
+      background-size: 22px 22px; }
+    /* line 349, ../sass/_timelines.scss */
+    .s-timeline .s-swimlane.selected {
+      background-color: #222;
+      color: #fff; }
+      /* line 355, ../sass/_timelines.scss */
+      .s-timeline .s-swimlane.selected .s-timeline-gantt .bar {
+        background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2U2ZTZlNiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2NjY2NjYyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+        background-size: 100%;
+        background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #e6e6e6), color-stop(100%, #cccccc));
+        background-image: -moz-linear-gradient(#e6e6e6, #cccccc);
+        background-image: -webkit-linear-gradient(#e6e6e6, #cccccc);
+        background-image: linear-gradient(#e6e6e6, #cccccc);
+        color: #333; }
+    /* line 363, ../sass/_timelines.scss */
+    .s-timeline .s-swimlane.drop-into {
+      background-color: rgba(85, 85, 170, 0.7); }
+      /* line 365, ../sass/_timelines.scss */
+      .s-timeline .s-swimlane.drop-into .s-timeline-gantt {
+        opacity: 0.7; }
+    /* line 369, ../sass/_timelines.scss */
+    .s-timeline .s-swimlane.drop-after {
+      background-color: rgba(0, 0, 0, 0.2);
+      border-bottom-color: #5555aa; }
+  /* line 375, ../sass/_timelines.scss */
+  .s-timeline .s-ticks {
+    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuMCIgeTE9IjAuNSIgeDI9IjEuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSIxcHgiIHN0b3AtY29sb3I9IiM1OTU5NTkiLz48c3RvcCBvZmZzZXQ9IjFweCIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjAiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMC4wIi8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
+    background-size: 100%;
+    background-image: -moz-linear-gradient(0deg, #595959 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
+    background-image: -webkit-linear-gradient(0deg, #595959 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
+    background-image: linear-gradient(90deg, #595959 1px, rgba(0, 0, 0, 0) 1px, rgba(0, 0, 0, 0) 100%);
+    background-repeat: repeat-x; }
+  /* line 378, ../sass/_timelines.scss */
+  .s-timeline .s-hover-btns-holder {
+    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjEuMCIgeTE9IjAuNSIgeDI9IjAuMCIgeTI9IjAuNSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzQwNDA0MCIvPjxzdG9wIG9mZnNldD0iNzAlIiBzdG9wLWNvbG9yPSIjNDA0MDQwIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjNDA0MDQwIiBzdG9wLW9wYWNpdHk9IjAuMCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+    background-size: 100%;
+    background-image: -moz-linear-gradient(180deg, #404040, #404040 70%, rgba(64, 64, 64, 0) 100%);
+    background-image: -webkit-linear-gradient(180deg, #404040, #404040 70%, rgba(64, 64, 64, 0) 100%);
+    background-image: linear-gradient(-90deg, #404040, #404040 70%, rgba(64, 64, 64, 0) 100%); }
+    /* line 383, ../sass/_timelines.scss */
+    .s-timeline .s-hover-btns-holder .s-btn {
+      background-color: #404040;
+      -moz-border-radius: 3px;
+      -webkit-border-radius: 3px;
+      border-radius: 3px;
+      -moz-box-sizing: border-box;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      color: #a6a6a6;
+      display: inline-block;
+      background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzQwNDA0MCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
+      background-size: 100%;
+      background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #4d4d4d), color-stop(100%, #404040));
+      background-image: -moz-linear-gradient(#4d4d4d, #404040);
+      background-image: -webkit-linear-gradient(#4d4d4d, #404040);
+      background-image: linear-gradient(#4d4d4d, #404040);
+      -moz-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+      -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px;
+      box-shadow: rgba(0, 0, 0, 0.2) 0 1px 2px; }
+
+/* line 389, ../sass/_timelines.scss */
+.edit-mode .s-swimlane {
+  cursor: pointer; }
+  /* line 391, ../sass/_timelines.scss */
+  .edit-mode .s-swimlane .s-label {
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    padding: 2px 5px; }
+    /* line 394, ../sass/_timelines.scss */
+    .edit-mode .s-swimlane .s-label:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff; }

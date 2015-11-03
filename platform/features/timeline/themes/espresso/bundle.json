@@ -5,7 +5,7 @@
     "stylesheets": [
       {
         "stylesheetUrl": "css/timeline.css",
-        "priority": "10"
+        "priority": "mandatory"
       }
     ]
   }
