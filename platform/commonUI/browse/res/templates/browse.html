@@ -34,10 +34,9 @@
                     </mct-representation>
                     <div class='holder search-holder abs'
                          ng-class="{active: treeModel.search}">
-                        <mct-representation key="'search'"
-                                     mct-object="domainObject"
+                        <mct-include key="'search'"
                                      ng-model="treeModel">
-                        </mct-representation>
+                        </mct-include>
                     </div>
                     <div class='tree-holder abs mobile-tree-holder'
                          ng-hide="treeModel.search">
