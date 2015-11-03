@@ -96,12 +96,15 @@ define(
                 delete modelClone.model.composition;
                 delete modelClone.model.location;
                 return $q.when(originalObject.useCapability('composition')).then(function(composees){
+                    console.log("composees: " + composees);
                     return (composees || []).reduce(function(promise, composee){
+                            console.log("inside reduce");
                             //If the object is composed of other
                             // objects, chain a promise..
                             return promise.then(function(){
                                 // ...to recursively copy it (and its children)
                                 return copy(composee, originalObject).then(function(composeeClone){
+                                    console.log("Composing clone");
                                     //Once copied, associate each cloned
                                     // composee with its parent clone
                                     composeeClone.model.location = modelClone.id;
@@ -110,6 +113,7 @@ define(
                                 });
                             });}, $q.when(undefined)
                     ).then(function (){
+                            console.log("Adding clone to list");
                         //Add the clone to the list of clones that will
                         //be returned by this function
                         clones.push(modelClone);
@@ -118,6 +122,7 @@ define(
                 });
             };
             return copy(domainObject, parent).then(function(){
+                console.log("Done cloning, returning");
                 return clones;
             });
         }
@@ -135,6 +140,7 @@ define(
             var persisted = 0,
                 self = this;
             return function(objectClones) {
+                console.log("Persisting " + objectClones.length + " clones");
                 return self.$q.all(objectClones.map(function(clone, index){
                     return self.persistenceService.createObject(clone.persistenceSpace, clone.id, clone.model)
                         .then(function(){

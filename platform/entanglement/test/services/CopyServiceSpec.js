@@ -134,7 +134,8 @@ define(
                     newParent,
                     copyResult,
                     copyFinished,
-                    persistObjectPromise;
+                    persistObjectPromise,
+                    persistenceCapability;
 
                 beforeEach(function () {
                     creationService = jasmine.createSpyObj(
@@ -152,6 +153,15 @@ define(
                     persistObjectPromise = synchronousPromise(undefined);
                     mockPersistenceService.createObject.andReturn(persistObjectPromise);
                     mockPersistenceService.updateObject.andReturn(persistObjectPromise);
+                    
+                    persistenceCapability = jasmine.createSpyObj(
+                        "persistence",
+                        [ "persist", "getSpace" ]
+                    );
+
+                    persistenceCapability.persist.andReturn(persistObjectPromise);
+                    persistenceCapability.getSpace.andReturn("testSpace");
+                    
                 });
 
                 describe("on domain object without composition", function () {
@@ -168,11 +178,13 @@ define(
                             id: '456',
                             model: {
                                 composition: []
+                            },
+                            capabilities: {
+                                persistence: persistenceCapability
                             }
                         });
                         mockQ = jasmine.createSpyObj('mockQ', ['when', 'all', 'reject']);
                         mockQ.when.andCallFake(synchronousPromise);
-                        //mockQ.all.andCallFake(synchronousPromise);
                         mockQ.all.andCallFake(function (promises) {
                             var result = {};
                             Object.keys(promises).forEach(function (k) {
@@ -180,7 +192,7 @@ define(
                             });
                             return synchronousPromise(result);
                         });
-
+                        
                         copyService = new CopyService(mockQ, creationService, policyService, mockPersistenceService);
                         copyResult = copyService.perform(object, newParent);
                         copyFinished = jasmine.createSpy('copyFinished');
@@ -198,6 +210,14 @@ define(
                             .toHaveBeenCalledWith(jasmine.any(Function));
                     });*/
 
+                    it("uses persistence service", function () {
+                     expect(mockPersistenceService.createObject)
+                     .toHaveBeenCalledWith(persistenceCapability, jasmine.any(String), object.getModel());
+
+                     expect(persistObjectPromise.then)
+                     .toHaveBeenCalledWith(jasmine.any(Function));
+                     });
+                    
                     it("deep clones object model", function () {
                         //var newModel = creationService
                         var newModel = mockPersistenceService
@@ -223,7 +243,7 @@ define(
 
                     beforeEach(function () {
                         mockQ = jasmine.createSpyObj('mockQ', ['when', 'all', 'reject']);
-                        mockQ.when.andCallFake(synchronousPromise);
+                        //mockQ.when.andCallFake(synchronousPromise);
                         mockQ.all.andCallFake(function (promises) {
                             var result = {};
                             Object.keys(promises).forEach(function (k) {
@@ -248,7 +268,7 @@ define(
                             ['then']
                         );
 
-                        compositionPromise.then.andCallFake(synchronousPromise);
+                        //compositionPromise.then.andCallFake(synchronousPromise);
 
                         compositionCapability
                             .invoke
@@ -287,8 +307,12 @@ define(
                         createObjectPromise = synchronousPromise(newObject);
                         creationService.createObject.andReturn(createObjectPromise);
                         copyService = new CopyService(mockQ, creationService, policyService);
+                        console.log("Before perform");
+                        compositionPromise.then.andReturn(synchronousPromise([childObject]));
+                        mockQ.when.andReturn(compositionPromise);
                         copyResult = copyService.perform(object, newParent);
-                        compositionPromise.then.mostRecentCall.args[0]([childObject]);
+                        console.log("After perform");
+                        //compositionPromise.then.mostRecentCall.args[0]([childObject]);
                         copyFinished = jasmine.createSpy('copyFinished');
                         copyResult.then(copyFinished);
                     });
@@ -307,7 +331,7 @@ define(
 
                     it("uses persistence service", function () {
                         expect(mockPersistenceService.createObject)
-                            .toHaveBeenCalledWith(jasmine.any(Object), jasmine.any(String), newParent);
+                            .toHaveBeenCalledWith(persistenceCapability, jasmine.any(String), newParent);
 
                         expect(createObjectPromise.then)
                             .toHaveBeenCalledWith(jasmine.any(Function));
