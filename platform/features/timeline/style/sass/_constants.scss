@@ -1,0 +1,56 @@
+$dirImgs: '../images/'; //Relative to warp.css
+/*$interiorMargin: 5px;
+$interiorMarginLg: $interiorMargin * 2;
+$interiorMarginSm: 3px;*/
+$logoAspect: .17;
+
+// Timeline constants
+$activityBarH: 17px;
+$timelinePaneLeftW: 30%;
+$timelinePaneBtmH: 30%;
+$timelineResourceGraphYLabelsMargin: 70px;
+$timelineTopPaneHeaderH: 30px;
+$timelineHeaderColorBg: lighten($colorBodyBg, 5%);
+$timelineColorAlt1: lighten($timelineHeaderColorBg, 10%);
+$timelineSwimlaneGanttVM: 2px; // The vertical space above and below the gantt bars
+$timelineSwimlaneH: $activityBarH + ($timelineSwimlaneGanttVM * 2);
+$timelineTopPaneHeaderElemMargin: $interiorMargin;
+$activityTypeFg: #fff;
+$activityTypeBg: #5555aa;
+$activityTypeTabularFgIcon: #8594ff;
+
+
+// Swimlane colors
+$colorDropTarg: rgba($activityTypeBg, 0.4);
+$colorSwimlaneSelectedBg: #222;
+$colorSwimlaneSelectedFg: #ccc;
+$colorSwimlaneSelectedGanttBg: #ccc;
+$colorSwimlaneSelectedGanttFg: #333;
+
+// Timeline Tabular constants
+$timelineColIconW: 16px;
+$timelineColResourcePlotW: $timelineColIconW;
+$timelineColTitleW: 250px;
+$timelineColDatetimeW: 110px;
+$timelineColDurationW: 70px;
+$timelineColActivityModesW: $timelineColTitleW;
+$timelineColPadR: 50px;
+$timelineTabularTitleW: $timelineColResourcePlotW + $timelineColTitleW;
+$timelineTabularDataW: ($timelineColDatetimeW * 2) + $timelineColDurationW + $timelineColActivityModesW + $timelineColPadR;
+
+
+// // Ported from legacy timelines SASS
+$activitiesHolderM: 30px;
+$scenarioTopPad: 25px;
+$swimlaneVM: 2px;
+$timelineVM: 10px;
+$timelineBPad: $interiorMargin * 2;
+$graphResourceSummaryH: 200px;
+$graphResourceSummaryLegendH: 20px;
+$scenarioTimelineSummaryH: 20px;
+$scenarioTimelineSummaryHExpanded: $graphResourceSummaryH + 30px;
+$scenarioPanZoomSliderH: 16px;
+$scenarioTicksH: 7px;
+$scenarioTickLabelsH: 10px;
+
+

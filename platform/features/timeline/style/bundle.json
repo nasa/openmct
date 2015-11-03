@@ -1,0 +1,12 @@
+{
+  "name": "Timeline Styling",
+  "description": "CSS for Timelines. Ported from /warp",
+  "extensions": {
+    "stylesheets": [
+      {
+        "stylesheetUrl": "css/timeline.css",
+        "priority": "10"
+      }
+    ]
+  }
+}
