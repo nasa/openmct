@@ -287,11 +287,8 @@
 }
 
 .object-holder {
-    overflow: hidden; // Contained objects need to handle their own overflow now
+    @include absPosDefault(0, auto);
     top: $ueTopBarH + $interiorMarginLg;
-    > ng-include {
-        @include absPosDefault(0, auto);
-    }
     &.l-controls-visible {
         &.l-time-controller-visible {
             bottom: nth($ueTimeControlH,1) + nth($ueTimeControlH,2) +nth($ueTimeControlH,3) + ($interiorMargin * 3);

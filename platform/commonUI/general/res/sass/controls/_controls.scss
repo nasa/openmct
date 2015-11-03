@@ -233,13 +233,6 @@ label.checkbox.custom {
 	//@include test();
 	font-size: 1em;
 
-	//> .title-label,
-	//> .type-icon,
-	//> .context-available {
-	//	//@include tmpBorder(#6666ff);
-	//	//vertical-align: middle;
-	//}
-
 	> .type-icon {
 		color: $colorObjHdrIc;
 		font-size: 120%;
@@ -249,7 +242,8 @@ label.checkbox.custom {
 
 	.l-elem-wrapper {
 		//@include test(#66f, 0.2);
-		@include webkitProp(justify-content, flex-start);
+		//@include webkitProp(justify-content, flex-start);
+        @include justify-content(flex-start);
 		mct-representation {
 			// Holds the context-available item
 			// Must have min-width to make flex work properly
