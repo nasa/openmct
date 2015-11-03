@@ -14,6 +14,7 @@
     "elements/PlotPosition",
     "elements/PlotPreparer",
     "elements/PlotSeriesWindow",
+    "elements/PlotTelemetryFormatter",
     "elements/PlotTickGenerator",
     "elements/PlotUpdater",
     "modes/PlotModeOptions",

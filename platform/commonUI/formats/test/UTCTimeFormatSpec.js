@@ -22,44 +22,34 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ["../src/TelemetryFormatter"],
-    function (TelemetryFormatter) {
-        "use strict";
+    ['../src/UTCTimeFormat', 'moment'],
+    function (UTCTimeFormat, moment) {
+        'use strict';
 
-        describe("The telemetry formatter", function () {
-            var mockFormatService,
-                mockFormat,
-                formatter;
+        describe("The UTCTimeFormat", function () {
+            var format;
 
             beforeEach(function () {
-                mockFormatService =
-                    jasmine.createSpyObj("formatService", ["getFormat"]);
-                mockFormat = jasmine.createSpyObj("format", [
-                    "validate",
-                    "parse",
-                    "format"
-                ]);
-                mockFormatService.getFormat.andReturn(mockFormat);
-                formatter = new TelemetryFormatter(mockFormatService);
+                format = new UTCTimeFormat();
             });
 
-            it("formats domains using the formatService", function () {
-                var testValue = 12321, testResult = "some result";
-                mockFormat.format.andReturn(testResult);
-
-                expect(formatter.formatDomainValue(testValue))
-                    .toEqual(testResult);
-                expect(mockFormat.format).toHaveBeenCalledWith(testValue);
+            it("formats UTC timestamps", function () {
+                var timestamp = 12345670000,
+                    formatted = format.format(timestamp);
+                expect(formatted).toEqual(jasmine.any(String));
+                expect(moment.utc(formatted).valueOf()).toEqual(timestamp);
             });
 
-            it("passes format keys to the formatService", function () {
-                formatter.formatDomainValue(12321, "someKey");
-                expect(mockFormatService.getFormat)
-                    .toHaveBeenCalledWith("someKey");
+            it("validates time inputs", function () {
+                expect(format.validate("1977-05-25 11:21:22")).toBe(true);
+                expect(format.validate("garbage text")).toBe(false);
             });
 
-            it("formats ranges as values", function () {
-                expect(formatter.formatRangeValue(10)).toEqual("10.000");
+            it("parses valid input", function () {
+                var text = "1977-05-25 11:21:22",
+                    parsed = format.parse(text);
+                expect(parsed).toEqual(jasmine.any(Number));
+                expect(parsed).toEqual(moment.utc(text).valueOf());
             });
         });
     }
