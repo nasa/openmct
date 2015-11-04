@@ -1,16 +1,12 @@
 @include phoneandtablet {
     .overlay {
-        $m: 0;
         .clk-icon.close {
             top: $mobileOverlayMargin; right: $mobileOverlayMargin;
         }
 
         > .holder {
-            @include border-radius($m);
-            top: $m;
-            right: $m;
-            bottom: $m;
-            left: $m;
+            height: 90%; width: 90%;
+
             > .contents {
                 top: $mobileOverlayMargin;
                 right: $mobileOverlayMargin;
@@ -22,35 +18,64 @@
                         margin-right: 1.2em;
                     }
                 }
-
-                .form.editor {
-                    border: none;
-
-                    .contents {
-                        top: 0;
-                        right: 0;
-                        bottom: 0;
-                        left: 0;
-                    }
-                }
             }
         }
     }
 }
 
 @include phone {
-    .overlay > .holder > .contents .form.editor .contents .form-row {
-        > .label,
-        > .controls {
-            //@include test(blue);
-            display: block;
-            float: none;
-            width: 100%;
+    .overlay > .holder {
+        //@include test(orange); // This works!
+        $m: 0;
+        @include border-radius($m);
+        top: $m;
+        right: $m;
+        bottom: $m;
+        left: $m;
+        height: auto; width: auto;
+        min-width: 200px; min-height: 200px;
+        max-height: 100%; max-width: 100%;
+        overflow: auto;
+        @include transform(none);
+
+        .editor .form .form-row {
+            > .label,
+            > .controls {
+                //@include test(blue);
+                display: block;
+                float: none;
+                width: 100%;
+            }
+            > .label {
+                &:after {
+                    float: none;
+                }
+            }
         }
-	    > .label {
-		    &:after {
-			    float: none;
-		    }
-	    }
+        
+        .contents {
+            .abs.top-bar,
+            .abs.editor,
+            .abs.message-body,
+            .abs.bottom-bar {
+                //@include test(orange);
+                top: auto; right: auto; bottom: auto; left: auto;
+                height: auto; width: auto;
+                margin-bottom: $interiorMarginLg * 2;
+                position: relative;
+            }
+        }
+    }
+    .t-dialog-sm .overlay > .holder {
+        //@include test(blue);
+        height: auto; max-height: 100%;
+    }
+}
+
+@include phonePortrait {
+    .overlay > .holder {
+        .contents .bottom-bar {
+            text-align: center;
+        }
     }
 }

@@ -77,7 +77,7 @@ define(
 
                 mockConductor.displayStart.andReturn(42);
                 mockConductor.displayEnd.andReturn(1977);
-                mockConductor.domain.andReturn("testDomain");
+                mockConductor.domain.andReturn({ key: "testDomain" });
 
                 decorator = new ConductorTelemetryDecorator(
                     mockConductorService,
@@ -104,7 +104,7 @@ define(
                 });
 
                 it("with domain selection", function () {
-                    expect(request.domain).toEqual(mockConductor.domain());
+                    expect(request.domain).toEqual(mockConductor.domain().key);
                 });
             });
 
@@ -127,7 +127,7 @@ define(
                 });
 
                 it("with domain selection", function () {
-                    expect(request.domain).toEqual(mockConductor.domain());
+                    expect(request.domain).toEqual(mockConductor.domain().key);
                 });
             });
 

@@ -21,17 +21,13 @@
 -->
 <div class="abs top-bar">
     <div class="title">{{ngModel.title}}</div>
-    <div class="hint">
-        All fields marked <span class="ui-symbol req">*</span> are required.
-    </div>
+    <div class="hint">All fields marked <span class="ui-symbol req">*</span> are required.</div>
 </div>
-<div class="abs form editor">
-    <div class='abs contents l-dialog'>
-        <mct-form ng-model="ngModel.value"
-                  structure="ngModel.structure"
-                  name="createForm">
-        </mct-form>
-    </div>
+<div class='abs editor'>
+    <mct-form ng-model="ngModel.value"
+              structure="ngModel.structure"
+              name="createForm">
+    </mct-form>
 </div>
 <div class="abs bottom-bar">
     <a class='s-btn major'

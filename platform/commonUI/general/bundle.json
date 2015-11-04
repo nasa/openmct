@@ -45,6 +45,14 @@
                 "templateUrl": "templates/indicator.html"
             },
             {
+                "key": "message-banner",
+                "templateUrl": "templates/message-banner.html"
+            },
+            {
+                "key": "progress-bar",
+                "templateUrl": "templates/progress-bar.html"
+            },
+            {
               "key": "time-controller",
               "templateUrl": "templates/controls/time-controller.html"
             }
@@ -53,12 +61,17 @@
             {
                 "key": "TimeRangeController",
                 "implementation": "controllers/TimeRangeController.js",
-                "depends": [ "$scope", "now" ]
+                "depends": [ "$scope", "formatService", "DEFAULT_TIME_FORMAT", "now" ]
             },
             {
                 "key": "DateTimePickerController",
                 "implementation": "controllers/DateTimePickerController.js",
                 "depends": [ "$scope", "now" ]
+            },
+            {
+                "key": "DateTimeFieldController",
+                "implementation": "controllers/DateTimeFieldController.js",
+                "depends": [ "$scope", "formatService", "DEFAULT_TIME_FORMAT" ]
             },
             {
                 "key": "TreeNodeController",
@@ -112,6 +125,11 @@
                 "key": "ObjectInspectorController",
                 "implementation": "controllers/ObjectInspectorController.js",
                 "depends": [ "$scope", "objectService" ]
+            },
+            {
+                "key": "BannerController",
+                "implementation": "controllers/BannerController.js",
+                "depends": ["$scope", "notificationService", "dialogService"]
             }
         ],
         "directives": [
@@ -251,6 +269,10 @@
             {
                 "key": "datetime-picker",
                 "templateUrl": "templates/controls/datetime-picker.html"
+            },
+            {
+                "key": "datetime-field",
+                "templateUrl": "templates/controls/datetime-field.html"
             }
         ],
         "licenses": [
