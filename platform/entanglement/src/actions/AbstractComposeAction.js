@@ -70,10 +70,6 @@ define(
          * @param {string} verb the verb to display for the action (e.g. "Move")
          * @param {string} [suffix] a string to display in the dialog title;
          *        default is "to a new location"
-         * @param {function} progressCallback a callback function that will
-         * be invoked to update invoker on progress. This is optional and
-         * may not be implemented by all composing actions. The signature of
-         * the callback function will depend on the service being invoked.
          */
         function AbstractComposeAction(locationService, composeService, context, verb, suffix) {
             if (context.selectedObject) {
@@ -93,7 +89,7 @@ define(
             this.suffix = suffix || "to a new location";
         }
 
-        AbstractComposeAction.prototype.perform = function (progressCallback) {
+        AbstractComposeAction.prototype.perform = function () {
             var dialogTitle,
                 label,
                 validateLocation,
@@ -122,7 +118,7 @@ define(
                 validateLocation,
                 currentParent
             ).then(function (newParent) {
-                return composeService.perform(object, newParent, progressCallback);
+                return composeService.perform(object, newParent);
             });
         };
 
