@@ -77,7 +77,7 @@
                 "description": "Provides a service for copying objects",
                 "implementation": "services/CopyService.js",
                 "depends": ["$q", "creationService", "policyService",
-                    "persistenceService"]
+                    "persistenceService", "now"]
             },
             {
                 "key": "locationService",
