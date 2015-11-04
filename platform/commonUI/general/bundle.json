@@ -18,7 +18,7 @@
         "runs": [
             {
                 "implementation": "StyleSheetLoader.js",
-                "depends": [ "stylesheets[]", "$document" ]
+                "depends": [ "stylesheets[]", "$document", "THEME" ]
             }
         ],
         "stylesheets": [
@@ -194,6 +194,11 @@
             {
                 "key": "MCT_SCROLL_Y_ATTRIBUTE",
                 "value": "mctScrollY"
+            },
+            {
+                "key": "THEME",
+                "value": "unspecified",
+                "priority": "fallback"
             }
         ],
         "containers": [
