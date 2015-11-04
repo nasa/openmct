@@ -30,6 +30,7 @@ define(
             var mockScope,
                 mockAgentService,
                 mockDomainObjects,
+                mockWindow,
                 controller;
 
             // We want to reinstantiate for each test case
@@ -37,7 +38,8 @@ define(
             function instantiateController() {
                 return new PaneController(
                     mockScope,
-                    mockAgentService
+                    mockAgentService,
+                    mockWindow
                 );
             }
 
@@ -58,6 +60,7 @@ define(
                     "agentService",
                     [ "isMobile", "isPhone", "isTablet", "isPortrait", "isLandscape" ]
                 );
+                mockWindow = jasmine.createSpyObj("$window", ["open"]);
             });
 
             it("is initially visible", function () {
