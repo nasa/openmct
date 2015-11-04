@@ -19,18 +19,32 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-// Styles to temporarily hide non-functional elements
+/*global define,window*/
 
-/******************************** BROWSE */
-.browse-mode {
-	.browse {
-		&.top-bar {
-			display: none;
-		}
-	}
+define(
+    [],
+    function () {
+        "use strict";
 
-	.browse-area.holder {
-		// When .browse.top-bar is hidden, set the top of the browse-area holder
-		top: $bodyMargin;
-	}
-}
+        function NotificationLaunchIndicator() {
+
+        }
+
+        NotificationLaunchIndicator.template = 'notificationLaunchTemplate';
+
+        NotificationLaunchIndicator.prototype.getGlyph = function () {
+            return "i";
+        };
+        NotificationLaunchIndicator.prototype.getGlyphClass = function () {
+            return 'caution';
+        };
+        NotificationLaunchIndicator.prototype.getText = function () {
+            return "Launch notification";
+        };
+        NotificationLaunchIndicator.prototype.getDescription = function () {
+            return "Launch notification";
+        };
+
+        return NotificationLaunchIndicator;
+    }
+);

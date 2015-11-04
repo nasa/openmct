@@ -27,7 +27,8 @@ define(
     function (TemplateLinker) {
         'use strict';
 
-        var JQLITE_METHODS = [ 'replaceWith', 'empty', 'append' ];
+        var JQLITE_METHODS = [ 'replaceWith', 'empty', 'html', 'contents' ],
+            SCOPE_METHODS = [ '$on', '$new', '$destroy' ];
 
         describe("TemplateLinker", function () {
             var mockTemplateRequest,
@@ -38,6 +39,8 @@ define(
                 mockElement,
                 mockTemplates,
                 mockElements,
+                mockContents,
+                mockNewScope,
                 mockPromise,
                 linker;
 
@@ -46,14 +49,18 @@ define(
                 mockSce = jasmine.createSpyObj('$sce', ['trustAsResourceUrl']);
                 mockCompile = jasmine.createSpy('$compile');
                 mockLog = jasmine.createSpyObj('$log', ['error', 'warn']);
-                mockScope = jasmine.createSpyObj('$scope', ['$on']);
+                mockScope = jasmine.createSpyObj('$scope', SCOPE_METHODS);
+                mockNewScope = jasmine.createSpyObj('$scope', SCOPE_METHODS);
                 mockElement = jasmine.createSpyObj('element', JQLITE_METHODS);
                 mockPromise = jasmine.createSpyObj('promise', ['then']);
                 mockTemplates = {};
                 mockElements = {};
+                mockContents = {};
 
                 mockTemplateRequest.andReturn(mockPromise);
-                mockCompile.andCallFake(function (html) {
+                mockCompile.andCallFake(function (toCompile) {
+                    var html = typeof toCompile === 'string' ?
+                            toCompile : toCompile.testHtml;
                     mockTemplates[html] = jasmine.createSpy('template');
                     mockElements[html] =
                         jasmine.createSpyObj('templateEl', JQLITE_METHODS);
@@ -62,6 +69,17 @@ define(
                 });
                 mockSce.trustAsResourceUrl.andCallFake(function (url) {
                     return { trusted: url };
+                });
+                mockScope.$new.andReturn(mockNewScope);
+                mockElement.html.andCallFake(function (html) {
+                    mockContents[html] =
+                        jasmine.createSpyObj('contentsEl', JQLITE_METHODS);
+                    mockContents[html].testHtml = html;
+                });
+                mockElement.contents.andCallFake(function () {
+                    return mockContents[
+                        mockElement.html.mostRecentCall.args[0]
+                    ];
                 });
 
                 linker = new TemplateLinker(
@@ -131,10 +149,11 @@ define(
                         }, false);
                     });
 
-                    it("compiles loaded templates with linked scope", function () {
-                        expect(mockCompile).toHaveBeenCalledWith(testTemplate);
+                    it("compiles element contents with a new scope", function () {
+                        expect(mockCompile)
+                            .toHaveBeenCalledWith(mockContents[testTemplate]);
                         expect(mockTemplates[testTemplate])
-                            .toHaveBeenCalledWith(mockScope);
+                            .toHaveBeenCalledWith(mockNewScope);
                     });
 
                     it("replaces comments with specified element", function () {
@@ -142,9 +161,9 @@ define(
                             .toHaveBeenCalledWith(mockElement);
                     });
 
-                    it("appends rendered content to the specified element", function () {
-                        expect(mockElement.append)
-                            .toHaveBeenCalledWith(mockElements[testTemplate]);
+                    it("inserts HTML content into the specified element", function () {
+                        expect(mockElement.html)
+                            .toHaveBeenCalledWith(testTemplate);
                     });
 
                     it("clears templates when called with undefined", function () {

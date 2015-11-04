@@ -29,11 +29,14 @@
 }
 
 .ui-symbol {
+    font-family: 'symbolsfont';
 	&.type-icon {
 		color: $colorObjHdrIc;
 	}
 	&.icon {
 		color: $colorKey;
+        //position: relative;
+        font-size: inherit;
 		&.alert {
 			color: $colorAlert;
 			&:hover {
@@ -69,18 +72,32 @@
 	position: absolute;
 }
 
-//.tree-item .type-icon {
-//	font-size: 16px; // 16px is crisp size
-//}
-
-.l-icon-link:before {
-	content: "\f4";
-}
-
 .l-icon-alert {
 	display: none !important; // Remove this when alerts are enabled
 	&:before {
 		color: $colorAlert;
 		content: "!";
 	}
+}
+
+// NEW!!
+.t-item-icon {
+	// Used in grid-item.html, tree-item, inspector location, more?
+	@extend .ui-symbol;
+    @extend .icon;
+    display: inline-block;
+    line-height: normal; // This is Ok for the symbolsfont
+    position: relative;
+    &.l-icon-link {
+        &:before {
+            color: $colorIconLink;
+            content: "\f4";
+            height: auto; width: auto;
+            position: absolute;
+            left: 0; top: 0; right: 0; bottom: 10%;
+            @include transform-origin(bottom, left);
+            @include transform(scale(0.3));
+            z-index: 2;
+        }
+    }
 }
