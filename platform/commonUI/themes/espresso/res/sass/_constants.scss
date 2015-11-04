@@ -10,7 +10,7 @@ $colorInteriorBorder: rgba($colorBodyFg, 0.1);
 $colorA: #ccc;
 $colorAHov: #fff;
 $contrastRatioPercent: 7%;
-$basicCr: 2px;
+$basicCr: 3px;
 $controlCr: 3px;
 $smallCr: 2px;
 
@@ -68,6 +68,8 @@ $colorFormRequired: $colorAlt1;
 $colorFormValid: #33cc33;
 $colorFormError: #cc0000;
 $colorFormInvalid: #ff3300;
+$colorFormLines: rgba(#fff, 0.1);
+$colorFormSectionHeader: rgba(#000, 0.2);
 $colorInputBg: rgba(#fff, 0.1);
 $colorInputFg: pullForward($colorBodyFg, 20%);
 $colorFormText: rgba(#fff, 0.5);
@@ -80,6 +82,18 @@ $colorInspectorPropName: pushBack($colorBodyFg, 15%);
 $colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
 $colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
+
+// Status colors, mainly used for messaging and item ancillary symbols
+$colorStatusFg: #ccc;
+$colorStatusDefault: #ccc;
+$colorStatusInfo: #62ba72;
+$colorStatusAlert: #ffa66d;
+$colorStatusError: #d4585c;
+$colorProgressBarOuter: rgba(#000, 0.1);
+$colorProgressBarAmt: $colorKey;
+$progressBarHOverlay: 15px;
+$progressBarStripeW: 20px;
+$shdwStatusIc: rgba(black, 0.4) 0 1px 2px;
 
 // Selects
 $colorSelectBg: $colorBtnBg;

@@ -27,16 +27,35 @@ define(
         "use strict";
 
         describe("The telemetry formatter", function () {
-            var formatter;
+            var mockFormatService,
+                mockFormat,
+                formatter;
 
             beforeEach(function () {
-                formatter = new TelemetryFormatter();
+                mockFormatService =
+                    jasmine.createSpyObj("formatService", ["getFormat"]);
+                mockFormat = jasmine.createSpyObj("format", [
+                    "validate",
+                    "parse",
+                    "format"
+                ]);
+                mockFormatService.getFormat.andReturn(mockFormat);
+                formatter = new TelemetryFormatter(mockFormatService);
             });
 
-            it("formats domains using YYYY-DDD style", function () {
-                expect(formatter.formatDomainValue(402513731000)).toEqual(
-                    "1982-276 17:22:11"
-                );
+            it("formats domains using the formatService", function () {
+                var testValue = 12321, testResult = "some result";
+                mockFormat.format.andReturn(testResult);
+
+                expect(formatter.formatDomainValue(testValue))
+                    .toEqual(testResult);
+                expect(mockFormat.format).toHaveBeenCalledWith(testValue);
+            });
+
+            it("passes format keys to the formatService", function () {
+                formatter.formatDomainValue(12321, "someKey");
+                expect(mockFormatService.getFormat)
+                    .toHaveBeenCalledWith("someKey");
             });
 
             it("formats ranges as values", function () {

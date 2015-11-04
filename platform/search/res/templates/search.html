@@ -43,7 +43,7 @@
         <a class="ui-symbol clear-icon"
            ng-class="{content: !(ngModel.input === '' || ngModel.input === undefined)}"
            ng-click="ngModel.input = ''; controller.search()">
-	        &#xe607;
+            &#xe607;
         </a>
 
         <!-- Menu icon/button 'v' -->
@@ -53,12 +53,12 @@
         </a>
 
         <!-- Menu -->
-        <mct-representation key="'search-menu'"
+        <mct-include key="'search-menu'"
                      class="menu-element search-menu-holder"
                      ng-class="{off: !toggle.isActive()}"
                      ng-model="ngModel"
                      ng-click="toggle.setState(true)">
-        </mct-representation>
+        </mct-include>
     </div>
 
     <!-- Active filter display -->
@@ -71,7 +71,7 @@
             &#xe607;
         </a>
 
-	    Filtered by: {{ ngModel.filtersString }}
+        Filtered by: {{ ngModel.filtersString }}
 
     </div>
 

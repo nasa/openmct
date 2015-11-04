@@ -92,10 +92,19 @@ define(
             var activeElement = element,
                 activeTemplateUrl,
                 comment = this.$compile('<!-- hidden mct element -->')(scope),
+                activeScope,
                 self = this;
+
+            function destroyScope() {
+                if (activeScope) {
+                    activeScope.$destroy();
+                    activeScope = undefined;
+                }
+            }
 
             function removeElement() {
                 if (activeElement !== comment) {
+                    destroyScope();
                     activeElement.replaceWith(comment);
                     activeElement = comment;
                 }
@@ -110,8 +119,10 @@ define(
             }
 
             function populateElement(template) {
-                element.empty();
-                element.append(self.$compile(template)(scope));
+                destroyScope();
+                activeScope = scope.$new(false);
+                element.html(template);
+                self.$compile(element.contents())(activeScope);
             }
 
             function badTemplate(templateUrl) {
@@ -120,22 +131,21 @@ define(
             }
 
             function changeTemplate(templateUrl) {
-                if (templateUrl !== activeTemplateUrl) {
-                    if (templateUrl) {
-                        addElement();
-                        self.load(templateUrl).then(function (template) {
-                            // Avoid race conditions
-                            if (templateUrl === activeTemplateUrl) {
-                                populateElement(template);
-                            }
-                        }, function () {
-                            badTemplate(templateUrl);
-                        });
-                    } else {
-                        removeElement();
-                    }
-                    activeTemplateUrl = templateUrl;
+                if (templateUrl) {
+                    destroyScope();
+                    addElement();
+                    self.load(templateUrl).then(function (template) {
+                        // Avoid race conditions
+                        if (templateUrl === activeTemplateUrl) {
+                            populateElement(template);
+                        }
+                    }, function () {
+                        badTemplate(templateUrl);
+                    });
+                } else {
+                    removeElement();
                 }
+                activeTemplateUrl = templateUrl;
             }
 
             if (templateUrl) {

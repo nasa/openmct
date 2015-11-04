@@ -72,6 +72,20 @@ $colorInputBg: $colorGenBg;
 $colorInputFg: $colorBodyFg;
 $colorFormText: pushBack($colorBodyFg, 10%);
 $colorInputIcon: pushBack($colorBodyFg, 25%);
+
+// Status colors, mainly used for messaging and item ancillary symbols
+$colorStatusFg: #fff;
+$colorStatusDefault: #ccc;
+$colorStatusInfo: #60ba7b;
+$colorStatusAlert: #ffb66c;
+$colorStatusError: #c96b68;
+$colorProgressBarOuter: rgba(#000, 0.1);
+$colorProgressBarAmt: #0a0;
+$progressBarHOverlay: 15px;
+$progressBarStripeW: 20px;
+$shdwStatusIc: rgba(white, 0.8) 0 0px 5px;
+
+// Selects
 $colorSelectBg: #ddd;
 $colorSelectFg: $colorBodyFg;
 
