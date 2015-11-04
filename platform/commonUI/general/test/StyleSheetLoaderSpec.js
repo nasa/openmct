@@ -93,7 +93,7 @@ define(
                         mockDocument,
                         testTheme
                     );
-                })
+                });
 
                 it("includes matching themes", function () {
                     expect(mockElement.setAttribute)
