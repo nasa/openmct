@@ -45,6 +45,14 @@
                 "templateUrl": "templates/indicator.html"
             },
             {
+                "key": "message-banner",
+                "templateUrl": "templates/message-banner.html"
+            },
+            {
+                "key": "progress-bar",
+                "templateUrl": "templates/progress-bar.html"
+            },
+            {
               "key": "time-controller",
               "templateUrl": "templates/controls/time-controller.html"
             }
@@ -112,6 +120,11 @@
                 "key": "SelectorController",
                 "implementation": "controllers/SelectorController.js",
                 "depends": [ "objectService", "$scope" ]
+            },
+            {
+                "key": "BannerController",
+                "implementation": "controllers/BannerController.js",
+                "depends": ["$scope", "notificationService", "dialogService"]
             }
         ],
         "directives": [

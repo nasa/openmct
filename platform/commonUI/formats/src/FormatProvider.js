@@ -72,9 +72,11 @@ define([
 
     /**
      * Look up a format by its symbolic identifier.
+     * @method getFormat
+     * @memberof FormatService#
      * @param {string} key the identifier for this format
-     * @returns {Format} the format, or `undefined` if no such format
-     *                   is known.
+     * @returns {Format} the format
+     * @throws {Error} errors when the requested format is unrecognized
      */
 
     /**
@@ -85,7 +87,7 @@ define([
      * @param {Array.<function(new : Format)>} format constructors,
      *        from the `formats` extension category.
      */
-    function FormatProvider(formats, $log) {
+    function FormatProvider(formats) {
         var formatMap = {};
 
         function addToMap(Format) {
@@ -97,13 +99,12 @@ define([
 
         formats.forEach(addToMap);
         this.formatMap = formatMap;
-        this.$log = $log;
     }
 
     FormatProvider.prototype.getFormat = function (key) {
         var format = this.formatMap[key];
         if (!format) {
-            this.$log.warn("No format found for " + key);
+            throw new Error("FormatProvider: No format found for " + key);
         }
         return format;
     };

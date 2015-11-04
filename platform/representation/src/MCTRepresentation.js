@@ -31,7 +31,6 @@ define(
     function () {
         "use strict";
 
-
         /**
          * Defines the mct-representation directive. This may be used to
          * present domain objects as HTML (with event wiring), with the
@@ -96,6 +95,9 @@ define(
                     }),
                     toClear = [], // Properties to clear out of scope on change
                     counter = 0,
+                    couldRepresent = false,
+                    lastId,
+                    lastKey,
                     changeTemplate = templateLinker.link($scope, element);
 
                 // Populate scope with any capabilities indicated by the
@@ -141,6 +143,13 @@ define(
                     });
                 }
 
+                function unchanged(canRepresent, id, key) {
+                    return canRepresent &&
+                        couldRepresent &&
+                        id === lastId &&
+                        key === lastKey;
+                }
+
                 // General-purpose refresh mechanism; should set up the scope
                 // as appropriate for current representation key and
                 // domain object.
@@ -149,7 +158,13 @@ define(
                         representation = lookup($scope.key, domainObject),
                         path = representation && getPath(representation),
                         uses = ((representation || {}).uses || []),
-                        canRepresent = !!(path && domainObject);
+                        canRepresent = !!(path && domainObject),
+                        id = domainObject && domainObject.getId(),
+                        key = $scope.key;
+
+                    if (unchanged(canRepresent, id, key)) {
+                        return;
+                    }
 
                     // Create an empty object named "representation", for this
                     // representation to store local variables into.
@@ -172,6 +187,11 @@ define(
                     toClear.forEach(function (property) {
                         delete $scope[property];
                     });
+
+                    // To allow simplified change detection next time around
+                    couldRepresent = canRepresent;
+                    lastId = id;
+                    lastKey = key;
 
                     // Populate scope with fields associated with the current
                     // domain object (if one has been passed in)

@@ -24,6 +24,18 @@
             {
                 "key": "form-dialog",
                 "templateUrl": "templates/dialog.html"
+            },
+            {
+                "key": "overlay-blocking-message",
+                "templateUrl": "templates/overlay-blocking-message.html"
+            },
+            {
+                "key": "message",
+                "templateUrl": "templates/message.html"
+            },
+            {
+                "key": "overlay-message-list",
+                "templateUrl": "templates/overlay-message-list.html"
             }
         ],
         "containers": [

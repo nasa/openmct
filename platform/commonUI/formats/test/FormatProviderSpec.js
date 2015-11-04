@@ -41,14 +41,13 @@ define(
                         [ 'parse', 'validate', 'format' ]
                     );
                 });
-                mockLog = jasmine.createSpyObj('$log', ['error', 'warn']);
                 // Return constructors
                 mockFormats = KEYS.map(function (k, i) {
                     function MockFormat() { return mockFormatInstances[i]; }
                     MockFormat.key = k;
                     return MockFormat;
                 });
-                provider = new FormatProvider(mockFormats, mockLog);
+                provider = new FormatProvider(mockFormats);
             });
 
             it("looks up formats by key", function () {
@@ -58,11 +57,10 @@ define(
                 });
             });
 
-            it("warns about unknown formats", function () {
-                provider.getFormat('a'); // known format
-                expect(mockLog.warn).not.toHaveBeenCalled();
-                provider.getFormat('some-unknown-format');
-                expect(mockLog.warn).toHaveBeenCalledWith(jasmine.any(String));
+            it("throws an error about unknown formats", function () {
+                expect(function () {
+                    provider.getFormat('some-unknown-format');
+                }).toThrow();
             });
 
         });
