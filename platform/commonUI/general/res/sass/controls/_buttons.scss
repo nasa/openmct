@@ -225,6 +225,11 @@ $pad: $interiorMargin * $baseRatio;
         overflow: hidden;
         word-break: break-all;
 
+        &.collapsed {
+            $d: $uePaneMiniTabCollapsedW;
+            width: $d; font-size: $d;
+        }
+
         &:before,
         &:after {
             position: absolute;
