@@ -1,0 +1,20 @@
+<span class="s-btn"
+      ng-controller="DateTimeFieldController">
+    <input type="text"
+           ng-model="textValue"
+           ng-class="{ error: textInvalid }">
+    </input>
+    <a class="ui-symbol icon icon-calendar"
+       ng-if="structure.format === 'utc' || !structure.format"
+       ng-click="pickerActive = !pickerActive">
+    </a>
+    <mct-popup ng-if="pickerActive">
+        <div mct-click-elsewhere="pickerActive = false">
+            <mct-control key="'datetime-picker'"
+                         ng-model="ngModel"
+                         field="field"
+                         options="{ hours: true }">
+            </mct-control>
+        </div>
+    </mct-popup>
+</span>

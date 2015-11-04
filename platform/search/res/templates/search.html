@@ -21,21 +21,16 @@
 -->
 <div class="search"
      ng-controller="SearchController as controller">
-    
+
     <!-- Search bar -->
     <div class="search-bar"
          ng-controller="ClickAwayController as toggle">
-        
+
         <!-- Input field -->
         <input class="search-input"
                type="text"
                ng-model="ngModel.input"
                ng-keyup="controller.search()" />
-        <!--mct-control key="'textfield'"
-                     class="search-input"
-                     ng-model="ngModel.input"
-                     ng-keyup="controller.search()">
-        </mct-control-->
 
         <!-- Search icon -->
         <!-- ui symbols for search are 'd' and 'M' -->
@@ -43,49 +38,46 @@
              ng-class="{content: !(ngModel.input === '' || ngModel.input === undefined)}">
             M
         </div>
-        
+
         <!-- Clear icon/button 'x' -->
         <a class="ui-symbol clear-icon"
            ng-class="{content: !(ngModel.input === '' || ngModel.input === undefined)}"
            ng-click="ngModel.input = ''; controller.search()">
-	        &#xe607;
+            &#xe607;
         </a>
-        
+
         <!-- Menu icon/button 'v' -->
         <a class="ui-symbol menu-icon"
            ng-click="toggle.toggle()">
             v
         </a>
-        
+
         <!-- Menu -->
-        <mct-representation key="'search-menu'"
+        <mct-include key="'search-menu'"
                      class="menu-element search-menu-holder"
                      ng-class="{off: !toggle.isActive()}"
                      ng-model="ngModel"
                      ng-click="toggle.setState(true)">
-        </mct-representation>
+        </mct-include>
     </div>
-    
+
     <!-- Active filter display -->
     <div class="active-filter-display"
          ng-class="{off: ngModel.filtersString === '' || ngModel.filtersString === undefined || !ngModel.search}"
          ng-controller="SearchMenuController as menuController">
-        
+
         <a class="ui-symbol clear-filters-icon"
            ng-click="ngModel.checkAll = true; menuController.checkAll()">
             &#xe607;
         </a>
 
-	    Filtered by: {{ ngModel.filtersString }}
-        
-        <!--div class="filter-options">
-            Filtered by: {{ ngModel.filtersString }}
-        </div-->
+        Filtered by: {{ ngModel.filtersString }}
+
     </div>
-    
+
     <!-- This div exists to determine scroll bar location -->
     <div class="search-scroll abs">
-        
+
         <!-- Results list -->
         <div class="results">
             <mct-representation key="'search-item'"
@@ -103,14 +95,14 @@
             <span class="title-label">Loading...</span>
         </div>
 
-        <!-- Load more button --> 
+        <!-- Load more button -->
         <div ng-if="controller.areMore()">
             <a class="load-more-button s-btn vsm"
-                    ng-click="controller.loadMore()"> 
+                    ng-click="controller.loadMore()">
                 More Results
             </a>
         </div>
-        
+
     </div>
-    
+
 </div>

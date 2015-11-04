@@ -1,4 +1,9 @@
 {
+    "configuration": {
+        "paths": {
+            "uuid": "uuid"
+        }
+    },
     "extensions": {
         "routes": [
             {
@@ -26,10 +31,10 @@
                 ]
             },
             {
-                "key": "BrowseTreeController",
-                "implementation": "BrowseTreeController.js",
+                "key": "PaneController",
+                "implementation": "PaneController.js",
                 "priority": "preferred",
-                "depends": [ "$scope", "agentService" ]
+                "depends": [ "$scope", "agentService","$window" ]
             },
             {
                 "key": "BrowseObjectController",

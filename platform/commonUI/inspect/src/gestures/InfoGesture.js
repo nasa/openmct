@@ -55,11 +55,6 @@ define(
                 self.trackPosition(event);
             };
 
-            // Also make sure we dismiss bubble if representation is destroyed
-            // before the mouse actually leaves it
-            this.scopeOff =
-                element.scope().$on('$destroy', this.hideBubbleCallback);
-
             this.element = element;
             this.$timeout = $timeout;
             this.infoService = infoService;
@@ -143,7 +138,6 @@ define(
             this.hideBubble();
             // ...and detach listeners
             this.element.off('mouseenter', this.showBubbleCallback);
-            this.scopeOff();
         };
 
         return InfoGesture;

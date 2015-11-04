@@ -43,6 +43,14 @@ define(
             this.formatter = formatter;
         }
 
+        // For phantomjs compatibility, for headless testing
+        // (Function.prototype.bind unsupported)
+        function bind(fn, thisObj) {
+            return fn.bind ? fn.bind(thisObj) : function () {
+                return fn.apply(thisObj, arguments);
+            };
+        }
+
         // Generate ticks; interpolate from start up to
         // start + span in count steps, using the provided
         // formatter to represent each value.
@@ -72,7 +80,7 @@ define(
                 panZoom.origin[0],
                 panZoom.dimensions[0],
                 count,
-                this.formatter.formatDomainValue
+                bind(this.formatter.formatDomainValue, this.formatter)
             );
         };
 
@@ -87,7 +95,7 @@ define(
                 panZoom.origin[1],
                 panZoom.dimensions[1],
                 count,
-                this.formatter.formatRangeValue
+                bind(this.formatter.formatRangeValue, this.formatter)
             );
         };
 

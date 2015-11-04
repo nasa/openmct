@@ -26,25 +26,32 @@ define(
     function (moment) {
         "use strict";
 
-        var
-				DATE_FORMAT = "YYYY-MM-DD HH:mm:ss",
-				TICK_SPACING_PX = 150;
+        var TICK_SPACING_PX = 150;
+
 
         /**
+         * Controller used by the `time-controller` template.
          * @memberof platform/commonUI/general
          * @constructor
+         * @param $scope the Angular scope for this controller
+         * @param {FormatService} formatService the service to user to format
+         *        domain values
+         * @param {string} defaultFormat the format to request when no
+         *        format has been otherwise specified
+         * @param {Function} now a function to return current system time
          */
-        function TimeConductorController($scope, now) {
+        function TimeRangeController($scope, formatService, defaultFormat, now) {
             var tickCount = 2,
                 innerMinimumSpan = 1000, // 1 second
                 outerMinimumSpan = 1000 * 60 * 60, // 1 hour
-                initialDragValue;
+                initialDragValue,
+                formatter = formatService.getFormat(defaultFormat);
 
             function formatTimestamp(ts) {
-                return moment.utc(ts).format(DATE_FORMAT);
+                return formatter.format(ts);
             }
 
-            // From 0.0-1.0 to "0%"-"1%"
+            // From 0.0-1.0 to "0%"-"100%"
             function toPercent(p) {
                 return (100 * p) + "%";
             }
@@ -94,22 +101,14 @@ define(
             }
 
             function updateViewFromModel(ngModel) {
-                var t = now();
-
                 ngModel = ngModel || {};
                 ngModel.outer = ngModel.outer || defaultBounds();
                 ngModel.inner = ngModel.inner || copyBounds(ngModel.outer);
 
-                // First, dates for the date pickers for outer bounds
-                $scope.startOuterDate = new Date(ngModel.outer.start);
-                $scope.endOuterDate = new Date(ngModel.outer.end);
-
-                // Then various updates for the inner span
-                updateViewForInnerSpanFromModel(ngModel);
-
                 // Stick it back is scope (in case we just set defaults)
                 $scope.ngModel = ngModel;
 
+                updateViewForInnerSpanFromModel(ngModel);
                 updateTicks();
             }
 
@@ -129,7 +128,8 @@ define(
             }
 
             function toMillis(pixels) {
-                var span = $scope.ngModel.outer.end - $scope.ngModel.outer.start;
+                var span =
+                    $scope.ngModel.outer.end - $scope.ngModel.outer.start;
                 return (pixels / $scope.spanWidth) * span;
             }
 
@@ -178,6 +178,8 @@ define(
             function updateOuterStart(t) {
                 var ngModel = $scope.ngModel;
 
+                ngModel.outer.start = t;
+
                 ngModel.outer.end = Math.max(
                     ngModel.outer.start + outerMinimumSpan,
                     ngModel.outer.end
@@ -190,13 +192,14 @@ define(
                     ngModel.inner.end
                 );
 
-                $scope.startOuterText = formatTimestamp(t);
-
                 updateViewForInnerSpanFromModel(ngModel);
+                updateTicks();
             }
 
             function updateOuterEnd(t) {
                 var ngModel = $scope.ngModel;
+
+                ngModel.outer.end = t;
 
                 ngModel.outer.start = Math.min(
                     ngModel.outer.end - outerMinimumSpan,
@@ -210,9 +213,14 @@ define(
                     ngModel.inner.start
                 );
 
-                $scope.endOuterText = formatTimestamp(t);
-
                 updateViewForInnerSpanFromModel(ngModel);
+                updateTicks();
+            }
+
+            function updateFormat(key) {
+                formatter = formatService.getFormat(key || defaultFormat);
+                updateViewForInnerSpanFromModel($scope.ngModel);
+                updateTicks();
             }
 
             $scope.startLeftDrag = startLeftDrag;
@@ -222,7 +230,6 @@ define(
             $scope.rightDrag = rightDrag;
             $scope.middleDrag = middleDrag;
 
-            $scope.state = false;
             $scope.ticks = [];
 
             // Initialize scope to defaults
@@ -232,8 +239,9 @@ define(
             $scope.$watch("spanWidth", updateSpanWidth);
             $scope.$watch("ngModel.outer.start", updateOuterStart);
             $scope.$watch("ngModel.outer.end", updateOuterEnd);
+            $scope.$watch("parameters.format", updateFormat);
         }
 
-        return TimeConductorController;
+        return TimeRangeController;
     }
 );

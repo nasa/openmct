@@ -169,8 +169,9 @@ define(
                     mockDomainObject
                 ]);
 
-                // Make an object available
+                // Make an object available; invoke handler's callback
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockHandler.handle.mostRecentCall.args[1]();
 
                 expect(controller.getModeOptions().length).toEqual(1);
 
@@ -181,8 +182,9 @@ define(
                     mockDomainObject
                 ]);
 
-                // Make an object available
+                // Make an object available; invoke handler's callback
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockHandler.handle.mostRecentCall.args[1]();
 
                 expect(controller.getModeOptions().length).toEqual(2);
             });

@@ -30,25 +30,25 @@ define(
             YELLOW = 0.5,
             LIMITS = {
                 rh: {
-                    cssClass: "s-limit-upr-red",
+                    cssClass: "s-limit-upr s-limit-red",
                     low: RED,
                     high: Number.POSITIVE_INFINITY,
                     name: "Red High"
                 },
                 rl: {
-                    cssClass: "s-limit-lwr-red",
+                    cssClass: "s-limit-lwr s-limit-red",
                     high: -RED,
                     low: Number.NEGATIVE_INFINITY,
                     name: "Red Low"
                 },
                 yh: {
-                    cssClass: "s-limit-upr-yellow",
+                    cssClass: "s-limit-upr s-limit-yellow",
                     low: YELLOW,
                     high: RED,
                     name: "Yellow High"
                 },
                 yl: {
-                    cssClass: "s-limit-lwr-yellow",
+                    cssClass: "s-limit-lwr s-limit-yellow",
                     low: -RED,
                     high: -YELLOW,
                     name: "Yellow Low"

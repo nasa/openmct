@@ -1,0 +1,26 @@
+{
+    "name": "Time services bundle",
+    "description": "Defines interfaces and provides default implementations for handling different time systems.",
+    "extensions": {
+        "components": [
+            {
+                "provides": "formatService",
+                "type": "provider",
+                "implementation": "FormatProvider.js",
+                "depends": [ "formats[]" ]
+            }
+        ],
+        "formats": [
+            {
+                "key": "utc",
+                "implementation": "UTCTimeFormat.js"
+            }
+        ],
+        "constants": [
+            {
+                "key": "DEFAULT_TIME_FORMAT",
+                "value": "utc"
+            }
+        ]
+    }
+}

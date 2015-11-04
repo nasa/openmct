@@ -22,8 +22,8 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ["../../src/controllers/TimeRangeController"],
-    function (TimeRangeController) {
+    ["../../src/controllers/TimeRangeController", "moment"],
+    function (TimeRangeController, moment) {
         "use strict";
 
         var SEC = 1000,
@@ -33,7 +33,10 @@ define(
 
         describe("The TimeRangeController", function () {
             var mockScope,
+                mockFormatService,
+                testDefaultFormat,
                 mockNow,
+                mockFormat,
                 controller;
 
             function fireWatch(expr, value) {
@@ -57,8 +60,30 @@ define(
                     "$scope",
                     [ "$apply", "$watch", "$watchCollection" ]
                 );
+                mockFormatService = jasmine.createSpyObj(
+                    "formatService",
+                    [ "getFormat" ]
+                );
+                testDefaultFormat = 'utc';
+                mockFormat = jasmine.createSpyObj(
+                    "format",
+                    [ "validate", "format", "parse" ]
+                );
+
+                mockFormatService.getFormat.andReturn(mockFormat);
+
+                mockFormat.format.andCallFake(function (value) {
+                    return moment.utc(value).format("YYYY-MM-DD HH:mm:ss");
+                });
+
                 mockNow = jasmine.createSpy('now');
-                controller = new TimeRangeController(mockScope, mockNow);
+
+                controller = new TimeRangeController(
+                    mockScope,
+                    mockFormatService,
+                    testDefaultFormat,
+                    mockNow
+                );
             });
 
             it("watches the model that was passed in", function () {
@@ -166,6 +191,22 @@ define(
                     expect(mockScope.ngModel.inner.end)
                         .toBeGreaterThan(mockScope.ngModel.inner.start);
                 });
+
+            });
+
+            it("watches for changes in format selection", function () {
+                expect(mockFormatService.getFormat)
+                    .not.toHaveBeenCalledWith('test-format');
+                fireWatch("parameters.format", 'test-format');
+                expect(mockFormatService.getFormat)
+                    .toHaveBeenCalledWith('test-format');
+            });
+
+            it("throws an error for unknown formats", function () {
+                mockFormatService.getFormat.andReturn(undefined);
+                expect(function () {
+                    fireWatch("parameters.format", "some-format");
+                }).toThrow();
             });
 
         });

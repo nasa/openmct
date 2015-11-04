@@ -30,7 +30,8 @@
 var CONSTANTS = {
         DIAGRAM_WIDTH: 800,
         DIAGRAM_HEIGHT: 500
-    };
+    },
+    TOC_HEAD = "# Table of Contents";
 
 GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be defined
 (function () {
@@ -44,6 +45,7 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
         split = require("split"),
         stream = require("stream"),
         nomnoml = require('nomnoml'),
+        toc = require("markdown-toc"),
         Canvas = require('canvas'),
         options = require("minimist")(process.argv.slice(2));
 
@@ -110,6 +112,9 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
             done();
         };
         transform._flush = function (done) {
+            // Prepend table of contents
+            markdown =
+                [ TOC_HEAD, toc(markdown).content, "", markdown ].join("\n");
             this.push("<html><body>\n");
             this.push(marked(markdown));
             this.push("\n</body></html>\n");
@@ -133,8 +138,8 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
         customRenderer.link = function (href, title, text) {
             // ...but only if they look like relative paths
             return (href || "").indexOf(":") === -1 && href[0] !== "/" ?
-                renderer.link(href.replace(/\.md/, ".html"), title, text) :
-                renderer.link.apply(renderer, arguments);
+                    renderer.link(href.replace(/\.md/, ".html"), title, text) :
+                    renderer.link.apply(renderer, arguments);
         };
         return customRenderer;
     }
@@ -179,13 +184,17 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
     glob(options['in'] + "/**/*.@(html|css|png)", {}, function (err, files) {
         files.forEach(function (file) {
             var destination = file.replace(options['in'], options.out),
-                destPath = path.dirname(destination);
-
+                destPath = path.dirname(destination),
+                streamOptions = {};
+            if (file.match(/png$/)){
+                streamOptions.encoding = null;
+            } else {
+                streamOptions.encoding = 'utf8';
+            }
+            
             mkdirp(destPath, function (err) {
-                fs.createReadStream(file, { encoding: 'utf8' })
-                    .pipe(fs.createWriteStream(destination, {
-                        encoding: 'utf8'
-                    }));
+                fs.createReadStream(file, streamOptions)
+                    .pipe(fs.createWriteStream(destination, streamOptions));
             });
         });
     });

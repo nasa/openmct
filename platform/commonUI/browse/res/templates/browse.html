@@ -22,22 +22,27 @@
 
 <div class="abs holder-all browse-mode" ng-controller="BrowseController">
     <mct-include key="'topbar-browse'"></mct-include>
-    <div class="holder browse-area s-browse-area abs browse-wrapper"
-         ng-controller="BrowseTreeController as tree"
-         ng-class="tree.visible() ? 'browse-showtree' : 'browse-hidetree'">
-        <mct-split-pane class='contents abs' anchor='left'>
+    <div class="abs holder holder-main browse-area s-browse-area browse-wrapper"
+         ng-controller="PaneController as modelPaneTree"
+         ng-class="modelPaneTree.visible() ? 'pane-tree-showing' : 'pane-tree-hidden'">
+        <mct-split-pane class='abs contents'
+                        anchor='left'>
             <div class='split-pane-component treeview pane left'>
-                <div class="holder abs l-mobile">
+                <!--<a class="mini-tab-icon anchor-left toggle-pane toggle-search mobile-hide"
+                   title="Enable search"
+                   ng-click="modelPaneTree.toggle()"
+                   ng-class="{ collapsed : !modelPaneTree.visible() }"
+                   ng-style="{ opacity: modelPaneTree.visible()? 0:1 }"></a>-->
+                <div class="holder holder-create-and-search abs l-mobile">
                     <mct-representation key="'create-button'"
                                         mct-object="navigatedObject"
                                         mct-device="desktop">
                     </mct-representation>
                     <div class='holder search-holder abs'
                          ng-class="{active: treeModel.search}">
-                        <mct-representation key="'search'"
-                                     mct-object="domainObject"
+                        <mct-include key="'search'"
                                      ng-model="treeModel">
-                        </mct-representation>
+                        </mct-include>
                     </div>
                     <div class='tree-holder abs mobile-tree-holder'
                          ng-hide="treeModel.search">
@@ -50,17 +55,40 @@
                 </div>
             </div>
 
-            <mct-splitter class="mobile-hide"></mct-splitter>
+            <mct-splitter class="splitter-treeview mobile-hide"></mct-splitter>
 
-            <div class='split-pane-component items pane right-repr'>
-                <div class='holder abs l-mobile' id='content-area'>
-                    <mct-representation mct-object="navigatedObject"
-                                        key="'browse-object'">
-                    </mct-representation>
+            <div class='split-pane-component items pane primary-pane right'>
+                <a class="mini-tab-icon anchor-left toggle-pane toggle-tree"
+                   title="{{ modelPaneTree.visible()? 'Hide' : 'Show' }} this pane"
+                   ng-click="modelPaneTree.toggle()"
+                   ng-class="{ collapsed : !modelPaneTree.visible() }"></a>
+
+                <div class='holder holder-object-and-inspector abs l-mobile' id='content-area'
+                     ng-controller="PaneController as modelPaneInspect"
+                     ng-class="modelPaneInspect.visible() ? 'pane-inspect-showing' : 'pane-inspect-hidden'">
+
+                    <mct-split-pane class='l-object-and-inspector contents abs' anchor='right'>
+                        <div class='split-pane-component t-object pane primary-pane left'>
+                            <mct-representation mct-object="navigatedObject"
+                                                key="'browse-object'"
+                                                class="abs holder holder-object">
+                            </mct-representation>
+                        </div>
+
+                        <mct-splitter class="splitter-inspect mobile-hide flush-right edge-shdw"></mct-splitter>
+
+                        <div class="split-pane-component t-inspect pane right mobile-hide">
+                            <mct-representation key="'object-inspector'"
+                                                mct-object="domainObject"
+                                                ng-model="treeModel">
+                            </mct-representation>
+                            <a class="mini-tab-icon anchor-right mobile-hide toggle-pane toggle-inspect"
+                               title="{{ modelPaneInspect.visible()? 'Hide' : 'Show' }} the Inspection pane"
+                               ng-click="modelPaneInspect.toggle()"
+                               ng-class="{ collapsed : !modelPaneInspect.visible() }"></a>
+                        </div>
+                    </mct-split-pane>
                 </div>
-                <div class="key-properties ui-symbol icon mobile-menu-icon desktop-hide"
-                     mct-device="mobile"
-                     ng-click="tree.toggle()">m</div>
             </div>
         </mct-split-pane>
     </div>

@@ -32,7 +32,7 @@
 .l-tree-item-flat-list {
 	// For lists of tree-items that are flat. Remove margin, etc. normally needed for the expansion arrow.
 	.tree-item {
-		.label {
+		.t-object-label {
 			left: $interiorMargin !important;
 		}
 	}
