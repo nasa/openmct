@@ -91,6 +91,7 @@
         padding: $interiorMargin 0;
     }
 }
+
 /********************************************* FLEX STYLES */
 .l-flex-row,
 .l-flex-col {
@@ -106,11 +107,13 @@
     }
 }
 
-.l-flex-row {
-    @include flex-direction(row);
+.l-flex-row { @include flex-direction(row); }
+.l-flex-col { @include flex-direction(column); }
 
-}
-
-.l-flex-col {
-    @include flex-direction(column);
+.l-flex {
+    @extend .l-flex-row;
+    .left {
+        @include flex(1 1 0);
+        padding-right: $interiorMarginLg;
+    }
 }

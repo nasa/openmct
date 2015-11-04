@@ -365,16 +365,6 @@
     }
 }
 
-.l-flex {
-    @include webkitVal('display', 'flex');
-    @include webkitProp('flex-flow', 'row nowrap');
-    .left {
-        //@include test(red);
-        @include webkitProp(flex, '1 1 0');
-        padding-right: $interiorMarginLg;
-    }
-}
-
 // When the tree is hidden, these are the
 // classes used for the left menu and the
 // right representation.
