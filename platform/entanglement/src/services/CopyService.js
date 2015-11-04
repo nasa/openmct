@@ -68,7 +68,7 @@ define(
          * object being copied. The clones are all full composed with
          * references to their own children.
          */
-        CopyService.prototype.buildCopyPlan = function(domainObject, parent) {
+        CopyService.prototype.buildCopyPlan = function(domainObject, parent, progress) {
             var clones = [],
                 $q = this.$q,
                 self = this;
@@ -99,6 +99,8 @@ define(
                 delete modelClone.model.persisted;
                 delete modelClone.model.modified;
                 return $q.when(originalObject.useCapability('composition')).then(function(composees){
+
+                    progress({phase: "preparing"});
                     return (composees || []).reduce(function(promise, composee){
                             //If the object is composed of other
                             // objects, chain a promise..
@@ -120,6 +122,7 @@ define(
                     });
                 });
             };
+            
             return copy(domainObject, parent).then(function(){
                 return clones;
             });
@@ -142,7 +145,7 @@ define(
                     clone.model.persisted = self.now();
                     return self.persistenceService.createObject(clone.persistenceSpace, clone.id, clone.model)
                         .then(function(){
-                            progress && progress("copying", objectClones.length, ++persisted);
+                            progress && progress({phase: "copying", totalObjects: objectClones.length, processed: ++persisted});
                         });
                 })).then(function(){
                     return objectClones
@@ -184,13 +187,15 @@ define(
          * @returns a promise that will be completed with the clone of
          * domainObject when the duplication is successful.
          */
-        CopyService.prototype.perform = function (domainObject, parent, progress) {
-            var $q = this.$q;
+        CopyService.prototype.perform = function (domainObject, parent) {
+            var $q = this.$q,
+                deferred = $q.defer();
             if (this.validate(domainObject, parent)) {
-                progress && progress("preparing");
-                return this.buildCopyPlan(domainObject, parent)
-                        .then(this.persistObjects(progress))
-                        .then(this.addClonesToParent(parent, progress));
+                    this.buildCopyPlan(domainObject, parent, deferred.notify)
+                    .then(this.persistObjects(deferred.notify))
+                    .then(this.addClonesToParent(parent, deferred.notify))
+                    .then(deferred.resolve);
+                return deferred.promise;
             } else {
                 throw new Error(
                     "Tried to copy objects without validating first."

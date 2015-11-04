@@ -26,6 +26,20 @@ define(
     function (AbstractComposeAction) {
         "use strict";
 
+        /*
+         function CopyAction(locationService, copyService, context) {
+            return new AbstractComposeAction (
+                locationService,
+                copyService,
+                context,
+                "Duplicate",
+                "to a location"
+            );
+         }
+
+         return CopyAction;
+         */
+        
         /**
          * The CopyAction is available from context menus and allows a user to
          * deep copy an object to another location of their choosing.
@@ -34,15 +48,21 @@ define(
          * @constructor
          * @memberof platform/entanglement
          */
-        function CopyAction($log, locationService, copyService, dialogService, notificationService, context) {
+        function CopyAction($log, locationService, copyService, dialogService, 
+                            notificationService, context) {
             this.dialogService = dialogService;
             this.notificationService = notificationService;
             this.$log = $log;
-            AbstractComposeAction.call(this, locationService, copyService, context, "Duplicate", "to a location");
+            //Extend the behaviour of the Abstract Compose Action
+            AbstractComposeAction.call(this, locationService, copyService, 
+                context, "Duplicate", "to a location");
         }
 
-        CopyAction.prototype = Object.create(AbstractComposeAction.prototype);
-
+        /**
+         * Executes the CopyAction. The CopyAction uses the default behaviour of 
+         * the AbstractComposeAction, but extends it to support notification 
+         * updates of progress on copy.
+         */
         CopyAction.prototype.perform = function() {
             var self = this,
                 notification,
@@ -51,8 +71,19 @@ define(
                     unknownProgress: false,
                     severity: "info",
                 };
-
+            
+            /*
+            Show banner notification of copy progress.
+             */
             function progress(phase, totalObjects, processed){
+                /*
+                Copy has two distinct phases. In the first phase a copy plan is 
+                made in memory. During this phase of execution, the user is 
+                shown a blocking 'modal' dialog.
+                 
+                In the second phase, the copying is taking place, and the user 
+                is shown non-invasive banner notifications at the bottom of the screen.
+                 */
                 if (phase.toLowerCase() === 'preparing'){
                     self.dialogService.showBlockingMessage({
                         title: "Preparing to copy objects",
@@ -62,19 +93,22 @@ define(
                 } else if (phase.toLowerCase() === "copying") {
                     self.dialogService.dismiss();
                     if (!notification) {
-                        notification = self.notificationService.notify(notificationModel);
+                        notification = self.notificationService
+                            .notify(notificationModel);
                     }
                     notificationModel.progress = (processed / totalObjects) * 100;
-                    notificationModel.title = ["Copied ", processed, "of ", totalObjects, "objects"].join(" ");
+                    notificationModel.title = ["Copied ", processed, "of ", 
+                        totalObjects, "objects"].join(" ");
                 }
             }
 
-            AbstractComposeAction.prototype.perform.call(this, progress)
-                .then(function(){
-                    notification.dismiss();
-                    self.notificationService.info("Copying complete.");
-                    })
-                .catch(function (error){
+            AbstractComposeAction.prototype.perform.call(this)
+                .then(
+                    function(){
+                        notification.dismiss();
+                        self.notificationService.info("Copying complete.");
+                    },
+                    function(error){
                         self.$log.error("Error copying objects. ", error);
                         //Show more general error message
                         self.notificationService.notify({
@@ -82,7 +116,11 @@ define(
                             severity: "error",
                             hint: error.message
                         });
-                    });
+                        
+                    },
+                    function(notification){
+                        progress(notification.phase, notification.totalObjects, notification.processed);
+                    })
                 };
         return CopyAction;
     }
