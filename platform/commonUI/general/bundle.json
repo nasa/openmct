@@ -122,6 +122,11 @@
                 "depends": [ "objectService", "$scope" ]
             },
             {
+                "key": "ObjectInspectorController",
+                "implementation": "controllers/ObjectInspectorController.js",
+                "depends": [ "$scope", "objectService" ]
+            },
+            {
                 "key": "BannerController",
                 "implementation": "controllers/BannerController.js",
                 "depends": ["$scope", "notificationService", "dialogService"]
@@ -250,6 +255,10 @@
                 "key": "switcher",
                 "templateUrl": "templates/controls/switcher.html",
                 "uses": [ "view" ]
+            },
+            {
+                "key": "object-inspector",
+                "templateUrl": "templates/object-inspector.html"
             }
         ],
         "controls": [

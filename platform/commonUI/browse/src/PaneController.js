@@ -33,10 +33,12 @@ define(
          * @constructor
          * @memberof platform/commonUI/browse
          */
-        function BrowseTreeController($scope, agentService) {
+        function PaneController($scope, agentService, $window) {
             var self = this;
             this.agentService = agentService;
-            this.state = true;
+
+            // Fast and cheap: if this has been opened in a new window, hide panes by default
+            this.state = !$window.opener;
 
             /**
              * Callback to invoke when any selection occurs in the tree.
@@ -44,7 +46,7 @@ define(
              * to the tree representation.
              *
              * @property {Function} callback
-             * @memberof platform/commonUI/browse.BrowseTreeController#
+             * @memberof platform/commonUI/browse.PaneController#
              */
             this.callback = function () {
                 // Note that, since this is a callback to pass, this is not
@@ -59,20 +61,20 @@ define(
         }
 
         /**
-         * Toggle the visibility of the tree.
+         * Toggle the visibility of the pane.
          */
-        BrowseTreeController.prototype.toggle = function () {
+        PaneController.prototype.toggle = function () {
             this.state = !this.state;
         };
 
         /**
-         * Get the desired visibility state of the tree.
+         * Get the desired visibility state of the pane.
          * @returns {boolean} true when visible
          */
-        BrowseTreeController.prototype.visible = function () {
+        PaneController.prototype.visible = function () {
             return this.state;
         };
 
-        return BrowseTreeController;
+        return PaneController;
     }
 );

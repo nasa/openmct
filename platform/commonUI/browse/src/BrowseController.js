@@ -153,7 +153,6 @@ define(
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);
             });
-
         }
 
         return BrowseController;

@@ -6,6 +6,7 @@
     "controllers/DateTimeFieldController",
     "controllers/DateTimePickerController",
     "controllers/GetterSetterController",
+    "controllers/ObjectInspectorController",
     "controllers/SelectorController",
     "controllers/SplitPaneController",
     "controllers/TimeRangeController",

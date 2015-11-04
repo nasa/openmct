@@ -37,12 +37,14 @@ $timeControllerToiLineColorHov: #fff;
 
 // General Colors
 $colorAlt1: #ffc700;
-$colorAlert: #ff533a;
+$colorAlert: #ff3c00;
 $colorIconLink: #49dedb;
 $colorPausedBg: #c56f01;
 $colorPausedFg: #fff;
 $colorCreateBtn: $colorKey;
 $colorGridLines: rgba(#fff, 0.05);
+$colorFormLines: rgba(#fff, 0.1);
+$colorFormSectionHeader: rgba(#000, 0.2);
 $colorInvokeMenu: #fff;
 $colorObjHdrTxt: $colorBodyFg;
 $colorObjHdrIc: pullForward($colorObjHdrTxt, 20%);
@@ -55,10 +57,10 @@ $colorMenuIc: pullForward($colorKey, 17%);
 $colorMenuHovBg: pullForward($colorMenuBg, 10%);
 $colorMenuHovFg: #fff;
 $colorMenuHovIc: $colorMenuHovFg;
-$colorCreateMenuLgIcon: $colorMenuFg;
-$colorCreateMenuText: $colorMenuFg;
 $shdwMenu: none;
 $shdwMenuText: rgba(black, 0.1) 0 1px 2px;
+$colorCreateMenuLgIcon: $colorMenuFg;
+$colorCreateMenuText: $colorMenuFg;
 
 // Form colors
 $colorCheck: $colorKey;
@@ -72,6 +74,14 @@ $colorInputBg: rgba(#fff, 0.1);
 $colorInputFg: pullForward($colorBodyFg, 20%);
 $colorFormText: rgba(#fff, 0.5);
 $colorInputIcon: pushBack($colorBodyFg, 15%);
+
+// Inspector
+$colorInspectorBg: pullForward($colorBodyBg, 3%);
+$colorInspectorFg: $colorBodyFg;
+$colorInspectorPropName: pushBack($colorBodyFg, 15%);
+$colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
+$colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
+$colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Status colors, mainly used for messaging and item ancillary symbols
 $colorStatusFg: #ccc;
@@ -139,6 +149,8 @@ $colorPlotAreaBorder: $colorInteriorBorder;
 $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
 
 // Tree
+$colorItemTreeHoverBg: rgba($colorBodyFg, 0.1);
+$colorItemTreeHoverFg: pullForward($colorBodyFg, 20%);
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
 $colorItemTreeFg: $colorBodyFg;
@@ -157,12 +169,13 @@ $scrollbarThumbColorHov: lighten($scrollbarThumbColor, 2%);
 $scrollbarTrackShdw: rgba(#000, 0.7) 0 1px 5px;
 
 // Splitter
+$splitterD: 25px; // splitterD and HandleD should both be odd, or even
+$splitterHandleD: 1px;
+$colorSplitterBg: pullForward($colorBodyBg, 5%);
 $splitterShdw: rgba(black, 0.4) 0 0 3px;
-$colorSplitterInterior: $colorBodyBg;
-$colorSplitterHover: none;
-$splitterW: 5px;
-$splitterEndCr: 1px;
-$colorGrippyInteriorHover: $colorKey;
+$splitterEndCr: none;
+$colorSplitterHover: pullForward($colorBodyBg, 15%);
+$colorSplitterActive: $colorKey;
 
 // Mobile
 $colorMobilePaneLeft: darken($colorBodyBg, 5%);

@@ -4,7 +4,7 @@
 	@include boxShdw($shdwBtns);
 }
 
-	@mixin btnSubtle($bg: $colorBodyBg, $bgHov: none, $fg: $colorBodyFg, $ic: $colorBtnIcon) {
+@mixin btnSubtle($bg: $colorBodyBg, $bgHov: none, $fg: $colorBodyFg, $ic: $colorBtnIcon) {
 	@include containerSubtle($bg, $fg);
 	@include btnBase($bg, linear-gradient(lighten($bg, 15%), lighten($bg, 10%)), $fg, $ic);
 	@include text-shadow($shdwItemText);

@@ -89,6 +89,14 @@ $shdwStatusIc: rgba(white, 0.8) 0 0px 5px;
 $colorSelectBg: #ddd;
 $colorSelectFg: $colorBodyFg;
 
+// Inspector
+$colorInspectorBg: pullForward($colorBodyBg, 5%);
+$colorInspectorFg: $colorBodyFg;
+$colorInspectorPropName: pushBack($colorBodyFg, 20%);
+$colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
+$colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
+$colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
+
 // Limits and staleness colors//
 $colorTelemFresh: pullForward($colorBodyFg, 20%);
 $colorTelemStale: pushBack($colorBodyFg, 20%);
@@ -124,6 +132,7 @@ $colorItemBgSelected: $colorKey;
 
 // Tabular
 $colorTabBorder: pullForward($colorBodyBg, 10%);
+$colorItemTreeHoverFg: pullForward($colorBodyFg, 20%);
 $colorTabBodyBg: $colorBodyBg;
 $colorTabBodyFg: pullForward($colorBodyFg, 20%);
 $colorTabHeaderBg: pullForward($colorBodyBg, 10%);
@@ -139,6 +148,7 @@ $colorPlotAreaBorder: $colorInteriorBorder;
 $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
 
 // Tree
+$colorItemTreeHoverBg: rgba($colorBodyFg, 0.1);
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: $colorItemTreeIcon; //pushBack($colorItemTreeIcon, 20%);
 $colorItemTreeVCHover: $colorKey;
@@ -157,12 +167,13 @@ $scrollbarThumbColor: darken($colorBodyBg, 50%);//
 $scrollbarThumbColorHov: $colorKey;
 
 // Splitter
+$splitterD: 24px;
+$splitterHandleD: 2px;
+$colorSplitterBg: pullForward($colorBodyBg, 10%);
 $splitterShdw: none;
-$colorSplitterInterior: $colorBodyBg;
-$colorSplitterHover: $colorKey;
-$splitterW: 5px;
-$splitterEndCr: $splitterW;
-$colorGrippyInteriorHover: $colorBodyBg;
+$splitterEndCr: none;
+$colorSplitterHover: none;
+$colorSplitterActive: $colorKey;
 
 // Mobile
 $colorMobilePaneLeft: darken($colorBodyBg, 2%);
