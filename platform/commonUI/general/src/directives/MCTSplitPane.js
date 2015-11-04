@@ -178,14 +178,10 @@ define(
                     return position;
                 }
 
-                // Dynamically apply a CSS class to elements when the user is actively resizing
-                function splitterState(state) {
-                    var
-                        children = $element.children(),
-                        i;
-                    for (i = 0; i < children.length; i++) {
-                        children.eq(i).toggleClass('resizing');
-                    }
+                // Dynamically apply a CSS class to elements when the user
+                // is actively resizing
+                function toggleClass(classToToggle) {
+                    $element.children().toggleClass(classToToggle);
                 }
 
                 // Make sure anchor parameter is something we know
@@ -218,7 +214,7 @@ define(
                 // Interface exposed by controller, for mct-splitter to user
                 return {
                     position: getSetPosition,
-                    action: splitterState,
+                    toggleClass: toggleClass,
                     anchor: function () {
                         return anchor;
                     }

@@ -54,7 +54,7 @@ define(
                     startMove: function () {
                         var splitter = element[0];
                         initialPosition = mctSplitPane.position();
-                        mctSplitPane.action('startMove');
+                        mctSplitPane.toggleClass('resizing');
                     },
                     // Handle user changes to splitter position
                     move: function (delta) {
@@ -66,9 +66,10 @@ define(
                         // Update the position of this splitter
                         mctSplitPane.position(initialPosition + pixelDelta);
                     },
-                    // Grab the event when the user is done moving the splitter and pass it on
+                    // Grab the event when the user is done moving
+                    // the splitter and pass it on
                     endMove: function() {
-                        mctSplitPane.action('endMove');
+                        mctSplitPane.toggleClass('resizing');
                     }
                 };
             }
