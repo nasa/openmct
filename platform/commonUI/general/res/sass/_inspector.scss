@@ -43,6 +43,11 @@
             vertical-align: bottom;
         }
     }
+    
+    ul {
+        @include box-sizing(border-box);
+        padding-right: $interiorMargin;
+    }
 
     ul li,
     em {
