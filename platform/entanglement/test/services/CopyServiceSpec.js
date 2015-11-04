@@ -126,6 +126,7 @@ define(
             describe("perform", function () {
 
                 var mockQ,
+                    mockDeferred,
                     creationService,
                     createObjectPromise,
                     copyService,
@@ -167,19 +168,33 @@ define(
                     mockNow.now.andCallFake(function(){
                         return 1234;
                     })
+
+                    var resolvedValue;
+
+                    mockDeferred = jasmine.createSpyObj('mockDeferred', ['notify', 'resolve']);
+                    mockDeferred.notify.andCallFake(function(notification){});
+                    mockDeferred.resolve.andCallFake(function(value){resolvedValue = value})
+                    mockDeferred.promise = {
+                        then: function(callback){
+                            return synchronousPromise(callback(resolvedValue));
+                        }
+                    }
+
+                    mockQ = jasmine.createSpyObj('mockQ', ['when', 'all', 'reject', 'defer']);
+                    mockQ.when.andCallFake(synchronousPromise);
+                    mockQ.all.andCallFake(function (promises) {
+                        var result = {};
+                        Object.keys(promises).forEach(function (k) {
+                            promises[k].then(function (v) { result[k] = v; });
+                        });
+                        return synchronousPromise(result);
+                    });
+                    mockQ.defer.andReturn(mockDeferred);
                     
                 });
 
                 describe("on domain object without composition", function () {
                     beforeEach(function () {
-                        object = domainObjectFactory({
-                            name: 'object',
-                            id: 'abc',
-                            model: {
-                                name: 'some object',
-                                persisted: mockNow.now()
-                            }
-                        });
                         newParent = domainObjectFactory({
                             name: 'newParent',
                             id: '456',
@@ -190,14 +205,15 @@ define(
                                 persistence: parentPersistenceCapability
                             }
                         });
-                        mockQ = jasmine.createSpyObj('mockQ', ['when', 'all', 'reject']);
-                        mockQ.when.andCallFake(synchronousPromise);
-                        mockQ.all.andCallFake(function (promises) {
-                            var result = {};
-                            Object.keys(promises).forEach(function (k) {
-                                promises[k].then(function (v) { result[k] = v; });
-                            });
-                            return synchronousPromise(result);
+
+                        object = domainObjectFactory({
+                            name: 'object',
+                            id: 'abc',
+                            model: {
+                                name: 'some object',
+                                location: newParent.id,
+                                persisted: mockNow.now()
+                            }
                         });
                         
                         copyService = new CopyService(mockQ, creationService, policyService, mockPersistenceService, mockNow.now);
@@ -235,18 +251,14 @@ define(
                     var newObject,
                         childObject,
                         compositionCapability,
+                        locationCapability,
                         compositionPromise;
 
                     beforeEach(function () {
-                        mockQ = jasmine.createSpyObj('mockQ', ['when', 'all', 'reject']);
-                        mockQ.when.andCallFake(synchronousPromise);
-                        mockQ.all.andCallFake(function (promises) {
-                            var result = {};
-                            Object.keys(promises).forEach(function (k) {
-                                promises[k].then(function (v) { result[k] = v; });
-                            });
-                            return synchronousPromise(result);
-                        });
+
+
+                        locationCapability = jasmine.createSpyObj('locationCapability', ['isLink']);
+                        locationCapability.isLink.andReturn(true);
 
                         childObject = domainObjectFactory({
                             name: 'childObject',
@@ -264,8 +276,6 @@ define(
                             ['then']
                         );
 
-                        //compositionPromise.then.andCallFake(synchronousPromise);
-
                         compositionCapability
                             .invoke
                             .andReturn(synchronousPromise([childObject]));
@@ -275,10 +285,12 @@ define(
                             id: 'abc',
                             model: {
                                 name: 'some object',
-                                composition: ['def']
+                                composition: ['def'],
+                                location: 'testLocation'
                             },
                             capabilities: {
-                                composition: compositionCapability
+                                composition: compositionCapability,
+                                location: locationCapability
                             }
                         });
                         newObject = domainObjectFactory({
@@ -315,16 +327,6 @@ define(
                             copyFinished = jasmine.createSpy('copyFinished');
                             copyResult.then(copyFinished);
                         });
-                        /**
-                         * This is testing that the number of calls to the
-                         * backend is kept to a minimum
-                         */
-                        it("makes only n+2 persistence calls for n copied" +
-                            " objects", function () {
-                            expect(mockPersistenceService.createObject.calls.length).toEqual(2);
-                            expect(mockPersistenceService.updateObject.calls.length).toEqual(1);
-                            expect(parentPersistenceCapability.persist).toHaveBeenCalled();
-                        });
 
                         it("copies object and children in a bottom-up" +
                             " fashion", function () {
@@ -340,6 +342,20 @@ define(
                         it("clears modified and sets persisted", function () {
                             expect(copyFinished.mostRecentCall.args[0].model.modified).toBeUndefined();
                             expect(copyFinished.mostRecentCall.args[0].model.persisted).toBe(mockNow.now());
+                        });
+
+                        /**
+                        Preserves links
+                         */
+                        it ("preserves links", function() {
+                            expect(copyFinished.mostRecentCall.args[0].model.location).toBe("testLocation");
+                        });
+
+                        /**
+                         Preserves links
+                         */
+                        it ("correctly locates cloned objects", function() {
+                            expect(mockPersistenceService.createObject.calls[0].args[2].location).toEqual(mockPersistenceService.createObject.calls[1].args[1])
                         });
 
                     });

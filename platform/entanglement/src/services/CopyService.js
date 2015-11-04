@@ -95,7 +95,6 @@ define(
                         persistenceSpace: originalParent.getCapability('persistence')
                     }
                 delete modelClone.model.composition;
-                delete modelClone.model.location;
                 delete modelClone.model.persisted;
                 delete modelClone.model.modified;
                 return $q.when(originalObject.useCapability('composition')).then(function(composees){
@@ -108,7 +107,11 @@ define(
                                 return copy(composee, originalObject).then(function(composeeClone){
                                     //Once copied, associate each cloned
                                     // composee with its parent clone
-                                    composeeClone.model.location = modelClone.id;
+                                    if ( !(composee.hasCapability("location") && composee.getCapability("location").isLink())) {
+                                        //If the object is not a link,
+                                        // locate it within its parent
+                                        composeeClone.model.location = modelClone.id;
+                                    }
                                     modelClone.model.composition = modelClone.model.composition || [];
                                     return modelClone.model.composition.push(composeeClone.id);
                                 });
@@ -122,7 +125,12 @@ define(
                 });
             };
             
-            return copy(domainObject, parent).then(function(){
+            return copy(domainObject, parent).then(function(domainObjectClone){
+                //If the domain object being cloned is not a link, set its
+                // location to the new parent
+                if ( !(domainObject.hasCapability("location") && domainObject.getCapability("location").isLink())) {
+                    domainObjectClone.model.location = parent.getId();
+                }
                 return clones;
             });
         }
@@ -166,8 +174,7 @@ define(
                 if (!parent.hasCapability('composition')){
                     return self.$q.reject();
                 }
-                parentClone.model.location = parent.getId();
-                
+
                 return self.persistenceService
                     .updateObject(parentClone.persistenceSpace, parentClone.id, parentClone.model)
                     .then(function(){return parent.getCapability("composition").add(parentClone.id)})
