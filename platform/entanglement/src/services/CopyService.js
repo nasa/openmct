@@ -99,7 +99,6 @@ define(
                 delete modelClone.model.persisted;
                 delete modelClone.model.modified;
                 return $q.when(originalObject.useCapability('composition')).then(function(composees){
-
                     progress({phase: "preparing"});
                     return (composees || []).reduce(function(promise, composee){
                             //If the object is composed of other
@@ -191,7 +190,7 @@ define(
             var $q = this.$q,
                 deferred = $q.defer();
             if (this.validate(domainObject, parent)) {
-                    this.buildCopyPlan(domainObject, parent, deferred.notify)
+                this.buildCopyPlan(domainObject, parent, deferred.notify)
                     .then(this.persistObjects(deferred.notify))
                     .then(this.addClonesToParent(parent, deferred.notify))
                     .then(deferred.resolve);

@@ -66,6 +66,7 @@ define(
         CopyAction.prototype.perform = function() {
             var self = this,
                 notification,
+                dialog,
                 notificationModel = {
                     title: "Copying objects",
                     unknownProgress: false,
@@ -84,8 +85,8 @@ define(
                 In the second phase, the copying is taking place, and the user 
                 is shown non-invasive banner notifications at the bottom of the screen.
                  */
-                if (phase.toLowerCase() === 'preparing'){
-                    self.dialogService.showBlockingMessage({
+                if (phase.toLowerCase() === 'preparing' && !dialog){
+                    dialog = self.dialogService.showBlockingMessage({
                         title: "Preparing to copy objects",
                         unknownProgress: true,
                         severity: "info",
