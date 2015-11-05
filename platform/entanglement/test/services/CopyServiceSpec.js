@@ -137,7 +137,8 @@ define(
                     copyResult,
                     copyFinished,
                     persistObjectPromise,
-                    parentPersistenceCapability;
+                    parentPersistenceCapability,
+                    resolvedValue;
 
                 beforeEach(function () {
                     creationService = jasmine.createSpyObj(
@@ -167,18 +168,16 @@ define(
                     mockNow = jasmine.createSpyObj("mockNow", ["now"]);
                     mockNow.now.andCallFake(function(){
                         return 1234;
-                    })
-
-                    var resolvedValue;
+                    });
 
                     mockDeferred = jasmine.createSpyObj('mockDeferred', ['notify', 'resolve']);
                     mockDeferred.notify.andCallFake(function(notification){});
-                    mockDeferred.resolve.andCallFake(function(value){resolvedValue = value})
+                    mockDeferred.resolve.andCallFake(function(value){resolvedValue = value;});
                     mockDeferred.promise = {
                         then: function(callback){
                             return synchronousPromise(callback(resolvedValue));
                         }
-                    }
+                    };
 
                     mockQ = jasmine.createSpyObj('mockQ', ['when', 'all', 'reject', 'defer']);
                     mockQ.when.andCallFake(synchronousPromise);
@@ -330,8 +329,8 @@ define(
 
                         it("copies object and children in a bottom-up" +
                             " fashion", function () {
-                            expect(mockPersistenceService.createObject.calls[0].args[2].name).toEqual(childObject.model.name)
-                            expect(mockPersistenceService.createObject.calls[1].args[2].name).toEqual(object.model.name)
+                            expect(mockPersistenceService.createObject.calls[0].args[2].name).toEqual(childObject.model.name);
+                            expect(mockPersistenceService.createObject.calls[1].args[2].name).toEqual(object.model.name);
                         });
 
                         it("returns a promise", function () {
@@ -355,7 +354,7 @@ define(
                          Preserves links
                          */
                         it ("correctly locates cloned objects", function() {
-                            expect(mockPersistenceService.createObject.calls[0].args[2].location).toEqual(mockPersistenceService.createObject.calls[1].args[1])
+                            expect(mockPersistenceService.createObject.calls[0].args[2].location).toEqual(mockPersistenceService.createObject.calls[1].args[1]);
                         });
 
                     });

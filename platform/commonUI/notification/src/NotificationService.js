@@ -222,7 +222,7 @@ define(
          * functions to dismiss or minimize
          */
         NotificationService.prototype.info = function (model) {
-            var notificationModel = typeof model === "string" ? {title: model} : model
+            var notificationModel = typeof model === "string" ? {title: model} : model;
             notificationModel.autoDismiss = notificationModel.autoDismiss || true;
             notificationModel.severity = "info";
             return this.notify(notificationModel);

@@ -68,7 +68,7 @@ define(
                 this.dialog = this.dialogService.showBlockingMessage({
                     title: "Preparing to copy objects",
                     unknownProgress: true,
-                    severity: "info",
+                    severity: "info"
                 });
             } else if (phase.toLowerCase() === "copying") {
                 this.dialogService.dismiss();
@@ -84,7 +84,7 @@ define(
                 this.notification.model.title = ["Copied ", processed, "of ",
                     totalObjects, "objects"].join(" ");
             }
-        }
+        };
 
         /**
          * Executes the CopyAction. The CopyAction uses the default behaviour of 
@@ -100,18 +100,18 @@ define(
                         self.notification.dismiss();
                         self.notificationService.info("Copying complete.");
                     },
-                    function error(error){
-                        self.$log.error("Error copying objects. ", error);
+                    function error(errorDetails){
+                        self.$log.error("Error copying objects. ", errorDetails);
                         //Show more general error message
                         self.notificationService.notify({
                             title: "Error copying objects.",
                             severity: "error",
-                            hint: error.message
+                            hint: errorDetails.message
                         });
                         
                     },
-                    function notification(notification){
-                        self.progress(notification.phase, notification.totalObjects, notification.processed);
+                    function notification(details){
+                        self.progress(details.phase, details.totalObjects, details.processed);
                     }
             );
         };

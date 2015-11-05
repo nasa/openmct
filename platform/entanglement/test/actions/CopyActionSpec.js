@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global define,describe,beforeEach,it,jasmine,expect */
+/*global define,describe,beforeEach,it,jasmine,expect,spyOn */
 
 define(
     [
@@ -101,10 +101,9 @@ define(
                 );
 
                 abstractComposePromise.then.andCallFake(function(success, error, notify){
-                        notify(progress);
-                        success();
-                    }
-                )
+                    notify(progress);
+                    success();
+                });
 
                 locationServicePromise.then.andCallFake(function(callback){
                     callback(newParent);

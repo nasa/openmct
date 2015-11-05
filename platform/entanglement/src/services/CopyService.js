@@ -93,7 +93,7 @@ define(
                         id: uuid(),
                         model: makeClone(originalObject.getModel()),
                         persistenceSpace: originalParent.getCapability('persistence')
-                    }
+                    };
                 delete modelClone.model.composition;
                 delete modelClone.model.persisted;
                 delete modelClone.model.modified;
@@ -123,7 +123,7 @@ define(
                         return modelClone;
                     });
                 });
-            };
+            }
             
             return copy(domainObject, parent).then(function(domainObjectClone){
                 //If the domain object being cloned is not a link, set its
@@ -133,7 +133,7 @@ define(
                 }
                 return clones;
             });
-        }
+        };
 
         /**
          * Will persist a list of {@link objectClones}. It will persist all
@@ -152,13 +152,13 @@ define(
                     clone.model.persisted = self.now();
                     return self.persistenceService.createObject(clone.persistenceSpace, clone.id, clone.model)
                         .then(function(){
-                            progress && progress({phase: "copying", totalObjects: objectClones.length, processed: ++persisted});
+                            return progress && progress({phase: "copying", totalObjects: objectClones.length, processed: ++persisted});
                         });
                 })).then(function(){
-                    return objectClones
+                    return objectClones;
                 });
-            }
-        }
+            };
+        };
 
         /**
          * Will add a list of clones to the specified parent's composition
@@ -177,12 +177,12 @@ define(
 
                 return self.persistenceService
                     .updateObject(parentClone.persistenceSpace, parentClone.id, parentClone.model)
-                    .then(function(){return parent.getCapability("composition").add(parentClone.id)})
-                    .then(function(){return parent.getCapability("persistence").persist()})
-                    .then(function(){return parentClone});
+                    .then(function(){return parent.getCapability("composition").add(parentClone.id);})
+                    .then(function(){return parent.getCapability("persistence").persist();})
+                    .then(function(){return parentClone;});
                     // Ensure the clone of the original domainObject is returned
-            }
-        }
+            };
+        };
 
         /**
          * Creates a duplicate of the object tree starting at domainObject to
@@ -207,7 +207,7 @@ define(
                     "Tried to copy objects without validating first."
                 );
             }
-        }
+        };
 
         return CopyService;
     }
