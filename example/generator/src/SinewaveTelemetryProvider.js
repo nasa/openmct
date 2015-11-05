@@ -25,8 +25,8 @@
  * Module defining SinewaveTelemetryProvider. Created by vwoeltje on 11/12/14.
  */
 define(
-    ["./SinewaveTelemetry"],
-    function (SinewaveTelemetry) {
+    ["./SinewaveTelemetrySeries"],
+    function (SinewaveTelemetrySeries) {
         "use strict";
 
         /**
@@ -45,7 +45,7 @@ define(
             function generateData(request) {
                 return {
                     key: request.key,
-                    telemetry: new SinewaveTelemetry(request)
+                    telemetry: new SinewaveTelemetrySeries(request)
                 };
             }
 

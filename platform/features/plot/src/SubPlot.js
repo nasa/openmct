@@ -64,6 +64,16 @@ define(
             this.updateTicks();
         }
 
+        /**
+         * Tests whether this subplot has domain data to show for the current pan/zoom level. Absence of domain data
+         * implies that there is no range data displayed either
+         * @returns {boolean} true if domain data exists for the current pan/zoom level
+         */
+        SubPlot.prototype.hasDomainData = function() {
+            return this.panZoomStack
+                && this.panZoomStack.getDimensions()[0] > 0;
+        };
+
         // Utility function for filtering out empty strings.
         function isNonEmpty(v) {
             return typeof v === 'string' && v !== "";
@@ -253,7 +263,10 @@ define(
             this.hovering = true;
             this.subPlotBounds = $event.target.getBoundingClientRect();
             this.mousePosition = this.toMousePosition($event);
-            this.updateHoverCoordinates();
+            //If there is a domain to display, show hover coordinates, otherwise hover coordinates are meaningless
+            if (this.hasDomainData()) {
+                this.updateHoverCoordinates();
+            }
             if (this.marqueeStart) {
                 this.updateMarqueeBox();
             }

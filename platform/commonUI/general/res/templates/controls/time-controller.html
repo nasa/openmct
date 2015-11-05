@@ -1,69 +1,108 @@
 <!--
+ Open MCT Web, Copyright (c) 2014-2015, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
 
-NOTES
+ Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
 
-Ticks:
-The thinking is to divide whatever the current time span is by 5,
-and assign values accordingly to 5 statically-positioned ticks. So the tick x-position is a static percentage
-of the total width available, and the labels change dynamically. This is consistent
-with our current approach to the time axis of plots.
-I'm keeping the number of ticks low so that when the view portal gets narrow,
-the tick labels won't collide with each other. For extra credit, add/remove ticks as the user resizes the view area.
-Note: this eval needs to be based on the whatever is containing the
-time-controller component, not the whole browser window.
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
 
-Range indicator and slider knobs:
-The left and right properties used in .slider .range-holder and  the .knobs are
-CSS offsets from the left and right of their respective containers. You
-may want or need to calculate those positions as pure offsets from the start datetime
-(or left, as it were) and set them as left properties. No problem if so, but
-we'll need to tweak the CSS tiny bit to get the center of the knobs to line up
-properly on the range left and right bounds.
-
+ Open MCT Web includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
 -->
+<div ng-controller="TimeRangeController">
+    <div class="l-time-range-inputs-holder">
+        <span class="l-time-range-inputs-elem ui-symbol type-icon">&#x43;</span>
+        <span class="l-time-range-input" ng-controller="ToggleController as t1">
+            <!--<span class="lbl">Start</span>-->
+            <span class="s-btn time-range-start">
+                <input type="text"
+                       ng-model="boundsModel.start"
+                       ng-class="{ error: !boundsModel.startValid }">
+                </input>
+                <a class="ui-symbol icon icon-calendar" ng-click="t1.toggle()"></a>
+                <mct-popup ng-if="t1.isActive()">
+                    <div mct-click-elsewhere="t1.setState(false)">
+                        <mct-control key="'datetime-picker'"
+                                     ng-model="ngModel.outer"
+                                     field="'start'"
+                                     options="{ hours: true }">
+                        </mct-control>
+                    </div>
+                </mct-popup>
+            </span>
+        </span>
 
-<div ng-init="
-notes = 'Temporarily using an array to populate ticks so I can see what I\'m doing';
-ticks = [
-'00:00',
-'00:30',
-'01:00',
-'01:30',
-'02:00'
-];
-"></div>
+        <span class="l-time-range-inputs-elem lbl">to</span>
 
-<div class="l-time-controller">
-	<div class="l-time-range-inputs-holder">
-		Start: <input type="date" />
-		End: <input type="date" />
-	</div>
+        <span class="l-time-range-input" ng-controller="ToggleController as t2">
+            <!--<span class="lbl">End</span>-->
+            <span class="s-btn l-time-range-input">
+                <input type="text"
+                       ng-model="boundsModel.end"
+                       ng-class="{ error: !boundsModel.endValid }">
+                </input>
+                <a class="ui-symbol icon icon-calendar" ng-click="t2.toggle()">
+                </a>
+                <mct-popup ng-if="t2.isActive()">
+                    <div mct-click-elsewhere="t2.setState(false)">
+                        <mct-control key="'datetime-picker'"
+                                     ng-model="ngModel.outer"
+                                     field="'end'"
+                                     options="{ hours: true }">
+                        </mct-control>
+                    </div>
+                </mct-popup>
+            </span>&nbsp;
+        </span>
+    </div>
 
-	<div class="l-time-range-slider-holder">
-		<div class="l-time-range-slider">
-			<div class="slider">
-				<div class="slot range-holder">
-					<div class="range" style="left: 0%; right: 30%;"></div>
-				</div>
-				<div class="knob knob-l" style="left: 0%;">
-					<div class="range-value">05/22 14:46</div>
-				</div>
-				<div class="knob knob-r" style="right: 30%;">
-					<div class="range-value">07/22 01:21</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="l-time-range-slider-holder">
+        <div class="l-time-range-slider">
+            <div class="slider"
+                 mct-resize="spanWidth = bounds.width">
+                <div class="knob knob-l"
+                     mct-drag-down="startLeftDrag()"
+                     mct-drag="leftDrag(delta[0])"
+                     ng-style="{ left: startInnerPct }">
+                    <div class="range-value">{{startInnerText}}</div>
+                </div>
+                <div class="knob knob-r"
+                     mct-drag-down="startRightDrag()"
+                     mct-drag="rightDrag(delta[0])"
+                     ng-style="{ right: endInnerPct }">
+                    <div class="range-value">{{endInnerText}}</div>
+                </div>
+                <div class="slot range-holder">
+                    <div class="range"
+                         mct-drag-down="startMiddleDrag()"
+                         mct-drag="middleDrag(delta[0])"
+                         ng-style="{ left: startInnerPct, right: endInnerPct}">
+                        <div class="toi-line"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<div class="l-time-range-ticks-holder">
-		<div class="l-time-range-ticks">
-			<div
-				ng-repeat="tick in ticks"
-				ng-style="{ left: $index * 25 + '%' }"
-				class="tick tick-x"
-				>
-				<span class="l-time-range-tick-label">{{tick}}</span>
-			</div>
-		</div>
-	</div>
+    <div class="l-time-range-ticks-holder">
+        <div class="l-time-range-ticks">
+            <div
+                ng-repeat="tick in ticks"
+                ng-style="{ left: $index * (100 / (ticks.length - 1)) + '%' }"
+                class="tick tick-x"
+                >
+                <span class="l-time-range-tick-label">{{tick}}</span>
+            </div>
+        </div>
+    </div>
 </div>

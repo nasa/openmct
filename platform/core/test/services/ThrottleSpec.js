@@ -45,7 +45,9 @@ define(
                 // Verify precondition: Not called at throttle-time
                 expect(mockTimeout).not.toHaveBeenCalled();
                 expect(throttled()).toEqual(mockPromise);
-                expect(mockTimeout).toHaveBeenCalledWith(mockFn, 0, false);
+                expect(mockFn).not.toHaveBeenCalled();
+                expect(mockTimeout)
+                    .toHaveBeenCalledWith(jasmine.any(Function), 0, false);
             });
 
             it("schedules only one timeout at a time", function () {
@@ -59,10 +61,11 @@ define(
             it("schedules additional invocations after resolution", function () {
                 var throttled = throttle(mockFn);
                 throttled();
-                mockPromise.then.mostRecentCall.args[0](); // Resolve timeout
+                mockTimeout.mostRecentCall.args[0](); // Resolve timeout
                 throttled();
-                mockPromise.then.mostRecentCall.args[0]();
+                mockTimeout.mostRecentCall.args[0]();
                 throttled();
+                mockTimeout.mostRecentCall.args[0]();
                 expect(mockTimeout.calls.length).toEqual(3);
             });
         });

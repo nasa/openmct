@@ -55,7 +55,7 @@ define(
             var range = this.rangeMetadata.key,
                 limit = domainObject.getCapability('limit'),
                 value = datum[range],
-                alarm = limit.evaluate(datum, range);
+                alarm = limit && limit.evaluate(datum, range);
 
             return {
                 cssClass: alarm && alarm.cssClass,

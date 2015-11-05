@@ -364,9 +364,10 @@
     /* This doesn't work on an element inside an element with absolute positioning that has height: auto */
     //position: relative;
     top: 50%;
-    -webkit-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
+	@include webkitProp(transform, translateY(-50%));
+    //-webkit-transform: translateY(-50%);
+    //-ms-transform: translateY(-50%);
+    //transform: translateY(-50%);
 }
 
 @mixin verticalCenterBlock($holderH, $itemH) {
@@ -391,22 +392,8 @@
     overflow-y: $showBar;
 }
 
-@mixin wait-spinner($b: 5px, $c: $colorAlt1) {
-    display: block;
-    position: absolute;
-    -webkit-animation: rotation .6s infinite linear;
-    -moz-animation: rotation .6s infinite linear;
-    -o-animation: rotation .6s infinite linear;
-    animation: rotation .6s infinite linear;
-    border-color: rgba($c, 0.25);
-    border-top-color: rgba($c, 1.0);
-    border-style: solid;
-    border-width: $b;
-    border-radius: 100%;
-}
-
 @mixin test($c: #ffcc00, $a: 0.2) {
-    background-color: rgba($c, $a);
+    background-color: rgba($c, $a) !important;
 }
 
 @mixin tmpBorder($c: #ffcc00, $a: 0.75) {

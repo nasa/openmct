@@ -7,12 +7,14 @@ $colorKey: #0099cc;
 $colorKeySelectedBg: #005177;
 $colorKeyFg: #fff;
 $colorInteriorBorder: rgba($colorBodyFg, 0.1);
+$colorA: #ccc;
+$colorAHov: #fff;
 $contrastRatioPercent: 7%;
 $basicCr: 3px;
 $controlCr: 3px;
 $smallCr: 2px;
 
-// Buttons
+// Buttons and Controls
 $colorBtnBg: pullForward($colorBodyBg, $contrastRatioPercent); //
 $colorBtnFg: $colorBodyFg;
 $colorBtnMajorBg: $colorKey;
@@ -20,6 +22,18 @@ $colorBtnMajorFg: $colorKeyFg;
 $colorBtnIcon: $colorKey;
 $colorInvokeMenu: #fff;
 $contrastInvokeMenuPercent: 20%;
+$shdwBtns: rgba(black, 0.2) 0 1px 2px;
+$sliderColorBase: $colorKey;
+$sliderColorRangeHolder: rgba(black, 0.1);
+$sliderColorRange: rgba($sliderColorBase, 0.3);
+$sliderColorRangeHov: rgba($sliderColorBase, 0.5);
+$sliderColorKnob: rgba($sliderColorBase, 0.6);
+$sliderColorKnobHov: $sliderColorBase;
+$sliderColorRangeValHovBg: rgba($sliderColorBase, 0.1);
+$sliderColorRangeValHovFg: $colorKeyFg;
+$sliderKnobW: nth($ueTimeControlH,2)/2;
+$timeControllerToiLineColor: #00c2ff;
+$timeControllerToiLineColorHov: #fff;
 
 // General Colors
 $colorAlt1: #ffc700;
@@ -32,6 +46,7 @@ $colorGridLines: rgba(#fff, 0.05);
 $colorInvokeMenu: #fff;
 $colorObjHdrTxt: $colorBodyFg;
 $colorObjHdrIc: pullForward($colorObjHdrTxt, 20%);
+$colorTick: rgba(white, 0.2);
 
 // Menu colors
 $colorMenuBg: pullForward($colorBodyBg, 23%);
@@ -111,16 +126,17 @@ $colorItemBgSelected: $colorKey;
 $colorTabBorder: pullForward($colorBodyBg, 10%);
 $colorTabBodyBg: darken($colorBodyBg, 10%);
 $colorTabBodyFg: lighten($colorTabBodyBg, 40%);
-$colorTabHeaderBg: lighten($colorBodyBg, 10%);
-$colorTabHeaderFg: lighten($colorTabHeaderBg, 40%);
+$colorTabHeaderBg: rgba(white, 0.1); // lighten($colorBodyBg, 10%);
+$colorTabHeaderFg: $colorBodyFg; //lighten($colorTabHeaderBg, 40%);
 $colorTabHeaderBorder: $colorBodyBg;
 
 // Plot
 $colorPlotBg: rgba(black, 0.1);
 $colorPlotFg: $colorBodyFg;
-$colorPlotHash: rgba(white, 0.2);
+$colorPlotHash: $colorTick;
 $stylePlotHash: dashed;
 $colorPlotAreaBorder: $colorInteriorBorder;
+$colorPlotLabelFg: pushBack($colorPlotFg, 20%);
 
 // Tree
 $colorItemTreeIcon: $colorKey;
@@ -151,5 +167,16 @@ $colorGrippyInteriorHover: $colorKey;
 // Mobile
 $colorMobilePaneLeft: darken($colorBodyBg, 5%);
 
+// Datetime Picker
+$colorCalCellHovBg: $colorKey;
+$colorCalCellHovFg: $colorKeyFg;
+$colorCalCellSelectedBg: $colorItemTreeSelectedBg;
+$colorCalCellSelectedFg: $colorItemTreeSelectedFg;
+$colorCalCellInMonthBg: pushBack($colorMenuBg, 5%);
+
 // About Screen
 $colorAboutLink: #84b3ff;
+
+// Loading
+$colorLoadingBg: rgba($colorBodyFg, 0.2);
+$colorLoadingFg: $colorAlt1;

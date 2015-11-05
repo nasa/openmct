@@ -79,8 +79,7 @@ define(
 
             /**
              * Change the request duration.
-             * @param {object|number} request the duration of historical
-             *        data to look at; or, the request to issue
+             * @param {TelemetryRequest} request the request to issue
              * @param {Function} [callback] a callback that will be
              *        invoked as new data becomes available, with the
              *        domain object for which new data is available.
@@ -105,6 +104,29 @@ define(
                 // then issue new requests.
                 return subscription.promiseTelemetryObjects()
                     .then(issueRequests);
+            };
+
+            /**
+             * Get the latest telemetry datum for this domain object. This
+             * will be from real-time telemetry, unless an index is specified,
+             * in which case it will be pulled from the historical telemetry
+             * series at the specified index. If there is no latest available
+             * datum, this will return undefined.
+             *
+             * @param {DomainObject} domainObject the object of interest
+             * @param {number} [index] the index of the data of interest
+             * @returns {TelemetryDatum} the most recent datum
+             */
+            self.getDatum = function (telemetryObject, index) {
+                function makeNewDatum(series) {
+                    return series ?
+                        subscription.makeDatum(telemetryObject, series, index) :
+                        undefined;
+                }
+
+                return typeof index !== 'number' ?
+                        subscription.getDatum(telemetryObject) :
+                        makeNewDatum(this.getSeries(telemetryObject));
             };
 
             return self;

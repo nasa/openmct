@@ -19,24 +19,45 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@-webkit-keyframes rotation {
-	from {-webkit-transform: rotate(0deg);}
-	to {-webkit-transform: rotate(359deg);}
+@include keyframes(rotation) {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(359deg); }
 }
 
-@-moz-keyframes rotation {
-	from {-moz-transform: rotate(0deg);}
-	to {-moz-transform: rotate(359deg);}
+@mixin wait-spinner2($b: 5px, $c: $colorAlt1) {
+    @include keyframes(rotateCentered) {
+         0%   { transform: translateX(-50%) translateY(-50%) rotate(0deg); }
+         100% { transform: translateX(-50%) translateY(-50%) rotate(359deg); }
+     }
+    @include animation-name(rotateCentered);
+    @include animation-duration(0.5s);
+    @include animation-iteration-count(infinite);
+    @include animation-timing-function(linear);
+    border-color: rgba($c, 0.25);
+    border-top-color: rgba($c, 1.0);
+    border-style: solid;
+    border-width: 5px;
+    @include border-radius(100%);
+    @include box-sizing(border-box);
+    display: block;
+    position: absolute;
+    height: 0; width: 0;
+    padding: 7%;
+    left: 50%; top: 50%;
 }
 
-@-o-keyframes rotation {
-	from {-o-transform: rotate(0deg);}
-	to {-o-transform: rotate(359deg);}
-}
-
-@keyframes rotation {
-	from {transform: rotate(0deg);}
-	to {transform: rotate(359deg);}
+@mixin wait-spinner($b: 5px, $c: $colorAlt1) {
+	display: block;
+	position: absolute;
+	-webkit-animation: rotation .6s infinite linear;
+	-moz-animation: rotation .6s infinite linear;
+	-o-animation: rotation .6s infinite linear;
+	animation: rotation .6s infinite linear;
+	border-color: rgba($c, 0.25);
+	border-top-color: rgba($c, 1.0);
+	border-style: solid;
+	border-width: $b;
+	@include border-radius(100%);
 }
 
 .t-wait-spinner,
@@ -96,4 +117,28 @@
 	margin-top: 0 !important;
 	padding: 0 !important;
 	top: 0; left: 0;
+}
+
+.loading {
+	// Can be applied to any block element with height and width
+    pointer-events: none;
+    &:before,
+    &:after {
+        content: '';
+    }
+	&:before {
+        @include wait-spinner2(5px, $colorLoadingFg);
+        z-index: 10;
+	}
+    &:after {
+        @include absPosDefault();
+        background: $colorLoadingBg;
+        display: block;
+        z-index: 9;
+    }
+    &.tree-item:before {
+        padding: $menuLineH / 4;
+        border-width: 2px;
+    }
+
 }

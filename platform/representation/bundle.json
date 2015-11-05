@@ -54,7 +54,13 @@
             {
                 "key": "menu",
                 "implementation": "actions/ContextMenuAction.js",
-                "depends": [ "$compile", "$document", "$window", "$rootScope", "agentService" ]
+                "depends": [
+                    "$compile",
+                    "$document",
+                    "$rootScope",
+                    "popupService",
+                    "agentService"
+                ]
             }
         ]
     }

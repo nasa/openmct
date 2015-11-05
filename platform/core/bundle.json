@@ -66,6 +66,7 @@
                 "depends": [
                     "persistenceService",
                     "$q",
+                    "now",
                     "PERSISTENCE_SPACE",
                     "ADDITIONAL_PERSISTENCE_SPACES"
                 ]

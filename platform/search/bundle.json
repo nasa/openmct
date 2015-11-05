@@ -45,13 +45,20 @@
                 "provides": "searchService",
                 "type": "provider",
                 "implementation": "services/GenericSearchProvider.js",
-                "depends": [ "$q", "$timeout", "objectService", "workerService", "GENERIC_SEARCH_ROOTS" ]
+                "depends": [
+                    "$q",
+                    "$log",
+                    "modelService",
+                    "workerService",
+                    "topic",
+                    "GENERIC_SEARCH_ROOTS"
+                ]
             },
             {
                 "provides": "searchService",
                 "type": "aggregator",
                 "implementation": "services/SearchAggregator.js",
-                "depends": [ "$q" ]
+                "depends": [ "$q", "objectService" ]
             }
         ],
         "workers": [

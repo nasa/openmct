@@ -36,10 +36,15 @@ define(
          *
          * Returns a function that, when invoked, will invoke `fn` after
          * `delay` milliseconds, only if no other invocations are pending.
-         * The optional argument `apply` determines whether.
+         * The optional argument `apply` determines whether or not a
+         * digest cycle should be triggered.
          *
          * The returned function will itself return a `Promise` which will
          * resolve to the returned value of `fn` whenever that is invoked.
+         *
+         * In cases where arguments are provided, only the most recent
+         * set of arguments will be passed on to the throttled function
+         * at the time it is executed.
          *
          * @returns {Function}
          * @memberof platform/core
@@ -56,12 +61,14 @@ define(
              * @memberof platform/core.Throttle#
              */
             return function (fn, delay, apply) {
-                var activeTimeout;
+                var promise,
+                    args = [];
 
-                // Clear active timeout, so that next invocation starts
-                // a new one.
-                function clearActiveTimeout() {
-                    activeTimeout = undefined;
+                function invoke() {
+                    // Clear the active timeout so a new one starts next time.
+                    promise = undefined;
+                    // Invoke the function with the latest supplied arguments.
+                    return fn.apply(null, args);
                 }
 
                 // Defaults
@@ -69,14 +76,13 @@ define(
                 apply = apply || false;
 
                 return function () {
+                    // Store arguments from this invocation
+                    args = Array.prototype.slice.apply(arguments, [0]);
                     // Start a timeout if needed
-                    if (!activeTimeout) {
-                        activeTimeout = $timeout(fn, delay, apply);
-                        activeTimeout.then(clearActiveTimeout);
-                    }
+                    promise = promise || $timeout(invoke, delay, apply);
                     // Return whichever timeout is active (to get
                     // a promise for the results of fn)
-                    return activeTimeout;
+                    return promise;
                 };
             };
         }
