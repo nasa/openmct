@@ -26,16 +26,30 @@ define(
     function (DomainObjectImpl, uuid) {
         'use strict';
 
-        function CreationCapability(capabilityService, domainObject) {
-            this.capabilityService = capabilityService;
+        function CreationCapability($injector, domainObject) {
+            this.$injector = $injector;
             this.domainObject = domainObject;
         }
+
+        /**
+         * @private
+         */
+        CreationCapability.prototype.getCapabilities = function (model) {
+            if (!this.capabilityService) {
+                this.capabilityService =
+                    this.$injector.get('capabilityService');
+            }
+            return this.capabilityService.getCapabilities(model);
+        };
 
         CreationCapability.prototype.create = function (model) {
             var id = uuid(),
                 capabilities = this.capabilityService.getCapabilities(model);
             return new DomainObjectImpl(id, model, capabilities);
         };
+
+        CreationCapability.prototype.invoke =
+            CreationCapability.prototype.create;
 
         return CreationCapability;
     }

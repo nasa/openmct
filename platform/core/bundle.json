@@ -193,6 +193,11 @@
                 "key": "delegation",
                 "implementation": "capabilities/DelegationCapability.js",
                 "depends": [ "$q" ]
+            },
+            {
+                "key": "creation",
+                "implementation": "capabilities/CreationCapability.js",
+                "depends": [ "$injector" ]
             }
         ],
         "services": [
