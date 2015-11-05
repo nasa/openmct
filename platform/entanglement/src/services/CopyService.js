@@ -23,7 +23,7 @@
 /*global define */
 
 define(
-    ["../../../commonUI/browse/lib/uuid"],
+    ["uuid"],
     function (uuid) {
         "use strict";
 
