@@ -26,20 +26,6 @@ define(
     function (AbstractComposeAction) {
         "use strict";
 
-        /*
-         function CopyAction(locationService, copyService, context) {
-            return new AbstractComposeAction (
-                locationService,
-                copyService,
-                context,
-                "Duplicate",
-                "to a location"
-            );
-         }
-
-         return CopyAction;
-         */
-        
         /**
          * The CopyAction is available from context menus and allows a user to
          * deep copy an object to another location of their choosing.
@@ -50,6 +36,8 @@ define(
          */
         function CopyAction($log, locationService, copyService, dialogService, 
                             notificationService, context) {
+            this.dialog = undefined;
+            this.notification = undefined;
             this.dialogService = dialogService;
             this.notificationService = notificationService;
             this.$log = $log;
@@ -59,57 +47,60 @@ define(
         }
 
         /**
+         * Updates user about progress of copy. Should not be invoked by
+         * client code under any circumstances.
+         *
+         * @private
+         * @param phase
+         * @param totalObjects
+         * @param processed
+         */
+        CopyAction.prototype.progress = function(phase, totalObjects, processed){
+            /*
+             Copy has two distinct phases. In the first phase a copy plan is
+             made in memory. During this phase of execution, the user is
+             shown a blocking 'modal' dialog.
+
+             In the second phase, the copying is taking place, and the user
+             is shown non-invasive banner notifications at the bottom of the screen.
+             */
+            if (phase.toLowerCase() === 'preparing' && !this.dialog){
+                this.dialog = self.dialogService.showBlockingMessage({
+                    title: "Preparing to copy objects",
+                    unknownProgress: true,
+                    severity: "info",
+                });
+            } else if (phase.toLowerCase() === "copying") {
+                self.dialogService.dismiss();
+                if (!notification) {
+                    this.notification = self.notificationService
+                        .notify({
+                            title: "Copying objects",
+                            unknownProgress: false,
+                            severity: "info"
+                        });
+                }
+                this.notification.model.progress = (processed / totalObjects) * 100;
+                this.notification.model.title = ["Copied ", processed, "of ",
+                    totalObjects, "objects"].join(" ");
+            }
+        }
+
+        /**
          * Executes the CopyAction. The CopyAction uses the default behaviour of 
          * the AbstractComposeAction, but extends it to support notification 
          * updates of progress on copy.
          */
         CopyAction.prototype.perform = function() {
-            var self = this,
-                notification,
-                dialog,
-                notificationModel = {
-                    title: "Copying objects",
-                    unknownProgress: false,
-                    severity: "info",
-                };
-            
-            /*
-            Show banner notification of copy progress.
-             */
-            function progress(phase, totalObjects, processed){
-                /*
-                Copy has two distinct phases. In the first phase a copy plan is 
-                made in memory. During this phase of execution, the user is 
-                shown a blocking 'modal' dialog.
-                 
-                In the second phase, the copying is taking place, and the user 
-                is shown non-invasive banner notifications at the bottom of the screen.
-                 */
-                if (phase.toLowerCase() === 'preparing' && !dialog){
-                    dialog = self.dialogService.showBlockingMessage({
-                        title: "Preparing to copy objects",
-                        unknownProgress: true,
-                        severity: "info",
-                    });
-                } else if (phase.toLowerCase() === "copying") {
-                    self.dialogService.dismiss();
-                    if (!notification) {
-                        notification = self.notificationService
-                            .notify(notificationModel);
-                    }
-                    notificationModel.progress = (processed / totalObjects) * 100;
-                    notificationModel.title = ["Copied ", processed, "of ", 
-                        totalObjects, "objects"].join(" ");
-                }
-            }
+            var self = this;
 
-            AbstractComposeAction.prototype.perform.call(this)
+            return AbstractComposeAction.prototype.perform.call(this)
                 .then(
-                    function(){
-                        notification.dismiss();
+                    function success(){
+                        self.notification.dismiss();
                         self.notificationService.info("Copying complete.");
                     },
-                    function(error){
+                    function error(error){
                         self.$log.error("Error copying objects. ", error);
                         //Show more general error message
                         self.notificationService.notify({
@@ -119,10 +110,11 @@ define(
                         });
                         
                     },
-                    function(notification){
-                        progress(notification.phase, notification.totalObjects, notification.processed);
-                    })
-                };
+                    function notification(notification){
+                        this.progress(notification.phase, notification.totalObjects, notification.processed);
+                    }
+            );
+        };
         return CopyAction;
     }
 );

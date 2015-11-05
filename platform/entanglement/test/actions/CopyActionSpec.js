@@ -41,7 +41,12 @@ define(
                 selectedObject,
                 selectedObjectContextCapability,
                 currentParent,
-                newParent;
+                newParent,
+                notificationService,
+                notification,
+                dialogService,
+                mockLog,
+                abstractComposePromise;
 
             beforeEach(function () {
                 selectedObjectContextCapability = jasmine.createSpyObj(
@@ -87,9 +92,46 @@ define(
                     ]
                 );
 
+                abstractComposePromise = jasmine.createSpyObj(
+                    'abstractComposePromise',
+                    [
+                        'then'
+                    ]
+                );
+
+                abstractComposePromise.then.andCallFake(function(success, error, notify){
+                        notify({phase: "copying", totalObjects: 10, processed: 10});
+                        success();
+                    }
+                )
+
+                locationServicePromise.then.andCallFake(function(callback){
+                    callback(newParent);
+                    return abstractComposePromise;
+                });
+
                 locationService
                     .getLocationFromUser
                     .andReturn(locationServicePromise);
+
+                dialogService = jasmine.createSpyObj('dialogService',
+                    ['showBlockingMessage']
+                );
+                dialogService.showBlockingMessage.andReturn();
+
+                notification = jasmine.createSpyObj('notification',
+                    ['dismiss', 'model']
+                );
+                notification.dismiss.andReturn();
+
+                notificationService = jasmine.createSpyObj('notificationService',
+                    ['notify']
+                );
+
+                notificationService.notify.andReturn(notification);
+
+                mockLog = jasmine.createSpyObj('log', ['error']);
+                mockLog.error.andReturn();
 
                 copyService = new MockCopyService();
             });
@@ -102,8 +144,11 @@ define(
                     };
 
                     copyAction = new CopyAction(
+                        mockLog,
                         locationService,
                         copyService,
+                        dialogService,
+                        notificationService,
                         context
                     );
                 });
@@ -114,6 +159,7 @@ define(
 
                 describe("when performed it", function () {
                     beforeEach(function () {
+                        spyOn(copyAction, 'progress').andCallThrough();
                         copyAction.perform();
                     });
 
@@ -132,7 +178,7 @@ define(
                             .toHaveBeenCalledWith(jasmine.any(Function));
                     });
 
-                    it("copys object to selected location", function () {
+                    it("copies object to selected location", function () {
                         locationServicePromise
                             .then
                             .mostRecentCall
@@ -141,6 +187,11 @@ define(
                         expect(copyService.perform)
                             .toHaveBeenCalledWith(selectedObject, newParent);
                     });
+
+                    it("notifies the user of progress", function(){
+                        expect(copyAction.progress.calls.length).toBeGreaterThan(0)
+                    });
+
                 });
             });
 
@@ -152,8 +203,11 @@ define(
                     };
 
                     copyAction = new CopyAction(
+                        mockLog,
                         locationService,
                         copyService,
+                        dialogService,
+                        notificationService,
                         context
                     );
                 });
