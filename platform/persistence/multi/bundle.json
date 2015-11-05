@@ -1,0 +1,32 @@
+{
+    "extensions": {
+        "components": [
+            {
+                "type": "decorator",
+                "provides": "persistenceService",
+                "implementation": "MultiPersistenceDecorator.js",
+                "depends": [
+                    "persistenceService",
+                    "$q",
+                    "MULTI_PERSISTENCE_SPACE_MAPPINGS",
+                    "MULTI_PERSISTENCE_DEFAULT_SPACE",
+                    "PERSISTENCE_SPACE"
+                ]
+            }
+        ],
+        "constants": [
+            {
+                "key": "MULTI_PERSISTENCE_SPACE_MAPPINGS",
+                "value": {},
+                "priority": "fallback",
+                "comment": "Maps identifiers to persistence spaces (statically.)"
+            },
+            {
+                "key": "MULTI_PERSISTENCE_DEFAULT_SPACE",
+                "value": "mct",
+                "priority": "fallback",
+                "comment": "Should be overridden with a reasonable default."
+            }
+        ]
+    }
+}
