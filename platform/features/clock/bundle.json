@@ -1,0 +1,178 @@
+{
+    "name": "Clocks/Timers",
+    "descriptions": "Domain objects for displaying current & relative times.",
+    "configuration": {
+        "paths": {
+            "moment-duration-format": "moment-duration-format"
+        },
+        "shim": {
+            "moment-duration-format": {
+                "deps": [ "moment" ]
+            }
+        }
+    },
+    "extensions": {
+        "constants": [
+            {
+                "key": "CLOCK_INDICATOR_FORMAT",
+                "value": "YYYY/MM/DD HH:mm:ss"
+            }
+
+        ],
+        "indicators": [
+            {
+                "implementation": "indicators/ClockIndicator.js",
+                "depends": [ "tickerService", "CLOCK_INDICATOR_FORMAT" ],
+                "priority": "preferred"
+            }
+        ],
+        "services": [
+            {
+                "key": "tickerService",
+                "implementation": "services/TickerService.js",
+                "depends": [ "$timeout", "now" ]
+            }
+        ],
+        "controllers": [
+            {
+                "key": "ClockController",
+                "implementation": "controllers/ClockController.js",
+                "depends": [ "$scope", "tickerService" ]
+            },
+            {
+                "key": "TimerController",
+                "implementation": "controllers/TimerController.js",
+                "depends": [ "$scope", "$window", "now" ]
+            },
+            {
+                "key": "RefreshingController",
+                "implementation": "controllers/RefreshingController.js",
+                "depends": [ "$scope", "tickerService" ]
+            }
+        ],
+        "views": [
+            {
+                "key": "clock",
+                "type": "clock",
+                "templateUrl": "templates/clock.html"
+            },
+            {
+                "key": "timer",
+                "type": "timer",
+                "templateUrl": "templates/timer.html"
+            }
+        ],
+        "actions": [
+            {
+                "key": "timer.start",
+                "implementation": "actions/StartTimerAction.js",
+                "depends": ["now"],
+                "category": "contextual",
+                "name": "Start",
+                "glyph": "\u00EF",
+                "priority": "preferred"
+            },
+            {
+                "key": "timer.restart",
+                "implementation": "actions/RestartTimerAction.js",
+                "depends": ["now"],
+                "category": "contextual",
+                "name": "Restart at 0",
+                "glyph": "r",
+                "priority": "preferred"
+            }
+        ],
+        "types": [
+            {
+                "key": "clock",
+                "name": "Clock",
+                "glyph": "C",
+                "features": [ "creation" ],
+                "properties": [
+                    {
+                        "key": "clockFormat",
+                        "name": "Display Format",
+                        "control": "composite",
+                        "items": [
+                            {
+                                "control": "select",
+                                "options": [
+                                    {
+                                        "value": "YYYY/MM/DD hh:mm:ss",
+                                        "name": "YYYY/MM/DD hh:mm:ss"
+                                    },
+                                    {
+                                        "value": "YYYY/DDD hh:mm:ss",
+                                        "name": "YYYY/DDD hh:mm:ss"
+                                    },
+                                    {
+                                        "value": "hh:mm:ss",
+                                        "name": "hh:mm:ss"
+                                    }
+                                ]
+                            },
+                            {
+                                "control": "select",
+                                "options": [
+                                    {
+                                        "value": "clock12",
+                                        "name": "12hr"
+                                    },
+                                    {
+                                        "value": "clock24",
+                                        "name": "24hr"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "model": {
+                    "clockFormat": [ "YYYY/MM/DD hh:mm:ss", "clock12" ]
+                }
+            },
+            {
+                "key": "timer",
+                "name": "Timer",
+                "glyph": "\u00F5",
+                "features": [ "creation" ],
+                "properties": [
+                    {
+                        "key": "timestamp",
+                        "control": "datetime",
+                        "name": "Target"
+                    },
+                    {
+                        "key": "timerFormat",
+                        "control": "select",
+                        "options": [
+                            {
+                                "value": "long",
+                                "name": "DDD hh:mm:ss"
+                            },
+                            {
+                                "value": "short",
+                                "name": "hh:mm:ss"
+                            }
+                        ]
+                    }
+                ],
+                "model": {
+                    "timerFormat": "DDD hh:mm:ss"
+                }
+            }
+        ],
+        "licenses": [
+            {
+                "name": "moment-duration-format",
+                "version": "1.3.0",
+                "author": "John Madhavan-Reese",
+                "description": "Duration parsing/formatting",
+                "website": "https://github.com/jsmreese/moment-duration-format",
+                "copyright": "Copyright 2014 John Madhavan-Reese",
+                "license": "license-mit",
+                "link": "https://github.com/jsmreese/moment-duration-format/blob/master/LICENSE"
+            }
+        ]
+    }
+}
