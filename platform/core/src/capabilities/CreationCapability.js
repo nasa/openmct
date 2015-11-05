@@ -44,7 +44,7 @@ define(
 
         CreationCapability.prototype.create = function (model) {
             var id = uuid(),
-                capabilities = this.capabilityService.getCapabilities(model);
+                capabilities = this.getCapabilities(model);
             return new DomainObjectImpl(id, model, capabilities);
         };
 
