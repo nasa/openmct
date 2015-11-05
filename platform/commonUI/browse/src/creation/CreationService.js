@@ -42,11 +42,9 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function CreationService(persistenceService, now, $q, $log) {
-            this.persistenceService = persistenceService;
+        function CreationService($q, $log) {
             this.$q = $q;
             this.$log = $log;
-            this.now = now;
         }
 
         /**
@@ -70,18 +68,9 @@ define(
          */
         CreationService.prototype.createObject = function (model, parent) {
             var persistence = parent.getCapability("persistence"),
+                newObject = parent.useCapability("creation", model),
+                newObjectPersistence = newObject.getCapability("persistence"),
                 self = this;
-
-            // Persist the new domain object's model; it will be fully
-            // constituted as a domain object when loaded back, as all
-            // domain object models are.
-            function doPersist(space, id, model) {
-                return self.persistenceService.createObject(
-                    space,
-                    id,
-                    model
-                ).then(function () { return id; });
-            }
 
             // Add the newly-created object's id to the parent's
             // composition, so that it will subsequently appear
@@ -105,7 +94,7 @@ define(
 
             // We need the parent's persistence capability to determine
             // what space to create the new object's model in.
-            if (!persistence) {
+            if (!persistence || !newObjectPersistence) {
                 self.$log.warn(NON_PERSISTENT_WARNING);
                 return self.$q.reject(new Error(NON_PERSISTENT_WARNING));
             }
@@ -114,10 +103,8 @@ define(
             // 1. Get a new UUID for the object
             // 2. Create a model with that ID in the persistence space
             // 3. Add that ID to
-            return self.$q.when(uuid()).then(function (id) {
-                model.persisted = self.now();
-                return doPersist(persistence.getSpace(), id, model);
-            }).then(function (id) {
+            return newObjectPersistence.persist().then(function () {
+                var id = newObject.getId();
                 return addToComposition(id, parent, persistence);
             });
         };
