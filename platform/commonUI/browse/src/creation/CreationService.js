@@ -75,10 +75,10 @@ define(
             // Add the newly-created object's id to the parent's
             // composition, so that it will subsequently appear
             // as a child contained by that parent.
-            function addToComposition(id, parent, parentPersistence) {
+            function addToComposition() {
                 var compositionCapability = parent.getCapability('composition'),
                     addResult = compositionCapability &&
-                        compositionCapability.add(id);
+                        compositionCapability.add(newObject);
 
                 return self.$q.when(addResult).then(function (result) {
                     if (!result) {
@@ -86,7 +86,7 @@ define(
                         return undefined;
                     }
 
-                    return parentPersistence.persist().then(function () {
+                    return persistence.persist().then(function () {
                         return result;
                     });
                 });
@@ -100,10 +100,7 @@ define(
             }
 
             // Persist the new object, then add it to composition.
-            return newObjectPersistence.persist().then(function () {
-                var id = newObject.getId();
-                return addToComposition(id, parent, persistence);
-            });
+            return newObjectPersistence.persist().then(addToComposition);
         };
 
 
