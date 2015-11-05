@@ -25,8 +25,8 @@
  * Module defining CreateService. Created by vwoeltje on 11/10/14.
  */
 define(
-    ["uuid"],
-    function (uuid) {
+    [],
+    function () {
         "use strict";
 
         var NON_PERSISTENT_WARNING =
@@ -99,10 +99,7 @@ define(
                 return self.$q.reject(new Error(NON_PERSISTENT_WARNING));
             }
 
-            // We create a new domain object in three sequential steps:
-            // 1. Get a new UUID for the object
-            // 2. Create a model with that ID in the persistence space
-            // 3. Add that ID to
+            // Persist the new object, then add it to composition.
             return newObjectPersistence.persist().then(function () {
                 var id = newObject.getId();
                 return addToComposition(id, parent, persistence);
