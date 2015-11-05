@@ -97,22 +97,37 @@
 .l-flex-col {
     @include display-flex;
     @include flex-wrap(nowrap);
+    //@include flex(1 1 auto !important);
     .flex-elem {
+        //@include test(green, 0.1);
+        min-height: 0; // Needed to allow element to shrink within parent
         &:not(.grows) {
-            @include flex(0 1 auto);
+            @include flex(0 0 auto);
         }
         &.grows {
             @include flex(1 1 auto);
         }
     }
+    .flex-container {
+        // Apply to wrapping elements, mct-includes, etc.
+        @include display-flex;
+        @include flex-wrap(nowrap);
+        @include flex(1 1 auto);
+        min-height:0;
+    }
 }
 
-.l-flex-row { @include flex-direction(row); }
+.l-flex-row {
+    @include flex-direction(row);
+    .flex-container { @include flex-direction(row); }
+}
+
 .l-flex-col {
     @include flex-direction(column);
     .flex-elem {
-        margin-bottom: $interiorMargin;
+        &:not(:first-child) { margin-top: $interiorMarginLg; }
     }
+    .flex-container { @include flex-direction(column); }
 }
 
 .l-flex {

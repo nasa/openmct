@@ -188,6 +188,8 @@
     }
 
     &.treeview.left {
+        // Converted to flex layout
+
         //.create-btn-holder {
         //    //bottom: auto;
         //    //top: 0;
@@ -197,16 +199,16 @@
         //        bottom: $interiorMargin;
         //    }
         //}
-        .holder-treeview-elements{
-
-        }
-        .search-holder {
-            top: $ueTopBarH + $interiorMarginLg;
-        }
-        .tree-holder {
-            overflow: auto;
-            top: $ueTopBarH + $interiorMarginLg + $treeSearchInputBarH + $interiorMargin;
-        }
+        //.holder-treeview-elements{
+        //
+        //}
+        //.search-holder {
+        //    top: $ueTopBarH + $interiorMarginLg;
+        //}
+        //.tree-holder {
+        //    overflow: auto;
+        //    top: $ueTopBarH + $interiorMarginLg + $treeSearchInputBarH + $interiorMargin;
+        //}
     }
 
     .mini-tab-icon.toggle-pane {

@@ -33,13 +33,14 @@
                                         mct-object="navigatedObject"
                                         class="flex-elem">
                     </mct-representation>
-                    <div class='holder search-holder flex-elem'
-                         ng-class="{active: treeModel.search}">
+                    <div class='holder l-flex-col flex-elem search-holder'
+                         ng-class="{ active: treeModel.search, grows: treeModel.search }">
                         <mct-include key="'search'"
-                                     ng-model="treeModel">
+                                     ng-model="treeModel"
+                                     class="flex-container">
                         </mct-include>
                     </div>
-                    <div class='holder tree-holder flex-elem grows'
+                    <div class='holder flex-elem grows vscroll tree-holder'
                          ng-hide="treeModel.search">
                         <mct-representation key="'tree'"
                                             mct-object="domainObject"

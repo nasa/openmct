@@ -515,30 +515,52 @@ mct-container {
   -webkit-flex-wrap: nowrap;
   flex-wrap: nowrap; }
   /* line 101, ../../../../general/res/sass/_archetypes.scss */
-  .l-flex-row .flex-elem:not(.grows), .l-flex .flex-elem:not(.grows),
-  .l-flex-col .flex-elem:not(.grows) {
-    -webkit-flex: 0 1 auto;
-    flex: 0 1 auto; }
-  /* line 104, ../../../../general/res/sass/_archetypes.scss */
-  .l-flex-row .flex-elem.grows, .l-flex .flex-elem.grows,
-  .l-flex-col .flex-elem.grows {
+  .l-flex-row .flex-elem, .l-flex .flex-elem,
+  .l-flex-col .flex-elem {
+    min-height: 0; }
+    /* line 104, ../../../../general/res/sass/_archetypes.scss */
+    .l-flex-row .flex-elem:not(.grows), .l-flex .flex-elem:not(.grows),
+    .l-flex-col .flex-elem:not(.grows) {
+      -webkit-flex: 0 0 auto;
+      flex: 0 0 auto; }
+    /* line 107, ../../../../general/res/sass/_archetypes.scss */
+    .l-flex-row .flex-elem.grows, .l-flex .flex-elem.grows,
+    .l-flex-col .flex-elem.grows {
+      -webkit-flex: 1 1 auto;
+      flex: 1 1 auto; }
+  /* line 111, ../../../../general/res/sass/_archetypes.scss */
+  .l-flex-row .flex-container, .l-flex .flex-container,
+  .l-flex-col .flex-container {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: nowrap;
+    flex-wrap: nowrap;
     -webkit-flex: 1 1 auto;
-    flex: 1 1 auto; }
+    flex: 1 1 auto;
+    min-height: 0; }
 
-/* line 110, ../../../../general/res/sass/_archetypes.scss */
+/* line 120, ../../../../general/res/sass/_archetypes.scss */
 .l-flex-row, .l-flex {
   -webkit-flex-direction: row;
   flex-direction: row; }
+  /* line 122, ../../../../general/res/sass/_archetypes.scss */
+  .l-flex-row .flex-container, .l-flex .flex-container {
+    -webkit-flex-direction: row;
+    flex-direction: row; }
 
-/* line 111, ../../../../general/res/sass/_archetypes.scss */
+/* line 125, ../../../../general/res/sass/_archetypes.scss */
 .l-flex-col {
   -webkit-flex-direction: column;
   flex-direction: column; }
-  /* line 113, ../../../../general/res/sass/_archetypes.scss */
-  .l-flex-col .flex-elem {
-    margin-bottom: 5px; }
+  /* line 128, ../../../../general/res/sass/_archetypes.scss */
+  .l-flex-col .flex-elem:not(:first-child) {
+    margin-top: 10px; }
+  /* line 130, ../../../../general/res/sass/_archetypes.scss */
+  .l-flex-col .flex-container {
+    -webkit-flex-direction: column;
+    flex-direction: column; }
 
-/* line 120, ../../../../general/res/sass/_archetypes.scss */
+/* line 135, ../../../../general/res/sass/_archetypes.scss */
 .l-flex .left {
   -webkit-flex: 1 1 0;
   flex: 1 1 0;
@@ -4501,49 +4523,42 @@ span.req {
   /* line 185, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .primary-pane {
     z-index: 2; }
-  /* line 203, ../../../../general/res/sass/user-environ/_layout.scss */
-  .pane.treeview.left .search-holder {
-    top: 34px; }
-  /* line 206, ../../../../general/res/sass/user-environ/_layout.scss */
-  .pane.treeview.left .tree-holder {
-    overflow: auto;
-    top: 64px; }
-  /* line 212, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 214, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .mini-tab-icon.toggle-pane {
     z-index: 5; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 212, ../../../../general/res/sass/user-environ/_layout.scss */
+      /* line 214, ../../../../general/res/sass/user-environ/_layout.scss */
       .pane .mini-tab-icon.toggle-pane {
         top: 10px;
         height: 24px;
         line-height: 24px; }
-        /* line 221, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 223, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane:after {
           opacity: 0; }
-        /* line 226, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 228, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane.collapsed:before {
           opacity: 0; }
-        /* line 229, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 231, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane.collapsed:after {
           opacity: 1; }
-        /* line 233, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 235, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane.toggle-tree.anchor-left {
           left: 0;
           -moz-transform: translateX(-34px);
           -ms-transform: translateX(-34px);
           -webkit-transform: translateX(-34px);
           transform: translateX(-34px); }
-          /* line 236, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 238, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-tree.anchor-left:after {
             content: '\6d'; }
-          /* line 239, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 241, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-tree.anchor-left.collapsed {
             left: 0;
             -moz-transform: translateX(-17px);
             -ms-transform: translateX(-17px);
             -webkit-transform: translateX(-17px);
             transform: translateX(-17px); }
-          /* line 243, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 245, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-tree.anchor-left:not(.collapsed):before {
             -moz-transition-property: opacity;
             -o-transition-property: opacity;
@@ -4561,16 +4576,16 @@ span.req {
             -o-transition-delay: 200ms;
             -webkit-transition-delay: 200ms;
             transition-delay: 200ms; }
-        /* line 247, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 249, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane.toggle-inspect.anchor-right {
           right: 10px; }
-          /* line 249, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 251, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-inspect.anchor-right:after {
             content: '\e615'; }
-          /* line 252, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 254, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-inspect.anchor-right.collapsed {
             right: 5px; } }
-  /* line 261, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 263, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .left.l-inspect, .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.pager, .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.pager,
   .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.val,
   .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.val, .pane.items .object-browse-bar .s-menu-btn span.left.l-click-area, .s-menu-btn .pane.items .object-browse-bar span.left.l-click-area,
@@ -4584,7 +4599,7 @@ span.req {
   .s-menu-btn .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
 
-/* line 269, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 271, ../../../../general/res/sass/user-environ/_layout.scss */
 .split-layout {
   /* &.vertical {
        // Slides left and right
@@ -4599,36 +4614,36 @@ span.req {
            }
        }
    }*/ }
-  /* line 272, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 274, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane {
     margin-top: 5px; }
-    /* line 275, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 277, ../../../../general/res/sass/user-environ/_layout.scss */
     .split-layout.horizontal > .pane:first-child {
       margin-top: 0; }
-  /* line 295, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 297, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .holder.holder-treeview-elements {
     top: 10px;
     right: 0;
     bottom: 10px;
     left: 10px; }
-  /* line 302, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 304, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .holder.holder-object-and-inspector {
     top: 0;
     right: 0;
     bottom: 0;
     left: 0; }
-    /* line 307, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 309, ../../../../general/res/sass/user-environ/_layout.scss */
     .split-layout .holder.holder-object-and-inspector .holder-object {
       top: 10px;
       bottom: 10px; }
-    /* line 311, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 313, ../../../../general/res/sass/user-environ/_layout.scss */
     .split-layout .holder.holder-object-and-inspector .holder-inspector-elements {
       top: 10px;
       bottom: 10px;
       left: 10px;
       right: 10px; }
 
-/* line 321, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 323, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-holder {
   overflow: auto;
   position: absolute;
@@ -4639,11 +4654,11 @@ span.req {
   width: auto;
   height: auto;
   top: 34px; }
-  /* line 325, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 327, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-holder.l-controls-visible.l-time-controller-visible {
     bottom: 88px; }
 
-/* line 331, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 333, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .s-btn, .object-browse-bar .s-menu-btn,
 .top-bar .buttons-main .s-btn,
 .top-bar .buttons-main .s-menu-btn,
@@ -4655,12 +4670,12 @@ span.req {
   line-height: 25px;
   vertical-align: top; }
 
-/* line 344, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 346, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .view-switcher,
 .top-bar .view-switcher {
   margin-right: 20px; }
 
-/* line 349, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 351, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar {
   overflow: hidden;
   position: absolute;
@@ -4676,22 +4691,22 @@ span.req {
   height: 24px;
   line-height: 24px;
   white-space: nowrap; }
-  /* line 357, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 359, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-browse-bar .left {
     padding-right: 20px; }
-    /* line 359, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 361, ../../../../general/res/sass/user-environ/_layout.scss */
     .object-browse-bar .left .l-back {
       display: inline-block;
       float: left;
       margin-right: 10px; }
 
-/* line 373, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 375, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-hidden .tree-holder,
 .pane-tree-hidden .splitter-treeview,
 .pane-tree-hidden .holder-treeview-elements {
   opacity: 0; }
 
-/* line 383, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 385, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-showing .tree-holder,
 .pane-tree-showing .splitter-treeview {
   -moz-transition-property: opacity;
@@ -4711,7 +4726,7 @@ span.req {
   -webkit-transition-delay: 250ms;
   transition-delay: 250ms;
   opacity: 1; }
-/* line 389, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 391, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-showing .holder-treeview-elements {
   -moz-transition-property: opacity;
   -o-transition-property: opacity;
@@ -4730,7 +4745,7 @@ span.req {
   -webkit-transition-delay: 200ms;
   transition-delay: 200ms; }
 
-/* line 396, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 398, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-showing .l-object-and-inspector .l-inspect,
 .pane-inspect-showing .l-object-and-inspector .splitter-inspect {
   -moz-transition-property: opacity;
@@ -4751,25 +4766,25 @@ span.req {
   transition-delay: 250ms;
   opacity: 1; }
 
-/* line 405, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 407, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-hidden .l-object-and-inspector .l-inspect,
 .pane-inspect-hidden .l-object-and-inspector .splitter-inspect {
   opacity: 0; }
 
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 413, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 415, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .tree-holder {
     padding-right: 5px; }
 
-  /* line 417, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 419, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane-tree-hidden .pane.right.primary-pane {
     left: 22px !important; }
 
-  /* line 420, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 422, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane-inspect-hidden .l-object-and-inspector .pane.left {
     right: 22px !important; }
 
-  /* line 423, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 425, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane:not(.resizing) {
     -moz-transition-property: width, left, right;
     -o-transition-property: width, left, right;
@@ -5136,117 +5151,139 @@ span.req {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 23, ../../../../general/res/sass/search/_search.scss */
-.abs.search-holder, .search-holder.l-inspect, .l-datetime-picker .l-month-year-pager .search-holder.pager,
-.l-datetime-picker .l-month-year-pager .search-holder.val, .s-menu-btn span.search-holder.l-click-area {
-  height: 25px;
-  bottom: 0;
-  top: 23px;
-  z-index: 5; }
-  /* line 27, ../../../../general/res/sass/search/_search.scss */
-  .abs.search-holder.active, .search-holder.active.l-inspect, .l-datetime-picker .l-month-year-pager .search-holder.active.pager,
-  .l-datetime-picker .l-month-year-pager .search-holder.active.val, .s-menu-btn span.search-holder.active.l-click-area {
-    height: auto;
-    bottom: 0; }
+/*.abs.search-holder {
+	//@include test(#990000);
+	height: $treeSearchInputBarH;
+	bottom: 0;
+	&.active {
+		height: auto;
+		bottom: 0;
+	}
+	top: 23px;
 
+	// Align with the top of the divider bar, below create button
+	//margin-top: 10px; // CH comment out
+	z-index:5;
+}*/
 /* line 38, ../../../../general/res/sass/search/_search.scss */
-.search {
-  display: flex;
-  display: -webkit-flex;
-  flex-direction: column;
-  -webkit-flex-direction: column;
-  height: 100%; }
-  /* line 48, ../../../../general/res/sass/search/_search.scss */
-  .search .search-bar {
+.holder-search {
+  height: 24px; }
+  /* line 42, ../../../../general/res/sass/search/_search.scss */
+  .holder-search .search-bar {
     font-size: 0.8em;
     max-width: 250px;
-    position: relative;
-    width: 100%; }
-    /* line 60, ../../../../general/res/sass/search/_search.scss */
-    .search .search-bar .search-input {
+    position: relative; }
+    /* line 51, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .search-bar .search-input {
       height: 25px;
-      line-height: 25px;
-      padding-top: 0;
-      padding-bottom: 0; }
-    /* line 67, ../../../../general/res/sass/search/_search.scss */
-    .search .search-bar .search-icon,
-    .search .search-bar .clear-icon,
-    .search .search-bar .menu-icon {
+      line-height: 25px; }
+    /* line 56, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .search-bar:before,
+    .holder-search .search-bar .clear-icon,
+    .holder-search .search-bar .menu-icon {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
       color: #737373;
+      font-family: symbolsfont;
       height: 17px;
       width: 17px;
       line-height: 17px;
       position: absolute;
       text-align: center;
       top: 4px; }
-    /* line 80, ../../../../general/res/sass/search/_search.scss */
-    .search .search-bar .clear-icon,
-    .search .search-bar .menu-icon {
+    /* line 70, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .search-bar .clear-icon,
+    .holder-search .search-bar .menu-icon {
       cursor: pointer;
-      -moz-transition: color, 0.25s;
-      -o-transition: color, 0.25s;
-      -webkit-transition: color, 0.25s;
-      transition: color, 0.25s; }
-    /* line 87, ../../../../general/res/sass/search/_search.scss */
-    .search .search-bar .search-input {
+      -moz-transition-property: opacity, color;
+      -o-transition-property: opacity, color;
+      -webkit-transition-property: opacity, color;
+      transition-property: opacity, color;
+      -moz-transition-duration: 150ms;
+      -o-transition-duration: 150ms;
+      -webkit-transition-duration: 150ms;
+      transition-duration: 150ms;
+      -moz-transition-timing-function: ease-in-out;
+      -o-transition-timing-function: ease-in-out;
+      -webkit-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out;
+      -moz-transition-delay: 0;
+      -o-transition-delay: 0;
+      -webkit-transition-delay: 0;
+      transition-delay: 0; }
+    /* line 77, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .search-bar .search-input {
       position: relative;
       width: 100%;
       padding-left: 22px !important;
       padding-right: 44px !important; }
-      /* line 94, ../../../../general/res/sass/search/_search.scss */
-      .search .search-bar .search-input input {
-        width: 100%; }
-    /* line 99, ../../../../general/res/sass/search/_search.scss */
-    .search .search-bar .search-icon {
+      /* line 84, ../../../../general/res/sass/search/_search.scss */
+      .holder-search .search-bar .search-input input {
+        width: inherit; }
+    /* line 89, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .search-bar:before {
+      content: '\4d';
       left: 3px;
-      transition: visibility .15s, opacity .15s, color .2s;
+      -moz-transition-property: color;
+      -o-transition-property: color;
+      -webkit-transition-property: color;
+      transition-property: color;
+      -moz-transition-duration: 250ms;
+      -o-transition-duration: 250ms;
+      -webkit-transition-duration: 250ms;
+      transition-duration: 250ms;
+      -moz-transition-timing-function: ease-in-out;
+      -o-transition-timing-function: ease-in-out;
+      -webkit-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out;
+      -moz-transition-delay: 0;
+      -o-transition-delay: 0;
+      -webkit-transition-delay: 0;
+      transition-delay: 0;
       pointer-events: none; }
-    /* line 119, ../../../../general/res/sass/search/_search.scss */
-    .search .search-bar .search-input:hover + div.search-icon {
+    /* line 98, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .search-bar:hover:before {
       color: #8c8c8c; }
-    /* line 123, ../../../../general/res/sass/search/_search.scss */
-    .search .search-bar .clear-icon {
+    /* line 102, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .search-bar .clear-icon {
       right: 22px;
       visibility: hidden;
-      opacity: 0;
-      transition: visibility .15s, opacity .15s, color .2s; }
-      /* line 132, ../../../../general/res/sass/search/_search.scss */
-      .search .search-bar .clear-icon.content {
+      opacity: 0; }
+      /* line 104, ../../../../general/res/sass/search/_search.scss */
+      .holder-search .search-bar .clear-icon:before {
+        content: '\e607'; }
+      /* line 110, ../../../../general/res/sass/search/_search.scss */
+      .holder-search .search-bar .clear-icon.show {
         visibility: visible;
         opacity: 1; }
-      /* line 137, ../../../../general/res/sass/search/_search.scss */
-      .search .search-bar .clear-icon:hover {
+      /* line 115, ../../../../general/res/sass/search/_search.scss */
+      .holder-search .search-bar .clear-icon:hover {
         color: #8c8c8c; }
-    /* line 142, ../../../../general/res/sass/search/_search.scss */
-    .search .search-bar .menu-icon {
+    /* line 120, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .search-bar .menu-icon {
       font-size: 0.8em;
       padding-right: 4px;
       right: 4px;
       text-align: right; }
-      /* line 148, ../../../../general/res/sass/search/_search.scss */
-      .search .search-bar .menu-icon:hover {
+      /* line 122, ../../../../general/res/sass/search/_search.scss */
+      .holder-search .search-bar .menu-icon:before {
+        content: '\76'; }
+      /* line 128, ../../../../general/res/sass/search/_search.scss */
+      .holder-search .search-bar .menu-icon:hover {
         color: #8c8c8c; }
-    /* line 153, ../../../../general/res/sass/search/_search.scss */
-    .search .search-bar .search-menu-holder {
+    /* line 133, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .search-bar .search-menu-holder {
       float: right;
       left: -20px;
       z-index: 1;
       transition: visibility .05s, opacity .05s; }
-      /* line 163, ../../../../general/res/sass/search/_search.scss */
-      .search .search-bar .search-menu-holder.off {
+      /* line 139, ../../../../general/res/sass/search/_search.scss */
+      .holder-search .search-bar .search-menu-holder.off {
         visibility: hidden;
         opacity: 0; }
-    /* line 170, ../../../../general/res/sass/search/_search.scss */
-    .search .search-bar .menu-icon:hover + div.search-menu-holder {
-      visibility: visible; }
-    /* line 173, ../../../../general/res/sass/search/_search.scss */
-    .search .search-bar div.search-menu-holder:hover {
-      visibility: visible; }
-  /* line 178, ../../../../general/res/sass/search/_search.scss */
-  .search .active-filter-display {
+  /* line 154, ../../../../general/res/sass/search/_search.scss */
+  .holder-search .active-filter-display {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     border-radius: 3px;
@@ -5258,44 +5295,34 @@ span.req {
     padding-left: 1.4625em;
     font-size: 0.65em;
     margin-top: 3px; }
-    /* line 193, ../../../../general/res/sass/search/_search.scss */
-    .search .active-filter-display .clear-filters-icon {
+    /* line 167, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .active-filter-display .clear-filters-icon {
       color: #737373;
       opacity: 1;
       font-size: 0.8em;
       position: absolute;
       left: 1px;
       cursor: pointer; }
-    /* line 205, ../../../../general/res/sass/search/_search.scss */
-    .search .active-filter-display.off {
+    /* line 178, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .active-filter-display.off {
       visibility: hidden;
       opacity: 0;
       height: 0;
       margin: 0;
       padding: 0;
       border: 0; }
-  /* line 215, ../../../../general/res/sass/search/_search.scss */
-  .search .search-scroll {
-    order: 3;
-    margin-top: 4px;
-    overflow-y: auto;
-    top: auto;
-    height: auto;
-    max-height: 100%;
-    position: relative; }
-    /* line 226, ../../../../general/res/sass/search/_search.scss */
-    .search .search-scroll .load-icon {
-      position: relative; }
-    /* line 230, ../../../../general/res/sass/search/_search.scss */
-    .search .search-scroll .load-more-button {
-      margin-top: 5px 0;
-      font-size: 0.8em;
-      position: relative;
-      left: 50%;
-      margin-left: -45px;
-      text-align: center;
-      width: 90px;
-      white-space: nowrap; }
+  /* line 189, ../../../../general/res/sass/search/_search.scss */
+  .holder-search .search-scroll .load-more-button {
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    display: inline-block;
+    margin-top: 5px;
+    padding: 0 10px;
+    font-size: 0.75em;
+    margin-left: 50%;
+    white-space: nowrap; }
 
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px) {
   /* line 5, ../../../../general/res/sass/mobile/search/_search.scss */
