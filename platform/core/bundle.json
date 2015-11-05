@@ -2,6 +2,11 @@
     "name": "Open MCT Web Core",
     "description": "Defines core concepts of Open MCT Web.",
     "sources": "src",
+    "configuration": {
+        "paths": {
+            "uuid": "uuid"
+        }
+    },
     "extensions": {
         "versions": [
             {
@@ -239,6 +244,18 @@
                 "key": "ADDITIONAL_PERSISTENCE_SPACES",
                 "value": [],
                 "description": "An array of additional persistence spaces to load models from."
+            }
+        ],
+        "licenses": [
+            {
+                "name": "Math.uuid.js",
+                "version": "1.4",
+                "description": "Unique identifer generation (code adapted.)",
+                "author": "Robert Kieffer",
+                "website": "https://github.com/broofa/node-uuid",
+                "copyright": "Copyright (c) 2010 Robert Kieffer",
+                "license": "license-mit",
+                "link": "http://opensource.org/licenses/MIT"
             }
         ]
     }

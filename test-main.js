@@ -46,7 +46,7 @@ require.config({
         'es6-promise': 'platform/framework/lib/es6-promise-2.0.0.min',
         'moment': 'platform/telemetry/lib/moment.min',
         'moment-duration-format': 'platform/features/clock/lib/moment-duration-format',
-        'uuid': 'platform/commonUI/browse/lib/uuid'
+        'uuid': 'platform/core/lib/uuid'
     },
 
     shim: {
