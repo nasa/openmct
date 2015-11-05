@@ -27,7 +27,6 @@ define(
         'use strict';
 
         function AsyncMutex($q) {
-            this.inUse = false;
             this.queue = [];
             this.$q = $q;
         }
@@ -56,11 +55,9 @@ define(
                 }
             }
 
-            if (this.inUse) {
-                queue.push(next);
-            } else {
-                this.inUse = true;
-                next();
+            queue.push(next);
+            if (queue.length === 1) {
+                advance();
             }
 
             return deferred.promise;

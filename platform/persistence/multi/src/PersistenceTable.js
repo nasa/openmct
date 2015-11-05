@@ -42,11 +42,10 @@ define(
                 self = this;
 
 
-            this.mutex = new AsyncMutex();
+            this.mutex = new AsyncMutex($q);
             this.$q = $q;
             this.staticSpaceMappings = spaceMappings;
             this.defaultSpace = defaultSpace;
-            this.observedSpaceMappings = {};
 
             this.mutex.acquire(function (release) {
                 initializer.initialTable(spaces).then(function (table) {
