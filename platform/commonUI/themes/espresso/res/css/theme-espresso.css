@@ -4660,7 +4660,7 @@ span.req {
 
 /* line 350, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar {
-  overflow: visible;
+  overflow: hidden;
   position: absolute;
   top: 0;
   right: 0;

@@ -349,7 +349,7 @@
 
 .object-browse-bar {
     //@include test(blue);
-    @include absPosDefault(0, visible);
+    @include absPosDefault(0, hidden);
     @include box-sizing(border-box);
     height: $ueTopBarH;
     line-height: $ueTopBarH;
