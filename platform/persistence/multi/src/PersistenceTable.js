@@ -46,6 +46,7 @@ define(
             this.$q = $q;
             this.staticSpaceMappings = spaceMappings;
             this.defaultSpace = defaultSpace;
+            this.spaces = spaces;
 
             this.mutex.acquire(function (release) {
                 initializer.initialTable(spaces).then(function (table) {
@@ -69,5 +70,8 @@ define(
             });
         };
 
+        PersistenceTable.prototype.getSpaces = function () {
+            return this.spaces;
+        };
     }
 );
