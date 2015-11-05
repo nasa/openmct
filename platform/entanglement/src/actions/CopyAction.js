@@ -119,8 +119,9 @@ define(
                             self.notification.dismiss(); // Clear the progress notification
                         }
                         self.$log.error("Error copying objects. ", errorDetails);
-                        //Show more general error message
+                        //Show a minimized notification of error for posterity
                         self.notificationService.notify(errorMessage);
+                        //Display a blocking message
                         self.dialogService.showBlockingMessage(errorMessage);
                         
                     },
