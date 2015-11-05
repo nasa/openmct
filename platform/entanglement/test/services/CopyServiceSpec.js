@@ -223,7 +223,7 @@ define(
 
                     it("uses persistence service", function () {
                      expect(mockPersistenceService.createObject)
-                     .toHaveBeenCalledWith(parentPersistenceCapability, jasmine.any(String), object.getModel());
+                     .toHaveBeenCalledWith(parentPersistenceCapability.getSpace(), jasmine.any(String), object.getModel());
 
                      expect(persistObjectPromise.then)
                      .toHaveBeenCalledWith(jasmine.any(Function));
