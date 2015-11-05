@@ -65,15 +65,15 @@ define(
              is shown non-invasive banner notifications at the bottom of the screen.
              */
             if (phase.toLowerCase() === 'preparing' && !this.dialog){
-                this.dialog = self.dialogService.showBlockingMessage({
+                this.dialog = this.dialogService.showBlockingMessage({
                     title: "Preparing to copy objects",
                     unknownProgress: true,
                     severity: "info",
                 });
             } else if (phase.toLowerCase() === "copying") {
-                self.dialogService.dismiss();
-                if (!notification) {
-                    this.notification = self.notificationService
+                this.dialogService.dismiss();
+                if (!this.notification) {
+                    this.notification = this.notificationService
                         .notify({
                             title: "Copying objects",
                             unknownProgress: false,
@@ -111,7 +111,7 @@ define(
                         
                     },
                     function notification(notification){
-                        this.progress(notification.phase, notification.totalObjects, notification.processed);
+                        self.progress(notification.phase, notification.totalObjects, notification.processed);
                     }
             );
         };

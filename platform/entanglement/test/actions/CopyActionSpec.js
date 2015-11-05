@@ -46,7 +46,8 @@ define(
                 notification,
                 dialogService,
                 mockLog,
-                abstractComposePromise;
+                abstractComposePromise,
+                progress = {phase: "copying", totalObjects: 10, processed: 1};
 
             beforeEach(function () {
                 selectedObjectContextCapability = jasmine.createSpyObj(
@@ -100,7 +101,7 @@ define(
                 );
 
                 abstractComposePromise.then.andCallFake(function(success, error, notify){
-                        notify({phase: "copying", totalObjects: 10, processed: 10});
+                        notify(progress);
                         success();
                     }
                 )
@@ -115,23 +116,23 @@ define(
                     .andReturn(locationServicePromise);
 
                 dialogService = jasmine.createSpyObj('dialogService',
-                    ['showBlockingMessage']
+                    ['showBlockingMessage', 'dismiss']
                 );
-                dialogService.showBlockingMessage.andReturn();
+                //dialogService.showBlockingMessage.andReturn();
 
                 notification = jasmine.createSpyObj('notification',
                     ['dismiss', 'model']
                 );
-                notification.dismiss.andReturn();
+                //notification.dismiss.andReturn();
 
                 notificationService = jasmine.createSpyObj('notificationService',
-                    ['notify']
+                    ['notify', 'info']
                 );
 
                 notificationService.notify.andReturn(notification);
 
                 mockLog = jasmine.createSpyObj('log', ['error']);
-                mockLog.error.andReturn();
+                //mockLog.error.andReturn();
 
                 copyService = new MockCopyService();
             });
@@ -189,7 +190,7 @@ define(
                     });
 
                     it("notifies the user of progress", function(){
-                        expect(copyAction.progress.calls.length).toBeGreaterThan(0)
+                        expect(notificationService.info).toHaveBeenCalled();
                     });
 
                 });
