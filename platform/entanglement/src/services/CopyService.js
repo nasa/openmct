@@ -92,7 +92,7 @@ define(
                 var modelClone = {
                         id: uuid(),
                         model: makeClone(originalObject.getModel()),
-                        persistenceSpace: originalParent.getCapability('persistence')
+                        persistenceSpace: originalParent.hasCapability('persistence') && originalParent.getCapability('persistence').getSpace()
                     };
                 delete modelClone.model.composition;
                 delete modelClone.model.persisted;
