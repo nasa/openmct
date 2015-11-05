@@ -132,10 +132,10 @@ define(
                     // Get actual size (to obey min-width etc.)
                     firstSize = getSize(first[0]);
                     first.css(anchor.dimension, firstSize + 'px');
-                    splitter.css(anchor.edge, (firstSize + splitterSize) + 'px');
+                    splitter.css(anchor.edge, firstSize + 'px');
                     splitter.css(anchor.opposite, "auto");
 
-                    last.css(anchor.edge, (firstSize + splitterSize * 3) + 'px');
+                    last.css(anchor.edge, (firstSize + splitterSize) + 'px');
                     last.css(anchor.opposite, "0px");
 
                     position = firstSize + splitterSize;
@@ -178,6 +178,12 @@ define(
                     return position;
                 }
 
+                // Dynamically apply a CSS class to elements when the user
+                // is actively resizing
+                function toggleClass(classToToggle) {
+                    $element.children().toggleClass(classToToggle);
+                }
+
                 // Make sure anchor parameter is something we know
                 if (!ANCHORS[anchorKey]) {
                     $log.warn(ANCHOR_WARNING_MESSAGE);
@@ -208,6 +214,7 @@ define(
                 // Interface exposed by controller, for mct-splitter to user
                 return {
                     position: getSetPosition,
+                    toggleClass: toggleClass,
                     anchor: function () {
                         return anchor;
                     }

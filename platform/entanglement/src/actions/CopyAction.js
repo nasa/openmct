@@ -101,13 +101,27 @@ define(
                         self.notificationService.info("Copying complete.");
                     },
                     function error(errorDetails){
-                        self.$log.error("Error copying objects. ", errorDetails);
-                        //Show more general error message
-                        self.notificationService.notify({
+                        var errorMessage = {
                             title: "Error copying objects.",
                             severity: "error",
-                            hint: errorDetails.message
-                        });
+                            hint: errorDetails.message,
+                            minimized: true, // want the notification to be minimized initially (don't show banner)
+                            options: [{
+                                label: "OK",
+                                callback: function() {
+                                    self.dialogService.dismiss();
+                                }
+                            }]
+                        };
+                        
+                        self.dialogService.dismiss();
+                        if (self.notification) {
+                            self.notification.dismiss(); // Clear the progress notification
+                        }
+                        self.$log.error("Error copying objects. ", errorDetails);
+                        //Show more general error message
+                        self.notificationService.notify(errorMessage);
+                        self.dialogService.showBlockingMessage(errorMessage);
                         
                     },
                     function notification(details){

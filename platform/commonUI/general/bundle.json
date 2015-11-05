@@ -61,12 +61,17 @@
             {
                 "key": "TimeRangeController",
                 "implementation": "controllers/TimeRangeController.js",
-                "depends": [ "$scope", "now" ]
+                "depends": [ "$scope", "formatService", "DEFAULT_TIME_FORMAT", "now" ]
             },
             {
                 "key": "DateTimePickerController",
                 "implementation": "controllers/DateTimePickerController.js",
                 "depends": [ "$scope", "now" ]
+            },
+            {
+                "key": "DateTimeFieldController",
+                "implementation": "controllers/DateTimeFieldController.js",
+                "depends": [ "$scope", "formatService", "DEFAULT_TIME_FORMAT" ]
             },
             {
                 "key": "TreeNodeController",
@@ -115,6 +120,11 @@
                 "key": "SelectorController",
                 "implementation": "controllers/SelectorController.js",
                 "depends": [ "objectService", "$scope" ]
+            },
+            {
+                "key": "ObjectInspectorController",
+                "implementation": "controllers/ObjectInspectorController.js",
+                "depends": [ "$scope", "objectService" ]
             },
             {
                 "key": "BannerController",
@@ -245,6 +255,10 @@
                 "key": "switcher",
                 "templateUrl": "templates/controls/switcher.html",
                 "uses": [ "view" ]
+            },
+            {
+                "key": "object-inspector",
+                "templateUrl": "templates/object-inspector.html"
             }
         ],
         "controls": [
@@ -255,6 +269,10 @@
             {
                 "key": "datetime-picker",
                 "templateUrl": "templates/controls/datetime-picker.html"
+            },
+            {
+                "key": "datetime-field",
+                "templateUrl": "templates/controls/datetime-field.html"
             }
         ],
         "licenses": [

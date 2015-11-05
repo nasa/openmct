@@ -19,18 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-// Styles to temporarily hide non-functional elements
+/*global define,Promise*/
 
-/******************************** BROWSE */
-.browse-mode {
-	.browse {
-		&.top-bar {
-			display: none;
-		}
-	}
-
-	.browse-area.holder {
-		// When .browse.top-bar is hidden, set the top of the browse-area holder
-		top: $bodyMargin;
-	}
-}
+define({
+    START_TIME: Date.now() - 24 * 60 * 60 * 1000 // Now minus a day.
+});

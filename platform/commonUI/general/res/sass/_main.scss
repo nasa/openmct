@@ -29,7 +29,7 @@
 @import "helpers/bubbles";
 @import "helpers/splitter";
 @import "helpers/wait-spinner";
-@import "properties";
+@import "inspector";
 
 /********************************* CONTROLS */
 @import "controls/breadcrumb";
@@ -69,7 +69,6 @@
 @import "lists/tabular";
 @import "plots/plots-main";
 @import "iframe";
-@import "hide-non-functional";
 @import "views";
 @import "items/item";
 @import "mobile/item";

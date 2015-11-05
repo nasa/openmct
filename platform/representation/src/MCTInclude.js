@@ -54,36 +54,38 @@ define(
          * @param {TemplateDefinition[]} templates an array of
          *        template extensions
          */
-        function MCTInclude(templates, $sce) {
+        function MCTInclude(templates, templateLinker) {
             var templateMap = {};
+
+            function link(scope, element) {
+                var changeTemplate = templateLinker.link(
+                    scope,
+                    element,
+                    scope.key && templateMap[scope.key]
+                );
+
+                scope.$watch('key', function (key) {
+                    changeTemplate(key && templateMap[key]);
+                });
+            }
 
             // Prepopulate templateMap for easy look up by key
             templates.forEach(function (template) {
-                var key = template.key,
-                    path = $sce.trustAsResourceUrl([
-                        template.bundle.path,
-                        template.bundle.resources,
-                        template.templateUrl
-                    ].join("/"));
+                var key = template.key;
                 // First found should win (priority ordering)
-                templateMap[key] = templateMap[key] || path;
+                templateMap[key] =
+                    templateMap[key] || templateLinker.getPath(template);
             });
-
-            function controller($scope) {
-                // Pass the template URL to ng-include via scope.
-                $scope.inclusion = templateMap[$scope.key];
-            }
 
             return {
                 // Only show at the element level
                 restrict: "E",
 
                 // Use the included controller to populate scope
-                controller: controller,
+                link: link,
 
-                // Use ng-include as a template; "inclusion" will be the real
-                // template path
-                template: '<ng-include src="inclusion"></ng-include>',
+                // May hide the element, so let other directives act first
+                priority: -1000,
 
                 // Two-way bind key, ngModel, and parameters
                 scope: { key: "=", ngModel: "=", parameters: "=" }

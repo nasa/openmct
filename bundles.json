@@ -6,6 +6,7 @@
     "platform/commonUI/browse",
     "platform/commonUI/edit",
     "platform/commonUI/dialog",
+    "platform/commonUI/formats",
     "platform/commonUI/general",
     "platform/commonUI/inspect",
     "platform/commonUI/mobile",

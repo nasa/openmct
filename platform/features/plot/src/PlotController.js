@@ -31,10 +31,19 @@ define(
         "./elements/PlotPalette",
         "./elements/PlotAxis",
         "./elements/PlotLimitTracker",
+        "./elements/PlotTelemetryFormatter",
         "./modes/PlotModeOptions",
         "./SubPlotFactory"
     ],
-    function (PlotUpdater, PlotPalette, PlotAxis, PlotLimitTracker, PlotModeOptions, SubPlotFactory) {
+    function (
+        PlotUpdater,
+        PlotPalette,
+        PlotAxis,
+        PlotLimitTracker,
+        PlotTelemetryFormatter,
+        PlotModeOptions,
+        SubPlotFactory
+    ) {
         "use strict";
 
         var AXIS_DEFAULTS = [
@@ -62,7 +71,10 @@ define(
             PLOT_FIXED_DURATION
         ) {
             var self = this,
-                subPlotFactory = new SubPlotFactory(telemetryFormatter),
+                plotTelemetryFormatter =
+                    new PlotTelemetryFormatter(telemetryFormatter),
+                subPlotFactory =
+                    new SubPlotFactory(plotTelemetryFormatter),
                 cachedObjects = [],
                 updater,
                 lastBounds,
@@ -71,10 +83,9 @@ define(
             // Populate the scope with axis information (specifically, options
             // available for each axis.)
             function setupAxes(metadatas) {
-                $scope.axes = [
-                    new PlotAxis("domain", metadatas, AXIS_DEFAULTS[0]),
-                    new PlotAxis("range", metadatas, AXIS_DEFAULTS[1])
-                ];
+                $scope.axes.forEach(function (axis) {
+                    axis.updateMetadata(metadatas);
+                });
             }
 
             // Trigger an update of a specific subplot;
@@ -125,34 +136,46 @@ define(
                 }
             }
 
+            function getUpdater() {
+                if (!updater) {
+                    recreateUpdater();
+                }
+                return updater;
+            }
+
             // Handle new telemetry data in this plot
             function updateValues() {
                 self.pending = false;
                 if (handle) {
                     setupModes(handle.getTelemetryObjects());
-                }
-                if (updater) {
-                    updater.update();
+                    setupAxes(handle.getMetadata());
+                    getUpdater().update();
                     self.modeOptions.getModeHandler().plotTelemetry(updater);
-                }
-                if (self.limitTracker) {
                     self.limitTracker.update();
+                    self.update();
                 }
-                self.update();
             }
 
             // Display new historical data as it becomes available
             function addHistoricalData(domainObject, series) {
                 self.pending = false;
-                updater.addHistorical(domainObject, series);
+                getUpdater().addHistorical(domainObject, series);
                 self.modeOptions.getModeHandler().plotTelemetry(updater);
                 self.update();
             }
 
             // Issue a new request for historical telemetry
             function requestTelemetry() {
-                if (handle && updater) {
+                if (handle) {
                     handle.request({}, addHistoricalData);
+                }
+            }
+
+            // Requery for data entirely
+            function replot() {
+                if (handle) {
+                    updater = undefined;
+                    requestTelemetry();
                 }
             }
 
@@ -167,12 +190,7 @@ define(
                     updateValues,
                     true // Lossless
                 );
-                if (handle) {
-                    setupModes(handle.getTelemetryObjects());
-                    setupAxes(handle.getMetadata());
-                    recreateUpdater();
-                    requestTelemetry();
-                }
+                replot();
             }
 
             // Release the current subscription (called when scope is destroyed)
@@ -185,10 +203,20 @@ define(
 
             // Respond to a display bounds change (requery for data)
             function changeDisplayBounds(event, bounds) {
+                var domainAxis = $scope.axes[0];
+
+                domainAxis.chooseOption(bounds.domain);
+                plotTelemetryFormatter
+                    .setDomainFormat(domainAxis.active.format);
+
                 self.pending = true;
                 releaseSubscription();
                 subscribe($scope.domainObject);
                 setBasePanZoom(bounds);
+            }
+
+            function updateDomainFormat(format) {
+                plotTelemetryFormatter.setDomainFormat(format);
             }
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
@@ -201,6 +229,13 @@ define(
             });
 
             self.pending = true;
+
+            // Initialize axes; will get repopulated when telemetry
+            // metadata becomes available.
+            $scope.axes = [
+                new PlotAxis("domains", [], AXIS_DEFAULTS[0]),
+                new PlotAxis("ranges", [], AXIS_DEFAULTS[1])
+            ];
 
             // Subscribe to telemetry when a domain object becomes available
             $scope.$watch('domainObject', subscribe);

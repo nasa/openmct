@@ -200,7 +200,7 @@ define(
                 this.buildCopyPlan(domainObject, parent, deferred.notify)
                     .then(this.persistObjects(deferred.notify))
                     .then(this.addClonesToParent(parent, deferred.notify))
-                    .then(deferred.resolve);
+                    .then(deferred.resolve, deferred.reject);
                 return deferred.promise;
             } else {
                 throw new Error(

@@ -19,17 +19,45 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* Classes to be used for lists of properties and values */
+/*global define*/
 
-.properties {
-    .s-row {
-        border-top: 1px solid $colorInteriorBorder;
-        font-size: 0.8em;
-        &:first-child {
-            border: none;
-        }
-        .s-value {
-            color: #fff;
-        }
+define([
+    'moment'
+], function (
+    moment
+) {
+    "use strict";
+
+    var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss",
+        DATE_FORMATS = [
+            DATE_FORMAT,
+            "YYYY-MM-DD HH:mm",
+            "YYYY-MM-DD"
+        ];
+
+
+    /**
+     * Formatter for UTC timestamps. Interprets numeric values as
+     * milliseconds since the start of 1970.
+     *
+     * @implements {Format}
+     * @constructor
+     * @memberof platform/commonUI/formats
+     */
+    function UTCTimeFormat() {
     }
-}
+
+    UTCTimeFormat.prototype.format = function (value) {
+        return moment.utc(value).format(DATE_FORMAT);
+    };
+
+    UTCTimeFormat.prototype.parse = function (text) {
+        return moment.utc(text, DATE_FORMATS).valueOf();
+    };
+
+    UTCTimeFormat.prototype.validate = function (text) {
+        return moment.utc(text, DATE_FORMATS).isValid();
+    };
+
+    return UTCTimeFormat;
+});

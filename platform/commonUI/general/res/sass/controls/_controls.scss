@@ -21,246 +21,239 @@
  *****************************************************************************/
 
 .accordion {
-	$accordionHeadH: 18px;
-	margin-top: $interiorMargin;
-	&:first-child {
-		margin-top: 0;
-	}
-	.accordion-head {
-		$op: 0.2;
-		@include border-radius($basicCr * 0.75);
-		@include box-sizing("border-box");
-		background: rgba($colorBodyFg, $op);
-		cursor: pointer;
-		font-size: 0.75em;
-		line-height: $accordionHeadH;
-		margin-bottom: $interiorMargin;
-		padding: 0 $interiorMargin;
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: auto;
-		left: 0;
-		width: auto;
-		height: $accordionHeadH;
-		text-transform: uppercase;
-		&:hover {
-			background: rgba($colorBodyFg, $op * 2);
-		}
-		&:after {
-			content: "^";
-			display: block;
-			font-family: 'symbolsfont';
-			font-size: 0.9em;
-			position: absolute;
-			right: $interiorMargin;
-			text-transform: none;
-			top: 0;
-		}
-		&:not(.expanded):after {
-			content: "v";
-		}
-	}
-	.accordion-contents {
-		position: absolute;
-		top: $accordionHeadH + $interiorMargin;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		overflow-y: auto;
-		overflow-x: hidden;
-	}
+    $accordionHeadH: 18px;
+    margin-top: $interiorMargin;
+    &:first-child {
+        margin-top: 0;
+    }
+    .accordion-head {
+        $op: 0.2;
+        @include border-radius($basicCr * 0.75);
+        @include box-sizing("border-box");
+        background: rgba($colorBodyFg, $op);
+        cursor: pointer;
+        font-size: 0.75em;
+        line-height: $accordionHeadH;
+        margin-bottom: $interiorMargin;
+        padding: 0 $interiorMargin;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: auto;
+        left: 0;
+        width: auto;
+        height: $accordionHeadH;
+        text-transform: uppercase;
+        &:hover {
+            background: rgba($colorBodyFg, $op * 2);
+        }
+        &:after {
+            content: "^";
+            display: block;
+            font-family: 'symbolsfont';
+            font-size: 0.9em;
+            position: absolute;
+            right: $interiorMargin;
+            text-transform: none;
+            top: 0;
+        }
+        &:not(.expanded):after {
+            content: "v";
+        }
+    }
+    .accordion-contents {
+        position: absolute;
+        top: $accordionHeadH + $interiorMargin;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
 }
 
 .l-composite-control {
-	vertical-align: middle;
-	&.l-checkbox {
-		.composite-control-label {
-			line-height: 18px;
-		}
-	}
+    vertical-align: middle;
+    &.l-checkbox {
+        .composite-control-label {
+            line-height: 18px;
+        }
+    }
 }
 
 .l-control-group {
-	// Buttons that have a conceptual grouping - internal space between, and a divider between groups.
-	//	@include test();
-	@include box-sizing(border-box);
-	border-left: 1px solid $colorInteriorBorder;
-	display: inline-block;
-	padding: 0 $interiorMargin;
-	position: relative;
-	&:first-child {
-		border-left: none;
-		padding-left: 0;
-	}
+    // Buttons that have a conceptual grouping - internal space between, and a divider between groups.
+    //    @include test();
+    @include box-sizing(border-box);
+    border-left: 1px solid $colorInteriorBorder;
+    display: inline-block;
+    padding: 0 $interiorMargin;
+    position: relative;
+    &:first-child {
+        border-left: none;
+        padding-left: 0;
+    }
 }
 
 .l-local-controls {
-	// Control shown when hovering over an object, like plots and imagery
-	// Default position is upper right
-	$p: $interiorMargin;
-	position: absolute;
-	top: $p;
-	right: $p;
-	z-index: 5;
+    // Control shown when hovering over an object, like plots and imagery
+    // Default position is upper right
+    $p: $interiorMargin;
+    position: absolute;
+    top: $p;
+    right: $p;
+    z-index: 5;
 }
 
 .s-local-controls {
-	font-size: 0.7rem;
+    font-size: 0.7rem;
 }
 
 label.checkbox.custom {
-	$bg: pullForward($colorBodyBg, 10%);
-	$d: $formRowCtrlsH;
-	cursor: pointer;
-	display: inline-block;
-	line-height: $d;
-	margin-right: $interiorMargin * 4;
-	padding-left: $d + $interiorMargin;
-	position: relative;
-	vertical-align: middle; // was top
-	em {
-		color: $colorBodyFg;
-		display: inline-block;
-		height: $d;
-		min-width: $d;
-		&:before {
-			@include border-radius($basicCr * .75);
-			background: $bg;
-			//border-bottom: 1px solid lighten($bg, 10%);
-			@include box-shadow(inset rgba(black, 0.4) 0 1px 2px);
-			box-sizing: border-box;
-			content: " ";
-			font-family: 'symbolsfont';
-			font-size: 0.8em;
-			display: inline-block;
-			margin-right: $interiorMargin;
-			height: $d;
-			width: $d;
-			left: 0;
-			top: 0;
-			position: absolute;
-			text-align: center;
-		}
-	}
-	&.no-text {
-		overflow: hidden;
-		margin-right: 0;
-		padding-left: 0;
-		height: $d;
-		width: $d;
-		em {
-			overflow: hidden;
-		}
-	}
-	input {
-		display: none;
-		&:checked ~ em:before {
-			background: $colorCheck;
-			color: lighten($colorCheck, 50%);
-			content: "2";
-		}
-	}
+    $bg: pullForward($colorBodyBg, 10%);
+    $d: $formRowCtrlsH;
+    cursor: pointer;
+    display: inline-block;
+    line-height: $d;
+    margin-right: $interiorMargin * 4;
+    padding-left: $d + $interiorMargin;
+    position: relative;
+    vertical-align: middle; // was top
+    em {
+        color: $colorBodyFg;
+        display: inline-block;
+        height: $d;
+        min-width: $d;
+        &:before {
+            @include border-radius($basicCr * .75);
+            background: $bg;
+            //border-bottom: 1px solid lighten($bg, 10%);
+            @include box-shadow(inset rgba(black, 0.4) 0 1px 2px);
+            box-sizing: border-box;
+            content: " ";
+            font-family: 'symbolsfont';
+            font-size: 0.8em;
+            display: inline-block;
+            margin-right: $interiorMargin;
+            height: $d;
+            width: $d;
+            left: 0;
+            top: 0;
+            position: absolute;
+            text-align: center;
+        }
+    }
+    &.no-text {
+        overflow: hidden;
+        margin-right: 0;
+        padding-left: 0;
+        height: $d;
+        width: $d;
+        em {
+            overflow: hidden;
+        }
+    }
+    input {
+        display: none;
+        &:checked ~ em:before {
+            background: $colorCheck;
+            color: lighten($colorCheck, 50%);
+            content: "2";
+        }
+    }
 }
 
 .input-labeled {
-	margin-left: $interiorMargin;
-	label {
-		display: inline-block;
-		margin-right: $interiorMarginSm;
-	}
-	&.inline {
-		display: inline-block;
-	}
-	&:first-child {
-		margin-left: 0;
-	}
+    margin-left: $interiorMargin;
+    label {
+        display: inline-block;
+        margin-right: $interiorMarginSm;
+    }
+    &.inline {
+        display: inline-block;
+    }
+    &:first-child {
+        margin-left: 0;
+    }
 }
 
 .s-menu-btn label.checkbox.custom {
-	margin-left: 5px;
+    margin-left: 5px;
 }
 
 .item .checkbox {
-	&.checked label {
-		@include box-shadow(none);
-		border-bottom: none;
-	}
+    &.checked label {
+        @include box-shadow(none);
+        border-bottom: none;
+    }
 }
 
 .context-available {
-	$c: $colorKey;
-	color: $c;
-	&:hover {
-		color: lighten($c, 10%);
-	}
+    $c: $colorKey;
+    color: $c;
+    &:hover {
+        color: lighten($c, 10%);
+    }
 }
 
 .view-switcher {
-	@include trans-prop-nice-fade($controlFadeMs);
+    @include trans-prop-nice-fade($controlFadeMs);
 }
 
 /******************************************************** OBJECT-HEADER */
 .object-header {
-	//@include test();
-	font-size: 1em;
+    //@include test();
+    font-size: 1em;
 
-	//> .title-label,
-	//> .type-icon,
-	//> .context-available {
-	//	//@include tmpBorder(#6666ff);
-	//	//vertical-align: middle;
-	//}
+    > .type-icon {
+        color: $colorObjHdrIc;
+        font-size: 120%;
+        float: left;
+        margin-right: $interiorMargin;
+    }
 
-	> .type-icon {
-		color: $colorObjHdrIc;
-		font-size: 120%;
-		float: left;
-		margin-right: $interiorMargin;
-	}
+    .l-elem-wrapper {
+        //@include test(#66f, 0.2);
+        @include justify-content(flex-start);
+        mct-representation {
+            // Holds the context-available item
+            // Must have min-width to make flex work properly
+            // in Safari
+            min-width: 0.7em;
+        }
+    }
 
-	.l-elem-wrapper {
-		//@include test(#66f, 0.2);
-		@include webkitProp(justify-content, flex-start);
-		mct-representation {
-			// Holds the context-available item
-			// Must have min-width to make flex work properly
-			// in Safari
-			min-width: 0.7em;
-		}
-	}
+    .action {
+        margin-right: $interiorMargin;
+    }
 
-	.action {
-		margin-right: $interiorMargin;
-	}
+    .title-label {
+        //@include test(green, 0.9);
+        color: $colorObjHdrTxt;
+        @include ellipsize();
+        //color: pushBack($colorBodyFg, 40%);
+        @include webkitProp(flex, '0 1 auto');
+        padding-right: 0.35em; // For context arrow. Done with em's so pad is relative to the scale of the text.
+        //position: relative;
+    }
 
-	.title-label {
-		//@include test(green, 0.9);
-		color: $colorObjHdrTxt;
-		@include ellipsize();
-		//color: pushBack($colorBodyFg, 40%);
-		@include webkitProp(flex, '0 1 auto');
-		padding-right: 0.35em; // For context arrow. Done with em's so pad is relative to the scale of the text.
-		//position: relative;
-	}
+    .context-available {
+        font-size: 0.7em;
+        @include webkitProp(flex, '0 0 1');
+        //margin-right: $interiorMargin;
+    }
 
-	.context-available {
-		font-size: 0.7em;
-		@include webkitProp(flex, '0 0 1');
-		//margin-right: $interiorMargin;
-	}
-
-	@include desktop {
-		.context-available {
-			@include trans-prop-nice(opacity, 0.25s);
-			opacity: 0;
-		}
-		&:hover {
-			.context-available {
-				opacity: 1;
-			}
-		}
-	}
+    @include desktop {
+        .context-available {
+            @include trans-prop-nice(opacity, 0.25s);
+            opacity: 0;
+        }
+        &:hover {
+            .context-available {
+                opacity: 1;
+            }
+        }
+    }
 }
 
 /******************************************************** PROGRESS BAR */
@@ -280,20 +273,20 @@ label.checkbox.custom {
 
 .l-progress-bar {
     // Assume will be determinate by default
-	display: inline-block;
-	overflow: hidden;
-	position: relative;
+    display: inline-block;
+    overflow: hidden;
+    position: relative;
 
-	.progress-amt-holder {
+    .progress-amt-holder {
         @include absPosDefault(1px);
     }
     .progress-amt,
     .progress-amt:before,
     .progress-amt:after {
-		@include absPosDefault();
+        @include absPosDefault();
         display: block;
         content: '';
-	}
+    }
 
     .progress-amt {
         right: auto; // Allow inline width to control }
@@ -311,10 +304,10 @@ label.checkbox.custom {
     @include boxIncised(0.3, 4px);
     background: $colorProgressBarOuter;
     //border:1px solid $colorProgressBarOuter;
-	.progress-amt {
-		@include border-radius($basicCr);
-		@include boxShdw();
-		@include border-radius($basicCr - 1);
+    .progress-amt {
+        @include border-radius($basicCr);
+        @include boxShdw();
+        @include border-radius($basicCr - 1);
         @include trans-prop-nice(width);
         &:before {
             background-color: $colorProgressBarAmt;
@@ -325,7 +318,7 @@ label.checkbox.custom {
                     transparent 5%, rgba(#fff,0.25) 30%, transparent 100%
             ));
         }
-	}
+    }
 
     &:not(.indeterminate) {
         .progress-amt:before {
@@ -348,187 +341,185 @@ label.checkbox.custom {
 /******************************************************** SLIDERS */
 
 .slider {
-	$knobH: 100%; //14px;
-	.slot {
-		//		@include border-radius($basicCr * .75);
-		//@include sliderTrack();
-		width: auto;
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-	}
-	.knob {
-		//@include btnSubtle();
-		//@include controlGrippy(rgba(black, 0.3), vertical, 1px, solid);
-		@include trans-prop-nice-fade(.25s);
-		background-color: $sliderColorKnob;
-		&:hover {
-			background-color: $sliderColorKnobHov;
-		}
-		position: absolute;
-		height: $knobH;
-		width: $sliderKnobW;
-		top: 0;
-		auto: 0;
-		bottom: auto;
-		left: auto;
-	}
-	.knob-l {
-		@include border-left-radius($sliderKnobW);
-		cursor: w-resize;
-	}
-	.knob-r {
-		@include border-right-radius($sliderKnobW);
-		cursor: e-resize;
-	}
-	.range {
-		@include trans-prop-nice-fade(.25s);
-		background-color: $sliderColorRange;
-		cursor: ew-resize;
-		position: absolute;
-		top: 0; //$tbOffset;
-		right: auto;
-		bottom: 0;
-		left: auto;
-		height: auto;
-		width: auto;
-		&:hover {
-			background-color: $sliderColorRangeHov;
-		}
-	}
+    $knobH: 100%; //14px;
+    .slot {
+        //        @include border-radius($basicCr * .75);
+        //@include sliderTrack();
+        width: auto;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+    .knob {
+        @include trans-prop-nice-fade(.25s);
+        background-color: $sliderColorKnob;
+        &:hover {
+            background-color: $sliderColorKnobHov;
+        }
+        position: absolute;
+        height: $knobH;
+        width: $sliderKnobW;
+        top: 0;
+        auto: 0;
+        bottom: auto;
+        left: auto;
+    }
+    .knob-l {
+        @include border-left-radius($sliderKnobW);
+        cursor: w-resize;
+    }
+    .knob-r {
+        @include border-right-radius($sliderKnobW);
+        cursor: e-resize;
+    }
+    .range {
+        @include trans-prop-nice-fade(.25s);
+        background-color: $sliderColorRange;
+        cursor: ew-resize;
+        position: absolute;
+        top: 0; //$tbOffset;
+        right: auto;
+        bottom: 0;
+        left: auto;
+        height: auto;
+        width: auto;
+        &:hover {
+            background-color: $sliderColorRangeHov;
+        }
+    }
 }
 
 /******************************************************** DATETIME PICKER */
 .l-datetime-picker {
-	$r1H: 15px;
-	@include user-select(none);
-	font-size: 0.8rem;
-	padding: $interiorMarginLg !important;
-	width: 230px;
-	.l-month-year-pager {
-		$pagerW: 20px;
-		//@include test();
-		//font-size: 0.8rem;
-		height: $r1H;
-		margin-bottom: $interiorMargin;
-		position: relative;
-		.pager,
-		.val {
-			//@include test(red);
-			@extend .abs;
-		}
-		.pager {
-			width: $pagerW;
-			@extend .ui-symbol;
-			&.prev {
-				right: auto;
-				&:before {
-					content: "\3c";
-				}
-			}
-			&.next {
-				left: auto;
-				text-align: right;
-				&:before {
-					content: "\3e";
-				}
-			}
-		}
-		.val {
-			text-align: center;
-			left: $pagerW + $interiorMargin;
-			right: $pagerW + $interiorMargin;
-		}
-	}
-	.l-calendar,
-	.l-time-selects {
-		border-top: 1px solid $colorInteriorBorder
-	}
-	.l-time-selects {
-		line-height: $formInputH;
-	}
+    $r1H: 15px;
+    @include user-select(none);
+    font-size: 0.8rem;
+    padding: $interiorMarginLg !important;
+    width: 230px;
+    .l-month-year-pager {
+        $pagerW: 20px;
+        //@include test();
+        //font-size: 0.8rem;
+        height: $r1H;
+        margin-bottom: $interiorMargin;
+        position: relative;
+        .pager,
+        .val {
+            //@include test(red);
+            @extend .abs;
+        }
+        .pager {
+            width: $pagerW;
+            @extend .ui-symbol;
+            &.prev {
+                right: auto;
+                &:before {
+                    content: "\3c";
+                }
+            }
+            &.next {
+                left: auto;
+                text-align: right;
+                &:before {
+                    content: "\3e";
+                }
+            }
+        }
+        .val {
+            text-align: center;
+            left: $pagerW + $interiorMargin;
+            right: $pagerW + $interiorMargin;
+        }
+    }
+    .l-calendar,
+    .l-time-selects {
+        border-top: 1px solid $colorInteriorBorder
+    }
+    .l-time-selects {
+        line-height: $formInputH;
+    }
 }
 
 /******************************************************** CALENDAR */
 .l-calendar {
-	$colorMuted: pushBack($colorMenuFg, 30%);
-	ul.l-cal-row {
-		@include display-flex;
-		@include flex-flow(row nowrap);
-		margin-top: 1px;
-		&:first-child {
-			margin-top: 0;
-		}
-		li {
-			@include flex(1 0);
-			//@include test();
-			margin-left: 1px;
-			padding: $interiorMargin;
-			text-align: center;
-			&:first-child {
-				margin-left: 0;
-			}
-		}
-		&.l-header li {
-			color: $colorMuted;
-		}
-		&.l-body li {
-			@include trans-prop-nice(background-color, .25s);
-			cursor: pointer;
-			&.in-month {
-				background-color: $colorCalCellInMonthBg;
-			}
-			.sub {
-				color: $colorMuted;
-				font-size: 0.8em;
-			}
-			&.selected {
-				background: $colorCalCellSelectedBg;
-				color: $colorCalCellSelectedFg;
-				.sub {
-					color: inherit;
-				}
-			}
-			&:hover {
-				background-color: $colorCalCellHovBg;
-				color: $colorCalCellHovFg;
-				.sub {
-					color: inherit;
-				}
-			}
-		}
-	}
+    $colorMuted: pushBack($colorMenuFg, 30%);
+    ul.l-cal-row {
+        @include display-flex;
+        @include flex-flow(row nowrap);
+        margin-top: 1px;
+        &:first-child {
+            margin-top: 0;
+        }
+        li {
+            @include flex(1 0);
+            //@include test();
+            margin-left: 1px;
+            padding: $interiorMargin;
+            text-align: center;
+            &:first-child {
+                margin-left: 0;
+            }
+        }
+        &.l-header li {
+            color: $colorMuted;
+        }
+        &.l-body li {
+            @include trans-prop-nice(background-color, .25s);
+            cursor: pointer;
+            &.in-month {
+                background-color: $colorCalCellInMonthBg;
+            }
+            .sub {
+                color: $colorMuted;
+                font-size: 0.8em;
+            }
+            &.selected {
+                background: $colorCalCellSelectedBg;
+                color: $colorCalCellSelectedFg;
+                .sub {
+                    color: inherit;
+                }
+            }
+            &:hover {
+                background-color: $colorCalCellHovBg;
+                color: $colorCalCellHovFg;
+                .sub {
+                    color: inherit;
+                }
+            }
+        }
+    }
 }
 
 /******************************************************** BROWSER ELEMENTS */
 
 @include desktop {
-	::-webkit-scrollbar {
-		@include border-radius(2px);
-		@include box-sizing(border-box);
-		@include box-shadow(inset $scrollbarTrackShdw);
-		background-color: $scrollbarTrackColorBg;
-		height: $scrollbarTrackSize;
-		width: $scrollbarTrackSize;
-	}
+    ::-webkit-scrollbar {
+        @include border-radius(2px);
+        @include box-sizing(border-box);
+        @include box-shadow(inset $scrollbarTrackShdw);
+        background-color: $scrollbarTrackColorBg;
+        height: $scrollbarTrackSize;
+        width: $scrollbarTrackSize;
+    }
 
-	::-webkit-scrollbar-thumb {
-		$bg: $scrollbarThumbColor;
-		$hc: $scrollbarThumbColorHov;
-		$gr: 5%;
-		@include background-image(linear-gradient(lighten($bg, $gr), $bg 20px));
-		@include border-radius(2px);
-		@include box-sizing(border-box);
-		//@include boxShdwSubtle();
-		//border-top: 1px solid lighten($bg, 20%);
-		&:hover {
-			@include background-image(linear-gradient(lighten($hc, $gr), $hc 20px));
-		}
-	}
+    ::-webkit-scrollbar-thumb {
+        $bg: $scrollbarThumbColor;
+        $hc: $scrollbarThumbColorHov;
+        $gr: 5%;
+        @include background-image(linear-gradient(lighten($bg, $gr), $bg 20px));
+        @include border-radius(2px);
+        @include box-sizing(border-box);
+        //@include boxShdwSubtle();
+        //border-top: 1px solid lighten($bg, 20%);
+        &:hover {
+            @include background-image(linear-gradient(lighten($hc, $gr), $hc 20px));
+        }
+    }
 
-	::-webkit-scrollbar-corner {
-		background: $scrollbarTrackColorBg;
-	}
+    ::-webkit-scrollbar-corner {
+        background: $scrollbarTrackColorBg;
+    }
 }
