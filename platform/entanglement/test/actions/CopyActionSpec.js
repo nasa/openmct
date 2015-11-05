@@ -118,12 +118,10 @@ define(
                 dialogService = jasmine.createSpyObj('dialogService',
                     ['showBlockingMessage', 'dismiss']
                 );
-                //dialogService.showBlockingMessage.andReturn();
 
                 notification = jasmine.createSpyObj('notification',
                     ['dismiss', 'model']
                 );
-                //notification.dismiss.andReturn();
 
                 notificationService = jasmine.createSpyObj('notificationService',
                     ['notify', 'info']
@@ -132,7 +130,6 @@ define(
                 notificationService.notify.andReturn(notification);
 
                 mockLog = jasmine.createSpyObj('log', ['error']);
-                //mockLog.error.andReturn();
 
                 copyService = new MockCopyService();
             });
