@@ -108,7 +108,12 @@
 }
 
 .l-flex-row { @include flex-direction(row); }
-.l-flex-col { @include flex-direction(column); }
+.l-flex-col {
+    @include flex-direction(column);
+    .flex-elem {
+        margin-bottom: $interiorMargin;
+    }
+}
 
 .l-flex {
     @extend .l-flex-row;

@@ -180,7 +180,6 @@
         text-transform: uppercase;
         height: $ueTopBarH;
         line-height: $ueTopBarH;
-        margin-bottom: $interiorMargin;
     }
 
     .primary-pane {
@@ -198,7 +197,7 @@
         //        bottom: $interiorMargin;
         //    }
         //}
-        .holder-create-and-search{
+        .holder-treeview-elements{
 
         }
         .search-holder {
@@ -293,7 +292,7 @@
     }*/
 
     // Specific elements margins
-    .holder.holder-create-and-search {
+    .holder.holder-treeview-elements {
         top: $bodyMargin;
         right: 0;
         bottom: $bodyMargin;
@@ -373,7 +372,7 @@
     //.pane.left.treeview,
     .tree-holder,
     .splitter-treeview,
-    .holder-create-and-search {
+    .holder-treeview-elements {
         opacity: 0;
     }
 }
@@ -387,7 +386,7 @@
         opacity: 1;
     }
 
-    .holder-create-and-search {
+    .holder-treeview-elements {
         @include trans-prop-nice(opacity, $dur: 250ms, $delay: 200ms);
     }
 }

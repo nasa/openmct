@@ -20,7 +20,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -41,38 +41,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -534,8 +534,11 @@ mct-container {
 .l-flex-col {
   -webkit-flex-direction: column;
   flex-direction: column; }
+  /* line 113, ../../../../general/res/sass/_archetypes.scss */
+  .l-flex-col .flex-elem {
+    margin-bottom: 5px; }
 
-/* line 115, ../../../../general/res/sass/_archetypes.scss */
+/* line 120, ../../../../general/res/sass/_archetypes.scss */
 .l-flex .left {
   -webkit-flex: 1 1 0;
   flex: 1 1 0;
@@ -4494,54 +4497,53 @@ span.req {
   .pane .pane-header {
     text-transform: uppercase;
     height: 24px;
-    line-height: 24px;
-    margin-bottom: 5px; }
-  /* line 186, ../../../../general/res/sass/user-environ/_layout.scss */
+    line-height: 24px; }
+  /* line 185, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .primary-pane {
     z-index: 2; }
-  /* line 204, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 203, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .search-holder {
     top: 34px; }
-  /* line 207, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 206, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .tree-holder {
     overflow: auto;
     top: 64px; }
-  /* line 213, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 212, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .mini-tab-icon.toggle-pane {
     z-index: 5; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 213, ../../../../general/res/sass/user-environ/_layout.scss */
+      /* line 212, ../../../../general/res/sass/user-environ/_layout.scss */
       .pane .mini-tab-icon.toggle-pane {
         top: 10px;
         height: 24px;
         line-height: 24px; }
-        /* line 222, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 221, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane:after {
           opacity: 0; }
-        /* line 227, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 226, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane.collapsed:before {
           opacity: 0; }
-        /* line 230, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 229, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane.collapsed:after {
           opacity: 1; }
-        /* line 234, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 233, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane.toggle-tree.anchor-left {
           left: 0;
           -moz-transform: translateX(-34px);
           -ms-transform: translateX(-34px);
           -webkit-transform: translateX(-34px);
           transform: translateX(-34px); }
-          /* line 237, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 236, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-tree.anchor-left:after {
             content: '\6d'; }
-          /* line 240, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 239, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-tree.anchor-left.collapsed {
             left: 0;
             -moz-transform: translateX(-17px);
             -ms-transform: translateX(-17px);
             -webkit-transform: translateX(-17px);
             transform: translateX(-17px); }
-          /* line 244, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 243, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-tree.anchor-left:not(.collapsed):before {
             -moz-transition-property: opacity;
             -o-transition-property: opacity;
@@ -4559,16 +4561,16 @@ span.req {
             -o-transition-delay: 200ms;
             -webkit-transition-delay: 200ms;
             transition-delay: 200ms; }
-        /* line 248, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 247, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane.toggle-inspect.anchor-right {
           right: 10px; }
-          /* line 250, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 249, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-inspect.anchor-right:after {
             content: '\e615'; }
-          /* line 253, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 252, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-inspect.anchor-right.collapsed {
             right: 5px; } }
-  /* line 262, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 261, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .left.l-inspect, .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.pager, .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.pager,
   .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.val,
   .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.val, .pane.items .object-browse-bar .s-menu-btn span.left.l-click-area, .s-menu-btn .pane.items .object-browse-bar span.left.l-click-area,
@@ -4582,7 +4584,7 @@ span.req {
   .s-menu-btn .pane.items .object-browse-bar span.right.l-click-area {
     top: auto; }
 
-/* line 270, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 269, ../../../../general/res/sass/user-environ/_layout.scss */
 .split-layout {
   /* &.vertical {
        // Slides left and right
@@ -4597,36 +4599,36 @@ span.req {
            }
        }
    }*/ }
-  /* line 273, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 272, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout.horizontal > .pane {
     margin-top: 5px; }
-    /* line 276, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 275, ../../../../general/res/sass/user-environ/_layout.scss */
     .split-layout.horizontal > .pane:first-child {
       margin-top: 0; }
-  /* line 296, ../../../../general/res/sass/user-environ/_layout.scss */
-  .split-layout .holder.holder-create-and-search {
+  /* line 295, ../../../../general/res/sass/user-environ/_layout.scss */
+  .split-layout .holder.holder-treeview-elements {
     top: 10px;
     right: 0;
     bottom: 10px;
     left: 10px; }
-  /* line 303, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 302, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .holder.holder-object-and-inspector {
     top: 0;
     right: 0;
     bottom: 0;
     left: 0; }
-    /* line 308, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 307, ../../../../general/res/sass/user-environ/_layout.scss */
     .split-layout .holder.holder-object-and-inspector .holder-object {
       top: 10px;
       bottom: 10px; }
-    /* line 312, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 311, ../../../../general/res/sass/user-environ/_layout.scss */
     .split-layout .holder.holder-object-and-inspector .holder-inspector-elements {
       top: 10px;
       bottom: 10px;
       left: 10px;
       right: 10px; }
 
-/* line 322, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 321, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-holder {
   overflow: auto;
   position: absolute;
@@ -4637,11 +4639,11 @@ span.req {
   width: auto;
   height: auto;
   top: 34px; }
-  /* line 326, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 325, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-holder.l-controls-visible.l-time-controller-visible {
     bottom: 88px; }
 
-/* line 332, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 331, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .s-btn, .object-browse-bar .s-menu-btn,
 .top-bar .buttons-main .s-btn,
 .top-bar .buttons-main .s-menu-btn,
@@ -4653,12 +4655,12 @@ span.req {
   line-height: 25px;
   vertical-align: top; }
 
-/* line 345, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 344, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .view-switcher,
 .top-bar .view-switcher {
   margin-right: 20px; }
 
-/* line 350, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 349, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar {
   overflow: hidden;
   position: absolute;
@@ -4674,22 +4676,22 @@ span.req {
   height: 24px;
   line-height: 24px;
   white-space: nowrap; }
-  /* line 358, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 357, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-browse-bar .left {
     padding-right: 20px; }
-    /* line 360, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 359, ../../../../general/res/sass/user-environ/_layout.scss */
     .object-browse-bar .left .l-back {
       display: inline-block;
       float: left;
       margin-right: 10px; }
 
-/* line 374, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 373, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-hidden .tree-holder,
 .pane-tree-hidden .splitter-treeview,
-.pane-tree-hidden .holder-create-and-search {
+.pane-tree-hidden .holder-treeview-elements {
   opacity: 0; }
 
-/* line 384, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 383, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-showing .tree-holder,
 .pane-tree-showing .splitter-treeview {
   -moz-transition-property: opacity;
@@ -4709,8 +4711,8 @@ span.req {
   -webkit-transition-delay: 250ms;
   transition-delay: 250ms;
   opacity: 1; }
-/* line 390, ../../../../general/res/sass/user-environ/_layout.scss */
-.pane-tree-showing .holder-create-and-search {
+/* line 389, ../../../../general/res/sass/user-environ/_layout.scss */
+.pane-tree-showing .holder-treeview-elements {
   -moz-transition-property: opacity;
   -o-transition-property: opacity;
   -webkit-transition-property: opacity;
@@ -4728,7 +4730,7 @@ span.req {
   -webkit-transition-delay: 200ms;
   transition-delay: 200ms; }
 
-/* line 397, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 396, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-showing .l-object-and-inspector .l-inspect,
 .pane-inspect-showing .l-object-and-inspector .splitter-inspect {
   -moz-transition-property: opacity;
@@ -4749,25 +4751,25 @@ span.req {
   transition-delay: 250ms;
   opacity: 1; }
 
-/* line 406, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 405, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-hidden .l-object-and-inspector .l-inspect,
 .pane-inspect-hidden .l-object-and-inspector .splitter-inspect {
   opacity: 0; }
 
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 414, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 413, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .tree-holder {
     padding-right: 5px; }
 
-  /* line 418, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 417, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane-tree-hidden .pane.right.primary-pane {
     left: 22px !important; }
 
-  /* line 421, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 420, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane-inspect-hidden .l-object-and-inspector .pane.left {
     right: 22px !important; }
 
-  /* line 424, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 423, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane:not(.resizing) {
     -moz-transition-property: width, left, right;
     -o-transition-property: width, left, right;
@@ -4839,7 +4841,7 @@ span.req {
       opacity: 1; }
 
   /* line 45, ../../../../general/res/sass/mobile/_layout.scss */
-  .holder.holder-create-and-search {
+  .holder.holder-treeview-elements {
     right: 10px !important; }
 
   /* line 56, ../../../../general/res/sass/mobile/_layout.scss */

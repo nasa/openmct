@@ -28,23 +28,18 @@
         <mct-split-pane class='abs contents'
                         anchor='left'>
             <div class='split-pane-component treeview pane left'>
-                <!--<a class="mini-tab-icon anchor-left toggle-pane toggle-search mobile-hide"
-                   title="Enable search"
-                   ng-click="modelPaneTree.toggle()"
-                   ng-class="{ collapsed : !modelPaneTree.visible() }"
-                   ng-style="{ opacity: modelPaneTree.visible()? 0:1 }"></a>-->
-                <div class="holder holder-create-and-search abs l-mobile">
+                <div class="abs holder l-flex-col holder-treeview-elements">
                     <mct-representation key="'create-button'"
                                         mct-object="navigatedObject"
-                                        mct-device="desktop">
+                                        class="flex-elem">
                     </mct-representation>
-                    <div class='holder search-holder abs'
+                    <div class='holder search-holder flex-elem'
                          ng-class="{active: treeModel.search}">
                         <mct-include key="'search'"
                                      ng-model="treeModel">
                         </mct-include>
                     </div>
-                    <div class='tree-holder abs mobile-tree-holder'
+                    <div class='holder tree-holder flex-elem grows'
                          ng-hide="treeModel.search">
                         <mct-representation key="'tree'"
                                             mct-object="domainObject"
@@ -63,7 +58,7 @@
                    ng-click="modelPaneTree.toggle()"
                    ng-class="{ collapsed : !modelPaneTree.visible() }"></a>
 
-                <div class='holder holder-object-and-inspector abs l-mobile' id='content-area'
+                <div class='holder holder-object-and-inspector abs' id='content-area'
                      ng-controller="PaneController as modelPaneInspect"
                      ng-class="modelPaneInspect.visible() ? 'pane-inspect-showing' : 'pane-inspect-hidden'">
 
