@@ -78,14 +78,43 @@ define(
         };
 
         MultiPersistenceDecorator.prototype.createObject = function (space, key, value) {
-
+            var persistenceService = this.persistenceService,
+                table = this.table;
+            if (space === this.spaceToRemap) {
+                return table.getSpace(value.location).then(function (s) {
+                    return table.setSpace(key, s).then(function () {
+                        return persistenceService.createObject(s, key, value);
+                    });
+                });
+            }
+            return persistenceService.createObject(space, key, value);
         };
 
         MultiPersistenceDecorator.prototype.readObject = function (space, key) {
-
+            var persistenceService = this.persistenceService;
+            if (space === this.spaceToRemap) {
+                return this.table.getSpace(key).then(function (s) {
+                    return persistenceService.readObject(s, key);
+                });
+            }
+            return persistenceService.readObject(space, key);
         };
 
         MultiPersistenceDecorator.prototype.updateObject = function (space, key, value) {
+            var persistenceService = this.persistenceService,
+                table = this.table,
+                self = this;
+            if (space === this.spaceToRemap) {
+                return this.table.getSpace(key).then(function (currentSpace) {
+                    return this.table.getSpace(value.location).then(function (newSpace) {
+                        // TODO: Also move children when space change happens?
+                        return (newSpace === currentSpace) ?
+                                persistenceService.updateObject(newSpace, key, value) :
+                                self.createObject(space, key, value);
+                    });
+                });
+            }
+            return persistenceService.createObject(space, key, value);
         };
 
         MultiPersistenceDecorator.prototype.deleteObject = function (space, key, value) {
