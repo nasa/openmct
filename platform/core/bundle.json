@@ -223,6 +223,11 @@
                 "key": "contextualize",
                 "implementation": "services/Contextualize.js",
                 "depends": [ "$log" ]
+            },
+            {
+                "key": "instantiate",
+                "implementation": "services/Instantiate.js",
+                "depends": [ "capabilityService" ]
             }
         ],
         "roots": [
