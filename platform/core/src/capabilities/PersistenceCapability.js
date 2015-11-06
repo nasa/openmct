@@ -130,6 +130,10 @@ define(
          *          be used to persist this object
          */
         PersistenceCapability.prototype.getSpace = function () {
+            if (this.domainObject.getId().indexOf(":") !== -1) {
+                return this.domainObject.getId().split(":")[0];
+            }
+
             return this.space;
         };
 
