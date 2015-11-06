@@ -10,6 +10,14 @@
                 },
                 "priority": "preferred"
             }
+        ],
+        "components": [
+            {
+                "provides": "persistenceService",
+                "type": "provider",
+                "implementation": "ScratchPersistenceProvider.js",
+                "depends": [ "$q" ]
+            }
         ]
     }
 }
