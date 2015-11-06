@@ -27,14 +27,14 @@ define(
         'use strict';
 
         /**
-         * Implements the `creation` capability. This allows new domain
+         * Implements the `instantiation` capability. This allows new domain
          * objects to be instantiated.
          *
          * @constructor
          * @memberof platform/core
          * @param $injector Angular's `$injector`
          */
-        function CreationCapability($injector) {
+        function InstantiationCapability($injector) {
             this.$injector = $injector;
         }
 
@@ -47,7 +47,7 @@ define(
          *
          * @returns {DomainObject} the new domain object
          */
-        CreationCapability.prototype.instantiate = function (model) {
+        InstantiationCapability.prototype.instantiate = function (model) {
             this.instantiate = this.$injector.get("instantiate");
             return this.instantiate(model);
         };
@@ -56,9 +56,9 @@ define(
          * Alias of `create`.
          * @see {platform/core.CreationCapability#create}
          */
-        CreationCapability.prototype.invoke =
-            CreationCapability.prototype.instantiate;
+        InstantiationCapability.prototype.invoke =
+            InstantiationCapability.prototype.instantiate;
 
-        return CreationCapability;
+        return InstantiationCapability;
     }
 );
