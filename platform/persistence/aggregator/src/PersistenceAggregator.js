@@ -64,11 +64,11 @@ define(
 
         Object.keys(METHOD_DEFAULTS).forEach(function (method) {
             PersistenceAggregator.prototype[method] = function (space) {
-                var delegateArgs = arguments.slice(0);
+                var delegateArgs = Array.prototype.slice.apply(arguments, []);
                 return this.providerMapPromise.then(function (map) {
                     var provider = map[space];
                     return provider ?
-                            provider.apply(provider, delegateArgs) :
+                            provider[method].apply(provider, delegateArgs) :
                             METHOD_DEFAULTS[method];
                 });
             };
