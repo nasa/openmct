@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
+/*global define,Promise,describe,it,xdescribe,expect,beforeEach,waitsFor,jasmine*/
 
 /**
  * ContextCapability. Created by vwoeltje on 11/6/14.
@@ -31,19 +31,16 @@ define(
 
         describe("The 'instantiation' capability", function () {
             var mockInjector,
-                mockCapabilityService,
+                mockInstantiate,
                 instantiation;
 
             beforeEach(function () {
                 mockInjector = jasmine.createSpyObj("$injector", ["get"]);
-                mockCapabilityService = jasmine.createSpyObj(
-                    "capabilityService",
-                    [ "getCapabilities" ]
-                );
+                mockInstantiate = jasmine.createSpy("instantiate");
 
                 mockInjector.get.andCallFake(function (key) {
-                    return key === 'capabilityService' ?
-                            mockCapabilityService : undefined;
+                    return key === 'instantiate' ?
+                            mockInstantiate : undefined;
                 });
 
                 instantiation = new InstantiationCapability(mockInjector);
@@ -54,7 +51,22 @@ define(
                 expect(instantiation.invoke).toBe(instantiation.instantiate);
             });
 
-            describe("when creating an object", function () {
+            it("uses the instantiate service to create domain objects", function () {
+                var mockDomainObject = jasmine.createSpyObj('domainObject', [
+                    'getId',
+                    'getModel',
+                    'getCapability',
+                    'useCapability',
+                    'hasCapability'
+                ]), testModel = { someKey: "some value" };
+                mockInstantiate.andReturn(mockDomainObject);
+                expect(instantiation.instantiate(testModel))
+                    .toBe(mockDomainObject);
+                expect(mockInstantiate).toHaveBeenCalledWith(testModel);
+            });
+
+            // TODO: Move to instantiate service
+            xdescribe("when creating an object", function () {
                 var mockCapabilityConstructor,
                     mockCapabilityInstance,
                     mockCapabilities,
@@ -64,9 +76,9 @@ define(
                 beforeEach(function () {
                     mockCapabilityConstructor = jasmine.createSpy('capability');
                     mockCapabilityInstance = {};
-                    mockCapabilityService.getCapabilities.andReturn({
-                        something: mockCapabilityConstructor
-                    });
+//                    mockCapabilityService.getCapabilities.andReturn({
+//                        something: mockCapabilityConstructor
+//                    });
                     mockCapabilityConstructor.andReturn(mockCapabilityInstance);
 
                     testModel = { someKey: "some value" };
@@ -75,8 +87,8 @@ define(
                 });
 
                 it("loads capabilities from the capability service", function () {
-                    expect(mockCapabilityService.getCapabilities)
-                        .toHaveBeenCalledWith(testModel);
+//                    expect(mockCapabilityService.getCapabilities)
+//                        .toHaveBeenCalledWith(testModel);
                 });
 
                 it("exposes loaded capabilities from the created object", function () {

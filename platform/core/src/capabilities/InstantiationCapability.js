@@ -39,20 +39,6 @@ define(
         }
 
         /**
-         * Alias of `capabilityService.getCapabilities`; handles lazy loading
-         * of `capabilityService`, since it cannot be declared as a
-         * dependency directly without creating a cycle.
-         * @private
-         */
-        CreationCapability.prototype.getCapabilities = function (model) {
-            if (!this.capabilityService) {
-                this.capabilityService =
-                    this.$injector.get('capabilityService');
-            }
-            return this.capabilityService.getCapabilities(model);
-        };
-
-        /**
          * Instantiate a new domain object with the provided model.
          *
          * This domain object will have been simply instantiated; it will not
@@ -62,9 +48,8 @@ define(
          * @returns {DomainObject} the new domain object
          */
         CreationCapability.prototype.instantiate = function (model) {
-            var id = uuid(),
-                capabilities = this.getCapabilities(model);
-            return new DomainObjectImpl(id, model, capabilities);
+            this.instantiate = this.$injector.get("instantiate");
+            return this.instantiate(model);
         };
 
         /**
