@@ -33,6 +33,15 @@ define(
          * A model service which reads domain object models from an external
          * persistence service.
          *
+         * Identifiers will be interpreted as follows:
+         * * If no colon is present, the model will be read from the default
+         *   persistence space.
+         * * If a colon is present, everything before the first colon will be
+         *   taken to refer to the persistence space, and everything after
+         *   will be taken to be that model's key within this space. (If
+         *   no such space exists within the `persistenceService`, that
+         *   identifier will simply be ignored.)
+         *
          * @memberof platform/core
          * @constructor
          * @implements {ModelService}
@@ -104,7 +113,7 @@ define(
             parsedIds = ids.map(function (id) {
                 var parts = id.split(":");
                 return (parts.length > 1) ?
-                        { space: parts[0], key: parts[1] } :
+                        { space: parts[0], key: parts.slice(1).join(":") } :
                         { space: defaultSpace, key: id };
             });
 
