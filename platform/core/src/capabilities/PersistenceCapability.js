@@ -63,6 +63,11 @@ define(
             };
         }
 
+        function getKey(id) {
+            var parts = id.split(":");
+            return parts.length > 1 ? parts.slice(1).join(":") : id;
+        }
+
         /**
          * Persist any changes which have been made to this
          * domain object's model.
@@ -87,7 +92,7 @@ define(
             // ...and persist
             return persistenceFn.apply(persistenceService, [
                 this.getSpace(),
-                domainObject.getId(),
+                getKey(domainObject.getId()),
                 domainObject.getModel()
             ]);
         };
