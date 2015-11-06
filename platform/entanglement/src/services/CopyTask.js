@@ -71,33 +71,31 @@ define(
          * Will persist a list of {@link objectClones}. It will persist all
          * simultaneously, irrespective of order in the list. This may
          * result in automatic request batching by the browser.
-         * @private
          */
-        CopyTask.prototype.persistObjects = function() {
-            var self = this;
+        function persistObjects(self) {
 
-            return this.$q.all(this.clones.map(function(clone){
+            return self.$q.all(self.clones.map(function(clone){
                 clone.model.persisted = self.now();
                 return self.persistenceService.createObject(clone.persistenceSpace, clone.id, clone.model)
                     .then(function(){
-                        return self.deferred.notify({phase: "copying", totalObjects: self.clones.length, processed: ++self.persisted});
+                        self.deferred.notify({phase: "copying", totalObjects: self.clones.length, processed: ++self.persisted});
                     });
-            }));
+            })).then(function(){
+                return self;
+            });
         };
 
         /**
          * Will add a list of clones to the specified parent's composition
-         * @private
          */
-        CopyTask.prototype.addClonesToParent = function() {
-            var parentClone = this.clones[this.clones.length-1],
-                self = this;
+        function addClonesToParent(self) {
+            var parentClone = self.clones[self.clones.length-1];
 
-            if (!this.parent.hasCapability('composition')){
-                return this.$q.reject();
+            if (!self.parent.hasCapability('composition')){
+                return self.$q.reject();
             }
 
-            return this.persistenceService
+            return self.persistenceService
                 .updateObject(parentClone.persistenceSpace, parentClone.id, parentClone.model)
                 .then(function(){return self.parent.getCapability("composition").add(parentClone.id);})
                 .then(function(){return self.parent.getCapability("persistence").persist();})
@@ -175,6 +173,7 @@ define(
 
             return this.copy(self.domainObject, self.parent).then(function(domainObjectClone){
                 domainObjectClone.model.location = self.parent.getId();
+                return self;
             });
         };
 
@@ -184,9 +183,6 @@ define(
          * once complete.
          */
         CopyTask.prototype.perform = function(){
-            var persistObjects = this.persistObjects.bind(this),
-                addClonesToParent = this.addClonesToParent.bind(this);
-
             this.deferred = this.$q.defer();
 
             this.buildCopyPlan()
