@@ -1,12 +1,18 @@
 {
-  "name": "Espresso",
-  "description": "Espresso theme: dark and rich",
-  "extensions": {
-    "stylesheets": [
-      {
-        "stylesheetUrl": "css/theme-espresso.css",
-        "priority": 1000
-      }
-    ]
-  }
+    "name": "Espresso",
+    "description": "Espresso theme: dark and rich",
+    "extensions": {
+        "stylesheets": [
+            {
+                "stylesheetUrl": "css/theme-espresso.css",
+                "priority": 1000
+            }
+        ],
+        "constants": [
+            {
+                "key": "THEME",
+                "value": "espresso"
+            }
+        ]
+    }
 }

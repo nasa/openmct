@@ -38,8 +38,9 @@ define(
          * @constructor
          * @param {object[]} stylesheets stylesheet extension definitions
          * @param $document Angular's jqLite-wrapped document element
+         * @param {string} activeTheme the theme in use
          */
-        function StyleSheetLoader(stylesheets, $document) {
+        function StyleSheetLoader(stylesheets, $document, activeTheme) {
             var head = $document.find('head'),
                 document = $document[0];
 
@@ -62,8 +63,15 @@ define(
                 head.append(link);
             }
 
+            // Stylesheets which specify themes should only be applied
+            // when that theme has been declared.
+            function matchesTheme(stylesheet) {
+                return stylesheet.theme === undefined ||
+                    stylesheet.theme === activeTheme;
+            }
+
             // Add all stylesheets from extensions
-            stylesheets.forEach(addStyleSheet);
+            stylesheets.filter(matchesTheme).forEach(addStyleSheet);
         }
 
         return StyleSheetLoader;
