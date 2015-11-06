@@ -51,27 +51,24 @@
          ng-class="{off: ngModel.filtersString === '' || ngModel.filtersString === undefined || !ngModel.search}"
          ng-controller="SearchMenuController as menuController">
 
-        <a class="ui-symbol clear-filters-icon"
-           ng-click="ngModel.checkAll = true; menuController.checkAll()">
-            &#xe607;
-        </a>
-
-        Filtered by: {{ ngModel.filtersString }}
+        <a class="clear-icon clear-filters-icon"
+           ng-click="ngModel.checkAll = true; menuController.checkAll()"></a>Filtered by: {{ ngModel.filtersString }}
 
     </div>
 
     <!-- This div exists to determine scroll bar location -->
-    <div class="search-scroll flex-elem grows vscroll" ng-class="{ loading: loading }">
+    <div class="search-results flex-elem grows vscroll"
+         ng-class="{ off: !(loading || results.length > 0), loading: loading }">
 
-        <!-- Results list -->
-        <div class="results">
-            <mct-representation key="'search-item'"
-                                ng-repeat="result in results"
-                                mct-object="result.object"
-                                ng-model="ngModel">
-            </mct-representation>
-        </div>
+        <!--ng-hide="(ngModel.input === '' || ngModel.input === undefined)"-->
 
+        <!--<div class="hint" ng-show="results.length === 0">No results found</div>-->
+        <!--<div class="hint" ng-show="results.length > 0">Displaying {{ results.length }} result<span ng-show="results.length > 1">s</span></div>-->
+        <mct-representation key="'search-item'"
+                            ng-repeat="result in results"
+                            mct-object="result.object"
+                            ng-model="ngModel">
+        </mct-representation>
         <!-- Load more button -->
         <a class="load-more-button s-btn vsm" ng-if="controller.areMore()" ng-click="controller.loadMore()">More Results</a>
     </div>

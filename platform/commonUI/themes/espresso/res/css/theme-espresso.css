@@ -517,18 +517,19 @@ mct-container {
   /* line 101, ../../../../general/res/sass/_archetypes.scss */
   .l-flex-row .flex-elem, .l-flex .flex-elem,
   .l-flex-col .flex-elem {
-    min-height: 0; }
-    /* line 104, ../../../../general/res/sass/_archetypes.scss */
+    min-height: 0;
+    position: relative; }
+    /* line 105, ../../../../general/res/sass/_archetypes.scss */
     .l-flex-row .flex-elem:not(.grows), .l-flex .flex-elem:not(.grows),
     .l-flex-col .flex-elem:not(.grows) {
       -webkit-flex: 0 0 auto;
       flex: 0 0 auto; }
-    /* line 107, ../../../../general/res/sass/_archetypes.scss */
+    /* line 108, ../../../../general/res/sass/_archetypes.scss */
     .l-flex-row .flex-elem.grows, .l-flex .flex-elem.grows,
     .l-flex-col .flex-elem.grows {
       -webkit-flex: 1 1 auto;
       flex: 1 1 auto; }
-  /* line 111, ../../../../general/res/sass/_archetypes.scss */
+  /* line 112, ../../../../general/res/sass/_archetypes.scss */
   .l-flex-row .flex-container, .l-flex .flex-container,
   .l-flex-col .flex-container {
     display: -webkit-flex;
@@ -539,28 +540,28 @@ mct-container {
     flex: 1 1 auto;
     min-height: 0; }
 
-/* line 120, ../../../../general/res/sass/_archetypes.scss */
+/* line 121, ../../../../general/res/sass/_archetypes.scss */
 .l-flex-row, .l-flex {
   -webkit-flex-direction: row;
   flex-direction: row; }
-  /* line 122, ../../../../general/res/sass/_archetypes.scss */
+  /* line 123, ../../../../general/res/sass/_archetypes.scss */
   .l-flex-row .flex-container, .l-flex .flex-container {
     -webkit-flex-direction: row;
     flex-direction: row; }
 
-/* line 125, ../../../../general/res/sass/_archetypes.scss */
+/* line 126, ../../../../general/res/sass/_archetypes.scss */
 .l-flex-col {
   -webkit-flex-direction: column;
   flex-direction: column; }
-  /* line 128, ../../../../general/res/sass/_archetypes.scss */
+  /* line 129, ../../../../general/res/sass/_archetypes.scss */
   .l-flex-col .flex-elem:not(:first-child) {
     margin-top: 10px; }
-  /* line 130, ../../../../general/res/sass/_archetypes.scss */
+  /* line 131, ../../../../general/res/sass/_archetypes.scss */
   .l-flex-col .flex-container {
     -webkit-flex-direction: column;
     flex-direction: column; }
 
-/* line 135, ../../../../general/res/sass/_archetypes.scss */
+/* line 136, ../../../../general/res/sass/_archetypes.scss */
 .l-flex .left {
   -webkit-flex: 1 1 0;
   flex: 1 1 0;
@@ -5154,7 +5155,7 @@ span.req {
 /*.abs.search-holder {
 	//@include test(#990000);
 	height: $treeSearchInputBarH;
-	bottom: 0;
+	bottom: 0;s
 	&.active {
 		height: auto;
 		bottom: 0;
@@ -5166,153 +5167,177 @@ span.req {
 	z-index:5;
 }*/
 /* line 38, ../../../../general/res/sass/search/_search.scss */
-.holder-search {
-  height: 24px; }
-  /* line 42, ../../../../general/res/sass/search/_search.scss */
-  .holder-search .search-bar {
-    font-size: 0.8em;
-    max-width: 250px;
-    position: relative; }
-    /* line 51, ../../../../general/res/sass/search/_search.scss */
-    .holder-search .search-bar .search-input {
-      height: 25px;
-      line-height: 25px; }
-    /* line 56, ../../../../general/res/sass/search/_search.scss */
-    .holder-search .search-bar:before,
-    .holder-search .search-bar .clear-icon,
-    .holder-search .search-bar .menu-icon {
-      -moz-box-sizing: border-box;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
-      color: #737373;
-      font-family: symbolsfont;
-      height: 17px;
-      width: 17px;
-      line-height: 17px;
-      position: absolute;
-      text-align: center;
-      top: 4px; }
-    /* line 70, ../../../../general/res/sass/search/_search.scss */
-    .holder-search .search-bar .clear-icon,
-    .holder-search .search-bar .menu-icon {
-      cursor: pointer;
-      -moz-transition-property: opacity, color;
-      -o-transition-property: opacity, color;
-      -webkit-transition-property: opacity, color;
-      transition-property: opacity, color;
-      -moz-transition-duration: 150ms;
-      -o-transition-duration: 150ms;
-      -webkit-transition-duration: 150ms;
-      transition-duration: 150ms;
-      -moz-transition-timing-function: ease-in-out;
-      -o-transition-timing-function: ease-in-out;
-      -webkit-transition-timing-function: ease-in-out;
-      transition-timing-function: ease-in-out;
-      -moz-transition-delay: 0;
-      -o-transition-delay: 0;
-      -webkit-transition-delay: 0;
-      transition-delay: 0; }
-    /* line 77, ../../../../general/res/sass/search/_search.scss */
-    .holder-search .search-bar .search-input {
-      position: relative;
-      width: 100%;
-      padding-left: 22px !important;
-      padding-right: 44px !important; }
-      /* line 84, ../../../../general/res/sass/search/_search.scss */
-      .holder-search .search-bar .search-input input {
-        width: inherit; }
-    /* line 89, ../../../../general/res/sass/search/_search.scss */
-    .holder-search .search-bar:before {
-      content: '\4d';
-      left: 3px;
-      -moz-transition-property: color;
-      -o-transition-property: color;
-      -webkit-transition-property: color;
-      transition-property: color;
-      -moz-transition-duration: 250ms;
-      -o-transition-duration: 250ms;
-      -webkit-transition-duration: 250ms;
-      transition-duration: 250ms;
-      -moz-transition-timing-function: ease-in-out;
-      -o-transition-timing-function: ease-in-out;
-      -webkit-transition-timing-function: ease-in-out;
-      transition-timing-function: ease-in-out;
-      -moz-transition-delay: 0;
-      -o-transition-delay: 0;
-      -webkit-transition-delay: 0;
-      transition-delay: 0;
-      pointer-events: none; }
-    /* line 98, ../../../../general/res/sass/search/_search.scss */
-    .holder-search .search-bar:hover:before {
-      color: #8c8c8c; }
-    /* line 102, ../../../../general/res/sass/search/_search.scss */
-    .holder-search .search-bar .clear-icon {
-      right: 22px;
-      visibility: hidden;
-      opacity: 0; }
-      /* line 104, ../../../../general/res/sass/search/_search.scss */
-      .holder-search .search-bar .clear-icon:before {
-        content: '\e607'; }
-      /* line 110, ../../../../general/res/sass/search/_search.scss */
-      .holder-search .search-bar .clear-icon.show {
-        visibility: visible;
-        opacity: 1; }
-      /* line 115, ../../../../general/res/sass/search/_search.scss */
-      .holder-search .search-bar .clear-icon:hover {
-        color: #8c8c8c; }
-    /* line 120, ../../../../general/res/sass/search/_search.scss */
-    .holder-search .search-bar .menu-icon {
-      font-size: 0.8em;
-      padding-right: 4px;
-      right: 4px;
-      text-align: right; }
-      /* line 122, ../../../../general/res/sass/search/_search.scss */
-      .holder-search .search-bar .menu-icon:before {
-        content: '\76'; }
-      /* line 128, ../../../../general/res/sass/search/_search.scss */
-      .holder-search .search-bar .menu-icon:hover {
-        color: #8c8c8c; }
-    /* line 133, ../../../../general/res/sass/search/_search.scss */
-    .holder-search .search-bar .search-menu-holder {
-      float: right;
-      left: -20px;
-      z-index: 1;
-      transition: visibility .05s, opacity .05s; }
-      /* line 139, ../../../../general/res/sass/search/_search.scss */
-      .holder-search .search-bar .search-menu-holder.off {
-        visibility: hidden;
-        opacity: 0; }
-  /* line 154, ../../../../general/res/sass/search/_search.scss */
-  .holder-search .active-filter-display {
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    border-radius: 3px;
+.clear-icon,
+.menu-icon {
+  cursor: pointer;
+  font-family: symbolsfont;
+  -moz-transition-property: opacity, color;
+  -o-transition-property: opacity, color;
+  -webkit-transition-property: opacity, color;
+  transition-property: opacity, color;
+  -moz-transition-duration: 150ms;
+  -o-transition-duration: 150ms;
+  -webkit-transition-duration: 150ms;
+  transition-duration: 150ms;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  -webkit-transition-delay: 0;
+  transition-delay: 0; }
+
+/* line 47, ../../../../general/res/sass/search/_search.scss */
+.clear-icon:before {
+  content: '\e607'; }
+
+/* line 52, ../../../../general/res/sass/search/_search.scss */
+.off {
+  visibility: hidden;
+  opacity: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  margin: 0 !important; }
+
+/* line 65, ../../../../general/res/sass/search/_search.scss */
+.holder-search .search-bar {
+  font-size: 0.8em;
+  max-width: 250px;
+  position: relative; }
+  /* line 74, ../../../../general/res/sass/search/_search.scss */
+  .holder-search .search-bar .search-input {
+    height: 25px;
+    line-height: 25px; }
+  /* line 79, ../../../../general/res/sass/search/_search.scss */
+  .holder-search .search-bar:before,
+  .holder-search .search-bar .clear-icon,
+  .holder-search .search-bar .menu-icon {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    line-height: 130%;
-    padding: 5px 0;
-    padding-left: 1.4625em;
-    font-size: 0.65em;
-    margin-top: 3px; }
-    /* line 167, ../../../../general/res/sass/search/_search.scss */
-    .holder-search .active-filter-display .clear-filters-icon {
-      color: #737373;
-      opacity: 1;
-      font-size: 0.8em;
-      position: absolute;
-      left: 1px;
-      cursor: pointer; }
-    /* line 178, ../../../../general/res/sass/search/_search.scss */
-    .holder-search .active-filter-display.off {
+    color: #737373;
+    height: 17px;
+    width: 17px;
+    line-height: 17px;
+    position: absolute;
+    text-align: center;
+    top: 4px; }
+  /* line 92, ../../../../general/res/sass/search/_search.scss */
+  .holder-search .search-bar .search-input {
+    position: relative;
+    width: 100%;
+    padding-left: 22px !important;
+    padding-right: 44px !important; }
+    /* line 99, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .search-bar .search-input input {
+      width: inherit; }
+  /* line 104, ../../../../general/res/sass/search/_search.scss */
+  .holder-search .search-bar:before {
+    content: '\4d';
+    font-family: symbolsfont;
+    left: 3px;
+    -moz-transition-property: color;
+    -o-transition-property: color;
+    -webkit-transition-property: color;
+    transition-property: color;
+    -moz-transition-duration: 250ms;
+    -o-transition-duration: 250ms;
+    -webkit-transition-duration: 250ms;
+    transition-duration: 250ms;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    -moz-transition-delay: 0;
+    -o-transition-delay: 0;
+    -webkit-transition-delay: 0;
+    transition-delay: 0;
+    pointer-events: none; }
+  /* line 114, ../../../../general/res/sass/search/_search.scss */
+  .holder-search .search-bar:hover:before {
+    color: #8c8c8c; }
+  /* line 118, ../../../../general/res/sass/search/_search.scss */
+  .holder-search .search-bar .clear-icon {
+    right: 22px;
+    visibility: hidden;
+    opacity: 0; }
+    /* line 124, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .search-bar .clear-icon.show {
+      visibility: visible;
+      opacity: 1; }
+    /* line 129, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .search-bar .clear-icon:hover {
+      color: #8c8c8c; }
+  /* line 134, ../../../../general/res/sass/search/_search.scss */
+  .holder-search .search-bar .menu-icon {
+    font-size: 0.8em;
+    padding-right: 4px;
+    right: 4px;
+    text-align: right; }
+    /* line 136, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .search-bar .menu-icon:before {
+      content: '\76'; }
+    /* line 142, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .search-bar .menu-icon:hover {
+      color: #8c8c8c; }
+  /* line 147, ../../../../general/res/sass/search/_search.scss */
+  .holder-search .search-bar .search-menu-holder {
+    float: right;
+    left: -20px;
+    z-index: 3;
+    transition: visibility .05s, opacity .05s; }
+    /* line 153, ../../../../general/res/sass/search/_search.scss */
+    .holder-search .search-bar .search-menu-holder.off {
       visibility: hidden;
-      opacity: 0;
-      height: 0;
-      margin: 0;
-      padding: 0;
-      border: 0; }
-  /* line 189, ../../../../general/res/sass/search/_search.scss */
-  .holder-search .search-scroll .load-more-button {
+      opacity: 0; }
+/* line 168, ../../../../general/res/sass/search/_search.scss */
+.holder-search .active-filter-display {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  line-height: 130%;
+  padding-left: 1.4625em;
+  font-size: 0.65em; }
+  /* line 181, ../../../../general/res/sass/search/_search.scss */
+  .holder-search .active-filter-display .clear-filters-icon {
+    color: #737373;
+    opacity: 1;
+    font-size: 0.8em;
+    position: absolute;
+    left: 1px;
+    cursor: pointer; }
+/* line 194, ../../../../general/res/sass/search/_search.scss */
+.holder-search .search-results {
+  -moz-transition-property: opacity, visibility;
+  -o-transition-property: opacity, visibility;
+  -webkit-transition-property: opacity, visibility;
+  transition-property: opacity, visibility;
+  -moz-transition-duration: 250ms;
+  -o-transition-duration: 250ms;
+  -webkit-transition-duration: 250ms;
+  transition-duration: 250ms;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  -webkit-transition-delay: 0;
+  transition-delay: 0; }
+  /* line 198, ../../../../general/res/sass/search/_search.scss */
+  .holder-search .search-results .hint {
+    margin-bottom: 10px;
+    font-size: 0.65em;
+    opacity: 0.6; }
+  /* line 204, ../../../../general/res/sass/search/_search.scss */
+  .holder-search .search-results.active {
+    visibility: visible;
+    opacity: 1; }
+  /* line 208, ../../../../general/res/sass/search/_search.scss */
+  .holder-search .search-results .load-more-button {
     -moz-transform: translateX(-50%);
     -ms-transform: translateX(-50%);
     -webkit-transform: translateX(-50%);

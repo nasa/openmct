@@ -23,7 +23,7 @@
 /*.abs.search-holder {
 	//@include test(#990000);
 	height: $treeSearchInputBarH;
-	bottom: 0;
+	bottom: 0;s
 	&.active {
 		height: auto;
 		bottom: 0;
@@ -35,9 +35,22 @@
 	z-index:5;
 }*/
 
+.clear-icon,
+.menu-icon {
+    cursor: pointer;
+    font-family: symbolsfont;
+    @include trans-prop-nice((opacity, color), 150ms);
+}
+
+.clear-icon {
+    // 'x' in circle icon
+    &:before {
+        content: '\e607';
+    }
+}
+
 .holder-search {
 	$iconWidth: 20px;
-    height: $ueTopBarH;
 
 	.search-bar {
 		$textInputHeight: 19px; // This is equal to the default value, 19px
@@ -58,7 +71,6 @@
 		.menu-icon {
 			@include box-sizing(border-box);
 			color: $colorInputIcon;
-            font-family: symbolsfont;
 			height: $iconD;
             width: $iconD;
 			line-height: $iconD;
@@ -66,13 +78,6 @@
 			text-align: center;
 			top: $iconEdgeM;
 		}
-
-		.clear-icon,
-		.menu-icon {
-			cursor: pointer;
-            @include trans-prop-nice((opacity, color), 150ms);
-		}
-
 
 		.search-input {
 			position: relative;
@@ -89,6 +94,7 @@
 		&:before {
             // Magnify glass icon
             content:'\4d';
+            font-family: symbolsfont;
             left: $interiorMarginSm;
             @include trans-prop-nice(color, 250ms);
             pointer-events: none;
@@ -100,8 +106,6 @@
 		}
 
 		.clear-icon {
-            // 'x' in circle icon
-            &:before { content: '\e607'; }
 			right: $iconD + $interiorMargin;
 
 			// Icon is visible only when there is text input
@@ -133,13 +137,8 @@
 		.search-menu-holder {
 			float: right;
 			left: -20px;
-			z-index: 1;
+			z-index: 3;
 			transition: visibility .05s, opacity .05s;
-
-			&.off {
-				visibility: hidden;
-				opacity: 0;
-			}
 		}
 
 		//// Hovering reveals menu
@@ -155,13 +154,13 @@
 		//order: 2;
 		$s: 0.65em;
 		$p: $interiorMargin;
-		@include border-radius($basicCr);
+		//@include border-radius($basicCr);
 		@include box-sizing(border-box);
 		line-height: 130%;
-		padding: $p 0;
+		//padding: $p 0;
 		padding-left: $s * 2.25;
 		font-size: $s;
-		margin-top: $interiorMarginSm;
+		//margin-top: $interiorMarginSm;
 
 
 		.clear-filters-icon {
@@ -175,17 +174,22 @@
 
 		// Transition looks weird when the results list has none
 		//transition: visibility .2s, opacity .2s;
-		&.off {
-			visibility: hidden;
-			opacity: 0;
-			height: 0;
-			margin: 0;
-			padding: 0;
-			border: 0;
-		}
 	}
 
-	.search-scroll {
+	.search-results {
+        @include trans-prop-nice((opacity, visibility), 250ms);
+        //visibility: hidden;
+        //opacity: 0;
+        .hint {
+            margin-bottom: $interiorMarginLg;
+            font-size: 0.65em;
+            opacity: 0.6;
+            //padding: 0 $interiorMargin;
+        }
+        &.active {
+            visibility: visible;
+            opacity: 1;
+        }
 		.load-more-button {
             @include transform(translateX(-50%));
             display: inline-block;

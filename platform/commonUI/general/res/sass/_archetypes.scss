@@ -101,6 +101,7 @@
     .flex-elem {
         //@include test(green, 0.1);
         min-height: 0; // Needed to allow element to shrink within parent
+        position: relative;
         &:not(.grows) {
             @include flex(0 0 auto);
         }
