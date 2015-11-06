@@ -91,14 +91,14 @@ define(
                 );
                 mockCreationCapability = jasmine.createSpyObj(
                     "creation",
-                    ["create", "invoke"]
+                    ["instantiate", "invoke"]
                 );
                 mockCapabilities = {
                     mutation: mockMutationCapability,
                     persistence: mockPersistenceCapability,
                     composition: mockCompositionCapability,
                     context: mockContextCapability,
-                    creation: mockCreationCapability
+                    instantiation: mockCreationCapability
                 };
                 mockNewPersistenceCapability = jasmine.createSpyObj(
                     "new-persistence",
@@ -130,9 +130,9 @@ define(
                     mockPromise([mockNewObject])
                 );
                 mockCompositionCapability.add.andReturn(mockPromise(true));
-                mockCreationCapability.create.andReturn(mockNewObject);
+                mockCreationCapability.instantiate.andReturn(mockNewObject);
                 mockCreationCapability.invoke.andCallFake(function (model) {
-                    return mockCreationCapability.create(model);
+                    return mockCreationCapability.instantiate(model);
                 });
 
                 creationService = new CreationService(
@@ -144,7 +144,7 @@ define(
             it("allows new objects to be created", function () {
                 var model = { someKey: "some value" };
                 creationService.createObject(model, mockParentObject);
-                expect(mockCreationCapability.create)
+                expect(mockCreationCapability.instantiate)
                     .toHaveBeenCalledWith(model);
             });
 

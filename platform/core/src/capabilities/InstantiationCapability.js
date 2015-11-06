@@ -61,7 +61,7 @@ define(
          *
          * @returns {DomainObject} the new domain object
          */
-        CreationCapability.prototype.create = function (model) {
+        CreationCapability.prototype.instantiate = function (model) {
             var id = uuid(),
                 capabilities = this.getCapabilities(model);
             return new DomainObjectImpl(id, model, capabilities);
@@ -72,7 +72,7 @@ define(
          * @see {platform/core.CreationCapability#create}
          */
         CreationCapability.prototype.invoke =
-            CreationCapability.prototype.create;
+            CreationCapability.prototype.instantiate;
 
         return CreationCapability;
     }

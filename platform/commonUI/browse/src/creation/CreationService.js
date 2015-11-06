@@ -68,7 +68,7 @@ define(
          */
         CreationService.prototype.createObject = function (model, parent) {
             var persistence = parent.getCapability("persistence"),
-                newObject = parent.useCapability("creation", model),
+                newObject = parent.useCapability("instantiation", model),
                 newObjectPersistence = newObject.getCapability("persistence"),
                 self = this;
 

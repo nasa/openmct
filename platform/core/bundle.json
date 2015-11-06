@@ -200,8 +200,8 @@
                 "depends": [ "$q" ]
             },
             {
-                "key": "creation",
-                "implementation": "capabilities/CreationCapability.js",
+                "key": "instantiation",
+                "implementation": "capabilities/InstantiationCapability.js",
                 "depends": [ "$injector" ]
             }
         ],
