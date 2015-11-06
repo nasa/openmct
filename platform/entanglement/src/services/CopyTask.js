@@ -120,11 +120,11 @@ define(
                 return promise.then(function(){
                     // ...to recursively copy it (and its children)
                     return self.copy(composee, originalParent).then(function(composee){
-                        composeChild(composee, clonedParent)
+                        composeChild(composee, clonedParent);
                     });
                 });}, self.$q.when(undefined)
-            )
-        }
+            );
+        };
 
         /**
          * A recursive function that will perform a bottom-up copy of
@@ -138,10 +138,8 @@ define(
          * @returns {*}
          */
         CopyTask.prototype.copy = function(originalObject, originalParent) {
-            var self = this;
-
-            //Make a clone of the model of the object to be copied
-            var modelClone = {
+            var self = this,
+                modelClone = {
                 id: uuid(),
                 model: cloneObjectModel(originalObject.getModel()),
                 persistenceSpace: originalParent.hasCapability('persistence') && originalParent.getCapability('persistence').getSpace()
@@ -158,7 +156,7 @@ define(
                     return modelClone;
                 });
             });
-        }
+        };
 
         /**
          * Will build a graph of an object and all of its child objects in
@@ -197,7 +195,7 @@ define(
                 .then(this.deferred.resolve, this.deferred.reject);
 
             return this.deferred.promise;
-        }
+        };
 
         return CopyTask;
     }
