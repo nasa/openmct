@@ -54,14 +54,13 @@ define(
             var persistenceService = this.persistenceService,
                 $q = this.$q,
                 now = this.now,
-                defaultSpace = this.defaultSpace;
+                defaultSpace = this.defaultSpace,
+                parsedIds;
 
             // Load a single object model from any persistence spaces
-            function loadModel(id) {
-                var parts = id.split(":"),
-                    space = parts.length > 1 ? parts[0] : defaultSpace,
-                    key = parts.length > 1 ? parts[1] : id;
-                return persistenceService.readObject(space, key);
+            function loadModel(parsedId) {
+                return persistenceService
+                        .readObject(parsedId.space, parsedId.key);
             }
 
             // Ensure that models read from persistence have some
@@ -86,26 +85,32 @@ define(
                 return result;
             }
 
-            // Filter down to o "namespaced" identifiers; these are
-            // not expected to be found in database. See WTD-659.
-            ids = ids.filter(function (id) {
-                return id.indexOf(":") !== -1;
+            function loadModels(parsedIds) {
+                return $q.all(parsedIds.map(loadModel))
+                    .then(function (models) {
+                        return packageResult(
+                            parsedIds,
+                            models.map(addPersistedTimestamp)
+                        );
+                    });
+            }
+
+            function restrictToSpaces(spaces) {
+                return parsedIds.filter(function (parsedId) {
+                    return spaces.indexOf(parsedId.space) !== -1;
+                });
+            }
+
+            parsedIds = ids.map(function (id) {
+                var parts = id.split(":");
+                return (parts.length > 1) ?
+                        { space: parts[0], key: parts[1] } :
+                        { space: defaultSpace, key: id };
             });
 
-            return persistenceService.listSpaces().then(function (spaces) {
-                return ids.filter(function (id) {
-                    var parts = id.split(":");
-                    return parts.length === 1 ||
-                            spaces.indexOf(parts[0]) !== -1;
-                });
-            }).then(function (ids) {
-                return $q.all(ids.map(loadModel)).then(function (models) {
-                    return packageResult(
-                        ids,
-                        models.map(addPersistedTimestamp)
-                    );
-                });
-            });
+            return persistenceService.listSpaces()
+                .then(restrictToSpaces)
+                .then(loadModels);
         };
 
         return PersistedModelProvider;
