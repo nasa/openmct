@@ -114,6 +114,12 @@
                 "type": "provider",
                 "implementation": "views/ViewProvider.js",
                 "depends": [ "views[]", "$log" ]
+            },
+            {
+                "provides": "identifierService",
+                "type": "provider",
+                "implementation": "identifiers/IdentifierProvider.js",
+                "depends": [ "PERSISTENCE_SPACE" ]
             }
         ],
         "types": [

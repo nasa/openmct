@@ -29,11 +29,11 @@ define(
         /**
          * Parses and generates domain object identifiers.
          */
-        function IdentifierService(defaultSpace) {
+        function IdentifierProvider(defaultSpace) {
             this.defaultSpace = defaultSpace;
         }
 
-        IdentifierService.prototype.generate = function (space) {
+        IdentifierProvider.prototype.generate = function (space) {
             var id = uuid();
             if (arguments.length > 0) {
                 id = space + ":" + id;
@@ -41,10 +41,10 @@ define(
             return id;
         };
 
-        IdentifierService.prototype.parse = function (id) {
+        IdentifierProvider.prototype.parse = function (id) {
             return new Identifier(id, this.defaultSpace);
         };
 
-        return IdentifierService;
+        return IdentifierProvider;
     }
 );
