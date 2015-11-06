@@ -41,13 +41,13 @@ define(
          * @param $q Angular's $q service, for working with promises
          * @param {function} now a function which provides the current time
          * @param {string} space the name of the persistence space(s)
-         *        from which models should be retrieved.
-         * @param {string} spaces additional persistence spaces to use
+         *        from which models should be retrieved by default
          */
-        function PersistedModelProvider(persistenceService, $q, now) {
+        function PersistedModelProvider(persistenceService, $q, now, space) {
             this.persistenceService = persistenceService;
             this.$q = $q;
             this.now = now;
+            this.defaultSpace = space;
         }
 
         PersistedModelProvider.prototype.getModels = function (ids) {

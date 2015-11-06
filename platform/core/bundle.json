@@ -72,8 +72,7 @@
                     "persistenceService",
                     "$q",
                     "now",
-                    "PERSISTENCE_SPACE",
-                    "ADDITIONAL_PERSISTENCE_SPACES"
+                    "PERSISTENCE_SPACE"
                 ]
             },
             {
@@ -239,11 +238,6 @@
             {
                 "key": "PERSISTENCE_SPACE",
                 "value": "mct"
-            },
-            {
-                "key": "ADDITIONAL_PERSISTENCE_SPACES",
-                "value": [],
-                "description": "An array of additional persistence spaces to load models from."
             }
         ],
         "licenses": [
