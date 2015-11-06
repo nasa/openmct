@@ -58,8 +58,10 @@ define(
         };
 
         ScratchPersistenceProvider.prototype.readObject = function (space, key) {
-            return this.$q
-                .when(space === 'scratch' ? this.table[key] : undefined);
+            return this.$q.when(
+                (space === 'scratch' && this.table[key]) ?
+                        JSON.parse(this.table[key]) : undefined
+            );
         };
 
         ScratchPersistenceProvider.prototype.deleteObject = function (space, key, value) {
