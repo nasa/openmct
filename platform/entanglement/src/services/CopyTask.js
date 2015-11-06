@@ -83,7 +83,7 @@ define(
             })).then(function(){
                 return self;
             });
-        };
+        }
 
         /**
          * Will add a list of clones to the specified parent's composition
@@ -101,7 +101,7 @@ define(
                 .then(function(){return self.parent.getCapability("persistence").persist();})
                 .then(function(){return parentClone;});
             // Ensure the clone of the original domainObject is returned
-        };
+        }
 
         /**
          * Given an array of objects composed by a parent, clone them, then
