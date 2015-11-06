@@ -38,11 +38,11 @@ define(
             if (separatorIndex > -1) {
                 this.key = id.substring(separatorIndex + 1);
                 this.space = id.substring(0, separatorIndex);
-                this.spaceDefined = true;
+                this.definedSpace = this.pace;
             } else {
                 this.key = id;
                 this.space = defaultSpace;
-                this.spaceDefined = false;
+                this.definedSpace = undefined;
             }
         }
 
@@ -54,8 +54,8 @@ define(
             return this.space;
         };
 
-        Identifier.prototype.hasDefinedSpace = function () {
-            return this.spaceDefined;
+        Identifier.prototype.getDefinedSpace = function () {
+            return this.definedSpace;
         };
 
         return Identifier;

@@ -34,8 +34,9 @@ define(
          * @memberof platform/core
          * @param $injector Angular's `$injector`
          */
-        function CreationCapability($injector, domainObject) {
+        function CreationCapability($injector, identifierService, domainObject) {
             this.$injector = $injector;
+            this.identifierService = identifierService;
             this.domainObject = domainObject;
         }
 
@@ -63,13 +64,11 @@ define(
          * @returns {DomainObject} the new domain object
          */
         CreationCapability.prototype.create = function (model) {
-            var id = uuid(),
+            var parsedId =
+                    this.identifierService.parse(this.domainObject.getId()),
+                space = parsedId.getDefinedSpace(),
+                id = this.identifierService.generate(space),
                 capabilities = this.getCapabilities(model);
-
-            // Retain any space-prefixing from the parent
-            if (this.domainObject.getId().indexOf(":") !== -1) {
-                id = this.domainObject.getId().split(":")[0] + ":" + id;
-            }
 
             return new DomainObjectImpl(id, model, capabilities);
         };

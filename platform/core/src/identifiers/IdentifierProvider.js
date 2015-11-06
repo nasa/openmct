@@ -35,7 +35,7 @@ define(
 
         IdentifierProvider.prototype.generate = function (space) {
             var id = uuid();
-            if (arguments.length > 0) {
+            if (space !== undefined) {
                 id = space + ":" + id;
             }
             return id;
