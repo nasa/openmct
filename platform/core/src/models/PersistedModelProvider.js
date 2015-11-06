@@ -84,9 +84,10 @@ define(
             }
 
             // Package the result as id->model
-            function packageResult(ids, models) {
+            function packageResult(parsedIds, models) {
                 var result = {};
-                ids.forEach(function (id, index) {
+                parsedIds.forEach(function (parsedId, index) {
+                    var id = parsedId.id;
                     if (models[index]) {
                         result[id] = models[index];
                     }
@@ -113,8 +114,8 @@ define(
             parsedIds = ids.map(function (id) {
                 var parts = id.split(":");
                 return (parts.length > 1) ?
-                        { space: parts[0], key: parts.slice(1).join(":") } :
-                        { space: defaultSpace, key: id };
+                        { id: id, space: parts[0], key: parts.slice(1).join(":") } :
+                        { id: id, space: defaultSpace, key: id };
             });
 
             return persistenceService.listSpaces()
