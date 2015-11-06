@@ -245,9 +245,6 @@ define(
 
             // Unsubscribe when the plot is destroyed
             $scope.$on("$destroy", releaseSubscription);
-
-            // Notify any external observers that a new telemetry view is here
-            $scope.$emit("telemetry:view");
         }
 
         /**
