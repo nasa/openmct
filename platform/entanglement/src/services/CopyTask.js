@@ -50,7 +50,7 @@ define(
                 clone.model.persisted = self.now();
                 return self.persistenceService.createObject(clone.persistenceSpace, clone.id, clone.model)
                     .then(function(){
-                        return self.deferred.notify({phase: "copying", totalObjects: objectClones.length, processed: ++persisted});
+                        return self.deferred.notify({phase: "copying", totalObjects: objectClones.length, processed: ++self.persisted});
                     });
             })).then(function(){
                 return objectClones;
@@ -66,7 +66,7 @@ define(
                 self = this;
 
             if (!this.parent.hasCapability('composition')){
-                return this.deferred.reject();
+                return this.$q.reject();
             }
 
             return this.persistenceService
@@ -145,7 +145,7 @@ define(
             }
 
             return copy(self.domainObject, self.parent).then(function(domainObjectClone){
-                domainObjectClone.model.location = parent.getId();
+                domainObjectClone.model.location = self.parent.getId();
                 return clones;
             });
         };
@@ -156,11 +156,12 @@ define(
 
             this.deferred = this.$q.defer();
 
-            return this.buildCopyPlan()
+            this.buildCopyPlan()
                 .then(persistObjects)
                 .then(addClonesToParent)
-                .then(this.deferred.resolve)
-                .catch(this.deferred.reject);
+                .then(this.deferred.resolve, this.deferred.reject);
+
+            return this.deferred.promise;
         }
 
         return CopyTask;
