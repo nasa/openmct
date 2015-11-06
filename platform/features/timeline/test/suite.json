@@ -1,0 +1,50 @@
+[
+    "TimelineConstants",
+    "TimelineFormatter",
+
+    "capabilities/ActivityTimespan",
+    "capabilities/ActivityTimespanCapability",
+    "capabilities/ActivityUtilization",
+    "capabilities/CostCapability",
+    "capabilities/GraphCapability",
+    "capabilities/CumulativeGraph",
+    "capabilities/ResourceGraph",
+    "capabilities/TimelineTimespan",
+    "capabilities/TimelineTimespanCapability",
+    "capabilities/TimelineUtilization",
+    "capabilities/UtilizationCapability",
+
+    "controllers/ActivityModeValuesController",
+    "controllers/TimelineController",
+    "controllers/TimelineGanttController",
+    "controllers/TimelineGraphController",
+    "controllers/TimelineTableController",
+    "controllers/TimelineTickController",
+    "controllers/TimelineZoomController",
+    "controllers/TimelineDateTimeController",
+
+    "controllers/drag/TimelineDragHandler",
+    "controllers/drag/TimelineDragHandleFactory",
+    "controllers/drag/TimelineDragPopulator",
+    "controllers/drag/TimelineSnapHandler",
+    "controllers/drag/TimelineStartHandle",
+    "controllers/drag/TimelineMoveHandle",
+    "controllers/drag/TimelineEndHandle",
+
+    "controllers/graph/TimelineGraph",
+    "controllers/graph/TimelineGraphPopulator",
+    "controllers/graph/TimelineGraphRenderer",
+
+    "controllers/swimlane/TimelineColorAssigner",
+    "controllers/swimlane/TimelineProxy",
+    "controllers/swimlane/TimelineSwimlane",
+    "controllers/swimlane/TimelineSwimlaneDecorator",
+    "controllers/swimlane/TimelineSwimlaneDropHandler",
+    "controllers/swimlane/TimelineSwimlanePopulator",
+
+    "directives/SwimlaneDragConstants",
+    "directives/MCTSwimlaneDrag",
+    "directives/MCTSwimlaneDrop",
+
+    "services/ObjectLoader"
+]

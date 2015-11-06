@@ -15,6 +15,7 @@
     "platform/containment",
     "platform/execution",
     "platform/telemetry",
+    "platform/features/clock",
     "platform/features/imagery",
     "platform/features/layout",
     "platform/features/pages",

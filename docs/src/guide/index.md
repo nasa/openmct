@@ -1106,6 +1106,8 @@ property:
 * `stylesheetUrl`: Path and filename, including extension, for the stylesheet to 
 include. This path is relative to the bundle's resources folder (by default,  
 `res`) 
+* `theme`: Optional; if present, this stylesheet will only be included if this
+value matches the `THEME` constant.
  
 To control the order of CSS files, use priority  (see the section on Extension 
 Definitions above.) 
@@ -2323,7 +2325,12 @@ default paths to reach external services are all correct.
 
 ### Configuration Constants
 
+
 The following configuration constants are recognized by Open MCT Web bundles:
+* Common UI elements - `platform/commonUI/general`
+    * `THEME`: A string identifying the current theme symbolically. Individual
+    stylesheets (the `stylesheets` extension category) may specify an optional
+    `theme` property which will be matched against this before inclusion.
 * CouchDB adapter - `platform/persistence/couch`
     * `COUCHDB_PATH`: URL or path to the CouchDB database to be used for domain 
     object persistence. Should not include a trailing slash.

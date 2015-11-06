@@ -102,7 +102,7 @@ define(
             function updateDomain(value) {
                 var newDomain = conductor.domain(value);
                 conductorScope.parameters.format = newDomain.format;
-                repScope.$broadcast('telemetry:display:bounds', bounds());
+                broadcastBounds();
             }
 
             // telemetry domain metadata -> option for a select control
@@ -139,8 +139,6 @@ define(
                 .$watch('ngModel.conductor.inner.end', updateConductorInner);
             conductorScope
                 .$watch('ngModel.domain', updateDomain);
-
-            repScope.$on('telemetry:view', updateConductorInner);
         };
 
         ConductorRepresenter.prototype.conductorScope = function (s) {
