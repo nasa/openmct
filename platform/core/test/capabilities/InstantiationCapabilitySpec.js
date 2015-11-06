@@ -65,50 +65,6 @@ define(
                 expect(mockInstantiate).toHaveBeenCalledWith(testModel);
             });
 
-            // TODO: Move to instantiate service
-            xdescribe("when creating an object", function () {
-                var mockCapabilityConstructor,
-                    mockCapabilityInstance,
-                    mockCapabilities,
-                    testModel,
-                    domainObject;
-
-                beforeEach(function () {
-                    mockCapabilityConstructor = jasmine.createSpy('capability');
-                    mockCapabilityInstance = {};
-//                    mockCapabilityService.getCapabilities.andReturn({
-//                        something: mockCapabilityConstructor
-//                    });
-                    mockCapabilityConstructor.andReturn(mockCapabilityInstance);
-
-                    testModel = { someKey: "some value" };
-
-                    domainObject = instantiation.instantiate(testModel);
-                });
-
-                it("loads capabilities from the capability service", function () {
-//                    expect(mockCapabilityService.getCapabilities)
-//                        .toHaveBeenCalledWith(testModel);
-                });
-
-                it("exposes loaded capabilities from the created object", function () {
-                    expect(domainObject.getCapability('something'))
-                        .toBe(mockCapabilityInstance);
-                    expect(mockCapabilityConstructor)
-                        .toHaveBeenCalledWith(domainObject);
-                });
-
-                it("exposes the provided model", function () {
-                    expect(domainObject.getModel()).toEqual(testModel);
-                });
-
-                it("provides unique identifiers", function () {
-                    expect(domainObject.getId()).toEqual(jasmine.any(String));
-                    expect(instantiation.instantiate(testModel).getId())
-                        .not.toEqual(domainObject.getId());
-                });
-            });
-
         });
     }
 );
