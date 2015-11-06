@@ -342,7 +342,7 @@ define(
                             expect(copyFinished.mostRecentCall.args[0].model.modified).toBeUndefined();
                             expect(copyFinished.mostRecentCall.args[0].model.persisted).toBe(mockNow.now());
                         });
-                        
+
                         it ("correctly locates cloned objects", function() {
                             expect(mockPersistenceService.createObject.calls[0].args[2].location).toEqual(mockPersistenceService.createObject.calls[1].args[1]);
                         });

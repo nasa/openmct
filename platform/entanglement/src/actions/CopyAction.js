@@ -94,41 +94,42 @@ define(
         CopyAction.prototype.perform = function() {
             var self = this;
 
-            return AbstractComposeAction.prototype.perform.call(this)
-                .then(
-                    function success(){
-                        self.notification.dismiss();
-                        self.notificationService.info("Copying complete.");
-                    },
-                    function error(errorDetails){
-                        var errorMessage = {
-                            title: "Error copying objects.",
-                            severity: "error",
-                            hint: errorDetails.message,
-                            minimized: true, // want the notification to be minimized initially (don't show banner)
-                            options: [{
-                                label: "OK",
-                                callback: function() {
-                                    self.dialogService.dismiss();
-                                }
-                            }]
-                        };
-                        
-                        self.dialogService.dismiss();
-                        if (self.notification) {
-                            self.notification.dismiss(); // Clear the progress notification
+            function success(){
+                self.notification.dismiss();
+                self.notificationService.info("Copying complete.");
+            }
+
+            function error(errorDetails){
+                var errorMessage = {
+                    title: "Error copying objects.",
+                    severity: "error",
+                    hint: errorDetails.message,
+                    minimized: true, // want the notification to be minimized initially (don't show banner)
+                    options: [{
+                        label: "OK",
+                        callback: function() {
+                            self.dialogService.dismiss();
                         }
-                        self.$log.error("Error copying objects. ", errorDetails);
-                        //Show a minimized notification of error for posterity
-                        self.notificationService.notify(errorMessage);
-                        //Display a blocking message
-                        self.dialogService.showBlockingMessage(errorMessage);
-                        
-                    },
-                    function notification(details){
-                        self.progress(details.phase, details.totalObjects, details.processed);
-                    }
-            );
+                    }]
+                };
+
+                self.dialogService.dismiss();
+                if (self.notification) {
+                    self.notification.dismiss(); // Clear the progress notification
+                }
+                self.$log.error("Error copying objects. ", errorDetails);
+                //Show a minimized notification of error for posterity
+                self.notificationService.notify(errorMessage);
+                //Display a blocking message
+                self.dialogService.showBlockingMessage(errorMessage);
+
+            }
+            function notification(details){
+                self.progress(details.phase, details.totalObjects, details.processed);
+            }
+
+            return AbstractComposeAction.prototype.perform.call(this)
+                .then(success, error, notification);
         };
         return CopyAction;
     }
