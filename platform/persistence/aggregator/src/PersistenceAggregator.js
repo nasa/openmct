@@ -52,7 +52,6 @@ define(
                 });
             }
 
-            this.$q = $q;
             this.providerMapPromise = $q.all(providers.map(addToMap))
                 .then(function () { return providerMap; });
         }
