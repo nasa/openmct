@@ -26,12 +26,22 @@ define(
     function (DomainObjectImpl, uuid) {
         'use strict';
 
-        function CreationCapability($injector, domainObject) {
+        /**
+         * Implements the `creation` capability. This allows new domain
+         * objects to be instantiated.
+         *
+         * @constructor
+         * @memberof platform/core
+         * @param $injector Angular's `$injector`
+         */
+        function CreationCapability($injector) {
             this.$injector = $injector;
-            this.domainObject = domainObject;
         }
 
         /**
+         * Alias of `capabilityService.getCapabilities`; handles lazy loading
+         * of `capabilityService`, since it cannot be declared as a
+         * dependency directly without creating a cycle.
          * @private
          */
         CreationCapability.prototype.getCapabilities = function (model) {
@@ -42,12 +52,25 @@ define(
             return this.capabilityService.getCapabilities(model);
         };
 
+        /**
+         * Instantiate a new domain object with the provided model.
+         *
+         * This domain object will have been simply instantiated; it will not
+         * have been persisted, nor will it have been added to the
+         * composition of the object which exposed this capability.
+         *
+         * @returns {DomainObject} the new domain object
+         */
         CreationCapability.prototype.create = function (model) {
             var id = uuid(),
                 capabilities = this.getCapabilities(model);
             return new DomainObjectImpl(id, model, capabilities);
         };
 
+        /**
+         * Alias of `create`.
+         * @see {platform/core.CreationCapability#create}
+         */
         CreationCapability.prototype.invoke =
             CreationCapability.prototype.create;
 
