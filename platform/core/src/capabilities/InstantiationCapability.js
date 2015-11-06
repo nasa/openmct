@@ -48,8 +48,11 @@ define(
          * @returns {DomainObject} the new domain object
          */
         InstantiationCapability.prototype.instantiate = function (model) {
-            this.instantiate = this.$injector.get("instantiate");
-            return this.instantiate(model);
+            // Lazily initialize; instantiate depends on capabilityService,
+            // which depends on all capabilities, including this one.
+            this.instantiateFn = this.instantiateFn ||
+                this.$injector.get("instantiate");
+            return this.instantiateFn(model);
         };
 
         /**
