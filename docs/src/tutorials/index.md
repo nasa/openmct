@@ -143,7 +143,7 @@ To run the tutorial web server
 ### Viewing in Browser
 
 Once running, you should be able to view Open MCT Web from your browser at 
-[http://localhost:8080/]() (assuming the web server is running on port 8080, 
+http://localhost:8080/ (assuming the web server is running on port 8080, 
 and OpenMCTWeb is installed at the server's root path). 
 [Google Chrome](https://www.google.com/chrome/) is recommended for these 
 tutorials, as Chrome is Open MCT Web’s “test-to” browser. The browser cache 
@@ -167,7 +167,7 @@ backend.
 
 The goal of this tutorial is to add a new application feature to Open MCT Web: 
 To-do lists. Users should be able to create and manage these to track items that 
-they need to do. This is modelled after the to-do lists at [http://todomvc.com/]().
+they need to do. This is modelled after the to-do lists at http://todomvc.com/.
 
 ### Step 1-Create the Plugin
 
@@ -249,7 +249,7 @@ __bundles.json__
 
 At this point, we can reload Open MCT Web. We haven’t introduced any new 
 functionality, so we don’t see anything different, but if we run with logging 
-enabled ([http://localhost:8080/?log=info]()) and check the browser console, we 
+enabled ( http://localhost:8080/?log=info ) and check the browser console, we 
 should see:
 
 `Resolving extensions for bundle tutorials/todo(To-do Plugin)`
@@ -458,8 +458,8 @@ particular, we want to:
 * Change the completion state of tasks in the model.
 
 To do this, we will support this by adding an Angular controller. (See 
-[https://docs.angularjs.org/guide/controller]() for an overview of controllers.) 
-We will define that in an AMD module (see [http://requirejs.org/docs/whyamd.html]()) 
+https://docs.angularjs.org/guide/controller for an overview of controllers.) 
+We will define that in an AMD module (see http://requirejs.org/docs/whyamd.html) 
 in the directory `tutorials/todo/src/controllers` (`src` is, by default, the 
 directory where bundle-related source code is kept, and controllers is where 
 Angular controllers are stored by convention.)
@@ -1995,7 +1995,7 @@ not important; it has just enough functionality to resemble a WebSocket
 interface to a real telemetry system, and niceties such as error-handling 
 have been omitted. (For more information on using WebSockets, both in the 
 client and on the server, 
-[https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API]() is an 
+https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API is an 
 excellent starting point.)
 
 What does matter for this tutorial is the interfaces that are exposed. Once a 
@@ -2121,7 +2121,7 @@ We can run this example server by:
     node app.js
 
 To verify that this is running and try out its interface, we can use a tool 
-like [https://www.npmjs.com/package/wscat](): 
+like https://www.npmjs.com/package/wscat : 
 
     wscat -c ws://localhost:8081
     connected (press CTRL+C to quit)
@@ -2278,7 +2278,7 @@ When created, this service initiates a connection to the server, and begins
 loading the dictionary. This will occur asynchronously, so the `dictionary()` 
 method it exposes returns a `Promise` for the loaded dictionary 
 (`dictionary.json` from above), using Angular’s `$q` 
-(see [https://docs.angularjs.org/api/ng/service/$q]().) Note that error- and 
+(see https://docs.angularjs.org/api/ng/service/$q .) Note that error- and 
 close-handling for this WebSocket connection have been omitted for brevity.
 
 Once the dictionary has been loaded, we will want to represent its contents 
@@ -2377,7 +2377,7 @@ object models from the persistence store.)
 
 Here, we read the dictionary using the server adapter from above; since this 
 will be loaded asynchronously, we use promise-chaining (see 
-[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then#Chaining]()) 
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/then#Chaining ) 
 to take that result and build up an object mapping identifiers to new domain 
 object models. This is returned from our `modelService`, but only when the 
 request actually calls for identifiers that look like they’re from the 

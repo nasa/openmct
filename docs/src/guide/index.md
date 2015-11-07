@@ -129,7 +129,7 @@ The framework's role in the application is to manage connections between
 bundles. All application-specific behavior is provided by individual bundles, or
 as the result of their collaboration.
 
-The framework is described in more detail in the [Framework Overview](../architecture/Framework.md#Overview) of the 
+The framework is described in more detail in the [Framework Overview](../architecture/framework.md#overview) of the 
 architecture guide.
 
 ### Tiers
@@ -186,7 +186,8 @@ as well as the framework layer's role in mediating between these components.
 Once the framework layer has wired these software components together, however,
 the application's logical architecture emerges.
 
-An overview of the logical architecture of the platform is given in the [Platform Architecture](../architecture/Platform.md#PlatformArchitecture) 
+An overview of the logical architecture of the platform is given in the 
+[Platform Architecture](../architecture/platform.md#platform-architecture) 
 section of the Platform guide
 
 ### Web Services
@@ -233,7 +234,7 @@ The application is composed of bundles. Plug-ins are bundles.
 non-persistent state associated with a domain object.
 * __category__: A machine-readable identifier for a group that something may 
 belong to.
-* __composition __: In the context of a domain object, this refers to the set of 
+* __composition__: In the context of a domain object, this refers to the set of 
 other domain objects that compose or are contained by that object. A domain 
 object's composition is the set of domain objects that should appear immediately
  beneath it in a tree hierarchy. A domain object's composition is described in 
@@ -244,10 +245,10 @@ identifiers asynchronously.
 readable description of a thing; usually a single sentence or short paragraph. 
 (Most often used in the context of extensions, domain object models, or other 
 similar application-specific objects.) 
-* __domain object __: A meaningful object to the user; a distinct thing in the 
+* __domain object__: A meaningful object to the user; a distinct thing in the 
 work support by Open MCT Web. Anything that appears in the left-hand tree is a 
 domain object. 
-* __extension __: An extension is a unit of functionality exposed to the platform 
+* __extension__: An extension is a unit of functionality exposed to the platform 
 in a declarative fashion by a bundle. The term 'extension category' is used to 
 distinguish types of extensions from specific extension instances. 
 * __id__: A string which uniquely identifies a domain object. 
@@ -609,8 +610,8 @@ path relative to the bundle's resource directory (`res` by default.)
 
 ### Composite Services
 
-Composite services are described in the [relevant section](../architecture/Framework.md#Composite-Services) 
-of the framework guide.
+Composite services are described in the [Composite Services](../architecture/framework.md#composite-services) 
+section of the framework guide.
 
 A component should include the following properties in its extension definition:
 
@@ -724,8 +725,8 @@ interpretations for specific sources.
 
 ### Telemetry Responses
 
-When returned from the `telemetryService` (see [Services](#Services) section), 
-telemetry series data will be packaged in a `source -> key -> TelemetrySeries` 
+When returned from the `telemetryService` (see [Telemetry Services](#telemetry-service) 
+section), telemetry series data will be packaged in a `source -> key -> TelemetrySeries` 
 fashion. That is, telemetry is passed in an object containing key-value pairs. 
 Keys identify telemetry sources; values are objects containing additional 
 key-value pairs. In this object, keys identify individual telemetry series (and 
@@ -1042,7 +1043,7 @@ Angular templates which need to interact with information (e.g. the domain
 object being represented) provided by the platform. This information is passed 
 in through the template's scope, such that simple representations may be created 
 by providing only templates. (More complex representations will need controllers 
-which are referenced from templates. See [https://docs.angularjs.org/guide/controller ]()
+which are referenced from templates. See https://docs.angularjs.org/guide/controller
 for more information on controllers in Angular.) 
  
 A representation's scope will contain:
@@ -1074,7 +1075,7 @@ representing domain objects in general. For example, support for the  _gestures_
 extension category is added by a _representer_.
 
 A representer needs only provide an implementation. When an `mct-representation` 
-is linked (see  [https://docs.angularjs.org/guide/directive ]() or when the 
+is linked (see https://docs.angularjs.org/guide/directive ) or when the 
 domain object being represented changes, a new _representer_ of each declared 
 type is instantiated. The constructor arguments for a _representer_ are the same 
 as the arguments to the link function in an Angular directive: `scope` the 
@@ -1157,7 +1158,7 @@ capability.
 (as should appear in the _Create_ or the _Edit Properties_ dialog.) Each 
 property is described by an object containing the following properties:
     * `control`: The key of the control (see `mct-control` and the `controls` 
-    [extension category](#Controls)) to use for editing this property. 
+    [extension category](#controls-category)) to use for editing this property. 
     * `property`: A string which will be used as the name of the property in the 
     domain object's model that the value for this property should be stored 
     under. If this value should be stored in an object nested within the domain 
@@ -1180,7 +1181,7 @@ the list of version information in the About dialog.
 dialog.
 
 To control the ordering of line items within the About dialog, use `priority`. 
-(See section on [Extension Definitions](#ExtensionDefinitions) above.) 
+(See section on [Extensions](#extensions) above.) 
 
 This extension category does not have implementations. 
  
@@ -1202,7 +1203,7 @@ applicable for domain objects which have the capabilities identified by these
 strings. 
 * `delegation`: Optional boolean, intended to be used in conjunction with  
 `needs`;  if present, allow required capabilities to be satisfied by means of 
-capability delegation. (See [Delegation](#Delegation))
+capability delegation. (See [Delegation](#delegation-capability))
 * `toolbar`: Optional; a definition for the toolbar which may appear in a 
 toolbar when using this view in Edit mode. This should be specified as a 
 structure for mct-toolbar , with additional properties available for each item in 
@@ -1563,7 +1564,8 @@ extension mechanism is insufficient to achieve a desired result.
  
 ### Action Service
 
-The [Action Service](../architecture/platform#action-service) (`actionService`) 
+The [Action Service](../architecture/platform.md#action-service) 
+(`actionService`) 
 provides `Action` instances which are applicable in specific contexts. See Core 
 API for additional notes on the interface for actions. The `actionService` has 
 the following interface: 
@@ -1573,7 +1575,8 @@ in the specified action context.
 
 ### Capability Service 
 
-The [Capability Service](../architecture/platform#capability-service) (`capabilityService`) 
+The [Capability Service](../architecture/platform.md#capability-service) 
+(`capabilityService`) 
 provides constructors for capabilities which will be exposed for a given domain 
 object. 
 
@@ -1693,7 +1696,7 @@ allowed within the application. It has the following interface:
 * `allow(category, candidate, context, [callback])`: Check if this decision 
 should be allowed. Returns a boolean. Its arguments are interpreted as: 
     * `category`: A string identifying which kind of decision is being made. See 
-    the [section on Categories](#PolicyCategories) for categories supported by 
+    the [section on Categories](#policy-categories) for categories supported by 
     the platform; plugins may define and utilize policies of additional 
     categories, as well. 
     * `candidate`: An object representing the thing which shall or shall not be 
@@ -1719,7 +1722,7 @@ When acquiring telemetry for display, it is recommended that the
 `telemetryHandler` service be used instead of this service. The 
 `telemetryHandler` has additional support for subscribing to and requesting 
 telemetry data associated with domain objects or groups of domain objects. See 
-the [Other Services](#Other-Services) section for more information. 
+the [Other Services](#other-services) section for more information. 
 
 The `telemetryService` has the following interface:
 
@@ -2154,7 +2157,7 @@ development. A few utilities are included to support development processes.
 
 ## Command-line Build
 Open MCT Web includes a script for building via command line using Maven 3.0.4 
-[https://maven.apache.org/]().
+https://maven.apache.org/ .
         
 Invoking mvn clean install will:
 
@@ -2171,7 +2174,7 @@ download build dependencies.
 
 ## Test Suite
 
-Open MCT Web uses Jasmine [http://jasmine.github.io/]() for automated testing. 
+Open MCT Web uses Jasmine http://jasmine.github.io/ for automated testing. 
 The file `test.html` included at the top level of the source repository, can be 
 run from the browser to perform tests for all active bundles, as defined in 
 `bundle.json`.
@@ -2262,30 +2265,30 @@ Examples of deployment strategies (and the conditions under which they make the
 most sense) include:
 
 * If the external services that Open MCT Web will utilize are all running on 
-Apache Tomcat [https://tomcat.apache.org/](), then it makes sense to run Open 
+[Apache Tomcat](https://tomcat.apache.org/), then it makes sense to run Open 
 MCT Web from the same Tomcat instance as a separate web application. The 
 `.war` artifact produced by the command line build facilitates this deployment 
-option. (See [https://tomcat.apache.org/tomcat-8.0-doc/deployer-howto.html() for 
+option. (See https://tomcat.apache.org/tomcat-8.0-doc/deployer-howto.html for 
 general information on deploying in Tomcat.)
 * If a variety of external services will be running from a variety of 
 hosts/ports, then it may make sense to use a web server that supports proxying, 
-such as the Apache HTTP Server [http://httpd.apache.org/](). In this 
+such as the [Apache HTTP Server](http://httpd.apache.org/). In this 
 configuration, the HTTP server would be configured to proxy (or reverse proxy) 
 requests at specific paths to the various external services, while providing 
 Open MCT Web as flat files from a different path.
 * If a single server component is being developed to handle all server-side 
 needs of an Open MCT Web instance, it can make sense to serve Open MCT Web (as 
-flat files) from the same component using an embedded HTTP server such as Nancy 
-[http://nancyfx.org/]().
+flat files) from the same component using an embedded HTTP server such as 
+[Nancy](http://nancyfx.org/).
 * If no external services are needed (or if the 'external services' will just 
 be generating flat files to read) it makes sense to utilize a lightweight flat 
-file HTTP server such as Lighttpd [http://www.lighttpd.net/](). In this 
+file HTTP server such as [Lighttpd](http://www.lighttpd.net/). In this 
 configuration, Open MCT Web sources/resources would be placed at one path, while 
 the files generated by the external service are placed at another path.
 * If all external services support CORS, it may make sense to have an HTTP 
 server that is solely responsible for making Open MCT Web sources/resources 
 available, and to have Open MCT Web contact these external services directly. 
-Again, lightweight HTTP servers such as Lighttpd [http://www.lighttpd.net/]() 
+Again, lightweight HTTP servers such as [Lighttpd](http://www.lighttpd.net/) 
 are useful in this circumstance. The downside of this option is that additional 
 configuration effort is required, both to enable CORS on the external services, 
 and to ensure that Open MCT Web can correctly locate these services.
