@@ -1,9 +1,4 @@
 {
-    "configuration": {
-        "paths": {
-            "uuid": "uuid"
-        }
-    },
     "extensions": {
         "routes": [
             {
@@ -159,7 +154,7 @@
                 "provides": "creationService",
                 "type": "provider",
                 "implementation": "creation/CreationService.js",
-                "depends": [ "persistenceService", "now", "$q", "$log" ]
+                "depends": [ "$q", "$log" ]
             }
         ],
         "runs": [
@@ -178,16 +173,6 @@
                 "copyright": "Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)",
                 "license": "license-mit",
                 "link": "https://github.com/sindresorhus/screenfull.js/blob/gh-pages/license"
-            },
-            {
-                "name": "Math.uuid.js",
-                "version": "1.4",
-                "description": "Unique identifer generation (code adapted.)",
-                "author": "Robert Kieffer",
-                "website": "https://github.com/broofa/node-uuid",
-                "copyright": "Copyright (c) 2010 Robert Kieffer",
-                "license": "license-mit",
-                "link": "http://opensource.org/licenses/MIT"
             }
         ]
     }

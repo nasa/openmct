@@ -27,8 +27,8 @@
  * @namespace platform/core
  */
 define(
-    ["./DomainObjectImpl"],
-    function (DomainObjectImpl) {
+    [],
+    function () {
         "use strict";
 
         /**
@@ -57,62 +57,36 @@ define(
          *
          * @param {ModelService} modelService the service which shall
          *        provide models (persistent state) for domain objects
-         * @param {CapabilityService} capabilityService the service
-         *        which provides capabilities (dynamic behavior)
-         *        for domain objects.
+         * @param {Function} instantiate a service to instantiate new
+         *        domain object instances
          * @param $q Angular's $q, for promise consolidation
          * @memberof platform/core
          * @constructor
          */
-        function DomainObjectProvider(modelService, capabilityService, $q) {
+        function DomainObjectProvider(modelService, instantiate, $q) {
             this.modelService = modelService;
-            this.capabilityService = capabilityService;
-            this.$q = $q;
+            this.instantiate = instantiate;
         }
 
         DomainObjectProvider.prototype.getObjects = function getObjects(ids) {
             var modelService = this.modelService,
-                capabilityService = this.capabilityService,
-                $q = this.$q;
-
-            // Given a models object (containing key-value id-model pairs)
-            // create a function that will look up from the capability
-            // service based on id; for handy mapping below.
-            function capabilityResolver(models) {
-                return function (id) {
-                    var model = models[id];
-                    return model ?
-                        capabilityService.getCapabilities(model) :
-                        undefined;
-                };
-            }
+                instantiate = this.instantiate;
 
             // Assemble the results from the model service and the
             // capability service into one value, suitable to return
-            // from this service. Note that ids are matched to capabilities
-            // by index.
-            function assembleResult(ids, models, capabilities) {
+            // from this service.
+            function assembleResult(models) {
                 var result = {};
                 ids.forEach(function (id, index) {
                     if (models[id]) {
                         // Create the domain object
-                        result[id] = new DomainObjectImpl(
-                            id,
-                            models[id],
-                            capabilities[index]
-                        );
+                        result[id] = instantiate(models[id], id);
                     }
                 });
                 return result;
             }
 
-            return modelService.getModels(ids).then(function (models) {
-                return $q.all(
-                    ids.map(capabilityResolver(models))
-                ).then(function (capabilities) {
-                        return assembleResult(ids, models, capabilities);
-                    });
-            });
+            return modelService.getModels(ids).then(assembleResult);
         };
 
         return DomainObjectProvider;
