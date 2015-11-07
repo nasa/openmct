@@ -104,6 +104,9 @@
         position: relative;
         &:not(.grows) {
             @include flex(0 0 auto);
+            &.flex-can-shrink {
+                @include flex(0 1 auto);
+            }
         }
         &.grows {
             @include flex(1 1 auto);
@@ -120,21 +123,28 @@
 
 .l-flex-row {
     @include flex-direction(row);
+    &.flex-elem { @include flex(1 1 auto); }
+    .flex-elem {
+        height: inherit;
+        line-height: inherit;
+        min-width: 0;
+    }
     .flex-container { @include flex-direction(row); }
 }
 
 .l-flex-col {
     @include flex-direction(column);
     .flex-elem {
+        min-height: 0;
         &:not(:first-child) { margin-top: $interiorMarginLg; }
     }
     .flex-container { @include flex-direction(column); }
 }
 
-.l-flex {
-    @extend .l-flex-row;
-    .left {
-        @include flex(1 1 0);
-        padding-right: $interiorMarginLg;
-    }
+.flex-fixed {
+    @include flex(0 0 auto);
+}
+
+.flex-justify-end {
+    @include justify-content(flex-end);
 }

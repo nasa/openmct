@@ -36,8 +36,10 @@
         //@include test();
         @include slMenuTransitions;
         margin-left: 0 !important;
-        #content-area {
+        .holder-object-and-inspector {
             @include slMenuTransitions;
+            left: $bodyMargin;
+            right: $bodyMargin;
             opacity: 1;
         }
     }
@@ -45,7 +47,6 @@
     .holder.holder-treeview-elements {
         right: $bodyMargin !important;
     }
-
 
 // When the tree is hidden, these are the
     // classes used for the left menu and the
@@ -148,7 +149,7 @@
         .pane.right.items {
             left: 0 !important;
             @include transform(translateX($proporMenuOnly));
-            #content-area {
+            .holder-object-and-inspector {
                 opacity: 0;
             }
         }
