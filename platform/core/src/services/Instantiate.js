@@ -22,8 +22,8 @@
 /*global define,Promise*/
 
 define(
-    ['../objects/DomainObjectImpl', 'uuid'],
-    function (DomainObjectImpl, uuid) {
+    ['../objects/DomainObjectImpl'],
+    function (DomainObjectImpl) {
         'use strict';
 
         /**
@@ -39,12 +39,15 @@ define(
          *
          * @constructor
          * @memberof platform/core
-         * @param $injector Angular's `$injector`
+         * @param {CapabilityService} capabilityService the service which will
+         *        provide instantiated domain objects with their capabilities
+         * @param {IdentifierService} identifierService service to generate
+         *        new identifiers
          */
-        function Instantiate(capabilityService) {
+        function Instantiate(capabilityService, identifierService) {
             return function (model, id) {
                 var capabilities = capabilityService.getCapabilities(model);
-                id = id || uuid();
+                id = id || identifierService.generate();
                 return new DomainObjectImpl(id, model, capabilities);
             };
         }
