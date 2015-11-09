@@ -1004,3 +1004,47 @@ To address this:
 * May result in harder-to-understand errors when overridden
   composition strategies do not failover well (that is, when they
   do need at least implementation, but fail to check for this.)
+
+## Plugins as Angular Modules
+
+Do away with the notion of bundles entirely; use Angular modules
+instead. Registering extensions or components of composite services
+would then be handled by configuring a provider; reusable classes
+could be exposed by the platform for these.
+
+Example (details are flexible, included for illustrative purposes):
+
+```javascript
+var mctEdit = angular.module('mct-edit', ['ng', 'mct']);
+
+// Expose a new extension category
+mctEdit.provider('actionRegistry', ExtensionCategoryProvider);
+
+// Expose a new extension
+mctEdit.config(['actionRegistryProvider', function (arp) {
+    arp.register(EditPropertiesAction);
+}])
+
+return mctEdit;
+```
+
+Incompatible with proposal to
+(expose no third-party APIs)[#expose-no-third-party-apis]; Angular
+API would be ubiquitously exposed.
+
+### Benefits
+
+* Removes a whole category of API (bundle definitions), reducing
+  learning curve associated with the software.
+* Closer to Angular style, reducing disconnect between learning
+  Angular and learning Open MCT Web (reducing burden of having
+  to learn multiple paradigms.)
+* Clarifies "what can be found where" (albeit not perfectly)
+  since you can look to module dependencies and follow back from there.
+
+### Detriments
+
+* Hardens dependency on Angular.
+* Increases depth of understanding required of Angular.
+* Increases amount of boilerplate (since a lot of this has
+  been short-handed by existing framework layer.)
