@@ -5033,21 +5033,7 @@ span.req {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*.abs.search-holder {
-	//@include test(#990000);
-	height: $treeSearchInputBarH;
-	bottom: 0;s
-	&.active {
-		height: auto;
-		bottom: 0;
-	}
-	top: 23px;
-
-	// Align with the top of the divider bar, below create button
-	//margin-top: 10px; // CH comment out
-	z-index:5;
-}*/
-/* line 38, ../../../../general/res/sass/search/_search.scss */
+/* line 23, ../../../../general/res/sass/search/_search.scss */
 .clear-icon,
 .menu-icon {
   cursor: pointer;
@@ -5069,20 +5055,20 @@ span.req {
   -webkit-transition-delay: 0;
   transition-delay: 0; }
 
-/* line 47, ../../../../general/res/sass/search/_search.scss */
+/* line 32, ../../../../general/res/sass/search/_search.scss */
 .clear-icon:before {
   content: '\e607'; }
 
-/* line 55, ../../../../general/res/sass/search/_search.scss */
+/* line 40, ../../../../general/res/sass/search/_search.scss */
 .holder-search .search-bar {
   font-size: 0.8em;
   max-width: 250px;
   position: relative; }
-  /* line 64, ../../../../general/res/sass/search/_search.scss */
+  /* line 49, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-bar .search-input {
     height: 25px;
     line-height: 25px; }
-  /* line 69, ../../../../general/res/sass/search/_search.scss */
+  /* line 54, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-bar:before,
   .holder-search .search-bar .clear-icon,
   .holder-search .search-bar .menu-icon {
@@ -5096,16 +5082,16 @@ span.req {
     position: absolute;
     text-align: center;
     top: 4px; }
-  /* line 82, ../../../../general/res/sass/search/_search.scss */
+  /* line 67, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-bar .search-input {
     position: relative;
     width: 100%;
     padding-left: 22px !important;
     padding-right: 44px !important; }
-    /* line 89, ../../../../general/res/sass/search/_search.scss */
+    /* line 74, ../../../../general/res/sass/search/_search.scss */
     .holder-search .search-bar .search-input input {
       width: inherit; }
-  /* line 94, ../../../../general/res/sass/search/_search.scss */
+  /* line 79, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-bar:before {
     content: '\4d';
     font-family: symbolsfont;
@@ -5127,40 +5113,40 @@ span.req {
     -webkit-transition-delay: 0;
     transition-delay: 0;
     pointer-events: none; }
-  /* line 104, ../../../../general/res/sass/search/_search.scss */
+  /* line 89, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-bar:hover:before {
     color: #8c8c8c; }
-  /* line 108, ../../../../general/res/sass/search/_search.scss */
+  /* line 93, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-bar .clear-icon {
     right: 22px;
     visibility: hidden;
     opacity: 0; }
-    /* line 114, ../../../../general/res/sass/search/_search.scss */
+    /* line 99, ../../../../general/res/sass/search/_search.scss */
     .holder-search .search-bar .clear-icon.show {
       visibility: visible;
       opacity: 1; }
-    /* line 119, ../../../../general/res/sass/search/_search.scss */
+    /* line 104, ../../../../general/res/sass/search/_search.scss */
     .holder-search .search-bar .clear-icon:hover {
       color: #8c8c8c; }
-  /* line 124, ../../../../general/res/sass/search/_search.scss */
+  /* line 109, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-bar .menu-icon {
     font-size: 0.8em;
     padding-right: 4px;
     right: 4px;
     text-align: right; }
-    /* line 126, ../../../../general/res/sass/search/_search.scss */
+    /* line 111, ../../../../general/res/sass/search/_search.scss */
     .holder-search .search-bar .menu-icon:before {
       content: '\76'; }
-    /* line 132, ../../../../general/res/sass/search/_search.scss */
+    /* line 117, ../../../../general/res/sass/search/_search.scss */
     .holder-search .search-bar .menu-icon:hover {
       color: #8c8c8c; }
-  /* line 137, ../../../../general/res/sass/search/_search.scss */
+  /* line 122, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-bar .search-menu-holder {
     float: right;
     left: -20px;
     z-index: 70;
     transition: visibility .05s, opacity .05s; }
-/* line 145, ../../../../general/res/sass/search/_search.scss */
+/* line 130, ../../../../general/res/sass/search/_search.scss */
 .holder-search .active-filter-display {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -5168,7 +5154,7 @@ span.req {
   line-height: 130%;
   padding-left: 1.4625em;
   font-size: 0.65em; }
-  /* line 158, ../../../../general/res/sass/search/_search.scss */
+  /* line 139, ../../../../general/res/sass/search/_search.scss */
   .holder-search .active-filter-display .clear-filters-icon {
     color: #a6a6a6;
     opacity: 1;
@@ -5176,7 +5162,7 @@ span.req {
     position: absolute;
     left: 1px;
     cursor: pointer; }
-/* line 171, ../../../../general/res/sass/search/_search.scss */
+/* line 149, ../../../../general/res/sass/search/_search.scss */
 .holder-search .search-results {
   -moz-transition-property: opacity, visibility;
   -o-transition-property: opacity, visibility;
@@ -5193,17 +5179,18 @@ span.req {
   -moz-transition-delay: 0;
   -o-transition-delay: 0;
   -webkit-transition-delay: 0;
-  transition-delay: 0; }
-  /* line 175, ../../../../general/res/sass/search/_search.scss */
+  transition-delay: 0;
+  padding-right: 5px; }
+  /* line 152, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-results .hint {
     margin-bottom: 10px;
     font-size: 0.65em;
     opacity: 0.6; }
-  /* line 181, ../../../../general/res/sass/search/_search.scss */
+  /* line 157, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-results.active {
     visibility: visible;
     opacity: 1; }
-  /* line 185, ../../../../general/res/sass/search/_search.scss */
+  /* line 161, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-results .load-more-button {
     -moz-transform: translateX(-50%);
     -ms-transform: translateX(-50%);
