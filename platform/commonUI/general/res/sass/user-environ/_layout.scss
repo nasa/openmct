@@ -46,31 +46,6 @@
     }
 }
 
-// .bar and following commented out as part of refactor to use flex layout for this stuff
-//.bar {
-/*    .icon.major {
-        margin-right: $interiorMargin;
-    }*/
-    //&.abs {
-        //text-wrap: none;
-        //white-space: nowrap;
-        //&.left,
-        //.left {
-        //    width: 45%;
-        //    right: auto;
-        //}
-        //&.right,
-        //.right {
-        //    width: 45%;
-        //    left: auto;
-        //    text-align: right;
-        //    .icon.major {
-        //        margin-left: $interiorMargin * 3;
-        //    }
-        //}
-    //}
-//}
-
 .user-environ {
     .browse-area,
     .editor {
@@ -139,14 +114,13 @@
     .split-pane-component.pane {
         //@include test(green);
         &.treeview.left {
-            min-width: 150px;
-            max-width: 800px;
+            min-width: $ueBrowseLeftPaneTreeMinW;
+            max-width: $ueBrowseLeftPaneTreeMaxW;
             width: $ueBrowseLeftPaneTreeW;
         }
         &.t-inspect.right {
-            min-width: 200px;
-            max-width: 600px;
-            //padding-left: $ueCollapsedPaneEdgeM; // Allow room for mini-tab element
+            min-width: $ueBrowseRightPaneInspectMinW;
+            max-width: $ueBrowseRightPaneInspectMaxW;
             width: $ueBrowseRightPaneInspectW;
             z-index: 3; // Must lift up beyond primary pane to allow overflow to go underneath
         }
@@ -179,30 +153,6 @@
         // Need to lift up this pane to ensure that 'collapsed' panes don't block user interactions
         z-index: 2;
     }
-
-    //&.treeview.left {
-        // Converted to flex layout
-
-        //.create-btn-holder {
-        //    //bottom: auto;
-        //    //top: 0;
-        //    height: $ueTopBarH;
-        //    .wrapper.menu-element {
-        //        position: absolute;
-        //        bottom: $interiorMargin;
-        //    }
-        //}
-        //.holder-treeview-elements{
-        //
-        //}
-        //.search-holder {
-        //    top: $ueTopBarH + $interiorMarginLg;
-        //}
-        //.tree-holder {
-        //    overflow: auto;
-        //    top: $ueTopBarH + $interiorMarginLg + $treeSearchInputBarH + $interiorMargin;
-        //}
-    //}
 
     .mini-tab-icon.toggle-pane {
         //@include test(blue, 0.3);
@@ -382,6 +332,9 @@
 }
 
 @include desktop {
+    .holder-all {
+        min-width: $ueDesktopMinW;
+    }
     .pane.treeview.left .tree-holder {
         padding-right: $interiorMargin;
     }
