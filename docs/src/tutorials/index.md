@@ -95,7 +95,7 @@ example/persistence.
     "platform/features/scrolling",
     "platform/forms",
     "platform/persistence/queue",
---  "platform/persistence/elastic",
+-   "platform/persistence/elastic",
     "platform/policy",
 
     "example/generator"
@@ -105,28 +105,28 @@ __bundles.json__
 
 #### Bundle After
 ```diff
-    [
-        "platform/framework",
-        "platform/core",
-        "platform/representation",
-        "platform/commonUI/about",
-        "platform/commonUI/browse",
-        "platform/commonUI/edit",
-        "platform/commonUI/dialog",
-        "platform/commonUI/general",
-        "platform/containment",
-        "platform/telemetry",
-        "platform/features/layout",
-        "platform/features/pages",
-        "platform/features/plot",
-        "platform/features/scrolling",
-        "platform/forms",
-        "platform/persistence/queue",
-        "platform/policy",
-    
-    ++  "example/persistence",
-        "example/generator"
-    ]
+[
+    "platform/framework",
+    "platform/core",
+    "platform/representation",
+    "platform/commonUI/about",
+    "platform/commonUI/browse",
+    "platform/commonUI/edit",
+    "platform/commonUI/dialog",
+    "platform/commonUI/general",
+    "platform/containment",
+    "platform/telemetry",
+    "platform/features/layout",
+    "platform/features/pages",
+    "platform/features/plot",
+    "platform/features/scrolling",
+    "platform/forms",
+    "platform/persistence/queue",
+    "platform/policy",
+
++   "example/persistence",
+    "example/generator"
+]
 ```
 __bundles.json__
 	
@@ -184,69 +184,72 @@ We will create this file in the directory tutorials/todo (we can hereafter refer
 to this plugin as tutorials/todo as well.) We will start with an “empty bundle”, 
 one which exposes no extensions - which looks like:
 
-    {
-        "name": "To-do Plugin",
-        "description": "Allows creating and editing to-do lists.",
-        "extensions": {
-    
-        }
-    }
+```diff
+{
+    "name": "To-do Plugin",
+    "description": "Allows creating and editing to-do lists.",
+    "extensions": {
 
+    }
+}
+```
 __tutorials/todo/bundle.json__
 
 We will also include this in our list of active bundles.
 
 #### Before
-    [
-        "platform/framework",
-        "platform/core",
-        "platform/representation",
-        "platform/commonUI/about",
-        "platform/commonUI/browse",
-        "platform/commonUI/edit",
-        "platform/commonUI/dialog",
-        "platform/commonUI/general",
-        "platform/containment",
-        "platform/telemetry",
-        "platform/features/layout",
-        "platform/features/pages",
-        "platform/features/plot",
-        "platform/features/scrolling",
-        "platform/forms",
-        "platform/persistence/queue",
-        "platform/policy",
-    
-        "example/persistence",
-        "example/generator"
+[
+    "platform/framework",
+    "platform/core",
+    "platform/representation",
+    "platform/commonUI/about",
+    "platform/commonUI/browse",
+    "platform/commonUI/edit",
+    "platform/commonUI/dialog",
+    "platform/commonUI/general",
+    "platform/containment",
+    "platform/telemetry",
+    "platform/features/layout",
+    "platform/features/pages",
+    "platform/features/plot",
+    "platform/features/scrolling",
+    "platform/forms",
+    "platform/persistence/queue",
+    "platform/policy",
+
+    "example/persistence",
+    "example/generator"
     ]
 __bundles.json__
 
 #### After
-    [
-        "platform/framework",
-        "platform/core",
-        "platform/representation",
-        "platform/commonUI/about",
-        "platform/commonUI/browse",
-        "platform/commonUI/edit",
-        "platform/commonUI/dialog",
-        "platform/commonUI/general",
-        "platform/containment",
-        "platform/telemetry",
-        "platform/features/layout",
-        "platform/features/pages",
-        "platform/features/plot",
-        "platform/features/scrolling",
-        "platform/forms",
-        "platform/persistence/queue",
-        "platform/policy",
-    
-        "example/persistence",
-        "example/generator",
-    
-    ++  "tutorials/todo"     
-    ]
-    
+
+```diff
+[
+    "platform/framework",
+    "platform/core",
+    "platform/representation",
+    "platform/commonUI/about",
+    "platform/commonUI/browse",
+    "platform/commonUI/edit",
+    "platform/commonUI/dialog",
+    "platform/commonUI/general",
+    "platform/containment",
+    "platform/telemetry",
+    "platform/features/layout",
+    "platform/features/pages",
+    "platform/features/plot",
+    "platform/features/scrolling",
+    "platform/forms",
+    "platform/persistence/queue",
+    "platform/policy",
+
+    "example/persistence",
+    "example/generator",
+
++   "tutorials/todo"     
+]
+```    
 __bundles.json__
 
 At this point, we can reload Open MCT Web. We haven’t introduced any new 
@@ -269,22 +272,23 @@ deeper explanation of domain objects, see the Open MCT Web Developer Guide.)
 In the case of our to-do list feature, the to-do list itself is the thing we’ll 
 want users to be able to create and edit. So, we will add that as a new type in 
 our bundle definition:
-    
-    {
-        "name": "To-do Plugin",
-        "description": "Allows creating and editing to-do lists.",
-        "extensions": {
-    ++      "types": [
-    ++          {
-    ++              "key": "example.todo",
-    ++              "name": "To-Do List",
-    ++              "glyph": "j",
-    ++              "description": "A list of things that need to be done.",
-    ++              "features": ["creation"]
-    ++          }
-            ]
-        }
+```diff    
+{
+    "name": "To-do Plugin",
+    "description": "Allows creating and editing to-do lists.",
+    "extensions": {
++      "types": [
++          {
++              "key": "example.todo",
++              "name": "To-Do List",
++              "glyph": "j",
++              "description": "A list of things that need to be done.",
++              "features": ["creation"]
++          }
+        ]
     }
+}
+```
 __tutorials/todo/bundle.json__
 
 What have we done here? We’ve stated that this bundle includes extensions of the 

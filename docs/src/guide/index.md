@@ -1234,8 +1234,8 @@ A view's selection state is, conceptually, a set of JavaScript objects. The
 presence of methods/properties on these objects determine which toolbar controls 
 are visible, and what state they manage and/or behavior they invoke. 
 
-This set may contain up to two different objects: The  _view proxy _, which is 
-used to make changes to the view as a whole, and the _ selected object _, which is 
+This set may contain up to two different objects: The  _view proxy_, which is 
+used to make changes to the view as a whole, and the _selected object_, which is 
 used to represent some state within the view. (Future versions of Open MCT Web 
 may support multiple selected objects.) 
 
