@@ -92,7 +92,7 @@
                 "provides": "actionService",
                 "type": "provider",
                 "implementation": "actions/ActionProvider.js",
-                "depends": [ "actions[]" ]
+                "depends": [ "actions[]", "$log" ]
             },
             {
                 "provides": "actionService",

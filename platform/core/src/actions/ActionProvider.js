@@ -39,8 +39,10 @@ define(
          * @imeplements {ActionService}
          * @constructor
          */
-        function ActionProvider(actions) {
+        function ActionProvider(actions, $log) {
             var self = this;
+
+            this.$log = $log;
 
             // Build up look-up tables
             this.actions = actions;
@@ -74,6 +76,7 @@ define(
             var context = (actionContext || {}),
                 category = context.category,
                 key = context.key,
+                $log = this.$log,
                 candidates;
 
             // Instantiate an action; invokes the constructor and
@@ -103,12 +106,31 @@ define(
             // appliesTo method of given actions (if defined), and
             // instantiate those applicable actions.
             function createIfApplicable(actions, context) {
-                return (actions || []).filter(function (Action) {
-                    return Action.appliesTo ?
-                        Action.appliesTo(context) : true;
-                }).map(function (Action) {
-                    return instantiateAction(Action, context);
-                });
+                function isApplicable(Action) {
+                    return Action.appliesTo ? Action.appliesTo(context) : true;
+                }
+
+                function instantiate(Action) {
+                    try {
+                        return instantiateAction(Action, context);
+                    } catch (e) {
+                        $log.error([
+                            "Could not instantiate action",
+                            Action.key,
+                            "due to:",
+                            e.message
+                        ].join(" "));
+                        return undefined;
+                    }
+                }
+
+                function isDefined(action) {
+                    return action !== undefined;
+                }
+
+                return (actions || []).filter(isApplicable)
+                    .map(instantiate)
+                    .filter(isDefined);
             }
 
             // Match actions to the provided context by comparing "key"
