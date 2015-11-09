@@ -207,7 +207,7 @@
             {
                 "key": "instantiation",
                 "implementation": "capabilities/InstantiationCapability.js",
-                "depends": [ "$injector" ]
+                "depends": [ "$injector", "identifierService" ]
             }
         ],
         "services": [
