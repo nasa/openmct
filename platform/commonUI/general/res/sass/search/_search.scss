@@ -20,21 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*.abs.search-holder {
-	//@include test(#990000);
-	height: $treeSearchInputBarH;
-	bottom: 0;s
-	&.active {
-		height: auto;
-		bottom: 0;
-	}
-	top: 23px;
-
-	// Align with the top of the divider bar, below create button
-	//margin-top: 10px; // CH comment out
-	z-index:5;
-}*/
-
 .clear-icon,
 .menu-icon {
     cursor: pointer;
@@ -146,14 +131,10 @@
 		//order: 2;
 		$s: 0.65em;
 		$p: $interiorMargin;
-		//@include border-radius($basicCr);
 		@include box-sizing(border-box);
 		line-height: 130%;
-		//padding: $p 0;
 		padding-left: $s * 2.25;
 		font-size: $s;
-		//margin-top: $interiorMarginSm;
-
 
 		.clear-filters-icon {
 			color: $colorInputIcon;
@@ -163,20 +144,15 @@
 			left: 1px;
 			cursor: pointer;
 		}
-
-		// Transition looks weird when the results list has none
-		//transition: visibility .2s, opacity .2s;
 	}
 
 	.search-results {
         @include trans-prop-nice((opacity, visibility), 250ms);
-        //visibility: hidden;
-        //opacity: 0;
+		padding-right: $interiorMargin;
         .hint {
             margin-bottom: $interiorMarginLg;
             font-size: 0.65em;
             opacity: 0.6;
-            //padding: 0 $interiorMargin;
         }
         &.active {
             visibility: visible;
