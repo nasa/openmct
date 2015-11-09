@@ -110,23 +110,6 @@
 	}
 }
 
-.split-layout {
-    .split-pane-component.pane {
-        //@include test(green);
-        &.treeview.left {
-            min-width: $ueBrowseLeftPaneTreeMinW;
-            max-width: $ueBrowseLeftPaneTreeMaxW;
-            width: $ueBrowseLeftPaneTreeW;
-        }
-        &.t-inspect.right {
-            min-width: $ueBrowseRightPaneInspectMinW;
-            max-width: $ueBrowseRightPaneInspectMaxW;
-            width: $ueBrowseRightPaneInspectW;
-            z-index: 3; // Must lift up beyond primary pane to allow overflow to go underneath
-        }
-    }
-}
-
 .edit-mode {
     .split-layout {
         .split-pane-component.pane.right {
@@ -335,6 +318,25 @@
     .holder-all {
         min-width: $ueDesktopMinW;
     }
+
+    .split-layout {
+        .split-pane-component.pane {
+            //@include test(green);
+            &.treeview.left {
+                min-width: $ueBrowseLeftPaneTreeMinW;
+                max-width: $ueBrowseLeftPaneTreeMaxW;
+                width: $ueBrowseLeftPaneTreeW;
+            }
+            &.t-inspect.right {
+                min-width: $ueBrowseRightPaneInspectMinW;
+                max-width: $ueBrowseRightPaneInspectMaxW;
+                width: $ueBrowseRightPaneInspectW;
+                z-index: 3; // Must lift up beyond primary pane to allow overflow to go underneath
+            }
+        }
+    }
+
+
     .pane.treeview.left .tree-holder {
         padding-right: $interiorMargin;
     }
