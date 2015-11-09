@@ -77,33 +77,34 @@ MCT Web repository) and replace platform/persistence/elastic with
 example/persistence.
 
 #### Bundle Before
+```diff
+[
+    "platform/framework",
+    "platform/core",
+    "platform/representation",
+    "platform/commonUI/about",
+    "platform/commonUI/browse",
+    "platform/commonUI/edit",
+    "platform/commonUI/dialog",
+    "platform/commonUI/general",
+    "platform/containment",
+    "platform/telemetry",
+    "platform/features/layout",
+    "platform/features/pages",
+    "platform/features/plot",
+    "platform/features/scrolling",
+    "platform/forms",
+    "platform/persistence/queue",
+--  "platform/persistence/elastic",
+    "platform/policy",
 
-    [
-        "platform/framework",
-        "platform/core",
-        "platform/representation",
-        "platform/commonUI/about",
-        "platform/commonUI/browse",
-        "platform/commonUI/edit",
-        "platform/commonUI/dialog",
-        "platform/commonUI/general",
-        "platform/containment",
-        "platform/telemetry",
-        "platform/features/layout",
-        "platform/features/pages",
-        "platform/features/plot",
-        "platform/features/scrolling",
-        "platform/forms",
-        "platform/persistence/queue",
-    --  "platform/persistence/elastic",
-        "platform/policy",
-    
-        "example/generator"
-    ]
+    "example/generator"
+]
+```
 __bundles.json__
 
 #### Bundle After
-
+```diff
     [
         "platform/framework",
         "platform/core",
@@ -126,6 +127,7 @@ __bundles.json__
     ++  "example/persistence",
         "example/generator"
     ]
+```
 __bundles.json__
 	
 ### Run a Web Server
