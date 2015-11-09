@@ -181,7 +181,7 @@ define(
          * @typedef DialogOption
          * @property {string} label a label to be displayed as the button
          * text for this action
-         * @property {function} action a function to be called when the
+         * @property {function} callback a function to be called when the
          * button is clicked
          */
 

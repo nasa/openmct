@@ -38,7 +38,7 @@
                 "provides": "objectService",
                 "type": "provider",
                 "implementation": "objects/DomainObjectProvider.js",
-                "depends": [ "modelService", "capabilityService", "$q" ]
+                "depends": [ "modelService", "instantiate" ]
             },
             {
                 "provides": "capabilityService",
@@ -205,8 +205,8 @@
                 "depends": [ "$q" ]
             },
             {
-                "key": "creation",
-                "implementation": "capabilities/CreationCapability.js",
+                "key": "instantiation",
+                "implementation": "capabilities/InstantiationCapability.js",
                 "depends": [ "$injector" ]
             }
         ],
@@ -228,6 +228,11 @@
                 "key": "contextualize",
                 "implementation": "services/Contextualize.js",
                 "depends": [ "$log" ]
+            },
+            {
+                "key": "instantiate",
+                "implementation": "services/Instantiate.js",
+                "depends": [ "capabilityService" ]
             }
         ],
         "roots": [

@@ -27,32 +27,18 @@ define(
         'use strict';
 
         /**
-         * Implements the `creation` capability. This allows new domain
+         * Implements the `instantiation` capability. This allows new domain
          * objects to be instantiated.
          *
          * @constructor
          * @memberof platform/core
          * @param $injector Angular's `$injector`
          */
-        function CreationCapability($injector, identifierService, domainObject) {
+        function InstantiationCapability($injector, identifierService, domainObject) {
             this.$injector = $injector;
             this.identifierService = identifierService;
             this.domainObject = domainObject;
         }
-
-        /**
-         * Alias of `capabilityService.getCapabilities`; handles lazy loading
-         * of `capabilityService`, since it cannot be declared as a
-         * dependency directly without creating a cycle.
-         * @private
-         */
-        CreationCapability.prototype.getCapabilities = function (model) {
-            if (!this.capabilityService) {
-                this.capabilityService =
-                    this.$injector.get('capabilityService');
-            }
-            return this.capabilityService.getCapabilities(model);
-        };
 
         /**
          * Instantiate a new domain object with the provided model.
@@ -63,23 +49,27 @@ define(
          *
          * @returns {DomainObject} the new domain object
          */
-        CreationCapability.prototype.create = function (model) {
+        InstantiationCapability.prototype.instantiate = function (model) {
             var parsedId =
                     this.identifierService.parse(this.domainObject.getId()),
                 space = parsedId.getDefinedSpace(),
-                id = this.identifierService.generate(space),
-                capabilities = this.getCapabilities(model);
+                id = this.identifierService.generate(space);
 
-            return new DomainObjectImpl(id, model, capabilities);
+            // Lazily initialize; instantiate depends on capabilityService,
+            // which depends on all capabilities, including this one.
+            this.instantiateFn = this.instantiateFn ||
+                this.$injector.get("instantiate");
+
+            return this.instantiateFn(model, id);
         };
 
         /**
-         * Alias of `create`.
-         * @see {platform/core.CreationCapability#create}
+         * Alias of `instantiate`.
+         * @see {platform/core.CreationCapability#instantiate}
          */
-        CreationCapability.prototype.invoke =
-            CreationCapability.prototype.create;
+        InstantiationCapability.prototype.invoke =
+            InstantiationCapability.prototype.instantiate;
 
-        return CreationCapability;
+        return InstantiationCapability;
     }
 );

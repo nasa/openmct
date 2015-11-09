@@ -23,7 +23,11 @@
 /*global define */
 
 define(
-    function () {
+    [
+        "uuid",
+        "./CopyTask"
+    ],
+    function (uuid, CopyTask) {
         "use strict";
 
         /**
@@ -34,10 +38,12 @@ define(
          * @memberof platform/entanglement
          * @implements {platform/entanglement.AbstractComposeService}
          */
-        function CopyService($q, creationService, policyService) {
+        function CopyService($q, creationService, policyService, persistenceService, now) {
             this.$q = $q;
             this.creationService = creationService;
             this.policyService = policyService;
+            this.persistenceService = persistenceService;
+            this.now = now;
         }
 
         CopyService.prototype.validate = function (object, parentCandidate) {
@@ -54,45 +60,25 @@ define(
             );
         };
 
+        /**
+         * Creates a duplicate of the object tree starting at domainObject to
+         * the new parent specified.
+         * @param domainObject
+         * @param parent
+         * @param progress
+         * @returns a promise that will be completed with the clone of
+         * domainObject when the duplication is successful.
+         */
         CopyService.prototype.perform = function (domainObject, parent) {
-            var model = JSON.parse(JSON.stringify(domainObject.getModel())),
-                $q = this.$q,
-                self = this;
-
-            // Wrapper for the recursive step
-            function duplicateObject(domainObject, parent) {
-                return self.perform(domainObject, parent);
-            }
-
-            if (!this.validate(domainObject, parent)) {
+            var $q = this.$q,
+                copyTask = new CopyTask(domainObject, parent, this.persistenceService, this.$q, this.now);
+            if (this.validate(domainObject, parent)) {
+                return copyTask.perform();
+            } else {
                 throw new Error(
                     "Tried to copy objects without validating first."
                 );
             }
-
-            if (domainObject.hasCapability('composition')) {
-                model.composition = [];
-            }
-
-            return this.creationService
-                .createObject(model, parent)
-                .then(function (newObject) {
-                    if (!domainObject.hasCapability('composition')) {
-                        return;
-                    }
-
-                    return domainObject
-                        .useCapability('composition')
-                        .then(function (composees) {
-                            // Duplicate composition serially to prevent
-                            // write conflicts.
-                            return composees.reduce(function (promise, composee) {
-                                return promise.then(function () {
-                                    return duplicateObject(composee, newObject);
-                                });
-                            }, $q.when(undefined));
-                        });
-                });
         };
 
         return CopyService;
