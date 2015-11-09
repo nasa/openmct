@@ -137,17 +137,9 @@
 		.search-menu-holder {
 			float: right;
 			left: -20px;
-			z-index: 3;
+			z-index: 70;
 			transition: visibility .05s, opacity .05s;
 		}
-
-		//// Hovering reveals menu
-		//.menu-icon:hover + div.search-menu-holder {
-		//	visibility: visible;
-		//}
-		//div.search-menu-holder:hover {
-		//	visibility: visible;
-		//}
 	}
 
 	.active-filter-display {

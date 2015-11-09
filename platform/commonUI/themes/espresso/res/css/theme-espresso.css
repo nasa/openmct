@@ -5236,9 +5236,9 @@ span.req {
   .holder-search .search-bar .search-menu-holder {
     float: right;
     left: -20px;
-    z-index: 3;
+    z-index: 70;
     transition: visibility .05s, opacity .05s; }
-/* line 153, ../../../../general/res/sass/search/_search.scss */
+/* line 145, ../../../../general/res/sass/search/_search.scss */
 .holder-search .active-filter-display {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -5246,7 +5246,7 @@ span.req {
   line-height: 130%;
   padding-left: 1.4625em;
   font-size: 0.65em; }
-  /* line 166, ../../../../general/res/sass/search/_search.scss */
+  /* line 158, ../../../../general/res/sass/search/_search.scss */
   .holder-search .active-filter-display .clear-filters-icon {
     color: #737373;
     opacity: 1;
@@ -5254,7 +5254,7 @@ span.req {
     position: absolute;
     left: 1px;
     cursor: pointer; }
-/* line 179, ../../../../general/res/sass/search/_search.scss */
+/* line 171, ../../../../general/res/sass/search/_search.scss */
 .holder-search .search-results {
   -moz-transition-property: opacity, visibility;
   -o-transition-property: opacity, visibility;
@@ -5272,16 +5272,16 @@ span.req {
   -o-transition-delay: 0;
   -webkit-transition-delay: 0;
   transition-delay: 0; }
-  /* line 183, ../../../../general/res/sass/search/_search.scss */
+  /* line 175, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-results .hint {
     margin-bottom: 10px;
     font-size: 0.65em;
     opacity: 0.6; }
-  /* line 189, ../../../../general/res/sass/search/_search.scss */
+  /* line 181, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-results.active {
     visibility: visible;
     opacity: 1; }
-  /* line 193, ../../../../general/res/sass/search/_search.scss */
+  /* line 185, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-results .load-more-button {
     -moz-transform: translateX(-50%);
     -ms-transform: translateX(-50%);
