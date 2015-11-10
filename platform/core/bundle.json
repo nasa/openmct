@@ -188,7 +188,7 @@
             {
                 "key": "persistence",
                 "implementation": "capabilities/PersistenceCapability.js",
-                "depends": [ "persistenceService", "PERSISTENCE_SPACE" ]
+                "depends": [ "persistenceService", "identifierService" ]
             },
             {
                 "key": "metadata",
