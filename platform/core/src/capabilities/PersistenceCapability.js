@@ -44,12 +44,16 @@ define(
          * @constructor
          * @implements {Capability}
          */
-        function PersistenceCapability(persistenceService, space, domainObject) {
+        function PersistenceCapability(
+            persistenceService,
+            identifierService,
+            domainObject
+        ) {
             // Cache modified timestamp
             this.modified = domainObject.getModel().modified;
 
             this.domainObject = domainObject;
-            this.space = space;
+            this.identifierService = identifierService;
             this.persistenceService = persistenceService;
         }
 
@@ -135,11 +139,8 @@ define(
          *          be used to persist this object
          */
         PersistenceCapability.prototype.getSpace = function () {
-            if (this.domainObject.getId().indexOf(":") !== -1) {
-                return this.domainObject.getId().split(":")[0];
-            }
-
-            return this.space;
+            var id = this.domainObject.getId();
+            return this.identifierService.parse(id).getSpace();
         };
 
         return PersistenceCapability;
