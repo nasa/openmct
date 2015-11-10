@@ -34,8 +34,9 @@ define(
          * @constructor
          * @memberof platform/entanglement
          */
-        function MoveAction(locationService, moveService, context) {
+        function MoveAction(policyService, locationService, moveService, context) {
             return new AbstractComposeAction(
+                policyService,
                 locationService,
                 moveService,
                 context,

@@ -34,16 +34,30 @@ define(
          * @constructor
          * @memberof platform/entanglement
          */
-        function CopyAction($log, locationService, copyService, dialogService, 
-                            notificationService, context) {
+        function CopyAction(
+            $log,
+            policyService,
+            locationService,
+            copyService,
+            dialogService,
+            notificationService,
+            context
+        ) {
             this.dialog = undefined;
             this.notification = undefined;
             this.dialogService = dialogService;
             this.notificationService = notificationService;
             this.$log = $log;
             //Extend the behaviour of the Abstract Compose Action
-            AbstractComposeAction.call(this, locationService, copyService, 
-                context, "Duplicate", "to a location");
+            AbstractComposeAction.call(
+                this,
+                policyService,
+                locationService,
+                copyService,
+                context,
+                "Duplicate",
+                "to a location"
+            );
         }
 
         /**
@@ -87,8 +101,8 @@ define(
         };
 
         /**
-         * Executes the CopyAction. The CopyAction uses the default behaviour of 
-         * the AbstractComposeAction, but extends it to support notification 
+         * Executes the CopyAction. The CopyAction uses the default behaviour of
+         * the AbstractComposeAction, but extends it to support notification
          * updates of progress on copy.
          */
         CopyAction.prototype.perform = function() {

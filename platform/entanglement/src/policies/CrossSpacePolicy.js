@@ -22,29 +22,44 @@
 
 /*global define */
 define(
-    ['./AbstractComposeAction'],
-    function (AbstractComposeAction) {
-        "use strict";
+    [],
+    function () {
+        'use strict';
 
-        /**
-         * The LinkAction is available from context menus and allows a user to
-         * link an object to another location of their choosing.
-         *
-         * @implements {Action}
-         * @constructor
-         * @memberof platform/entanglement
-         */
-        function LinkAction(policyService, locationService, linkService, context) {
-            return new AbstractComposeAction(
-                policyService,
-                locationService,
-                linkService,
-                context,
-                "Link"
-            );
+        var DISALLOWED_ACTIONS = [
+            "move",
+            "copy",
+            "link",
+            "compose"
+        ];
+
+        function CrossSpacePolicy() {
         }
 
-        return LinkAction;
+        function lookupSpace(domainObject) {
+            var persistence = domainObject &&
+                domainObject.getCapability("persistence");
+            return persistence && persistence.getSpace();
+        }
+
+        function isCrossSpace(context) {
+            var domainObject = context.domainObject,
+                selectedObject = context.selectedObject,
+                spaces = [ domainObject, selectedObject ].map(lookupSpace);
+            return spaces[0] === spaces[1];
+        }
+
+        CrossSpacePolicy.prototype.allow = function (action, context) {
+            var key = action.getMetadata().key;
+
+            if (DISALLOWED_ACTIONS.indexOf(key) !== -1) {
+                return !isCrossSpace(context);
+            }
+
+            return true;
+        };
+
+        return CrossSpacePolicy;
+
     }
 );
-

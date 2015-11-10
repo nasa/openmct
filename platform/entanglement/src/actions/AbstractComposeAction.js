@@ -71,7 +71,14 @@ define(
          * @param {string} [suffix] a string to display in the dialog title;
          *        default is "to a new location"
          */
-        function AbstractComposeAction(locationService, composeService, context, verb, suffix) {
+        function AbstractComposeAction(
+            policyService,
+            locationService,
+            composeService,
+            context,
+            verb,
+            suffix
+        ) {
             if (context.selectedObject) {
                 this.newParent = context.domainObject;
                 this.object = context.selectedObject;
@@ -83,16 +90,27 @@ define(
                 .getCapability('context')
                 .getParent();
 
+            this.context = context;
+            this.policyService = policyService;
             this.locationService = locationService;
             this.composeService = composeService;
             this.verb = verb || "Compose";
             this.suffix = suffix || "to a new location";
         }
 
+        AbstractComposeAction.prototype.cloneContext = function () {
+            var clone = {}, original = this.context;
+            Object.keys(original).forEach(function (k) {
+                clone[k] = original[k];
+            });
+            return clone;
+        };
+
         AbstractComposeAction.prototype.perform = function () {
             var dialogTitle,
                 label,
                 validateLocation,
+                self = this,
                 locationService = this.locationService,
                 composeService = this.composeService,
                 currentParent = this.currentParent,
@@ -109,7 +127,11 @@ define(
             label = this.verb + " To";
 
             validateLocation = function (newParent) {
-                return composeService.validate(object, newParent);
+                var newContext = self.cloneContext();
+                newContext.selectedObject =  object;
+                newContext.domainObject = newParent;
+                return composeService.validate(object, newParent) &&
+                    self.policyService.allow("action", self, newContext);
             };
 
             return locationService.getLocationFromUser(
