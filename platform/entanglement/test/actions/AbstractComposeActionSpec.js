@@ -34,6 +34,7 @@ define(
         describe("Move/copy/link Actions", function () {
 
             var action,
+                policyService,
                 locationService,
                 locationServicePromise,
                 composeService,
@@ -44,6 +45,11 @@ define(
                 newParent;
 
             beforeEach(function () {
+                policyService = jasmine.createSpyObj(
+                    'policyService',
+                    [ 'allow' ]
+                );
+
                 selectedObjectContextCapability = jasmine.createSpyObj(
                     'selectedObjectContextCapability',
                     [
@@ -87,6 +93,8 @@ define(
                     ]
                 );
 
+                policyService.allow.andReturn(true);
+
                 locationService
                     .getLocationFromUser
                     .andReturn(locationServicePromise);
@@ -102,6 +110,7 @@ define(
                     };
 
                     action = new AbstractComposeAction(
+                        policyService,
                         locationService,
                         composeService,
                         context,
@@ -153,6 +162,7 @@ define(
                     };
 
                     action = new AbstractComposeAction(
+                        policyService,
                         locationService,
                         composeService,
                         context,
