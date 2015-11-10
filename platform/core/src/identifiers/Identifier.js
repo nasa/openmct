@@ -38,7 +38,7 @@ define(
             if (separatorIndex > -1) {
                 this.key = id.substring(separatorIndex + 1);
                 this.space = id.substring(0, separatorIndex);
-                this.definedSpace = this.pace;
+                this.definedSpace = this.space;
             } else {
                 this.key = id;
                 this.space = defaultSpace;

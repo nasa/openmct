@@ -22,8 +22,8 @@
 /*global define,Promise*/
 
 define(
-    ['../objects/DomainObjectImpl', 'uuid'],
-    function (DomainObjectImpl, uuid) {
+    ['../objects/DomainObjectImpl'],
+    function (DomainObjectImpl) {
         'use strict';
 
         /**
