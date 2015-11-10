@@ -207,7 +207,8 @@
             },
             {
                 "key": "topic",
-                "implementation": "services/Topic.js"
+                "implementation": "services/Topic.js",
+                "depends": [ "$log" ]
             },
             {
                 "key": "contextualize",

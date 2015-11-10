@@ -28,13 +28,18 @@ define(
 
         describe("The 'topic' service", function () {
             var topic,
+                mockLog,
                 testMessage,
                 mockCallback;
 
             beforeEach(function () {
                 testMessage = { someKey: "some value"};
+                mockLog = jasmine.createSpyObj(
+                    '$log',
+                    [ 'error', 'warn', 'info', 'debug' ]
+                );
                 mockCallback = jasmine.createSpy('callback');
-                topic = new Topic();
+                topic = new Topic(mockLog);
             });
 
             it("notifies listeners on a topic", function () {
