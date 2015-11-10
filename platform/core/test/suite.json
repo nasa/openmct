@@ -9,6 +9,7 @@
     "capabilities/ContextualDomainObject",
     "capabilities/CoreCapabilityProvider",
     "capabilities/DelegationCapability",
+    "capabilities/InstantiationCapability",
     "capabilities/MetadataCapability",
     "capabilities/MutationCapability",
     "capabilities/PersistenceCapability",
@@ -25,6 +26,7 @@
     "objects/DomainObjectProvider",
 
     "services/Contextualize",
+    "services/Instantiate",
     "services/Now",
     "services/Throttle",
     "services/Topic",

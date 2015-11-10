@@ -30,9 +30,7 @@ define(
         "use strict";
 
         describe("The creation service", function () {
-            var mockPersistenceService,
-                mockNow,
-                mockQ,
+            var mockQ,
                 mockLog,
                 mockParentObject,
                 mockNewObject,
@@ -40,7 +38,9 @@ define(
                 mockPersistenceCapability,
                 mockCompositionCapability,
                 mockContextCapability,
+                mockCreationCapability,
                 mockCapabilities,
+                mockNewPersistenceCapability,
                 creationService;
 
             function mockPromise(value) {
@@ -60,11 +60,6 @@ define(
             }
 
             beforeEach(function () {
-                mockPersistenceService = jasmine.createSpyObj(
-                    "persistenceService",
-                    [ "createObject" ]
-                );
-                mockNow = jasmine.createSpy('now');
                 mockQ = { when: mockPromise, reject: mockReject };
                 mockLog = jasmine.createSpyObj(
                     "$log",
@@ -76,7 +71,7 @@ define(
                 );
                 mockNewObject = jasmine.createSpyObj(
                     "newObject",
-                    [ "getId" ]
+                    [ "getId", "getCapability", "useCapability" ]
                 );
                 mockMutationCapability = jasmine.createSpyObj(
                     "mutation",
@@ -94,18 +89,21 @@ define(
                     "context",
                     ["getPath"]
                 );
+                mockCreationCapability = jasmine.createSpyObj(
+                    "creation",
+                    ["instantiate", "invoke"]
+                );
                 mockCapabilities = {
                     mutation: mockMutationCapability,
                     persistence: mockPersistenceCapability,
                     composition: mockCompositionCapability,
-                    context: mockContextCapability
+                    context: mockContextCapability,
+                    instantiation: mockCreationCapability
                 };
-
-                mockPersistenceService.createObject.andReturn(
-                    mockPromise(true)
+                mockNewPersistenceCapability = jasmine.createSpyObj(
+                    "new-persistence",
+                    [ "persist", "getSpace" ]
                 );
-
-                mockNow.andReturn(12321);
 
                 mockParentObject.getCapability.andCallFake(function (key) {
                     return mockCapabilities[key];
@@ -115,9 +113,16 @@ define(
                 });
                 mockParentObject.getId.andReturn('parentId');
 
-                mockPersistenceCapability.persist.andReturn(
-                    mockPromise(true)
-                );
+                mockNewObject.getId.andReturn('newId');
+                mockNewObject.getCapability.andCallFake(function (c) {
+                    return c === 'persistence' ?
+                            mockNewPersistenceCapability : undefined;
+                });
+
+                mockPersistenceCapability.persist
+                    .andReturn(mockPromise(true));
+                mockNewPersistenceCapability.persist
+                    .andReturn(mockPromise(true));
 
                 mockMutationCapability.invoke.andReturn(mockPromise(true));
                 mockPersistenceCapability.getSpace.andReturn("testSpace");
@@ -125,10 +130,12 @@ define(
                     mockPromise([mockNewObject])
                 );
                 mockCompositionCapability.add.andReturn(mockPromise(true));
+                mockCreationCapability.instantiate.andReturn(mockNewObject);
+                mockCreationCapability.invoke.andCallFake(function (model) {
+                    return mockCreationCapability.instantiate(model);
+                });
 
                 creationService = new CreationService(
-                    mockPersistenceService,
-                    mockNow,
                     mockQ,
                     mockLog
                 );
@@ -137,21 +144,18 @@ define(
             it("allows new objects to be created", function () {
                 var model = { someKey: "some value" };
                 creationService.createObject(model, mockParentObject);
-                expect(mockPersistenceService.createObject).toHaveBeenCalledWith(
-                    "testSpace",
-                    jasmine.any(String), // the object id; generated UUID
-                    model
-                );
+                expect(mockCreationCapability.instantiate)
+                    .toHaveBeenCalledWith(model);
             });
 
-            it("adds new id's to the parent's composition", function () {
+            it("adds new objects to the parent's composition", function () {
                 var model = { someKey: "some value" },
                     parentModel = { composition: ["notAnyUUID"] };
                 creationService.createObject(model, mockParentObject);
 
                 // Verify that a new ID was added
                 expect(mockCompositionCapability.add)
-                    .toHaveBeenCalledWith(jasmine.any(String));
+                    .toHaveBeenCalledWith(mockNewObject);
             });
 
             it("provides the newly-created object", function () {
@@ -207,11 +211,6 @@ define(
                 expect(mockLog.error).toHaveBeenCalled();
             });
 
-            it("attaches a 'persisted' timestamp", function () {
-                var model = { someKey: "some value" };
-                creationService.createObject(model, mockParentObject);
-                expect(model.persisted).toEqual(mockNow());
-            });
 
         });
     }

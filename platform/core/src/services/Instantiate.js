@@ -19,45 +19,36 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/*global define,Promise*/
 
-/*global require,window*/
-var allTestFiles = [];
-var TEST_REGEXP = /(Spec)\.js$/;
+define(
+    ['../objects/DomainObjectImpl', 'uuid'],
+    function (DomainObjectImpl, uuid) {
+        'use strict';
 
-var pathToModule = function(path) {
-    return path.replace(/^\/base\//, '').replace(/\.js$/, '');
-};
-
-Object.keys(window.__karma__.files).forEach(function(file) {
-    if (TEST_REGEXP.test(file)) {
-        // Normalize paths to RequireJS module names.
-        allTestFiles.push(pathToModule(file));
-    }
-});
-
-// Force es6-promise to load.
-allTestFiles.unshift('es6-promise');
-
-require.config({
-    // Karma serves files from the basePath defined in karma.conf.js
-    baseUrl: '/base',
-
-    paths: {
-        'es6-promise': 'platform/framework/lib/es6-promise-2.0.0.min',
-        'moment': 'platform/telemetry/lib/moment.min',
-        'moment-duration-format': 'platform/features/clock/lib/moment-duration-format',
-        'uuid': 'platform/core/lib/uuid'
-    },
-
-    shim: {
-        'moment-duration-format': {
-            deps: [ 'moment' ]
+        /**
+         * The `instantiate` service allows new domain object instances to be
+         * created. These objects are not persisted to any back-end or
+         * placed anywhere in the object hierarchy by default.
+         *
+         * Usage: `instantiate(model, [id])`
+         *
+         * ...returns a new instance of a domain object with the specified
+         * model. An identifier may be provided; if omitted, one will be
+         * generated instead.
+         *
+         * @constructor
+         * @memberof platform/core
+         * @param $injector Angular's `$injector`
+         */
+        function Instantiate(capabilityService) {
+            return function (model, id) {
+                var capabilities = capabilityService.getCapabilities(model);
+                id = id || uuid();
+                return new DomainObjectImpl(id, model, capabilities);
+            };
         }
-    },
 
-    // dynamically load all test files
-    deps: allTestFiles,
-
-    // we have to kickoff jasmine, as it is asynchronous
-    callback: window.__karma__.start
-});
+        return Instantiate;
+    }
+);
