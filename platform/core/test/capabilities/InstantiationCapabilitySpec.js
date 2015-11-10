@@ -28,19 +28,40 @@ define(
 
         describe("The 'instantiation' capability", function () {
             var mockInjector,
+                mockIdentifierService,
                 mockInstantiate,
+                mockIdentifier,
+                mockDomainObject,
                 instantiation;
 
             beforeEach(function () {
                 mockInjector = jasmine.createSpyObj("$injector", ["get"]);
                 mockInstantiate = jasmine.createSpy("instantiate");
+                mockIdentifierService = jasmine.createSpyObj(
+                    'identifierService',
+                    [ 'parse', 'generate' ]
+                );
+                mockIdentifier = jasmine.createSpyObj(
+                    'identifier',
+                    [ 'getSpace', 'getKey', 'getDefinedSpace' ]
+                );
+                mockDomainObject = jasmine.createSpyObj(
+                    'domainObject',
+                    [ 'getId', 'getCapability', 'getModel' ]
+                );
 
                 mockInjector.get.andCallFake(function (key) {
                     return key === 'instantiate' ?
                             mockInstantiate : undefined;
                 });
+                mockIdentifierService.parse.andReturn(mockIdentifier);
+                mockIdentifierService.generate.andReturn("some-id");
 
-                instantiation = new InstantiationCapability(mockInjector);
+                instantiation = new InstantiationCapability(
+                    mockInjector,
+                    mockIdentifierService,
+                    mockDomainObject
+                );
             });
 
 
@@ -59,7 +80,8 @@ define(
                 mockInstantiate.andReturn(mockDomainObject);
                 expect(instantiation.instantiate(testModel))
                     .toBe(mockDomainObject);
-                expect(mockInstantiate).toHaveBeenCalledWith(testModel);
+                expect(mockInstantiate)
+                    .toHaveBeenCalledWith(testModel, jasmine.any(String));
             });
 
         });
