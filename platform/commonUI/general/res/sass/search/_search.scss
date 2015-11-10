@@ -20,30 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-.abs.search-holder {
-	//@include test(#990000);
-	height: $treeSearchInputBarH;
-	bottom: 0;
-	&.active {
-		height: auto;
-		bottom: 0;
-	}
-	top: 23px;
-
-	// Align with the top of the divider bar, below create button
-	//margin-top: 10px; // CH comment out
-	z-index:5;
+.clear-icon,
+.menu-icon {
+    cursor: pointer;
+    font-family: symbolsfont;
+    @include trans-prop-nice((opacity, color), 150ms);
 }
 
-.search {
+.clear-icon {
+    // 'x' in circle icon
+    &:before {
+        content: '\e607';
+    }
+}
+
+.holder-search {
 	$iconWidth: 20px;
-	$leftMargin: 6px;
-	$rightPadding: 5px;
-	@include webkitVal(display, flex);
-	//display: flex;
-	@include webkitProp(flex-direction, column);
-	//flex-direction: column;
-	height: 100%;
 
 	.search-bar {
 		$textInputHeight: 19px; // This is equal to the default value, 19px
@@ -52,37 +44,24 @@
 		font-size: 0.8em;
 		max-width: 250px;
 		position: relative;
-		width: 100%;
-		.search-input,
-		.search-icon {
-		}
-		
+
 		.search-input {
 			height: $treeSearchInputBarH;
 			line-height: $treeSearchInputBarH;
-			padding-top: 0;
-			padding-bottom: 0;
 		}
 		
-		.search-icon,
+		&:before,
 		.clear-icon,
 		.menu-icon {
-			//@include test(#008800);
 			@include box-sizing(border-box);
 			color: $colorInputIcon;
-			height: $iconD; width: $iconD;
+			height: $iconD;
+            width: $iconD;
 			line-height: $iconD;
 			position: absolute;
 			text-align: center;
 			top: $iconEdgeM;
 		}
-
-		.clear-icon,
-		.menu-icon {
-			cursor: pointer;
-			@include transition(color, .25s);
-		}
-
 
 		.search-input {
 			position: relative;
@@ -92,31 +71,21 @@
 
 			// Make work for mct-control textfield
 			input {
-				width: 100%;
+				width: inherit; // was 100%
 			}
 		}
 
-		.search-icon {
-			//color: $colorItemFg;
-			left: $interiorMarginSm;
-			transition: visibility .15s, opacity .15s, color .2s;
-			pointer-events: none;
-
-			&.content {
-				// Make icon invisible whenever there is text input
-				//visibility: hidden;
-				//opacity: 0;
-			}
-		}
-
-		// Make icon invisible when the text input is focused
-		.search-input:focus + div.search-icon {
-			//visibility: hidden;
-			//opacity: 0;
-		}
+		&:before {
+            // Magnify glass icon
+            content:'\4d';
+            font-family: symbolsfont;
+            left: $interiorMarginSm;
+            @include trans-prop-nice(color, 250ms);
+            pointer-events: none;
+        }
 
 		// Make icon lighten when hovering over search bar
-		.search-input:hover + div.search-icon {
+		&:hover:before {
 			color: pullForward($colorInputIcon, 10%);
 		}
 
@@ -124,13 +93,10 @@
 			right: $iconD + $interiorMargin;
 
 			// Icon is visible only when there is text input
-			visibility: hidden;
+            visibility: hidden;
 			opacity: 0;
-
-			transition: visibility .15s, opacity .15s, color .2s;
-
-			&.content {
-				visibility: visible;
+			&.show {
+                visibility: visible;
 				opacity: 1;
 			}
 
@@ -140,6 +106,8 @@
 		}
 
 		.menu-icon {
+            // 'v' invoke menu icon
+            &:before { content: '\76'; }
 			font-size: 0.8em;
 			padding-right: $iconEdgeM;
 			right: $iconEdgeM;
@@ -152,43 +120,19 @@
 
 		.search-menu-holder {
 			float: right;
-			//margin-top: $textInputHeight - 2px;
-			//left: -50px;
 			left: -20px;
-
-			z-index: 1;
-
+			z-index: 70;
 			transition: visibility .05s, opacity .05s;
-
-			&.off {
-				visibility: hidden;
-				opacity: 0;
-			}
-		}
-
-		// Hovering reveals menu
-		.menu-icon:hover + div.search-menu-holder {
-			visibility: visible;
-		}
-		div.search-menu-holder:hover {
-			visibility: visible;
 		}
 	}
 
 	.active-filter-display {
-		//order: 2;
 		$s: 0.65em;
 		$p: $interiorMargin;
-		@include border-radius($basicCr);
 		@include box-sizing(border-box);
 		line-height: 130%;
-		padding: $p 0;
 		padding-left: $s * 2.25;
 		font-size: $s;
-		//background-color: rgba(#000, 0.3);
-		//border-radius: $basicCr;
-		margin-top: $interiorMarginSm;
-
 
 		.clear-filters-icon {
 			color: $colorInputIcon;
@@ -198,43 +142,28 @@
 			left: 1px;
 			cursor: pointer;
 		}
-
-		// Transition looks weird when the results list has none
-		//transition: visibility .2s, opacity .2s;
-
-		&.off {
-			visibility: hidden;
-			opacity: 0;
-			height: 0;
-			margin: 0;
-			padding: 0;
-			border: 0;
-		}
 	}
 
-	.search-scroll {
-		order: 3;
-		margin-top: 4px;
-
-		// Adjustable scrolling size
-		overflow-y: auto;
-		top: auto;
-		height: auto;
-		max-height: 100%;
-		position: relative;
-
-		.load-icon {
-			position: relative;
-		}
-
+	.search-results {
+        @include trans-prop-nice((opacity, visibility), 250ms);
+        margin-top: $interiorMarginLg; // Always include margin here to fend off the search input
+		padding-right: $interiorMargin;
+        .hint {
+            margin-bottom: $interiorMarginLg;
+            font-size: 0.65em;
+            opacity: 0.6;
+        }
+        &.active {
+            visibility: visible;
+            opacity: 1;
+        }
 		.load-more-button {
-			margin-top: $interiorMargin 0;
-			font-size: 0.8em;
-			position: relative;
-			left: 50%;
-			margin-left: -45px;
-			text-align: center;
-			width: 90px;
+            @include transform(translateX(-50%));
+            display: inline-block;
+			margin-top: $interiorMargin;
+            padding: 0 $interiorMarginLg;
+			font-size: 0.75em;
+			margin-left: 50%;
 			white-space: nowrap;
 		}
 	}

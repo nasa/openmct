@@ -35,15 +35,13 @@ $ltGamma: 20%;
 $btnFontSizeToH: 0.45;
 
 /************************** LAYOUT */
-$ueTopBarH: 24px; // Change when breadcrumb is enabled
+$ueTopBarH: 24px;
 $ueTopBarEditH: 30px;
 $ueTopBarBtnH: 35px;
 $ueFooterH: 25px;
 $ueColMargin: 1.5%;
 $ueAppLogoW: 105px;
 $ueEditToolBarH: 25px;
-$ueBrowseLeftPaneTreeW: 25%;
-$ueBrowseRightPaneInspectW: 20%;
 $ueCollapsedPaneEdgeM: 22px;
 $uePaneMiniTabH: $ueTopBarH;
 $uePaneMiniTabW: 9px;
@@ -51,6 +49,15 @@ $uePaneMiniTabCollapsedW: 11px;
 $ueEditLeftPaneW: 75%;
 $treeSearchInputBarH: 25px;
 $ueTimeControlH: (33px, 20px, 20px);
+// Panes
+$ueBrowseLeftPaneTreeMinW: 150px;
+$ueBrowseLeftPaneTreeMaxW: 35%;
+$ueBrowseLeftPaneTreeW: 25%;
+$ueBrowseRightPaneInspectMinW: 200px;
+$ueBrowseRightPaneInspectMaxW: 35%;
+$ueBrowseRightPaneInspectW: 20%;
+$ueDesktopMinW: 600px;
+
 // Overlay
 $ovrTopBarH: 45px;
 $ovrFooterH: 24px;

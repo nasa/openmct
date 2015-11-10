@@ -142,6 +142,16 @@ mct-container {
 	display: none !important;
 }
 
+.off {
+    visibility: hidden;
+    opacity: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    margin: 0 !important;
+}
+
 .sep {
 	color: rgba(#fff, 0.2);
 }

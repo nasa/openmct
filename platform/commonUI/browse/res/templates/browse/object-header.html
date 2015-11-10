@@ -19,12 +19,12 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class='object-header'>
-    <span class='type-icon ui-symbol'>{{type.getGlyph()}}</span>
-    <!--span class='type-name mobile-important-hide'>{{type.getName()}}</span-->
-    <span class="l-elem-wrapper l-flex">
-        <span ng-if="parameters.mode" class='action'>{{parameters.mode}}</span>
-        <span class='title-label'>{{model.name}}</span>
-        <mct-representation key="'menu-arrow'" mct-object='domainObject'></mct-representation>
-    </span>
-</div>
+<span class='type-icon ui-symbol flex-elem'>{{type.getGlyph()}}</span>
+<span class="l-elem-wrapper l-flex-row flex-elem grows">
+    <span ng-if="parameters.mode" class='action flex-elem'>{{parameters.mode}}</span>
+    <span class='title-label flex-elem flex-can-shrink'>{{model.name}}</span>
+    <mct-representation
+        key="'menu-arrow'"
+        mct-object='domainObject'
+        class="flex-elem"></mct-representation>
+</span>

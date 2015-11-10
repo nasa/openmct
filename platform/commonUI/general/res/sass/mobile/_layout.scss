@@ -36,16 +36,23 @@
         //@include test();
         @include slMenuTransitions;
         margin-left: 0 !important;
-        #content-area {
+        .holder-object-and-inspector {
             @include slMenuTransitions;
+            left: $bodyMargin;
+            right: $bodyMargin;
             opacity: 1;
         }
     }
 
-    .holder.holder-create-and-search {
-        right: $bodyMargin !important;
+    .create-btn-holder {
+        // Hide the create button by default in mobile;
+        // This can be overridden by the examples/mobile bundle
+        display: none;
     }
 
+    .holder.holder-treeview-elements {
+        right: $bodyMargin !important;
+    }
 
 // When the tree is hidden, these are the
     // classes used for the left menu and the
@@ -55,10 +62,6 @@
         // is hidden.
         .pane.left.treeview {
             @include trans-prop-nice(opacity, 150ms);
-            //right: 100% !important;
-            //width: auto !important;
-            //overflow-y: hidden;
-            //overflow-x: hidden;
             opacity: 0 !important;
         }
         .pane.right.items {
@@ -72,7 +75,6 @@
         // causing cut/copy/paste menu to
         // not appear. Should me moved in
         // future to properly work
-        //@include user-select(none);
 
         // Sets the left tree menu when the tree is shown.
         .pane.left.treeview {
@@ -100,7 +102,6 @@
     }
 
     .object-browse-bar {
-        //@include test();
         left: 45px !important;
         .context-available {
             opacity: 1 !important;
@@ -148,7 +149,7 @@
         .pane.right.items {
             left: 0 !important;
             @include transform(translateX($proporMenuOnly));
-            #content-area {
+            .holder-object-and-inspector {
                 opacity: 0;
             }
         }
