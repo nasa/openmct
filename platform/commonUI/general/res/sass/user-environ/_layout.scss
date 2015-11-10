@@ -309,12 +309,17 @@
             top: $bodyMargin;
             bottom: $bodyMargin;
         }
-        .holder-inspector-elements {
+        .holder-inspector {
             top: $bodyMargin;
             bottom: $bodyMargin;
             left: $bodyMargin;
             right: $bodyMargin;
-
+        }
+        .holder-elements {
+            top: 0;
+            bottom: $bodyMargin;
+            left: $bodyMargin;
+            right: $bodyMargin;
         }
     }
 }
