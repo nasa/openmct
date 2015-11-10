@@ -41,7 +41,6 @@
 		$textInputHeight: 19px; // This is equal to the default value, 19px
 		$iconEdgeM: 4px;
 		$iconD: $treeSearchInputBarH - ($iconEdgeM*2);
-        //@include test(red, 0.1);
 		font-size: 0.8em;
 		max-width: 250px;
 		position: relative;
@@ -128,7 +127,6 @@
 	}
 
 	.active-filter-display {
-		//order: 2;
 		$s: 0.65em;
 		$p: $interiorMargin;
 		@include box-sizing(border-box);

@@ -31,7 +31,7 @@
 }
 
 .contents {
-    $myM: 0; //$interiorMargin;
+    $myM: 0;
     box-sizing: border-box;
     position: absolute;
     top: $myM;
@@ -86,12 +86,10 @@
 		background: $colorFooterBg;
 		color: lighten($colorBodyBg, 30%);
 		font-size: .7rem;
-
 		.status-holder {
 			@include box-sizing(border-box);
 			@include absPosDefault($interiorMargin);
 			@include ellipsize();
-			//line-height: $ueFooterH - ($interiorMargin * 2);
 			right: 120px;
 			text-transform: uppercase;
 			z-index: 1;
@@ -138,7 +136,6 @@
     }
 
     .mini-tab-icon.toggle-pane {
-        //@include test(blue, 0.3);
         z-index: 5;
         @include desktop {
             $d: $uePaneMiniTabH;
@@ -250,7 +247,6 @@
 
 /***************************************************** OBJECT BROWSE BAR */
 .object-browse-bar {
-    //@include test(blue);
     @include absPosDefault(0, visible); // Must use visible to avoid hiding view switcher menu
     @include box-sizing(border-box);
     height: $ueTopBarH;
@@ -270,7 +266,6 @@
 // right representation.
 .pane-tree-hidden {
     // Sets the left tree menu when the tree is hidden.
-    //.pane.left.treeview,
     .tree-holder,
     .splitter-treeview,
     .holder-treeview-elements {
@@ -280,7 +275,6 @@
 
 .pane-tree-showing {
     // Sets the left tree menu when the tree is shown.
-    //.pane.left.treeview,
     .tree-holder,
     .splitter-treeview {
         @include trans-prop-nice(opacity, $dur: 250ms, $delay: 250ms);
@@ -320,7 +314,6 @@
     }
     .split-layout {
         .split-pane-component.pane {
-            //@include test(green);
             &.treeview.left {
                 min-width: $ueBrowseLeftPaneTreeMinW;
                 max-width: $ueBrowseLeftPaneTreeMaxW;

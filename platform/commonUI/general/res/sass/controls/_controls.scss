@@ -127,7 +127,6 @@ label.checkbox.custom {
         &:before {
             @include border-radius($basicCr * .75);
             background: $bg;
-            //border-bottom: 1px solid lighten($bg, 10%);
             @include box-shadow(inset rgba(black, 0.4) 0 1px 2px);
             box-sizing: border-box;
             content: " ";
@@ -202,7 +201,6 @@ label.checkbox.custom {
 
 /******************************************************** OBJECT-HEADER */
 .object-header {
-    //@include test();
     font-size: 1em;
 
     > .type-icon {
@@ -213,8 +211,6 @@ label.checkbox.custom {
     }
 
     .l-elem-wrapper {
-        //@include test(#66f, 0.2);
-        //@include justify-content(flex-start); // Commented out 11/6/15 open250
         mct-representation {
             // Holds the context-available item
             // Must have min-width to make flex work properly
@@ -228,19 +224,15 @@ label.checkbox.custom {
     }
 
     .title-label {
-        //@include test(green, 0.9);
         color: $colorObjHdrTxt;
         @include ellipsize();
-        //color: pushBack($colorBodyFg, 40%);
         @include webkitProp(flex, '0 1 auto');
         padding-right: 0.35em; // For context arrow. Done with em's so pad is relative to the scale of the text.
-        //position: relative;
     }
 
     .context-available {
         font-size: 0.7em;
         @include webkitProp(flex, '0 0 1');
-        //margin-right: $interiorMargin;
     }
 
     @include desktop {
@@ -303,7 +295,6 @@ label.checkbox.custom {
     @include border-radius($basicCr);
     @include boxIncised(0.3, 4px);
     background: $colorProgressBarOuter;
-    //border:1px solid $colorProgressBarOuter;
     .progress-amt {
         @include border-radius($basicCr);
         @include boxShdw();
@@ -343,8 +334,6 @@ label.checkbox.custom {
 .slider {
     $knobH: 100%; //14px;
     .slot {
-        //        @include border-radius($basicCr * .75);
-        //@include sliderTrack();
         width: auto;
         position: absolute;
         top: 0;
@@ -400,14 +389,11 @@ label.checkbox.custom {
     width: 230px;
     .l-month-year-pager {
         $pagerW: 20px;
-        //@include test();
-        //font-size: 0.8rem;
         height: $r1H;
         margin-bottom: $interiorMargin;
         position: relative;
         .pager,
         .val {
-            //@include test(red);
             @extend .abs;
         }
         .pager {
@@ -454,7 +440,6 @@ label.checkbox.custom {
         }
         li {
             @include flex(1 0);
-            //@include test();
             margin-left: 1px;
             padding: $interiorMargin;
             text-align: center;
@@ -512,8 +497,6 @@ label.checkbox.custom {
         @include background-image(linear-gradient(lighten($bg, $gr), $bg 20px));
         @include border-radius(2px);
         @include box-sizing(border-box);
-        //@include boxShdwSubtle();
-        //border-top: 1px solid lighten($bg, 20%);
         &:hover {
             @include background-image(linear-gradient(lighten($hc, $gr), $hc 20px));
         }

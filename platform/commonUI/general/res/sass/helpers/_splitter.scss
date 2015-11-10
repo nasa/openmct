@@ -43,7 +43,6 @@
         }
     }
     &:active {
-        //@include test();
         &:after {
             background-color: $colorSplitterActive !important;
         }
@@ -122,11 +121,3 @@
         }
     }
 }
-
-/*.browse-area .splitter {
-	top: 0; //$ueTopBarH + $interiorMarginLg;
-}
-
-.edit-area .splitter {
-	top: 0;
-}*/

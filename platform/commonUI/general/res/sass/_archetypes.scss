@@ -36,7 +36,6 @@
     .col {
         @include box-sizing(border-box);
         @include clearfix;
-        //		background: rgba(#ffcc00, 0.2);
         float: left;
         margin-left: $ueColMargin;
         padding-left: $interiorMargin;
@@ -97,9 +96,7 @@
 .l-flex-col {
     @include display-flex;
     @include flex-wrap(nowrap);
-    //@include flex(1 1 auto !important);
     .flex-elem {
-        //@include test(green, 0.1);
         min-height: 0; // Needed to allow element to shrink within parent
         position: relative;
         &:not(.grows) {
