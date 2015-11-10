@@ -65,6 +65,21 @@ define(
                 expect(mockCallback).toHaveBeenCalledWith(testMessage);
             });
 
+            it("is robust against errors thrown by listeners", function () {
+                var mockBadCallback = jasmine.createSpy("bad-callback"),
+                    t = topic();
+
+                mockBadCallback.andCallFake(function () {
+                    throw new Error("I'm afraid I can't do that.");
+                });
+
+                t.listen(mockBadCallback);
+                t.listen(mockCallback);
+
+                t.notify(testMessage);
+                expect(mockCallback).toHaveBeenCalledWith(testMessage);
+            });
+
         });
     }
 );
