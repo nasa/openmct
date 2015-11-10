@@ -119,6 +119,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/* REQUIRES /platform/commonUI/general/res/sass/mobile/_constants.scss */
 /*****************************************************************************
  * Open MCT Web, Copyright (c) 2014-2015, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -169,6 +170,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/* REQUIRES /platform/commonUI/general/res/sass/_constants.scss */
 /************************** MOBILE REPRESENTATION ITEMS DIMENSIONS */
 /************************** MOBILE TREE MENU DIMENSIONS */
 /************************** WINDOW DIMENSIONS FOR RWD */
@@ -3632,17 +3634,17 @@ mct-include.l-time-controller {
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 @media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
-  /* line 26, ../../../../general/res/sass/mobile/controls/_menus.scss */
-  .menu-element .super-menu {
+  /* line 25, ../../../../general/res/sass/mobile/controls/_menus.scss */
+  .super-menu {
     width: 250px;
     height: 250px; }
-    /* line 32, ../../../../general/res/sass/mobile/controls/_menus.scss */
-    .menu-element .super-menu .pane.left {
+    /* line 31, ../../../../general/res/sass/mobile/controls/_menus.scss */
+    .super-menu .pane.left {
       border-right: none;
       padding-right: 0;
       width: 100%; }
-    /* line 37, ../../../../general/res/sass/mobile/controls/_menus.scss */
-    .menu-element .super-menu .pane.right {
+    /* line 36, ../../../../general/res/sass/mobile/controls/_menus.scss */
+    .super-menu .pane.right {
       display: none; } }
 /********************************* FORMS */
 /*****************************************************************************
