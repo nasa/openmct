@@ -62,6 +62,8 @@ define(
          * @constructor
          * @private
          * @memberof platform/entanglement
+         * @param {PolicyService} policyService the policy service to use to
+         *        verify that variants of this action are allowed
          * @param {platform/entanglement.LocationService} locationService a
          *        service to request destinations from the user
          * @param {platform/entanglement.AbstractComposeService} composeService

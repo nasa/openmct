@@ -33,6 +33,14 @@ define(
             "compose"
         ];
 
+        /**
+         * This policy prevents performing move/copy/link actions across
+         * different persistence spaces (e.g. linking to an object in
+         * a private space from an object in a public space.)
+         * @memberof {platform/entanglement}
+         * @constructor
+         * @implements {Policy}
+         */
         function CrossSpacePolicy() {
         }
 

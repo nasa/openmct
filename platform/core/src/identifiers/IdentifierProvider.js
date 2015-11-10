@@ -28,11 +28,22 @@ define(
 
         /**
          * Parses and generates domain object identifiers.
+         * @param {string} defaultSpace the default persistence space
+         * @constructor
+         * @memberof {platform/core}
          */
         function IdentifierProvider(defaultSpace) {
             this.defaultSpace = defaultSpace;
         }
 
+        /**
+         * Generate a new domain object identifier. A persistence space
+         * may optionally be included; if not specified, no space will
+         * be encoded into the identifier.
+         * @param {string} [space] the persistence space to encode
+         *        in this identifier
+         * @returns {string} a new domain object identifier
+         */
         IdentifierProvider.prototype.generate = function (space) {
             var id = uuid();
             if (space !== undefined) {
@@ -41,6 +52,11 @@ define(
             return id;
         };
 
+        /**
+         * Parse a domain object identifier to examine its component
+         * parts (e.g. its persistence space.)
+         * @returns {platform/core.Identifier} the parsed identifier
+         */
         IdentifierProvider.prototype.parse = function (id) {
             return new Identifier(id, this.defaultSpace);
         };

@@ -33,6 +33,7 @@ define(
          * @constructor
          * @memberof platform/core
          * @param $injector Angular's `$injector`
+         * @implements {Capability}
          */
         function InstantiationCapability($injector, identifierService, domainObject) {
             this.$injector = $injector;
@@ -47,6 +48,7 @@ define(
          * have been persisted, nor will it have been added to the
          * composition of the object which exposed this capability.
          *
+         * @param {object} the model for the new domain object
          * @returns {DomainObject} the new domain object
          */
         InstantiationCapability.prototype.instantiate = function (model) {

@@ -36,10 +36,13 @@ define(
         };
 
         /**
+         * Aggregates multiple persistence providers, such that they can be
+         * utilized as if they were a single object.
          * @memberof platform/persistence/aggregator
          * @constructor
          * @implements {PersistenceService}
-         * @param q Angular's $q, for promises
+         * @param $q Angular's $q, for promises
+         * @param {PersistenceService[]} providers the providers to aggregate
          */
         function PersistenceAggregator($q, providers) {
             var providerMap = {};
