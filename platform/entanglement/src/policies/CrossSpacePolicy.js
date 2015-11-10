@@ -46,7 +46,9 @@ define(
             var domainObject = context.domainObject,
                 selectedObject = context.selectedObject,
                 spaces = [ domainObject, selectedObject ].map(lookupSpace);
-            return spaces[0] === spaces[1];
+            return selectedObject !== undefined &&
+                domainObject !== undefined &&
+                lookupSpace(domainObject) !== lookupSpace(selectedObject);
         }
 
         CrossSpacePolicy.prototype.allow = function (action, context) {
