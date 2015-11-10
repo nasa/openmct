@@ -44,6 +44,12 @@
         }
     }
 
+    .create-btn-holder {
+        // Hide the create button by default in mobile;
+        // This can be overridden by an example bundle to come
+        display: none;
+    }
+
     .holder.holder-treeview-elements {
         right: $bodyMargin !important;
     }
