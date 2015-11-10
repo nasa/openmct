@@ -78,6 +78,8 @@ define(
                 cachedObjects = [],
                 updater,
                 lastBounds,
+                lastRange,
+                lastDomain,
                 handle;
 
             // Populate the scope with axis information (specifically, options
@@ -120,16 +122,16 @@ define(
             // Reinstantiate the plot updater (e.g. because we have a
             // new subscription.) This will clear the plot.
             function recreateUpdater() {
-                updater = new PlotUpdater(
-                    handle,
-                    ($scope.axes[0].active || {}).key,
-                    ($scope.axes[1].active || {}).key,
-                    PLOT_FIXED_DURATION
-                );
-                self.limitTracker = new PlotLimitTracker(
-                    handle,
-                    ($scope.axes[1].active || {}).key
-                );
+                var domain = ($scope.axes[0].active || {}).key,
+                    range = ($scope.axes[1].active || {}).key,
+                    duration = PLOT_FIXED_DURATION;
+
+                updater = new PlotUpdater(handle, domain, range, duration);
+                lastDomain = domain;
+                lastRange = range;
+
+                self.limitTracker = new PlotLimitTracker(handle, range);
+
                 // Keep any externally-provided bounds
                 if (lastBounds) {
                     setBasePanZoom(lastBounds);
@@ -201,6 +203,24 @@ define(
                 }
             }
 
+            function requery() {
+                self.pending = true;
+                releaseSubscription();
+                subscribe($scope.domainObject);
+            }
+
+            function domainRequery(newDomain) {
+                if (newDomain !== lastDomain) {
+                    requery();
+                }
+            }
+
+            function rangeRequery(newRange) {
+                if (newRange !== lastRange) {
+                    requery();
+                }
+            }
+
             // Respond to a display bounds change (requery for data)
             function changeDisplayBounds(event, bounds) {
                 var domainAxis = $scope.axes[0];
@@ -208,12 +228,10 @@ define(
                 domainAxis.chooseOption(bounds.domain);
                 plotTelemetryFormatter
                     .setDomainFormat(domainAxis.active.format);
-
-                self.pending = true;
-                releaseSubscription();
-                subscribe($scope.domainObject);
                 setBasePanZoom(bounds);
+                requery();
             }
+
 
             function updateDomainFormat(format) {
                 plotTelemetryFormatter.setDomainFormat(format);
@@ -236,6 +254,10 @@ define(
                 new PlotAxis("domains", [], AXIS_DEFAULTS[0]),
                 new PlotAxis("ranges", [], AXIS_DEFAULTS[1])
             ];
+
+            // Watch for changes to the selected axis
+            $scope.$watch("axes[0].active.key", domainRequery);
+            $scope.$watch("axes[1].active.key", rangeRequery);
 
             // Subscribe to telemetry when a domain object becomes available
             $scope.$watch('domainObject', subscribe);
