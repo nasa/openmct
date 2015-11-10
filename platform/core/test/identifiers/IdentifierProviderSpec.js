@@ -25,5 +25,34 @@ define(
     ["../../src/identifiers/IdentifierProvider"],
     function (IdentifierProvider) {
         'use strict';
+
+        describe("IdentifierProvider", function () {
+            var defaultSpace,
+                provider;
+
+            beforeEach(function () {
+                defaultSpace = "some-default-space";
+                provider = new IdentifierProvider(defaultSpace);
+            });
+
+            it("generates unique identifiers", function () {
+                expect(provider.generate())
+                    .not.toEqual(provider.generate());
+            });
+
+            it("allows spaces to be specified for generated identifiers", function () {
+                var specificSpace = "some-specific-space",
+                    id = provider.generate(specificSpace);
+                expect(id).toEqual(jasmine.any(String));
+                expect(provider.parse(id).getDefinedSpace())
+                    .toEqual(specificSpace);
+            });
+
+            it("parses identifiers using the default space", function () {
+                expect(provider.parse("some-unprefixed-id").getSpace())
+                    .toEqual(defaultSpace);
+            });
+
+        });
     }
 );
