@@ -30,7 +30,8 @@ define(
         "use strict";
 
         describe("The action provider", function () {
-            var actions,
+            var mockLog,
+                actions,
                 actionProvider;
 
             function SimpleAction() {
@@ -62,6 +63,10 @@ define(
             MetadataAction.key = "metadata";
 
             beforeEach(function () {
+                mockLog = jasmine.createSpyObj(
+                    '$log',
+                    ['error', 'warn', 'info', 'debug']
+                );
                 actions = [
                     SimpleAction,
                     CategorizedAction,
@@ -136,6 +141,42 @@ define(
                 var provided = actionProvider.getActions({ key: "metadata" });
                 expect(provided[0].getMetadata()).toEqual("custom metadata");
             });
+
+            describe("when actions throw errors during instantiation", function () {
+                var errorText,
+                    provided;
+
+                beforeEach(function () {
+                    errorText = "some error text";
+
+                    function BadAction() {
+                        throw new Error(errorText);
+                    }
+
+                    provided = new ActionProvider(
+                        [ SimpleAction, BadAction ],
+                        mockLog
+                    ).getActions();
+                });
+
+                it("logs an error", function () {
+                    expect(mockLog.error)
+                        .toHaveBeenCalledWith(jasmine.any(String));
+                });
+
+                it("reports the error's message", function () {
+                    expect(
+                        mockLog.error.mostRecentCall.args[0].indexOf(errorText)
+                    ).not.toEqual(-1);
+                });
+
+                it("still provides valid actions", function () {
+                    expect(provided.length).toEqual(1);
+                    expect(provided[0].perform()).toEqual("simple");
+                });
+
+            });
+
 
         });
     }
