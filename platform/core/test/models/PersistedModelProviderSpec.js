@@ -33,13 +33,12 @@ define(
             var mockQ,
                 mockPersistenceService,
                 SPACE = "space0",
-                spaces = [ "space1" ],
                 modTimes,
                 mockNow,
                 provider;
 
             function mockPromise(value) {
-                return {
+                return (value || {}).then ? value : {
                     then: function (callback) {
                         return mockPromise(callback(value));
                     },
@@ -78,13 +77,14 @@ define(
                             persisted: 0
                         });
                     });
+                mockPersistenceService.listSpaces
+                    .andReturn(mockPromise([SPACE]));
 
                 provider = new PersistedModelProvider(
                     mockPersistenceService,
                     mockQ,
                     mockNow,
-                    SPACE,
-                    spaces
+                    SPACE
                 );
             });
 
@@ -98,25 +98,6 @@ define(
                 expect(models).toEqual({
                     a: { space: SPACE, id: "a", persisted: 0 },
                     x: { space: SPACE, id: "x", persisted: 0 },
-                    zz: { space: SPACE, id: "zz", persisted: 0 }
-                });
-            });
-
-
-            it("reads object models from multiple spaces", function () {
-                var models;
-
-                modTimes.space1 = {
-                    'x': 12321
-                };
-
-                provider.getModels(["a", "x", "zz"]).then(function (m) {
-                    models = m;
-                });
-
-                expect(models).toEqual({
-                    a: { space: SPACE, id: "a", persisted: 0 },
-                    x: { space: 'space1', id: "x", modified: 12321, persisted: 0 },
                     zz: { space: SPACE, id: "zz", persisted: 0 }
                 });
             });
