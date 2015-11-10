@@ -136,7 +136,7 @@
     @include flex-direction(column);
     .flex-elem {
         min-height: 0;
-        &:not(:first-child) { margin-top: $interiorMarginLg; }
+        &.holder:not(:last-child) { margin-bottom: $interiorMarginLg; }
     }
     .flex-container { @include flex-direction(column); }
 }

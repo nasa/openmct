@@ -183,7 +183,6 @@
             }
         }
     }
-
     &.items {
         .object-browse-bar {
             .left.abs,
@@ -302,6 +301,7 @@
         }
     }
 }
+
 .pane-inspect-hidden {
     .l-object-and-inspector {
         .t-inspect {
@@ -318,7 +318,6 @@
     .holder-all {
         min-width: $ueDesktopMinW;
     }
-
     .split-layout {
         .split-pane-component.pane {
             //@include test(green);
@@ -335,8 +334,6 @@
             }
         }
     }
-
-
     .pane.treeview.left .tree-holder {
         padding-right: $interiorMargin;
     }
