@@ -26,131 +26,130 @@
  */
 (function () {
     "use strict";
-    
+
     // An array of objects composed of domain object IDs and models
     // {id: domainObject's ID, model: domainObject's model}
-    var indexedItems = [];
-    
-    // Helper function for serach()
-    function convertToTerms(input) {
-        var terms = input;
-        // Shave any spaces off of the ends of the input
-        while (terms.substr(0, 1) === ' ') {
-            terms = terms.substring(1, terms.length);
-        }
-        while (terms.substr(terms.length - 1, 1) === ' ') {
-            terms = terms.substring(0, terms.length - 1);
-        }
-        
-        // Then split it at spaces and asterisks
-        terms = terms.split(/ |\*/);
-        
-        // Remove any empty strings from the terms
-        while (terms.indexOf('') !== -1) {
-            terms.splice(terms.indexOf(''), 1);
-        }
-        
-        return terms;
+    var indexedItems = [],
+        TERM_SPLITTER = /[ _\*]/;
+
+    function indexItem(id, model) {
+        var vector = {
+            name: model.name
+        };
+        vector.cleanName = model.name.trim();
+        vector.lowerCaseName = vector.cleanName.toLocaleLowerCase();
+        vector.terms = vector.lowerCaseName.split(TERM_SPLITTER);
+
+        indexedItems.push({
+            id: id,
+            vector: vector,
+            model: model
+        });
     }
-    
+
     // Helper function for search()
-    function scoreItem(item, input, terms) {
-        var name = item.model.name.toLocaleLowerCase(),
-            weight = 0.65,
-            score = 0.0,
-            i;
-
-        // Make the score really big if the item name and 
-        // the original search input are the same
-        if (name === input) {
-            score = 42;
-        }
-
-        for (i = 0; i < terms.length; i += 1) {
-            // Increase the score if the term is in the item name
-            if (name.indexOf(terms[i]) !== -1) {
-                score += 1;
-
-                // Add extra to the score if the search term exists
-                // as its own term within the items
-                if (name.split(' ').indexOf(terms[i]) !== -1) {
-                    score += 0.5;
-                }
-            }
-        }
-
-        return score * weight;
+    function convertToTerms(input) {
+        var query = {
+                exactInput: input
+            };
+        query.inputClean = input.trim();
+        query.inputLowerCase = query.inputClean.toLocaleLowerCase();
+        query.terms = query.inputLowerCase.split(TERM_SPLITTER);
+        query.exactTerms = query.inputClean.split(TERM_SPLITTER);
+        return query;
     }
-    
-    /** 
+
+    /**
      * Gets search results from the indexedItems based on provided search
-     *   input. Returns matching results from indexedItems, as well as the
-     *   timestamp that was passed to it.
-     * 
+     *   input. Returns matching results from indexedItems
+     *
      * @param data An object which contains:
      *           * input: The original string which we are searching with
-     *           * maxNumber: The maximum number of search results desired
-     *           * timestamp: The time identifier from when the query was made
+     *           * maxResults: The maximum number of search results desired
+     *           * queryId: an id identifying this query, will be returned.
      */
     function search(data) {
-        // This results dictionary will have domain object ID keys which 
-        // point to the value the domain object's score. 
-        var results = {},
-            input = data.input.toLocaleLowerCase(),
-            terms = convertToTerms(input),
+        // This results dictionary will have domain object ID keys which
+        // point to the value the domain object's score.
+        var results,
+            input = data.input,
+            query = convertToTerms(input),
             message = {
                 request: 'search',
                 results: {},
                 total: 0,
-                timestamp: data.timestamp,
-                timedOut: false
+                queryId: data.queryId
             },
-            score,
-            i,
-            id;
-        
-        // If the user input is empty, we want to have no search results.
-        if (input !== '') {
-            for (i = 0; i < indexedItems.length; i += 1) {
-                // If this is taking too long, then stop
-                if (Date.now() > data.timestamp + data.timeout) {
-                    message.timedOut = true;
-                    break;
-                }
-                
-                // Score and add items
-                score = scoreItem(indexedItems[i], input, terms);
-                if (score > 0) {
-                    results[indexedItems[i].id] = score;
-                    message.total += 1;
-                }
-            }
+            matches = {};
+
+        if (!query.inputClean) {
+            // No search terms, no results;
+            return message;
         }
-        
-        // Truncate results if there are more than maxResults
-        if (message.total > data.maxResults) {
-            i = 0;
-            for (id in results) {
-                message.results[id] = results[id];
-                i += 1;
-                if (i >= data.maxResults) {
-                    break;
+
+        // Two phases: find matches, then score matches.
+        // Idea being that match finding should be fast, so that future scoring
+        // operations process fewer objects.
+
+        query.terms.forEach(function findMatchingItems(term) {
+            indexedItems
+                .filter(function matchesItem(item) {
+                    return item.vector.lowerCaseName.indexOf(term) !== -1;
+                })
+                .forEach(function trackMatch(matchedItem) {
+                    if (!matches[matchedItem.id]) {
+                        matches[matchedItem.id] = {
+                            matchCount: 0,
+                            item: matchedItem
+                        };
+                    }
+                    matches[matchedItem.id].matchCount += 1;
+                });
+        });
+
+        // Then, score matching items.
+        results = Object
+            .keys(matches)
+            .map(function asMatches(matchId) {
+                return matches[matchId];
+            })
+            .map(function prioritizeExactMatches(match) {
+                if (match.item.vector.name === query.exactInput) {
+                    match.matchCount += 100;
+                } else if (match.item.vector.lowerCaseName ===
+                           query.inputLowerCase) {
+                   match.matchCount += 50;
                 }
-            }
-            // TODO: This seems inefficient.
-        } else {
-            message.results = results;
-        }
-        
+                return match;
+            })
+            .map(function prioritizeCompleteTermMatches(match) {
+                match.item.vector.terms.forEach(function (term) {
+                    if (query.terms.indexOf(term) !== -1) {
+                        match.matchCount += 0.5;
+                    }
+                });
+                return match;
+            })
+            .sort(function compare(a, b) {
+                if (a.matchCount > b.matchCount) {
+                    return -1;
+                }
+                if (a.matchCount < b.matchCount) {
+                    return 1;
+                }
+                return 0;
+            });
+
+        message.total = results.length;
+        message.results = results
+            .slice(0, data.maxResults);
+
         return message;
     }
-    
+
     self.onmessage = function (event) {
         if (event.data.request === 'index') {
-            indexedItems.push({
-                id: event.data.id,
-                model: event.data.model
-            });
+            indexItem(event.data.id, event.data.model);
         } else if (event.data.request === 'search') {
             self.postMessage(search(event.data));
         }

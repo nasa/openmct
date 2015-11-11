@@ -4,12 +4,12 @@
             {
                 "key": "mctInclude",
                 "implementation": "MCTInclude.js",
-                "depends": [ "templates[]", "$sce" ]
+                "depends": [ "templates[]", "templateLinker" ]
             },
             {
                 "key": "mctRepresentation",
                 "implementation": "MCTRepresentation.js",
-                "depends": [ "representations[]", "views[]", "representers[]", "$q", "$sce", "$log" ]
+                "depends": [ "representations[]", "views[]", "representers[]", "$q", "templateLinker", "$log" ]
             }
         ],
         "gestures": [
@@ -49,6 +49,12 @@
                 "key": "dndService",
                 "implementation": "services/DndService.js",
                 "depends": [ "$log" ]
+            },
+            {
+                "key": "templateLinker",
+                "implementation": "TemplateLinker.js",
+                "depends": [ "$templateRequest", "$sce", "$compile", "$log" ],
+                "comment": "For internal use by mct-include and mct-representation."
             }
         ],
         "actions": [

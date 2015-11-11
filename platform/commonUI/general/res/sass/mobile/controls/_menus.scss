@@ -22,21 +22,19 @@
 
 // Override the Create menu for mobile
 @include phoneandtablet {
-    .menu-element {
-        .super-menu {
-            $d: 250px;
-            width: $d;
-            height: $d;
+    .super-menu {
+        $d: 250px;
+        width: $d;
+        height: $d;
 
-            .pane {
-                &.left {
-                    border-right: none;
-                    padding-right: 0;
-                    width: 100%;
-                }
-                &.right {
-                    display: none;
-                }
+        .pane {
+            &.left {
+                border-right: none;
+                padding-right: 0;
+                width: 100%;
+            }
+            &.right {
+                display: none;
             }
         }
     }

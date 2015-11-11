@@ -23,19 +23,17 @@
     editBtns = [{ cssclass: 'save',title: 'Save' },{ cssclass: 'cancel',title: 'Discard Changes', action:'cancelEditing' }];
 "></div>
 <span ng-controller="BrowseObjectController">
-    <!--<a class="s-btn"
-       style="opacity: 0.9; position:absolute; right: 250px; z-index: 100"
-       ng-class="{ major:!editMode }"
-       ng-click="editMode = !editMode">Set EditMode to {{!editMode}}</a> -->
-    <div class="object-browse-bar bar l-flex">
-        <div class="items-select left">
+    <div class="object-browse-bar l-flex-row">
+        <div class="items-select left flex-elem l-flex-row grows">
             <mct-representation key="'back-arrow'"
                                 mct-object="domainObject"
-                                class="l-back"></mct-representation>
-            <mct-representation key="'object-header'" mct-object="domainObject">
+                                class="flex-elem l-back"></mct-representation>
+            <mct-representation key="'object-header'"
+                                mct-object="domainObject"
+                                class="l-flex-row flex-elem grows object-header">
             </mct-representation>
         </div>
-        <div class="btn-bar right">
+        <div class="btn-bar right l-flex-row flex-elem flex-justify-end flex-fixed">
             <mct-representation key="'switcher'"
                                 mct-object="domainObject"
                                 ng-model="representation">
@@ -48,6 +46,7 @@
             </mct-representation>
         </div>
     </div>
+
 
     <div class="l-object-wrapper"
          ng-class="{ active:editMode, 'edit-main':editMode}">

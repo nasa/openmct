@@ -39,6 +39,7 @@ define(
          */
         function TelemetryHandle($q, subscription) {
             var seriesMap = {},
+                active = true,
                 self = Object.create(subscription);
 
             // Request a telemetry series for this specific object
@@ -50,7 +51,7 @@ define(
                     // Store it for subsequent lookup
                     seriesMap[id] = series;
                     // Notify callback of new series data, if there is one
-                    if (callback) {
+                    if (callback && active) {
                         callback(telemetryObject, series);
                     }
                     // Pass it along for promise-chaining
@@ -61,6 +62,10 @@ define(
                 return telemetry.requestData(request).then(receiveSeries);
             }
 
+            self.unsubscribe = function () {
+                active = false;
+                return subscription.unsubscribe();
+            };
 
             /**
              * Get the most recently obtained telemetry data series associated

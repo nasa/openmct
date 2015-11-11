@@ -1,0 +1,32 @@
+<div class="l-message"
+     ng-class="'message-severity-' + ngModel.severity">
+    <div class="ui-symbol type-icon message-type"></div>
+    <div class="message-contents">
+        <div class="top-bar">
+            <div class="title">{{ngModel.title}}</div>
+            <div class="hint" ng-hide="ngModel.hint === undefined">{{ngModel.hint}}</div>
+        </div>
+        <div class="message-body">
+            <div class="message-action">
+                {{ngModel.actionText}}
+            </div>
+            <mct-include key="'progress-bar'"
+                         ng-model="ngModel"
+                         ng-show="ngModel.progress !== undefined || ngModel.unknownProgress"></mct-include>
+        </div>
+        <div class="bottom-bar">
+            <a ng-repeat="dialogOption in ngModel.options"
+               class="s-btn major"
+               ng-click="dialogOption.callback()">
+                {{dialogOption.label}}
+            </a>
+            <a class="s-btn major"
+               ng-if="ngModel.primaryOption"
+               ng-click="ngModel.primaryOption.callback()">
+                {{ngModel.primaryOption.label}}
+            </a>
+
+        </div>
+
+    </div>
+</div>

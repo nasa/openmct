@@ -34,10 +34,6 @@
 	font-style: normal;
 }
 
-.ui-symbol {
-	font-family: 'symbolsfont';
-}
-
 /************************** HTML ENTITIES */
 a {
 	color: $colorA;
@@ -55,7 +51,7 @@ body, html {
 	color: $colorBodyFg;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 100%;
-	//font-weight: 500;
+	font-weight: 200;
 	height: 100%;
 	width: 100%;
 	overflow: hidden;
@@ -148,6 +144,16 @@ mct-container {
 .hide,
 .hidden {
 	display: none !important;
+}
+
+.off {
+    visibility: hidden;
+    opacity: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    margin: 0 !important;
 }
 
 .sep {

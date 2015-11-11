@@ -25,14 +25,16 @@
  * DomainObjectProviderSpec. Created by vwoeltje on 11/6/14.
  */
 define(
-    ["../../src/objects/DomainObjectProvider"],
-    function (DomainObjectProvider) {
+    [
+        "../../src/objects/DomainObjectProvider",
+        "../../src/objects/DomainObjectImpl"
+    ],
+    function (DomainObjectProvider, DomainObjectImpl) {
         "use strict";
 
         describe("The domain object provider", function () {
             var mockModelService,
-                mockCapabilityService,
-                mockQ,
+                mockInstantiate,
                 provider;
 
             function mockPromise(value) {
@@ -57,18 +59,15 @@ define(
                     "modelService",
                     [ "getModels" ]
                 );
-                mockCapabilityService = jasmine.createSpyObj(
-                    "capabilityService",
-                    [ "getCapabilities" ]
-                );
-                mockQ = {
-                    when: mockPromise,
-                    all: mockAll
-                };
+                mockInstantiate = jasmine.createSpy("instantiate");
+
+                mockInstantiate.andCallFake(function (model, id) {
+                    return new DomainObjectImpl(id, model, {});
+                });
+
                 provider = new DomainObjectProvider(
                     mockModelService,
-                    mockCapabilityService,
-                    mockQ
+                    mockInstantiate
                 );
             });
 
@@ -86,6 +85,7 @@ define(
                     result;
                 mockModelService.getModels.andReturn(mockPromise({ a: model }));
                 result = provider.getObjects(ids).testValue;
+                expect(mockInstantiate).toHaveBeenCalledWith(model, 'a');
                 expect(result.a.getId()).toEqual("a");
                 expect(result.a.getModel()).toEqual(model);
             });

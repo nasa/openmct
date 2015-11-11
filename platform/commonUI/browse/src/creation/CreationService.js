@@ -25,8 +25,8 @@
  * Module defining CreateService. Created by vwoeltje on 11/10/14.
  */
 define(
-    ["../../lib/uuid"],
-    function (uuid) {
+    [],
+    function () {
         "use strict";
 
         var NON_PERSISTENT_WARNING =
@@ -42,11 +42,9 @@ define(
          * @memberof platform/commonUI/browse
          * @constructor
          */
-        function CreationService(persistenceService, now, $q, $log) {
-            this.persistenceService = persistenceService;
+        function CreationService($q, $log) {
             this.$q = $q;
             this.$log = $log;
-            this.now = now;
         }
 
         /**
@@ -70,26 +68,17 @@ define(
          */
         CreationService.prototype.createObject = function (model, parent) {
             var persistence = parent.getCapability("persistence"),
+                newObject = parent.useCapability("instantiation", model),
+                newObjectPersistence = newObject.getCapability("persistence"),
                 self = this;
-
-            // Persist the new domain object's model; it will be fully
-            // constituted as a domain object when loaded back, as all
-            // domain object models are.
-            function doPersist(space, id, model) {
-                return self.persistenceService.createObject(
-                    space,
-                    id,
-                    model
-                ).then(function () { return id; });
-            }
 
             // Add the newly-created object's id to the parent's
             // composition, so that it will subsequently appear
             // as a child contained by that parent.
-            function addToComposition(id, parent, parentPersistence) {
+            function addToComposition() {
                 var compositionCapability = parent.getCapability('composition'),
                     addResult = compositionCapability &&
-                        compositionCapability.add(id);
+                        compositionCapability.add(newObject);
 
                 return self.$q.when(addResult).then(function (result) {
                     if (!result) {
@@ -97,7 +86,7 @@ define(
                         return undefined;
                     }
 
-                    return parentPersistence.persist().then(function () {
+                    return persistence.persist().then(function () {
                         return result;
                     });
                 });
@@ -105,21 +94,13 @@ define(
 
             // We need the parent's persistence capability to determine
             // what space to create the new object's model in.
-            if (!persistence) {
+            if (!persistence || !newObjectPersistence) {
                 self.$log.warn(NON_PERSISTENT_WARNING);
                 return self.$q.reject(new Error(NON_PERSISTENT_WARNING));
             }
 
-            // We create a new domain object in three sequential steps:
-            // 1. Get a new UUID for the object
-            // 2. Create a model with that ID in the persistence space
-            // 3. Add that ID to
-            return self.$q.when(uuid()).then(function (id) {
-                model.persisted = self.now();
-                return doPersist(persistence.getSpace(), id, model);
-            }).then(function (id) {
-                return addToComposition(id, parent, persistence);
-            });
+            // Persist the new object, then add it to composition.
+            return newObjectPersistence.persist().then(addToComposition);
         };
 
 

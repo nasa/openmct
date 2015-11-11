@@ -86,27 +86,16 @@
                 //top: $ueBrowseGridItemTopBarH; bottom: $ueBrowseGridItemBottomBarH; //
                 line-height: $lh;
 	            z-index: 1;
-                .item-type {
-                    //@include trans-prop-nice("color", $transTime);
-                    @include absPosDefault($iconMargin, false);
-                    //@include test(red);
-                    //color: $colorItemIc;
-                    text-align: center;
+                .item-type,
+                .t-item-icon {
+                    //@include test();
+                    @include transform(translateX(-50%) translateY(-55%));
+                    position: absolute;
+                    top: 50%; left: 50%;
+                    //height: $iconD; width: $iconD;
                     font-size: $iconD * 0.95; //6em;
-                    line-height: $iconD;
-                    bottom: auto;
-                    height: $iconD;
-                    top: $iconMargin - 10;
-                    .l-icon-link {
-                        color: $colorIconLink;
-                        height: auto;
-                        line-height: 100%;
-                        position: absolute;
-                        font-size: 0.3em;
-                        left: 0px;
-                        bottom: 10px;
-                        z-index: 2;
-                    }
+                    //line-height: normal;
+                    //text-align: center;
                 }
                 .item-open {
                     @include trans-prop-nice("opacity", $transTime);

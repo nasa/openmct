@@ -43,6 +43,11 @@
 	}
 
 	&.create-btn {
+		&:before {
+			content:'\2b';
+			display: inline;
+			font-family: symbolsfont;
+		}
 		.title-label {
 			font-size: 1rem;
 		}
@@ -83,7 +88,7 @@
 		@include menuUlReset();
 		li {
 			@include box-sizing(border-box);
-			border-top: 1px solid lighten($colorMenuBg, 20%);
+			border-top: 1px solid pullForward($colorMenuBg, 10%);
 			color: pullForward($colorMenuBg, 60%);
 			line-height: $menuLineH;
 			padding: $interiorMarginSm $interiorMargin * 2 $interiorMarginSm ($interiorMargin * 2) + $treeTypeIconW;

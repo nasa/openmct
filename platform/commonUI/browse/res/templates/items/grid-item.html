@@ -26,14 +26,8 @@
             <div class='ui-symbol profile' title='Shared'>&#x4f;</div>
             <mct-representation class="desktop-hide" key="'info-button'" mct-object="domainObject"></mct-representation>
         </div>
-        <div class='item-main abs'>
-            <div class='ui-symbol icon lg item-type'>
-                {{type.getGlyph()}}
-                <span
-                    class="ui-symbol l-icon-link" title="This object is a link"
-                    ng-show="location.isLink()"
-                    ></span>
-            </div>
+        <div class='item-main abs lg'>
+            <span class="t-item-icon" ng-class="{ 'l-icon-link':location.isLink() }">{{type.getGlyph()}}</span>
             <div class='ui-symbol abs item-open'>}</div>
         </div>
         <div class='bottom-bar bar abs'>

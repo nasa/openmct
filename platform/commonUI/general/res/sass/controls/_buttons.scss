@@ -22,13 +22,17 @@
 $baseRatio: 1.5;
 $pad: $interiorMargin * $baseRatio;
 
-.s-btn {
-    @include box-sizing(border-box);
+.s-btn,
+.s-icon-btn {
     @include user-select(none);
     cursor: pointer;
     text-decoration: none;
     height: $btnStdH;
     line-height: $btnStdH;
+}
+
+.s-btn {
+    @include box-sizing(border-box);
     padding: 0 $pad;
     font-size: 0.7rem;
     vertical-align: top;
@@ -98,6 +102,160 @@ $pad: $interiorMargin * $baseRatio;
     &.show-thumbs {
         .icon:before {
             content: "\000039";
+        }
+    }
+}
+
+.s-icon-btn {
+    @extend .ui-symbol;
+    color: $colorBtnIcon;
+    &:hover {
+        color: lighten($colorBtnIcon, $ltGamma);
+    }
+}
+
+.mini-tab {
+    // Meant to be used as pane hide/show control elements in concert with mct-splitter
+    //@extend .ui-symbol;
+    @include desktop {
+        //@include test(green);
+        $iconH: $uePaneMiniTabH;
+        $iconW: $uePaneMiniTabW;
+        $iconInnerLR: 0;
+        $arwD: 9px;
+        $arwOffsetX: 0px;
+        $arwAnimOffsetX: 2px + $iconInnerLR;
+        $cBg: pullForward($colorBodyBg, 15%);
+        $cFg: $cBg;
+
+
+        @include border-radius($basicCr);
+        //@include boxShdw($shdwBtns);
+        @include box-sizing(border-box);
+        @include trans-prop-nice((color, background-color), 100ms);
+        color: $cFg;
+        cursor: pointer;
+        font-family: symbolsfont;
+        font-size: $arwD;
+        display: block;
+        position: absolute;
+        line-height: $iconH;
+        height: $iconH; width: $iconW;
+        text-align: center;
+
+        &:hover {
+            //background-color: $cBg;
+            color: $colorKey; //pullForward($cFg, $ltGamma);
+        }
+
+        &.collapsed {
+            // State when the pane this element controls has been collapsed
+            @include btnSubtle($colorBtnBg, $colorKey, $colorBtnFg, $colorBtnIcon);
+            &:before { opacity: 0; }
+            &:after { opacity: 1; }
+            &:hover {
+                &:before { opacity: 1; }
+                &:after { opacity: 0; }
+            }
+
+        }
+
+        &:before,
+        &:after {
+            //@include test();
+            @include trans-prop-nice((left, right, opacity), 250ms);
+            display: block;
+            height: 100%;
+            position: absolute;
+        }
+
+        &:before {
+            // Always the arrow icon
+            //@include test(green);
+            //font-size: $arwD;
+            width: $arwD;
+        }
+        &:after {
+            // Always icon; content is set in _layout.scss
+            width: 100%;
+            text-align: center;
+            opacity: 0;
+        }
+
+        &.anchor-left {
+            // |<
+            text-align: right;
+            &:before {
+                content:'\3c'; // Collapse left icon e613
+                right: $iconInnerLR;
+            }
+            //&:hover:before { right: $arwAnimOffsetX; }
+            &.collapsed {
+                @include border-left-radius(0);
+                text-align: left;
+                &:before {
+                    content:'\3e';
+                    left: $iconInnerLR;
+                }
+                &:hover:before { left: $arwAnimOffsetX; }
+            }
+        }
+        &.anchor-right {
+            // >|
+            text-align: left;
+            &:before {
+                content:'\3e'; // Collapse right icon e614
+                left: $iconInnerLR;
+            }
+            //&:hover:before { left: $arwAnimOffsetX; }
+            &.collapsed {
+                @include border-right-radius(0);
+                &:before {
+                    text-align: right;
+                    content:'\3c';
+                    right: $iconInnerLR;
+                }
+                &:hover:before { right: $arwAnimOffsetX; }
+            }
+        }
+    }
+}
+
+.mini-tab-icon {
+    // Meant to be used as pane hide/show control elements in concert with mct-splitter
+    //@extend .ui-symbol;
+    @include desktop {
+        $d: $uePaneMiniTabW;
+        //@include trans-prop-nice(transform, 150ms);
+        color: pullForward($colorBodyBg, 15%);
+        cursor: pointer;
+        display: block;
+        font-family: symbolsfont;
+        font-size: $d;
+        position: absolute;
+        height: $d; width: $d;
+        line-height: $d;
+        overflow: hidden;
+        word-break: break-all;
+
+        &.collapsed {
+            $d: $uePaneMiniTabCollapsedW;
+            width: $d; font-size: $d;
+        }
+
+        &:before,
+        &:after {
+            position: absolute;
+            display: inherit;
+        }
+
+        &:before {
+            content: '\78'; // X icon
+        }
+
+        &:hover {
+            color: $colorKey;
+            //@include transform(scale(1.2));
         }
     }
 }

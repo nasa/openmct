@@ -85,10 +85,18 @@ define(
 
             it("exposes subscription API", function () {
                 // Should still expose methods from the provided subscription
-                expect(handle.unsubscribe)
-                    .toBe(mockSubscription.unsubscribe);
-                expect(handle.getTelemetryObjects)
-                    .toBe(mockSubscription.getTelemetryObjects);
+                // (though these may have been wrapped)
+                expect(mockSubscription.getTelemetryObjects)
+                    .not.toHaveBeenCalled();
+                handle.getTelemetryObjects();
+                expect(mockSubscription.getTelemetryObjects)
+                    .toHaveBeenCalled();
+
+                expect(mockSubscription.unsubscribe)
+                    .not.toHaveBeenCalled();
+                handle.unsubscribe();
+                expect(mockSubscription.unsubscribe)
+                    .toHaveBeenCalled();
             });
 
             it("provides an interface for historical requests", function () {

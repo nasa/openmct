@@ -1,0 +1,19 @@
+<mct-container key="overlay" class="t-message-list">
+    <div class="message-contents">
+        <div class="abs top-bar">
+            <div class="title">{{ngModel.dialog.title}}</div>
+            <div class="hint">Displaying {{ngModel.dialog.messages.length}} message<span ng-show="ngModel.dialog.messages.length > 1">s</span>
+            </div>
+        </div>
+        <div class="abs message-body">
+            <mct-include ng-repeat="msg in ngModel.dialog.messages | orderBy: '-'" key="'message'" ng-model="msg"></mct-include>
+        </div>
+        <div class="abs bottom-bar">
+            <a ng-repeat="dialogAction in ngModel.dialog.actions"
+               class="s-btn major"
+               ng-click="dialogAction.action()">
+                {{dialogAction.label}}
+            </a>
+        </div>
+    </div>
+</mct-container>

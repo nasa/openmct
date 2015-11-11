@@ -1,12 +1,18 @@
 {
-  "name": "Sonw",
-  "description": "Snow theme: light and cool",
-  "extensions": {
-    "stylesheets": [
-      {
-        "stylesheetUrl": "css/theme-snow.css",
-        "priority": 1000
-      }
-    ]
-  }
+    "name": "Snow",
+    "description": "Snow theme: light and cool",
+    "extensions": {
+        "stylesheets": [
+            {
+                "stylesheetUrl": "css/theme-snow.css",
+                "priority": 1000
+            }
+        ],
+        "constants": [
+            {
+                "key": "THEME",
+                "value": "snow"
+            }
+        ]
+    }
 }

@@ -7,5 +7,6 @@
     "gestures/GestureRepresenter",
     "services/DndService",
     "MCTInclude",
-    "MCTRepresentation"
+    "MCTRepresentation",
+    "TemplateLinker"
 ]

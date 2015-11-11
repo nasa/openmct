@@ -41,23 +41,26 @@
     width: $d;
 }
 
-@mixin trans-prop-nice($props, $t: 500ms) {
-    @if $t == 0 {
+@mixin trans-prop-nice($props, $dur: 500ms, $delay: 0) {
+    // Multiple $props must be in parans like this: (left, right)
+    @if $dur == 0 {
         @include transition-property(none);
     } @else {
         @include transition-property($props);
-        @include transition-duration($t);
+        @include transition-duration($dur);
         @include transition-timing-function(ease-in-out);
+        @include transition-delay($delay);
     }
 }
 
-@mixin trans-prop-nice-fade($t: 0.5s) {
-    @if $t == 0 {
+@mixin trans-prop-nice-fade($dur: 500ms, $delay: 0) {
+    @if $dur == 0 {
         @include transition-property(none);
     } @else {
-        @include transition-property(visibility, opacity, background-color, border-color);
-        @include transition-duration($t);
+        @include transition-property(opacity, background-color, border-color, color);
+        @include transition-duration($dur);
         @include transition-timing-function(ease-in-out);
+        @include transition-delay($delay);
     }
 }
 
@@ -67,16 +70,18 @@
     @include transition-timing-function($tf);
 }
 
-@mixin trans-prop-nice-resize-h($t: 0.5s) {
+@mixin trans-prop-nice-resize-h($dur: 500ms, $delay: 0) {
     @include transition-property(height, bottom, top);
-    @include transition-duration($t);
+    @include transition-duration($dur);
     @include transition-timing-function(ease-in-out);
+    @include transition-delay($delay);
 }
 
-@mixin trans-prop-nice-resize-w($t: 0.5s) {
+@mixin trans-prop-nice-resize-w($dur: 500ms, $delay: 0) {
     @include transition-property(width, left, right);
-    @include transition-duration($t);
+    @include transition-duration($dur);
     @include transition-timing-function(ease-in-out);
+    @include transition-delay($delay);
 }
 
 @mixin triangle-right($size, $color) {
@@ -100,7 +105,6 @@
 }
 
 @mixin triangle($dir: "left", $size: 5px, $ratio: 1, $color: red) {
-    //$size: $size*2;
     width: 0;
     height: 0;
     $slopedB: $size/$ratio solid transparent;
@@ -135,6 +139,24 @@
     background-size: $d $d;
 }
 
+@mixin bgVertStripes($c: yellow, $a: 0.1, $d: 40px) {
+    @include background-image(linear-gradient(-90deg,
+        rgba($c, $a) 0%, rgba($c, $a) 50%,
+        transparent 50%, transparent 100%
+    ));
+    background-repeat: repeat;
+    background-size: $d $d;
+}
+
+@mixin bgVertFuzzyStripes($c: yellow, $a: 0.1, $d: 40px) {
+    @include background-image(linear-gradient(-90deg,
+        rgba($c, $a) 0%, transparent 50%,
+        transparent 50%, rgba($c, $a) 100%
+    ));
+    background-repeat: repeat;
+    background-size: $d $d;
+}
+
 @mixin bgTicks($c: $colorBodyFg, $repeatDir: 'x') {
     $deg: 90deg;
     @if ($repeatDir != 'x') {
@@ -162,31 +184,28 @@
 }
 
 @mixin controlGrippy($b, $direction: horizontal, $w: 1px, $style: dotted) {
-    &:before {
-        @include trans-prop-nice("border-color", 0.75s);
-        content: '';
-        display: block;
-        height: auto;
-        pointer-events: none;
-        position: absolute;
-        z-index: 2;
+    //&:before {
+    //@include trans-prop-nice("border-color", 25ms);
+    content: '';
+    display: block;
+    //height: auto;
+    pointer-events: none;
+    position: absolute;
+    z-index: 2;
 
-        @if $direction == "horizontal" {
-            border-top: $w $style darken($b, 15%);
-            top: 2px;
-            left: 5px;
-            right: 5px;
+    @if $direction == "horizontal" {
+        border-top: $w $style darken($b, 15%);
+        top: 2px;
+        left: 5px;
+        right: 5px;
+        height: 1px;
 
-        } @else if $direction == "vertical" {
-            border-left: $w $style darken($b, 15%);
-            left: 2px;
-            bottom: 5px;
-            top: 5px;
-        }
-    }
-    &:not(.disabled):hover:before {
-        @include trans-prop-nice("border-color", 25ms);
-        border-color: $colorGrippyInteriorHover;
+    } @else if $direction == "vertical" {
+        border-left: $w $style darken($b, 15%);
+        left: 2px;
+        bottom: 5px;
+        top: 5px;
+        width: 1px;
     }
 }
 
@@ -261,6 +280,12 @@
 @function decimalToPercent($d) {
 	@return percentage($d);
 }
+
+@function splitterHandleInset($splitterD: 21px, $splitterHandleD: 1px) {
+    // Space to either side of the handle
+    @return ($splitterD - $splitterHandleD) * 0.5;
+}
+
 
 /*********************************************** CONTROLS, FORM ELEMENTS */
 
@@ -353,10 +378,7 @@
     /* This doesn't work on an element inside an element with absolute positioning that has height: auto */
     //position: relative;
     top: 50%;
-	@include webkitProp(transform, translateY(-50%));
-    //-webkit-transform: translateY(-50%);
-    //-ms-transform: translateY(-50%);
-    //transform: translateY(-50%);
+    @include transform(translateY(-50%));
 }
 
 @mixin verticalCenterBlock($holderH, $itemH) {

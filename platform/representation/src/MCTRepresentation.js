@@ -31,7 +31,6 @@ define(
     function () {
         "use strict";
 
-
         /**
          * Defines the mct-representation directive. This may be used to
          * present domain objects as HTML (with event wiring), with the
@@ -55,7 +54,7 @@ define(
          *        representation extensions
          * @param {ViewDefinition[]} views an array of view extensions
          */
-        function MCTRepresentation(representations, views, representers, $q, $sce, $log) {
+        function MCTRepresentation(representations, views, representers, $q, templateLinker, $log) {
             var representationMap = {},
                 gestureMap = {};
 
@@ -72,11 +71,7 @@ define(
 
             // Get a path to a representation
             function getPath(representation) {
-                return $sce.trustAsResourceUrl([
-                    representation.bundle.path,
-                    representation.bundle.resources,
-                    representation.templateUrl
-                ].join("/"));
+                return templateLinker.getPath(representation);
             }
 
             // Look up a matching representation for this domain object
@@ -94,12 +89,16 @@ define(
                 }
             }
 
-            function link($scope, element, attrs) {
+            function link($scope, element, attrs, ctrl, transclude) {
                 var activeRepresenters = representers.map(function (Representer) {
                         return new Representer($scope, element, attrs);
                     }),
                     toClear = [], // Properties to clear out of scope on change
-                    counter = 0;
+                    counter = 0,
+                    couldRepresent = false,
+                    lastId,
+                    lastKey,
+                    changeTemplate = templateLinker.link($scope, element);
 
                 // Populate scope with any capabilities indicated by the
                 // representation's extension definition
@@ -144,21 +143,36 @@ define(
                     });
                 }
 
+                function unchanged(canRepresent, id, key) {
+                    return canRepresent &&
+                        couldRepresent &&
+                        id === lastId &&
+                        key === lastKey;
+                }
+
                 // General-purpose refresh mechanism; should set up the scope
                 // as appropriate for current representation key and
                 // domain object.
                 function refresh() {
                     var domainObject = $scope.domainObject,
                         representation = lookup($scope.key, domainObject),
-                        uses = ((representation || {}).uses || []);
+                        path = representation && getPath(representation),
+                        uses = ((representation || {}).uses || []),
+                        canRepresent = !!(path && domainObject),
+                        id = domainObject && domainObject.getId(),
+                        key = $scope.key;
+
+                    if (unchanged(canRepresent, id, key)) {
+                        return;
+                    }
 
                     // Create an empty object named "representation", for this
                     // representation to store local variables into.
                     $scope.representation = {};
 
-                    // Look up the actual template path, pass it to ng-include
-                    // via the "inclusion" field
-                    $scope.inclusion = representation && getPath(representation);
+                    // Change templates (passing in undefined to clear
+                    // if we don't have enough info to show a template.)
+                    changeTemplate(canRepresent ? path : undefined);
 
                     // Any existing representers are no longer valid; release them.
                     destroyRepresenters();
@@ -174,9 +188,14 @@ define(
                         delete $scope[property];
                     });
 
+                    // To allow simplified change detection next time around
+                    couldRepresent = canRepresent;
+                    lastId = id;
+                    lastKey = key;
+
                     // Populate scope with fields associated with the current
                     // domain object (if one has been passed in)
-                    if (domainObject) {
+                    if (canRepresent) {
                         // Track how many representations we've made in this scope,
                         // to ensure that the correct representations are matched to
                         // the correct object/key pairs.
@@ -233,9 +252,8 @@ define(
                 // Handle Angular's linking step
                 link: link,
 
-                // Use ng-include as a template; "inclusion" will be the real
-                // template path
-                template: '<ng-include src="inclusion"></ng-include>',
+                // May hide the element, so let other directives act first
+                priority: -1000,
 
                 // Two-way bind key and parameters, get the represented domain
                 // object as "mct-object"

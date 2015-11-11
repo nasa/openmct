@@ -20,12 +20,15 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="frame frame-template abs">
-    <div class="bar abs l-flex object-header object-top-bar">
-        <div class="left">
-            <mct-representation key="'object-header'" mct-object="domainObject">
+    <div class="abs object-top-bar l-flex-row">
+        <div class="left flex-elem l-flex-row grows">
+            <mct-representation
+                key="'object-header'"
+                mct-object="domainObject"
+                class="l-flex-row flex-elem object-header grows">
             </mct-representation>
         </div>
-        <div class="btn-bar right">
+        <div class="btn-bar right l-flex-row flex-elem flex-justify-end flex-fixed">
             <mct-representation key="'switcher'"
                                 ng-model="representation"
                                 mct-object="domainObject">
