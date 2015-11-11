@@ -30,7 +30,7 @@ define(
                 "<mct-include key=\"'time-conductor'\" ",
                 "ng-model='ngModel' ",
                 "parameters='parameters' ",
-                "class='l-time-controller'>",
+                "class='flex-elem flex-fixed l-time-controller'>",
                 "</mct-include>"
             ].join(''),
             THROTTLE_MS = 200,

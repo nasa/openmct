@@ -125,7 +125,8 @@ mct-container {
     @include ellipsize();
 }
 
-.scrolling {
+.scrolling,
+.scroll {
 	overflow: auto;
 }
 
