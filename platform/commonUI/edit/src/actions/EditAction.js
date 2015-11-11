@@ -46,7 +46,7 @@ define(
          * @constructor
          * @implements {Action}
          */
-        function EditAction($location, navigationService, $log, context) {
+        function EditAction($location, navigationService, $log, $q, context) {
             var domainObject = (context || {}).domainObject;
 
             // We cannot enter Edit mode if we have no domain object to
@@ -65,6 +65,7 @@ define(
             this.domainObject = domainObject;
             this.$location = $location;
             this.navigationService = navigationService;
+            this.$q = $q;
         }
 
         /**
@@ -72,7 +73,7 @@ define(
          */
         EditAction.prototype.perform = function () {
             if (!this.domainObject.getDomainObject) {
-                this.navigationService.setNavigation(new EditableDomainObject(this.domainObject));
+                this.navigationService.setNavigation(new EditableDomainObject(this.domainObject, this.$q));
             }
             //this.$location.path("/edit");
         };

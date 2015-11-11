@@ -42,7 +42,7 @@ define(
          * @param {DomainObject} domainObject the domain object whose
          *        composition should be modified as a result of the drop.
          */
-        function DropGesture(dndService, $q, navigationService, objectService, element, domainObject) {
+        function DropGesture(dndService, $q, navigationService, objectService, instantiate, element, domainObject) {
             var actionCapability = domainObject.getCapability('action'),
                 editableDomainObject,
                 action; // Action for the drop, when it occurs
@@ -73,15 +73,15 @@ define(
             function shouldCreateVirtualPanel(domainObject){
                 //
                 return domainObject.useCapability('view').filter(function (view){
-                            return view.key==='plot' && domainObject.getModel().type!== 'telemetry.panel'
-                        }).length > 0;
+                    return view.key==='plot' && domainObject.getModel().type!== 'telemetry.panel'
+                }).length > 0;
             }
 
             function dragOver(e) {
                 //Refresh domain object on each dragOver to catch external
                 // updates to the model
                 //Don't use EditableDomainObject for folders, allow immediate persistence
-                editableDomainObject = domainObject.getDomainObject || domainObject.getModel().type==='folder' ? domainObject : new EditableDomainObject(domainObject, $q);
+                editableDomainObject = domainObject.hasCapability('editor') || domainObject.getModel().type==='folder' ? domainObject : new EditableDomainObject(domainObject, $q);
                 actionCapability = editableDomainObject.getCapability('action');
 
                 var event = (e || {}).originalEvent || e,
@@ -117,7 +117,7 @@ define(
                     id = uuid();
                 //ObjectService is wrapped by a decorator which is obscuring
                 // the newObject method.
-                return objectService.objectService.newObject(id, model);
+                return instantiate(model, id);
 
             }
 
