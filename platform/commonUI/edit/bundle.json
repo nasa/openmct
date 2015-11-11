@@ -38,7 +38,7 @@
             {
                 "key": "edit",
                 "implementation": "actions/EditAction.js",
-                "depends": [ "$location", "navigationService", "$log" ],
+                "depends": [ "$location", "navigationService", "$log", "now" ],
                 "description": "Edit this object.",
                 "category": "view-control",
                 "glyph": "p"
