@@ -27,7 +27,7 @@
 define(
     ['./GestureConstants',
      '../../../commonUI/edit/src/objects/EditableDomainObject',
-     '../../../commonUI/browse/lib/uuid'],
+     'uuid'],
     function (GestureConstants, EditableDomainObject, uuid) {
         "use strict";
 
