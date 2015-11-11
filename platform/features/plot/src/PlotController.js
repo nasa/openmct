@@ -209,8 +209,15 @@ define(
                 subscribe($scope.domainObject);
             }
 
+            function updateDomainFormat() {
+                var domainAxis = $scope.axes[0];
+                plotTelemetryFormatter
+                    .setDomainFormat(domainAxis.active.format);
+            }
+
             function domainRequery(newDomain) {
                 if (newDomain !== lastDomain) {
+                    updateDomainFormat();
                     requery();
                 }
             }
@@ -226,15 +233,9 @@ define(
                 var domainAxis = $scope.axes[0];
 
                 domainAxis.chooseOption(bounds.domain);
-                plotTelemetryFormatter
-                    .setDomainFormat(domainAxis.active.format);
+                updateDomainFormat();
                 setBasePanZoom(bounds);
                 requery();
-            }
-
-
-            function updateDomainFormat(format) {
-                plotTelemetryFormatter.setDomainFormat(format);
             }
 
             this.modeOptions = new PlotModeOptions([], subPlotFactory);
