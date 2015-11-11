@@ -221,16 +221,16 @@
 .object-holder {
     @include absPosDefault(0, auto);
     top: $ueTopBarH + $interiorMarginLg;
-    &.l-controls-visible {
-        &.l-time-controller-visible {
-            bottom: nth($ueTimeControlH,1) + nth($ueTimeControlH,2) +nth($ueTimeControlH,3) + ($interiorMargin * 3);
-        }
-    }
 }
 
 .l-object-wrapper {
     @extend .abs;
     top: $ueTopBarH + $interiorMarginLg;
+
+    .object-holder-main {
+        position: relative;
+    }
+
     &.active {
         @include pulseBorder($colorKey, 150ms, 8, 0.5s);
         @include border-radius($controlCr);
