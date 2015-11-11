@@ -30,7 +30,7 @@ define(
                 "<mct-include key=\"'time-conductor'\" ",
                 "ng-model='ngModel' ",
                 "parameters='parameters' ",
-                "class='flex-elem flex-fixed l-time-controller'>",
+                "class='holder flex-elem flex-fixed l-time-controller'>",
                 "</mct-include>"
             ].join(''),
             THROTTLE_MS = 200,
@@ -159,8 +159,8 @@ define(
                 this.wireScope();
                 this.conductorElement =
                     this.$compile(TEMPLATE)(this.conductorScope());
-                this.element.after(this.conductorElement[0]);
-                this.element.addClass('l-controls-visible l-time-controller-visible');
+                this.element.parent().parent().after(this.conductorElement[0]);
+                this.element.parent().parent().addClass('l-controls-visible l-time-controller-visible');
                 GLOBAL_SHOWING = true;
             }
         };

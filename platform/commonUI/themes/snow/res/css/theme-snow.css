@@ -374,7 +374,7 @@ mct-container {
 
 /* line 93, ../../../../general/res/sass/_global.scss */
 .abs, .l-inspect, .l-datetime-picker .l-month-year-pager .pager,
-.l-datetime-picker .l-month-year-pager .val, .s-menu-btn span.l-click-area, .l-object-wrapper, .l-object-wrapper-inner {
+.l-datetime-picker .l-month-year-pager .val, .s-menu-btn span.l-click-area, .l-object-wrapper, .l-object-wrapper .object-holder-main {
   position: absolute;
   top: 0;
   right: 0;
@@ -630,7 +630,7 @@ mct-container {
  *****************************************************************************/
 /* line 26, ../../../../general/res/sass/_about.scss */
 .l-about.abs, .l-about.l-inspect, .l-datetime-picker .l-month-year-pager .l-about.pager,
-.l-datetime-picker .l-month-year-pager .l-about.val, .s-menu-btn span.l-about.l-click-area, .l-about.l-object-wrapper, .l-about.l-object-wrapper-inner {
+.l-datetime-picker .l-month-year-pager .l-about.val, .s-menu-btn span.l-about.l-click-area, .l-about.l-object-wrapper, .l-object-wrapper .l-about.object-holder-main {
   overflow: auto; }
 /* line 31, ../../../../general/res/sass/_about.scss */
 .l-about .l-logo-holder {
@@ -722,7 +722,7 @@ mct-container {
  *****************************************************************************/
 /* line 24, ../../../../general/res/sass/_text.scss */
 .abs.l-standalone, .l-standalone.l-inspect, .l-datetime-picker .l-month-year-pager .l-standalone.pager,
-.l-datetime-picker .l-month-year-pager .l-standalone.val, .s-menu-btn span.l-standalone.l-click-area, .l-standalone.l-object-wrapper, .l-standalone.l-object-wrapper-inner {
+.l-datetime-picker .l-month-year-pager .l-standalone.val, .s-menu-btn span.l-standalone.l-click-area, .l-standalone.l-object-wrapper, .l-object-wrapper .l-standalone.object-holder-main {
   padding: 5% 20%; }
 
 /* line 29, ../../../../general/res/sass/_text.scss */
@@ -3401,16 +3401,8 @@ label.checkbox.custom {
 
 /* line 9, ../../../../general/res/sass/controls/_time-controller.scss */
 mct-include.l-time-controller {
-  overflow: hidden;
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
-  width: auto;
-  height: auto;
+  background-color: rgba(255, 204, 0, 0.2) !important;
   display: block;
-  top: auto;
   height: 83px;
   min-width: 500px;
   font-size: 0.8rem; }
@@ -4483,7 +4475,7 @@ span.req {
   /* line 186, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .left.l-inspect, .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.pager, .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.pager,
   .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.val,
-  .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.val, .pane.items .object-browse-bar .s-menu-btn span.left.l-click-area, .s-menu-btn .pane.items .object-browse-bar span.left.l-click-area, .pane.items .object-browse-bar .left.l-object-wrapper, .pane.items .object-browse-bar .left.l-object-wrapper-inner,
+  .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.val, .pane.items .object-browse-bar .s-menu-btn span.left.l-click-area, .s-menu-btn .pane.items .object-browse-bar span.left.l-click-area, .pane.items .object-browse-bar .left.l-object-wrapper, .pane.items .object-browse-bar .l-object-wrapper .left.object-holder-main, .l-object-wrapper .pane.items .object-browse-bar .left.object-holder-main,
   .pane.items .object-browse-bar .right.abs,
   .pane.items .object-browse-bar .right.l-inspect,
   .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .right.pager,
@@ -4493,7 +4485,8 @@ span.req {
   .pane.items .object-browse-bar .s-menu-btn span.right.l-click-area,
   .s-menu-btn .pane.items .object-browse-bar span.right.l-click-area,
   .pane.items .object-browse-bar .right.l-object-wrapper,
-  .pane.items .object-browse-bar .right.l-object-wrapper-inner {
+  .pane.items .object-browse-bar .l-object-wrapper .right.object-holder-main,
+  .l-object-wrapper .pane.items .object-browse-bar .right.object-holder-main {
     top: auto; }
 
 /* line 196, ../../../../general/res/sass/user-environ/_layout.scss */
@@ -4531,38 +4524,32 @@ span.req {
   height: auto;
   top: 34px; }
 
-/* line 226, ../../../../general/res/sass/user-environ/_layout.scss */
-.l-object-wrapper {
-  top: 34px; }
-  /* line 230, ../../../../general/res/sass/user-environ/_layout.scss */
-  .l-object-wrapper .object-holder-main {
-    position: relative; }
-  /* line 234, ../../../../general/res/sass/user-environ/_layout.scss */
-  .l-object-wrapper.active {
-    -moz-animation-name: pulseBorder;
-    -webkit-animation-name: pulseBorder;
-    animation-name: pulseBorder;
-    -moz-animation-duration: 150ms;
-    -webkit-animation-duration: 150ms;
-    animation-duration: 150ms;
-    -moz-animation-direction: alternate;
-    -webkit-animation-direction: alternate;
-    animation-direction: alternate;
-    -moz-animation-iteration-count: 8;
-    -webkit-animation-iteration-count: 8;
-    animation-iteration-count: 8;
-    -moz-animation-timing-function: ease;
-    -webkit-animation-timing-function: ease;
-    animation-timing-function: ease;
-    -moz-animation-delay: 0.5s;
-    -webkit-animation-delay: 0.5s;
-    animation-delay: 0.5s;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    border-radius: 4px;
-    border-color: #0099cc;
-    border-width: 2px;
-    border-style: dotted; }
+/* line 234, ../../../../general/res/sass/user-environ/_layout.scss */
+.l-object-wrapper.active {
+  -moz-animation-name: pulseBorder;
+  -webkit-animation-name: pulseBorder;
+  animation-name: pulseBorder;
+  -moz-animation-duration: 150ms;
+  -webkit-animation-duration: 150ms;
+  animation-duration: 150ms;
+  -moz-animation-direction: alternate;
+  -webkit-animation-direction: alternate;
+  animation-direction: alternate;
+  -moz-animation-iteration-count: 8;
+  -webkit-animation-iteration-count: 8;
+  animation-iteration-count: 8;
+  -moz-animation-timing-function: ease;
+  -webkit-animation-timing-function: ease;
+  animation-timing-function: ease;
+  -moz-animation-delay: 0.5s;
+  -webkit-animation-delay: 0.5s;
+  animation-delay: 0.5s;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  border-color: #0099cc;
+  border-width: 2px;
+  border-style: dotted; }
 @-moz-keyframes pulseBorder {
   0% {
     border-color: transparent; }
@@ -4578,17 +4565,15 @@ span.req {
     border-color: transparent; }
   100% {
     border-color: #0099cc; } }
-    /* line 240, ../../../../general/res/sass/user-environ/_layout.scss */
-    .l-object-wrapper.active .l-object-wrapper-inner {
-      top: 3px;
-      right: 3px;
-      bottom: 3px;
-      left: 3px; }
+  /* line 240, ../../../../general/res/sass/user-environ/_layout.scss */
+  .l-object-wrapper.active .l-object-wrapper-inner {
+    top: 3px;
+    right: 3px;
+    bottom: 3px;
+    left: 3px; }
 
 /* line 250, ../../../../general/res/sass/user-environ/_layout.scss */
 .l-object-wrapper-inner {
-  display: -webkit-column nowrap;
-  display: column nowrap;
   -moz-transition-property: height, width, top, right, bottom, left, opacity;
   -o-transition-property: height, width, top, right, bottom, left, opacity;
   -webkit-transition-property: height, width, top, right, bottom, left, opacity;
@@ -4602,7 +4587,7 @@ span.req {
   -webkit-transition-timing-function: ease-in-out;
   transition-timing-function: ease-in-out; }
 
-/* line 256, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 254, ../../../../general/res/sass/user-environ/_layout.scss */
 .l-edit-controls {
   -moz-transition-property: height, width, top, right, bottom, left, opacity;
   -o-transition-property: height, width, top, right, bottom, left, opacity;
@@ -4619,14 +4604,14 @@ span.req {
   height: 0;
   opacity: 0;
   overflow: hidden; }
-  /* line 261, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 259, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-edit-controls.active {
     border-bottom: 1px solid rgba(102, 102, 102, 0.2);
     height: 30px;
     line-height: 25px;
     opacity: 1; }
 
-/* line 269, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 267, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .s-btn, .object-browse-bar .s-menu-btn,
 .top-bar .buttons-main .s-btn,
 .top-bar .buttons-main .s-menu-btn,
@@ -4638,42 +4623,34 @@ span.req {
   line-height: 25px;
   vertical-align: top; }
 
-/* line 282, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 280, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .view-switcher,
 .top-bar .view-switcher {
   margin-right: 20px; }
 
 /***************************************************** OBJECT BROWSE BAR */
-/* line 288, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 286, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar {
-  overflow: visible;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  width: auto;
-  height: auto;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   height: 24px;
   line-height: 24px;
   white-space: nowrap; }
-  /* line 295, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 294, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-browse-bar .left {
     padding-right: 10px; }
-    /* line 297, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 296, ../../../../general/res/sass/user-environ/_layout.scss */
     .object-browse-bar .left .l-back {
       margin-right: 10px; }
 
-/* line 308, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 307, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-hidden .tree-holder,
 .pane-tree-hidden .splitter-treeview,
 .pane-tree-hidden .holder-treeview-elements {
   opacity: 0; }
 
-/* line 317, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 316, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-showing .tree-holder,
 .pane-tree-showing .splitter-treeview {
   -moz-transition-property: opacity;
@@ -4693,7 +4670,7 @@ span.req {
   -webkit-transition-delay: 250ms;
   transition-delay: 250ms;
   opacity: 1; }
-/* line 323, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 322, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-showing .holder-treeview-elements {
   -moz-transition-property: opacity;
   -o-transition-property: opacity;
@@ -4712,7 +4689,7 @@ span.req {
   -webkit-transition-delay: 200ms;
   transition-delay: 200ms; }
 
-/* line 330, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 329, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-showing .l-object-and-inspector .l-inspect,
 .pane-inspect-showing .l-object-and-inspector .splitter-inspect {
   -moz-transition-property: opacity;
@@ -4733,44 +4710,44 @@ span.req {
   transition-delay: 250ms;
   opacity: 1; }
 
-/* line 340, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 339, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-hidden .l-object-and-inspector .t-inspect {
   z-index: 1 !important; }
-/* line 343, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 342, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-hidden .l-object-and-inspector .l-inspect,
 .pane-inspect-hidden .l-object-and-inspector .splitter-inspect {
   opacity: 0; }
 
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 351, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 350, ../../../../general/res/sass/user-environ/_layout.scss */
   .holder-all {
     min-width: 600px; }
 
-  /* line 356, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 355, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .split-pane-component.pane.treeview.left {
     min-width: 150px;
     max-width: 35%;
     width: 25%; }
-  /* line 361, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 360, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .split-pane-component.pane.t-inspect.right {
     min-width: 200px;
     max-width: 35%;
     width: 20%;
     z-index: 3; }
 
-  /* line 369, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 368, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .tree-holder {
     padding-right: 5px; }
 
-  /* line 373, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 372, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane-tree-hidden .pane.right.primary-pane {
     left: 22px !important; }
 
-  /* line 376, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 375, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane-inspect-hidden .l-object-and-inspector .pane.left {
     right: 22px !important; }
 
-  /* line 378, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 377, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane:not(.resizing) {
     -moz-transition-property: width, left, right;
     -o-transition-property: width, left, right;
@@ -4789,7 +4766,7 @@ span.req {
     -webkit-transition-delay: 0;
     transition-delay: 0; }
 
-  /* line 381, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 380, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.primary-pane .object-browse-bar {
     min-width: 200px; } }
 /*****************************************************************************
@@ -5412,12 +5389,12 @@ span.req {
   /* line 80, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .abs.top-bar, .overlay .top-bar.l-inspect, .overlay .l-datetime-picker .l-month-year-pager .top-bar.pager, .l-datetime-picker .l-month-year-pager .overlay .top-bar.pager,
   .overlay .l-datetime-picker .l-month-year-pager .top-bar.val,
-  .l-datetime-picker .l-month-year-pager .overlay .top-bar.val, .overlay .s-menu-btn span.top-bar.l-click-area, .s-menu-btn .overlay span.top-bar.l-click-area, .overlay .top-bar.l-object-wrapper, .overlay .top-bar.l-object-wrapper-inner {
+  .l-datetime-picker .l-month-year-pager .overlay .top-bar.val, .overlay .s-menu-btn span.top-bar.l-click-area, .s-menu-btn .overlay span.top-bar.l-click-area, .overlay .top-bar.l-object-wrapper, .overlay .l-object-wrapper .top-bar.object-holder-main, .l-object-wrapper .overlay .top-bar.object-holder-main {
     height: 45px; }
   /* line 84, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .abs.editor, .overlay .editor.l-inspect, .overlay .l-datetime-picker .l-month-year-pager .editor.pager, .l-datetime-picker .l-month-year-pager .overlay .editor.pager,
   .overlay .l-datetime-picker .l-month-year-pager .editor.val,
-  .l-datetime-picker .l-month-year-pager .overlay .editor.val, .overlay .s-menu-btn span.editor.l-click-area, .s-menu-btn .overlay span.editor.l-click-area, .overlay .editor.l-object-wrapper, .overlay .editor.l-object-wrapper-inner,
+  .l-datetime-picker .l-month-year-pager .overlay .editor.val, .overlay .s-menu-btn span.editor.l-click-area, .s-menu-btn .overlay span.editor.l-click-area, .overlay .editor.l-object-wrapper, .overlay .l-object-wrapper .editor.object-holder-main, .l-object-wrapper .overlay .editor.object-holder-main,
   .overlay .abs.message-body,
   .overlay .message-body.l-inspect,
   .overlay .l-datetime-picker .l-month-year-pager .message-body.pager,
@@ -5427,7 +5404,8 @@ span.req {
   .overlay .s-menu-btn span.message-body.l-click-area,
   .s-menu-btn .overlay span.message-body.l-click-area,
   .overlay .message-body.l-object-wrapper,
-  .overlay .message-body.l-object-wrapper-inner {
+  .overlay .l-object-wrapper .message-body.object-holder-main,
+  .l-object-wrapper .overlay .message-body.object-holder-main {
     top: 55px;
     bottom: 34px;
     left: 0;
@@ -5436,7 +5414,7 @@ span.req {
     /* line 92, ../../../../general/res/sass/overlay/_overlay.scss */
     .overlay .abs.editor .field.l-med input[type='text'], .overlay .editor.l-inspect .field.l-med input[type='text'], .overlay .l-datetime-picker .l-month-year-pager .editor.pager .field.l-med input[type='text'], .l-datetime-picker .l-month-year-pager .overlay .editor.pager .field.l-med input[type='text'],
     .overlay .l-datetime-picker .l-month-year-pager .editor.val .field.l-med input[type='text'],
-    .l-datetime-picker .l-month-year-pager .overlay .editor.val .field.l-med input[type='text'], .overlay .s-menu-btn span.editor.l-click-area .field.l-med input[type='text'], .s-menu-btn .overlay span.editor.l-click-area .field.l-med input[type='text'], .overlay .editor.l-object-wrapper .field.l-med input[type='text'], .overlay .editor.l-object-wrapper-inner .field.l-med input[type='text'],
+    .l-datetime-picker .l-month-year-pager .overlay .editor.val .field.l-med input[type='text'], .overlay .s-menu-btn span.editor.l-click-area .field.l-med input[type='text'], .s-menu-btn .overlay span.editor.l-click-area .field.l-med input[type='text'], .overlay .editor.l-object-wrapper .field.l-med input[type='text'], .overlay .l-object-wrapper .editor.object-holder-main .field.l-med input[type='text'], .l-object-wrapper .overlay .editor.object-holder-main .field.l-med input[type='text'],
     .overlay .abs.message-body .field.l-med input[type='text'],
     .overlay .message-body.l-inspect .field.l-med input[type='text'],
     .overlay .l-datetime-picker .l-month-year-pager .message-body.pager .field.l-med input[type='text'],
@@ -5446,7 +5424,8 @@ span.req {
     .overlay .s-menu-btn span.message-body.l-click-area .field.l-med input[type='text'],
     .s-menu-btn .overlay span.message-body.l-click-area .field.l-med input[type='text'],
     .overlay .message-body.l-object-wrapper .field.l-med input[type='text'],
-    .overlay .message-body.l-object-wrapper-inner .field.l-med input[type='text'] {
+    .overlay .l-object-wrapper .message-body.object-holder-main .field.l-med input[type='text'],
+    .l-object-wrapper .overlay .message-body.object-holder-main .field.l-med input[type='text'] {
       width: 100%; }
   /* line 98, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .bottom-bar {
@@ -5494,7 +5473,7 @@ span.req {
   /* line 117, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .abs.bottom-bar, .overlay .bottom-bar.l-inspect, .overlay .l-datetime-picker .l-month-year-pager .bottom-bar.pager, .l-datetime-picker .l-month-year-pager .overlay .bottom-bar.pager,
   .overlay .l-datetime-picker .l-month-year-pager .bottom-bar.val,
-  .l-datetime-picker .l-month-year-pager .overlay .bottom-bar.val, .overlay .s-menu-btn span.bottom-bar.l-click-area, .s-menu-btn .overlay span.bottom-bar.l-click-area, .overlay .bottom-bar.l-object-wrapper, .overlay .bottom-bar.l-object-wrapper-inner {
+  .l-datetime-picker .l-month-year-pager .overlay .bottom-bar.val, .overlay .s-menu-btn span.bottom-bar.l-click-area, .s-menu-btn .overlay span.bottom-bar.l-click-area, .overlay .bottom-bar.l-object-wrapper, .overlay .l-object-wrapper .bottom-bar.object-holder-main, .l-object-wrapper .overlay .bottom-bar.object-holder-main {
     top: auto;
     right: 0;
     bottom: 0;
@@ -5565,7 +5544,7 @@ span.req {
     /* line 57, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
     .overlay > .holder .contents .abs.top-bar, .overlay > .holder .contents .top-bar.l-inspect, .overlay > .holder .contents .l-datetime-picker .l-month-year-pager .top-bar.pager, .l-datetime-picker .l-month-year-pager .overlay > .holder .contents .top-bar.pager,
     .overlay > .holder .contents .l-datetime-picker .l-month-year-pager .top-bar.val,
-    .l-datetime-picker .l-month-year-pager .overlay > .holder .contents .top-bar.val, .overlay > .holder .contents .s-menu-btn span.top-bar.l-click-area, .s-menu-btn .overlay > .holder .contents span.top-bar.l-click-area, .overlay > .holder .contents .top-bar.l-object-wrapper, .overlay > .holder .contents .top-bar.l-object-wrapper-inner,
+    .l-datetime-picker .l-month-year-pager .overlay > .holder .contents .top-bar.val, .overlay > .holder .contents .s-menu-btn span.top-bar.l-click-area, .s-menu-btn .overlay > .holder .contents span.top-bar.l-click-area, .overlay > .holder .contents .top-bar.l-object-wrapper, .overlay > .holder .contents .l-object-wrapper .top-bar.object-holder-main, .l-object-wrapper .overlay > .holder .contents .top-bar.object-holder-main,
     .overlay > .holder .contents .abs.editor,
     .overlay > .holder .contents .editor.l-inspect,
     .overlay > .holder .contents .l-datetime-picker .l-month-year-pager .editor.pager,
@@ -5575,7 +5554,8 @@ span.req {
     .overlay > .holder .contents .s-menu-btn span.editor.l-click-area,
     .s-menu-btn .overlay > .holder .contents span.editor.l-click-area,
     .overlay > .holder .contents .editor.l-object-wrapper,
-    .overlay > .holder .contents .editor.l-object-wrapper-inner,
+    .overlay > .holder .contents .l-object-wrapper .editor.object-holder-main,
+    .l-object-wrapper .overlay > .holder .contents .editor.object-holder-main,
     .overlay > .holder .contents .abs.message-body,
     .overlay > .holder .contents .message-body.l-inspect,
     .overlay > .holder .contents .l-datetime-picker .l-month-year-pager .message-body.pager,
@@ -5585,7 +5565,8 @@ span.req {
     .overlay > .holder .contents .s-menu-btn span.message-body.l-click-area,
     .s-menu-btn .overlay > .holder .contents span.message-body.l-click-area,
     .overlay > .holder .contents .message-body.l-object-wrapper,
-    .overlay > .holder .contents .message-body.l-object-wrapper-inner,
+    .overlay > .holder .contents .l-object-wrapper .message-body.object-holder-main,
+    .l-object-wrapper .overlay > .holder .contents .message-body.object-holder-main,
     .overlay > .holder .contents .abs.bottom-bar,
     .overlay > .holder .contents .bottom-bar.l-inspect,
     .overlay > .holder .contents .l-datetime-picker .l-month-year-pager .bottom-bar.pager,
@@ -5595,7 +5576,8 @@ span.req {
     .overlay > .holder .contents .s-menu-btn span.bottom-bar.l-click-area,
     .s-menu-btn .overlay > .holder .contents span.bottom-bar.l-click-area,
     .overlay > .holder .contents .bottom-bar.l-object-wrapper,
-    .overlay > .holder .contents .bottom-bar.l-object-wrapper-inner {
+    .overlay > .holder .contents .l-object-wrapper .bottom-bar.object-holder-main,
+    .l-object-wrapper .overlay > .holder .contents .bottom-bar.object-holder-main {
       top: auto;
       right: auto;
       bottom: auto;
@@ -5932,7 +5914,7 @@ ul.tree {
     padding-right: 10px; }
 /* line 40, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame > .object-holder.abs, .frame > .object-holder.l-inspect, .l-datetime-picker .l-month-year-pager .frame > .object-holder.pager,
-.l-datetime-picker .l-month-year-pager .frame > .object-holder.val, .s-menu-btn .frame > span.object-holder.l-click-area, .frame > .object-holder.l-object-wrapper, .frame > .object-holder.l-object-wrapper-inner {
+.l-datetime-picker .l-month-year-pager .frame > .object-holder.val, .s-menu-btn .frame > span.object-holder.l-click-area, .frame > .object-holder.l-object-wrapper, .l-object-wrapper .frame > .object-holder.object-holder-main {
   top: 21px; }
 /* line 43, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame .contents {
@@ -6014,7 +5996,7 @@ ul.tree {
   /* line 52, ../../../../general/res/sass/user-environ/_top-bar.scss */
   .edit-mode .top-bar .buttons-main.abs, .edit-mode .top-bar .buttons-main.l-inspect, .edit-mode .top-bar .l-datetime-picker .l-month-year-pager .buttons-main.pager, .l-datetime-picker .l-month-year-pager .edit-mode .top-bar .buttons-main.pager,
   .edit-mode .top-bar .l-datetime-picker .l-month-year-pager .buttons-main.val,
-  .l-datetime-picker .l-month-year-pager .edit-mode .top-bar .buttons-main.val, .edit-mode .top-bar .s-menu-btn span.buttons-main.l-click-area, .s-menu-btn .edit-mode .top-bar span.buttons-main.l-click-area, .edit-mode .top-bar .buttons-main.l-object-wrapper, .edit-mode .top-bar .buttons-main.l-object-wrapper-inner {
+  .l-datetime-picker .l-month-year-pager .edit-mode .top-bar .buttons-main.val, .edit-mode .top-bar .s-menu-btn span.buttons-main.l-click-area, .s-menu-btn .edit-mode .top-bar span.buttons-main.l-click-area, .edit-mode .top-bar .buttons-main.l-object-wrapper, .edit-mode .top-bar .l-object-wrapper .buttons-main.object-holder-main, .l-object-wrapper .edit-mode .top-bar .buttons-main.object-holder-main {
     bottom: auto;
     left: auto; }
 
