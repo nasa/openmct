@@ -122,8 +122,8 @@ define(
             // Reinstantiate the plot updater (e.g. because we have a
             // new subscription.) This will clear the plot.
             function recreateUpdater() {
-                var domain = ($scope.axes[0].active || {}).key,
-                    range = ($scope.axes[1].active || {}).key,
+                var domain = $scope.axes[0].active.key,
+                    range = $scope.axes[1].active.key,
                     duration = PLOT_FIXED_DURATION;
 
                 updater = new PlotUpdater(handle, domain, range, duration);
