@@ -267,7 +267,7 @@ a.disabled {
     opacity: 0.5; }
   100% {
     opacity: 1; } }
-/* line 69, ../../../../general/res/sass/_effects.scss */
+/* line 82, ../../../../general/res/sass/_effects.scss */
 .pulse {
   -moz-animation-name: pulse;
   -webkit-animation-name: pulse;
@@ -374,7 +374,7 @@ mct-container {
 
 /* line 93, ../../../../general/res/sass/_global.scss */
 .abs, .l-inspect, .l-datetime-picker .l-month-year-pager .pager,
-.l-datetime-picker .l-month-year-pager .val, .s-menu-btn span.l-click-area {
+.l-datetime-picker .l-month-year-pager .val, .s-menu-btn span.l-click-area, .l-object-wrapper, .l-object-wrapper-inner {
   position: absolute;
   top: 0;
   right: 0;
@@ -404,29 +404,35 @@ mct-container {
   text-align: center; }
 
 /* line 124, ../../../../general/res/sass/_global.scss */
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; }
+
+/* line 128, ../../../../general/res/sass/_global.scss */
 .scrolling {
   overflow: auto; }
 
-/* line 128, ../../../../general/res/sass/_global.scss */
+/* line 132, ../../../../general/res/sass/_global.scss */
 .vscroll {
   overflow-y: auto; }
 
-/* line 132, ../../../../general/res/sass/_global.scss */
+/* line 136, ../../../../general/res/sass/_global.scss */
 .no-margin {
   margin: 0; }
 
-/* line 136, ../../../../general/res/sass/_global.scss */
+/* line 140, ../../../../general/res/sass/_global.scss */
 .ds {
   -moz-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   -webkit-box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px;
   box-shadow: rgba(0, 0, 0, 0.7) 0 4px 10px 2px; }
 
-/* line 140, ../../../../general/res/sass/_global.scss */
+/* line 144, ../../../../general/res/sass/_global.scss */
 .hide,
 .hidden {
   display: none !important; }
 
-/* line 145, ../../../../general/res/sass/_global.scss */
+/* line 149, ../../../../general/res/sass/_global.scss */
 .off {
   visibility: hidden;
   opacity: 0;
@@ -436,7 +442,7 @@ mct-container {
   border: 0;
   margin: 0 !important; }
 
-/* line 155, ../../../../general/res/sass/_global.scss */
+/* line 159, ../../../../general/res/sass/_global.scss */
 .sep {
   color: rgba(255, 255, 255, 0.2); }
 
@@ -623,7 +629,7 @@ mct-container {
  *****************************************************************************/
 /* line 26, ../../../../general/res/sass/_about.scss */
 .l-about.abs, .l-about.l-inspect, .l-datetime-picker .l-month-year-pager .l-about.pager,
-.l-datetime-picker .l-month-year-pager .l-about.val, .s-menu-btn span.l-about.l-click-area {
+.l-datetime-picker .l-month-year-pager .l-about.val, .s-menu-btn span.l-about.l-click-area, .l-about.l-object-wrapper, .l-about.l-object-wrapper-inner {
   overflow: auto; }
 /* line 31, ../../../../general/res/sass/_about.scss */
 .l-about .l-logo-holder {
@@ -715,7 +721,7 @@ mct-container {
  *****************************************************************************/
 /* line 24, ../../../../general/res/sass/_text.scss */
 .abs.l-standalone, .l-standalone.l-inspect, .l-datetime-picker .l-month-year-pager .l-standalone.pager,
-.l-datetime-picker .l-month-year-pager .l-standalone.val, .s-menu-btn span.l-standalone.l-click-area {
+.l-datetime-picker .l-month-year-pager .l-standalone.val, .s-menu-btn span.l-standalone.l-click-area, .l-standalone.l-object-wrapper, .l-standalone.l-object-wrapper-inner {
   padding: 5% 20%; }
 
 /* line 29, ../../../../general/res/sass/_text.scss */
@@ -1598,24 +1604,25 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   padding: 0 7.5px;
-  font-size: 0.7rem; }
-  /* line 39, ../../../../general/res/sass/controls/_buttons.scss */
+  font-size: 0.7rem;
+  vertical-align: top; }
+  /* line 40, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn .icon, .s-menu-btn .icon, .s-btn .t-item-icon, .s-menu-btn .t-item-icon {
     font-size: 0.8rem;
     color: #0099cc; }
-  /* line 44, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 45, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn .title-label, .s-menu-btn .title-label {
     vertical-align: top; }
-  /* line 48, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 49, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.lg, .lg.s-menu-btn {
     font-size: 1rem; }
-  /* line 52, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 53, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.sm, .sm.s-menu-btn {
     padding: 0 5px; }
-  /* line 56, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 57, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.vsm, .vsm.s-menu-btn {
     padding: 0 2.5px; }
-  /* line 60, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 61, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.major, .major.s-menu-btn {
     background-color: #0099cc;
     -moz-border-radius: 3px;
@@ -1644,17 +1651,17 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     -webkit-transition: background, 0.25s;
     transition: background, 0.25s;
     text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px; }
-    /* line 297, ../../../../general/res/sass/_mixins.scss */
+    /* line 303, ../../../../general/res/sass/_mixins.scss */
     .s-btn.major .icon, .major.s-menu-btn .icon, .s-btn.major .t-item-icon, .major.s-menu-btn .t-item-icon {
       color: #fff; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 302, ../../../../general/res/sass/_mixins.scss */
+      /* line 308, ../../../../general/res/sass/_mixins.scss */
       .s-btn.major:not(.disabled):hover, .major.s-menu-btn:not(.disabled):hover {
         background: linear-gradient(#1ac6ff, #00bfff); }
-        /* line 304, ../../../../general/res/sass/_mixins.scss */
+        /* line 310, ../../../../general/res/sass/_mixins.scss */
         .s-btn.major:not(.disabled):hover > .icon, .major.s-menu-btn:not(.disabled):hover > .icon, .s-btn.major:not(.disabled):hover > .t-item-icon, .major.s-menu-btn:not(.disabled):hover > .t-item-icon {
           color: white; } }
-  /* line 66, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 67, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn:not(.major), .s-menu-btn:not(.major) {
     background-color: #454545;
     -moz-border-radius: 3px;
@@ -1683,20 +1690,32 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     -webkit-transition: background, 0.25s;
     transition: background, 0.25s;
     text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px; }
-    /* line 297, ../../../../general/res/sass/_mixins.scss */
+    /* line 303, ../../../../general/res/sass/_mixins.scss */
     .s-btn:not(.major) .icon, .s-menu-btn:not(.major) .icon, .s-btn:not(.major) .t-item-icon, .s-menu-btn:not(.major) .t-item-icon {
       color: #0099cc; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 302, ../../../../general/res/sass/_mixins.scss */
+      /* line 308, ../../../../general/res/sass/_mixins.scss */
       .s-btn:not(.major):not(.disabled):hover, .s-menu-btn:not(.major):not(.disabled):hover {
         background: linear-gradient(#6b6b6b, #5e5e5e); }
-        /* line 304, ../../../../general/res/sass/_mixins.scss */
+        /* line 310, ../../../../general/res/sass/_mixins.scss */
         .s-btn:not(.major):not(.disabled):hover > .icon, .s-menu-btn:not(.major):not(.disabled):hover > .icon, .s-btn:not(.major):not(.disabled):hover > .t-item-icon, .s-menu-btn:not(.major):not(.disabled):hover > .t-item-icon {
           color: #33ccff; } }
-  /* line 75, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 74, ../../../../general/res/sass/controls/_buttons.scss */
+  .s-btn.t-save:before, .t-save.s-menu-btn:before {
+    content: '\e612';
+    font-family: symbolsfont;
+    margin-right: 3px; }
+  /* line 80, ../../../../general/res/sass/controls/_buttons.scss */
+  .s-btn.t-cancel .title-label, .t-cancel.s-menu-btn .title-label {
+    display: none; }
+  /* line 81, ../../../../general/res/sass/controls/_buttons.scss */
+  .s-btn.t-cancel:before, .t-cancel.s-menu-btn:before {
+    content: '\78';
+    font-family: symbolsfont; }
+  /* line 88, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.pause-play .icon:before, .pause-play.s-menu-btn .icon:before, .s-btn.pause-play .t-item-icon:before, .pause-play.s-menu-btn .t-item-icon:before {
     content: "\0000F1"; }
-  /* line 78, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 91, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.pause-play.paused, .pause-play.paused.s-menu-btn {
     background-color: #c56f01;
     -moz-border-radius: 3px;
@@ -1725,17 +1744,17 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     -webkit-transition: background, 0.25s;
     transition: background, 0.25s;
     text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px; }
-    /* line 297, ../../../../general/res/sass/_mixins.scss */
+    /* line 303, ../../../../general/res/sass/_mixins.scss */
     .s-btn.pause-play.paused .icon, .pause-play.paused.s-menu-btn .icon, .s-btn.pause-play.paused .t-item-icon, .pause-play.paused.s-menu-btn .t-item-icon {
       color: #fff; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 302, ../../../../general/res/sass/_mixins.scss */
+      /* line 308, ../../../../general/res/sass/_mixins.scss */
       .s-btn.pause-play.paused:not(.disabled):hover, .pause-play.paused.s-menu-btn:not(.disabled):hover {
         background: linear-gradient(#fe9815, #f88c01); }
-        /* line 304, ../../../../general/res/sass/_mixins.scss */
+        /* line 310, ../../../../general/res/sass/_mixins.scss */
         .s-btn.pause-play.paused:not(.disabled):hover > .icon, .pause-play.paused.s-menu-btn:not(.disabled):hover > .icon, .s-btn.pause-play.paused:not(.disabled):hover > .t-item-icon, .pause-play.paused.s-menu-btn:not(.disabled):hover > .t-item-icon {
           color: white; } }
-    /* line 80, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 93, ../../../../general/res/sass/controls/_buttons.scss */
     .s-btn.pause-play.paused .icon, .pause-play.paused.s-menu-btn .icon, .s-btn.pause-play.paused .t-item-icon, .pause-play.paused.s-menu-btn .t-item-icon {
       -moz-animation-name: pulse;
       -webkit-animation-name: pulse;
@@ -1752,22 +1771,22 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
       -moz-animation-timing-function: ease-in-out;
       -webkit-animation-timing-function: ease-in-out;
       animation-timing-function: ease-in-out; }
-      /* line 82, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 95, ../../../../general/res/sass/controls/_buttons.scss */
       .s-btn.pause-play.paused .icon :before, .pause-play.paused.s-menu-btn .icon :before, .s-btn.pause-play.paused .t-item-icon :before, .pause-play.paused.s-menu-btn .t-item-icon :before {
         content: "\0000EF"; }
-  /* line 90, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 103, ../../../../general/res/sass/controls/_buttons.scss */
   .s-btn.show-thumbs .icon:before, .show-thumbs.s-menu-btn .icon:before, .s-btn.show-thumbs .t-item-icon:before, .show-thumbs.s-menu-btn .t-item-icon:before {
     content: "\000039"; }
 
-/* line 96, ../../../../general/res/sass/controls/_buttons.scss */
+/* line 109, ../../../../general/res/sass/controls/_buttons.scss */
 .s-icon-btn {
   color: #0099cc; }
-  /* line 99, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 112, ../../../../general/res/sass/controls/_buttons.scss */
   .s-icon-btn:hover {
     color: #33ccff; }
 
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 104, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 117, ../../../../general/res/sass/controls/_buttons.scss */
   .mini-tab {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -1801,10 +1820,10 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     height: 24px;
     width: 9px;
     text-align: center; }
-    /* line 133, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 146, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab:hover {
       color: #0099cc; }
-    /* line 138, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 151, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.collapsed {
       background-color: #454545;
       -moz-border-radius: 3px;
@@ -1833,30 +1852,30 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
       -webkit-transition: background, 0.25s;
       transition: background, 0.25s;
       text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px; }
-      /* line 297, ../../../../general/res/sass/_mixins.scss */
+      /* line 303, ../../../../general/res/sass/_mixins.scss */
       .mini-tab.collapsed .icon, .mini-tab.collapsed .t-item-icon {
         color: #0099cc; } }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px) and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 800px) and (min-device-height: 1025px) and (min-device-width: 1025px) and (min-device-height: 800px), screen and (min-device-width: 1025px) and (min-device-height: 800px) and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 302, ../../../../general/res/sass/_mixins.scss */
+      /* line 308, ../../../../general/res/sass/_mixins.scss */
       .mini-tab.collapsed:not(.disabled):hover {
         background: linear-gradient(#6b6b6b, #5e5e5e); }
-        /* line 304, ../../../../general/res/sass/_mixins.scss */
+        /* line 310, ../../../../general/res/sass/_mixins.scss */
         .mini-tab.collapsed:not(.disabled):hover > .icon, .mini-tab.collapsed:not(.disabled):hover > .t-item-icon {
           color: #33ccff; } }
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 141, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 154, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.collapsed:before {
         opacity: 0; }
-      /* line 142, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 155, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.collapsed:after {
         opacity: 1; }
-      /* line 144, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 157, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.collapsed:hover:before {
         opacity: 1; }
-      /* line 145, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 158, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.collapsed:hover:after {
         opacity: 0; }
-    /* line 150, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 163, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab:before, .mini-tab:after {
       -moz-transition-property: left, right, opacity;
       -o-transition-property: left, right, opacity;
@@ -1877,22 +1896,22 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
       display: block;
       height: 100%;
       position: absolute; }
-    /* line 159, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 172, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab:before {
       width: 9px; }
-    /* line 165, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 178, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab:after {
       width: 100%;
       text-align: center;
       opacity: 0; }
-    /* line 172, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 185, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-left {
       text-align: right; }
-      /* line 175, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 188, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.anchor-left:before {
         content: '\3c';
         right: 0; }
-      /* line 180, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 193, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.anchor-left.collapsed {
         -moz-border-radius-topleft: 0;
         -webkit-border-top-left-radius: 0;
@@ -1901,21 +1920,21 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
         -webkit-border-bottom-left-radius: 0;
         border-bottom-left-radius: 0;
         text-align: left; }
-        /* line 183, ../../../../general/res/sass/controls/_buttons.scss */
+        /* line 196, ../../../../general/res/sass/controls/_buttons.scss */
         .mini-tab.anchor-left.collapsed:before {
           content: '\3e';
           left: 0; }
-        /* line 187, ../../../../general/res/sass/controls/_buttons.scss */
+        /* line 200, ../../../../general/res/sass/controls/_buttons.scss */
         .mini-tab.anchor-left.collapsed:hover:before {
           left: 2px; }
-    /* line 190, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 203, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-right {
       text-align: left; }
-      /* line 193, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 206, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.anchor-right:before {
         content: '\3e';
         left: 0; }
-      /* line 198, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 211, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.anchor-right.collapsed {
         -moz-border-radius-topright: 0;
         -webkit-border-top-right-radius: 0;
@@ -1923,17 +1942,17 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
         -moz-border-radius-bottomright: 0;
         -webkit-border-bottom-right-radius: 0;
         border-bottom-right-radius: 0; }
-        /* line 200, ../../../../general/res/sass/controls/_buttons.scss */
+        /* line 213, ../../../../general/res/sass/controls/_buttons.scss */
         .mini-tab.anchor-right.collapsed:before {
           text-align: right;
           content: '\3c';
           right: 0; }
-        /* line 205, ../../../../general/res/sass/controls/_buttons.scss */
+        /* line 218, ../../../../general/res/sass/controls/_buttons.scss */
         .mini-tab.anchor-right.collapsed:hover:before {
           right: 2px; } }
 
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 211, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 224, ../../../../general/res/sass/controls/_buttons.scss */
   .mini-tab-icon {
     color: #595959;
     cursor: pointer;
@@ -1946,31 +1965,31 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     line-height: 9px;
     overflow: hidden;
     word-break: break-all; }
-    /* line 228, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 241, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab-icon.collapsed {
       width: 11px;
       font-size: 11px; }
-    /* line 233, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 246, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab-icon:before, .mini-tab-icon:after {
       position: absolute;
       display: inherit; }
-    /* line 239, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 252, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab-icon:before {
       content: '\78'; }
-    /* line 243, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 256, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab-icon:hover {
       color: #0099cc; } }
 
-/* line 250, ../../../../general/res/sass/controls/_buttons.scss */
+/* line 263, ../../../../general/res/sass/controls/_buttons.scss */
 .l-btn-set {
   font-size: 0; }
-  /* line 256, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 269, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .s-btn, .l-btn-set .s-menu-btn {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
     border-radius: 0;
     margin-left: 1px; }
-  /* line 262, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 275, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .first .s-btn, .l-btn-set .first .s-menu-btn {
     -moz-border-radius-topleft: 3px;
     -webkit-border-top-left-radius: 3px;
@@ -1979,7 +1998,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     -webkit-border-bottom-left-radius: 3px;
     border-bottom-left-radius: 3px;
     margin-left: 0; }
-  /* line 269, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 282, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .last .s-btn, .l-btn-set .last .s-menu-btn {
     -moz-border-radius-topright: 3px;
     -webkit-border-top-right-radius: 3px;
@@ -1988,7 +2007,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     -webkit-border-bottom-right-radius: 3px;
     border-bottom-right-radius: 3px; }
 
-/* line 276, ../../../../general/res/sass/controls/_buttons.scss */
+/* line 289, ../../../../general/res/sass/controls/_buttons.scss */
 .paused:not(.s-btn):not(.s-menu-btn) {
   border-color: #c56f01 !important;
   color: #c56f01 !important; }
@@ -2831,7 +2850,7 @@ label.checkbox.custom {
   .menu ul {
     margin: 0;
     padding: 0; }
-    /* line 354, ../../../../general/res/sass/_mixins.scss */
+    /* line 360, ../../../../general/res/sass/_mixins.scss */
     .menu ul li {
       list-style-type: none;
       margin: 0;
@@ -3820,7 +3839,7 @@ mct-include.l-time-controller {
       padding: 0 3px;
       position: relative;
       height: 150px; }
-      /* line 321, ../../../../general/res/sass/_mixins.scss */
+      /* line 327, ../../../../general/res/sass/_mixins.scss */
       .form .form-row .selector-list.error {
         background: rgba(255, 0, 0, 0.5); }
       /* line 124, ../../../../general/res/sass/forms/_elems.scss */
@@ -3877,7 +3896,7 @@ input[type="text"] {
   color: #cccccc;
   outline: none;
   padding: 0 3px; }
-  /* line 321, ../../../../general/res/sass/_mixins.scss */
+  /* line 327, ../../../../general/res/sass/_mixins.scss */
   input[type="text"].error {
     background: rgba(255, 0, 0, 0.5); }
   /* line 172, ../../../../general/res/sass/forms/_elems.scss */
@@ -3905,7 +3924,7 @@ textarea {
   position: absolute;
   height: 100%;
   width: 100%; }
-  /* line 321, ../../../../general/res/sass/_mixins.scss */
+  /* line 327, ../../../../general/res/sass/_mixins.scss */
   textarea.error {
     background: rgba(255, 0, 0, 0.5); }
 
@@ -3964,14 +3983,14 @@ textarea {
   overflow: hidden;
   position: relative;
   line-height: 22px; }
-  /* line 297, ../../../../general/res/sass/_mixins.scss */
+  /* line 303, ../../../../general/res/sass/_mixins.scss */
   .select .icon, .select .t-item-icon {
     color: #0099cc; }
   @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-    /* line 302, ../../../../general/res/sass/_mixins.scss */
+    /* line 308, ../../../../general/res/sass/_mixins.scss */
     .select:not(.disabled):hover {
       background: linear-gradient(#6b6b6b, #5e5e5e); }
-      /* line 304, ../../../../general/res/sass/_mixins.scss */
+      /* line 310, ../../../../general/res/sass/_mixins.scss */
       .select:not(.disabled):hover > .icon, .select:not(.disabled):hover > .t-item-icon {
         color: #33ccff; } }
   /* line 31, ../../../../general/res/sass/forms/_selects.scss */
@@ -4053,7 +4072,7 @@ textarea {
   max-height: 400px;
   overflow: auto;
   padding: 5px; }
-  /* line 321, ../../../../general/res/sass/_mixins.scss */
+  /* line 327, ../../../../general/res/sass/_mixins.scss */
   .channel-selector .treeview.error {
     background: rgba(255, 0, 0, 0.5); }
 /* line 36, ../../../../general/res/sass/forms/_channel-selector.scss */
@@ -4219,7 +4238,7 @@ span.req {
   padding: 0 3px;
   background: #3b3b3b;
   border-bottom: 1px solid #4d4d4d; }
-  /* line 321, ../../../../general/res/sass/_mixins.scss */
+  /* line 327, ../../../../general/res/sass/_mixins.scss */
   .filter input.filter.error,
   .filter input.t-filter-input.error,
   .t-filter input.filter.error,
@@ -4390,14 +4409,15 @@ span.req {
   bottom: 35px; }
   /* line 69, ../../../../general/res/sass/user-environ/_layout.scss */
   .user-environ .edit-area .tool-bar {
+    border-bottom: 1px solid rgba(153, 153, 153, 0.1);
     bottom: auto;
     height: 30px;
     line-height: 25px; }
-  /* line 74, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 75, ../../../../general/res/sass/user-environ/_layout.scss */
   .user-environ .edit-area .object-holder.work-area {
     top: 40px;
     overflow: auto; }
-/* line 81, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 82, ../../../../general/res/sass/user-environ/_layout.scss */
 .user-environ .ue-bottom-bar {
   overflow: hidden;
   position: absolute;
@@ -4413,7 +4433,7 @@ span.req {
   background: #000;
   color: gray;
   font-size: .7rem; }
-  /* line 89, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 90, ../../../../general/res/sass/user-environ/_layout.scss */
   .user-environ .ue-bottom-bar .status-holder {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -4432,7 +4452,7 @@ span.req {
     right: 120px;
     text-transform: uppercase;
     z-index: 1; }
-  /* line 97, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 98, ../../../../general/res/sass/user-environ/_layout.scss */
   .user-environ .ue-bottom-bar .app-logo {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -4449,68 +4469,68 @@ span.req {
     left: auto;
     width: 105px;
     z-index: 2; }
-    /* line 104, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 105, ../../../../general/res/sass/user-environ/_layout.scss */
     .user-environ .ue-bottom-bar .app-logo.logo-openmctweb {
       background: url("../../../../general/res/images/logo-openmctweb.svg") no-repeat center center; }
 
-/* line 113, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 114, ../../../../general/res/sass/user-environ/_layout.scss */
 .edit-mode .split-layout .split-pane-component.pane.right {
   width: 15%; }
-  /* line 115, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 116, ../../../../general/res/sass/user-environ/_layout.scss */
   .edit-mode .split-layout .split-pane-component.pane.right .pane.bottom {
     min-height: 50px;
     height: 30%; }
 
-/* line 123, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 124, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   position: absolute; }
-  /* line 127, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 128, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .pane-header {
     text-transform: uppercase;
     height: 24px;
     line-height: 24px; }
-  /* line 133, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 134, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .primary-pane {
     z-index: 2; }
-  /* line 138, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 139, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .mini-tab-icon.toggle-pane {
     z-index: 5; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 138, ../../../../general/res/sass/user-environ/_layout.scss */
+      /* line 139, ../../../../general/res/sass/user-environ/_layout.scss */
       .pane .mini-tab-icon.toggle-pane {
         top: 10px;
         height: 24px;
         line-height: 24px; }
-        /* line 146, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 147, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane:after {
           opacity: 0; }
-        /* line 151, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 152, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane.collapsed:before {
           opacity: 0; }
-        /* line 154, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 155, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane.collapsed:after {
           opacity: 1; }
-        /* line 158, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 159, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane.toggle-tree.anchor-left {
           left: 0;
           -moz-transform: translateX(-34px);
           -ms-transform: translateX(-34px);
           -webkit-transform: translateX(-34px);
           transform: translateX(-34px); }
-          /* line 161, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 162, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-tree.anchor-left:after {
             content: '\6d'; }
-          /* line 164, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 165, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-tree.anchor-left.collapsed {
             left: 0;
             -moz-transform: translateX(-17px);
             -ms-transform: translateX(-17px);
             -webkit-transform: translateX(-17px);
             transform: translateX(-17px); }
-          /* line 168, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 169, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-tree.anchor-left:not(.collapsed):before {
             -moz-transition-property: opacity;
             -o-transition-property: opacity;
@@ -4528,19 +4548,19 @@ span.req {
             -o-transition-delay: 200ms;
             -webkit-transition-delay: 200ms;
             transition-delay: 200ms; }
-        /* line 172, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 173, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane.toggle-inspect.anchor-right {
           right: 10px; }
-          /* line 174, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 175, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-inspect.anchor-right:after {
             content: '\e615'; }
-          /* line 177, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 178, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-inspect.anchor-right.collapsed {
             right: 5px; } }
-  /* line 185, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 186, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .left.l-inspect, .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.pager, .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.pager,
   .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.val,
-  .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.val, .pane.items .object-browse-bar .s-menu-btn span.left.l-click-area, .s-menu-btn .pane.items .object-browse-bar span.left.l-click-area,
+  .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.val, .pane.items .object-browse-bar .s-menu-btn span.left.l-click-area, .s-menu-btn .pane.items .object-browse-bar span.left.l-click-area, .pane.items .object-browse-bar .left.l-object-wrapper, .pane.items .object-browse-bar .left.l-object-wrapper-inner,
   .pane.items .object-browse-bar .right.abs,
   .pane.items .object-browse-bar .right.l-inspect,
   .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .right.pager,
@@ -4548,33 +4568,35 @@ span.req {
   .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .right.val,
   .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .right.val,
   .pane.items .object-browse-bar .s-menu-btn span.right.l-click-area,
-  .s-menu-btn .pane.items .object-browse-bar span.right.l-click-area {
+  .s-menu-btn .pane.items .object-browse-bar span.right.l-click-area,
+  .pane.items .object-browse-bar .right.l-object-wrapper,
+  .pane.items .object-browse-bar .right.l-object-wrapper-inner {
     top: auto; }
 
-/* line 195, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 196, ../../../../general/res/sass/user-environ/_layout.scss */
 .split-layout .holder.holder-treeview-elements {
   top: 10px;
   right: 0;
   bottom: 10px;
   left: 10px; }
-/* line 202, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 203, ../../../../general/res/sass/user-environ/_layout.scss */
 .split-layout .holder.holder-object-and-inspector {
   top: 0;
   right: 0;
   bottom: 0;
   left: 0; }
-  /* line 207, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 208, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .holder.holder-object-and-inspector .holder-object {
     top: 10px;
     bottom: 10px; }
-  /* line 211, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 212, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .holder.holder-object-and-inspector .holder-inspector-elements {
     top: 10px;
     bottom: 10px;
     left: 10px;
     right: 10px; }
 
-/* line 220, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 221, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-holder {
   overflow: auto;
   position: absolute;
@@ -4585,11 +4607,103 @@ span.req {
   width: auto;
   height: auto;
   top: 34px; }
-  /* line 224, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 225, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-holder.l-controls-visible.l-time-controller-visible {
     bottom: 88px; }
 
-/* line 230, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 231, ../../../../general/res/sass/user-environ/_layout.scss */
+.l-object-wrapper {
+  top: 34px; }
+  /* line 234, ../../../../general/res/sass/user-environ/_layout.scss */
+  .l-object-wrapper.active {
+    -moz-animation-name: pulseBorder;
+    -webkit-animation-name: pulseBorder;
+    animation-name: pulseBorder;
+    -moz-animation-duration: 150ms;
+    -webkit-animation-duration: 150ms;
+    animation-duration: 150ms;
+    -moz-animation-direction: alternate;
+    -webkit-animation-direction: alternate;
+    animation-direction: alternate;
+    -moz-animation-iteration-count: 8;
+    -webkit-animation-iteration-count: 8;
+    animation-iteration-count: 8;
+    -moz-animation-timing-function: ease;
+    -webkit-animation-timing-function: ease;
+    animation-timing-function: ease;
+    -moz-animation-delay: 0.5s;
+    -webkit-animation-delay: 0.5s;
+    animation-delay: 0.5s;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    border-color: #0099cc;
+    border-width: 2px;
+    border-style: dotted; }
+@-moz-keyframes pulseBorder {
+  0% {
+    border-color: transparent; }
+  100% {
+    border-color: #0099cc; } }
+@-webkit-keyframes pulseBorder {
+  0% {
+    border-color: transparent; }
+  100% {
+    border-color: #0099cc; } }
+@keyframes pulseBorder {
+  0% {
+    border-color: transparent; }
+  100% {
+    border-color: #0099cc; } }
+    /* line 240, ../../../../general/res/sass/user-environ/_layout.scss */
+    .l-object-wrapper.active .l-object-wrapper-inner {
+      top: 3px;
+      right: 3px;
+      bottom: 3px;
+      left: 3px; }
+
+/* line 250, ../../../../general/res/sass/user-environ/_layout.scss */
+.l-object-wrapper-inner {
+  display: -webkit-column nowrap;
+  display: column nowrap;
+  -moz-transition-property: height, width, top, right, bottom, left, opacity;
+  -o-transition-property: height, width, top, right, bottom, left, opacity;
+  -webkit-transition-property: height, width, top, right, bottom, left, opacity;
+  transition-property: height, width, top, right, bottom, left, opacity;
+  -moz-transition-duration: 0.25s;
+  -o-transition-duration: 0.25s;
+  -webkit-transition-duration: 0.25s;
+  transition-duration: 0.25s;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out; }
+
+/* line 256, ../../../../general/res/sass/user-environ/_layout.scss */
+.l-edit-controls {
+  -moz-transition-property: height, width, top, right, bottom, left, opacity;
+  -o-transition-property: height, width, top, right, bottom, left, opacity;
+  -webkit-transition-property: height, width, top, right, bottom, left, opacity;
+  transition-property: height, width, top, right, bottom, left, opacity;
+  -moz-transition-duration: 0.25s;
+  -o-transition-duration: 0.25s;
+  -webkit-transition-duration: 0.25s;
+  transition-duration: 0.25s;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  height: 0;
+  opacity: 0;
+  overflow: hidden; }
+  /* line 261, ../../../../general/res/sass/user-environ/_layout.scss */
+  .l-edit-controls.active {
+    border-bottom: 1px solid rgba(153, 153, 153, 0.1);
+    height: 30px;
+    line-height: 25px;
+    opacity: 1; }
+
+/* line 269, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .s-btn, .object-browse-bar .s-menu-btn,
 .top-bar .buttons-main .s-btn,
 .top-bar .buttons-main .s-menu-btn,
@@ -4601,13 +4715,13 @@ span.req {
   line-height: 25px;
   vertical-align: top; }
 
-/* line 243, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 282, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .view-switcher,
 .top-bar .view-switcher {
   margin-right: 20px; }
 
 /***************************************************** OBJECT BROWSE BAR */
-/* line 249, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 288, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar {
   overflow: visible;
   position: absolute;
@@ -4623,20 +4737,20 @@ span.req {
   height: 24px;
   line-height: 24px;
   white-space: nowrap; }
-  /* line 256, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 295, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-browse-bar .left {
     padding-right: 10px; }
-    /* line 258, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 297, ../../../../general/res/sass/user-environ/_layout.scss */
     .object-browse-bar .left .l-back {
       margin-right: 10px; }
 
-/* line 269, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 308, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-hidden .tree-holder,
 .pane-tree-hidden .splitter-treeview,
 .pane-tree-hidden .holder-treeview-elements {
   opacity: 0; }
 
-/* line 278, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 317, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-showing .tree-holder,
 .pane-tree-showing .splitter-treeview {
   -moz-transition-property: opacity;
@@ -4656,7 +4770,7 @@ span.req {
   -webkit-transition-delay: 250ms;
   transition-delay: 250ms;
   opacity: 1; }
-/* line 284, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 323, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-showing .holder-treeview-elements {
   -moz-transition-property: opacity;
   -o-transition-property: opacity;
@@ -4675,7 +4789,7 @@ span.req {
   -webkit-transition-delay: 200ms;
   transition-delay: 200ms; }
 
-/* line 291, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 330, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-showing .l-object-and-inspector .l-inspect,
 .pane-inspect-showing .l-object-and-inspector .splitter-inspect {
   -moz-transition-property: opacity;
@@ -4696,44 +4810,44 @@ span.req {
   transition-delay: 250ms;
   opacity: 1; }
 
-/* line 301, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 340, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-hidden .l-object-and-inspector .t-inspect {
   z-index: 1 !important; }
-/* line 304, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 343, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-hidden .l-object-and-inspector .l-inspect,
 .pane-inspect-hidden .l-object-and-inspector .splitter-inspect {
   opacity: 0; }
 
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 312, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 351, ../../../../general/res/sass/user-environ/_layout.scss */
   .holder-all {
     min-width: 600px; }
 
-  /* line 317, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 356, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .split-pane-component.pane.treeview.left {
     min-width: 150px;
     max-width: 35%;
     width: 25%; }
-  /* line 322, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 361, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .split-pane-component.pane.t-inspect.right {
     min-width: 200px;
     max-width: 35%;
     width: 20%;
     z-index: 3; }
 
-  /* line 330, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 369, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .tree-holder {
     padding-right: 5px; }
 
-  /* line 334, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 373, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane-tree-hidden .pane.right.primary-pane {
     left: 22px !important; }
 
-  /* line 337, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 376, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane-inspect-hidden .l-object-and-inspector .pane.left {
     right: 22px !important; }
 
-  /* line 339, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 378, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane:not(.resizing) {
     -moz-transition-property: width, left, right;
     -o-transition-property: width, left, right;
@@ -4752,7 +4866,7 @@ span.req {
     -webkit-transition-delay: 0;
     transition-delay: 0; }
 
-  /* line 342, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 381, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.primary-pane .object-browse-bar {
     min-width: 200px; } }
 /*****************************************************************************
@@ -5384,12 +5498,12 @@ span.req {
   /* line 80, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .abs.top-bar, .overlay .top-bar.l-inspect, .overlay .l-datetime-picker .l-month-year-pager .top-bar.pager, .l-datetime-picker .l-month-year-pager .overlay .top-bar.pager,
   .overlay .l-datetime-picker .l-month-year-pager .top-bar.val,
-  .l-datetime-picker .l-month-year-pager .overlay .top-bar.val, .overlay .s-menu-btn span.top-bar.l-click-area, .s-menu-btn .overlay span.top-bar.l-click-area {
+  .l-datetime-picker .l-month-year-pager .overlay .top-bar.val, .overlay .s-menu-btn span.top-bar.l-click-area, .s-menu-btn .overlay span.top-bar.l-click-area, .overlay .top-bar.l-object-wrapper, .overlay .top-bar.l-object-wrapper-inner {
     height: 45px; }
   /* line 84, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .abs.editor, .overlay .editor.l-inspect, .overlay .l-datetime-picker .l-month-year-pager .editor.pager, .l-datetime-picker .l-month-year-pager .overlay .editor.pager,
   .overlay .l-datetime-picker .l-month-year-pager .editor.val,
-  .l-datetime-picker .l-month-year-pager .overlay .editor.val, .overlay .s-menu-btn span.editor.l-click-area, .s-menu-btn .overlay span.editor.l-click-area,
+  .l-datetime-picker .l-month-year-pager .overlay .editor.val, .overlay .s-menu-btn span.editor.l-click-area, .s-menu-btn .overlay span.editor.l-click-area, .overlay .editor.l-object-wrapper, .overlay .editor.l-object-wrapper-inner,
   .overlay .abs.message-body,
   .overlay .message-body.l-inspect,
   .overlay .l-datetime-picker .l-month-year-pager .message-body.pager,
@@ -5397,7 +5511,9 @@ span.req {
   .overlay .l-datetime-picker .l-month-year-pager .message-body.val,
   .l-datetime-picker .l-month-year-pager .overlay .message-body.val,
   .overlay .s-menu-btn span.message-body.l-click-area,
-  .s-menu-btn .overlay span.message-body.l-click-area {
+  .s-menu-btn .overlay span.message-body.l-click-area,
+  .overlay .message-body.l-object-wrapper,
+  .overlay .message-body.l-object-wrapper-inner {
     top: 55px;
     bottom: 34px;
     left: 0;
@@ -5406,7 +5522,7 @@ span.req {
     /* line 92, ../../../../general/res/sass/overlay/_overlay.scss */
     .overlay .abs.editor .field.l-med input[type='text'], .overlay .editor.l-inspect .field.l-med input[type='text'], .overlay .l-datetime-picker .l-month-year-pager .editor.pager .field.l-med input[type='text'], .l-datetime-picker .l-month-year-pager .overlay .editor.pager .field.l-med input[type='text'],
     .overlay .l-datetime-picker .l-month-year-pager .editor.val .field.l-med input[type='text'],
-    .l-datetime-picker .l-month-year-pager .overlay .editor.val .field.l-med input[type='text'], .overlay .s-menu-btn span.editor.l-click-area .field.l-med input[type='text'], .s-menu-btn .overlay span.editor.l-click-area .field.l-med input[type='text'],
+    .l-datetime-picker .l-month-year-pager .overlay .editor.val .field.l-med input[type='text'], .overlay .s-menu-btn span.editor.l-click-area .field.l-med input[type='text'], .s-menu-btn .overlay span.editor.l-click-area .field.l-med input[type='text'], .overlay .editor.l-object-wrapper .field.l-med input[type='text'], .overlay .editor.l-object-wrapper-inner .field.l-med input[type='text'],
     .overlay .abs.message-body .field.l-med input[type='text'],
     .overlay .message-body.l-inspect .field.l-med input[type='text'],
     .overlay .l-datetime-picker .l-month-year-pager .message-body.pager .field.l-med input[type='text'],
@@ -5414,7 +5530,9 @@ span.req {
     .overlay .l-datetime-picker .l-month-year-pager .message-body.val .field.l-med input[type='text'],
     .l-datetime-picker .l-month-year-pager .overlay .message-body.val .field.l-med input[type='text'],
     .overlay .s-menu-btn span.message-body.l-click-area .field.l-med input[type='text'],
-    .s-menu-btn .overlay span.message-body.l-click-area .field.l-med input[type='text'] {
+    .s-menu-btn .overlay span.message-body.l-click-area .field.l-med input[type='text'],
+    .overlay .message-body.l-object-wrapper .field.l-med input[type='text'],
+    .overlay .message-body.l-object-wrapper-inner .field.l-med input[type='text'] {
       width: 100%; }
   /* line 98, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .bottom-bar {
@@ -5455,14 +5573,14 @@ span.req {
         -webkit-transition: background, 0.25s;
         transition: background, 0.25s;
         text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px; }
-        /* line 297, ../../../../general/res/sass/_mixins.scss */
+        /* line 303, ../../../../general/res/sass/_mixins.scss */
         .overlay .bottom-bar .s-btn:not(.major) .icon, .overlay .bottom-bar .s-menu-btn:not(.major) .icon, .overlay .bottom-bar .s-btn:not(.major) .t-item-icon, .overlay .bottom-bar .s-menu-btn:not(.major) .t-item-icon {
           color: #fff; }
         @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-          /* line 302, ../../../../general/res/sass/_mixins.scss */
+          /* line 308, ../../../../general/res/sass/_mixins.scss */
           .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover, .overlay .bottom-bar .s-menu-btn:not(.major):not(.disabled):hover {
             background: linear-gradient(#a6a6a6, #999999); }
-            /* line 304, ../../../../general/res/sass/_mixins.scss */
+            /* line 310, ../../../../general/res/sass/_mixins.scss */
             .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .s-menu-btn:not(.major):not(.disabled):hover > .icon, .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover > .t-item-icon, .overlay .bottom-bar .s-menu-btn:not(.major):not(.disabled):hover > .t-item-icon {
               color: white; } }
       /* line 110, ../../../../general/res/sass/overlay/_overlay.scss */
@@ -5471,7 +5589,7 @@ span.req {
   /* line 117, ../../../../general/res/sass/overlay/_overlay.scss */
   .overlay .abs.bottom-bar, .overlay .bottom-bar.l-inspect, .overlay .l-datetime-picker .l-month-year-pager .bottom-bar.pager, .l-datetime-picker .l-month-year-pager .overlay .bottom-bar.pager,
   .overlay .l-datetime-picker .l-month-year-pager .bottom-bar.val,
-  .l-datetime-picker .l-month-year-pager .overlay .bottom-bar.val, .overlay .s-menu-btn span.bottom-bar.l-click-area, .s-menu-btn .overlay span.bottom-bar.l-click-area {
+  .l-datetime-picker .l-month-year-pager .overlay .bottom-bar.val, .overlay .s-menu-btn span.bottom-bar.l-click-area, .s-menu-btn .overlay span.bottom-bar.l-click-area, .overlay .bottom-bar.l-object-wrapper, .overlay .bottom-bar.l-object-wrapper-inner {
     top: auto;
     right: 0;
     bottom: 0;
@@ -5542,7 +5660,7 @@ span.req {
     /* line 57, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
     .overlay > .holder .contents .abs.top-bar, .overlay > .holder .contents .top-bar.l-inspect, .overlay > .holder .contents .l-datetime-picker .l-month-year-pager .top-bar.pager, .l-datetime-picker .l-month-year-pager .overlay > .holder .contents .top-bar.pager,
     .overlay > .holder .contents .l-datetime-picker .l-month-year-pager .top-bar.val,
-    .l-datetime-picker .l-month-year-pager .overlay > .holder .contents .top-bar.val, .overlay > .holder .contents .s-menu-btn span.top-bar.l-click-area, .s-menu-btn .overlay > .holder .contents span.top-bar.l-click-area,
+    .l-datetime-picker .l-month-year-pager .overlay > .holder .contents .top-bar.val, .overlay > .holder .contents .s-menu-btn span.top-bar.l-click-area, .s-menu-btn .overlay > .holder .contents span.top-bar.l-click-area, .overlay > .holder .contents .top-bar.l-object-wrapper, .overlay > .holder .contents .top-bar.l-object-wrapper-inner,
     .overlay > .holder .contents .abs.editor,
     .overlay > .holder .contents .editor.l-inspect,
     .overlay > .holder .contents .l-datetime-picker .l-month-year-pager .editor.pager,
@@ -5551,6 +5669,8 @@ span.req {
     .l-datetime-picker .l-month-year-pager .overlay > .holder .contents .editor.val,
     .overlay > .holder .contents .s-menu-btn span.editor.l-click-area,
     .s-menu-btn .overlay > .holder .contents span.editor.l-click-area,
+    .overlay > .holder .contents .editor.l-object-wrapper,
+    .overlay > .holder .contents .editor.l-object-wrapper-inner,
     .overlay > .holder .contents .abs.message-body,
     .overlay > .holder .contents .message-body.l-inspect,
     .overlay > .holder .contents .l-datetime-picker .l-month-year-pager .message-body.pager,
@@ -5559,6 +5679,8 @@ span.req {
     .l-datetime-picker .l-month-year-pager .overlay > .holder .contents .message-body.val,
     .overlay > .holder .contents .s-menu-btn span.message-body.l-click-area,
     .s-menu-btn .overlay > .holder .contents span.message-body.l-click-area,
+    .overlay > .holder .contents .message-body.l-object-wrapper,
+    .overlay > .holder .contents .message-body.l-object-wrapper-inner,
     .overlay > .holder .contents .abs.bottom-bar,
     .overlay > .holder .contents .bottom-bar.l-inspect,
     .overlay > .holder .contents .l-datetime-picker .l-month-year-pager .bottom-bar.pager,
@@ -5566,7 +5688,9 @@ span.req {
     .overlay > .holder .contents .l-datetime-picker .l-month-year-pager .bottom-bar.val,
     .l-datetime-picker .l-month-year-pager .overlay > .holder .contents .bottom-bar.val,
     .overlay > .holder .contents .s-menu-btn span.bottom-bar.l-click-area,
-    .s-menu-btn .overlay > .holder .contents span.bottom-bar.l-click-area {
+    .s-menu-btn .overlay > .holder .contents span.bottom-bar.l-click-area,
+    .overlay > .holder .contents .bottom-bar.l-object-wrapper,
+    .overlay > .holder .contents .bottom-bar.l-object-wrapper-inner {
       top: auto;
       right: auto;
       bottom: auto;
@@ -5613,7 +5737,7 @@ ul.tree {
   -ms-user-select: none;
   -webkit-user-select: none;
   user-select: none; }
-  /* line 354, ../../../../general/res/sass/_mixins.scss */
+  /* line 360, ../../../../general/res/sass/_mixins.scss */
   ul.tree li {
     list-style-type: none;
     margin: 0;
@@ -5905,7 +6029,7 @@ ul.tree {
     padding-right: 10px; }
 /* line 40, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame > .object-holder.abs, .frame > .object-holder.l-inspect, .l-datetime-picker .l-month-year-pager .frame > .object-holder.pager,
-.l-datetime-picker .l-month-year-pager .frame > .object-holder.val, .s-menu-btn .frame > span.object-holder.l-click-area {
+.l-datetime-picker .l-month-year-pager .frame > .object-holder.val, .s-menu-btn .frame > span.object-holder.l-click-area, .frame > .object-holder.l-object-wrapper, .frame > .object-holder.l-object-wrapper-inner {
   top: 21px; }
 /* line 43, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame .contents {
@@ -5987,7 +6111,7 @@ ul.tree {
   /* line 52, ../../../../general/res/sass/user-environ/_top-bar.scss */
   .edit-mode .top-bar .buttons-main.abs, .edit-mode .top-bar .buttons-main.l-inspect, .edit-mode .top-bar .l-datetime-picker .l-month-year-pager .buttons-main.pager, .l-datetime-picker .l-month-year-pager .edit-mode .top-bar .buttons-main.pager,
   .edit-mode .top-bar .l-datetime-picker .l-month-year-pager .buttons-main.val,
-  .l-datetime-picker .l-month-year-pager .edit-mode .top-bar .buttons-main.val, .edit-mode .top-bar .s-menu-btn span.buttons-main.l-click-area, .s-menu-btn .edit-mode .top-bar span.buttons-main.l-click-area {
+  .l-datetime-picker .l-month-year-pager .edit-mode .top-bar .buttons-main.val, .edit-mode .top-bar .s-menu-btn span.buttons-main.l-click-area, .s-menu-btn .edit-mode .top-bar span.buttons-main.l-click-area, .edit-mode .top-bar .buttons-main.l-object-wrapper, .edit-mode .top-bar .buttons-main.l-object-wrapper-inner {
     bottom: auto;
     left: auto; }
 
@@ -6012,27 +6136,24 @@ ul.tree {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 22, ../../../../general/res/sass/user-environ/_tool-bar.scss */
-.tool-bar {
-  border-bottom: 1px solid rgba(153, 153, 153, 0.1); }
-  /* line 24, ../../../../general/res/sass/user-environ/_tool-bar.scss */
-  .tool-bar .l-control-group {
-    height: 25px; }
-  /* line 27, ../../../../general/res/sass/user-environ/_tool-bar.scss */
-  .tool-bar input[type="text"] {
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    font-size: .9em;
-    height: 25px;
-    margin-bottom: 1px;
-    position: relative; }
-    /* line 33, ../../../../general/res/sass/user-environ/_tool-bar.scss */
-    .tool-bar input[type="text"].sm {
-      width: 25px; }
-  /* line 37, ../../../../general/res/sass/user-environ/_tool-bar.scss */
-  .tool-bar .input-labeled label {
-    font-size: 11.25px; }
+/* line 23, ../../../../general/res/sass/user-environ/_tool-bar.scss */
+.tool-bar .l-control-group {
+  height: 25px; }
+/* line 26, ../../../../general/res/sass/user-environ/_tool-bar.scss */
+.tool-bar input[type="text"] {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  font-size: .9em;
+  height: 25px;
+  margin-bottom: 1px;
+  position: relative; }
+  /* line 32, ../../../../general/res/sass/user-environ/_tool-bar.scss */
+  .tool-bar input[type="text"].sm {
+    width: 25px; }
+/* line 36, ../../../../general/res/sass/user-environ/_tool-bar.scss */
+.tool-bar .input-labeled label {
+  font-size: 11.25px; }
 
 /********************************* VIEWS */
 /*****************************************************************************
@@ -6818,14 +6939,14 @@ table {
     margin-bottom: 3px;
     margin-right: 3px;
     position: relative; }
-    /* line 297, ../../../../general/res/sass/_mixins.scss */
+    /* line 303, ../../../../general/res/sass/_mixins.scss */
     .items-holder .item.grid-item .icon, .items-holder .item.grid-item .t-item-icon {
       color: #0099cc; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 302, ../../../../general/res/sass/_mixins.scss */
+      /* line 308, ../../../../general/res/sass/_mixins.scss */
       .items-holder .item.grid-item:not(.disabled):hover {
         background: linear-gradient(#666666, #595959); }
-        /* line 304, ../../../../general/res/sass/_mixins.scss */
+        /* line 310, ../../../../general/res/sass/_mixins.scss */
         .items-holder .item.grid-item:not(.disabled):hover > .icon, .items-holder .item.grid-item:not(.disabled):hover > .t-item-icon {
           color: #33ccff; } }
     /* line 45, ../../../../general/res/sass/items/_item.scss */
@@ -6949,14 +7070,14 @@ table {
       transition: background, 0.25s;
       text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px;
       color: #80dfff; }
-      /* line 297, ../../../../general/res/sass/_mixins.scss */
+      /* line 303, ../../../../general/res/sass/_mixins.scss */
       .items-holder .item.grid-item.selected .icon, .items-holder .item.grid-item.selected .t-item-icon {
         color: #0099cc; }
       @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-        /* line 302, ../../../../general/res/sass/_mixins.scss */
+        /* line 308, ../../../../general/res/sass/_mixins.scss */
         .items-holder .item.grid-item.selected:not(.disabled):hover {
           background: linear-gradient(#1ac6ff, #00bfff); }
-          /* line 304, ../../../../general/res/sass/_mixins.scss */
+          /* line 310, ../../../../general/res/sass/_mixins.scss */
           .items-holder .item.grid-item.selected:not(.disabled):hover > .icon, .items-holder .item.grid-item.selected:not(.disabled):hover > .t-item-icon {
             color: #33ccff; } }
       /* line 126, ../../../../general/res/sass/items/_item.scss */
