@@ -20,7 +20,8 @@
  at runtime from the About dialog for additional information.
 -->
 <span ng-controller="PlotController as plot"
-      ng-mouseleave="representation.showControls = false">
+      ng-mouseleave="representation.showControls = false"
+      class="abs holder holder-plot">
 
     <div class="gl-plot"
          ng-style="{ height: 100 / plot.getSubPlots().length + '%'}"

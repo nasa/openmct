@@ -19,8 +19,8 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<span ng-controller="BrowseObjectController">
-    <div class="object-browse-bar l-flex-row">
+<div ng-controller="BrowseObjectController" class="abs l-flex-col">
+    <div class="holder flex-elem l-flex-row object-browse-bar ">
         <div class="items-select left flex-elem l-flex-row grows">
             <mct-representation key="'back-arrow'"
                                 mct-object="domainObject"
@@ -43,19 +43,15 @@
             </mct-representation>
         </div>
     </div>
-
-
-    <div class="l-object-wrapper"
-         ng-class="{ active:editMode, 'edit-main':editMode}">
-        <div class="l-object-wrapper-inner l-flex-col">
+    <div class="holder l-flex-col flex-elem grows l-object-wrapper" ng-class="{ active:editMode, 'edit-main':editMode}">
+        <div class="holder l-flex-col flex-elem grows l-object-wrapper-inner">
             <!-- Toolbar and Save/Cancel buttons -->
             <div class="l-edit-controls flex-elem l-flex-row flex-align-end"
                  ng-class="{ active:editMode }">
-<!--            <mct-toolbar name="mctToolbar"
+    <!--            <mct-toolbar name="mctToolbar"
                              structure="toolbar.structure"
                              ng-model="toolbar.state"
-                             class="flex-elem grow">
-                </mct-toolbar>-->
+                             class="flex-elem grow"></mct-toolbar>-->
 
                 <!-- from toolbar.html -->
                 <mct-toolbar-x class="flex-elem grows ellipsis">
@@ -88,8 +84,8 @@
             </div>
             <mct-representation key="representation.selected.key"
                                 mct-object="representation.selected.key && domainObject"
-                                class="flex-elem grows object-holder-main scroll">
+                                class="abs flex-elem grows object-holder-main scroll">
             </mct-representation>
-        </div>
+        </div><!--/ l-object-wrapper-inner -->
     </div>
-</span>
+</div>

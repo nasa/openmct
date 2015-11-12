@@ -225,10 +225,10 @@
 
 .l-object-wrapper {
     @extend .abs;
-    top: $ueTopBarH + $interiorMarginLg;
+    //top: $ueTopBarH + $interiorMarginLg;
 
     .object-holder-main {
-        position: relative;
+        @extend .abs;
     }
 
     &.active {
@@ -238,18 +238,12 @@
         border-width: 2px;
         border-style: dotted;
         .l-object-wrapper-inner {
-            $m: 3px;
-            top: $m;
-            right: $m;
-            bottom: $m;
-            left: $m;
+            @include absPosDefault(3px, hidden);
         }
     }
 }
 
 .l-object-wrapper-inner {
-    @extend .abs;
-    @include display-flex(column nowrap);
     @include trans-prop-nice-resize(0.25s);
 }
 
@@ -286,7 +280,8 @@
 
 /***************************************************** OBJECT BROWSE BAR */
 .object-browse-bar {
-    @include absPosDefault(0, visible); // Must use visible to avoid hiding view switcher menu
+    // Converting to use flexbox layout
+    //@include absPosDefault(0, visible); // Must use visible to avoid hiding view switcher menu
     @include box-sizing(border-box);
     height: $ueTopBarH;
     line-height: $ueTopBarH;

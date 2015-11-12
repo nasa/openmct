@@ -18,10 +18,10 @@ mct-include.l-time-controller {
 	$r2H: nth($ueTimeControlH,2);
 	$r3H: nth($ueTimeControlH,3);
 
-    @include absPosDefault();
+    //@include absPosDefault();
     //@include test();
     display: block;
-    top: auto;
+    //top: auto;
 	height: $r1H + $r2H + $r3H + ($interiorMargin * 2);
     min-width: $minW;
     font-size: 0.8rem;
