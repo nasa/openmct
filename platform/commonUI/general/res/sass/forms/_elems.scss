@@ -164,14 +164,28 @@ label.form-control.checkbox {
 
 input[type="text"] {
 	@include nice-input($colorInputBg, $colorInputFg);
-	&.filter {
-		&.ng-dirty {
-			//            background: red;
-		}
-	}
+    vertical-align: baseline;
+    padding: 3px 5px;
 	&.numeric {
 		text-align: right;
 	}
+}
+
+.complex-input {
+    // Holder that looks like an input,
+    // and holds a text input plus other elements
+    @include border-radius($controlCr);
+    @include box-sizing(border-box);
+    @include box-shadow($inputInsetShdw);
+    background: $colorInputBg;
+    display: inline-block;
+    padding: 3px 5px 3px 3px;
+    input[type="text"] {
+        //@include test();
+        @include box-shadow(none);
+        background: none;
+        padding: 1px 3px;
+    }
 }
 
 textarea {
