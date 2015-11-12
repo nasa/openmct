@@ -96,6 +96,7 @@ define(
                     toClear = [], // Properties to clear out of scope on change
                     counter = 0,
                     couldRepresent = false,
+                    couldEdit = false,
                     lastId,
                     lastKey,
                     changeTemplate = templateLinker.link($scope, element);
@@ -143,11 +144,13 @@ define(
                     });
                 }
 
-                function unchanged(canRepresent, id, key) {
+                function unchanged(canRepresent, canEdit, id, key) {
                     return canRepresent &&
                         couldRepresent &&
                         id === lastId &&
-                        key === lastKey;
+                        key === lastKey &&
+                        canEdit &&
+                        couldEdit;
                 }
 
                 // General-purpose refresh mechanism; should set up the scope
@@ -159,10 +162,11 @@ define(
                         path = representation && getPath(representation),
                         uses = ((representation || {}).uses || []),
                         canRepresent = !!(path && domainObject),
+                        canEdit = !!(domainObject && domainObject.hasCapability('editor')),
                         id = domainObject && domainObject.getId(),
                         key = $scope.key;
 
-                    if (unchanged(canRepresent, id, key)) {
+                    if (unchanged(canRepresent, canEdit, id, key)) {
                         return;
                     }
 
@@ -190,6 +194,7 @@ define(
 
                     // To allow simplified change detection next time around
                     couldRepresent = canRepresent;
+                    couldEdit = canEdit;
                     lastId = id;
                     lastKey = key;
 
