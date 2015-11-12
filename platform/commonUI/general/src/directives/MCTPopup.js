@@ -51,6 +51,8 @@ define(
                     position = [ rect.left, rect.top ],
                     popup = popupService.display(div, position);
 
+                div.css('z-index', 75);
+
                 transclude(function (clone) {
                     div.append(clone);
                 });
