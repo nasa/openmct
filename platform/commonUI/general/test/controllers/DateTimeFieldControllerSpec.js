@@ -91,6 +91,10 @@ define(
                 expect(mockScope.textValue).toEqual("1977-05-25 17:30:00");
             });
 
+            it("exposes toggle state for date-time picker", function () {
+                expect(mockScope.picker.active).toBe(false);
+            });
+
             describe("when user input is invalid", function () {
                 var newText, oldValue;
 
