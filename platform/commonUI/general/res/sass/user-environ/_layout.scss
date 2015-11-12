@@ -238,11 +238,7 @@
         border-width: 2px;
         border-style: dotted;
         .l-object-wrapper-inner {
-            $m: 3px;
-            top: $m;
-            right: $m;
-            bottom: $m;
-            left: $m;
+            @include absPosDefault(3px, hidden);
         }
     }
 }
