@@ -46,6 +46,54 @@ Responsibilities of the project manager including:
 
 ## Sprint Calendar
 
+Certain process points are regularly scheduled in the sprint cycle.
+
+### Sprints by Release
+
+Allocation of work among sprints should be planned relative to release
+goals and milestones. As a general guideline, higher-risk work (large
+new features which may carry new defects, major refactoring, design
+changes with uncertain effects on usability) should be allocated to
+earlier sprints, allowing for time in later sprints to ensure stability.
+
+| Sprint | Focus                                                   |
+|:------:|:--------------------------------------------------------|
+| __1__  | Prototyping, design, experimentation.                   |
+| __2__  | New features, refinements, enhancements.                |
+| __3__  | Feature completion, low-risk enhancements, bug fixing.  |
+| __4__  | Stability & quality assurance.                          |
+
+### Sprints 1-3
+
+The first three sprints of a release are primarily centered around
+development work, with regular acceptance testing in the third
+week. During this third week, the top priority should be passing
+acceptance testing (e.g. by resolving any blockers found); any
+resources not needed for this effort should be used to begin work
+for the subsequent sprint.
+
+| Week  | Mon                       | Tue    | Wed | Thu                          | Fri         |
+|:-----:|:-------------------------:|:------:|:---:|:----------------------------:|:-----------:|
+| __1__ | Sprint plan               | Tag-up |     |                              |             |
+| __2__ |                           | Tag-up |     |                              | Code freeze |
+| __3__ | Sprint acceptance testing | Triage |     | _Sprint acceptance testing*_ | Ship        |
+
+&ast; If necessary.
+
+### Sprint 4
+
+The software must be stable at the end of the fourth sprint; because of
+this, the fourth sprint is scheduled differently, with a heightened
+emphasis on testing.
+
+|        | Mon                       | Tue    | Wed | Thu                          | Fri         |
+|-------:|:-------------------------:|:------:|:---:|:----------------------------:|:-----------:|
+| Week 1 | Sprint plan               | Tag-up |     |                              | Code freeze |
+| Week 2 | Acceptance testing        | Triage |     |                              |             |
+| Week 3 | _Acceptance testing*_     | Triage |     | _Acceptance testing*_        | Ship        |
+
+&ast; If necessary.
+
 ## Process Points
 
 * __Sprint plan.__ Project manager allocates issues based on
@@ -101,7 +149,7 @@ Responsibilities of the project manager including:
   testing and deploy that version. (Only true if acceptance
   testing has passed by this point; if acceptance testing has not
   been passed, will need to make ad hoc decisions with stakeholders,
-  e.g. “extend the sprint” or “defer shipment until end of next
-  sprint.”)
+  e.g. "extend the sprint" or "defer shipment until end of next
+  sprint.")
 
 
