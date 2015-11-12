@@ -63,14 +63,10 @@ define(
                 return editor.cancel();
             }
 
-            // Discard the current root view (which will be the editing
-            // UI, which will have been pushed atop the Browise UI.)
+            //Discard current 'editable' object, and retrieve original
+            // un-edited object.
             function returnToBrowse() {
-                self.objectService.getObjects([self.domainObject.getId()]).then(function(objects){
-                    return self.navigationService.setNavigation(objects[self.domainObject.getId()]);
-                })
-                //return
-                // self.navigationService.setNavigation(self.domainObject.getDomainObject());
+                return self.navigationService.setNavigation(self.domainObject.getOriginalObject());
             }
 
             return doCancel(getEditorCapability())

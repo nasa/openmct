@@ -99,8 +99,9 @@ define(
                         return domainObject.useCapability('composition')
                         .then(function(composees){
                             return self.$q.all(composees.map(function(composee){
-                                return object.getCapability('composition').add(composee);
-                            }));
+                                object.getCapability('composition').add(composee);
+                                return object;
+                            })).then(function(){return object});
                         });
                     });
                 }
@@ -120,7 +121,9 @@ define(
                 //This is a new 'virtual panel' that has not been persisted
                 // yet.
                 if (domainObject.getModel().type === 'telemetry.panel' && !domainObject.getModel().persisted){
-                    return self.getObjectService().getObjects([domainObject.getModel().location]).then(function(objs){ doWizardSave(domainObject, objs[domainObject.getModel().location])});
+                    return self.getObjectService()
+                        .getObjects([domainObject.getModel().location])
+                        .then(function(objs){ return doWizardSave(domainObject, objs[domainObject.getModel().location])});
                 } else {
                     return domainObject.getCapability("editor").save();
                 }
@@ -128,8 +131,8 @@ define(
 
             // Discard the current root view (which will be the editing
             // UI, which will have been pushed atop the Browse UI.)
-            function returnToBrowse() {
-                return self.navigationService.setNavigation(self.domainObject.getDomainObject());
+            function returnToBrowse(object) {
+                self.navigationService.setNavigation(object)
             }
 
             return doSave().then(returnToBrowse);

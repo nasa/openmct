@@ -42,7 +42,7 @@ define(
          * @param {DomainObject} domainObject the domain object whose
          *        composition should be modified as a result of the drop.
          */
-        function DropGesture(dndService, $q, navigationService, objectService, instantiate, element, domainObject) {
+        function DropGesture(dndService, $q, navigationService, objectService, instantiate, typeService, element, domainObject) {
             var actionCapability = domainObject.getCapability('action'),
                 editableDomainObject,
                 action; // Action for the drop, when it occurs
@@ -108,16 +108,28 @@ define(
             }
 
             function createVirtualPanel(base, overlayId){
-                var model = {
-                        name: 'New telemetry panel',
-                        type: 'telemetry.panel',
-                        composition: [base.getId(), overlayId],
-                        location: base.getModel().location
-                    },
-                    id = uuid();
+
+                var typeKey = 'telemetry.panel',
+                    type = typeService.getType(typeKey),
+                    model = type.getInitialModel(),
+                    id = uuid(),
+                    newPanel = undefined;
+
+                model.type = typeKey;
+                model.name = 'New telemetry panel';
+                newPanel = instantiate(model, id);
+
+                [base.getId(), overlayId].forEach(function(id){
+                    newPanel.getCapability('composition').add(id)
+                });
+
+                newPanel.getCapability('location').setPrimaryLocation(base.getCapability('location').getContextualLocation());
+
                 //ObjectService is wrapped by a decorator which is obscuring
                 // the newObject method.
-                return instantiate(model, id);
+                var virtualPanel = new EditableDomainObject(newPanel, $q);
+                virtualPanel.setOriginalObject(base);
+                return virtualPanel;
 
             }
 
@@ -137,8 +149,7 @@ define(
                     // the change.
                     if (id) {
                         if (shouldCreateVirtualPanel(domainObject)){
-                            virtualObj = new EditableDomainObject(createVirtualPanel(domainObject, id));
-                            navigationService.setNavigation(virtualObj);
+                            navigationService.setNavigation(createVirtualPanel(domainObject, id));
                             broadcastDrop(id, event);
                         } else {
                             $q.when(action && action.perform()).then(function (result) {

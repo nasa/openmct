@@ -22,7 +22,7 @@
                 "key": "drop",
                 "implementation": "gestures/DropGesture.js",
                 "depends": [ "dndService", "$q", "navigationService",
-                    "objectService", "instantiate" ]
+                    "objectService", "instantiate", "typeService" ]
             },
             {
                 "key": "menu",

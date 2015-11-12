@@ -78,7 +78,8 @@ define(
             // different versions of the same editable domain object
             // are not shown in different sections of the same Edit
             // UI, which might thereby fall out of sync.
-            var cache;
+            var cache,
+                originalObject = domainObject;
 
             // Constructor for EditableDomainObject, which adheres
             // to the same shared cache.
@@ -101,10 +102,15 @@ define(
                             new Factory(capability, editableObject, domainObject, cache) :
                             capability;
                 };
-                
-                editableObject.getDomainObject = function() {
-                    return domainObject;
-                }
+
+
+                editableObject.setOriginalObject = function(object) {
+                    originalObject = object;
+                };
+
+                editableObject.getOriginalObject = function() {
+                    return originalObject;
+                };
 
                 return editableObject;
             }
