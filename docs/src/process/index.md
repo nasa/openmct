@@ -86,11 +86,11 @@ The software must be stable at the end of the fourth sprint; because of
 this, the fourth sprint is scheduled differently, with a heightened
 emphasis on testing.
 
-|        | Mon                       | Tue    | Wed | Thu                          | Fri         |
+| Week   | Mon                       | Tue    | Wed | Thu                          | Fri         |
 |-------:|:-------------------------:|:------:|:---:|:----------------------------:|:-----------:|
-| Week 1 | Sprint plan               | Tag-up |     |                              | Code freeze |
-| Week 2 | Acceptance testing        | Triage |     |                              |             |
-| Week 3 | _Acceptance testing*_     | Triage |     | _Acceptance testing*_        | Ship        |
+| __1__  | Sprint plan               | Tag-up |     |                              | Code freeze |
+| __2__  | Acceptance testing        | Triage |     |                              |             |
+| __3__  | _Acceptance testing*_     | Triage |     | _Acceptance testing*_        | Ship        |
 
 &ast; If necessary.
 
