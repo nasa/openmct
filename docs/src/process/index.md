@@ -39,14 +39,15 @@ Responsibilities of the project manager including:
   assigned.
 * Pre-planning subsequent sprints to ensure that all members of the
   team always have a clear direction.
-* Scheduling and/or ensuring adherance to
+* Scheduling and/or ensuring adherence to
   [process points](#process-points).
 * Responding to changes within the sprint (shifting priorities,
   new issues) and re-allocating work for the sprint as needed.
 
 ## Sprint Calendar
 
-Certain process points are regularly scheduled in the sprint cycle.
+Certain [process points](#process-points) are regularly scheduled in
+the sprint cycle.
 
 ### Sprints by Release
 
