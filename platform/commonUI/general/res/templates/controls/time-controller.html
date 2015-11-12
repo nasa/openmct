@@ -19,10 +19,10 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div ng-controller="TimeRangeController">
-    <div class="l-time-range-inputs-holder">
-        <span class="l-time-range-inputs-elem ui-symbol type-icon">&#x43;</span>
-        <span class="l-time-range-input">
+<div ng-controller="TimeRangeController" class="l-flex-col">
+    <div class="holder l-flex-row flex-elem flex-row-align-center l-time-range-inputs-holder">
+        <span class="flex-elem l-time-range-inputs-elem ui-symbol type-icon">&#x43;</span>
+        <span class="flex-elem l-time-range-input">
             <mct-control key="'datetime-field'"
                          structure="{ format: parameters.format }"
                          ng-model="ngModel.outer"
@@ -31,19 +31,19 @@
             </mct-control>
         </span>
 
-        <span class="l-time-range-inputs-elem lbl">to</span>
+        <span class="flex-elem l-time-range-inputs-elem lbl">to</span>
 
-        <span class="l-time-range-input" ng-controller="ToggleController as t2">
+        <span class="flex-elem l-time-range-input" ng-controller="ToggleController as t2">
             <mct-control key="'datetime-field'"
                          structure="{ format: parameters.format }"
                          ng-model="ngModel.outer"
                          field="'end'"
                          class="time-range-end">
-            </mct-control>&nbsp;
+            </mct-control>
         </span>
     </div>
 
-    <div class="l-time-range-slider-holder">
+    <div class="flex-elem holder l-time-range-slider-holder">
         <div class="l-time-range-slider">
             <div class="slider"
                  mct-resize="spanWidth = bounds.width">
@@ -71,7 +71,7 @@
         </div>
     </div>
 
-    <div class="l-time-range-ticks-holder">
+    <div class="flex-elem holder l-time-range-ticks-holder">
         <div class="l-time-range-ticks">
             <div
                 ng-repeat="tick in ticks track by $index"

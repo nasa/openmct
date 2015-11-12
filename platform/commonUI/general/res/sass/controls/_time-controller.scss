@@ -18,27 +18,22 @@ mct-include.l-time-controller {
 	$r2H: nth($ueTimeControlH,2);
 	$r3H: nth($ueTimeControlH,3);
 
-    //@include absPosDefault();
     //@include test();
     display: block;
-    //top: auto;
-	height: $r1H + $r2H + $r3H + ($interiorMargin * 2);
     min-width: $minW;
     font-size: 0.8rem;
 
-	.l-time-range-inputs-holder,
+/*	.l-time-range-inputs-holder,
 	.l-time-range-slider {
 		//font-size: 0.8em;
-	}
+	}*/
 
 	.l-time-range-inputs-holder,
 	.l-time-range-slider-holder,
 	.l-time-range-ticks-holder
 	{
 		//@include test();
-		@include absPosDefault(0, visible);
 		@include box-sizing(border-box);
-		top: auto;
 	}
 	.l-time-range-slider,
 	.l-time-range-ticks {
@@ -49,7 +44,8 @@ mct-include.l-time-controller {
 
 	.l-time-range-inputs-holder {
 		//@include test(red);
-		height: $r1H; bottom: $r2H + $r3H + ($interiorMarginSm * 2);
+		//height: $r1H;
+        //line-height: $r1H;
 		padding-top: $interiorMargin;
 		border-top: 1px solid $colorInteriorBorder;
 		.type-icon {
@@ -71,7 +67,7 @@ mct-include.l-time-controller {
 
 	.l-time-range-slider-holder {
 		//@include test(green);
-		height: $r2H; bottom: $r3H + ($interiorMarginSm * 1);
+		height: $r2H;
 		.range-holder {
 			@include box-shadow(none);
 			background: none;
@@ -114,7 +110,6 @@ mct-include.l-time-controller {
 			}
 		}
 		&:not(:active) {
-			//@include test(#ff00cc);
 			.knob,
 			.range {
 				@include transition-property(left, right);
@@ -155,7 +150,6 @@ mct-include.l-time-controller {
 	.knob {
 		z-index: 2;
 		.range-value {
-			//@include test($sliderColorRange);
 			@include trans-prop-nice-fade(.25s);
 			padding: 0 $rangeValOffset;
 			position: absolute;
@@ -167,7 +161,6 @@ mct-include.l-time-controller {
 			color: $sliderColorKnobHov;
 		}
 		&.knob-l {
-			//@include border-bottom-left-radius($knobCr); // MOVED TO _CONTROLS.SCSS
 			margin-left: $knobM;
 			.range-value {
 				text-align: right;
@@ -175,7 +168,6 @@ mct-include.l-time-controller {
 			}
 		}
 		&.knob-r {
-			//@include border-bottom-right-radius($knobCr);
 			margin-right: $knobM;
 			.range-value {
 				left: $rangeValOffset;
@@ -187,12 +179,7 @@ mct-include.l-time-controller {
 	}
 }
 
-//.slot.range-holder {
-//	background-color: $sliderColorRangeHolder;
-//}
-
 .s-time-range-val {
-	//@include test();
 	@include border-radius($controlCr);
 	background-color: $colorInputBg;
 	padding: 1px 1px 0 $interiorMargin;

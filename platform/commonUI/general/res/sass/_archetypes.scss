@@ -145,3 +145,7 @@
 .flex-justify-end {
     @include justify-content(flex-end);
 }
+
+.flex-row-align-center {
+    @include align-items(center);
+}
