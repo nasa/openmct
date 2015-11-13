@@ -255,6 +255,9 @@ define(
                 // do this can result in unstable digest cycles, which
                 // Angular will detect, and throw an Error about.
                 refresh();
+
+                $scope.ngModel = $scope.$parent.$eval(attrs.mctModel || attrs.ngModel);
+                $scope.parameters = $scope.$parent.$eval(attrs.parameters);
             }
 
             return {
@@ -269,8 +272,8 @@ define(
 
                 // Two-way bind ng-model and parameters
                 scope: {
-                    ngModel: "=",
-                    parameters: "="
+//                    ngModel: "=",
+//                    parameters: "="
                 }
             };
         }

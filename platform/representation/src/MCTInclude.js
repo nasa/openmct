@@ -70,6 +70,9 @@ define(
                 });
 
                 scope.$on("$destroy", unwatch);
+
+                scope.ngModel = scope.$parent.$eval(attrs.ngModel);
+                scope.parameters = scope.$parent.$eval(attrs.parameters);
             }
 
             // Prepopulate templateMap for easy look up by key
@@ -91,7 +94,10 @@ define(
                 priority: -1000,
 
                 // Two-way bind ngModel, and parameters
-                scope: { ngModel: "=", parameters: "=" }
+                scope: {
+//                    ngModel: "=",
+//                    parameters: "="
+                }
             };
         }
 

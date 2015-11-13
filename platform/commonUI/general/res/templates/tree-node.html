@@ -57,7 +57,6 @@
             <span
                 mct-device="mobile"
                 class='ui-symbol view-control'
-                ng-model="::ngModel"
                 ng-click="treeNode.select()"
                 >
                 }
@@ -70,7 +69,7 @@
                 >
 
                 <mct-representation key="::'subtree'"
-                                    ng-model="::ngModel"
+                                    mct-model="::ngModel"
                                     parameters="::parameters"
                                     mct-object="::(treeNode.hasBeenExpanded() ? domainObject : undefined)">
                 </mct-representation>
