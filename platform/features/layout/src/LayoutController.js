@@ -113,7 +113,7 @@ define(
                         Math.floor(position.x / self.gridSize[0]),
                         Math.floor(position.y / self.gridSize[1])
                     ],
-                    dimensions: DEFAULT_DIMENSIONS
+                    dimensions: self.defaultDimensions()
                 };
                 // Mark change as persistable
                 if ($scope.commit) {
