@@ -29,11 +29,11 @@ define(
     function (GestureConstants) {
         "use strict";
 
-        var MENU_TEMPLATE = "<mct-representation key=\"'context-menu'\" " +
+        var MENU_TEMPLATE = "<span><mct-representation key=\"'context-menu'\" " +
                 "mct-object=\"domainObject\" " +
                 "ng-class=\"menuClass\" " +
                 "ng-style=\"menuStyle\">" +
-                "</mct-representation>",
+                "</mct-representation></span>",
             dismissExistingMenu;
 
         /**
