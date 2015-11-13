@@ -125,7 +125,7 @@ define(
                         .getObjects([domainObject.getModel().location])
                         .then(function(objs){ return doWizardSave(domainObject, objs[domainObject.getModel().location])});
                 } else {
-                    return domainObject.getCapability("editor").save();
+                    return domainObject.getCapability("editor").save().then(function(){return domainObject.getOriginalObject()});
                 }
             }
 
