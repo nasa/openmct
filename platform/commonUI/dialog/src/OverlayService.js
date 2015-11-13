@@ -28,7 +28,7 @@ define(
 
         // Template to inject into the DOM to show the dialog; really just points to
         // the a specific template that can be included via mct-include
-        var TEMPLATE = '<mct-include ng-model="overlay" key="key" ng-class="typeClass"></mct-include>';
+        var TEMPLATE = '<span><mct-include ng-model="overlay" key="key" ng-class="typeClass"></mct-include></span>';
 
 
         /**
