@@ -33,8 +33,8 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function ToggleController() {
-            this.state = false;
+        function ToggleController(Observable) {
+            this.state = new Observable(false);
         }
 
         /**
@@ -42,7 +42,7 @@ define(
          * @return {boolean} true if active
          */
         ToggleController.prototype.isActive = function () {
-            return this.state;
+            return this.state.get();
         };
 
         /**
@@ -50,7 +50,7 @@ define(
          * @return {boolean} true to activate
          */
         ToggleController.prototype.setState = function (newState) {
-            this.state = newState;
+            this.state.set(newState);
         };
 
         /**
@@ -58,7 +58,7 @@ define(
          * deactivate if it is active.
          */
         ToggleController.prototype.toggle = function () {
-            this.state = !this.state;
+            this.state.set(!this.state.get());
         };
 
         return ToggleController;

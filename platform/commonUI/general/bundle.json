@@ -85,7 +85,8 @@
             },
             {
                 "key": "ToggleController",
-                "implementation": "controllers/ToggleController.js"
+                "implementation": "controllers/ToggleController.js",
+                "depends": [ "Observable" ]
             },
             {
                 "key": "ContextMenuController",

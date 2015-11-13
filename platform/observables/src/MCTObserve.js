@@ -25,17 +25,12 @@ define(
                     });
                 }
 
-                recreateContents();
-                scheduleRecreate = throttle(recreateContents);
+                //recreateContents();
+                scheduleRecreate = throttle(recreateContents, 0);
 
-                unwatch = scope.$parent.$watch(attrs.mctObserve, function (observables) {
+                unwatch = scope.$parent.$watch(attrs.mctObserve, function (observable) {
                     stopObserving();
-                    unobserveFns = Object.keys(observables).map(function (key) {
-                        return observables[key].observe(function (newValue) {
-                            scope[key] = newValue;
-                            scheduleRecreate();
-                        });
-                    });
+                    unobserveFns = [observable.observe(scheduleRecreate)];
                 });
 
                 scope.$on('$destroy', function () {

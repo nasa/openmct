@@ -24,6 +24,7 @@ define(
         Observable.prototype.observe = function (listener) {
             var self = this;
             this.listeners.push(listener);
+            listener(this.get());
             return function () {
                 self.listeners = self.listeners.filter(function (fn) {
                     return fn !== listener;

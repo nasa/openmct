@@ -23,7 +23,6 @@
     <span ng-controller="TreeNodeController as treeNode">
         <span
             class="tree-item menus-to-left"
-            ng-class="{selected: treeNode.isSelected()}"
             >
             <span
                 mct-device="desktop"
@@ -31,7 +30,9 @@
                 ng-click="toggle.toggle(); treeNode.trackExpansion()"
                 ng-if="::(model.composition !== undefined)"
                 >
-                {{toggle.isActive() ? "v" : ">"}}
+                <span mct-observe="::toggle.state">
+                    {{::(toggle.isActive() ? "v" : ">")}}
+                </span>
             </span>
 
             <mct-representation
@@ -62,18 +63,19 @@
                 }
             </span>
         </span>
-        <span
-            class="tree-item-subtree"
-            ng-show="toggle.isActive()"
-            ng-if="::(model.composition !== undefined)"
-            >
+        <span mct-observe="::toggle.state">
+            <span
+                class="tree-item-subtree"
+                ng-if="::(toggle.isActive())"
+                >
 
-            <mct-representation key="'subtree'"
-                                ng-model="::ngModel"
-                                parameters="::parameters"
-                                mct-object="::(treeNode.hasBeenExpanded() ? domainObject : undefined)">
-            </mct-representation>
+                <mct-representation key="'subtree'"
+                                    ng-model="::ngModel"
+                                    parameters="::parameters"
+                                    mct-object="::(treeNode.hasBeenExpanded() ? domainObject : undefined)">
+                </mct-representation>
 
+            </span>
         </span>
     </span>
 </span>
