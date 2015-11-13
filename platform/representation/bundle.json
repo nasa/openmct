@@ -10,6 +10,10 @@
                 "key": "mctRepresentation",
                 "implementation": "MCTRepresentation.js",
                 "depends": [ "representations[]", "views[]", "representers[]", "$q", "templateLinker", "$log" ]
+            },
+            {
+                "key": "mctRefresh",
+                "implementation": "MCTRefresh.js"
             }
         ],
         "gestures": [
