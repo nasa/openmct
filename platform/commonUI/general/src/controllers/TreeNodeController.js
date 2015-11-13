@@ -145,8 +145,8 @@ define(
             this.$scope = $scope;
 
             // Listen for changes which will effect display parameters
-            $scope.$watch("ngModel.selectedObject", setSelection);
-            $scope.$watch("domainObject", checkSelection);
+            //$scope.$watch("ngModel.selectedObject", setSelection);
+            //$scope.$watch("domainObject", checkSelection);
         }
 
         /**

@@ -38,7 +38,7 @@
             <mct-representation
                 mct-device="desktop"
                 class="mobile-hide"
-                key="'label'"
+                key="::'label'"
                 mct-object="::domainObject"
                 ng-click="treeNode.select()"
                 >
@@ -46,7 +46,7 @@
             <mct-representation
                 mct-device="mobile"
                 class="desktop-hide"
-                key="'label'"
+                key="::'label'"
                 mct-object="::domainObject"
                 ng-click="(model.composition === undefined) && treeNode.select();
                           toggle.toggle();
@@ -69,7 +69,7 @@
                 ng-if="::(toggle.isActive())"
                 >
 
-                <mct-representation key="'subtree'"
+                <mct-representation key="::'subtree'"
                                     ng-model="::ngModel"
                                     parameters="::parameters"
                                     mct-object="::(treeNode.hasBeenExpanded() ? domainObject : undefined)">
