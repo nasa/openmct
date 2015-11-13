@@ -19,14 +19,13 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<ul class="tree"
-    ng-if="::(model.composition !== undefined)">
-    <!-- li ng-if="!composition">
+<ul class="tree" mct-refresh="domainObject">
+    <li ng-hide="::composition">
         <span class="tree-item">
             <span class="icon wait-spinner"></span>
             <span class="title-label">Loading...</span>
         </span>
-    </li -->
+    </li>
     <li ng-repeat="child in ::composition">
         <mct-representation key="::'tree-node'"
                             mct-object="::child"
