@@ -22,6 +22,8 @@
 <span ng-controller="ToggleController as toggle">
     <span ng-controller="TreeNodeController as treeNode">
         <span
+            mct-observe="ngModel.observableSelectedObject"
+            ng-class="{selected: treeNode.isSelected()}"
             class="tree-item menus-to-left"
             >
             <span

@@ -60,9 +60,10 @@ define(
          * @memberof platform/commonUI/general
          * @constructor
          */
-        function TreeNodeController($scope, $timeout) {
+        function TreeNodeController($scope, $timeout, Observable) {
             var self = this,
                 selectedObject = ($scope.ngModel || {}).selectedObject,
+                unobserve,
                 isSelected = false,
                 hasBeenExpanded = false;
 
@@ -144,6 +145,17 @@ define(
             this.$timeout = $timeout;
             this.$scope = $scope;
 
+            $scope.ngModel.observableSelectedObject =
+                $scope.ngModel.observableSelectedObject ||
+                    new Observable($scope.ngModel.selectedObject);
+
+            unobserve = $scope.ngModel.observableSelectedObject
+                .observe(setSelection);
+            $scope.$on("$destroy", function () {
+                unobserve();
+            });
+
+
             // Listen for changes which will effect display parameters
             //$scope.$watch("ngModel.selectedObject", setSelection);
             //$scope.$watch("domainObject", checkSelection);
@@ -159,6 +171,8 @@ define(
             if (this.$scope.ngModel) {
                 this.$scope.ngModel.selectedObject =
                     this.$scope.domainObject;
+                this.$scope.ngModel.observableSelectedObject
+                    .set(this.$scope.domainObject);
             }
             if ((this.$scope.parameters || {}).callback) {
                 this.$scope.parameters.callback(this.$scope.domainObject);
