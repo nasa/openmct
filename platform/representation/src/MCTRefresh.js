@@ -18,6 +18,7 @@ define(
                     });
                 }
 
+                recreateContents();
                 unlisten = mutation.listen(recreateContents);
                 scope.$on("$destroy", unlisten);
             }
