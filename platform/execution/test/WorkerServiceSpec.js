@@ -30,10 +30,14 @@ define(
             var mockWindow,
                 testWorkers,
                 mockWorker,
+                mockSharedWorker,
                 service;
 
             beforeEach(function () {
-                mockWindow = jasmine.createSpyObj('$window', ['Worker']);
+                mockWindow = jasmine.createSpyObj(
+                    '$window',
+                    ['Worker', 'SharedWorker']
+                );
                 testWorkers = [
                     {
                         key: 'abc',
@@ -49,11 +53,19 @@ define(
                         key: 'xyz',
                         scriptUrl: 'bad.js',
                         bundle: { path: 'bad', sources: 'bad' }
+                    },
+                    {
+                        key: 'a-shared-worker',
+                        shared: true,
+                        scriptUrl: 'c.js',
+                        bundle: { path: 'a', sources: 'b' }
                     }
                 ];
                 mockWorker = {};
+                mockSharedWorker = {};
 
                 mockWindow.Worker.andReturn(mockWorker);
+                mockWindow.SharedWorker.andReturn(mockSharedWorker);
 
                 service = new WorkerService(mockWindow, testWorkers);
             });
@@ -66,6 +78,12 @@ define(
             it("prefers the first worker when multiple keys are found", function () {
                 expect(service.run('xyz')).toBe(mockWorker);
                 expect(mockWindow.Worker).toHaveBeenCalledWith('x/y/z.js');
+            });
+
+            it("allows workers to be shared", function () {
+                expect(service.run('a-shared-worker')).toBe(mockSharedWorker);
+                expect(mockWindow.SharedWorker)
+                    .toHaveBeenCalledWith('a/b/c.js');
             });
 
             it("returns undefined for unknown workers", function () {

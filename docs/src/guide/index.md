@@ -1254,6 +1254,21 @@ object, or the current view proxy.
 * `all()`: Get an array of all objects in the selection state. Will include 
 either or both of the view proxy and selected object. 
 
+## Workers Category
+
+The `workers` extension category allows scripts to be run as web workers
+using the `workerService`.
+
+An extension of this category has no implementation. The following properties
+are supported:
+
+* `key`: A symbolic string used to identify this worker.
+* `workerUrl`: The path, relative to this bundle's `src` folder, where
+  this worker's source code resides.
+* `shared`: Optional; a boolean flag which, if true, indicates that this
+  worker should be instantiated as a
+  [`SharedWorker`](https://developer.mozilla.org/en-US/docs/Web/API/SharedWorker/SharedWorker).
+
 # Directives
 
 Open MCT Web defines several Angular directives that are intended for use both 
@@ -1849,6 +1864,14 @@ the TelemetrySeries itself, in that order.
 * `getSeries(domainObject)`: Get the latest `TelemetrySeries` (as resulted from 
 a previous `request(...)` call) available for this domain object.
 
+### Worker Service
+
+The `workerService` may be used to run web workers defined via the
+`workers` extension category. It has the following method:
+
+* `run(key)`: Run the worker identified by the provided `key`. Returns
+  a `Worker` (or `SharedWorker`, if the specified worker is defined
+  as a shared worker); if the `key` is unknown, returns `undefined`.
 
 # Models
 Domain object models in Open MCT Web are JavaScript objects describing the 

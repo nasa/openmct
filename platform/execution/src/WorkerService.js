@@ -38,7 +38,8 @@ define(
          * @constructor
          */
         function WorkerService($window, workers) {
-            var workerUrls = {};
+            var workerUrls = {},
+                sharedWorkers = {};
 
             function addWorker(worker) {
                 var key = worker.key;
@@ -48,12 +49,15 @@ define(
                         worker.bundle.sources,
                         worker.scriptUrl
                     ].join("/");
+                    sharedWorkers[key] = worker.shared;
                 }
             }
 
             (workers || []).forEach(addWorker);
             this.workerUrls = workerUrls;
+            this.sharedWorkers = sharedWorkers;
             this.Worker = $window.Worker;
+            this.SharedWorker = $window.SharedWorker;
         }
 
         /**
@@ -66,7 +70,8 @@ define(
          */
         WorkerService.prototype.run = function (key) {
             var scriptUrl = this.workerUrls[key],
-                Worker = this.Worker;
+                Worker = this.sharedWorkers[key] ?
+                        this.SharedWorker : this.Worker;
             return scriptUrl && Worker && new Worker(scriptUrl);
         };
 
