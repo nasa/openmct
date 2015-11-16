@@ -16,6 +16,7 @@
     "platform/execution",
     "platform/telemetry",
     "platform/features/clock",
+    "platform/features/conductor",
     "platform/features/imagery",
     "platform/features/layout",
     "platform/features/pages",

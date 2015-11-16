@@ -171,7 +171,7 @@ $scrollbarTrackShdw: rgba(#000, 0.7) 0 1px 5px;
 // Splitter
 $splitterD: 25px; // splitterD and HandleD should both be odd, or even
 $splitterHandleD: 1px;
-$colorSplitterBg: pullForward($colorBodyBg, 5%);
+$colorSplitterBg: rgba(#fff, 0.1); //pullForward($colorBodyBg, 5%);
 $splitterShdw: rgba(black, 0.4) 0 0 3px;
 $splitterEndCr: none;
 $colorSplitterHover: pullForward($colorBodyBg, 15%);

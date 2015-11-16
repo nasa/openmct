@@ -43,6 +43,16 @@
             vertical-align: bottom;
         }
     }
+
+    .split-layout {
+        .split-pane-component.pane {
+            &.bottom {
+                height: 30%;
+                min-height: 20%;
+                max-height: 80%;
+            }
+        }
+    }
     
     ul {
         @include box-sizing(border-box);
@@ -109,4 +119,10 @@
             width: 4px;
         }
     }
+    .holder-elements {
+        .current-elements {
+            position: relative;
+        }
+    }
 }
+

@@ -67,7 +67,6 @@
         right: $bodyMargin;
         bottom: $bodyMargin + $ueFooterH;
         .tool-bar {
-            border-bottom: 1px solid $colorInteriorBorder;
             bottom: auto;
             height: $tbH;
             line-height: $btnToolbarH;
@@ -193,7 +192,7 @@
 
 .split-layout {
     // Specific elements margins
-    .holder.holder-treeview-elements {
+    .holder.holder-create-and-search {
         top: $bodyMargin;
         right: 0;
         bottom: $bodyMargin;
@@ -209,8 +208,14 @@
             top: $bodyMargin;
             bottom: $bodyMargin;
         }
-        .holder-inspector-elements {
+        .holder-inspector {
             top: $bodyMargin;
+            bottom: $bodyMargin;
+            left: $bodyMargin;
+            right: $bodyMargin;
+        }
+        .holder-elements {
+            top: 0;
             bottom: $bodyMargin;
             left: $bodyMargin;
             right: $bodyMargin;
@@ -281,7 +286,6 @@
 /***************************************************** OBJECT BROWSE BAR */
 .object-browse-bar {
     // Converting to use flexbox layout
-    //@include absPosDefault(0, visible); // Must use visible to avoid hiding view switcher menu
     @include box-sizing(border-box);
     height: $ueTopBarH;
     line-height: $ueTopBarH;
@@ -302,7 +306,7 @@
     // Sets the left tree menu when the tree is hidden.
     .tree-holder,
     .splitter-treeview,
-    .holder-treeview-elements {
+    .holder-create-and-search {
         opacity: 0;
     }
 }
@@ -315,7 +319,7 @@
         opacity: 1;
     }
 
-    .holder-treeview-elements {
+    .holder-create-and-search {
         @include trans-prop-nice(opacity, $dur: 250ms, $delay: 200ms);
     }
 }
@@ -332,9 +336,6 @@
 
 .pane-inspect-hidden {
     .l-object-and-inspector {
-        .t-inspect {
-            z-index: 1 !important; // Move down so that primary pane elements are clickable
-        }
         .l-inspect,
         .splitter-inspect {
             opacity: 0;
