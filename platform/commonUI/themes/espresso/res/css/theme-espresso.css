@@ -4416,7 +4416,7 @@ span.req {
   .user-environ .edit-area .object-holder.work-area {
     top: 40px;
     overflow: auto; }
-/* line 81, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 80, ../../../../general/res/sass/user-environ/_layout.scss */
 .user-environ .ue-bottom-bar {
   overflow: hidden;
   position: absolute;
@@ -4432,7 +4432,7 @@ span.req {
   background: #000;
   color: gray;
   font-size: .7rem; }
-  /* line 89, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 88, ../../../../general/res/sass/user-environ/_layout.scss */
   .user-environ .ue-bottom-bar .status-holder {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -4451,7 +4451,7 @@ span.req {
     right: 120px;
     text-transform: uppercase;
     z-index: 1; }
-  /* line 97, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 96, ../../../../general/res/sass/user-environ/_layout.scss */
   .user-environ .ue-bottom-bar .app-logo {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -4468,68 +4468,68 @@ span.req {
     left: auto;
     width: 105px;
     z-index: 2; }
-    /* line 104, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 103, ../../../../general/res/sass/user-environ/_layout.scss */
     .user-environ .ue-bottom-bar .app-logo.logo-openmctweb {
       background: url("../../../../general/res/images/logo-openmctweb.svg") no-repeat center center; }
 
-/* line 113, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 112, ../../../../general/res/sass/user-environ/_layout.scss */
 .edit-mode .split-layout .split-pane-component.pane.right {
   width: 15%; }
-  /* line 115, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 114, ../../../../general/res/sass/user-environ/_layout.scss */
   .edit-mode .split-layout .split-pane-component.pane.right .pane.bottom {
     min-height: 50px;
     height: 30%; }
 
-/* line 123, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 122, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   position: absolute; }
-  /* line 127, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 126, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .pane-header {
     text-transform: uppercase;
     height: 24px;
     line-height: 24px; }
-  /* line 133, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 132, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .primary-pane {
     z-index: 2; }
-  /* line 138, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 137, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .mini-tab-icon.toggle-pane {
     z-index: 5; }
     @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 138, ../../../../general/res/sass/user-environ/_layout.scss */
+      /* line 137, ../../../../general/res/sass/user-environ/_layout.scss */
       .pane .mini-tab-icon.toggle-pane {
         top: 10px;
         height: 24px;
         line-height: 24px; }
-        /* line 146, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 145, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane:after {
           opacity: 0; }
-        /* line 151, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 150, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane.collapsed:before {
           opacity: 0; }
-        /* line 154, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 153, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane.collapsed:after {
           opacity: 1; }
-        /* line 158, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 157, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane.toggle-tree.anchor-left {
           left: 0;
           -moz-transform: translateX(-34px);
           -ms-transform: translateX(-34px);
           -webkit-transform: translateX(-34px);
           transform: translateX(-34px); }
-          /* line 161, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 160, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-tree.anchor-left:after {
             content: '\6d'; }
-          /* line 164, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 163, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-tree.anchor-left.collapsed {
             left: 0;
             -moz-transform: translateX(-17px);
             -ms-transform: translateX(-17px);
             -webkit-transform: translateX(-17px);
             transform: translateX(-17px); }
-          /* line 168, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 167, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-tree.anchor-left:not(.collapsed):before {
             -moz-transition-property: opacity;
             -o-transition-property: opacity;
@@ -4547,16 +4547,16 @@ span.req {
             -o-transition-delay: 200ms;
             -webkit-transition-delay: 200ms;
             transition-delay: 200ms; }
-        /* line 172, ../../../../general/res/sass/user-environ/_layout.scss */
+        /* line 171, ../../../../general/res/sass/user-environ/_layout.scss */
         .pane .mini-tab-icon.toggle-pane.toggle-inspect.anchor-right {
           right: 10px; }
-          /* line 174, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 173, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-inspect.anchor-right:after {
             content: '\e615'; }
-          /* line 177, ../../../../general/res/sass/user-environ/_layout.scss */
+          /* line 176, ../../../../general/res/sass/user-environ/_layout.scss */
           .pane .mini-tab-icon.toggle-pane.toggle-inspect.anchor-right.collapsed {
             right: 5px; } }
-  /* line 185, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 184, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.items .object-browse-bar .left.abs, .pane.items .object-browse-bar .left.l-inspect, .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.pager, .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.pager,
   .pane.items .object-browse-bar .l-datetime-picker .l-month-year-pager .left.val,
   .l-datetime-picker .l-month-year-pager .pane.items .object-browse-bar .left.val, .pane.items .object-browse-bar .s-menu-btn span.left.l-click-area, .s-menu-btn .pane.items .object-browse-bar span.left.l-click-area, .pane.items .object-browse-bar .left.l-object-wrapper, .pane.items .object-browse-bar .l-object-wrapper .left.object-holder-main, .l-object-wrapper .pane.items .object-browse-bar .left.object-holder-main,
@@ -4573,36 +4573,36 @@ span.req {
   .l-object-wrapper .pane.items .object-browse-bar .right.object-holder-main {
     top: auto; }
 
-/* line 195, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 194, ../../../../general/res/sass/user-environ/_layout.scss */
 .split-layout .holder.holder-treeview-elements {
   top: 10px;
   right: 0;
   bottom: 10px;
   left: 10px; }
-/* line 202, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 201, ../../../../general/res/sass/user-environ/_layout.scss */
 .split-layout .holder.holder-object-and-inspector {
   top: 0;
   right: 0;
   bottom: 0;
   left: 0; }
-  /* line 207, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 206, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .holder.holder-object-and-inspector .holder-object {
     top: 10px;
     bottom: 10px; }
-  /* line 211, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 210, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .holder.holder-object-and-inspector .holder-inspector {
     top: 10px;
     bottom: 10px;
     left: 10px;
     right: 10px; }
-  /* line 217, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 216, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .holder.holder-object-and-inspector .holder-elements {
     top: 0;
     bottom: 10px;
     left: 10px;
     right: 10px; }
 
-/* line 226, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 225, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-holder {
   overflow: auto;
   position: absolute;
@@ -4614,7 +4614,7 @@ span.req {
   height: auto;
   top: 34px; }
 
-/* line 239, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 237, ../../../../general/res/sass/user-environ/_layout.scss */
 .l-object-wrapper.active {
   -moz-animation-name: pulseBorder;
   -webkit-animation-name: pulseBorder;
@@ -4655,7 +4655,7 @@ span.req {
     border-color: transparent; }
   100% {
     border-color: #0099cc; } }
-  /* line 245, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 243, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-object-wrapper.active .l-object-wrapper-inner {
     overflow: hidden;
     position: absolute;
@@ -4666,7 +4666,7 @@ span.req {
     width: auto;
     height: auto; }
 
-/* line 251, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 249, ../../../../general/res/sass/user-environ/_layout.scss */
 .l-object-wrapper-inner {
   -moz-transition-property: height, width, top, right, bottom, left, opacity;
   -o-transition-property: height, width, top, right, bottom, left, opacity;
@@ -4681,7 +4681,7 @@ span.req {
   -webkit-transition-timing-function: ease-in-out;
   transition-timing-function: ease-in-out; }
 
-/* line 255, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 253, ../../../../general/res/sass/user-environ/_layout.scss */
 .l-edit-controls {
   -moz-transition-property: height, width, top, right, bottom, left, opacity;
   -o-transition-property: height, width, top, right, bottom, left, opacity;
@@ -4698,14 +4698,14 @@ span.req {
   height: 0;
   opacity: 0;
   overflow: hidden; }
-  /* line 260, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 258, ../../../../general/res/sass/user-environ/_layout.scss */
   .l-edit-controls.active {
     border-bottom: 1px solid rgba(153, 153, 153, 0.1);
     height: 30px;
     line-height: 25px;
     opacity: 1; }
 
-/* line 268, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 266, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .s-btn, .object-browse-bar .s-menu-btn,
 .top-bar .buttons-main .s-btn,
 .top-bar .buttons-main .s-menu-btn,
@@ -4717,13 +4717,13 @@ span.req {
   line-height: 25px;
   vertical-align: top; }
 
-/* line 281, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 279, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar .view-switcher,
 .top-bar .view-switcher {
   margin-right: 20px; }
 
 /***************************************************** OBJECT BROWSE BAR */
-/* line 287, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 285, ../../../../general/res/sass/user-environ/_layout.scss */
 .object-browse-bar {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -4731,20 +4731,20 @@ span.req {
   height: 24px;
   line-height: 24px;
   white-space: nowrap; }
-  /* line 294, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 292, ../../../../general/res/sass/user-environ/_layout.scss */
   .object-browse-bar .left {
     padding-right: 10px; }
-    /* line 296, ../../../../general/res/sass/user-environ/_layout.scss */
+    /* line 294, ../../../../general/res/sass/user-environ/_layout.scss */
     .object-browse-bar .left .l-back {
       margin-right: 10px; }
 
-/* line 307, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 303, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-hidden .tree-holder,
 .pane-tree-hidden .splitter-treeview,
 .pane-tree-hidden .holder-treeview-elements {
   opacity: 0; }
 
-/* line 316, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 312, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-showing .tree-holder,
 .pane-tree-showing .splitter-treeview {
   -moz-transition-property: opacity;
@@ -4764,7 +4764,7 @@ span.req {
   -webkit-transition-delay: 250ms;
   transition-delay: 250ms;
   opacity: 1; }
-/* line 322, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 318, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-tree-showing .holder-treeview-elements {
   -moz-transition-property: opacity;
   -o-transition-property: opacity;
@@ -4783,7 +4783,7 @@ span.req {
   -webkit-transition-delay: 200ms;
   transition-delay: 200ms; }
 
-/* line 329, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 325, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-showing .l-object-and-inspector .l-inspect,
 .pane-inspect-showing .l-object-and-inspector .splitter-inspect {
   -moz-transition-property: opacity;
@@ -4804,41 +4804,41 @@ span.req {
   transition-delay: 250ms;
   opacity: 1; }
 
-/* line 339, ../../../../general/res/sass/user-environ/_layout.scss */
+/* line 335, ../../../../general/res/sass/user-environ/_layout.scss */
 .pane-inspect-hidden .l-object-and-inspector .l-inspect,
 .pane-inspect-hidden .l-object-and-inspector .splitter-inspect {
   opacity: 0; }
 
 @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 347, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 343, ../../../../general/res/sass/user-environ/_layout.scss */
   .holder-all {
     min-width: 600px; }
 
-  /* line 352, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 348, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .split-pane-component.pane.treeview.left {
     min-width: 150px;
     max-width: 35%;
     width: 25%; }
-  /* line 357, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 353, ../../../../general/res/sass/user-environ/_layout.scss */
   .split-layout .split-pane-component.pane.t-inspect.right {
     min-width: 200px;
     max-width: 35%;
     width: 20%;
     z-index: 3; }
 
-  /* line 365, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 361, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.treeview.left .tree-holder {
     padding-right: 5px; }
 
-  /* line 369, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 365, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane-tree-hidden .pane.right.primary-pane {
     left: 22px !important; }
 
-  /* line 372, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 368, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane-inspect-hidden .l-object-and-inspector .pane.left {
     right: 22px !important; }
 
-  /* line 374, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 370, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane:not(.resizing) {
     -moz-transition-property: width, left, right;
     -o-transition-property: width, left, right;
@@ -4857,7 +4857,7 @@ span.req {
     -webkit-transition-delay: 0;
     transition-delay: 0; }
 
-  /* line 377, ../../../../general/res/sass/user-environ/_layout.scss */
+  /* line 373, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane.primary-pane .object-browse-bar {
     min-width: 200px; } }
 /*****************************************************************************
@@ -4989,7 +4989,7 @@ span.req {
 
   /* line 104, ../../../../general/res/sass/mobile/_layout.scss */
   .object-browse-bar {
-    left: 45px !important; }
+    margin-left: 45px; }
     /* line 106, ../../../../general/res/sass/mobile/_layout.scss */
     .object-browse-bar .context-available {
       opacity: 1 !important; }
