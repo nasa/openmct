@@ -30,7 +30,8 @@
     // An array of objects composed of domain object IDs and models
     // {id: domainObject's ID, model: domainObject's model}
     var indexedItems = [],
-        TERM_SPLITTER = /[ _\*]/;
+        TERM_SPLITTER = /[ _\*]/,
+        status = { request: 'status', finished: false };
 
     function indexItem(id, model) {
         var vector = {
@@ -155,6 +156,10 @@
                 indexItem(event.data.id, event.data.model);
             } else if (event.data.request === 'search') {
                 port.postMessage(search(event.data));
+            } else if (event.data.request === 'status') {
+                port.postMessage(status);
+            } else if (event.data.request === 'finish') {
+                status.finished = true;
             }
         };
     };

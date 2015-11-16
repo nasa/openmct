@@ -59,11 +59,9 @@ define([
         this.worker = this.startWorker(workerService);
         this.indexOnMutation(topic);
 
-        ROOTS.forEach(function indexRoot(rootId) {
-            provider.scheduleForIndexing(rootId);
-        });
+        this.rootsToIndex = ROOTS;
 
-
+        this.worker.port.postMessage({ request: 'status' });
     }
 
     /**
@@ -151,9 +149,12 @@ define([
      * @private
      */
     GenericSearchProvider.prototype.keepIndexing = function () {
+        if (this.pendingRequests === 0 && this.idsToIndex.length === 0) {
+            this.worker.port.postMessage({ request: 'finish' });
+        }
+
         while (this.pendingRequests < this.MAX_CONCURRENT_REQUESTS &&
-            this.idsToIndex.length
-            ) {
+                this.idsToIndex.length) {
             this.beginIndexRequest();
         }
     };
@@ -221,14 +222,25 @@ define([
      * @private
      */
     GenericSearchProvider.prototype.onWorkerMessage = function (event) {
+        var provider = this,
+            pendingQuery,
+            modelResults;
+
+        if (event.data.request === 'status' && !event.data.finished) {
+            this.rootsToIndex.forEach(function indexRoot(rootId) {
+                provider.scheduleForIndexing(rootId);
+            });
+            return;
+        }
+
         if (event.data.request !== 'search') {
             return;
         }
 
-        var pendingQuery = this.pendingQueries[event.data.queryId],
-            modelResults = {
-                total: event.data.total
-            };
+        pendingQuery = this.pendingQueries[event.data.queryId];
+        modelResults = {
+            total: event.data.total
+        };
 
         modelResults.hits = event.data.results.map(function (hit) {
             return {
