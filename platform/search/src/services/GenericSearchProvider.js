@@ -102,7 +102,8 @@ define([
         var worker = workerService.run('genericSearchWorker'),
             provider = this;
 
-        worker.addEventListener('message', function (messageEvent) {
+        worker.port.start();
+        worker.port.addEventListener('message', function (messageEvent) {
             provider.onWorkerMessage(messageEvent);
         });
 
@@ -168,7 +169,7 @@ define([
     GenericSearchProvider.prototype.index = function (id, model) {
         var provider = this;
 
-        this.worker.postMessage({
+        this.worker.port.postMessage({
             request: 'index',
             model: model,
             id: id
@@ -265,7 +266,7 @@ define([
     ) {
         var queryId = this.makeQueryId();
 
-        this.worker.postMessage({
+        this.worker.port.postMessage({
             request: 'search',
             input: searchInput,
             maxResults: maxResults,

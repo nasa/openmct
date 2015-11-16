@@ -118,7 +118,7 @@
                     match.matchCount += 100;
                 } else if (match.item.vector.lowerCaseName ===
                            query.inputLowerCase) {
-                   match.matchCount += 50;
+                    match.matchCount += 50;
                 }
                 return match;
             })
@@ -147,11 +147,15 @@
         return message;
     }
 
-    self.onmessage = function (event) {
-        if (event.data.request === 'index') {
-            indexItem(event.data.id, event.data.model);
-        } else if (event.data.request === 'search') {
-            self.postMessage(search(event.data));
-        }
+    self.onconnect = function (connectEvent) {
+        var port = connectEvent.ports[0];
+
+        port.onmessage = function (event) {
+            if (event.data.request === 'index') {
+                indexItem(event.data.id, event.data.model);
+            } else if (event.data.request === 'search') {
+                port.postMessage(search(event.data));
+            }
+        };
     };
 }());
