@@ -78,7 +78,7 @@
                 "implementation": "actions/CancelAction.js",
                 "name": "Cancel",
                 "description": "Discard changes made to these objects.",
-                "depends": ["$injector", "navigationService"]
+                "depends": ["$location", "urlService"]
             }
         ],
         "policies": [

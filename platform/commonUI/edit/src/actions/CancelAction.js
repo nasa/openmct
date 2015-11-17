@@ -33,10 +33,10 @@ define(
          * @memberof platform/commonUI/edit
          * @implements {Action}
          */
-        function CancelAction($injector, navigationService, context) {
+        function CancelAction($location, urlService, context) {
             this.domainObject = context.domainObject;
-            this.navigationService = navigationService;
-            this.objectService = $injector.get('objectService');
+            this.$location = $location;
+            this.urlService = urlService;
         }
 
         /**
@@ -47,7 +47,8 @@ define(
          */
         CancelAction.prototype.perform = function () {
             var domainObject = this.domainObject,
-                self = this;
+                $location = this.$location,
+                urlService = this.urlService;
 
             // Look up the object's "editor.completion" capability;
             // this is introduced by EditableDomainObject which is
@@ -63,10 +64,13 @@ define(
                 return editor.cancel();
             }
 
-            //Discard current 'editable' object, and retrieve original
-            // un-edited object.
+            // Discard the current root view (which will be the editing
+            // UI, which will have been pushed atop the Browise UI.)
             function returnToBrowse() {
-                return self.navigationService.setNavigation(self.domainObject.getOriginalObject());
+                $location.path(urlService.urlForLocation(
+                    "browse",
+                    domainObject.getOriginalObject()
+                ));
             }
 
             return doCancel(getEditorCapability())
