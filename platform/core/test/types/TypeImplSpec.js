@@ -101,6 +101,10 @@ define(
                 expect(type.getInitialModel().someKey).toEqual("some value");
             });
 
+            it("provides a fresh initial model each time", function () {
+                expect(type.getInitialModel().someKey).toEqual("some value");
+            });
+
             it("provides type properties", function () {
                 expect(type.getProperties().length).toEqual(1);
             });
