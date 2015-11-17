@@ -237,6 +237,7 @@
     &.active {
         @include pulseBorder($colorKey, 150ms, 8, 0.5s);
         @include border-radius($controlCr);
+        background-color: $colorEditAreaBg;
         border-color: $colorKey;
         border-width: 2px;
         border-style: dotted;
