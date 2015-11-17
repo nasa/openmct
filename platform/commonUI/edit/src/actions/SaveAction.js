@@ -70,21 +70,44 @@ define(
                 urlService = this.urlService,
                 self = this;
 
-            function doWizardSave(domainObject, parent) {
+            function resolveWith(object){
+                return function() {return object};
+            }
+
+            function doWizardSave(parent) {
                 var context = domainObject.getCapability("context");
                 var wizard = new CreateWizard(domainObject.useCapability('type'), parent, self.policyService);
 
                 // Create and persist the new object, based on user
                 // input.
-                function persistResult(formValue) {
+                function buildObjectFromInput(formValue) {
                     var parent = wizard.getLocation(formValue),
                         newModel = wizard.createModel(formValue);
-                    return self.creationService.createObject(newModel, parent);
+                        //Replace domain object model with model collected
+                        // from user form.
+                        domainObject.useCapability("mutation", function(){
+                            newModel.location = parent.getId();
+                            newModel.composition = domainObject.getModel().composition;
+                            return newModel;
+                        });
+                        return domainObject;
                 }
 
                 function doNothing() {
                     // Create cancelled, do nothing
                     return false;
+                }
+
+                function getAllComposees(domainObject){
+                    return domainObject.useCapability('composition');
+                }
+
+                function addComposeesToObject(object){
+                    return function(composees){
+                        return self.$q.all(composees.map(function (composee) {
+                            return object.getCapability('composition').add(composee);
+                        })).then(resolveWith(object));
+                    }
                 }
 
                 /**
@@ -93,23 +116,47 @@ define(
                  * @param object
                  * @returns {*}
                  */
-                function composeObject(object){
-                    return object && self.$q.when(object.hasCapability('composition') && domainObject.hasCapability('composition'))
-                    .then(function(){
-                        return domainObject.useCapability('composition')
-                        .then(function(composees){
-                            return self.$q.all(composees.map(function(composee){
-                                object.getCapability('composition').add(composee);
-                                return object;
-                            })).then(function(){return object});
-                        });
-                    });
+                function composeNewObject(object){
+                    if (self.$q.when(object.hasCapability('composition') && domainObject.hasCapability('composition'))) {
+                        return getAllComposees(domainObject)
+                            .then(addComposeesToObject(object))
+                    }
                 }
 
-                return self.dialogService.getUserInput(
-                    wizard.getFormStructure(),
-                    wizard.getInitialFormValue()
-                ).then(persistResult, doNothing).then(composeObject);
+                return self.dialogService
+                    .getUserInput(wizard.getFormStructure(), wizard.getInitialFormValue())
+                    .then(buildObjectFromInput, doNothing)
+                    //.then(composeNewObject)
+                    //.then(object.getCapability("persistence"));
+            }
+
+
+            function persistObject(object){
+
+                return (object.hasCapability('editor') && object.getCapability('editor').save() || object.getCapability('persistence').persist())
+                    .then(resolveWith(object));
+                /*
+                if (object.hasCapability('editor')){
+                    return object.getCapability('editor').save(true)
+                        .then(resolveWith(object));
+                } else {
+                    return object.useCapability(persistence);
+                }*/
+            }
+
+            function fetchObject(objectId){
+                return self.getObjectService().getObjects([objectId]).then(function(objects){
+                    return objects[objectId];
+                })
+            }
+
+            function getParent(object){
+                return fetchObject(object.getModel().location);
+            }
+
+            function locateObjectInParent(parent){
+                parent.getCapability('composition').add(domainObject.getId());
+                return parent;
             }
 
             // Invoke any save behavior introduced by the editor capability;
@@ -121,20 +168,30 @@ define(
                 //This is a new 'virtual panel' that has not been persisted
                 // yet.
                 if (domainObject.getModel().type === 'telemetry.panel' && !domainObject.getModel().persisted){
-                    return self.getObjectService()
-                        .getObjects([domainObject.getModel().location])
-                        .then(function(objs){ return doWizardSave(domainObject, objs[domainObject.getModel().location])});
+                    return getParent(domainObject)
+                            .then(doWizardSave)
+                            .then(persistObject)
+                            .then(getParent)//Parent may have changed based
+                                            // on user selection
+                            .then(locateObjectInParent)
+                            .then(persistObject)
+                            .then(function(){return fetchObject(domainObject.getId());})
                 } else {
-                    return domainObject.getCapability("editor").save().then(function(){return domainObject.getOriginalObject()});
+                    return domainObject.getCapability("editor").save()
+                        .then(resolveWith(domainObject.getOriginalObject()));
                 }
             }
 
             // Discard the current root view (which will be the editing
             // UI, which will have been pushed atop the Browse UI.)
             function returnToBrowse(object) {
-                self.navigationService.setNavigation(object)
+                if (object) {
+                    self.navigationService.setNavigation(object);
+                }
+                return object;
             }
 
+            //return doSave().then(returnToBrowse);
             return doSave().then(returnToBrowse);
         };
 

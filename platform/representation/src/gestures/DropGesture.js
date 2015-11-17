@@ -71,7 +71,6 @@ define(
             }
             
             function shouldCreateVirtualPanel(domainObject){
-                //
                 return domainObject.useCapability('view').filter(function (view){
                     return view.key==='plot' && domainObject.getModel().type!== 'telemetry.panel'
                 }).length > 0;
@@ -116,8 +115,7 @@ define(
                     newPanel = undefined;
 
                 model.type = typeKey;
-                model.name = 'New telemetry panel';
-                newPanel = instantiate(model, id);
+                newPanel = new EditableDomainObject(instantiate(model, id), $q);
 
                 [base.getId(), overlayId].forEach(function(id){
                     newPanel.getCapability('composition').add(id)
@@ -125,11 +123,11 @@ define(
 
                 newPanel.getCapability('location').setPrimaryLocation(base.getCapability('location').getContextualLocation());
 
-                //ObjectService is wrapped by a decorator which is obscuring
-                // the newObject method.
-                var virtualPanel = new EditableDomainObject(newPanel, $q);
-                virtualPanel.setOriginalObject(base);
-                return virtualPanel;
+                //var virtualPanel = new EditableDomainObject(newPanel, $q);
+                //virtualPanel.setOriginalObject(base);
+                newPanel.setOriginalObject(base);
+                //return virtualPanel;
+                return newPanel;
 
             }
 

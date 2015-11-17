@@ -55,42 +55,29 @@ define(
             function updateRoute(domainObject) {
                 var priorRoute = $route.current,
                     // Act as if params HADN'T changed to avoid page reload
-                    unlisten,
-                    navigateToObject = domainObject,
-                    mode = "browse";
+                    unlisten;
 
                 unlisten = $scope.$on('$locationChangeSuccess', function () {
                     // Checks path to make sure /browse/ is at front
                     // if so, change $route.current
-                    //if ($location.path().indexOf("/browse/") === 0) {
+                    if ($location.path().indexOf("/browse/") === 0) {
                         $route.current = priorRoute;
-                    //}
-                    setNavigation(domainObject);
+                    }
                     unlisten();
                 });
                 // urlService.urlForLocation used to adjust current
                 // path to new, addressed, path based on
                 // domainObject
-                if (domainObject && domainObject.hasCapability("editor")){
-                    //Set navigation path to edit mode
-                    mode = "edit";
-                    //Unwrap non-editable object for url calculation (needs
-                    // context capability
-                    navigateToObject = domainObject.getOriginalObject();
-                }
-                $location.path(urlService.urlForLocation(mode, navigateToObject));
+                $location.path(urlService.urlForLocation("browse", domainObject.hasCapability('editor') ? domainObject.getOriginalObject() : domainObject));
 
             }
 
             function setSelectedObject(domainObject) {
-               /* if (domainObject !== $scope.navigatedObject && isDirty()
-                && !confirm(CONFIRM_MSG)) {
-
+                if (domainObject !== $scope.navigatedObject && isDirty() && !confirm(CONFIRM_MSG)) {
                         $scope.treeModel.selectedObject = $scope.navigatedObject;
                 } else {
                     setNavigation(domainObject);
-                }*/
-                updateRoute(domainObject);
+                }
             }
 
             // Callback for updating the in-scope reference to the object
@@ -98,7 +85,8 @@ define(
             function setNavigation(domainObject) {
                 $scope.navigatedObject = domainObject;
                 $scope.treeModel.selectedObject = domainObject;
-                //navigationService.setNavigation(domainObject);
+                navigationService.setNavigation(domainObject);
+                updateRoute(domainObject);
             }
 
             function navigateTo(domainObject) {
@@ -191,17 +179,14 @@ define(
             }
 
             // Listen for changes in navigation state.
-            navigationService.addListener(updateRoute);
+            navigationService.addListener(setNavigation);
 
-            // If the selected tree node changes, update the route. This
-            // ensures navigation is always in sync with browser location,
-            // and also allows unload event to be used for catching
-            // navigation as well as browse events.
-            $scope.$watch("treeModel.selectedObject", updateRoute);
+            // Also listen for changes which come from the tree
+            $scope.$watch("treeModel.selectedObject", setSelectedObject);
             
             // Clean up when the scope is destroyed
             $scope.$on("$destroy", function () {
-                navigationService.removeListener(updateRoute);
+                navigationService.removeListener(setNavigation);
             });
         }
 
