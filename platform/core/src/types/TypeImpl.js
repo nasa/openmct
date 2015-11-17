@@ -157,7 +157,7 @@ define(
         };
 
         TypeImpl.prototype.getInitialModel = function () {
-            return this.typeDef.model || {};
+            return JSON.parse(JSON.stringify(this.typeDef.model || {}));
         };
 
         TypeImpl.prototype.getDefinition = function () {
