@@ -1539,6 +1539,9 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
   /* line 123, ../../../../general/res/sass/_inspector.scss */
   .l-inspect .holder-elements .current-elements {
     position: relative; }
+    /* line 125, ../../../../general/res/sass/_inspector.scss */
+    .l-inspect .holder-elements .current-elements .tree-item .t-object-label {
+      left: 0; }
 
 /********************************* CONTROLS */
 /* line 1, ../../../../general/res/sass/controls/_breadcrumb.scss */
@@ -3682,7 +3685,7 @@ mct-include.l-time-controller {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.07);
   padding: 1px 1px 0 5px; }
 
 /*****************************************************************************
@@ -3829,10 +3832,10 @@ mct-include.l-time-controller {
       -moz-box-sizing: border-box;
       -webkit-box-sizing: border-box;
       box-sizing: border-box;
-      -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
-      -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
-      box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
-      background: rgba(255, 255, 255, 0.1);
+      -moz-box-shadow: inset rgba(0, 0, 0, 0.6) 0 1px 3px;
+      -webkit-box-shadow: inset rgba(0, 0, 0, 0.6) 0 1px 3px;
+      box-shadow: inset rgba(0, 0, 0, 0.6) 0 1px 3px;
+      background: rgba(255, 255, 255, 0.07);
       border: none;
       color: #cccccc;
       outline: none;
@@ -3879,7 +3882,8 @@ label.form-control.checkbox input {
     padding: 5px; }
 
 /* line 165, ../../../../general/res/sass/forms/_elems.scss */
-input[type="text"] {
+input[type="text"],
+input[type="search"] {
   -moz-appearance: none;
   -webkit-appearance: none;
   -moz-border-radius: 3px;
@@ -3888,22 +3892,24 @@ input[type="text"] {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
-  box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
-  background: rgba(255, 255, 255, 0.1);
+  -moz-box-shadow: inset rgba(0, 0, 0, 0.6) 0 1px 3px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.6) 0 1px 3px;
+  box-shadow: inset rgba(0, 0, 0, 0.6) 0 1px 3px;
+  background: rgba(255, 255, 255, 0.07);
   border: none;
   color: #cccccc;
   outline: none;
   padding: 0 3px; }
   /* line 327, ../../../../general/res/sass/_mixins.scss */
-  input[type="text"].error {
+  input[type="text"].error,
+  input[type="search"].error {
     background: rgba(255, 0, 0, 0.5); }
-  /* line 172, ../../../../general/res/sass/forms/_elems.scss */
-  input[type="text"].numeric {
+  /* line 173, ../../../../general/res/sass/forms/_elems.scss */
+  input[type="text"].numeric,
+  input[type="search"].numeric {
     text-align: right; }
 
-/* line 177, ../../../../general/res/sass/forms/_elems.scss */
+/* line 178, ../../../../general/res/sass/forms/_elems.scss */
 textarea {
   -moz-appearance: none;
   -webkit-appearance: none;
@@ -3913,10 +3919,10 @@ textarea {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
-  box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
-  background: rgba(255, 255, 255, 0.1);
+  -moz-box-shadow: inset rgba(0, 0, 0, 0.6) 0 1px 3px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.6) 0 1px 3px;
+  box-shadow: inset rgba(0, 0, 0, 0.6) 0 1px 3px;
+  background: rgba(255, 255, 255, 0.07);
   border: none;
   color: #cccccc;
   outline: none;
@@ -4058,9 +4064,9 @@ textarea {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
-  -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
-  box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
+  -moz-box-shadow: inset rgba(0, 0, 0, 0.6) 0 1px 3px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.6) 0 1px 3px;
+  box-shadow: inset rgba(0, 0, 0, 0.6) 0 1px 3px;
   background: #333;
   border: none;
   color: #999;
@@ -4215,45 +4221,11 @@ span.req {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 24, ../../../../general/res/sass/forms/_filter.scss */
-.filter input.filter,
-.filter input.t-filter-input,
-.t-filter input.filter,
-.t-filter input.t-filter-input {
-  -moz-appearance: none;
-  -webkit-appearance: none;
-  -moz-border-radius: 3px;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  -moz-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
-  -webkit-box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
-  box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px;
-  background: #333;
-  border: none;
-  color: #999;
-  outline: none;
-  padding: 0 3px;
-  background: #3b3b3b;
-  border-bottom: 1px solid #4d4d4d; }
-  /* line 327, ../../../../general/res/sass/_mixins.scss */
-  .filter input.filter.error,
-  .filter input.t-filter-input.error,
-  .t-filter input.filter.error,
-  .t-filter input.t-filter-input.error {
-    background: rgba(255, 0, 0, 0.5); }
-/* line 28, ../../../../general/res/sass/forms/_filter.scss */
-.filter input.t-filter-input,
-.t-filter input.t-filter-input {
-  height: 22px;
-  width: 200px; }
-  /* line 38, ../../../../general/res/sass/forms/_filter.scss */
-  .filter input.t-filter-input:not(.ng-dirty) + .t-a-clear,
-  .t-filter input.t-filter-input:not(.ng-dirty) + .t-a-clear {
-    display: none; }
-/* line 42, ../../../../general/res/sass/forms/_filter.scss */
+/* line 34, ../../../../general/res/sass/forms/_filter.scss */
+.filter input.t-filter-input:not(.ng-dirty) + .t-a-clear,
+.t-filter input.t-filter-input:not(.ng-dirty) + .t-a-clear {
+  display: none; }
+/* line 38, ../../../../general/res/sass/forms/_filter.scss */
 .filter .icon.ui-symbol, .filter .t-item-icon, .filter .icon.s-icon-btn, .filter .s-icon-btn.t-item-icon, .filter .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .filter .icon.pager, .filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .l-datetime-picker .l-month-year-pager .filter .pager.t-item-icon,
 .t-filter .icon.ui-symbol,
 .t-filter .t-item-icon,
@@ -4272,7 +4244,7 @@ span.req {
   line-height: 22px;
   padding: 0px 5px;
   vertical-align: middle; }
-  /* line 50, ../../../../general/res/sass/forms/_filter.scss */
+  /* line 46, ../../../../general/res/sass/forms/_filter.scss */
   .filter .icon.ui-symbol:hover, .filter .t-item-icon:hover, .filter .icon.s-icon-btn:hover, .filter .s-icon-btn.t-item-icon:hover, .filter .l-datetime-picker .l-month-year-pager .icon.pager:hover, .l-datetime-picker .l-month-year-pager .filter .icon.pager:hover, .filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon:hover, .l-datetime-picker .l-month-year-pager .filter .pager.t-item-icon:hover,
   .t-filter .icon.ui-symbol:hover,
   .t-filter .t-item-icon:hover,
@@ -4283,7 +4255,7 @@ span.req {
   .t-filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon:hover,
   .l-datetime-picker .l-month-year-pager .t-filter .pager.t-item-icon:hover {
     background: rgba(255, 255, 255, 0.1); }
-/* line 54, ../../../../general/res/sass/forms/_filter.scss */
+/* line 50, ../../../../general/res/sass/forms/_filter.scss */
 .filter .s-a-clear.ui-symbol, .filter .s-a-clear.t-item-icon, .filter .s-a-clear.s-icon-btn, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager,
 .t-filter .s-a-clear.ui-symbol,
 .t-filter .s-a-clear.t-item-icon,
@@ -4312,7 +4284,7 @@ span.req {
   top: 50%;
   text-align: center;
   z-index: 5; }
-  /* line 74, ../../../../general/res/sass/forms/_filter.scss */
+  /* line 70, ../../../../general/res/sass/forms/_filter.scss */
   .filter .s-a-clear.ui-symbol:hover, .filter .s-a-clear.t-item-icon:hover, .filter .s-a-clear.s-icon-btn:hover, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager:hover, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager:hover,
   .t-filter .s-a-clear.ui-symbol:hover,
   .t-filter .s-a-clear.t-item-icon:hover,
@@ -4323,12 +4295,7 @@ span.req {
     opacity: 0.6;
     background-color: #0099cc; }
 
-/* line 82, ../../../../general/res/sass/forms/_filter.scss */
-.l-filter {
-  display: inline-block;
-  position: relative; }
-
-/* line 89, ../../../../general/res/sass/forms/_filter.scss */
+/* line 79, ../../../../general/res/sass/forms/_filter.scss */
 .top-bar input.filter {
   font-size: .9em;
   height: 24px;
@@ -4337,9 +4304,113 @@ span.req {
   padding-left: 10px;
   padding-right: 10px;
   vertical-align: top; }
-/* line 100, ../../../../general/res/sass/forms/_filter.scss */
+/* line 90, ../../../../general/res/sass/forms/_filter.scss */
 .top-bar .icon-filter {
   font-size: 1.4em; }
+
+/* line 95, ../../../../general/res/sass/forms/_filter.scss */
+.l-filter {
+  display: inline-block;
+  position: relative; }
+  /* line 102, ../../../../general/res/sass/forms/_filter.scss */
+  .l-filter input[type="search"] {
+    padding: 2px 19px; }
+  /* line 105, ../../../../general/res/sass/forms/_filter.scss */
+  .l-filter .clear-icon,
+  .l-filter .menu-icon, .l-filter:before {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    display: inline-block;
+    line-height: inherit;
+    position: absolute;
+    top: 50%;
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%); }
+  /* line 116, ../../../../general/res/sass/forms/_filter.scss */
+  .l-filter:before {
+    content: '\4d';
+    left: 5px;
+    -moz-transition-property: color;
+    -o-transition-property: color;
+    -webkit-transition-property: color;
+    transition-property: color;
+    -moz-transition-duration: 250ms;
+    -o-transition-duration: 250ms;
+    -webkit-transition-duration: 250ms;
+    transition-duration: 250ms;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    -moz-transition-delay: 0;
+    -o-transition-delay: 0;
+    -webkit-transition-delay: 0;
+    transition-delay: 0;
+    pointer-events: none; }
+  /* line 124, ../../../../general/res/sass/forms/_filter.scss */
+  .l-filter .clear-icon {
+    right: 4px;
+    visibility: hidden;
+    opacity: 0; }
+    /* line 130, ../../../../general/res/sass/forms/_filter.scss */
+    .l-filter .clear-icon.show {
+      visibility: visible;
+      opacity: 1; }
+    /* line 135, ../../../../general/res/sass/forms/_filter.scss */
+    .l-filter .clear-icon:hover {
+      color: #8c8c8c; }
+
+/* line 142, ../../../../general/res/sass/forms/_filter.scss */
+.s-filter input[type="search"] {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-box-shadow: inset rgba(0, 0, 0, 0.6) 0 1px 3px;
+  -webkit-box-shadow: inset rgba(0, 0, 0, 0.6) 0 1px 3px;
+  box-shadow: inset rgba(0, 0, 0, 0.6) 0 1px 3px;
+  background: rgba(255, 255, 255, 0.07);
+  border: none;
+  color: #cccccc;
+  outline: none; }
+  /* line 327, ../../../../general/res/sass/_mixins.scss */
+  .s-filter input[type="search"].error {
+    background: rgba(255, 0, 0, 0.5); }
+/* line 145, ../../../../general/res/sass/forms/_filter.scss */
+.s-filter .clear-icon,
+.s-filter .menu-icon, .s-filter:before {
+  color: #737373;
+  cursor: pointer;
+  font-family: symbolsfont;
+  -moz-transition-property: opacity, color;
+  -o-transition-property: opacity, color;
+  -webkit-transition-property: opacity, color;
+  transition-property: opacity, color;
+  -moz-transition-duration: 150ms;
+  -o-transition-duration: 150ms;
+  -webkit-transition-duration: 150ms;
+  transition-duration: 150ms;
+  -moz-transition-timing-function: ease-in-out;
+  -o-transition-timing-function: ease-in-out;
+  -webkit-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -moz-transition-delay: 0;
+  -o-transition-delay: 0;
+  -webkit-transition-delay: 0;
+  transition-delay: 0; }
+/* line 154, ../../../../general/res/sass/forms/_filter.scss */
+.s-filter:hover:before {
+  color: #8c8c8c; }
+/* line 160, ../../../../general/res/sass/forms/_filter.scss */
+.s-filter .clear-icon:before {
+  content: '\e607'; }
 
 /********************************* USER ENVIRON */
 /*****************************************************************************
@@ -5215,120 +5286,72 @@ span.req {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 23, ../../../../general/res/sass/search/_search.scss */
+/*
+// Moved to filter.scss
 .clear-icon,
 .menu-icon {
-  cursor: pointer;
-  font-family: symbolsfont;
-  -moz-transition-property: opacity, color;
-  -o-transition-property: opacity, color;
-  -webkit-transition-property: opacity, color;
-  transition-property: opacity, color;
-  -moz-transition-duration: 150ms;
-  -o-transition-duration: 150ms;
-  -webkit-transition-duration: 150ms;
-  transition-duration: 150ms;
-  -moz-transition-timing-function: ease-in-out;
-  -o-transition-timing-function: ease-in-out;
-  -webkit-transition-timing-function: ease-in-out;
-  transition-timing-function: ease-in-out;
-  -moz-transition-delay: 0;
-  -o-transition-delay: 0;
-  -webkit-transition-delay: 0;
-  transition-delay: 0; }
+    cursor: pointer;
+    font-family: symbolsfont;
+    @include trans-prop-nice((opacity, color), 150ms);
+}
 
-/* line 32, ../../../../general/res/sass/search/_search.scss */
-.clear-icon:before {
-  content: '\e607'; }
-
-/* line 40, ../../../../general/res/sass/search/_search.scss */
+.clear-icon {
+    // 'x' in circle icon
+    &:before {
+        content: '\e607';
+    }
+}
+*/
+/* line 63, ../../../../general/res/sass/search/_search.scss */
 .holder-search .search-bar {
   font-size: 0.8em;
   max-width: 250px;
-  position: relative; }
-  /* line 48, ../../../../general/res/sass/search/_search.scss */
-  .holder-search .search-bar .search-input {
+  position: relative;
+  /*		.clear-icon {
+  			right: $iconD + $interiorMargin;
+  
+  			// Icon is visible only when there is text input
+              visibility: hidden;
+  			opacity: 0;
+  			&.show {
+                  visibility: visible;
+  				opacity: 1;
+  			}
+  
+  			&:hover {
+  				color: pullForward($colorInputIcon, 10%);
+  			}
+  		}*/ }
+  /* line 68, ../../../../general/res/sass/search/_search.scss */
+  .holder-search .search-bar input[type="search"] {
     height: 25px;
-    line-height: 25px; }
-  /* line 53, ../../../../general/res/sass/search/_search.scss */
-  .holder-search .search-bar:before,
-  .holder-search .search-bar .clear-icon,
-  .holder-search .search-bar .menu-icon {
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    color: #737373;
-    height: 17px;
-    width: 17px;
-    line-height: 17px;
-    position: absolute;
-    text-align: center;
-    top: 4px; }
-  /* line 66, ../../../../general/res/sass/search/_search.scss */
-  .holder-search .search-bar .search-input {
+    line-height: 25px;
     position: relative;
     width: 100%;
     padding-left: 22px !important;
     padding-right: 44px !important; }
-    /* line 73, ../../../../general/res/sass/search/_search.scss */
-    .holder-search .search-bar .search-input input {
-      width: inherit; }
-  /* line 78, ../../../../general/res/sass/search/_search.scss */
-  .holder-search .search-bar:before {
-    content: '\4d';
-    font-family: symbolsfont;
-    left: 3px;
-    -moz-transition-property: color;
-    -o-transition-property: color;
-    -webkit-transition-property: color;
-    transition-property: color;
-    -moz-transition-duration: 250ms;
-    -o-transition-duration: 250ms;
-    -webkit-transition-duration: 250ms;
-    transition-duration: 250ms;
-    -moz-transition-timing-function: ease-in-out;
-    -o-transition-timing-function: ease-in-out;
-    -webkit-transition-timing-function: ease-in-out;
-    transition-timing-function: ease-in-out;
-    -moz-transition-delay: 0;
-    -o-transition-delay: 0;
-    -webkit-transition-delay: 0;
-    transition-delay: 0;
-    pointer-events: none; }
-  /* line 88, ../../../../general/res/sass/search/_search.scss */
-  .holder-search .search-bar:hover:before {
-    color: #8c8c8c; }
-  /* line 92, ../../../../general/res/sass/search/_search.scss */
+  /* line 133, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-bar .clear-icon {
-    right: 22px;
-    visibility: hidden;
-    opacity: 0; }
-    /* line 98, ../../../../general/res/sass/search/_search.scss */
-    .holder-search .search-bar .clear-icon.show {
-      visibility: visible;
-      opacity: 1; }
-    /* line 103, ../../../../general/res/sass/search/_search.scss */
-    .holder-search .search-bar .clear-icon:hover {
-      color: #8c8c8c; }
-  /* line 108, ../../../../general/res/sass/search/_search.scss */
+    right: 22px; }
+  /* line 137, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-bar .menu-icon {
     font-size: 0.8em;
     padding-right: 4px;
     right: 4px;
     text-align: right; }
-    /* line 110, ../../../../general/res/sass/search/_search.scss */
+    /* line 139, ../../../../general/res/sass/search/_search.scss */
     .holder-search .search-bar .menu-icon:before {
       content: '\76'; }
-    /* line 116, ../../../../general/res/sass/search/_search.scss */
+    /* line 145, ../../../../general/res/sass/search/_search.scss */
     .holder-search .search-bar .menu-icon:hover {
       color: #8c8c8c; }
-  /* line 121, ../../../../general/res/sass/search/_search.scss */
+  /* line 150, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-bar .search-menu-holder {
     float: right;
     left: -20px;
     z-index: 70;
     transition: visibility .05s, opacity .05s; }
-/* line 129, ../../../../general/res/sass/search/_search.scss */
+/* line 158, ../../../../general/res/sass/search/_search.scss */
 .holder-search .active-filter-display {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -5336,7 +5359,7 @@ span.req {
   line-height: 130%;
   padding-left: 1.4625em;
   font-size: 0.65em; }
-  /* line 137, ../../../../general/res/sass/search/_search.scss */
+  /* line 166, ../../../../general/res/sass/search/_search.scss */
   .holder-search .active-filter-display .clear-filters-icon {
     color: #737373;
     opacity: 1;
@@ -5344,7 +5367,7 @@ span.req {
     position: absolute;
     left: 1px;
     cursor: pointer; }
-/* line 147, ../../../../general/res/sass/search/_search.scss */
+/* line 176, ../../../../general/res/sass/search/_search.scss */
 .holder-search .search-results {
   -moz-transition-property: opacity, visibility;
   -o-transition-property: opacity, visibility;
@@ -5364,16 +5387,16 @@ span.req {
   transition-delay: 0;
   margin-top: 10px;
   padding-right: 5px; }
-  /* line 151, ../../../../general/res/sass/search/_search.scss */
+  /* line 180, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-results .hint {
     margin-bottom: 10px;
     font-size: 0.65em;
     opacity: 0.6; }
-  /* line 156, ../../../../general/res/sass/search/_search.scss */
+  /* line 185, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-results.active {
     visibility: visible;
     opacity: 1; }
-  /* line 160, ../../../../general/res/sass/search/_search.scss */
+  /* line 189, ../../../../general/res/sass/search/_search.scss */
   .holder-search .search-results .load-more-button {
     -moz-transform: translateX(-50%);
     -ms-transform: translateX(-50%);
