@@ -103,7 +103,7 @@ define(
 
             it("provides a fresh initial model each time", function () {
                 var model = type.getInitialModel();
-                model.someKey = "some other value"
+                model.someKey = "some other value";
                 expect(type.getInitialModel().someKey).toEqual("some value");
             });
 
