@@ -23,7 +23,7 @@
 
 .l-inspect,
 .l-inspect table tr td {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
 }
 
 .l-inspect {
@@ -31,6 +31,9 @@
     background: $colorInspectorBg;
     color: $colorInspectorFg;
     line-height: 140%;
+
+    .flex-elem.holder:not(:last-child) { margin-bottom: $interiorMargin; }
+
     .pane-header {
         color: pushBack($colorInspectorFg, 20%);
         font-size: 0.8rem;
@@ -122,9 +125,18 @@
     .holder-elements {
         .current-elements {
             position: relative;
-            .tree-item .t-object-label {
-                // Elements pool is a flat list, so don't indent items.
-                left: 0;
+            .tree-item {
+                .t-object-label {
+                    // Elements pool is a flat list, so don't indent items.
+                    left: 0;
+                    .t-item-icon {
+                        font-size: 1em;
+                        width: 1em;
+                    }
+                    .t-title-label {
+                        left: 20px + $interiorMargin;
+                    }
+                }
             }
         }
     }

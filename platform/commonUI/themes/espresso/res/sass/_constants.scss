@@ -69,8 +69,8 @@ $colorFormValid: #33cc33;
 $colorFormError: #cc0000;
 $colorFormInvalid: #ff3300;
 $colorFormLines: rgba(#fff, 0.1);
-$colorFormSectionHeader: rgba(#000, 0.2);
-$colorInputBg: rgba(#fff, 0.07);
+$colorFormSectionHeader: rgba(#fff, 0.1);
+$colorInputBg: rgba(#000, 0.1);
 $colorInputFg: pullForward($colorBodyFg, 20%);
 $colorFormText: rgba(#fff, 0.5);
 $colorInputIcon: pushBack($colorBodyFg, 15%);
@@ -80,7 +80,7 @@ $colorInspectorBg: pullForward($colorBodyBg, 3%);
 $colorInspectorFg: $colorBodyFg;
 $colorInspectorPropName: pushBack($colorBodyFg, 15%);
 $colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
-$colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
+$colorInspectorSectionHeaderBg: $colorFormSectionHeader;
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Status colors, mainly used for messaging and item ancillary symbols
