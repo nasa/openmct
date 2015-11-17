@@ -6,6 +6,7 @@ $colorFooterBg: #000;
 $colorKey: #0099cc;
 $colorKeySelectedBg: #005177;
 $colorKeyFg: #fff;
+$colorEditAreaBg: rgba(#1f4fa2, 0.1);
 $colorInteriorBorder: rgba($colorBodyFg, 0.1);
 $colorA: #ccc;
 $colorAHov: #fff;
@@ -69,8 +70,8 @@ $colorFormValid: #33cc33;
 $colorFormError: #cc0000;
 $colorFormInvalid: #ff3300;
 $colorFormLines: rgba(#fff, 0.1);
-$colorFormSectionHeader: rgba(#000, 0.2);
-$colorInputBg: rgba(#fff, 0.1);
+$colorFormSectionHeader: rgba(#fff, 0.1);
+$colorInputBg: rgba(#000, 0.1);
 $colorInputFg: pullForward($colorBodyFg, 20%);
 $colorFormText: rgba(#fff, 0.5);
 $colorInputIcon: pushBack($colorBodyFg, 15%);
@@ -80,7 +81,7 @@ $colorInspectorBg: pullForward($colorBodyBg, 3%);
 $colorInspectorFg: $colorBodyFg;
 $colorInspectorPropName: pushBack($colorBodyFg, 15%);
 $colorInspectorPropVal: pullForward($colorInspectorFg, 15%);
-$colorInspectorSectionHeaderBg: pullForward($colorInspectorBg, 5%);
+$colorInspectorSectionHeaderBg: $colorFormSectionHeader;
 $colorInspectorSectionHeaderFg: pullForward($colorInspectorBg, 40%);
 
 // Status colors, mainly used for messaging and item ancillary symbols
@@ -171,7 +172,7 @@ $scrollbarTrackShdw: rgba(#000, 0.7) 0 1px 5px;
 // Splitter
 $splitterD: 25px; // splitterD and HandleD should both be odd, or even
 $splitterHandleD: 1px;
-$colorSplitterBg: pullForward($colorBodyBg, 5%);
+$colorSplitterBg: rgba(#fff, 0.1); //pullForward($colorBodyBg, 5%);
 $splitterShdw: rgba(black, 0.4) 0 0 3px;
 $splitterEndCr: none;
 $colorSplitterHover: pullForward($colorBodyBg, 15%);

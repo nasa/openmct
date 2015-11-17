@@ -67,7 +67,6 @@
         right: $bodyMargin;
         bottom: $bodyMargin + $ueFooterH;
         .tool-bar {
-            border-bottom: 1px solid $colorInteriorBorder;
             bottom: auto;
             height: $tbH;
             line-height: $btnToolbarH;
@@ -78,7 +77,6 @@
         }
     }
 
-	// from _bottom-bar.scss
 	.ue-bottom-bar {
 		@include absPosDefault(0);// New status bar design
 		top: auto;
@@ -209,8 +207,14 @@
             top: $bodyMargin;
             bottom: $bodyMargin;
         }
-        .holder-inspector-elements {
+        .holder-inspector {
             top: $bodyMargin;
+            bottom: $bodyMargin;
+            left: $bodyMargin;
+            right: $bodyMargin;
+        }
+        .holder-elements {
+            top: 0;
             bottom: $bodyMargin;
             left: $bodyMargin;
             right: $bodyMargin;
@@ -225,7 +229,6 @@
 
 .l-object-wrapper {
     @extend .abs;
-    //top: $ueTopBarH + $interiorMarginLg;
 
     .object-holder-main {
         @extend .abs;
@@ -234,6 +237,7 @@
     &.active {
         @include pulseBorder($colorKey, 150ms, 8, 0.5s);
         @include border-radius($controlCr);
+        background-color: $colorEditAreaBg;
         border-color: $colorKey;
         border-width: 2px;
         border-style: dotted;
@@ -281,7 +285,6 @@
 /***************************************************** OBJECT BROWSE BAR */
 .object-browse-bar {
     // Converting to use flexbox layout
-    //@include absPosDefault(0, visible); // Must use visible to avoid hiding view switcher menu
     @include box-sizing(border-box);
     height: $ueTopBarH;
     line-height: $ueTopBarH;
@@ -295,9 +298,7 @@
     }
 }
 
-// When the tree is hidden, these are the
-// classes used for the left menu and the
-// right representation.
+// When the tree is hidden, these are the classes used for the left menu and the right representation.
 .pane-tree-hidden {
     // Sets the left tree menu when the tree is hidden.
     .tree-holder,
@@ -332,9 +333,6 @@
 
 .pane-inspect-hidden {
     .l-object-and-inspector {
-        .t-inspect {
-            z-index: 1 !important; // Move down so that primary pane elements are clickable
-        }
         .l-inspect,
         .splitter-inspect {
             opacity: 0;

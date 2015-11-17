@@ -20,9 +20,8 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="l-flex-col flex-elem grows holder holder-search"  ng-controller="SearchController as controller">
-    <div class="search-bar flex-elem" ng-controller="ClickAwayController as toggle">
-        <input class="search-input"
-               type="text"
+    <div class="search-bar search-input l-filter s-filter flex-elem" ng-controller="ClickAwayController as toggle">
+        <input type="search"
                ng-model="ngModel.input"
                ng-keyup="controller.search()" />
         <a class="clear-icon"

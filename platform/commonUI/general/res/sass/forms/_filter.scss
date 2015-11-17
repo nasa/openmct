@@ -21,13 +21,9 @@
  *****************************************************************************/
 .filter,
 .t-filter {
-	input.filter,
 	input.t-filter-input {
-		@include subdued-input();
-	}
-	input.t-filter-input {
-		height: $formInputH;
-		width: 200px;
+		//height: $formInputH;
+		//width: 200px;
 		&:not(.ng-dirty) {
 //			TO-DO: Update compass install to support this
 //			@include input-placeholder {
@@ -79,12 +75,6 @@
 //	&:not(ng-dirty)
 }
 
-.l-filter {
-	// Holds an input and a clear button
-	display:inline-block;
-	position: relative;
-}
-
 .top-bar {
 	input.filter {
 		$h: $ueTopBarH;
@@ -100,4 +90,75 @@
 	.icon-filter {
 		font-size: 1.4em;
 	}
+}
+
+.l-filter {
+    $iconEdgeM: 4px;
+    $iconD: $formInputH - ($iconEdgeM * 2);
+    // Adds a magnifying glass before, holds an input and a clear button
+    display: inline-block;
+    position: relative;
+
+    input[type="search"] {
+        padding: 2px ($iconD + $interiorMargin);
+    }
+    .clear-icon,
+    .menu-icon,
+    &:before {
+        @include box-sizing(border-box);
+        display: inline-block;
+        line-height: inherit;
+        position: absolute;
+        top: 50%;
+        @include transform(translateY(-50%));
+    }
+
+    &:before {
+        // Magnify glass icon
+        content:'\4d';
+        left: $interiorMargin;
+        @include trans-prop-nice(color, 250ms);
+        pointer-events: none;
+    }
+
+    .clear-icon {
+        right: $iconEdgeM;
+
+        // Icon is visible only when there is text input
+        visibility: hidden;
+        opacity: 0;
+        &.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        &:hover {
+            color: pullForward($colorInputIcon, 10%);
+        }
+    }
+}
+
+.s-filter {
+    input[type="search"] {
+        @include input-base();
+    }
+    .clear-icon,
+    .menu-icon,
+    &:before {
+        color: $colorInputIcon;
+        cursor: pointer;
+        font-family: symbolsfont;
+        @include trans-prop-nice((opacity, color), 150ms);
+    }
+    // Make icon lighten when hovering over search bar
+    &:hover:before {
+        color: pullForward($colorInputIcon, 10%);
+    }
+
+    .clear-icon {
+        // 'x' in circle icon
+        &:before {
+            content: '\e607';
+        }
+    }
 }
