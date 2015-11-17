@@ -69,9 +69,12 @@ define(
                 updateFromModel($scope.ngModel[$scope.field]);
             }
 
+            $scope.picker = { active: false };
+
             $scope.$watch('structure.format', setFormat);
             $scope.$watch('ngModel[field]', updateFromModel);
             $scope.$watch('textValue', updateFromView);
+
         }
 
         return DateTimeFieldController;

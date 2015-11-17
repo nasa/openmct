@@ -26,6 +26,8 @@ define(
     function () {
         "use strict";
 
+        var ERROR_PREFIX = "Error when notifying listener: ";
+
         /**
          * The `topic` service provides a way to create both named,
          * shared listeners and anonymous, private listeners.
@@ -46,7 +48,7 @@ define(
          * @returns {Function}
          * @memberof platform/core
          */
-        function Topic() {
+        function Topic($log) {
             var topics = {};
 
             function createTopic() {
@@ -63,7 +65,11 @@ define(
                     },
                     notify: function (message) {
                         listeners.forEach(function (listener) {
-                            listener(message);
+                            try {
+                                listener(message);
+                            } catch (e) {
+                                $log.error(ERROR_PREFIX + e.message);
+                            }
                         });
                     }
                 };

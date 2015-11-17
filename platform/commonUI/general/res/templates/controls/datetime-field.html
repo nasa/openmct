@@ -6,10 +6,10 @@
     </input>
     <a class="ui-symbol icon icon-calendar"
        ng-if="structure.format === 'utc' || !structure.format"
-       ng-click="pickerActive = !pickerActive">
+       ng-click="picker.active = !picker.active">
     </a>
-    <mct-popup ng-if="pickerActive">
-        <div mct-click-elsewhere="pickerActive = false">
+    <mct-popup ng-if="picker.active">
+        <div mct-click-elsewhere="picker.active = false">
             <mct-control key="'datetime-picker'"
                          ng-model="ngModel"
                          field="field"
