@@ -1268,6 +1268,7 @@ are supported:
 * `shared`: Optional; a boolean flag which, if true, indicates that this
   worker should be instantiated as a
   [`SharedWorker`](https://developer.mozilla.org/en-US/docs/Web/API/SharedWorker/SharedWorker).
+  Default value is `false`.
 
 # Directives
 
