@@ -156,6 +156,13 @@ define(
             });
         };
 
+        /**
+         * Returns the default model for an object of this type. Note that
+         * this method returns a clone of the original model, so if using this
+         * method heavily, consider caching the result to optimize performance.
+         *
+         * @return {object} The default model for an object of this type.
+         */
         TypeImpl.prototype.getInitialModel = function () {
             return JSON.parse(JSON.stringify(this.typeDef.model || {}));
         };
