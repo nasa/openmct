@@ -143,6 +143,20 @@ ul.tree {
 		}
 	}
 
+    &.active {
+        // The item is being edited
+        background: rgba($colorItemTreeEditingBg, 0.5) !important;
+        pointer-events: none;
+        &:before {
+            // Pencil icon
+            @extend .ui-symbol;
+            color: $colorItemTreeEditingBg;
+            content: '\70';
+            margin-left: $interiorMarginSm;
+        }
+        .view-control, + .tree-item-subtree { display: none; }
+    }
+
 	&:not(.loading) {
 		cursor: pointer;
 	}

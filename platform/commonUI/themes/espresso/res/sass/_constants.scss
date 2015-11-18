@@ -157,6 +157,7 @@ $colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
 $colorItemTreeFg: $colorBodyFg;
 $colorItemTreeSelectedBg: pushBack($colorKey, 15%);
 $colorItemTreeSelectedFg: pullForward($colorBodyFg, 20%);
+$colorItemTreeEditingBg: #b2624a;
 $colorItemTreeVC: rgba(#fff, 0.3);
 $colorItemTreeSelectedVC: $colorItemTreeVC;
 $colorItemTreeVCHover: $colorAlt1;

@@ -784,30 +784,41 @@ mct-container {
     border-right: 5px solid transparent; }
 
 /* line 31, ../../../../general/res/sass/_icons.scss */
-.ui-symbol, .t-item-icon, .s-icon-btn, .l-datetime-picker .l-month-year-pager .pager {
+.ui-symbol, .t-item-icon, .s-icon-btn, .l-datetime-picker .l-month-year-pager .pager, .tree-item.active:before,
+.search-result-item.active:before {
   font-family: 'symbolsfont'; }
   /* line 33, ../../../../general/res/sass/_icons.scss */
-  .ui-symbol.type-icon, .type-icon.t-item-icon, .type-icon.s-icon-btn, .l-datetime-picker .l-month-year-pager .type-icon.pager {
+  .ui-symbol.type-icon, .type-icon.t-item-icon, .type-icon.s-icon-btn, .l-datetime-picker .l-month-year-pager .type-icon.pager, .type-icon.tree-item.active:before,
+  .type-icon.search-result-item.active:before {
     color: #b3b3b3; }
   /* line 36, ../../../../general/res/sass/_icons.scss */
-  .ui-symbol.icon, .t-item-icon, .icon.s-icon-btn, .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .pager.t-item-icon {
+  .ui-symbol.icon, .t-item-icon, .icon.s-icon-btn, .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .icon.tree-item.active:before, .tree-item.active.t-item-icon:before,
+  .icon.search-result-item.active:before,
+  .search-result-item.active.t-item-icon:before {
     color: #0099cc;
     font-size: inherit; }
     /* line 40, ../../../../general/res/sass/_icons.scss */
-    .ui-symbol.icon.alert, .alert.t-item-icon, .icon.alert.s-icon-btn, .l-datetime-picker .l-month-year-pager .icon.alert.pager, .l-datetime-picker .l-month-year-pager .alert.pager.t-item-icon {
+    .ui-symbol.icon.alert, .alert.t-item-icon, .icon.alert.s-icon-btn, .l-datetime-picker .l-month-year-pager .icon.alert.pager, .l-datetime-picker .l-month-year-pager .alert.pager.t-item-icon, .icon.alert.tree-item.active:before, .alert.tree-item.active.t-item-icon:before,
+    .icon.alert.search-result-item.active:before,
+    .alert.search-result-item.active.t-item-icon:before {
       color: #ff3c00; }
       /* line 42, ../../../../general/res/sass/_icons.scss */
-      .ui-symbol.icon.alert:hover, .alert.t-item-icon:hover, .icon.alert.s-icon-btn:hover, .l-datetime-picker .l-month-year-pager .icon.alert.pager:hover {
+      .ui-symbol.icon.alert:hover, .alert.t-item-icon:hover, .icon.alert.s-icon-btn:hover, .l-datetime-picker .l-month-year-pager .icon.alert.pager:hover, .icon.alert.tree-item.active:hover:before, .alert.tree-item.active.t-item-icon:hover:before,
+      .icon.alert.search-result-item.active:hover:before,
+      .alert.search-result-item.active.t-item-icon:hover:before {
         color: #ff8a66; }
     /* line 46, ../../../../general/res/sass/_icons.scss */
-    .ui-symbol.icon.major, .major.t-item-icon, .icon.major.s-icon-btn, .l-datetime-picker .l-month-year-pager .icon.major.pager, .l-datetime-picker .l-month-year-pager .major.pager.t-item-icon {
+    .ui-symbol.icon.major, .major.t-item-icon, .icon.major.s-icon-btn, .l-datetime-picker .l-month-year-pager .icon.major.pager, .l-datetime-picker .l-month-year-pager .major.pager.t-item-icon, .icon.major.tree-item.active:before, .major.tree-item.active.t-item-icon:before,
+    .icon.major.search-result-item.active:before,
+    .major.search-result-item.active.t-item-icon:before {
       font-size: 1.65em; }
   /* line 50, ../../../../general/res/sass/_icons.scss */
   .ui-symbol.icon-calendar:after, .icon-calendar.t-item-icon:after, .icon-calendar.s-icon-btn:after, .l-datetime-picker .l-month-year-pager .icon-calendar.pager:after {
     content: "\e605"; }
 
 /* line 55, ../../../../general/res/sass/_icons.scss */
-.bar .ui-symbol, .bar .t-item-icon, .bar .s-icon-btn, .bar .l-datetime-picker .l-month-year-pager .pager, .l-datetime-picker .l-month-year-pager .bar .pager {
+.bar .ui-symbol, .bar .t-item-icon, .bar .s-icon-btn, .bar .l-datetime-picker .l-month-year-pager .pager, .l-datetime-picker .l-month-year-pager .bar .pager, .bar .tree-item.active:before,
+.bar .search-result-item.active:before {
   display: inline-block; }
 
 /* line 59, ../../../../general/res/sass/_icons.scss */
@@ -2773,7 +2784,9 @@ label.checkbox.custom {
   left: 0;
   text-align: left; }
   /* line 62, ../../../../general/res/sass/controls/_menus.scss */
-  .s-menu-btn .menu .ui-symbol.icon, .s-menu-btn .menu .t-item-icon, .s-menu-btn .menu .icon.s-icon-btn, .s-menu-btn .menu .s-icon-btn.t-item-icon, .s-menu-btn .menu .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .s-menu-btn .menu .icon.pager, .s-menu-btn .menu .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .l-datetime-picker .l-month-year-pager .s-menu-btn .menu .pager.t-item-icon {
+  .s-menu-btn .menu .ui-symbol.icon, .s-menu-btn .menu .t-item-icon, .s-menu-btn .menu .icon.s-icon-btn, .s-menu-btn .menu .s-icon-btn.t-item-icon, .s-menu-btn .menu .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .s-menu-btn .menu .icon.pager, .s-menu-btn .menu .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .l-datetime-picker .l-month-year-pager .s-menu-btn .menu .pager.t-item-icon, .s-menu-btn .menu .icon.tree-item.active:before, .s-menu-btn .menu .tree-item.active.t-item-icon:before,
+  .s-menu-btn .menu .icon.search-result-item.active:before,
+  .s-menu-btn .menu .search-result-item.active.t-item-icon:before {
     width: 12px; }
 
 /******************************************************** MENUS THEMSELVES */
@@ -3474,7 +3487,9 @@ mct-include.l-time-controller {
       mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .lbl {
         color: #999999; }
       /* line 65, ../../../../general/res/sass/controls/_time-controller.scss */
-      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .ui-symbol.icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .t-item-icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.s-icon-btn, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .s-icon-btn.t-item-icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.pager, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .pager.t-item-icon,
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .ui-symbol.icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .t-item-icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.s-icon-btn, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .s-icon-btn.t-item-icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.pager, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .pager.t-item-icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.tree-item.active:before, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .tree-item.active.t-item-icon:before,
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.search-result-item.active:before,
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .search-result-item.active.t-item-icon:before,
       mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .ui-symbol.icon,
       mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .t-item-icon,
       mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.s-icon-btn,
@@ -3482,7 +3497,11 @@ mct-include.l-time-controller {
       mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .l-datetime-picker .l-month-year-pager .icon.pager,
       .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.pager,
       mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .l-datetime-picker .l-month-year-pager .pager.t-item-icon,
-      .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .pager.t-item-icon {
+      .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .pager.t-item-icon,
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.tree-item.active:before,
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .tree-item.active.t-item-icon:before,
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.search-result-item.active:before,
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .search-result-item.active.t-item-icon:before {
         font-size: 11px;
         width: 11px; }
   /* line 72, ../../../../general/res/sass/controls/_time-controller.scss */
@@ -4158,7 +4177,9 @@ span.req {
 .t-filter input.t-filter-input:not(.ng-dirty) + .t-a-clear {
   display: none; }
 /* line 38, ../../../../general/res/sass/forms/_filter.scss */
-.filter .icon.ui-symbol, .filter .t-item-icon, .filter .icon.s-icon-btn, .filter .s-icon-btn.t-item-icon, .filter .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .filter .icon.pager, .filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .l-datetime-picker .l-month-year-pager .filter .pager.t-item-icon,
+.filter .icon.ui-symbol, .filter .t-item-icon, .filter .icon.s-icon-btn, .filter .s-icon-btn.t-item-icon, .filter .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .filter .icon.pager, .filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .l-datetime-picker .l-month-year-pager .filter .pager.t-item-icon, .filter .icon.tree-item.active:before, .filter .tree-item.active.t-item-icon:before,
+.filter .icon.search-result-item.active:before,
+.filter .search-result-item.active.t-item-icon:before,
 .t-filter .icon.ui-symbol,
 .t-filter .t-item-icon,
 .t-filter .icon.s-icon-btn,
@@ -4166,7 +4187,11 @@ span.req {
 .t-filter .l-datetime-picker .l-month-year-pager .icon.pager,
 .l-datetime-picker .l-month-year-pager .t-filter .icon.pager,
 .t-filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon,
-.l-datetime-picker .l-month-year-pager .t-filter .pager.t-item-icon {
+.l-datetime-picker .l-month-year-pager .t-filter .pager.t-item-icon,
+.t-filter .icon.tree-item.active:before,
+.t-filter .tree-item.active.t-item-icon:before,
+.t-filter .icon.search-result-item.active:before,
+.t-filter .search-result-item.active.t-item-icon:before {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
@@ -4177,7 +4202,9 @@ span.req {
   padding: 0px 5px;
   vertical-align: middle; }
   /* line 46, ../../../../general/res/sass/forms/_filter.scss */
-  .filter .icon.ui-symbol:hover, .filter .t-item-icon:hover, .filter .icon.s-icon-btn:hover, .filter .s-icon-btn.t-item-icon:hover, .filter .l-datetime-picker .l-month-year-pager .icon.pager:hover, .l-datetime-picker .l-month-year-pager .filter .icon.pager:hover, .filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon:hover, .l-datetime-picker .l-month-year-pager .filter .pager.t-item-icon:hover,
+  .filter .icon.ui-symbol:hover, .filter .t-item-icon:hover, .filter .icon.s-icon-btn:hover, .filter .s-icon-btn.t-item-icon:hover, .filter .l-datetime-picker .l-month-year-pager .icon.pager:hover, .l-datetime-picker .l-month-year-pager .filter .icon.pager:hover, .filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon:hover, .l-datetime-picker .l-month-year-pager .filter .pager.t-item-icon:hover, .filter .icon.tree-item.active:hover:before, .filter .tree-item.active.t-item-icon:hover:before,
+  .filter .icon.search-result-item.active:hover:before,
+  .filter .search-result-item.active.t-item-icon:hover:before,
   .t-filter .icon.ui-symbol:hover,
   .t-filter .t-item-icon:hover,
   .t-filter .icon.s-icon-btn:hover,
@@ -4185,15 +4212,22 @@ span.req {
   .t-filter .l-datetime-picker .l-month-year-pager .icon.pager:hover,
   .l-datetime-picker .l-month-year-pager .t-filter .icon.pager:hover,
   .t-filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon:hover,
-  .l-datetime-picker .l-month-year-pager .t-filter .pager.t-item-icon:hover {
+  .l-datetime-picker .l-month-year-pager .t-filter .pager.t-item-icon:hover,
+  .t-filter .icon.tree-item.active:hover:before,
+  .t-filter .tree-item.active.t-item-icon:hover:before,
+  .t-filter .icon.search-result-item.active:hover:before,
+  .t-filter .search-result-item.active.t-item-icon:hover:before {
     background: rgba(255, 255, 255, 0.1); }
 /* line 50, ../../../../general/res/sass/forms/_filter.scss */
-.filter .s-a-clear.ui-symbol, .filter .s-a-clear.t-item-icon, .filter .s-a-clear.s-icon-btn, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager,
+.filter .s-a-clear.ui-symbol, .filter .s-a-clear.t-item-icon, .filter .s-a-clear.s-icon-btn, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager, .filter .s-a-clear.tree-item.active:before,
+.filter .s-a-clear.search-result-item.active:before,
 .t-filter .s-a-clear.ui-symbol,
 .t-filter .s-a-clear.t-item-icon,
 .t-filter .s-a-clear.s-icon-btn,
 .t-filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager,
-.l-datetime-picker .l-month-year-pager .t-filter .s-a-clear.pager {
+.l-datetime-picker .l-month-year-pager .t-filter .s-a-clear.pager,
+.t-filter .s-a-clear.tree-item.active:before,
+.t-filter .s-a-clear.search-result-item.active:before {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
@@ -4217,12 +4251,15 @@ span.req {
   text-align: center;
   z-index: 5; }
   /* line 70, ../../../../general/res/sass/forms/_filter.scss */
-  .filter .s-a-clear.ui-symbol:hover, .filter .s-a-clear.t-item-icon:hover, .filter .s-a-clear.s-icon-btn:hover, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager:hover, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager:hover,
+  .filter .s-a-clear.ui-symbol:hover, .filter .s-a-clear.t-item-icon:hover, .filter .s-a-clear.s-icon-btn:hover, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager:hover, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager:hover, .filter .s-a-clear.tree-item.active:hover:before,
+  .filter .s-a-clear.search-result-item.active:hover:before,
   .t-filter .s-a-clear.ui-symbol:hover,
   .t-filter .s-a-clear.t-item-icon:hover,
   .t-filter .s-a-clear.s-icon-btn:hover,
   .t-filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager:hover,
-  .l-datetime-picker .l-month-year-pager .t-filter .s-a-clear.pager:hover {
+  .l-datetime-picker .l-month-year-pager .t-filter .s-a-clear.pager:hover,
+  .t-filter .s-a-clear.tree-item.active:hover:before,
+  .t-filter .s-a-clear.search-result-item.active:hover:before {
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
     opacity: 0.6;
     background-color: #0099cc; }
@@ -5822,23 +5859,39 @@ ul.tree {
       .search-result-item:not(.selected):hover .t-item-icon {
         color: #0099cc; } }
   /* line 146, ../../../../general/res/sass/tree/_tree.scss */
+  .tree-item.active,
+  .search-result-item.active {
+    background: rgba(178, 98, 74, 0.5) !important;
+    pointer-events: none; }
+    /* line 150, ../../../../general/res/sass/tree/_tree.scss */
+    .tree-item.active:before,
+    .search-result-item.active:before {
+      color: #b2624a;
+      content: '\70';
+      margin-left: 3px; }
+    /* line 157, ../../../../general/res/sass/tree/_tree.scss */
+    .tree-item.active .view-control, .tree-item.active + .tree-item-subtree,
+    .search-result-item.active .view-control,
+    .search-result-item.active + .tree-item-subtree {
+      display: none; }
+  /* line 160, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item:not(.loading),
   .search-result-item:not(.loading) {
     cursor: pointer; }
-  /* line 150, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 164, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .context-trigger,
   .search-result-item .context-trigger {
     top: -1px;
     position: absolute;
     right: 3px; }
-    /* line 155, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 169, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .context-trigger .invoke-menu,
     .search-result-item .context-trigger .invoke-menu {
       font-size: 0.75em;
       height: 0.9rem;
       line-height: 0.9rem; }
 
-/* line 164, ../../../../general/res/sass/tree/_tree.scss */
+/* line 178, ../../../../general/res/sass/tree/_tree.scss */
 .tree-item .t-object-label {
   left: 15px; }
 
@@ -7404,7 +7457,8 @@ table {
   left: 0;
   z-index: 1; }
   /* line 22, ../../../../general/res/sass/features/_time-display.scss */
-  .l-time-display.l-timer .l-elem.l-value .ui-symbol.direction, .l-time-display.l-timer .l-elem.l-value .direction.t-item-icon, .l-time-display.l-timer .l-elem.l-value .direction.s-icon-btn, .l-time-display.l-timer .l-elem.l-value .l-datetime-picker .l-month-year-pager .direction.pager, .l-datetime-picker .l-month-year-pager .l-time-display.l-timer .l-elem.l-value .direction.pager {
+  .l-time-display.l-timer .l-elem.l-value .ui-symbol.direction, .l-time-display.l-timer .l-elem.l-value .direction.t-item-icon, .l-time-display.l-timer .l-elem.l-value .direction.s-icon-btn, .l-time-display.l-timer .l-elem.l-value .l-datetime-picker .l-month-year-pager .direction.pager, .l-datetime-picker .l-month-year-pager .l-time-display.l-timer .l-elem.l-value .direction.pager, .l-time-display.l-timer .l-elem.l-value .direction.tree-item.active:before,
+  .l-time-display.l-timer .l-elem.l-value .direction.search-result-item.active:before {
     font-size: 0.8em; }
 /* line 26, ../../../../general/res/sass/features/_time-display.scss */
 .l-time-display.l-timer:hover .l-elem.l-value {
