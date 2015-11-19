@@ -72,8 +72,10 @@ define(
          * Enter edit mode.
          */
         EditAction.prototype.perform = function () {
-            if (!this.domainObject.getDomainObject) {
-                this.navigationService.setNavigation(new EditableDomainObject(this.domainObject, this.$q));
+            var editableObject;
+            if (!this.domainObject.hasCapability("editor")) {
+                editableObject = new EditableDomainObject(this.domainObject, this.$q);
+                this.navigationService.setNavigation(editableObject);
             }
             //this.$location.path("/edit");
         };
