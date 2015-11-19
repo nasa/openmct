@@ -76,19 +76,26 @@ define(
 
             function doWizardSave(parent) {
                 var context = domainObject.getCapability("context");
-                var wizard = new CreateWizard(domainObject.useCapability('type'), parent, self.policyService);
+                var wizard = new CreateWizard(domainObject.useCapability('type'), parent, self.policyService, domainObject.getModel());
+
+                function mergeObjects(fromObject, toObject){
+                    Object.keys(fromObject).forEach(function(key) {
+                        toObject[key] = fromObject[key];
+                    });
+                }
 
                 // Create and persist the new object, based on user
                 // input.
                 function buildObjectFromInput(formValue) {
                     var parent = wizard.getLocation(formValue),
-                        newModel = wizard.createModel(formValue);
+                        formModel = wizard.createModel(formValue);
+
+                        formModel.location = parent.getId();
                         //Replace domain object model with model collected
                         // from user form.
                         domainObject.useCapability("mutation", function(){
-                            newModel.location = parent.getId();
-                            newModel.composition = domainObject.getModel().composition;
-                            return newModel;
+                            //Replace object model with the model from the form
+                            return formModel;
                         });
                         return domainObject;
                 }

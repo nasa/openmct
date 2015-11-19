@@ -46,10 +46,9 @@ define(
          *        introduced in this bundle), responsible for handling actual
          *        object creation.
          */
-        function CreateActionProvider($injector, $q, typeService, navigationService) {
+        function CreateActionProvider($q, typeService, navigationService) {
             this.typeService = typeService;
             this.navigationService = navigationService;
-            this.$injector = $injector;
             this.$q = $q;
         }
 
@@ -75,7 +74,6 @@ define(
                     type,
                     destination,
                     context,
-                    self.$injector,
                     self.$q,
                     self.navigationService
                 );

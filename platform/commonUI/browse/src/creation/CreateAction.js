@@ -51,7 +51,7 @@ define(
          *        which handles changes in navigation. It allows the object
          *        being browsed/edited to be set.
          */
-        function CreateAction(type, parent, context, $injector, $q, navigationService) {
+        function CreateAction(type, parent, context, $q, navigationService) {
             this.metadata = {
                 key: 'create',
                 glyph: type.getGlyph(),

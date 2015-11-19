@@ -150,7 +150,7 @@
                 "provides": "actionService",
                 "type": "provider",
                 "implementation": "creation/CreateActionProvider.js",
-                "depends": [ "$injector", "$q", "typeService",
+                "depends": ["$q", "typeService",
                     "navigationService"]
             },
             {
