@@ -48,6 +48,17 @@ define(
             this.lastClasses = [];
         }
 
+        /**
+         * Remove any status-related classes from this representation.
+         * @private
+         */
+        StatusRepresenter.prototype.clearClasses = function () {
+            var element = this.element;
+            this.lastClasses.forEach(function (c) {
+                element.removeClass(c);
+            });
+        };
+
         StatusRepresenter.prototype.represent = function (representation, domainObject) {
             var self = this,
                 statusCapability = domainObject.getCapability('status');
@@ -57,9 +68,7 @@ define(
                     return STATUS_CLASS_PREFIX + flag;
                 });
 
-                self.lastClasses.forEach(function (c) {
-                    self.element.removeClass(c);
-                });
+                self.clearClasses();
 
                 newClasses.forEach(function (c) {
                     self.element.addClass(c);
@@ -73,6 +82,7 @@ define(
         };
 
         StatusRepresenter.prototype.destroy = function () {
+            this.clearClasses();
             if (this.unlisten) {
                 this.unlisten();
                 this.unlisten = undefined;
