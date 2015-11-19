@@ -27,6 +27,68 @@ define(
         "use strict";
 
         describe("The status service", function () {
+            var mockTopic,
+                mockTopicInstance,
+                mockUnlisten,
+                mockCallback,
+                testId,
+                testStatus,
+                statusService;
+
+            beforeEach(function () {
+                testId = "some-domain-object-identifier";
+                testStatus = "test-status";
+
+                mockTopic = jasmine.createSpy('topic');
+                mockTopicInstance = jasmine.createSpyObj(
+                    'topicInstance',
+                    [ 'notify', 'listen' ]
+                );
+                mockUnlisten = jasmine.createSpy('unlisten');
+                mockCallback = jasmine.createSpy('callback');
+
+                mockTopic.andReturn(mockTopicInstance);
+                mockTopicInstance.listen.andReturn(mockUnlisten);
+
+                statusService = new StatusService(mockTopic);
+            });
+
+            it("initially contains no flags for an object", function () {
+                expect(statusService.getStatus(testId)).toEqual([]);
+            });
+
+            it("stores and clears status flags", function () {
+                statusService.setStatus(testId, testStatus, true);
+                expect(statusService.getStatus(testId)).toEqual([testStatus]);
+                statusService.setStatus(testId, testStatus, false);
+                expect(statusService.getStatus(testId)).toEqual([]);
+            });
+
+            it("uses topic to listen for changes", function () {
+                expect(statusService.listen(testId, mockCallback))
+                    .toEqual(mockUnlisten);
+                expect(mockTopic)
+                    .toHaveBeenCalledWith(jasmine.any(String));
+                // Just care that the topic was somehow unique to the object
+                expect(mockTopic.mostRecentCall.args[0].indexOf(testId))
+                    .not.toEqual(-1);
+            });
+
+            it("notifies listeners of changes", function () {
+                statusService.setStatus(testId, testStatus, true);
+                expect(mockTopicInstance.notify)
+                    .toHaveBeenCalledWith([ testStatus ]);
+                statusService.setStatus(testId, testStatus, false);
+                expect(mockTopicInstance.notify)
+                    .toHaveBeenCalledWith([ ]);
+
+                expect(mockTopic)
+                    .toHaveBeenCalledWith(jasmine.any(String));
+                // Just care that the topic was somehow unique to the object
+                expect(mockTopic.mostRecentCall.args[0].indexOf(testId))
+                    .not.toEqual(-1);
+            });
+
         });
     }
 );

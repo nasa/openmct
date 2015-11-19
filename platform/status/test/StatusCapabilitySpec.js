@@ -27,6 +27,58 @@ define(
         "use strict";
 
         describe("The status capability", function () {
+            var mockStatusService,
+                mockDomainObject,
+                mockUnlisten,
+                testId,
+                testStatusFlags,
+                capability;
+
+            beforeEach(function () {
+                testId = "some-id";
+                testStatusFlags = [ 'a', 'b', 'c' ];
+
+                mockStatusService = jasmine.createSpyObj(
+                    'statusService',
+                    [ 'listen', 'setStatus', 'getStatus' ]
+                );
+                mockDomainObject = jasmine.createSpyObj(
+                    'domainObject',
+                    [ 'getId', 'getCapability', 'getModel' ]
+                );
+                mockUnlisten = jasmine.createSpy('unlisten');
+
+                mockStatusService.listen.andReturn(mockUnlisten);
+                mockStatusService.getStatus.andReturn(testStatusFlags);
+                mockDomainObject.getId.andReturn(testId);
+
+                capability = new StatusCapability(
+                    mockStatusService,
+                    mockDomainObject
+                );
+            });
+
+            it("sets status with the statusService", function () {
+                var testStatus = "some-test-status";
+                capability.set(testStatus, true);
+                expect(mockStatusService.setStatus)
+                    .toHaveBeenCalledWith(testId, testStatus, true);
+                capability.set(testStatus, false);
+                expect(mockStatusService.setStatus)
+                    .toHaveBeenCalledWith(testId, testStatus, false);
+            });
+
+            it("gets status from the statusService", function () {
+                expect(capability.get()).toBe(testStatusFlags);
+            });
+
+            it("listens to changes from the statusService", function () {
+                var mockCallback = jasmine.createSpy();
+                expect(capability.listen(mockCallback))
+                    .toBe(mockUnlisten);
+                expect(mockStatusService.listen)
+                    .toHaveBeenCalledWith(testId, mockCallback);
+            });
         });
     }
 );

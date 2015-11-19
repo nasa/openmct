@@ -22,11 +22,97 @@
 /*global define,Promise,describe,it,expect,beforeEach,waitsFor,jasmine*/
 
 define(
-    ["../src/StatusRepresenter"],
-    function (StatusRepresenter) {
+    ["../src/StatusRepresenter", "../src/StatusConstants"],
+    function (StatusRepresenter, StatusConstants) {
         "use strict";
 
         describe("The status representer", function () {
+            var mockScope,
+                mockElement,
+                testRepresentation,
+                mockDomainObject,
+                mockStatusCapability,
+                mockUnlisten,
+                elementClasses,
+                testStatusFlags,
+                representer;
+
+            function verifyClasses() {
+                expect(Object.keys(elementClasses).sort())
+                    .toEqual(testStatusFlags.map(function (s) {
+                        return StatusConstants.CSS_CLASS_PREFIX + s;
+                    }).sort());
+            }
+
+            function updateStatus(newFlags) {
+                testStatusFlags = newFlags;
+                mockStatusCapability.get.andReturn(newFlags);
+                mockStatusCapability.listen.mostRecentCall
+                    .args[0](newFlags);
+            }
+
+            beforeEach(function () {
+                testStatusFlags = [ 'x', 'y', 'z' ];
+
+                mockScope = {};
+                mockElement = jasmine.createSpyObj('element', [
+                    'addClass',
+                    'removeClass'
+                ]);
+                testRepresentation = { key: "someKey" };
+                mockDomainObject = jasmine.createSpyObj(
+                    'domainObject',
+                    [ 'getModel', 'getId', 'getCapability' ]
+                );
+                mockStatusCapability = jasmine.createSpyObj(
+                    'status',
+                    [ 'get', 'set', 'listen' ]
+                );
+                mockUnlisten = jasmine.createSpy();
+
+                elementClasses = {};
+
+                mockElement.addClass.andCallFake(function (c) {
+                    elementClasses[c] = true;
+                });
+                mockElement.removeClass.andCallFake(function (c) {
+                    delete elementClasses[c];
+                });
+
+                mockStatusCapability.get.andReturn(testStatusFlags);
+                mockStatusCapability.listen.andReturn(mockUnlisten);
+
+                mockDomainObject.getCapability.andCallFake(function (c) {
+                    return c === 'status' && mockStatusCapability;
+                });
+
+                representer = new StatusRepresenter(mockScope, mockElement);
+                representer.represent(testRepresentation, mockDomainObject);
+            });
+
+            it("listens for status changes", function () {
+                expect(mockStatusCapability.listen)
+                    .toHaveBeenCalledWith(jasmine.any(Function));
+            });
+
+            it("initially sets classes to reflect status", verifyClasses);
+
+            it("changes classes on status change callbacks", function () {
+                updateStatus(['a', 'x', '123']);
+                verifyClasses();
+            });
+
+            it("stops listening when destroyed", function () {
+                expect(mockUnlisten).not.toHaveBeenCalled();
+                representer.destroy();
+                expect(mockUnlisten).toHaveBeenCalled();
+            });
+
+            it("removes status classes when destroyed", function () {
+                expect(elementClasses).not.toEqual({});
+                representer.destroy();
+                expect(elementClasses).toEqual({});
+            });
         });
     }
 );

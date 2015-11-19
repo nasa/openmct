@@ -22,11 +22,11 @@
 /*global define*/
 
 define(
-    [],
-    function () {
+    ['./StatusConstants'],
+    function (StatusConstants) {
         'use strict';
 
-        var STATUS_CLASS_PREFIX = "s-status-";
+        var STATUS_CLASS_PREFIX = StatusConstants.CSS_CLASS_PREFIX;
 
         /**
          * Adds/removes CSS classes to `mct-representation`s to reflect the

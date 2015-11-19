@@ -22,11 +22,11 @@
 /*global define*/
 
 define(
-    [],
-    function () {
+    ['./StatusConstants'],
+    function (StatusConstants) {
         'use strict';
 
-        var STATUS_PREFIX = "status:";
+        var STATUS_PREFIX = StatusConstants.TOPIC_PREFIX;
 
         /**
          * The `statusService` maintains information about the current
