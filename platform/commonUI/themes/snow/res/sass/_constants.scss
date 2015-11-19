@@ -57,10 +57,10 @@ $colorMenuIc: $colorKey;
 $colorMenuHovBg: pullForward($colorMenuBg, 10%);
 $colorMenuHovFg: $colorMenuFg;
 $colorMenuHovIc: $colorMenuIc;
-$colorCreateMenuLgIcon: $colorKey;
-$colorCreateMenuText: $colorBodyFg;
 $shdwMenu: rgba(black, 0.5) 0 1px 5px;
 $shdwMenuText: none;
+$colorCreateMenuLgIcon: $colorKey;
+$colorCreateMenuText: $colorBodyFg;
 
 // Form colors
 $colorCheck: $colorKey;
@@ -109,8 +109,8 @@ $colorLimitRedBg: rgba(red, 0.3);
 $colorLimitRedIc: red;
 
 // Bubble colors
-$colorInfoBubbleFg: #666;
 $colorInfoBubbleBg: $colorMenuBg;
+$colorInfoBubbleFg: #666;
 $colorThumbsBubbleFg: pullForward($colorBodyFg, 10%);
 $colorThumbsBubbleBg: pullForward($colorBodyBg, 10%);
 
@@ -129,12 +129,11 @@ $colorItemFgDetails: pushBack($colorItemFg, 15%);
 $colorItemIc: $colorKey;
 $colorItemSubIcons: $colorItemFgDetails;
 $colorItemOpenIcon: $colorItemFgDetails;
-$shdwItemText: none; //rgba(black, 0.2) 0 1px 2px;
+$shdwItemText: none;
 $colorItemBgSelected: $colorKey;
 
 // Tabular
 $colorTabBorder: pullForward($colorBodyBg, 10%);
-$colorItemTreeHoverFg: pullForward($colorBodyFg, 20%);
 $colorTabBodyBg: $colorBodyBg;
 $colorTabBodyFg: pullForward($colorBodyFg, 20%);
 $colorTabHeaderBg: pullForward($colorBodyBg, 10%);
@@ -151,6 +150,7 @@ $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
 
 // Tree
 $colorItemTreeHoverBg: rgba($colorBodyFg, 0.1);
+$colorItemTreeHoverFg: pullForward($colorBodyFg, 20%);
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: $colorItemTreeIcon; //pushBack($colorItemTreeIcon, 20%);
 $colorItemTreeVCHover: $colorKey;

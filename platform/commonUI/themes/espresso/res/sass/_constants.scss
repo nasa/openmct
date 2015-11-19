@@ -45,8 +45,6 @@ $colorPausedBg: #c56f01;
 $colorPausedFg: #fff;
 $colorCreateBtn: $colorKey;
 $colorGridLines: rgba(#fff, 0.05);
-$colorFormLines: rgba(#fff, 0.1);
-$colorFormSectionHeader: rgba(#000, 0.2);
 $colorInvokeMenu: #fff;
 $colorObjHdrTxt: $colorBodyFg;
 $colorObjHdrIc: pullForward($colorObjHdrTxt, 20%);
@@ -111,8 +109,8 @@ $colorLimitRedBg: rgba(red, 0.3);
 $colorLimitRedIc: red;
 
 // Bubble colors
-$colorInfoBubbleFg: #666;
 $colorInfoBubbleBg: #ddd;
+$colorInfoBubbleFg: #666;
 $colorThumbsBubbleFg: pullForward($colorBodyFg, 10%);
 $colorThumbsBubbleBg: pullForward($colorBodyBg, 10%);
 
@@ -128,7 +126,7 @@ $colorItemBg: lighten($colorBodyBg, 5%);
 $colorItemBgHov: pullForward($colorItemBg, 15%);
 $colorItemFg: lighten($colorItemBg, 50%);
 $colorItemFgDetails: lighten($colorItemBg, 30%);
-$colorItemIc: $colorKey; //pullForward($colorItemFg, 20%);
+$colorItemIc: $colorKey;
 $colorItemSubIcons: $colorItemFgDetails;
 $colorItemOpenIcon: $colorItemFgDetails;
 $shdwItemText: rgba(black, 0.1) 0 1px 2px;
@@ -155,6 +153,7 @@ $colorItemTreeHoverBg: rgba($colorBodyFg, 0.1);
 $colorItemTreeHoverFg: pullForward($colorBodyFg, 20%);
 $colorItemTreeIcon: $colorKey;
 $colorItemTreeIconHover: lighten($colorItemTreeIcon, 20%);
+$colorItemTreeVCHover: $colorAlt1;
 $colorItemTreeFg: $colorBodyFg;
 $colorItemTreeSelectedBg: pushBack($colorKey, 15%);
 $colorItemTreeSelectedFg: pullForward($colorBodyFg, 20%);
@@ -162,7 +161,6 @@ $colorItemTreeEditingBg: #344154;
 $colorItemTreeEditingFg: $colorEditAreaFg;
 $colorItemTreeVC: rgba(#fff, 0.3);
 $colorItemTreeSelectedVC: $colorItemTreeVC;
-$colorItemTreeVCHover: $colorAlt1;
 $shdwItemTreeIcon: 0.6;
 
 // Scrollbar
@@ -195,5 +193,5 @@ $colorCalCellInMonthBg: pushBack($colorMenuBg, 5%);
 $colorAboutLink: #84b3ff;
 
 // Loading
-$colorLoadingBg: rgba($colorBodyFg, 0.2);
 $colorLoadingFg: $colorAlt1;
+$colorLoadingBg: rgba($colorBodyFg, 0.2);
