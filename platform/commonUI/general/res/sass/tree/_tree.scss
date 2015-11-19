@@ -145,14 +145,25 @@ ul.tree {
 
     &.active {
         // The item is being edited
-        background: rgba($colorItemTreeEditingBg, 0.5) !important;
+        background: $colorItemTreeEditingBg; //rgba($colorItemTreeSelectedBg, 0.2) !important;
         pointer-events: none;
         &:before {
             // Pencil icon
             @extend .ui-symbol;
-            color: $colorItemTreeEditingBg;
+            @include pulse($dur: 1s, $opacity0: 0.25);
+            color: $colorItemTreeEditingFg;
             content: '\70';
             margin-left: $interiorMarginSm;
+        }
+        .t-object-label {
+            .t-item-icon,
+            .t-title-label {
+                color: $colorItemTreeEditingFg;
+                @include text-shadow(none);
+            }
+            .t-title-label {
+                font-style: italic;
+            }
         }
         .view-control, + .tree-item-subtree { display: none; }
     }
@@ -174,7 +185,8 @@ ul.tree {
 	}
 }
 
-.tree-item {
+.tree-item,
+.search-result-item.active {
 	.t-object-label {
 		left: $interiorMargin + $treeVCW;
 	}

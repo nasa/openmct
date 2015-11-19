@@ -235,10 +235,10 @@
     }
 
     &.active {
-        @include pulseBorder($colorKey, 150ms, 8, 0.5s);
+        @include pulseBorder($colorEditAreaFg, $dur: 1s, $opacity0: 0.3);
         @include border-radius($controlCr);
         background-color: $colorEditAreaBg;
-        border-color: $colorKey;
+        border-color: $colorEditAreaFg;
         border-width: 2px;
         border-style: dotted;
         .l-object-wrapper-inner {
@@ -252,14 +252,15 @@
 }
 
 .l-edit-controls {
-    @include trans-prop-nice-resize(0.25s);
-    height: 0;
+    @include trans-prop-nice((opacity, height), 0.25s);
+    border-bottom: 1px solid $colorInteriorBorder;
+    line-height: $ueEditToolBarH;
+    height: 0px;
     opacity: 0;
     overflow: hidden;
     &.active {
-        border-bottom: 1px solid $colorInteriorBorder;
         height: $ueEditToolBarH + $interiorMargin;
-        line-height: $ueEditToolBarH;
+        margin-bottom: $interiorMargin;
         opacity: 1;
     }
 }
