@@ -111,6 +111,7 @@
         position: absolute;
         top: 50%;
         @include transform(translateY(-50%));
+        z-index: 1;
     }
 
     &:before {
