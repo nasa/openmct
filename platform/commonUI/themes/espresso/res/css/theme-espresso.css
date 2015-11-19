@@ -3816,11 +3816,11 @@ mct-include.l-time-controller {
 /* line 33, ../../../../general/res/sass/forms/_elems.scss */
 .form {
   color: rgba(255, 255, 255, 0.5); }
-  /* line 36, ../../../../general/res/sass/forms/_elems.scss */
+  /* line 35, ../../../../general/res/sass/forms/_elems.scss */
   .form .form-section {
     position: relative;
     margin-bottom: 20px; }
-  /* line 41, ../../../../general/res/sass/forms/_elems.scss */
+  /* line 40, ../../../../general/res/sass/forms/_elems.scss */
   .form .form-row {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -3831,10 +3831,10 @@ mct-include.l-time-controller {
     margin-top: 5px;
     padding: 5px 0;
     position: relative; }
-    /* line 49, ../../../../general/res/sass/forms/_elems.scss */
+    /* line 48, ../../../../general/res/sass/forms/_elems.scss */
     .form .form-row.first {
       border-top: none; }
-    /* line 53, ../../../../general/res/sass/forms/_elems.scss */
+    /* line 52, ../../../../general/res/sass/forms/_elems.scss */
     .form .form-row > .label,
     .form .form-row > .controls {
       -moz-box-sizing: border-box;
@@ -3845,42 +3845,42 @@ mct-include.l-time-controller {
       font-size: 0.8rem;
       line-height: 22px;
       min-height: 22px; }
-    /* line 62, ../../../../general/res/sass/forms/_elems.scss */
+    /* line 61, ../../../../general/res/sass/forms/_elems.scss */
     .form .form-row > .label {
       float: left;
       min-width: 120px;
       position: relative;
       white-space: nowrap;
       width: 30%; }
-    /* line 72, ../../../../general/res/sass/forms/_elems.scss */
+    /* line 71, ../../../../general/res/sass/forms/_elems.scss */
     .form .form-row .value {
       color: #cccccc; }
-    /* line 76, ../../../../general/res/sass/forms/_elems.scss */
+    /* line 75, ../../../../general/res/sass/forms/_elems.scss */
     .form .form-row .controls {
       float: left;
       position: relative;
       width: 69.9%; }
-      /* line 83, ../../../../general/res/sass/forms/_elems.scss */
+      /* line 82, ../../../../general/res/sass/forms/_elems.scss */
       .form .form-row .controls .l-composite-control.l-checkbox {
         display: inline-block;
         line-height: 14px;
         margin-right: 5px; }
-      /* line 92, ../../../../general/res/sass/forms/_elems.scss */
+      /* line 91, ../../../../general/res/sass/forms/_elems.scss */
       .form .form-row .controls .l-med input[type="text"] {
         width: 200px; }
-      /* line 96, ../../../../general/res/sass/forms/_elems.scss */
+      /* line 95, ../../../../general/res/sass/forms/_elems.scss */
       .form .form-row .controls .l-small input[type="text"] {
         width: 50px; }
-      /* line 100, ../../../../general/res/sass/forms/_elems.scss */
+      /* line 99, ../../../../general/res/sass/forms/_elems.scss */
       .form .form-row .controls .l-numeric input[type="text"] {
         text-align: right; }
-      /* line 104, ../../../../general/res/sass/forms/_elems.scss */
+      /* line 103, ../../../../general/res/sass/forms/_elems.scss */
       .form .form-row .controls .select {
         margin-right: 5px; }
-    /* line 109, ../../../../general/res/sass/forms/_elems.scss */
+    /* line 108, ../../../../general/res/sass/forms/_elems.scss */
     .form .form-row .field-hints {
       color: #666666; }
-    /* line 113, ../../../../general/res/sass/forms/_elems.scss */
+    /* line 112, ../../../../general/res/sass/forms/_elems.scss */
     .form .form-row .selector-list {
       -moz-appearance: none;
       -webkit-appearance: none;
@@ -3903,7 +3903,7 @@ mct-include.l-time-controller {
       /* line 327, ../../../../general/res/sass/_mixins.scss */
       .form .form-row .selector-list.error {
         background: rgba(255, 0, 0, 0.5); }
-      /* line 124, ../../../../general/res/sass/forms/_elems.scss */
+      /* line 119, ../../../../general/res/sass/forms/_elems.scss */
       .form .form-row .selector-list > .wrapper {
         overflow: auto;
         position: absolute;
@@ -3912,24 +3912,24 @@ mct-include.l-time-controller {
         bottom: 5px;
         left: 5px; }
 
-/* line 138, ../../../../general/res/sass/forms/_elems.scss */
+/* line 133, ../../../../general/res/sass/forms/_elems.scss */
 label.form-control.checkbox input {
   margin-right: 5px;
   vertical-align: top; }
 
-/* line 144, ../../../../general/res/sass/forms/_elems.scss */
+/* line 139, ../../../../general/res/sass/forms/_elems.scss */
 .hint,
 .s-hint {
   font-size: 0.9em; }
 
-/* line 149, ../../../../general/res/sass/forms/_elems.scss */
+/* line 144, ../../../../general/res/sass/forms/_elems.scss */
 .l-result {
   display: inline-block;
   min-width: 32px;
   min-height: 32px;
   position: relative;
   vertical-align: top; }
-  /* line 156, ../../../../general/res/sass/forms/_elems.scss */
+  /* line 151, ../../../../general/res/sass/forms/_elems.scss */
   .l-result div.s-hint {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -3939,7 +3939,7 @@ label.form-control.checkbox input {
     color: #ffad99;
     padding: 5px; }
 
-/* line 165, ../../../../general/res/sass/forms/_elems.scss */
+/* line 160, ../../../../general/res/sass/forms/_elems.scss */
 input[type="text"],
 input[type="search"] {
   -moz-appearance: none;
@@ -3962,12 +3962,12 @@ input[type="search"] {
   input[type="text"].error,
   input[type="search"].error {
     background: rgba(255, 0, 0, 0.5); }
-  /* line 173, ../../../../general/res/sass/forms/_elems.scss */
+  /* line 163, ../../../../general/res/sass/forms/_elems.scss */
   input[type="text"].numeric,
   input[type="search"].numeric {
     text-align: right; }
 
-/* line 178, ../../../../general/res/sass/forms/_elems.scss */
+/* line 168, ../../../../general/res/sass/forms/_elems.scss */
 textarea {
   -moz-appearance: none;
   -webkit-appearance: none;
@@ -4279,11 +4279,11 @@ span.req {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 34, ../../../../general/res/sass/forms/_filter.scss */
+/* line 25, ../../../../general/res/sass/forms/_filter.scss */
 .filter input.t-filter-input:not(.ng-dirty) + .t-a-clear,
 .t-filter input.t-filter-input:not(.ng-dirty) + .t-a-clear {
   display: none; }
-/* line 38, ../../../../general/res/sass/forms/_filter.scss */
+/* line 29, ../../../../general/res/sass/forms/_filter.scss */
 .filter .icon.ui-symbol, .filter .t-item-icon, .filter .icon.s-icon-btn, .filter .s-icon-btn.t-item-icon, .filter .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .filter .icon.pager, .filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .l-datetime-picker .l-month-year-pager .filter .pager.t-item-icon, .filter .icon.tree-item.active:before, .filter .tree-item.active.t-item-icon:before,
 .filter .icon.search-result-item.active:before,
 .filter .search-result-item.active.t-item-icon:before,
@@ -4308,7 +4308,7 @@ span.req {
   line-height: 22px;
   padding: 0px 5px;
   vertical-align: middle; }
-  /* line 46, ../../../../general/res/sass/forms/_filter.scss */
+  /* line 37, ../../../../general/res/sass/forms/_filter.scss */
   .filter .icon.ui-symbol:hover, .filter .t-item-icon:hover, .filter .icon.s-icon-btn:hover, .filter .s-icon-btn.t-item-icon:hover, .filter .l-datetime-picker .l-month-year-pager .icon.pager:hover, .l-datetime-picker .l-month-year-pager .filter .icon.pager:hover, .filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon:hover, .l-datetime-picker .l-month-year-pager .filter .pager.t-item-icon:hover, .filter .icon.tree-item.active:hover:before, .filter .tree-item.active.t-item-icon:hover:before,
   .filter .icon.search-result-item.active:hover:before,
   .filter .search-result-item.active.t-item-icon:hover:before,
@@ -4325,7 +4325,7 @@ span.req {
   .t-filter .icon.search-result-item.active:hover:before,
   .t-filter .search-result-item.active.t-item-icon:hover:before {
     background: rgba(255, 255, 255, 0.1); }
-/* line 50, ../../../../general/res/sass/forms/_filter.scss */
+/* line 41, ../../../../general/res/sass/forms/_filter.scss */
 .filter .s-a-clear.ui-symbol, .filter .s-a-clear.t-item-icon, .filter .s-a-clear.s-icon-btn, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager, .filter .s-a-clear.tree-item.active:before,
 .filter .s-a-clear.search-result-item.active:before,
 .t-filter .s-a-clear.ui-symbol,
@@ -4357,7 +4357,7 @@ span.req {
   top: 50%;
   text-align: center;
   z-index: 5; }
-  /* line 70, ../../../../general/res/sass/forms/_filter.scss */
+  /* line 61, ../../../../general/res/sass/forms/_filter.scss */
   .filter .s-a-clear.ui-symbol:hover, .filter .s-a-clear.t-item-icon:hover, .filter .s-a-clear.s-icon-btn:hover, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager:hover, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager:hover, .filter .s-a-clear.tree-item.active:hover:before,
   .filter .s-a-clear.search-result-item.active:hover:before,
   .t-filter .s-a-clear.ui-symbol:hover,
@@ -4371,7 +4371,7 @@ span.req {
     opacity: 0.6;
     background-color: #0099cc; }
 
-/* line 79, ../../../../general/res/sass/forms/_filter.scss */
+/* line 69, ../../../../general/res/sass/forms/_filter.scss */
 .top-bar input.filter {
   font-size: .9em;
   height: 24px;
@@ -4380,18 +4380,18 @@ span.req {
   padding-left: 10px;
   padding-right: 10px;
   vertical-align: top; }
-/* line 90, ../../../../general/res/sass/forms/_filter.scss */
+/* line 80, ../../../../general/res/sass/forms/_filter.scss */
 .top-bar .icon-filter {
   font-size: 1.4em; }
 
-/* line 95, ../../../../general/res/sass/forms/_filter.scss */
+/* line 85, ../../../../general/res/sass/forms/_filter.scss */
 .l-filter {
   display: inline-block;
   position: relative; }
-  /* line 102, ../../../../general/res/sass/forms/_filter.scss */
+  /* line 92, ../../../../general/res/sass/forms/_filter.scss */
   .l-filter input[type="search"] {
     padding: 2px 19px; }
-  /* line 105, ../../../../general/res/sass/forms/_filter.scss */
+  /* line 95, ../../../../general/res/sass/forms/_filter.scss */
   .l-filter .clear-icon,
   .l-filter .menu-icon, .l-filter:before {
     -moz-box-sizing: border-box;
@@ -4406,7 +4406,7 @@ span.req {
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%);
     z-index: 1; }
-  /* line 117, ../../../../general/res/sass/forms/_filter.scss */
+  /* line 107, ../../../../general/res/sass/forms/_filter.scss */
   .l-filter:before {
     content: '\4d';
     left: 5px;
@@ -4427,20 +4427,20 @@ span.req {
     -webkit-transition-delay: 0;
     transition-delay: 0;
     pointer-events: none; }
-  /* line 125, ../../../../general/res/sass/forms/_filter.scss */
+  /* line 115, ../../../../general/res/sass/forms/_filter.scss */
   .l-filter .clear-icon {
     right: 4px;
     visibility: hidden;
     opacity: 0; }
-    /* line 131, ../../../../general/res/sass/forms/_filter.scss */
+    /* line 120, ../../../../general/res/sass/forms/_filter.scss */
     .l-filter .clear-icon.show {
       visibility: visible;
       opacity: 1; }
-    /* line 136, ../../../../general/res/sass/forms/_filter.scss */
+    /* line 125, ../../../../general/res/sass/forms/_filter.scss */
     .l-filter .clear-icon:hover {
       color: #8c8c8c; }
 
-/* line 143, ../../../../general/res/sass/forms/_filter.scss */
+/* line 132, ../../../../general/res/sass/forms/_filter.scss */
 .s-filter input[type="search"] {
   -moz-appearance: none;
   -webkit-appearance: none;
@@ -4460,7 +4460,7 @@ span.req {
   /* line 327, ../../../../general/res/sass/_mixins.scss */
   .s-filter input[type="search"].error {
     background: rgba(255, 0, 0, 0.5); }
-/* line 146, ../../../../general/res/sass/forms/_filter.scss */
+/* line 135, ../../../../general/res/sass/forms/_filter.scss */
 .s-filter .clear-icon,
 .s-filter .menu-icon, .s-filter:before {
   color: #737373;
@@ -4482,10 +4482,10 @@ span.req {
   -o-transition-delay: 0;
   -webkit-transition-delay: 0;
   transition-delay: 0; }
-/* line 155, ../../../../general/res/sass/forms/_filter.scss */
+/* line 144, ../../../../general/res/sass/forms/_filter.scss */
 .s-filter:hover:before {
   color: #8c8c8c; }
-/* line 161, ../../../../general/res/sass/forms/_filter.scss */
+/* line 150, ../../../../general/res/sass/forms/_filter.scss */
 .s-filter .clear-icon:before {
   content: '\e607'; }
 
