@@ -1032,6 +1032,9 @@ Incompatible with proposal to
 (expose no third-party APIs)[#expose-no-third-party-apis]; Angular
 API would be ubiquitously exposed.
 
+This is a more specific variant of
+(Bundle Declarations in JavaScript)[#bundle-declarations-in-javascript].
+
 ### Benefits
 
 * Removes a whole category of API (bundle definitions), reducing
@@ -1048,3 +1051,83 @@ API would be ubiquitously exposed.
 * Increases depth of understanding required of Angular.
 * Increases amount of boilerplate (since a lot of this has
   been short-handed by existing framework layer.)
+
+## Contextual Injection
+
+For extensions that depend on certain instance-level run-time
+properties (e.g. actions or views which use objects and/or specific
+capabilities of those objects), declare these features as dependencies
+and expose them via dependency injection. (AngularJS does this for
+`$scope` in the context of controllers, for example.)
+
+A sketch of an implementation for this might look like:
+
+```js
+function ExtensionRegistry($injector, extensions, getLocals) {
+    this.$injector = $injector;
+    this.extensions = extensions;
+    this.getLocals = getLocals;
+}
+ExtensionRegistry.prototype.get = function () {
+    var $injector = this.$injector,
+        locals = this.getLocals.apply(null, arguments);
+    return this.extensions.filter(function (extension) {
+        return depsSatisfiable(extension, $injector, locals);
+    }).map(function (extension) {
+        return $injector.instantiate(extension, locals);
+    });
+};
+
+
+function ExtensionRegistryProvider(getLocals) {
+    this.getLocals = getLocals || function () { return {}; };
+    this.extensions = [];
+}
+ExtensionRegistryProvider.prototype.register = function (extension) {
+    this.extensions.push(extension);
+};
+ExtensionRegistryProvider.prototype.$get = ['$injector', function ($injector) {
+    return new ExtensionRegistry($injector, this.extensions, this.getLocals);
+}];
+```
+
+Extension registries which need to behave context-sensitively could
+subclass this to describe how these contextual dependencies are satisfied
+(for instance, by returning various capability properties in `getLocals`).
+
+Specific extensions could then declare dependencies as appropriate to the
+registry they are using:
+
+```js
+app.config(['actionRegistryProvider', function (arp) {
+    arp.register(['contextCapability', 'domainObject', RemoveAction]);
+}]);
+```
+
+### Benefits
+
+* Allows contextual dependencies to be fulfilled in the same (or similar)
+  manner as global dependencies, increasing overall consistency of API.
+* Clarifies dependencies of individual extensions (currently, extensions
+  themselves or policies generally need to imperatively describe what
+  dependencies will be used in order to filter down to applicable
+  extensions.)
+* Factors out some redundant code from relevant extensions; actions,
+  for instance, no longer need to interpret an `ActionContext` object.
+  Instead, their constructors take inputs that are more relevant to
+  their behavior.
+* Removes need for partial construction, as any arguments which would
+  normally be appended after partialization can instead be declared as
+  dependencies. Constructors in general become much less bound to the
+  specifics of the platform.
+
+### Detriments
+
+* Slightly increases dependency on Angular; other dependency injectors
+  may not offer comparable ways to specificy dependencies non-globally.
+* Not clear (or will take effort to make clear) which dependencies are
+  available for which extensions. Could be mitigated by standardizing
+  descriptions of context across actions and views, but that may offer
+  its own difficulties.
+* May seem counter-intuitive coming from "vanilla" AngularJS, where
+  `$scope` is the only commonly-used context-sensitive dependency.
