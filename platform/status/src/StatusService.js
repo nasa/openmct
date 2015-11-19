@@ -28,12 +28,26 @@ define(
 
         var STATUS_PREFIX = "status:";
 
+        /**
+         * The `statusService` maintains information about the current
+         * status of specific domain objects within the system. Status
+         * is represented as string flags which are present when a
+         * domain object possesses that status, and false when it does
+         * not.
+         *
+         * @param {platform/core.Topic} topic the `topic` service, used
+         *        to create/use named listeners.
+         * @constructor
+         * @memberof platform/status
+         */
         function StatusService(topic) {
             this.statusTable = {};
             this.topic = topic;
         }
 
         /**
+         * Get all status flags currently set for a domain object.
+         * @param {string} id the identifier of the domain object
          * @returns {string[]} an array containing all status flags currently
          *          applicable to the object with this identifier
          */
@@ -41,6 +55,13 @@ define(
             return this.statusTable[id] || [];
         };
 
+        /**
+         * Set a status flag for a domain object.
+         * @param {string} id the identifier of the domain object
+         * @param {string} status the status to set
+         * @param {boolean} state true if the domain object should
+         *        possess this status, false if it should not
+         */
         StatusService.prototype.setStatus = function (id, status, state) {
             this.statusTable[id] = this.statusTable[id] || [];
             this.statusTable[id] = this.statusTable[id].filter(function (s) {
@@ -52,6 +73,15 @@ define(
             this.topic(STATUS_PREFIX + id).notify(this.statusTable[id]);
         };
 
+        /**
+         * Listen for changes in a domain object's status.
+         * @param {string} id the identifier of the domain object
+         * @param {Function} callback function to invoke on changes;
+         *        called with the new status of the domain object, as an
+         *        array of strings
+         * @returns {Function} a function which can be used to stop
+         *          listening to status changes for this domain object.
+         */
         StatusService.prototype.listen = function (id, callback) {
             return this.topic(STATUS_PREFIX + id).listen(callback);
         };

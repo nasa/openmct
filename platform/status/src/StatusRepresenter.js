@@ -26,8 +26,23 @@ define(
     function () {
         'use strict';
 
-        var STATUS_CLASS_PREFIX = "l-status-";
+        var STATUS_CLASS_PREFIX = "s-status-";
 
+        /**
+         * Adds/removes CSS classes to `mct-representation`s to reflect the
+         * current status of represented domain objects, as reported by
+         * their `status` capability.
+         *
+         * Statuses are prefixed with `s-status-` to build CSS class names.
+         * As such, when a domain object has the status "pending", its
+         * representations will have the CSS class `s-status-pending`.
+         *
+         * @param {angular.Scope} scope the representation's scope object
+         * @param element the representation's jqLite-wrapped DOM element
+         * @implements {Representer}
+         * @constructor
+         * @memberof platform/status
+         */
         function StatusRepresenter(scope, element) {
             this.element = element;
             this.lastClasses = [];

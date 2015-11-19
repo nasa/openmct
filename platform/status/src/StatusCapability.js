@@ -26,15 +26,42 @@ define(
     function () {
         'use strict';
 
+        /**
+         * The `status` capability can be used to attach information
+         * about the state of a domain object, expressed as simple
+         * string flags.
+         *
+         * Representations of domain objects will also receive CSS
+         * classes which reflect their current status.
+         * (@see platform/status.StatusRepresenter)
+         *
+         * @param {platform/status.StatusService} statusService
+         *        the service which will track domain object status
+         *        within the application.
+         * @param {DomainObject} the domain object whose status will
+         *        be tracked.
+         * @constructor
+         * @memberof platform/status
+         */
         function StatusCapability(statusService, domainObject) {
             this.statusService = statusService;
             this.domainObject = domainObject;
         }
 
+        /**
+         * Get all status flags currently set for this domain object.
+         * @returns {string[]} all current status flags.
+         */
         StatusCapability.prototype.get = function () {
             return this.statusService.getStatus(this.domainObject.getId());
         };
 
+        /**
+         * Set a status flag on this domain object.
+         * @param {string} status the status to set
+         * @param {boolean} state true if the domain object should
+         *        possess this status, false if it should not
+         */
         StatusCapability.prototype.set = function (status, state) {
             return this.statusService.setStatus(
                 this.domainObject.getId(),
@@ -43,6 +70,14 @@ define(
             );
         };
 
+        /**
+         * Listen for changes in this domain object's status.
+         * @param {Function} callback function to invoke on changes;
+         *        called with the new status of the domain object, as an
+         *        array of strings
+         * @returns {Function} a function which can be used to stop
+         *          listening to status changes for this domain object.
+         */
         StatusCapability.prototype.listen = function (callback) {
             return this.statusService.listen(
                 this.domainObject.getId(),
