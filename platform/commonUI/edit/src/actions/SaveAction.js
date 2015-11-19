@@ -23,7 +23,7 @@
 
 
 define(
-    ['../../../browse/src/creation/createWizard'],
+    ['../../../browse/src/creation/CreateWizard'],
     function (CreateWizard) {
         'use strict';
 
