@@ -133,7 +133,7 @@ define(
 
             function persistObject(object){
 
-                return (object.hasCapability('editor') && object.getCapability('editor').save() || object.getCapability('persistence').persist())
+                return (object.hasCapability('editor') && object.getCapability('editor').save(true) || object.getCapability('persistence').persist())
                     .then(resolveWith(object));
                 /*
                 if (object.hasCapability('editor')){
@@ -165,9 +165,9 @@ define(
             // during editing.
             function doSave() {
                 //WARNING: HACK
-                //This is a new 'virtual panel' that has not been persisted
+                //This is a new 'virtual object' that has not been persisted
                 // yet.
-                if (domainObject.getModel().type === 'telemetry.panel' && !domainObject.getModel().persisted){
+                if (!domainObject.getModel().persisted){
                     return getParent(domainObject)
                             .then(doWizardSave)
                             .then(persistObject)

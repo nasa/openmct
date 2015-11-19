@@ -46,11 +46,11 @@ define(
          *        introduced in this bundle), responsible for handling actual
          *        object creation.
          */
-        function CreateActionProvider(typeService, dialogService, creationService, policyService) {
+        function CreateActionProvider($injector, $q, typeService, navigationService) {
             this.typeService = typeService;
-            this.dialogService = dialogService;
-            this.creationService = creationService;
-            this.policyService = policyService;
+            this.navigationService = navigationService;
+            this.$injector = $injector;
+            this.$q = $q;
         }
 
         CreateActionProvider.prototype.getActions = function (actionContext) {
@@ -75,9 +75,9 @@ define(
                     type,
                     destination,
                     context,
-                    self.dialogService,
-                    self.creationService,
-                    self.policyService
+                    self.$injector,
+                    self.$q,
+                    self.navigationService
                 );
             });
         };
