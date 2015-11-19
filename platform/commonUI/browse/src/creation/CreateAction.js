@@ -25,8 +25,10 @@
  * Module defining CreateAction. Created by vwoeltje on 11/10/14.
  */
 define(
-    ['./CreateWizard'],
-    function (CreateWizard) {
+    ['./CreateWizard',
+    'uuid',
+    '../../../edit/src/objects/EditableDomainObject'],
+    function (CreateWizard, uuid, EditableDomainObject) {
         "use strict";
 
         /**
@@ -45,13 +47,11 @@ define(
          *        override this)
          * @param {ActionContext} context the context in which the
          *        action is being performed
-         * @param {DialogService} dialogService the dialog service
-         *        to use when requesting user input
-         * @param {CreationService} creationService the creation service,
-         *        which handles the actual instantiation and persistence
-         *        of the newly-created domain object
+         * @param {NavigationService} navigationService the navigation service,
+         *        which handles changes in navigation. It allows the object
+         *        being browsed/edited to be set.
          */
-        function CreateAction(type, parent, context, dialogService, creationService, policyService) {
+        function CreateAction(type, parent, context, $q, navigationService) {
             this.metadata = {
                 key: 'create',
                 glyph: type.getGlyph(),
@@ -63,9 +63,8 @@ define(
 
             this.type = type;
             this.parent = parent;
-            this.policyService = policyService;
-            this.dialogService = dialogService;
-            this.creationService = creationService;
+            this.navigationService = navigationService;
+            this.$q = $q;
         }
 
         /**
@@ -73,45 +72,24 @@ define(
          * This will prompt for user input first.
          */
         CreateAction.prototype.perform = function () {
-            /*
-             Overview of steps in object creation:
+            var newModel = this.type.getInitialModel(),
+                parentObject = this.navigationService.getNavigation(),
+                newObject,
+                editableObject;
 
-             1. Show dialog
-             a. Prepare dialog contents
-             b. Invoke dialogService
-             2. Create new object in persistence service
-             a. Generate UUID
-             b. Store model
-             3. Mutate destination container
-             a. Get mutation capability
-             b. Add new id to composition
-             4. Persist destination container
-             a. ...use persistence capability.
-             */
+            newModel.type = this.type.getKey();
+            newObject = parentObject.useCapability('instantiation', newModel);
+            editableObject = new EditableDomainObject(newObject, this.$q);
+            editableObject.setOriginalObject(parentObject);
+            editableObject.useCapability('mutation', function(model){
+                model.location = parentObject.getId();
+            });
 
-            // The wizard will handle creating the form model based
-            // on the type...
-            var wizard =
-                new CreateWizard(this.type, this.parent, this.policyService),
-                self = this;
-
-            // Create and persist the new object, based on user
-            // input.
-            function persistResult(formValue) {
-                var parent = wizard.getLocation(formValue),
-                    newModel = wizard.createModel(formValue);
-                return self.creationService.createObject(newModel, parent);
+            if (newObject.hasCapability('composition') && this.type.getKey()!=='folder') {
+                this.navigationService.setNavigation(editableObject);
+            } else {
+                return editableObject.getCapability('action').perform('save');
             }
-
-            function doNothing() {
-                // Create cancelled, do nothing
-                return false;
-            }
-
-            return this.dialogService.getUserInput(
-                wizard.getFormStructure(),
-                wizard.getInitialFormValue()
-            ).then(persistResult, doNothing);
         };
 
 
