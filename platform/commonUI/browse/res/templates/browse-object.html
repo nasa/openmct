@@ -19,7 +19,8 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div ng-controller="BrowseObjectController" class="abs l-flex-col">
+<div ng-controller="BrowseObjectController" class="abs l-flex-col"
+     ng-class="editMode ? 'edit-mode' : 'browse-mode'">
     <div class="holder flex-elem l-flex-row object-browse-bar ">
         <div class="items-select left flex-elem l-flex-row grows">
             <mct-representation key="'back-arrow'"
@@ -61,7 +62,8 @@
             </div>
             <mct-representation key="representation.selected.key"
                                 mct-object="representation.selected.key && domainObject"
-                                class="abs flex-elem grows object-holder-main scroll">
+                                class="abs flex-elem grows object-holder-main scroll"
+                                toolbar="toolbar">
             </mct-representation>
         </div><!--/ l-object-wrapper-inner -->
     </div>
