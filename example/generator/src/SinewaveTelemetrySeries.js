@@ -62,7 +62,7 @@ define(
                 // so it's not checked for here, just formatted for display
                 // differently.
                 return (i + offset) * 1000 + firstTime * 1000 -
-                    (domain === 'yesterday' ? ONE_DAY : 0);
+                    (domain === 'yesterday' ? (ONE_DAY * 1000) : 0);
             };
 
             generatorData.getRangeValue = function (i, range) {

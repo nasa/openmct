@@ -285,11 +285,17 @@ define(
          * domain objects returned by `getTelemetryObjects()`.
          *
          * @param {DomainObject} domainObject the object of interest
+         * @param {string} [key] the symbolic identifier of the domain
+         *        to look up; if omitted, the value for this object's
+         *        default domain will be used
          * @returns the most recent domain value observed
          */
-        TelemetrySubscription.prototype.getDomainValue = function (domainObject) {
-            var id = domainObject.getId();
-            return (this.latestValues[id] || {}).domain;
+        TelemetrySubscription.prototype.getDomainValue = function (domainObject, key) {
+            var id = domainObject.getId(),
+                latestValue = this.latestValues[id];
+            return latestValue && (key ?
+                                   latestValue.datum[key] :
+                                   latestValue.domain);
         };
 
         /**
@@ -302,11 +308,17 @@ define(
          * domain objects returned by `getTelemetryObjects()`.
          *
          * @param {DomainObject} domainObject the object of interest
+         * @param {string} [key] the symbolic identifier of the range
+         *        to look up; if omitted, the value for this object's
+         *        default range will be used
          * @returns the most recent range value observed
          */
-        TelemetrySubscription.prototype.getRangeValue = function (domainObject) {
-            var id = domainObject.getId();
-            return (this.latestValues[id] || {}).range;
+        TelemetrySubscription.prototype.getRangeValue = function (domainObject, key) {
+            var id = domainObject.getId(),
+                latestValue = this.latestValues[id];
+            return latestValue && (key ?
+                                   latestValue.datum[key] :
+                                   latestValue.range);
         };
 
         /**
