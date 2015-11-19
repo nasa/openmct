@@ -51,14 +51,11 @@ a.disabled {
 	@include animation-name(pulse, 0.2);
 }
 
-@include keyframes(pulse) {
-	0%   { opacity: 0.5; }
-	100% { opacity: 1; }
-}
-
-
-@mixin pulse($dur: 500ms, $iteration: infinite) {
-	//@include customKeyframes(pulse, 0.2);
+@mixin pulse($dur: 500ms, $iteration: infinite, $opacity0: 0.5, $opacity100: 1) {
+    @include keyframes(pulse) {
+        0%   { opacity: $opacity0; }
+        100% { opacity: $opacity100; }
+    }
 	@include animation-name(pulse);
 	@include animation-duration($dur);
 	@include animation-direction(alternate);
@@ -66,10 +63,10 @@ a.disabled {
 	@include animation-timing-function(ease-in-out);
 }
 
-@mixin pulseBorder($c: red, $dur: 500ms, $iteration: infinite, $delay: 0s) {
+@mixin pulseBorder($c: red, $dur: 500ms, $iteration: infinite, $delay: 0s, $opacity0: 0, $opacity100: 1) {
 	@include keyframes(pulseBorder) {
-		0%   { border-color: transparent; }
-		100% { border-color: $c; }
+		0%   { border-color: rgba($c, $opacity0); }
+		100% { border-color: rgba($c, $opacity100); }
 	}
 	@include animation-name(pulseBorder);
 	@include animation-duration($dur);
