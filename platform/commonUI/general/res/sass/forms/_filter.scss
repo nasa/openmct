@@ -22,15 +22,6 @@
 .filter,
 .t-filter {
 	input.t-filter-input {
-		//height: $formInputH;
-		//width: 200px;
-		&:not(.ng-dirty) {
-//			TO-DO: Update compass install to support this
-//			@include input-placeholder {
-//				color: rgba(#fff, 0.3);
-//				font-style: italic;
-//			}
-		}
 		&:not(.ng-dirty) + .t-a-clear {
 			display: none;
 		}
@@ -72,7 +63,6 @@
 			background-color: $colorKey;
 		}
 	}
-//	&:not(ng-dirty)
 }
 
 .top-bar {
@@ -124,7 +114,6 @@
 
     .clear-icon {
         right: $iconEdgeM;
-
         // Icon is visible only when there is text input
         visibility: hidden;
         opacity: 0;
