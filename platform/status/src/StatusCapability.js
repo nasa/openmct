@@ -49,11 +49,20 @@ define(
         }
 
         /**
-         * Get all status flags currently set for this domain object.
+         * List all status flags currently set for this domain object.
          * @returns {string[]} all current status flags.
          */
-        StatusCapability.prototype.get = function () {
-            return this.statusService.getStatus(this.domainObject.getId());
+        StatusCapability.prototype.list = function () {
+            return this.statusService.listStatuses(this.domainObject.getId());
+        };
+
+        /**
+         * Check if a status flag is currently set for this domain object.
+         * @param {string} status the status to get
+         * @returns {boolean} true if the flag is present, otherwise false
+         */
+        StatusCapability.prototype.get = function (status) {
+            return this.list().indexOf(status) !== -1;
         };
 
         /**

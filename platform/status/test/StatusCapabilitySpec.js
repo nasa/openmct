@@ -40,7 +40,7 @@ define(
 
                 mockStatusService = jasmine.createSpyObj(
                     'statusService',
-                    [ 'listen', 'setStatus', 'getStatus' ]
+                    [ 'listen', 'setStatus', 'listStatuses' ]
                 );
                 mockDomainObject = jasmine.createSpyObj(
                     'domainObject',
@@ -49,7 +49,7 @@ define(
                 mockUnlisten = jasmine.createSpy('unlisten');
 
                 mockStatusService.listen.andReturn(mockUnlisten);
-                mockStatusService.getStatus.andReturn(testStatusFlags);
+                mockStatusService.listStatuses.andReturn(testStatusFlags);
                 mockDomainObject.getId.andReturn(testId);
 
                 capability = new StatusCapability(
@@ -69,7 +69,7 @@ define(
             });
 
             it("gets status from the statusService", function () {
-                expect(capability.get()).toBe(testStatusFlags);
+                expect(capability.list()).toBe(testStatusFlags);
             });
 
             it("listens to changes from the statusService", function () {
@@ -78,6 +78,11 @@ define(
                     .toBe(mockUnlisten);
                 expect(mockStatusService.listen)
                     .toHaveBeenCalledWith(testId, mockCallback);
+            });
+
+            it("allows statuses to be checked individually", function () {
+                expect(capability.get('some-unset-status')).toBe(false);
+                expect(capability.get(testStatusFlags[0])).toBe(true);
             });
         });
     }

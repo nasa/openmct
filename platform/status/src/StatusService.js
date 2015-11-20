@@ -51,7 +51,7 @@ define(
          * @returns {string[]} an array containing all status flags currently
          *          applicable to the object with this identifier
          */
-        StatusService.prototype.getStatus = function (id) {
+        StatusService.prototype.listStatuses = function (id) {
             return this.statusTable[id] || [];
         };
 
