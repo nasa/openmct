@@ -2080,6 +2080,31 @@ objects which has a `relationships` property in their model, whose value is an
 object containing key-value pairs, where keys are strings identifying 
 relationship types, and values are arrays of domain object identifiers.
 
+## Status Capability
+
+The `status` capability provides a way to flag domain objects as possessing
+certain states, represented as simple strings. These states, in turn, are
+reflected on `mct-representation` elements as classes (prefixed with
+`s-status-`.) The `status` capability has the following interface:
+
+* `get()`: Returns an array of all status strings that currently apply
+  to this object.
+* `set(status, state)`: Adds or removes a status flag to this domain object.
+  The `status` argument is the string to set; `state` is a boolean
+  indicating whether this status should be included (true) or removed (false).
+* `listen(callback)`: Listen for changes in status. The provided `callback`
+  will be invoked with an array of all current status strings whenever status
+  changes.
+
+Plug-ins may add and/or recognize arbitrary status flags. Flags defined
+and/or supported by the platform are:
+
+ Status    | CSS Class          | Meaning
+-----------|--------------------|-----------------------------------
+`editing`  | `s-status-editing` | Domain object is being edited.
+`pending`  | `s-status-pending` | Domain object is partially loaded.
+
+
 ## Telemetry Capability
 
 The telemetry capability provides a means for accessing telemetry data 
