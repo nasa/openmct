@@ -42,6 +42,12 @@ define(
                 });
             }
 
+            function updateText(newText) {
+                mockScope.textValue = newText;
+                fireWatch("textValue", newText);
+                mockScope.updateFromView(newText);
+            }
+
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj('$scope', ['$watch']);
                 mockFormatService =
@@ -77,8 +83,7 @@ define(
             it("updates models from user-entered text", function () {
                 var newText = "1977-05-25 17:30:00";
 
-                mockScope.textValue = newText;
-                fireWatch("textValue", newText);
+                updateText(newText);
                 expect(mockScope.ngModel.testField)
                     .toEqual(mockFormat.parse(newText));
                 expect(mockScope.textInvalid).toBeFalsy();
@@ -101,8 +106,7 @@ define(
                 beforeEach(function () {
                     newText = "Not a date";
                     oldValue = mockScope.ngModel.testField;
-                    mockScope.textValue = newText;
-                    fireWatch("textValue", newText);
+                    updateText(newText);
                 });
 
                 it("displays error state", function () {
@@ -127,8 +131,7 @@ define(
 
                 mockFormat.validate.andReturn(true);
                 mockFormat.parse.andReturn(42);
-                mockScope.textValue = newText;
-                fireWatch("textValue", newText);
+                updateText(newText);
 
                 expect(mockScope.textValue).toEqual(newText);
                 expect(mockScope.ngModel.testField).toEqual(42);
@@ -160,16 +163,14 @@ define(
 
                 it("parses user input", function () {
                     var newText = "some other new text";
-                    mockScope.textValue = newText;
-                    fireWatch("textValue", newText);
+                    updateText(newText);
                     expect(mockFormat.parse).toHaveBeenCalledWith(newText);
                     expect(mockScope.ngModel.testField).toEqual(testValue);
                 });
 
                 it("validates user input", function () {
                     var newText = "some other new text";
-                    mockScope.textValue = newText;
-                    fireWatch("textValue", newText);
+                    updateText(newText);
                     expect(mockFormat.validate).toHaveBeenCalledWith(newText);
                 });
 
