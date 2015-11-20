@@ -144,6 +144,15 @@ define(
             this.$timeout = $timeout;
             this.$scope = $scope;
 
+            //$scope.editing =
+            // $scope.domainObject.getCapability('status').get().indexOf('editing') >=0;
+
+            //TODO: Temporary hack until css classes are defined for status
+            // change
+            $scope.domainObject.getCapability('status').listen(function(status){
+                $scope.editing = status.indexOf('editing') >=0;
+            });
+
             // Listen for changes which will effect display parameters
             $scope.$watch("ngModel.selectedObject", setSelection);
             $scope.$watch("domainObject", checkSelection);

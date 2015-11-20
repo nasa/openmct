@@ -70,7 +70,8 @@ define(
         EditableDomainObjectCache.prototype.getEditableObject = function (domainObject) {
             var type = domainObject.getCapability('type'),
                 EditableDomainObject = this.EditableDomainObject,
-                editableObject;
+                editableObject,
+                statusListener;
 
             // Track the top-level domain object; this will have
             // some special behavior for its context capability.
@@ -92,6 +93,14 @@ define(
                 this.cache.getCachedModel(domainObject)
             );
             editableObject.getCapability("status").set('editing', true);
+            if (!this.isRoot(domainObject)){
+                statusListener = this.root.getCapability("status").listen(function(statuses){
+                    if (statuses.indexOf("editing") < 0 ){
+                        editableObject.getCapability("status").set("editing", false);
+                        statusListener();
+                    }
+                });
+            }
 
             return editableObject;
         };

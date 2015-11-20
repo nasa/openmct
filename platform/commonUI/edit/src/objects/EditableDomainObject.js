@@ -116,7 +116,6 @@ define(
             }
 
             cache = new EditableDomainObjectCache(EditableDomainObjectImpl, $q);
-
             return cache.getEditableObject(domainObject);
         }
 
