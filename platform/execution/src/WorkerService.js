@@ -65,8 +65,12 @@ define(
          * that has been registered under the `workers` category
          * of extension.
          *
+         * This will return either a Worker or a SharedWorker,
+         * depending on whether a `shared` flag has been specified
+         * on the the extension definition for the referenced worker.
+         *
          * @param {string} key symbolic identifier for the worker
-         * @returns {Worker} the running Worker
+         * @returns {Worker | SharedWorker} the running Worker
          */
         WorkerService.prototype.run = function (key) {
             var scriptUrl = this.workerUrls[key],
