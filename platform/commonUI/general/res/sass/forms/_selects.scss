@@ -25,7 +25,6 @@
 	    margin: 0 0 2px 0; // Needed to avoid dropshadow from being clipped by parent containers
     }
 	padding: 0 $interiorMargin;
-    overflow: hidden;
 	position: relative;
     line-height: $formInputH;
 	select {
