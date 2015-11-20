@@ -1,14 +1,17 @@
 <span class="s-btn"
       ng-controller="DateTimeFieldController">
-    <input type="text"
-           ng-blur="updateFromView(textValue)"
-           ng-model="textValue"
-           ng-class="{ error: textInvalid }">
-    </input>
-    <a class="ui-symbol icon icon-calendar"
-       ng-if="structure.format === 'utc' || !structure.format"
-       ng-click="picker.active = !picker.active">
-    </a>
+    <form ng-submit="updateFromView(textValue)">
+        <input type="text"
+               ng-blur="updateFromView(textValue)"
+               ng-model="textValue"
+               ng-class="{ error: textInvalid }">
+        </input>
+
+        <a class="ui-symbol icon icon-calendar"
+           ng-if="structure.format === 'utc' || !structure.format"
+           ng-click="picker.active = !picker.active">
+        </a>
+    </form>
     <mct-popup ng-if="picker.active">
         <div mct-click-elsewhere="picker.active = false">
             <mct-control key="'datetime-picker'"
