@@ -101,24 +101,31 @@ define(
             });
 
             describe("when user input is invalid", function () {
-                var newText, oldValue;
+                var newText, oldText, oldValue;
 
                 beforeEach(function () {
                     newText = "Not a date";
                     oldValue = mockScope.ngModel.testField;
-                    updateText(newText);
+                    mockScope.textValue = newText;
+                    fireWatch("textValue", newText);
                 });
 
                 it("displays error state", function () {
                     expect(mockScope.textInvalid).toBeTruthy();
                 });
 
-                it("does not modify model state", function () {
-                    expect(mockScope.ngModel.testField).toEqual(oldValue);
-                });
-
                 it("does not modify user input", function () {
                     expect(mockScope.textValue).toEqual(newText);
+                });
+
+                describe("and has been submitted", function () {
+                    beforeEach(function () {
+                        mockScope.updateFromView(newText);
+                    });
+
+                    it("does not modify model state", function () {
+                        expect(mockScope.ngModel.testField).toEqual(oldValue);
+                    });
                 });
             });
 
