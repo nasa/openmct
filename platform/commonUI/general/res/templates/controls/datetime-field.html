@@ -1,6 +1,7 @@
 <span class="s-btn"
       ng-controller="DateTimeFieldController">
     <input type="text"
+           ng-blur="updateFromView(textValue)"
            ng-model="textValue"
            ng-class="{ error: textInvalid }">
     </input>
