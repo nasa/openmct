@@ -23,7 +23,6 @@
     "platform/features/plot",
     "platform/features/scrolling",
     "platform/features/timeline",
-    "platform/features/timeline/themes/espresso",
     "platform/forms",
     "platform/identity",
     "platform/persistence/local",

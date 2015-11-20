@@ -217,6 +217,11 @@
                 }
             }
         ],
+        "stylesheets": [
+            {
+                "stylesheetUrl": "css/timeline.css"
+            }
+        ],
         "representations": [
             {
                 "key": "gantt",
