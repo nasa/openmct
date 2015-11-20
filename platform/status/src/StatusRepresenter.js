@@ -77,7 +77,7 @@ define(
                 self.lastClasses = newClasses;
             }
 
-            updateStatus(statusCapability.get());
+            updateStatus(statusCapability.list());
             this.unlisten = statusCapability.listen(updateStatus);
         };
 

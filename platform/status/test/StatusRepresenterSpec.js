@@ -66,7 +66,7 @@ define(
                 );
                 mockStatusCapability = jasmine.createSpyObj(
                     'status',
-                    [ 'get', 'set', 'listen' ]
+                    [ 'list', 'get', 'set', 'listen' ]
                 );
                 mockUnlisten = jasmine.createSpy();
 
@@ -79,7 +79,7 @@ define(
                     delete elementClasses[c];
                 });
 
-                mockStatusCapability.get.andReturn(testStatusFlags);
+                mockStatusCapability.list.andReturn(testStatusFlags);
                 mockStatusCapability.listen.andReturn(mockUnlisten);
 
                 mockDomainObject.getCapability.andCallFake(function (c) {

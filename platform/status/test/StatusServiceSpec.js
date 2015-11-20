@@ -54,14 +54,14 @@ define(
             });
 
             it("initially contains no flags for an object", function () {
-                expect(statusService.getStatus(testId)).toEqual([]);
+                expect(statusService.listStatuses(testId)).toEqual([]);
             });
 
             it("stores and clears status flags", function () {
                 statusService.setStatus(testId, testStatus, true);
-                expect(statusService.getStatus(testId)).toEqual([testStatus]);
+                expect(statusService.listStatuses(testId)).toEqual([testStatus]);
                 statusService.setStatus(testId, testStatus, false);
-                expect(statusService.getStatus(testId)).toEqual([]);
+                expect(statusService.listStatuses(testId)).toEqual([]);
             });
 
             it("uses topic to listen for changes", function () {
