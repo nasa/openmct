@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 // General
-$timelineHeaderColorBg: lighten($colorBodyBg, 5%);
-$timelineColorAlt1: lighten($timelineHeaderColorBg, 10%);
+$timelineHeaderColorBg: pullForward($colorBodyBg, 5%);
+$timelineColorAlt1: pullForward($timelineHeaderColorBg, 10%);
 $colorGanttBarBg: #5555aa;
 $colorGanttBarFg: #fff;
 $colorGanttBarSelectedBg: #ccc;

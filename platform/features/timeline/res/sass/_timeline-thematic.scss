@@ -119,9 +119,14 @@
         $bg: $timelineHeaderColorBg;
         $bga: 1;
         $l: 5%;
+        @include user-select(none);
         @include background-image(linear-gradient(-90deg, rgba($bg, $bga), rgba($bg, $bga) 70%, rgba($bg, 0) 100%));
         .s-btn {
-            @include containerSubtle(lighten($colorBodyBg, $l), lighten($colorBodyFg, $l), true);
+            height: 16px;
+            line-height: 16px;
+            .icon {
+                font-size: 0.7rem !important;
+            }
         }
     }
 
