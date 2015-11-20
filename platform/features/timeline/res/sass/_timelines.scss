@@ -1,3 +1,24 @@
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
 //*************************************************************** LAYOUT
 .l-timeline-holder {
 //    @include test();
@@ -37,26 +58,20 @@
                 }
             }
             &.l-timeline-gantt {
-//                @include testObj();
-
                 .l-swimlanes-holder {
                     @include scrollV(scroll);
                 }
-
             }
 	        &.l-timeline-resource-legend {
 		        @include box-sizing(border-box);
 		        padding: $interiorMargin 0;
 		        white-space: nowrap;
-		        .l-title {
-		        }
 
 		        .l-legend-items {
 			        @include absPosDefault();
 			        @include scrollV();
 			        top: 25px;
-			        color: lighten($timelineColorAlt1, 10%);
-//			        margin-top: $interiorMargin;
+			        //color: lighten($timelineColorAlt1, 10%); // MOVED to espresso theme
 		        }
 		        .legend-item {
 			        // Inherits from /platform/commonUI/general/res/sass/plots/_plots-main.scss
@@ -117,13 +132,12 @@
 
 	            .l-title {
 		            @include ellipsize();
-		            color: rgba(#fff, 0.4);
 		            top: $m; left: $m;
 		            position: absolute;
 	            }
 
 	            .l-graph {
-		            background: rgba(black, 0.3);
+		            //background: rgba(black, 0.3); // MOVED
                     width: 100%;
 		            .l-graph-area {
 			            canvas {
@@ -282,26 +296,13 @@
 	.s-timeline-tabular {
 		.l-header .l-cols {
 			top: $timelineTopPaneHeaderElemMargin; bottom: $timelineTopPaneHeaderElemMargin;
-			.l-col {
-				border-left: 1px solid rgba(#fff, 0.1);
-//				height: 100%;
-			}
 		}
 
 		.l-pane-l {
 			// Left pane of the tabular area
 			.l-cols {
 				left: $timelineTopPaneHeaderElemMargin;
-				.s-label .ui-symbol.icon {
-					//color: $colorKeyFg;
-					color: $activityTypeTabularFgIcon;
-				}
 			}
-		}
-
-		.l-pane-r {
-			// Right pane of the tabular area
-//			@include test(red, 0.05);
 		}
 	}
 
@@ -325,77 +326,3 @@
 		height: 5px
 	}
 }
-
-//*************************************************************** STYLING
-.s-timeline {
-    font-size: 0.75rem;
-	.s-header {
-		background-color: $timelineHeaderColorBg;
-	}
-	.s-swimlane {
-		//    @include transition-property(background-color);
-		//    @include transition-duration(0.2s);
-		//    @include transition-timing-function(ease-out);
-		//    border-top: 1px solid rgba(black, 0.2);
-		border-bottom: 1px solid rgba(white, 0.1);
-		line-height: $activityBarH + 2 + 1;
-		/*    &:hover {
-				background: rgba(white, 0.1);
-			}*/
-		&.exceeded {
-			@include bgDiagonalStripes(#fff, 0.05, $timelineSwimlaneH + 1);
-		}
-
-		&.selected {
-			$bg: $colorSwimlaneSelectedBg;
-			background-color: $bg;
-			color: #fff;
-//			@include background-image(linear-gradient(darken($bg, 5), $bg));
-
-			.s-timeline-gantt .bar {
-				@include activityBg($colorSwimlaneSelectedGanttBg, 10);
-				color: $colorSwimlaneSelectedGanttFg;
-//				background-color: red;
-//				background-image: none;
-			}
-		}
-
-		&.drop-into {
-			background-color: rgba($colorDropTarg, 0.7);
-			.s-timeline-gantt {
-				opacity: 0.7;
-			}
-		}
-		&.drop-after {
-			background-color: rgba(#000, 0.2);
-			border-bottom-color: rgba($colorDropTarg, 1.0);
-		}
-	}
-
-	.s-ticks {
-		@include bgTicks($timelineColorAlt1);
-	}
-	.s-hover-btns-holder {
-		$bg: $timelineHeaderColorBg;
-		$bga: 1;
-		$l: 5%;
-		@include background-image(linear-gradient(-90deg, rgba($bg, $bga), rgba($bg, $bga) 70%, rgba($bg, 0) 100%));
-		.s-btn {
-			@include containerSubtle(lighten($colorBodyBg, $l), lighten($colorBodyFg, $l), true);
-		}
-	}
-}
-
-.edit-mode .s-swimlane {
-	cursor: pointer;
-	.s-label {
-		@include border-radius($controlCr);
-		padding: 2px 5px;
-		&:hover {
-			background: rgba(#fff, 0.1);
-			color: #fff;
-		}
-	}
-}
-
-

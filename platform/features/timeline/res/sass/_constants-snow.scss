@@ -19,14 +19,24 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@import "compass";
-@import "compass/css3";
-@import "compass/utilities";
 
-@import "../../../../commonUI/general/res/sass/constants";
-@import "../../../../commonUI/general/res/sass/mixins";
-@import "../../../../commonUI/themes/espresso/res/sass/constants";
-@import "../../../../commonUI/themes/espresso/res/sass/mixins";
-@import "constants";
-@import "activities";
-@import "timelines";
+// General
+$timelineHeaderColorBg: pullForward($colorBodyBg, 5%);
+$timelineColorAlt1: pullForward($timelineHeaderColorBg, 10%);
+$colorGanttBarBg: #5555aa;
+$colorGanttBarFg: #fff;
+$colorGanttBarSelectedBg: $colorGanttBarBg;
+$colorGanttBarSelectedFg: $colorGanttBarFg;
+$colorGanttBarTabularFgIcon: #8594ff;
+
+// Swimlane colors
+$colorDropTarg: rgba($colorGanttBarBg, 0.4);
+$colorSwimlaneSelectedBg: rgba($colorGanttBarBg, 0.25);
+$colorSwimlaneSelectedFg: pullForward($colorBodyFg, 10%);
+$colorGanttToggle: $colorKey;
+$shdwGanttBar: rgba(black, 0.1) 0 1px 3px;
+
+// Resource graphs
+$timelineResourceGraphBg: rgba(black, 0.1);
+$timelineResourceGraphFg: $colorBodyFg;
+$timelineResourceGraphLegendFg: $colorBodyFg;

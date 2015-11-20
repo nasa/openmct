@@ -57,36 +57,7 @@
 	}
 }
 
-.s-timeline-gantt {
-	$br: $controlCr;
-	.bar {
-		color: $activityTypeFg;
-//		opacity: 0.9;
-//		@include background-image(linear-gradient(lighten($activityTypeBg, 10), $activityTypeBg));
-		@include activityBg($activityTypeBg);
-		@include border-radius($br);
-		@include box-shadow(rgba(black, 0.4) 0 1px 3px);
-		&.expanded {
-			@include border-top-radius($br);
-			@include border-bottom-radius(0);
-		}
-		&.leaf {
-			@include border-top-radius(0);
-			@include border-bottom-radius($br);
-		}
-		.s-toggle {
-			color: $colorKey;
-		}
-	}
-}
-
 .edit-mode .s-timeline-gantt {
-	.bar {
-		&:hover {
-			@include background-image(linear-gradient(lighten($activityTypeBg, 20), lighten($activityTypeBg, 10)));
-		}
-	}
-
 	.handle {
 		cursor: col-resize;
 		&.start {

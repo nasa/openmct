@@ -220,6 +220,14 @@
         "stylesheets": [
             {
                 "stylesheetUrl": "css/timeline.css"
+            },
+            {
+                "stylesheetUrl": "css/timeline-espresso.css",
+                "theme": "espresso"
+            },
+            {
+                "stylesheetUrl": "css/timeline-snow.css",
+                "theme": "snow"
             }
         ],
         "representations": [
