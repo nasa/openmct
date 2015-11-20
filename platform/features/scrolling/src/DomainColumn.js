@@ -54,7 +54,8 @@ define(
         DomainColumn.prototype.getValue = function (domainObject, datum) {
             return {
                 text: this.telemetryFormatter.formatDomainValue(
-                    datum[this.domainMetadata.key]
+                    datum[this.domainMetadata.key],
+                    this.domainMetadata.format
                 )
             };
         };

@@ -19,23 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@mixin cols($totalCols, $span) {
-    $cw: 100% / $totalCols;
-    min-width: (500px / $totalCols) * $span;
-    @if ($totalCols != $span) {
-        width: ($cw * $span) - $ueColMargin;
-    } @else {
-        width: $cw;
-    }
-}
-
-.holder-all {
-    $myM: 0; // $interiorMarginSm;
-    top: $myM;
-    right: $myM;
-    bottom: $myM;
-    left: $myM;
-}
 
 .browse-area,
 .edit-area,
@@ -48,7 +31,7 @@
 }
 
 .contents {
-    $myM: 0; //$interiorMargin;
+    $myM: 0;
     box-sizing: border-box;
     position: absolute;
     top: $myM;
@@ -63,45 +46,10 @@
     }
 }
 
-.bar {
-    .icon.major {
-        margin-right: $interiorMargin;
-    }
-    &.abs {
-        text-wrap: none;
-        white-space: nowrap;
-        &.left,
-        .left {
-            width: 45%;
-            right: auto;
-        }
-        &.right,
-        .right {
-            width: 45%;
-            left: auto;
-            text-align: right;
-            .icon.major {
-                margin-left: $interiorMargin * 3;
-            }
-        }
-        .l-flex,
-        &.l-flex {
-            .left,
-            .right {
-                width: auto;
-            }
-        }
-    }
-}
-
 .user-environ {
     .browse-area,
-    .edit-area,
     .editor {
-        top: $bodyMargin + $ueTopBarH + ($interiorMargin);
-        right: $bodyMargin;
-        bottom: $ueFooterH + $bodyMargin;
-        left: $bodyMargin;
+        top: 0; left: 0; right: 0; bottom: $ueFooterH;
     }
 
     .browse-area,
@@ -115,102 +63,49 @@
     .edit-area {
         $tbH: $btnToolbarH + $interiorMargin;
         top: $bodyMargin + $ueTopBarEditH + ($interiorMargin);
+        left: $bodyMargin;
+        right: $bodyMargin;
+        bottom: $bodyMargin + $ueFooterH;
         .tool-bar {
             bottom: auto;
             height: $tbH;
             line-height: $btnToolbarH;
         }
-        .work-area {
+        .object-holder.work-area {
             top: $tbH + $interiorMargin * 2;
+            overflow: auto;
         }
     }
 
-    .ue-bottom-bar {
-        //@include absPosDefault($bodyMargin);
-        @include absPosDefault(0); // New status bar design
-        top: auto;
-        height: $ueFooterH;
-        .status-holder {
-            //right: $ueAppLogoW + $bodyMargin; New status bar design
-            z-index: 1;
-        }
-        .app-logo {
-            left: auto;
-            width: $ueAppLogoW;
-            z-index: 2;
-        }
-    }
-}
-
-.cols {
-    @include clearfix;
-    .col {
-        @include box-sizing(border-box);
-        @include clearfix;
-        //		background: rgba(#ffcc00, 0.2);
-        float: left;
-        margin-left: $ueColMargin;
-        padding-left: $interiorMargin;
-        position: relative;
-        &:first-child {
-            margin-left: 0;
-            padding-left: 0;
-        }
-    }
-    &.cols-2 {
-        $nc: 2;
-        .col-1 {
-            @include cols($nc, 1);
-        }
-    }
-    &.cols-2-ff {
-        // 2 columns, first column is fixed, second is fluid
-        .col-100px {
-            width: 100px;
-        }
-    }
-
-    &.cols-6 {
-        $nc: 6;
-        .col-1 {
-            @include cols($nc, 1);
-        }
-    }
-    &.cols-16 {
-        $nc: 16;
-        .col-1 {
-            @include cols($nc, 1);
-        }
-        .col-2 {
-            @include cols($nc, 2);
-        }
-        .col-7 {
-            @include cols($nc, 7);
-        }
-    }
-    &.cols-32 {
-        $nc: 32;
-        .col-2 {
-            @include cols($nc, 2);
-        }
-        .col-15 {
-            @include cols($nc, 15);
-        }
-    }
-    .l-row {
-        @include clearfix;
-        padding: $interiorMargin 0;
-    }
-}
-
-.browse-mode {
-    .split-layout {
-        .split-pane-component.pane.left {
-            min-width: 150px;
-            max-width: 800px;
-            width: $ueBrowseLeftPaneW;
-        }
-    }
+	// from _bottom-bar.scss
+	.ue-bottom-bar {
+		@include absPosDefault(0);// New status bar design
+		top: auto;
+		height: $ueFooterH;
+		line-height: $ueFooterH - ($interiorMargin * 2);
+		background: $colorFooterBg;
+		color: lighten($colorBodyBg, 30%);
+		font-size: .7rem;
+		.status-holder {
+			@include box-sizing(border-box);
+			@include absPosDefault($interiorMargin);
+			@include ellipsize();
+			right: 120px;
+			text-transform: uppercase;
+			z-index: 1;
+		}
+		.app-logo {
+			@include box-sizing(border-box);
+			@include absPosDefault($interiorMargin);
+			cursor: pointer;
+			left: auto;
+			width: $ueAppLogoW;
+			z-index: 2;
+			&.logo-openmctweb {
+				background: url($dirImgs + 'logo-openmctweb.svg') no-repeat center center;
+			}
+		}
+	}
 }
 
 .edit-mode {
@@ -226,23 +121,63 @@
 }
 
 .pane {
+    @include box-sizing(border-box);
     position: absolute;
-    &.treeview.left {
-        .create-btn-holder {
-            bottom: auto;
-            top: 0;
-            height: $ueTopBarH;
-            .wrapper.menu-element {
-                position: absolute;
-                bottom: $interiorMargin;
+
+    .pane-header {
+        text-transform: uppercase;
+        height: $ueTopBarH;
+        line-height: $ueTopBarH;
+    }
+
+    .primary-pane {
+        // Need to lift up this pane to ensure that 'collapsed' panes don't block user interactions
+        z-index: 2;
+    }
+
+    .mini-tab-icon.toggle-pane {
+        z-index: 5;
+        @include desktop {
+            $d: $uePaneMiniTabH;
+            $paneExpandedOffset: $splitterD + $uePaneMiniTabW;
+            top: $bodyMargin;
+            height: $d;
+            line-height: $d;
+            &:after {
+                // Always the icon that shows when the pane is collapsed
+                opacity: 0;
             }
-        }
-        .search-holder {
-            top: $ueTopBarH + $interiorMarginLg;
-        }
-        .tree-holder {
-            overflow: auto;
-            top: $ueTopBarH + $interiorMarginLg + $treeSearchInputBarH + $interiorMargin;
+            &.collapsed {
+                &:before {
+                    opacity: 0;
+                }
+                &:after {
+                    opacity: 1;
+                }
+            }
+            &.toggle-tree.anchor-left {
+                left: 0;
+                @include transform(translateX(-1 * $paneExpandedOffset));
+                &:after {
+                    content: '\6d'; // Menu 'hamburger' icon
+                }
+                &.collapsed {
+                    left: 0;
+                    @include transform(translateX((-1 * $ueCollapsedPaneEdgeM) + $interiorMargin));
+                }
+                &:not(.collapsed):before {
+                    @include trans-prop-nice(opacity, 200ms, 200ms);
+                }
+            }
+            &.toggle-inspect.anchor-right {
+                right: $bodyMargin;
+                &:after {
+                    content: '\e615';  // e615: Crosshair icon; was e608: Info "i" icon
+                }
+                &.collapsed {
+                    right: $interiorMargin;
+                }
+            }
         }
     }
     &.items {
@@ -256,42 +191,35 @@
 }
 
 .split-layout {
-    &.horizontal {
-        // Slides up and down
-        > .pane {
-            //			@include test();
-            margin-top: $interiorMargin;
-            &:first-child {
-                margin-top: 0;
-            }
-        }
+    // Specific elements margins
+    .holder.holder-treeview-elements {
+        top: $bodyMargin;
+        right: 0;
+        bottom: $bodyMargin;
+        left: $bodyMargin;
     }
-    &.vertical {
-        // Slides left and right
-        > .pane {
-            //            @include test();
-            margin-left: $interiorMargin;
-            > .holder {
-                left: 0;
-                right: 0;
-            }
-            &:first-child {
-                margin-left: 0;
-                .holder {
-                    right: $interiorMarginSm;
-                }
-            }
-        }
 
+    .holder.holder-object-and-inspector {
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        .holder-object {
+            top: $bodyMargin;
+            bottom: $bodyMargin;
+        }
+        .holder-inspector-elements {
+            top: $bodyMargin;
+            bottom: $bodyMargin;
+            left: $bodyMargin;
+            right: $bodyMargin;
+        }
     }
 }
 
 .object-holder {
-    overflow: hidden; // Contained objects need to handle their own overflow now
+    @include absPosDefault(0, auto);
     top: $ueTopBarH + $interiorMarginLg;
-    > ng-include {
-        @include absPosDefault(0, auto);
-    }
     &.l-controls-visible {
         &.l-time-controller-visible {
             bottom: nth($ueTimeControlH,1) + nth($ueTimeControlH,2) +nth($ueTimeControlH,3) + ($interiorMargin * 3);
@@ -317,30 +245,101 @@
     }
 }
 
+/***************************************************** OBJECT BROWSE BAR */
 .object-browse-bar {
-    //@include test(blue);
-    @include absPosDefault(0, visible);
+    @include absPosDefault(0, visible); // Must use visible to avoid hiding view switcher menu
     @include box-sizing(border-box);
     height: $ueTopBarH;
     line-height: $ueTopBarH;
     white-space: nowrap;
 
     .left {
-        padding-right: $interiorMarginLg * 2;
+        padding-right: $interiorMarginLg;
         .l-back {
-            display: inline-block;
-            float: left;
             margin-right: $interiorMarginLg;
         }
     }
 }
 
-.l-flex {
-    @include webkitVal('display', 'flex');
-    @include webkitProp('flex-flow', 'row nowrap');
-    .left {
-        //@include test(red);
-        @include webkitProp(flex, '1 1 0');
-        padding-right: $interiorMarginLg;
+// When the tree is hidden, these are the
+// classes used for the left menu and the
+// right representation.
+.pane-tree-hidden {
+    // Sets the left tree menu when the tree is hidden.
+    .tree-holder,
+    .splitter-treeview,
+    .holder-treeview-elements {
+        opacity: 0;
+    }
+}
+
+.pane-tree-showing {
+    // Sets the left tree menu when the tree is shown.
+    .tree-holder,
+    .splitter-treeview {
+        @include trans-prop-nice(opacity, $dur: 250ms, $delay: 250ms);
+        opacity: 1;
+    }
+
+    .holder-treeview-elements {
+        @include trans-prop-nice(opacity, $dur: 250ms, $delay: 200ms);
+    }
+}
+
+.pane-inspect-showing {
+    .l-object-and-inspector {
+        .l-inspect,
+        .splitter-inspect {
+            @include trans-prop-nice(opacity, $dur: 250ms, $delay: 250ms);
+            opacity: 1;
+        }
+    }
+}
+
+.pane-inspect-hidden {
+    .l-object-and-inspector {
+        .t-inspect {
+            z-index: 1 !important; // Move down so that primary pane elements are clickable
+        }
+        .l-inspect,
+        .splitter-inspect {
+            opacity: 0;
+        }
+    }
+}
+
+@include desktop {
+    .holder-all {
+        min-width: $ueDesktopMinW;
+    }
+    .split-layout {
+        .split-pane-component.pane {
+            &.treeview.left {
+                min-width: $ueBrowseLeftPaneTreeMinW;
+                max-width: $ueBrowseLeftPaneTreeMaxW;
+                width: $ueBrowseLeftPaneTreeW;
+            }
+            &.t-inspect.right {
+                min-width: $ueBrowseRightPaneInspectMinW;
+                max-width: $ueBrowseRightPaneInspectMaxW;
+                width: $ueBrowseRightPaneInspectW;
+                z-index: 3; // Must lift up beyond primary pane to allow overflow to go underneath
+            }
+        }
+    }
+    .pane.treeview.left .tree-holder {
+        padding-right: $interiorMargin;
+    }
+    .pane-tree-hidden {
+        .pane.right.primary-pane { left: $ueCollapsedPaneEdgeM !important; }
+    }
+    .pane-inspect-hidden .l-object-and-inspector {
+        .pane.left { right: $ueCollapsedPaneEdgeM !important; }
+    }
+    .pane:not(.resizing) {
+        @include trans-prop-nice-resize-w(250ms);
+    }
+    .pane.primary-pane .object-browse-bar {
+        min-width: 200px; // Needed for nice display when primary pane is constrained severely via splitters
     }
 }

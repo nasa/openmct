@@ -36,10 +36,12 @@ define(
         describe("The mct-representation directive", function () {
             var testRepresentations,
                 testViews,
+                testUrls,
                 mockRepresenters,
                 mockQ,
-                mockSce,
+                mockLinker,
                 mockLog,
+                mockChangeTemplate,
                 mockScope,
                 mockElement,
                 mockDomainObject,
@@ -54,7 +56,17 @@ define(
                 };
             }
 
+            function fireWatch(expr, value) {
+                mockScope.$watch.calls.forEach(function (call) {
+                    if (call.args[0] === expr) {
+                        call.args[1](value);
+                    }
+                });
+            }
+
             beforeEach(function () {
+                testUrls = {};
+
                 testRepresentations = [
                     {
                         key: "abc",
@@ -85,6 +97,11 @@ define(
 
                 testModel = { someKey: "some value" };
 
+                testUrls = {};
+                testViews.concat(testRepresentations).forEach(function (t, i) {
+                    testUrls[t.key] = "some URL " + String(i);
+                });
+
                 mockRepresenters = ["A", "B"].map(function (name) {
                     var constructor = jasmine.createSpy("Representer" + name),
                         representer = jasmine.createSpyObj(
@@ -96,45 +113,44 @@ define(
                 });
 
                 mockQ = { when: mockPromise };
-                mockSce = jasmine.createSpyObj(
-                    '$sce',
-                    ['trustAsResourceUrl']
+                mockLinker = jasmine.createSpyObj(
+                    'templateLinker',
+                    ['link', 'getPath']
                 );
+                mockChangeTemplate = jasmine.createSpy('changeTemplate');
                 mockLog = jasmine.createSpyObj("$log", LOG_FUNCTIONS);
 
-
-                mockSce.trustAsResourceUrl.andCallFake(function (url) {
-                    return url;
-                });
                 mockScope = jasmine.createSpyObj("scope", [ "$watch", "$on" ]);
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
 
                 mockDomainObject.getModel.andReturn(testModel);
+                mockLinker.link.andReturn(mockChangeTemplate);
+                mockLinker.getPath.andCallFake(function (ext) {
+                    return testUrls[ext.key];
+                });
 
                 mctRepresentation = new MCTRepresentation(
                     testRepresentations,
                     testViews,
                     mockRepresenters,
                     mockQ,
-                    mockSce,
+                    mockLinker,
                     mockLog
                 );
-            });
-
-
-            it("has a built-in template, with ng-include src=inclusion", function () {
-                // Not rigorous, but should detect many cases when template is broken.
-                expect(mctRepresentation.template.indexOf("ng-include")).not.toEqual(-1);
-                expect(mctRepresentation.template.indexOf("inclusion")).not.toEqual(-1);
+                mctRepresentation.link(mockScope, mockElement);
             });
 
             it("is restricted to elements", function () {
                 expect(mctRepresentation.restrict).toEqual("E");
             });
 
+            it("exposes templates via the templateLinker", function () {
+                expect(mockLinker.link)
+                    .toHaveBeenCalledWith(mockScope, mockElement);
+            });
+
             it("watches scope when linked", function () {
-                mctRepresentation.link(mockScope, mockElement);
                 expect(mockScope.$watch).toHaveBeenCalledWith(
                     "key",
                     jasmine.any(Function)
@@ -150,42 +166,46 @@ define(
             });
 
             it("recognizes keys for representations", function () {
-                mctRepresentation.link(mockScope, mockElement);
-
                 mockScope.key = "abc";
+                mockScope.domainObject = mockDomainObject;
 
                 // Trigger the watch
-                mockScope.$watch.calls[0].args[1]();
+                fireWatch('key', mockScope.key);
+                fireWatch('domainObject', mockDomainObject);
 
-                expect(mockScope.inclusion).toEqual("a/b/c/template.html");
+                expect(mockChangeTemplate)
+                    .toHaveBeenCalledWith(testUrls.abc);
             });
 
             it("recognizes keys for views", function () {
-                mctRepresentation.link(mockScope, mockElement);
-
                 mockScope.key = "xyz";
+                mockScope.domainObject = mockDomainObject;
 
-                // Trigger the watch
-                mockScope.$watch.calls[0].args[1]();
+                // Trigger the watches
+                fireWatch('key', mockScope.key);
+                fireWatch('domainObject', mockDomainObject);
 
-                expect(mockScope.inclusion).toEqual("x/y/z/template.html");
+                expect(mockChangeTemplate)
+                    .toHaveBeenCalledWith(testUrls.xyz);
             });
 
-            it("trusts template URLs", function () {
-                mctRepresentation.link(mockScope, mockElement);
-
+            it("does not load templates until there is an object", function () {
                 mockScope.key = "xyz";
 
                 // Trigger the watch
-                mockScope.$watch.calls[0].args[1]();
+                fireWatch('key', mockScope.key);
 
-                expect(mockSce.trustAsResourceUrl)
-                    .toHaveBeenCalledWith("x/y/z/template.html");
+                expect(mockChangeTemplate)
+                    .not.toHaveBeenCalledWith(jasmine.any(String));
+
+                mockScope.domainObject = mockDomainObject;
+                fireWatch('domainObject', mockDomainObject);
+
+                expect(mockChangeTemplate)
+                    .toHaveBeenCalledWith(jasmine.any(String));
             });
 
             it("loads declared capabilities", function () {
-                mctRepresentation.link(mockScope, mockElement);
-
                 mockScope.key = "def";
                 mockScope.domainObject = mockDomainObject;
 
@@ -199,8 +219,6 @@ define(
             });
 
             it("logs when no representation is available for a key", function () {
-                mctRepresentation.link(mockScope, mockElement);
-
                 mockScope.key = "someUnknownThing";
 
                 // Verify precondition
@@ -214,8 +232,6 @@ define(
             });
 
             it("clears out obsolete peroperties from scope", function () {
-                mctRepresentation.link(mockScope, mockElement);
-
                 mockScope.key = "def";
                 mockScope.domainObject = mockDomainObject;
                 mockDomainObject.useCapability.andReturn("some value");

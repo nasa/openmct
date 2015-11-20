@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global require,process,GLOBAL*/
+/*global require,process,__dirname,GLOBAL*/
 /*jslint nomen: false */
 
 
@@ -47,6 +47,8 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
         nomnoml = require('nomnoml'),
         toc = require("markdown-toc"),
         Canvas = require('canvas'),
+        header = fs.readFileSync(path.resolve(__dirname, 'header.html')),
+        footer = fs.readFileSync(path.resolve(__dirname, 'footer.html')),
         options = require("minimist")(process.argv.slice(2));
 
     // Convert from nomnoml source to a target PNG file.
@@ -115,9 +117,9 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
             // Prepend table of contents
             markdown =
                 [ TOC_HEAD, toc(markdown).content, "", markdown ].join("\n");
-            this.push("<html><body>\n");
+            this.push(header);
             this.push(marked(markdown));
-            this.push("\n</body></html>\n");
+            this.push(footer);
             done();
         };
         return transform;
@@ -186,12 +188,12 @@ GLOBAL.window = GLOBAL.window ||  GLOBAL; // nomnoml expects window to be define
             var destination = file.replace(options['in'], options.out),
                 destPath = path.dirname(destination),
                 streamOptions = {};
-            if (file.match(/png$/)){
-                streamOptions.encoding = 'binary';
+            if (file.match(/png$/)) {
+                streamOptions.encoding = null;
             } else {
                 streamOptions.encoding = 'utf8';
             }
-            
+
             mkdirp(destPath, function (err) {
                 fs.createReadStream(file, streamOptions)
                     .pipe(fs.createWriteStream(destination, streamOptions));

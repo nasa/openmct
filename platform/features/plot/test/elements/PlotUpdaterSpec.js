@@ -202,6 +202,38 @@ define(
                 expect(updater.getDimensions()[1]).toBeGreaterThan(20);
             });
 
+            describe("when no data is initially available", function () {
+                beforeEach(function () {
+                    testDomainValues = {};
+                    testRangeValues = {};
+                    updater = new PlotUpdater(
+                        mockSubscription,
+                        testDomain,
+                        testRange,
+                        1350 // Smaller max size for easier testing
+                    );
+                });
+
+                it("has no line data", function () {
+                    // Either no lines, or empty lines are fine
+                    expect(updater.getLineBuffers().map(function (lineBuffer) {
+                        return lineBuffer.getLength();
+                    }).reduce(function (a, b) {
+                        return a + b;
+                    }, 0)).toEqual(0);
+                });
+
+                it("determines initial domain bounds from first available data", function () {
+                    testDomainValues.a = 123;
+                    testRangeValues.a = 456;
+                    updater.update();
+                    expect(updater.getOrigin()[0]).toEqual(jasmine.any(Number));
+                    expect(updater.getOrigin()[1]).toEqual(jasmine.any(Number));
+                    expect(isNaN(updater.getOrigin()[0])).toBeFalsy();
+                    expect(isNaN(updater.getOrigin()[1])).toBeFalsy();
+                });
+            });
+
         });
     }
 );

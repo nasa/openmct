@@ -19,16 +19,7 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<span class="label s-label">
-    <span class='ui-symbol icon type-icon'>
-        {{type.getGlyph()}}
-        <span
-            class='ui-symbol icon l-icon-link'
-            ng-show="location.isLink()"
-            ></span>
-        <span class='ui-symbol icon l-icon-alert'></span>
-    </span>
-    <span class='title-label'>
-        {{model.name}}
-    </span>
+<span class="t-object-label">
+<span class="t-item-icon" ng-class="{ 'l-icon-link':location.isLink() }">{{type.getGlyph()}}</span>
+<span class='t-title-label'>{{model.name}}</span>
 </span>

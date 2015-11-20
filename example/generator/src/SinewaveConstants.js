@@ -19,17 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* Classes to be used for lists of properties and values */
+/*global define,Promise*/
 
-.properties {
-    .s-row {
-        border-top: 1px solid $colorInteriorBorder;
-        font-size: 0.8em;
-        &:first-child {
-            border: none;
-        }
-        .s-value {
-            color: #fff;
-        }
-    }
-}
+define({
+    START_TIME: Date.now() - 24 * 60 * 60 * 1000 // Now minus a day.
+});

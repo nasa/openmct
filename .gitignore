@@ -28,3 +28,5 @@ node_modules
 # Protractor logs
 protractor/logs
 
+# npm-debug log
+npm-debug.log

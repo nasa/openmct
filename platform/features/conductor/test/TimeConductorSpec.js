@@ -59,12 +59,12 @@ define(
             });
 
             it("exposes the current domain choice", function () {
-                expect(conductor.domain()).toEqual(testDomains[0].key);
+                expect(conductor.domain()).toEqual(testDomains[0]);
             });
 
             it("allows the domain choice to be changed", function () {
                 conductor.domain(testDomains[1].key);
-                expect(conductor.domain()).toEqual(testDomains[1].key);
+                expect(conductor.domain()).toEqual(testDomains[1]);
             });
 
             it("throws an error on attempts to set an invalid domain", function () {

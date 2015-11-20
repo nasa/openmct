@@ -116,7 +116,19 @@ define(
                         dialog: dialogModel,
                         confirm: jasmine.any(Function),
                         cancel: jasmine.any(Function)
-                    }
+                    },
+                    't-dialog'
+                );
+            });
+
+            it("invokes the overlay service with the correct parameters when" +
+                " a blocking dialog is requested", function() {
+                var dialogModel = {};
+                expect(dialogService.showBlockingMessage(dialogModel)).toBe(true);
+                expect(mockOverlayService.createOverlay).toHaveBeenCalledWith(
+                    "overlay-blocking-message",
+                    dialogModel,
+                    "t-dialog-sm"
                 );
             });
 

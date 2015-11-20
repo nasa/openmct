@@ -52,7 +52,6 @@ ul.tree {
 		font-size: 0.75em;
 		width: $treeVCW;
 		$runningItemW: $interiorMargin + $treeVCW;
-		// NOTE: [Mobile] Removed Hover on Mobile
 		@include desktop {
 			&:hover {
 				color: $colorItemTreeVCHover !important;
@@ -60,25 +59,34 @@ ul.tree {
 		}
 	}
 
-	.label {
+	.label,
+	.t-object-label {
 		display: block;
-		//				@include test(orange);
 		@include absPosDefault();
-		//left: $runningItemW + $interiorMargin; // Adding pad to left to make room for link icon
 		line-height: $menuLineH;
-		//left: $runningItemW;
+
+        .t-item-icon {
+            @include txtShdwSubtle($shdwItemTreeIcon);
+            font-size: $treeTypeIconH;
+            color: $colorItemTreeIcon;
+            position: absolute;
+            left: $interiorMargin;
+            top: 50%;
+            width: $treeTypeIconH;
+            @include transform(translateY(-50%));
+        }
 
 		.type-icon {
 			//@include absPosDefault(0, false);
-			$d: $treeTypeIconH; // 16px is crisp size
+			$d: $treeTypeIconH;
 			@include txtShdwSubtle($shdwItemTreeIcon);
-			font-size: $d;
+			font-size: $treeTypeIconH;
 			color: $colorItemTreeIcon;
 			left: $interiorMargin;
 			position: absolute;
-			@include verticalCenterBlock($menuLineHPx, $d);
+			@include verticalCenterBlock($menuLineHPx, $treeTypeIconHPx);
 			line-height: 100%;
-			right: auto; width: $d;
+			right: auto; width: $treeTypeIconH;
 
 			.icon {
 				&.l-icon-link,
@@ -100,7 +108,8 @@ ul.tree {
 				}
 			}
 		}
-		.title-label {
+		.title-label,
+        .t-title-label {
 			@include absPosDefault();
 			display: block;
 			left: $runningItemW + ($interiorMargin * 3);
@@ -116,7 +125,7 @@ ul.tree {
 		.view-control {
 			color: $colorItemTreeSelectedVC;
 		}
-		.label .type-icon {
+		.t-object-label .t-item-icon {
 			color: $colorItemTreeSelectedFg; //$colorItemTreeIconHover;
 		}
 	}
@@ -125,9 +134,9 @@ ul.tree {
 		// NOTE: [Mobile] Removed Hover on Mobile
 		@include desktop {
 			&:hover {
-				background: rgba($colorBodyFg, 0.1); //lighten($colorBodyBg, 5%);
-				color: pullForward($colorBodyFg, 20%);
-				.icon {
+				background: $colorItemTreeHoverBg;
+				color: $colorItemTreeHoverFg;
+				.t-item-icon {
 					color: $colorItemTreeIconHover;
 				}
 			}
@@ -152,7 +161,7 @@ ul.tree {
 }
 
 .tree-item {
-	.label {
+	.t-object-label {
 		left: $interiorMargin + $treeVCW;
 	}
 }

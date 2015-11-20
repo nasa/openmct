@@ -20,15 +20,17 @@
  at runtime from the About dialog for additional information.
 -->
 <span ng-controller="BrowseObjectController">
-    <div class="object-browse-bar bar l-flex">
-        <div class="items-select left">
+    <div class="object-browse-bar l-flex-row">
+        <div class="items-select left flex-elem l-flex-row grows">
             <mct-representation key="'back-arrow'"
                                 mct-object="domainObject"
-                                class="l-back"></mct-representation>
-            <mct-representation key="'object-header'" mct-object="domainObject">
+                                class="flex-elem l-back"></mct-representation>
+            <mct-representation key="'object-header'"
+                                mct-object="domainObject"
+                                class="l-flex-row flex-elem grows object-header">
             </mct-representation>
         </div>
-        <div class="btn-bar right">
+        <div class="btn-bar right l-flex-row flex-elem flex-justify-end flex-fixed">
             <mct-representation key="'switcher'"
                                 mct-object="domainObject"
                                 ng-model="representation">
@@ -41,7 +43,6 @@
             </mct-representation>
         </div>
     </div>
-
     <mct-representation key="representation.selected.key"
                         mct-object="representation.selected.key && domainObject"
                         class="abs object-holder">

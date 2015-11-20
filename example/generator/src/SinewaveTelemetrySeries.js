@@ -25,12 +25,12 @@
  * Module defining SinewaveTelemetry. Created by vwoeltje on 11/12/14.
  */
 define(
-    [],
-    function () {
+    ['./SinewaveConstants'],
+    function (SinewaveConstants) {
         "use strict";
 
         var ONE_DAY = 60 * 60 * 24,
-            firstObservedTime = Math.floor(Date.now() / 1000) - ONE_DAY;
+            firstObservedTime = Math.floor(SinewaveConstants.START_TIME / 1000);
 
         /**
          *
@@ -58,8 +58,11 @@ define(
             };
 
             generatorData.getDomainValue = function (i, domain) {
+                // delta uses the same numeric values as the default domain,
+                // so it's not checked for here, just formatted for display
+                // differently.
                 return (i + offset) * 1000 + firstTime * 1000 -
-                    (domain === 'yesterday' ? ONE_DAY : 0);
+                    (domain === 'yesterday' ? (ONE_DAY * 1000) : 0);
             };
 
             generatorData.getRangeValue = function (i, range) {

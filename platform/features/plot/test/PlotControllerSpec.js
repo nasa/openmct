@@ -53,6 +53,14 @@ define(
                 });
             }
 
+            function fireWatch(expr, value) {
+                mockScope.$watch.calls.forEach(function (call) {
+                    if (call.args[0] === expr) {
+                        call.args[1].apply(null, [value]);
+                    }
+                });
+            }
+
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
@@ -169,8 +177,9 @@ define(
                     mockDomainObject
                 ]);
 
-                // Make an object available
+                // Make an object available; invoke handler's callback
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockHandler.handle.mostRecentCall.args[1]();
 
                 expect(controller.getModeOptions().length).toEqual(1);
 
@@ -181,8 +190,9 @@ define(
                     mockDomainObject
                 ]);
 
-                // Make an object available
+                // Make an object available; invoke handler's callback
                 mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                mockHandler.handle.mostRecentCall.args[1]();
 
                 expect(controller.getModeOptions().length).toEqual(2);
             });
@@ -259,6 +269,20 @@ define(
                     {},
                     { start: 10, end: 100 }
                 ]);
+                expect(mockHandle.request.calls.length).toEqual(2);
+            });
+
+            it("requeries when user changes domain selection", function () {
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                expect(mockHandle.request.calls.length).toEqual(1);
+                fireWatch("axes[0].active.key", 'someNewKey');
+                expect(mockHandle.request.calls.length).toEqual(2);
+            });
+
+            it("requeries when user changes range selection", function () {
+                mockScope.$watch.mostRecentCall.args[1](mockDomainObject);
+                expect(mockHandle.request.calls.length).toEqual(1);
+                fireWatch("axes[1].active.key", 'someNewKey');
                 expect(mockHandle.request.calls.length).toEqual(2);
             });
         });

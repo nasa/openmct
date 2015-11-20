@@ -26,13 +26,12 @@ define(
     function (MCTDevice) {
         "use strict";
 
-        var JQLITE_METHODS = [ 'parent', 'append' ];
+        var JQLITE_METHODS = [ 'replaceWith' ];
 
         describe("The mct-device directive", function () {
             var mockAgentService,
                 mockTransclude,
                 mockElement,
-                mockParent,
                 mockClone,
                 testAttrs,
                 directive;
@@ -48,10 +47,7 @@ define(
                 );
                 mockTransclude = jasmine.createSpy("$transclude");
                 mockElement = jasmine.createSpyObj(name, JQLITE_METHODS);
-                mockParent = jasmine.createSpyObj(name, JQLITE_METHODS);
                 mockClone = jasmine.createSpyObj(name, JQLITE_METHODS);
-
-                mockElement.parent.andReturn(mockParent);
 
                 mockTransclude.andCallFake(function (fn) {
                     fn(mockClone);
@@ -64,6 +60,15 @@ define(
 
                 directive = new MCTDevice(mockAgentService);
             });
+
+            function expectInclusion() {
+                expect(mockElement.replaceWith)
+                    .toHaveBeenCalledWith(mockClone);
+            }
+
+            function expectExclusion() {
+                expect(mockElement.replaceWith).not.toHaveBeenCalled();
+            }
 
             it("is applicable at the attribute level", function () {
                 expect(directive.restrict).toEqual("A");
@@ -80,54 +85,54 @@ define(
             it("restricts element inclusion for mobile devices", function () {
                 testAttrs.mctDevice = "mobile";
                 link();
-                expect(mockParent.append).not.toHaveBeenCalled();
+                expectExclusion();
 
                 mockAgentService.isMobile.andReturn(true);
                 link();
-                expect(mockParent.append).toHaveBeenCalledWith(mockClone);
+                expectInclusion();
             });
 
             it("restricts element inclusion for tablet devices", function () {
                 testAttrs.mctDevice = "tablet";
                 mockAgentService.isMobile.andReturn(true);
                 link();
-                expect(mockParent.append).not.toHaveBeenCalled();
+                expectExclusion();
 
                 mockAgentService.isTablet.andReturn(true);
                 link();
-                expect(mockParent.append).toHaveBeenCalledWith(mockClone);
+                expectInclusion();
             });
 
             it("restricts element inclusion for phone devices", function () {
                 testAttrs.mctDevice = "phone";
                 mockAgentService.isMobile.andReturn(true);
                 link();
-                expect(mockParent.append).not.toHaveBeenCalled();
+                expectExclusion();
 
                 mockAgentService.isPhone.andReturn(true);
                 link();
-                expect(mockParent.append).toHaveBeenCalledWith(mockClone);
+                expectInclusion();
             });
 
             it("restricts element inclusion for desktop devices", function () {
                 testAttrs.mctDevice = "desktop";
                 mockAgentService.isMobile.andReturn(true);
                 link();
-                expect(mockParent.append).not.toHaveBeenCalled();
+                expectExclusion();
 
                 mockAgentService.isMobile.andReturn(false);
                 link();
-                expect(mockParent.append).toHaveBeenCalledWith(mockClone);
+                expectInclusion();
             });
 
             it("restricts element inclusion for portrait orientation", function () {
                 testAttrs.mctDevice = "portrait";
                 link();
-                expect(mockParent.append).not.toHaveBeenCalled();
+                expectExclusion();
 
                 mockAgentService.isPortrait.andReturn(true);
                 link();
-                expect(mockParent.append).toHaveBeenCalledWith(mockClone);
+                expectInclusion();
             });
 
             it("restricts element inclusion for landscape orientation", function () {
@@ -135,11 +140,11 @@ define(
                 mockAgentService.isLandscape.andReturn(false);
                 mockAgentService.isPortrait.andReturn(true);
                 link();
-                expect(mockParent.append).not.toHaveBeenCalled();
+                expectExclusion();
 
                 mockAgentService.isLandscape.andReturn(true);
                 link();
-                expect(mockParent.append).toHaveBeenCalledWith(mockClone);
+                expectInclusion();
             });
 
             it("allows multiple device characteristics to be requested", function () {
@@ -148,17 +153,17 @@ define(
                 testAttrs.mctDevice = "portrait mobile";
                 link();
                 // Neither portrait nor mobile, not called
-                expect(mockParent.append).not.toHaveBeenCalled();
+                expectExclusion();
 
                 mockAgentService.isPortrait.andReturn(true);
                 link();
 
                 // Was portrait, but not mobile, so no
-                expect(mockParent.append).not.toHaveBeenCalled();
+                expectExclusion();
 
                 mockAgentService.isMobile.andReturn(true);
                 link();
-                expect(mockParent.append).toHaveBeenCalledWith(mockClone);
+                expectInclusion();
             });
         });
     }

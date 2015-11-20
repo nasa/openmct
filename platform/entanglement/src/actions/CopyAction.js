@@ -34,15 +34,105 @@ define(
          * @constructor
          * @memberof platform/entanglement
          */
-        function CopyAction(locationService, copyService, context) {
-            return new AbstractComposeAction(
-                locationService,
-                copyService,
-                context,
-                "Duplicate",
-                "to a location"
-            );
+        function CopyAction($log, locationService, copyService, dialogService,
+                            notificationService, context) {
+            this.dialog = undefined;
+            this.notification = undefined;
+            this.dialogService = dialogService;
+            this.notificationService = notificationService;
+            this.$log = $log;
+            //Extend the behaviour of the Abstract Compose Action
+            AbstractComposeAction.call(this, locationService, copyService,
+                context, "Duplicate", "to a location");
         }
+
+        /**
+         * Updates user about progress of copy. Should not be invoked by
+         * client code under any circumstances.
+         *
+         * @private
+         * @param phase
+         * @param totalObjects
+         * @param processed
+         */
+        CopyAction.prototype.progress = function(phase, totalObjects, processed){
+            /*
+             Copy has two distinct phases. In the first phase a copy plan is
+             made in memory. During this phase of execution, the user is
+             shown a blocking 'modal' dialog.
+
+             In the second phase, the copying is taking place, and the user
+             is shown non-invasive banner notifications at the bottom of the screen.
+             */
+            if (phase.toLowerCase() === 'preparing' && !this.dialog){
+                this.dialog = this.dialogService.showBlockingMessage({
+                    title: "Preparing to copy objects",
+                    unknownProgress: true,
+                    severity: "info"
+                });
+            } else if (phase.toLowerCase() === "copying") {
+                this.dialogService.dismiss();
+                if (!this.notification) {
+                    this.notification = this.notificationService
+                        .notify({
+                            title: "Copying objects",
+                            unknownProgress: false,
+                            severity: "info"
+                        });
+                }
+                this.notification.model.progress = (processed / totalObjects) * 100;
+                this.notification.model.title = ["Copied ", processed, "of ",
+                    totalObjects, "objects"].join(" ");
+            }
+        };
+
+        /**
+         * Executes the CopyAction. The CopyAction uses the default behaviour of
+         * the AbstractComposeAction, but extends it to support notification
+         * updates of progress on copy.
+         */
+        CopyAction.prototype.perform = function() {
+            var self = this;
+
+            function success(){
+                self.notification.dismiss();
+                self.notificationService.info("Copying complete.");
+            }
+
+            function error(errorDetails){
+                var errorMessage = {
+                    title: "Error copying objects.",
+                    severity: "error",
+                    hint: errorDetails.message,
+                    minimized: true, // want the notification to be minimized initially (don't show banner)
+                    options: [{
+                        label: "OK",
+                        callback: function() {
+                            self.dialogService.dismiss();
+                        }
+                    }]
+                };
+
+                self.dialogService.dismiss();
+                if (self.notification) {
+                    self.notification.dismiss(); // Clear the progress notification
+                }
+                self.$log.error("Error copying objects. ", errorDetails);
+                //Show a minimized notification of error for posterity
+                self.notificationService.notify(errorMessage);
+                //Display a blocking message
+                self.dialogService.showBlockingMessage(errorMessage);
+
+            }
+            function notification(details){
+                self.progress(details.phase, details.totalObjects, details.processed);
+            }
+
+            return AbstractComposeAction.prototype.perform.call(this)
+                .then(success, error, notification);
+        };
+
+        CopyAction.appliesTo = AbstractComposeAction.appliesTo;
 
         return CopyAction;
     }

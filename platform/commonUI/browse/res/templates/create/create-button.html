@@ -19,13 +19,12 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<div class="menu-element wrapper" ng-controller="ClickAwayController as createController">
+<span ng-controller="ClickAwayController as createController">
     <div class="s-menu-btn major create-btn" ng-click="createController.toggle()">
-		<span class="ui-symbol icon type-icon">&#x2b;</span>
 		<span class="title-label">Create</span>
     </div>
     <div class="menu super-menu" ng-show="createController.isActive()">
         <mct-representation mct-object="domainObject" key="'create-menu'">
         </mct-representation>
     </div>
-</div>
+</span>
