@@ -60,6 +60,8 @@ define(
                 if (!$scope.textInvalid) {
                     $scope.ngModel[$scope.field] =
                         formatter.parse(textValue);
+                } else {
+                    updateFromModel($scope.ngModel[$scope.field]);
                 }
             }
 
