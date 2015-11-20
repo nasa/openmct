@@ -76,6 +76,9 @@ define(
                 if (domainObject !== $scope.navigatedObject && isDirty() && !confirm(CONFIRM_MSG)) {
                         $scope.treeModel.selectedObject = $scope.navigatedObject;
                 } else {
+                    if (domainObject !== $scope.navigatedObject && $scope.navigatedObject.hasCapability('editor')){
+                        $scope.navigatedObject.getCapability('action').perform('cancel');
+                    }
                     setNavigation(domainObject);
                 }
             }
@@ -161,15 +164,6 @@ define(
                         $scope.navigatedObject.getCapability("editor"),
                     hasChanges = editorCapability && editorCapability.dirty();
                 return hasChanges;
-            }
-
-            function beforeNavigateWarning (){
-                if (isDirty()) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
             }
 
             $scope.beforeUnloadWarning = function() {

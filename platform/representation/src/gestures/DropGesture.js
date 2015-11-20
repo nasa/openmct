@@ -137,6 +137,8 @@ define(
                     domainObjectType = editableDomainObject.getModel().type,
                     virtualObj;
 
+                editableDomainObject.getCapability('status').set('editing', true);
+
                 // If currently in edit mode allow drag and drop gestures to the
                 // domain object. An exception to this is folders which have drop
                 // gestures in browse mode.
