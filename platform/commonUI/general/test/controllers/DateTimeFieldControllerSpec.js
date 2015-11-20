@@ -104,7 +104,9 @@ define(
                 var newText, oldText, oldValue;
 
                 beforeEach(function () {
+                    fireWatch("ngModel[field]", mockScope.ngModel.testField);
                     newText = "Not a date";
+                    oldText = mockScope.textValue;
                     oldValue = mockScope.ngModel.testField;
                     mockScope.textValue = newText;
                     fireWatch("textValue", newText);
@@ -125,6 +127,10 @@ define(
 
                     it("does not modify model state", function () {
                         expect(mockScope.ngModel.testField).toEqual(oldValue);
+                    });
+
+                    it("restores original text", function () {
+                        expect(mockScope.textValue).toEqual(oldText);
                     });
                 });
             });
