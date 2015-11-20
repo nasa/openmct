@@ -118,7 +118,6 @@ define(
 
             cache = new EditableDomainObjectCache(EditableDomainObjectImpl, $q);
             cachedObject = cache.getEditableObject(domainObject);
-            cachedObject.getCapability('status').set('editing', true);
 
             return cachedObject;
         }

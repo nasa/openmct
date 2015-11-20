@@ -75,6 +75,7 @@ define(
             var editableObject;
             if (!this.domainObject.hasCapability("editor")) {
                 editableObject = new EditableDomainObject(this.domainObject, this.$q);
+                editableObject.getCapability('status').set('editing', true);
                 this.navigationService.setNavigation(editableObject);
             }
             //this.$location.path("/edit");
