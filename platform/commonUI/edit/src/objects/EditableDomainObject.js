@@ -79,7 +79,8 @@ define(
             // are not shown in different sections of the same Edit
             // UI, which might thereby fall out of sync.
             var cache,
-                originalObject = domainObject;
+                originalObject = domainObject,
+                cachedObject;
 
             // Constructor for EditableDomainObject, which adheres
             // to the same shared cache.
@@ -116,7 +117,10 @@ define(
             }
 
             cache = new EditableDomainObjectCache(EditableDomainObjectImpl, $q);
-            return cache.getEditableObject(domainObject);
+            cachedObject = cache.getEditableObject(domainObject);
+            cachedObject.getCapability('status').set('editing', true);
+
+            return cachedObject;
         }
 
         return EditableDomainObject;

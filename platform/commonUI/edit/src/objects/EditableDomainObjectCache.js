@@ -92,15 +92,6 @@ define(
                 domainObject,
                 this.cache.getCachedModel(domainObject)
             );
-            editableObject.getCapability("status").set('editing', true);
-            if (!this.isRoot(domainObject)){
-                statusListener = this.root.getCapability("status").listen(function(statuses){
-                    if (statuses.indexOf("editing") < 0 ){
-                        editableObject.getCapability("status").set("editing", false);
-                        statusListener();
-                    }
-                });
-            }
 
             return editableObject;
         };
