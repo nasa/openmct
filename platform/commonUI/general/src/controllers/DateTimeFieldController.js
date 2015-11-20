@@ -57,11 +57,16 @@ define(
             }
 
             function updateFromView(textValue) {
-                $scope.textInvalid = !formatter.validate(textValue);
                 if (!$scope.textInvalid) {
                     $scope.ngModel[$scope.field] =
                         formatter.parse(textValue);
+                } else {
+                    updateFromModel($scope.ngModel[$scope.field]);
                 }
+            }
+
+            function checkValidity(textValue) {
+                $scope.textInvalid = !formatter.validate(textValue);
             }
 
             function setFormat(format) {
@@ -70,11 +75,11 @@ define(
             }
 
             $scope.picker = { active: false };
+            $scope.updateFromView = updateFromView;
 
             $scope.$watch('structure.format', setFormat);
             $scope.$watch('ngModel[field]', updateFromModel);
-            $scope.$watch('textValue', updateFromView);
-
+            $scope.$watch('textValue', checkValidity);
         }
 
         return DateTimeFieldController;
