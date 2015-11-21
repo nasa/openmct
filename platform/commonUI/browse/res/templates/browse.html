@@ -28,30 +28,23 @@
         <mct-split-pane class='abs contents'
                         anchor='left'>
             <div class='split-pane-component treeview pane left'>
-                <!--<a class="mini-tab-icon anchor-left toggle-pane toggle-search mobile-hide"
-                   title="Enable search"
-                   ng-click="modelPaneTree.toggle()"
-                   ng-class="{ collapsed : !modelPaneTree.visible() }"
-                   ng-style="{ opacity: modelPaneTree.visible()? 0:1 }"></a>-->
-                <div class="holder holder-create-and-search abs l-mobile">
+                <div class="abs holder l-flex-col holder-treeview-elements">
                     <mct-representation key="'create-button'"
                                         mct-object="navigatedObject"
-                                        mct-device="desktop">
+                                        class="holder flex-elem create-btn-holder">
                     </mct-representation>
-                    <div class='holder search-holder abs'
-                         ng-class="{active: treeModel.search}">
-                        <mct-include key="'search'"
-                                     ng-model="treeModel">
-                        </mct-include>
-                    </div>
-                    <div class='tree-holder abs mobile-tree-holder'
-                         ng-hide="treeModel.search">
-                        <mct-representation key="'tree'"
-                                            mct-object="domainObject"
-                                            parameters="tree"
-                                            ng-model="treeModel">
-                        </mct-representation>
-                    </div>
+                    <mct-include key="'search'"
+                                 ng-model="treeModel"
+                                 class="holder l-flex-col flex-elem search-holder"
+                                 ng-class="{ active: treeModel.search, grows: treeModel.search }">
+                    </mct-include>
+                    <mct-representation key="'tree'"
+                                        mct-object="domainObject"
+                                        parameters="tree"
+                                        ng-model="treeModel"
+                                        class="holder flex-elem grows vscroll tree-holder"
+                                        ng-hide="treeModel.search">
+                    </mct-representation>
                 </div>
             </div>
 
@@ -63,7 +56,7 @@
                    ng-click="modelPaneTree.toggle()"
                    ng-class="{ collapsed : !modelPaneTree.visible() }"></a>
 
-                <div class='holder holder-object-and-inspector abs l-mobile' id='content-area'
+                <div class='holder holder-object-and-inspector abs' id='content-area'
                      ng-controller="PaneController as modelPaneInspect"
                      ng-class="modelPaneInspect.visible() ? 'pane-inspect-showing' : 'pane-inspect-hidden'">
 

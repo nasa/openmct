@@ -1,5 +1,4 @@
 <div class="t-imagery" ng-controller="ImageryController as imagery">
-    <!-- Main image -->
     <div
         class="l-image-main-wrapper"
         ng-mouseenter="showLocalControls = true;"
@@ -33,8 +32,8 @@
             >
         </div>
 
-        <div class="l-image-main-controlbar l-flex bar">
-            <div class="left">
+        <div class="l-image-main-controlbar l-flex-row">
+            <div class="left flex-elem grows">
                 <a
                     class="s-btn show-thumbs sm hidden"
                     ng-click="showThumbsBubble = (showThumbsBubble)? false:true"
@@ -43,7 +42,7 @@
                 <span class="l-time">{{imagery.getTime()}}</span>
                 <span class="l-date">{{imagery.getDate()}}</span>
             </div>
-            <div class="right">
+            <div class="right flex-elem">
                 <a
                     class="s-btn pause-play"
                     ng-click="imagery.paused(!imagery.paused())"

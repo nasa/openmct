@@ -102,6 +102,28 @@ define(
                 composeService = new MockCopyService();
             });
 
+            it("are only applicable to domain objects with a context", function () {
+                var noContextObject = domainObjectFactory({
+                    name: 'selectedObject',
+                    model: { name: 'selectedObject' },
+                    capabilities: {}
+                });
+
+                expect(AbstractComposeAction.appliesTo({
+                    selectedObject: selectedObject
+                })).toBe(true);
+                expect(AbstractComposeAction.appliesTo({
+                    domainObject: selectedObject
+                })).toBe(true);
+
+                expect(AbstractComposeAction.appliesTo({
+                    selectedObject: noContextObject
+                })).toBe(false);
+                expect(AbstractComposeAction.appliesTo({
+                    domainObject: noContextObject
+                })).toBe(false);
+            });
+
 
             describe("with context from context-action", function () {
                 beforeEach(function () {

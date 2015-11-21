@@ -96,7 +96,7 @@
                 "provides": "actionService",
                 "type": "provider",
                 "implementation": "actions/ActionProvider.js",
-                "depends": [ "actions[]" ]
+                "depends": [ "actions[]", "$log" ]
             },
             {
                 "provides": "actionService",
@@ -222,7 +222,8 @@
             },
             {
                 "key": "topic",
-                "implementation": "services/Topic.js"
+                "implementation": "services/Topic.js",
+                "depends": [ "$log" ]
             },
             {
                 "key": "contextualize",

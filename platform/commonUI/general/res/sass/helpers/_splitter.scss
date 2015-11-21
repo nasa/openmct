@@ -29,7 +29,7 @@
     //@include test(red);
     display: block;
     position: absolute;
-    z-index: 1;
+    z-index: 3;
     &:after {
         // The handle
         content:"";
@@ -43,7 +43,6 @@
         }
     }
     &:active {
-        //@include test();
         &:after {
             background-color: $colorSplitterActive !important;
         }
@@ -122,11 +121,3 @@
         }
     }
 }
-
-/*.browse-area .splitter {
-	top: 0; //$ueTopBarH + $interiorMarginLg;
-}
-
-.edit-area .splitter {
-	top: 0;
-}*/

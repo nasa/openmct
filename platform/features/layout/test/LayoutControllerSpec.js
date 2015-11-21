@@ -192,6 +192,29 @@ define(
                 expect(parseInt(styleB.width, 10)).toBeGreaterThan(63);
                 expect(parseInt(styleB.width, 10)).toBeGreaterThan(31);
             });
+
+            it("ensures a minimum frame size on drop", function () {
+                var style;
+
+                // Start with a very small frame size
+                testModel.layoutGrid = [ 1, 1 ];
+                mockScope.$watch.calls[0].args[1](testModel.layoutGrid);
+
+                // Notify that a drop occurred
+                testModel.composition.push('d');
+                mockScope.$on.mostRecentCall.args[1](
+                    mockEvent,
+                    'd',
+                    { x: 300, y: 100 }
+                );
+                mockScope.$watch.calls[0].args[1](['d']);
+
+                style = controller.getFrameStyle("d");
+
+                // Resulting size should still be reasonably large pixel-size
+                expect(parseInt(style.width, 10)).toBeGreaterThan(63);
+                expect(parseInt(style.height, 10)).toBeGreaterThan(31);
+            });
         });
     }
 );

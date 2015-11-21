@@ -30,6 +30,7 @@
     "platform/policy",
     "platform/entanglement",
     "platform/search",
+    "platform/status",
 
     "example/imagery",
     "example/eventGenerator",

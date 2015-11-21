@@ -146,6 +146,14 @@ define(
             });
         };
 
+        AbstractComposeAction.appliesTo = function (context) {
+            var applicableObject =
+                context.selectedObject || context.domainObject;
+
+            return !!(applicableObject &&
+                applicableObject.hasCapability('context'));
+        };
+
         return AbstractComposeAction;
     }
 );

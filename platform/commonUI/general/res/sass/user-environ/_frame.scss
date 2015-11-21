@@ -29,11 +29,13 @@
 			border-color: lighten($bc, 10%);
 		}
 	}
-	>.object-header.abs {
-		//@include test(red);
+	.object-top-bar {
 		font-size: 0.75em;
 		height: $ohH;
 		line-height: $ohH;
+        .left {
+            padding-right: $interiorMarginLg;
+        }
 	}
 	>.object-holder.abs {
 		top: $ohH + $interiorMargin;

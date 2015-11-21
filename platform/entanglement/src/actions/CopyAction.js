@@ -60,6 +60,8 @@ define(
             );
         }
 
+        CopyAction.prototype = Object.create(AbstractComposeAction.prototype);
+
         /**
          * Updates user about progress of copy. Should not be invoked by
          * client code under any circumstances.
@@ -145,6 +147,9 @@ define(
             return AbstractComposeAction.prototype.perform.call(this)
                 .then(success, error, notification);
         };
+
+        CopyAction.appliesTo = AbstractComposeAction.appliesTo;
+
         return CopyAction;
     }
 );
