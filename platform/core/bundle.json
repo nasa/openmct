@@ -72,8 +72,7 @@
                     "persistenceService",
                     "$q",
                     "now",
-                    "PERSISTENCE_SPACE",
-                    "ADDITIONAL_PERSISTENCE_SPACES"
+                    "PERSISTENCE_SPACE"
                 ]
             },
             {
@@ -115,6 +114,12 @@
                 "type": "provider",
                 "implementation": "views/ViewProvider.js",
                 "depends": [ "views[]", "$log" ]
+            },
+            {
+                "provides": "identifierService",
+                "type": "provider",
+                "implementation": "identifiers/IdentifierProvider.js",
+                "depends": [ "PERSISTENCE_SPACE" ]
             }
         ],
         "types": [
@@ -183,7 +188,7 @@
             {
                 "key": "persistence",
                 "implementation": "capabilities/PersistenceCapability.js",
-                "depends": [ "persistenceService", "PERSISTENCE_SPACE" ]
+                "depends": [ "persistenceService", "identifierService" ]
             },
             {
                 "key": "metadata",
@@ -202,7 +207,7 @@
             {
                 "key": "instantiation",
                 "implementation": "capabilities/InstantiationCapability.js",
-                "depends": [ "$injector" ]
+                "depends": [ "$injector", "identifierService" ]
             }
         ],
         "services": [
@@ -245,11 +250,6 @@
             {
                 "key": "PERSISTENCE_SPACE",
                 "value": "mct"
-            },
-            {
-                "key": "ADDITIONAL_PERSISTENCE_SPACES",
-                "value": [],
-                "description": "An array of additional persistence spaces to load models from."
             }
         ],
         "licenses": [

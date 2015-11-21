@@ -44,12 +44,16 @@ define(
          * @constructor
          * @implements {Capability}
          */
-        function PersistenceCapability(persistenceService, space, domainObject) {
+        function PersistenceCapability(
+            persistenceService,
+            identifierService,
+            domainObject
+        ) {
             // Cache modified timestamp
             this.modified = domainObject.getModel().modified;
 
             this.domainObject = domainObject;
-            this.space = space;
+            this.identifierService = identifierService;
             this.persistenceService = persistenceService;
         }
 
@@ -61,6 +65,11 @@ define(
                     return fastPromise(callback(value));
                 }
             };
+        }
+
+        function getKey(id) {
+            var parts = id.split(":");
+            return parts.length > 1 ? parts.slice(1).join(":") : id;
         }
 
         /**
@@ -87,7 +96,7 @@ define(
             // ...and persist
             return persistenceFn.apply(persistenceService, [
                 this.getSpace(),
-                domainObject.getId(),
+                getKey(domainObject.getId()),
                 domainObject.getModel()
             ]);
         };
@@ -130,7 +139,8 @@ define(
          *          be used to persist this object
          */
         PersistenceCapability.prototype.getSpace = function () {
-            return this.space;
+            var id = this.domainObject.getId();
+            return this.identifierService.parse(id).getSpace();
         };
 
         return PersistenceCapability;

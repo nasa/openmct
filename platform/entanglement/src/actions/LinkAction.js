@@ -34,10 +34,10 @@ define(
          * @constructor
          * @memberof platform/entanglement
          */
-        function LinkAction(locationService, linkService, context) {
+        function LinkAction(policyService, locationService, linkService, context) {
             AbstractComposeAction.apply(
                 this,
-                [locationService, linkService, context, "Link"]
+                [policyService, locationService, linkService, context, "Link"]
             );
         }
 

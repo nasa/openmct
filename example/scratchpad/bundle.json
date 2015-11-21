@@ -1,0 +1,23 @@
+{
+    "extensions": {
+        "roots": [
+            {
+                "id": "scratch:root",
+                "model": {
+                    "type": "folder",
+                    "composition": [],
+                    "name": "Scratchpad"
+                },
+                "priority": "preferred"
+            }
+        ],
+        "components": [
+            {
+                "provides": "persistenceService",
+                "type": "provider",
+                "implementation": "ScratchPersistenceProvider.js",
+                "depends": [ "$q" ]
+            }
+        ]
+    }
+}

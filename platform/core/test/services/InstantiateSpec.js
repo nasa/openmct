@@ -29,17 +29,26 @@ define(
         describe("The 'instantiate' service", function () {
 
             var mockCapabilityService,
+                mockIdentifierService,
                 mockCapabilityConstructor,
                 mockCapabilityInstance,
                 mockCapabilities,
+                mockIdentifier,
+                idCounter,
                 testModel,
                 instantiate,
                 domainObject;
 
             beforeEach(function () {
+                idCounter = 0;
+
                 mockCapabilityService = jasmine.createSpyObj(
                     'capabilityService',
                     ['getCapabilities']
+                );
+                mockIdentifierService = jasmine.createSpyObj(
+                    'identifierService',
+                    [ 'parse', 'generate' ]
                 );
                 mockCapabilityConstructor = jasmine.createSpy('capability');
                 mockCapabilityInstance = {};
@@ -48,9 +57,17 @@ define(
                 });
                 mockCapabilityConstructor.andReturn(mockCapabilityInstance);
 
+                mockIdentifierService.generate.andCallFake(function (space) {
+                    return (space ? (space + ":") : "") +
+                            "some-id-" + (idCounter += 1);
+                });
+
                 testModel = { someKey: "some value" };
 
-                instantiate = new Instantiate(mockCapabilityService);
+                instantiate = new Instantiate(
+                    mockCapabilityService,
+                    mockIdentifierService
+                );
                 domainObject = instantiate(testModel);
             });
 
