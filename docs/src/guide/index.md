@@ -687,15 +687,27 @@ A domain object identifier has one or two parts, separated by a colon.
 
 * If two parts are present, the part before the colon refers to the space
   in which the domain object resides. This may be a persistence space or
-  a purely symbolic space recognized by a specific model provider.
+  a purely symbolic space recognized by a specific model provider. The
+  part after the colon is the key to use when looking up the domain object
+  model within that space.
 * If only one part is present, the domain object has no space specified,
   and may presume to reside in the application-configured default space
   defined by the `PERSISTENCE_SPACE` constant.
+* Both the key and the space identifier may consist of any combination
+  of alphanumeric characters, underscores, dashes, and periods.
+
+Some examples:
+
+* A domain object with the identifier `foo:xyz` would have its model
+  loaded using key `xyz` from persistence space `foo`.
+* A domain object with the identifier `bar` would have its model loaded
+  using key `bar` from the space identified by the `PERSISTENCE_SPACE`
+  constant.
 
 ```bnf
-<identifier> ::= <space> ":" <simple id> | <simple id>
+<identifier> ::= <space> ":" <key> | <key>
 <space> ::= <id char>+
-<simple id> ::= <id char>+
+<key> ::= <id char>+
 <id char> ::= <letter> | <digit> | "-" | "." | "_"
 ```
 
