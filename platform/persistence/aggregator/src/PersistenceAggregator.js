@@ -27,6 +27,8 @@ define(
     function () {
         'use strict';
 
+        // Return values to use when a persistence space is unknown,
+        // and there is no appropriate provider to route to.
         var METHOD_DEFAULTS = {
             createObject: false,
             readObject: undefined,
@@ -40,8 +42,8 @@ define(
          * utilized as if they were a single object. This is achieved by
          * routing persistence calls to an appropriate provider; the space
          * specified at call time is matched with the first provider (per
-         * priority order) which reports that it provides persistence this
-         * space.
+         * priority order) which reports that it provides persistence for
+         * this space.
          *
          * @memberof platform/persistence/aggregator
          * @constructor
