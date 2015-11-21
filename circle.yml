@@ -9,7 +9,6 @@ deployment:
     heroku:
       appname: openmctweb-staging-un
   openmctweb-staging-deux:
-    branch: open169
+    branch: mobile
     heroku:
       appname: openmctweb-staging-deux
-
