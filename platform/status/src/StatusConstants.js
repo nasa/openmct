@@ -19,32 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-.select {
-	@include btnSubtle($colorSelectBg);
-    @if $shdwBtns != none {
-	    margin: 0 0 2px 0; // Needed to avoid dropshadow from being clipped by parent containers
-    }
-	padding: 0 $interiorMargin;
-	position: relative;
-    line-height: $formInputH;
-	select {
-		@include appearance(none);
-		@include box-sizing(border-box);
-		background: none;
-		color: $colorSelectFg;
-		cursor: pointer;
-		border: none !important;
-		padding: 4px 25px 2px 0px;
-        width: 120%;
-        option {
-            margin: $interiorMargin 0; // Firefox
-        }
-	}
-	&:after {
-		@include contextArrow();
-		pointer-events: none;
-		color: rgba($colorSelectFg, percentToDecimal($contrastInvokeMenuPercent));
-		position: absolute;
-		right: $interiorMargin; top: 0;
-	}
-}
+/*global define*/
+define({
+    CSS_CLASS_PREFIX: 's-status-',
+    TOPIC_PREFIX: 'status:'
+});

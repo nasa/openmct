@@ -38,7 +38,8 @@ define(
          * @constructor
          */
         function WorkerService($window, workers) {
-            var workerUrls = {};
+            var workerUrls = {},
+                sharedWorkers = {};
 
             function addWorker(worker) {
                 var key = worker.key;
@@ -48,12 +49,15 @@ define(
                         worker.bundle.sources,
                         worker.scriptUrl
                     ].join("/");
+                    sharedWorkers[key] = worker.shared;
                 }
             }
 
             (workers || []).forEach(addWorker);
             this.workerUrls = workerUrls;
+            this.sharedWorkers = sharedWorkers;
             this.Worker = $window.Worker;
+            this.SharedWorker = $window.SharedWorker;
         }
 
         /**
@@ -61,12 +65,17 @@ define(
          * that has been registered under the `workers` category
          * of extension.
          *
+         * This will return either a Worker or a SharedWorker,
+         * depending on whether a `shared` flag has been specified
+         * on the the extension definition for the referenced worker.
+         *
          * @param {string} key symbolic identifier for the worker
-         * @returns {Worker} the running Worker
+         * @returns {Worker | SharedWorker} the running Worker
          */
         WorkerService.prototype.run = function (key) {
             var scriptUrl = this.workerUrls[key],
-                Worker = this.Worker;
+                Worker = this.sharedWorkers[key] ?
+                        this.SharedWorker : this.Worker;
             return scriptUrl && Worker && new Worker(scriptUrl);
         };
 

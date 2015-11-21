@@ -1254,6 +1254,22 @@ object, or the current view proxy.
 * `all()`: Get an array of all objects in the selection state. Will include 
 either or both of the view proxy and selected object. 
 
+## Workers Category
+
+The `workers` extension category allows scripts to be run as web workers
+using the `workerService`.
+
+An extension of this category has no implementation. The following properties
+are supported:
+
+* `key`: A symbolic string used to identify this worker.
+* `workerUrl`: The path, relative to this bundle's `src` folder, where
+  this worker's source code resides.
+* `shared`: Optional; a boolean flag which, if true, indicates that this
+  worker should be instantiated as a
+  [`SharedWorker`](https://developer.mozilla.org/en-US/docs/Web/API/SharedWorker/SharedWorker).
+  Default value is `false`.
+
 # Directives
 
 Open MCT Web defines several Angular directives that are intended for use both 
@@ -1849,6 +1865,14 @@ the TelemetrySeries itself, in that order.
 * `getSeries(domainObject)`: Get the latest `TelemetrySeries` (as resulted from 
 a previous `request(...)` call) available for this domain object.
 
+### Worker Service
+
+The `workerService` may be used to run web workers defined via the
+`workers` extension category. It has the following method:
+
+* `run(key)`: Run the worker identified by the provided `key`. Returns
+  a `Worker` (or `SharedWorker`, if the specified worker is defined
+  as a shared worker); if the `key` is unknown, returns `undefined`.
 
 # Models
 Domain object models in Open MCT Web are JavaScript objects describing the 
@@ -2055,6 +2079,31 @@ The platform implementation of the `relationship` capability is present for doma
 objects which has a `relationships` property in their model, whose value is an 
 object containing key-value pairs, where keys are strings identifying 
 relationship types, and values are arrays of domain object identifiers.
+
+## Status Capability
+
+The `status` capability provides a way to flag domain objects as possessing
+certain states, represented as simple strings. These states, in turn, are
+reflected on `mct-representation` elements as classes (prefixed with
+`s-status-`.) The `status` capability has the following interface:
+
+* `get()`: Returns an array of all status strings that currently apply
+  to this object.
+* `set(status, state)`: Adds or removes a status flag to this domain object.
+  The `status` argument is the string to set; `state` is a boolean
+  indicating whether this status should be included (true) or removed (false).
+* `listen(callback)`: Listen for changes in status. The provided `callback`
+  will be invoked with an array of all current status strings whenever status
+  changes.
+
+Plug-ins may add and/or recognize arbitrary status flags. Flags defined
+and/or supported by the platform are:
+
+ Status    | CSS Class          | Meaning
+-----------|--------------------|-----------------------------------
+`editing`  | `s-status-editing` | Domain object is being edited.
+`pending`  | `s-status-pending` | Domain object is partially loaded.
+
 
 ## Telemetry Capability
 

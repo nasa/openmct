@@ -25,8 +25,7 @@
 // Phones in any orientation
 @mixin phone {
     @media #{$phonePortrait},
-           #{$phoneLandscape},
-           #{$phoneLandscapeEmu} {
+           #{$phoneLandscape} {
         @content
     }
 }
@@ -40,8 +39,7 @@
 
 // Phones in landscape orientation
 @mixin phoneLandscape {
-    @media #{$phoneLandscape},
-           #{$phoneLandscapeEmu} {
+    @media #{$phoneLandscape} {
         @content
     }
 }
@@ -49,8 +47,7 @@
 // Tablets in any orientation
 @mixin tablet {
     @media #{$tabletPortrait},
-           #{$tabletLandscape},
-           #{$tabletLandscapeEmu} {
+           #{$tabletLandscape} {
         @content
     }
 }
@@ -64,8 +61,7 @@
 
 // Tablets in landscape orientation
 @mixin tabletLandscape {
-    @media #{$tabletLandscape},
-           #{$tabletLandscapeEmu} {
+    @media #{$tabletLandscape} {
         @content
     }
 }
@@ -74,10 +70,8 @@
 @mixin phoneandtablet {
     @media #{$phonePortrait},
            #{$phoneLandscape},
-           #{$phoneLandscapeEmu},
            #{$tabletPortrait},
-           #{$tabletLandscape},
-           #{$tabletLandscapeEmu} {
+           #{$tabletLandscape} {
         @content
     }
 }
@@ -86,17 +80,14 @@
 @mixin desktopandtablet {
     @media #{$tabletPortrait},
            #{$tabletLandscape},
-           #{$tabletLandscapeEmu},
-           #{$desktopPortrait},
-           #{$desktopLandscape} {
+           #{$desktop} {
         @content
     }
 }
 
 // Desktop monitors in any orientation
 @mixin desktop {
-    @media #{$desktopPortrait},
-           #{$desktopLandscape} {
+    @media #{$desktop} {
         @content
     }
 }
