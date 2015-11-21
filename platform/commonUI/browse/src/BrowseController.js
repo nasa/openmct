@@ -45,8 +45,9 @@ define(
          */
         function BrowseController($scope, $route, $location, objectService, navigationService, urlService) {
             var path = [ROOT_ID].concat(
-                ($route.current.params.ids || DEFAULT_PATH).split("/")
-            );
+                    ($route.current.params.ids || DEFAULT_PATH).split("/")
+                ),
+                unobserve;
 
             function updateRoute(domainObject) {
                 var priorRoute = $route.current,
@@ -148,10 +149,16 @@ define(
 
             // Also listen for changes which come from the tree
             $scope.$watch("treeModel.selectedObject", setNavigation);
+            $scope.$watch("treeModel.observableSelectedObject", function (obs) {
+                if (obs) {
+                    unobserve = obs.observe(setNavigation);
+                }
+            });
 
             // Clean up when the scope is destroyed
             $scope.$on("$destroy", function () {
                 navigationService.removeListener(setNavigation);
+                unobserve();
             });
         }
 

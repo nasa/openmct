@@ -57,16 +57,22 @@ define(
         function MCTInclude(templates, templateLinker) {
             var templateMap = {};
 
-            function link(scope, element) {
+            function link(scope, element, attrs) {
                 var changeTemplate = templateLinker.link(
-                    scope,
-                    element,
-                    scope.key && templateMap[scope.key]
-                );
+                        scope,
+                        element,
+                        scope.key && templateMap[scope.key]
+                    ),
+                    unwatch;
 
-                scope.$watch('key', function (key) {
+                unwatch = scope.$parent.$watch(attrs.key, function (key) {
                     changeTemplate(key && templateMap[key]);
                 });
+
+                scope.$on("$destroy", unwatch);
+
+                scope.ngModel = scope.$parent.$eval(attrs.ngModel);
+                scope.parameters = scope.$parent.$eval(attrs.parameters);
             }
 
             // Prepopulate templateMap for easy look up by key
@@ -87,8 +93,11 @@ define(
                 // May hide the element, so let other directives act first
                 priority: -1000,
 
-                // Two-way bind key, ngModel, and parameters
-                scope: { key: "=", ngModel: "=", parameters: "=" }
+                // Two-way bind ngModel, and parameters
+                scope: {
+//                    ngModel: "=",
+//                    parameters: "="
+                }
             };
         }
 

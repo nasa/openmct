@@ -93,7 +93,9 @@ define(
                 var activeRepresenters = representers.map(function (Representer) {
                         return new Representer($scope, element, attrs);
                     }),
+                    toUnwatch = [],
                     toClear = [], // Properties to clear out of scope on change
+                    unlisten,
                     counter = 0,
                     couldRepresent = false,
                     lastId,
@@ -137,10 +139,13 @@ define(
 
                 // Destroy (deallocate any resources associated with) any
                 // active representers.
-                function destroyRepresenters() {
+                function cleanup() {
                     activeRepresenters.forEach(function (activeRepresenter) {
                         activeRepresenter.destroy();
                     });
+                    if (unlisten) {
+                        unlisten();
+                    }
                 }
 
                 function unchanged(canRepresent, id, key) {
@@ -175,7 +180,7 @@ define(
                     changeTemplate(canRepresent ? path : undefined);
 
                     // Any existing representers are no longer valid; release them.
-                    destroyRepresenters();
+                    cleanup();
 
                     // Log if a key was given, but no matching representation
                     // was found.
@@ -196,6 +201,9 @@ define(
                     // Populate scope with fields associated with the current
                     // domain object (if one has been passed in)
                     if (canRepresent) {
+                        unlisten = domainObject.getCapability('mutation')
+                            .listen(refreshCapabilities);
+
                         // Track how many representations we've made in this scope,
                         // to ensure that the correct representations are matched to
                         // the correct object/key pairs.
@@ -223,26 +231,33 @@ define(
 
                 // Update the representation when the key changes (e.g. if a
                 // different representation has been selected)
-                $scope.$watch("key", refresh);
+                toUnwatch.push($scope.$parent.$watch(attrs.key, function (key) {
+                    $scope.key = key;
+                    refresh();
+                }));
 
                 // Also update when the represented domain object changes
                 // (to a different object)
-                $scope.$watch("domainObject", refresh);
-
-                // Finally, also update when there is a new version of that
-                // same domain object; these changes should be tracked in the
-                // model's "modified" field, by the mutation capability.
-                $scope.$watch("domainObject.getModel().modified", refreshCapabilities);
+                toUnwatch.push($scope.$parent.$watch(attrs.mctObject, function (domainObject) {
+                    $scope.domainObject = domainObject;
+                    refresh();
+                }));
 
                 // Make sure any resources allocated by representers also get
                 // released.
-                $scope.$on("$destroy", destroyRepresenters);
+                $scope.$on("$destroy", function () {
+                    cleanup();
+                    toUnwatch.forEach(function (unwatch) { unwatch(); });
+                });
 
                 // Do one initial refresh, so that we don't need another
                 // digest iteration just to populate the scope. Failure to
                 // do this can result in unstable digest cycles, which
                 // Angular will detect, and throw an Error about.
                 refresh();
+
+                $scope.ngModel = $scope.$parent.$eval(attrs.mctModel || attrs.ngModel);
+                $scope.parameters = $scope.$parent.$eval(attrs.parameters);
             }
 
             return {
@@ -255,13 +270,10 @@ define(
                 // May hide the element, so let other directives act first
                 priority: -1000,
 
-                // Two-way bind key and parameters, get the represented domain
-                // object as "mct-object"
+                // Two-way bind ng-model and parameters
                 scope: {
-                    key: "=",
-                    domainObject: "=mctObject",
-                    ngModel: "=",
-                    parameters: "="
+//                    ngModel: "=",
+//                    parameters: "="
                 }
             };
         }

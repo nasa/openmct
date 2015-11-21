@@ -22,31 +22,34 @@
 <span ng-controller="ToggleController as toggle">
     <span ng-controller="TreeNodeController as treeNode">
         <span
-            class="tree-item menus-to-left"
+            mct-observe="ngModel.observableSelectedObject"
             ng-class="{selected: treeNode.isSelected()}"
+            class="tree-item menus-to-left"
             >
             <span
                 mct-device="desktop"
                 class='ui-symbol view-control'
                 ng-click="toggle.toggle(); treeNode.trackExpansion()"
-                ng-if="model.composition !== undefined"
+                ng-if="::(model.composition !== undefined)"
                 >
-                {{toggle.isActive() ? "v" : ">"}}
+                <span mct-observe="::toggle.state">
+                    {{::(toggle.isActive() ? "v" : ">")}}
+                </span>
             </span>
 
             <mct-representation
                 mct-device="desktop"
                 class="mobile-hide"
-                key="'label'"
-                mct-object="domainObject"
+                key="::'label'"
+                mct-object="::domainObject"
                 ng-click="treeNode.select()"
                 >
             </mct-representation>
             <mct-representation
                 mct-device="mobile"
                 class="desktop-hide"
-                key="'label'"
-                mct-object="domainObject"
+                key="::'label'"
+                mct-object="::domainObject"
                 ng-click="(model.composition === undefined) && treeNode.select();
                           toggle.toggle();
                           treeNode.trackExpansion();"
@@ -56,24 +59,24 @@
             <span
                 mct-device="mobile"
                 class='ui-symbol view-control'
-                ng-model="ngModel"
                 ng-click="treeNode.select()"
                 >
                 }
             </span>
         </span>
-        <span
-            class="tree-item-subtree"
-            ng-show="toggle.isActive()"
-            ng-if="model.composition !== undefined"
-            >
+        <span mct-observe="::toggle.state">
+            <span
+                class="tree-item-subtree"
+                ng-if="::(toggle.isActive())"
+                >
 
-            <mct-representation key="'subtree'"
-                                ng-model="ngModel"
-                                parameters="parameters"
-                                mct-object="treeNode.hasBeenExpanded() && domainObject">
-            </mct-representation>
+                <mct-representation key="::'subtree'"
+                                    mct-model="::ngModel"
+                                    parameters="::parameters"
+                                    mct-object="::(treeNode.hasBeenExpanded() ? domainObject : undefined)">
+                </mct-representation>
 
+            </span>
         </span>
     </span>
 </span>

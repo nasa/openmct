@@ -40,12 +40,11 @@ define(
             }
 
             // Set the window title...
-            function setTitle(name) {
-                $document[0].title = name;
+            function updateTitle() {
+                $document[0].title = getNavigatedObjectName();
             }
 
-            // Watch the former, and invoke the latter
-            $rootScope.$watch(getNavigatedObjectName, setTitle);
+            navigationService.addListener(updateTitle);
         }
 
         return WindowTitler;

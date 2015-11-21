@@ -76,7 +76,7 @@
             {
                 "key": "TreeNodeController",
                 "implementation": "controllers/TreeNodeController.js",
-                "depends": [ "$scope", "$timeout" ]
+                "depends": [ "$scope", "$timeout", "Observable" ]
             },
             {
                 "key": "ActionGroupController",
@@ -85,7 +85,8 @@
             },
             {
                 "key": "ToggleController",
-                "implementation": "controllers/ToggleController.js"
+                "implementation": "controllers/ToggleController.js",
+                "depends": [ "Observable" ]
             },
             {
                 "key": "ContextMenuController",

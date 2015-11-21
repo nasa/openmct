@@ -1,0 +1,17 @@
+{
+    "extensions": {
+        "directives": [
+            {
+                "key": "mctObserve",
+                "implementation": "MCTObserve.js",
+                "depends": [ "throttle" ]
+            }
+        ],
+        "services": [
+            {
+                "key": "Observable",
+                "implementation": "ObservableExposer.js"
+            }
+        ]
+    }
+}
