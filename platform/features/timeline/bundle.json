@@ -57,7 +57,7 @@
                 "properties": [
                     {
                         "name": "Start date/time",
-                        "control": "datetime",
+                        "control": "timeline-datetime",
                         "required": true,
                         "property": [ "start" ],
                         "options": [ "SET" ]
@@ -83,7 +83,7 @@
                 "properties": [
                     {
                         "name": "Start date/time",
-                        "control": "datetime",
+                        "control": "timeline-datetime",
                         "required": true,
                         "property": [ "start" ],
                         "options": [ "SET" ]
@@ -271,7 +271,7 @@
         ],
         "controls": [
             {
-                "key": "datetime",
+                "key": "timeline-datetime",
                 "templateUrl": "templates/controls/datetime.html"
             },
             {
