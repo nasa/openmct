@@ -37,7 +37,12 @@ define(
 
         /**
          * Aggregates multiple persistence providers, such that they can be
-         * utilized as if they were a single object.
+         * utilized as if they were a single object. This is achieved by
+         * routing persistence calls to an appropriate provider; the space
+         * specified at call time is matched with the first provider (per
+         * priority order) which reports that it provides persistence this
+         * space.
+         *
          * @memberof platform/persistence/aggregator
          * @constructor
          * @implements {PersistenceService}
