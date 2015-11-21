@@ -20,7 +20,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -41,38 +41,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -7376,63 +7376,43 @@ table {
 .frame .t-imagery .l-image-thumbs-wrapper {
   display: none; }
 
-/* line 5, ../../../../general/res/sass/features/_time-display.scss */
-.l-time-display:hover .l-btn.control {
-  opacity: 1; }
-/* line 9, ../../../../general/res/sass/features/_time-display.scss */
-.l-time-display .l-elem-wrapper {
-  position: relative; }
-/* line 12, ../../../../general/res/sass/features/_time-display.scss */
-.l-time-display .l-elem {
-  display: inline-block; }
-/* line 17, ../../../../general/res/sass/features/_time-display.scss */
-.l-time-display.l-timer .l-elem.l-value {
-  -moz-transition-property: left;
-  -o-transition-property: left;
-  -webkit-transition-property: left;
-  transition-property: left;
-  -moz-transition-duration: 200ms;
-  -o-transition-duration: 200ms;
-  -webkit-transition-duration: 200ms;
-  transition-duration: 200ms;
-  -moz-transition-timing-function: ease-in-out;
-  -o-transition-timing-function: ease-in-out;
-  -webkit-transition-timing-function: ease-in-out;
-  transition-timing-function: ease-in-out;
-  -moz-transition-delay: 0;
-  -o-transition-delay: 0;
-  -webkit-transition-delay: 0;
-  transition-delay: 0;
-  position: absolute;
-  left: 0;
-  z-index: 1; }
-  /* line 22, ../../../../general/res/sass/features/_time-display.scss */
-  .l-time-display.l-timer .l-elem.l-value .ui-symbol.direction, .l-time-display.l-timer .l-elem.l-value .direction.t-item-icon, .l-time-display.l-timer .l-elem.l-value .direction.s-icon-btn, .l-time-display.l-timer .l-elem.l-value .l-datetime-picker .l-month-year-pager .direction.pager, .l-datetime-picker .l-month-year-pager .l-time-display.l-timer .l-elem.l-value .direction.pager {
-    font-size: 0.8em; }
-/* line 26, ../../../../general/res/sass/features/_time-display.scss */
-.l-time-display.l-timer:hover .l-elem.l-value {
-  left: 20px; }
-/* line 33, ../../../../general/res/sass/features/_time-display.scss */
-.l-time-display .l-elem .value.active, .l-time-display .l-elem.value.active {
-  color: #fff; }
-/* line 38, ../../../../general/res/sass/features/_time-display.scss */
-.l-time-display .l-btn.control {
-  -moz-transition-property: opacity, background-color, border-color, color;
-  -o-transition-property: opacity, background-color, border-color, color;
-  -webkit-transition-property: opacity, background-color, border-color, color;
-  transition-property: opacity, background-color, border-color, color;
-  -moz-transition-duration: 200ms;
-  -o-transition-duration: 200ms;
-  -webkit-transition-duration: 200ms;
-  transition-duration: 200ms;
-  -moz-transition-timing-function: ease-in-out;
-  -o-transition-timing-function: ease-in-out;
-  -webkit-transition-timing-function: ease-in-out;
-  transition-timing-function: ease-in-out;
-  -moz-transition-delay: 0;
-  -o-transition-delay: 0;
-  -webkit-transition-delay: 0;
-  transition-delay: 0;
-  opacity: 0;
-  font-size: 0.65em;
-  vertical-align: top; }
+/* line 1, ../../../../general/res/sass/features/_time-display.scss */
+.l-time-display {
+  line-height: 140%; }
+  /* line 6, ../../../../general/res/sass/features/_time-display.scss */
+  .l-time-display:hover .l-btn.control {
+    opacity: 1; }
+  /* line 18, ../../../../general/res/sass/features/_time-display.scss */
+  .l-time-display.l-timer .control {
+    -moz-transition-property: width, opacity;
+    -o-transition-property: width, opacity;
+    -webkit-transition-property: width, opacity;
+    transition-property: width, opacity;
+    -moz-transition-duration: 200ms;
+    -o-transition-duration: 200ms;
+    -webkit-transition-duration: 200ms;
+    transition-duration: 200ms;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    -moz-transition-delay: 0;
+    -o-transition-delay: 0;
+    -webkit-transition-delay: 0;
+    transition-delay: 0;
+    line-height: inherit;
+    margin-right: 0;
+    opacity: 0;
+    width: 0; }
+  /* line 27, ../../../../general/res/sass/features/_time-display.scss */
+  .l-time-display.l-timer:hover .control {
+    margin-right: 5px;
+    opacity: 1;
+    width: auto; }
+  /* line 34, ../../../../general/res/sass/features/_time-display.scss */
+  .l-time-display .value {
+    color: #cccccc;
+    font-weight: 600; }
+    /* line 37, ../../../../general/res/sass/features/_time-display.scss */
+    .l-time-display .value .direction {
+      font-size: 0.8em; }
