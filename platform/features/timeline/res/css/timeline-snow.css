@@ -279,12 +279,13 @@
 .edit-mode .s-swimlane {
   cursor: pointer; }
   /* line 145, ../sass/_timeline-thematic.scss */
-  .edit-mode .s-swimlane .s-label {
+  .edit-mode .s-swimlane .t-object-label {
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
     border-radius: 4px;
+    cursor: move;
     padding: 2px 5px; }
-    /* line 148, ../sass/_timeline-thematic.scss */
-    .edit-mode .s-swimlane .s-label:hover {
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff; }
+    /* line 149, ../sass/_timeline-thematic.scss */
+    .edit-mode .s-swimlane .t-object-label:hover {
+      background: rgba(102, 102, 102, 0.3);
+      color: #333333; }

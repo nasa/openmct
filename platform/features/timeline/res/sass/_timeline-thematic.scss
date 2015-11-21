@@ -142,13 +142,13 @@
 
 .edit-mode .s-swimlane {
     cursor: pointer;
-    .s-label {
+    .t-object-label {
         @include border-radius($controlCr);
+        cursor: move;
         padding: 2px 5px;
         &:hover {
-            // TO-DO: Convert to theming!
-            background: rgba(#fff, 0.1);
-            color: #fff;
+            background: rgba($colorBodyFg, 0.3);
+            color: pullForward($colorBodyFg, 20%);
         }
     }
 }
