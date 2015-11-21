@@ -21,7 +21,6 @@
  *****************************************************************************/
 //*************************************************************** LAYOUT
 .l-timeline-holder {
-//    @include test();
     @include absPosDefault();
 
     .l-timeline-pane {
@@ -71,11 +70,9 @@
 			        @include absPosDefault();
 			        @include scrollV();
 			        top: 25px;
-			        //color: lighten($timelineColorAlt1, 10%); // MOVED to espresso theme
 		        }
 		        .legend-item {
 			        // Inherits from /platform/commonUI/general/res/sass/plots/_plots-main.scss
-//			        border-bottom: 1px solid $colorInteriorBorder;
 			        display: block;
 			        margin-bottom: $interiorMarginSm;
 			        overflow: hidden;
@@ -94,7 +91,6 @@
 	            $m: $interiorMargin;
 
                 .l-graphs-holder {
-//                    @include test(blue);
                     @include absPosDefault();
                     bottom: $scrollbarTrackSize;
 
@@ -104,7 +100,6 @@
                     }
 
                     .l-graph-labels-holder {
-//                        @include test(red);
                         @include absPosDefault();
                         overflow: hidden;
                         right: auto;
@@ -125,7 +120,7 @@
 
 	            .l-graph,
 	            .l-graph-labels {
-		            height: 80px; //was 120px
+		            height: 80px;
 		            margin-bottom: $interiorMarginSm;
 		            position: relative;
 	            }
@@ -137,7 +132,6 @@
 	            }
 
 	            .l-graph {
-		            //background: rgba(black, 0.3); // MOVED
                     width: 100%;
 		            .l-graph-area {
 			            canvas {
@@ -166,7 +160,6 @@
         }
 
         &.l-pane-l {
-//            @include test(red);
             right: auto;
 			min-width: 50px;
 			max-width: 90%;
@@ -174,7 +167,6 @@
         }
 
         &.l-pane-r {
-//            @include test(blue);
             left: 0;
 			&:hover {
 				.l-hover-btns-holder {
@@ -185,11 +177,9 @@
         }
 
         &.l-pane-top {
-//            @include test(green);
             bottom: $timelinePaneBtmH;
         }
         &.l-pane-btm {
-//            @include test(orange);
             top: auto;
 			min-height: 20px;
 			max-height: 80%;
@@ -205,13 +195,11 @@
 	// Header
     .s-timeline-tabular .l-header,
     .s-timeline-gantt .l-header {
-//        @include test(white,0.05);
 	    @include absPosDefault(0, visible);
         bottom: auto; height: $timelineTopPaneHeaderH;
 
         .l-header-elem {
 		    @include absPosDefault($timelineTopPaneHeaderElemMargin, visible);
-//		    bottom: auto; height: 15px;
 		    display: block;
 		    &.l-labels {
 			    .l-label {
@@ -238,14 +226,12 @@
 
 	// Tabular Columns
 	.l-cols {
-//		@include test(#66ff66, 0.1);
 		@include absPosDefault(0, visible);
 		text-wrap: none;
 		white-space: nowrap;
 		.l-col {
 			@include box-sizing(border-box);
 			@include ellipsize();
-//			@include test(red, 0.05);
 			display: inline-block;
 			height: 100%;
 			padding: 0 $interiorMargin;
@@ -266,9 +252,6 @@
 				border-left: none !important;
 				cursor: pointer;
 				padding-left: 0;
-//				.ui-symbol {
-//					color: $colorFormValid;
-//				}
 			}
 
 			&.l-title {
@@ -281,15 +264,10 @@
 				width: $timelineColDatetimeW;
 			}
 
-			//&.l-duration {
-			//	width: $timelineColDurationW;
-			//}
-
 			&.l-activity-modes {
 				display: none; // Temp, until modes can be displayed
 				width: $timelineColActivityModesW;
 			}
-
 		}
 	}
 

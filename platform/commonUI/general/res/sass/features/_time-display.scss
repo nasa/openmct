@@ -18,13 +18,13 @@
 		&:hover .control {
             margin-right: $interiorMargin;
             opacity: 1;
-			width: auto;
+			width: 1em;
 		}
 	}
 
     .value {
-        color: pullForward($colorBodyFg, 20%);
-        font-weight: 600;
+        color: pullForward($colorBodyFg, 50%);
+        font-weight: 400;
         .direction {
             font-size: 0.8em;
         }

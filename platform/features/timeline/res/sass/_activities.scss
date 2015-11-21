@@ -24,8 +24,6 @@
 			}
 			&.s-title {
 				@include text-shadow(rgba(black, 0.1) 0 1px 2px);
-//				right: 5px;
-//				width: 50%;
 			}
 			&.duration {
 				left: auto;
@@ -35,7 +33,6 @@
 				width: 60px;
 			}
 			&.handle {
-				//background: rgba(red, 0.2);
 				top: 0;
 				bottom: 0;
 				height: auto;
@@ -60,15 +57,8 @@
 .edit-mode .s-timeline-gantt {
 	.handle {
 		cursor: col-resize;
-		&.start {
-//			@include test(red);
-		}
 		&.mid {
-//			@include test(green);
 			cursor: ew-resize;
-		}
-		&.end {
-//			@include test(blue);
 		}
 	}
 }
