@@ -57,7 +57,7 @@
                 "properties": [
                     {
                         "name": "Start date/time",
-                        "control": "datetime",
+                        "control": "timeline-datetime",
                         "required": true,
                         "property": [ "start" ],
                         "options": [ "SET" ]
@@ -83,7 +83,7 @@
                 "properties": [
                     {
                         "name": "Start date/time",
-                        "control": "datetime",
+                        "control": "timeline-datetime",
                         "required": true,
                         "property": [ "start" ],
                         "options": [ "SET" ]
@@ -217,6 +217,19 @@
                 }
             }
         ],
+        "stylesheets": [
+            {
+                "stylesheetUrl": "css/timeline.css"
+            },
+            {
+                "stylesheetUrl": "css/timeline-espresso.css",
+                "theme": "espresso"
+            },
+            {
+                "stylesheetUrl": "css/timeline-snow.css",
+                "theme": "snow"
+            }
+        ],
         "representations": [
             {
                 "key": "gantt",
@@ -258,7 +271,7 @@
         ],
         "controls": [
             {
-                "key": "datetime",
+                "key": "timeline-datetime",
                 "templateUrl": "templates/controls/datetime.html"
             },
             {

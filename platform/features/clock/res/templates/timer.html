@@ -20,15 +20,15 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="l-time-display l-digital l-timer s-timer" ng-controller="TimerController as timer">
-	<div class="l-elem-wrapper">
+	<div class="l-elem-wrapper l-flex-row">
 		<a
 			ng-click="timer.clickButton()"
 			title="{{timer.buttonText()}}"
-			class="l-elem l-btn s-btn s-icon-btn s-very-subtle vsm control"
+			class="flex-elem s-icon-btn control"
 			>
-			<span class="ui-symbol icon">{{timer.buttonGlyph()}}</span>
+			{{timer.buttonGlyph()}}
 		</a>
-	    <span class="l-elem l-value">
+	    <span class="flex-elem l-value">
 		    <span class="ui-symbol direction">{{timer.sign()}}</span>
 	        <span
 		        class="value"
@@ -36,7 +36,6 @@
 		        >{{timer.text() || "--:--:--"}}
 		        </span>
 	    </span>
-	    <span ng-controller="RefreshingController">
-	    </span>
+	    <span ng-controller="RefreshingController"></span>
 	</div>
 </div>
