@@ -58,13 +58,13 @@ define(
                 return copy;
             }
 
-            // Compute panel positions based on the layout's object model
-            function lookupPanels(ids) {
+            /**
+             * Compute panel positions based on the layout's object model.
+             * Defined as member function to facilitate testing.
+             * @private
+             */
+            LayoutController.prototype.layoutPanels = function layoutPanels (ids) {
                 var configuration = $scope.configuration || {};
-
-                // ids is read from model.composition and may be undefined;
-                // fall back to an array if that occurs
-                ids = ids || [];
 
                 // Pull panel positions from configuration
                 self.rawPositions =
@@ -81,7 +81,7 @@ define(
                 ids.forEach(function (id, index) {
                     self.populatePosition(id, index);
                 });
-            }
+            };
 
             // Update grid size when it changed
             function updateGridSize(layoutGrid) {
@@ -92,7 +92,7 @@ define(
                 // Only update panel positions if this actually changed things
                 if (self.gridSize[0] !== oldSize[0] ||
                         self.gridSize[1] !== oldSize[1]) {
-                    lookupPanels(Object.keys(self.positions));
+                    self.layoutPanels(Object.keys(self.positions));
                 }
             }
 
@@ -127,6 +127,25 @@ define(
                 e.preventDefault();
             }
 
+            function getComposition(domainObject){
+                return domainObject.useCapability('composition');
+            }
+
+            function composeView (composition){
+                $scope.composition = composition;
+                return composition.map(function (object) {
+                        return object.getId();
+                    }) || [];
+            }
+
+            //Will fetch fully contextualized composed objects, and populate
+            // scope with them.
+            function refreshComposition() {
+                return getComposition($scope.domainObject)
+                    .then(composeView)
+                    .then(self.layoutPanels);
+            }
+
             // End drag; we don't want to put $scope into this
             // because it triggers "cpws" (copy window or scope)
             // errors in Angular.
@@ -156,8 +175,8 @@ define(
             // Watch for changes to the grid size in the model
             $scope.$watch("model.layoutGrid", updateGridSize);
 
-            // Position panes when the model field changes
-            $scope.$watch("model.composition", lookupPanels);
+            // Update composed objects on screen, and position panes
+            $scope.$watch("model.composition", refreshComposition);
 
             // Position panes where they are dropped
             $scope.$on("mctDrop", handleDrop);
