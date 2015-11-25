@@ -1,0 +1,12 @@
+{
+    "extensions": {
+        "components": [
+            {
+                "provides": "persistenceService",
+                "type": "aggregator",
+                "depends": [ "$q" ],
+                "implementation": "PersistenceAggregator.js"
+            }
+        ]
+    }
+}

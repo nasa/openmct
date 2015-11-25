@@ -1,0 +1,306 @@
+/*****************************************************************************
+ * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT Web is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT Web includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+//*************************************************************** LAYOUT
+.l-timeline-holder {
+    @include absPosDefault();
+
+    .l-timeline-pane {
+        @include absPosDefault();
+
+	    .l-width-control {
+		    position: relative;
+	    }
+
+	    .l-swimlanes-holder {
+		    @include absPosDefault();
+		    top: $timelineTopPaneHeaderH + 1;
+	    }
+
+	    // Overall layout
+        &.t-pane-h {
+            &.s-timeline-tabular .t-pane-v {
+                // Vertical panes within tabular area
+                @include absPosDefault();
+                &.l-tabular-l {
+                    // Tree area with item title
+                    right: auto; // Set this to auto and uncomment width below when additional tabular columns are added
+                    width: $timelineTabularTitleW;
+                }
+                &.l-tabular-r {
+                    // Start, end, duration, activity modes columns
+                    @include scrollH();
+                    left: $timelineTabularTitleW;
+	                .l-width {
+		                @include absPosDefault(0, visible);
+		                min-width: $timelineTabularDataW;
+		                width: 100%;
+	                }
+                }
+            }
+            &.l-timeline-gantt {
+                .l-swimlanes-holder {
+                    @include scrollV(scroll);
+                }
+            }
+	        &.l-timeline-resource-legend {
+		        @include box-sizing(border-box);
+		        padding: $interiorMargin 0;
+		        white-space: nowrap;
+
+		        .l-legend-items {
+			        @include absPosDefault();
+			        @include scrollV();
+			        top: 25px;
+		        }
+		        .legend-item {
+			        // Inherits from /platform/commonUI/general/res/sass/plots/_plots-main.scss
+			        display: block;
+			        margin-bottom: $interiorMarginSm;
+			        overflow: hidden;
+			        text-overflow: ellipsis;
+			        white-space: nowrap;
+			        .color-swatch {
+				        vertical-align: baseline;
+			        }
+			        .title-label {
+				        vertical-align: baseline;
+			        }
+		        }
+	        }
+
+            &.l-timeline-resource-graph {
+	            $m: $interiorMargin;
+
+                .l-graphs-holder {
+                    @include absPosDefault();
+                    bottom: $scrollbarTrackSize;
+
+                    .l-graphs {
+                        @include absPosDefault();
+                        @include scrollV(scroll);
+                    }
+
+                    .l-graph-labels-holder {
+                        @include absPosDefault();
+                        overflow: hidden;
+                        right: auto;
+                        width: 400px;
+                    }
+                }
+
+                .l-scroll-control {
+                    @include absPosDefault();
+                    overflow-x: scroll;
+                    overflow-y: hidden;
+                    top: auto; right: $scrollbarTrackSize;
+                    height: $scrollbarTrackSize;
+                    .l-width-control {
+                        height: 10px; // Need to add height to force scrollbar to appear
+                    }
+                }
+
+	            .l-graph,
+	            .l-graph-labels {
+		            height: 80px;
+		            margin-bottom: $interiorMarginSm;
+		            position: relative;
+	            }
+
+	            .l-title {
+		            @include ellipsize();
+		            top: $m; left: $m;
+		            position: absolute;
+	            }
+
+	            .l-graph {
+                    width: 100%;
+		            .l-graph-area {
+			            canvas {
+				            width: 100%;
+				            height: 100%;
+			            }
+		            }
+	            }
+
+	            .l-graph-labels {
+		            z-index: 10;
+	            }
+
+	            .l-graph-area {
+		            @include absPosDefault();
+		            top: 20px; bottom: 5px;
+		            .l-labels-holder {
+			            @include absPosDefault();
+			            left: $m;
+			            .tick-label.tick-label-y {
+				            text-align: left;
+			            }
+		            }
+	            }
+            }
+        }
+
+        &.l-pane-l {
+            right: auto;
+			min-width: 50px;
+			max-width: 90%;
+            width: $timelinePaneLeftW;
+        }
+
+        &.l-pane-r {
+            left: 0;
+			&:hover {
+				.l-hover-btns-holder {
+					@include trans-prop-nice-fade(100ms);
+					opacity: 1;
+				}
+			}
+        }
+
+        &.l-pane-top {
+            bottom: $timelinePaneBtmH;
+        }
+        &.l-pane-btm {
+            top: auto;
+			min-height: 20px;
+			max-height: 80%;
+            height: $timelinePaneBtmH;
+        }
+    }
+
+    .l-swimlane {
+	    height: $timelineSwimlaneH;
+	    position: relative;
+    }
+
+	// Header
+    .s-timeline-tabular .l-header,
+    .s-timeline-gantt .l-header {
+	    @include absPosDefault(0, visible);
+        bottom: auto; height: $timelineTopPaneHeaderH;
+
+        .l-header-elem {
+		    @include absPosDefault($timelineTopPaneHeaderElemMargin, visible);
+		    display: block;
+		    &.l-labels {
+			    .l-label {
+				    position: absolute;
+				    width: 140px;
+				    margin-left: -70px;
+				    text-align: center;
+			    }
+		    }
+	    }
+    }
+
+	.l-hover-btns-holder {
+		@include absPosDefault();
+		@include box-sizing(border-box);
+		@include trans-prop-nice-fade(500ms);
+		opacity: 0;
+		height: $timelineTopPaneHeaderH;
+		width: 100px; left: auto;
+		padding: $interiorMargin;
+		text-align: right;
+		z-index: 10;
+	}
+
+	// Tabular Columns
+	.l-cols {
+		@include absPosDefault(0, visible);
+		text-wrap: none;
+		white-space: nowrap;
+		.l-col {
+			@include box-sizing(border-box);
+			@include ellipsize();
+			display: inline-block;
+			height: 100%;
+			padding: 0 $interiorMargin;
+			position: relative;
+			text-wrap: none;
+			white-space: nowrap;
+
+			&.l-col-icon {
+				width: $timelineColIconW;
+                text-align: center;
+                padding: 0;
+				.ui-symbol {
+					color: $colorKey;
+				}
+			}
+
+			&.l-plot-resource {
+				border-left: none !important;
+				cursor: pointer;
+				padding-left: 0;
+			}
+
+			&.l-title {
+				width: $timelineColTitleW;
+			}
+
+			&.l-start,
+			&.l-end,
+			&.l-duration {
+				width: $timelineColDatetimeW;
+			}
+
+			&.l-activity-modes {
+				display: none; // Temp, until modes can be displayed
+				width: $timelineColActivityModesW;
+			}
+		}
+	}
+
+	.s-timeline-tabular {
+		.l-header .l-cols {
+			top: $timelineTopPaneHeaderElemMargin; bottom: $timelineTopPaneHeaderElemMargin;
+		}
+
+		.l-pane-l {
+			// Left pane of the tabular area
+			.l-cols {
+				left: $timelineTopPaneHeaderElemMargin;
+			}
+		}
+	}
+
+    .splitter {
+        // Top of splitter within Timelines should be 0
+        top: 0;
+    }
+
+	// Ticks
+	.l-ticks,
+	.l-subticks {
+		@include absPosDefault();
+		top: auto; bottom: $interiorMarginSm;
+	}
+
+	.l-ticks {
+		height: 10px
+	}
+
+	.l-subticks {
+		height: 5px
+	}
+}

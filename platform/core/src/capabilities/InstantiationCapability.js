@@ -22,8 +22,8 @@
 /*global define,Promise*/
 
 define(
-    ['../objects/DomainObjectImpl', 'uuid'],
-    function (DomainObjectImpl, uuid) {
+    ['../objects/DomainObjectImpl'],
+    function (DomainObjectImpl) {
         'use strict';
 
         /**
@@ -33,9 +33,12 @@ define(
          * @constructor
          * @memberof platform/core
          * @param $injector Angular's `$injector`
+         * @implements {Capability}
          */
-        function InstantiationCapability($injector) {
+        function InstantiationCapability($injector, identifierService, domainObject) {
             this.$injector = $injector;
+            this.identifierService = identifierService;
+            this.domainObject = domainObject;
         }
 
         /**
@@ -45,19 +48,26 @@ define(
          * have been persisted, nor will it have been added to the
          * composition of the object which exposed this capability.
          *
+         * @param {object} the model for the new domain object
          * @returns {DomainObject} the new domain object
          */
         InstantiationCapability.prototype.instantiate = function (model) {
+            var parsedId =
+                    this.identifierService.parse(this.domainObject.getId()),
+                space = parsedId.getDefinedSpace(),
+                id = this.identifierService.generate(space);
+
             // Lazily initialize; instantiate depends on capabilityService,
             // which depends on all capabilities, including this one.
             this.instantiateFn = this.instantiateFn ||
                 this.$injector.get("instantiate");
-            return this.instantiateFn(model);
+
+            return this.instantiateFn(model, id);
         };
 
         /**
-         * Alias of `create`.
-         * @see {platform/core.CreationCapability#create}
+         * Alias of `instantiate`.
+         * @see {platform/core.CreationCapability#instantiate}
          */
         InstantiationCapability.prototype.invoke =
             InstantiationCapability.prototype.instantiate;

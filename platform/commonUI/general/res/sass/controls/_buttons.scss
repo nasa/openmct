@@ -108,10 +108,7 @@ $pad: $interiorMargin * $baseRatio;
 
 .s-icon-btn {
     @extend .ui-symbol;
-    color: $colorBtnIcon;
-    &:hover {
-        color: lighten($colorBtnIcon, $ltGamma);
-    }
+    // Color and styling additionally in _controls.scss
 }
 
 .mini-tab {

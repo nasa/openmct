@@ -187,7 +187,8 @@ label.checkbox.custom {
     }
 }
 
-.context-available {
+.context-available,
+.s-icon-btn {
     $c: $colorKey;
     color: $c;
     &:hover {

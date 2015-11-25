@@ -34,6 +34,7 @@ define(
         describe("Copy Action", function () {
 
             var copyAction,
+                policyService,
                 locationService,
                 locationServicePromise,
                 copyService,
@@ -50,6 +51,12 @@ define(
                 progress = {phase: "copying", totalObjects: 10, processed: 1};
 
             beforeEach(function () {
+                policyService = jasmine.createSpyObj(
+                    'policyService',
+                    [ 'allow' ]
+                );
+                policyService.allow.andReturn(true);
+
                 selectedObjectContextCapability = jasmine.createSpyObj(
                     'selectedObjectContextCapability',
                     [
@@ -142,6 +149,7 @@ define(
 
                     copyAction = new CopyAction(
                         mockLog,
+                        policyService,
                         locationService,
                         copyService,
                         dialogService,
@@ -201,6 +209,7 @@ define(
 
                     copyAction = new CopyAction(
                         mockLog,
+                        policyService,
                         locationService,
                         copyService,
                         dialogService,

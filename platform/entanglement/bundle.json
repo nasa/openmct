@@ -11,7 +11,7 @@
                 "glyph": "f",
                 "category": "contextual",
                 "implementation": "actions/MoveAction.js",
-                "depends": ["locationService", "moveService"]
+                "depends": ["policyService", "locationService", "moveService"]
             },
             {
                 "key": "copy",
@@ -20,7 +20,7 @@
                 "glyph": "+",
                 "category": "contextual",
                 "implementation": "actions/CopyAction.js",
-                "depends": ["$log", "locationService", "copyService",
+                "depends": ["$log", "policyService", "locationService", "copyService",
                     "dialogService", "notificationService"]
             },
             {
@@ -30,7 +30,7 @@
                 "glyph": "\u00E8",
                 "category": "contextual",
                 "implementation": "actions/LinkAction.js",
-                "depends": ["locationService", "linkService"]
+                "depends": ["policyService", "locationService", "linkService"]
             },
             {
                 "key": "follow",
@@ -54,7 +54,11 @@
                 "depends": ["contextualize", "$q", "$log"]
             }
         ],
-        "controllers": [
+        "policies": [
+            {
+                "category": "action",
+                "implementation": "policies/CrossSpacePolicy.js"
+            }
         ],
         "capabilities": [
             {

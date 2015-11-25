@@ -63,7 +63,7 @@
                  ng-show="representation.showControls"
                  ng-if="axes[1].options.length > 0">
                 <div class='form-control shell select'>
-                    <select class="form-control input shell select"
+                    <select class="form-control input shell"
                             ng-model="axes[1].active"
                             ng-options="option.name for option in axes[1].options">
                     </select>
@@ -161,12 +161,11 @@
                 {{axes[0].active.name}}
             </div>
 
-
             <div class="gl-plot-x-options gl-plot-local-controls"
                  ng-show="representation.showControls"
                  ng-if="axes[0].options.length > 0">
                 <div class='form-control shell select'>
-                    <select class="form-control input shell select"
+                    <select class="form-control input shell"
                             ng-model="axes[0].active"
                             ng-options="option.name for option in axes[0].options">
                     </select>
