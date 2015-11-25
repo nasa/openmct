@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
+/*global define,describe,it,expect,beforeEach,jasmine,spyOn*/
 
 define(
     ["../src/LayoutController"],
@@ -31,7 +31,28 @@ define(
                 mockEvent,
                 testModel,
                 testConfiguration,
-                controller;
+                controller,
+                mockCompositionCapability,
+                mockComposition;
+
+            function mockPromise(value){
+                return {
+                    then: function (thenFunc) {
+                        return mockPromise(thenFunc(value));
+                    }
+                };
+            }
+
+            function mockDomainObject(id){
+                return {
+                    getId: function() {
+                        return id;
+                    },
+                    useCapability: function() {
+                        return mockCompositionCapability;
+                    }
+                };
+            }
 
             beforeEach(function () {
                 mockScope = jasmine.createSpyObj(
@@ -43,9 +64,9 @@ define(
                     [ 'preventDefault' ]
                 );
 
-                testModel = {
-                    composition: [ "a", "b", "c" ]
-                };
+                testModel = {};
+
+                mockComposition = ["a", "b", "c"];
 
                 testConfiguration = {
                     panels: {
@@ -56,10 +77,15 @@ define(
                     }
                 };
 
+                mockCompositionCapability = mockPromise(mockComposition.map(mockDomainObject));
+
+                mockScope.domainObject = mockDomainObject("mockDomainObject");
                 mockScope.model = testModel;
                 mockScope.configuration = testConfiguration;
+                spyOn(mockScope.domainObject, "useCapability").andCallThrough();
 
                 controller = new LayoutController(mockScope);
+                spyOn(controller, "layoutPanels").andCallThrough();
             });
 
             // Model changes will indicate that panel positions
@@ -71,8 +97,18 @@ define(
                 );
             });
 
+            it("Retrieves updated composition from composition capability", function () {
+                mockScope.$watch.mostRecentCall.args[1]();
+                expect(mockScope.domainObject.useCapability).toHaveBeenCalledWith(
+                    "composition"
+                );
+                expect(controller.layoutPanels).toHaveBeenCalledWith(
+                    mockComposition
+                );
+            });
+
             it("provides styles for frames, from configuration", function () {
-                mockScope.$watch.mostRecentCall.args[1](testModel.composition);
+                mockScope.$watch.mostRecentCall.args[1]();
                 expect(controller.getFrameStyle("a")).toEqual({
                     top: "320px",
                     left: "640px",
@@ -85,7 +121,7 @@ define(
                 var styleB, styleC;
 
                 // b and c do not have configured positions
-                mockScope.$watch.mostRecentCall.args[1](testModel.composition);
+                mockScope.$watch.mostRecentCall.args[1]();
 
                 styleB = controller.getFrameStyle("b");
                 styleC = controller.getFrameStyle("c");
@@ -102,7 +138,7 @@ define(
 
             it("allows panels to be dragged", function () {
                 // Populate scope
-                mockScope.$watch.mostRecentCall.args[1](testModel.composition);
+                mockScope.$watch.mostRecentCall.args[1]();
 
                 // Verify precondtion
                 expect(testConfiguration.panels.b).not.toBeDefined();
@@ -121,7 +157,7 @@ define(
 
             it("invokes commit after drag", function () {
                 // Populate scope
-                mockScope.$watch.mostRecentCall.args[1](testModel.composition);
+                mockScope.$watch.mostRecentCall.args[1]();
 
                 // Do a drag
                 controller.startDrag("b", [1, 1], [0, 0]);
@@ -147,7 +183,6 @@ define(
                 expect(testConfiguration.panels.d).not.toBeDefined();
 
                 // Notify that a drop occurred
-                testModel.composition.push('d');
                 mockScope.$on.mostRecentCall.args[1](
                     mockEvent,
                     'd',
@@ -167,7 +202,6 @@ define(
                 mockEvent.defaultPrevented = true;
 
                 // Notify that a drop occurred
-                testModel.composition.push('d');
                 mockScope.$on.mostRecentCall.args[1](
                     mockEvent,
                     'd',
@@ -201,7 +235,6 @@ define(
                 mockScope.$watch.calls[0].args[1](testModel.layoutGrid);
 
                 // Notify that a drop occurred
-                testModel.composition.push('d');
                 mockScope.$on.mostRecentCall.args[1](
                     mockEvent,
                     'd',
