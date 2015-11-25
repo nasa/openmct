@@ -50,7 +50,8 @@ define(
                     ((domainObject && domainObject.useCapability('view')) || [])
                         .forEach(selectViewIfMatching);
                 }
-                $scope.editMode = domainObject.hasCapability('editor') ? true : false;
+                //$scope.editMode = domainObject.hasCapability('editor') ?
+                // true : false;
                 navigatedObject = domainObject;
             }
 
