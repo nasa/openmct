@@ -1131,3 +1131,51 @@ app.config(['actionRegistryProvider', function (arp) {
   its own difficulties.
 * May seem counter-intuitive coming from "vanilla" AngularJS, where
   `$scope` is the only commonly-used context-sensitive dependency.
+
+## Add new abstractions for actions
+
+Originally suggested in
+[this comment](https://github.com/nasa/openmctweb/pull/69#issuecomment-156199991):
+
+> I think there are some grey areas with actions: are they all directly
+tied to user input?  If so, why do they have any meaning in the back end?
+Maybe we should look at different abstractions for actions:
+
+> * `actions` - the basic implementation of an action, essentially a
+    function declaration. for example, `copy` requires arguments of
+    `object` and a `target` to place the object in.  at this level,
+    it is reusable in a CLI.
+> * `context menu actions` - has criteria for what it applies to.
+    when it is visible, and defines how to get extra > input from a
+    user to complete that action. UI concern only.
+> * `gesture-handler` - allows for mapping a `gesture` to an action,
+    e.g. drag and drop for link.  UI Concern only.
+
+> We could add context menu actions for domain objects which navigate
+to that object, without having to implement an action that has no real
+usage on a command line / backend.
+
+### Benefits
+
+* Clearly delineates concerns (UI versus model)
+
+### Detriments
+
+* Increases number of interfaces.
+
+## Add gesture handlers
+
+See [Add new abstractions for actions](#add-new-abstractions-for-actions);
+adding an intermediary between gestures and the actions that they
+trigger could be useful in separating concerns, and for more easily
+changing mappings in a mobile context.
+
+### Benefits
+
+* Clearly decouples UI concerns from the underlying model changes
+  they initiate.
+* Simplifies and clarifies mobile support.
+
+### Detriments
+
+* Increases number of interfaces.
