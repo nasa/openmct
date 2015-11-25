@@ -21,6 +21,11 @@
                 "key": "EditPanesController",
                 "implementation": "controllers/EditPanesController.js",
                 "depends": [ "$scope" ]
+            },
+            {
+                "key": "ElementsController",
+                "implementation": "controllers/ElementsController.js",
+                "depends": [ "$scope" ]
             }
         ],
         "directives": [
