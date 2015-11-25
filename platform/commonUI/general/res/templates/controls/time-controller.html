@@ -26,7 +26,7 @@
         <span class="l-time-range-input">
             <mct-control key="'datetime-field'"
                          structure="{ format: parameters.format, submit: updateBoundsFromForm }"
-                         ng-model="ngModel.outer"
+                         ng-model="formModel"
                          field="'start'"
                          class="time-range-start">
             </mct-control>
@@ -37,7 +37,7 @@
         <span class="l-time-range-input" ng-controller="ToggleController as t2">
             <mct-control key="'datetime-field'"
                          structure="{ format: parameters.format, submit: updateBoundsFromForm }"
-                         ng-model="ngModel.outer"
+                         ng-model="formModel"
                          field="'end'"
                          class="time-range-end">
             </mct-control>&nbsp;
