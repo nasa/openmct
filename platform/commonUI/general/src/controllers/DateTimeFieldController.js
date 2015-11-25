@@ -55,6 +55,7 @@ define(
                     $scope.textInvalid = false;
                     $scope.lastValidValue = $scope.textValue;
                 }
+                $scope.pickerModel = { value: value };
             }
 
             function updateFromView(textValue) {
@@ -63,6 +64,14 @@ define(
                     $scope.ngModel[$scope.field] =
                         formatter.parse(textValue);
                     $scope.lastValidValue = $scope.textValue;
+                }
+            }
+
+            function updateFromPicker(value) {
+                $scope.ngModel[$scope.field] = value;
+                updateFromModel(value);
+                if ($scope.structure && $scope.structure.submit) {
+                    $scope.structure.submit();
                 }
             }
 
@@ -82,6 +91,7 @@ define(
 
             $scope.$watch('structure.format', setFormat);
             $scope.$watch('ngModel[field]', updateFromModel);
+            $scope.$watch('pickerModel.value', updateFromPicker);
             $scope.$watch('textValue', updateFromView);
 
         }
