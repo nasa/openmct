@@ -53,6 +53,7 @@ define(
                         formatter.parse($scope.textValue) !== value) {
                     $scope.textValue = formatter.format(value);
                     $scope.textInvalid = false;
+                    $scope.lastValidValue = $scope.textValue;
                 }
             }
 
@@ -61,6 +62,7 @@ define(
                 if (!$scope.textInvalid) {
                     $scope.ngModel[$scope.field] =
                         formatter.parse(textValue);
+                    $scope.lastValidValue = $scope.textValue;
                 }
             }
 
@@ -68,6 +70,13 @@ define(
                 formatter = formatService.getFormat(format || defaultFormat);
                 updateFromModel($scope.ngModel[$scope.field]);
             }
+
+            function restoreValue() {
+                $scope.textValue = $scope.lastValidValue;
+                updateFromView($scope.textValue);
+            }
+
+            $scope.restoreValue = restoreValue;
 
             $scope.picker = { active: false };
 
