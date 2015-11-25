@@ -230,6 +230,10 @@ define(
             $scope.rightDrag = rightDrag;
             $scope.middleDrag = middleDrag;
 
+            $scope.updateBoundsFromForm = function () {
+                // TODO: update outer bounds
+            };
+
             $scope.ticks = [];
 
             // Initialize scope to defaults
