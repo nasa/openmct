@@ -55,12 +55,14 @@ define(
             $rootScope,
             popupService,
             agentService,
+            navigationService,
             actionContext
         ) {
             this.$compile = $compile;
             this.agentService = agentService;
             this.actionContext = actionContext;
             this.popupService = popupService;
+            this.navigationService = navigationService;
             this.getDocument = function () { return $document; };
             this.getRootScope = function () { return $rootScope; };
         }
@@ -81,6 +83,10 @@ define(
                         'touchstart' : 'mousedown',
                 menu,
                 popup;
+
+            if (this.navigationService.getNavigation() && this.navigationService.getNavigation().hasCapability('editor')){
+                return;
+            }
 
             // Remove the context menu
             function dismiss() {
