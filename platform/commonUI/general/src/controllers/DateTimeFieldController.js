@@ -68,10 +68,12 @@ define(
             }
 
             function updateFromPicker(value) {
-                $scope.ngModel[$scope.field] = value;
-                updateFromModel(value);
-                if ($scope.structure && $scope.structure.submit) {
-                    $scope.structure.submit();
+                if (value !== $scope.ngModel[$scope.field]) {
+                    $scope.ngModel[$scope.field] = value;
+                    updateFromModel(value);
+                    if ($scope.structure && $scope.structure.submit) {
+                        $scope.structure.submit();
+                    }
                 }
             }
 
