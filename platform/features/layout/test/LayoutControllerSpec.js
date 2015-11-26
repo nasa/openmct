@@ -33,7 +33,8 @@ define(
                 testConfiguration,
                 controller,
                 mockCompositionCapability,
-                mockComposition;
+                mockComposition,
+                mockCompositionObjects;
 
             function mockPromise(value){
                 return {
@@ -67,6 +68,7 @@ define(
                 testModel = {};
 
                 mockComposition = ["a", "b", "c"];
+                mockCompositionObjects = mockComposition.map(mockDomainObject);
 
                 testConfiguration = {
                     panels: {
@@ -77,7 +79,7 @@ define(
                     }
                 };
 
-                mockCompositionCapability = mockPromise(mockComposition.map(mockDomainObject));
+                mockCompositionCapability = mockPromise(mockCompositionObjects);
 
                 mockScope.domainObject = mockDomainObject("mockDomainObject");
                 mockScope.model = testModel;
@@ -106,6 +108,30 @@ define(
                     mockComposition
                 );
             });
+
+            it("Is robust to concurrent changes to composition", function () {
+                var secondMockComposition = ["a", "b", "c", "d"],
+                    secondMockCompositionObjects = secondMockComposition.map(mockDomainObject),
+                    firstCompositionCB,
+                    secondCompositionCB;
+
+                spyOn(mockCompositionCapability, "then");
+                mockScope.$watchCollection.mostRecentCall.args[1]();
+                mockScope.$watchCollection.mostRecentCall.args[1]();
+
+                firstCompositionCB = mockCompositionCapability.then.calls[0].args[0];
+                secondCompositionCB = mockCompositionCapability.then.calls[1].args[0];
+
+                //Resolve promises in reverse order
+                secondCompositionCB(secondMockCompositionObjects);
+                firstCompositionCB(mockCompositionObjects);
+
+                //Expect the promise call that was initiated most recently to
+                // be the one used to populate scope, irrespective of order that
+                // it was eventually resolved
+                expect(mockScope.composition).toBe(secondMockCompositionObjects);
+            });
+
 
             it("provides styles for frames, from configuration", function () {
                 mockScope.$watchCollection.mostRecentCall.args[1]();

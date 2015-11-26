@@ -45,7 +45,8 @@ define(
          * @param {Scope} $scope the controller's Angular scope
          */
         function LayoutController($scope) {
-            var self = this;
+            var self = this,
+                callbackCount = 0;
 
             // Update grid size when it changed
             function updateGridSize(layoutGrid) {
@@ -91,23 +92,26 @@ define(
                 e.preventDefault();
             }
 
-            function getComposition(domainObject){
-                return domainObject.useCapability('composition');
-            }
-
-            function composeView (composition){
-                $scope.composition = composition;
-                return composition.map(function (object) {
-                        return object.getId();
-                    }) || [];
-            }
-
             //Will fetch fully contextualized composed objects, and populate
             // scope with them.
-            function refreshComposition(ids) {
-                return getComposition($scope.domainObject)
-                    .then(composeView)
-                    .then(function(ids){self.layoutPanels(ids);});
+            function refreshComposition() {
+                //Keep a track of how many composition callbacks have been made
+                var thisCount = ++callbackCount;
+
+                $scope.domainObject.useCapability('composition').then(function(composition){
+                    var ids;
+
+                    //Is this callback for the most recent composition
+                    // request? If not, discard it. Prevents race condition
+                    if (thisCount === callbackCount){
+                        ids = composition.map(function (object) {
+                                return object.getId();
+                            }) || [];
+
+                        $scope.composition = composition;
+                        self.layoutPanels(ids);
+                    }
+                });
             }
 
             // End drag; we don't want to put $scope into this
