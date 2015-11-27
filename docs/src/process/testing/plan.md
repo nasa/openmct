@@ -25,6 +25,11 @@ Testing for Open MCT Web includes:
 
 Tests are performed at various levels of frequency.
 
+* _Per-merge_: Performed before any new changes are integrated into
+  the software.
+* _Per-sprint_: Performed at the end of every [sprint](../cycle.md).
+* _Per-release: Performed at the end of every [release](../cycle.md).
+
 ### Per-merge Testing
 
 Before changes are merged, the author of the changes must perform:
@@ -39,4 +44,27 @@ by the [Author Checklist](https://github.com/nasa/openmctweb/blob/master/CONTRIB
 
 ### Per-sprint Testing
 
+Before a sprint is closed, the development team must additionally
+perform:
+
+* _User testing_ (both generally, and for areas which interact with
+  changes made during the sprint.)
+* _Long-duration testing_ (specifically, for 24 hours.)
+
+Issues are reported as a product of both forms of testing.
+
+A sprint is not closed until both categories have been performed on
+the latest snapshot of the software, _and_ no issues labelled as
+["blocker"](https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#issue-reporting)
+remain open.
+
 ### Per-release Testing
+
+As [per-sprint testing](#per-sprint-testing), except that _user testing_
+should be comprehensive, with less focus on changes from the specific
+sprint or release.
+
+A release is not closed until both categories have been performed on
+the latest snapshot of the software, _and_ no issues labelled as
+["blocker" or "critical"](https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#issue-reporting)
+remain open.
