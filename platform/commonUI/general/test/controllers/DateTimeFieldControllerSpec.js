@@ -184,10 +184,6 @@ define(
                 }).toThrow();
             });
 
-            describe("when values are changed via the date picker", function () {
-
-            });
-
             describe("using the obtained format", function () {
                 var testValue = 1234321,
                     testText = "some text";
