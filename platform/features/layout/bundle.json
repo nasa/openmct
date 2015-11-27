@@ -19,7 +19,6 @@
                 "type": "telemetry.panel",
                 "templateUrl": "templates/fixed.html",
                 "uses": [ "composition" ],
-                "gestures": [ "drop" ],
                 "toolbar": {
                     "sections": [
                         {

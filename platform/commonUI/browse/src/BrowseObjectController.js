@@ -56,9 +56,11 @@ define(
             }
 
             function updateQueryParam(viewKey) {
-                var unlisten, priorRoute = $route.current;
+                var unlisten,
+                    priorRoute = $route.current,
+                    editMode = $scope.domainObject && $scope.domainObject.hasCapability('editor');
 
-                if (viewKey) {
+                if (viewKey && !editMode) {
                     $location.search('view', viewKey);
                     unlisten = $scope.$on('$locationChangeSuccess', function () {
                         // Checks path to make sure /browse/ is at front
