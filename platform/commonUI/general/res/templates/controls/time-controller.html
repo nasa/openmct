@@ -25,8 +25,9 @@
         <span class="l-time-range-inputs-elem ui-symbol type-icon">&#x43;</span>
         <span class="l-time-range-input">
             <mct-control key="'datetime-field'"
-                         structure="{ format: parameters.format, submit: updateBoundsFromForm }"
+                         structure="{ format: parameters.format }"
                          ng-model="formModel"
+                         ng-blur="updateBoundsFromForm()"
                          field="'start'"
                          class="time-range-start">
             </mct-control>
@@ -38,6 +39,7 @@
             <mct-control key="'datetime-field'"
                          structure="{ format: parameters.format, submit: updateBoundsFromForm }"
                          ng-model="formModel"
+                         ng-blur="updateBoundsFromForm()"
                          field="'end'"
                          class="time-range-end">
             </mct-control>&nbsp;
