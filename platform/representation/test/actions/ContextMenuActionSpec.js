@@ -47,8 +47,6 @@ define(
                 mockScope,
                 mockElement,
                 mockDomainObject,
-                mockNavigatedObject,
-                mockNavigationService,
                 mockEvent,
                 mockPopup,
                 mockActionContext,
@@ -69,11 +67,9 @@ define(
                 ]);
                 mockRootScope = jasmine.createSpyObj("$rootScope", ["$new"]);
                 mockAgentService = jasmine.createSpyObj("agentService", ["isMobile"]);
-                mockNavigationService = jasmine.createSpyObj("navigationService", ["getNavigation"]);
                 mockScope = jasmine.createSpyObj("scope", ["$destroy"]);
                 mockElement = jasmine.createSpyObj("element", JQLITE_FUNCTIONS);
                 mockDomainObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
-                mockNavigatedObject = jasmine.createSpyObj("domainObject", DOMAIN_OBJECT_METHODS);
                 mockEvent = jasmine.createSpyObj("event", ["preventDefault", "stopPropagation"]);
                 mockEvent.pageX = 123;
                 mockEvent.pageY = 321;
@@ -83,7 +79,6 @@ define(
                 mockDocument.find.andReturn(mockBody);
                 mockRootScope.$new.andReturn(mockScope);
                 mockPopupService.display.andReturn(mockPopup);
-                mockNavigationService.getNavigation.andReturn(mockNavigatedObject);
 
                 mockActionContext = {key: 'menu', domainObject: mockDomainObject, event: mockEvent};
 
@@ -93,7 +88,6 @@ define(
                     mockRootScope,
                     mockPopupService,
                     mockAgentService,
-                    mockNavigationService,
                     mockActionContext
                 );
             });
@@ -188,15 +182,6 @@ define(
                 expect(mockBody.off).not.toHaveBeenCalled();
             });
 
-            it("is not active when in edit mode", function () {
-                mockNavigatedObject.hasCapability.andReturn(true);
-
-                // Show the menu
-                action.perform();
-
-                expect(mockPopupService.display).not.toHaveBeenCalled();
-            });
-
             it("keeps a menu when menu is clicked on mobile", function () {
                 mockAgentService.isMobile.andReturn(true);
                 action = new ContextMenuAction(
@@ -205,7 +190,6 @@ define(
                     mockRootScope,
                     mockPopupService,
                     mockAgentService,
-                    mockNavigationService,
                     mockActionContext
                 );
                 action.perform();
