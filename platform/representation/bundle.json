@@ -67,8 +67,7 @@
                     "$document",
                     "$rootScope",
                     "popupService",
-                    "agentService",
-                    "navigationService"
+                    "agentService"
                 ]
             }
         ]

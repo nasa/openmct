@@ -64,8 +64,7 @@ define(
                     domainObject.getCapability('action').perform({
                         key: 'menu',
                         domainObject: domainObject,
-                        event: event,
-                        element: element
+                        event: event
                     });
                 }
             }
