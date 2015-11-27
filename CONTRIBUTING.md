@@ -292,6 +292,7 @@ checklist.)
 2. Unit tests included and/or updated with changes?
 3. Command line build passes?
 4. Expect to pass code review?
+5. Changes have been smoke-tested?
 
 ### Reviewer Checklist
 
