@@ -27,15 +27,9 @@ Unit tests are automated tests which exercise individual software
 components. Tests are subject to code review along with the actual
 implementation, to ensure that tests are applicable and useful.
 
-Examples of useful tests:
-
-* Tests which replicate bugs (or their root causes) to verify their resolution.
-* Tests which reflect details from software specifications.
-* Tests which exercise edge or corner cases among inputs.
-* Tests which verify expected interactions with other components in the system.
-
-During automated testing, code coverage metrics will be reported.
-Line coverage must remain at or above 80%.
+Unit tests should meet
+[test standards](https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#test-standards)
+as described in the contributing guide.
 
 ### User Testing
 
