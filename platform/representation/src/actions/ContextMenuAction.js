@@ -82,11 +82,7 @@ define(
                 initiatingEvent = this.agentService.isMobile() ?
                         'touchstart' : 'mousedown',
                 menu,
-                popup;
-
-            if (this.navigationService.getNavigation() && this.navigationService.getNavigation().hasCapability('editor')){
-                return;
-            }
+                popup
 
             // Remove the context menu
             function dismiss() {

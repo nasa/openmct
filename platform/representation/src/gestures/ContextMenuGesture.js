@@ -41,16 +41,33 @@ define(
          *                       in the context menu will be performed
          * @implements {Gesture}
          */
-        function ContextMenuGesture($timeout, agentService, element, domainObject) {
+        function ContextMenuGesture($timeout, $parse, agentService, navigationService, element, domainObject) {
             var isPressing,
-                longTouchTime = 500;
+                longTouchTime = 500,
+                parameters = element && element.attr('parameters') && $parse(element.attr('parameters'))()
+
+            function suppressMenu(){
+                return parameters
+                && parameters.suppressMenuOnEdit
+                && navigationService.getNavigation()
+                && navigationService.getNavigation().hasCapability('editor');
+            }
 
             function showMenu(event) {
-                domainObject.getCapability('action').perform({
-                    key: 'menu',
-                    domainObject: domainObject,
-                    event: event
-                });
+                /**
+                 * Some menu items should have the context menu action
+                 * suppressed (eg. the navigation menu on the left)
+                 */
+                if (suppressMenu()){
+                    return;
+                } else {
+                    domainObject.getCapability('action').perform({
+                        key: 'menu',
+                        domainObject: domainObject,
+                        event: event,
+                        element: element
+                    });
+                }
             }
 
             // When context menu event occurs, show object actions instead
