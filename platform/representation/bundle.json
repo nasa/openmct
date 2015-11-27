@@ -27,7 +27,8 @@
             {
                 "key": "menu",
                 "implementation": "gestures/ContextMenuGesture.js",
-                "depends": ["$timeout", "agentService"]
+                "depends": ["$timeout", "$parse", "agentService",
+                    "navigationService"]
             }
         ],
         "components": [
@@ -66,8 +67,7 @@
                     "$document",
                     "$rootScope",
                     "popupService",
-                    "agentService",
-                    "navigationService"
+                    "agentService"
                 ]
             }
         ]
