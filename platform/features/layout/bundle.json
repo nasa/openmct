@@ -9,7 +9,7 @@
                 "glyph": "L",
                 "type": "layout",
                 "templateUrl": "templates/layout.html",
-                "uses": [ "composition" ],
+                "uses": [],
                 "gestures": [ "drop" ]
             },
             {
