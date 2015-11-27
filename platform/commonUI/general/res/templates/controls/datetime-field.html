@@ -2,7 +2,7 @@
       ng-controller="DateTimeFieldController">
     <input type="text"
            ng-model="textValue"
-           ng-blur="restoreValue(); structure.submit()"
+           ng-blur="restoreValue(); ngBlur()"
            ng-class="{ error: textInvalid }">
     </input>
     <a class="ui-symbol icon icon-calendar"
