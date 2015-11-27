@@ -17,9 +17,49 @@ Testing for Open MCT Web includes:
 
 ### Smoke Testing
 
+Manual, non-rigorous testing of the software and/or specific features
+of interest. Verifies that the software runs and that basic functionality
+is present.
+
 ### Unit Testing
 
+Unit tests are automated tests which exercise individual software
+components. Tests are subject to code review along with the actual
+implementation, to ensure that tests are applicable and useful.
+
+Examples of useful tests:
+
+* Tests which replicate bugs (or their root causes) to verify their resolution.
+* Tests which reflect details from software specifications.
+* Tests which exercise edge or corner cases among inputs.
+* Tests which verify expected interactions with other components in the system.
+
+During automated testing, code coverage metrics will be reported.
+Line coverage must remain at or above 80%.
+
 ### User Testing
+
+User testing is performed at scheduled times involving target users
+of the software or reasonable representatives, along with members of
+the development team exercising known use cases. Users test the
+software directly; the software should be configured as similarly to
+its planned production configuration as is feasible without introducing
+other risks (e.g. damage to data in a production instance.)
+
+User testing will focus on the following activities:
+
+* Verifying issues resolved since the last test session.
+* Checking for regressions in areas related to recent changes.
+* Using major or important features of the software,
+  as determined by the user.
+* General "trying to break things."
+
+Desired outcomes of user testing are:
+
+* Identified software defects.
+* Areas for usability improvement.
+* Feature requests (particularly missed requirements.)
+* Recorded issue verification.
 
 ## Test Performance
 
