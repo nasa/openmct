@@ -87,7 +87,7 @@ Tests are performed at various levels of frequency.
 * _Per-merge_: Performed before any new changes are integrated into
   the software.
 * _Per-sprint_: Performed at the end of every [sprint](../cycle.md).
-* _Per-release: Performed at the end of every [release](../cycle.md).
+* _Per-release_: Performed at the end of every [release](../cycle.md).
 
 ### Per-merge Testing
 
