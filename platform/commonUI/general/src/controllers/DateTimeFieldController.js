@@ -82,12 +82,12 @@ define(
                 updateFromModel($scope.ngModel[$scope.field]);
             }
 
-            function restoreValue() {
+            function restoreTextValue() {
                 $scope.textValue = $scope.lastValidValue;
                 updateFromView($scope.textValue);
             }
 
-            $scope.restoreValue = restoreValue;
+            $scope.restoreTextValue = restoreTextValue;
 
             $scope.picker = { active: false };
 

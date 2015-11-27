@@ -126,11 +126,12 @@ define(
             });
 
             describe("when user input is invalid", function () {
-                var newText, oldValue;
+                var newText, oldText, oldValue;
 
                 beforeEach(function () {
                     newText = "Not a date";
                     oldValue = mockScope.ngModel.testField;
+                    oldText = mockScope.textValue;
                     mockScope.textValue = newText;
                     fireWatch("textValue", newText);
                 });
@@ -145,6 +146,11 @@ define(
 
                 it("does not modify user input", function () {
                     expect(mockScope.textValue).toEqual(newText);
+                });
+
+                it("restores valid text values on request", function () {
+                    mockScope.restoreTextValue();
+                    expect(mockScope.textValue).toEqual(oldText);
                 });
             });
 
