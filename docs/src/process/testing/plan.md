@@ -54,12 +54,31 @@ User testing will focus on the following activities:
   as determined by the user.
 * General "trying to break things."
 
+During user testing, users will
+[report issues](https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#issue-reporting)
+as they are encountered.
+
 Desired outcomes of user testing are:
 
 * Identified software defects.
 * Areas for usability improvement.
 * Feature requests (particularly missed requirements.)
 * Recorded issue verification.
+
+### Long-duration Testing
+
+Long-duration testing occurs over a twenty-four hour period. The
+software is run in one or more stressing cases representative of expected
+usage. After twenty-four hours, the software is evaluated for:
+
+* Performance metrics: Have memory usage or CPU utilization increased
+  during this time period in unexpected or undesirable ways?
+* Subjective usability: Does the software behave in the same way it did
+  at the start of the test? Is it as responsive?
+
+Any defects or unexpected behavior identified during testing should be
+[reported as issues](https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#issue-reporting)
+and reviewed for severity.
 
 ## Test Performance
 
