@@ -77,7 +77,7 @@ for the subsequent sprint.
 |:-----:|:-------------------------:|:------:|:---:|:----------------------------:|:-----------:|
 | __1__ | Sprint plan               | Tag-up |     |                              |             |
 | __2__ |                           | Tag-up |     |                              | Code freeze |
-| __3__ | Sprint acceptance testing | Triage |     | _Sprint acceptance testing*_ | Ship        |
+| __3__ | Per-sprint testing        | Triage |     | _Per-sprint testing*_        | Ship        |
 
 &ast; If necessary.
 
@@ -90,8 +90,8 @@ emphasis on testing.
 | Week   | Mon                       | Tue    | Wed | Thu                          | Fri         |
 |-------:|:-------------------------:|:------:|:---:|:----------------------------:|:-----------:|
 | __1__  | Sprint plan               | Tag-up |     |                              | Code freeze |
-| __2__  | Acceptance testing        | Triage |     |                              |             |
-| __3__  | _Acceptance testing*_     | Triage |     | _Acceptance testing*_        | Ship        |
+| __2__  | Per-release testing       | Triage |     |                              |             |
+| __3__  | _Per-release testing*_    | Triage |     | _Per-release testing*_       | Ship        |
 
 &ast; If necessary.
 
@@ -113,7 +113,8 @@ emphasis on testing.
   (and until the end of the sprint) the only changes that should be
   merged into the master branch should directly address issues
   needed to pass acceptance testing.
-* __Acceptance Testing.__ Structured testing with predefined
+* [__Per-release Testing.__](testing/plan.md#per-release-testing)
+  Structured testing with predefined
   success criteria. No release should ship without passing
   acceptance tests. Time is allocated in each sprint for subsequent
   rounds of acceptance testing if issues are identified during a
@@ -122,23 +123,27 @@ emphasis on testing.
   and should be flexible enough to allow changes to plans
   (e.g. deferring delivery of some feature in order to ensure
   stability of other features.) Baseline testing includes:
-  * __Testathon.__ Multi-user testing, involving as many users as
+  * [__Testathon.__](testing/plan.md#user-testing)
+    Multi-user testing, involving as many users as
     is feasible, plus development team. Open-ended; should verify
     completed work from this sprint, test exploratorily for
     regressions, et cetera.
-  * __24-Hour Test.__ A test to verify that the software remains
+  * [__Long-Duration Test.__](testing/plan.md#long-duration-testing) A
+    test to verify that the software remains
     stable after running for longer durations. May include some
     combination of automated testing and user verification (e.g.
     checking to verify that software remains subjectively
     responsive at conclusion of test.)
-  * __Automated Testing.__ Automated testing integrated into the
+  * [__Unit Testing.__](testing/plan.md#unit-testing)
+    Automated testing integrated into the
     build. (These tests are verified to pass more often than once
     per sprint, as they run before any merge to master, but still
-    play an important role in acceptance testing.)
-* __Sprint Acceptance Testing.__ Subset of Acceptance Testing
+    play an important role in per-release testing.)
+* [__Per-sprint Testing.__](testing/plan.md#per-sprint-testing)
+  Subset of Pre-release Testing
   which should be performed before shipping at the end of any
   sprint. Time is allocated for a second round of
-  Sprint Acceptance Testing if the first round is not passed.
+  Pre-release Testing if the first round is not passed.
 * __Triage.__ Team reviews issues from acceptance testing and uses
   success criteria to determine whether or not they should block
   release, then formulates a plan to address these issues before

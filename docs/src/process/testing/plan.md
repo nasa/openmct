@@ -123,6 +123,9 @@ As [per-sprint testing](#per-sprint-testing), except that _user testing_
 should be comprehensive, with less focus on changes from the specific
 sprint or release.
 
+Per-release testing should also include any acceptance testing steps
+agreed upon with recipients of the software.
+
 A release is not closed until both categories have been performed on
 the latest snapshot of the software, _and_ no issues labelled as
 ["blocker" or "critical"](https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#issue-reporting)
