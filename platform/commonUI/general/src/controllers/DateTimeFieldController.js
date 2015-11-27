@@ -71,8 +71,8 @@ define(
                 if (value !== $scope.ngModel[$scope.field]) {
                     $scope.ngModel[$scope.field] = value;
                     updateFromModel(value);
-                    if ($scope.structure && $scope.structure.submit) {
-                        $scope.structure.submit();
+                    if ($scope.ngBlur) {
+                        $scope.ngBlur();
                     }
                 }
             }
