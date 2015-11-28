@@ -143,7 +143,8 @@ ul.tree {
 		}
 	}
 
-    &.active {
+    //&.active {
+ 	mct-representation.s-status-editing & {
         // The item is being edited
         background: $colorItemTreeEditingBg; //rgba($colorItemTreeSelectedBg, 0.2) !important;
         pointer-events: none;

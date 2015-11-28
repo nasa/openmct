@@ -20,7 +20,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 5, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 5, ../../../../../../../../../.rvm/gems/ruby-2.2.3/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -41,38 +41,38 @@ time, mark, audio, video {
   font-size: 100%;
   vertical-align: baseline; }
 
-/* line 22, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 22, ../../../../../../../../../.rvm/gems/ruby-2.2.3/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 html {
   line-height: 1; }
 
-/* line 24, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 24, ../../../../../../../../../.rvm/gems/ruby-2.2.3/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 ol, ul {
   list-style: none; }
 
-/* line 26, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 26, ../../../../../../../../../.rvm/gems/ruby-2.2.3/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
-/* line 28, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 28, ../../../../../../../../../.rvm/gems/ruby-2.2.3/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 caption, th, td {
   text-align: left;
   font-weight: normal;
   vertical-align: middle; }
 
-/* line 30, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 30, ../../../../../../../../../.rvm/gems/ruby-2.2.3/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 q, blockquote {
   quotes: none; }
-  /* line 103, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+  /* line 103, ../../../../../../../../../.rvm/gems/ruby-2.2.3/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
   q:before, q:after, blockquote:before, blockquote:after {
     content: "";
     content: none; }
 
-/* line 32, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 32, ../../../../../../../../../.rvm/gems/ruby-2.2.3/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 a img {
   border: none; }
 
-/* line 116, ../../../../../../../../../../../Library/Ruby/Gems/2.0.0/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
+/* line 116, ../../../../../../../../../.rvm/gems/ruby-2.2.3/gems/compass-core-1.0.3/stylesheets/compass/reset/_utilities.scss */
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary {
   display: block; }
 
@@ -173,7 +173,7 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 /* REQUIRES /platform/commonUI/general/res/sass/_constants.scss */
 /************************** MOBILE REPRESENTATION ITEMS DIMENSIONS */
 /************************** MOBILE TREE MENU DIMENSIONS */
-/************************** WINDOW DIMENSIONS FOR RWD */
+/************************** DEVICE WIDTHS */
 /************************** MEDIA QUERIES: WINDOW CHECKS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
 /************************** MEDIA QUERIES: WINDOWS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
 /************************** DEVICE PARAMETERS FOR MENUS/REPRESENTATIONS */
@@ -783,41 +783,40 @@ mct-container {
     border-right: 5px solid transparent; }
 
 /* line 31, ../../../../general/res/sass/_icons.scss */
-.ui-symbol, .t-item-icon, .s-icon-btn, .l-datetime-picker .l-month-year-pager .pager, .tree-item.active:before,
-.search-result-item.active:before {
+.ui-symbol, .t-item-icon, .s-icon-btn, .l-datetime-picker .l-month-year-pager .pager, mct-representation.s-status-editing .tree-item:before, mct-representation.s-status-editing
+.search-result-item:before {
   font-family: 'symbolsfont'; }
   /* line 33, ../../../../general/res/sass/_icons.scss */
-  .ui-symbol.type-icon, .type-icon.t-item-icon, .type-icon.s-icon-btn, .l-datetime-picker .l-month-year-pager .type-icon.pager, .type-icon.tree-item.active:before,
-  .type-icon.search-result-item.active:before {
+  .ui-symbol.type-icon, .type-icon.t-item-icon, .type-icon.s-icon-btn, .l-datetime-picker .l-month-year-pager .type-icon.pager, mct-representation.s-status-editing .type-icon.tree-item:before, mct-representation.s-status-editing
+  .type-icon.search-result-item:before {
     color: #cccccc; }
   /* line 36, ../../../../general/res/sass/_icons.scss */
-  .ui-symbol.icon, .t-item-icon, .icon.s-icon-btn, .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .icon.tree-item.active:before, .tree-item.active.t-item-icon:before,
-  .icon.search-result-item.active:before,
-  .search-result-item.active.t-item-icon:before {
+  .ui-symbol.icon, .t-item-icon, .icon.s-icon-btn, .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .pager.t-item-icon, mct-representation.s-status-editing .icon.tree-item:before, mct-representation.s-status-editing .tree-item.t-item-icon:before, mct-representation.s-status-editing
+  .icon.search-result-item:before, mct-representation.s-status-editing
+  .search-result-item.t-item-icon:before {
     color: #0099cc;
     font-size: inherit; }
     /* line 40, ../../../../general/res/sass/_icons.scss */
-    .ui-symbol.icon.alert, .alert.t-item-icon, .icon.alert.s-icon-btn, .l-datetime-picker .l-month-year-pager .icon.alert.pager, .l-datetime-picker .l-month-year-pager .alert.pager.t-item-icon, .icon.alert.tree-item.active:before, .alert.tree-item.active.t-item-icon:before,
-    .icon.alert.search-result-item.active:before,
-    .alert.search-result-item.active.t-item-icon:before {
+    .ui-symbol.icon.alert, .alert.t-item-icon, .icon.alert.s-icon-btn, .l-datetime-picker .l-month-year-pager .icon.alert.pager, .l-datetime-picker .l-month-year-pager .alert.pager.t-item-icon, mct-representation.s-status-editing .icon.alert.tree-item:before, mct-representation.s-status-editing .alert.tree-item.t-item-icon:before, mct-representation.s-status-editing
+    .icon.alert.search-result-item:before, mct-representation.s-status-editing
+    .alert.search-result-item.t-item-icon:before {
       color: #ff3c00; }
       /* line 42, ../../../../general/res/sass/_icons.scss */
-      .ui-symbol.icon.alert:hover, .alert.t-item-icon:hover, .icon.alert.s-icon-btn:hover, .l-datetime-picker .l-month-year-pager .icon.alert.pager:hover, .icon.alert.tree-item.active:hover:before, .alert.tree-item.active.t-item-icon:hover:before,
-      .icon.alert.search-result-item.active:hover:before,
-      .alert.search-result-item.active.t-item-icon:hover:before {
+      .ui-symbol.icon.alert:hover, .alert.t-item-icon:hover, .icon.alert.s-icon-btn:hover, .l-datetime-picker .l-month-year-pager .icon.alert.pager:hover, mct-representation.s-status-editing .icon.alert.tree-item:hover:before, mct-representation.s-status-editing .alert.tree-item.t-item-icon:hover:before, mct-representation.s-status-editing
+      .icon.alert.search-result-item:hover:before, mct-representation.s-status-editing
+      .alert.search-result-item.t-item-icon:hover:before {
         color: #ff8a66; }
     /* line 46, ../../../../general/res/sass/_icons.scss */
-    .ui-symbol.icon.major, .major.t-item-icon, .icon.major.s-icon-btn, .l-datetime-picker .l-month-year-pager .icon.major.pager, .l-datetime-picker .l-month-year-pager .major.pager.t-item-icon, .icon.major.tree-item.active:before, .major.tree-item.active.t-item-icon:before,
-    .icon.major.search-result-item.active:before,
-    .major.search-result-item.active.t-item-icon:before {
+    .ui-symbol.icon.major, .major.t-item-icon, .icon.major.s-icon-btn, .l-datetime-picker .l-month-year-pager .icon.major.pager, .l-datetime-picker .l-month-year-pager .major.pager.t-item-icon, mct-representation.s-status-editing .icon.major.tree-item:before, mct-representation.s-status-editing .major.tree-item.t-item-icon:before, mct-representation.s-status-editing
+    .icon.major.search-result-item:before, mct-representation.s-status-editing
+    .major.search-result-item.t-item-icon:before {
       font-size: 1.65em; }
   /* line 50, ../../../../general/res/sass/_icons.scss */
   .ui-symbol.icon-calendar:after, .icon-calendar.t-item-icon:after, .icon-calendar.s-icon-btn:after, .l-datetime-picker .l-month-year-pager .icon-calendar.pager:after {
     content: "\e605"; }
 
 /* line 55, ../../../../general/res/sass/_icons.scss */
-.bar .ui-symbol, .bar .t-item-icon, .bar .s-icon-btn, .bar .l-datetime-picker .l-month-year-pager .pager, .l-datetime-picker .l-month-year-pager .bar .pager, .bar .tree-item.active:before,
-.bar .search-result-item.active:before {
+.bar .ui-symbol, .bar .t-item-icon, .bar .s-icon-btn, .bar .l-datetime-picker .l-month-year-pager .pager, .l-datetime-picker .l-month-year-pager .bar .pager, .bar mct-representation.s-status-editing .tree-item:before, mct-representation.s-status-editing .bar .tree-item:before, .bar mct-representation.s-status-editing .search-result-item:before, mct-representation.s-status-editing .bar .search-result-item:before {
   display: inline-block; }
 
 /* line 59, ../../../../general/res/sass/_icons.scss */
@@ -1007,7 +1006,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     /* line 76, ../../../../general/res/sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-left .l-infobubble::before {
       right: 100%; }
-      @media screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+      @media screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (min-device-width: 1281px) {
         /* line 76, ../../../../general/res/sass/helpers/_bubbles.scss */
         .l-infobubble-wrapper.arw-left .l-infobubble::before {
           width: 0;
@@ -1015,14 +1014,14 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
           border-top: 6.66667px solid transparent;
           border-bottom: 6.66667px solid transparent;
           border-right: 10px solid #ddd; } }
-  @media screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+  @media screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (min-device-width: 1281px) {
     /* line 88, ../../../../general/res/sass/helpers/_bubbles.scss */
     .l-infobubble-wrapper.arw-right {
       margin-right: 20px; } }
   /* line 95, ../../../../general/res/sass/helpers/_bubbles.scss */
   .l-infobubble-wrapper.arw-right .l-infobubble::before {
     left: 100%; }
-    @media screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+    @media screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (min-device-width: 1281px) {
       /* line 95, ../../../../general/res/sass/helpers/_bubbles.scss */
       .l-infobubble-wrapper.arw-right .l-infobubble::before {
         width: 0;
@@ -1686,7 +1685,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     /* line 303, ../../../../general/res/sass/_mixins.scss */
     .s-btn.major .icon, .major.s-menu-btn .icon, .s-btn.major .t-item-icon, .major.s-menu-btn .t-item-icon {
       color: #fff; }
-    @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+    @media screen and (min-device-width: 1281px) {
       /* line 308, ../../../../general/res/sass/_mixins.scss */
       .s-btn.major:not(.disabled):hover, .major.s-menu-btn:not(.disabled):hover {
         background: linear-gradient(#1ac6ff, #00bfff); }
@@ -1725,7 +1724,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     /* line 303, ../../../../general/res/sass/_mixins.scss */
     .s-btn:not(.major) .icon, .s-menu-btn:not(.major) .icon, .s-btn:not(.major) .t-item-icon, .s-menu-btn:not(.major) .t-item-icon {
       color: #0099cc; }
-    @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+    @media screen and (min-device-width: 1281px) {
       /* line 308, ../../../../general/res/sass/_mixins.scss */
       .s-btn:not(.major):not(.disabled):hover, .s-menu-btn:not(.major):not(.disabled):hover {
         background: linear-gradient(#6b6b6b, #5e5e5e); }
@@ -1779,7 +1778,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     /* line 303, ../../../../general/res/sass/_mixins.scss */
     .s-btn.pause-play.paused .icon, .pause-play.paused.s-menu-btn .icon, .s-btn.pause-play.paused .t-item-icon, .pause-play.paused.s-menu-btn .t-item-icon {
       color: #fff; }
-    @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+    @media screen and (min-device-width: 1281px) {
       /* line 308, ../../../../general/res/sass/_mixins.scss */
       .s-btn.pause-play.paused:not(.disabled):hover, .pause-play.paused.s-menu-btn:not(.disabled):hover {
         background: linear-gradient(#fe9815, #f88c01); }
@@ -1825,15 +1824,8 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
   .s-btn.show-thumbs .icon:before, .show-thumbs.s-menu-btn .icon:before, .s-btn.show-thumbs .t-item-icon:before, .show-thumbs.s-menu-btn .t-item-icon:before {
     content: "\000039"; }
 
-/* line 109, ../../../../general/res/sass/controls/_buttons.scss */
-.s-icon-btn {
-  color: #0099cc; }
-  /* line 112, ../../../../general/res/sass/controls/_buttons.scss */
-  .s-icon-btn:hover {
-    color: #33ccff; }
-
-@media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 117, ../../../../general/res/sass/controls/_buttons.scss */
+@media screen and (min-device-width: 1281px) {
+  /* line 114, ../../../../general/res/sass/controls/_buttons.scss */
   .mini-tab {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -1867,10 +1859,10 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     height: 24px;
     width: 9px;
     text-align: center; }
-    /* line 146, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 143, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab:hover {
       color: #0099cc; }
-    /* line 151, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 148, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.collapsed {
       background-color: #454545;
       -moz-border-radius: 3px;
@@ -1902,27 +1894,27 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
       /* line 303, ../../../../general/res/sass/_mixins.scss */
       .mini-tab.collapsed .icon, .mini-tab.collapsed .t-item-icon {
         color: #0099cc; } }
-    @media screen and (min-device-width: 800px) and (min-device-height: 1025px) and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 800px) and (min-device-height: 1025px) and (min-device-width: 1025px) and (min-device-height: 800px), screen and (min-device-width: 1025px) and (min-device-height: 800px) and (min-device-width: 1025px) and (min-device-height: 800px) {
+    @media screen and (min-device-width: 1281px) and (min-device-width: 1281px) {
       /* line 308, ../../../../general/res/sass/_mixins.scss */
       .mini-tab.collapsed:not(.disabled):hover {
         background: linear-gradient(#6b6b6b, #5e5e5e); }
         /* line 310, ../../../../general/res/sass/_mixins.scss */
         .mini-tab.collapsed:not(.disabled):hover > .icon, .mini-tab.collapsed:not(.disabled):hover > .t-item-icon {
           color: #33ccff; } }
-@media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-      /* line 154, ../../../../general/res/sass/controls/_buttons.scss */
+@media screen and (min-device-width: 1281px) {
+      /* line 151, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.collapsed:before {
         opacity: 0; }
-      /* line 155, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 152, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.collapsed:after {
         opacity: 1; }
-      /* line 157, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 154, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.collapsed:hover:before {
         opacity: 1; }
-      /* line 158, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 155, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.collapsed:hover:after {
         opacity: 0; }
-    /* line 163, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 160, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab:before, .mini-tab:after {
       -moz-transition-property: left, right, opacity;
       -o-transition-property: left, right, opacity;
@@ -1943,22 +1935,22 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
       display: block;
       height: 100%;
       position: absolute; }
-    /* line 172, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 169, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab:before {
       width: 9px; }
-    /* line 178, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 175, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab:after {
       width: 100%;
       text-align: center;
       opacity: 0; }
-    /* line 185, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 182, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-left {
       text-align: right; }
-      /* line 188, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 185, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.anchor-left:before {
         content: '\3c';
         right: 0; }
-      /* line 193, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 190, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.anchor-left.collapsed {
         -moz-border-radius-topleft: 0;
         -webkit-border-top-left-radius: 0;
@@ -1967,21 +1959,21 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
         -webkit-border-bottom-left-radius: 0;
         border-bottom-left-radius: 0;
         text-align: left; }
-        /* line 196, ../../../../general/res/sass/controls/_buttons.scss */
+        /* line 193, ../../../../general/res/sass/controls/_buttons.scss */
         .mini-tab.anchor-left.collapsed:before {
           content: '\3e';
           left: 0; }
-        /* line 200, ../../../../general/res/sass/controls/_buttons.scss */
+        /* line 197, ../../../../general/res/sass/controls/_buttons.scss */
         .mini-tab.anchor-left.collapsed:hover:before {
           left: 2px; }
-    /* line 203, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 200, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab.anchor-right {
       text-align: left; }
-      /* line 206, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 203, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.anchor-right:before {
         content: '\3e';
         left: 0; }
-      /* line 211, ../../../../general/res/sass/controls/_buttons.scss */
+      /* line 208, ../../../../general/res/sass/controls/_buttons.scss */
       .mini-tab.anchor-right.collapsed {
         -moz-border-radius-topright: 0;
         -webkit-border-top-right-radius: 0;
@@ -1989,17 +1981,17 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
         -moz-border-radius-bottomright: 0;
         -webkit-border-bottom-right-radius: 0;
         border-bottom-right-radius: 0; }
-        /* line 213, ../../../../general/res/sass/controls/_buttons.scss */
+        /* line 210, ../../../../general/res/sass/controls/_buttons.scss */
         .mini-tab.anchor-right.collapsed:before {
           text-align: right;
           content: '\3c';
           right: 0; }
-        /* line 218, ../../../../general/res/sass/controls/_buttons.scss */
+        /* line 215, ../../../../general/res/sass/controls/_buttons.scss */
         .mini-tab.anchor-right.collapsed:hover:before {
           right: 2px; } }
 
-@media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 224, ../../../../general/res/sass/controls/_buttons.scss */
+@media screen and (min-device-width: 1281px) {
+  /* line 221, ../../../../general/res/sass/controls/_buttons.scss */
   .mini-tab-icon {
     color: #595959;
     cursor: pointer;
@@ -2012,31 +2004,31 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     line-height: 9px;
     overflow: hidden;
     word-break: break-all; }
-    /* line 241, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 238, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab-icon.collapsed {
       width: 11px;
       font-size: 11px; }
-    /* line 246, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 243, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab-icon:before, .mini-tab-icon:after {
       position: absolute;
       display: inherit; }
-    /* line 252, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 249, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab-icon:before {
       content: '\78'; }
-    /* line 256, ../../../../general/res/sass/controls/_buttons.scss */
+    /* line 253, ../../../../general/res/sass/controls/_buttons.scss */
     .mini-tab-icon:hover {
       color: #0099cc; } }
 
-/* line 263, ../../../../general/res/sass/controls/_buttons.scss */
+/* line 260, ../../../../general/res/sass/controls/_buttons.scss */
 .l-btn-set {
   font-size: 0; }
-  /* line 269, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 266, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .s-btn, .l-btn-set .s-menu-btn {
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
     border-radius: 0;
     margin-left: 1px; }
-  /* line 275, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 272, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .first .s-btn, .l-btn-set .first .s-menu-btn {
     -moz-border-radius-topleft: 3px;
     -webkit-border-top-left-radius: 3px;
@@ -2045,7 +2037,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     -webkit-border-bottom-left-radius: 3px;
     border-bottom-left-radius: 3px;
     margin-left: 0; }
-  /* line 282, ../../../../general/res/sass/controls/_buttons.scss */
+  /* line 279, ../../../../general/res/sass/controls/_buttons.scss */
   .l-btn-set .last .s-btn, .l-btn-set .last .s-menu-btn {
     -moz-border-radius-topright: 3px;
     -webkit-border-top-right-radius: 3px;
@@ -2054,7 +2046,7 @@ tr[class*="s-limit"].s-limit-lwr td:first-child:before {
     -webkit-border-bottom-right-radius: 3px;
     border-bottom-right-radius: 3px; }
 
-/* line 289, ../../../../general/res/sass/controls/_buttons.scss */
+/* line 286, ../../../../general/res/sass/controls/_buttons.scss */
 .paused:not(.s-btn):not(.s-menu-btn) {
   border-color: #c56f01 !important;
   color: #c56f01 !important; }
@@ -2330,13 +2322,15 @@ label.checkbox.custom {
   border-bottom: none; }
 
 /* line 190, ../../../../general/res/sass/controls/_controls.scss */
-.context-available {
+.context-available,
+.s-icon-btn {
   color: #0099cc; }
-  /* line 193, ../../../../general/res/sass/controls/_controls.scss */
-  .context-available:hover {
+  /* line 194, ../../../../general/res/sass/controls/_controls.scss */
+  .context-available:hover,
+  .s-icon-btn:hover {
     color: deepskyblue; }
 
-/* line 198, ../../../../general/res/sass/controls/_controls.scss */
+/* line 199, ../../../../general/res/sass/controls/_controls.scss */
 .view-switcher {
   -moz-transition-property: opacity, background-color, border-color, color;
   -o-transition-property: opacity, background-color, border-color, color;
@@ -2356,22 +2350,22 @@ label.checkbox.custom {
   transition-delay: 0; }
 
 /******************************************************** OBJECT-HEADER */
-/* line 203, ../../../../general/res/sass/controls/_controls.scss */
+/* line 204, ../../../../general/res/sass/controls/_controls.scss */
 .object-header {
   font-size: 1em; }
-  /* line 206, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 207, ../../../../general/res/sass/controls/_controls.scss */
   .object-header > .type-icon {
     color: #cccccc;
     font-size: 120%;
     float: left;
     margin-right: 5px; }
-  /* line 214, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 215, ../../../../general/res/sass/controls/_controls.scss */
   .object-header .l-elem-wrapper mct-representation {
     min-width: 0.7em; }
-  /* line 222, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 223, ../../../../general/res/sass/controls/_controls.scss */
   .object-header .action {
     margin-right: 5px; }
-  /* line 226, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 227, ../../../../general/res/sass/controls/_controls.scss */
   .object-header .title-label {
     color: #999;
     overflow: hidden;
@@ -2380,13 +2374,13 @@ label.checkbox.custom {
     flex: 0 1 auto;
     -webkit-flex: 0 1 auto;
     padding-right: 0.35em; }
-  /* line 233, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 234, ../../../../general/res/sass/controls/_controls.scss */
   .object-header .context-available {
     font-size: 0.7em;
     flex: 0 0 1;
     -webkit-flex: 0 0 1; }
-  @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-    /* line 239, ../../../../general/res/sass/controls/_controls.scss */
+  @media screen and (min-device-width: 1281px) {
+    /* line 240, ../../../../general/res/sass/controls/_controls.scss */
     .object-header .context-available {
       -moz-transition-property: opacity;
       -o-transition-property: opacity;
@@ -2405,7 +2399,7 @@ label.checkbox.custom {
       -webkit-transition-delay: 0;
       transition-delay: 0;
       opacity: 0; }
-    /* line 244, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 245, ../../../../general/res/sass/controls/_controls.scss */
     .object-header:hover .context-available {
       opacity: 1; } }
 
@@ -2419,12 +2413,12 @@ label.checkbox.custom {
 @keyframes progress {
   100% {
     background-position: 20px center; } }
-/* line 266, ../../../../general/res/sass/controls/_controls.scss */
+/* line 267, ../../../../general/res/sass/controls/_controls.scss */
 .l-progress-bar {
   display: inline-block;
   overflow: hidden;
   position: relative; }
-  /* line 272, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 273, ../../../../general/res/sass/controls/_controls.scss */
   .l-progress-bar .progress-amt-holder {
     overflow: hidden;
     position: absolute;
@@ -2434,7 +2428,7 @@ label.checkbox.custom {
     left: 1px;
     width: auto;
     height: auto; }
-  /* line 275, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 276, ../../../../general/res/sass/controls/_controls.scss */
   .l-progress-bar .progress-amt,
   .l-progress-bar .progress-amt:before,
   .l-progress-bar .progress-amt:after {
@@ -2448,14 +2442,14 @@ label.checkbox.custom {
     height: auto;
     display: block;
     content: ''; }
-  /* line 283, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 284, ../../../../general/res/sass/controls/_controls.scss */
   .l-progress-bar .progress-amt {
     right: auto; }
-  /* line 288, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 289, ../../../../general/res/sass/controls/_controls.scss */
   .l-progress-bar.indeterminate .progress-amt {
     width: 100% !important; }
 
-/* line 294, ../../../../general/res/sass/controls/_controls.scss */
+/* line 295, ../../../../general/res/sass/controls/_controls.scss */
 .s-progress-bar {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
@@ -2464,7 +2458,7 @@ label.checkbox.custom {
   -webkit-box-shadow: inset rgba(0, 0, 0, 0.3) 0 1px 4px;
   box-shadow: inset rgba(0, 0, 0, 0.3) 0 1px 4px;
   background: rgba(0, 0, 0, 0.1); }
-  /* line 298, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 299, ../../../../general/res/sass/controls/_controls.scss */
   .s-progress-bar .progress-amt {
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -2491,10 +2485,10 @@ label.checkbox.custom {
     -o-transition-delay: 0;
     -webkit-transition-delay: 0;
     transition-delay: 0; }
-    /* line 303, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 304, ../../../../general/res/sass/controls/_controls.scss */
     .s-progress-bar .progress-amt:before {
       background-color: #0099cc; }
-    /* line 306, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 307, ../../../../general/res/sass/controls/_controls.scss */
     .s-progress-bar .progress-amt:after {
       background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSI1JSIgc3RvcC1jb2xvcj0iIzAwMDAwMCIgc3RvcC1vcGFjaXR5PSIwLjAiLz48c3RvcCBvZmZzZXQ9IjMwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwLjI1Ii8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjMDAwMDAwIiBzdG9wLW9wYWNpdHk9IjAuMCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
@@ -2502,7 +2496,7 @@ label.checkbox.custom {
       background-image: -moz-linear-gradient(rgba(0, 0, 0, 0) 5%, rgba(255, 255, 255, 0.25) 30%, rgba(0, 0, 0, 0) 100%);
       background-image: -webkit-linear-gradient(rgba(0, 0, 0, 0) 5%, rgba(255, 255, 255, 0.25) 30%, rgba(0, 0, 0, 0) 100%);
       background-image: linear-gradient(rgba(0, 0, 0, 0) 5%, rgba(255, 255, 255, 0.25) 30%, rgba(0, 0, 0, 0) 100%); }
-  /* line 315, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 316, ../../../../general/res/sass/controls/_controls.scss */
   .s-progress-bar:not(.indeterminate) .progress-amt:before {
     -moz-animation: progress 0.4s linear infinite;
     -webkit-animation: progress 0.4s linear infinite;
@@ -2515,7 +2509,7 @@ label.checkbox.custom {
     background-position: 0 center;
     background-repeat: repeat-x;
     background-size: 20px 40%; }
-  /* line 323, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 324, ../../../../general/res/sass/controls/_controls.scss */
   .s-progress-bar.indeterminate .progress-amt:before {
     -moz-animation: progress 0.6s linear infinite;
     -webkit-animation: progress 0.6s linear infinite;
@@ -2527,12 +2521,12 @@ label.checkbox.custom {
     background-image: linear-gradient(-45deg, rgba(255, 255, 255, 0.2) 25%, rgba(0, 0, 0, 0) 25%, rgba(0, 0, 0, 0) 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, rgba(0, 0, 0, 0) 75%, rgba(0, 0, 0, 0) 100%);
     background-repeat: repeat;
     background-size: 20px 20px; }
-  /* line 328, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 329, ../../../../general/res/sass/controls/_controls.scss */
   .s-progress-bar.indeterminate .progress-amt:after {
     display: none; }
 
 /******************************************************** SLIDERS */
-/* line 336, ../../../../general/res/sass/controls/_controls.scss */
+/* line 337, ../../../../general/res/sass/controls/_controls.scss */
 .slider .slot {
   width: auto;
   position: absolute;
@@ -2540,7 +2534,7 @@ label.checkbox.custom {
   right: 0;
   bottom: 0;
   left: 0; }
-/* line 344, ../../../../general/res/sass/controls/_controls.scss */
+/* line 345, ../../../../general/res/sass/controls/_controls.scss */
 .slider .knob {
   -moz-transition-property: opacity, background-color, border-color, color;
   -o-transition-property: opacity, background-color, border-color, color;
@@ -2566,10 +2560,10 @@ label.checkbox.custom {
   auto: 0;
   bottom: auto;
   left: auto; }
-  /* line 347, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 348, ../../../../general/res/sass/controls/_controls.scss */
   .slider .knob:hover {
     background-color: #0099cc; }
-/* line 358, ../../../../general/res/sass/controls/_controls.scss */
+/* line 359, ../../../../general/res/sass/controls/_controls.scss */
 .slider .knob-l {
   -moz-border-radius-topleft: 10px;
   -webkit-border-top-left-radius: 10px;
@@ -2578,7 +2572,7 @@ label.checkbox.custom {
   -webkit-border-bottom-left-radius: 10px;
   border-bottom-left-radius: 10px;
   cursor: w-resize; }
-/* line 362, ../../../../general/res/sass/controls/_controls.scss */
+/* line 363, ../../../../general/res/sass/controls/_controls.scss */
 .slider .knob-r {
   -moz-border-radius-topright: 10px;
   -webkit-border-top-right-radius: 10px;
@@ -2587,7 +2581,7 @@ label.checkbox.custom {
   -webkit-border-bottom-right-radius: 10px;
   border-bottom-right-radius: 10px;
   cursor: e-resize; }
-/* line 366, ../../../../general/res/sass/controls/_controls.scss */
+/* line 367, ../../../../general/res/sass/controls/_controls.scss */
 .slider .range {
   -moz-transition-property: opacity, background-color, border-color, color;
   -o-transition-property: opacity, background-color, border-color, color;
@@ -2614,12 +2608,12 @@ label.checkbox.custom {
   left: auto;
   height: auto;
   width: auto; }
-  /* line 377, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 378, ../../../../general/res/sass/controls/_controls.scss */
   .slider .range:hover {
     background-color: rgba(0, 153, 204, 0.5); }
 
 /******************************************************** DATETIME PICKER */
-/* line 384, ../../../../general/res/sass/controls/_controls.scss */
+/* line 385, ../../../../general/res/sass/controls/_controls.scss */
 .l-datetime-picker {
   -moz-user-select: -moz-none;
   -ms-user-select: none;
@@ -2628,65 +2622,65 @@ label.checkbox.custom {
   font-size: 0.8rem;
   padding: 10px !important;
   width: 230px; }
-  /* line 390, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 391, ../../../../general/res/sass/controls/_controls.scss */
   .l-datetime-picker .l-month-year-pager {
     height: 15px;
     margin-bottom: 5px;
     position: relative; }
-    /* line 399, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 400, ../../../../general/res/sass/controls/_controls.scss */
     .l-datetime-picker .l-month-year-pager .pager {
       width: 20px; }
-      /* line 402, ../../../../general/res/sass/controls/_controls.scss */
+      /* line 403, ../../../../general/res/sass/controls/_controls.scss */
       .l-datetime-picker .l-month-year-pager .pager.prev {
         right: auto; }
-        /* line 404, ../../../../general/res/sass/controls/_controls.scss */
+        /* line 405, ../../../../general/res/sass/controls/_controls.scss */
         .l-datetime-picker .l-month-year-pager .pager.prev:before {
           content: "\3c"; }
-      /* line 408, ../../../../general/res/sass/controls/_controls.scss */
+      /* line 409, ../../../../general/res/sass/controls/_controls.scss */
       .l-datetime-picker .l-month-year-pager .pager.next {
         left: auto;
         text-align: right; }
-        /* line 411, ../../../../general/res/sass/controls/_controls.scss */
+        /* line 412, ../../../../general/res/sass/controls/_controls.scss */
         .l-datetime-picker .l-month-year-pager .pager.next:before {
           content: "\3e"; }
-    /* line 416, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 417, ../../../../general/res/sass/controls/_controls.scss */
     .l-datetime-picker .l-month-year-pager .val {
       text-align: center;
       left: 25px;
       right: 25px; }
-  /* line 422, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 423, ../../../../general/res/sass/controls/_controls.scss */
   .l-datetime-picker .l-calendar,
   .l-datetime-picker .l-time-selects {
     border-top: 1px solid rgba(153, 153, 153, 0.1); }
-  /* line 426, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 427, ../../../../general/res/sass/controls/_controls.scss */
   .l-datetime-picker .l-time-selects {
     line-height: 22px; }
 
 /******************************************************** CALENDAR */
-/* line 434, ../../../../general/res/sass/controls/_controls.scss */
+/* line 435, ../../../../general/res/sass/controls/_controls.scss */
 .l-calendar ul.l-cal-row {
   display: -webkit-flex;
   display: flex;
   -webkit-flex-flow: row nowrap;
   flex-flow: row nowrap;
   margin-top: 1px; }
-  /* line 438, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 439, ../../../../general/res/sass/controls/_controls.scss */
   .l-calendar ul.l-cal-row:first-child {
     margin-top: 0; }
-  /* line 441, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 442, ../../../../general/res/sass/controls/_controls.scss */
   .l-calendar ul.l-cal-row li {
     -webkit-flex: 1 0;
     flex: 1 0;
     margin-left: 1px;
     padding: 5px;
     text-align: center; }
-    /* line 446, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 447, ../../../../general/res/sass/controls/_controls.scss */
     .l-calendar ul.l-cal-row li:first-child {
       margin-left: 0; }
-  /* line 450, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 451, ../../../../general/res/sass/controls/_controls.scss */
   .l-calendar ul.l-cal-row.l-header li {
     color: #b3b3b3; }
-  /* line 453, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 454, ../../../../general/res/sass/controls/_controls.scss */
   .l-calendar ul.l-cal-row.l-body li {
     -moz-transition-property: background-color;
     -o-transition-property: background-color;
@@ -2705,31 +2699,31 @@ label.checkbox.custom {
     -webkit-transition-delay: 0;
     transition-delay: 0;
     cursor: pointer; }
-    /* line 456, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 457, ../../../../general/res/sass/controls/_controls.scss */
     .l-calendar ul.l-cal-row.l-body li.in-month {
       background-color: #616161; }
-    /* line 459, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 460, ../../../../general/res/sass/controls/_controls.scss */
     .l-calendar ul.l-cal-row.l-body li .sub {
       color: #b3b3b3;
       font-size: 0.8em; }
-    /* line 463, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 464, ../../../../general/res/sass/controls/_controls.scss */
     .l-calendar ul.l-cal-row.l-body li.selected {
       background: #006080;
       color: #cccccc; }
-      /* line 466, ../../../../general/res/sass/controls/_controls.scss */
+      /* line 467, ../../../../general/res/sass/controls/_controls.scss */
       .l-calendar ul.l-cal-row.l-body li.selected .sub {
         color: inherit; }
-    /* line 470, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 471, ../../../../general/res/sass/controls/_controls.scss */
     .l-calendar ul.l-cal-row.l-body li:hover {
       background-color: #0099cc;
       color: #fff; }
-      /* line 473, ../../../../general/res/sass/controls/_controls.scss */
+      /* line 474, ../../../../general/res/sass/controls/_controls.scss */
       .l-calendar ul.l-cal-row.l-body li:hover .sub {
         color: inherit; }
 
 /******************************************************** BROWSER ELEMENTS */
-@media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
-  /* line 484, ../../../../general/res/sass/controls/_controls.scss */
+@media screen and (min-device-width: 1281px) {
+  /* line 485, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar {
     -moz-border-radius: 2px;
     -webkit-border-radius: 2px;
@@ -2744,7 +2738,7 @@ label.checkbox.custom {
     height: 10px;
     width: 10px; }
 
-  /* line 493, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 494, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar-thumb {
     background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzU5NTk1OSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRkNGQ0ZCIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
     background-size: 100%;
@@ -2758,7 +2752,7 @@ label.checkbox.custom {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box; }
-    /* line 500, ../../../../general/res/sass/controls/_controls.scss */
+    /* line 501, ../../../../general/res/sass/controls/_controls.scss */
     ::-webkit-scrollbar-thumb:hover {
       background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzVlNWU1ZSIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzUyNTI1MiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
       background-size: 100%;
@@ -2767,7 +2761,7 @@ label.checkbox.custom {
       background-image: -webkit-linear-gradient(#5e5e5e, #525252 20px);
       background-image: linear-gradient(#5e5e5e, #525252 20px); }
 
-  /* line 505, ../../../../general/res/sass/controls/_controls.scss */
+  /* line 506, ../../../../general/res/sass/controls/_controls.scss */
   ::-webkit-scrollbar-corner {
     background: rgba(0, 0, 0, 0.4); } }
 /*****************************************************************************
@@ -2853,9 +2847,7 @@ label.checkbox.custom {
   left: 0;
   text-align: left; }
   /* line 62, ../../../../general/res/sass/controls/_menus.scss */
-  .s-menu-btn .menu .ui-symbol.icon, .s-menu-btn .menu .t-item-icon, .s-menu-btn .menu .icon.s-icon-btn, .s-menu-btn .menu .s-icon-btn.t-item-icon, .s-menu-btn .menu .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .s-menu-btn .menu .icon.pager, .s-menu-btn .menu .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .l-datetime-picker .l-month-year-pager .s-menu-btn .menu .pager.t-item-icon, .s-menu-btn .menu .icon.tree-item.active:before, .s-menu-btn .menu .tree-item.active.t-item-icon:before,
-  .s-menu-btn .menu .icon.search-result-item.active:before,
-  .s-menu-btn .menu .search-result-item.active.t-item-icon:before {
+  .s-menu-btn .menu .ui-symbol.icon, .s-menu-btn .menu .t-item-icon, .s-menu-btn .menu .icon.s-icon-btn, .s-menu-btn .menu .s-icon-btn.t-item-icon, .s-menu-btn .menu .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .s-menu-btn .menu .icon.pager, .s-menu-btn .menu .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .l-datetime-picker .l-month-year-pager .s-menu-btn .menu .pager.t-item-icon, .s-menu-btn .menu mct-representation.s-status-editing .icon.tree-item:before, mct-representation.s-status-editing .s-menu-btn .menu .icon.tree-item:before, .s-menu-btn .menu mct-representation.s-status-editing .tree-item.t-item-icon:before, mct-representation.s-status-editing .s-menu-btn .menu .tree-item.t-item-icon:before, .s-menu-btn .menu mct-representation.s-status-editing .icon.search-result-item:before, mct-representation.s-status-editing .s-menu-btn .menu .icon.search-result-item:before, .s-menu-btn .menu mct-representation.s-status-editing .search-result-item.t-item-icon:before, mct-representation.s-status-editing .s-menu-btn .menu .search-result-item.t-item-icon:before {
     width: 12px; }
 
 /******************************************************** MENUS THEMSELVES */
@@ -3447,7 +3439,7 @@ label.checkbox.custom {
   /* line 213, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .message-severity-error .type-icon.message-type:before {
     content: "\21"; }
-@media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+@media screen and (min-device-width: 1281px) {
   /* line 259, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-single .l-message,
   .t-message-single .bottom-bar {
@@ -3518,7 +3510,7 @@ label.checkbox.custom {
   .t-message-list .message-contents .l-message .top-bar,
   .t-message-list .message-contents .l-message .message-body {
     margin-bottom: 10px; }
-@media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+@media screen and (min-device-width: 1281px) {
   /* line 304, ../../../../general/res/sass/controls/_messages.scss */
   .t-message-list .message-contents .l-message {
     margin-right: 10px; } }
@@ -3577,9 +3569,7 @@ mct-include.l-time-controller {
       mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .lbl {
         color: #666666; }
       /* line 65, ../../../../general/res/sass/controls/_time-controller.scss */
-      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .ui-symbol.icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .t-item-icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.s-icon-btn, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .s-icon-btn.t-item-icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.pager, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .pager.t-item-icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.tree-item.active:before, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .tree-item.active.t-item-icon:before,
-      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.search-result-item.active:before,
-      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .search-result-item.active.t-item-icon:before,
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .ui-symbol.icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .t-item-icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.s-icon-btn, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .s-icon-btn.t-item-icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.pager, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .pager.t-item-icon, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input mct-representation.s-status-editing .icon.tree-item:before, mct-representation.s-status-editing mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.tree-item:before, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input mct-representation.s-status-editing .tree-item.t-item-icon:before, mct-representation.s-status-editing mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .tree-item.t-item-icon:before, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input mct-representation.s-status-editing .icon.search-result-item:before, mct-representation.s-status-editing mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .icon.search-result-item:before, mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input mct-representation.s-status-editing .search-result-item.t-item-icon:before, mct-representation.s-status-editing mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-input .search-result-item.t-item-icon:before,
       mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .ui-symbol.icon,
       mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .t-item-icon,
       mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.s-icon-btn,
@@ -3588,10 +3578,14 @@ mct-include.l-time-controller {
       .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.pager,
       mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .l-datetime-picker .l-month-year-pager .pager.t-item-icon,
       .l-datetime-picker .l-month-year-pager mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .pager.t-item-icon,
-      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.tree-item.active:before,
-      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .tree-item.active.t-item-icon:before,
-      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.search-result-item.active:before,
-      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .search-result-item.active.t-item-icon:before {
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem mct-representation.s-status-editing .icon.tree-item:before,
+      mct-representation.s-status-editing mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.tree-item:before,
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem mct-representation.s-status-editing .tree-item.t-item-icon:before,
+      mct-representation.s-status-editing mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .tree-item.t-item-icon:before,
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem mct-representation.s-status-editing .icon.search-result-item:before,
+      mct-representation.s-status-editing mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .icon.search-result-item:before,
+      mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem mct-representation.s-status-editing .search-result-item.t-item-icon:before,
+      mct-representation.s-status-editing mct-include.l-time-controller .l-time-range-inputs-holder .l-time-range-inputs-elem .search-result-item.t-item-icon:before {
         font-size: 11px;
         width: 11px; }
   /* line 72, ../../../../general/res/sass/controls/_time-controller.scss */
@@ -3767,7 +3761,7 @@ mct-include.l-time-controller {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
+@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px) {
   /* line 25, ../../../../general/res/sass/mobile/controls/_menus.scss */
   .super-menu {
     width: 250px;
@@ -4044,20 +4038,19 @@ textarea {
   text-shadow: rgba(0, 0, 0, 0.1) 0 1px 2px;
   margin: 0 0 2px 0;
   padding: 0 5px;
-  overflow: hidden;
   position: relative;
   line-height: 22px; }
   /* line 303, ../../../../general/res/sass/_mixins.scss */
   .select .icon, .select .t-item-icon {
     color: #0099cc; }
-  @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+  @media screen and (min-device-width: 1281px) {
     /* line 308, ../../../../general/res/sass/_mixins.scss */
     .select:not(.disabled):hover {
       background: linear-gradient(#6b6b6b, #5e5e5e); }
       /* line 310, ../../../../general/res/sass/_mixins.scss */
       .select:not(.disabled):hover > .icon, .select:not(.disabled):hover > .t-item-icon {
         color: #33ccff; } }
-  /* line 31, ../../../../general/res/sass/forms/_selects.scss */
+  /* line 30, ../../../../general/res/sass/forms/_selects.scss */
   .select select {
     -moz-appearance: none;
     -webkit-appearance: none;
@@ -4070,10 +4063,10 @@ textarea {
     border: none !important;
     padding: 4px 25px 2px 0px;
     width: 120%; }
-    /* line 40, ../../../../general/res/sass/forms/_selects.scss */
+    /* line 39, ../../../../general/res/sass/forms/_selects.scss */
     .select select option {
       margin: 5px 0; }
-  /* line 44, ../../../../general/res/sass/forms/_selects.scss */
+  /* line 43, ../../../../general/res/sass/forms/_selects.scss */
   .select:after {
     text-shadow: none;
     content: '\76';
@@ -4284,9 +4277,7 @@ span.req {
 .t-filter input.t-filter-input:not(.ng-dirty) + .t-a-clear {
   display: none; }
 /* line 29, ../../../../general/res/sass/forms/_filter.scss */
-.filter .icon.ui-symbol, .filter .t-item-icon, .filter .icon.s-icon-btn, .filter .s-icon-btn.t-item-icon, .filter .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .filter .icon.pager, .filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .l-datetime-picker .l-month-year-pager .filter .pager.t-item-icon, .filter .icon.tree-item.active:before, .filter .tree-item.active.t-item-icon:before,
-.filter .icon.search-result-item.active:before,
-.filter .search-result-item.active.t-item-icon:before,
+.filter .icon.ui-symbol, .filter .t-item-icon, .filter .icon.s-icon-btn, .filter .s-icon-btn.t-item-icon, .filter .l-datetime-picker .l-month-year-pager .icon.pager, .l-datetime-picker .l-month-year-pager .filter .icon.pager, .filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon, .l-datetime-picker .l-month-year-pager .filter .pager.t-item-icon, .filter mct-representation.s-status-editing .icon.tree-item:before, mct-representation.s-status-editing .filter .icon.tree-item:before, .filter mct-representation.s-status-editing .tree-item.t-item-icon:before, mct-representation.s-status-editing .filter .tree-item.t-item-icon:before, .filter mct-representation.s-status-editing .icon.search-result-item:before, mct-representation.s-status-editing .filter .icon.search-result-item:before, .filter mct-representation.s-status-editing .search-result-item.t-item-icon:before, mct-representation.s-status-editing .filter .search-result-item.t-item-icon:before,
 .t-filter .icon.ui-symbol,
 .t-filter .t-item-icon,
 .t-filter .icon.s-icon-btn,
@@ -4295,10 +4286,14 @@ span.req {
 .l-datetime-picker .l-month-year-pager .t-filter .icon.pager,
 .t-filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon,
 .l-datetime-picker .l-month-year-pager .t-filter .pager.t-item-icon,
-.t-filter .icon.tree-item.active:before,
-.t-filter .tree-item.active.t-item-icon:before,
-.t-filter .icon.search-result-item.active:before,
-.t-filter .search-result-item.active.t-item-icon:before {
+.t-filter mct-representation.s-status-editing .icon.tree-item:before,
+mct-representation.s-status-editing .t-filter .icon.tree-item:before,
+.t-filter mct-representation.s-status-editing .tree-item.t-item-icon:before,
+mct-representation.s-status-editing .t-filter .tree-item.t-item-icon:before,
+.t-filter mct-representation.s-status-editing .icon.search-result-item:before,
+mct-representation.s-status-editing .t-filter .icon.search-result-item:before,
+.t-filter mct-representation.s-status-editing .search-result-item.t-item-icon:before,
+mct-representation.s-status-editing .t-filter .search-result-item.t-item-icon:before {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
@@ -4309,9 +4304,7 @@ span.req {
   padding: 0px 5px;
   vertical-align: middle; }
   /* line 37, ../../../../general/res/sass/forms/_filter.scss */
-  .filter .icon.ui-symbol:hover, .filter .t-item-icon:hover, .filter .icon.s-icon-btn:hover, .filter .s-icon-btn.t-item-icon:hover, .filter .l-datetime-picker .l-month-year-pager .icon.pager:hover, .l-datetime-picker .l-month-year-pager .filter .icon.pager:hover, .filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon:hover, .l-datetime-picker .l-month-year-pager .filter .pager.t-item-icon:hover, .filter .icon.tree-item.active:hover:before, .filter .tree-item.active.t-item-icon:hover:before,
-  .filter .icon.search-result-item.active:hover:before,
-  .filter .search-result-item.active.t-item-icon:hover:before,
+  .filter .icon.ui-symbol:hover, .filter .t-item-icon:hover, .filter .icon.s-icon-btn:hover, .filter .s-icon-btn.t-item-icon:hover, .filter .l-datetime-picker .l-month-year-pager .icon.pager:hover, .l-datetime-picker .l-month-year-pager .filter .icon.pager:hover, .filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon:hover, .l-datetime-picker .l-month-year-pager .filter .pager.t-item-icon:hover, .filter mct-representation.s-status-editing .icon.tree-item:hover:before, mct-representation.s-status-editing .filter .icon.tree-item:hover:before, .filter mct-representation.s-status-editing .tree-item.t-item-icon:hover:before, mct-representation.s-status-editing .filter .tree-item.t-item-icon:hover:before, .filter mct-representation.s-status-editing .icon.search-result-item:hover:before, mct-representation.s-status-editing .filter .icon.search-result-item:hover:before, .filter mct-representation.s-status-editing .search-result-item.t-item-icon:hover:before, mct-representation.s-status-editing .filter .search-result-item.t-item-icon:hover:before,
   .t-filter .icon.ui-symbol:hover,
   .t-filter .t-item-icon:hover,
   .t-filter .icon.s-icon-btn:hover,
@@ -4320,21 +4313,26 @@ span.req {
   .l-datetime-picker .l-month-year-pager .t-filter .icon.pager:hover,
   .t-filter .l-datetime-picker .l-month-year-pager .pager.t-item-icon:hover,
   .l-datetime-picker .l-month-year-pager .t-filter .pager.t-item-icon:hover,
-  .t-filter .icon.tree-item.active:hover:before,
-  .t-filter .tree-item.active.t-item-icon:hover:before,
-  .t-filter .icon.search-result-item.active:hover:before,
-  .t-filter .search-result-item.active.t-item-icon:hover:before {
+  .t-filter mct-representation.s-status-editing .icon.tree-item:hover:before,
+  mct-representation.s-status-editing .t-filter .icon.tree-item:hover:before,
+  .t-filter mct-representation.s-status-editing .tree-item.t-item-icon:hover:before,
+  mct-representation.s-status-editing .t-filter .tree-item.t-item-icon:hover:before,
+  .t-filter mct-representation.s-status-editing .icon.search-result-item:hover:before,
+  mct-representation.s-status-editing .t-filter .icon.search-result-item:hover:before,
+  .t-filter mct-representation.s-status-editing .search-result-item.t-item-icon:hover:before,
+  mct-representation.s-status-editing .t-filter .search-result-item.t-item-icon:hover:before {
     background: rgba(255, 255, 255, 0.1); }
 /* line 41, ../../../../general/res/sass/forms/_filter.scss */
-.filter .s-a-clear.ui-symbol, .filter .s-a-clear.t-item-icon, .filter .s-a-clear.s-icon-btn, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager, .filter .s-a-clear.tree-item.active:before,
-.filter .s-a-clear.search-result-item.active:before,
+.filter .s-a-clear.ui-symbol, .filter .s-a-clear.t-item-icon, .filter .s-a-clear.s-icon-btn, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager, .filter mct-representation.s-status-editing .s-a-clear.tree-item:before, mct-representation.s-status-editing .filter .s-a-clear.tree-item:before, .filter mct-representation.s-status-editing .s-a-clear.search-result-item:before, mct-representation.s-status-editing .filter .s-a-clear.search-result-item:before,
 .t-filter .s-a-clear.ui-symbol,
 .t-filter .s-a-clear.t-item-icon,
 .t-filter .s-a-clear.s-icon-btn,
 .t-filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager,
 .l-datetime-picker .l-month-year-pager .t-filter .s-a-clear.pager,
-.t-filter .s-a-clear.tree-item.active:before,
-.t-filter .s-a-clear.search-result-item.active:before {
+.t-filter mct-representation.s-status-editing .s-a-clear.tree-item:before,
+mct-representation.s-status-editing .t-filter .s-a-clear.tree-item:before,
+.t-filter mct-representation.s-status-editing .s-a-clear.search-result-item:before,
+mct-representation.s-status-editing .t-filter .s-a-clear.search-result-item:before {
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
   border-radius: 3px;
@@ -4358,15 +4356,16 @@ span.req {
   text-align: center;
   z-index: 5; }
   /* line 61, ../../../../general/res/sass/forms/_filter.scss */
-  .filter .s-a-clear.ui-symbol:hover, .filter .s-a-clear.t-item-icon:hover, .filter .s-a-clear.s-icon-btn:hover, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager:hover, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager:hover, .filter .s-a-clear.tree-item.active:hover:before,
-  .filter .s-a-clear.search-result-item.active:hover:before,
+  .filter .s-a-clear.ui-symbol:hover, .filter .s-a-clear.t-item-icon:hover, .filter .s-a-clear.s-icon-btn:hover, .filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager:hover, .l-datetime-picker .l-month-year-pager .filter .s-a-clear.pager:hover, .filter mct-representation.s-status-editing .s-a-clear.tree-item:hover:before, mct-representation.s-status-editing .filter .s-a-clear.tree-item:hover:before, .filter mct-representation.s-status-editing .s-a-clear.search-result-item:hover:before, mct-representation.s-status-editing .filter .s-a-clear.search-result-item:hover:before,
   .t-filter .s-a-clear.ui-symbol:hover,
   .t-filter .s-a-clear.t-item-icon:hover,
   .t-filter .s-a-clear.s-icon-btn:hover,
   .t-filter .l-datetime-picker .l-month-year-pager .s-a-clear.pager:hover,
   .l-datetime-picker .l-month-year-pager .t-filter .s-a-clear.pager:hover,
-  .t-filter .s-a-clear.tree-item.active:hover:before,
-  .t-filter .s-a-clear.search-result-item.active:hover:before {
+  .t-filter mct-representation.s-status-editing .s-a-clear.tree-item:hover:before,
+  mct-representation.s-status-editing .t-filter .s-a-clear.tree-item:hover:before,
+  .t-filter mct-representation.s-status-editing .s-a-clear.search-result-item:hover:before,
+  mct-representation.s-status-editing .t-filter .s-a-clear.search-result-item:hover:before {
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=60);
     opacity: 0.6;
     background-color: #0099cc; }
@@ -4645,7 +4644,7 @@ span.req {
   /* line 137, ../../../../general/res/sass/user-environ/_layout.scss */
   .pane .mini-tab-icon.toggle-pane {
     z-index: 5; }
-    @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+    @media screen and (min-device-width: 1281px) {
       /* line 137, ../../../../general/res/sass/user-environ/_layout.scss */
       .pane .mini-tab-icon.toggle-pane {
         top: 10px;
@@ -4963,7 +4962,7 @@ span.req {
 .pane-inspect-hidden .l-object-and-inspector .splitter-inspect {
   opacity: 0; }
 
-@media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+@media screen and (min-device-width: 1281px) {
   /* line 345, ../../../../general/res/sass/user-environ/_layout.scss */
   .holder-all {
     min-width: 600px; }
@@ -5035,7 +5034,7 @@ span.req {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
+@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px) {
   /* line 26, ../../../../general/res/sass/mobile/_layout.scss */
   .browse-wrapper,
   .pane {
@@ -5211,7 +5210,7 @@ span.req {
     -webkit-transition-delay: 0;
     transition-delay: 0;
     opacity: 1; } }
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) {
+@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px) {
   /* line 146, ../../../../general/res/sass/mobile/_layout.scss */
   .pane-tree-showing .pane.left.treeview {
     width: 90% !important; }
@@ -5225,7 +5224,7 @@ span.req {
     /* line 152, ../../../../general/res/sass/mobile/_layout.scss */
     .pane-tree-showing .pane.right.items .holder-object-and-inspector {
       opacity: 0; } }
-@media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+@media screen and (min-device-width: 1281px) {
   /* line 160, ../../../../general/res/sass/mobile/_layout.scss */
   .desktop-hide {
     display: none; } }
@@ -5461,7 +5460,7 @@ span.req {
     margin-left: 50%;
     white-space: nowrap; }
 
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px) {
+@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 514px) and (max-device-width: 1280px) {
   /* line 5, ../../../../general/res/sass/mobile/search/_search.scss */
   .search .search-bar .menu-icon {
     display: none; }
@@ -5644,7 +5643,7 @@ span.req {
         /* line 303, ../../../../general/res/sass/_mixins.scss */
         .overlay .bottom-bar .s-btn:not(.major) .icon, .overlay .bottom-bar .s-menu-btn:not(.major) .icon, .overlay .bottom-bar .s-btn:not(.major) .t-item-icon, .overlay .bottom-bar .s-menu-btn:not(.major) .t-item-icon {
           color: #fff; }
-        @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+        @media screen and (min-device-width: 1281px) {
           /* line 308, ../../../../general/res/sass/_mixins.scss */
           .overlay .bottom-bar .s-btn:not(.major):not(.disabled):hover, .overlay .bottom-bar .s-menu-btn:not(.major):not(.disabled):hover {
             background: linear-gradient(#a6a6a6, #999999); }
@@ -5677,7 +5676,7 @@ span.req {
   min-height: 225px;
   height: 225px; }
 
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
+@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px) {
   /* line 3, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
   .overlay .clk-icon.close {
     top: 20px;
@@ -5695,7 +5694,7 @@ span.req {
       /* line 17, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
       .overlay > .holder > .contents .top-bar > .title {
         margin-right: 1.2em; } }
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px) {
+@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 514px) and (max-device-width: 1280px) {
   /* line 27, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
   .overlay > .holder {
     -moz-border-radius: 0;
@@ -5775,7 +5774,7 @@ span.req {
   .t-dialog-sm .overlay > .holder {
     height: auto;
     max-height: 100%; } }
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px) {
+@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px) {
   /* line 77, ../../../../general/res/sass/mobile/overlay/_overlay.scss */
   .overlay > .holder .contents .bottom-bar {
     text-align: center; } }
@@ -5848,7 +5847,7 @@ ul.tree {
     margin-left: 5px;
     font-size: 0.75em;
     width: 10px; }
-    @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+    @media screen and (min-device-width: 1281px) {
       /* line 56, ../../../../general/res/sass/tree/_tree.scss */
       .tree-item .view-control:hover,
       .search-result-item .view-control:hover {
@@ -5981,7 +5980,7 @@ ul.tree {
     .tree-item.selected .t-object-label .t-item-icon,
     .search-result-item.selected .t-object-label .t-item-icon {
       color: #cccccc; }
-  @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+  @media screen and (min-device-width: 1281px) {
     /* line 136, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item:not(.selected):hover,
     .search-result-item:not(.selected):hover {
@@ -5991,14 +5990,14 @@ ul.tree {
       .tree-item:not(.selected):hover .t-item-icon,
       .search-result-item:not(.selected):hover .t-item-icon {
         color: #33ccff; } }
-  /* line 146, ../../../../general/res/sass/tree/_tree.scss */
-  .tree-item.active,
-  .search-result-item.active {
+  /* line 147, ../../../../general/res/sass/tree/_tree.scss */
+  mct-representation.s-status-editing .tree-item, mct-representation.s-status-editing
+  .search-result-item {
     background: #344154;
     pointer-events: none; }
-    /* line 150, ../../../../general/res/sass/tree/_tree.scss */
-    .tree-item.active:before,
-    .search-result-item.active:before {
+    /* line 151, ../../../../general/res/sass/tree/_tree.scss */
+    mct-representation.s-status-editing .tree-item:before, mct-representation.s-status-editing
+    .search-result-item:before {
       -moz-animation-name: pulse;
       -webkit-animation-name: pulse;
       animation-name: pulse;
@@ -6032,40 +6031,41 @@ ul.tree {
     opacity: 0.25; }
   100% {
     opacity: 1; } }
-    /* line 159, ../../../../general/res/sass/tree/_tree.scss */
-    .tree-item.active .t-object-label .t-item-icon,
-    .tree-item.active .t-object-label .t-title-label,
-    .search-result-item.active .t-object-label .t-item-icon,
-    .search-result-item.active .t-object-label .t-title-label {
+    /* line 160, ../../../../general/res/sass/tree/_tree.scss */
+    mct-representation.s-status-editing .tree-item .t-object-label .t-item-icon,
+    mct-representation.s-status-editing .tree-item .t-object-label .t-title-label, mct-representation.s-status-editing
+    .search-result-item .t-object-label .t-item-icon,
+    mct-representation.s-status-editing
+    .search-result-item .t-object-label .t-title-label {
       color: #587ab5;
       text-shadow: none; }
-    /* line 164, ../../../../general/res/sass/tree/_tree.scss */
-    .tree-item.active .t-object-label .t-title-label,
-    .search-result-item.active .t-object-label .t-title-label {
+    /* line 165, ../../../../general/res/sass/tree/_tree.scss */
+    mct-representation.s-status-editing .tree-item .t-object-label .t-title-label, mct-representation.s-status-editing
+    .search-result-item .t-object-label .t-title-label {
       font-style: italic; }
-    /* line 168, ../../../../general/res/sass/tree/_tree.scss */
-    .tree-item.active .view-control, .tree-item.active + .tree-item-subtree,
-    .search-result-item.active .view-control,
-    .search-result-item.active + .tree-item-subtree {
+    /* line 169, ../../../../general/res/sass/tree/_tree.scss */
+    mct-representation.s-status-editing .tree-item .view-control, mct-representation.s-status-editing .tree-item + .tree-item-subtree, mct-representation.s-status-editing
+    .search-result-item .view-control, mct-representation.s-status-editing
+    .search-result-item + .tree-item-subtree {
       display: none; }
-  /* line 171, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 172, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item:not(.loading),
   .search-result-item:not(.loading) {
     cursor: pointer; }
-  /* line 175, ../../../../general/res/sass/tree/_tree.scss */
+  /* line 176, ../../../../general/res/sass/tree/_tree.scss */
   .tree-item .context-trigger,
   .search-result-item .context-trigger {
     top: -1px;
     position: absolute;
     right: 3px; }
-    /* line 180, ../../../../general/res/sass/tree/_tree.scss */
+    /* line 181, ../../../../general/res/sass/tree/_tree.scss */
     .tree-item .context-trigger .invoke-menu,
     .search-result-item .context-trigger .invoke-menu {
       font-size: 0.75em;
       height: 0.9rem;
       line-height: 0.9rem; }
 
-/* line 190, ../../../../general/res/sass/tree/_tree.scss */
+/* line 191, ../../../../general/res/sass/tree/_tree.scss */
 .tree-item .t-object-label,
 .search-result-item.active .t-object-label {
   left: 15px; }
@@ -6091,7 +6091,7 @@ ul.tree {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
+@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px) {
   /* line 27, ../../../../general/res/sass/mobile/_tree.scss */
   ul.tree ul.tree {
     margin-left: 20px; }
@@ -6182,7 +6182,7 @@ ul.tree {
 /* line 65, ../../../../general/res/sass/user-environ/_frame.scss */
 .frame.frame-template .view-switcher {
   z-index: 10; }
-@media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+@media screen and (min-device-width: 1281px) {
   /* line 71, ../../../../general/res/sass/user-environ/_frame.scss */
   .frame.frame-template .view-switcher {
     opacity: 0; }
@@ -6681,7 +6681,7 @@ table {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* line 31, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 29, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot {
   color: #999;
   font-size: 0.7rem;
@@ -6689,10 +6689,10 @@ table {
   width: 100%;
   height: 100%;
   /****************************** Limits and Out-of-Bounds data */ }
-  /* line 38, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 36, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-axis-area {
     position: absolute; }
-    /* line 41, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 38, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-axis-area.gl-plot-x {
       top: auto;
       right: 0;
@@ -6701,14 +6701,14 @@ table {
       height: 32px;
       width: auto;
       overflow: hidden; }
-    /* line 50, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 47, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-axis-area.gl-plot-y {
       top: 25px;
       right: auto;
       bottom: 37px;
       left: 0;
       width: 60px; }
-  /* line 59, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 56, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-coords {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -6725,10 +6725,10 @@ table {
     bottom: auto;
     left: 70px;
     z-index: 10; }
-    /* line 71, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 68, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-coords:empty {
       display: none; }
-  /* line 76, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 73, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-display-area {
     background-color: rgba(0, 0, 0, 0.1);
     position: absolute;
@@ -6738,13 +6738,13 @@ table {
     left: 60px;
     cursor: crosshair;
     border: 1px solid rgba(153, 153, 153, 0.1); }
-  /* line 89, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 86, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-label,
   .gl-plot .l-plot-label {
     color: #666666;
     position: absolute;
     text-align: center; }
-    /* line 97, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 92, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-label.gl-plot-x-label, .gl-plot .gl-plot-label.l-plot-x-label,
     .gl-plot .l-plot-label.gl-plot-x-label,
     .gl-plot .l-plot-label.l-plot-x-label {
@@ -6753,7 +6753,7 @@ table {
       bottom: 0;
       left: 0;
       height: auto; }
-    /* line 106, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 101, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-label.gl-plot-y-label, .gl-plot .gl-plot-label.l-plot-y-label,
     .gl-plot .l-plot-label.gl-plot-y-label,
     .gl-plot .l-plot-label.l-plot-y-label {
@@ -6770,30 +6770,38 @@ table {
       left: 0;
       top: 50%;
       white-space: nowrap; }
-  /* line 120, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 115, ../../../../general/res/sass/plots/_plots-main.scss */
+  .gl-plot .gl-plot-x-options,
   .gl-plot .gl-plot-y-options {
     position: absolute;
-    top: 50%;
-    right: auto;
-    bottom: auto;
-    left: auto5px;
-    margin-top: -16px;
     height: auto;
     min-height: 32px;
-    width: 32px; }
-  /* line 134, ../../../../general/res/sass/plots/_plots-main.scss */
+    z-index: 2; }
+  /* line 124, ../../../../general/res/sass/plots/_plots-main.scss */
+  .gl-plot .gl-plot-x-options {
+    top: 5px; }
+  /* line 128, ../../../../general/res/sass/plots/_plots-main.scss */
+  .gl-plot .gl-plot-y-options {
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    min-width: 150px;
+    top: 50%;
+    left: 20px; }
+  /* line 135, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-hash {
     position: absolute;
     border: 0 rgba(255, 255, 255, 0.2) dashed; }
-    /* line 137, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 138, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-hash.hash-v {
       border-right-width: 1px;
       height: 100%; }
-    /* line 141, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 142, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .gl-plot-hash.hash-h {
       border-bottom-width: 1px;
       width: 100%; }
-  /* line 147, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 148, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .gl-plot-legend {
     position: absolute;
     top: 0;
@@ -6803,24 +6811,24 @@ table {
     height: 20px;
     overflow-x: hidden;
     overflow-y: auto; }
-  /* line 160, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 161, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .l-limit-bar,
   .gl-plot .l-oob-data {
     position: absolute;
     left: 0;
     right: 0;
     width: auto; }
-  /* line 168, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 169, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .l-limit-bar {
     height: auto;
     z-index: 0; }
-    /* line 176, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 177, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .l-limit-bar.s-limit-yellow {
       background: rgba(255, 170, 0, 0.2); }
-    /* line 177, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 178, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .l-limit-bar.s-limit-red {
       background: rgba(255, 0, 0, 0.2); }
-  /* line 180, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 181, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot .l-oob-data {
     overflow: hidden;
     position: absolute;
@@ -6833,7 +6841,7 @@ table {
     pointer-events: none;
     height: 10px;
     z-index: 1; }
-    /* line 188, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 189, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .l-oob-data.l-oob-data-up {
       top: 0;
       bottom: auto;
@@ -6842,7 +6850,7 @@ table {
       background-image: -moz-linear-gradient(90deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%);
       background-image: -webkit-linear-gradient(90deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%);
       background-image: linear-gradient(0deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%); }
-    /* line 193, ../../../../general/res/sass/plots/_plots-main.scss */
+    /* line 194, ../../../../general/res/sass/plots/_plots-main.scss */
     .gl-plot .l-oob-data.l-oob-data-dwn {
       bottom: 0;
       top: auto;
@@ -6852,7 +6860,7 @@ table {
       background-image: -webkit-linear-gradient(270deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%);
       background-image: linear-gradient(180deg, rgba(119, 72, 214, 0), rgba(119, 72, 214, 0.5) 100%); }
 
-/* line 203, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 204, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot-legend .plot-legend-item,
 .gl-plot-legend .legend-item,
 .legend .plot-legend-item,
@@ -6860,13 +6868,13 @@ table {
   display: inline-block;
   margin-right: 10px;
   margin-bottom: 3px; }
-  /* line 208, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 209, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item span,
   .gl-plot-legend .legend-item span,
   .legend .plot-legend-item span,
   .legend .legend-item span {
     vertical-align: middle; }
-  /* line 211, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 212, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item .plot-color-swatch,
   .gl-plot-legend .plot-legend-item .color-swatch,
   .gl-plot-legend .legend-item .plot-color-swatch,
@@ -6882,29 +6890,29 @@ table {
     height: 8px;
     width: 8px; }
 
-/* line 228, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 223, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot-legend .plot-legend-item {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
   border-radius: 2px;
   line-height: 1.5em;
   padding: 0px 5px; }
-  /* line 234, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 227, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot-legend .plot-legend-item .plot-color-swatch {
     border: 1px solid #333;
     height: 9px;
     width: 9px; }
 
-/* line 242, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 235, ../../../../general/res/sass/plots/_plots-main.scss */
 .tick {
   position: absolute;
   border: 0 rgba(255, 255, 255, 0.2) solid; }
-  /* line 245, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 238, ../../../../general/res/sass/plots/_plots-main.scss */
   .tick.tick-x {
     border-right-width: 1px;
     height: 100%; }
 
-/* line 251, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 244, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot-tick,
 .tick-label {
   font-size: 0.7rem;
@@ -6912,7 +6920,7 @@ table {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis; }
-  /* line 259, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 251, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-x-tick-label, .gl-plot-tick.tick-label-x,
   .tick-label.gl-plot-x-tick-label,
   .tick-label.tick-label-x {
@@ -6923,7 +6931,7 @@ table {
     width: 20%;
     margin-left: -10%;
     text-align: center; }
-  /* line 269, ../../../../general/res/sass/plots/_plots-main.scss */
+  /* line 261, ../../../../general/res/sass/plots/_plots-main.scss */
   .gl-plot-tick.gl-plot-y-tick-label, .gl-plot-tick.tick-label-y,
   .tick-label.gl-plot-y-tick-label,
   .tick-label.tick-label-y {
@@ -6933,18 +6941,18 @@ table {
     margin-bottom: -0.5em;
     text-align: right; }
 
-/* line 281, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 272, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-x-tick-label {
   top: 5px; }
-/* line 284, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 275, ../../../../general/res/sass/plots/_plots-main.scss */
 .gl-plot-tick.gl-plot-y-tick-label {
   right: 5px;
   left: 5px; }
 
-/* line 291, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 282, ../../../../general/res/sass/plots/_plots-main.scss */
 .tick-label.tick-label-x {
   top: 0; }
-/* line 294, ../../../../general/res/sass/plots/_plots-main.scss */
+/* line 285, ../../../../general/res/sass/plots/_plots-main.scss */
 .tick-label.tick-label-y {
   right: 0;
   left: 0; }
@@ -7071,7 +7079,7 @@ table {
     /* line 303, ../../../../general/res/sass/_mixins.scss */
     .items-holder .item.grid-item .icon, .items-holder .item.grid-item .t-item-icon {
       color: #0099cc; }
-    @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+    @media screen and (min-device-width: 1281px) {
       /* line 308, ../../../../general/res/sass/_mixins.scss */
       .items-holder .item.grid-item:not(.disabled):hover {
         background: linear-gradient(#666666, #595959); }
@@ -7202,7 +7210,7 @@ table {
       /* line 303, ../../../../general/res/sass/_mixins.scss */
       .items-holder .item.grid-item.selected .icon, .items-holder .item.grid-item.selected .t-item-icon {
         color: #0099cc; }
-      @media screen and (min-device-width: 800px) and (min-device-height: 1025px), screen and (min-device-width: 1025px) and (min-device-height: 800px) {
+      @media screen and (min-device-width: 1281px) {
         /* line 308, ../../../../general/res/sass/_mixins.scss */
         .items-holder .item.grid-item.selected:not(.disabled):hover {
           background: linear-gradient(#1ac6ff, #00bfff); }
@@ -7243,7 +7251,7 @@ table {
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px), screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
+@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px) {
   /* line 29, ../../../../general/res/sass/mobile/_item.scss */
   .items-holder .item.grid-item {
     width: 100%; }
@@ -7277,7 +7285,7 @@ table {
       opacity: 1;
       font-size: 1em;
       width: auto; } }
-@media screen and (orientation: portrait) and (max-width: 514px) and (max-height: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (max-height: 514px) and (max-width: 740px) and (max-device-width: 1024px) and (max-device-height: 799px) {
+@media screen and (orientation: portrait) and (max-device-width: 514px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 514px) and (max-device-width: 1280px) {
   /* line 29, ../../../../general/res/sass/mobile/_item.scss */
   .items-holder .item.grid-item {
     height: 50px; }
@@ -7297,7 +7305,7 @@ table {
     /* line 83, ../../../../general/res/sass/mobile/_item.scss */
     .items-holder .item.grid-item .item-main .item-open {
       line-height: 50px; } }
-@media screen and (orientation: portrait) and (min-width: 515px) and (max-width: 799px) and (min-height: 741px) and (max-height: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 799px) and (max-device-height: 1024px), screen and (orientation: landscape) and (min-height: 515px) and (max-height: 799px) and (min-width: 741px) and (max-width: 1024px) and (max-device-width: 1024px) and (max-device-height: 799px) {
+@media screen and (orientation: portrait) and (max-device-width: 1280px) and (max-device-width: 1280px), screen and (orientation: landscape) and (max-device-width: 1280px) and (max-device-width: 1280px) {
   /* line 29, ../../../../general/res/sass/mobile/_item.scss */
   .items-holder .item.grid-item {
     height: 66px; }
@@ -7626,64 +7634,43 @@ table {
 .frame .t-imagery .l-image-thumbs-wrapper {
   display: none; }
 
-/* line 5, ../../../../general/res/sass/features/_time-display.scss */
-.l-time-display:hover .l-btn.control {
-  opacity: 1; }
-/* line 9, ../../../../general/res/sass/features/_time-display.scss */
-.l-time-display .l-elem-wrapper {
-  position: relative; }
-/* line 12, ../../../../general/res/sass/features/_time-display.scss */
-.l-time-display .l-elem {
-  display: inline-block; }
-/* line 17, ../../../../general/res/sass/features/_time-display.scss */
-.l-time-display.l-timer .l-elem.l-value {
-  -moz-transition-property: left;
-  -o-transition-property: left;
-  -webkit-transition-property: left;
-  transition-property: left;
-  -moz-transition-duration: 200ms;
-  -o-transition-duration: 200ms;
-  -webkit-transition-duration: 200ms;
-  transition-duration: 200ms;
-  -moz-transition-timing-function: ease-in-out;
-  -o-transition-timing-function: ease-in-out;
-  -webkit-transition-timing-function: ease-in-out;
-  transition-timing-function: ease-in-out;
-  -moz-transition-delay: 0;
-  -o-transition-delay: 0;
-  -webkit-transition-delay: 0;
-  transition-delay: 0;
-  position: absolute;
-  left: 0;
-  z-index: 1; }
-  /* line 22, ../../../../general/res/sass/features/_time-display.scss */
-  .l-time-display.l-timer .l-elem.l-value .ui-symbol.direction, .l-time-display.l-timer .l-elem.l-value .direction.t-item-icon, .l-time-display.l-timer .l-elem.l-value .direction.s-icon-btn, .l-time-display.l-timer .l-elem.l-value .l-datetime-picker .l-month-year-pager .direction.pager, .l-datetime-picker .l-month-year-pager .l-time-display.l-timer .l-elem.l-value .direction.pager, .l-time-display.l-timer .l-elem.l-value .direction.tree-item.active:before,
-  .l-time-display.l-timer .l-elem.l-value .direction.search-result-item.active:before {
-    font-size: 0.8em; }
-/* line 26, ../../../../general/res/sass/features/_time-display.scss */
-.l-time-display.l-timer:hover .l-elem.l-value {
-  left: 20px; }
-/* line 33, ../../../../general/res/sass/features/_time-display.scss */
-.l-time-display .l-elem .value.active, .l-time-display .l-elem.value.active {
-  color: #fff; }
-/* line 38, ../../../../general/res/sass/features/_time-display.scss */
-.l-time-display .l-btn.control {
-  -moz-transition-property: opacity, background-color, border-color, color;
-  -o-transition-property: opacity, background-color, border-color, color;
-  -webkit-transition-property: opacity, background-color, border-color, color;
-  transition-property: opacity, background-color, border-color, color;
-  -moz-transition-duration: 200ms;
-  -o-transition-duration: 200ms;
-  -webkit-transition-duration: 200ms;
-  transition-duration: 200ms;
-  -moz-transition-timing-function: ease-in-out;
-  -o-transition-timing-function: ease-in-out;
-  -webkit-transition-timing-function: ease-in-out;
-  transition-timing-function: ease-in-out;
-  -moz-transition-delay: 0;
-  -o-transition-delay: 0;
-  -webkit-transition-delay: 0;
-  transition-delay: 0;
-  opacity: 0;
-  font-size: 0.65em;
-  vertical-align: top; }
+/* line 1, ../../../../general/res/sass/features/_time-display.scss */
+.l-time-display {
+  line-height: 140%; }
+  /* line 5, ../../../../general/res/sass/features/_time-display.scss */
+  .l-time-display:hover .l-btn.control {
+    opacity: 1; }
+  /* line 11, ../../../../general/res/sass/features/_time-display.scss */
+  .l-time-display.l-timer .control {
+    -moz-transition-property: width, opacity;
+    -o-transition-property: width, opacity;
+    -webkit-transition-property: width, opacity;
+    transition-property: width, opacity;
+    -moz-transition-duration: 200ms;
+    -o-transition-duration: 200ms;
+    -webkit-transition-duration: 200ms;
+    transition-duration: 200ms;
+    -moz-transition-timing-function: ease-in-out;
+    -o-transition-timing-function: ease-in-out;
+    -webkit-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    -moz-transition-delay: 0;
+    -o-transition-delay: 0;
+    -webkit-transition-delay: 0;
+    transition-delay: 0;
+    line-height: inherit;
+    margin-right: 0;
+    opacity: 0;
+    width: 0; }
+  /* line 18, ../../../../general/res/sass/features/_time-display.scss */
+  .l-time-display.l-timer:hover .control {
+    margin-right: 5px;
+    opacity: 1;
+    width: 1em; }
+  /* line 25, ../../../../general/res/sass/features/_time-display.scss */
+  .l-time-display .value {
+    color: white;
+    font-weight: 400; }
+    /* line 28, ../../../../general/res/sass/features/_time-display.scss */
+    .l-time-display .value .direction {
+      font-size: 0.8em; }
