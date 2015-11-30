@@ -135,9 +135,7 @@ define(
                 var event = (e || {}).originalEvent || e,
                     id = event.dataTransfer.getData(GestureConstants.MCT_DRAG_TYPE),
                     domainObjectType = editableDomainObject.getModel().type,
-                    virtualObj;
-
-                editableDomainObject.getCapability('status').set('editing', true);
+                    virtualPanel;
 
                 // If currently in edit mode allow drag and drop gestures to the
                 // domain object. An exception to this is folders which have drop
@@ -152,6 +150,7 @@ define(
                             navigationService.setNavigation(createVirtualPanel(domainObject, id));
                             broadcastDrop(id, event);
                         } else {
+                            editableDomainObject.getCapability('status').set('editing', true);
                             $q.when(action && action.perform()).then(function (result) {
                                 //Don't go into edit mode for folders
                                 if (domainObjectType!=='folder') {
