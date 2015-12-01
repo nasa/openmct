@@ -257,11 +257,13 @@
     line-height: $ueEditToolBarH;
     height: 0px;
     opacity: 0;
-    overflow: hidden;
     &.active {
         height: $ueEditToolBarH + $interiorMargin;
         margin-bottom: $interiorMargin;
         opacity: 1;
+    }
+    .tool-bar {
+        right: $interiorMargin;
     }
 }
 
